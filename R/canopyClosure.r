@@ -41,11 +41,11 @@ canopyClosure = function(x, threshold, na.rm = TRUE)
   num  = sum(x > threshold, na.rm=TRUE)
 
   if(na.rm)
-    over = length(x[!is.na(x)])*100
+    over = length(x[!is.na(x)])
   else
-    over = length(x)*100
+    over = length(x)
 
-  CC  = num/over
+  CC  = num/over*1000
 
   return(CC)
 }
