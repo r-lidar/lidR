@@ -88,6 +88,6 @@ vci = function(z, zmax, by = 1)
 {
   z = z[z < zmax]
 
-  return(entropy(z, zmax, by))
+  return(entropy(z, by, zmax))
 }
 
