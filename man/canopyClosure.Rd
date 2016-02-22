@@ -24,7 +24,7 @@ the total cells of the canopy.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = Lidar(LASfile)
+lidar = LoadLidar(LASfile)
 
 myClosureMetrics = function(x, y, z)
 {

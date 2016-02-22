@@ -3,7 +3,7 @@
 \name{plot3d}
 \alias{plot3d}
 \alias{plot3d.gridMetrics}
-\title{Plot3d generic function}
+\title{plot3d generic function}
 \usage{
 plot3d(x, z = NULL, ...)
 
@@ -17,7 +17,7 @@ plot3d(x, z = NULL, ...)
 \item{\dots}{Other parameters for \code{surface3d}}
 }
 \description{
-Plot3d generic function
+plot3d generic function
 
 Plot an object of class gridMetrics in 3D
 }
