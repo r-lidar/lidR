@@ -40,7 +40,7 @@ lakes = rgdal::readOGR(shapefile_dir, "lac_ontario_UTM17")
 
 # The field "lake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
 lidar = classifyFromShapefile(lidar, lakes, "inlakes")
-forest = leach(lidar, inlakes == FALSE)
+forest = filter(lidar, inlakes == FALSE)
 plot(lidar)
 plot(forest)
 

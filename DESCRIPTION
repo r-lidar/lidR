@@ -16,7 +16,7 @@ License: GPL-2
 Depends:
     R (>= 3.1.2),methods,data.table,magrittr
 Imports:
-    rgl,grDevices,reshape2,geometry,tools,parallel,RcppArmadillo,fields,bitops,raster,sp,rgdal,plyr,dplyr
+    rgl,grDevices,reshape2,geometry,tools,parallel,RcppArmadillo,fields,bitops,raster,sp,rgdal,plyr,dplyr,rgeos
 LazyData: true
 RoxygenNote: 5.0.1
 Collate:

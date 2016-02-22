@@ -27,7 +27,7 @@ function for \code{Lidar} objects which replace the function
 package.
 }
 \note{
-\code{getNth(obj, n)} is an alias for \code{leach(obj, ReturnNumber == n)}
+\code{getNth(obj, n)} is an alias for \code{filter(obj, ReturnNumber == n)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -44,6 +44,6 @@ secondReturns = lidar \%>\% getNth(2)
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:leach]{leach} }
+\code{\link[lidR:filter]{filter} }
 }
 
