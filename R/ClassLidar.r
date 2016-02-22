@@ -105,8 +105,8 @@ setMethod("initialize", "Lidar",
 	}
 )
 
-#' @rdname leach
-setMethod("leach", "Lidar",
+#' @rdname filter
+setMethod("filter", "Lidar",
 	function(.data, ...)
 	{
 		ret = .data@data %>% dplyr::filter(...) %>% LoadLidar
@@ -124,7 +124,7 @@ setMethod("getNth", "Lidar",
 	  if(n > max(obj@data$ReturnNumber) | n <= 0)
 	    stop("Parameter n of function getNth incorrect")
 
-		return(leach(obj, ReturnNumber == n))
+		return(filter(obj, ReturnNumber == n))
 	}
 )
 
@@ -141,7 +141,7 @@ setMethod("getFirstOfMany", "Lidar",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(leach(obj, NumberOfReturns > 1, ReturnNumber == 1))
+		return(filter(obj, NumberOfReturns > 1, ReturnNumber == 1))
 	}
 )
 
@@ -151,7 +151,7 @@ setMethod("getSingle", "Lidar",
 	{
 	  NumberOfReturns <- NULL
 
-		return(leach(obj, NumberOfReturns == 1))
+		return(filter(obj, NumberOfReturns == 1))
 	}
 )
 
@@ -161,7 +161,7 @@ setMethod("getLast", "Lidar",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(leach(obj, ReturnNumber == NumberOfReturns))
+		return(filter(obj, ReturnNumber == NumberOfReturns))
 	}
 )
 
@@ -171,7 +171,7 @@ setMethod("getFirstLast", "Lidar",
 	{
 	  ReturnNumber <- NumberOfReturns <- NULL
 
-		return(leach(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
+		return(filter(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
 	}
 )
 
@@ -181,7 +181,7 @@ setMethod("getGround", "Lidar",
 	{
 	  Classification <- NULL
 
-	 	return(leach(obj, Classification == 2))
+	 	return(filter(obj, Classification == 2))
  	}
 )
 
@@ -228,9 +228,9 @@ setMethod("clipRectangle", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
+		  return(filter(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
 	  else
-	    return(leach(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
+	    return(filter(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
 
 	}
 )
@@ -242,9 +242,9 @@ setMethod("clipPolygon", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, sp::point.in.polygon(X,Y,x,y) > 0))
+		  return(filter(obj, sp::point.in.polygon(X,Y,x,y) > 0))
 	  else
-	    return(leach(obj, sp::point.in.polygon(X,Y,x,y) == 0))
+	    return(filter(obj, sp::point.in.polygon(X,Y,x,y) == 0))
 	}
 )
 
@@ -255,9 +255,9 @@ setMethod("clipCircle", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+		  return(filter(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
 	  else
-	    return(leach(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+	    return(filter(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
 	}
 )
 

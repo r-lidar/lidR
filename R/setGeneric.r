@@ -1,11 +1,11 @@
 #' Return points with matching conditions
 #'
-#' Return points with matching conditions. \code{leach} is an overloading
+#' Return points with matching conditions. \code{filter} is an overloading
 #'
 #' function for \code{Lidar} objects which replace the function
 #' \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}}
 #' package.
-#' @aliases  leach
+#' @aliases  filter
 #' @param .data An object of class \code{Lidar}
 #' @param \dots Logical predicates. Multiple conditions are combined with &.
 #' @return An object of class \code{Lidar}
@@ -15,12 +15,12 @@
 #' lidar = LoadLidar(LASfile)
 #'
 #' # Select the first returns classified as ground
-#' firstground = lidar %>% leach(Classification == 1, ReturnNumber == 1)
+#' firstground = lidar %>% filter(Classification == 1, ReturnNumber == 1)
 #' @seealso
 #' \code{\link[dplyr:filter]{filter}}
-#' @export leach
+#' @export filter
 #' @importFrom dplyr filter
-setGeneric("leach", function(.data, ...){standardGeneric("leach")})
+setGeneric("filter", function(.data, ...){standardGeneric("filter")})
 
 #' Filter returns by their position in the return sequence
 #'
@@ -47,9 +47,9 @@ setGeneric("leach", function(.data, ...){standardGeneric("leach")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getNth
-#' @note \code{getNth(obj, n)} is an alias for \code{leach(obj, ReturnNumber == n)}
+#' @note \code{getNth(obj, n)} is an alias for \code{filter(obj, ReturnNumber == n)}
 #' @aliases  getNth
 setGeneric("getNth", function(obj, n){standardGeneric("getNth")})
 
@@ -74,9 +74,9 @@ setGeneric("getNth", function(obj, n){standardGeneric("getNth")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getFirst
-#' @note \code{getFirst(obj)} is an alias for \code{leach(obj, ReturnNumber == 1)}
+#' @note \code{getFirst(obj)} is an alias for \code{filter(obj, ReturnNumber == 1)}
 setGeneric("getFirst", function(obj){standardGeneric("getFirst")})
 
 #' Filter first returns from pulses which returned multiple points
@@ -100,9 +100,9 @@ setGeneric("getFirst", function(obj){standardGeneric("getFirst")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getFirstOfMany
-#' @note \code{getFirstOfMany(obj)} is an alias for \code{leach(obj, NumberOfReturns > 1, ReturnNumber == 1))}
+#' @note \code{getFirstOfMany(obj)} is an alias for \code{filter(obj, NumberOfReturns > 1, ReturnNumber == 1))}
 setGeneric("getFirstOfMany", function(obj){standardGeneric("getFirstOfMany")})
 
 #' Filter single returns
@@ -126,9 +126,9 @@ setGeneric("getFirstOfMany", function(obj){standardGeneric("getFirstOfMany")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getSingle
-#' @note \code{getSingle(obj)} is an alias for \code{leach(obj, NumberOfReturns == 1))}
+#' @note \code{getSingle(obj)} is an alias for \code{filter(obj, NumberOfReturns == 1))}
 setGeneric("getSingle", function(obj){standardGeneric("getSingle")})
 
 #' Filter last returns
@@ -151,9 +151,9 @@ setGeneric("getSingle", function(obj){standardGeneric("getSingle")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getLast
-#' @note \code{getLast(obj)} is an alias for \code{leach(obj, ReturnNumber == NumberOfReturns))}
+#' @note \code{getLast(obj)} is an alias for \code{filter(obj, ReturnNumber == NumberOfReturns))}
 setGeneric("getLast", function(obj){standardGeneric("getLast")})
 
 #' Filter first and last returns
@@ -177,9 +177,9 @@ setGeneric("getLast", function(obj){standardGeneric("getLast")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getFirstLast
-#' @note \code{getFirstLast(obj)} is an alias for \code{leach(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))}
+#' @note \code{getFirstLast(obj)} is an alias for \code{filter(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))}
 setGeneric("getFirstLast", function(obj){standardGeneric("getFirstLast")})
 
 #' Filter returns classified as ground
@@ -203,9 +203,9 @@ setGeneric("getFirstLast", function(obj){standardGeneric("getFirstLast")})
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:leach]{leach} }
+#' \code{\link[lidR:filter]{filter} }
 #' @export getGround
-#' @note \code{getGround(obj)} is an alias for \code{leach(obj, Classification == 2)}
+#' @note \code{getGround(obj)} is an alias for \code{filter(obj, Classification == 2)}
 setGeneric("getGround", function(obj){standardGeneric("getGround")})
 
 #' Canopy surface model
@@ -532,7 +532,7 @@ setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
 #'
 #' # The field "lake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
 #' lidar = classifyFromShapefile(lidar, lakes, "inlakes")
-#' forest = leach(lidar, inlakes == FALSE)
+#' forest = filter(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'

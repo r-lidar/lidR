@@ -51,7 +51,7 @@ entropy = function(z, by = 1, zmax = NULL)
 	bk = seq(0, ceiling(zmax), by)
 
 	# Compute the p for each bin
-	hist = hist(z, breaks = bk, plot=T)$count
+	hist = hist(z, breaks = bk, plot=F)$count
 	hist = hist/sum(hist)
 
 	# Remove bin where there are no point because of log(0)
