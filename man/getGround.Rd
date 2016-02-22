@@ -20,7 +20,7 @@ An object of class \code{Lidar}
 Select only the returns classified as ground form a \code{Lidar} object
 }
 \note{
-\code{getGround(obj)} is an alias for \code{filter(obj, Classification == 2)}
+\code{getGround(obj)} is an alias for \code{leach(obj, Classification == 2)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -37,6 +37,6 @@ ground = lidar \%>\% getGround
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:filter]{filter} }
+\code{\link[lidR:leach]{leach} }
 }
 

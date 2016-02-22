@@ -20,7 +20,7 @@ An object of class \code{Lidar}
 Select only the last returns form a \code{Lidar} object i.e. the last returns and the single returns
 }
 \note{
-\code{getLast(obj)} is an alias for \code{filter(obj, ReturnNumber == NumberOfReturns))}
+\code{getLast(obj)} is an alias for \code{leach(obj, ReturnNumber == NumberOfReturns))}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -37,6 +37,6 @@ lastReturns = lidar \%>\% getLast
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:filter]{filter} }
+\code{\link[lidR:leach]{leach} }
 }
 
