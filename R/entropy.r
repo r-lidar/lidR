@@ -51,13 +51,15 @@ entropy = function(z, by = 1, zmax = NULL)
 	bk = seq(0, ceiling(zmax), by)
 
 	# Compute the p for each bin
-	hist = hist(z, breaks = bk, plot=F)$density
+	hist = hist(z, breaks = bk, plot=T)$count
+	hist = hist/sum(hist)
 
 	# Remove bin where there are no point because of log(0)
-	p = hist[hist > 0]
+	p    = hist[hist > 0]
+	pref = rep(1/length(hist), length(hist))
 
 	# normalized entropy
-	S = - sum(p*log2(p)) / length(hist)
+	S = - sum(p*log(p)) / -sum(pref*log(pref))
 
 	return(S)
 }
@@ -88,6 +90,6 @@ vci = function(z, zmax, by = 1)
 {
   z = z[z < zmax]
 
-  return(entropy(z, zmax, by))
+  return(entropy(z, by, zmax))
 }
 

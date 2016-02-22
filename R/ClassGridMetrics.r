@@ -1,9 +1,13 @@
 #' Plot an object of class gridMetrics in 2D
 #'
-#' @param x an object of class gridMetrics
+#' This functions implements a \link[graphics:plot]{plot} method for gridMetrics data.frame
+#'
+#' The \dots param enables to provide more arguments to \link[fields:image.plot]{image.plot} function
+#'
 #' @param z character. The field to plot. If NULL, autodetect
-#' @param \dots Other parameters for \code{image.plot}
+#'
 #' @seealso
+#' \link[lidR:gridMetrics]{gridMetrics}
 #' \link[fields:image.plot]{image.plot}
 #' @importFrom fields image.plot
 #' @export plot.gridMetrics
@@ -40,7 +44,7 @@ plot.gridMetrics = function(x, z = NULL, ...)
   do.call(fields::image.plot, c(list(x = X, y = Y, z = mtx), inargs))
 }
 
-#' Plot3d generic function
+#' plot3d generic function
 #'
 #' @export plot3d
 plot3d = function(x, z = NULL, ...)
