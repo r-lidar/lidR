@@ -23,7 +23,7 @@ TIN = function(x,y,z)
 
   n = dim(tin)[1]
 
-  # Retrouve les coordonnées des points
+  # Retrieve point coordinates
   triangles = array( rep(NA, n*3*3), dim = c(n, 3, 3) )
 
   triangles[1:n, 1, 1] = x[tin[,1]]
@@ -102,7 +102,7 @@ rasterizeTIN <- function(tin, res)
 
 #' Plot triangular irregular network TIN
 #'
-#' Plot method for object \code{TIN}.
+#' This functions implements a \link[graphics:plot]{plot} method for class TIN
 #'
 #' @param x An object of class \code{TIN}
 #' @param ... Unused

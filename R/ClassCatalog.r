@@ -1,19 +1,34 @@
+#' An S4 class to represent a catalog of las tiles.
+#'
+#' An S4 class to represent a set of las tiles, to plot them and to process them in with
+#' multicore.
+#'
+#' A \code{Lidar} object contains a \code{data.frame} in the slot \code{@headers} with the data
+#' read from the headers of all your \code{.las} files.
+#' @slot headers data.frame. A table representing the las header data
+#' @name Catalog-class
+#' @rdname Catalog-class
+#' @exportClass Catalog
+#' @seealso
+#' \link[lidR:processParallel]{processParallel}
+#' \link[lidR:extractGroundInventory]{extractGroundInventory}
+#' @include setGeneric.r
 setClass(
-	Class = "LiDARProject",
+	Class = "Catalog",
 	representation = representation(
 		headers = "data.frame"
 	)
 )
 
-#' Build a LiDARProject object
+#' Build a Catalog object
 #'
 #' @param folder string. The path of a folder containing a set of .las files
 #' @param \dots Unused
-#' @return A LiDARProject object
-#' @export LiDARProject
-LiDARProject <- function(folder, ...) {return(new("LiDARProject", folder, ...))}
+#' @return A Catalog object
+#' @export Catalog
+Catalog <- function(folder, ...) {return(new("Catalog", folder, ...))}
 
-setMethod("initialize", "LiDARProject",
+setMethod("initialize", "Catalog",
 	function(.Object, folder, ...)
 	{
 	  if(!is.character(folder))
@@ -55,54 +70,40 @@ setMethod("initialize", "LiDARProject",
 	}
 )
 
-#' Plot a LiDARProject object
+#' Plot a Catalog object
 #'
-#' @param x A LiDARProject object
+#' This functions implements a \link[graphics:plot]{plot} method for Catalog objects
+#'
+#' @param x A Catalog object
 #' @param y Unused (inherited from base plot)
 #' @param \dots Unused (inherited from base plot)
-#' @export plot
-setMethod("plot", "LiDARProject",
-	function(x, y, ...)
-	{
-      headers = x@headers
+#' @export plot.Catalog
+plot.Catalog = function(x, y, ...)
+{
+  headers = x@headers
 
-      xmin = min(headers$Min.X)
-      xmax = max(headers$Max.X)
-      ymin = min(headers$Min.Y)
-      ymax = max(headers$Max.Y)
+  xmin = min(headers$Min.X)
+  xmax = max(headers$Max.X)
+  ymin = min(headers$Min.Y)
+  ymax = max(headers$Max.Y)
 
-      plot(0,0, xlim=c(xmin, xmax), ylim = c(ymin, ymax), col="white", asp=1, xlab="X", ylab="Y")
+  plot(0,0, xlim=c(xmin, xmax), ylim = c(ymin, ymax), col="white", asp=1, xlab="X", ylab="Y")
 
-     for(i in 1:dim(headers)[1])
-     {
-       tile = headers[i,]
+  for(i in 1:dim(headers)[1])
+  {
+    tile = headers[i,]
 
-       xmax = tile$Max.X[1]
-       ymax = tile$Max.Y[1]
-       xmin = tile$Min.X[1]
-       ymin = tile$Min.Y[1]
+    xmax = tile$Max.X[1]
+    ymax = tile$Max.Y[1]
+    xmin = tile$Min.X[1]
+    ymin = tile$Min.Y[1]
 
-       rect(xmin, ymin, xmax, ymax)
-     }
-	}
-)
+    rect(xmin, ymin, xmax, ymax)
+  }
+}
 
-#' Apply a function to a set of tiles
-#'
-#' Apply a function to a set of tiles using several cores
-#'
-#' @aliases processParallel
-#' @param x  A LiDARProject object
-#' @param func A function which have one parameter: the name of a .las file
-#' @param mc.cores numeric. Number of core used. Default is "auto"
-#' @param combine character. The function used to merge the outputs of the \code{func} function
-#' @param \dots Other parameters for \code{mclapply}
-#' @seealso
-#' \link[parallel:mclapply]{mclapply}
-#' @export processParallel
-#' @importFrom parallel mclapply detectCores
-setGeneric("processParallel", function(x, func, mc.cores = "auto", combine = "rbind", ...){standardGeneric("processParallel")})
-setMethod("processParallel", "LiDARProject",
+#' @rdname processParallel
+setMethod("processParallel", "Catalog",
 	function(x, func, mc.cores = "auto", combine = "rbind", ...)
 	{
 	    if(mc.cores == "auto")
@@ -130,18 +131,8 @@ setMethod("processParallel", "LiDARProject",
 
 #  ========= EN DEVELOPPEMENT =========
 
-#' Find the tiles containing plots
-#'
-#' @aliases retrieveInventoryTiles
-#' @param obj A LiDARProject object
-#' @param plotnames vector. A set of plot names
-#' @param x vector. A set of x plot coordinates
-#' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radiuses of plots
-#' @param buffer numeric. A buffer value to expend the extent of search
-#' @export retrieveInventoryTiles
-setGeneric("retrieveInventoryTiles", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("retrieveInventoryTiles")})
-setMethod("retrieveInventoryTiles", "LiDARProject",
+#' @rdname retrieveInventoryTiles
+setMethod("retrieveInventoryTiles", "Catalog",
 	function(obj, plotnames, x, y, radius, buffer = 2)
 	{
 	    X <- Y <- tile <- minx <- maxx <- miny <- maxy <- NULL # for RMD check
@@ -155,24 +146,24 @@ setMethod("retrieveInventoryTiles", "LiDARProject",
 
       coord.plot = data.table(plotnames = plotnames, X = x, Y = y, radius = radius)
 
-      coord.plot %<>% mutate(maxx = X+radius,
+      coord.plot %<>% dplyr::mutate(maxx = X+radius,
                              maxy = Y+radius,
                              minx = X-radius,
                              miny = Y-radius)
 
-      coord.plot %<>% mutate(tile1 = NA_character_,
+      coord.plot %<>% dplyr::mutate(tile1 = NA_character_,
                              tile2 = NA_character_,
                              tile3 = NA_character_,
                              tile4 = NA_character_)
 
       cat("\nLooking for tiles containing plot inventories...\n")
 
-      p <- progress_estimated(length(coord.plot$X))
+      p <- dplyr::progress_estimated(length(coord.plot$X))
 
       for(i in 1:length(coord.plot$X))
       {
         coord = coord.plot[i]
-        tiles = filter(coord.tiles,
+        tiles = dplyr::filter(coord.tiles,
               (between(coord$minx, minx, maxx) & between(coord$miny, miny, maxy))|
               (between(coord$maxx, minx, maxx) & between(coord$miny, miny, maxy))|
               (between(coord$maxx, minx, maxx) & between(coord$maxy, miny, maxy))|
@@ -192,19 +183,8 @@ setMethod("retrieveInventoryTiles", "LiDARProject",
 	}
 )
 
-#' Extract inventory from a set of tiles
-#'
-#' @aliases extractGroundInventory
-#' @param obj A LiDARProject object
-#' @param plotnames vector. A set of plot names
-#' @param x vector. A set of x plot coordinates
-#' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radiuses of plots
-#' @param buffer numeric. A buffer value to expend the extent of search
-#' @return A list of Lidar objects
-#' @export extractGroundInventory
-setGeneric("extractGroundInventory", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("extractGroundInventory")})
-setMethod("extractGroundInventory", "LiDARProject",
+#' @rdname extractGroundInventory
+setMethod("extractGroundInventory", "Catalog",
   function(obj, plotnames, x, y, radius, buffer = 2)
   {
     tile1 <- tile2 <- tile3 <- tile4 <- NULL
@@ -213,15 +193,15 @@ setMethod("extractGroundInventory", "LiDARProject",
 
     tilesForPlots = obj %>% retrieveInventoryTiles(plotnames, x, y, radius, buffer)
 
-    tilesForPlots %<>% group_by(tile1, tile2, tile3, tile4) %>%
-      summarise(plotnames = list(plotnames), X = list(X), Y = list(Y), radius = list(radius)) %>%
-      ungroup
+    tilesForPlots %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%
+      dplyr::summarise(plotnames = list(plotnames), X = list(X), Y = list(Y), radius = list(radius)) %>%
+      dplyr::ungroup
 
     output = vector("list", nplot)
 
     cat("\nExtracting plot inventories...\n")
 
-    p <- progress_estimated(nplot)
+    p <- dplyr::progress_estimated(nplot)
 
     k = 1
 
@@ -242,7 +222,7 @@ setMethod("extractGroundInventory", "LiDARProject",
       Y      = line$Y[[1]]
       radius = line$radius[[1]]
 
-      lidar  = Lidar(files)
+      lidar  = LoadLidar(files)
 
       for(j in 1:length(names))
       {

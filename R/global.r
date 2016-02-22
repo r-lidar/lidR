@@ -1,6 +1,5 @@
 #' @import data.table
 #' @import magrittr
-#' @import dplyr
 #' @import methods
 
 .IdentifyPulse = function(return.number)

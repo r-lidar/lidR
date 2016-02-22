@@ -10,20 +10,19 @@
 \method{plot}{TIN}(x, ...)
 }
 \arguments{
-\item{x}{an object of class gridMetrics}
+\item{x}{An object of class \code{TIN}}
 
 \item{z}{character. The field to plot. If NULL, autodetect}
 
 \item{...}{Unused}
-
-\item{\dots}{Other parameters for \code{image.plot}}
-
-\item{x}{An object of class \code{TIN}}
 }
 \description{
-Plot an object of class gridMetrics in 2D
+This functions implements a \link[graphics:plot]{plot} method for gridMetrics data.frame
 
-Plot method for object \code{TIN}.
+This functions implements a \link[graphics:plot]{plot} method for class TIN
+}
+\details{
+The \dots param enables to provide more arguments to \link[fields:image.plot]{image.plot} function
 }
 \examples{
 x = runif(20)
@@ -33,6 +32,7 @@ tin = TIN(x, y, z)
 plot(tin)
 }
 \seealso{
+\link[lidR:gridMetrics]{gridMetrics}
 \link[fields:image.plot]{image.plot}
 
 \link[lidR:TIN]{TIN}
