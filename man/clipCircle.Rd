@@ -13,11 +13,11 @@ clipCircle(obj, xcenter, ycenter, radius, inside = TRUE)
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
-\item{xcenter}{a scalar of x circle center}
+\item{xcenter}{a scalar. x disc center}
 
-\item{ycenter}{a scalar of y circle center}
+\item{ycenter}{a scalar. y disc center}
 
-\item{radius}{a a scalar of circle radius}
+\item{radius}{a scalar. Disc radius}
 
 \item{inside}{logical. Keep data inside or outside the shape}
 }

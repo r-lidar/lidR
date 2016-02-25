@@ -16,7 +16,7 @@ thin(obj, pulseDensity, homogenize = TRUE, resolution = 5)
 
 \item{pulseDensity}{numeric. The pulseDensity expected}
 
-\item{homogenize}{logical. If \code{TRUE}, algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
+\item{homogenize}{logical. If \code{TRUE}, algorithm tries to homogenize the pulse density to provide a unifrom dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
 
 \item{resolution}{numeric. Cell size to compute the pulse density.}
 }
@@ -27,13 +27,15 @@ It returns a \code{data.table} with the class \code{gridMetrics} which anable to
 Thin LIDAR data removing randomly a given proportion of pulses to reach a specific pulse densities
 }
 \details{
-Thin is designed to produce output data sets that have uniform pulse densities
+Thin is designed to produce output data sets that have unifrom pulse densities
 throughout the coverage area. For each cell, the proportion of pulses that will
 be retained is computed using the calculated pulse density and the desired pulse
 density. If required pulse density is greater than the local pulse density it returns
 an unchanged set of points (it cannot increases the pulse density). In the way
 of \code{homogenize = FALSE} it randomly remove pulses to reach the required pulse
-density on the whole area (see \code{\link[lidR:area]{area}}).
+density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must large enought
+to compute a coherant local pulse density. 25 square meters looks good. 1 square
+meter does not have a meaning.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

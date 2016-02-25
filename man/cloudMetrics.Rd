@@ -19,10 +19,48 @@ cloudMetrics(obj, func)
 It returns a \code{data.table} with containing the metrics
 }
 \description{
-Computes a series of descriptive statistics for a LIDAR dataset
+Computes a series of descriptive statistics for a LiDAR dataset
 }
 \details{
-Computes a series of descriptive statistics for a LIDAR data set. Cloudmetrics
-computes a single set of metrics for the entire data set.#'
+Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
+computes a single set of metrics for the entire data set. See \link[lidR:gridMetrics]{gridMetrics}
+to compute metrics on a grid. Basically there no predifined metrics. The users
+must write is own function to create metrics (see example). The following existing
+function can help the user to compute some metrics:
+\itemize{
+\item{\link[lidR:entropy]{entropy}}
+\item{\link[lidR:vci]{vci}}
+\item{\link[lidR:canopyMatrix]{canopyMatrix}}
+\item{\link[lidR:LAD]{LAD}}
+\item{\link[lidR:canopyClosure]{canopyClosure}}
+\item{\link[lidR:fractal.dimension]{fractal.dimension}}
+\item{\link[lidR:LAD]{LAD}}
+}
+}
+\examples{
+LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+lidar = LoadLidar(LASfile)
+
+cloudMetrics(lidar, max(Z))
+cloudMetrics(lidar, mean(Z))
+
+# Define your own metric function
+myMetrics = function(z, i, angle, pulseID)
+{
+  ret = list(
+        npulse  = length(unique(pulseID)),
+        hmean   = mean(z),
+        hmax    = max(z),
+        imean   = mean(i),
+        angle   = mean(abs(angle))
+        )
+
+   return(ret)
+ }
+
+metrics = cloudMetrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
+}
+\seealso{
+\link[lidR:gridMetrics]{gridMetrics}
 }
 

@@ -4,7 +4,7 @@
 \name{retrieveInventoryTiles}
 \alias{retrieveInventoryTiles}
 \alias{retrieveInventoryTiles,Catalog-method}
-\title{Find the tiles containing plots}
+\title{Retrieve the tiles containing plots}
 \usage{
 retrieveInventoryTiles(obj, plotnames, x, y, radius, buffer = 2)
 
@@ -25,6 +25,14 @@ retrieveInventoryTiles(obj, plotnames, x, y, radius, buffer = 2)
 \item{buffer}{numeric. A buffer value to expend the extent of search}
 }
 \description{
-Find the tiles containing plots
+When the user have a set of coordinates of ground inventory, he can extract the
+lidar data associated with these plot automatically. This function retrieve the tiles
+for each plot. This function is used by \link[lidR:extractGroundInventory]{extractGroundInventory}.
+Users do not rally need it.
+}
+\details{
+When the user have a set of coordinates of ground inventory, he can extract the
+lidar data associated with these plot automatically. The algorithm is able to find tiles
+for plots falling between several tiles (on the edges) if tiles are organized in a grid.
 }
 

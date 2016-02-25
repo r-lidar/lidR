@@ -10,10 +10,10 @@
 \arguments{
 \item{object}{An object of the class \code{Lidar}}
 
-\item{\dots}{Unused}
+\item{\dots}{Unused (inherited from R base)}
 }
 \description{
-This functions implements a \link[base:summary]{summary} method for raster image
+This functions implements a \link[base:summary]{summary} method for Lidar object
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -21,5 +21,9 @@ LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 lidar = LoadLidar(LASfile)
 
 summary(lidar)
+
+}
+\seealso{
+\link[lidR:Lidar]{Class Lidar}
 }
 

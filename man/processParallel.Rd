@@ -23,9 +23,50 @@ processParallel(x, func, mc.cores = "auto", combine = "rbind", ...)
 \item{\dots}{Other parameters for \code{mclapply}}
 }
 \description{
-Apply a function to a set of tiles using several cores
+Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
+}
+\details{
+When user have a set of Lidar data organized in several tiles it can apply a user function to each tiles.
+This function describe the procedure to apply to each file beginning by the data loading (see example).
+}
+\examples{
+\dontrun{
+# 1. build a project
+project = Catalog("folder")
+plot(project)
+
+# 2. load the shapefile you need to filter your points (if needed).
+lake = rgdal::readOGR("folder", "shapefile")
+
+# 3 build the function which analyse a tile (a file).
+# This function input is only the path of a las file
+# see the following template
+
+analyse_tile = function(LASFile)
+{
+  # Load the data
+  lidar = LoadLidar(LASFile)
+
+  # Associate geographic data to lidar points (if needed)
+  lidar \%<>\% classifyFromShapefile(lake, field="inlake")
+
+  # filter lake
+  lidar \%<>\% extract(lake == FALSE)
+  # compute all metrics
+  metrics = gridMetrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
+
+  return(metrics)
+}
+
+# 5. Process the project. By default it detects how many core you have. But you can add
+# an optional parameter mc.core = 3. see ?mclapply for other options
+output = project \%>\% processParallel(analyse_tile)
+}
 }
 \seealso{
+\link[lidR:Catalog-class]{catalog}
 \link[parallel:mclapply]{mclapply}
+\link[lidR:classifyFromShapefile]{classifyFromShapefile}
+\link[lidR:gridMetrics]{gridMetrics}
 }
 

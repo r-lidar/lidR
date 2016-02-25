@@ -15,6 +15,17 @@ Catalog(folder, ...)
 A Catalog object
 }
 \description{
-Build a Catalog object
+Methods to creates a \code{Catalog} object from a folder name
+}
+\details{
+A catalog is the reprsentation of a set of las files. A computer cannot load all
+the data in one time. A catalog is a simple way to manage all the file sequentially
+reading only their header.
+}
+\seealso{
+\link[lidR:Catalog]{Catalog-class}
+\link[lidR:plot.Catalog]{plot}
+\link[lidR:processParallel]{processParallel}
+\link[lidR:extractGroundInventory]{extractGroundInventory}
 }
 

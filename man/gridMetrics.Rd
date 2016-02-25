@@ -20,28 +20,37 @@ gridMetrics(obj, res, func, start = c(0, 0), option = NULL)
 
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0).}
 
-\item{option}{character. Could be \code{"slip_flightline"}. In this case algorithm will compute the metrics for each flightline individually. It return several times the same cells in overlaps.}
+\item{option}{character. Could be \code{"split_flightline"}. In this case algorithm will compute the metrics for each flightline individually. It return several times the same cells in overlaps.}
 }
 \value{
 It returns a \code{data.table} with containing the metrics for each cells. The table have the class "gridMetrics" enabling to easily plot it.
 }
 \description{
-Computes a series of descriptive statistics for a LIDAR dataset for each cells
+Computes a series of descriptive statistics for a LiDAR dataset for each cells
 of a grid.
 }
 \details{
-Computes a series of descriptive statistics for a LIDAR data set. Output is a
-data.frame represented in database form with each record corresponding to a
-single grid cell. GridMetrics is similar to CloudMetrics except it computes
-metrics for all returns  within each cell in the output grid. Cloudmetrics
-computes a single set of metrics for the entire data set. The grid cells
-coordinates are pre-determinted for a given resolution. So algorithm will always
-provides the same coordinates idependently of the datset. It allows to compare
-the same cells on several data set. Particularly the option \code{slit_fightline}
-makes the exact same grid for each flightlines.
-When start = (0,0) and res = 20 m gridMetrics will produce the following raster centers (10,10), (10,30), (30,10) etc..
-When start = (-10, -10) and res = 20 m gridMetrics will produce the following raster centers (0,0), (0,20), (20,0) etc..
-In Quebec (Canada) reference is (-831600,  117980) in NAD83.
+Computes a series of descriptive statistics defined by the user. Output is a
+data.frame in which each line is a raster (single grid cell), each column is a metric.
+gridMetrics is similar to cloudMetrics except it computes metrics within each cell
+in the output grid. The grid cells coordinates are pre-determinted for a given resolution.
+So the algorithm will always provides the same coordinates independently of the dataset.
+When start = (0,0) and res = 20 gridMetrics will produce the following raster centers (10,10), (10,30), (30,10) etc..
+When start = (-10, -10) and res = 20 gridMetrics will produce the following raster centers (0,0), (0,20), (20,0) etc..
+In Quebec (Canada) reference is (-831600,  117980) in NAD83 coordinate system. The function to be apply to each cells
+is a classical function (see examples) which return a labelled list of metrics. The following existing function
+can help the user to compute some metrics:
+\itemize{
+\item{\link[lidR:entropy]{entropy}}
+\item{\link[lidR:vci]{vci}}
+\item{\link[lidR:canopyMatrix]{canopyMatrix}}
+\item{\link[lidR:LAD]{LAD}}
+\item{\link[lidR:canopyClosure]{canopyClosure}}
+\item{\link[lidR:fractal.dimension]{fractal.dimension}}
+\item{\link[lidR:LAD]{LAD}}
+} Basically there no predifined metrics. The users must write is own function to create metrics.
+gridMetrics will dispach the LiDAR data for each cell in the user's function. The user write his
+function without thinking about grid cells. Just thinking about a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -68,9 +77,10 @@ myMetrics = function(z, i, angle, pulseID)
  }
 
 metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+
 plot(metrics, "hmean")
 plot(metrics, "hmax")
 plot(metrics, "imean")
-#etc...)
+#etc.
 }
 

@@ -28,6 +28,12 @@ extractGroundInventory(obj, plotnames, x, y, radius, buffer = 2)
 A list of Lidar objects
 }
 \description{
-Extract inventory from a set of tiles
+When the user have a set of coordinates of ground inventory, he can extract the
+lidar data associated with these plot automatically.
+}
+\details{
+When the user have a set of coordinates of ground inventory, he can extract the
+lidar data associated with these plot automatically. The algorithm automatically extract
+plots falling on the edges of tiles.
 }
 

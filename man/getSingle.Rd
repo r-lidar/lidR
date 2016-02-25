@@ -17,10 +17,10 @@ getSingle(obj)
 An object of class \code{Lidar}
 }
 \description{
-Select only the returns which return only one points form a \code{Lidar} object
+Select only the returns which return only one points.
 }
 \note{
-\code{getSingle(obj)} is an alias for \code{leach(obj, NumberOfReturns == 1))}
+\code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -37,6 +37,6 @@ singleReturns = lidar \%>\% getSingle
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:leach]{leach} }
+\code{\link[lidR:extract]{extract} }
 }
 

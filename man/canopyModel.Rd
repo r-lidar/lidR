@@ -14,17 +14,17 @@ canopyModel(obj, res = 2, method = "local_maximum", start = c(0, 0))
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units}
+\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.}
 
 \item{method}{character. The algorithm used to compute the canopy i.e. \code{"local_maxium"} or \code{"TIN"}}
 
-\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}}
+\item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}}
 }
 \value{
 It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
 }
 \description{
-Creates a canopy surface model using a LIDAR point cloud.
+Creates a canopy surface model using a LiDAR cloud of points.
 }
 \details{
 By default, the algorithm used is the local maximum algorithm. It assigns the

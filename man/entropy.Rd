@@ -11,7 +11,7 @@ entropy(z, by = 1, zmax = NULL)
 
 \item{by}{numeric. The thickeness of the layers used (height bin)}
 
-\item{zmax}{numeric. Used to turn the function entropy to the function vci.}
+\item{zmax}{numeric. Used to turn the function entropy to the function \link[lidR:vci]{vci}.}
 }
 \value{
 A number between 0 and 1
@@ -20,7 +20,7 @@ A number between 0 and 1
 A normalized Shannon vertical complexity index
 }
 \details{
-The Shannon diversity index is a measure for quantifying diversity, and is
+The Shannon diversity index is a measure for quantifying diversity and is
 based on the number and frequency of species present. This index, developed by
 Shannon and Weaver for use in information theory, was successfully transferred
 to the description of species diversity in biological systems (Shannon 1948).

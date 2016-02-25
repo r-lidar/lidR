@@ -4,7 +4,7 @@
 \alias{canopyMatrix}
 \title{Local canopy surface model}
 \usage{
-canopyMatrix(x, y, z, resolution)
+canopyMatrix(x, y, z, res)
 }
 \arguments{
 \item{x}{vector of x coordinates}
@@ -13,7 +13,7 @@ canopyMatrix(x, y, z, resolution)
 
 \item{z}{vector of z coordinates}
 
-\item{resolution}{numeric. The size of the cells}
+\item{res}{numeric. The size of the cells}
 }
 \value{
 A matrix which is the raster of the canopy surface model
@@ -21,7 +21,7 @@ A matrix which is the raster of the canopy surface model
 \description{
 canopyMatrix is a reimplementation of canopyModel with the local maxium algorithm
 for local analyse (e.g. in a raster) avoiding sides effect of the algorithm used to
-procude the grid. It is usefull to write your own metric in a fuction.
+procuce the grid. It is only usefull to compute your own metric in a fuction.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

@@ -7,12 +7,15 @@
 readLASheader(LASfile)
 }
 \arguments{
-\item{LASfile}{character. filename of .las file}
+\item{LASfile}{character. Filename of .las file}
 }
 \value{
 A list with the las header fields
 }
 \description{
-Methods to read .las file header
+Methods to read .las file header. This function musn't be used by users. Use \link[lidR:LoadLidar]{LoadLidar}.
+}
+\seealso{
+\link[lidR:LoadLidar]{LoadLidar}
 }
 

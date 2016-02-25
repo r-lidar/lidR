@@ -21,26 +21,26 @@ classifyFromShapefile(obj, shapefile, field)
 An object of the class \code{Lidar} with a new field
 }
 \description{
-Classify LiDAR points from the polygons in a ESRI shapefile
+Classify LiDAR points from the polygons in an ESRI shapefile
 }
 \details{
-Classify Lidar points based on geographic data found in a shapefile. It check
+Classify Lidar points based on geographic data found in an shapefile. It check
 if the LiDAR points are in polygons given in the shapefile. If the parameter
 \code{field} is the name of a field of the shapefile if classify the points
 based on the data in the shapefile. Else it classify points as boolean. TRUE
 if the points is in a polygon, FALSE otherwise. This function allows to filter
-lakes for example.e
+lakes for example.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
 lidar = LoadLidar(LASfile)
-lakes = rgdal::readOGR(shapefile_dir, "lac_ontario_UTM17")
+lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 
-# The field "lake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
+# The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
 lidar = classifyFromShapefile(lidar, lakes, "inlakes")
-forest = leach(lidar, inlakes == FALSE)
+forest = extract(lidar, inlakes == FALSE)
 plot(lidar)
 plot(forest)
 

@@ -13,13 +13,13 @@ pulseDensity(obj, res = 4)
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units}
+\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.}
 }
 \value{
 It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
 }
 \description{
-Creates a pulse density surface model using a LIDAR point cloud.
+Creates a pulse density surface model using a LiDAR cloud of points.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

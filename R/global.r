@@ -1,17 +1,19 @@
-#' @import data.table
-#' @import magrittr
+#' @importFrom magrittr %>% %<>% %$% divide_by
+#' @importFrom data.table := setnames is.data.table as.data.table setorder data.table between rbindlist
 #' @import methods
 
+#' @importFrom dplyr lag
 .IdentifyPulse = function(return.number)
 {
-  boo = lag(return.number) >= return.number
+  boo = dplyr::lag(return.number) >= return.number
   boo[1] = TRUE
   return(cumsum(boo))
 }
 
+#' @importFrom dplyr lag
 .IdentifyFlightlines = function(time, t = 30)
 {
-  boo = time - lag(time) > t
+  boo = time - dplyr::lag(time) > t
   boo[1] = TRUE
   return(cumsum(boo))
 }

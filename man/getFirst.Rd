@@ -17,10 +17,10 @@ getFirst(obj)
 An object of class \code{Lidar}
 }
 \description{
-Select only the first returns form a \code{Lidar} object.
+Select only the first returns.
 }
 \note{
-\code{getFirst(obj)} is an alias for \code{leach(obj, ReturnNumber == 1)}
+\code{getFirst(obj)} is an alias for \code{extract(obj, ReturnNumber == 1)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -37,6 +37,6 @@ firstReturns = lidar \%>\% getFirst
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:leach]{leach} }
+\code{\link[lidR:extract]{extract} }
 }
 

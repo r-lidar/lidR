@@ -14,6 +14,6 @@
 \item{\dots}{Unused (inherited from base plot)}
 }
 \description{
-This functions implements a \link[graphics:plot]{plot} method for Catalog objects
+This functions implements a \link[graphics:plot]{plot} method for a Catalog objects
 }
 
