@@ -17,7 +17,8 @@ Computes the fractal dimention of a surface. The fractal dimension is a measure
 of roughness.
 }
 \details{
-fractal dimension compute the roughness based on box counting method  (see Taud and Parrot)
+Fractal dimension compute the roughness based on box counting method  (see Taud and Parrot).
+If the input have a NA value, it returns NA. If the input is too small it returns NA.
 }
 \references{
 Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622

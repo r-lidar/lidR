@@ -16,7 +16,16 @@
 \description{
 Tranform a gridMetrics into a spatial matrix
 }
+\examples{
+LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+lidar = LoadLidar(LASfile)
+
+meanHeight = gridMetrics(lidar, 20, mean(Z))
+mtx = as.matrix(meanHeight)
+}
 \seealso{
+\link[lidR:gridMetrics]{gridMetrics}
+\link[lidR:canopyModel]{canopyModel}
 \link[reshape2:acast]{acast}
 }
 

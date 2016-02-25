@@ -13,9 +13,9 @@ clipPolygon(obj, x, y, inside = TRUE)
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
-\item{x}{a vector of x polygon's coordinates}
+\item{x}{numerical array of x-coordinates of polygon}
 
-\item{y}{a vector of y polygon's coordinates}
+\item{y}{numerical array of y-coordinates of polygon}
 
 \item{inside}{logical. Keep data inside or outside the shape}
 }
@@ -31,7 +31,7 @@ LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 lidar = LoadLidar(LASfile)
 
 subset = lidar \%>\% clipPolygon(x=c(685000, 685200, 685050),
-                                 y=c(5018000, 5018100, 5018200))
+                               y=c(5018000, 5018100, 5018200))
 
 
 plot(subset)

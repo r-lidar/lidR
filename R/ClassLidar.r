@@ -1,22 +1,24 @@
 #' An S4 class to represent a LiDAR dataset.
 #'
-#' An S4 class to represent a LiDAR dataset. It contain the raw data, the header and additionnal
-#' values
+#' An S4 class to represent a LiDAR dataset. It contains the data, the header and additionnal
+#' values computed during the loading.
 #'
-#'   A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
+#' A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
 #' read from a \code{.las} file and other informations computed during the data loading. The
-#' field read from the las file are:
-#' \itemize{\item{\code{X Y Z Intensity}}
+#' fields read from the las file are named:
+#' \itemize{
+#' \item{\code{X Y Z}}
+#' \item{\code{Intensity}}
 #' \item{\code{ReturnNumber}}
 #' \item{\code{NumberOfReturns}}
 #' \item{\code{ScanDirectionFlag}}
 #' \item{\code{EdgeofFlightline}}
 #' \item{\code{Classification}}
-#' \item{\code{Scan.Angle}}
+#' \item{\code{ScanAngle}}
 #' \item{\code{UserData}}
 #' \item{\code{PointSourceID}}
 #' }
-#' When a \code{Lidar} object is built, two other informations are computed in the data.table:
+#' When a \code{Lidar} object is built, two other informations are computed in the \code{data.table}:
 #' \itemize{
 #' \item{\code{pulseID}: }{a number which identifies each pulse allowing to know from which beam a point comes from}
 #' \item{\code{flightlineID}: }{a number which identifies the flightline allowing to know from which flighline a point comes from}}
@@ -25,13 +27,16 @@
 #' \item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
 #' \item{\code{points} and \code{pulse density}: }{are computed with the computed area. Therefore it suffers of the same issue.}
 #' }
-#' A \code{Lidar} object also contains a slot \code{@header} containing the header of the \code{.las} file. See public documentation of \code{.las} file format for more information.
+#' A \code{Lidar} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
+#' See public documentation of \code{.las} file format for more information.
 #'
 #' @slot data data.table. a table representing the LiDAR data
-#' @slot area numeric. the area of the dataset computed with a convex hull
-#' @slot pointDensity numeric. the point density of the dataset
-#' @slot pulseDensity numeric. the pulse density of the dataset
+#' @slot area numeric. The area of the dataset computed with a convex hull
+#' @slot pointDensity numeric. The point density of the dataset
+#' @slot pulseDensity numeric. The pulse density of the dataset
 #' @slot header list. A list of information contained is the las file header.
+#' @seealso
+#' \link[lidR:LoadLidar]{LoadLidar}
 #' @name Lidar-class
 #' @rdname Lidar-class
 #' @aliases Lidar
@@ -48,19 +53,31 @@ setClass(
 	)
 )
 
-#' Load a las file and create a \code{Lidar} object
+#' Load a las file and create a 'Lidar' object
 #'
 #' Methods to read and creates a \code{Lidar} object from a vector of .las filename(s)
-#' @param input character. filename(s) of .las file(s)
-#' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}
+#'
+#' Methods to read and creates a \code{Lidar} object from a vector of .las filename(s).
+#' The option fields enable to select which fields will be loaded. Removing useless field
+#' allows to save memory. The option '\code{minimal}' load only X,Y,Z and gpstime allowing
+#' to compute pulseID and flightlineID. The option '\code{standard}' load all the fiels
+#' minus UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' load
+#' everinthing.
+#' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatain several files.
+#' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
 #' @param \dots Unused
 #' @return An object of the class \code{Lidar}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
 #' lidar = LoadLidar(LASfile)
+#'
+#' getData(lidar)
+#' summary(lidar)
 #' @seealso
 #' \link[lidR:Lidar]{Class Lidar}
+#' \link[lidR:getData]{getData}
+#' \link[lidR:summary]{summary}
 #' @export LoadLidar
 LoadLidar <- function(input, fields = "standard", ...) {return(new("Lidar", input, fields, ...))}
 
@@ -105,8 +122,8 @@ setMethod("initialize", "Lidar",
 	}
 )
 
-#' @rdname leach
-setMethod("leach", "Lidar",
+#' @rdname extract
+setMethod("extract", "Lidar",
 	function(.data, ...)
 	{
 		ret = .data@data %>% dplyr::filter(...) %>% LoadLidar
@@ -124,7 +141,7 @@ setMethod("getNth", "Lidar",
 	  if(n > max(obj@data$ReturnNumber) | n <= 0)
 	    stop("Parameter n of function getNth incorrect")
 
-		return(leach(obj, ReturnNumber == n))
+		return(extract(obj, ReturnNumber == n))
 	}
 )
 
@@ -141,7 +158,7 @@ setMethod("getFirstOfMany", "Lidar",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(leach(obj, NumberOfReturns > 1, ReturnNumber == 1))
+		return(extract(obj, NumberOfReturns > 1, ReturnNumber == 1))
 	}
 )
 
@@ -151,7 +168,7 @@ setMethod("getSingle", "Lidar",
 	{
 	  NumberOfReturns <- NULL
 
-		return(leach(obj, NumberOfReturns == 1))
+		return(extract(obj, NumberOfReturns == 1))
 	}
 )
 
@@ -161,7 +178,7 @@ setMethod("getLast", "Lidar",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(leach(obj, ReturnNumber == NumberOfReturns))
+		return(extract(obj, ReturnNumber == NumberOfReturns))
 	}
 )
 
@@ -171,7 +188,7 @@ setMethod("getFirstLast", "Lidar",
 	{
 	  ReturnNumber <- NumberOfReturns <- NULL
 
-		return(leach(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
+		return(extract(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
 	}
 )
 
@@ -181,7 +198,7 @@ setMethod("getGround", "Lidar",
 	{
 	  Classification <- NULL
 
-	 	return(leach(obj, Classification == 2))
+	 	return(extract(obj, Classification == 2))
  	}
 )
 
@@ -228,9 +245,9 @@ setMethod("clipRectangle", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
+		  return(extract(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
 	  else
-	    return(leach(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
+	    return(extract(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
 
 	}
 )
@@ -242,9 +259,9 @@ setMethod("clipPolygon", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, sp::point.in.polygon(X,Y,x,y) > 0))
+		  return(extract(obj, sp::point.in.polygon(X,Y,x,y) > 0))
 	  else
-	    return(leach(obj, sp::point.in.polygon(X,Y,x,y) == 0))
+	    return(extract(obj, sp::point.in.polygon(X,Y,x,y) == 0))
 	}
 )
 
@@ -255,9 +272,9 @@ setMethod("clipCircle", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(leach(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+		  return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
 	  else
-	    return(leach(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+	    return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
 	}
 )
 
@@ -311,7 +328,7 @@ setMethod("thin", c("Lidar", "numeric"),
     if(homogenize == FALSE)
     {
       n = round(pulseDensity*obj@area)
-      selected = selectPulseToRemove(obj@data$pulseID, n)
+      selected = .selectPulseToRemove(obj@data$pulseID, n)
     }
     else
     {
@@ -322,7 +339,7 @@ setMethod("thin", c("Lidar", "numeric"),
 
       by = list(Xr = x_raster,Yr = y_raster)
 
-      selected = obj@data[, list(delete = selectPulseToRemove(pulseID, n), t = gpstime), by=by]
+      selected = obj@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
       selected[, c("Xr", "Yr") := NULL]
 
       setorder(selected, t)
@@ -345,15 +362,15 @@ setMethod("extent", "Lidar",
 
 #' Plot LiDAR data
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for Lidar objects
+#' This functions implements a 3D plot method for Lidar objects
 #'
 #' @aliases plot plot.Lidar
 #' @param x An object of the class \code{Lidar}
-#' @param y Unused (inherited from base plot)
+#' @param y Unused (inherited from R base)
 #' @param color characters. The field used to colorize the points. Default is Z coordinates
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
-#' @param bg characters. Background color. Default is black.
-#' @param \dots supplementary parameters for \link[rgl:points3d]{points3d}
+#' @param bg The color for the background Default is black.
+#' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
@@ -361,9 +378,13 @@ setMethod("extent", "Lidar",
 #'
 #' plot(lidar)
 #' plot(lidar, color = "Intensity", colorPalette = "heat.colors")
-#' @seealso \code{\link[rgl:points3d]{points3d} }
-#' @export plot.Lidar
-#' @importFrom rgl points3d open3d
+#' @seealso
+#' \link[rgl:points3d]{points3d}
+#' \link[lidR:height.colors]{height.colors}
+#' \link[grDevices:heat.colors]{heat.colors}
+#' \link[lidR:Lidar]{Class Lidar}
+#' @export
+#' @importFrom rgl points3d open3d rgl.bg
 #' @importFrom grDevices heat.colors terrain.colors topo.colors
 plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "black",  ...)
 {
@@ -383,18 +404,21 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 
 #' Summary of Lidar data
 #'
-#' This functions implements a \link[base:summary]{summary} method for raster image
+#' This functions implements a \link[base:summary]{summary} method for Lidar object
 #'
 #' @aliases summary
 #' @param object An object of the class \code{Lidar}
-#' @param \dots Unused
+#' @param \dots Unused (inherited from R base)
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
 #' lidar = LoadLidar(LASfile)
 #'
 #' summary(lidar)
-#' @export summary.Lidar
+#'
+#' @export
+#' @seealso
+#' \link[lidR:Lidar]{Class Lidar}
 summary.Lidar =	function(object, ...)
 {
   size <- format(object.size(object), units = "auto")

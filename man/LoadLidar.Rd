@@ -2,14 +2,14 @@
 % Please edit documentation in R/ClassLidar.r
 \name{LoadLidar}
 \alias{LoadLidar}
-\title{Load a las file and create a \code{Lidar} object}
+\title{Load a las file and create a 'Lidar' object}
 \usage{
 LoadLidar(input, fields = "standard", ...)
 }
 \arguments{
-\item{input}{character. filename(s) of .las file(s)}
+\item{input}{character. Filename of .las file. Use \link[base:c]{c()} to concatain several files.}
 
-\item{fields}{character. \code{"minimal"}, \code{"standard"}, \code{"all"}}
+\item{fields}{character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.}
 
 \item{\dots}{Unused}
 }
@@ -19,12 +19,25 @@ An object of the class \code{Lidar}
 \description{
 Methods to read and creates a \code{Lidar} object from a vector of .las filename(s)
 }
+\details{
+Methods to read and creates a \code{Lidar} object from a vector of .las filename(s).
+The option fields enable to select which fields will be loaded. Removing useless field
+allows to save memory. The option '\code{minimal}' load only X,Y,Z and gpstime allowing
+to compute pulseID and flightlineID. The option '\code{standard}' load all the fiels
+minus UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' load
+everinthing.
+}
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
 lidar = LoadLidar(LASfile)
+
+getData(lidar)
+summary(lidar)
 }
 \seealso{
 \link[lidR:Lidar]{Class Lidar}
+\link[lidR:getData]{getData}
+\link[lidR:summary]{summary}
 }
 

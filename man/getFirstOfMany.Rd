@@ -17,10 +17,10 @@ getFirstOfMany(obj)
 An object of class \code{Lidar}
 }
 \description{
-Select only the first returns from pulses which returned multiple points form a \code{Lidar} object
+Select only the first returns from pulses which returned multiple points
 }
 \note{
-\code{getFirstOfMany(obj)} is an alias for \code{leach(obj, NumberOfReturns > 1, ReturnNumber == 1))}
+\code{getFirstOfMany(obj)} is an alias for \code{extract(obj, NumberOfReturns > 1, ReturnNumber == 1))}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -37,6 +37,6 @@ firstOfManyReturns = lidar \%>\% getFirstOfMany
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:leach]{leach} }
+\code{\link[lidR:extract]{extract} }
 }
 

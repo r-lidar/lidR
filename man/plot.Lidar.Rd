@@ -11,18 +11,18 @@
 \arguments{
 \item{x}{An object of the class \code{Lidar}}
 
-\item{y}{Unused (inherited from base plot)}
+\item{y}{Unused (inherited from R base)}
 
 \item{color}{characters. The field used to colorize the points. Default is Z coordinates}
 
 \item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
 
-\item{bg}{characters. Background color. Default is black.}
+\item{bg}{The color for the background Default is black.}
 
-\item{\dots}{supplementary parameters for \link[rgl:points3d]{points3d}}
+\item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d}}
 }
 \description{
-This functions implements a \link[graphics:plot]{plot} method for Lidar objects
+This functions implements a 3D plot method for Lidar objects
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -33,6 +33,9 @@ plot(lidar)
 plot(lidar, color = "Intensity", colorPalette = "heat.colors")
 }
 \seealso{
-\code{\link[rgl:points3d]{points3d} }
+\link[rgl:points3d]{points3d}
+\link[lidR:height.colors]{height.colors}
+\link[grDevices:heat.colors]{heat.colors}
+\link[lidR:Lidar]{Class Lidar}
 }
 

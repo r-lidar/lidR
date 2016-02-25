@@ -17,6 +17,9 @@ A data.table containing the x, y and z coordinates of the cells
 \description{
 Rasterize a triangular irregular network
 }
+\details{
+This function is in developpement and is currently very slow.
+}
 \note{
 Still in developpment. Currently very slow.
 }
@@ -25,7 +28,8 @@ x = runif(20)
 y = runif(20)
 z = runif(20)
 tin = TIN(x, y, z)
-rasterizeTIN(tin, 0.05)
+rasterTIN = rasterizeTIN(tin, 0.05)
+plot(rasterTIN)
 }
 \seealso{
 \link[lidR:TIN]{TIN}

@@ -1,10 +1,10 @@
 #' Triangular irregular network
 #'
-#' Triangular irregular network computed from Delaunay triangulation
+#' Triangular irregular network computed from a Delaunay triangulation
 #' @param x numeric. n points x coordinates
 #' @param y numeric. n points y coordinates
 #' @param z numeric. n points z coordinates
-#' @return A data.frame containig the list of triangles coordinates in each row
+#' @return A data.table containig the list of triangles coordinates in each row
 #' @examples
 #' x = runif(20)
 #' y = runif(20)
@@ -49,6 +49,9 @@ TIN = function(x,y,z)
 #' Rasterize a triangular irregular network
 #'
 #' Rasterize a triangular irregular network
+#'
+#' This function is in developpement and is currently very slow.
+#'
 #' @param tin An object of class \code{TIN}
 #' @param res scalar. the resolution of the rasterization
 #' @return A data.table containing the x, y and z coordinates of the cells
@@ -57,7 +60,8 @@ TIN = function(x,y,z)
 #' y = runif(20)
 #' z = runif(20)
 #' tin = TIN(x, y, z)
-#' rasterizeTIN(tin, 0.05)
+#' rasterTIN = rasterizeTIN(tin, 0.05)
+#' plot(rasterTIN)
 #' @note Still in developpment. Currently very slow.
 #' @seealso
 #' \link[lidR:TIN]{TIN}
@@ -114,8 +118,8 @@ rasterizeTIN <- function(tin, res)
 #' plot(tin)
 #' @seealso
 #' \link[lidR:TIN]{TIN}
-#' @rdname plot
-#' @export plot.TIN
+#' @rdname plot.TIN
+#' @export
 #' @method plot TIN
 plot.TIN = function(x, ...)
 {

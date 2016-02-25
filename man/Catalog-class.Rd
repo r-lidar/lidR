@@ -9,8 +9,11 @@ An S4 class to represent a set of las tiles, to plot them and to process them in
 multicore.
 }
 \details{
-A \code{Lidar} object contains a \code{data.frame} in the slot \code{@headers} with the data
-read from the headers of all your \code{.las} files.
+A \code{Catalog} object contains a \code{data.frame} in the slot \code{@headers} with the data
+read from the headers of all user's \code{.las} files. A catalog is the representation
+of a set of las files. A computer cannot load all the data in one time. A catalog
+is a simple way to manage all the file sequentially reading only their header. See the
+public documentation of las format for more information.
 }
 \section{Slots}{
 
@@ -18,6 +21,8 @@ read from the headers of all your \code{.las} files.
 \item{\code{headers}}{data.frame. A table representing the las header data}
 }}
 \seealso{
+\link[lidR:Catalog]{Catalog}
+\link[lidR:plot.Catalog]{plot}
 \link[lidR:processParallel]{processParallel}
 \link[lidR:extractGroundInventory]{extractGroundInventory}
 }

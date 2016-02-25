@@ -2,7 +2,7 @@
 % Please edit documentation in R/ClassGridMetrics.r
 \name{as.gridMetrics}
 \alias{as.gridMetrics}
-\title{Set the class gridMetrics to a data.frame}
+\title{Set the class gridMetrics to a data.frame or a data.table}
 \usage{
 as.gridMetrics(x)
 }
@@ -12,6 +12,6 @@ as.gridMetrics(x)
 \description{
 Set the class gridMetrics to a data.frame. Usefull when reading data from a file.
 In this case the data.frame does not have the class gridMetrics and cannot easly be
-plotted or transformed into a matrix
+plotted or transformed into a matrix.
 }
 

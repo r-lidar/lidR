@@ -4,7 +4,7 @@
 \name{getNth}
 \alias{getNth}
 \alias{getNth,Lidar-method}
-\title{Filter returns by their position in the return sequence}
+\title{Filter returns by their position in the return sequence.}
 \usage{
 getNth(obj, n)
 
@@ -19,15 +19,11 @@ getNth(obj, n)
 An object of class \code{Lidar}
 }
 \description{
-Select the returns from their position in the return sequence form a \code{Lidar} object
-}
-\details{
-function for \code{Lidar} objects which replace the function
-\code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}}
-package.
+Select the returns from their position in the return sequence. Point density
+pulse density and area are recomputed on the fly
 }
 \note{
-\code{getNth(obj, n)} is an alias for \code{leach(obj, ReturnNumber == n)}
+\code{getNth(obj, n)} is an alias for \code{extract(obj, ReturnNumber == n)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -44,6 +40,6 @@ secondReturns = lidar \%>\% getNth(2)
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:leach]{leach} }
+\code{\link[lidR:extract]{extract} }
 }
 

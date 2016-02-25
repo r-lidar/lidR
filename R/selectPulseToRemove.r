@@ -1,4 +1,4 @@
-selectPulseToRemove = function(pulseID, n)
+.selectPulseToRemove = function(pulseID, n)
 {
   p = unique(pulseID)
 

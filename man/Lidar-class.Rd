@@ -6,24 +6,26 @@
 \alias{Lidar-class}
 \title{An S4 class to represent a LiDAR dataset.}
 \description{
-An S4 class to represent a LiDAR dataset. It contain the raw data, the header and additionnal
-values
+An S4 class to represent a LiDAR dataset. It contains the data, the header and additionnal
+values computed during the loading.
 }
 \details{
 A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
 read from a \code{.las} file and other informations computed during the data loading. The
-field read from the las file are:
-\itemize{\item{\code{X Y Z Intensity}}
+fields read from the las file are named:
+\itemize{
+\item{\code{X Y Z}}
+\item{\code{Intensity}}
 \item{\code{ReturnNumber}}
 \item{\code{NumberOfReturns}}
 \item{\code{ScanDirectionFlag}}
 \item{\code{EdgeofFlightline}}
 \item{\code{Classification}}
-\item{\code{Scan.Angle}}
+\item{\code{ScanAngle}}
 \item{\code{UserData}}
 \item{\code{PointSourceID}}
 }
-When a \code{Lidar} object is built, two other informations are computed in the data.table:
+When a \code{Lidar} object is built, two other informations are computed in the \code{data.table}:
 \itemize{
 \item{\code{pulseID}: }{a number which identifies each pulse allowing to know from which beam a point comes from}
 \item{\code{flightlineID}: }{a number which identifies the flightline allowing to know from which flighline a point comes from}}
@@ -32,19 +34,23 @@ A \code{Lidar} object contains other informations in slots \code{@area}, \code{@
 \item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
 \item{\code{points} and \code{pulse density}: }{are computed with the computed area. Therefore it suffers of the same issue.}
 }
-A \code{Lidar} object also contains a slot \code{@header} containing the header of the \code{.las} file. See public documentation of \code{.las} file format for more information.
+A \code{Lidar} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
+See public documentation of \code{.las} file format for more information.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{data}}{data.table. a table representing the LiDAR data}
 
-\item{\code{area}}{numeric. the area of the dataset computed with a convex hull}
+\item{\code{area}}{numeric. The area of the dataset computed with a convex hull}
 
-\item{\code{pointDensity}}{numeric. the point density of the dataset}
+\item{\code{pointDensity}}{numeric. The point density of the dataset}
 
-\item{\code{pulseDensity}}{numeric. the pulse density of the dataset}
+\item{\code{pulseDensity}}{numeric. The pulse density of the dataset}
 
 \item{\code{header}}{list. A list of information contained is the las file header.}
 }}
+\seealso{
+\link[lidR:LoadLidar]{LoadLidar}
+}
 

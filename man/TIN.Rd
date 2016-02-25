@@ -14,10 +14,10 @@ TIN(x, y, z)
 \item{z}{numeric. n points z coordinates}
 }
 \value{
-A data.frame containig the list of triangles coordinates in each row
+A data.table containig the list of triangles coordinates in each row
 }
 \description{
-Triangular irregular network computed from Delaunay triangulation
+Triangular irregular network computed from a Delaunay triangulation
 }
 \examples{
 x = runif(20)
