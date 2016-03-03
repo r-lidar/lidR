@@ -467,10 +467,11 @@ setMethod("classifyFromShapefile", "Lidar",
 		}
 
 	  polys   = raster::crop(shapefile, extent(obj))
-		npoly   = length(polys@polygons)
 
-		if(npoly > 0)
+		if(!is.null(polys))
 		{
+		    npoly   = length(polys@polygons)
+
     		for(i in 1:npoly)
     		{
     		  x = polys@polygons[[i]]@Polygons[[1]]@coords[,1]
