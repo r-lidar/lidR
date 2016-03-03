@@ -449,18 +449,14 @@ setMethod("area", "Lidar",
 setMethod("classifyFromShapefile", "Lidar",
 	function(obj, shapefile, field)
 	{
-		polys   = raster::crop(shapefile, extent(obj))
-		npoly   = length(polys@polygons)
-		npoints = dim(obj@data)[1]
+	  npoints = dim(obj@data)[1]
 
-		if(field %in% names(polys@data))
+		if(field %in% names(shapefile@data))
 		{
 		  method = 1
 
-		  data = polys@data[,field]
-
-		  if(class(data) == "factor")
-		    values = factor(rep(NA, npoints), levels = levels(data))
+		  if(class(shapefile@data[,field]) == "factor")
+		    values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
 		  else
 		    values = numeric(npoints)
 		}
@@ -470,20 +466,26 @@ setMethod("classifyFromShapefile", "Lidar",
 		  values = numeric(npoints)
 		}
 
-		for(i in 1:npoly)
-		{
-		  x = polys@polygons[[i]]@Polygons[[1]]@coords[,1]
-		  y = polys@polygons[[i]]@Polygons[[1]]@coords[,2]
+	  polys   = raster::crop(shapefile, extent(obj))
+		npoly   = length(polys@polygons)
 
-		  if(method == 1)
-		  {
-		    bool = sp::point.in.polygon(obj@data$X, obj@data$Y, x, y) > 0
-		    values[bool] = data[i]
-		  }
-		  else if(method == 2)
-		  {
-		    values = values + sp::point.in.polygon(obj@data$X, obj@data$Y, x, y)
-		  }
+		if(npoly > 0)
+		{
+    		for(i in 1:npoly)
+    		{
+    		  x = polys@polygons[[i]]@Polygons[[1]]@coords[,1]
+    		  y = polys@polygons[[i]]@Polygons[[1]]@coords[,2]
+
+    		  if(method == 1)
+    		  {
+    		    bool = sp::point.in.polygon(obj@data$X, obj@data$Y, x, y) > 0
+    		    values[bool] = data[i]
+    		  }
+    		  else if(method == 2)
+    		  {
+    		    values = values + sp::point.in.polygon(obj@data$X, obj@data$Y, x, y)
+    		  }
+    		}
 		}
 
 		if(method == 2)
