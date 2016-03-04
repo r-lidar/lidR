@@ -26,7 +26,7 @@ LAD = function(z, by = 1, k = 0.5) # (Bouvier et al. 2015)
 	z = ld$z[-1]
 	lad = lad[-1]
 
-	return(data.frame(z = ld$z, lad))
+	return(data.frame(z, lad))
 }
 
 .leafdensity = function (z, by = 1)
