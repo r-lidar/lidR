@@ -4,17 +4,17 @@
 \alias{LAD}
 \title{Leaf area density}
 \usage{
-LAD(z, by = 1, threshold = 0)
+LAD(z, by = 1, k = 0.5)
 }
 \arguments{
 \item{z}{vector of positive z coordinates}
 
 \item{by}{numeric. The thickeness of the layers used (height bin)}
 
-\item{threshold}{numeric. Remove points below the threshold}
+\item{k}{numeric. is the extinction coefficient}
 }
 \value{
-numeric vector containing the leaf area density for each bin
+A data.frame containing the bins elevations (z) and leaf area density for each bin (lad)
 }
 \description{
 Computes a leaf area density profile based on Bouvier et al. method (see reference)
