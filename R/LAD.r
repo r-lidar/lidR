@@ -2,8 +2,14 @@
 #'
 #' Computes a leaf area density profile based on Bouvier et al. method (see reference)
 #'
+#' The function assessing the number of laser points that actually reached the layer
+#' z+dz and those that when through by the layer [z, z+dz]. Then it compute the log
+#' of this quantity and divided it by the extinction coefficient k as described in Bouvier
+#' et al. By definition the layer 0 will always return 0 because no return went through
+#' the ground. So the layer 0 is removed from the returned results.
+#'
 #' @param z vector of positive z coordinates
-#' @param by numeric. The thickeness of the layers used (height bin)
+#' @param dz numeric. The thickeness of the layers used (height bin)
 #' @param k numeric. is the extinction coefficient
 #' @return A data.frame containing the bins elevations (z) and leaf area density for each bin (lad)
 #' @examples
@@ -11,29 +17,50 @@
 #'
 #' lad = LAD(z)
 #'
-#' plot(1:length(lad)~lad, type="l", ylab="Elevation", xlab="Leaf area density")
+#' plot(lad, type="l", xlab="Elevation", ylab="Leaf area density")
 #' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
+#' @seealso \link[lidR:gapFractionProfile]{gapFractionProfile}
 #' @export LAD
-LAD = function(z, by = 1, k = 0.5) # (Bouvier et al. 2015)
+LAD = function(z, dz = 1, k = 0.5) # (Bouvier et al. 2015)
 {
-	ld = .leafdensity(z, by)
+	ld = gapFractionProfile(z, dz)
 
-	lad = 1-ld$ld
+	lad = ld$gf
 	lad = -log(lad)/k
 
 	lad[is.infinite(lad)] = NA
 
-	z = ld$z[-1]
-	lad = lad[-1]
+	lad = lad
 
-	return(data.frame(z, lad))
+	return(data.frame(z = ld$z, lad))
 }
 
-.leafdensity = function (z, by = 1)
+#' Gap fraction profile
+#'
+#' Computes the gap fraction profile from Bouvier et al. method (see reference)
+#'
+#' The function assessing the number of laser points that actually reached the layer
+#' z+dz and those that when through by the layer [z, z+dz]. By definition the layer 0
+#' will always return 0 because no return went through the ground. So the layer 0 is removed
+#' from the returned results.
+#'
+#' @param z vector of positive z coordinates
+#' @param dz numeric. The thickeness of the layers used (height bin)
+#' @return A data.frame containing the bins elevations (z) and the gap fraction for each bin (gf)
+#' @examples
+#' z = dbeta(seq(0, 0.8, length = 1000), 6, 6)*10
+#'
+#' gapFraction = gapFractionProfile(z)
+#'
+#' plot(gapFraction, type="l", xlab="Elevation", ylab="Gap fraction")
+#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
+#' @seealso \link[lidR:LAD]{LAD}
+#' @export gapFractionProfile
+gapFractionProfile = function (z, dz = 1)
 {
     maxz = max(z)
 
-    bk = seq(0, ceiling(maxz), by)
+    bk = seq(0, ceiling(maxz), dz)
 
     histogram = hist(z, breaks = bk, plot = F)
     height    = histogram$mids
@@ -50,6 +77,9 @@ LAD = function(z, by = 1, k = 0.5) # (Bouvier et al. 2015)
 
     r[is.nan(r)] = NA
 
-    return(data.frame(z = height, ld = r))
+    z = height[-1]
+	  r = r[-1]
+
+    return(data.frame(z, gf = 1-r))
 }
 
