@@ -459,14 +459,12 @@ setMethod("classifyFromShapefile", "Lidar",
 		    values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
 		  else
 		    values = numeric(npoints)
-		}
-		else
-		{
+		}else{
 		  method = 2
 		  values = numeric(npoints)
 		}
 
-	  polys   = raster::crop(shapefile, extent(obj))
+	  polys = raster::crop(shapefile, extent(obj))
 
 		if(!is.null(polys))
 		{
@@ -480,7 +478,7 @@ setMethod("classifyFromShapefile", "Lidar",
     		  if(method == 1)
     		  {
     		    bool = sp::point.in.polygon(obj@data$X, obj@data$Y, x, y) > 0
-    		    values[bool] = data[i]
+    		    values[bool] = polys@data[, field][i]
     		  }
     		  else if(method == 2)
     		  {
