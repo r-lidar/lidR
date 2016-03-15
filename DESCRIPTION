@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
-Version: 0.5.4
+Version: 0.5.5
 Date: 2016-03-16
 Author: Jean-Romain Roussel
 Maintainer: Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>
