@@ -17,4 +17,13 @@ A data.table
 \description{
 Methods to read .las file
 }
+\note{
+The function was firsly wrote by Michael Sumner and Carlos Alberto Silva.
+This version is a function modify from the first one whichis less greedy in memory
+and more flexible for the lidR package usages. But the greater work was made by the authors
+of rLidar package.
+}
+\author{
+Michael Sumner and Carlos Alberto Silva.
+}
 
