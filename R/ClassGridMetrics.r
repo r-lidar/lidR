@@ -57,7 +57,7 @@ plot.gridMetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
-  mtx = as.matrix(x, z)
+  mtx = as.matrix(x, z, fun.aggregate = fun.aggregate)
   X = rownames(mtx) %>% as.numeric
   Y = colnames(mtx) %>% as.numeric
 
@@ -100,7 +100,7 @@ plot.gridMetrics = function(x, z = NULL, ...)
 #' @rdname plot3d
 plot3d = function(x, z = NULL, ...)
 {
-  inargs <- list(...)
+  inargs = list(...)
 
   if(is.null(z))
   {
@@ -144,6 +144,16 @@ plot3d = function(x, z = NULL, ...)
 #' @method as.matrix gridMetrics
 as.matrix.gridMetrics = function(x, z = NULL, ...)
 {
+  inargs <- list(...)
+
+  multi = duplicated(x, by = c("X","Y")) %>% sum
+
+  if(multi > 0 & is.null(inargs$fun.aggregate))
+    message(paste(multi, "duplicated ratsers have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation have been done using mean function"))
+
+  if(is.null(inargs$fun.aggregate))
+    inargs$fun.aggregate = mean
+
   if(is.null(z))
   {
     if(length(names(x)) > 3)
@@ -152,7 +162,7 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
-  mtx = reshape2::acast(x, X~Y, value.var=z, ...)
+  mtx = do.call(reshape2::acast, c(list(data = x, formula = X~Y, value.var=z), inargs))
 
   return(mtx)
 }
