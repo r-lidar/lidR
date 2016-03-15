@@ -57,7 +57,7 @@ plot.gridMetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
-  mtx = as.matrix(x, z, fun.aggregate = fun.aggregate)
+  mtx = as.matrix(x, z)
   X = rownames(mtx) %>% as.numeric
   Y = colnames(mtx) %>% as.numeric
 
