@@ -25,6 +25,9 @@ LAD = function(z, dz = 1, k = 0.5) # (Bouvier et al. 2015)
 {
 	ld = gapFractionProfile(z, dz)
 
+	if(anyNA(ld))
+	  return(NA_real_)
+
 	lad = ld$gf
 	lad = -log(lad)/k
 
@@ -59,6 +62,9 @@ LAD = function(z, dz = 1, k = 0.5) # (Bouvier et al. 2015)
 gapFractionProfile = function (z, dz = 1)
 {
     maxz = max(z)
+
+    if(maxz < 3*dz)
+      return(NA_real_)
 
     bk = seq(0, ceiling(maxz), dz)
 
