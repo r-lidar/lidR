@@ -39,8 +39,7 @@ lidR package provides functions to read `.las` files, plot a cloud of points, co
 
 ## Compute a simple metric
 
-    metric = gridM
-    metrics(lidar, 20, mean(Z))
+    metric = gridMetrics(lidar, 20, mean(Z))
     plot(metric)
     
 ## Compute a set a personnal metrics
