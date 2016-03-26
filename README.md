@@ -6,7 +6,8 @@ lidR package provides functions to read `.las` files, plot a cloud of points, co
 # Install lidR on R with devtools
 
     install.package("devtools")
-    devtools::instal.github("Jean-Romain/lidR")
+    devtools::instal_github("Jean-Romain/lidR")
+    library(lidR)
     
 # Functionnalities 
 
@@ -16,11 +17,15 @@ lidR package provides functions to read `.las` files, plot a cloud of points, co
 - Compute any set of metrics on a cloud of point
 - Rasterize and apply any function to compute a set of metrics in an area based approach
 - Classify and filter data from geographic shapefiles
-- Filter cloud of point
+- Filter cloud of points
+- Clip data
 - Compute point and pulse densities
 - Manage a catalog of `.las` tiles
-- Extract automatically a set of ground plot inventories (even plot falling between 2 or more tiles)
+- Extract automatically a set of ground plot inventories (even plot falling between two or more tiles)
 - Analyse a full set a tiles in parallel computing
+- Plot 3D LiDAR data
+- plot in 2D and 3D the metrics
+- Compute simple triangular irregular network (TIN)
     
 # Some examples
 
@@ -34,5 +39,28 @@ lidR package provides functions to read `.las` files, plot a cloud of points, co
 
 ## Compute a simple metric
 
-    metric = gridMetrics(lidar, 20, mean(Z))
+    metric = gridM
+    metrics(lidar, 20, mean(Z))
     plot(metric)
+    
+## Compute a set a personnal metrics
+
+    myMetrics = function(z, i, angle, pulseID)
+    {
+      ret = list(
+            npulse  = length(unique(pulseID)),
+            hmean   = mean(z),
+            hmax    = max(z),
+            imean   = mean(i),
+            angle   = mean(abs(angle))
+            )
+
+       return(ret)
+    }
+    
+    metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+
+    plot(metrics, "hmean")
+    plot(metrics, "hmax")
+    plot(metrics, "imean")
+    #etc.
