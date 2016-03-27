@@ -37,3 +37,4 @@ Collate:
     'readLASheader.r'
     'readLas.r'
     'selectPulseToRemove.r'
+    'voxelize.r'
