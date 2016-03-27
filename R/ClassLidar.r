@@ -284,6 +284,8 @@ setMethod("gridMetrics", "Lidar",
 	{
 	  func_call = substitute(func)
 
+	  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+
 		x_raster = plyr::round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
 		y_raster = plyr::round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
 		flightlineID = obj@data$flightlineID
@@ -312,9 +314,7 @@ setMethod("cloudMetrics", "Lidar",
 	function(obj, func)
 	{
 	  func_call = substitute(func)
-
 	  metric = obj@data %$% eval(func_call)
-
 		return(metric)
 	}
 )
