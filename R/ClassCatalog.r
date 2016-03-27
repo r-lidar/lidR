@@ -60,11 +60,6 @@ setMethod("initialize", "Catalog",
 	  {
 	    h = readLASheader(file)
 
-	    h$`Generating Software` = rawToChar(h$`Generating Software` )
-	    h$`System Identifier` = rawToChar(h$`System Identifier`)
-
-	    h$`Version Major` = NULL
-	    h$`Version Minor` = NULL
 	    h$`Project ID - GUID data 1` = NULL
 	    h$`Project ID - GUID data 2` = NULL
 	    h$`Project ID - GUID data 3` = NULL

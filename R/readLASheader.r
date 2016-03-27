@@ -45,6 +45,12 @@ readLASheader = function(LASfile)
 
   close(con)
 
+  pheader$`Generating Software` %<>% rawToChar
+  pheader$`System Identifier` %<>% rawToChar
+
+  pheader$`Version Major` %<>% as.numeric
+  pheader$`Version Minor` %<>% as.numeric
+
   return(pheader)
 }
 
