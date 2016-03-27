@@ -390,6 +390,8 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 {
   inargs <- list(...)
 
+  trim = ifelse(is.null(inargs$trim), 1, inargs$trim)
+
   inargs$col = color
 
   if(length(color) == 1)
@@ -400,7 +402,7 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 
       if(is.numeric(data))
       {
-        inargs$col = .colorPalette(data-min(data), 1, colorPalette)
+        inargs$col = .colorPalette(data-min(data), trim, colorPalette)
         inargs$col[is.na(inargs$col)] = "lightgray"
       }
       else if(is.character(data))
