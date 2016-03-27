@@ -367,7 +367,7 @@ setMethod("extent", "Lidar",
 #' @aliases plot plot.Lidar
 #' @param x An object of the class \code{Lidar}
 #' @param y Unused (inherited from R base)
-#' @param color characters. The field used to colorize the points. Default is Z coordinates
+#' @param color characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
 #' @param bg The color for the background Default is black.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
@@ -390,12 +390,23 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 {
   inargs <- list(...)
 
-  q = ifelse(is.null(inargs$q), 1, inargs$q)
+  inargs$col = color
 
-  data = unlist(x@data[,color, with = FALSE])
-  inargs$col = .colorPalette(data, q, colorPalette)
+  if(length(color) == 1)
+  {
+    if(color %in% names(x@data))
+    {
+      data = unlist(x@data[,color, with = FALSE])
 
-  inargs$col[is.na(inargs$col)] = "lightgray"
+      if(is.numeric(data))
+      {
+        inargs$col = .colorPalette(data-min(data), 1, colorPalette)
+        inargs$col[is.na(inargs$col)] = "lightgray"
+      }
+      else if(is.character(data))
+        inargs$col = data
+    }
+  }
 
   rgl::open3d()
   rgl::rgl.bg(color = bg)
