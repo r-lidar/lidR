@@ -12,7 +12,7 @@ lidR provides an open-source and R based implementation of the main functions fr
     
 # Features 
 
-- [Read .las files](http://jean-romain.github.io/lidR/lloadLidar.html)
+- [Read .las files](http://jean-romain.github.io/lidR/loadLidar.html)
 - [Retrieved indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-field)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Compute a digital model of canopy](http://jean-romain.github.io/lidR/lanopy.html)
