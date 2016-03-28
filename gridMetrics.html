@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="/lidR"><h1>lidR</h1></a>
+        <h2>R package for airborne LiDAR data manipulation and visualisation for forestry applications</h2>
+        <a href="https://github.com/Jean-Romain/lidR" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+    <h1>Compute a series of descriptive statistics</h1>
+
+    <p>The <code class="highlighter-rouge">gridMetrics</code> function makes rasters (cells) and enables to compute one or more metrics for each cells.
+The size of the cells is given by the parameter <code class="highlighter-rouge">resolution</code>. The cell area is the square of the resolution. The metric wanted is given by an expression in parameter <code class="highlighter-rouge">func</code>. The <code class="highlighter-rouge">gridMetrics</code> function returns a <code class="highlighter-rouge">gridMetrics</code> object.</p>
+
+<h2 id="grid-one-metric">Grid one metric</h2>
+
+<p><a href="canopy.html"><code class="highlighter-rouge">canopyModel</code></a> was an alias for:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>canopy = lidar %&gt;% gridMetrics(2, max(Z))
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">pulseDensity</code> was an alias for:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pulseDensity = lidar %&gt;% gridMetrics(3, length(unique(pulseID))/9)
+</code></pre>
+</div>
+
+<p>Compute the mean height for 400 m^2 plots</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>hmean = lidar %&gt;% gridMetrics(20, mean(Z))
+</code></pre>
+</div>
+
+<p>Some functions are already avaible in the package like <code class="highlighter-rouge">entropy</code> or <code class="highlighter-rouge">vci</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>entropy = lidar %&gt;% gridMetrics(20, entropy(Z))
+vci     = lidar %&gt;% gridMetrics(20, vci(Z, zmax = 40))
+</code></pre>
+</div>
+
+<h2 id="grid-multiple-metrics">Grid multiple metrics</h2>
+
+<p>When we want to compute several metrics we would like to compute each metric in one time. We can use <code class="highlighter-rouge">gridMetrics</code> with a function which return several values in a labelled list:</p>
+
+<h3 id="define-your-own-metric-function">Define your own metric function</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>myMetrics = function(z, i, angle, pulseID, area)
+{
+    ret = list(
+        density = length(unique(pulseID))/area,
+        hmean   = mean(z),
+        hmax    = max(z),
+        imean   = mean(i),
+        angle   = mean(abs(angle))
+        )
+
+  return(ret)
+}
+</code></pre>
+</div>
+
+<h3 id="use-you-own-function-in-gridmetrics">Use you own function in gridMetrics</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID, 400))
+</code></pre>
+</div>
+
+<h2 id="splitflightline-option">split_flightline option</h2>
+
+<p><code class="highlighter-rouge">gridMetrics</code> allows an optional parameter named <code class="highlighter-rouge">option</code>. You can set this parameter to <code class="highlighter-rouge">"split_flighline"</code>. In this case, the algorithm will compute the metrics on each flighline individually. In this case in the overlaps, for example, you will have twice the same raster.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID, 400), option = "split_flightline")
+</code></pre>
+</div>
+
+<h2 id="cloudmetrics">cloudMetrics</h2>
+
+<p>The function <code class="highlighter-rouge">cloudMetrics</code> works exactly like <code class="highlighter-rouge">gridMetrics</code> but it does no have a <code class="highlighter-rouge">resolution</code> parameter and it does not make cells. It only computes one or several metrics on a cloud of points based on the function given in parameter. It is useful to compute metrics on a single plot inventory.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>metrics = cloudMetrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID, 400), option = "split_flightline")
+</code></pre>
+</div>
+
+<h2 id="quality-control-for-gridmetrics-and-geographic-data">Quality control for gridMetrics and geographic data</h2>
+
+<p>The previous sections showed how to efficiently process a dataset. It returns a list of plots with the associated metrics. But some plots fall in water and the algorithm cannot guess that. Some plots are incomplete because they fall in the edge of the file or in the edge of a flightline, or in this edge of a void area (providers removed some data) or \ldots. The algorithm makes cells but it does not control what was in the cells. You can control the cells quality using two ways.</p>
+
+<ul>
+  <li>Using quality metrics</li>
+  <li>Filtering data based on shapefiles</li>
+</ul>
+
+
+</section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Jean-Romain/lidR/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Jean-Romain/lidR/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Jean-Romain/lidR"></a> is maintained by <a href="https://github.com/Jean-Romain">Jean-Romain</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
+
