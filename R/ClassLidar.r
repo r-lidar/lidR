@@ -84,7 +84,7 @@ LoadLidar <- function(input, fields = "standard", ...) {return(new("Lidar", inpu
 setMethod("initialize", "Lidar",
 	function(.Object, input, fields = "standard", ...)
 	{
-	  gpstime <- NULL
+	  gpstime <- R <- G <- B <- NULL
 
 	  if(is.character(input))
 	  {
@@ -94,29 +94,41 @@ setMethod("initialize", "Lidar",
 	  else if(is.data.table(input))
 	    .Object@data = input
 	  else
-	    stop("Invalid parameter input in constructor")
+	    stop("Invalid parameter input in constructor", call.=F)
 
 	  negvalues = sum(.Object@data$Z < 0)
 	  class0    = sum(.Object@data$Classification == 0)
 
 	  if(negvalues > 0)
-	    warning("Dataset may be invalid: ", negvalues, " points below 0 found")
+	    warning("Dataset may be invalid: ", negvalues, " points below 0 found", call.=F)
 
 	  if(class0 > 0)
-	    warning("Dataset may be invalid: ", class0, " unclassified points found")
+	    warning("Dataset may be invalid: ", class0, " unclassified points found", call.=F)
 
-	  setorder(.Object@data, gpstime)
+	  if("gpstime" %in% names(.Object@data))
+	  {
+  	  setorder(.Object@data, gpstime)
 
-	  .Object@area <- area(.Object)
+  	  .Object@area <- area(.Object)
 
-	  if(is.null(.Object@data$pulseID))
-	    .Object@data$pulseID <- .IdentifyPulse(.Object@data$ReturnNumber)
+  	  if(is.null(.Object@data$pulseID))
+  	    .Object@data$pulseID <- .IdentifyPulse(.Object@data$ReturnNumber)
 
-	  if(is.null(.Object@data$flightlineID))
-	    .Object@data$flightlineID <- .IdentifyFlightlines(.Object@data$gpstime)
+  	  if(is.null(.Object@data$flightlineID))
+  	    .Object@data$flightlineID <- .IdentifyFlightlines(.Object@data$gpstime)
+
+  	  .Object@pulseDensity <- .pulseDensity(.Object)
+	  }
+	  else
+	    warning("No gpstime field found. 'pulseID', 'flightlines' and 'pulse density' cannot be computed from this file.", call.=F)
+
+	  if(sum(c("R", "G", "B") %in% names(.Object@data)) == 3)
+	  {
+	    if(is.null(.Object@data$color))
+  	    .Object@data$color <- .Object@data %$% rgb(R/255, G/255, B/255)
+	  }
 
 	  .Object@pointDensity <- .pointDensity(.Object)
-	  .Object@pulseDensity <- .pulseDensity(.Object)
 
 	  return(.Object)
 	}
