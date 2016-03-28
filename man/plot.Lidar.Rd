@@ -13,7 +13,7 @@
 
 \item{y}{Unused (inherited from R base)}
 
-\item{color}{characters. The field used to colorize the points. Default is Z coordinates}
+\item{color}{characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.}
 
 \item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
 
