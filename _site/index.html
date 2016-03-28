@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="/"><h1>lidR</h1></a>
+        <h2>R package for airborne LiDAR data manipulation and visualisation for forestry applications</h2>
+        <a href="https://github.com/Jean-Romain/lidR" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+    <h1>lidR package</h1>
+
+    <p>R package for airborne LiDAR data manipulation and visualisation for forestry application</p>
+
+<p>lidR package provides functions to read <code class="highlighter-rouge">.las</code> files, plot a cloud of points, compute metrics in an area-based approach, compute digital model of canopy, thin lidar data, automatically extract ground inventories, process a set of tiles on multicore, classify data from shapefiles and provides others tools to manipulate liDAR data. LidR is designed mainly for research purposes in an area-based approach.</p>
+
+<p>lidR provides an open-source and R based implementation of the main functions from sofware like FUSION or lastools. lidR is flexible because it rely on the programmation of you own tools rather than the use of a set of given tools.</p>
+
+<h1 id="install-lidr-from-github-with-devtools">Install lidR from Github with devtools</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>install.package("devtools")
+devtools::install_github("Jean-Romain/lidR")
+library(lidR)
+</code></pre>
+</div>
+
+<h1 id="features">Features</h1>
+
+<ul>
+  <li><a href="loadLidar.html">Read .las files</a></li>
+  <li><a href="loadLidar.html#dynamically-computed-field">Retrieved indiviual pulses</a></li>
+  <li><a href="loadLidar.html#dynamically-computed-fields">Retrieve individual flightlines</a></li>
+  <li><a href="canopy.html">Compute a digital model of canopy</a></li>
+  <li>Compute any set of metrics on a cloud of point</li>
+  <li>Rasterize and apply any function to compute a set of metrics in an area based approach</li>
+  <li>Classify and filter data from geographic shapefiles</li>
+  <li>Filter cloud of points based on any condition test</li>
+  <li>Thin a cloud of point to reach an homogeneous point density</li>
+  <li>Clip data base on disc, rectangle or polygon.</li>
+  <li>Compute point and pulse densities</li>
+  <li>Manage a catalog of <code class="highlighter-rouge">.las</code> tiles</li>
+  <li>Extract automatically a set of ground plot inventories (even plot falling between two or more tiles)</li>
+  <li>Analyse a full set a tiles in parallel computing</li>
+  <li><a href="plotLidar.html">Plot 3D LiDAR data</a></li>
+  <li>plot in 2D and 3D the metrics</li>
+  <li>Compute simple triangular irregular network (TIN)</li>
+</ul>
+
+<h1 id="some-examples">Some examples</h1>
+
+<h2 id="plot-data">Plot data</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>lidar = LoadLidar("myfile.las")
+plot(lidar)
+</code></pre>
+</div>
+
+<p><img src="../images/plot3d_1.jpg" alt="" /></p>
+
+<h2 id="compute-a-simple-metric">Compute a simple metric</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>metric = gridMetrics(lidar, 20, mean(Z))
+plot(metric)
+</code></pre>
+</div>
+
+<p><img src="../images/gridMetrics-mean.jpg" alt="" /></p>
+
+<h2 id="compute-a-set-a-personnal-metrics">Compute a set a personnal metrics</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>myMetrics = function(z, i, angle, pulseID)
+{
+  ret = list(
+        npulse  = length(unique(pulseID)),
+        hmean   = mean(z),
+        hmax    = max(z),
+        imean   = mean(i),
+        angle   = mean(abs(angle))
+        )
+
+   return(ret)
+}
+
+metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+
+plot(metrics, "hmean")
+plot(metrics, "hmax")
+plot(metrics, "imean")
+#etc.
+</code></pre>
+</div>
+
+
+
+</section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Jean-Romain/lidR/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Jean-Romain/lidR/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Jean-Romain/lidR"></a> is maintained by <a href="https://github.com/Jean-Romain">Jean-Romain</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
+

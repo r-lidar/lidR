@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="/"><h1>lidR</h1></a>
+        <h2>R package for airborne LiDAR data manipulation and visualisation for forestry applications</h2>
+        <a href="https://github.com/Jean-Romain/lidR" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+    <h1>Structure of a Lidar object</h1>
+
+    <p>Read a <code class="highlighter-rouge">.las</code> file to build a <code class="highlighter-rouge">Lidar</code> object with the <code class="highlighter-rouge">LoadLidar</code> function. <code class="highlighter-rouge">lidR</code> package allows to read only <code class="highlighter-rouge">.las</code> files.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>library(lidR)
+lidar = LoadLidar("myfile.las")
+</code></pre>
+</div>
+
+<h2 id="basic-structure">Basic structure</h2>
+
+<p>A <code class="highlighter-rouge">Lidar</code> object contains a <code class="highlighter-rouge">data.table</code> in the slot <code class="highlighter-rouge">@data</code> with the data read from the <code class="highlighter-rouge">.las</code> file. The following names enable to acces the data and correspond to the las specification.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">X</code> <code class="highlighter-rouge">Y</code> <code class="highlighter-rouge">Z</code> <code class="highlighter-rouge">Intensity</code> and <code class="highlighter-rouge">gpstime</code></li>
+  <li><code class="highlighter-rouge">ReturnNumber</code></li>
+  <li><code class="highlighter-rouge">NumberOfReturns</code></li>
+  <li><code class="highlighter-rouge">ScanDirectionFlag</code></li>
+  <li><code class="highlighter-rouge">EdgeofFlightline</code></li>
+  <li><code class="highlighter-rouge">Classification</code></li>
+  <li><code class="highlighter-rouge">ScanAngle</code></li>
+  <li><code class="highlighter-rouge">UserData</code></li>
+  <li><code class="highlighter-rouge">PointSourceID</code></li>
+  <li><code class="highlighter-rouge">R</code> <code class="highlighter-rouge">G</code> and <code class="highlighter-rouge">B</code></li>
+</ul>
+
+<p>To save memory only the really usefull data are loaded. <code class="highlighter-rouge">LoadLidar</code> can take and extra paramter <code class="highlighter-rouge">fields</code>. The option <code class="highlighter-rouge">fields</code> enable to select which fields will be loaded. Removing useless field allows to save memory. The option <code class="highlighter-rouge">minimal</code> load only <code class="highlighter-rouge">X</code>, <code class="highlighter-rouge">Y</code>, <code class="highlighter-rouge">Z</code>  and <code class="highlighter-rouge">gpstime</code> (if avaible). The option <code class="highlighter-rouge">standard</code> load all the fiels minus ̀<code class="highlighter-rouge">UserData</code>, <code class="highlighter-rouge">EdgeofFlighline</code> and <code class="highlighter-rouge">PointSourceID</code>. The option <code class="highlighter-rouge">all</code> load everinthing.</p>
+
+<h2 id="dynamically-computed-fields">Dynamically computed fields</h2>
+
+<p>When a <code class="highlighter-rouge">Lidar</code> object is built other informations are automatically computed:</p>
+
+<p>If the file contains a field <code class="highlighter-rouge">gpstime</code></p>
+
+<ul>
+  <li><code class="highlighter-rouge">pulseID</code>: a number which identifies each pulse allowing to know from which beam a point comes</li>
+  <li><code class="highlighter-rouge">flightlineID</code>: a number which identifies the flightline allowing to know from which flighline a point comes</li>
+</ul>
+
+<p>If the file contains the fields <code class="highlighter-rouge">R</code> <code class="highlighter-rouge">G</code> and <code class="highlighter-rouge">B</code></p>
+
+<ul>
+  <li><code class="highlighter-rouge">color</code>: a string containg the hexadecimal names of the RGB colors.</li>
+</ul>
+
+<h2 id="other-data-contained-in-a-lidar-object">Other data contained in a Lidar object</h2>
+
+<p>A <code class="highlighter-rouge">Lidar</code> object contains other informations in slots <code class="highlighter-rouge">@area</code>, <code class="highlighter-rouge">@pointDensity</code>, <code class="highlighter-rouge">@pulseDensity</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>summary(lidar)
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Memory : 86 Mb</p>
+
+  <p>area : 350306.8 m^2 <br />
+points : 805322 points<br />
+pulses : 561704 pulses<br /> 
+point density : 2.3 points/m^2<br /> 
+pulse density : 1.6 pulses/m^2 <br /></p>
+</blockquote>
+
+<ul>
+  <li><code class="highlighter-rouge">area</code>: is computed with a convex hull. It is only an approximation if the shape of the data is not convex.</li>
+  <li><code class="highlighter-rouge">points</code> and <code class="highlighter-rouge">pulse density</code> are computed with the computed area. Therefore it suffers of the same issue</li>
+</ul>
+
+<h2 id="header">Header</h2>
+
+<p>A <code class="highlighter-rouge">Lidar</code> object also contains a slot <code class="highlighter-rouge">@header</code> containing the header of the <code class="highlighter-rouge">.las</code> file. See public documentation of <code class="highlighter-rouge">.las</code> file format for more information</p>
+
+
+</section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Jean-Romain/lidR/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Jean-Romain/lidR/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Jean-Romain/lidR"></a> is maintained by <a href="https://github.com/Jean-Romain">Jean-Romain</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
+
