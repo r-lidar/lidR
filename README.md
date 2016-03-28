@@ -13,9 +13,9 @@ lidR provides an open-source and R based implementation of the main functions fr
 # Features 
 
 - [Read .las files](http://jean-romain.github.io/lidR/lloadLidar.html)
-- [Retrieved indiviual pulses](http://jean-romain.github.io/lidR/lloadLidar.html#dynamically-computed-field)
-- [Retrieve individual flightlines](http://jean-romain.github.io/lidR/lloadLidar.html#dynamically-computed-fields)
-- [Compute a digital model of canopy](http://jean-romain.github.io/lidR/lcanopy.html)
+- [Retrieved indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-field)
+- [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
+- [Compute a digital model of canopy](http://jean-romain.github.io/lidR/lanopy.html)
 - Compute any set of metrics on a cloud of point
 - Rasterize and apply any function to compute a set of metrics in an area based approach
 - Classify and filter data from geographic shapefiles
@@ -26,7 +26,7 @@ lidR provides an open-source and R based implementation of the main functions fr
 - Manage a catalog of `.las` tiles
 - Extract automatically a set of ground plot inventories (even plot falling between two or more tiles)
 - Analyse a full set a tiles in parallel computing
-- [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/lplotLidar.html)
+- [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
 - plot in 2D and 3D the metrics
 - Compute simple triangular irregular network (TIN)
     
