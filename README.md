@@ -15,7 +15,7 @@ lidR provides an open-source and R based implementation of the main functions fr
 - [Read .las files](http://jean-romain.github.io/lidR/loadLidar.html)
 - [Retrieved indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
-- [Compute a digital model of canopy](http://jean-romain.github.io/lidR/lanopy.html)
+- [Compute a digital model of canopy](http://jean-romain.github.io/lidR/canopy.html)
 - Compute any set of metrics on a cloud of point
 - Rasterize and apply any function to compute a set of metrics in an area based approach
 - Classify and filter data from geographic shapefiles
