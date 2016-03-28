@@ -37,7 +37,7 @@ lidR provides an open-source and R based implementation of the main functions fr
 	lidar = LoadLidar("myfile.las")
 	plot(lidar)
 
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/images/plot3d_1.jpg)
+![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
 
 ## Compute a simple metric
 
