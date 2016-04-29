@@ -51,6 +51,13 @@ readLASheader = function(LASfile)
   pheader$`Version Major` %<>% as.numeric
   pheader$`Version Minor` %<>% as.numeric
 
+  pheader$`Project ID - GUID data 1` = NULL
+  pheader$`Project ID - GUID data 2` = NULL
+  pheader$`Project ID - GUID data 3` = NULL
+  pheader$`Project ID - GUID data 4` = NULL
+  pheader$`Number of points by return` = NULL
+  pheader$`Point Data Format ID (0-99 for spec)` = NULL
+
   return(pheader)
 }
 
