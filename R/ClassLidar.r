@@ -321,6 +321,33 @@ setMethod("gridMetrics", "Lidar",
 	}
 )
 
+#' @rdname voxelize
+setMethod("voxelize", "Lidar",
+    function(obj, res, func)
+    {
+        func_call = substitute(func)
+
+	      obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+
+        x_raster = plyr::round_any(obj@data$X, res)
+        y_raster = plyr::round_any(obj@data$Y, res)
+        z_raster = plyr::round_any(obj@data$Z, res)
+
+        by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
+
+        stat <- obj@data[, c(eval(func_call)), by=by]
+
+        n = names(stat)
+        n[1:3] = c("X", "Y", "Z")
+        setnames(stat, n)
+
+        attr(stat, "class") = c("voxels", attr(stat, "class"))
+        attr(stat, "res") = res
+
+        return(stat)
+    }
+)
+
 #' @rdname cloudMetrics
 setMethod("cloudMetrics", "Lidar",
 	function(obj, func)
