@@ -433,6 +433,58 @@ setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){
 #' @importFrom plyr round_any
 setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("gridMetrics")})
 
+#' Voxelize the space and compute metrics for each voxel
+#'
+#' Voxelize the cloud of points and compute a series of descriptive statistics for
+#' each voxel.
+#'
+#' Voxelize create a 3D matrix of voxels whith a given resolution. It create a voxel
+#' from the cloud of point if there is at least one points in the voxel. For each voxel
+#' the function allows to compute one or several derived metrics by the same way than
+#' the gridMetrics functions.
+#' Basically there no predifined metrics. The users must write is own function to create metrics.
+#' Vovelize will dispach the LiDAR data for each voxel in the user's function. The user write his
+#' function without thinking about grid cells. Just thinking about a cloud of points (see example).
+#'
+#' @aliases  voxelize
+#' @param obj An object of class \code{Lidar}
+#' @param res numeric. The size of the cells
+#' @param func the function to be apply to each cells
+#' @return It returns a \code{data.table} with containing the metrics for each voxel. The table have the class "voxels" enabling to easily plot it.
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' lidar = LoadLidar(LASfile)
+#'
+#' # Cloud of point is voxelize with a 1 meter resolution and in each voxel
+#' # the number of points is computed.
+#' voxelize(lidar, 1, length(Z))
+#'
+#' # Cloud of point is voxelize with a 1 meter resolution and in each voxel
+#' # the mean scan angle of points is computed.
+#' voxelize(lidar, 1, mean(ScanAngle))
+#'
+#' # Define your own metric function
+#' myMetrics = function(i, angle, pulseID)
+#' {
+#'   ret = list(
+#'         npulse  = length(unique(pulseID)),
+#'         angle   = mean(angle),
+#'         imean   = mean(i)
+#'         )
+#'
+#'    return(ret)
+#'  }
+#'
+#' voxels = voxelize(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
+#'
+#' plot(voxels, "hmean")
+#' plot(voxels, "hmax")
+#' plot(voxels, "imean")
+#' #etc.
+#' @export voxelize
+#' @importFrom plyr round_any
+setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
+
 #' Compute metrics for a cloud of points
 #'
 #' Computes a series of descriptive statistics for a LiDAR dataset
