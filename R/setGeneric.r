@@ -477,8 +477,7 @@ setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){
 #'
 #' voxels = voxelize(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
 #'
-#' plot(voxels, "hmean")
-#' plot(voxels, "hmax")
+#' plot(voxels, "angle")
 #' plot(voxels, "imean")
 #' #etc.
 #' @export voxelize
