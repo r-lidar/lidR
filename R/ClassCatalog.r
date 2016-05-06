@@ -54,22 +54,7 @@ setMethod("initialize", "Catalog",
 
 	  files = list.files(folder, full.names = T)
 
-	  headers = list()
-
-	  for(file in files)
-	  {
-	    h = readLASheader(file)
-
-	    h$`Project ID - GUID data 1` = NULL
-	    h$`Project ID - GUID data 2` = NULL
-	    h$`Project ID - GUID data 3` = NULL
-	    h$`Project ID - GUID data 4` = NULL
-	    h$`Number of points by return` = NULL
-	    h$`Point Data Format ID (0-99 for spec)` = NULL
-
-	    headers[[file]] = h
-	  }
-
+	  headers = lapply(files, readLASheader)
 	  headers = do.call(rbind.data.frame, headers)
 	  headers$filename = files
 	  rownames(headers) <- NULL
@@ -98,18 +83,7 @@ plot.Catalog = function(x, y, ...)
   ymax = max(headers$Max.Y)
 
   plot(0,0, xlim=c(xmin, xmax), ylim = c(ymin, ymax), col="white", asp=1, xlab="X", ylab="Y")
-
-  for(i in 1:dim(headers)[1])
-  {
-    tile = headers[i,]
-
-    xmax = tile$Max.X[1]
-    ymax = tile$Max.Y[1]
-    xmin = tile$Min.X[1]
-    ymin = tile$Min.Y[1]
-
-    rect(xmin, ymin, xmax, ymax)
-  }
+  rect(headers$Min.X, headers$Min.Y, headers$Max.X, headers$Max.Y)
 }
 
 #' @rdname processParallel
