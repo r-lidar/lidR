@@ -178,9 +178,7 @@ setMethod("extractGroundInventory", "Catalog",
     tilesForPlots = obj %>% retrieveInventoryTiles(plotnames, x, y, radius, buffer)
 
     tilesForPlots %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%
-      dplyr::summarise(plotnames = list(plotnames), X = list(X), Y = list(Y), radius = list(radius)) %>%
-      dplyr::ungroup
-
+      dplyr::summarise(plotnames = list(plotnames), X = list(X), Y = list(Y), radius = list(radius))
     output = vector("list", nplot)
 
     cat("\nExtracting plot inventories...\n")
