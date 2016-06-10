@@ -4,7 +4,7 @@
 \name{extract}
 \alias{extract}
 \alias{extract,Lidar-method}
-\title{Return points with matching conditions}
+\title{Return point with matching conditions}
 \usage{
 extract(.data, ...)
 
