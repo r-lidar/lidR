@@ -18,8 +18,8 @@ lidR provides an open-source and R based implementation of the main functions fr
 - [Compute a digital model of canopy](http://jean-romain.github.io/lidR/canopy.html)
 - Compute any set of metrics on a cloud of points
 - Rasterize and apply any function to compute a set of metrics in an area based approach
-- Classify and filter data from geographic shapefiles
-- Filter cloud of points based on any condition test
+- [Classify and filter data from geographic shapefiles](http://jean-romain.github.io/lidR/classifyFromShapefile.html)
+- [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/extract.html)
 - Thin a cloud of points to reach an homogeneous point density
 - Clip data base on disc, rectangle or polygon.
 - Compute point and pulse densities
