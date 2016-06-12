@@ -59,8 +59,7 @@ myMetrics = function(i, angle, pulseID)
 
 voxels = voxelize(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
 
-plot(voxels, "hmean")
-plot(voxels, "hmax")
+plot(voxels, "angle")
 plot(voxels, "imean")
 #etc.
 }
