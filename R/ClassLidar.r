@@ -1,6 +1,6 @@
 #' An S4 class to represent a LiDAR dataset.
 #'
-#' An S4 class to represent a LiDAR dataset. It contains the data, the header and additionnal
+#' An S4 class to represent a LiDAR dataset. It contains the data, the header and additional
 #' values computed during the loading.
 #'
 #' A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
