@@ -1,8 +1,8 @@
 #' Local canopy surface model
 #'
-#' canopyMatrix is a reimplementation of canopyModel with the local maxium algorithm
-#' for local analyse (e.g. in a raster) avoiding sides effect of the algorithm used to
-#' procuce the grid. It is only usefull to compute your own metric in a fuction.
+#' canopyMatrix is a reimplementation of canopyModel with the local maximum algorithm
+#' for local analysis (e.g. in a raster) avoiding side effects of the algorithm used to
+#' produce the grid. It is only useful to compute your own metric in a function.
 #'
 #' @param x vector of x coordinates
 #' @param y vector of y coordinates
