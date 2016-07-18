@@ -7,8 +7,8 @@
 #'
 #' @param x numeric matrix. A canopy surface model
 #' @param threshold numeric. Threshold value
-#' @param na.rm logical. If TRUE it doesn't count NA value in the number of cells (useful for circular plot for example)
-#' @return A numeric percentage between 0 and 100
+#' @param na.rm logical. If TRUE NA values in the number of cells are not counted (useful for circular plots, for example)
+#' @return A numeric percentage value between 0 and 100
 #' @seealso
 #' \link[lidR:canopyMatrix]{canopyMatrix}
 #' \link[lidR:gridMetrics]{gridMetrics}
