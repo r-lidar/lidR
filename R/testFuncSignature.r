@@ -27,9 +27,9 @@
     c = size[!test]
 
     if(sum(!test) == 1)
-      lidRError("TFS3", expression = funcstring, metric = n, class = c)
+      lidRError("TFS3", expression = funcstring, metric = n, number = c)
     else if(sum(!test) > 1)
-      lidRError("TFS4", expression = funcstring, metric = n, class = c)
+      lidRError("TFS4", expression = funcstring, metric = n, number = c)
   }
   else if(is.data.frame(metrics))
     lidRError("TFS5")
