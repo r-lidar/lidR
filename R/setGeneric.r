@@ -1,7 +1,7 @@
 #' Return points with matching conditions
 #'
 #' Return points with matching conditions. \code{extract} is an overloading
-#' function for \code{Lidar} objects which replace the function
+#' function for \code{Lidar} objects which replaces the function
 #' \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
 #'
 #' @aliases extract
@@ -112,7 +112,7 @@ setGeneric("getFirstOfMany", function(obj){standardGeneric("getFirstOfMany")})
 
 #' Filter single returns
 #'
-#' Select only the returns which return only one points.
+#' Select only the returns which return only one point.
 #'
 #' @aliases  getSingle
 #' @param obj An object of class \code{Lidar}
@@ -221,13 +221,13 @@ setGeneric("getGround", function(obj){standardGeneric("getGround")})
 #' elevation of the highest return within each grid cell to the grid cell center.
 #' It can also use a triangular irregular network (TIN) algorithm. In this case
 #' it use a Delaunay triangulation on first returns. The TIN rasterization is
-#' currently very slow. So, it can't be used for large datasets.
+#' currently very slow. Therefore, it is not suitable for large datasets.
 #' @aliases  canopyModel
 #' @param obj An object of class \code{Lidar}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.
 #' @param method character. The algorithm used to compute the canopy i.e. \code{"local_maxium"} or \code{"TIN"}
 #' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}
-#' @return It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
+#' @return It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
@@ -256,7 +256,7 @@ setGeneric("canopyModel", function(obj, res = 2, method="local_maximum", start =
 #' @aliases pulseDensity
 #' @param obj An object of class \code{Lidar}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
-#' @return It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
+#' @return It returns a \code{data.table} with the class \code{gridMetrics} which which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
@@ -271,11 +271,11 @@ setGeneric("pulseDensity", function(obj, res = 4){standardGeneric("pulseDensity"
 
 #' Get LiDAR data
 #'
-#' Return the slot @data from an \code{Lidar} object
+#' Return the slot @data from a \code{Lidar} object
 #'
 #' @aliases getData
 #' @param obj An object of class \code{Lidar}
-#' @return It returns a \code{data.table} with containing the LiDAR data
+#' @return It returns a \code{data.table} containing the LiDAR data
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
@@ -365,21 +365,21 @@ setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("cl
 #' @export clipCircle
 setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("clipCircle")})
 
-#' Rasterize the space and compute metrics for each cells
+#' Rasterize the space and compute metrics for each cell
 #'
-#' Computes a series of descriptive statistics for a LiDAR dataset for each cells
+#' Computes a series of descriptive statistics for a LiDAR dataset for each cell
 #' of a grid.
 #'
 #' Computes a series of descriptive statistics defined by the user. Output is a
 #' data.frame in which each line is a raster (single grid cell), each column is a metric.
 #' gridMetrics is similar to cloudMetrics except it computes metrics within each cell
-#' in the output grid. The grid cells coordinates are pre-determinted for a given resolution.
-#' So the algorithm will always provides the same coordinates independently of the dataset.
-#' When start = (0,0) and res = 20 gridMetrics will produce the following raster centers (10,10), (10,30), (30,10) etc..
-#' When start = (-10, -10) and res = 20 gridMetrics will produce the following raster centers (0,0), (0,20), (20,0) etc..
-#' In Quebec (Canada) reference is (-831600,  117980) in NAD83 coordinate system. The function to be apply to each cells
-#' is a classical function (see examples) which return a labelled list of metrics. The following existing function
-#' can help the user to compute some metrics:
+#' in the output grid. The grid cell coordinates are pre-determined for a given resolution.
+#' So the algorithm will always provide the same coordinates independently of the dataset.
+#' When start = (0,0) and res = 20 gridMetrics will produce the following raster centers: (10,10), (10,30), (30,10) etc..
+#' When start = (-10, -10) and res = 20 gridMetrics will produce the following raster centers: (0,0), (0,20), (20,0) etc..
+#' In Quebec (Canada) reference is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each cell is a classical function (see examples) that returns a labelled list of metrics.
+#' The following existing function can help the user to compute some metrics:
+#' 
 #' \itemize{
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:vci]{vci}}
@@ -388,17 +388,17 @@ setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){
 #' \item{\link[lidR:canopyClosure]{canopyClosure}}
 #' \item{\link[lidR:fractal.dimension]{fractal.dimension}}
 #' \item{\link[lidR:LAD]{LAD}}
-#' } Basically there no predifined metrics. The users must write is own function to create metrics.
-#' gridMetrics will dispach the LiDAR data for each cell in the user's function. The user write his
-#' function without thinking about grid cells. Just thinking about a cloud of points (see example).
+#' } Basically there are no predifined metrics. Users must write their own functions to create metrics.
+#' gridMetrics will dispach the LiDAR data for each cell in the user's function. The user writes their
+#' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  gridMetrics
 #' @param obj An object of class \code{Lidar}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
-#' @param option character. Could be \code{"split_flightline"}. In this case algorithm will compute the metrics for each flightline individually. It return several times the same cells in overlaps.
-#' @return It returns a \code{data.table} with containing the metrics for each cells. The table have the class "gridMetrics" enabling to easily plot it.
+#' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
+#' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridMetrics" enabling easy plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
@@ -438,28 +438,28 @@ setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){
 #' Voxelize the cloud of points and compute a series of descriptive statistics for
 #' each voxel.
 #'
-#' Voxelize create a 3D matrix of voxels whith a given resolution. It create a voxel
-#' from the cloud of point if there is at least one points in the voxel. For each voxel
-#' the function allows to compute one or several derived metrics by the same way than
+#' Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
+#' from the cloud of point if there is at least one point in the voxel. For each voxel
+#' the function allows computation of one or several derived metrics in the same way as
 #' the gridMetrics functions.
-#' Basically there no predifined metrics. The users must write is own function to create metrics.
-#' Vovelize will dispach the LiDAR data for each voxel in the user's function. The user write his
-#' function without thinking about grid cells. Just thinking about a cloud of points (see example).
+#' Basically there are no predifined metrics. Users must write their own function to create metrics.
+#' Voxelize will dispach the LiDAR data for each voxel in the user's function. The user writes their
+#' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  voxelize
 #' @param obj An object of class \code{Lidar}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
-#' @return It returns a \code{data.table} with containing the metrics for each voxel. The table have the class "voxels" enabling to easily plot it.
+#' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
 #'
-#' # Cloud of point is voxelize with a 1 meter resolution and in each voxel
+#' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the number of points is computed.
 #' voxelize(lidar, 1, length(Z))
 #'
-#' # Cloud of point is voxelize with a 1 meter resolution and in each voxel
+#' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the mean scan angle of points is computed.
 #' voxelize(lidar, 1, mean(ScanAngle))
 #'
@@ -490,8 +490,8 @@ setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
 #'
 #' Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
 #' computes a single set of metrics for the entire data set. See \link[lidR:gridMetrics]{gridMetrics}
-#' to compute metrics on a grid. Basically there no predifined metrics. The users
-#' must write is own function to create metrics (see example). The following existing
+#' to compute metrics on a grid. Basically there are no predifined metrics. Users
+#' must write their own function to create metrics (see example). The following existing
 #' function can help the user to compute some metrics:
 #' \itemize{
 #' \item{\link[lidR:entropy]{entropy}}
@@ -504,8 +504,8 @@ setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
 #' }
 #' @aliases cloudMetrics
 #' @param obj An object of class \code{Lidar}
-#' @param func The function to be apply to cloud of points
-#' @return It returns a \code{data.table} with containing the metrics
+#' @param func The function to be applied to a cloud of points
+#' @return It returns a \code{data.table} containing the metrics
 #' @export cloudMetrics
 #' @seealso \link[lidR:gridMetrics]{gridMetrics}
 #' @examples
@@ -534,33 +534,33 @@ setGeneric("cloudMetrics", function(obj, func){standardGeneric("cloudMetrics")})
 
 #' Thin LiDAR data
 #'
-#' Thin LIDAR data removing randomly a given proportion of pulses to reach a specific pulse densities
+#' Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 #'
-#' Thin is designed to produce output data sets that have unifrom pulse densities
+#' Thin is designed to produce output data sets that have uniform pulse densities
 #' throughout the coverage area. For each cell, the proportion of pulses that will
 #' be retained is computed using the calculated pulse density and the desired pulse
 #' density. If required pulse density is greater than the local pulse density it returns
-#' an unchanged set of points (it cannot increases the pulse density). In the way
-#' of \code{homogenize = FALSE} it randomly remove pulses to reach the required pulse
-#' density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must large enought
+#' an unchanged set of points (it cannot increase the pulse density). In the way
+#' of \code{homogenize = FALSE} it randomly removes pulses to reach the required pulse
+#' density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must be large enough
 #' to compute a coherant local pulse density. 25 square meters looks good. 1 square
-#' meter does not have a meaning.
+#' meter is meaningless.
 #' @aliases  thin
 #' @param obj An object of the class \code{Lidar}
-#' @param pulseDensity numeric. The pulseDensity expected
-#' @param homogenize logical. If \code{TRUE}, algorithm tries to homogenize the pulse density to provide a unifrom dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.
+#' @param pulseDensity numeric. The expected pulseDensity
+#' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.
 #' @param resolution numeric. Cell size to compute the pulse density.
-#' @return It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
+#' @return It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = LoadLidar(LASfile)
 #'
-#' # By default the method method is homogenize = TRUE
+#' # By default the method is homogenize = TRUE
 #' thinned = lidar %>% thin(1, resolution = 5)
 #' lidar   %>% pulseDensity %>% plot
 #' thinned %>% pulseDensity %>% plot
 #'
-#' # Method homogenize = FALSE enables to reach a global pulse density
+#' # Method homogenize = FALSE enables a global pulse density to be reached
 #' thinned = lidar %>% thin(1, homogenize = FALSE)
 #' thinned %>% summary
 #' thinned %>% pulseDensity %>% plot
@@ -616,12 +616,12 @@ setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
 #'
 #' Classify LiDAR points from the polygons in an ESRI shapefile
 #'
-#' Classify Lidar points based on geographic data found in an shapefile. It check
+#' Classify Lidar points based on geographic data found in a shapefile. It checks
 #' if the LiDAR points are in polygons given in the shapefile. If the parameter
-#' \code{field} is the name of a field of the shapefile if classify the points
-#' based on the data in the shapefile. Else it classify points as boolean. TRUE
-#' if the points is in a polygon, FALSE otherwise. This function allows to filter
-#' lakes for example.
+#' \code{field} is the name of a field in the shapefile it classifies the points
+#' based on the data in the shapefile. Else it classifies the points as boolean. TRUE
+#' if the points are in a polygon, FALSE otherwise. This function allows for filtering
+#' lakes, for example.
 #' @param obj An object of the class \code{Lidar}
 #' @param shapefile An object of class SpatialPolygonsDataFrame
 #' @param field characters. The name of a field of the shapefile or the name of the new field in the Lidar object.
@@ -639,7 +639,7 @@ setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
 #' plot(lidar)
 #' plot(forest)
 #'
-#' # The field "LAKENAME_1" exist in the shapefile. Points are classified with the value of the polygon
+#' # The field "LAKENAME_1" exists in the shapefile. Points are classified with the value of the polygon
 #' lidar = classifyFromShapefile(lidar, lakes, "LAKENAME_1")
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
@@ -654,12 +654,12 @@ setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGene
 #'
 #' Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
 #'
-#' When user have a set of Lidar data organized in several tiles it can apply a user function to each tiles.
-#' This function describe the procedure to apply to each file beginning by the data loading (see example).
+#' When users have a set of Lidar data organized in several tiles it can apply a user function to each tile.
+#' This function describes the procedure to apply to each file beginning with data loading (see example).
 #' @aliases processParallel
 #' @param x  A Catalog object
-#' @param func A function which have one parameter: the name of a .las file
-#' @param mc.cores numeric. Number of core used. Default is "auto"
+#' @param func A function which has one parameter: the name of a .las file
+#' @param mc.cores numeric. Number of cores used. Default is "auto"
 #' @param combine character. The function used to merge the outputs of the \code{func} function
 #' @param \dots Other parameters for \code{mclapply}
 #' @examples
@@ -671,8 +671,8 @@ setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGene
 #' # 2. load the shapefile you need to filter your points (if needed).
 #' lake = rgdal::readOGR("folder", "shapefile")
 #'
-#' # 3 build the function which analyse a tile (a file).
-#' # This function input is only the path of a las file
+#' # 3 build the function which analyses a tile (a file).
+#' # This function input is only the path of a .las file
 #' # see the following template
 #'
 #' analyse_tile = function(LASFile)
@@ -680,7 +680,7 @@ setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGene
 #'   # Load the data
 #'   lidar = LoadLidar(LASFile)
 #'
-#'   # Associate geographic data to lidar points (if needed)
+#'   # Associate geographic data with lidar points (if needed)
 #'   lidar %<>% classifyFromShapefile(lake, field="inlake")
 #'
 #'   # filter lake
@@ -691,7 +691,7 @@ setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGene
 #'   return(metrics)
 #' }
 #'
-#' # 5. Process the project. By default it detects how many core you have. But you can add
+#' # 5. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3. see ?mclapply for other options
 #' output = project %>% processParallel(analyse_tile)
 #' }
@@ -706,13 +706,13 @@ setGeneric("processParallel", function(x, func, mc.cores = "auto", combine = "rb
 
 #' Retrieve the tiles containing plots
 #'
-#' When the user have a set of coordinates of ground inventory, he can extract the
-#' lidar data associated with these plot automatically. This function retrieve the tiles
+#' When the user has a set of coordinates of ground inventory, they can extract the
+#' lidar data associated with these plots automatically. This function retrieves the tiles
 #' for each plot. This function is used by \link[lidR:extractGroundInventory]{extractGroundInventory}.
-#' Users do not rally need it.
+#' Users do not really need it.
 #'
-#' When the user have a set of coordinates of ground inventory, he can extract the
-#' lidar data associated with these plot automatically. The algorithm is able to find tiles
+#' When the user has a set of coordinates of ground inventory, they can extract the
+#' lidar data associated with these plots automatically. The algorithm is able to find tiles
 #' for plots falling between several tiles (on the edges) if tiles are organized in a grid.
 #'
 #' @aliases retrieveInventoryTiles
@@ -720,19 +720,19 @@ setGeneric("processParallel", function(x, func, mc.cores = "auto", combine = "rb
 #' @param plotnames vector. A set of plot names
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radiuses of plots
-#' @param buffer numeric. A buffer value to expend the extent of search
+#' @param radius numeric or vector. A radius or a set of radii of plots
+#' @param buffer numeric. A buffer value to extend the search range
 #' @export retrieveInventoryTiles
 #' @importFrom dplyr mutate progress_estimated
 setGeneric("retrieveInventoryTiles", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("retrieveInventoryTiles")})
 
 #' Extract inventory from a set of tiles
 #'
-#' When the user have a set of coordinates of ground inventory, he can extract the
+#' When the user has a set of coordinates of ground inventory, they can extract the
 #' lidar data associated with these plot automatically.
 #'
-#' When the user have a set of coordinates of ground inventory, he can extract the
-#' lidar data associated with these plot automatically. The algorithm automatically extract
+#' When the user has a set of coordinates of ground inventory, they can extract the
+#' lidar data associated with these plot automatically. The algorithm automatically extracts
 #' plots falling on the edges of tiles.
 #'
 #' @aliases extractGroundInventory
@@ -740,8 +740,8 @@ setGeneric("retrieveInventoryTiles", function(obj, plotnames, x, y, radius, buff
 #' @param plotnames vector. A set of plot names
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radiuses of plots
-#' @param buffer numeric. A buffer value to expend the extent of search
+#' @param radius numeric or vector. A radius or a set of radii of plots
+#' @param buffer numeric. A buffer value to extend the search range
 #' @return A list of Lidar objects
 #' @export extractGroundInventory
 #' @importFrom dplyr group_by summarise ungroup progress_estimated

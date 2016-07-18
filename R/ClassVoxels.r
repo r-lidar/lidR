@@ -1,14 +1,14 @@
 #' Plot voxelized LiDAR data
 #'
-#' This functions implements a 3D plot methods for voxels objects
+#' This functions implements a 3D plot method for voxels objects
 #'
-#' By default the function plot points for fast display purpose. It can plot real voxels.
+#' By default the function plots points for fast display purposes. It can also plot real voxels.
 #' @aliases plot.voxels
 #' @param x An object of the class \code{voxels}
 #' @param y Unused (inherited from R base)
-#' @param color characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.
+#' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
-#' @param bg The color for the background Default is black.
+#' @param bg The color for the background. Default is black.
 #' @param display character. By default is "points" to plot voxels as points for fast display. Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow. It cannot be use for a large number of voxels.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"
 #' @examples

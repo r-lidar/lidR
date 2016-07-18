@@ -24,7 +24,7 @@
 #'
 #' @param x coordinates vectors of points
 #' @param y coordinates vectors of points
-#' @return A data frame with the coordinates of the unique points lying on the convex hull, in clockwise order. The first points is repeated to close the hull.
+#' @return A data frame with the coordinates of the unique points lying on the convex hull, in clockwise order. The first point is repeated to close the hull.
 #' @examples
 #' x = runif(20)
 #' y = runif(20)
