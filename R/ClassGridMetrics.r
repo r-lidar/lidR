@@ -2,7 +2,7 @@
 #'
 #' This functions implements a \link[graphics:plot]{plot} method for a gridMetrics data.frame
 #'
-#' The \dots param enables to provide more arguments to \link[fields:image.plot]{image.plot}.
+#' The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
 #'
 #' @param x A data.frame or data.table of class gridMetrics.
 #' @param z character. The field to plot. If NULL, autodetect.
@@ -123,7 +123,7 @@ plot3d = function(x, z = NULL, ...)
   do.call(rgl::surface3d, c(list(x=rownames(mtx), y=colnames(mtx), z=mtx), inargs))
 }
 
-#' Tranform a gridMetrics into a spatial matrix
+#' Tranform a gridMetrics object into a spatial matrix
 #'
 #' @param x a gridMetrics object
 #' @param z character. The field to plot. If NULL, autodetect
@@ -169,7 +169,7 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
 
 #' Set the class gridMetrics to a data.frame or a data.table
 #'
-#' Set the class gridMetrics to a data.frame. Usefull when reading data from a file.
+#' Set the class gridMetrics to a data.frame. Useful when reading data from a file.
 #' In this case the data.frame does not have the class gridMetrics and cannot easly be
 #' plotted or transformed into a matrix.
 #'

@@ -50,7 +50,7 @@ TIN = function(x,y,z)
 #'
 #' Rasterize a triangular irregular network
 #'
-#' This function is in developpement and is currently very slow.
+#' This function is in development and is currently very slow.
 #'
 #' @param tin An object of class \code{TIN}
 #' @param res scalar. the resolution of the rasterization
@@ -62,7 +62,7 @@ TIN = function(x,y,z)
 #' tin = TIN(x, y, z)
 #' rasterTIN = rasterizeTIN(tin, 0.05)
 #' plot(rasterTIN)
-#' @note Still in developpment. Currently very slow.
+#' @note Still in development. Currently very slow.
 #' @seealso
 #' \link[lidR:TIN]{TIN}
 #' @export rasterizeTIN

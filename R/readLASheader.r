@@ -20,7 +20,7 @@
 
 #' Read a .las file header
 #'
-#' Methods to read .las file header. This function musn't be used by users. Use \link[lidR:LoadLidar]{LoadLidar}.
+#' Methods to read .las file header. This function should not be used by users. Use \link[lidR:LoadLidar]{LoadLidar}.
 #'
 #' @param LASfile character. Filename of .las file
 #' @return A list with the las header fields
