@@ -6,8 +6,8 @@
 #' based on the number and frequency of species present. This index, developed by
 #' Shannon and Weaver for use in information theory, was successfully transferred
 #' to the description of species diversity in biological systems (Shannon 1948).
-#' Here it is applied to quantify the diversity and the evenness of a distribution
-#' of LiDAR points elevation. It makes bins between 0 and the maximum elevation.
+#' Here it is applied to quantify the diversity and the evenness of an elevational distribution
+#' of LiDAR points. It makes bins between 0 and the maximum elevation.
 #'
 #' @param z vector of positive z coordinates
 #' @param by numeric. The thickeness of the layers used (height bin)
@@ -40,7 +40,7 @@ entropy = function(z, by = 1, zmax = NULL)
   if(is.null(zmax))
 	  zmax = max(z)
 
-	# If z max < 3 it does not have a meaning to compute entropy
+	# If zmax < 3 it is meaningless to compute entropy
 	if(zmax < 2)
 		return(NA_real_)
 
@@ -54,7 +54,7 @@ entropy = function(z, by = 1, zmax = NULL)
 	hist = hist(z, breaks = bk, plot=F)$count
 	hist = hist/sum(hist)
 
-	# Remove bin where there are no point because of log(0)
+	# Remove bin where there are no points because of log(0)
 	p    = hist[hist > 0]
 	pref = rep(1/length(hist), length(hist))
 
@@ -68,7 +68,7 @@ entropy = function(z, by = 1, zmax = NULL)
 #'
 #' A fixed normalization of the entropy function (see references)
 #' @param z vector of z coordinates
-#' @param by numeric. The thickeness of the layers used (height bin)
+#' @param by numeric. The thickness of the layers used (height bin)
 #' @param zmax numeric. Used to turn the function entropy to the function vci.
 #' @return A number between 0 and 1
 #' @return A number between 0 and 1
