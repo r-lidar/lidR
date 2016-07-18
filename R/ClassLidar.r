@@ -4,7 +4,7 @@
 #' values computed during the loading.
 #'
 #' A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
-#' read from a \code{.las} file and other informations computed during the data loading. The
+#' read from a \code{.las} file and other information computed during data loading. The
 #' fields read from the las file are named:
 #' \itemize{
 #' \item{\code{X Y Z}}
@@ -18,23 +18,23 @@
 #' \item{\code{UserData}}
 #' \item{\code{PointSourceID}}
 #' }
-#' When a \code{Lidar} object is built, two other informations are computed in the \code{data.table}:
+#' When a \code{Lidar} object is built, two other variables are computed in the \code{data.table}:
 #' \itemize{
-#' \item{\code{pulseID}: }{a number which identifies each pulse allowing to know from which beam a point comes from}
-#' \item{\code{flightlineID}: }{a number which identifies the flightline allowing to know from which flighline a point comes from}}
-#' A \code{Lidar} object contains other informations in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
+#' \item{\code{pulseID}: }{a unique identifying number for each pulse so the beam origin of each point is known}
+#' \item{\code{flightlineID}: }{a unique identifying number for the flightline so the flightline origin of each point is known}}
+#' A \code{Lidar} object contains other information in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
 #' \itemize{
 #' \item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
-#' \item{\code{points} and \code{pulse density}: }{are computed with the computed area. Therefore it suffers of the same issue.}
+#' \item{\code{points} and \code{pulse density}: }{are computed using the computed area. Also an approximation if the data are not convex}
 #' }
 #' A \code{Lidar} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
-#' See public documentation of \code{.las} file format for more information.
+#' See the public documentation of \code{.las} file format for more information.
 #'
 #' @slot data data.table. a table representing the LiDAR data
 #' @slot area numeric. The area of the dataset computed with a convex hull
 #' @slot pointDensity numeric. The point density of the dataset
 #' @slot pulseDensity numeric. The pulse density of the dataset
-#' @slot header list. A list of information contained is the las file header.
+#' @slot header list. A list of information contained in the las file header.
 #' @seealso
 #' \link[lidR:LoadLidar]{LoadLidar}
 #' @name Lidar-class
@@ -55,18 +55,18 @@ setClass(
 
 #' Load a las file and create a 'Lidar' object
 #'
-#' Methods to read and creates a \code{Lidar} object from a vector of .las filename(s)
+#' Methods to read and create a \code{Lidar} object from a vector of .las filename(s)
 #'
-#' Methods to read and creates a \code{Lidar} object from a vector of .las filename(s).
-#' The option fields enable to select which fields will be loaded. Removing useless field
-#' allows to save memory. The option '\code{minimal}' load only X,Y,Z and gpstime allowing
-#' to compute pulseID and flightlineID. The option '\code{standard}' load all the fiels
-#' minus UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' load
-#' everinthing.
-#' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatain several files.
+#' Methods to read and create a \code{Lidar} object from a vector of .las filename(s).
+#' The option fields allows selection of fields to be loaded. Removing redundant fields
+#' saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
+#' pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
+#' apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
+#' 
+#' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
 #' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
 #' @param \dots Unused
-#' @return An object of the class \code{Lidar}
+#' @return An object of class \code{Lidar}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
@@ -406,9 +406,9 @@ setMethod("extent", "Lidar",
 #' @aliases plot plot.Lidar
 #' @param x An object of the class \code{Lidar}
 #' @param y Unused (inherited from R base)
-#' @param color characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.
+#' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
-#' @param bg The color for the background Default is black.
+#' @param bg The color for the background. Default is black.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -456,7 +456,7 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 
 #' Summary of Lidar data
 #'
-#' This functions implements a \link[base:summary]{summary} method for Lidar object
+#' This functions implements a \link[base:summary]{summary} method for Lidar objects
 #'
 #' @aliases summary
 #' @param object An object of the class \code{Lidar}
