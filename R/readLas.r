@@ -5,10 +5,10 @@
   islas = tools::file_ext(files) == "las"
 
   if( sum(!valid) != 0 )
-    stop(paste("File(s) ", files[!valid], " not found\n", sep=""))
+    lidRError("LAS1", files = files[!valid])
 
   if( sum(!islas) != 0 )
-    stop(paste("File(s) ", files[!islas], " not supported\n", sep=""))
+    lidRError("LAS2", files = files[!islas])
 
   data = data.table()
 
@@ -34,7 +34,7 @@
 readLAS <- function(LASfile, fields="standard")
 {
   if(!(fields %in% c("minimal", "standard", "all")))
-      stop("The field parameter is invalid. It must to be a string: 'minimal' or 'standard' or 'all'")
+    lidRError("LAS4")
 
   skip <- 0
   nrows <- NULL
@@ -47,7 +47,7 @@ readLAS <- function(LASfile, fields="standard")
   pheader[[hd$Item[1]]] <- readBin(isLASFbytes, "character", size = 4, endian = "little")
 
   if (! pheader[[hd$Item[1]]] == "LASF")
-    stop("The LASfile input is not a valid LAS file")
+    lidRError("LAS3")
 
   for (i in 2:nrow(hd))
     pheader[[hd$Item[i]]] <- readBin(con, what = hd$what[i], size = hd$Rsize[i], endian = "little", n = hd$n[i])

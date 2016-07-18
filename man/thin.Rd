@@ -14,39 +14,39 @@ thin(obj, pulseDensity, homogenize = TRUE, resolution = 5)
 \arguments{
 \item{obj}{An object of the class \code{Lidar}}
 
-\item{pulseDensity}{numeric. The pulseDensity expected}
+\item{pulseDensity}{numeric. The expected pulseDensity}
 
-\item{homogenize}{logical. If \code{TRUE}, algorithm tries to homogenize the pulse density to provide a unifrom dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
+\item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
 
 \item{resolution}{numeric. Cell size to compute the pulse density.}
 }
 \value{
-It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
+It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
 }
 \description{
-Thin LIDAR data removing randomly a given proportion of pulses to reach a specific pulse densities
+Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 }
 \details{
-Thin is designed to produce output data sets that have unifrom pulse densities
+Thin is designed to produce output data sets that have uniform pulse densities
 throughout the coverage area. For each cell, the proportion of pulses that will
 be retained is computed using the calculated pulse density and the desired pulse
 density. If required pulse density is greater than the local pulse density it returns
-an unchanged set of points (it cannot increases the pulse density). In the way
-of \code{homogenize = FALSE} it randomly remove pulses to reach the required pulse
-density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must large enought
+an unchanged set of points (it cannot increase the pulse density). In the way
+of \code{homogenize = FALSE} it randomly removes pulses to reach the required pulse
+density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must be large enough
 to compute a coherant local pulse density. 25 square meters looks good. 1 square
-meter does not have a meaning.
+meter is meaningless.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 lidar = LoadLidar(LASfile)
 
-# By default the method method is homogenize = TRUE
+# By default the method is homogenize = TRUE
 thinned = lidar \%>\% thin(1, resolution = 5)
 lidar   \%>\% pulseDensity \%>\% plot
 thinned \%>\% pulseDensity \%>\% plot
 
-# Method homogenize = FALSE enables to reach a global pulse density
+# Method homogenize = FALSE enables a global pulse density to be reached
 thinned = lidar \%>\% thin(1, homogenize = FALSE)
 thinned \%>\% summary
 thinned \%>\% pulseDensity \%>\% plot

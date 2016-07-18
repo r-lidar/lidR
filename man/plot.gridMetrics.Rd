@@ -17,7 +17,7 @@
 This functions implements a \link[graphics:plot]{plot} method for a gridMetrics data.frame
 }
 \details{
-The \dots param enables to provide more arguments to \link[fields:image.plot]{image.plot}.
+The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

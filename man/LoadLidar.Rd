@@ -7,25 +7,24 @@
 LoadLidar(input, fields = "standard", ...)
 }
 \arguments{
-\item{input}{character. Filename of .las file. Use \link[base:c]{c()} to concatain several files.}
+\item{input}{character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.}
 
 \item{fields}{character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.}
 
 \item{\dots}{Unused}
 }
 \value{
-An object of the class \code{Lidar}
+An object of class \code{Lidar}
 }
 \description{
-Methods to read and creates a \code{Lidar} object from a vector of .las filename(s)
+Methods to read and create a \code{Lidar} object from a vector of .las filename(s)
 }
 \details{
-Methods to read and creates a \code{Lidar} object from a vector of .las filename(s).
-The option fields enable to select which fields will be loaded. Removing useless field
-allows to save memory. The option '\code{minimal}' load only X,Y,Z and gpstime allowing
-to compute pulseID and flightlineID. The option '\code{standard}' load all the fiels
-minus UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' load
-everinthing.
+Methods to read and create a \code{Lidar} object from a vector of .las filename(s).
+The option fields allows selection of fields to be loaded. Removing redundant fields
+saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
+pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
+apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

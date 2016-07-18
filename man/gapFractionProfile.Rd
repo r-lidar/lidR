@@ -9,18 +9,18 @@ gapFractionProfile(z, dz = 1)
 \arguments{
 \item{z}{vector of positive z coordinates}
 
-\item{dz}{numeric. The thickeness of the layers used (height bin)}
+\item{dz}{numeric. The thickness of the layers used (height bin)}
 }
 \value{
-A data.frame containing the bins elevations (z) and the gap fraction for each bin (gf)
+A data.frame containing the bin elevations (z) and the gap fraction for each bin (gf)
 }
 \description{
-Computes the gap fraction profile from Bouvier et al. method (see reference)
+Computes the gap fraction profile using the method of Bouvier et al. (see reference)
 }
 \details{
 The function assessing the number of laser points that actually reached the layer
-z+dz and those that when through by the layer [z, z+dz]. By definition the layer 0
-will always return 0 because no return went through the ground. So the layer 0 is removed
+z+dz and those that passed through the layer [z, z+dz]. By definition the layer 0
+will always return 0 because no returns reached the ground. Therefore, the layer 0 is removed
 from the returned results.
 }
 \examples{

@@ -11,7 +11,7 @@ vci(z, zmax, by = 1)
 
 \item{zmax}{numeric. Used to turn the function entropy to the function vci.}
 
-\item{by}{numeric. The thickeness of the layers used (height bin)}
+\item{by}{numeric. The thickness of the layers used (height bin)}
 }
 \value{
 A number between 0 and 1

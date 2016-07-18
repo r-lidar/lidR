@@ -17,7 +17,7 @@ getSingle(obj)
 An object of class \code{Lidar}
 }
 \description{
-Select only the returns which return only one points.
+Select only the returns which return only one point.
 }
 \note{
 \code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}

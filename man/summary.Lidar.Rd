@@ -13,7 +13,7 @@
 \item{\dots}{Unused (inherited from R base)}
 }
 \description{
-This functions implements a \link[base:summary]{summary} method for Lidar object
+This functions implements a \link[base:summary]{summary} method for Lidar objects
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

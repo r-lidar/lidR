@@ -20,20 +20,20 @@ extractGroundInventory(obj, plotnames, x, y, radius, buffer = 2)
 
 \item{y}{vector. A set of y plot coordinates}
 
-\item{radius}{numeric or vector. A radius or a set of radiuses of plots}
+\item{radius}{numeric or vector. A radius or a set of radii of plots}
 
-\item{buffer}{numeric. A buffer value to expend the extent of search}
+\item{buffer}{numeric. A buffer value to extend the search range}
 }
 \value{
 A list of Lidar objects
 }
 \description{
-When the user have a set of coordinates of ground inventory, he can extract the
+When the user has a set of coordinates of ground inventory, they can extract the
 lidar data associated with these plot automatically.
 }
 \details{
-When the user have a set of coordinates of ground inventory, he can extract the
-lidar data associated with these plot automatically. The algorithm automatically extract
+When the user has a set of coordinates of ground inventory, they can extract the
+lidar data associated with these plot automatically. The algorithm automatically extracts
 plots falling on the edges of tiles.
 }
 
