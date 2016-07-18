@@ -20,19 +20,19 @@ retrieveInventoryTiles(obj, plotnames, x, y, radius, buffer = 2)
 
 \item{y}{vector. A set of y plot coordinates}
 
-\item{radius}{numeric or vector. A radius or a set of radiuses of plots}
+\item{radius}{numeric or vector. A radius or a set of radii of plots}
 
-\item{buffer}{numeric. A buffer value to expend the extent of search}
+\item{buffer}{numeric. A buffer value to extend the search range}
 }
 \description{
-When the user have a set of coordinates of ground inventory, he can extract the
-lidar data associated with these plot automatically. This function retrieve the tiles
+When the user has a set of coordinates of ground inventory, they can extract the
+lidar data associated with these plots automatically. This function retrieves the tiles
 for each plot. This function is used by \link[lidR:extractGroundInventory]{extractGroundInventory}.
-Users do not rally need it.
+Users do not really need it.
 }
 \details{
-When the user have a set of coordinates of ground inventory, he can extract the
-lidar data associated with these plot automatically. The algorithm is able to find tiles
+When the user has a set of coordinates of ground inventory, they can extract the
+lidar data associated with these plots automatically. The algorithm is able to find tiles
 for plots falling between several tiles (on the edges) if tiles are organized in a grid.
 }
 

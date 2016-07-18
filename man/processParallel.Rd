@@ -14,9 +14,9 @@ processParallel(x, func, mc.cores = "auto", combine = "rbind", ...)
 \arguments{
 \item{x}{A Catalog object}
 
-\item{func}{A function which have one parameter: the name of a .las file}
+\item{func}{A function which has one parameter: the name of a .las file}
 
-\item{mc.cores}{numeric. Number of core used. Default is "auto"}
+\item{mc.cores}{numeric. Number of cores used. Default is "auto"}
 
 \item{combine}{character. The function used to merge the outputs of the \code{func} function}
 
@@ -26,8 +26,8 @@ processParallel(x, func, mc.cores = "auto", combine = "rbind", ...)
 Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
 }
 \details{
-When user have a set of Lidar data organized in several tiles it can apply a user function to each tiles.
-This function describe the procedure to apply to each file beginning by the data loading (see example).
+When users have a set of Lidar data organized in several tiles it can apply a user function to each tile.
+This function describes the procedure to apply to each file beginning with data loading (see example).
 }
 \examples{
 \dontrun{
@@ -38,8 +38,8 @@ plot(project)
 # 2. load the shapefile you need to filter your points (if needed).
 lake = rgdal::readOGR("folder", "shapefile")
 
-# 3 build the function which analyse a tile (a file).
-# This function input is only the path of a las file
+# 3 build the function which analyses a tile (a file).
+# This function input is only the path of a .las file
 # see the following template
 
 analyse_tile = function(LASFile)
@@ -47,7 +47,7 @@ analyse_tile = function(LASFile)
   # Load the data
   lidar = LoadLidar(LASFile)
 
-  # Associate geographic data to lidar points (if needed)
+  # Associate geographic data with lidar points (if needed)
   lidar \%<>\% classifyFromShapefile(lake, field="inlake")
 
   # filter lake
@@ -58,7 +58,7 @@ analyse_tile = function(LASFile)
   return(metrics)
 }
 
-# 5. Process the project. By default it detects how many core you have. But you can add
+# 5. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3. see ?mclapply for other options
 output = project \%>\% processParallel(analyse_tile)
 }

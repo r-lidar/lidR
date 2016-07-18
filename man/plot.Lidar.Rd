@@ -13,11 +13,11 @@
 
 \item{y}{Unused (inherited from R base)}
 
-\item{color}{characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.}
+\item{color}{characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.}
 
 \item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
 
-\item{bg}{The color for the background Default is black.}
+\item{bg}{The color for the background. Default is black.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d}}
 }

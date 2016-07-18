@@ -52,7 +52,7 @@ plot.gridMetrics = function(x, z = NULL, ...)
   if(is.null(z))
   {
     if(length(names(x)) > 3)
-      stop("More than 3 columns: please input the column's name to plot", call.=F)
+      lidRError("GDM1")
     else
       z = names(x)[3]
   }
@@ -105,7 +105,7 @@ plot3d = function(x, z = NULL, ...)
   if(is.null(z))
   {
     if(length(names(x)) > 3)
-      stop("More than 3 columns: please input the column's name to plot", call.= F)
+      lidRError("GDM1")
     else
       z = names(x)[3]
   }
@@ -149,7 +149,7 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
   multi = duplicated(x, by = c("X","Y")) %>% sum
 
   if(multi > 0 & is.null(inargs$fun.aggregate))
-    message(paste(multi, "duplicated ratsers have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation have been done using mean function"))
+     lidRError("GDM2", number = multi, behavior = message)
 
   if(is.null(inargs$fun.aggregate))
     inargs$fun.aggregate = mean
@@ -157,7 +157,7 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
   if(is.null(z))
   {
     if(length(names(x)) > 3)
-      stop("More than 3 columns: please input the column's name to plot")
+      lidRError("GDM3")
     else
       z = names(x)[3]
   }

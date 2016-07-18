@@ -18,9 +18,9 @@ A Catalog object
 Methods to creates a \code{Catalog} object from a folder name
 }
 \details{
-A catalog is the reprsentation of a set of las files. A computer cannot load all
-the data in one time. A catalog is a simple way to manage all the file sequentially
-reading only their header.
+A catalog is the representation of a set of las files. A computer cannot load all
+the data at the same time. A catalog is a simple way to manage all the file sequentially
+reading only the headers.
 }
 \seealso{
 \link[lidR:Catalog]{Catalog-class}

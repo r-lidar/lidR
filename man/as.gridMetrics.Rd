@@ -10,7 +10,7 @@ as.gridMetrics(x)
 \item{x}{A data.frame}
 }
 \description{
-Set the class gridMetrics to a data.frame. Usefull when reading data from a file.
+Set the class gridMetrics to a data.frame. Useful when reading data from a file.
 In this case the data.frame does not have the class gridMetrics and cannot easly be
 plotted or transformed into a matrix.
 }

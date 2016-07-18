@@ -14,10 +14,10 @@ getData(obj)
 \item{obj}{An object of class \code{Lidar}}
 }
 \value{
-It returns a \code{data.table} with containing the LiDAR data
+It returns a \code{data.table} containing the LiDAR data
 }
 \description{
-Return the slot @data from an \code{Lidar} object
+Return the slot @data from a \code{Lidar} object
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

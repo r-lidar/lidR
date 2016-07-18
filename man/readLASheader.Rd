@@ -13,7 +13,7 @@ readLASheader(LASfile)
 A list with the las header fields
 }
 \description{
-Methods to read .las file header. This function musn't be used by users. Use \link[lidR:LoadLidar]{LoadLidar}.
+Methods to read .las file header. This function should not be used by users. Use \link[lidR:LoadLidar]{LoadLidar}.
 }
 \seealso{
 \link[lidR:LoadLidar]{LoadLidar}

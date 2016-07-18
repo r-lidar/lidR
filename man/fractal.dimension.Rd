@@ -7,18 +7,18 @@
 fractal.dimension(mtx)
 }
 \arguments{
-\item{mtx}{a matrix which is the representation of a surface model}
+\item{mtx}{a matrix that is the representation of a surface model}
 }
 \value{
-A number between 0 and 3. 3 Being the dimension of a volume
+A number between 0 and 3. 3 being the dimension of a volume
 }
 \description{
 Computes the fractal dimention of a surface. The fractal dimension is a measure
 of roughness.
 }
 \details{
-Fractal dimension compute the roughness based on box counting method  (see Taud and Parrot).
-If the input have a NA value, it returns NA. If the input is too small it returns NA.
+Fractal dimension compute the roughness based on the box counting method  (see Taud and Parrot).
+If the input has an NA value, it returns NA. If the input is too small it returns NA.
 }
 \references{
 Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622

@@ -20,7 +20,7 @@ An object of class \code{Lidar}
 }
 \description{
 Return points with matching conditions. \code{extract} is an overloading
-function for \code{Lidar} objects which replace the function
+function for \code{Lidar} objects which replaces the function
 \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
 }
 \examples{
