@@ -3,11 +3,11 @@ layout: default
 title: lidR package
 ---
 
-R package for airborne LiDAR data manipulation and visualisation for forestry application
+R package for airborne LiDAR data manipulation and visualisation for forestry applications
 
-lidR package provides functions to read `.las` files, plot a cloud of points, compute metrics in an area-based approach, compute digital model of canopy, thin lidar data, automatically extract ground inventories, process a set of tiles on multicore, classify data from shapefiles and provides others tools to manipulate liDAR data. LidR is designed mainly for research purposes in an area-based approach.
+lidR package provides functions to read `.las` files, plot a cloud of points, compute metrics in an area-based approach, compute a digital canopy model, thin liDAR data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. LidR is designed mainly for research purposes using an area-based approach.
 
-lidR provides an open-source and R based implementation of the main functions from sofware like FUSION or lastools. lidR is flexible because it rely on the programmation of you own tools rather than the use of a set of given tools.
+lidR provides an open-source and R-based implementation of the main functions from sofware like FUSION or lastools. lidR is flexible because it allows users to program their own tools rather than using a set of predetermined tools.
 
 # Install lidR from Github with devtools
 
@@ -18,22 +18,22 @@ lidR provides an open-source and R based implementation of the main functions fr
 # Features 
 
 - [Read .las files](loadLidar.html)
-- [Retrieved indiviual pulses](loadLidar.html#dynamically-computed-field)
+- [Retrieve indiviual pulses](loadLidar.html#dynamically-computed-field)
 - [Retrieve individual flightlines](loadLidar.html#dynamically-computed-fields)
-- [Compute a digital model of canopy](canopy.html)
-- Compute any set of metrics on a cloud of point
-- Rasterize and apply any function to compute a set of metrics in an area based approach
+- [Compute a digital canopy model](canopy.html)
+- Compute any set of metrics on a cloud of points
+- Rasterize and apply any function to compute a set of metrics using an area-based approach
 - [Classify and filter data from geographic shapefiles](classifyFromShapefile.html)
-- [Filter cloud of points based on any condition test](extract.html)
-- Thin a cloud of point to reach an homogeneous point density
-- Clip data base on disc, rectangle or polygon.
+- [Filter a cloud of points based on any condition test](extract.html)
+- Thin a cloud of points to reach an homogeneous point density
+- Clip data based on discs, rectangles or polygons.
 - Compute point and pulse densities
 - Manage a catalog of `.las` tiles
-- Extract automatically a set of ground plot inventories (even plot falling between two or more tiles)
-- Analyse a full set a tiles in parallel computing
+- Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)
+- Analyse a full set of tiles in parallel computing
 - [Plot 3D LiDAR data](plotLidar.html)
-- plot in 2D and 3D the metrics
-- Compute simple triangular irregular network (TIN)
+- plot metrics in 2D and 3D
+- Compute a simple triangular irregular network (TIN)
     
 # Some examples
     
@@ -52,7 +52,7 @@ lidR provides an open-source and R based implementation of the main functions fr
 
 ![](images/gridMetrics-mean.jpg)
     
-## Compute a set a personnal metrics
+## Compute a set of user-defined metrics
 
     myMetrics = function(z, i, angle, pulseID)
     {
