@@ -9,22 +9,22 @@ LAD(z, dz = 1, k = 0.5)
 \arguments{
 \item{z}{vector of positive z coordinates}
 
-\item{dz}{numeric. The thickeness of the layers used (height bin)}
+\item{dz}{numeric. The thickness of the layers used (height bin)}
 
 \item{k}{numeric. is the extinction coefficient}
 }
 \value{
-A data.frame containing the bins elevations (z) and leaf area density for each bin (lad)
+A data.frame containing the bin elevations (z) and leaf area density for each bin (lad)
 }
 \description{
-Computes a leaf area density profile based on Bouvier et al. method (see reference)
+Computes a leaf area density profile based on the method of Bouvier et al. (see reference)
 }
 \details{
 The function assessing the number of laser points that actually reached the layer
-z+dz and those that when through by the layer [z, z+dz]. Then it compute the log
-of this quantity and divided it by the extinction coefficient k as described in Bouvier
-et al. By definition the layer 0 will always return 0 because no return went through
-the ground. So the layer 0 is removed from the returned results.
+z+dz and those that passed through the layer [z, z+dz]. Then it computes the log
+of this quantity and divides it by the extinction coefficient k as described in Bouvier
+et al. By definition the layer 0 will always return 0 because no returns reached
+the ground. Therefore, the layer 0 is removed from the returned results.
 }
 \examples{
 z = dbeta(seq(0, 0.8, length = 1000), 6, 6)*10

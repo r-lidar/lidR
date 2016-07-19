@@ -5,7 +5,7 @@
 \alias{summary.Lidar}
 \title{Summary of Lidar data}
 \usage{
-\method{summary}{Lidar}(object, ...)
+summary.Lidar(object, ...)
 }
 \arguments{
 \item{object}{An object of the class \code{Lidar}}
@@ -13,7 +13,7 @@
 \item{\dots}{Unused (inherited from R base)}
 }
 \description{
-This functions implements a \link[base:summary]{summary} method for Lidar object
+This functions implements a \link[base:summary]{summary} method for Lidar objects
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

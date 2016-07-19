@@ -15,13 +15,13 @@ readLAS(LASfile, fields = "standard")
 A data.table
 }
 \description{
-Methods to read .las file
+Methods to read .las files
 }
 \note{
-The function was firsly wrote by Michael Sumner and Carlos Alberto Silva.
-This version is a function modify from the first one whichis less greedy in memory
-and more flexible for the lidR package usages. But the greater work was made by the authors
-of rLidar package.
+The function was first written by Michael Sumner and Carlos Alberto Silva.
+This is a modified version of the original function that is less memory-intensive
+and more flexible for the various lidR package usages. The majority of the work was done by the authors
+of the rLidar package.
 }
 \author{
 Michael Sumner and Carlos Alberto Silva.

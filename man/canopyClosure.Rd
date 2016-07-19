@@ -11,10 +11,10 @@ canopyClosure(x, threshold, na.rm = TRUE)
 
 \item{threshold}{numeric. Threshold value}
 
-\item{na.rm}{logical. If TRUE it doesn't count NA value in the number of cells (useful for circular plot for example)}
+\item{na.rm}{logical. If TRUE NA values in the number of cells are not counted (useful for circular plots, for example)}
 }
 \value{
-A numeric percentage between 0 and 100
+A numeric percentage value between 0 and 100
 }
 \description{
 canopyClosure computes estimates of canopy closure using a canopy surface model.

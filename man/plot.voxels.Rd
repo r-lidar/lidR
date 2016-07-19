@@ -4,7 +4,7 @@
 \alias{plot.voxels}
 \title{Plot voxelized LiDAR data}
 \usage{
-\method{plot}{voxels}(x, y, color = "Z", colorPalette = "height.colors",
+plot.voxels(x, y, color = "Z", colorPalette = "height.colors",
   bg = "black", display = "points", ...)
 }
 \arguments{
@@ -12,21 +12,21 @@
 
 \item{y}{Unused (inherited from R base)}
 
-\item{color}{characters. The field used to colorize the points. Default is Z coordinates. Or a vector of colors.}
+\item{color}{characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.}
 
 \item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
 
-\item{bg}{The color for the background Default is black.}
+\item{bg}{The color for the background. Default is black.}
 
 \item{display}{character. By default is "points" to plot voxels as points for fast display. Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow. It cannot be use for a large number of voxels.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"}
 }
 \description{
-This functions implements a 3D plot methods for voxels objects
+This functions implements a 3D plot method for voxels objects
 }
 \details{
-By default the function plot points for fast display purpose. It can plot real voxels.
+By default the function plots points for fast display purposes. It can also plot real voxels.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")

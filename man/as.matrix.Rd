@@ -2,7 +2,7 @@
 % Please edit documentation in R/ClassGridMetrics.r
 \name{as.matrix.gridMetrics}
 \alias{as.matrix.gridMetrics}
-\title{Tranform a gridMetrics into a spatial matrix}
+\title{Tranform a gridMetrics object into a spatial matrix}
 \usage{
 \method{as.matrix}{gridMetrics}(x, z = NULL, ...)
 }
@@ -14,7 +14,7 @@
 \item{\dots}{Other parameters for \code{acast}}
 }
 \description{
-Tranform a gridMetrics into a spatial matrix
+Tranform a gridMetrics object into a spatial matrix
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
