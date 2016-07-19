@@ -32,9 +32,9 @@
       lidRError("TFS4", expression = funcstring, metric = n, number = c)
   }
   else if(is.data.frame(metrics))
-    lidRError("TFS5")
+    lidRError("TFS5", expression = funcstring)
   else if(is.vector(metrics) & length(metrics) > 1)
-    lidRError("TFS6")
+    lidRError("TFS6", expression = funcstring)
   else
     return(0)
 }
