@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Common miss usage of gridMetrics
+title: Common misusage of gridMetrics
 ---
 
-The user can miss use the `gridMetrics` function by using a function which is not appropriated. For example these examples are not allowed: 
+The user can misuse the `gridMetrics` function by using a function which is not appropriate. For example, the following are not allowed: 
 
     gridMetrics(lidar, 20, LAD(Z))
     gridMetrics(lidar, 20, head(Z))
@@ -15,11 +15,11 @@ The user can miss use the `gridMetrics` function by using a function which is no
 3. `range`returns a `vector`
 4. `quantile`returns a `vector`
 
-The expression provided to `gridMetrics` must return a single number or a `list` of single numbers. If it is not the case, the function will crash and the error given by the `data.table` is inapprehensible for users.
+The expression provided to `gridMetrics` must return a single number or a `list` of single numbers. If it is not the case, the function will crash and the error given by `data.table` is incomprehensible for users.
 
 ## Example of quantiles
 
-By defining a new quantile function which call the original on you can change the output type. And you can choose the names of the outputs renaming the list.
+By defining a new quantile function which calls the original you can change the output type. And you can choose the names of the outputs renaming the list.
 
     myQuantile = function(x, probs = seq(0, 1, 0.25))
     {
@@ -42,7 +42,7 @@ Then use this function. This the basic way `gridMetrics` works.
     5: 685350 5017790 0.00 0.285 5.540  8.9750 14.67
     6: 685350 5017810 0.00 2.880 6.980  9.9200 15.21
     
-You can use it with optionnal arguments.
+You can use it with optional arguments.
 
     metrics = gridMetrics(lidar, 20, myQuantile(Z, seq(0.1,0.9,0.1)))
     hean(metrics)
@@ -55,7 +55,7 @@ You can use it with optionnal arguments.
     5: 685350 5017790 0.00 0.120 1.590 3.600 5.540 6.560 8.390  9.800 11.420
     6: 685350 5017810 0.11 0.512 4.202 5.830 6.980 7.870 9.210 10.490 11.652
 
-## Common error
+## Common errors
 
      gridMetrics(lidar, 20, LAD(Z))
 
