@@ -12,7 +12,7 @@ convexHull(x, y)
 \item{y}{coordinates vectors of points}
 }
 \value{
-A data frame with the coordinates of the unique points lying on the convex hull, in clockwise order. The first points is repeated to close the hull.
+A data frame with the coordinates of the unique points lying on the convex hull, in clockwise order. The first point is repeated to close the hull.
 }
 \description{
 Computes the convex hull of the set of points specified.

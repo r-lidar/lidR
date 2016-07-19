@@ -4,7 +4,7 @@
 \alias{plot.Catalog}
 \title{Plot a Catalog object}
 \usage{
-\method{plot}{Catalog}(x, y, ...)
+plot.Catalog(x, y, ...)
 }
 \arguments{
 \item{x}{A Catalog object}

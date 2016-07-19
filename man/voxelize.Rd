@@ -18,30 +18,30 @@ voxelize(obj, res, func)
 \item{func}{the function to be apply to each cells}
 }
 \value{
-It returns a \code{data.table} with containing the metrics for each voxel. The table have the class "voxels" enabling to easily plot it.
+It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
 }
 \description{
 Voxelize the cloud of points and compute a series of descriptive statistics for
 each voxel.
 }
 \details{
-Voxelize create a 3D matrix of voxels whith a given resolution. It create a voxel
-from the cloud of point if there is at least one points in the voxel. For each voxel
-the function allows to compute one or several derived metrics by the same way than
+Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
+from the cloud of point if there is at least one point in the voxel. For each voxel
+the function allows computation of one or several derived metrics in the same way as
 the gridMetrics functions.
-Basically there no predifined metrics. The users must write is own function to create metrics.
-Vovelize will dispach the LiDAR data for each voxel in the user's function. The user write his
-function without thinking about grid cells. Just thinking about a cloud of points (see example).
+Basically there are no predifined metrics. Users must write their own function to create metrics.
+Voxelize will dispach the LiDAR data for each voxel in the user's function. The user writes their
+function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 lidar = LoadLidar(LASfile)
 
-# Cloud of point is voxelize with a 1 meter resolution and in each voxel
+# Cloud of points is voxelized with a 1 meter resolution and in each voxel
 # the number of points is computed.
 voxelize(lidar, 1, length(Z))
 
-# Cloud of point is voxelize with a 1 meter resolution and in each voxel
+# Cloud of points is voxelized with a 1 meter resolution and in each voxel
 # the mean scan angle of points is computed.
 voxelize(lidar, 1, mean(ScanAngle))
 

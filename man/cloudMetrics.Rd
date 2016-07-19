@@ -13,10 +13,10 @@ cloudMetrics(obj, func)
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
-\item{func}{The function to be apply to cloud of points}
+\item{func}{The function to be applied to a cloud of points}
 }
 \value{
-It returns a \code{data.table} with containing the metrics
+It returns a \code{data.table} containing the metrics
 }
 \description{
 Computes a series of descriptive statistics for a LiDAR dataset
@@ -24,8 +24,8 @@ Computes a series of descriptive statistics for a LiDAR dataset
 \details{
 Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
 computes a single set of metrics for the entire data set. See \link[lidR:gridMetrics]{gridMetrics}
-to compute metrics on a grid. Basically there no predifined metrics. The users
-must write is own function to create metrics (see example). The following existing
+to compute metrics on a grid. Basically there are no predifined metrics. Users
+must write their own function to create metrics (see example). The following existing
 function can help the user to compute some metrics:
 \itemize{
 \item{\link[lidR:entropy]{entropy}}

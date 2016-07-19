@@ -18,10 +18,10 @@ A data.table containing the x, y and z coordinates of the cells
 Rasterize a triangular irregular network
 }
 \details{
-This function is in developpement and is currently very slow.
+This function is in development and is currently very slow.
 }
 \note{
-Still in developpment. Currently very slow.
+Still in development. Currently very slow.
 }
 \examples{
 x = runif(20)

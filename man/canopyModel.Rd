@@ -21,7 +21,7 @@ canopyModel(obj, res = 2, method = "local_maximum", start = c(0, 0))
 \item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}}
 }
 \value{
-It returns a \code{data.table} with the class \code{gridMetrics} which anable to plot it easily.
+It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
 }
 \description{
 Creates a canopy surface model using a LiDAR cloud of points.
@@ -31,7 +31,7 @@ By default, the algorithm used is the local maximum algorithm. It assigns the
 elevation of the highest return within each grid cell to the grid cell center.
 It can also use a triangular irregular network (TIN) algorithm. In this case
 it use a Delaunay triangulation on first returns. The TIN rasterization is
-currently very slow. So, it can't be used for large datasets.
+currently very slow. Therefore, it is not suitable for large datasets.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
