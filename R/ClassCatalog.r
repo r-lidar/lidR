@@ -47,10 +47,10 @@ setMethod("initialize", "Catalog",
 	function(.Object, folder, ...)
 	{
 	  if(!is.character(folder))
-	    stop("Invalid parameter input in constructor. Expected string.")
+	     lidRError("GTG1")
 
 	  if(!dir.exists(folder))
-	    stop("This folder doesn't exist.")
+	     lidRError("CTG2")
 
 	  files = list.files(folder, full.names = T)
 

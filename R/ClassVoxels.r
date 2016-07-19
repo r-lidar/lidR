@@ -63,7 +63,7 @@ plot.voxels = function(x, y, color = "Z", colorPalette = "height.colors", bg = "
     x %$% cube(x$X, x$Y, x$Z, inargs$col, scale = attr(x, "res"))
   }
   else
-    stop("This diplay method does not exist.", call. = F)
+    lidRError("VOX1")
 }
 
 cube <- function(x, y, z, col, scale = 1)
