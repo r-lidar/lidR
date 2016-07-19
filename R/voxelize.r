@@ -59,7 +59,7 @@ setMethod("voxelize", "Lidar",
 
         x_raster = plyr::round_any(obj@data$X, res)
         y_raster = plyr::round_any(obj@data$Y, res)
-        z_raster = plyr::round_any(obj@data$Z, res)
+        z_raster = plyr::round_any(obj@data$Z-0.5*res, res)+0.5*res
 
         by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
 
