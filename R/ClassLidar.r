@@ -62,7 +62,7 @@ setClass(
 #' saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
 #' pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
 #' apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
-#' 
+#'
 #' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
 #' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
 #' @param \dots Unused
@@ -94,16 +94,16 @@ setMethod("initialize", "Lidar",
 	  else if(is.data.table(input))
 	    .Object@data = input
 	  else
-	    stop("Invalid parameter input in constructor", call.=F)
+	    lidRError("LDR1")
 
 	  negvalues = sum(.Object@data$Z < 0)
 	  class0    = sum(.Object@data$Classification == 0)
 
 	  if(negvalues > 0)
-	    warning("Dataset may be invalid: ", negvalues, " points below 0 found", call.=F)
+	    lidRError("LDR2", number = negvalues, behaviour = warning)
 
 	  if(class0 > 0)
-	    warning("Dataset may be invalid: ", class0, " unclassified points found", call.=F)
+	    lidRError("LDR3", number = class0, behaviour = warning)
 
 	  if("gpstime" %in% names(.Object@data))
 	  {
@@ -120,7 +120,7 @@ setMethod("initialize", "Lidar",
   	  .Object@pulseDensity <- .pulseDensity(.Object)
 	  }
 	  else
-	    warning("No gpstime field found. 'pulseID', 'flightlines' and 'pulse density' cannot be computed from this file.", call.=F)
+	    lidRError("LDR4", behaviour = warning)
 
 	  if(sum(c("R", "G", "B") %in% names(.Object@data)) == 3)
 	  {
@@ -151,7 +151,7 @@ setMethod("getNth", "Lidar",
 	   ReturnNumber <- NULL
 
 	  if(n > max(obj@data$ReturnNumber) | n <= 0)
-	    stop("Parameter n of function getNth incorrect")
+	    lidRError("LDR5")
 
 		return(extract(obj, ReturnNumber == n))
 	}
@@ -225,7 +225,7 @@ setMethod("canopyModel", "Lidar",
 	  else if(method == "TIN")
 	    ret = obj %>% getFirst %>% getData %$% TIN(X,Y,Z) %>% rasterizeTIN(res) %>% as.gridMetrics
 	  else
-	    stop("This algorithm does not exist")
+	    lidRError("LDR6")
 
     return(ret)
 	}
@@ -307,7 +307,7 @@ setMethod("gridMetrics", "Lidar",
  		else if(option == "split_flightline")
  			by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
  		else
-			stop("Cette option n'existe pas")
+			lidRError("LDR7", option = option)
 
 		stat <- obj@data[, c(eval(func_call)), 	by=by]
 

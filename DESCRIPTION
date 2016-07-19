@@ -32,6 +32,7 @@ Collate:
     'entropy.r'
     'fractal.dimension.r'
     'global.r'
+    'lidRError.r'
     'metrics.r'
     'perc_pulses_with_n_returns.r'
     'publicHeaderDescription.R'
