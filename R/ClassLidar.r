@@ -41,7 +41,6 @@
 #' @rdname Lidar-class
 #' @aliases Lidar
 #' @exportClass Lidar
-#' @include setGeneric.r
 setClass(
 	Class = "Lidar",
 	representation(
@@ -53,34 +52,7 @@ setClass(
 	)
 )
 
-#' Load a las file and create a 'Lidar' object
-#'
-#' Methods to read and create a \code{Lidar} object from a vector of .las filename(s)
-#'
-#' Methods to read and create a \code{Lidar} object from a vector of .las filename(s).
-#' The option fields allows selection of fields to be loaded. Removing redundant fields
-#' saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
-#' pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
-#' apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
-#'
-#' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
-#' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
-#' @param \dots Unused
-#' @return An object of class \code{Lidar}
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#'
-#' lidar = LoadLidar(LASfile)
-#'
-#' getData(lidar)
-#' summary(lidar)
-#' @seealso
-#' \link[lidR:Lidar]{Class Lidar}
-#' \link[lidR:getData]{getData}
-#' \link[lidR:summary]{summary}
-#' @export LoadLidar
-LoadLidar <- function(input, fields = "standard", ...) {return(new("Lidar", input, fields, ...))}
-
+#' @importFrom data.table is.data.table setorder
 setMethod("initialize", "Lidar",
 	function(.Object, input, fields = "standard", ...)
 	{
@@ -134,424 +106,11 @@ setMethod("initialize", "Lidar",
 	}
 )
 
-#' @rdname extract
-setMethod("extract", "Lidar",
-	function(.data, ...)
-	{
-		ret = .data@data %>% dplyr::filter(...) %>% LoadLidar
+# Internal functions
 
-		return(ret)
-	}
-)
+setGeneric(".pointDensity", function(obj){standardGeneric(".pointDensity")})
 
-#' @rdname getNth
-setMethod("getNth", "Lidar",
-	function(obj, n)
-	{
-	   ReturnNumber <- NULL
-
-	  if(n > max(obj@data$ReturnNumber) | n <= 0)
-	    lidRError("LDR5")
-
-		return(extract(obj, ReturnNumber == n))
-	}
-)
-
-#' @rdname getFirst
-setMethod("getFirst", "Lidar",
-	function(obj)
-	{
-		return(getNth(obj, 1))
-	}
-)
-#' @rdname getFirstOfMany
-setMethod("getFirstOfMany", "Lidar",
-	function(obj)
-	{
-	  NumberOfReturns <- ReturnNumber <- NULL
-
-		return(extract(obj, NumberOfReturns > 1, ReturnNumber == 1))
-	}
-)
-
-#' @rdname getSingle
-setMethod("getSingle", "Lidar",
-	function(obj)
-	{
-	  NumberOfReturns <- NULL
-
-		return(extract(obj, NumberOfReturns == 1))
-	}
-)
-
-#' @rdname  getLast
-setMethod("getLast", "Lidar",
-	function(obj)
-	{
-	  NumberOfReturns <- ReturnNumber <- NULL
-
-		return(extract(obj, ReturnNumber == NumberOfReturns))
-	}
-)
-
-#' @rdname getFirstLast
-setMethod("getFirstLast", "Lidar",
-	function(obj)
-	{
-	  ReturnNumber <- NumberOfReturns <- NULL
-
-		return(extract(obj, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
-	}
-)
-
-#' @rdname getGround
-setMethod("getGround", "Lidar",
-	function(obj)
-	{
-	  Classification <- NULL
-
-	 	return(extract(obj, Classification == 2))
- 	}
-)
-
-#' @rdname canopyModel
-setMethod("canopyModel", "Lidar",
-	function(obj, res = 2, method="local_maximum", start=c(0,0))
-	{
-	  X <- Y <- Z <- V1 <- NULL
-
-	  if(method == "local_maximum")
-		  ret = gridMetrics(obj, res, max(Z), start) %>% dplyr::rename(Z = V1)
-	  else if(method == "TIN")
-	    ret = obj %>% getFirst %>% getData %$% TIN(X,Y,Z) %>% rasterizeTIN(res) %>% as.gridMetrics
-	  else
-	    lidRError("LDR6")
-
-    return(ret)
-	}
-)
-
-#' @rdname pulseDensity
-setMethod("pulseDensity", "Lidar",
-	function(obj, res = 4)
-	{
-	  pulseID <- V1 <- NULL
-
-		ret = gridMetrics(obj, res, length(unique(pulseID))/res^2) %>% dplyr::rename(Z = V1)
-    return(ret)
-	}
-)
-
-#' @rdname getData
-setMethod("getData", "Lidar",
-	function(obj)
-	{
-		return(obj@data)
-	}
-)
-
-#' @rdname clipRectangle
-setMethod("clipRectangle", "Lidar",
-	function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
-	{
-	  X <- Y <- NULL
-
-	  if(inside)
-		  return(extract(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
-	  else
-	    return(extract(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
-
-	}
-)
-
-#' @rdname clipPolygon
-setMethod("clipPolygon", "Lidar",
-	function(obj, x, y, inside = TRUE)
-	{
-	  X <- Y <- NULL
-
-	  if(inside)
-		  return(extract(obj, sp::point.in.polygon(X,Y,x,y) > 0))
-	  else
-	    return(extract(obj, sp::point.in.polygon(X,Y,x,y) == 0))
-	}
-)
-
-#' @rdname clipCircle
-setMethod("clipCircle", "Lidar",
-	function(obj, xcenter, ycenter, radius, inside = TRUE)
-	{
-	  X <- Y <- NULL
-
-	  if(inside)
-		  return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
-	  else
-	    return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
-	}
-)
-
-#' @rdname gridMetrics
-setMethod("gridMetrics", "Lidar",
-	function(obj, res, func, start = c(0,0), option = NULL)
-	{
-	  func_call = substitute(func)
-
-	  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
-
-		x_raster = plyr::round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-		y_raster = plyr::round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
-		flightlineID = obj@data$flightlineID
-
- 		if(is.null(option))
- 			by = list(Xc = x_raster,Yc = y_raster)
- 		else if(option == "split_flightline")
- 			by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
- 		else
-			lidRError("LDR7", option = option)
-
-		stat <- obj@data[, c(eval(func_call)), 	by=by]
-
-		n = names(stat)
-		n[1:2] = c("X", "Y")
-		setnames(stat, n)
-
-		attr(stat, "class") = c("gridMetrics", attr(stat, "class"))
-
-		return(stat)
-	}
-)
-
-#' @rdname voxelize
-setMethod("voxelize", "Lidar",
-    function(obj, res, func)
-    {
-        func_call = substitute(func)
-
-	      obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
-
-        x_raster = plyr::round_any(obj@data$X, res)
-        y_raster = plyr::round_any(obj@data$Y, res)
-        z_raster = plyr::round_any(obj@data$Z, res)
-
-        by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
-
-        stat <- obj@data[, c(eval(func_call)), by=by]
-
-        n = names(stat)
-        n[1:3] = c("X", "Y", "Z")
-        setnames(stat, n)
-
-        attr(stat, "class") = c("voxels", attr(stat, "class"))
-        attr(stat, "res") = res
-
-        return(stat)
-    }
-)
-
-#' @rdname cloudMetrics
-setMethod("cloudMetrics", "Lidar",
-	function(obj, func)
-	{
-	  func_call = substitute(func)
-	  metric = obj@data %$% eval(func_call)
-		return(metric)
-	}
-)
-
-#' @rdname thin
-setMethod("thin", c("Lidar", "numeric"),
-	function(obj, pulseDensity, homogenize = TRUE, resolution = 5)
-  {
-	  pulseID <- gpstime <- NULL
-
-    if(homogenize == FALSE)
-    {
-      n = round(pulseDensity*obj@area)
-      selected = .selectPulseToRemove(obj@data$pulseID, n)
-    }
-    else
-    {
-      n = round(pulseDensity*resolution^2)
-
-      x_raster = plyr::round_any(obj@data$X, resolution)
-      y_raster = plyr::round_any(obj@data$Y, resolution)
-
-      by = list(Xr = x_raster,Yr = y_raster)
-
-      selected = obj@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
-      selected[, c("Xr", "Yr") := NULL]
-
-      setorder(selected, t)
-      setorder(obj@data, gpstime)
-
-      selected = selected$delete
-    }
-
-    return(LoadLidar(obj@data[selected]))
-	}
-)
-
-#' @rdname extent
-setMethod("extent", "Lidar",
-	function(x)
-	{
-		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
-	}
-)
-
-#' Plot LiDAR data
-#'
-#' This functions implements a 3D plot method for Lidar objects
-#'
-#' @aliases plot plot.Lidar
-#' @param x An object of the class \code{Lidar}
-#' @param y Unused (inherited from R base)
-#' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
-#' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
-#' @param bg The color for the background. Default is black.
-#' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#'
-#' lidar = LoadLidar(LASfile)
-#'
-#' plot(lidar)
-#' plot(lidar, color = "Intensity", colorPalette = "heat.colors")
-#' @seealso
-#' \link[rgl:points3d]{points3d}
-#' \link[lidR:height.colors]{height.colors}
-#' \link[grDevices:heat.colors]{heat.colors}
-#' \link[lidR:Lidar]{Class Lidar}
-#' @export
-#' @importFrom rgl points3d open3d rgl.bg
-#' @importFrom grDevices heat.colors terrain.colors topo.colors
-plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "black",  ...)
-{
-  inargs <- list(...)
-
-  trim = ifelse(is.null(inargs$trim), 1, inargs$trim)
-
-  inargs$col = color
-
-  if(length(color) == 1)
-  {
-    if(color %in% names(x@data))
-    {
-      data = unlist(x@data[,color, with = FALSE])
-
-      if(is.numeric(data))
-      {
-        inargs$col = .colorPalette(data-min(data), trim, colorPalette)
-        inargs$col[is.na(inargs$col)] = "lightgray"
-      }
-      else if(is.character(data))
-        inargs$col = data
-    }
-  }
-
-  rgl::open3d()
-  rgl::rgl.bg(color = bg)
-  do.call(rgl::points3d, c(list(x=x@data$X, y=x@data$Y, z=x@data$Z), inargs))
-}
-
-#' Summary of Lidar data
-#'
-#' This functions implements a \link[base:summary]{summary} method for Lidar objects
-#'
-#' @aliases summary
-#' @param object An object of the class \code{Lidar}
-#' @param \dots Unused (inherited from R base)
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#'
-#' lidar = LoadLidar(LASfile)
-#'
-#' summary(lidar)
-#'
-#' @export
-#' @seealso
-#' \link[lidR:Lidar]{Class Lidar}
-summary.Lidar =	function(object, ...)
-{
-  size <- format(object.size(object), units = "auto")
-
-  cat(paste("Memory :", size, "\n", sep=" "))
-
-  cat("\n")
-
-  cat("area :", object@area, "square units\n")
-  cat("points :", dim(object@data)[1], "points\n")
-  cat("pulses :", dplyr::n_distinct(object@data$pulseID), "pulses\n")
-  cat("point density :", object@pointDensity, "points/square units\n")
-  cat("pulse density :", object@pulseDensity, "pulses/square units\n")
-}
-
-#' @rdname area
-setMethod("area", "Lidar",
-	function(obj)
-	{
-		hull = convexHull(obj@data$X, obj@data$Y)
-		area = polygonArea(hull$x, hull$y)
-		area = round(area,1)
-		return(area)
-	}
-)
-
-#' @rdname classifyFromShapefile
-setMethod("classifyFromShapefile", "Lidar",
-	function(obj, shapefile, field)
-	{
-	  npoints = dim(obj@data)[1]
-
-		if(field %in% names(shapefile@data))
-		{
-		  method = 1
-
-		  if(class(shapefile@data[,field]) == "factor")
-		    values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
-		  else
-		    values = numeric(npoints)
-		}else{
-		  method = 2
-		  values = numeric(npoints)
-		}
-
-	  polys = raster::crop(shapefile, extent(obj))
-
-		if(!is.null(polys))
-		{
-		    npoly   = length(polys@polygons)
-
-    		for(i in 1:npoly)
-    		{
-    		  x = polys@polygons[[i]]@Polygons[[1]]@coords[,1]
-    		  y = polys@polygons[[i]]@Polygons[[1]]@coords[,2]
-
-    		  if(method == 1)
-    		  {
-    		    bool = sp::point.in.polygon(obj@data$X, obj@data$Y, x, y) > 0
-    		    values[bool] = polys@data[, field][i]
-    		  }
-    		  else if(method == 2)
-    		  {
-    		    values = values + sp::point.in.polygon(obj@data$X, obj@data$Y, x, y)
-    		  }
-    		}
-		}
-
-		if(method == 2)
-		  values = values > 0
-
-		obj@data$info = values
-
-		colnames = names(obj@data)
-		colnames[length(colnames)] = field
-    setnames(obj@data, colnames)
-
-    return(obj)
-	}
-)
-
+#' @importFrom magrittr %>% divide_by
 setMethod(".pointDensity", "Lidar",
 	function(obj)
 	{
@@ -560,6 +119,9 @@ setMethod(".pointDensity", "Lidar",
 	}
 )
 
+setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
+
+#' @importFrom magrittr %>% divide_by
 setMethod(".pulseDensity", "Lidar",
 	function(obj)
 	{
@@ -568,20 +130,20 @@ setMethod(".pulseDensity", "Lidar",
 	}
 )
 
-#  ========= EN DEVELOPPEMENT =========
+#' @importFrom dplyr lag
+.IdentifyPulse = function(return.number)
+{
+  boo = dplyr::lag(return.number) >= return.number
+  boo[1] = TRUE
+  return(cumsum(boo))
+}
 
-# setGeneric("getDTM", function(obj, rasterArea = 4){standardGeneric("getDTM")})
-# setMethod("getDTM", "Lidar",
-# 	function(obj, rasterArea = 4)
-# 	{
-# 	  ground = obj %>% getGround
-#
-# 	  x = ground@data$X
-#     y = ground@data$Y
-#     z = ground@data$Z
-#
-#     dtm = .rasterize_tin(x, y, z, 100, 100)
-#
-# 		return(DigitalModel(dtm, 10))
-# 	}
-# )
+#' @importFrom dplyr lag
+.IdentifyFlightlines = function(time, t = 30)
+{
+  boo = time - dplyr::lag(time) > t
+  boo[1] = TRUE
+  return(cumsum(boo))
+}
+
+

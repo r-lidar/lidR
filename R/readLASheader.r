@@ -26,6 +26,7 @@
 #' @return A list with the las header fields
 #' @seealso \link[lidR:LoadLidar]{LoadLidar}
 #' @export readLASheader
+#' @importFrom magrittr %<>%
 readLASheader = function(LASfile)
 {
   hd <- publicHeaderDescription()
