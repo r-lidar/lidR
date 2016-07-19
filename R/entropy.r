@@ -11,9 +11,9 @@
 #'
 #' @param z vector of positive z coordinates
 #' @param by numeric. The thickeness of the layers used (height bin)
-#' @param zmax numeric. Used to turn the function entropy to the function \link[lidR:vci]{vci}.
+#' @param zmax numeric. Used to turn the function entropy to the function \link[lidR:VCI]{VCI}.
 #' @seealso
-#' \link[lidR:vci]{vci}
+#' \link[lidR:VCI]{VCI}
 #' @examples
 #' z = runif(10000, 0, 10)
 #'
@@ -63,33 +63,3 @@ entropy = function(z, by = 1, zmax = NULL)
 
 	return(S)
 }
-
-#' Vertical complexity index
-#'
-#' A fixed normalization of the entropy function (see references)
-#' @param z vector of z coordinates
-#' @param by numeric. The thickness of the layers used (height bin)
-#' @param zmax numeric. Used to turn the function entropy to the function vci.
-#' @return A number between 0 and 1
-#' @return A number between 0 and 1
-#' @seealso
-#' \link[lidR:entropy]{entropy}
-#' @examples
-#' z = runif(10000, 0, 10)
-#'
-
-#' vci(z, by = 1, zmax = 20)
-#'
-#' z = abs(rnorm(10000, 10, 1))
-#'
-#' # expected to be closer to 0.
-#' vci(z, by = 1, zmax = 20)
-#' @references van Ewijk, K. Y., Treitz, P. M., & Scott, N. A. (2011). Characterizing Forest Succession in Central Ontario using Lidar-derived Indices. Photogrammetric Engineering and Remote Sensing, 77(3), 261-269. Retrieved from <Go to ISI>://WOS:000288052100009
-#' @export vci
-vci = function(z, zmax, by = 1)
-{
-  z = z[z < zmax]
-
-  return(entropy(z, by, zmax))
-}
-

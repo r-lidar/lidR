@@ -1,4 +1,5 @@
 #' @importFrom tools file_ext
+#' @importFrom data.table data.table rbindlist
 .loadLAS = function(files, fields="standard")
 {
   valid = file.exists(files)
@@ -31,6 +32,7 @@
 #' and more flexible for the various lidR package usages. The majority of the work was done by the authors
 #' of the rLidar package.
 #' @importFrom bitops bitAnd bitShiftR
+#' @importFrom data.table data.table
 readLAS <- function(LASfile, fields="standard")
 {
   if(!(fields %in% c("minimal", "standard", "all")))

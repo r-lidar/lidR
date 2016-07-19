@@ -11,7 +11,7 @@ entropy(z, by = 1, zmax = NULL)
 
 \item{by}{numeric. The thickeness of the layers used (height bin)}
 
-\item{zmax}{numeric. Used to turn the function entropy to the function \link[lidR:vci]{vci}.}
+\item{zmax}{numeric. Used to turn the function entropy to the function \link[lidR:VCI]{VCI}.}
 }
 \value{
 A number between 0 and 1
@@ -48,6 +48,6 @@ Pretzsch, H. (2008). Description and Analysis of Stand Structures. Springer Berl
 Shannon, Claude E. (1948), "A mathematical theory of communication," Bell System Tech. Journal 27, 379-423, 623-656.
 }
 \seealso{
-\link[lidR:vci]{vci}
+\link[lidR:VCI]{VCI}
 }
 
