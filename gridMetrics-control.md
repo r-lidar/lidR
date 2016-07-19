@@ -3,7 +3,7 @@ layout: default
 title: Advanced used of gridMetrics
 ---
 
-gridMetrics returns a list of plots with the associated metrics. But some plots fall in water and the algorithm cannot guess that. Some plots are incomplete because they fall at the edge of the file or the edge of a flightline, or in this edge of a void area (providers removed some data), or for other good reasons. The algorithm makes cells but it does not control what was in the cells. You can control the quality of cells in two ways.
+gridMetrics returns a list of plots with the associated metrics. But some plots fall in water and the algorithm cannot guess that. Some plots are incomplete because they fall at the edge of the file or the edge of a flightline, or at the edge of a void area (providers removed some data), or for other reasons. The algorithm makes cells but it does not control what is in the cells. You can control the quality of cells in two ways.
 
 The user must be able to filter the bad cells. Several possibilities are available.
 
@@ -36,7 +36,7 @@ You can see that some plots have an area which is not 100 m^2 (10 x 10). That me
     
 ![](images/gridMetrics-A.jpg)
 
-So the metrics must be cleaned
+So the metrics must be cleaned:
     
     metricsCleaned = dplyr::filter(metrics, A > 100*0.90)
     
@@ -44,12 +44,12 @@ The real area cannot be exactly 100 m^2 because the returns are discrete. Here w
 
 ## Advanced controller: filter from shapefiles
 
-Area control is not enough. We can classify the data based on geographic information found in shapefiles.
+Area control is sometimes not enough. We can classify the data based on geographic information found in shapefiles.
 
     shapefile_dir <- system.file("extdata", package = "lidR")
     lake = rgdal::readOGR(shapefile_dir, "lac_ontario_UTM17")
 
-We can check if the LiDAR points are in polygons given in the shapefile (here polygons are lakes) with the function `classifyFromShapefile`. This function is documented [here](classifyFromShapefile.html).
+We can check if the LiDAR points are in polygons given in the shapefile (here, polygons are lakes) with the function `classifyFromShapefile`. This function is documented [here](classifyFromShapefile.html).
 
     lidar = classifyFromShapefile(lidar, lake, field="lake")
 
@@ -84,7 +84,7 @@ You can also compute the number of points classified as lake in the `gridMetrics
     
 ![](images/gridMetrics-nlake.jpg)
 
-And filter the resulting raster which has no points into a lake and which has a proper defined area.
+And filter the resulting raster which has no points into a lake and which has a defined area.
 
     metricsCleaned = dplyr::filter(metrics, A > 380, nlake == 0)
     plot(metricsCleaned, "hmean")
