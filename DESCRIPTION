@@ -2,9 +2,9 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
-Version: 0.6.0
+Version: 0.6.1
 Date: 2016-04-09
-Authors: Jean-Romain Roussel, David Auty
+Author: Jean-Romain Roussel, David Auty
 Maintainer: Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>
 Description: This package provides an airborne LiDAR interface for data
     visualisation and manipulation. It has been designed mainly for use in forestry
@@ -71,6 +71,7 @@ Collate:
     'readLas.r'
     'retrieveInventoryTiles.r'
     'selectPulseToRemove.r'
+    'selectArea.r'
     'summary.lidar.r'
     'testFuncSignature.r'
     'thin.r'
