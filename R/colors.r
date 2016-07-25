@@ -1,8 +1,9 @@
 #' @importFrom magrittr %>%
+#' @importFrom stats quantile
 .colorPalette = function(x, q = 1, palette = "terrain.colors")
 {
   fun <- paste(palette, "(n+1)", sep="")
-  n   <- x %>% quantile(q, na.rm=T) %>% round
+  n   <- x %>% stats::quantile(q, na.rm=T) %>% round
 
 	colors_map <- eval(parse(text=fun))
 	colors     <- colors_map[round(x, 0)+1]

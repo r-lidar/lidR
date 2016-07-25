@@ -6,17 +6,14 @@
 \alias{canopyModel,Lidar-method}
 \title{Canopy surface model}
 \usage{
-canopyModel(obj, res = 2, method = "local_maximum", start = c(0, 0))
+canopyModel(obj, res = 2, start = c(0, 0))
 
-\S4method{canopyModel}{Lidar}(obj, res = 2, method = "local_maximum",
-  start = c(0, 0))
+\S4method{canopyModel}{Lidar}(obj, res = 2, start = c(0, 0))
 }
 \arguments{
 \item{obj}{An object of class \code{Lidar}}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.}
-
-\item{method}{character. The algorithm used to compute the canopy i.e. \code{"local_maxium"} or \code{"TIN"}}
 
 \item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}}
 }
@@ -27,11 +24,8 @@ It returns a \code{data.table} with the class \code{gridMetrics} which enables e
 Creates a canopy surface model using a LiDAR cloud of points.
 }
 \details{
-By default, the algorithm used is the local maximum algorithm. It assigns the
+The algorithm used is the local maximum algorithm. It assigns the
 elevation of the highest return within each grid cell to the grid cell center.
-It can also use a triangular irregular network (TIN) algorithm. In this case
-it use a Delaunay triangulation on first returns. The TIN rasterization is
-currently very slow. Therefore, it is not suitable for large datasets.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -44,12 +38,9 @@ lidar \%>\% canopyModel(2) \%>\% plot3d
 # Local maximum and TIN algorithm on a plot with a resolution of 0.5 meters
 forestplot = clipCircle(lidar, 685000, 5017900, 25)
 forestplot \%>\% canopyModel(.5) \%>\% plot
-forestplot \%>\% canopyModel(.5, "TIN") \%>\% plot
 }
 \seealso{
 \code{\link[lidR:gridMetrics]{gridMetrics}}
-\code{\link[geometry:delaunayn]{delaunayn}}
-\code{\link[lidR:rasterizeTIN]{rasterizeTIN}}
 \code{\link[lidR:clipCircle]{clipCircle}}
 }
 
