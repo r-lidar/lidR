@@ -27,8 +27,7 @@ lidR provides an open-source and R-based implementation of the main functions fr
 - Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)
 - Analyse a full set a tiles in parallel computing
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
-- plot the metrics in 2D and 3D 
-- Compute a simple triangular irregular network (TIN)
+- plot the metrics in 2D and 3D
     
 # Some examples
      
