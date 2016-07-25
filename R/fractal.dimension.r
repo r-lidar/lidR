@@ -10,6 +10,7 @@
 #' @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
 #' @export fractal.dimension
 #' @importFrom RcppArmadillo fastLmPure
+#' @importFrom stats coefficients
 fractal.dimension = function(mtx)
 {
 	if( sum(is.na(mtx)) > 0 )
@@ -34,7 +35,7 @@ fractal.dimension = function(mtx)
 
 	lm = RcppArmadillo::fastLmPure(cbind(1,log(q)), log(nbbox))
 
-	return(abs(as.numeric(coefficients(lm)[2])))
+	return(abs(as.numeric(stats::coefficients(lm)[2])))
 }
 
 .countBox = function(q, mtx)

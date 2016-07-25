@@ -15,6 +15,7 @@
 #' @export
 #' @seealso
 #' \link[lidR:Lidar]{Class Lidar}
+#' @importFrom utils object.size
 summary.Lidar =	function(object, ...)
 {
   size <- format(object.size(object), units = "auto")

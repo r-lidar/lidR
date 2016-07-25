@@ -1,3 +1,4 @@
+#' @importFrom utils capture.output
 lidRError = function(code, ..., behaviour = stop)
 {
   p <- list(...)

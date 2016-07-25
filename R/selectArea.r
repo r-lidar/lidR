@@ -25,6 +25,8 @@ setGeneric("selectArea", function(obj, ...){standardGeneric("selectArea")})
 setMethod("selectArea", "Lidar",
   function(obj, ...)
   {
+    X <- Y <- NULL
+
     plot.Lidar(obj, ...)
     rgl::view3d(0,0)
 

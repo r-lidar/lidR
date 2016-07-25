@@ -41,6 +41,8 @@
 #' @rdname Lidar-class
 #' @aliases Lidar
 #' @exportClass Lidar
+#' @importFrom methods new
+#' @importFrom grDevices rgb
 setClass(
 	Class = "Lidar",
 	representation(
@@ -97,7 +99,7 @@ setMethod("initialize", "Lidar",
 	  if(sum(c("R", "G", "B") %in% names(.Object@data)) == 3)
 	  {
 	    if(is.null(.Object@data$color))
-  	    .Object@data$color <- .Object@data %$% rgb(R/255, G/255, B/255)
+  	    .Object@data$color <- .Object@data %$% grDevices::rgb(R/255, G/255, B/255)
 	  }
 
 	  .Object@pointDensity <- .pointDensity(.Object)

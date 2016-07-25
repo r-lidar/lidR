@@ -14,4 +14,5 @@
 #' \link[lidR:extractGroundInventory]{extractGroundInventory}
 #' @return A Catalog object
 #' @export Catalog
+#' @importFrom methods new
 Catalog <- function(folder, ...) {return(new("Catalog", folder, ...))}

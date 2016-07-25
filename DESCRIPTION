@@ -16,7 +16,7 @@ License: GPL-2
 Depends:
     R (>= 3.2.0),methods,magrittr,dtplyr
 Imports:
-    rgl,grDevices,reshape2,geometry,tools,parallel,RcppArmadillo,fields,bitops,raster,sp,rgdal,plyr,rgeos,data.table,dplyr
+    rgl,stats,utils,grDevices,reshape2,tools,parallel,RcppArmadillo,fields,bitops,raster,sp,rgdal,plyr,rgeos,data.table,dplyr
 LazyData: true
 RoxygenNote: 5.0.1
 Collate:
@@ -26,7 +26,6 @@ Collate:
     'ClassLidar.r'
     'LAD.r'
     'LoadLidar.r'
-    'TIN.r'
     'area.r'
     'as.gridMetrics.r'
     'as.matrix.gridMetrics.r'
@@ -53,10 +52,8 @@ Collate:
     'getNth.r'
     'getSingle.r'
     'gridMetric.r'
-    'internals.TIN.r'
     'lidRError.r'
     'metrics.r'
-    'plot.TIN.r'
     'plot.catalog.r'
     'plot.gridMetrics.r'
     'plot.lidar.r'
@@ -66,7 +63,6 @@ Collate:
     'processParallel.r'
     'publicHeaderDescription.R'
     'pulseDensity.r'
-    'rasterizeTIN.r'
     'readLASheader.r'
     'readLas.r'
     'retrieveInventoryTiles.r'
@@ -74,6 +70,7 @@ Collate:
     'selectArea.r'
     'summary.lidar.r'
     'testFuncSignature.r'
+    'gapFractionProfile.r'
     'thin.r'
     'VCI.r'
     'voxelize.r'
