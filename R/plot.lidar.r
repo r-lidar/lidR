@@ -8,6 +8,10 @@
 #' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
 #' @param bg The color for the background. Default is black.
+#' @param trim numeric. Enables trimming of values when outliers break the color palette range.
+#' Default is 1 meaning that the whole range of the values is used for the color palette.
+#' 0.9 means thant 10% of the hightest values are not used to defined the colors palette.
+#' In this case the values higher that the 90th percentile are set to the highest color. They are not removed.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
@@ -15,20 +19,23 @@
 #' lidar = LoadLidar(LASfile)
 #'
 #' plot(lidar)
-#' plot(lidar, color = "Intensity", colorPalette = "heat.colors")
+#'
+#' # Outliers of intensity breaks the color range. Use the trim parameter.
+#' plot(lidar, color = "Intensity", colorPalette = heat.colors)
+#' plot(lidar, color = "Intensity", colorPalette = heat.colors, trim = 0.99)
 #' @seealso
 #' \link[rgl:points3d]{points3d}
 #' \link[lidR:height.colors]{height.colors}
+#' \link[lidR:forest.colors]{forest.colors}
 #' \link[grDevices:heat.colors]{heat.colors}
+#' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:Lidar]{Class Lidar}
 #' @export
 #' @importFrom rgl points3d open3d rgl.bg
 #' @importFrom grDevices heat.colors terrain.colors topo.colors
-plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "black",  ...)
+plot.Lidar = function(x, y, color = "Z", colorPalette = height.colors, bg = "black",  trim = 1, ...)
 {
   inargs <- list(...)
-
-  trim = ifelse(is.null(inargs$trim), 1, inargs$trim)
 
   inargs$col = color
 
@@ -40,7 +47,7 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = "height.colors", bg = "b
 
       if(is.numeric(data))
       {
-        inargs$col = .colorPalette(data-min(data), trim, colorPalette)
+        inargs$col = set.colors(data, colorPalette, 50, trim)
         inargs$col[is.na(inargs$col)] = "lightgray"
       }
       else if(is.character(data))

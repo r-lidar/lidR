@@ -13,6 +13,9 @@ height.colors(n)
 Create a vector of n contiguous colors of elevations.
 }
 \seealso{
+\link[lidR:height.colors]{height.colors}
+\link[lidR:forest.colors]{forest.colors}
+\link[grDevices:heat.colors]{heat.colors}
 \link[grDevices:colorRamp]{colorRampPalette}
 }
 
