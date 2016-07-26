@@ -10,6 +10,8 @@
 #' @importFrom magrittr %$%
 plot.Catalog = function(x, y, ...)
 {
+  Min.X <- Min.Y <- Max.X <- Max.y <- filename <- NULL
+
   headers = x@headers
 
   xmin = min(headers$Min.X)
@@ -21,3 +23,4 @@ plot.Catalog = function(x, y, ...)
   headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y)
   headers %$% graphics::text((Min.X + Max.X)/2, (Min.Y + Max.Y)/2, basename(filename))
 }
+
