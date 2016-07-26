@@ -10,7 +10,7 @@
 #' @importFrom magrittr %$%
 plot.Catalog = function(x, y, ...)
 {
-  Min.X <- Min.Y <- Max.X <- Max.y <- filename <- NULL
+  Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
 
   headers = x@headers
 
