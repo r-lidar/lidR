@@ -4,14 +4,17 @@
 #'
 #' The function assessing the number of laser points that actually reached the layer
 #' z+dz and those that passed through the layer [z, z+dz]. By definition the layer 0
-#' will always return 0 because no returns reached the ground. Therefore, the layer 0 is removed
+#' will always return 0 because no returns pass through the ground. Therefore, the layer 0 is removed
 #' from the returned results.
 #'
 #' @param z vector of positive z coordinates
 #' @param dz numeric. The thickness of the layers used (height bin)
 #' @return A data.frame containing the bin elevations (z) and the gap fraction for each bin (gf)
 #' @examples
-#' z = dbeta(seq(0, 0.8, length = 1000), 6, 6)*10
+#' z = c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
+#' z = z[z<45 & z>0]
+#'
+#' hist(z, n=50)
 #'
 #' gapFraction = gapFractionProfile(z)
 #'
