@@ -18,6 +18,7 @@ This functions implements a \link[graphics:plot]{plot} method for a Catalog obje
 }
 \examples{
 \dontrun{
+
 catalog = Catalog("<Path to a folder containing a set of .las files>")
 plot(catalog)
 }
