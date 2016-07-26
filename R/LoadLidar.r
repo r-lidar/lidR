@@ -8,7 +8,8 @@
 #' pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
 #' apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
 #'
-#' @param input character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
+#' @param input character or Catalog object. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
+#' If input is a \link[lidR:Catalog-class]{Catalog} object, all the .las file in the catalog will be loaded.
 #' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
 #' @param \dots Unused
 #' @return An object of class \code{Lidar}

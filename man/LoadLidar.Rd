@@ -7,7 +7,8 @@
 LoadLidar(input, fields = "standard", ...)
 }
 \arguments{
-\item{input}{character. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.}
+\item{input}{character or Catalog object. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
+If input is a \link[lidR:Catalog-class]{Catalog} object, all the .las file in the catalog will be loaded.}
 
 \item{fields}{character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.}
 
