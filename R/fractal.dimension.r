@@ -9,33 +9,32 @@
 #' @return A number between 0 and 3. 3 being the dimension of a volume
 #' @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
 #' @export fractal.dimension
-#' @importFrom RcppArmadillo fastLmPure
-#' @importFrom stats coefficients
+#' @importFrom stats coefficients lm
 fractal.dimension = function(mtx)
 {
-	if( sum(is.na(mtx)) > 0 )
-		return(NA_real_)
+  if( sum(is.na(mtx)) > 0 )
+    return(NA_real_)
 
-	size = min(dim(mtx))
+  size = min(dim(mtx))
 
-	if( size < 6)
-		return(NA_real_)
+  if( size < 6)
+    return(NA_real_)
 
-	size = ifelse(size %% 2 == 0, size, size-1)
+  size = ifelse(size %% 2 == 0, size, size-1)
 
   mtx = mtx[1:size, 1:size]
 
-	q = 1:size
-	q = q[size %% q == 0]
+  q = 1:size
+  q = q[size %% q == 0]
 
-	if(length(q) < 3)
-		return(as.numeric(NA))
+  if(length(q) < 3)
+    return(as.numeric(NA))
 
-	nbbox = sapply(q, .countBox, mtx=mtx)
+  nbbox = sapply(q, .countBox, mtx=mtx)
 
-	lm = RcppArmadillo::fastLmPure(cbind(1,log(q)), log(nbbox))
+  lm = stats::lm(log(nbbox) ~ log(q))
 
-	return(abs(as.numeric(stats::coefficients(lm)[2])))
+  return(abs(as.numeric(stats::coefficients(lm)[2])))
 }
 
 .countBox = function(q, mtx)
