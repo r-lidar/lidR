@@ -20,7 +20,6 @@ Imports:
 LazyData: true
 RoxygenNote: 5.0.1
 Collate:
-    'global.r'
     'Catalog.r'
     'ClassCatalog.r'
     'ClassLidar.r'
