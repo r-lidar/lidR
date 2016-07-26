@@ -60,6 +60,9 @@ setMethod("initialize", "Lidar",
 	{
 	  gpstime <- R <- G <- B <- NULL
 
+	  if(class(input)[1] == "Catalog")
+	    input = input@headers$filename
+
 	  if(is.character(input))
 	  {
 	    .Object@data   = .loadLAS(input, fields)
