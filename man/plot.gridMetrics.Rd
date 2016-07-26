@@ -4,14 +4,16 @@
 \alias{plot.gridMetrics}
 \title{Plot an object of class gridMetrics in 2D}
 \usage{
-\method{plot}{gridMetrics}(x, z = NULL, ...)
+\method{plot}{gridMetrics}(x, z = NULL, colorPalette = height.colors, ...)
 }
 \arguments{
 \item{x}{A data.frame or data.table of class gridMetrics.}
 
 \item{z}{character. The field to plot. If NULL, autodetect.}
 
-\item{\dots}{Unused}
+\item{colorPalette}{function. A color palette function. Default is \code{height.colors} provided by the package lidR}
+
+\item{\dots}{Supplementary parameters for \link[fields:image.plot]{image.plot}}
 }
 \description{
 This functions implements a \link[graphics:plot]{plot} method for a gridMetrics data.frame
@@ -53,6 +55,10 @@ plot(metrics, "imean")
 \link[lidR:gridMetrics]{gridMetrics}
 \link[lidR:canopyModel]{canopyModel}
 \link[fields:image.plot]{image.plot}
+\link[lidR:height.colors]{height.colors}
+\link[lidR:forest.colors]{forest.colors}
+\link[grDevices:heat.colors]{heat.colors}
+\link[grDevices:colorRamp]{colorRampPalette}
 \link[lidR:plot3d]{plot3d}
 }
 

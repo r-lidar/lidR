@@ -9,29 +9,35 @@
 #' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
 #' @param bg The color for the background. Default is black.
-#' @param display character. By default is "points" to plot voxels as points for fast display. Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow. It cannot be use for a large number of voxels.
+#' @param display character. By default is "points" to plot voxels as points for fast display.
+#' Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow.
+#' It cannot be use for a large number of voxels.
+#' @param trim numeric. Enables trimming of values when outliers break the color palette range.
+#' Default is 1 meaning that the whole range of the values is used for the color palette.
+#' 0.9 means thant 10% of the hightest values are not used to defined the colors palette.
+#' In this case the values higher that the 90th percentile are set to the highest color. They are not removed
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
 #' lidar = LoadLidar(LASfile)
 #'
-#' voxels = voxelize(lidar, 1, list(I = mean(Intensity)))
-#' plot(voxels, color = "I", colorPalette = "heat.colors", trim=0.99)
+#' voxels = voxelize(lidar, 1, list(Imean = mean(Intensity)))
+#' plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 #' @seealso
 #' \link[rgl:points3d]{points3d}
 #' \link[lidR:height.colors]{height.colors}
+#' \link[lidR:forest.colors]{forest.colors}
 #' \link[grDevices:heat.colors]{heat.colors}
+#' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:voxelize]{voxelize}
 #' @export
 #' @importFrom rgl points3d open3d rgl.bg
 #' @importFrom grDevices heat.colors terrain.colors topo.colors
 #' @importFrom magrittr %$%
-plot.voxels = function(x, y, color = "Z", colorPalette = "height.colors", bg = "black", display = "points", ...)
+plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", display = "points", trim = 1, ...)
 {
   inargs <- list(...)
-
-  trim = ifelse(is.null(inargs$trim), 1, inargs$trim)
 
   inargs$col = color
 
@@ -43,7 +49,7 @@ plot.voxels = function(x, y, color = "Z", colorPalette = "height.colors", bg = "
 
       if(is.numeric(data))
       {
-        inargs$col = .colorPalette(data-min(data), trim, colorPalette)
+        inargs$col = set.colors(data, colorPalette, 50, trim)
         inargs$col[is.na(inargs$col)] = "lightgray"
       }
       else if(is.character(data))

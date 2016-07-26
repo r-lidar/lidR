@@ -4,8 +4,8 @@
 \alias{plot.voxels}
 \title{Plot voxelized LiDAR data}
 \usage{
-\method{plot}{voxels}(x, y, color = "Z", colorPalette = "height.colors",
-  bg = "black", display = "points", ...)
+\method{plot}{voxels}(x, y, color = "Z", colorPalette = height.colors,
+  bg = "black", display = "points", trim = 1, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{voxels}}
@@ -18,7 +18,14 @@
 
 \item{bg}{The color for the background. Default is black.}
 
-\item{display}{character. By default is "points" to plot voxels as points for fast display. Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow. It cannot be use for a large number of voxels.}
+\item{display}{character. By default is "points" to plot voxels as points for fast display.
+Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow.
+It cannot be use for a large number of voxels.}
+
+\item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
+Default is 1 meaning that the whole range of the values is used for the color palette.
+0.9 means thant 10% of the hightest values are not used to defined the colors palette.
+In this case the values higher that the 90th percentile are set to the highest color. They are not removed}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"}
 }
@@ -33,13 +40,15 @@ LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
 lidar = LoadLidar(LASfile)
 
-voxels = voxelize(lidar, 1, list(I = mean(Intensity)))
-plot(voxels, color = "I", colorPalette = "heat.colors", trim=0.99)
+voxels = voxelize(lidar, 1, list(Imean = mean(Intensity)))
+plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 }
 \seealso{
 \link[rgl:points3d]{points3d}
 \link[lidR:height.colors]{height.colors}
+\link[lidR:forest.colors]{forest.colors}
 \link[grDevices:heat.colors]{heat.colors}
+\link[grDevices:colorRamp]{colorRampPalette}
 \link[lidR:voxelize]{voxelize}
 }
 

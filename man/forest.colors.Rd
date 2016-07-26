@@ -10,7 +10,7 @@ forest.colors(n)
 \item{n}{The number of colors (> 1) to be in the palette}
 }
 \description{
-Create a vector of n contiguous colors of green.
+Create a vector of n contiguous colors of green from darkgreen to lightgreen.
 }
 \seealso{
 \link[grDevices:colorRamp]{colorRampPalette}
