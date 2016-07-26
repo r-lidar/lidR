@@ -6,6 +6,12 @@
 #' @param y Unused (inherited from base plot)
 #' @param \dots Unused (inherited from base plot)
 #' @export
+#' @examples
+#' \dontrun{
+#'
+#' catalog = Catalog("<Path to a folder containing a set of .las files>")
+#' plot(catalog)
+#' }
 #' @importFrom graphics plot rect text
 #' @importFrom magrittr %$%
 plot.Catalog = function(x, y, ...)
@@ -21,6 +27,6 @@ plot.Catalog = function(x, y, ...)
 
   graphics::plot(0,0, xlim=c(xmin, xmax), ylim = c(ymin, ymax), col="white", asp=1, xlab="X", ylab="Y")
   headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y)
-  headers %$% graphics::text((Min.X + Max.X)/2, (Min.Y + Max.Y)/2, basename(filename))
+  #headers %$% graphics::text((Min.X + Max.X)/2, (Min.Y + Max.Y)/2, basename(filename))
 }
 
