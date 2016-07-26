@@ -6,7 +6,8 @@
 #' @param y Unused (inherited from base plot)
 #' @param \dots Unused (inherited from base plot)
 #' @export
-#' @importFrom graphics plot rect
+#' @importFrom graphics plot rect text
+#' @importFrom magrittr %$%
 plot.Catalog = function(x, y, ...)
 {
   headers = x@headers
@@ -17,5 +18,6 @@ plot.Catalog = function(x, y, ...)
   ymax = max(headers$Max.Y)
 
   graphics::plot(0,0, xlim=c(xmin, xmax), ylim = c(ymin, ymax), col="white", asp=1, xlab="X", ylab="Y")
-  graphics::rect(headers$Min.X, headers$Min.Y, headers$Max.X, headers$Max.Y)
+  headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y)
+  headers %$% graphics::text((Min.X + Max.X)/2, (Min.Y + Max.Y)/2, basename(filename))
 }
