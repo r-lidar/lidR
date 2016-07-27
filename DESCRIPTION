@@ -16,7 +16,8 @@ License: GPL-2
 Depends:
     R (>= 3.2.0),methods,magrittr,dtplyr
 Imports:
-    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,bitops,raster,sp,rgdal,plyr,rgeos,data.table,dplyr
+    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,bitops,raster,rgdal,plyr,rgeos,data.table,dplyr,
+    Rcpp
 LazyData: true
 RoxygenNote: 5.0.1
 Collate:
@@ -74,3 +75,5 @@ Collate:
     'VCI.r'
     'voxelize.r'
     'selectTiles.r'
+    'RcppExports.R'
+LinkingTo: Rcpp
