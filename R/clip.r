@@ -65,7 +65,6 @@ setMethod("clipRectangle", "Lidar",
 #' \link[lidR:clipCircle]{clipCircle}
 #' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipPolygon
-#' @importFrom sp point.in.polygon
 setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("clipPolygon")})
 
 #' @rdname clipPolygon
@@ -75,9 +74,9 @@ setMethod("clipPolygon", "Lidar",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(extract(obj, sp::point.in.polygon(X,Y,x,y) > 0))
+		  return(extract(obj, pointsInPolygon(x,y,X,Y)))
 	  else
-	    return(extract(obj, sp::point.in.polygon(X,Y,x,y) == 0))
+	    return(extract(obj, !pointsInPolygon(x,y,X,Y)))
 	}
 )
 

@@ -32,64 +32,59 @@
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export classifyFromShapefile
-#' @importFrom sp point.in.polygon
 #' @importFrom raster crop
 #' @importFrom rgdal readOGR
 #' @importFrom data.table setnames
 setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGeneric("classifyFromShapefile")})
 
-
 #' @rdname classifyFromShapefile
+#' @useDynLib lidR
+#' @importFrom Rcpp sourceCpp
 setMethod("classifyFromShapefile", "Lidar",
-	function(obj, shapefile, field)
-	{
-	  npoints = dim(obj@data)[1]
+          function(obj, shapefile, field)
+          {
+            npoints = dim(obj@data)[1]
 
-		if(field %in% names(shapefile@data))
-		{
-		  method = 1
+            if(field %in% names(shapefile@data))
+            {
+              method = 1
 
-		  if(class(shapefile@data[,field]) == "factor")
-		    values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
-		  else
-		    values = numeric(npoints)
-		}else{
-		  method = 2
-		  values = numeric(npoints)
-		}
+              if(class(shapefile@data[,field]) == "factor")
+                values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
+              else
+                values = rep(NA_real_, npoints)
+            }
+            else
+            {
+              method = 2
+              values = logical(npoints)
+            }
 
-	  polys = raster::crop(shapefile, extent(obj))
+            polys = raster::crop(shapefile, extent(obj))
 
-		if(!is.null(polys))
-		{
-		    npoly   = length(polys@polygons)
+            if(is.null(polys))
+              return(values)
 
-    		for(i in 1:npoly)
-    		{
-    		  x = polys@polygons[[i]]@Polygons[[1]]@coords[,1]
-    		  y = polys@polygons[[i]]@Polygons[[1]]@coords[,2]
+            xcoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,1]})
+            ycoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,2]})
 
-    		  if(method == 1)
-    		  {
-    		    bool = sp::point.in.polygon(obj@data$X, obj@data$Y, x, y) > 0
-    		    values[bool] = polys@data[, field][i]
-    		  }
-    		  else if(method == 2)
-    		  {
-    		    values = values + sp::point.in.polygon(obj@data$X, obj@data$Y, x, y)
-    		  }
-    		}
-		}
+            ids = pointsInPolygons(xcoords, ycoords, obj@data$X, obj@data$Y)
 
-		if(method == 2)
-		  values = values > 0
+            if(method == 1)
+            {
+              ids = ids[ids > 0]
+              values[ids] = polys@data[, field][ids]
+            }
 
-		obj@data$info = values
+            else if(method == 2)
+              values = ids > 0
 
-		colnames = names(obj@data)
-		colnames[length(colnames)] = field
-    setnames(obj@data, colnames)
+            obj@data$info = values
 
-    return(obj)
-	}
+            colnames = names(obj@data)
+            colnames[length(colnames)] = field
+            data.table::setnames(obj@data, colnames)
+
+            return(obj)
+          }
 )

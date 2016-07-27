@@ -46,12 +46,13 @@ plot.Lidar = function(x, y, color = "Z", colorPalette = height.colors, bg = "bla
       data = unlist(x@data[,color, with = FALSE])
 
       if(is.numeric(data))
-      {
         inargs$col = set.colors(data, colorPalette, 50, trim)
-        inargs$col[is.na(inargs$col)] = "lightgray"
-      }
       else if(is.character(data))
         inargs$col = data
+      else if(is.logical(data))
+        inargs$col = set.colors(as.numeric(data), colorPalette, 2)
+
+      inargs$col[is.na(inargs$col)] = "lightgray"
     }
   }
 
