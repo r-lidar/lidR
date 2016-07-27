@@ -20,71 +20,71 @@
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-#' lidar = classifyFromShapefile(lidar, lakes, "inlakes")
+#' classifyFromShapefile(lidar, lakes, "inlakes")
 #' forest = extract(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'
 #' # The field "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the value of the polygon
-#' lidar = classifyFromShapefile(lidar, lakes, "LAKENAME_1")
+#' classifyFromShapefile(lidar, lakes, "LAKENAME_1")
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export classifyFromShapefile
 #' @importFrom raster crop
 #' @importFrom rgdal readOGR
-#' @importFrom data.table setnames
+#' @importFrom data.table setnames :=
 setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGeneric("classifyFromShapefile")})
 
 #' @rdname classifyFromShapefile
 #' @useDynLib lidR
 #' @importFrom Rcpp sourceCpp
 setMethod("classifyFromShapefile", "Lidar",
-          function(obj, shapefile, field)
-          {
-            npoints = dim(obj@data)[1]
+  function(obj, shapefile, field)
+  {
+    npoints = dim(obj@data)[1]
 
-            if(field %in% names(shapefile@data))
-            {
-              method = 1
+    if(field %in% names(shapefile@data))
+    {
+      method = 1
 
-              if(class(shapefile@data[,field]) == "factor")
-                values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
-              else
-                values = rep(NA_real_, npoints)
-            }
-            else
-            {
-              method = 2
-              values = logical(npoints)
-            }
+      if(class(shapefile@data[,field]) == "factor")
+        values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
+      else
+        values = rep(NA_real_, npoints)
+    }
+    else
+    {
+      method = 2
+      values = logical(npoints)
+    }
 
-            polys = raster::crop(shapefile, extent(obj))
+    polys = raster::crop(shapefile, extent(obj))
 
-            if(is.null(polys))
-              return(values)
+    if(is.null(polys))
+      return(values)
 
-            xcoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,1]})
-            ycoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,2]})
+    xcoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,1]})
+    ycoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,2]})
 
-            ids = pointsInPolygons(xcoords, ycoords, obj@data$X, obj@data$Y)
+    ids = pointsInPolygons(xcoords, ycoords, obj@data$X, obj@data$Y)
 
-            if(method == 1)
-            {
-              ids = ids[ids > 0]
-              values[ids] = polys@data[, field][ids]
-            }
+    if(method == 1)
+    {
+      ids = ids[ids > 0]
+      values[ids] = polys@data[, field][ids]
+    }
 
-            else if(method == 2)
-              values = ids > 0
+    else if(method == 2)
+      values = ids > 0
 
-            obj@data$info = values
+    obj@data[,info:=values]
 
-            colnames = names(obj@data)
-            colnames[length(colnames)] = field
-            data.table::setnames(obj@data, colnames)
+    colnames = names(obj@data)
+    colnames[length(colnames)] = field
+    data.table::setnames(obj@data, colnames)
 
-            return(obj)
-          }
+    return(invisible(NULL))
+  }
 )
