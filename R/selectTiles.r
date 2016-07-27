@@ -28,9 +28,9 @@ setMethod("selectTiles", "Catalog",
 
     plot(x)
 
-    selected = headers %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
+    selected = x@headers %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
 
-    x@headers = headers[selected,]
+    x@headers = x@headers[selected,]
 
     x@headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y, col="red")
 
