@@ -65,8 +65,9 @@ setMethod("initialize", "Lidar",
 
 	  if(is.character(input))
 	  {
-	    .Object@data   = .loadLAS(input, fields)
-	    .Object@header = .loadLASheaders(input)
+	    LAS = readLAS(input)
+	    .Object@data   = as.data.table(LAS[[2]])
+	    .Object@header = LAS[[1]]
 	  }
 	  else if(is.data.table(input))
 	    .Object@data = input

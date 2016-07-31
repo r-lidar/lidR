@@ -2,8 +2,8 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
-Version: 1.0.0
-Date: 2016-07-27
+Version: 1.1.0
+Date: 2016-07-29
 Author: Jean-Romain Roussel, David Auty
 Maintainer: Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>
 Description: This package provides an airborne LiDAR interface for data
@@ -16,7 +16,7 @@ License: GPL-2
 Depends:
     R (>= 3.2.0),methods,magrittr,dtplyr
 Imports:
-    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,bitops,raster,rgdal,plyr,rgeos,data.table,dplyr,
+    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,bitops,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,gstat,BH,
     Rcpp
 LazyData: true
 RoxygenNote: 5.0.1
@@ -61,10 +61,7 @@ Collate:
     'plot3d.gridMetrics.r'
     'polygonArea.r'
     'processParallel.r'
-    'publicHeaderDescription.R'
     'pulseDensity.r'
-    'readLASheader.r'
-    'readLas.r'
     'retrieveInventoryTiles.r'
     'selectPulseToRemove.r'
     'selectArea.r'
