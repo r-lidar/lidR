@@ -39,14 +39,14 @@ lidar = LoadLidar(LASfile)
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 
 # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-lidar = classifyFromShapefile(lidar, lakes, "inlakes")
+classifyFromShapefile(lidar, lakes, "inlakes")
 forest = extract(lidar, inlakes == FALSE)
 plot(lidar)
 plot(forest)
 
 # The field "LAKENAME_1" exists in the shapefile.
 # Points are classified with the value of the polygon
-lidar = classifyFromShapefile(lidar, lakes, "LAKENAME_1")
+classifyFromShapefile(lidar, lakes, "LAKENAME_1")
 }
 \seealso{
 \code{\link[rgdal:readOGR]{readOGR} }
