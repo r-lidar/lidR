@@ -5,15 +5,16 @@
 
 using namespace Rcpp;
 
-//' Read a .las file
+//' Read data in a .las file
 //'
-//' Methods to read .las files
+//' Methods to read .las files content
+//'
 //' @param LASfile character. filename of .las file
 //' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
 //' @return A data.table
-//' @export readLAS
+//' @export readLASdata
 // [[Rcpp::export]]
-List readLAS(CharacterVector file,
+List readLASdata(CharacterVector file,
              bool Intensity = true,
              bool ReturnNumber = true,
              bool NumberOfReturns = true,
@@ -114,6 +115,37 @@ List readLAS(CharacterVector file,
 
     lasdata.names() = field;
 
+    return(lasdata);
+  }
+  catch (std::exception const& e)
+  {
+    Rcerr << "Error: " << e.what() << std::endl;
+    return(List(0));
+  }
+}
+
+//' Read header in a .las file
+//'
+//' Methods to read the header in a .las file
+//'
+//' @param LASfile character. filename of .las file
+//' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
+//' @return A data.table
+//' @export readLASheader
+// [[Rcpp::export]]
+List readLASheader(CharacterVector file)
+{
+  try
+  {
+    std::string filestd = as<std::string>(file);
+
+    std::ifstream ifs(filestd.c_str(), std::ios::in | std::ios::binary);
+
+    liblas::Reader reader(ifs);
+    liblas::Header header = reader.GetHeader();
+
+    ifs.close();
+
     List head(0);
     head.push_back(header.GetFileSignature());
     head.push_back(header.GetFileSourceId());
@@ -178,7 +210,7 @@ List readLAS(CharacterVector file,
 
     head.names() = names;
 
-    return(List::create(head, lasdata));
+    return(head);
   }
   catch (std::exception const& e)
   {

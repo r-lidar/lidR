@@ -47,9 +47,9 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// readLAS
-List readLAS(CharacterVector file, bool Intensity, bool ReturnNumber, bool NumberOfReturns, bool ScanDirectionFlag, bool EdgeofFlightline, bool Classification, bool ScanAngle, bool UserData, bool PointSourceID, bool RGB);
-RcppExport SEXP lidR_readLAS(SEXP fileSEXP, SEXP IntensitySEXP, SEXP ReturnNumberSEXP, SEXP NumberOfReturnsSEXP, SEXP ScanDirectionFlagSEXP, SEXP EdgeofFlightlineSEXP, SEXP ClassificationSEXP, SEXP ScanAngleSEXP, SEXP UserDataSEXP, SEXP PointSourceIDSEXP, SEXP RGBSEXP) {
+// readLASdata
+List readLASdata(CharacterVector file, bool Intensity, bool ReturnNumber, bool NumberOfReturns, bool ScanDirectionFlag, bool EdgeofFlightline, bool Classification, bool ScanAngle, bool UserData, bool PointSourceID, bool RGB);
+RcppExport SEXP lidR_readLASdata(SEXP fileSEXP, SEXP IntensitySEXP, SEXP ReturnNumberSEXP, SEXP NumberOfReturnsSEXP, SEXP ScanDirectionFlagSEXP, SEXP EdgeofFlightlineSEXP, SEXP ClassificationSEXP, SEXP ScanAngleSEXP, SEXP UserDataSEXP, SEXP PointSourceIDSEXP, SEXP RGBSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -64,13 +64,24 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type UserData(UserDataSEXP);
     Rcpp::traits::input_parameter< bool >::type PointSourceID(PointSourceIDSEXP);
     Rcpp::traits::input_parameter< bool >::type RGB(RGBSEXP);
-    __result = Rcpp::wrap(readLAS(file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB));
+    __result = Rcpp::wrap(readLASdata(file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB));
     return __result;
 END_RCPP
 }
-// writeLAS
-int writeLAS(CharacterVector file, List LASheader, NumericVector X, NumericVector Y, NumericVector Z, IntegerVector I, IntegerVector RN, IntegerVector NoR, LogicalVector SDF, LogicalVector EoF, IntegerVector C, IntegerVector SA, IntegerVector UD, IntegerVector PSI, NumericVector T, IntegerVector R, IntegerVector G, IntegerVector B);
-RcppExport SEXP lidR_writeLAS(SEXP fileSEXP, SEXP LASheaderSEXP, SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP ISEXP, SEXP RNSEXP, SEXP NoRSEXP, SEXP SDFSEXP, SEXP EoFSEXP, SEXP CSEXP, SEXP SASEXP, SEXP UDSEXP, SEXP PSISEXP, SEXP TSEXP, SEXP RSEXP, SEXP GSEXP, SEXP BSEXP) {
+// readLASheader
+List readLASheader(CharacterVector file);
+RcppExport SEXP lidR_readLASheader(SEXP fileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< CharacterVector >::type file(fileSEXP);
+    __result = Rcpp::wrap(readLASheader(file));
+    return __result;
+END_RCPP
+}
+// liblasWriteLAS
+int liblasWriteLAS(CharacterVector file, List LASheader, NumericVector X, NumericVector Y, NumericVector Z, IntegerVector I, IntegerVector RN, IntegerVector NoR, IntegerVector SDF, IntegerVector EoF, IntegerVector C, IntegerVector SA, IntegerVector UD, IntegerVector PSI, NumericVector T, IntegerVector R, IntegerVector G, IntegerVector B);
+RcppExport SEXP lidR_liblasWriteLAS(SEXP fileSEXP, SEXP LASheaderSEXP, SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP ISEXP, SEXP RNSEXP, SEXP NoRSEXP, SEXP SDFSEXP, SEXP EoFSEXP, SEXP CSEXP, SEXP SASEXP, SEXP UDSEXP, SEXP PSISEXP, SEXP TSEXP, SEXP RSEXP, SEXP GSEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -82,8 +93,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type I(ISEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type RN(RNSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type NoR(NoRSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type SDF(SDFSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type EoF(EoFSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type SDF(SDFSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type EoF(EoFSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type C(CSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type SA(SASEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type UD(UDSEXP);
@@ -92,7 +103,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type R(RSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type G(GSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type B(BSEXP);
-    __result = Rcpp::wrap(writeLAS(file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B));
+    __result = Rcpp::wrap(liblasWriteLAS(file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B));
     return __result;
 END_RCPP
 }
