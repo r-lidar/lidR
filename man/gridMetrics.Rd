@@ -3,16 +3,15 @@
 \docType{methods}
 \name{gridMetrics}
 \alias{gridMetrics}
-\alias{gridMetrics,Lidar-method}
+\alias{gridMetrics,LAS-method}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
 gridMetrics(obj, res, func, start = c(0, 0), option = NULL)
 
-\S4method{gridMetrics}{Lidar}(obj, res, func, start = c(0, 0),
-  option = NULL)
+\S4method{gridMetrics}{LAS}(obj, res, func, start = c(0, 0), option = NULL)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of the cells}
 
@@ -53,7 +52,7 @@ function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
 gridMetrics(lidar, 2, max(Z)) \%>\% plot

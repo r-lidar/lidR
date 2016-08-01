@@ -12,14 +12,14 @@
 #' to compute a coherant local pulse density. 25 square meters looks good. 1 square
 #' meter is meaningless.
 #' @aliases  thin
-#' @param obj An object of the class \code{Lidar}
+#' @param obj An object of the class \code{LAS}
 #' @param pulseDensity numeric. The expected pulseDensity
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.
 #' @param resolution numeric. Cell size to compute the pulse density.
-#' @return It returns a \code{Lidar} object.
+#' @return It returns a \code{LAS} object.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' # By default the method is homogenize = TRUE
 #' thinned = lidar %>% thin(1, resolution = 5)
@@ -37,7 +37,7 @@
 setGeneric("thin", function(obj, pulseDensity, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
 
 #' @rdname thin
-setMethod("thin", c("Lidar", "numeric"),
+setMethod("thin", c("LAS", "numeric"),
 	function(obj, pulseDensity, homogenize = TRUE, resolution = 5)
   {
 	  pulseID <- gpstime <- NULL
@@ -65,6 +65,6 @@ setMethod("thin", c("Lidar", "numeric"),
       selected = selected$delete
     }
 
-    return(LoadLidar(obj@data[selected]))
+    return(LAS(obj@data[selected]))
 	}
 )

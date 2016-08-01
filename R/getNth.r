@@ -4,13 +4,13 @@
 #' pulse density and area are recomputed on the fly
 #'
 #' @aliases  getNth
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param n numeric. The position in the return sequence
-#' @return An object of class \code{Lidar}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' secondReturns = lidar %>% getNth(2)
 #' @seealso
@@ -28,7 +28,7 @@
 setGeneric("getNth", function(obj, n){standardGeneric("getNth")})
 
 #' @rdname getNth
-setMethod("getNth", "Lidar",
+setMethod("getNth", "LAS",
 	function(obj, n)
 	{
 	   ReturnNumber <- NULL

@@ -17,9 +17,10 @@
 #' @param y vector. A set of y plot coordinates
 #' @param radius numeric or vector. A radius or a set of radii of plots
 #' @param buffer numeric. A buffer value to extend the search range
-#' @return A list of Lidar objects
+#' @return A list of LAS objects
 #' @export extractGroundInventory
 #' @importFrom dplyr group_by summarise ungroup progress_estimated
+#' @importFrom magrittr %>% %<>%
 setGeneric("extractGroundInventory", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("extractGroundInventory")})
 
 #' @rdname extractGroundInventory
@@ -59,7 +60,7 @@ setMethod("extractGroundInventory", "Catalog",
       Y      = line$Y[[1]]
       radius = line$radius[[1]]
 
-      lidar  = LoadLidar(files)
+      lidar  = readLAS(files)
 
       for(j in 1:length(names))
       {

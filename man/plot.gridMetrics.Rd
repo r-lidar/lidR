@@ -23,7 +23,7 @@ The \dots param provides additional arguments to \link[fields:image.plot]{image.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
 gridMetrics(lidar, 2, max(Z)) \%>\% plot

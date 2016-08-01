@@ -25,7 +25,7 @@ extractGroundInventory(obj, plotnames, x, y, radius, buffer = 2)
 \item{buffer}{numeric. A buffer value to extend the search range}
 }
 \value{
-A list of Lidar objects
+A list of LAS objects
 }
 \description{
 When the user has a set of coordinates of ground inventory, they can extract the

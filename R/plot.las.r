@@ -1,9 +1,9 @@
 #' Plot LiDAR data
 #'
-#' This functions implements a 3D plot method for Lidar objects
+#' This functions implements a 3D plot method for LAS objects
 #'
-#' @aliases plot plot.Lidar
-#' @param x An object of the class \code{Lidar}
+#' @aliases plot plot.LAS
+#' @param x An object of the class \code{LAS}
 #' @param y Unused (inherited from R base)
 #' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
@@ -16,7 +16,7 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' plot(lidar)
 #'
@@ -29,11 +29,11 @@
 #' \link[lidR:forest.colors]{forest.colors}
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' \link[lidR:Lidar]{Class Lidar}
+#' \link[lidR:LAS]{Class LAS}
 #' @export
 #' @importFrom rgl points3d open3d rgl.bg
 #' @importFrom grDevices heat.colors terrain.colors topo.colors
-plot.Lidar = function(x, y, color = "Z", colorPalette = height.colors, bg = "black",  trim = 1, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors, bg = "black",  trim = 1, ...)
 {
   inargs <- list(...)
 

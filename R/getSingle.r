@@ -3,12 +3,12 @@
 #' Select only the returns which return only one point.
 #'
 #' @aliases  getSingle
-#' @param obj An object of class \code{Lidar}
-#' @return An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' singleReturns = lidar %>% getSingle
 #' @seealso
@@ -25,7 +25,7 @@
 setGeneric("getSingle", function(obj){standardGeneric("getSingle")})
 
 #' @rdname getSingle
-setMethod("getSingle", "Lidar",
+setMethod("getSingle", "LAS",
 	function(obj)
 	{
 	  NumberOfReturns <- NULL

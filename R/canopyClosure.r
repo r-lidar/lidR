@@ -15,7 +15,7 @@
 #' \link[lidR:cloudMetrics]{cloudMetrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' myClosureMetrics = function(x, y, z)
 #' {

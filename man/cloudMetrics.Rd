@@ -3,15 +3,15 @@
 \docType{methods}
 \name{cloudMetrics}
 \alias{cloudMetrics}
-\alias{cloudMetrics,Lidar-method}
+\alias{cloudMetrics,LAS-method}
 \title{Compute metrics for a cloud of points}
 \usage{
 cloudMetrics(obj, func)
 
-\S4method{cloudMetrics}{Lidar}(obj, func)
+\S4method{cloudMetrics}{LAS}(obj, func)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{func}{The function to be applied to a cloud of points}
 }
@@ -39,7 +39,7 @@ function can help the user to compute some metrics:
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 cloudMetrics(lidar, max(Z))
 cloudMetrics(lidar, mean(Z))

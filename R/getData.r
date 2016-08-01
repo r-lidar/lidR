@@ -1,20 +1,20 @@
 #' Get LiDAR data
 #'
-#' Return the slot @data from a \code{Lidar} object
+#' Return the slot @data from a \code{LAS} object
 #'
 #' @aliases getData
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @return It returns a \code{data.table} containing the LiDAR data
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' getData(lidar)
 #' @export getData
 setGeneric("getData", function(obj){standardGeneric("getData")})
 
 #' @rdname getData
-setMethod("getData", "Lidar",
+setMethod("getData", "LAS",
 	function(obj)
 	{
 		return(obj@data)

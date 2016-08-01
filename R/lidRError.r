@@ -13,7 +13,7 @@ lidRError = function(code, ..., behaviour = stop)
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
 "TFS6" = list("The expression '", p$expression, "' returned a vector of lenght ", p$number,  ". A single number or a list of single number is expected."),
 
-# ClassLidar.r
+# ClassLAS.r
 "LDR1" = list("Invalid parameter input in constructor"),
 "LDR2" = list("Dataset may be invalid: ", p$number, " points below 0 found."),
 "LDR3" = list("Dataset may be invalid: ", p$number, " unclassified points found."),

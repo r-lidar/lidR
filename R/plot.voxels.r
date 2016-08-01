@@ -20,7 +20,7 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' voxels = voxelize(lidar, 1, list(Imean = mean(Intensity)))
 #' plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)

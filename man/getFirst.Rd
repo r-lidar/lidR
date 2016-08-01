@@ -3,18 +3,18 @@
 \docType{methods}
 \name{getFirst}
 \alias{getFirst}
-\alias{getFirst,Lidar-method}
+\alias{getFirst,LAS-method}
 \title{Filter first returns}
 \usage{
 getFirst(obj)
 
-\S4method{getFirst}{Lidar}(obj)
+\S4method{getFirst}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select only the first returns.
@@ -25,7 +25,7 @@ Select only the first returns.
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 firstReturns = lidar \%>\% getFirst
 }

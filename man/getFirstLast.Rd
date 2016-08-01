@@ -3,18 +3,18 @@
 \docType{methods}
 \name{getFirstLast}
 \alias{getFirstLast}
-\alias{getFirstLast,Lidar-method}
+\alias{getFirstLast,LAS-method}
 \title{Filter first and last returns}
 \usage{
 getFirstLast(obj)
 
-\S4method{getFirstLast}{Lidar}(obj)
+\S4method{getFirstLast}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select only the first and last returns.
@@ -25,7 +25,7 @@ Select only the first and last returns.
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 firstLastReturns = lidar \%>\% getFirstLast
 }

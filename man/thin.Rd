@@ -3,16 +3,16 @@
 \docType{methods}
 \name{thin}
 \alias{thin}
-\alias{thin,Lidar,numeric-method}
+\alias{thin,LAS,numeric-method}
 \title{Thin LiDAR data}
 \usage{
 thin(obj, pulseDensity, homogenize = TRUE, resolution = 5)
 
-\S4method{thin}{Lidar,numeric}(obj, pulseDensity, homogenize = TRUE,
+\S4method{thin}{LAS,numeric}(obj, pulseDensity, homogenize = TRUE,
   resolution = 5)
 }
 \arguments{
-\item{obj}{An object of the class \code{Lidar}}
+\item{obj}{An object of the class \code{LAS}}
 
 \item{pulseDensity}{numeric. The expected pulseDensity}
 
@@ -21,7 +21,7 @@ thin(obj, pulseDensity, homogenize = TRUE, resolution = 5)
 \item{resolution}{numeric. Cell size to compute the pulse density.}
 }
 \value{
-It returns a \code{Lidar} object.
+It returns a \code{LAS} object.
 }
 \description{
 Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
@@ -39,7 +39,7 @@ meter is meaningless.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 # By default the method is homogenize = TRUE
 thinned = lidar \%>\% thin(1, resolution = 5)

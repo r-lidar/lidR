@@ -3,25 +3,25 @@
 \docType{methods}
 \name{getData}
 \alias{getData}
-\alias{getData,Lidar-method}
+\alias{getData,LAS-method}
 \title{Get LiDAR data}
 \usage{
 getData(obj)
 
-\S4method{getData}{Lidar}(obj)
+\S4method{getData}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
 It returns a \code{data.table} containing the LiDAR data
 }
 \description{
-Return the slot @data from a \code{Lidar} object
+Return the slot @data from a \code{LAS} object
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 getData(lidar)
 }

@@ -3,21 +3,21 @@
 \docType{methods}
 \name{area}
 \alias{area}
-\alias{area,Lidar-method}
-\title{Area of a Lidar object}
+\alias{area,LAS-method}
+\title{Area of a LAS object}
 \usage{
 area(obj)
 
-\S4method{area}{Lidar}(obj)
+\S4method{area}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of the class \code{Lidar}}
+\item{obj}{An object of the class \code{LAS}}
 }
 \value{
-numeric. The area of the object computed with a convex hull in Lidar coordinates units
+numeric. The area of the object computed with a convex hull in LAS coordinates units
 }
 \description{
-Retrieve the area of a Lidar object.
+Retrieve the area of a LAS object.
 }
 \details{
 area is computed with a convex hull. It is only an approximation if the shape of
@@ -26,7 +26,7 @@ the data is not convex.
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 area(lidar)
 }

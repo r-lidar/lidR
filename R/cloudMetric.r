@@ -17,14 +17,14 @@
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
 #' @aliases cloudMetrics
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param func The function to be applied to a cloud of points
 #' @return It returns a \code{data.table} containing the metrics
 #' @export cloudMetrics
 #' @seealso \link[lidR:gridMetrics]{gridMetrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' cloudMetrics(lidar, max(Z))
 #' cloudMetrics(lidar, mean(Z))
@@ -48,7 +48,7 @@
 setGeneric("cloudMetrics", function(obj, func){standardGeneric("cloudMetrics")})
 
 #' @rdname cloudMetrics
-setMethod("cloudMetrics", "Lidar",
+setMethod("cloudMetrics", "LAS",
 	function(obj, func)
 	{
 	  func_call = substitute(func)

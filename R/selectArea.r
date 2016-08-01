@@ -5,14 +5,14 @@
 #' \code{selectArea} enable the user to select a region of interest (ROI) drawing
 #' a rectangle with the mouse
 #' @aliases selectArea
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param \dots Optionnal parameters for the plot function
-#' @return An object of class \code{Lidar}
+#' @return An object of class \code{LAS}
 #' @examples
 #'\dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' subset = selectArea(lidar)
 #' }
@@ -22,12 +22,12 @@
 setGeneric("selectArea", function(obj, ...){standardGeneric("selectArea")})
 
 #' @rdname selectArea
-setMethod("selectArea", "Lidar",
+setMethod("selectArea", "LAS",
   function(obj, ...)
   {
     X <- Y <- NULL
 
-    plot.Lidar(obj, ...)
+    plot.LAS(obj, ...)
     rgl::view3d(0,0)
 
     f = rgl::select3d()
@@ -35,7 +35,7 @@ setMethod("selectArea", "Lidar",
     rgl::rgl.close()
 
     out = obj %>% extract(keep)
-    plot.Lidar(out, ...)
+    plot.LAS(out, ...)
 
     return(out)
   }

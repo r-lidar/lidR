@@ -3,28 +3,28 @@
 \docType{methods}
 \name{classifyFromShapefile}
 \alias{classifyFromShapefile}
-\alias{classifyFromShapefile,Lidar-method}
+\alias{classifyFromShapefile,LAS-method}
 \title{Classify LiDAR points from the polygons in a shapefile}
 \usage{
 classifyFromShapefile(obj, shapefile, field)
 
-\S4method{classifyFromShapefile}{Lidar}(obj, shapefile, field)
+\S4method{classifyFromShapefile}{LAS}(obj, shapefile, field)
 }
 \arguments{
-\item{obj}{An object of the class \code{Lidar}}
+\item{obj}{An object of the class \code{LAS}}
 
 \item{shapefile}{An object of class SpatialPolygonsDataFrame}
 
-\item{field}{characters. The name of a field of the shapefile or the name of the new field in the Lidar object.}
+\item{field}{characters. The name of a field of the shapefile or the name of the new field in the LAS object.}
 }
 \value{
-An object of the class \code{Lidar} with a new field
+An object of the class \code{LAS} with a new field
 }
 \description{
 Classify LiDAR points from the polygons in an ESRI shapefile
 }
 \details{
-Classify Lidar points based on geographic data found in a shapefile. It checks
+Classify LAS points based on geographic data found in a shapefile. It checks
 if the LiDAR points are in polygons given in the shapefile. If the parameter
 \code{field} is the name of a field in the shapefile it classifies the points
 based on the data in the shapefile. Else it classifies the points as boolean. TRUE
@@ -35,7 +35,7 @@ lakes, for example.
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 
 # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon

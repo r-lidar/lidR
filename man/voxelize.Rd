@@ -3,15 +3,15 @@
 \docType{methods}
 \name{voxelize}
 \alias{voxelize}
-\alias{voxelize,Lidar-method}
+\alias{voxelize,LAS-method}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
 voxelize(obj, res, func)
 
-\S4method{voxelize}{Lidar}(obj, res, func)
+\S4method{voxelize}{LAS}(obj, res, func)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of the cells}
 
@@ -35,7 +35,7 @@ function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 # the number of points is computed.

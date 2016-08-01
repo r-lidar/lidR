@@ -3,20 +3,20 @@
 \docType{methods}
 \name{selectArea}
 \alias{selectArea}
-\alias{selectArea,Lidar-method}
+\alias{selectArea,LAS-method}
 \title{Select an region of interest interactively}
 \usage{
 selectArea(obj, ...)
 
-\S4method{selectArea}{Lidar}(obj, ...)
+\S4method{selectArea}{LAS}(obj, ...)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{\dots}{Optionnal parameters for the plot function}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select an region of interest contained into a rectangle using interactively the mouse
@@ -29,7 +29,7 @@ a rectangle with the mouse
 \dontrun{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 subset = selectArea(lidar)
 }

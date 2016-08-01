@@ -3,18 +3,18 @@
 \docType{methods}
 \name{getGround}
 \alias{getGround}
-\alias{getGround,Lidar-method}
+\alias{getGround,LAS-method}
 \title{Filter returns classified as ground}
 \usage{
 getGround(obj)
 
-\S4method{getGround}{Lidar}(obj)
+\S4method{getGround}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select only the returns classified as ground according to LAS specification v1.3.
@@ -25,7 +25,7 @@ Select only the returns classified as ground according to LAS specification v1.3
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 ground = lidar \%>\% getGround
 }
