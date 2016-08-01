@@ -16,9 +16,9 @@ using namespace boost;
 //' @param file character. filename of .las file
 //' @param LASheader
 //' @return void
-//' @export writeLAS
+//' @export liblasWriteLAS
 // [[Rcpp::export]]
-int writeLAS(CharacterVector file,
+void liblasWriteLAS(CharacterVector file,
              List LASheader,
              NumericVector X,
              NumericVector Y,
@@ -26,8 +26,8 @@ int writeLAS(CharacterVector file,
              IntegerVector I = IntegerVector(0),
              IntegerVector RN = IntegerVector(0),
              IntegerVector NoR = IntegerVector(0),
-             LogicalVector SDF = LogicalVector(0),
-             LogicalVector EoF = LogicalVector(0),
+             IntegerVector SDF = IntegerVector(0),
+             IntegerVector EoF = IntegerVector(0),
              IntegerVector C = IntegerVector(0),
              IntegerVector SA = IntegerVector(0),
              IntegerVector UD = IntegerVector(0),
@@ -106,35 +106,23 @@ int writeLAS(CharacterVector file,
       liblas::Classification cl;
       liblas::Color color;
 
-
       p.SetRawX((X[i]-Xoffset)/Xscalefactor);
       p.SetRawY((Y[i]-Yoffset)/Yscalefactor);
       p.SetRawZ((Z[i]-Zoffset)/Zscalefactor);
 
       if(I.length() > 0){ p.SetIntensity(numeric_cast<uint16_t>(I[i])); }
-
       if(RN.length() > 0){ p.SetReturnNumber(numeric_cast<uint16_t>(RN[i])); }
-
       if(NoR.length() > 0){ p.SetNumberOfReturns(numeric_cast<uint16_t>(NoR[i])); }
-
       if(SDF.length() > 0){ p.SetScanFlags(numeric_cast<uint8_t>(NoR[i])); }
-
       if(EoF.length() > 0){ p.SetFlightLineEdge(numeric_cast<uint8_t>(EoF[i])); }
-
       if(C.length() > 0){ p.SetClassification(numeric_cast<uint8_t>(C[i])); }
-
-      if(SA.length() > 0){ p.SetScanAngleRank(numeric_cast<uint8_t>(SA[i])); }
-
+      if(SA.length() > 0){ p.SetScanAngleRank(numeric_cast<int8_t>(SA[i])); }
       if(UD.length() > 0){ p.SetUserData(numeric_cast<uint8_t>(UD[i])); }
-
-      if(PSI.length() > 0){ p.SetPointSourceID(numeric_cast<uint16_t>(PSI[i])); }
-
+      //if(PSI.length() > 0){ p.SetPointSourceID(numeric_cast<uint16_t>(PSI[i])); }
       if(T.length() > 0){ p.SetTime(T[i]); }
-
-
       if(R.length() > 0)
       {
-        liblas::Color color(numeric_cast<uint16_t>(R[i]), numeric_cast<uint16_t>(G[i]), numeric_cast<uint16_t>(B[i]));
+        liblas::Color color(numeric_cast<uint32_t>(R[i]), numeric_cast<uint32_t>(G[i]), numeric_cast<uint32_t>(B[i]));
         p.SetColor(color);
       }
 
@@ -142,8 +130,6 @@ int writeLAS(CharacterVector file,
     }
 
     ofs.close();
-
-    return(0);
   }
   catch (std::exception const& e)
   {
