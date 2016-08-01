@@ -80,6 +80,6 @@ readLASheader <- function(file) {
 #' @return void
 #' @export liblasWriteLAS
 liblasWriteLAS <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
-    .Call('lidR_liblasWriteLAS', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B)
+    invisible(.Call('lidR_liblasWriteLAS', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B))
 }
 
