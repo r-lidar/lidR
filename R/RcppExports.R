@@ -44,39 +44,67 @@ pointsInPolygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_pointsInPolygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-#' Read data in a .las file
+#' Read data from a las file with liblas
 #'
-#' Methods to read .las files content
+#' Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
 #'
-#' @param LASfile character. filename of .las file
-#' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
-#' @return A data.table
+#' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
+#'
+#' @param file character. The name of the file which the data are to be read from
+#' @param Intensity logical. do you want to load Intensity field? default: TRUE
+#' @param ReturnNumber logical. do you want to load ReturnNumber field? default: TRUE
+#' @param NumberOfReturns logical. do you want to load NumberOfReturns field? default: TRUE
+#' @param ScanDirectionFlag logical. do you want to load ScanDirectionFlag field? default: FALSE
+#' @param EdgeofFlightline logical. do you want to load EdgeofFlightline field? default: FALSE
+#' @param Classification logical. do you want to load Classification field? default: TRUE
+#' @param ScanAngle logical. do you want to load intensity field? default: TRUE
+#' @param UserData logical. do you want to load UserData field? default: FALSE
+#' @param PointSourceID logical. do you want to load PointSourceID field? default: FALSE
+#' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
+#'
+#' @return list
 #' @export readLASdata
 readLASdata <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfReturns = TRUE, ScanDirectionFlag = FALSE, EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE, UserData = FALSE, PointSourceID = FALSE, RGB = TRUE) {
     .Call('lidR_readLASdata', PACKAGE = 'lidR', file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB)
 }
 
-#' Read header in a .las file
+#' Read header in a las file
 #'
-#' Methods to read the header in a .las file
+#' Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
 #'
-#' @param LASfile character. filename of .las file
-#' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
-#' @return A data.table
+#' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
+#'
+#' @param file character. the name of the file which the data are to be read from
+#' @return A list
 #' @export readLASheader
 readLASheader <- function(file) {
     .Call('lidR_readLASheader', PACKAGE = 'lidR', file)
 }
 
-#' Write a .las file
+#' Write a las file with liblas
 #'
-#' Methods to write .las files
+#' Methods to write las files using liblas
 #'
-#' This function is an interface between R and the library liblas.
-#' Users must avoid to use this function standalone. Use w
+#' This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
 #'
 #' @param file character. filename of .las file
-#' @param LASheader
+#' @param LASheader list a header from a LAS object
+#' @param X numeric array X data
+#' @param Y numeric array Y data
+#' @param Z numeric array Z data
+#' @param I integer array intensity data
+#' @param RN integer array return number data
+#' @param NoR integer array number of returns data
+#' @param SDF integer array scan direction flag data
+#' @param EoF integer array edge of flightline data
+#' @param C integer array classification data
+#' @param SA integer array scan angle data
+#' @param UD integer array user data data
+#' @param PSI integer array point source id data
+#' @param T numeric array gpstime data
+#' @param R integer array red data
+#' @param G integer array green data
+#' @param B integer array blue data
 #' @return void
 #' @export liblasWriteLAS
 liblasWriteLAS <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {

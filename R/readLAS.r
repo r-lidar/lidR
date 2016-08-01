@@ -1,19 +1,28 @@
 #' Read las files
 #'
-#' @param files character.
-#' @param Intensity logical.
-#' @param ReturnNumber logical.
-#' @param NumberOfReturns logical.
-#' @param ScanDirectionFlag logical.
-#' @param EdgeofFlightline logical.
-#' @param Classification logical.
-#' @param ScanAngle logical.
-#' @param UserData logical.
-#' @param PointSourceID logical.
-#' @param RGB logical.
+#' Read las files in format 1 to 4 according to LAS specification (non fullwaveform) and return an object of class LAS
+#'
+#' If several files are given the returned LAS object is considered as one LAS file.
+#' The non-recomputable informations in the header are the one read from the first file of the list.
+#' The other informations are recomputed on the fly.
+#' The optional logical parameters enable to do not load some fields to save memory if the field are useless for user's purpose.
+#'
+#' @param files array of character.
+#' @param Intensity logical. do you want to load Intensity field? default: TRUE
+#' @param ReturnNumber logical. do you want to load ReturnNumber field? default: TRUE
+#' @param NumberOfReturns logical. do you want to load NumberOfReturns field? default: TRUE
+#' @param ScanDirectionFlag logical. do you want to load ScanDirectionFlag field? default: FALSE
+#' @param EdgeofFlightline logical. do you want to load EdgeofFlightline field? default: FALSE
+#' @param Classification logical. do you want to load Classification field? default: TRUE
+#' @param ScanAngle logical. do you want to load intensity field? default: TRUE
+#' @param UserData logical. do you want to load UserData field? default: FALSE
+#' @param PointSourceID logical. do you want to load PointSourceID field? default: FALSE
+#' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
 #'
 #' @return A LAS object
 #' @export readLAS
+#' @seealso
+#' \link[lidR:LAS-class]{Class LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' lidar = readLAS(LASfile)

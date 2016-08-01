@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{readLASdata}
 \alias{readLASdata}
-\title{Read data in a .las file}
+\title{Read data from a las file with liblas}
 \usage{
 readLASdata(file, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
@@ -10,14 +10,35 @@ readLASdata(file, Intensity = TRUE, ReturnNumber = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE)
 }
 \arguments{
-\item{LASfile}{character. filename of .las file}
+\item{file}{character. The name of the file which the data are to be read from}
 
-\item{fields}{character. \code{"minimal"}, \code{"standard"}, \code{"all"}.}
+\item{Intensity}{logical. do you want to load Intensity field? default: TRUE}
+
+\item{ReturnNumber}{logical. do you want to load ReturnNumber field? default: TRUE}
+
+\item{NumberOfReturns}{logical. do you want to load NumberOfReturns field? default: TRUE}
+
+\item{ScanDirectionFlag}{logical. do you want to load ScanDirectionFlag field? default: FALSE}
+
+\item{EdgeofFlightline}{logical. do you want to load EdgeofFlightline field? default: FALSE}
+
+\item{Classification}{logical. do you want to load Classification field? default: TRUE}
+
+\item{ScanAngle}{logical. do you want to load intensity field? default: TRUE}
+
+\item{UserData}{logical. do you want to load UserData field? default: FALSE}
+
+\item{PointSourceID}{logical. do you want to load PointSourceID field? default: FALSE}
+
+\item{RGB}{logical. do you want to load intensity R,G and B? default: TRUE}
 }
 \value{
-A data.table
+list
 }
 \description{
-Methods to read .las files content
+Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+}
+\details{
+This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
 }
 

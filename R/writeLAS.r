@@ -1,45 +1,50 @@
-#' Write las file
+#' Write a las file
 #'
-#' @param LAS an object of class class
-#' @param file character. a character string naming a file
+#' Write a LAS object into a binary file (.las if specified in filename)
 #'
-#' @return
+#' @param obj an object of class LAS
+#' @param file character. a character string naming an output file
+#' @return void
 #' @export writeLAS
-#' @examples
-writeLAS = function(LAS, file)
-{
-  I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
-  time = numeric(0)
+setGeneric("writeLAS", function(obj, file){standardGeneric("writeLAS")})
 
-  fields = names(LAS@data)
-
-  if("Intensity" %in% fields)
-    I = LAS@data$Intensity
-  if("ReturnNumber" %in% fields)
-    RN = LAS@data$ReturnNumber
-  if("NumberOfReturns" %in% fields)
-    NoR = LAS@data$NumberOfReturns
-  if("ScanDirectionFlag" %in% fields)
-    SDF = LAS@data$ScanDirectionFlag
-  if("EdgeofFlightline" %in% fields)
-    EoF = LAS@data$EdgeofFlightline
-  if("Classification" %in% fields)
-    C = LAS@data$Classification
-  if("ScanAngle" %in% fields)
-    SA = LAS@data$ScanAngle
-  if("UserData" %in% fields)
-    US = LAS@data$UserData
-  if("gpstime" %in% fields)
-    time = LAS@data$gpstime
-  if("PointSourceID" %in% fields)
-  if("PointSourceID" %in% fields)
-    PSI = LAS@data$PointSourceID
-  if("R" %in% fields)
+#' @rdname writeLAS
+setMethod("writeLAS", "LAS",
+  function(obj, file)
   {
-    R = LAS@data$R
-    G = LAS@data$G
-    B = LAS@data$B
-  }
+    I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
+    time = numeric(0)
 
-  liblasWriteLAS(file, LAS@header, LAS@data$X, LAS@data$Y, LAS@data$Z, I, RN, NoR, SDF, EoF, C, SA, PSI, time, R, G, B)
-}
+    fields = names(obj@data)
+
+    if("Intensity" %in% fields)
+      I = obj@data$Intensity
+    if("ReturnNumber" %in% fields)
+      RN = obj@data$ReturnNumber
+    if("NumberOfReturns" %in% fields)
+      NoR = obj@data$NumberOfReturns
+    if("ScanDirectionFlag" %in% fields)
+      SDF = obj@data$ScanDirectionFlag
+    if("EdgeofFlightline" %in% fields)
+      EoF = obj@data$EdgeofFlightline
+    if("Classification" %in% fields)
+      C = obj@data$Classification
+    if("ScanAngle" %in% fields)
+      SA = obj@data$ScanAngle
+    if("UserData" %in% fields)
+      US = obj@data$UserData
+    if("gpstime" %in% fields)
+      time = obj@data$gpstime
+    if("PointSourceID" %in% fields)
+    if("PointSourceID" %in% fields)
+      PSI = obj@data$PointSourceID
+    if("R" %in% fields)
+    {
+      R = obj@data$R
+      G = obj@data$G
+      B = obj@data$B
+    }
+
+    liblasWriteLAS(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, PSI, time, R, G, B)
+  }
+)
