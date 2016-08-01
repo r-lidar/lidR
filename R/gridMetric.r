@@ -25,7 +25,7 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  gridMetrics
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
@@ -33,7 +33,7 @@
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridMetrics" enabling easy plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
 #' gridMetrics(lidar, 2, max(Z)) %>% plot
@@ -66,7 +66,7 @@
 setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("gridMetrics")})
 
 #' @rdname gridMetrics
-setMethod("gridMetrics", "Lidar",
+setMethod("gridMetrics", "LAS",
 	function(obj, res, func, start = c(0,0), option = NULL)
 	{
 	  func_call = substitute(func)

@@ -44,15 +44,28 @@ pointsInPolygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_pointsInPolygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-#' Read a .las file
+#' Read data in a .las file
 #'
-#' Methods to read .las files
+#' Methods to read .las files content
+#'
 #' @param LASfile character. filename of .las file
 #' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
 #' @return A data.table
-#' @export readLAS
-readLAS <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfReturns = TRUE, ScanDirectionFlag = FALSE, EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE, UserData = FALSE, PointSourceID = FALSE, RGB = TRUE) {
-    .Call('lidR_readLAS', PACKAGE = 'lidR', file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB)
+#' @export readLASdata
+readLASdata <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfReturns = TRUE, ScanDirectionFlag = FALSE, EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE, UserData = FALSE, PointSourceID = FALSE, RGB = TRUE) {
+    .Call('lidR_readLASdata', PACKAGE = 'lidR', file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB)
+}
+
+#' Read header in a .las file
+#'
+#' Methods to read the header in a .las file
+#'
+#' @param LASfile character. filename of .las file
+#' @param fields character. \code{"minimal"}, \code{"standard"}, \code{"all"}.
+#' @return A data.table
+#' @export readLASheader
+readLASheader <- function(file) {
+    .Call('lidR_readLASheader', PACKAGE = 'lidR', file)
 }
 
 #' Write a .las file
@@ -65,8 +78,8 @@ readLAS <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfReturns
 #' @param file character. filename of .las file
 #' @param LASheader
 #' @return void
-#' @export writeLAS
-writeLAS <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = logical(0), EoF = logical(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
-    .Call('lidR_writeLAS', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B)
+#' @export liblasWriteLAS
+liblasWriteLAS <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
+    .Call('lidR_liblasWriteLAS', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B)
 }
 

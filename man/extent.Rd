@@ -3,15 +3,15 @@
 \docType{methods}
 \name{extent}
 \alias{extent}
-\alias{extent,Lidar-method}
+\alias{extent,LAS-method}
 \title{Extent}
 \usage{
 extent(x)
 
-\S4method{extent}{Lidar}(x)
+\S4method{extent}{LAS}(x)
 }
 \arguments{
-\item{x}{An object of the class \code{Lidar}}
+\item{x}{An object of the class \code{LAS}}
 
 \item{\dots}{Unused}
 }
@@ -19,12 +19,12 @@ extent(x)
 Extent object
 }
 \description{
-Returns an Extent object of a \code{Lidar} object.
+Returns an Extent object of a \code{LAS} object.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 extent(lidar)
 }

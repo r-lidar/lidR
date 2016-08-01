@@ -2,12 +2,12 @@
 #'
 #' Select only the last returns i.e. the last returns and the single returns
 #' @aliases  getLast
-#' @param obj An object of class \code{Lidar}
-#' @return An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' lastReturns = lidar %>% getLast
 #' @seealso
@@ -24,7 +24,7 @@
 setGeneric("getLast", function(obj){standardGeneric("getLast")})
 
 #' @rdname  getLast
-setMethod("getLast", "Lidar",
+setMethod("getLast", "LAS",
 	function(obj)
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL

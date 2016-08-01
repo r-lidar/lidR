@@ -25,7 +25,7 @@ produce the grid. It is only useful to compute your own metric in a function.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 myClosureMetrics = function(x, y, z)
 {

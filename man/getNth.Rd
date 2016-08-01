@@ -3,20 +3,20 @@
 \docType{methods}
 \name{getNth}
 \alias{getNth}
-\alias{getNth,Lidar-method}
+\alias{getNth,LAS-method}
 \title{Filter returns by their position in the return sequence.}
 \usage{
 getNth(obj, n)
 
-\S4method{getNth}{Lidar}(obj, n)
+\S4method{getNth}{LAS}(obj, n)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{n}{numeric. The position in the return sequence}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select the returns from their position in the return sequence. Point density
@@ -28,7 +28,7 @@ pulse density and area are recomputed on the fly
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 secondReturns = lidar \%>\% getNth(2)
 }

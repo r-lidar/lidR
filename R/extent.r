@@ -1,15 +1,15 @@
 #' Extent
 #'
-#' Returns an Extent object of a \code{Lidar} object.
+#' Returns an Extent object of a \code{LAS} object.
 #'
 #' @aliases extent
-#' @param x An object of the class \code{Lidar}
+#' @param x An object of the class \code{LAS}
 #' @param \dots Unused
 #' @return Extent object
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' extent(lidar)
 #' @seealso \code{\link[raster:extent]{raster::extent} }
@@ -18,7 +18,7 @@
 setGeneric("extent", function(x){standardGeneric("extent")})
 
 #' @rdname extent
-setMethod("extent", "Lidar",
+setMethod("extent", "LAS",
 	function(x)
 	{
 		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))

@@ -3,15 +3,15 @@
 \docType{methods}
 \name{clipPolygon}
 \alias{clipPolygon}
-\alias{clipPolygon,Lidar-method}
+\alias{clipPolygon,LAS-method}
 \title{Clip LiDAR points within a polygon}
 \usage{
 clipPolygon(obj, x, y, inside = TRUE)
 
-\S4method{clipPolygon}{Lidar}(obj, x, y, inside = TRUE)
+\S4method{clipPolygon}{LAS}(obj, x, y, inside = TRUE)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{x}{numerical array of x-coordinates of polygon}
 
@@ -20,7 +20,7 @@ clipPolygon(obj, x, y, inside = TRUE)
 \item{inside}{logical. Keep data inside or outside the shape}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Clip LiDAR points within a polygon
@@ -28,7 +28,7 @@ Clip LiDAR points within a polygon
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 subset = lidar \%>\% clipPolygon(x=c(685000, 685200, 685050),
                                y=c(5018000, 5018100, 5018200))

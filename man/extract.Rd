@@ -3,37 +3,37 @@
 \docType{methods}
 \name{extract}
 \alias{extract}
-\alias{extract,Lidar-method}
+\alias{extract,LAS-method}
 \title{Return points with matching conditions}
 \usage{
 extract(.data, ...)
 
-\S4method{extract}{Lidar}(.data, ...)
+\S4method{extract}{LAS}(.data, ...)
 }
 \arguments{
-\item{.data}{An object of class \code{Lidar}}
+\item{.data}{An object of class \code{LAS}}
 
 \item{\dots}{Logical predicates. Multiple conditions are combined with &.}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Return points with matching conditions. \code{extract} is an overloading
-function for \code{Lidar} objects which replaces the function
+function for \code{LAS} objects which replaces the function
 \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 # Select the first returns classified as ground
 firstground = lidar \%>\% extract(Classification == 1, ReturnNumber == 1)
 }
 \seealso{
 \link[dplyr:filter]{filter}
-\link[lidR:Lidar]{Class Lidar}
+\link[lidR:LAS]{Class LAS}
 \link[lidR:getFirst]{getFirst}
 \link[lidR:getFirstLast]{getFirstLast}
 \link[lidR:getFirstOfMany]{getFirstOfMany}

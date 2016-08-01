@@ -3,15 +3,15 @@
 \docType{methods}
 \name{pulseDensity}
 \alias{pulseDensity}
-\alias{pulseDensity,Lidar-method}
+\alias{pulseDensity,LAS-method}
 \title{Pulse density surface model}
 \usage{
 pulseDensity(obj, res = 4)
 
-\S4method{pulseDensity}{Lidar}(obj, res = 4)
+\S4method{pulseDensity}{LAS}(obj, res = 4)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.}
 }
@@ -23,7 +23,7 @@ Creates a pulse density map using a LiDAR cloud of points.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 lidar \%>\% pulseDensity(5) \%>\% plot
 lidar \%>\% pulseDensity(10) \%>\% plot

@@ -3,12 +3,12 @@
 #' Select only the returns classified as ground according to LAS specification v1.3.
 #'
 #' @aliases  getGround
-#' @param obj An object of class \code{Lidar}
-#' @return An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' ground = lidar %>% getGround
 #' @seealso
@@ -25,7 +25,7 @@
 setGeneric("getGround", function(obj){standardGeneric("getGround")})
 
 #' @rdname getGround
-setMethod("getGround", "Lidar",
+setMethod("getGround", "LAS",
 	function(obj)
 	{
 	  Classification <- NULL

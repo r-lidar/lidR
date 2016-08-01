@@ -2,17 +2,17 @@
 #'
 #' Clip LiDAR points within a rectangle
 #'
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param xleft	a scalar of left x position.
 #' @param ybottom	a scalar of bottom y position.
 #' @param xright a scalar of right x position.
 #' @param ytop a scalar of top y position.
 #' @param inside logical. Keep data inside or outside the shape
-#' @return An object of class \code{Lidar}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' subset = lidar %>% clipRectangle(xleft=685000, ybottom=5018000,
 #'                                  xright=685100, ytop =5018100)
@@ -27,7 +27,7 @@
 setGeneric("clipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("clipRectangle")})
 
 #' @rdname clipRectangle
-setMethod("clipRectangle", "Lidar",
+setMethod("clipRectangle", "LAS",
 	function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
 	{
 	  X <- Y <- NULL
@@ -45,15 +45,15 @@ setMethod("clipRectangle", "Lidar",
 #' Clip LiDAR points within a polygon
 #'
 #' @aliases clipPolygon
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param x	numerical array of x-coordinates of polygon
 #' @param y	numerical array of y-coordinates of polygon
 #' @param inside logical. Keep data inside or outside the shape
-#' @return An object of class \code{Lidar}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' subset = lidar %>% clipPolygon(x=c(685000, 685200, 685050),
 #'                                y=c(5018000, 5018100, 5018200))
@@ -68,7 +68,7 @@ setMethod("clipRectangle", "Lidar",
 setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("clipPolygon")})
 
 #' @rdname clipPolygon
-setMethod("clipPolygon", "Lidar",
+setMethod("clipPolygon", "LAS",
 	function(obj, x, y, inside = TRUE)
 	{
 	  X <- Y <- NULL
@@ -85,16 +85,16 @@ setMethod("clipPolygon", "Lidar",
 #' Clip LiDAR points within a disc
 #'
 #' @aliases clipCircle
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param xcenter	a scalar. x disc center
 #' @param ycenter	a scalar. y disc center
 #' @param radius a scalar. Disc radius
 #' @param inside logical. Keep data inside or outside the shape
-#' @return An object of class \code{Lidar}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' subset = lidar %>% clipCircle(685000, 5018000, 25)
 #'
@@ -107,7 +107,7 @@ setMethod("clipPolygon", "Lidar",
 setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("clipCircle")})
 
 #' @rdname clipCircle
-setMethod("clipCircle", "Lidar",
+setMethod("clipCircle", "LAS",
 	function(obj, xcenter, ycenter, radius, inside = TRUE)
 	{
 	  X <- Y <- NULL

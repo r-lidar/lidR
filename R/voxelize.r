@@ -12,13 +12,13 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  voxelize
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the number of points is computed.
@@ -50,7 +50,7 @@
 setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
 
 #' @rdname voxelize
-setMethod("voxelize", "Lidar",
+setMethod("voxelize", "LAS",
     function(obj, res, func)
     {
         func_call = substitute(func)

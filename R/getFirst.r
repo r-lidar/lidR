@@ -3,12 +3,12 @@
 #' Select only the first returns.
 #'
 #' @aliases  getFirst
-#' @param obj An object of class \code{Lidar}
-#' @return An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' firstReturns = lidar %>% getFirst
 #' @seealso
@@ -26,7 +26,7 @@ setGeneric("getFirst", function(obj){standardGeneric("getFirst")})
 
 
 #' @rdname getFirst
-setMethod("getFirst", "Lidar",
+setMethod("getFirst", "LAS",
 	function(obj)
 	{
 		return(getNth(obj, 1))

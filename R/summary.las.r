@@ -1,22 +1,22 @@
-#' Summary of Lidar data
+#' Summary of LAS data
 #'
-#' This functions implements a \link[base:summary]{summary} method for Lidar objects
+#' This functions implements a \link[base:summary]{summary} method for LAS objects
 #'
 #' @aliases summary
-#' @param object An object of the class \code{Lidar}
+#' @param object An object of the class \code{LAS}
 #' @param \dots Unused (inherited from R base)
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' summary(lidar)
 #'
 #' @export
 #' @seealso
-#' \link[lidR:Lidar]{Class Lidar}
+#' \link[lidR:LAS]{Class LAS}
 #' @importFrom utils object.size
-summary.Lidar =	function(object, ...)
+summary.LAS =	function(object, ...)
 {
   size <- format(object.size(object), units = "auto")
 

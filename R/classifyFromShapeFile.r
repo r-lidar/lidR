@@ -2,21 +2,21 @@
 #'
 #' Classify LiDAR points from the polygons in an ESRI shapefile
 #'
-#' Classify Lidar points based on geographic data found in a shapefile. It checks
+#' Classify LAS points based on geographic data found in a shapefile. It checks
 #' if the LiDAR points are in polygons given in the shapefile. If the parameter
 #' \code{field} is the name of a field in the shapefile it classifies the points
 #' based on the data in the shapefile. Else it classifies the points as boolean. TRUE
 #' if the points are in a polygon, FALSE otherwise. This function allows for filtering
 #' lakes, for example.
-#' @param obj An object of the class \code{Lidar}
+#' @param obj An object of the class \code{LAS}
 #' @param shapefile An object of class SpatialPolygonsDataFrame
-#' @param field characters. The name of a field of the shapefile or the name of the new field in the Lidar object.
-#' @return An object of the class \code{Lidar} with a new field
+#' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
+#' @return An object of the class \code{LAS} with a new field
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
@@ -40,9 +40,11 @@ setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGene
 #' @rdname classifyFromShapefile
 #' @useDynLib lidR
 #' @importFrom Rcpp sourceCpp
-setMethod("classifyFromShapefile", "Lidar",
+setMethod("classifyFromShapefile", "LAS",
   function(obj, shapefile, field)
   {
+    info <- NULL
+
     npoints = dim(obj@data)[1]
 
     if(field %in% names(shapefile@data))

@@ -1,9 +1,9 @@
-#' An S4 class to represent a LiDAR dataset.
+#' An S4 class to represent a LAS dataset.
 #'
-#' An S4 class to represent a LiDAR dataset. It contains the data, the header and additional
+#' An S4 class to represent a LAS dataset. It contains the data, the header and additional
 #' values computed during the loading.
 #'
-#' A \code{Lidar} object contains a \code{data.table} in the slot \code{@data} with the data
+#' A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with the data
 #' read from a \code{.las} file and other information computed during data loading. The
 #' fields read from the las file are named:
 #' \itemize{
@@ -18,33 +18,33 @@
 #' \item{\code{UserData}}
 #' \item{\code{PointSourceID}}
 #' }
-#' When a \code{Lidar} object is built, two other variables are computed in the \code{data.table}:
+#' When a \code{LAS} object is built, two other variables are computed in the \code{data.table}:
 #' \itemize{
 #' \item{\code{pulseID}: }{a unique identifying number for each pulse so the beam origin of each point is known}
 #' \item{\code{flightlineID}: }{a unique identifying number for the flightline so the flightline origin of each point is known}}
-#' A \code{Lidar} object contains other information in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
+#' A \code{LAS} object contains other information in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
 #' \itemize{
 #' \item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
 #' \item{\code{points} and \code{pulse density}: }{are computed using the computed area. Also an approximation if the data are not convex}
 #' }
-#' A \code{Lidar} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
+#' A \code{LAS} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
 #' See the public documentation of \code{.las} file format for more information.
 #'
-#' @slot data data.table. a table representing the LiDAR data
+#' @slot data data.table. a table representing the LAS data
 #' @slot area numeric. The area of the dataset computed with a convex hull
 #' @slot pointDensity numeric. The point density of the dataset
 #' @slot pulseDensity numeric. The pulse density of the dataset
 #' @slot header list. A list of information contained in the las file header.
 #' @seealso
-#' \link[lidR:LoadLidar]{LoadLidar}
-#' @name Lidar-class
-#' @rdname Lidar-class
-#' @aliases Lidar
-#' @exportClass Lidar
+#' \link[lidR:LAS]{LAS}
+#' @name LAS-class
+#' @rdname LAS-class
+#' @aliases LAS
+#' @exportClass LAS
 #' @importFrom methods new
 #' @importFrom grDevices rgb
 setClass(
-	Class = "Lidar",
+	Class = "LAS",
 	representation(
 		data 					= "data.table",
 		area 					= "numeric",
@@ -55,7 +55,7 @@ setClass(
 )
 
 #' @importFrom data.table is.data.table setorder
-setMethod("initialize", "Lidar",
+setMethod("initialize", "LAS",
 	function(.Object, input, fields = "standard", ...)
 	{
 	  gpstime <- R <- G <- B <- NULL
@@ -65,12 +65,13 @@ setMethod("initialize", "Lidar",
 
 	  if(is.character(input))
 	  {
-	    LAS = readLAS(input)
-	    .Object@data   = as.data.table(LAS[[2]])
-	    .Object@header = LAS[[1]]
+	    .Object@data   = readLASdata(input)
+	    .Object@header = readLASheader(input)
 	  }
 	  else if(is.data.table(input))
+	  {
 	    .Object@data = input
+	  }
 	  else
 	    lidRError("LDR1")
 
@@ -117,7 +118,7 @@ setMethod("initialize", "Lidar",
 setGeneric(".pointDensity", function(obj){standardGeneric(".pointDensity")})
 
 #' @importFrom magrittr %>% divide_by
-setMethod(".pointDensity", "Lidar",
+setMethod(".pointDensity", "LAS",
 	function(obj)
 	{
 		d = obj@data %>% nrow %>% divide_by(obj@area) %>% round(2)
@@ -128,7 +129,7 @@ setMethod(".pointDensity", "Lidar",
 setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
 
 #' @importFrom magrittr %>% divide_by
-setMethod(".pulseDensity", "Lidar",
+setMethod(".pulseDensity", "LAS",
 	function(obj)
 	{
 		d = obj@data$pulseID %>% n_distinct %>% divide_by(obj@area) %>% round(2)

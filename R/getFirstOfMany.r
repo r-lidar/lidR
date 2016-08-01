@@ -3,12 +3,12 @@
 #' Select only the first returns from pulses which returned multiple points
 #'
 #' @aliases  getFirstOfMany
-#' @param obj An object of class \code{Lidar}
-#' @return An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
+#' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 #'
-#' lidar = LoadLidar(LASfile)
+#' lidar = readLAS(LASfile)
 #'
 #' firstOfManyReturns = lidar %>% getFirstOfMany
 #' @seealso
@@ -25,7 +25,7 @@
 setGeneric("getFirstOfMany", function(obj){standardGeneric("getFirstOfMany")})
 
 #' @rdname getFirstOfMany
-setMethod("getFirstOfMany", "Lidar",
+setMethod("getFirstOfMany", "LAS",
 	function(obj)
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL

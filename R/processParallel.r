@@ -2,7 +2,7 @@
 #'
 #' Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
 #'
-#' When users have a set of Lidar data organized in several tiles it can apply a user function to each tile.
+#' When users have a set of LAS data organized in several tiles it can apply a user function to each tile.
 #' This function describes the procedure to apply to each file beginning with data loading (see example).
 #' @aliases processParallel
 #' @param x  A Catalog object
@@ -26,7 +26,7 @@
 #' analyse_tile = function(LASFile)
 #' {
 #'   # Load the data
-#'   lidar = LoadLidar(LASFile)
+#'   lidar = readLAS(LASFile)
 #'
 #'   # Associate geographic data with lidar points (if needed)
 #'   lidar %<>% classifyFromShapefile(lake, field="inlake")
