@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{liblasWriteLAS}
 \alias{liblasWriteLAS}
-\title{Write a .las file}
+\title{Write a las file with liblas}
 \usage{
 liblasWriteLAS(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0),
   NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0),
@@ -11,15 +11,48 @@ liblasWriteLAS(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0),
 }
 \arguments{
 \item{file}{character. filename of .las file}
+
+\item{LASheader}{list a header from a LAS object}
+
+\item{X}{numeric array X data}
+
+\item{Y}{numeric array Y data}
+
+\item{Z}{numeric array Z data}
+
+\item{I}{integer array intensity data}
+
+\item{RN}{integer array return number data}
+
+\item{NoR}{integer array number of returns data}
+
+\item{SDF}{integer array scan direction flag data}
+
+\item{EoF}{integer array edge of flightline data}
+
+\item{C}{integer array classification data}
+
+\item{SA}{integer array scan angle data}
+
+\item{UD}{integer array user data data}
+
+\item{PSI}{integer array point source id data}
+
+\item{T}{numeric array gpstime data}
+
+\item{R}{integer array red data}
+
+\item{G}{integer array green data}
+
+\item{B}{integer array blue data}
 }
 \value{
 void
 }
 \description{
-Methods to write .las files
+Methods to write las files using liblas
 }
 \details{
-This function is an interface between R and the library liblas.
-Users must avoid to use this function standalone. Use w
+This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
 }
 

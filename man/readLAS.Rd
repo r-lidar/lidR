@@ -10,36 +10,45 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE)
 }
 \arguments{
-\item{files}{character.}
+\item{files}{array of character.}
 
-\item{Intensity}{logical.}
+\item{Intensity}{logical. do you want to load Intensity field? default: TRUE}
 
-\item{ReturnNumber}{logical.}
+\item{ReturnNumber}{logical. do you want to load ReturnNumber field? default: TRUE}
 
-\item{NumberOfReturns}{logical.}
+\item{NumberOfReturns}{logical. do you want to load NumberOfReturns field? default: TRUE}
 
-\item{ScanDirectionFlag}{logical.}
+\item{ScanDirectionFlag}{logical. do you want to load ScanDirectionFlag field? default: FALSE}
 
-\item{EdgeofFlightline}{logical.}
+\item{EdgeofFlightline}{logical. do you want to load EdgeofFlightline field? default: FALSE}
 
-\item{Classification}{logical.}
+\item{Classification}{logical. do you want to load Classification field? default: TRUE}
 
-\item{ScanAngle}{logical.}
+\item{ScanAngle}{logical. do you want to load intensity field? default: TRUE}
 
-\item{UserData}{logical.}
+\item{UserData}{logical. do you want to load UserData field? default: FALSE}
 
-\item{PointSourceID}{logical.}
+\item{PointSourceID}{logical. do you want to load PointSourceID field? default: FALSE}
 
-\item{RGB}{logical.}
+\item{RGB}{logical. do you want to load intensity R,G and B? default: TRUE}
 }
 \value{
 A LAS object
 }
 \description{
-Read las files
+Read las files in format 1 to 4 according to LAS specification (non fullwaveform) and return an object of class LAS
+}
+\details{
+If several files are given the returned LAS object is considered as one LAS file.
+The non-recomputable informations in the header are the one read from the first file of the list.
+The other informations are recomputed on the fly.
+The optional logical parameters enable to do not load some fields to save memory if the field are useless for user's purpose.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
 lidar = readLAS(LASfile)
+}
+\seealso{
+\link[lidR:LAS-class]{Class LAS}
 }
 

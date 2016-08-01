@@ -2,19 +2,20 @@
 % Please edit documentation in R/RcppExports.R
 \name{readLASheader}
 \alias{readLASheader}
-\title{Read header in a .las file}
+\title{Read header in a las file}
 \usage{
 readLASheader(file)
 }
 \arguments{
-\item{LASfile}{character. filename of .las file}
-
-\item{fields}{character. \code{"minimal"}, \code{"standard"}, \code{"all"}.}
+\item{file}{character. the name of the file which the data are to be read from}
 }
 \value{
-A data.table
+A list
 }
 \description{
-Methods to read the header in a .las file
+Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+}
+\details{
+This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
 }
 

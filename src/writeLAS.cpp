@@ -6,15 +6,30 @@
 using namespace Rcpp;
 using namespace boost;
 
-//' Write a .las file
+//' Write a las file with liblas
 //'
-//' Methods to write .las files
+//' Methods to write las files using liblas
 //'
-//' This function is an interface between R and the library liblas.
-//' Users must avoid to use this function standalone. Use w
+//' This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
 //'
 //' @param file character. filename of .las file
-//' @param LASheader
+//' @param LASheader list a header from a LAS object
+//' @param X numeric array X data
+//' @param Y numeric array Y data
+//' @param Z numeric array Z data
+//' @param I integer array intensity data
+//' @param RN integer array return number data
+//' @param NoR integer array number of returns data
+//' @param SDF integer array scan direction flag data
+//' @param EoF integer array edge of flightline data
+//' @param C integer array classification data
+//' @param SA integer array scan angle data
+//' @param UD integer array user data data
+//' @param PSI integer array point source id data
+//' @param T numeric array gpstime data
+//' @param R integer array red data
+//' @param G integer array green data
+//' @param B integer array blue data
 //' @return void
 //' @export liblasWriteLAS
 // [[Rcpp::export]]

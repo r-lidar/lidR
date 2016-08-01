@@ -39,7 +39,6 @@
 #' \link[lidR:LAS]{LAS}
 #' @name LAS-class
 #' @rdname LAS-class
-#' @aliases LAS
 #' @exportClass LAS
 #' @importFrom methods new
 #' @importFrom grDevices rgb
