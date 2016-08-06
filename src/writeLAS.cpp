@@ -117,7 +117,7 @@ void liblasWriteLAS(CharacterVector file,
 
     for(int i = 0 ; i < X.length() ; i++)
     {
-      liblas::Point p;
+      liblas::Point p(&header);
       liblas::Classification cl;
       liblas::Color color;
 

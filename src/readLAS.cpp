@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <liblas/reader.hpp>
+#include <liblas/point.hpp>
 #include <exception>
 #include <fstream>
 
@@ -45,7 +46,7 @@ List readLASdata(CharacterVector file,
     std::ifstream ifs(filestd.c_str(), std::ios::in | std::ios::binary);
 
     liblas::Reader reader(ifs);
-    liblas::Point p;
+    liblas::Point p(&reader.GetHeader());
 
     boost::uint32_t n = reader.GetHeader().GetPointRecordsCount();
     liblas::Header header = reader.GetHeader();
@@ -163,7 +164,7 @@ List readLASheader(CharacterVector file)
     head.push_back(header.GetFileSignature());
     head.push_back(header.GetFileSourceId());
     head.push_back(0);
-    head.push_back(header.GetProjectId().to_string());
+    head.push_back(0); //header.GetProjectId()
     head.push_back(header.GetVersionMajor());
     head.push_back(header.GetVersionMinor());
     head.push_back(header.GetSystemId());
@@ -176,7 +177,7 @@ List readLASheader(CharacterVector file)
     head.push_back((int)header.GetDataFormatId());
     head.push_back(header.GetDataRecordLength());
     head.push_back(header.GetPointRecordsCount());
-    head.push_back(header.GetPointRecordsByReturnCount());
+    head.push_back(0); //header.GetPointRecordsByReturnCount()
     head.push_back(header.GetScaleX());
     head.push_back(header.GetScaleY());
     head.push_back(header.GetScaleZ());

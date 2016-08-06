@@ -1,1 +1,1 @@
-PKG_LIBS = -L/usr/lib/ -llas
+PKG_CPPFLAGS=-I../inst/include
