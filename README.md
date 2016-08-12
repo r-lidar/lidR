@@ -24,7 +24,8 @@ Since v1.1.0 it not so easy to install it on Windows because lidR depend on exte
     
 # Features 
 
-- [Read .las files](http://jean-romain.github.io/lidR/loadLidar.html)
+- [Read .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
+- Write .las and .laz files
 - [Retrieve indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
@@ -60,5 +61,6 @@ Since v1.1.0 it not so easy to install it on Windows because lidR depend on exte
 
 - `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
 - Add functions `DEM` and `DTM` : note that they are experimental functions ! They cannot be used for normalization purpose
-- `readLAs` have been rewritten in C++ using `liblas`. It is 2 times faster and it's safer.
-- Add function `writeLAS` using `liblas`.
+- `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
+- Add function `writeLAS` using `LASlib`.
+- Support of compressed `.laz` format.
