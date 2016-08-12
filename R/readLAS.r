@@ -40,7 +40,7 @@ readLAS = function(files,
                    RGB = TRUE)
 {
   valid = file.exists(files)
-  islas = tools::file_ext(files) == "las"
+  islas = tools::file_ext(files) %in% c("las", "laz")
 
   if( sum(!valid) != 0 )
   {
