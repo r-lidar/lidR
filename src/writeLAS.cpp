@@ -1,10 +1,13 @@
 #include <Rcpp.h>
-#include <liblas/writer.hpp>
-#include <exception>
-#include <fstream>
+
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "laswriter.hpp"
 
 using namespace Rcpp;
-using namespace boost;
 
 //' Write a las file with liblas
 //'
@@ -56,24 +59,22 @@ void liblasWriteLAS(CharacterVector file,
   {
     std::string filestd = as<std::string>(file);
 
-    std::ofstream ofs(filestd.c_str(), std::ios::out | std::ios::binary);
-
-    std::string FileSignature = LASheader["File Signature"];
+    /*std::string FileSignature = LASheader["File Signature"];
     int FileSourceID = LASheader["File Source ID"];
     int GlobalEncoding = LASheader["Global Encoding"];
-    std::string ProjectIDGUID = LASheader["Project ID - GUID"];
+    std::string ProjectIDGUID = LASheader["Project ID - GUID"];*/
     int VersionMajor = LASheader["Version Major"];
     int VersionMinor = LASheader["Version Minor"];
     std::string SystemIdentifier = LASheader["System Identifier"];
     std::string GeneratingSoftware = LASheader["Generating Software"];
     int FileCreationDayofYear = LASheader["File Creation Day of Year"];
     int FileCreationYear = LASheader["File Creation Year"];
-    int HeaderSize = LASheader["Header Size"];
+    /*int HeaderSize = LASheader["Header Size"];
     double Offsettopointdata = LASheader["Offset to point data"];
-    double Numberofvariablelengthrecords = LASheader["Number of variable length records"];
+    double Numberofvariablelengthrecords = LASheader["Number of variable length records"];*/
     int PointDataFormatID = LASheader["Point Data Format ID"];
     int PointDataRecordLength = LASheader["Point Data Record Length"];
-    double Numberofpointrecords = LASheader["Number of point records"];
+    //double Numberofpointrecords = LASheader["Number of point records"];
     //double Numberofpointsbyreturn = LASheader["Number of points by return"];
     double Xscalefactor = LASheader["X scale factor"];
     double Yscalefactor = LASheader["Y scale factor"];
@@ -81,70 +82,84 @@ void liblasWriteLAS(CharacterVector file,
     double Xoffset = LASheader["X offset"];
     double Yoffset = LASheader["Y offset"];
     double Zoffset = LASheader["Z offset"];
-    double MaxX = LASheader["Max X"];
+    /*double MaxX = LASheader["Max X"];
     double MinX = LASheader["Min X"];
     double MaxY = LASheader["Max Y"];
     double MinY = LASheader["Min Y"];
     double MaxZ = LASheader["Max Z"];
     double MinZ = LASheader["Min Z"];
-    uint16_t offset = 227;
+    uint16_t offset = 227;*/
 
-    liblas::Header header;
+    class LASheader header;
 
     //header.SetFileSignature(as<std::string>(LASheader["File Signature"]));
-    header.SetFileSourceId(numeric_cast<uint16_t>(FileSourceID));
+    //header.file_source_ID = FileSourceID;
     //
     //header.SetProjectId();
-    header.SetVersionMajor(numeric_cast<uint8_t>(VersionMajor));
-    header.SetVersionMinor(numeric_cast<uint8_t>(VersionMinor));
+    header.version_major = VersionMajor;
+    header.version_minor = VersionMinor;
     //header.SetSystemId();
     //header.SetSoftwareId();
-    header.SetCreationDOY(numeric_cast<uint16_t>(FileCreationDayofYear));
-    header.SetCreationYear(numeric_cast<uint16_t>(FileCreationYear));
-    header.SetHeaderSize(offset);
-    header.SetDataOffset(offset);
-    header.SetRecordsCount(numeric_cast<uint16_t>(Numberofvariablelengthrecords));
-    header.SetDataFormatId(liblas::ePointFormat1);
+    header.file_creation_day =  FileCreationDayofYear;
+    header.file_creation_year = FileCreationYear;
+    //header.header_size = HeaderSize;
+    //header.offset_to_point_data =  offset;
+    //header.number_of_variable_length_records = Numberofvariablelengthrecords;
+    header.point_data_format = PointDataFormatID;
     //header.SetDataRecordLength();
-    header.SetPointRecordsCount(numeric_cast<uint32_t>(X.length())); // WARNING
+    //header.SetPointRecordsCount(numeric_cast<uint32_t>(X.length())); // WARNING
     //header.SetPointRecordsByReturnCount();
-    header.SetScale(Xscalefactor, Yscalefactor, Zscalefactor);
-    header.SetOffset(Xoffset, Yoffset, Zoffset);
-    header.SetMax(MaxX, MaxY, MaxZ);
-    header.SetMin(MinX, MinY, MinZ);
+    header.x_scale_factor = Xscalefactor;
+    header.y_scale_factor = Yscalefactor;
+    header.z_scale_factor = Zscalefactor;
+    header.x_offset =  Xoffset;
+    header.y_offset =  Yoffset;
+    header.z_offset =  Zoffset;
+    header.point_data_record_length = PointDataRecordLength;
+    /*header.max_x = MaxX;
+    header.max_y = MaxY;
+    header.max_z = MaxZ;
+    header.min_x = MinX;
+    header.min_y = MinY;
+    header.min_z = MinZ;*/
 
-    liblas::Writer writer(ofs, header);
+    LASwriteOpener laswriteopener;
+    laswriteopener.set_file_name(filestd.c_str());
+
+    LASpoint p;
+    p.init(&header, header.point_data_format, header.point_data_record_length, 0);
+
+    LASwriter* laswriter = laswriteopener.open(&header);
 
     for(int i = 0 ; i < X.length() ; i++)
     {
-      liblas::Point p(&header);
-      liblas::Classification cl;
-      liblas::Color color;
+      p.set_X((X[i]-Xoffset)/Xscalefactor);
+      p.set_Y((Y[i]-Yoffset)/Yscalefactor);
+      p.set_Z((Z[i]-Zoffset)/Zscalefactor);
+      p.set_intensity((U16)I[i]);
 
-      p.SetRawX((X[i]-Xoffset)/Xscalefactor);
-      p.SetRawY((Y[i]-Yoffset)/Yscalefactor);
-      p.SetRawZ((Z[i]-Zoffset)/Zscalefactor);
-
-      if(I.length() > 0){ p.SetIntensity(numeric_cast<uint16_t>(I[i])); }
-      if(RN.length() > 0){ p.SetReturnNumber(numeric_cast<uint16_t>(RN[i])); }
-      if(NoR.length() > 0){ p.SetNumberOfReturns(numeric_cast<uint16_t>(NoR[i])); }
-      if(SDF.length() > 0){ p.SetScanFlags(numeric_cast<uint8_t>(NoR[i])); }
-      if(EoF.length() > 0){ p.SetFlightLineEdge(numeric_cast<uint8_t>(EoF[i])); }
-      if(C.length() > 0){ p.SetClassification(numeric_cast<uint8_t>(C[i])); }
-      if(SA.length() > 0){ p.SetScanAngleRank(numeric_cast<int8_t>(SA[i])); }
-      if(UD.length() > 0){ p.SetUserData(numeric_cast<uint8_t>(UD[i])); }
-      //if(PSI.length() > 0){ p.SetPointSourceID(numeric_cast<uint16_t>(PSI[i])); }
-      if(T.length() > 0){ p.SetTime(T[i]); }
-      if(R.length() > 0)
+      if(I.length() > 0){ p.set_intensity((U16)I[i]); }
+      if(RN.length() > 0){ p.set_return_number((U8)RN[i]); }
+      if(NoR.length() > 0){ p.set_number_of_returns((U8)NoR[i]); }
+      if(SDF.length() > 0){ p.set_scan_direction_flag((U8)SDF[i]); }
+      if(EoF.length() > 0){ p.set_edge_of_flight_line((U8)EoF[i]); }
+      if(C.length() > 0){ p.set_classification((U8)C[i]); }
+      if(SA.length() > 0){ p.set_scan_angle_rank((I8)SA[i]); }
+      if(UD.length() > 0){ p.set_user_data((U8)UD[i]); }
+      if(PSI.length() > 0){ p.set_point_source_ID((U16)PSI[i]); }
+      if(T.length() > 0){ p.set_gps_time((F64)T[i]); }
+      /*if(R.length() > 0)
       {
         liblas::Color color(numeric_cast<uint32_t>(R[i]), numeric_cast<uint32_t>(G[i]), numeric_cast<uint32_t>(B[i]));
         p.SetColor(color);
-      }
+      }*/
 
-      writer.WritePoint(p);
+      laswriter->write_point(&p);
+      laswriter->update_inventory(&p);
     }
 
-    ofs.close();
+    laswriter->update_header(&header, TRUE);
+    I64 total_bytes = laswriter->close();
   }
   catch (std::exception const& e)
   {

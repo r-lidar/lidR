@@ -64,8 +64,6 @@ Collate:
     'retrieveInventoryTiles.r'
     'selectPulseToRemove.r'
     'selectArea.r'
-    'readLAS.r'
-    'writeLAS.r'
     'summary.las.r'
     'testFuncSignature.r'
     'gapFractionProfile.r'
@@ -74,4 +72,6 @@ Collate:
     'voxelize.r'
     'selectTiles.r'
     'RcppExports.R'
+    'readLAS.r'
+    'writeLAS.r'
 LinkingTo: Rcpp
