@@ -4,8 +4,10 @@ Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
 Version: 1.1.0
 Date: 2016-07-29
-Author: Jean-Romain Roussel, David Auty
-Maintainer: Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>
+Authors@R: c(
+    person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
+    person("Pierrick", "Marie", email = "", role = c("aut", "ctb")),
+    person("David", "Auty", email = "", role = c("aut","ctb")))
 Description: Airborne LiDAR interface for data
     visualisation and manipulation. It has been designed mainly for use in forestry
     applications. The lidR package allows computation of digital elevation canopy models,
