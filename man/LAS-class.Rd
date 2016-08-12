@@ -2,7 +2,6 @@
 % Please edit documentation in R/ClassLAS.r
 \docType{class}
 \name{LAS-class}
-\alias{LAS}
 \alias{LAS-class}
 \title{An S4 class to represent a LAS dataset.}
 \description{

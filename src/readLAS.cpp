@@ -1,8 +1,12 @@
 #include <Rcpp.h>
-#include <liblas/reader.hpp>
-#include <liblas/point.hpp>
-#include <exception>
-#include <fstream>
+
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "lasreader.hpp"
+#include "laswriter.hpp"
 
 using namespace Rcpp;
 
@@ -43,13 +47,12 @@ List readLASdata(CharacterVector file,
   {
     std::string filestd = as<std::string>(file);
 
-    std::ifstream ifs(filestd.c_str(), std::ios::in | std::ios::binary);
+    LASreadOpener lasreadopener;
+    lasreadopener.set_file_name(filestd.c_str());
 
-    liblas::Reader reader(ifs);
-    liblas::Point p(&reader.GetHeader());
+    LASreader* lasreader = lasreadopener.open();
 
-    boost::uint32_t n = reader.GetHeader().GetPointRecordsCount();
-    liblas::Header header = reader.GetHeader();
+    int n = lasreader->header.number_of_point_records;
 
     NumericVector X(n);
     NumericVector Y(n);
@@ -69,31 +72,30 @@ List readLASdata(CharacterVector file,
     IntegerVector B(n);
 
     unsigned int i = 0;
-    while (reader.ReadNextPoint())
+    while (lasreader->read_point())
     {
-      p = reader.GetPoint();
-
-      X[i]   = p.GetX();
-      Y[i]   = p.GetY();
-      Z[i]   = p.GetZ();
-      I[i]   = p.GetIntensity();
-      RN[i]  = p.GetReturnNumber();
-      NoR[i] = p.GetNumberOfReturns();
-      SDF[i] = p.GetScanFlags();
-      EoF[i] = p.GetFlightLineEdge();
-      C[i]   = p.GetClassification().GetClass();
-      SA[i]  = p.GetScanAngleRank();
-      UD[i]  = p.GetUserData();
-      PSI[i] = p.GetPointSourceID();
-      T[i]   = p.GetTime();
-      R[i]   = p.GetColor().GetRed();
-      G[i]   = p.GetColor().GetGreen();
-      B[i]   = p.GetColor().GetBlue();
+      X[i]   = lasreader->point.get_x();
+      Y[i]   = lasreader->point.get_y();
+      Z[i]   = lasreader->point.get_z();
+      I[i]   = lasreader->point.get_intensity();
+      RN[i]  = lasreader->point.get_return_number();
+      NoR[i] = lasreader->point.get_number_of_returns();
+      SDF[i] = lasreader->point.get_scan_direction_flag();
+      EoF[i] = lasreader->point.get_edge_of_flight_line();
+      C[i]   = lasreader->point.get_classification();
+      SA[i]  = lasreader->point.get_scan_angle_rank();
+      UD[i]  = lasreader->point.get_user_data();
+      PSI[i] = lasreader->point.get_point_source_ID();
+      T[i]   = lasreader->point.get_gps_time();
+      R[i]   = lasreader->point.get_R();
+      G[i]   = lasreader->point.get_G();
+      B[i]   = lasreader->point.get_B();
 
       i++;
     }
 
-    ifs.close();
+    lasreader->close();
+    delete lasreader;
 
     List lasdata = List::create(X,Y,Z);
     CharacterVector field(0);
@@ -117,13 +119,13 @@ List readLASdata(CharacterVector file,
       lasdata.push_back(UD), field.push_back("UserData");
     if(PointSourceID)
       lasdata.push_back(PSI), field.push_back("PointSourceID");
-    if(RGB && header.GetDataFormatId() == liblas::ePointFormat2 | header.GetDataFormatId() == liblas::ePointFormat3)
+    /*if(RGB && (lasreader->header.point_data_format == 2 | lasreader->header.point_data_format == 3))
     {
       lasdata.push_back(R), field.push_back("R");
       lasdata.push_back(G), field.push_back("G");
       lasdata.push_back(B), field.push_back("B");
-    }
-    if(header.GetDataFormatId() == liblas::ePointFormat1 | header.GetDataFormatId() == liblas::ePointFormat3)
+    }*/
+    //if(lasreader->header.point_data_format == 1 | lasreader->header.point_data_format == 3)
       lasdata.push_back(T); field.push_back("gpstime");
 
     lasdata.names() = field;
@@ -153,43 +155,45 @@ List readLASheader(CharacterVector file)
   {
     std::string filestd = as<std::string>(file);
 
-    std::ifstream ifs(filestd.c_str(), std::ios::in | std::ios::binary);
+    LASreadOpener lasreadopener;
+    lasreadopener.set_file_name(filestd.c_str());
 
-    liblas::Reader reader(ifs);
-    liblas::Header header = reader.GetHeader();
-
-    ifs.close();
+    LASreader* lasreader = lasreadopener.open();
 
     List head(0);
-    head.push_back(header.GetFileSignature());
-    head.push_back(header.GetFileSourceId());
-    head.push_back(0);
-    head.push_back(0); //header.GetProjectId()
-    head.push_back(header.GetVersionMajor());
-    head.push_back(header.GetVersionMinor());
-    head.push_back(header.GetSystemId());
-    head.push_back(header.GetSoftwareId());
-    head.push_back(header.GetCreationDOY());
-    head.push_back(header.GetCreationYear());
-    head.push_back(header.GetHeaderSize());
-    head.push_back(header.GetDataOffset());
-    head.push_back(header.GetRecordsCount());
-    head.push_back((int)header.GetDataFormatId());
-    head.push_back(header.GetDataRecordLength());
-    head.push_back(header.GetPointRecordsCount());
-    head.push_back(0); //header.GetPointRecordsByReturnCount()
-    head.push_back(header.GetScaleX());
-    head.push_back(header.GetScaleY());
-    head.push_back(header.GetScaleZ());
-    head.push_back(header.GetOffsetX());
-    head.push_back(header.GetOffsetY());
-    head.push_back(header.GetOffsetZ());
-    head.push_back(header.GetMaxX());
-    head.push_back(header.GetMinX());
-    head.push_back(header.GetMaxY());
-    head.push_back(header.GetMinX());
-    head.push_back(header.GetMaxZ());
-    head.push_back(header.GetMinZ());
+    head.push_back(lasreader->header.file_signature);
+    head.push_back(lasreader->header.file_source_ID);
+    head.push_back(lasreader->header.global_encoding);
+    head.push_back(0); //lasreader->header.GetProjectId();
+    head.push_back(lasreader->header.version_major);
+    head.push_back(lasreader->header.version_minor);
+    head.push_back(lasreader->header.system_identifier);
+    head.push_back(lasreader->header.generating_software);
+    head.push_back(lasreader->header.file_creation_day);
+    head.push_back(lasreader->header.file_creation_year);
+    head.push_back(lasreader->header.header_size);
+    head.push_back(lasreader->header.offset_to_point_data);
+    head.push_back(lasreader->header.number_of_variable_length_records);
+    head.push_back(lasreader->header.point_data_format);
+    head.push_back(lasreader->header.point_data_record_length);
+    head.push_back(lasreader->header.number_of_point_records);
+    head.push_back(NumericVector::create(lasreader->header.number_of_points_by_return[0],
+                                         lasreader->header.number_of_points_by_return[1],
+                                         lasreader->header.number_of_points_by_return[2],
+                                         lasreader->header.number_of_points_by_return[3],
+                                         lasreader->header.number_of_points_by_return[4]));
+    head.push_back(lasreader->header.x_scale_factor);
+    head.push_back(lasreader->header.y_scale_factor);
+    head.push_back(lasreader->header.z_scale_factor);
+    head.push_back(lasreader->header.x_offset);
+    head.push_back(lasreader->header.y_offset);
+    head.push_back(lasreader->header.z_offset);
+    head.push_back(lasreader->header.max_x);
+    head.push_back(lasreader->header.min_x);
+    head.push_back(lasreader->header.max_y);
+    head.push_back(lasreader->header.min_y);
+    head.push_back(lasreader->header.max_z);
+    head.push_back(lasreader->header.min_z);
 
     CharacterVector names(0);
     names.push_back("File Signature");
