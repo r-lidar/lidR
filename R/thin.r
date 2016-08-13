@@ -18,7 +18,7 @@
 #' @param resolution numeric. Cell size to compute the pulse density.
 #' @return It returns a \code{LAS} object.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # By default the method is homogenize = TRUE

@@ -8,7 +8,7 @@
 #' @param obj An object of the class \code{LAS}
 #' @return numeric. The area of the object computed with a convex hull in LAS coordinates units
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

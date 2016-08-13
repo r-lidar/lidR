@@ -20,7 +20,7 @@ It returns a \code{data.table} containing the LiDAR data
 Return the slot @data from a \code{LAS} object
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 getData(lidar)

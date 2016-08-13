@@ -32,7 +32,7 @@
 #' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridMetrics" enabling easy plotting.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells

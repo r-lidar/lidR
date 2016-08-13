@@ -24,7 +24,7 @@ function for \code{LAS} objects which replaces the function
 \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

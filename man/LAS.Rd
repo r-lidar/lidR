@@ -28,7 +28,7 @@ pulseID and flightlineID to be computed. The option '\code{standard}' loads all 
 apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

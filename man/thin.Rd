@@ -38,7 +38,7 @@ to compute a coherant local pulse density. 25 square meters looks good. 1 square
 meter is meaningless.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # By default the method is homogenize = TRUE

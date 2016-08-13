@@ -6,7 +6,7 @@
 #' @param object An object of the class \code{LAS}
 #' @param \dots Unused (inherited from R base)
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

@@ -1,9 +1,9 @@
-#' Write a las file
+#' Write a las or laz file
 #'
-#' Write a LAS object into a binary file (.las if specified in filename)
+#' Write a LAS object into a binary file (.las or .laz m specified in filename)
 #'
 #' @param obj an object of class LAS
-#' @param file character. a character string naming an output file
+#' @param file character. A character string naming an output file
 #' @return void
 #' @export writeLAS
 setGeneric("writeLAS", function(obj, file){standardGeneric("writeLAS")})
@@ -12,6 +12,8 @@ setGeneric("writeLAS", function(obj, file){standardGeneric("writeLAS")})
 setMethod("writeLAS", "LAS",
   function(obj, file)
   {
+    files <- NULL
+
     islas = tools::file_ext(file) %in% c("las", "laz")
 
     if(length(file) > 1)

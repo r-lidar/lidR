@@ -13,7 +13,7 @@
 #' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
 #' @return An object of the class \code{LAS} with a new field
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
 #' lidar = readLAS(LASfile)

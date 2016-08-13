@@ -9,7 +9,7 @@
 #' \link[rgl:surface3d]{surface3d}
 #' \link[lidR:plot.gridMetrics]{plot2d}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells

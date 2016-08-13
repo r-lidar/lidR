@@ -10,7 +10,7 @@
 #' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}
 #' @return It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Local maximum algorithm with a resolution of 2 meters

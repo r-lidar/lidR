@@ -26,7 +26,7 @@ An object of class \code{LAS}
 Clip LiDAR points within a polygon
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

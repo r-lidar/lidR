@@ -23,7 +23,7 @@ Select only the first returns from pulses which returned multiple points
 \code{getFirstOfMany(obj)} is an alias for \code{extract(obj, NumberOfReturns > 1, ReturnNumber == 1))}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

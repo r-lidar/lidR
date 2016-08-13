@@ -23,7 +23,7 @@ Select only the returns which return only one point.
 \code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

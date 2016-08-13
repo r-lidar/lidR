@@ -8,7 +8,7 @@
 #' \link[lidR:canopyModel]{canopyModel}
 #' \link[reshape2:acast]{acast}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' meanHeight = gridMetrics(lidar, 20, mean(Z))

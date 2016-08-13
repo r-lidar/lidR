@@ -24,7 +24,7 @@ area is computed with a convex hull. It is only an approximation if the shape of
 the data is not convex.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

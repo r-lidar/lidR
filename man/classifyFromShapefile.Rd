@@ -32,7 +32,7 @@ if the points are in a polygon, FALSE otherwise. This function allows for filter
 lakes, for example.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
 lidar = readLAS(LASfile)

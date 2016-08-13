@@ -6,7 +6,7 @@
 #' @param obj An object of class \code{LAS}
 #' @return An object of class \code{LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

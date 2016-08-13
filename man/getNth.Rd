@@ -26,7 +26,7 @@ pulse density and area are recomputed on the fly
 \code{getNth(obj, n)} is an alias for \code{extract(obj, ReturnNumber == n)}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

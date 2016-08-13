@@ -4,7 +4,7 @@
 \name{writeLAS}
 \alias{writeLAS}
 \alias{writeLAS,LAS-method}
-\title{Write a las file}
+\title{Write a las or laz file}
 \usage{
 writeLAS(obj, file)
 
@@ -13,12 +13,12 @@ writeLAS(obj, file)
 \arguments{
 \item{obj}{an object of class LAS}
 
-\item{file}{character. a character string naming an output file}
+\item{file}{character. A character string naming an output file}
 }
 \value{
 void
 }
 \description{
-Write a LAS object into a binary file (.las if specified in filename)
+Write a LAS object into a binary file (.las or .laz m specified in filename)
 }
 

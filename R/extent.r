@@ -7,7 +7,7 @@
 #' @param \dots Unused
 #' @return Extent object
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

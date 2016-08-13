@@ -51,7 +51,7 @@ gridMetrics will dispach the LiDAR data for each cell in the user's function. Th
 function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
