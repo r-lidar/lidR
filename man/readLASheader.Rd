@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{readLASheader}
 \alias{readLASheader}
-\title{Read header in a las file}
+\title{Read header in a las or laz file}
 \usage{
 readLASheader(file)
 }
@@ -13,7 +13,7 @@ readLASheader(file)
 A list
 }
 \description{
-Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+Read data from a las  or laz file in format 1 to 4 according to LAS specification and return a list.
 }
 \details{
 This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
