@@ -1,10 +1,5 @@
-PKG_CPPFLAGS = -w -Wno-deprecated -DNDEBUG -DUNORDERED -I. -I../inst/include/LASlib -I../inst/include/LASzip
+PKG_CPPFLAGS = -w -DNDEBUG -DUNORDERED -I. -I./include/LASlib -I./include/LASzip
 
 SOURCES = $(wildcard LASlib/*.cpp LASzip/*.cpp ./*.cpp)
 
 OBJECTS =  $(SOURCES:.cpp=.o)
-
-all: $(SHLIB)
-
-clean:
-	@rm -f $(OBJECTS)
