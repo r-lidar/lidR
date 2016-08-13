@@ -1,26 +1,24 @@
 R package for airborne LiDAR data manipulation and visualisation for forestry applications
 
-lidR package provides functions to read `.las` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. LidR is designed mainly for research purposes using an area-based approach.
+lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
 
 lidR provides an open-source and R-based implementation of the main functions from software like FUSION or lastools. lidR is flexible because it allows the user to program their own tools rather rely on a set of predefined tools.
 
 # Install lidR
 
-## Install lidR - Linux
-
 Install dependencies
 
-    sudo apt-get install liblas-dev libboost-dev
+    installed.packages(c("rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
 
 Install from github with devtools
 
-    install.package("devtools")
+    install.packages("devtools")
     devtools::install_github("Jean-Romain/lidR")
     library(lidR)
 
-## Install lidR - Windows
+Note for Windows users
 
-Since v1.1.0 it not so easy to install it on Windows because lidR depend on external library such as `liblas`. Windows does not provide fair tools easily develop computer tools.
+Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developpers lifes... and also kittens.
     
 # Features 
 
