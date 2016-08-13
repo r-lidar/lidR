@@ -51,7 +51,7 @@ readLAS = function(files,
   if( sum(!islas) != 0 )
   {
     lidRError("LAS2", files = files[!islas], behaviour = warning)
-    files = files[valid]
+    files = files[islas]
   }
 
   data = lapply(files, function(x)
