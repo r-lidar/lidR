@@ -6,17 +6,17 @@ lidR provides an open-source and R-based implementation of the main functions fr
 
 # Install lidR
 
-Install dependencies
+###  Install dependencies
 
     installed.packages(c("rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
 
-Install from github with devtools
+### Install from github with devtools
 
     install.packages("devtools")
     devtools::install_github("Jean-Romain/lidR")
     library(lidR)
 
-Note for Windows users
+### Note for Windows users
 
 Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developpers lifes... and also kittens.
     
@@ -57,8 +57,10 @@ Installation might work as well as for GNU/Linux. But maybe not... Windows behav
 
 ## Changelog v1.1.0
 
-- `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
-- Add functions `DEM` and `DTM` : note that they are experimental functions ! They cannot be used for normalization purpose
-- `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
+- Function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
+- Include the Martin Isenburg source code of `LASlib` and `LASzip`.
+- Function `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
 - Add function `writeLAS` using `LASlib`.
-- Support of compressed `.laz` format.
+- Support of compressed `.laz` format in `readLAS` and `writeLAS` thanks to `LASlib` and `LASzip`.
+- Function `readLAS` replace `loadLidar`.
+- Objects `Lidar` do not exist anymore. They are called `LAS`. It does not change anything for users.
