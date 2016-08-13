@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{readLASdata}
 \alias{readLASdata}
-\title{Read data from a las file with liblas}
+\title{Read data from a las and laz file with LASlib}
 \usage{
 readLASdata(file, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
@@ -36,7 +36,7 @@ readLASdata(file, Intensity = TRUE, ReturnNumber = TRUE,
 list
 }
 \description{
-Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
 }
 \details{
 This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.

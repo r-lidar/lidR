@@ -9,9 +9,9 @@
 
 using namespace Rcpp;
 
-//' Write a las file with liblas
+//' Write a las file with LASlib
 //'
-//' Methods to write las files using liblas
+//' Methods to write las files using LASlib
 //'
 //' This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
 //'
@@ -34,9 +34,9 @@ using namespace Rcpp;
 //' @param G integer array green data
 //' @param B integer array blue data
 //' @return void
-//' @export liblasWriteLAS
+//' @export LASlibWrite
 // [[Rcpp::export]]
-void liblasWriteLAS(CharacterVector file,
+void LASlibWrite(CharacterVector file,
              List LASheader,
              NumericVector X,
              NumericVector Y,
@@ -57,71 +57,24 @@ void liblasWriteLAS(CharacterVector file,
 {
   try
   {
-    std::string filestd = as<std::string>(file);
-
-    /*std::string FileSignature = LASheader["File Signature"];
-    int FileSourceID = LASheader["File Source ID"];
-    int GlobalEncoding = LASheader["Global Encoding"];
-    std::string ProjectIDGUID = LASheader["Project ID - GUID"];*/
-    int VersionMajor = LASheader["Version Major"];
-    int VersionMinor = LASheader["Version Minor"];
-    std::string SystemIdentifier = LASheader["System Identifier"];
-    std::string GeneratingSoftware = LASheader["Generating Software"];
-    int FileCreationDayofYear = LASheader["File Creation Day of Year"];
-    int FileCreationYear = LASheader["File Creation Year"];
-    /*int HeaderSize = LASheader["Header Size"];
-    double Offsettopointdata = LASheader["Offset to point data"];
-    double Numberofvariablelengthrecords = LASheader["Number of variable length records"];*/
-    int PointDataFormatID = LASheader["Point Data Format ID"];
-    int PointDataRecordLength = LASheader["Point Data Record Length"];
-    //double Numberofpointrecords = LASheader["Number of point records"];
-    //double Numberofpointsbyreturn = LASheader["Number of points by return"];
-    double Xscalefactor = LASheader["X scale factor"];
-    double Yscalefactor = LASheader["Y scale factor"];
-    double Zscalefactor = LASheader["Z scale factor"];
-    double Xoffset = LASheader["X offset"];
-    double Yoffset = LASheader["Y offset"];
-    double Zoffset = LASheader["Z offset"];
-    /*double MaxX = LASheader["Max X"];
-    double MinX = LASheader["Min X"];
-    double MaxY = LASheader["Max Y"];
-    double MinY = LASheader["Min Y"];
-    double MaxZ = LASheader["Max Z"];
-    double MinZ = LASheader["Min Z"];
-    uint16_t offset = 227;*/
-
     class LASheader header;
 
-    //header.SetFileSignature(as<std::string>(LASheader["File Signature"]));
-    //header.file_source_ID = FileSourceID;
-    //
-    //header.SetProjectId();
-    header.version_major = VersionMajor;
-    header.version_minor = VersionMinor;
-    //header.SetSystemId();
-    //header.SetSoftwareId();
-    header.file_creation_day =  FileCreationDayofYear;
-    header.file_creation_year = FileCreationYear;
-    //header.header_size = HeaderSize;
-    //header.offset_to_point_data =  offset;
-    //header.number_of_variable_length_records = Numberofvariablelengthrecords;
-    header.point_data_format = PointDataFormatID;
-    //header.SetDataRecordLength();
-    //header.SetPointRecordsCount(numeric_cast<uint32_t>(X.length())); // WARNING
-    //header.SetPointRecordsByReturnCount();
-    header.x_scale_factor = Xscalefactor;
-    header.y_scale_factor = Yscalefactor;
-    header.z_scale_factor = Zscalefactor;
-    header.x_offset =  Xoffset;
-    header.y_offset =  Yoffset;
-    header.z_offset =  Zoffset;
-    header.point_data_record_length = PointDataRecordLength;
-    /*header.max_x = MaxX;
-    header.max_y = MaxY;
-    header.max_z = MaxZ;
-    header.min_x = MinX;
-    header.min_y = MinY;
-    header.min_z = MinZ;*/
+    header.file_source_ID = (int)LASheader["File Source ID"];
+    header.version_major = (int)LASheader["Version Major"];
+    header.version_minor = (int)LASheader["Version Minor"];
+    header.file_creation_day =  (int)LASheader["File Creation Day of Year"];
+    header.file_creation_year = (int)LASheader["File Creation Year"];
+    header.point_data_format = (int)LASheader["Point Data Format ID"];
+    header.x_scale_factor = (double)LASheader["X scale factor"];
+    header.y_scale_factor = (double)LASheader["Y scale factor"];
+    header.z_scale_factor = (double)LASheader["Z scale factor"];
+    header.x_offset =  (double)LASheader["X offset"];
+    header.y_offset =  (double)LASheader["Y offset"];
+    header.z_offset =  (double)LASheader["Z offset"];
+    header.point_data_record_length = (int)LASheader["Point Data Record Length"];
+    strcpy(header.generating_software, "lidR R package");
+
+    std::string filestd = as<std::string>(file);
 
     LASwriteOpener laswriteopener;
     laswriteopener.set_file_name(filestd.c_str());
@@ -133,9 +86,9 @@ void liblasWriteLAS(CharacterVector file,
 
     for(int i = 0 ; i < X.length() ; i++)
     {
-      p.set_X((X[i]-Xoffset)/Xscalefactor);
-      p.set_Y((Y[i]-Yoffset)/Yscalefactor);
-      p.set_Z((Z[i]-Zoffset)/Zscalefactor);
+      p.set_X((X[i]-header.x_offset)/header.x_scale_factor );
+      p.set_Y((Y[i]-header.y_offset)/header.y_scale_factor );
+      p.set_Z((Z[i]-header.z_offset)/header.z_scale_factor );
       p.set_intensity((U16)I[i]);
 
       if(I.length() > 0){ p.set_intensity((U16)I[i]); }
@@ -148,11 +101,12 @@ void liblasWriteLAS(CharacterVector file,
       if(UD.length() > 0){ p.set_user_data((U8)UD[i]); }
       if(PSI.length() > 0){ p.set_point_source_ID((U16)PSI[i]); }
       if(T.length() > 0){ p.set_gps_time((F64)T[i]); }
-      /*if(R.length() > 0)
+      if(R.length() > 0)
       {
-        liblas::Color color(numeric_cast<uint32_t>(R[i]), numeric_cast<uint32_t>(G[i]), numeric_cast<uint32_t>(B[i]));
-        p.SetColor(color);
-      }*/
+        p.set_R((U16)R[i]);
+        p.set_G((U16)G[i]);
+        p.set_B((U16)B[i]);
+      }
 
       laswriter->write_point(&p);
       laswriter->update_inventory(&p);
@@ -160,6 +114,7 @@ void liblasWriteLAS(CharacterVector file,
 
     laswriter->update_header(&header, TRUE);
     I64 total_bytes = laswriter->close();
+    delete laswriter;
   }
   catch (std::exception const& e)
   {

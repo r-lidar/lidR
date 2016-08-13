@@ -44,9 +44,9 @@ pointsInPolygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_pointsInPolygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-#' Read data from a las file with liblas
+#' Read data from a las and laz file with LASlib
 #'
-#' Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+#' Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
 #'
 #' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
 #'
@@ -81,9 +81,9 @@ readLASheader <- function(file) {
     .Call('lidR_readLASheader', PACKAGE = 'lidR', file)
 }
 
-#' Write a las file with liblas
+#' Write a las file with LASlib
 #'
-#' Methods to write las files using liblas
+#' Methods to write las files using LASlib
 #'
 #' This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
 #'
@@ -106,8 +106,8 @@ readLASheader <- function(file) {
 #' @param G integer array green data
 #' @param B integer array blue data
 #' @return void
-#' @export liblasWriteLAS
-liblasWriteLAS <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
-    invisible(.Call('lidR_liblasWriteLAS', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B))
+#' @export LASlibWrite
+LASlibWrite <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
+    invisible(.Call('lidR_LASlibWrite', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B))
 }
 

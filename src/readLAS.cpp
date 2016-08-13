@@ -10,9 +10,9 @@
 
 using namespace Rcpp;
 
-//' Read data from a las file with liblas
+//' Read data from a las and laz file with LASlib
 //'
-//' Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+//' Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
 //'
 //' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
 //'
@@ -52,7 +52,49 @@ List readLASdata(CharacterVector file,
 
     LASreader* lasreader = lasreadopener.open();
 
+    U8 point_type = lasreader->header.point_data_format;
+    int format;
     int n = lasreader->header.number_of_point_records;
+
+    switch (point_type)
+    {
+    case 0:
+      format = 0;
+      break;
+    case 1:
+      format = 1;
+      break;
+    case 2:
+      format = 2;
+      break;
+    case 3:
+      format = 3;
+      break;
+    case 4:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 5:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 6:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 7:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 8:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 9:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    case 10:
+      throw std::runtime_error(std::string("LAS format not yet supported"));
+      break;
+    default:
+      throw std::runtime_error(std::string("LAS format not valid"));
+    }
+
 
     NumericVector X(n);
     NumericVector Y(n);
@@ -119,13 +161,13 @@ List readLASdata(CharacterVector file,
       lasdata.push_back(UD), field.push_back("UserData");
     if(PointSourceID)
       lasdata.push_back(PSI), field.push_back("PointSourceID");
-    /*if(RGB && (lasreader->header.point_data_format == 2 | lasreader->header.point_data_format == 3))
+    if(RGB && (format == 2 || format == 3))
     {
       lasdata.push_back(R), field.push_back("R");
       lasdata.push_back(G), field.push_back("G");
       lasdata.push_back(B), field.push_back("B");
-    }*/
-    //if(lasreader->header.point_data_format == 1 | lasreader->header.point_data_format == 3)
+    }
+    if(format == 1 || format == 3)
       lasdata.push_back(T); field.push_back("gpstime");
 
     lasdata.names() = field;

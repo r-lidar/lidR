@@ -12,6 +12,14 @@ setGeneric("writeLAS", function(obj, file){standardGeneric("writeLAS")})
 setMethod("writeLAS", "LAS",
   function(obj, file)
   {
+    islas = tools::file_ext(file) %in% c("las", "laz")
+
+    if(length(file) > 1)
+      lidRError("LAS5", behaviour = stop)
+
+    if(!islas)
+      lidRError("LAS2", files = files[!islas], behaviour = stop)
+
     I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
     time = numeric(0)
 
@@ -36,15 +44,14 @@ setMethod("writeLAS", "LAS",
     if("gpstime" %in% fields)
       time = obj@data$gpstime
     if("PointSourceID" %in% fields)
-    if("PointSourceID" %in% fields)
       PSI = obj@data$PointSourceID
-    if("R" %in% fields)
+    if("R" %in% fields & "G" %in% fields & "B" %in% fields )
     {
       R = obj@data$R
       G = obj@data$G
       B = obj@data$B
     }
 
-    liblasWriteLAS(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, PSI, time, R, G, B)
+    LASlibWrite(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, PSI, time, R, G, B)
   }
 )
