@@ -28,7 +28,7 @@ The algorithm used is the local maximum algorithm. It assigns the
 elevation of the highest return within each grid cell to the grid cell center.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Local maximum algorithm with a resolution of 2 meters

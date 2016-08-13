@@ -16,7 +16,7 @@
 This functions implements a \link[base:summary]{summary} method for LAS objects
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

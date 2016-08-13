@@ -23,7 +23,7 @@ Select only the last returns i.e. the last returns and the single returns
 \code{getLast(obj)} is an alias for \code{extract(obj, ReturnNumber == NumberOfReturns))}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

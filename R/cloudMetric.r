@@ -23,7 +23,7 @@
 #' @export cloudMetrics
 #' @seealso \link[lidR:gridMetrics]{gridMetrics}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' cloudMetrics(lidar, max(Z))

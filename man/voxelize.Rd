@@ -34,7 +34,7 @@ Voxelize will dispach the LiDAR data for each voxel in the user's function. The 
 function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Cloud of points is voxelized with a 1 meter resolution and in each voxel

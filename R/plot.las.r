@@ -14,7 +14,7 @@
 #' In this case the values higher that the 90th percentile are set to the highest color. They are not removed.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

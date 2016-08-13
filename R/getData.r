@@ -6,7 +6,7 @@
 #' @param obj An object of class \code{LAS}
 #' @return It returns a \code{data.table} containing the LiDAR data
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' getData(lidar)

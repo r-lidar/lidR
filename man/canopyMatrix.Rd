@@ -24,7 +24,7 @@ for local analysis (e.g. in a raster), avoiding side effects of the algorithm us
 produce the grid. It is only useful to compute your own metric in a function.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 myClosureMetrics = function(x, y, z)

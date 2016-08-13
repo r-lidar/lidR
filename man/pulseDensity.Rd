@@ -22,7 +22,7 @@ It returns a \code{data.table} with the class \code{gridMetrics} which which ena
 Creates a pulse density map using a LiDAR cloud of points.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 lidar \%>\% pulseDensity(5) \%>\% plot

@@ -1,10 +1,10 @@
 #' Read las files
 #'
-#' Read las files in format 1 to 4 according to LAS specification (non fullwaveform) and return an object of class LAS
+#' Read las files in format 1 to 4 according to LAS specification and return an object of class LAS
 #'
 #' If several files are given the returned LAS object is considered as one LAS file.
 #' The non-recomputable informations in the header are the one read from the first file of the list.
-#' The other informations are recomputed on the fly.
+#' The other informations are recomputed on the fly like the extend hull of the data.
 #' The optional logical parameters enable to do not load some fields to save memory if the field are useless for user's purpose.
 #'
 #' @param files array of character.
@@ -24,7 +24,7 @@
 #' @seealso
 #' \link[lidR:LAS-class]{Class LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #' @importFrom data.table data.table rbindlist
 readLAS = function(files,

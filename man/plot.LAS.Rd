@@ -30,7 +30,7 @@ In this case the values higher that the 90th percentile are set to the highest c
 This functions implements a 3D plot method for LAS objects
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

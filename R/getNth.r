@@ -8,7 +8,7 @@
 #' @param n numeric. The position in the return sequence
 #' @return An object of class \code{LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

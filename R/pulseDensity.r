@@ -7,7 +7,7 @@
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
 #' @return It returns a \code{data.table} with the class \code{gridMetrics} which which enables easier plotting.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' lidar %>% pulseDensity(5) %>% plot

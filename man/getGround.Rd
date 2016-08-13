@@ -23,7 +23,7 @@ Select only the returns classified as ground according to LAS specification v1.3
 \code{getGround(obj)} is an alias for \code{extract(obj, Classification == 2)}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 

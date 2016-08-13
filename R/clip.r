@@ -10,7 +10,7 @@
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'
@@ -51,7 +51,7 @@ setMethod("clipRectangle", "LAS",
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'
@@ -92,7 +92,7 @@ setMethod("clipPolygon", "LAS",
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'

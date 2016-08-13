@@ -38,7 +38,7 @@ function can help the user to compute some metrics:
 }
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 cloudMetrics(lidar, max(Z))

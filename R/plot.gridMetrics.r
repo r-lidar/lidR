@@ -9,7 +9,7 @@
 #' @param colorPalette function. A color palette function. Default is \code{height.colors} provided by the package lidR
 #' @param \dots Supplementary parameters for \link[fields:image.plot]{image.plot}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells

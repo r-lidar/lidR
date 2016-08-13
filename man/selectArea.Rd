@@ -27,7 +27,7 @@ a rectangle with the mouse
 }
 \examples{
 \dontrun{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
