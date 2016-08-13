@@ -68,9 +68,9 @@ readLASdata <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfRet
     .Call('lidR_readLASdata', PACKAGE = 'lidR', file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB)
 }
 
-#' Read header in a las file
+#' Read header in a las or laz file
 #'
-#' Read data from a las file in format 1 to 4 according to LAS specification (non fullwaveform) and return a list.
+#' Read data from a las  or laz file in format 1 to 4 according to LAS specification and return a list.
 #'
 #' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
 #'
