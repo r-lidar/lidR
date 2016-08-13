@@ -4,21 +4,35 @@ lidR package provides functions to read and write `.las` and `.laz` files, plot 
 
 lidR provides an open-source and R-based implementation of the main functions from software like FUSION or lastools. lidR is flexible because it allows the user to program their own tools rather rely on a set of predefined tools.
 
-# Install lidR
+# Install lidR from github
 
-###  Install dependencies
+Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as tou need tools to be able to compile C++ code.
+
+##  1. All operating system: install dependencies
 
     installed.packages(c("rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
+    
+## 2. Linux users
 
-### Install from github with devtools
+Install R development package
+
+    sudo apt-get install r-base-dev
+    
+## 2. Windows users
+
+Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
+
+## 2. Mac users
+
+I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
+
+## 3. Install from github with devtools
 
     install.packages("devtools")
     devtools::install_github("Jean-Romain/lidR")
     library(lidR)
 
-### Note for Windows users
-
-Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developpers lifes... and also kittens.
+**Note for Windows users** : installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developpers lifes... and also kittens.
     
 # Features 
 
