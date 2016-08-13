@@ -20,5 +20,6 @@ Depends:
 Imports:
     rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
 LazyData: true
+SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
