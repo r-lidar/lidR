@@ -12,7 +12,7 @@ Since version 1.1.0 the package contains C++ code. The process to install the pa
 
 ### Linux users
 
-Install R development package ̀sudo apt-get install r-base-dev`
+Install R development package  ̀sudo apt-get install r-base-dev`
 
 ### Windows users
 
