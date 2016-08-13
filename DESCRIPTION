@@ -3,7 +3,7 @@ Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
 Version: 1.1.0
-Date: 2016-07-29
+Date: 2016-08-12
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
     person("Pierrick", "Marie", email = "", role = c("aut", "ctb")),
