@@ -6,20 +6,14 @@ lidR provides an open-source and R-based implementation of the main functions fr
 
 # Install lidR from github
 
-Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as tou need tools to be able to compile C++ code.
-
-## Install dependencies
-
-    installed.packages(c("rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
+Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code.
     
 ## Install development tools
 
 ### Linux users
 
-Install R development package
+Install R development package ̀sudo apt-get install r-base-dev`
 
-    sudo apt-get install r-base-dev
-    
 ### Windows users
 
 Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
@@ -27,6 +21,10 @@ Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
 ### Mac users
 
 I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
+
+## Install dependencies
+
+    installed.packages(c("rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
 
 ## Install from github with devtools
 
