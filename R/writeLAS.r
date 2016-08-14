@@ -20,7 +20,9 @@ setMethod("writeLAS", "LAS",
       lidRError("LAS5", behaviour = stop)
 
     if(!islas)
-      lidRError("LAS2", files = files[!islas], behaviour = stop)
+      lidRError("LAS2", files = file, behaviour = stop)
+
+    file = normalizePath(file)
 
     I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
     time = numeric(0)

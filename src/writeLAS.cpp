@@ -84,6 +84,9 @@ void LASlibWrite(CharacterVector file,
 
     LASwriter* laswriter = laswriteopener.open(&header);
 
+    if(0 == laswriter | NULL == laswriter)
+      throw std::runtime_error("LASlib internal error. See message above.");
+
     for(int i = 0 ; i < X.length() ; i++)
     {
       p.set_X((X[i]-header.x_offset)/header.x_scale_factor );

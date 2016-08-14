@@ -34,7 +34,7 @@ lidRError = function(code, ..., behaviour = stop)
 # readLASheader.r and readLAS.r
 "LAS1" = list("File(s) ", p$files, " not found"),
 "LAS2" = list("File(s) ", p$files, " not supported"),
-"LAS3" = list("The LAS file inputed is not a valid LAS file"),
+"LAS3" = list("Unable to read any input file(s)"),
 "LAS4" = list("The field parameter is invalid. It must to be a string: 'minimal' or 'standard' or 'all'"),
 "LAS5" = list("Please write only one file at a time"),
 

@@ -43,17 +43,22 @@ readLAS = function(files,
   valid = file.exists(files)
   islas = tools::file_ext(files) %in% c("las", "laz")
 
-  if( sum(!valid) != 0 )
+  if( sum(!valid) > 0)
   {
     lidRError("LAS1", files = files[!valid], behaviour = warning)
     files = files[valid]
   }
 
-  if( sum(!islas) != 0 )
+  if( sum(!islas) > 0 )
   {
     lidRError("LAS2", files = files[!islas], behaviour = warning)
     files = files[islas]
   }
+
+  if (sum(valid) == 0 | sum(islas) == 0)
+    lidRError("LAS3", behaviour = stop)
+
+  files = normalizePath(files)
 
   data = lapply(files, function(x)
   {
@@ -71,10 +76,11 @@ readLAS = function(files,
 
   data = data.table::rbindlist(data)
 
+  if(dim(data)[1] == 0 & dim(data)[2] == 0)
+    return(invisible(NULL))
+
   las = LAS(data)
   las@header = readLASheader(files[1])
-
-  # recompute header
 
   return(las)
 }
