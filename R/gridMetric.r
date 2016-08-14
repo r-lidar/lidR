@@ -1,3 +1,32 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' Rasterize the space and compute metrics for each cell
 #'
 #' Computes a series of descriptive statistics for a LiDAR dataset for each cell
@@ -25,15 +54,15 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  gridMetrics
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridMetrics" enabling easy plotting.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
 #' gridMetrics(lidar, 2, max(Z)) %>% plot
@@ -66,7 +95,7 @@
 setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("gridMetrics")})
 
 #' @rdname gridMetrics
-setMethod("gridMetrics", "Lidar",
+setMethod("gridMetrics", "LAS",
 	function(obj, res, func, start = c(0,0), option = NULL)
 	{
 	  func_call = substitute(func)

@@ -23,8 +23,8 @@ is defined as the number of cells over a specified height threshold divided by
 the total cells of the canopy.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+lidar = readLAS(LASfile)
 
 myClosureMetrics = function(x, y, z)
 {

@@ -3,15 +3,15 @@
 \docType{methods}
 \name{clipCircle}
 \alias{clipCircle}
-\alias{clipCircle,Lidar-method}
+\alias{clipCircle,LAS-method}
 \title{Clip LiDAR points within a disc}
 \usage{
 clipCircle(obj, xcenter, ycenter, radius, inside = TRUE)
 
-\S4method{clipCircle}{Lidar}(obj, xcenter, ycenter, radius, inside = TRUE)
+\S4method{clipCircle}{LAS}(obj, xcenter, ycenter, radius, inside = TRUE)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{xcenter}{a scalar. x disc center}
 
@@ -22,23 +22,22 @@ clipCircle(obj, xcenter, ycenter, radius, inside = TRUE)
 \item{inside}{logical. Keep data inside or outside the shape}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Clip LiDAR points within a disc
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 subset = lidar \%>\% clipCircle(685000, 5018000, 25)
 
 plot(subset)
 }
 \seealso{
-\link[lidR:clipRectangle]{clipRectangle}
-\link[lidR:clipCircle]{clipCircle}
-\link[lidR:clipCircle]{clipPolygon}
+Other clip: \code{\link{clipPolygon}},
+  \code{\link{clipRectangle}}
 }
 

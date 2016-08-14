@@ -2,75 +2,24 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
-Version: 1.0.0
-Date: 2016-07-27
-Author: Jean-Romain Roussel, David Auty
-Maintainer: Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>
-Description: This package provides an airborne LiDAR interface for data
+Version: 1.1.0
+Date: 2016-08-12
+Authors@R: c(
+    person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
+    person("Pierrick", "Marie", email = "", role = c("aut", "ctb")),
+    person("David", "Auty", email = "", role = c("aut","ctb")))
+Description: Airborne LiDAR interface for data
     visualisation and manipulation. It has been designed mainly for use in forestry
     applications. The lidR package allows computation of digital elevation canopy models,
     point classification based on geographic shapefiles, space
     rasterization, computation of derived metrics, point filtering, artificial point
     reduction and other manipulations.
-License: GPL-2
+License: GPL-3 | file LICENCE
 Depends:
-    R (>= 3.2.0),methods,magrittr,dtplyr
+    R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,bitops,raster,sp,rgdal,plyr,rgeos,data.table,dplyr
+    rgl,methods,stats,utils,grDevices,reshape2,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
 LazyData: true
+SystemRequirements: GNU make
 RoxygenNote: 5.0.1
-Collate:
-    'Catalog.r'
-    'ClassCatalog.r'
-    'ClassLidar.r'
-    'LAD.r'
-    'LoadLidar.r'
-    'area.r'
-    'as.gridMetrics.r'
-    'as.matrix.gridMetrics.r'
-    'canopyClosure.r'
-    'canopyMatrix.r'
-    'canopyModel.r'
-    'classifyFromShapeFile.r'
-    'clip.r'
-    'cloudMetric.r'
-    'colors.r'
-    'convexHull.r'
-    'cube.r'
-    'entropy.r'
-    'extent.r'
-    'extract.r'
-    'extractGroundInventory.r'
-    'fractal.dimension.r'
-    'getData.r'
-    'getFirst.r'
-    'getFirstLast.r'
-    'getFirstOfMany.r'
-    'getGround.r'
-    'getLast.r'
-    'getNth.r'
-    'getSingle.r'
-    'gridMetric.r'
-    'lidRError.r'
-    'metrics.r'
-    'plot.catalog.r'
-    'plot.gridMetrics.r'
-    'plot.lidar.r'
-    'plot.voxels.r'
-    'plot3d.gridMetrics.r'
-    'polygonArea.r'
-    'processParallel.r'
-    'publicHeaderDescription.R'
-    'pulseDensity.r'
-    'readLASheader.r'
-    'readLas.r'
-    'retrieveInventoryTiles.r'
-    'selectPulseToRemove.r'
-    'selectArea.r'
-    'summary.lidar.r'
-    'testFuncSignature.r'
-    'gapFractionProfile.r'
-    'thin.r'
-    'VCI.r'
-    'voxelize.r'
-    'selectTiles.r'
+LinkingTo: Rcpp

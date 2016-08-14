@@ -3,18 +3,18 @@
 \docType{methods}
 \name{getFirstOfMany}
 \alias{getFirstOfMany}
-\alias{getFirstOfMany,Lidar-method}
+\alias{getFirstOfMany,LAS-method}
 \title{Filter first returns from pulses which returned multiple points}
 \usage{
 getFirstOfMany(obj)
 
-\S4method{getFirstOfMany}{Lidar}(obj)
+\S4method{getFirstOfMany}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select only the first returns from pulses which returned multiple points
@@ -23,9 +23,9 @@ Select only the first returns from pulses which returned multiple points
 \code{getFirstOfMany(obj)} is an alias for \code{extract(obj, NumberOfReturns > 1, ReturnNumber == 1))}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 firstOfManyReturns = lidar \%>\% getFirstOfMany
 }
