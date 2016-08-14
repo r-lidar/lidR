@@ -32,7 +32,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
     devtools::install_github("Jean-Romain/lidR")
     library(lidR)
 
-**Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developper lifes... and also kittens.
+**Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable.
     
 # Features 
 
