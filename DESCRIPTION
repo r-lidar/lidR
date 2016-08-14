@@ -16,9 +16,9 @@ Description: Airborne LiDAR interface for data
     reduction and other manipulations.
 License: GPL-2
 Depends:
-    R (>= 3.2.0),methods,magrittr,dtplyr
+    R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,stats,utils,grDevices,reshape2,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
+    rgl,methods,stats,utils,grDevices,reshape2,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
 LazyData: true
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
