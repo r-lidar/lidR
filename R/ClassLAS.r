@@ -40,6 +40,7 @@
 #' @name LAS-class
 #' @rdname LAS-class
 #' @exportClass LAS
+#' @import dtplyr
 #' @importFrom methods new
 #' @importFrom grDevices rgb
 setClass(
