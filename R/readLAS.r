@@ -1,11 +1,12 @@
-#' Read las files
+#' Read las or laz files
 #'
-#' Read las files in format 1 to 4 according to LAS specification and return an object of class LAS
+#' Read las or laz files in format 1 to 4 according to LAS specification and return an object of class LAS
 #'
 #' If several files are given the returned LAS object is considered as one LAS file.
-#' The non-recomputable informations in the header are the one read from the first file of the list.
-#' The other informations are recomputed on the fly like the extend hull of the data.
-#' The optional logical parameters enable to do not load some fields to save memory if the field are useless for user's purpose.
+#' The informations keep in the header are those read only from the first file of the list.
+#' The optional logical parameters enable to do not load some information from the files to save memory if these informations
+#' are useless for user's purpose. Indeed, the readLAS function does no stream the data. Everything is loaded into the
+#' computer memory (RAM) in a not completely optimized way (R does not enable to manage many data type).
 #'
 #' @param files array of character.
 #' @param Intensity logical. do you want to load Intensity field? default: TRUE
