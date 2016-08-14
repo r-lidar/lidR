@@ -17,8 +17,8 @@
 Tranform a gridMetrics object into a spatial matrix
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+lidar = readLAS(LASfile)
 
 meanHeight = gridMetrics(lidar, 20, mean(Z))
 mtx = as.matrix(meanHeight)

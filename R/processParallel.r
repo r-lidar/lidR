@@ -1,8 +1,37 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' Apply a function to a set of tiles
 #'
 #' Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
 #'
-#' When users have a set of Lidar data organized in several tiles it can apply a user function to each tile.
+#' When users have a set of LAS data organized in several tiles it can apply a user function to each tile.
 #' This function describes the procedure to apply to each file beginning with data loading (see example).
 #' @aliases processParallel
 #' @param x  A Catalog object
@@ -26,7 +55,7 @@
 #' analyse_tile = function(LASFile)
 #' {
 #'   # Load the data
-#'   lidar = LoadLidar(LASFile)
+#'   lidar = readLAS(LASFile)
 #'
 #'   # Associate geographic data with lidar points (if needed)
 #'   lidar %<>% classifyFromShapefile(lake, field="inlake")

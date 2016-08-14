@@ -3,18 +3,18 @@
 \docType{methods}
 \name{getSingle}
 \alias{getSingle}
-\alias{getSingle,Lidar-method}
+\alias{getSingle,LAS-method}
 \title{Filter single returns}
 \usage{
 getSingle(obj)
 
-\S4method{getSingle}{Lidar}(obj)
+\S4method{getSingle}{LAS}(obj)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Select only the returns which return only one point.
@@ -23,9 +23,9 @@ Select only the returns which return only one point.
 \code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 singleReturns = lidar \%>\% getSingle
 }

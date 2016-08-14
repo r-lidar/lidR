@@ -1,3 +1,32 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' Plot an object of class gridMetrics in 3D
 #'
 #' @param x A data.frame or data.table of class gridMetrics.
@@ -9,8 +38,8 @@
 #' \link[rgl:surface3d]{surface3d}
 #' \link[lidR:plot.gridMetrics]{plot2d}
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
 #' gridMetrics(lidar, 2, max(Z)) %>% plot3d

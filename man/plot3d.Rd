@@ -17,8 +17,8 @@ plot3d(x, z = NULL, ...)
 Plot an object of class gridMetrics in 3D
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
 gridMetrics(lidar, 2, max(Z)) \%>\% plot3d

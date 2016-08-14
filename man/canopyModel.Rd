@@ -3,15 +3,15 @@
 \docType{methods}
 \name{canopyModel}
 \alias{canopyModel}
-\alias{canopyModel,Lidar-method}
+\alias{canopyModel,LAS-method}
 \title{Canopy surface model}
 \usage{
 canopyModel(obj, res = 2, start = c(0, 0))
 
-\S4method{canopyModel}{Lidar}(obj, res = 2, start = c(0, 0))
+\S4method{canopyModel}{LAS}(obj, res = 2, start = c(0, 0))
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.}
 
@@ -28,16 +28,12 @@ The algorithm used is the local maximum algorithm. It assigns the
 elevation of the highest return within each grid cell to the grid cell center.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+lidar = readLAS(LASfile)
 
 # Local maximum algorithm with a resolution of 2 meters
 lidar \%>\% canopyModel(2) \%>\% plot
 lidar \%>\% canopyModel(2) \%>\% plot3d
-
-# Local maximum and TIN algorithm on a plot with a resolution of 0.5 meters
-forestplot = clipCircle(lidar, 685000, 5017900, 25)
-forestplot \%>\% canopyModel(.5) \%>\% plot
 }
 \seealso{
 \code{\link[lidR:gridMetrics]{gridMetrics}}

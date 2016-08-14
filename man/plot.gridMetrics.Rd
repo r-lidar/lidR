@@ -22,8 +22,8 @@ This functions implements a \link[graphics:plot]{plot} method for a gridMetrics 
 The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-lidar = LoadLidar(LASfile)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
 gridMetrics(lidar, 2, max(Z)) \%>\% plot

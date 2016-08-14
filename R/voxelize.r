@@ -1,3 +1,32 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' Voxelize the space and compute metrics for each voxel
 #'
 #' Voxelize the cloud of points and compute a series of descriptive statistics for
@@ -12,13 +41,13 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  voxelize
-#' @param obj An object of class \code{Lidar}
+#' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
-#' lidar = LoadLidar(LASfile)
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' lidar = readLAS(LASfile)
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the number of points is computed.
@@ -50,7 +79,7 @@
 setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
 
 #' @rdname voxelize
-setMethod("voxelize", "Lidar",
+setMethod("voxelize", "LAS",
     function(obj, res, func)
     {
         func_call = substitute(func)

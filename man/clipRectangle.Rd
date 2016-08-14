@@ -3,16 +3,16 @@
 \docType{methods}
 \name{clipRectangle}
 \alias{clipRectangle}
-\alias{clipRectangle,Lidar-method}
+\alias{clipRectangle,LAS-method}
 \title{Clip LiDAR points within a rectangle}
 \usage{
 clipRectangle(obj, xleft, ybottom, xright, ytop, inside = TRUE)
 
-\S4method{clipRectangle}{Lidar}(obj, xleft, ybottom, xright, ytop,
+\S4method{clipRectangle}{LAS}(obj, xleft, ybottom, xright, ytop,
   inside = TRUE)
 }
 \arguments{
-\item{obj}{An object of class \code{Lidar}}
+\item{obj}{An object of class \code{LAS}}
 
 \item{xleft}{a scalar of left x position.}
 
@@ -25,15 +25,15 @@ clipRectangle(obj, xleft, ybottom, xright, ytop, inside = TRUE)
 \item{inside}{logical. Keep data inside or outside the shape}
 }
 \value{
-An object of class \code{Lidar}
+An object of class \code{LAS}
 }
 \description{
 Clip LiDAR points within a rectangle
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 subset = lidar \%>\% clipRectangle(xleft=685000, ybottom=5018000,
                                  xright=685100, ytop =5018100)
@@ -41,8 +41,7 @@ subset = lidar \%>\% clipRectangle(xleft=685000, ybottom=5018000,
 plot(subset)
 }
 \seealso{
-\link[lidR:clipRectangle]{clipRectangle}
-\link[lidR:clipCircle]{clipCircle}
-\link[lidR:clipCircle]{clipPolygon}
+Other clip: \code{\link{clipCircle}},
+  \code{\link{clipPolygon}}
 }
 

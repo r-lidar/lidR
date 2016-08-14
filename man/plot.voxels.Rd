@@ -36,9 +36,9 @@ This functions implements a 3D plot method for voxels objects
 By default the function plots points for fast display purposes. It can also plot real voxels.
 }
 \examples{
-LASfile <- system.file("extdata", "Megaplot.las", package="lidR")
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
-lidar = LoadLidar(LASfile)
+lidar = readLAS(LASfile)
 
 voxels = voxelize(lidar, 1, list(Imean = mean(Intensity)))
 plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
