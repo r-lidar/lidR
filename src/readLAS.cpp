@@ -52,6 +52,9 @@ List readLASdata(CharacterVector file,
 
     LASreader* lasreader = lasreadopener.open();
 
+    if(0 == lasreader | NULL == lasreader)
+      throw std::runtime_error("LASlib internal error. See message above.");
+
     U8 point_type = lasreader->header.point_data_format;
     int format;
     int n = lasreader->header.number_of_point_records;
@@ -71,28 +74,28 @@ List readLASdata(CharacterVector file,
       format = 3;
       break;
     case 4:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 5:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 6:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 7:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 8:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 9:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 10:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     default:
-      throw std::runtime_error(std::string("LAS format not valid"));
+      throw std::runtime_error("LAS format not valid");
     }
 
 
@@ -201,6 +204,9 @@ List readLASheader(CharacterVector file)
     lasreadopener.set_file_name(filestd.c_str());
 
     LASreader* lasreader = lasreadopener.open();
+
+    if(0 == lasreader | NULL == lasreader)
+      throw std::runtime_error("LASlib internal error. See message above.");
 
     List head(0);
     head.push_back(lasreader->header.file_signature);
