@@ -9,6 +9,7 @@
 #' @param ytop a scalar of top y position.
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -18,10 +19,6 @@
 #'                                  xright=685100, ytop =5018100)
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipRectangle
 #' @importFrom data.table between
 setGeneric("clipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("clipRectangle")})
@@ -50,6 +47,7 @@ setMethod("clipRectangle", "LAS",
 #' @param y	numerical array of y-coordinates of polygon
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -60,10 +58,6 @@ setMethod("clipRectangle", "LAS",
 #'
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipPolygon
 setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("clipPolygon")})
 
@@ -91,6 +85,7 @@ setMethod("clipPolygon", "LAS",
 #' @param radius a scalar. Disc radius
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -99,10 +94,6 @@ setMethod("clipPolygon", "LAS",
 #' subset = lidar %>% clipCircle(685000, 5018000, 25)
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipCircle
 setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("clipCircle")})
 
