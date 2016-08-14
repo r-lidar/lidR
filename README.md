@@ -6,7 +6,7 @@ lidR provides an open-source and R-based implementation of the main functions fr
 
 # Install lidR from github
 
-Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code.
+Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code. Windows users can download and install a binary version of the package (not necesseraly up-to date; curently 1.1.0)
     
 ## Install development tools
 
