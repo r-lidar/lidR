@@ -254,11 +254,11 @@ List readLASheader(CharacterVector file)
     head.push_back(lasreader->header.point_data_format);
     head.push_back(lasreader->header.point_data_record_length);
     head.push_back(lasreader->header.number_of_point_records);
-    head.push_back(NumericVector::create(lasreader->header.number_of_points_by_return[0],
-                                         lasreader->header.number_of_points_by_return[1],
-                                         lasreader->header.number_of_points_by_return[2],
-                                         lasreader->header.number_of_points_by_return[3],
-                                         lasreader->header.number_of_points_by_return[4]));
+    head.push_back(lasreader->header.number_of_points_by_return[0]);
+    head.push_back(lasreader->header.number_of_points_by_return[1]);
+    head.push_back(lasreader->header.number_of_points_by_return[2]);
+    head.push_back(lasreader->header.number_of_points_by_return[3]);
+    head.push_back(lasreader->header.number_of_points_by_return[4]);
     head.push_back(lasreader->header.x_scale_factor);
     head.push_back(lasreader->header.y_scale_factor);
     head.push_back(lasreader->header.z_scale_factor);
@@ -289,7 +289,11 @@ List readLASheader(CharacterVector file)
     names.push_back("Point Data Format ID");
     names.push_back("Point Data Record Length");
     names.push_back("Number of point records");
-    names.push_back("Number of points by return");
+    names.push_back("Number of 1st return");
+    names.push_back("Number of 2nd return");
+    names.push_back("Number of 3rd return");
+    names.push_back("Number of 4th return");
+    names.push_back("Number of 5th return");
     names.push_back("X scale factor");
     names.push_back("Y scale factor");
     names.push_back("Z scale factor");

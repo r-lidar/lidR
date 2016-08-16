@@ -37,7 +37,7 @@
 #' are useless for user's purpose. Indeed, the readLAS function does no stream the data. Everything is loaded into the
 #' computer memory (RAM) in a not completely optimized way (R does not enable to manage many data type).
 #'
-#' @param files array of character.
+#' @param files array of character or a \link[lidR:Catalog-class]{Catalog} object
 #' @param Intensity logical. do you want to load Intensity field? default: TRUE
 #' @param ReturnNumber logical. do you want to load ReturnNumber field? default: TRUE
 #' @param NumberOfReturns logical. do you want to load NumberOfReturns field? default: TRUE
@@ -53,6 +53,7 @@
 #' @export readLAS
 #' @seealso
 #' \link[lidR:LAS-class]{Class LAS}
+#' \link[lidR:Catalog-class]{Catalog}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -69,6 +70,9 @@ readLAS = function(files,
                    PointSourceID = FALSE,
                    RGB = TRUE)
 {
+  if(class(files)[1] == "Catalog")
+    files = files@headers$filename
+
   valid = file.exists(files)
   islas = tools::file_ext(files) %in% c("las", "laz")
 

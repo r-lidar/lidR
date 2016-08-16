@@ -27,7 +27,17 @@ Apply a function to a set of tiles using several cores (Linux only, Windows user
 }
 \details{
 When users have a set of LAS data organized in several tiles it can apply a user function to each tile.
-This function describes the procedure to apply to each file beginning with data loading (see example).
+Examples section describes the procedure to apply to each file beginning with data loading (see example).
+WARNING: there is no buffer mechanism to protect the process again edge artifacs. See section "Edge artifacts".
+}
+\section{Egde artifacts}{
+
+
+It is very important to take precautions to avoid “edge artifacts” when processing LiDAR tiles.
+If the points from neighboring tiles are not included during certain process it might involve edge artifacts
+at the edges of the tiles. For exemple, empty or incomplete pixels in a rasterization process. The lidR package
+does not provide internal tools to deal with buffer as it is design for experimental purposes not to output professional
+products. The users could, for example, filter the invalid/corrupted data at the edge of the tiles from the output.
 }
 \examples{
 \dontrun{
