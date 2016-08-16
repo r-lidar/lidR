@@ -1,3 +1,5 @@
+![Version](http://img.shields.io/Version/1.1.1.png)  ![licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)
+
 R package `v 1.1.1` for airborne LiDAR data manipulation and visualisation for forestry applications. 
 
 lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
