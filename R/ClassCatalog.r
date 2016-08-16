@@ -64,7 +64,7 @@ setMethod("initialize", "Catalog",
 
 	  files = list.files(folder, full.names = T, pattern = "\\.las|.laz$", ...)
 
-	  headers = lapply(files, readLASheader)
+	  headers = lapply(files, function(x){readLASheader(x) %>% as.data.frame})
 	  headers = do.call(rbind.data.frame, headers)
 	  headers$filename = files
 	  rownames(headers) <- NULL
