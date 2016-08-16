@@ -35,7 +35,7 @@
 #' the data at the same time. A catalog is a simple way to manage all the file sequentially
 #' reading only the headers.
 #' @param folder string. The path of a folder containing a set of .las files
-#' @param \dots Unused
+#' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @seealso
 #' \link[lidR:Catalog]{Catalog-class}
 #' \link[lidR:plot.Catalog]{plot}
