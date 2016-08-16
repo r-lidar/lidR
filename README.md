@@ -4,7 +4,7 @@ lidR package provides functions to read and write `.las` and `.laz` files, plot 
 
 lidR provides an open-source and R-based implementation of several classical functions used in softwares dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools in R rather rely on a set of predefined tools.
 
-1. [Install lidR from github](#features)
+1. [Feature](#features)
 2. [Install lidR from github](#install-lidr-from-github)
 3. [Some examples](#some-examples)
 4. [Changelog](#changelog)
