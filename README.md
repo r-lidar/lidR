@@ -78,14 +78,14 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ## Changelog v1.1.1
 
-- Fix: readLAS can read file from a `Catalog` object again.
+- Fix: `readLAS` can read file from a `Catalog` object again.
 - Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
 - Fix: bug when building a `Catalog` since version 1.1.0. Works angain.
 
 ## Changelog v1.1.0
 
 - Update: function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
-- Add: include the [https://rapidlasso.com/](Martin Isenburg) source code of `LASlib` and `LASzip`.
+- Add: include the [Martin Isenburg](https://rapidlasso.com/) source code of `LASlib` and `LASzip`.
 - Update: function `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
 - Add: function `writeLAS` using `LASlib`.
 - Add: support of compressed `.laz` format in `readLAS` and `writeLAS` thanks to `LASlib` and `LASzip`.
