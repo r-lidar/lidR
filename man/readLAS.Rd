@@ -10,7 +10,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE)
 }
 \arguments{
-\item{files}{array of character.}
+\item{files}{array of character or a \link[lidR:Catalog-class]{Catalog} object}
 
 \item{Intensity}{logical. do you want to load Intensity field? default: TRUE}
 
@@ -51,5 +51,6 @@ lidar = readLAS(LASfile)
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
+\link[lidR:Catalog-class]{Catalog}
 }
 
