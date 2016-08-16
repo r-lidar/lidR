@@ -69,6 +69,12 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
+## Changelog v.1.1.1
+
+- Fix: readLAS can read file from a `Catalog` object again.
+- Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
+- Fix: bug when building a `Catalog` since version 1.1.0. Works angain.
+
 ## Changelog v1.1.0
 
 - Function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
