@@ -1,0 +1,4 @@
+src/LASlib/* linguist-vendored
+src/LASzib/* linguist-vendored
+src/include/* linguist-vendored
+man/* linguist-documentation
