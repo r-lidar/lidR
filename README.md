@@ -74,11 +74,11 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 # Changelog
 
-## Changelog v1.1.2
+### Changelog v1.1.2
 
 - Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
 
-## Changelog v1.1.1
+### Changelog v1.1.1
 
 - Fix: `readLAS` can read file from a `Catalog` object again.
 - Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
