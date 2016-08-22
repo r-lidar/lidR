@@ -48,14 +48,10 @@ Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
 
 I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
 
-## Install dependencies
-
-    installed.packages(c("methods","magrittr","dtplyr","rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
-
 ## Install from github with devtools
 
     install.packages("devtools")
-    devtools::install_github("Jean-Romain/lidR")
+    devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
     library(lidR)
 
 **Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable.
@@ -64,7 +60,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
      
 ## Plot data
 
-	lidar = LoadLidar("myfile.las")
+	lidar = readLAS("myfile.las")
 	plot(lidar)
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
@@ -77,6 +73,10 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
 # Changelog
+
+## Changelog v1.1.2
+
+- Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
 
 ## Changelog v1.1.1
 
