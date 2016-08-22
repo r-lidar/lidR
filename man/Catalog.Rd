@@ -9,7 +9,7 @@ Catalog(folder, ...)
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}
 
-\item{\dots}{Unused}
+\item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
 }
 \value{
 A Catalog object

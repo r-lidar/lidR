@@ -1,3 +1,32 @@
+/*
+===============================================================================
+
+PROGRAMMERS:
+
+jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+
+COPYRIGHT:
+
+Copyright 2016 Jean-Romain Roussel
+
+This file is part of lidR R package.
+
+lidR is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+===============================================================================
+*/
+
 #include <Rcpp.h>
 
 #include <time.h>
@@ -52,6 +81,9 @@ List readLASdata(CharacterVector file,
 
     LASreader* lasreader = lasreadopener.open();
 
+    if(0 == lasreader | NULL == lasreader)
+      throw std::runtime_error("LASlib internal error. See message above.");
+
     U8 point_type = lasreader->header.point_data_format;
     int format;
     int n = lasreader->header.number_of_point_records;
@@ -71,28 +103,28 @@ List readLASdata(CharacterVector file,
       format = 3;
       break;
     case 4:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 5:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 6:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 7:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 8:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 9:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     case 10:
-      throw std::runtime_error(std::string("LAS format not yet supported"));
+      throw std::runtime_error("LAS format not yet supported");
       break;
     default:
-      throw std::runtime_error(std::string("LAS format not valid"));
+      throw std::runtime_error("LAS format not valid");
     }
 
 
@@ -202,6 +234,9 @@ List readLASheader(CharacterVector file)
 
     LASreader* lasreader = lasreadopener.open();
 
+    if(0 == lasreader | NULL == lasreader)
+      throw std::runtime_error("LASlib internal error. See message above.");
+
     List head(0);
     head.push_back(lasreader->header.file_signature);
     head.push_back(lasreader->header.file_source_ID);
@@ -219,11 +254,11 @@ List readLASheader(CharacterVector file)
     head.push_back(lasreader->header.point_data_format);
     head.push_back(lasreader->header.point_data_record_length);
     head.push_back(lasreader->header.number_of_point_records);
-    head.push_back(NumericVector::create(lasreader->header.number_of_points_by_return[0],
-                                         lasreader->header.number_of_points_by_return[1],
-                                         lasreader->header.number_of_points_by_return[2],
-                                         lasreader->header.number_of_points_by_return[3],
-                                         lasreader->header.number_of_points_by_return[4]));
+    head.push_back(lasreader->header.number_of_points_by_return[0]);
+    head.push_back(lasreader->header.number_of_points_by_return[1]);
+    head.push_back(lasreader->header.number_of_points_by_return[2]);
+    head.push_back(lasreader->header.number_of_points_by_return[3]);
+    head.push_back(lasreader->header.number_of_points_by_return[4]);
     head.push_back(lasreader->header.x_scale_factor);
     head.push_back(lasreader->header.y_scale_factor);
     head.push_back(lasreader->header.z_scale_factor);
@@ -236,6 +271,9 @@ List readLASheader(CharacterVector file)
     head.push_back(lasreader->header.min_y);
     head.push_back(lasreader->header.max_z);
     head.push_back(lasreader->header.min_z);
+
+    lasreader->close();
+    delete lasreader;
 
     CharacterVector names(0);
     names.push_back("File Signature");
@@ -254,7 +292,11 @@ List readLASheader(CharacterVector file)
     names.push_back("Point Data Format ID");
     names.push_back("Point Data Record Length");
     names.push_back("Number of point records");
-    names.push_back("Number of points by return");
+    names.push_back("Number of 1st return");
+    names.push_back("Number of 2nd return");
+    names.push_back("Number of 3rd return");
+    names.push_back("Number of 4th return");
+    names.push_back("Number of 5th return");
     names.push_back("X scale factor");
     names.push_back("Y scale factor");
     names.push_back("Z scale factor");

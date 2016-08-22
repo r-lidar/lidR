@@ -1,39 +1,16 @@
-R package for airborne LiDAR data manipulation and visualisation for forestry applications
+![Version](http://img.shields.io/Version/1.1.2.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+
+R package for airborne LiDAR data manipulation and visualisation for forestry applications. 
 
 lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
 
-lidR provides an open-source and R-based implementation of the main functions from software like FUSION or lastools. lidR is flexible because it allows the user to program their own tools rather rely on a set of predefined tools.
+lidR provides an open-source and R-based implementation of several classical functions used in softwares dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools in R rather rely on a set of predefined tools.
 
-# Install lidR from github
+1. [Feature](#features)
+2. [Install lidR from github](#install-lidr-from-github)
+3. [Some examples](#some-examples)
+4. [Changelog](#changelog)
 
-Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code.
-    
-## Install development tools
-
-### Linux users
-
-Install R development package `sudo apt-get install r-base-dev`
-
-### Windows users
-
-Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
-
-### Mac users
-
-I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
-
-## Install dependencies
-
-    installed.packages(c("methods","magrittr","dtplyr","rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
-
-## Install from github with devtools
-
-    install.packages("devtools")
-    devtools::install_github("Jean-Romain/lidR")
-    library(lidR)
-
-**Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable. Please send me a message if it does not work. I spent so much time to make it working on Windows. Please consider using a real operating system the next time. You will save developper lifes... and also kittens.
-    
 # Features 
 
 - [Read .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
@@ -52,12 +29,38 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 - [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html)
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
 - [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridMetrics.html)
+
+# Install lidR from github
+
+Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code. Windows users can download and install a [binary version of the package](https://github.com/Jean-Romain/lidR/tree/gh-pages/win-bin/) (not necesseraly up-to date).
+    
+## Install development tools
+
+### Linux users
+
+Install R development package `sudo apt-get install r-base-dev`
+
+### Windows users
+
+Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
+
+### Mac users
+
+I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
+
+## Install from github with devtools
+
+    install.packages("devtools")
+    devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
+    library(lidR)
+
+**Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable.
     
 # Some examples
      
 ## Plot data
 
-	lidar = LoadLidar("myfile.las")
+	lidar = readLAS("myfile.las")
 	plot(lidar)
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
@@ -69,12 +72,24 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
+# Changelog
+
+## Changelog v1.1.2
+
+- Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
+
+## Changelog v1.1.1
+
+- Fix: `readLAS` can read file from a `Catalog` object again.
+- Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
+- Fix: bug when building a `Catalog` since version 1.1.0. Works angain.
+
 ## Changelog v1.1.0
 
-- Function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
-- Include the Martin Isenburg source code of `LASlib` and `LASzip`.
-- Function `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
-- Add function `writeLAS` using `LASlib`.
-- Support of compressed `.laz` format in `readLAS` and `writeLAS` thanks to `LASlib` and `LASzip`.
-- Function `readLAS` replace `loadLidar`.
-- Objects `Lidar` do not exist anymore. They are called `LAS`. It does not change anything for users.
+- Update: function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
+- Add: include the [Martin Isenburg](https://rapidlasso.com/) source code of `LASlib` and `LASzip`.
+- Update: function `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
+- Add: function `writeLAS` using `LASlib`.
+- Add: support of compressed `.laz` format in `readLAS` and `writeLAS` thanks to `LASlib` and `LASzip`.
+- Update: function `readLAS` replace `loadLidar`. `loadLidar` does not exist anymore.
+- Update: objects `Lidar` do not exist anymore. They are called `LAS`. It does not change anything for users.
