@@ -272,6 +272,9 @@ List readLASheader(CharacterVector file)
     head.push_back(lasreader->header.max_z);
     head.push_back(lasreader->header.min_z);
 
+    lasreader->close();
+    delete lasreader;
+
     CharacterVector names(0);
     names.push_back("File Signature");
     names.push_back("File Source ID");
