@@ -1,3 +1,32 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' Clip LiDAR points within a rectangle
 #'
 #' Clip LiDAR points within a rectangle
@@ -9,6 +38,7 @@
 #' @param ytop a scalar of top y position.
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -18,10 +48,6 @@
 #'                                  xright=685100, ytop =5018100)
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipRectangle
 #' @importFrom data.table between
 setGeneric("clipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("clipRectangle")})
@@ -50,6 +76,7 @@ setMethod("clipRectangle", "LAS",
 #' @param y	numerical array of y-coordinates of polygon
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -60,10 +87,6 @@ setMethod("clipRectangle", "LAS",
 #'
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipPolygon
 setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("clipPolygon")})
 
@@ -91,6 +114,7 @@ setMethod("clipPolygon", "LAS",
 #' @param radius a scalar. Disc radius
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
+#' @family clip
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -99,10 +123,6 @@ setMethod("clipPolygon", "LAS",
 #' subset = lidar %>% clipCircle(685000, 5018000, 25)
 #'
 #' plot(subset)
-#' @seealso
-#' \link[lidR:clipRectangle]{clipRectangle}
-#' \link[lidR:clipCircle]{clipCircle}
-#' \link[lidR:clipCircle]{clipPolygon}
 #' @export clipCircle
 setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("clipCircle")})
 

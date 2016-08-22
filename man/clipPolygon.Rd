@@ -37,8 +37,7 @@ subset = lidar \%>\% clipPolygon(x=c(685000, 685200, 685050),
 plot(subset)
 }
 \seealso{
-\link[lidR:clipRectangle]{clipRectangle}
-\link[lidR:clipCircle]{clipCircle}
-\link[lidR:clipCircle]{clipPolygon}
+Other clip: \code{\link{clipCircle}},
+  \code{\link{clipRectangle}}
 }
 

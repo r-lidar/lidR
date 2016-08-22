@@ -1,13 +1,42 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+
+
 #' An S4 class to represent a catalog of las tiles.
 #'
-#' An S4 class to represent a set of las tiles, to plot them and to process them with
+#' An S4 class to represent a set of las or laz tiles, to plot them and to process them with
 #' multicore.
 #'
 #' A \code{Catalog} object contains a \code{data.frame} in the slot \code{@headers} with the data
-#' read from the headers of all user's \code{.las} files. A catalog is the representation
-#' of a set of las files. A computer cannot load all the data at thet same time. A catalog
+#' read from the headers of all user's .las or .laz files. A catalog is the representation
+#' of a set of files. A computer cannot load all the data at thet same time. A catalog
 #' is a simple way to manage all the files sequentially reading only the headers. See the
-#' public documentation of las format for more information.
+#' public documentation of las format specification for more informations.
 #' @slot headers data.frame. A table representing the las header data
 #' @name Catalog-class
 #' @rdname Catalog-class
@@ -33,9 +62,9 @@ setMethod("initialize", "Catalog",
 	  if(!dir.exists(folder))
 	     lidRError("CTG2")
 
-	  files = list.files(folder, full.names = T)
+	  files = list.files(folder, full.names = T, pattern = "\\.las|.laz$", ...)
 
-	  headers = lapply(files, readLASheader)
+	  headers = lapply(files, function(x){readLASheader(x) %>% as.data.frame})
 	  headers = do.call(rbind.data.frame, headers)
 	  headers$filename = files
 	  rownames(headers) <- NULL
