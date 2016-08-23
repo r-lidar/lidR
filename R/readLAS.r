@@ -74,7 +74,7 @@ readLAS = function(files,
     files = files@headers$filename
 
   valid = file.exists(files)
-  islas = tools::file_ext(files) %in% c("las", "laz")
+  islas = tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
 
   if( sum(!valid) > 0)
   {
