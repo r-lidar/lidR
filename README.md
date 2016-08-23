@@ -76,7 +76,10 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ### Changelog v1.1.2
 
-- Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
+- Fix: In `gapFractionProfile` enable more flexible binning (issue #7)
+- Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
+- Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue #6)
+- Fix: bug when reading to many files because of non closed connections (issue #5)
 
 ### Changelog v1.1.1
 
