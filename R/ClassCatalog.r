@@ -62,7 +62,7 @@ setMethod("initialize", "Catalog",
 	  if(!dir.exists(folder))
 	     lidRError("CTG2")
 
-	  files = list.files(folder, full.names = T, pattern = "\\.las|.laz$", ...)
+	  files = list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
 	  headers = lapply(files, function(x){readLASheader(x) %>% as.data.frame})
 	  headers = do.call(rbind.data.frame, headers)
