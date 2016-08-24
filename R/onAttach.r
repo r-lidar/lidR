@@ -4,6 +4,6 @@
   {
     v = packageVersion("lidR")
 
-    packageStartupMessage("lidR ", v, ". For help or up-to-date version check https://github.com/Jean-Romain/lidR")
+    packageStartupMessage("lidR ", v, ". For help, for up-to-date version, to report a bug or to ask for new features check https://github.com/Jean-Romain/lidR")
   }
 }
