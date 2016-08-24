@@ -34,9 +34,7 @@
 #' plotted or transformed into a matrix.
 #'
 #' @param x A data.frame
-#' @importFrom reshape2 acast
 #' @export as.gridMetrics
-#' @importFrom magrittr %>%
 #' @importFrom data.table as.data.table
 as.gridMetrics = function(x)
 {

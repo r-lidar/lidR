@@ -76,6 +76,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ### Changelog v1.1.2
 
+- Change: remove depence to `reshape2` (issue [#8](https://github.com/Jean-Romain/lidR/issues/8))
 - Add: onAttach function to provide github link when package is loaded
 - Fix: In `gapFractionProfile` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
 - Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)

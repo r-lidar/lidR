@@ -31,18 +31,18 @@
 #'
 #' @param x a gridMetrics object
 #' @param z character. The field to plot. If NULL, autodetect
-#' @param \dots Other parameters for \code{acast}
+#' @param \dots other parameters for \link[data.table:dcast]{dcast}
 #' @seealso
 #' \link[lidR:gridMetrics]{gridMetrics}
 #' \link[lidR:canopyModel]{canopyModel}
-#' \link[reshape2:acast]{acast}
+#' \link[data.table:dcast]{dcast}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' meanHeight = gridMetrics(lidar, 20, mean(Z))
 #' mtx = as.matrix(meanHeight)
-#' @importFrom reshape2 acast
+#' @importFrom data.table dcast
 #' @export
 #' @method as.matrix gridMetrics
 #' @importFrom magrittr %>%
@@ -50,13 +50,11 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
 {
   inargs <- list(...)
 
+
   multi = duplicated(x, by = c("X","Y")) %>% sum
 
   if(multi > 0 & is.null(inargs$fun.aggregate))
-     lidRError("GDM2", number = multi, behavior = message)
-
-  if(is.null(inargs$fun.aggregate))
-    inargs$fun.aggregate = mean
+    lidRError("GDM2", number = multi, behavior = message)
 
   if(is.null(z))
   {
@@ -66,7 +64,15 @@ as.matrix.gridMetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
-  mtx = do.call(reshape2::acast, c(list(data = x, formula = X~Y, value.var=z), inargs))
+  if(is.null(inargs$fun.aggregate))
+    out = data.table::dcast(data = x, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
+  else(is.null(inargs$fun.aggregate))
+    out = data.table::dcast(data = x, formula = X~Y, value.var=z, ...)
 
-  return(mtx)
+  xnames = out$X
+  out[, X := NULL]
+  out %<>% as.matrix
+  rownames(out) = xnames
+
+  return(out)
 }
