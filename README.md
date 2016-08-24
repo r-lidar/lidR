@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.1.2.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+![Version](http://img.shields.io/Version/1.1.2.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
 R package for airborne LiDAR data manipulation and visualisation for forestry applications. 
 
@@ -76,6 +76,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 ### Changelog v1.1.2
 
+- Add: onAttach function to provide github link when package is loaded
 - Fix: In `gapFractionProfile` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
 - Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
 - Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue [#6](https://github.com/Jean-Romain/lidR/issues/6))
