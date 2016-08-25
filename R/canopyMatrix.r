@@ -63,23 +63,26 @@
 #' \link[lidR:gridMetrics]{gridMetrics}
 #' \link[lidR:cloudMetrics]{cloudMetrics}
 #' @importFrom plyr round_any
-#' @importFrom reshape2 acast
-#' @importFrom data.table data.table
+#' @importFrom data.table data.table dcast
 canopyMatrix = function(x,y,z, res)
 {
   X <- Y <- Z <- NULL
 
   xr = x - min(x)
-  xr[xr == 0] = 0.001
-  xr = plyr::round_any(xr, res, ceiling)
+  xr = plyr::round_any(xr-0.5*res, res)+0.5*res
 
   yr = y - min(y)
-  yr[yr == 0] = 0.001
-  yr = plyr::round_any(yr, res, ceiling)
+  yr = plyr::round_any(yr-0.5*res, res)+0.5*res
 
   frst = data.table(Z = z)
 
   canopy = frst[, list(Z = max(Z)), by = list(X = xr,Y = yr)]
 
-  return(reshape2::acast(canopy, X~Y, value.var = "Z"))
+  out = data.table::dcast(canopy, X~Y, value.var = "Z")
+  xnames = out$X
+  out[, X := NULL]
+  out %<>% as.matrix
+  rownames(out) = xnames
+
+  return(out)
 }
