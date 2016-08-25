@@ -1,6 +1,6 @@
-![Version](http://img.shields.io/Version/1.1.1.png)  ![licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)
+![Version](http://img.shields.io/Version/1.1.2.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
-R package `v 1.1.1` for airborne LiDAR data manipulation and visualisation for forestry applications. 
+R package for airborne LiDAR data manipulation and visualisation for forestry applications. 
 
 lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
 
@@ -48,14 +48,10 @@ Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
 
 I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
 
-## Install dependencies
-
-    installed.packages(c("methods","magrittr","dtplyr","rgl","reshape2","tools","parallel","fields","raster","rgdal","plyr","rgeos","data.table","dplyr","sp","Rcpp"))
-
 ## Install from github with devtools
 
     install.packages("devtools")
-    devtools::install_github("Jean-Romain/lidR")
+    devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
     library(lidR)
 
 **Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable.
@@ -64,7 +60,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
      
 ## Plot data
 
-	lidar = LoadLidar("myfile.las")
+	lidar = readLAS("myfile.las")
 	plot(lidar)
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
@@ -78,7 +74,15 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 # Changelog
 
-## Changelog v1.1.1
+### Changelog v1.1.2
+
+- Add: onAttach function to provide github link when package is loaded
+- Fix: In `gapFractionProfile` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
+- Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
+- Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue [#6](https://github.com/Jean-Romain/lidR/issues/6))
+- Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
+
+### Changelog v1.1.1
 
 - Fix: `readLAS` can read file from a `Catalog` object again.
 - Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.

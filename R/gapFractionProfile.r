@@ -59,7 +59,7 @@ gapFractionProfile = function (z, dz = 1)
   if(maxz < 3*dz)
     return(NA_real_)
 
-  bk = seq(0, ceiling(maxz), dz)
+  bk = seq(0, plyr::round_any(max(z), dz, ceiling), dz)
 
   histogram = graphics::hist(z, breaks = bk, plot = F)
   height    = histogram$mids
