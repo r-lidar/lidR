@@ -63,8 +63,7 @@
 #' \link[lidR:gridMetrics]{gridMetrics}
 #' \link[lidR:cloudMetrics]{cloudMetrics}
 #' @importFrom plyr round_any
-#' @importFrom reshape2 acast
-#' @importFrom data.table data.table
+#' @importFrom data.table data.table dcast
 canopyMatrix = function(x,y,z, res)
 {
   X <- Y <- Z <- NULL
