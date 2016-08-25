@@ -11,7 +11,7 @@
 
 \item{z}{character. The field to plot. If NULL, autodetect}
 
-\item{\dots}{Other parameters for \code{acast}}
+\item{\dots}{other parameters for \link[data.table:dcast]{dcast}}
 }
 \description{
 Tranform a gridMetrics object into a spatial matrix
@@ -26,6 +26,6 @@ mtx = as.matrix(meanHeight)
 \seealso{
 \link[lidR:gridMetrics]{gridMetrics}
 \link[lidR:canopyModel]{canopyModel}
-\link[reshape2:acast]{acast}
+\link[data.table:dcast]{dcast}
 }
 
