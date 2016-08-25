@@ -6,7 +6,7 @@ lidR package provides functions to read and write `.las` and `.laz` files, plot 
 
 lidR provides an open-source and R-based implementation of several classical functions used in softwares dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools in R rather rely on a set of predefined tools.
 
-1. [Feature](#features)
+1. [Features](#features)
 2. [Install lidR from github](#install-lidr-from-github)
 3. [Some examples](#some-examples)
 4. [Changelog](#changelog)
@@ -32,7 +32,7 @@ lidR provides an open-source and R-based implementation of several classical fun
 
 # Install lidR from github
 
-Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code. Windows users can download and install a [binary version of the package](https://github.com/Jean-Romain/lidR/tree/gh-pages/win-bin/) (not necesseraly up-to date).
+Since version 1.1.0 the package contains C++ code. The process to install the package from github for Windows users is more complex than before as you need developpement tools to be able to compile C++ code. Windows users can download and install a [binary version of the package](https://github.com/Jean-Romain/lidR/tree/gh-pages/win-bin/) already compiled to skip this step (but not necesseraly up-to-date).
     
 ## Install development tools
 
@@ -60,15 +60,19 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
      
 ## Plot data
 
-	lidar = readLAS("myfile.las")
-	plot(lidar)
+````r
+lidar = readLAS("myfile.las")
+plot(lidar)
+````
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
 
 ## Compute a simple metric
 
-    metric = gridMetrics(lidar, 20, mean(Z))
-    plot(metric)
+````r
+metric = gridMetrics(lidar, 20, mean(Z))
+plot(metric)
+````
 
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
@@ -77,7 +81,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 ### Changelog v1.1.2
 
 - Change: remove depence to `reshape2` (issue [#8](https://github.com/Jean-Romain/lidR/issues/8))
-- Add: onAttach function to provide github link when package is loaded
+- Add: `onAttach` function to provide github link when package is loaded
 - Fix: In `gapFractionProfile` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
 - Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
 - Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue [#6](https://github.com/Jean-Romain/lidR/issues/6))
@@ -87,7 +91,7 @@ I can't help you. Reading documentation seems prohibited for non mac user. Read 
 
 - Fix: `readLAS` can read file from a `Catalog` object again.
 - Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
-- Fix: bug when building a `Catalog` since version 1.1.0. Works angain.
+- Fix: bug when building a `Catalog` since version 1.1.0. Works again.
 
 ## Changelog v1.1.0
 
