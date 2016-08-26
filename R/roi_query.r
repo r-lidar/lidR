@@ -26,80 +26,112 @@
 # ===============================================================================
 
 
-
-#  ========= IN DEVELOPPEMENT =========
-
-
-#' Extract inventory from a set of tiles
+#' Extract LiDAR data from based on a set of coordinates
 #'
-#' When the user has a set of coordinates of ground inventory, they can extract the
-#' lidar data associated with these plot automatically.
+#' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
+#' (a ground inventory for example), he can automatically extract the lidar data associated
+#' to the ROIs from a Catalog. The algorithm automatically extracts ROIs even falling on the edges
+#' of one or more tiles.\cr
+#' It works only for tiles well organized as a damier.
 #'
-#' When the user has a set of coordinates of ground inventory, they can extract the
-#' lidar data associated with these plot automatically. The algorithm automatically extracts
-#' plots falling on the edges of tiles.
-#'
-#' @aliases extractGroundInventory
+#' @aliases roi_query
 #' @param obj A Catalog object
-#' @param plotnames vector. A set of plot names
-#' @param x vector. A set of x plot coordinates
-#' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radii of plots
-#' @param buffer numeric. A buffer value to extend the search range
+#' @param x vector. A set of x coordinates corresponding to the center of the ROI
+#' @param y vector. A set of y coordinates corresponding to the center of the ROI
+#' @param radius numeric or vector. A radius or a set of radii of the ROI. If only
+#' radius is provided (radius2 = NULL) it will extract data falling into a disc.
+#' @param radius2 numeric or vector. A radius or a set of radii of plots. If radius2
+#' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
+#' @param roinames vector. A set of ROI names (the ID of the plots for example)
+#' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
-#' @export extractGroundInventory
+#' @export roi_query
 #' @importFrom dplyr group_by summarise ungroup progress_estimated
 #' @importFrom magrittr %>% %<>%
-setGeneric("extractGroundInventory", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("extractGroundInventory")})
+#' @examples
+#' \notrun{
+#' # Build a Catalog
+#' catalog = Catalog("<Path to a folder containing a set of las or laz files>")
+#'
+#' # Get coordinates from an external file
+#' X = runif(30, 690000, 800000)
+#' Y = runif(30, 5010000, 5020000)
+#' R = 25
+#'
+#' # Return a List of 30 circular LAS objects of 25 m radius (50 m diameter)
+#' catalog %>% roi_query(X, Y, R)
+#'
+#' # Return a List of 30 square LAS objects of 50x50 m
+#' catalog %>% roi_query(X, Y, R, R)
+#' }
+setGeneric("roi_query", function(obj, x, y, radius, radius2 = NULL, roinames = NULL, ...){standardGeneric("roi_query")})
 
-#' @rdname extractGroundInventory
-setMethod("extractGroundInventory", "Catalog",
-  function(obj, plotnames, x, y, radius, buffer = 2)
+#' @rdname roi_query
+setMethod("roi_query", "Catalog",
+  function(obj, x, y, radius, radius2 = NULL, roinames, ...)
   {
     tile1 <- tile2 <- tile3 <- tile4 <- NULL
 
-    nplot = length(plotnames)
+    CIRCLE = 0
+    RECTANGLE = 1
 
-    tilesForPlots = obj %>% retrieveInventoryTiles(plotnames, x, y, radius, buffer)
-
-    tilesForPlots %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%
-      dplyr::summarise(plotnames = list(plotnames), X = list(X), Y = list(Y), radius = list(radius))
+    nplot  = length(x)
     output = vector("list", nplot)
+    p      = dplyr::progress_estimated(nplot)
+    k      = 1
+    type   = if(is.null(radius2)) CIRCLE else RECTANGLE
 
-    cat("\nExtracting plot inventories...\n")
+    if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-    p <- dplyr::progress_estimated(nplot)
+    # Make an index of the file in which are each query
+    lasindex = obj %>% makeindex(x, y, radius, radius2)
 
-    k = 1
+    # Group the index of idendical queries with the aim to reduce number ofqueries
+    lasindex %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%
+                  dplyr::summarise(roinames = list(roinames),
+                                   X = list(X),
+                                   Y = list(Y),
+                                   radius = list(radius),
+                                   radius2 = list(radius2))
 
-    for(i in 1:dim(tilesForPlots)[1])
+    nqueries = dim(lasindex)[1]
+
+    cat("Extracting data...\n")
+
+    for(i in 1:nqueries)
     {
-      line   = tilesForPlots[i]
+      query   = lasindex[i]
 
-      file1  = line$tile1
-      file2  = line$tile2
-      file3  = line$tile3
-      file4  = line$tile4
+      file1  = query$tile1
+      file2  = query$tile2
+      file3  = query$tile3
+      file4  = query$tile4
 
       files  = c(file1, file2, file3, file4)
       files  = files[!is.na(files)]
 
-      names  = line$plotnames[[1]]
-      X      = line$X[[1]]
-      Y      = line$Y[[1]]
-      radius = line$radius[[1]]
+      X      = query$X[[1]]
+      Y      = query$Y[[1]]
+      radius = query$radius[[1]]
+      radius2 = query$radius2[[1]]
 
-      lidar  = readLAS(files)
+      lidar  = readLAS(files, ...)
 
-      for(j in 1:length(names))
+      for(j in 1:length(X))
       {
-        output[[k]] = clipCircle(lidar, X[j], Y[j], radius[j])
+        if(type == CIRCLE)
+          output[[k]] = clipCircle(lidar, X[j], Y[j], radius[j])
+        else
+          output[[k]] = clipRectangle(lidar, X[j]-radius[j], Y[j]-radius2[j], X[j]+radius[j], Y[j]+radius2[j])
+
         k = k+1
         p$tick()$print()
       }
     }
 
-    names(output) = plotnames
+    cat("\n")
+
+    names(output) = roinames
 
     return(output)
   }
