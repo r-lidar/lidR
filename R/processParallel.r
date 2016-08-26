@@ -27,13 +27,38 @@
 
 
 
-#' Apply a function to a set of tiles
+#' Apply a function to a set of tiles using several cores.
 #'
-#' Apply a function to a set of tiles using several cores (Linux only, Windows users can only use one core, sorry...)
+#' The function has different behaviours on MS Windows and Unix platform, read carfully
+#' the doc, sections "Detail", "Unix" and "Windows". This function provide an immediatly usable
+#' parallel computing tool but users confortable with multi-core process are better
+#' to use there own code to have a more flexible tools.
 #'
 #' When users have a set of LAS data organized in several tiles it can apply a user function to each tile.
 #' Examples section describes the procedure to apply to each file beginning with data loading (see example).
+#' The function automatically detect you operating system and apply the best parallelisation method for your system.
+#' Unix mechanism is more powerfull. However it is not compatible with Windows (see sections Unix and Windows).
+#' The Windows mechanism is more complex to use.\cr\cr
 #' WARNING: there is no buffer mechanism to protect the process again edge artifacs. See section "Edge artifacts".
+#'
+#' @section Unix:
+#'
+#' In Unix platform (GNU/Linux and Mac), the parallelization rely on fork-exec technique
+#' (see \link[parallel:mclapply]{mclapply}). It means, among others, that each child process
+#' has an acces to the parent process' memory. For example you can call functions from .GlobalEnv
+#' or any orther environnement. If a code written for Unix is ran on Windows it will works
+#' but with only one core like a normal loop. If Unix users want to share their code
+#' to Windows users they are better to force the function to use clustering method.
+#'
+#' @section Windows:
+#'
+#' In Windows platform (MS Windows), the parallelization rely on cluster
+#' (see \link[parallel:parLapplyLB]{parLapplyLB}). It works both for Unix and Windows
+#' but it is much more memory intensive and very not userfriendly as the user must
+#' export himself all the object he needs. Indeed cluster technique implies, among others,
+#' that each child process cannot acces to the parent process memory.
+#' If you want to make the process on 1 core only, use the \code{unix} mode which work simpler
+#' on windows when using only one core (non parallel computing).
 #'
 #' @section Egde artifacts:
 #'
@@ -45,12 +70,16 @@
 #'
 #' @aliases processParallel
 #' @param x  A Catalog object
-#' @param func A function which has one parameter: the name of a .las file
-#' @param mc.cores numeric. Number of cores used. Default is "auto"
-#' @param combine character. The function used to merge the outputs of the \code{func} function
-#' @param \dots Other parameters for \code{mclapply}
+#' @param func A function which has one parameter: the name of a .las or .laz file (see example)
+#' @param platform charater. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".
+#' @param mc.cores integer. Number of cores used. Default is the number of cores you have on your computer.
+#' @param combine character. The function used to merge the outputs of the \code{func} function.
+#' @param varlist charaters vector. For windows mode, character vector of names of objects to export.
 #' @examples
 #' \dontrun{
+#' # Visit http://jean-romain.github.io/lidR/catalog.html for more examples
+#' # about this function
+#'
 #' # 1. build a project
 #' project = Catalog("folder")
 #' plot(project)
@@ -77,41 +106,65 @@
 #'
 #'   return(metrics)
 #' }
+
+#' #### UNIX #####
+#' # This code works only on Unix platforms because it rely on shared memory
+#' # between all the process. See below for a Windows compatible code.
 #'
-#' # 5. Process the project. By default it detects how many cores you have. But you can add
-#' # an optional parameter mc.core = 3. see ?mclapply for other options
+#' # 4. Process the project. By default it detects how many cores you have. But you can add
+#' # an optional parameter mc.core = 3.
 #' output = project %>% processParallel(analyse_tile)
+#'
+#' #' #### WINDOWS #####
+#' # This code works both on Unix and Windows platforms. But it is more memory intensive
+#' # and more complex (here the exemple is simple enought so it does not change a lot of things)
+#'
+#' # 4. Process the project. By default it detects how many cores you have. But you can add
+#' # an optional parameter mc.core = 3.
+#' export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "var", "extract", "%<>%")
+#' output = project %>% processParallel(analyse_tile, varlist = export, platform = "windows")
 #' }
 #' @seealso
 #' \link[lidR:Catalog-class]{catalog}
 #' \link[parallel:mclapply]{mclapply}
+#' \link[parallel:parLapplyLB]{parLapplyLB}
 #' \link[lidR:classifyFromShapefile]{classifyFromShapefile}
 #' \link[lidR:gridMetrics]{gridMetrics}
 #' @export processParallel
 #' @importFrom parallel mclapply detectCores
-setGeneric("processParallel", function(x, func, mc.cores = "auto", combine = "rbind", ...){standardGeneric("processParallel")})
+setGeneric("processParallel", function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = ""){standardGeneric("processParallel")})
 
 #' @rdname processParallel
 setMethod("processParallel", "Catalog",
-	function(x, func, mc.cores = "auto", combine = "rbind", ...)
+	function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
 	{
-	    if(mc.cores == "auto")
-	      mc.cores = parallel::detectCores()
-	    else
-	      mc.cores = mc.cores
-
-	    cat("Begin parallel processing... \n\n")
+	    cat("Begin parallel processing... \n")
 
       ti = Sys.time()
 
       files = x@headers$filename
 
-      out = parallel::mclapply(files, func, mc.preschedule = FALSE, mc.cores = mc.cores, ...)
+      if(platform == "unix")
+      {
+        cat("Platform mode: unix (fork-exec)\n")
+        cat("Num. of cores:", mc.cores, "\n\n")
+        out = parallel::mclapply(files, func, mc.preschedule = FALSE, mc.cores = mc.cores)
+      }
+      else
+      {
+        cat("Platform mode: windows (cluster)\n")
+        cat("Num. of cores:", mc.cores, "\n\n")
+        cl <- parallel::makeCluster(getOption("cl.cores", mc.cores))
+        parallel::clusterExport(cl, varlist, envir = environment())
+        out = parallel::parLapplyLB(cl, files, func)
+        parallel::stopCluster(cl)
+      }
 
       out = do.call(combine, out)
 
-      tf = Sys.time()
+      gc()
 
+      tf = Sys.time()
       cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
       return(out)

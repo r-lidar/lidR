@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.1.2.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
+![Version](http://img.shields.io/Version/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
 R package for airborne LiDAR data manipulation and visualisation for forestry applications. 
 
@@ -26,7 +26,7 @@ lidR provides an open-source and R-based implementation of several classical fun
 - [Clip data bases on discs, rectangles or polygons](http://jean-romain.github.io/lidR/clip.html)
 - [Manage a catalog of `.las` tiles](http://jean-romain.github.io/lidR/catalog.html)
 - [Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
-- [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html)
+- [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html#process-all-the-file-of-a-catalog)
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
 - [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridMetrics.html)
 
@@ -79,6 +79,10 @@ plot(metric)
 ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
 # Changelog
+
+## Changelog v1.2.0
+
+- Change: `processParallel` works both on Unix (GNU/linux and Mac) and Windows platform.
 
 ### Changelog v1.1.2
 
