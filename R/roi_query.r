@@ -49,7 +49,7 @@
 #' @importFrom dplyr group_by summarise ungroup progress_estimated
 #' @importFrom magrittr %>% %<>%
 #' @examples
-#' \notrun{
+#' \dontrun{
 #' # Build a Catalog
 #' catalog = Catalog("<Path to a folder containing a set of las or laz files>")
 #'
@@ -84,7 +84,7 @@ setMethod("roi_query", "Catalog",
     if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
     # Make an index of the file in which are each query
-    lasindex = obj %>% makeindex(x, y, radius, radius2)
+    lasindex = obj %>% roi_index(x, y, radius, radius2)
 
     # Group the index of idendical queries with the aim to reduce number ofqueries
     lasindex %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%

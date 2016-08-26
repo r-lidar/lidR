@@ -48,6 +48,8 @@
 #' @importFrom magrittr %>%
 as.matrix.gridMetrics = function(x, z = NULL, ...)
 {
+  X <- NULL
+
   inargs <- list(...)
 
 
