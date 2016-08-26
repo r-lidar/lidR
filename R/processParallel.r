@@ -115,13 +115,13 @@
 #' # an optional parameter mc.core = 3.
 #' output = project %>% processParallel(analyse_tile)
 #'
-#' #' #### WINDOWS #####
+#' #### WINDOWS #####
 #' # This code works both on Unix and Windows platforms. But it is more memory intensive
 #' # and more complex (here the exemple is simple enought so it does not change a lot of things)
 #'
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
-#' export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "var", "extract", "%<>%")
+#' export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "lake", "extract", "%<>%")
 #' output = project %>% processParallel(analyse_tile, varlist = export, platform = "windows")
 #' }
 #' @seealso
