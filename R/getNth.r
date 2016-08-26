@@ -50,9 +50,9 @@
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \code{\link[lidR:lasfilter]{lasfilter} }
 #' @export getNth
-#' @note \code{getNth(obj, n)} is an alias for \code{extract(obj, ReturnNumber == n)}
+#' @note \code{getNth(obj, n)} is an alias for \code{lasfilter(obj, ReturnNumber == n)}
 #' @aliases  getNth
 setGeneric("getNth", function(obj, n){standardGeneric("getNth")})
 
@@ -65,6 +65,6 @@ setMethod("getNth", "LAS",
 	  if(n > max(obj@data$ReturnNumber) | n <= 0)
 	    lidRError("LDR5")
 
-		return(extract(obj, ReturnNumber == n))
+		return(lasfilter(obj, ReturnNumber == n))
 	}
 )

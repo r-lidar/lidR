@@ -20,7 +20,7 @@ An object of class \code{LAS}
 Select only the returns classified as ground according to LAS specification v1.3.
 }
 \note{
-\code{getGround(obj)} is an alias for \code{extract(obj, Classification == 2)}
+\code{getGround(obj)} is an alias for \code{lasfilter(obj, Classification == 2)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -37,6 +37,6 @@ ground = lidar \%>\% getGround
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:extract]{extract} }
+\code{\link[lidR:lasfilter]{lasfilter} }
 }
 

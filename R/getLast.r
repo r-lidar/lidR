@@ -47,9 +47,9 @@
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \code{\link[lidR:lasfilter]{lasfilter} }
 #' @export getLast
-#' @note \code{getLast(obj)} is an alias for \code{extract(obj, ReturnNumber == NumberOfReturns))}
+#' @note \code{getLast(obj)} is an alias for \code{lasfilter(obj, ReturnNumber == NumberOfReturns))}
 setGeneric("getLast", function(obj){standardGeneric("getLast")})
 
 #' @rdname  getLast
@@ -58,6 +58,6 @@ setMethod("getLast", "LAS",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(extract(obj, ReturnNumber == NumberOfReturns))
+		return(lasfilter(obj, ReturnNumber == NumberOfReturns))
 	}
 )

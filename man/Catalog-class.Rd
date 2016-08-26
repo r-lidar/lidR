@@ -24,6 +24,6 @@ public documentation of las format specification for more informations.
 \link[lidR:Catalog]{Catalog}
 \link[lidR:plot.Catalog]{plot}
 \link[lidR:processParallel]{processParallel}
-\link[lidR:extractGroundInventory]{extractGroundInventory}
+\link[lidR:roi_query]{roi_query}
 }
 

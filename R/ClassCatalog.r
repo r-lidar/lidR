@@ -45,7 +45,7 @@
 #' \link[lidR:Catalog]{Catalog}
 #' \link[lidR:plot.Catalog]{plot}
 #' \link[lidR:processParallel]{processParallel}
-#' \link[lidR:extractGroundInventory]{extractGroundInventory}
+#' \link[lidR:roi_query]{roi_query}
 setClass(
 	Class = "Catalog",
 	representation = representation(
