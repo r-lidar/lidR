@@ -32,6 +32,6 @@ area(lidar)
 }
 \seealso{
 \code{\link[lidR:convexHull]{convexHull} }
-\code{\link[lidR:polygonArea]{polygonArea} }
+\code{\link[lidR:polygon_area]{polygon_area} }
 }
 
