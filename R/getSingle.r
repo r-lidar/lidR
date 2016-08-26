@@ -48,9 +48,9 @@
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \code{\link[lidR:lasfilter]{lasfilter} }
 #' @export getSingle
-#' @note \code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}
+#' @note \code{getSingle(obj)} is an alias for \code{lasfilter(obj, NumberOfReturns == 1))}
 setGeneric("getSingle", function(obj){standardGeneric("getSingle")})
 
 #' @rdname getSingle
@@ -59,6 +59,6 @@ setMethod("getSingle", "LAS",
 	{
 	  NumberOfReturns <- NULL
 
-		return(extract(obj, NumberOfReturns == 1))
+		return(lasfilter(obj, NumberOfReturns == 1))
 	}
 )

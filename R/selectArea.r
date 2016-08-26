@@ -63,7 +63,7 @@ setMethod("selectArea", "LAS",
     keep = obj@data %$% f(X,Y,0)
     rgl::rgl.close()
 
-    out = obj %>% extract(keep)
+    out = obj %>% lasfilter(keep)
     plot.LAS(out, ...)
 
     return(out)

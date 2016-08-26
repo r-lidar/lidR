@@ -48,9 +48,9 @@
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \code{\link[lidR:lasfilter]{lasfilter} }
 #' @export getFirst
-#' @note \code{getFirst(obj)} is an alias for \code{extract(obj, ReturnNumber == 1)}
+#' @note \code{getFirst(obj)} is an alias for \code{lasfilter(obj, ReturnNumber == 1)}
 setGeneric("getFirst", function(obj){standardGeneric("getFirst")})
 
 

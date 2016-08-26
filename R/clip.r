@@ -59,9 +59,9 @@ setMethod("clipRectangle", "LAS",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(extract(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
+		  return(lasfilter(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
 	  else
-	    return(extract(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
+	    return(lasfilter(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
 
 	}
 )
@@ -97,9 +97,9 @@ setMethod("clipPolygon", "LAS",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(extract(obj, pointsInPolygon(x,y,X,Y)))
+		  return(lasfilter(obj, pointsInPolygon(x,y,X,Y)))
 	  else
-	    return(extract(obj, !pointsInPolygon(x,y,X,Y)))
+	    return(lasfilter(obj, !pointsInPolygon(x,y,X,Y)))
 	}
 )
 
@@ -133,8 +133,8 @@ setMethod("clipCircle", "LAS",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+		  return(lasfilter(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
 	  else
-	    return(extract(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+	    return(lasfilter(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
 	}
 )

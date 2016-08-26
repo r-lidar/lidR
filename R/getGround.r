@@ -48,9 +48,9 @@
 #' \code{\link[lidR:getLast]{getLast} }
 #' \code{\link[lidR:getGround]{getGround} }
 #' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \code{\link[lidR:lasfilter]{lasfilter} }
 #' @export getGround
-#' @note \code{getGround(obj)} is an alias for \code{extract(obj, Classification == 2)}
+#' @note \code{getGround(obj)} is an alias for \code{lasfilter(obj, Classification == 2)}
 setGeneric("getGround", function(obj){standardGeneric("getGround")})
 
 #' @rdname getGround
@@ -59,6 +59,6 @@ setMethod("getGround", "LAS",
 	{
 	  Classification <- NULL
 
-	 	return(extract(obj, Classification == 2))
+	 	return(lasfilter(obj, Classification == 2))
  	}
 )

@@ -23,7 +23,7 @@ Select the returns from their position in the return sequence. Point density
 pulse density and area are recomputed on the fly
 }
 \note{
-\code{getNth(obj, n)} is an alias for \code{extract(obj, ReturnNumber == n)}
+\code{getNth(obj, n)} is an alias for \code{lasfilter(obj, ReturnNumber == n)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -40,6 +40,6 @@ secondReturns = lidar \%>\% getNth(2)
 \code{\link[lidR:getLast]{getLast} }
 \code{\link[lidR:getGround]{getGround} }
 \code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:extract]{extract} }
+\code{\link[lidR:lasfilter]{lasfilter} }
 }
 

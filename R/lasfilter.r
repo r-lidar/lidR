@@ -29,11 +29,11 @@
 
 #' Return points with matching conditions
 #'
-#' Return points with matching conditions. \code{extract} is an overloading
+#' Return points with matching conditions. \code{lasfilter} is an overloading
 #' function for \code{LAS} objects which replaces the function
 #' \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
 #'
-#' @aliases extract
+#' @aliases lasfilter
 #' @param .data An object of class \code{LAS}
 #' @param \dots Logical predicates. Multiple conditions are combined with &.
 #' @return An object of class \code{LAS}
@@ -43,7 +43,7 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Select the first returns classified as ground
-#' firstground = lidar %>% extract(Classification == 1, ReturnNumber == 1)
+#' firstground = lidar %>% lasfilter(Classification == 1, ReturnNumber == 1)
 #' @seealso
 #' \link[dplyr:filter]{filter}
 #' \link[lidR:LAS]{Class LAS}
@@ -54,13 +54,13 @@
 #' \link[lidR:getLast]{getLast}
 #' \link[lidR:getGround]{getGround}
 #' \link[lidR:getNth]{getNth}
-#' @export extract
+#' @export lasfilter
 #' @importFrom dplyr filter
 #' @importFrom magrittr %>%
-setGeneric("extract", function(.data, ...){standardGeneric("extract")})
+setGeneric("lasfilter", function(.data, ...){standardGeneric("lasfilter")})
 
-#' @rdname extract
-setMethod("extract", "LAS",
+#' @rdname lasfilter
+setMethod("lasfilter", "LAS",
 	function(.data, ...)
 	{
 		ret = .data@data %>% dplyr::filter(...) %>% LAS

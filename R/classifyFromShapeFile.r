@@ -50,7 +50,7 @@
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
 #' classifyFromShapefile(lidar, lakes, "inlakes")
-#' forest = extract(lidar, inlakes == FALSE)
+#' forest = lasfilter(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'
