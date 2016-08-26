@@ -44,7 +44,7 @@
 #' area(lidar)
 #' @seealso
 #' \code{\link[lidR:convexHull]{convexHull} }
-#' \code{\link[lidR:polygonArea]{polygonArea} }
+#' \code{\link[lidR:polygon_area]{polygon_area} }
 #' @export area
 setGeneric("area", function(obj){standardGeneric("area")})
 
@@ -53,7 +53,7 @@ setMethod("area", "LAS",
 	function(obj)
 	{
 		hull = convexHull(obj@data$X, obj@data$Y)
-		area = polygonArea(hull$x, hull$y)
+		area = polygon_area(hull$x, hull$y)
 		area = round(area,1)
 		return(area)
 	}

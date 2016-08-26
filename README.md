@@ -82,8 +82,8 @@ plot(metric)
 
 ## Changelog v1.2.0
 
-- Change: `roi_query` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)
-- Change: `process_parallel` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10).
+- Change: `roi_query` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11))
+- Change: `process_parallel` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
 - Change: `roi_index` can create index from rectangular queries.
 - Rename: `extract`to `lasfilter`. It enable to do not override `extract` function from `magrittr` or `rgdal` and it's a better name.
 - Rename: `extractGroundInventory`to `roi_query`.
