@@ -46,7 +46,7 @@ In Unix platform (GNU/Linux and Mac), the parallelization rely on fork-exec tech
 (see \link[parallel:mclapply]{mclapply}). It means, among others, that each child process
 has an acces to the parent process' memory. For example you can call functions from .GlobalEnv
 or any orther environnement. If a code written for Unix is ran on Windows it will works
-but with only one core like a normal loop. If unix users want to share their code
+but with only one core like a normal loop. If Unix users want to share their code
 to Windows users they are better to force the function to use clustering method.
 }
 
@@ -56,10 +56,10 @@ to Windows users they are better to force the function to use clustering method.
 In Windows platform (MS Windows), the parallelization rely on cluster
 (see \link[parallel:parLapplyLB]{parLapplyLB}). It works both for Unix and Windows
 but it is much more memory intensive and very not userfriendly as the user must
-export himself all the object he needs. Indeed cluster technique imply, among others,
+export himself all the object he needs. Indeed cluster technique implies, among others,
 that each child process cannot acces to the parent process memory.
-If you want to make the process on 1 core only, use the unix mode which work simpler
-on windows too when using only one core (non parallel computing).
+If you want to make the process on 1 core only, use the \code{unix} mode which work simpler
+on windows when using only one core (non parallel computing).
 }
 
 \section{Egde artifacts}{
@@ -110,13 +110,13 @@ analyse_tile = function(LASFile)
 # an optional parameter mc.core = 3.
 output = project \%>\% processParallel(analyse_tile)
 
-#' #### WINDOWS #####
+#### WINDOWS #####
 # This code works both on Unix and Windows platforms. But it is more memory intensive
 # and more complex (here the exemple is simple enought so it does not change a lot of things)
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.
-export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "var", "extract", "\%<>\%")
+export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "lake", "extract", "\%<>\%")
 output = project \%>\% processParallel(analyse_tile, varlist = export, platform = "windows")
 }
 }
