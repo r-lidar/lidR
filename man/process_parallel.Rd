@@ -116,7 +116,8 @@ output = project \%>\% process_parallel(analyse_tile)
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.
-export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "lake", "lasfilter", "\%<>\%")
+export = c("readLAS", "classifyFromShapefile", "gridMetrics",
+           "myMetrics", "lake", "lasfilter", "\%<>\%")
 output = project \%>\% process_parallel(analyse_tile, varlist = export, platform = "windows")
 }
 }

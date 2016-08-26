@@ -55,6 +55,7 @@ setMethod("roi_index", "Catalog",
 	function(obj, x, y, radius, radius2 = NULL, roinames = NULL)
 	{
 	    X <- Y <- tile <- minx <- maxx <- miny <- maxy <- NULL
+	    Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
 
 	    nplot = length(x)
 	    p     = dplyr::progress_estimated(nplot)
@@ -69,7 +70,11 @@ setMethod("roi_index", "Catalog",
             	                    miny = Min.Y,
             	                    maxy = Max.Y)
 
-      coord.plot = data.table(roinames = roinames, X = x, Y = y, radius = radius, radius2 = radius2)
+      coord.plot = data.table(roinames = roinames,
+                              X = x,
+                              Y = y,
+                              radius = radius,
+                              radius2 = radius2)
 
       coord.plot %<>% dplyr::mutate(maxx = X+radius,
                                     maxy = Y+radius2,

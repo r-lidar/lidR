@@ -39,7 +39,7 @@ of one or more tiles.\cr
 It works only for tiles well organized as a damier.
 }
 \examples{
-\\notrun{
+\dontrun{
 # Build a Catalog
 catalog = Catalog("<Path to a folder containing a set of las or laz files>")
 
