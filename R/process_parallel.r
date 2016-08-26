@@ -68,7 +68,7 @@
 #' does not provide internal tools to deal with buffer as it is design for experimental purposes not to output professional
 #' products. The users could, for example, filter the invalid/corrupted data at the edge of the tiles from the output.
 #'
-#' @aliases processParallel
+#' @aliases process_parallel
 #' @param x  A Catalog object
 #' @param func A function which has one parameter: the name of a .las or .laz file (see example)
 #' @param platform charater. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".
@@ -113,7 +113,7 @@
 #'
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
-#' output = project %>% processParallel(analyse_tile)
+#' output = project %>% process_parallel(analyse_tile)
 #'
 #' #### WINDOWS #####
 #' # This code works both on Unix and Windows platforms. But it is more memory intensive
@@ -122,7 +122,7 @@
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
 #' export = c("readLAS", "classifyFromShapefile", "gridMetrics", "myMetrics", "lake", "extract", "%<>%")
-#' output = project %>% processParallel(analyse_tile, varlist = export, platform = "windows")
+#' output = project %>% process_parallel(analyse_tile, varlist = export, platform = "windows")
 #' }
 #' @seealso
 #' \link[lidR:Catalog-class]{catalog}
@@ -130,12 +130,12 @@
 #' \link[parallel:parLapplyLB]{parLapplyLB}
 #' \link[lidR:classifyFromShapefile]{classifyFromShapefile}
 #' \link[lidR:gridMetrics]{gridMetrics}
-#' @export processParallel
+#' @export process_parallel
 #' @importFrom parallel mclapply detectCores
-setGeneric("processParallel", function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = ""){standardGeneric("processParallel")})
+setGeneric("process_parallel", function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = ""){standardGeneric("process_parallel")})
 
-#' @rdname processParallel
-setMethod("processParallel", "Catalog",
+#' @rdname process_parallel
+setMethod("process_parallel", "Catalog",
 	function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
 	{
 	    cat("Begin parallel processing... \n")
