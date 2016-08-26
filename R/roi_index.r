@@ -27,59 +27,63 @@
 
 
 
-#' Retrieve the tiles containing plots
+#' Retrieve the tiles containing ROIs
 #'
-#' When the user has a set of coordinates of ground inventory, they can extract the
-#' lidar data associated with these plots automatically. This function retrieves the tiles
-#' for each plot. This function is used by \link[lidR:extractGroundInventory]{extractGroundInventory}.
+#' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
+#' (a ground inventory for example), he can automatically find in which tiles the lidar data associated
+#' to the ROIs from a Catalog are. The algorithm automatically find tiles even for ROIs falling on the edges
+#' of one or more tiles.\cr
+#' It works only for tiles well organized as a damier. This function is used by \link[lidR:roi_query]{roi_query}.
 #' Users do not really need it.
 #'
-#' When the user has a set of coordinates of ground inventory, they can extract the
-#' lidar data associated with these plots automatically. The algorithm is able to find tiles
-#' for plots falling between several tiles (on the edges) if tiles are organized in a grid.
-#'
-#' @aliases retrieveInventoryTiles
+#' @aliases roi_index
 #' @param obj A Catalog object
-#' @param plotnames vector. A set of plot names
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radii of plots
-#' @param buffer numeric. A buffer value to extend the search range
-#' @export retrieveInventoryTiles
-#' @importFrom dplyr mutate progress_estimated
-#' @importFrom data.table :=
-setGeneric("retrieveInventoryTiles", function(obj, plotnames, x, y, radius, buffer = 2){standardGeneric("retrieveInventoryTiles")})
+#' @param radius numeric or vector. A radius or a set of radii of the ROI. If only
+#' radius is provided (radius2 = NULL) it will extract data falling into a disc.
+#' @param radius2 numeric or vector. A radius or a set of radii of plots. If radius2
+#' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
+#' @param roinames vector. A set of ROI names
+#' @export roi_index
+#' @importFrom dplyr mutate select progress_estimated
+#' @importFrom data.table data.table :=
+setGeneric("roi_index", function(obj, x, y, radius, radius2 = NULL, roinames = NULL){standardGeneric("roi_index")})
 
-#' @rdname retrieveInventoryTiles
-setMethod("retrieveInventoryTiles", "Catalog",
-	function(obj, plotnames, x, y, radius, buffer = 2)
+#' @rdname roi_index
+setMethod("roi_index", "Catalog",
+	function(obj, x, y, radius, radius2 = NULL, roinames = NULL)
 	{
-	    X <- Y <- tile <- minx <- maxx <- miny <- maxy <- NULL # for RMD check
+	    X <- Y <- tile <- minx <- maxx <- miny <- maxy <- NULL
 
-      coord.tiles = data.table(
-        tile = obj@headers$filename,
-        minx = obj@headers$Min.X,
-        maxx = obj@headers$Max.X,
-        miny = obj@headers$Min.Y,
-        maxy = obj@headers$Max.Y)
+	    nplot = length(x)
+	    p     = dplyr::progress_estimated(nplot)
 
-      coord.plot = data.table(plotnames = plotnames, X = x, Y = y, radius = radius)
+	    if(is.null(radius2)) radius2 = radius
+	    if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
+
+	    coord.tiles = obj@headers %>%
+            	      dplyr::select(tile = filename,
+            	                    minx = Min.X,
+            	                    maxx = Max.X,
+            	                    miny = Min.Y,
+            	                    maxy = Max.Y)
+
+      coord.plot = data.table(roinames = roinames, X = x, Y = y, radius = radius, radius2 = radius2)
 
       coord.plot %<>% dplyr::mutate(maxx = X+radius,
-                             maxy = Y+radius,
-                             minx = X-radius,
-                             miny = Y-radius)
+                                    maxy = Y+radius2,
+                                    minx = X-radius,
+                                    miny = Y-radius2)
 
       coord.plot %<>% dplyr::mutate(tile1 = NA_character_,
-                             tile2 = NA_character_,
-                             tile3 = NA_character_,
-                             tile4 = NA_character_)
+                                    tile2 = NA_character_,
+                                    tile3 = NA_character_,
+                                    tile4 = NA_character_)
 
-      cat("\nLooking for tiles containing plot inventories...\n")
+      cat("Indexing tiles...\n")
 
-      p <- dplyr::progress_estimated(length(coord.plot$X))
-
-      for(i in 1:length(coord.plot$X))
+      for(i in 1:nplot)
       {
         coord = coord.plot[i]
         tiles = dplyr::filter(coord.tiles,
@@ -95,6 +99,8 @@ setMethod("retrieveInventoryTiles", "Catalog",
 
         p$tick()$print()
       }
+
+      cat("\n")
 
       coord.plot[,c("maxx", "maxy", "minx", "miny"):=NULL]
 

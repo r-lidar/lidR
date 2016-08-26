@@ -82,7 +82,11 @@ plot(metric)
 
 ## Changelog v1.2.0
 
-- Change: `processParallel` works both on Unix (GNU/linux and Mac) and Windows platform.
+- Add:`query` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)
+- Change: rename `extractGroundInventory`to `query`.
+- Add: `makeindex` can create index from rectangular queries.
+- Change: rename `retrieveInventoryTile` to `makeindex`.
+- Change: `processParallel` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10).
 
 ### Changelog v1.1.2
 
