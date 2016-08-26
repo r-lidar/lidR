@@ -62,7 +62,7 @@
 #'
 #' @section Egde artifacts:
 #'
-#' It is very important to take precautions to avoid “edge artifacts” when processing LiDAR tiles.
+#' It is very important to take precautions to avoid "edge artifacts" when processing LiDAR tiles.
 #' If the points from neighboring tiles are not included during certain process it might involve edge artifacts
 #' at the edges of the tiles. For exemple, empty or incomplete pixels in a rasterization process. The lidR package
 #' does not provide internal tools to deal with buffer as it is design for experimental purposes not to output professional
