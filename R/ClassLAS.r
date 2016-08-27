@@ -127,15 +127,14 @@ setMethod("initialize", "LAS",
   	  setorder(data, gpstime)
 
   	  if(!"pulseID" %in% fields & "ReturnNumber" %in% fields)
-  	  {
   	    data$pulseID <- .identify_pulse(data$ReturnNumber)
-  	    dpulse <- data$pulseID %>% n_distinct %>% divide_by(area) %>% round(2)
-  	  }
-	    else if(!"pulseID" %in% fields)
-	    {
-	      dpulse = NA_real_
+	    else if(!"pulseID" %in% fields & !"ReturnNumber" %in% fields)
 	      lidRError("LDR8", behaviour = warning)
-	    }
+
+	    if("pulseID" %in% fields)
+	      dpulse <- data$pulseID %>% n_distinct %>% divide_by(area) %>% round(2)
+	    else
+	      dpulse <- NA_real_
 
   	  if(!"flightlineID" %in% fields)
   	    data$flightlineID <- .identify_flightlines(data$gpstime)
@@ -161,7 +160,11 @@ setMethod("initialize", "LAS",
 	}
 )
 
-#' @importFrom methods slot, slotNames
+#' Extract parts of a LAS object
+#'
+#' @param x object from which to extract element(s).
+#' @param name A literal character string or a name (possibly backtick quoted).
+#' @importFrom methods slot slotNames
 setMethod("$", "LAS", function(x, name)
 {
   if(name %in% names(x@data))
