@@ -101,7 +101,7 @@ setClass(
 setMethod("initialize", "LAS",
 	function(.Object, data, header = list())
 	{
-	  gpstime <- R <- G <- B <- NULL
+	  gpstime <- R <- G <- B <- X <- Y <- NULL
 
 	  if(!is.data.table(data)) lidRError("LDR1")
 
@@ -161,6 +161,7 @@ setMethod("initialize", "LAS",
 	}
 )
 
+#' @importFrom methods slot, slotNames
 setMethod("$", "LAS", function(x, name)
 {
   if(name %in% names(x@data))
