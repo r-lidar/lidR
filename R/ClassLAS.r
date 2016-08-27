@@ -27,14 +27,14 @@
 
 
 
-#' An S4 class to represent a LAS dataset.
+#' An S4 class to represent the data read in a .las or .laz file
 #'
-#' An S4 class to represent a LAS dataset. It contains the data, the header and additional
-#' values computed during the loading.
+#' A LAS object contains the data and the header read in a .las file and
+#' additional values computed on the fly during the loading.
 #'
-#' A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with the data
-#' read from a \code{.las} file and other information computed during data loading. The
-#' fields read from the las file are named:
+#' A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with
+#' the data read from a \code{.las} file and other information computed during
+#' data loading. The fields read from the las file are named:
 #' \itemize{
 #' \item{\code{X Y Z}}
 #' \item{\code{Intensity}}
@@ -47,17 +47,29 @@
 #' \item{\code{UserData}}
 #' \item{\code{PointSourceID}}
 #' }
-#' When a \code{LAS} object is built, two other variables are computed in the \code{data.table}:
+#' When a \code{LAS} object is built, two other variables are computed in the
+#' slot \code{@data}:
 #' \itemize{
-#' \item{\code{pulseID}: }{a unique identifying number for each pulse so the beam origin of each point is known}
-#' \item{\code{flightlineID}: }{a unique identifying number for the flightline so the flightline origin of each point is known}}
-#' A \code{LAS} object contains other information in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
-#' \itemize{
-#' \item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
-#' \item{\code{points} and \code{pulse density}: }{are computed using the computed area. Also an approximation if the data are not convex}
+#' \item{\code{pulseID}: }{a unique identifying number for each pulse so the
+#' beam origin of each point is known}
+#'
+#' \item{\code{flightlineID}: }{a unique identifying number for the flightline
+#' so the flightline origin of each point is known}
 #' }
-#' A \code{LAS} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
-#' See the public documentation of \code{.las} file format for more information.
+#'
+#' A \code{LAS} object contains other information in slots \code{@area},
+#' \code{@pointDensity} and \code{@pulseDensity}:
+#' \itemize{
+#' \item{\code{area}: }{is computed with a convex hull. It is only an
+#' approximation if the shape of the data is not convex.}
+#'
+#' \item{\code{points} and \code{pulse density}: }{are computed using the
+#' computed area. Also an approximation if the data are not convex}
+#' }
+#'
+#' A \code{LAS} object also contains a slot \code{@header} which contains the
+#' header of the \code{.las} file. See the public documentation of LAS
+#' specifications of file format for more informations.
 #'
 #' @slot data data.table. a table representing the LAS data
 #' @slot area numeric. The area of the dataset computed with a convex hull
@@ -72,6 +84,8 @@
 #' @import dtplyr
 #' @importFrom methods new
 #' @importFrom grDevices rgb
+#' @importFrom magrittr %>% %$% divide_by
+#' @importFrom dplyr n_distinct
 setClass(
 	Class = "LAS",
 	representation(
@@ -85,47 +99,46 @@ setClass(
 
 #' @importFrom data.table is.data.table setorder
 setMethod("initialize", "LAS",
-	function(.Object, input, fields = "standard", ...)
+	function(.Object, data, header = list())
 	{
 	  gpstime <- R <- G <- B <- NULL
 
-	  if(class(input)[1] == "Catalog")
-	    input = input@headers$filename
+	  if(!is.data.table(data)) lidRError("LDR1")
 
-	  if(is.character(input))
+	  # Check if the data are valid. Else: warning -------------------------------
+
+	  negvalues = sum(data$Z < 0)
+	  if(negvalues > 0) lidRError("LDR2", number = negvalues, behaviour = warning)
+
+	  if("Classification" %in% names(data))
 	  {
-	    .Object@data   = readLASdata(input)
-	    .Object@header = readLASheader(input)
+	    class0 = sum(data$Classification == 0)
+	    if(class0 > 0) lidRError("LDR3", number = class0, behaviour = warning)
 	  }
-	  else if(is.data.table(input))
+
+	  # Compute extra data -------------------------------------------------------
+
+	  fields <- names(data)
+	  area   <- data %$% area(X, Y)
+	  dpoint <- data %>% nrow %>% divide_by(area) %>% round(2)
+
+	  if("gpstime" %in% fields)
 	  {
-	    .Object@data = input
-	  }
-	  else
-	    lidRError("LDR1")
+  	  setorder(data, gpstime)
 
-	  negvalues = sum(.Object@data$Z < 0)
-	  class0    = sum(.Object@data$Classification == 0)
+  	  if(!"pulseID" %in% fields & "ReturnNumber" %in% fields)
+  	  {
+  	    data$pulseID <- .identify_pulse(data$ReturnNumber)
+  	    dpulse <- data$pulseID %>% n_distinct %>% divide_by(area) %>% round(2)
+  	  }
+	    else if(!"pulseID" %in% fields)
+	    {
+	      dpulse = NA_real_
+	      lidRError("LDR8", behaviour = warning)
+	    }
 
-	  if(negvalues > 0)
-	    lidRError("LDR2", number = negvalues, behaviour = warning)
-
-	  if(class0 > 0)
-	    lidRError("LDR3", number = class0, behaviour = warning)
-
-	  if("gpstime" %in% names(.Object@data))
-	  {
-  	  setorder(.Object@data, gpstime)
-
-  	  .Object@area <- area(.Object)
-
-  	  if(is.null(.Object@data$pulseID))
-  	    .Object@data$pulseID <- .IdentifyPulse(.Object@data$ReturnNumber)
-
-  	  if(is.null(.Object@data$flightlineID))
-  	    .Object@data$flightlineID <- .IdentifyFlightlines(.Object@data$gpstime)
-
-  	  .Object@pulseDensity <- .pulseDensity(.Object)
+  	  if(!"flightlineID" %in% fields)
+  	    data$flightlineID <- .identify_flightlines(data$gpstime)
 	  }
 	  else
 	    lidRError("LDR4", behaviour = warning)
@@ -136,50 +149,16 @@ setMethod("initialize", "LAS",
   	    .Object@data$color <- .Object@data %$% grDevices::rgb(R/255, G/255, B/255)
 	  }
 
-	  .Object@pointDensity <- .pointDensity(.Object)
+	  # Build returned object  ---------------------------------------------------
+
+	  .Object@data <- data
+	  .Object@header <- header
+	  .Object@area <- area
+	  .Object@pointDensity <- dpoint
+	  .Object@pulseDensity <- dpulse
 
 	  return(.Object)
 	}
 )
-
-# Internal functions
-
-setGeneric(".pointDensity", function(obj){standardGeneric(".pointDensity")})
-
-#' @importFrom magrittr %>% divide_by
-setMethod(".pointDensity", "LAS",
-	function(obj)
-	{
-		d = obj@data %>% nrow %>% divide_by(obj@area) %>% round(2)
-		return(d)
-	}
-)
-
-setGeneric(".pulseDensity", function(obj){standardGeneric(".pulseDensity")})
-
-#' @importFrom magrittr %>% divide_by
-setMethod(".pulseDensity", "LAS",
-	function(obj)
-	{
-		d = obj@data$pulseID %>% n_distinct %>% divide_by(obj@area) %>% round(2)
-		return(d)
-	}
-)
-
-#' @importFrom dplyr lag
-.IdentifyPulse = function(return.number)
-{
-  boo = dplyr::lag(return.number) >= return.number
-  boo[1] = TRUE
-  return(cumsum(boo))
-}
-
-#' @importFrom dplyr lag
-.IdentifyFlightlines = function(time, t = 30)
-{
-  boo = time - dplyr::lag(time) > t
-  boo[1] = TRUE
-  return(cumsum(boo))
-}
 
 

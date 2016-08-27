@@ -3,15 +3,15 @@
 \docType{class}
 \name{LAS-class}
 \alias{LAS-class}
-\title{An S4 class to represent a LAS dataset.}
+\title{An S4 class to represent the data read in a .las or .laz file}
 \description{
-An S4 class to represent a LAS dataset. It contains the data, the header and additional
-values computed during the loading.
+A LAS object contains the data and the header read in a .las file and
+additional values computed on the fly during the loading.
 }
 \details{
-A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with the data
-read from a \code{.las} file and other information computed during data loading. The
-fields read from the las file are named:
+A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with
+the data read from a \code{.las} file and other information computed during
+data loading. The fields read from the las file are named:
 \itemize{
 \item{\code{X Y Z}}
 \item{\code{Intensity}}
@@ -24,17 +24,29 @@ fields read from the las file are named:
 \item{\code{UserData}}
 \item{\code{PointSourceID}}
 }
-When a \code{LAS} object is built, two other variables are computed in the \code{data.table}:
+When a \code{LAS} object is built, two other variables are computed in the
+slot \code{@data}:
 \itemize{
-\item{\code{pulseID}: }{a unique identifying number for each pulse so the beam origin of each point is known}
-\item{\code{flightlineID}: }{a unique identifying number for the flightline so the flightline origin of each point is known}}
-A \code{LAS} object contains other information in slots \code{@area}, \code{@pointDensity} and \code{@pulseDensity}:
-\itemize{
-\item{\code{area}: }{is computed with a convex hull. It is only an approximation if the shape of the data is not convex.}
-\item{\code{points} and \code{pulse density}: }{are computed using the computed area. Also an approximation if the data are not convex}
+\item{\code{pulseID}: }{a unique identifying number for each pulse so the
+beam origin of each point is known}
+
+\item{\code{flightlineID}: }{a unique identifying number for the flightline
+so the flightline origin of each point is known}
 }
-A \code{LAS} object also contains a slot \code{@header} which contains the header of the \code{.las} file.
-See the public documentation of \code{.las} file format for more information.
+
+A \code{LAS} object contains other information in slots \code{@area},
+\code{@pointDensity} and \code{@pulseDensity}:
+\itemize{
+\item{\code{area}: }{is computed with a convex hull. It is only an
+approximation if the shape of the data is not convex.}
+
+\item{\code{points} and \code{pulse density}: }{are computed using the
+computed area. Also an approximation if the data are not convex}
+}
+
+A \code{LAS} object also contains a slot \code{@header} which contains the
+header of the \code{.las} file. See the public documentation of LAS
+specifications of file format for more informations.
 }
 \section{Slots}{
 
