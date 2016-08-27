@@ -109,7 +109,7 @@ metricslist = list(
   "CANOPY_MEAN" = "mean(local_maximum(X,Y,Z, resolution), na.rm=TRUE)",
   "CANOPY_SD" = "sd(local_maximum(X,Y,Z, resoluion), na.rm=TRUE)",
   "CANOPY_FD"  = "fractal_dimension(local_maximum(X, Y, Z, resolution))",
-  "CANOPYCLOSURE" = "canopyClosure(X, Y, Z, resolution, threshold)",
+  "CANOPYCLOSURE" = "canopy_closure(X, Y, Z, resolution, threshold)",
 
   "NPULSE" = "length(unique(pulseID))"
 )

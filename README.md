@@ -90,7 +90,8 @@ plot(metric)
 - Rename: `convexHull()`to `convex_hull()` to harmonize function names style.
 - Rename: `selectTiles()`to `tiles_select()` to harmonize function names style.
 - Rename: `fractal.dimension()`to `fractal_dimension()` to harmonize function names style.
-- Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. `filter()` is already used by `dplyr`.
+- Rename: `extract()`to `lasfilter()` to not override `extract()` from `magrittr` or `rgdal`. `filter()` is already used by `dplyr`.
+- Rename: `canopyClosure()` to `canopy_closure()` to harmonize function names style.
 - Rename: `canopyMatrix()` to `local_maximum()` for a better meaning.
 - Rename: `canopyModel()`to `grid_canopy()` to harmonize function names style.
 - Rename: `pulseDensity()`to `grid_density()` to harmonize function names style.

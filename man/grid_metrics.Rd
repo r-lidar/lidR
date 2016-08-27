@@ -44,7 +44,7 @@ The following existing function can help the user to compute some metrics:
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:local_maximum]{local_maximum}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:canopyClosure]{canopyClosure}}
+\item{\link[lidR:canopy_closure]{canopy_closure}}
 \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 } Basically there are no predifined metrics. Users must write their own functions to create metrics.
 grid_metrics will dispach the LiDAR data for each cell in the user's function. The user writes their
