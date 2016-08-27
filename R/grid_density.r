@@ -34,7 +34,7 @@
 #' @aliases grid_density
 #' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
-#' @return It returns a \code{data.table} with the class \code{gridmetrics} which which enables easier plotting.
+#' @return It returns a \code{data.table} with the class \code{grid_metrics} which which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -42,7 +42,7 @@
 #' lidar %>% grid_density(5) %>% plot
 #' lidar %>% grid_density(10) %>% plot
 #' @seealso
-#' \code{\link[lidR:gridmetrics]{gridmetrics}}
+#' \code{\link[lidR:grid_metrics]{grid_metrics}}
 #' @export grid_density
 #' @importFrom dplyr rename
 setGeneric("grid_density", function(obj, res = 4){standardGeneric("grid_density")})
@@ -53,7 +53,7 @@ setMethod("grid_density", "LAS",
 	{
 	  pulseID <- V1 <- NULL
 
-		ret = gridmetrics(obj, res, length(unique(pulseID))/res^2) %>% dplyr::rename(Z = V1)
+		ret = grid_metrics(obj, res, length(unique(pulseID))/res^2) %>% dplyr::rename(Z = V1)
     return(ret)
 	}
 )

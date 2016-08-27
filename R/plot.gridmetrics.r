@@ -27,13 +27,13 @@
 
 
 
-#' Plot an object of class gridmetrics in 2D
+#' Plot an object of class grid_metrics in 2D
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for a gridmetrics data.frame
+#' This functions implements a \link[graphics:plot]{plot} method for a grid_metrics data.frame
 #'
 #' The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
 #'
-#' @param x A data.frame or data.table of class gridmetrics.
+#' @param x A data.frame or data.table of class grid_metrics.
 #' @param z character. The field to plot. If NULL, autodetect.
 #' @param colorPalette function. A color palette function. Default is \code{height.colors} provided by the package lidR
 #' @param \dots Supplementary parameters for \link[fields:image.plot]{image.plot}
@@ -42,10 +42,10 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' gridmetrics(lidar, 2, max(Z)) %>% plot
+#' grid_metrics(lidar, 2, max(Z)) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' gridmetrics(lidar, 20, mean(Z)) %>% plot
+#' grid_metrics(lidar, 20, mean(Z)) %>% plot
 #'
 #' # Define your own metric function
 #' myMetrics = function(z, i, angle, pulseID)
@@ -61,13 +61,13 @@
 #'    return(ret)
 #'  }
 #'
-#' metrics = gridmetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#' metrics = grid_metrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
 #'
 #' plot(metrics, "hmean")
 #' plot(metrics, "hmax")
 #' plot(metrics, "imean")
 #' @seealso
-#' \link[lidR:gridmetrics]{gridmetrics}
+#' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:canopyModel]{canopyModel}
 #' \link[fields:image.plot]{image.plot}
 #' \link[lidR:height.colors]{height.colors}
@@ -77,10 +77,10 @@
 #' \link[lidR:plot3d]{plot3d}
 #' @importFrom fields image.plot
 #' @export
-#' @rdname plot.gridmetrics
-#' @method plot gridmetrics
+#' @rdname plot.grid_metrics
+#' @method plot grid_metrics
 #' @importFrom magrittr %>%
-plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
+plot.grid_metrics = function(x, z = NULL, colorPalette = height.colors, ...)
 {
   inargs = list(...)
 

@@ -54,13 +54,13 @@
 #'    return(list(CC2 = CC2, CC10 = CC10, CC20 = CC20))
 #' }
 #'
-#' closures = gridmetrics(lidar, 20, myClosureMetrics(X,Y,Z))
+#' closures = grid_metrics(lidar, 20, myClosureMetrics(X,Y,Z))
 #' plot(closures, "CC2")
 #' plot(closures, "CC10")
 #' plot(closures, "CC20")
 #' @seealso
 #' \link[lidR:canopyClosure]{canopyClosure}
-#' \link[lidR:gridmetrics]{gridmetrics}
+#' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:cloudmetrics]{cloudmetrics}
 #' @importFrom plyr round_any
 #' @importFrom data.table data.table dcast
