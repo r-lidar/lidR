@@ -161,4 +161,13 @@ setMethod("initialize", "LAS",
 	}
 )
 
+setMethod("$", "LAS", function(x, name)
+{
+  if(name %in% names(x@data))
+    return(as.numeric(unlist(x@data[,name,with=F])))
+  else if(name %in% slotNames(x))
+    return(slot(x, name))
+  else if(name %in% names(x@header))
+    return(x@header[name])
+})
 
