@@ -52,7 +52,7 @@ setGeneric("area", function(x, y){standardGeneric("area")})
 setMethod("area", "LAS",
 	function(x, y = NULL)
 	{
-		hull = convex_hull(obj@data$X, obj@data$Y)
+		hull = convex_hull(x@data$X, x@data$Y)
 		area = polygon_area(hull$x, hull$y)
 		area = round(area,1)
 		return(area)
