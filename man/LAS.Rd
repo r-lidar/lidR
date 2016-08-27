@@ -27,7 +27,6 @@ summary(lidar)
 }
 \seealso{
 \link[lidR:LAS]{Class LAS}
-\link[lidR:getData]{getData}
 \link[lidR:summary]{summary}
 }
 
