@@ -47,9 +47,9 @@
 #' {
 #'    canopy = local_maximum(x,y,z, 2)
 #'
-#'    CC2  = canopyClosure(canopy, 2)
-#'    CC10 = canopyClosure(canopy, 10)
-#'    CC20 = canopyClosure(canopy, 20)
+#'    CC2  = canopy_closure(canopy, 2)
+#'    CC10 = canopy_closure(canopy, 10)
+#'    CC20 = canopy_closure(canopy, 20)
 #'
 #'    return(list(CC2 = CC2, CC10 = CC10, CC20 = CC20))
 #' }
@@ -59,7 +59,7 @@
 #' plot(closures, "CC10")
 #' plot(closures, "CC20")
 #' @seealso
-#' \link[lidR:canopyClosure]{canopyClosure}
+#' \link[lidR:canopy_closure]{canopy_closure}
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:cloud_metrics]{cloud_metrics}
 #' @importFrom plyr round_any

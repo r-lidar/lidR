@@ -32,7 +32,7 @@ function can help the user to compute some metrics:
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:local_maximum]{local_maximum}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:canopyClosure]{canopyClosure}}
+\item{\link[lidR:canopy_closure]{canopy_closure}}
 \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 \item{\link[lidR:LAD]{LAD}}
 }

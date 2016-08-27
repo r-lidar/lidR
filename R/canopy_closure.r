@@ -29,7 +29,7 @@
 
 #' Canopy Closure
 #'
-#' canopyClosure computes estimates of canopy closure using a canopy surface model.
+#' canopy_closure computes estimates of canopy closure using a canopy surface model.
 #' Output values for cover estimates range from 0.0 to 100.0 percent. Canopy closure
 #' is defined as the number of cells over a specified height threshold divided by
 #' the total cells of the canopy.
@@ -50,9 +50,9 @@
 #' {
 #'    canopy = local_maximum(x,y,z, 2)
 #'
-#'    CC2  = canopyClosure(canopy, 2)
-#'    CC10 = canopyClosure(canopy, 10)
-#'    CC20 = canopyClosure(canopy, 20)
+#'    CC2  = canopy_closure(canopy, 2)
+#'    CC10 = canopy_closure(canopy, 10)
+#'    CC20 = canopy_closure(canopy, 20)
 #'
 #'    return(list(CC2 = CC2, CC10 = CC10, CC20 = CC20))
 #' }
@@ -61,8 +61,8 @@
 #' plot(closures, "CC2")
 #' plot(closures, "CC10")
 #' plot(closures, "CC20")
-#' @export canopyClosure
-canopyClosure = function(x, threshold, na.rm = TRUE)
+#' @export canopy_closure
+canopy_closure = function(x, threshold, na.rm = TRUE)
 {
   if(!is.matrix(x))
     stop("'x' is not a correct type")
