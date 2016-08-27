@@ -20,7 +20,7 @@ lidR provides an open-source and R-based implementation of several classical fun
 - [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
 - [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridmetrics.html#cloudmetrics)
 - [Rasterize and apply any function to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
-- [Classify and filter data from geographic shapefiles](http://jean-romain.github.io/lidR/classifyFromShapefile.html)
+- [Classify and filter data from geographic shapefiles](http://jean-romain.github.io/lidR/classify_from_shapefile.html)
 - [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/extract.html)
 - [Thin a cloud of points to reach an homogeneous point density](http://jean-romain.github.io/lidR/thin.html)
 - [Clip data bases on discs, rectangles or polygons](http://jean-romain.github.io/lidR/clip.html)
@@ -91,31 +91,33 @@ plot(metric)
 - Rename: `extract()`to `lasfilter()`. It enable to do not override `extract()` function from `magrittr` or `rgdal` and it's a better name.
 - Rename: `gridMetrics()`to `gridmetrics()` to try to respect constant style in function names.
 - Rename: `cloudMetrics()`to `cloudmetrics()` to try to respect constant style in function names.
-- Rename: `extractGroundInventory()` to `roi_query()`.
-- Rename: `retrieveInventoryTile()` to `roi_index()`.
+- Rename: `extractGroundInventory()` to `roi_query()`for a wider meaning.
+- Rename: `retrieveInventoryTile()` to `roi_index()` for a wider meaning.
+- Rename: `gapFractionProfile()` to `gap_fraction_profile()` to try to respect constant style in function names.
+- Rename: `classifyFromShapefile()` to `classify_from_shapefile()` to try to respect constant style in function names.
 - Rename: `processParallel()` to `process_parallel()`to try to respect constant style in fucntion names.
 
 ### Changelog v1.1.2
 
 - Change: remove dependence to `reshape2` (issue [#8](https://github.com/Jean-Romain/lidR/issues/8))
-- Add: `onAttach` function to provide github link when package is loaded
-- Fix: In `gapFractionProfile` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
-- Fix: In `readLAS` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
+- Add: `onAttach()` function to provide github link when package is loaded
+- Fix: In `gapFractionProfile()` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
+- Fix: In `readLAS()` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
 - Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue [#6](https://github.com/Jean-Romain/lidR/issues/6))
 - Fix: bug when reading to many files because of non closed connections (issue [#5](https://github.com/Jean-Romain/lidR/issues/5))
 
 ### Changelog v1.1.1
 
-- Fix: `readLAS` can read file from a `Catalog` object again.
+- Fix: `readLAS()` can read file from a `Catalog` object again.
 - Fix: bug when building a `Catalog` from a folder containing not only las or laz files. Add a regular expression.
 - Fix: bug when building a `Catalog` since version 1.1.0. Works again.
 
 ## Changelog v1.1.0
 
-- Update: function `classifyFromShapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
+- Update: function `classify_from_shapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
 - Add: include the [Martin Isenburg](https://rapidlasso.com/) source code of `LASlib` and `LASzip`.
-- Update: function `readLAs` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
-- Add: function `writeLAS` using `LASlib`.
-- Add: support of compressed `.laz` format in `readLAS` and `writeLAS` thanks to `LASlib` and `LASzip`.
-- Update: function `readLAS` replace `loadLidar`. `loadLidar` does not exist anymore.
+- Update: function `readLAS()` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
+- Add: function `writeLAS()` using `LASlib`.
+- Add: support of compressed `.laz` format in `readLAS` and `writeLAS()` thanks to `LASlib` and `LASzip`.
+- Update: function `readLAS()` replace `loadLidar()`. `loadLidar()` does not exist anymore.
 - Update: objects `Lidar` do not exist anymore. They are called `LAS`. It does not change anything for users.
