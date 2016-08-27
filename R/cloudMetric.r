@@ -32,7 +32,7 @@
 #' Computes a series of descriptive statistics for a LiDAR dataset
 #'
 #' Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
-#' computes a single set of metrics for the entire data set. See \link[lidR:gridMetrics]{gridMetrics}
+#' computes a single set of metrics for the entire data set. See \link[lidR:gridmetrics]{gridmetrics}
 #' to compute metrics on a grid. Basically there are no predifined metrics. Users
 #' must write their own function to create metrics (see example). The following existing
 #' function can help the user to compute some metrics:
@@ -50,7 +50,7 @@
 #' @param func The function to be applied to a cloud of points
 #' @return It returns a \code{data.table} containing the metrics
 #' @export cloudMetrics
-#' @seealso \link[lidR:gridMetrics]{gridMetrics}
+#' @seealso \link[lidR:gridmetrics]{gridmetrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)

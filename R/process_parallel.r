@@ -102,7 +102,7 @@
 #'   # filter lake
 #'   lidar %<>% lasfilter(lake == FALSE)
 #'   # compute all metrics
-#'   metrics = gridMetrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
+#'   metrics = gridmetrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
 #'
 #'   return(metrics)
 #' }
@@ -121,7 +121,7 @@
 #'
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
-#' export = c("readLAS", "classifyFromShapefile", "gridMetrics",
+#' export = c("readLAS", "classifyFromShapefile", "gridmetrics",
 #'            "myMetrics", "lake", "lasfilter", "%<>%")
 #' output = project %>% process_parallel(analyse_tile, varlist = export, platform = "windows")
 #' }
@@ -130,7 +130,7 @@
 #' \link[parallel:mclapply]{mclapply}
 #' \link[parallel:parLapplyLB]{parLapplyLB}
 #' \link[lidR:classifyFromShapefile]{classifyFromShapefile}
-#' \link[lidR:gridMetrics]{gridMetrics}
+#' \link[lidR:gridmetrics]{gridmetrics}
 #' @export process_parallel
 #' @importFrom parallel mclapply detectCores
 setGeneric("process_parallel", function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = ""){standardGeneric("process_parallel")})

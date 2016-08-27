@@ -18,8 +18,8 @@ lidR provides an open-source and R-based implementation of several classical fun
 - [Retrieve indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
-- [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridMetrics.html#cloudmetrics)
-- [Rasterize and apply any function to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridMetrics.html)
+- [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridmetrics.html#cloudmetrics)
+- [Rasterize and apply any function to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
 - [Classify and filter data from geographic shapefiles](http://jean-romain.github.io/lidR/classifyFromShapefile.html)
 - [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/extract.html)
 - [Thin a cloud of points to reach an homogeneous point density](http://jean-romain.github.io/lidR/thin.html)
@@ -28,7 +28,7 @@ lidR provides an open-source and R-based implementation of several classical fun
 - [Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
 - [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html#process-all-the-file-of-a-catalog)
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
-- [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridMetrics.html)
+- [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridmetrics.html)
 
 # Install lidR from github
 
@@ -72,11 +72,11 @@ plot(lidar)
 ## Compute a simple metric
 
 ````r
-metric = gridMetrics(lidar, 20, mean(Z))
+metric = gridmetrics(lidar, 20, mean(Z))
 plot(metric)
 ````
 
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
+![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridmetrics-mean.jpg)
 
 # Changelog
 
