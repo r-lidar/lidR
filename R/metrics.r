@@ -108,7 +108,7 @@ metricslist = list(
 
   "CANOPY_MEAN" = "mean(canopyMatrix(X,Y,Z, resolution), na.rm=TRUE)",
   "CANOPY_SD" = "sd(canopyMatrix(X,Y,Z, resoluion), na.rm=TRUE)",
-  "CANOPY_FD"  = "fractal.dimension(canopyMatrix(X, Y, Z, resolution))",
+  "CANOPY_FD"  = "fractal_dimension(canopyMatrix(X, Y, Z, resolution))",
   "CANOPYCLOSURE" = "canopyClosure(X, Y, Z, resolution, threshold)",
 
   "NPULSE" = "length(unique(pulseID))"

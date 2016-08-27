@@ -45,7 +45,7 @@ The following existing function can help the user to compute some metrics:
 \item{\link[lidR:canopyMatrix]{canopyMatrix}}
 \item{\link[lidR:LAD]{LAD}}
 \item{\link[lidR:canopyClosure]{canopyClosure}}
-\item{\link[lidR:fractal.dimension]{fractal.dimension}}
+\item{\link[lidR:fractal_dimension]{fractal_dimension}}
 } Basically there are no predifined metrics. Users must write their own functions to create metrics.
 gridmetrics will dispach the LiDAR data for each cell in the user's function. The user writes their
 function without considering grid cells, only a cloud of points (see example).
