@@ -43,7 +43,6 @@
 #' summary(lidar)
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:getData]{getData}
 #' \link[lidR:summary]{summary}
 #' @export LAS
 LAS <- function(data, header = list()) {return(new("LAS", data, header))}
