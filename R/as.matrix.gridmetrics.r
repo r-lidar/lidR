@@ -27,26 +27,26 @@
 
 
 
-#' Tranform a gridmetrics object into a spatial matrix
+#' Tranform a grid_metrics object into a spatial matrix
 #'
-#' @param x a gridmetrics object
+#' @param x a grid_metrics object
 #' @param z character. The field to plot. If NULL, autodetect
 #' @param \dots other parameters for \link[data.table:dcast]{dcast}
 #' @seealso
-#' \link[lidR:gridmetrics]{gridmetrics}
+#' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:canopyModel]{canopyModel}
 #' \link[data.table:dcast]{dcast}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' meanHeight = gridmetrics(lidar, 20, mean(Z))
+#' meanHeight = grid_metrics(lidar, 20, mean(Z))
 #' mtx = as.matrix(meanHeight)
 #' @importFrom data.table dcast
 #' @export
-#' @method as.matrix gridmetrics
+#' @method as.matrix grid_metrics
 #' @importFrom magrittr %>%
-as.matrix.gridmetrics = function(x, z = NULL, ...)
+as.matrix.grid_metrics = function(x, z = NULL, ...)
 {
   X <- NULL
 

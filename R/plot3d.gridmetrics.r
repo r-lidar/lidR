@@ -27,25 +27,25 @@
 
 
 
-#' Plot an object of class gridmetrics in 3D
+#' Plot an object of class grid_metrics in 3D
 #'
-#' @param x A data.frame or data.table of class gridmetrics.
+#' @param x A data.frame or data.table of class grid_metrics.
 #' @param z character. The field to plot. If NULL, autodetect.
 #' @param \dots Other parameters for \link[rgl:surface3d]{surface3}
 #' @seealso
-#' \link[lidR:gridmetrics]{gridmetrics}
+#' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:canopyModel]{canopyModel}
 #' \link[rgl:surface3d]{surface3d}
-#' \link[lidR:plot.gridmetrics]{plot2d}
+#' \link[lidR:plot.grid_metrics]{plot2d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' gridmetrics(lidar, 2, max(Z)) %>% plot3d
+#' grid_metrics(lidar, 2, max(Z)) %>% plot3d
 #'
 #' # Mean height with 400 m^2 cells
-#' gridmetrics(lidar, 20, mean(Z)) %>% plot3d
+#' grid_metrics(lidar, 20, mean(Z)) %>% plot3d
 #' @importFrom rgl surface3d
 #' @export
 plot3d = function(x, z = NULL, ...)

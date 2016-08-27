@@ -36,8 +36,8 @@
 #' @aliases  canopyModel
 #' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.
-#' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridmetrics]{gridmetrics}
-#' @return It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting.
+#' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:grid_metrics]{grid_metrics}
+#' @return It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -46,7 +46,7 @@
 #' lidar %>% canopyModel(2) %>% plot
 #' lidar %>% canopyModel(2) %>% plot3d
 #' @seealso
-#' \code{\link[lidR:gridmetrics]{gridmetrics}}
+#' \code{\link[lidR:grid_metrics]{grid_metrics}}
 #' \code{\link[lidR:clipCircle]{clipCircle}}
 #' @export canopyModel
 #' @importFrom dplyr rename
@@ -59,7 +59,7 @@ setMethod("canopyModel", "LAS",
 	{
 	  X <- Y <- Z <- V1 <- NULL
 
-	  ret = gridmetrics(obj, res, max(Z), start) %>% dplyr::rename(Z = V1)
+	  ret = grid_metrics(obj, res, max(Z), start) %>% dplyr::rename(Z = V1)
 
 	  #lidRError("LDR6")
 

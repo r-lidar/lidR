@@ -98,7 +98,7 @@ analyse_tile = function(LASFile)
   # filter lake
   lidar \%<>\% lasfilter(lake == FALSE)
   # compute all metrics
-  metrics = gridmetrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
+  metrics = grid_metrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
 
   return(metrics)
 }
@@ -116,7 +116,7 @@ output = project \%>\% process_parallel(analyse_tile)
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.
-export = c("readLAS", "classify_from_shapefile", "gridmetrics",
+export = c("readLAS", "classify_from_shapefile", "grid_metrics",
            "myMetrics", "lake", "lasfilter", "\%<>\%")
 output = project \%>\% process_parallel(analyse_tile, varlist = export, platform = "windows")
 }
@@ -126,6 +126,6 @@ output = project \%>\% process_parallel(analyse_tile, varlist = export, platform
 \link[parallel:mclapply]{mclapply}
 \link[parallel:parLapplyLB]{parLapplyLB}
 \link[lidR:classify_from_shapefile]{classify_from_shapefile}
-\link[lidR:gridmetrics]{gridmetrics}
+\link[lidR:grid_metrics]{grid_metrics}
 }
 

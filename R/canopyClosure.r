@@ -40,7 +40,7 @@
 #' @return A numeric percentage value between 0 and 100
 #' @seealso
 #' \link[lidR:canopyMatrix]{canopyMatrix}
-#' \link[lidR:gridmetrics]{gridmetrics}
+#' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:cloudmetrics]{cloudmetrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -57,7 +57,7 @@
 #'    return(list(CC2 = CC2, CC10 = CC10, CC20 = CC20))
 #' }
 #'
-#' closures = gridmetrics(lidar, 20, myClosureMetrics(X,Y,Z))
+#' closures = grid_metrics(lidar, 20, myClosureMetrics(X,Y,Z))
 #' plot(closures, "CC2")
 #' plot(closures, "CC10")
 #' plot(closures, "CC20")

@@ -2,34 +2,34 @@
 % Please edit documentation in R/plot3d.gridmetrics.r
 \name{plot3d}
 \alias{plot3d}
-\title{Plot an object of class gridmetrics in 3D}
+\title{Plot an object of class grid_metrics in 3D}
 \usage{
 plot3d(x, z = NULL, ...)
 }
 \arguments{
-\item{x}{A data.frame or data.table of class gridmetrics.}
+\item{x}{A data.frame or data.table of class grid_metrics.}
 
 \item{z}{character. The field to plot. If NULL, autodetect.}
 
 \item{\dots}{Other parameters for \link[rgl:surface3d]{surface3}}
 }
 \description{
-Plot an object of class gridmetrics in 3D
+Plot an object of class grid_metrics in 3D
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
-gridmetrics(lidar, 2, max(Z)) \%>\% plot3d
+grid_metrics(lidar, 2, max(Z)) \%>\% plot3d
 
 # Mean height with 400 m^2 cells
-gridmetrics(lidar, 20, mean(Z)) \%>\% plot3d
+grid_metrics(lidar, 20, mean(Z)) \%>\% plot3d
 }
 \seealso{
-\link[lidR:gridmetrics]{gridmetrics}
+\link[lidR:grid_metrics]{grid_metrics}
 \link[lidR:canopyModel]{canopyModel}
 \link[rgl:surface3d]{surface3d}
-\link[lidR:plot.gridmetrics]{plot2d}
+\link[lidR:plot.grid_metrics]{plot2d}
 }
 
