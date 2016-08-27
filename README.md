@@ -86,14 +86,15 @@ plot(metric)
 
 - Change: `roi_query()` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Change: `process_parallel()` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
-- Change: `roi_index` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
+- Change: `roi_index()` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Rename: `convexHull()`to `convex_hull()` to harmonize function names style.
 - Rename: `selectTiles()`to `tiles_select()` to harmonize function names style.
-- Rename: `selectArea()`to `roi_select()` to harmonize function names style.
 - Rename: `fractal.dimension()`to `fractal_dimension()` to harmonize function names style.
 - Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. Furthermore it's a better name.
-- Rename: `gridMetrics()`to `gridmetrics()` to harmonize function names style.
+- Rename: `pulseDensity()`to `grid_density()` to harmonize function names style.
+- Rename: `gridMetrics()`to `grid_metrics()` to harmonize function names style.
 - Rename: `cloudMetrics()`to `cloudmetrics()` to harmonize function names style.
+- Rename: `selectArea()`to `roi_select()` to harmonize function names style.
 - Rename: `extractGroundInventory()` to `roi_query()`for a wider meaning.
 - Rename: `retrieveInventoryTile()` to `roi_index()` for a wider meaning.
 - Rename: `gapFractionProfile()` to `gap_fraction_profile()` to harmonize function names style.
@@ -117,7 +118,7 @@ plot(metric)
 
 ## Changelog v1.1.0
 
-- Update: function `classify_from_shapefile` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
+- Update: function `classifyFromShapefile()` is, at least, 3 times faster. Parts of the function have been rewritten in C++. The new column is added by reference
 - Add: include the [Martin Isenburg](https://rapidlasso.com/) source code of `LASlib` and `LASzip`.
 - Update: function `readLAS()` have been rewritten in C++ using `LASlib`. It is 2 times faster and it's safer.
 - Add: function `writeLAS()` using `LASlib`.
