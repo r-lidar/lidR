@@ -41,7 +41,7 @@
 #' @seealso
 #' \link[lidR:canopyMatrix]{canopyMatrix}
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:cloudmetrics]{cloudmetrics}
+#' \link[lidR:cloud_metrics]{cloud_metrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
