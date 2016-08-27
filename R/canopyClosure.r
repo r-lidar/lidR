@@ -39,7 +39,7 @@
 #' @param na.rm logical. If TRUE NA values in the number of cells are not counted (useful for circular plots, for example)
 #' @return A numeric percentage value between 0 and 100
 #' @seealso
-#' \link[lidR:canopyMatrix]{canopyMatrix}
+#' \link[lidR:local_maximum]{local_maximum}
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:cloud_metrics]{cloud_metrics}
 #' @examples
@@ -48,7 +48,7 @@
 #'
 #' myClosureMetrics = function(x, y, z)
 #' {
-#'    canopy = canopyMatrix(x,y,z, 2)
+#'    canopy = local_maximum(x,y,z, 2)
 #'
 #'    CC2  = canopyClosure(canopy, 2)
 #'    CC10 = canopyClosure(canopy, 10)

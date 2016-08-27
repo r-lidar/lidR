@@ -29,7 +29,7 @@
 
 #' Local canopy surface model
 #'
-#' canopyMatrix is a reimplementation of grid_canopy with the local maximum algorithm
+#' local_maximum is a reimplementation of grid_canopy with the local maximum algorithm
 #' for local analysis (e.g. in a raster), avoiding side effects of the algorithm used to
 #' produce the grid. It is only useful to compute your own metric in a function.
 #'
@@ -38,14 +38,14 @@
 #' @param z vector of z coordinates
 #' @param res numeric. The size of the cells
 #' @return A matrix which is the raster of the canopy surface model
-#' @export canopyMatrix
+#' @export local_maximum
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' myClosureMetrics = function(x, y, z)
 #' {
-#'    canopy = canopyMatrix(x,y,z, 2)
+#'    canopy = local_maximum(x,y,z, 2)
 #'
 #'    CC2  = canopyClosure(canopy, 2)
 #'    CC10 = canopyClosure(canopy, 10)
@@ -64,7 +64,7 @@
 #' \link[lidR:cloud_metrics]{cloud_metrics}
 #' @importFrom plyr round_any
 #' @importFrom data.table data.table dcast
-canopyMatrix = function(x,y,z, res)
+local_maximum = function(x,y,z, res)
 {
   X <- Y <- Z <- NULL
 

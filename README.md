@@ -42,11 +42,11 @@ Install R development package `sudo apt-get install r-base-dev`
 
 ### Windows users
 
-Install Rtools: https://cran.r-project.org/bin/windows/Rtools/
+Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
 
 ### Mac users
 
-I can't help you. Reading documentation seems prohibited for non mac user. Read this page: https://www.rstudio.com/products/rpackages/devtools/
+Install the [Xcode command line tools](https://developer.apple.com/downloads)
 
 ## Install from github with devtools
 
@@ -90,10 +90,12 @@ plot(metric)
 - Rename: `convexHull()`to `convex_hull()` to harmonize function names style.
 - Rename: `selectTiles()`to `tiles_select()` to harmonize function names style.
 - Rename: `fractal.dimension()`to `fractal_dimension()` to harmonize function names style.
-- Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. Furthermore it's a better name.
+- Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. `filter()` is already used by `dplyr`.
+- Rename: `canopyMatrix()` to `local_maximum()` for a better meaning.
+- Rename: `canopyModel()`to `grid_canopy()` to harmonize function names style.
 - Rename: `pulseDensity()`to `grid_density()` to harmonize function names style.
 - Rename: `gridMetrics()`to `grid_metrics()` to harmonize function names style.
-- Rename: `cloudMetrics()`to `cloudmetrics()` to harmonize function names style.
+- Rename: `cloudMetrics()`to `cloud_metrics()` to harmonize function names style.
 - Rename: `selectArea()`to `roi_select()` to harmonize function names style.
 - Rename: `extractGroundInventory()` to `roi_query()`for a wider meaning.
 - Rename: `retrieveInventoryTile()` to `roi_index()` for a wider meaning.

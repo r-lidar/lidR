@@ -30,6 +30,6 @@ grid_metrics(lidar, 20, mean(Z)) \%>\% plot3d
 \link[lidR:grid_metrics]{grid_metrics}
 \link[lidR:grid_canopy]{grid_canopy}
 \link[rgl:surface3d]{surface3d}
-\link[lidR:plot.grid_metrics]{plot2d}
+\link[lidR:plot.gridmetrics]{plot2d}
 }
 
