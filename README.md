@@ -88,8 +88,8 @@ plot(metric)
 - Change: `process_parallel()` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
 - Change: `roi_index` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Rename: `convexHull()`to `convex_hull()` to harmonize function names style.
-- Rename: `selectTiles()`to `select_tiles()` to harmonize function names style.
-- Rename: `selectArea()`to `select_area()` to harmonize function names style.
+- Rename: `selectTiles()`to `tiles_select()` to harmonize function names style.
+- Rename: `selectArea()`to `roi_select()` to harmonize function names style.
 - Rename: `fractal.dimension()`to `fractal_dimension()` to harmonize function names style.
 - Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. Furthermore it's a better name.
 - Rename: `gridMetrics()`to `gridmetrics()` to harmonize function names style.
