@@ -106,9 +106,9 @@ metricslist = list(
   "LAD"        = "LAD(Z)",
   "LADCV"      = "sd(LAD(Z))/mean(LAD(Z))",
 
-  "CANOPY_MEAN" = "mean(canopyMatrix(X,Y,Z, resolution), na.rm=TRUE)",
-  "CANOPY_SD" = "sd(canopyMatrix(X,Y,Z, resoluion), na.rm=TRUE)",
-  "CANOPY_FD"  = "fractal_dimension(canopyMatrix(X, Y, Z, resolution))",
+  "CANOPY_MEAN" = "mean(local_maximum(X,Y,Z, resolution), na.rm=TRUE)",
+  "CANOPY_SD" = "sd(local_maximum(X,Y,Z, resoluion), na.rm=TRUE)",
+  "CANOPY_FD"  = "fractal_dimension(local_maximum(X, Y, Z, resolution))",
   "CANOPYCLOSURE" = "canopyClosure(X, Y, Z, resolution, threshold)",
 
   "NPULSE" = "length(unique(pulseID))"

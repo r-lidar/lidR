@@ -39,7 +39,7 @@
 #' \itemize{
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
-#' \item{\link[lidR:canopyMatrix]{canopyMatrix}}
+#' \item{\link[lidR:local_maximum]{local_maximum}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' \item{\link[lidR:canopyClosure]{canopyClosure}}
 #' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
