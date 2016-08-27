@@ -31,7 +31,7 @@
 #'
 #' Creates a pulse density map using a LiDAR cloud of points.
 #'
-#' @aliases pulseDensity
+#' @aliases grid_density
 #' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
 #' @return It returns a \code{data.table} with the class \code{gridmetrics} which which enables easier plotting.
@@ -39,16 +39,16 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' lidar %>% pulseDensity(5) %>% plot
-#' lidar %>% pulseDensity(10) %>% plot
+#' lidar %>% grid_density(5) %>% plot
+#' lidar %>% grid_density(10) %>% plot
 #' @seealso
 #' \code{\link[lidR:gridmetrics]{gridmetrics}}
-#' @export pulseDensity
+#' @export grid_density
 #' @importFrom dplyr rename
-setGeneric("pulseDensity", function(obj, res = 4){standardGeneric("pulseDensity")})
+setGeneric("grid_density", function(obj, res = 4){standardGeneric("grid_density")})
 
-#' @rdname pulseDensity
-setMethod("pulseDensity", "LAS",
+#' @rdname grid_density
+setMethod("grid_density", "LAS",
 	function(obj, res = 4)
 	{
 	  pulseID <- V1 <- NULL
