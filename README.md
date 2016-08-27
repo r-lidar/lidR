@@ -1,6 +1,6 @@
 ![Version](http://img.shields.io/Version/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
-R package for airborne LiDAR data manipulation and visualisation for forestry applications. 
+R package for airborne LiDAR data manipulation and visualisation for foresapplications. 
 
 lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
 
@@ -82,21 +82,23 @@ plot(metric)
 
 ## Changelog v1.2.0
 
+*Note*: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
+
 - Change: `roi_query()` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Change: `process_parallel()` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
 - Change: `roi_index` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
-- Rename: `convexHull()`to `convex_hull()` to try to harmonize function names style.
-- Rename: `selectTiles()`to `select_tiles()` to try to harmonize function names style.
-- Rename: `selectArea()`to `select_area()` to try to harmonize function names style.
-- Rename: `fractal.dimension()`to `fractal_dimension()` to try to harmonize function names style.
-- Rename: `extract()`to `lasfilter()`. It enable to do not override `extract()` function from `magrittr` or `rgdal` and it's a better name.
-- Rename: `gridMetrics()`to `gridmetrics()` to try to harmonize function names style.
-- Rename: `cloudMetrics()`to `cloudmetrics()` to try to harmonize function names style.
+- Rename: `convexHull()`to `convex_hull()` to harmonize function names style.
+- Rename: `selectTiles()`to `select_tiles()` to harmonize function names style.
+- Rename: `selectArea()`to `select_area()` to harmonize function names style.
+- Rename: `fractal.dimension()`to `fractal_dimension()` to harmonize function names style.
+- Rename: `extract()`to `lasfilter()` to do not override `extract()` functions from `magrittr` or `rgdal`. Furthermore it's a better name.
+- Rename: `gridMetrics()`to `gridmetrics()` to harmonize function names style.
+- Rename: `cloudMetrics()`to `cloudmetrics()` to harmonize function names style.
 - Rename: `extractGroundInventory()` to `roi_query()`for a wider meaning.
 - Rename: `retrieveInventoryTile()` to `roi_index()` for a wider meaning.
-- Rename: `gapFractionProfile()` to `gap_fraction_profile()` to try to harmonize function names style.
-- Rename: `classifyFromShapefile()` to `classify_from_shapefile()` to try to harmonize function names style.
-- Rename: `processParallel()` to `process_parallel()` to try to harmonize function names style.
+- Rename: `gapFractionProfile()` to `gap_fraction_profile()` to harmonize function names style.
+- Rename: `classifyFromShapefile()` to `classify_from_shapefile()` to harmonize function names style.
+- Rename: `processParallel()` to `process_parallel()` to harmonize function names style.
 
 ### Changelog v1.1.2
 
