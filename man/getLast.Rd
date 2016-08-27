@@ -30,13 +30,11 @@ lidar = readLAS(LASfile)
 lastReturns = lidar \%>\% getLast
 }
 \seealso{
-\code{\link[lidR:getFirst]{getFirst} }
-\code{\link[lidR:getFirstLast]{getFirstLast} }
-\code{\link[lidR:getFirstOfMany]{getFirstOfMany} }
-\code{\link[lidR:getSingle]{getSingle} }
-\code{\link[lidR:getLast]{getLast} }
-\code{\link[lidR:getGround]{getGround} }
-\code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:lasfilter]{lasfilter} }
+\link[lidR:lasfilter]{lasfilter}
+
+Other getters: \code{\link{getFirstLast}},
+  \code{\link{getFirstOfMany}}, \code{\link{getFirst}},
+  \code{\link{getGround}}, \code{\link{getNth}},
+  \code{\link{getSingle}}
 }
 
