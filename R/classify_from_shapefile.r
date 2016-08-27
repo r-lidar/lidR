@@ -99,7 +99,7 @@ setMethod("classify_from_shapefile", "LAS",
     xcoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,1]})
     ycoords = lapply(polys@polygons, function(x){x@Polygons[[1]]@coords[,2]})
 
-    ids = pointsInPolygons(xcoords, ycoords, obj@data$X, obj@data$Y)
+    ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
 
     if(method == 1)
     {

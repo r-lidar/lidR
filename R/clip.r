@@ -97,9 +97,9 @@ setMethod("clipPolygon", "LAS",
 	  X <- Y <- NULL
 
 	  if(inside)
-		  return(lasfilter(obj, pointsInPolygon(x,y,X,Y)))
+		  return(lasfilter(obj, points_in_polygon(x,y,X,Y)))
 	  else
-	    return(lasfilter(obj, !pointsInPolygon(x,y,X,Y)))
+	    return(lasfilter(obj, !points_in_polygon(x,y,X,Y)))
 	}
 )
 
