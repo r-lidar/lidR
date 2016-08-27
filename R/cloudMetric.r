@@ -42,7 +42,7 @@
 #' \item{\link[lidR:canopyMatrix]{canopyMatrix}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' \item{\link[lidR:canopyClosure]{canopyClosure}}
-#' \item{\link[lidR:fractal.dimension]{fractal.dimension}}
+#' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
 #' @aliases cloudMetrics

@@ -27,7 +27,7 @@
 
 
 
-#' fractal.dimension
+#' fractal_dimension
 #'
 #' Computes the fractal dimension of a surface. The fractal dimension is a measure
 #' of roughness.
@@ -40,10 +40,10 @@
 #' @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
 #' @examples
 #' mtx = matrix(runif(100), 10, 10)
-#' fractal.dimension(mtx)
-#' @export fractal.dimension
+#' fractal_dimension(mtx)
+#' @export fractal_dimension
 #' @importFrom stats coefficients lm
-fractal.dimension = function(mtx)
+fractal_dimension = function(mtx)
 {
   if( sum(is.na(mtx)) > 0 )
     return(NA_real_)
