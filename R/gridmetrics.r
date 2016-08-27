@@ -34,11 +34,11 @@
 #'
 #' Computes a series of descriptive statistics defined by the user. Output is a
 #' data.frame in which each line is a raster (single grid cell), each column is a metric.
-#' gridMetrics is similar to cloudMetrics except it computes metrics within each cell
+#' gridmetrics is similar to cloudMetrics except it computes metrics within each cell
 #' in the output grid. The grid cell coordinates are pre-determined for a given resolution.
 #' So the algorithm will always provide the same coordinates independently of the dataset.
-#' When start = (0,0) and res = 20 gridMetrics will produce the following raster centers: (10,10), (10,30), (30,10) etc..
-#' When start = (-10, -10) and res = 20 gridMetrics will produce the following raster centers: (0,0), (0,20), (20,0) etc..
+#' When start = (0,0) and res = 20 gridmetrics will produce the following raster centers: (10,10), (10,30), (30,10) etc..
+#' When start = (-10, -10) and res = 20 gridmetrics will produce the following raster centers: (0,0), (0,20), (20,0) etc..
 #' In Quebec (Canada) reference is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each cell is a classical function (see examples) that returns a labelled list of metrics.
 #' The following existing function can help the user to compute some metrics:
 #'
@@ -50,25 +50,25 @@
 #' \item{\link[lidR:canopyClosure]{canopyClosure}}
 #' \item{\link[lidR:fractal.dimension]{fractal.dimension}}
 #' } Basically there are no predifined metrics. Users must write their own functions to create metrics.
-#' gridMetrics will dispach the LiDAR data for each cell in the user's function. The user writes their
+#' gridmetrics will dispach the LiDAR data for each cell in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).
 #'
-#' @aliases  gridMetrics
+#' @aliases  gridmetrics
 #' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
-#' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridMetrics" enabling easy plotting.
+#' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "gridmetrics" enabling easy plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' gridMetrics(lidar, 2, max(Z)) %>% plot
+#' gridmetrics(lidar, 2, max(Z)) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' gridMetrics(lidar, 20, mean(Z)) %>% plot
+#' gridmetrics(lidar, 20, mean(Z)) %>% plot
 #'
 #' # Define your own metric function
 #' myMetrics = function(z, i, angle, pulseID)
@@ -84,18 +84,18 @@
 #'    return(ret)
 #'  }
 #'
-#' metrics = gridMetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#' metrics = gridmetrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
 #'
 #' plot(metrics, "hmean")
 #' plot(metrics, "hmax")
 #' plot(metrics, "imean")
 #' #etc.
-#' @export gridMetrics
+#' @export gridmetrics
 #' @importFrom plyr round_any
-setGeneric("gridMetrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("gridMetrics")})
+setGeneric("gridmetrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("gridmetrics")})
 
-#' @rdname gridMetrics
-setMethod("gridMetrics", "LAS",
+#' @rdname gridmetrics
+setMethod("gridmetrics", "LAS",
 	function(obj, res, func, start = c(0,0), option = NULL)
 	{
 	  func_call = substitute(func)
@@ -119,7 +119,7 @@ setMethod("gridMetrics", "LAS",
 		n[1:2] = c("X", "Y")
 		setnames(stat, n)
 
-		attr(stat, "class") = c("gridMetrics", attr(stat, "class"))
+		attr(stat, "class") = c("gridmetrics", attr(stat, "class"))
 
 		return(stat)
 	}

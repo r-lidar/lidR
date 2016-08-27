@@ -23,7 +23,7 @@ Computes a series of descriptive statistics for a LiDAR dataset
 }
 \details{
 Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
-computes a single set of metrics for the entire data set. See \link[lidR:gridMetrics]{gridMetrics}
+computes a single set of metrics for the entire data set. See \link[lidR:gridmetrics]{gridmetrics}
 to compute metrics on a grid. Basically there are no predifined metrics. Users
 must write their own function to create metrics (see example). The following existing
 function can help the user to compute some metrics:
@@ -61,6 +61,6 @@ myMetrics = function(z, i, angle, pulseID)
 metrics = cloudMetrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
 }
 \seealso{
-\link[lidR:gridMetrics]{gridMetrics}
+\link[lidR:gridmetrics]{gridmetrics}
 }
 

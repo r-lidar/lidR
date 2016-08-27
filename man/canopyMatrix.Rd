@@ -38,14 +38,14 @@ myClosureMetrics = function(x, y, z)
    return(list(CC2 = CC2, CC10 = CC10, CC20 = CC20))
 }
 
-closures = gridMetrics(lidar, 20, myClosureMetrics(X,Y,Z))
+closures = gridmetrics(lidar, 20, myClosureMetrics(X,Y,Z))
 plot(closures, "CC2")
 plot(closures, "CC10")
 plot(closures, "CC20")
 }
 \seealso{
 \link[lidR:canopyClosure]{canopyClosure}
-\link[lidR:gridMetrics]{gridMetrics}
+\link[lidR:gridmetrics]{gridmetrics}
 \link[lidR:cloudMetrics]{cloudMetrics}
 }
 

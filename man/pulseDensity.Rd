@@ -16,7 +16,7 @@ pulseDensity(obj, res = 4)
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.}
 }
 \value{
-It returns a \code{data.table} with the class \code{gridMetrics} which which enables easier plotting.
+It returns a \code{data.table} with the class \code{gridmetrics} which which enables easier plotting.
 }
 \description{
 Creates a pulse density map using a LiDAR cloud of points.
@@ -29,6 +29,6 @@ lidar \%>\% pulseDensity(5) \%>\% plot
 lidar \%>\% pulseDensity(10) \%>\% plot
 }
 \seealso{
-\code{\link[lidR:gridMetrics]{gridMetrics}}
+\code{\link[lidR:gridmetrics]{gridmetrics}}
 }
 

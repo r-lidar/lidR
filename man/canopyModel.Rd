@@ -15,10 +15,10 @@ canopyModel(obj, res = 2, start = c(0, 0))
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.}
 
-\item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridMetrics]{gridMetrics}}
+\item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:gridmetrics]{gridmetrics}}
 }
 \value{
-It returns a \code{data.table} with the class \code{gridMetrics} which enables easier plotting.
+It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting.
 }
 \description{
 Creates a canopy surface model using a LiDAR cloud of points.
@@ -36,7 +36,7 @@ lidar \%>\% canopyModel(2) \%>\% plot
 lidar \%>\% canopyModel(2) \%>\% plot3d
 }
 \seealso{
-\code{\link[lidR:gridMetrics]{gridMetrics}}
+\code{\link[lidR:gridmetrics]{gridmetrics}}
 \code{\link[lidR:clipCircle]{clipCircle}}
 }
 
