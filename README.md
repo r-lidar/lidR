@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.2.0.png) ![Devel](http://img.shields.io/Version/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
+![Version](http://img.shields.io/Version/1.2.0.png) ![Devel](http://img.shields.io/Devel/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
 R package for airborne LiDAR data manipulation and visualisation for forest applications. 
 
