@@ -45,18 +45,18 @@
 #' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
-#' @aliases cloudmetrics
+#' @aliases cloud_metrics
 #' @param obj An object of class \code{LAS}
 #' @param func The function to be applied to a cloud of points
 #' @return It returns a \code{data.table} containing the metrics
-#' @export cloudmetrics
+#' @export cloud_metrics
 #' @seealso \link[lidR:grid_metrics]{grid_metrics}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' cloudmetrics(lidar, max(Z))
-#' cloudmetrics(lidar, mean(Z))
+#' cloud_metrics(lidar, max(Z))
+#' cloud_metrics(lidar, mean(Z))
 #'
 #' # Define your own metric function
 #' myMetrics = function(z, i, angle, pulseID)
@@ -72,12 +72,12 @@
 #'    return(ret)
 #'  }
 #'
-#' metrics = cloudmetrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#' metrics = cloud_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
 #' @importFrom magrittr %$%
-setGeneric("cloudmetrics", function(obj, func){standardGeneric("cloudmetrics")})
+setGeneric("cloud_metrics", function(obj, func){standardGeneric("cloud_metrics")})
 
-#' @rdname cloudmetrics
-setMethod("cloudmetrics", "LAS",
+#' @rdname cloud_metrics
+setMethod("cloud_metrics", "LAS",
 	function(obj, func)
 	{
 	  func_call = substitute(func)
