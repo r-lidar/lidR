@@ -27,14 +27,14 @@
 
 
 
-#' Plot an object of class grid_metrics in 3D
+#' Plot an object of class gridmetrics in 3D
 #'
 #' @param x A data.frame or data.table of class grid_metrics.
 #' @param z character. The field to plot. If NULL, autodetect.
 #' @param \dots Other parameters for \link[rgl:surface3d]{surface3}
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:canopyModel]{canopyModel}
+#' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[rgl:surface3d]{surface3d}
 #' \link[lidR:plot.grid_metrics]{plot2d}
 #' @examples

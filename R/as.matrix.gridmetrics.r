@@ -34,7 +34,7 @@
 #' @param \dots other parameters for \link[data.table:dcast]{dcast}
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:canopyModel]{canopyModel}
+#' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[data.table:dcast]{dcast}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -44,9 +44,9 @@
 #' mtx = as.matrix(meanHeight)
 #' @importFrom data.table dcast
 #' @export
-#' @method as.matrix grid_metrics
+#' @method as.matrix gridmetrics
 #' @importFrom magrittr %>%
-as.matrix.grid_metrics = function(x, z = NULL, ...)
+as.matrix.gridmetrics = function(x, z = NULL, ...)
 {
   X <- NULL
 
