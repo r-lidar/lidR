@@ -29,11 +29,12 @@
 
 #' Canopy surface model
 #'
-#' Creates a canopy surface model using a LiDAR cloud of points.
+#' Creates a canopy surface model using a LiDAR cloud of points. This function is an
+#' alias for \code{grid_metrics(obj, res, max(Z))}.
 #'
 #' The algorithm used is the local maximum algorithm. It assigns the
 #' elevation of the highest return within each grid cell to the grid cell center.
-#' @aliases  canopyModel
+#' @aliases  grid_canopy
 #' @param obj An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.
 #' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:grid_metrics]{grid_metrics}
@@ -43,18 +44,18 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Local maximum algorithm with a resolution of 2 meters
-#' lidar %>% canopyModel(2) %>% plot
-#' lidar %>% canopyModel(2) %>% plot3d
+#' lidar %>% grid_canopy(2) %>% plot
+#' lidar %>% grid_canopy(2) %>% plot3d
+#' @family grid_alias
 #' @seealso
-#' \code{\link[lidR:grid_metrics]{grid_metrics}}
-#' \code{\link[lidR:clipCircle]{clipCircle}}
-#' @export canopyModel
+#' \link[lidR:grid_metrics]{grid_metrics}
+#' @export grid_canopy
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>% %$%
-setGeneric("canopyModel", function(obj, res = 2, start = c(0,0)){standardGeneric("canopyModel")})
+setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
 
-#' @rdname canopyModel
-setMethod("canopyModel", "LAS",
+#' @rdname grid_canopy
+setMethod("grid_canopy", "LAS",
 	function(obj, res = 2, start=c(0,0))
 	{
 	  X <- Y <- Z <- V1 <- NULL

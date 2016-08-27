@@ -41,7 +41,7 @@ as.grid_metrics = function(x)
   if(is.data.frame(x))
   {
     x = as.data.table(x)
-    attr(x, "class") = c("grid_metrics", attr(x, "class"))
+    attr(x, "class") = c("gridmetrics", attr(x, "class"))
   }
 
   return(x)

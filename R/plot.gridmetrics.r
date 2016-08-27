@@ -68,7 +68,7 @@
 #' plot(metrics, "imean")
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:canopyModel]{canopyModel}
+#' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[fields:image.plot]{image.plot}
 #' \link[lidR:height.colors]{height.colors}
 #' \link[lidR:forest.colors]{forest.colors}
@@ -77,10 +77,10 @@
 #' \link[lidR:plot3d]{plot3d}
 #' @importFrom fields image.plot
 #' @export
-#' @rdname plot.grid_metrics
-#' @method plot grid_metrics
+#' @rdname plot.gridmetrics
+#' @method plot gridmetrics
 #' @importFrom magrittr %>%
-plot.grid_metrics = function(x, z = NULL, colorPalette = height.colors, ...)
+plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
 {
   inargs = list(...)
 

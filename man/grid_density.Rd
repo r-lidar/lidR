@@ -19,7 +19,8 @@ grid_density(obj, res = 4)
 It returns a \code{data.table} with the class \code{grid_metrics} which which enables easier plotting.
 }
 \description{
-Creates a pulse density map using a LiDAR cloud of points.
+Creates a pulse density map using a LiDAR cloud of points. This function is an alias
+for \code{grid_metrics(obj, res, length(unique(pulseID))/res^2)}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -29,6 +30,8 @@ lidar \%>\% grid_density(5) \%>\% plot
 lidar \%>\% grid_density(10) \%>\% plot
 }
 \seealso{
-\code{\link[lidR:grid_metrics]{grid_metrics}}
+\link[lidR:grid_metrics]{grid_metrics}
+
+Other grid_alias: \code{\link{grid_canopy}}
 }
 

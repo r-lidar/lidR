@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot3d.gridmetrics.r
 \name{plot3d}
 \alias{plot3d}
-\title{Plot an object of class grid_metrics in 3D}
+\title{Plot an object of class gridmetrics in 3D}
 \usage{
 plot3d(x, z = NULL, ...)
 }
@@ -14,7 +14,7 @@ plot3d(x, z = NULL, ...)
 \item{\dots}{Other parameters for \link[rgl:surface3d]{surface3}}
 }
 \description{
-Plot an object of class grid_metrics in 3D
+Plot an object of class gridmetrics in 3D
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -28,7 +28,7 @@ grid_metrics(lidar, 20, mean(Z)) \%>\% plot3d
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
-\link[lidR:canopyModel]{canopyModel}
+\link[lidR:grid_canopy]{grid_canopy}
 \link[rgl:surface3d]{surface3d}
 \link[lidR:plot.grid_metrics]{plot2d}
 }

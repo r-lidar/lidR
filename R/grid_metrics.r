@@ -119,7 +119,7 @@ setMethod("grid_metrics", "LAS",
 		n[1:2] = c("X", "Y")
 		setnames(stat, n)
 
-		attr(stat, "class") = c("grid_metrics", attr(stat, "class"))
+		attr(stat, "class") = c("gridmetrics", attr(stat, "class"))
 
 		return(stat)
 	}
