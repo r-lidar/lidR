@@ -31,9 +31,9 @@
 #'
 #' Select an region of interest contained into a rectangle using interactively the mouse
 #'
-#' \code{selectArea} enable the user to select a region of interest (ROI) drawing
+#' \code{select_area} enable the user to select a region of interest (ROI) drawing
 #' a rectangle with the mouse
-#' @aliases selectArea
+#' @aliases select_area
 #' @param obj An object of class \code{LAS}
 #' @param \dots Optionnal parameters for the plot function
 #' @return An object of class \code{LAS}
@@ -43,15 +43,15 @@
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' subset = selectArea(lidar)
+#' subset = select_area(lidar)
 #' }
-#' @export selectArea
+#' @export select_area
 #' @importFrom rgl view3d select3d rgl.close
 #' @importFrom magrittr %$% %>%
-setGeneric("selectArea", function(obj, ...){standardGeneric("selectArea")})
+setGeneric("select_area", function(obj, ...){standardGeneric("select_area")})
 
-#' @rdname selectArea
-setMethod("selectArea", "LAS",
+#' @rdname select_area
+setMethod("select_area", "LAS",
   function(obj, ...)
   {
     X <- Y <- NULL
