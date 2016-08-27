@@ -45,14 +45,14 @@
 #'
 #' hist(z, n=50)
 #'
-#' gapFraction = gapFractionProfile(z)
+#' gapFraction = gap_fraction_profile(z)
 #'
 #' plot(gapFraction, type="l", xlab="Elevation", ylab="Gap fraction")
 #' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 #' @seealso \link[lidR:LAD]{LAD}
-#' @export gapFractionProfile
+#' @export gap_fraction_profile
 #' @importFrom graphics hist
-gapFractionProfile = function (z, dz = 1)
+gap_fraction_profile = function (z, dz = 1)
 {
   maxz = max(z)
 

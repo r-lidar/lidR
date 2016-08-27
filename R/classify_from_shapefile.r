@@ -49,27 +49,27 @@
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-#' classifyFromShapefile(lidar, lakes, "inlakes")
+#' classify_from_shapefile(lidar, lakes, "inlakes")
 #' forest = lasfilter(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'
 #' # The field "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the value of the polygon
-#' classifyFromShapefile(lidar, lakes, "LAKENAME_1")
+#' classify_from_shapefile(lidar, lakes, "LAKENAME_1")
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
-#' @export classifyFromShapefile
+#' @export classify_from_shapefile
 #' @importFrom raster crop
 #' @importFrom rgdal readOGR
 #' @importFrom data.table setnames :=
-setGeneric("classifyFromShapefile", function(obj, shapefile, field){standardGeneric("classifyFromShapefile")})
+setGeneric("classify_from_shapefile", function(obj, shapefile, field){standardGeneric("classify_from_shapefile")})
 
-#' @rdname classifyFromShapefile
+#' @rdname classify_from_shapefile
 #' @useDynLib lidR
 #' @importFrom Rcpp sourceCpp
-setMethod("classifyFromShapefile", "LAS",
+setMethod("classify_from_shapefile", "LAS",
   function(obj, shapefile, field)
   {
     info <- NULL
