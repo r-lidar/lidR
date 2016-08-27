@@ -31,7 +31,7 @@ of a grid.
 \details{
 Computes a series of descriptive statistics defined by the user. Output is a
 data.frame in which each line is a raster (single grid cell), each column is a metric.
-gridmetrics is similar to cloudMetrics except it computes metrics within each cell
+gridmetrics is similar to cloudmetrics except it computes metrics within each cell
 in the output grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 gridmetrics will produce the following raster centers: (10,10), (10,30), (30,10) etc..

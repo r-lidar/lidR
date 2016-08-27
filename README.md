@@ -87,8 +87,10 @@ plot(metric)
 - Change: `roi_index` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Rename: `convexHull()`to `convex_hull()` to try to respect constant style in function names.
 - Rename: `selectTiles()`to `select_tiles()` to try to respect constant style in function names.
+- Rename: `fractal.dimension()`to `fractal_dimension()` to try to respect constant style in function names.
 - Rename: `extract()`to `lasfilter()`. It enable to do not override `extract()` function from `magrittr` or `rgdal` and it's a better name.
 - Rename: `gridMetrics()`to `gridmetrics()` to try to respect constant style in function names.
+- Rename: `cloudMetrics()`to `cloudmetrics()` to try to respect constant style in function names.
 - Rename: `extractGroundInventory()` to `roi_query()`.
 - Rename: `retrieveInventoryTile()` to `roi_index()`.
 - Rename: `processParallel()` to `process_parallel()`to try to respect constant style in fucntion names.

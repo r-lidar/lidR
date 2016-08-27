@@ -45,6 +45,6 @@ plot(closures, "CC20")
 \seealso{
 \link[lidR:canopyMatrix]{canopyMatrix}
 \link[lidR:gridmetrics]{gridmetrics}
-\link[lidR:cloudMetrics]{cloudMetrics}
+\link[lidR:cloudmetrics]{cloudmetrics}
 }
 
