@@ -2,37 +2,27 @@
 % Please edit documentation in R/LAS.r
 \name{LAS}
 \alias{LAS}
-\title{Load a las file and create a 'LAS' object}
+\title{Create a \code{LAS} object}
 \usage{
-LAS(input, fields = "standard", ...)
+LAS(data, header = list())
 }
 \arguments{
-\item{input}{character or Catalog object. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
-If input is a \link[lidR:Catalog-class]{Catalog} object, all the .las file in the catalog will be loaded.}
+\item{data}{a data.table containing the LiDAR data.}
 
-\item{fields}{character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.}
-
-\item{\dots}{Unused}
+\item{header}{a list containing the data from the header of a las file.}
 }
 \value{
 An object of class \code{LAS}
 }
 \description{
-Methods to read and create a \code{LAS} object from a vector of .las filename(s)
-}
-\details{
-Methods to read and create a \code{LAS} object from a vector of .las filename(s).
-The option fields allows selection of fields to be loaded. Removing redundant fields
-saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
-pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
-apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
+When a \code{LAS} object is created sevral things are computed on the fly in addition
+to the data inputed in the constructor. See \link[lidR:LAS-class]{LAS-class}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
-getData(lidar)
 summary(lidar)
 }
 \seealso{
