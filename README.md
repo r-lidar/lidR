@@ -85,11 +85,13 @@ plot(metric)
 - Change: `roi_query()` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Change: `process_parallel()` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
 - Change: `roi_index` can create index from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
+- Rename: `convexHull()`to `convex_hull()` to try to respect constant style in function names.
+- Rename: `selectTiles()`to `select_tiles()` to try to respect constant style in function names.
 - Rename: `extract()`to `lasfilter()`. It enable to do not override `extract()` function from `magrittr` or `rgdal` and it's a better name.
-- Rename: `gridMetrics()`to `gridmetrics()` to try to respect constant style in fucntion name.
-- Rename: `extractGroundInventory()`to `roi_query()`.
+- Rename: `gridMetrics()`to `gridmetrics()` to try to respect constant style in function names.
+- Rename: `extractGroundInventory()` to `roi_query()`.
 - Rename: `retrieveInventoryTile()` to `roi_index()`.
-- Rename: `processParallel()` to `process_parallel()`to try to respect constant style in fucntion name.
+- Rename: `processParallel()` to `process_parallel()`to try to respect constant style in fucntion names.
 
 ### Changelog v1.1.2
 

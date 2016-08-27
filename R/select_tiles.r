@@ -40,17 +40,17 @@
 #' \dontrun{
 #'
 #' catalog = Catalog("<Path to a folder containing a set of .las files>")
-#' selectedFiles = selectTiles(catalog)
+#' selectedFiles = select_tiles(catalog)
 #' }
 #' @seealso
 #' \link[lidR:Catalog-class]{Catalog-class}
 #' \link[lidR:Catalog]{Catalog}
 #' @importFrom graphics rect identify
 #' @importFrom magrittr %$%
-setGeneric("selectTiles", function(x){standardGeneric("selectTiles")})
+setGeneric("select_tiles", function(x){standardGeneric("select_tiles")})
 
-#' @rdname selectTiles
-setMethod("selectTiles", "Catalog",
+#' @rdname select_tiles
+setMethod("select_tiles", "Catalog",
   function(x)
   {
     Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
