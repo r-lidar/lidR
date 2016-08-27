@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// pointInPolygon
-bool pointInPolygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
-RcppExport SEXP lidR_pointInPolygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+// point_in_polygon
+bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
+RcppExport SEXP lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -15,13 +15,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
     Rcpp::traits::input_parameter< float >::type pointx(pointxSEXP);
     Rcpp::traits::input_parameter< float >::type pointy(pointySEXP);
-    __result = Rcpp::wrap(pointInPolygon(vertx, verty, pointx, pointy));
+    __result = Rcpp::wrap(point_in_polygon(vertx, verty, pointx, pointy));
     return __result;
 END_RCPP
 }
-// pointsInPolygon
-LogicalVector pointsInPolygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy);
-RcppExport SEXP lidR_pointsInPolygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+// points_in_polygon
+LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy);
+RcppExport SEXP lidR_points_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -29,13 +29,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    __result = Rcpp::wrap(pointsInPolygon(vertx, verty, pointx, pointy));
+    __result = Rcpp::wrap(points_in_polygon(vertx, verty, pointx, pointy));
     return __result;
 END_RCPP
 }
-// pointsInPolygons
-IntegerVector pointsInPolygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy);
-RcppExport SEXP lidR_pointsInPolygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+// points_in_polygons
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy);
+RcppExport SEXP lidR_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -43,7 +43,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type verty(vertySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    __result = Rcpp::wrap(pointsInPolygons(vertx, verty, pointx, pointy));
+    __result = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy));
     return __result;
 END_RCPP
 }

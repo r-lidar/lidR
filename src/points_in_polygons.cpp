@@ -44,7 +44,7 @@ using namespace Rcpp;
 //' @references Adaptation of the C function written by W. Randolph Franklin
 //' @export
 // [[Rcpp::export]]
-bool pointInPolygon(NumericVector vertx, NumericVector verty, float pointx, float pointy)
+bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy)
 {
   bool c = false;
   int i,j;
@@ -70,7 +70,7 @@ bool pointInPolygon(NumericVector vertx, NumericVector verty, float pointx, floa
 //' @return Logical array. FALSE, point is exterior to the polygon, TRUE, point is in interior to the polygon
 //' @export
 // [[Rcpp::export]]
-LogicalVector pointsInPolygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy)
+LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy)
 {
   int i;
   int npoints = pointx.length();
@@ -78,7 +78,7 @@ LogicalVector pointsInPolygon(NumericVector vertx, NumericVector verty, NumericV
 
   for (i = 0 ; i < npoints ; i++)
   {
-    c[i] = pointInPolygon(vertx, verty, pointx[i], pointy[i]);
+    c[i] = point_in_polygon(vertx, verty, pointx[i], pointy[i]);
   }
 
   return c;
@@ -95,7 +95,7 @@ LogicalVector pointsInPolygon(NumericVector vertx, NumericVector verty, NumericV
 //' @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a polygon
 //' @export
 // [[Rcpp::export]]
-IntegerVector pointsInPolygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)
 {
   int i,j;
   int npoints = pointx.length();
@@ -106,7 +106,7 @@ IntegerVector pointsInPolygons(Rcpp::List vertx, Rcpp::List verty, NumericVector
   {
     for (j = 0 ; j < nvert ; j++)
     {
-        if(pointInPolygon(vertx[j], verty[j], pointx[i], pointy[i]))
+        if(point_in_polygon(vertx[j], verty[j], pointx[i], pointy[i]))
           id[i] = j+1;
     }
   }
