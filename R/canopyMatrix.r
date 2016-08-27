@@ -61,7 +61,7 @@
 #' @seealso
 #' \link[lidR:canopyClosure]{canopyClosure}
 #' \link[lidR:gridmetrics]{gridmetrics}
-#' \link[lidR:cloudMetrics]{cloudMetrics}
+#' \link[lidR:cloudmetrics]{cloudmetrics}
 #' @importFrom plyr round_any
 #' @importFrom data.table data.table dcast
 canopyMatrix = function(x,y,z, res)
