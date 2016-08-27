@@ -1,10 +1,12 @@
-![Version](http://img.shields.io/Version/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
+![Version](http://img.shields.io/Version/1.2.0.png) ![Devel](http://img.shields.io/Version/1.2.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
-R package for airborne LiDAR data manipulation and visualisation for foresapplications. 
+R package for airborne LiDAR data manipulation and visualisation for forest applications. 
 
-lidR package provides functions to read and write `.las` and `.laz` files, plot a cloud of points, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate liDAR data. lidR package is designed mainly for research purposes using an area-based approach.
+lidR package provides functions to read and write `.las` and `.laz` files, plot a point cloud, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of dataset, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate LiDAR data. lidR package is designed mainly for research purposes using an area-based approach.
 
-lidR provides an open-source and R-based implementation of several classical functions used in softwares dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools in R rather rely on a set of predefined tools.
+lidR provides an open-source and R-based implementation of several classical functions used in softwares dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools and manipulate their own object in R rather rely on a set of predefined tools without any control. However it does NOT replace existing tools like FUSION or LAStools. The aims are not the same. The lidR package aims to easily manipulate data to create new thing/ideas but is does not provide memory optimized powerfull algorithms to export professtionnal product.
+
+Please contact the author for any bug or feature request (on github is the best). I'll enjoy to implement new stuff.
 
 1. [Features](#features)
 2. [Install lidR from github](#install-lidr-from-github)
