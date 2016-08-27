@@ -37,14 +37,14 @@
 #' @examples
 #' x = runif(20)
 #' y = runif(20)
-#' hull = convexHull(x,y)
+#' hull = convex_hull(x,y)
 #'
 #' plot(x,y)
 #' lines(hull)
 #' @seealso \link[grDevices:chull]{chull}
-#' @export convexHull
+#' @export convex_hull
 #' @importFrom grDevices chull
-convexHull = function(x, y)
+convex_hull = function(x, y)
 {
 	data = data.frame(x,y)
 	ch <- grDevices::chull(x,y)
