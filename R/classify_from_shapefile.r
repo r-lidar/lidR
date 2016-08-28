@@ -42,6 +42,7 @@
 #' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
 #' @return An object of the class \code{LAS} with a new field
 #' @examples
+#' \dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
@@ -57,6 +58,7 @@
 #' # The field "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the value of the polygon
 #' classify_from_shapefile(lidar, lakes, "LAKENAME_1")
+#' }
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
