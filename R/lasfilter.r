@@ -63,8 +63,6 @@ setGeneric("lasfilter", function(.data, ...){standardGeneric("lasfilter")})
 setMethod("lasfilter", "LAS",
 	function(.data, ...)
 	{
-		ret = .data@data %>% dplyr::filter(...) %>% LAS
-
-		return(ret)
+		.data@data %>% dplyr::filter(...) %>% LAS(.data@header) %>% return()
 	}
 )
