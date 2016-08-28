@@ -28,8 +28,8 @@ Please contact the author for any bug or feature request (on github is the best)
 - [Manage a catalog of `.las` tiles](http://jean-romain.github.io/lidR/catalog.html)
 - [Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
 - [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html#process-all-the-file-of-a-catalog)
-- Compute a digital terrain mode (DTM).
-- Normalize a cloud of point substracting a DTM (computed a read from file).
+- Compute a digital terrain model (DTM).
+- Normalize a point cloud substracting a DTM (computed or read from a file).
 - [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
 - [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridmetrics.html)

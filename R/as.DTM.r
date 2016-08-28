@@ -26,20 +26,37 @@
 # ===============================================================================
 
 
-#' Set the class gridmetrics to a data.frame or a data.table
+
+#' Transform a raster into a DTM
 #'
-#' Set the class gridmetrics to a data.frame. Useful when reading data from a file.
-#' In this case the data.frame does not have the class gridmetrics and cannot easly be
-#' plotted or transformed into a matrix.
+#' Transform a raster (formal class RasterLayer from package raster) into a
+#' DTM format used by the package lidR.
 #'
-#' @param x A data.frame
-#' @export as.gridmetrics
-#' @importFrom data.table as.data.table
-as.gridmetrics = function(x)
+#' @param r a RasterLayer from package raster
+#' @seealso
+#' \link[raster:raster]{raster}
+#' @export
+#' @importFrom raster extent res as.matrix
+as.DTM = function(r)
 {
-  if(is.data.frame(x)) x = as.data.table(x)
+  if(class(r)[1] != "RasterLayer")
+    stop("Not a  RasterLayer")
 
-  attr(x, "class") = c("gridmetrics", attr(x, "class"))
+  resol = raster::res(r)[1]
 
-  return(x)
+  z = raster::as.matrix(r)
+  z = t(z[nrow(z):1,,drop=FALSE])
+
+  nrow = dim(r)[1]
+  ncol = dim(r)[2]
+  ext = raster::extent(r)
+
+  x = seq(ext@xmin, ext@xmax-resol, by = resol)
+  y = seq(ext@ymin, ext@ymax-resol, by = resol)
+
+  dtm = list(x = x, y = y, z = z)
+  attr(dtm, "res") = resol
+  class(dtm) = c("DTM", "list")
+
+  return(dtm)
 }
