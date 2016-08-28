@@ -94,6 +94,6 @@ setMethod("thin", c("LAS", "numeric"),
       selected = selected$delete
     }
 
-    return(LAS(obj@data[selected]))
+    LAS(obj@data[selected], obj@header) %>% return()
 	}
 )
