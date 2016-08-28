@@ -148,6 +148,15 @@ setMethod("initialize", "LAS",
   	    .Object@data$color <- .Object@data %$% grDevices::rgb(R/255, G/255, B/255)
 	  }
 
+	  # Update header ------------------------------------------------------------
+
+	  header["Min X"] = min(data$X)
+	  header["Min Y"] = min(data$Y)
+	  header["Min Z"] = min(data$Z)
+	  header["Max X"] = max(data$X)
+	  header["Max Y"] = max(data$Y)
+	  header["Max Z"] = max(data$Z)
+
 	  # Build returned object  ---------------------------------------------------
 
 	  .Object@data <- data
