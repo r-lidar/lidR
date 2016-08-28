@@ -38,11 +38,43 @@
 #' @importFrom data.table as.data.table
 as.gridmetrics = function(x)
 {
-  if(is.data.frame(x))
-  {
-    x = as.data.table(x)
-    attr(x, "class") = c("gridmetrics", attr(x, "class"))
-  }
+  if(is.data.frame(x)) x = as.data.table(x)
+
+  attr(x, "class") = c("gridmetrics", attr(x, "class"))
 
   return(x)
+}
+
+#' Transform a raster into a DTM
+#'
+#' Transform a raster (formal class RasterLayer from package raster) into a
+#' DTM format used by the package lidR.
+#'
+#' @param r a RasterLayer from package raster
+#' @seealso
+#' \link[raster:raster]{raster}
+#' @export
+#' @importFrom raster extent res as.matrix
+as.DTM = function(r)
+{
+  if(class(r)[1] != "RasterLayer")
+    stop("Not a  RasterLayer")
+
+  resol = raster::res(r)[1]
+
+  z = raster::as.matrix(r)
+  z = t(z[nrow(z):1,,drop=FALSE])
+
+  nrow = dim(r)[1]
+  ncol = dim(r)[2]
+  ext = raster::extent(r)
+
+  x = seq(ext@xmin, ext@xmax-resol, by = resol)
+  y = seq(ext@ymin, ext@ymax-resol, by = resol)
+
+  dtm = list(x = x, y = y, z = z)
+  attr(dtm, "res") = resol
+  class(dtm) = c("DTM", "list")
+
+  return(dtm)
 }

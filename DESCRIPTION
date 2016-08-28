@@ -18,8 +18,8 @@ License: GPL-3 | file LICENCE
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,methods,stats,utils,grDevices,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
-LazyData: true
+    rgl,methods,stats,utils,grDevices,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,akima,Rcpp
+LazyData: trues
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp

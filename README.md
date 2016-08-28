@@ -13,22 +13,24 @@ Please contact the author for any bug or feature request (on github is the best)
 3. [Some examples](#some-examples)
 4. [Changelog](#changelog)
 
-# Features 
+# Features (not exhaustive)
 
 - [Read .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
 - Write .las and .laz files
 - [Retrieve indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
-- [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
 - [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridmetrics.html#cloudmetrics)
-- [Rasterize and apply any function to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
-- [Classify and filter data from geographic shapefiles](http://jean-romain.github.io/lidR/classify_from_shapefile.html)
+- [Rasterize and to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
+- [Classify and clip data from geographic shapefiles](http://jean-romain.github.io/lidR/classify_from_shapefile.html)
+- [Thin a cloud of points to reach an homogeneous pulse density](http://jean-romain.github.io/lidR/thin.html)
 - [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/extract.html)
-- [Thin a cloud of points to reach an homogeneous point density](http://jean-romain.github.io/lidR/thin.html)
 - [Clip data bases on discs, rectangles or polygons](http://jean-romain.github.io/lidR/clip.html)
 - [Manage a catalog of `.las` tiles](http://jean-romain.github.io/lidR/catalog.html)
 - [Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
 - [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html#process-all-the-file-of-a-catalog)
+- Compute a digital terrain mode (DTM).
+- Normalize a cloud of point substracting a DTM (computed a read from file).
+- [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
 - [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
 - [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridmetrics.html)
 
@@ -86,6 +88,9 @@ plot(metric)
 
 **Note**: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
 
+- Add: an overloaded operator minus `-` very convenient to normalize a dataset `lidar - dtm` is synonyme to `normalize(lidar, dtm)`
+- Add: `normalize()` enable to substract a digital terrain model to the LiDAR data.
+- Add: `grid_terrain()` enable to compute digital terrain model.
 - Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
 - Add: `LAS` object have now an accessor `$` enabling to access to slots or columns in `@data` or fields in `@header`.
 - Change: `roi_query()` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
