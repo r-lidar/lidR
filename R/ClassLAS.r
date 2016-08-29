@@ -103,17 +103,20 @@ setMethod("initialize", "LAS",
 	{
 	  gpstime <- R <- G <- B <- X <- Y <- NULL
 
-	  if(!is.data.table(data)) lidRError("LDR1")
+	  if(!is.data.table(data))
+	    lidRError("LDR1")
 
 	  # Check if the data are valid. Else: warning -------------------------------
 
 	  negvalues = sum(data$Z < 0)
-	  if(negvalues > 0) lidRError("LDR2", number = negvalues, behaviour = warning)
+	  if(negvalues > 0)
+	    lidRError("LDR2", number = negvalues, behaviour = warning)
 
 	  if("Classification" %in% names(data))
 	  {
 	    class0 = sum(data$Classification == 0)
-	    if(class0 > 0) lidRError("LDR3", number = class0, behaviour = warning)
+	    if(class0 > 0)
+	      lidRError("LDR3", number = class0, behaviour = warning)
 	  }
 
 	  # Compute extra data -------------------------------------------------------
@@ -159,9 +162,9 @@ setMethod("initialize", "LAS",
 
 	  # Build returned object  ---------------------------------------------------
 
-	  .Object@data <- data
-	  .Object@header <- header
-	  .Object@area <- area
+	  .Object@data         <- data
+	  .Object@header       <- header
+	  .Object@area         <- area
 	  .Object@pointDensity <- dpoint
 	  .Object@pulseDensity <- dpulse
 
