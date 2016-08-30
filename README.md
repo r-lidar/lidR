@@ -88,10 +88,12 @@ plot(metric)
 
 **Note**: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
 
+- Fix: Correct computation of color when reading RBG. R G and B are coded on 16 bits. (issue [#13](https://github.com/Jean-Romain/lidR/issues/13)).
+- Fix: Propage and update header when manipulation of lidar data (issue [#12](https://github.com/Jean-Romain/lidR/issues/12)).
+- Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
 - Add: an overloaded operator minus `-` very convenient to normalize a dataset `lidar - dtm` is synonyme to `normalize(lidar, dtm)`
 - Add: `normalize()` enable to substract a digital terrain model to the LiDAR data.
 - Add: `grid_terrain()` enable to compute digital terrain model.
-- Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
 - Add: `LAS` object have now an accessor `$` enabling to access to slots or columns in `@data` or fields in `@header`.
 - Change: `roi_query()` can extract data from rectangular queries (issue [#11](https://github.com/Jean-Romain/lidR/issues/11)).
 - Change: `process_parallel()` works both on Unix (GNU/linux and Mac) and Windows platform (issue [#10](https://github.com/Jean-Romain/lidR/issues/10)).
