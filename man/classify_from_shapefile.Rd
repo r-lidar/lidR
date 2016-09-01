@@ -3,12 +3,13 @@
 \docType{methods}
 \name{classify_from_shapefile}
 \alias{classify_from_shapefile}
-\alias{classify_from_shapefile,LAS-method}
+\alias{classify_from_shapefile,LAS,SpatialPolygonsDataFrame-method}
 \title{Classify LiDAR points from the polygons in a shapefile}
 \usage{
 classify_from_shapefile(obj, shapefile, field)
 
-\S4method{classify_from_shapefile}{LAS}(obj, shapefile, field)
+\S4method{classify_from_shapefile}{LAS,SpatialPolygonsDataFrame}(obj, shapefile,
+  field)
 }
 \arguments{
 \item{obj}{An object of the class \code{LAS}}
