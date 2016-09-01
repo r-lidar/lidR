@@ -18,7 +18,7 @@ classify_from_shapefile(obj, shapefile, field)
 \item{field}{characters. The name of a field of the shapefile or the name of the new field in the LAS object.}
 }
 \value{
-An object of the class \code{LAS} with a new field
+Nothing. The new field is added by reference in the original data.
 }
 \description{
 Classify LiDAR points from the polygons in an ESRI shapefile
@@ -32,6 +32,7 @@ if the points are in a polygon, FALSE otherwise. This function allows for filter
 lakes, for example.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
@@ -47,6 +48,7 @@ plot(forest)
 # The field "LAKENAME_1" exists in the shapefile.
 # Points are classified with the value of the polygon
 classify_from_shapefile(lidar, lakes, "LAKENAME_1")
+}
 }
 \seealso{
 \code{\link[rgdal:readOGR]{readOGR} }
