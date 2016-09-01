@@ -55,12 +55,8 @@ Install the [Xcode command line tools](https://developer.apple.com/downloads)
 ## Install from github with devtools
 
 ````r
-install.packages("devtools")
 devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
-library(lidR)
 ````
-
-**Note for Windows users** : tested on Windows 7. Installation might work as well as for GNU/Linux. But maybe not... Windows behaviours are... unpredictable.
     
 # Some examples
      
@@ -76,7 +72,7 @@ plot(lidar)
 ## Compute a simple metric
 
 ````r
-metric = gridmetrics(lidar, 20, mean(Z))
+metric = grid_metrics(lidar, 20, mean(Z))
 plot(metric)
 ````
 
@@ -117,7 +113,7 @@ plot(metric)
 ### Changelog v1.1.2
 
 - Change: remove dependence to `reshape2` (issue [#8](https://github.com/Jean-Romain/lidR/issues/8))
-- Add: `onAttach()` function to provide github link when package is loaded
+- Add: `.onAttach()` function to provide github link when package is loaded
 - Fix: In `gapFractionProfile()` enable more flexible binning (issue [#7](https://github.com/Jean-Romain/lidR/issues/7))
 - Fix: In `readLAS()` accept uppercase files extensions LAS and LAZ (not LaS or lAs; pure uppercase is bad enought)
 - Fix: In `Catalog()` read only las, laz, LAS and LAZ files extensions (updated regex) (issue [#6](https://github.com/Jean-Romain/lidR/issues/6))
