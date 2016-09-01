@@ -40,7 +40,7 @@
 #' @param obj An object of the class \code{LAS}
 #' @param shapefile An object of class SpatialPolygonsDataFrame
 #' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
-#' @return An object of the class \code{LAS} with a new field
+#' @return Nothing. The new field is added by reference in the original data.
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -64,7 +64,6 @@
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export classify_from_shapefile
 #' @importFrom raster crop
-#' @importFrom rgdal readOGR
 #' @importFrom data.table setnames :=
 setGeneric("classify_from_shapefile", function(obj, shapefile, field){standardGeneric("classify_from_shapefile")})
 
