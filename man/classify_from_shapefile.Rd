@@ -3,22 +3,24 @@
 \docType{methods}
 \name{classify_from_shapefile}
 \alias{classify_from_shapefile}
-\alias{classify_from_shapefile,LAS-method}
+\alias{classify_from_shapefile,LAS,SpatialPolygonsDataFrame-method}
 \title{Classify LiDAR points from the polygons in a shapefile}
 \usage{
 classify_from_shapefile(obj, shapefile, field)
 
-\S4method{classify_from_shapefile}{LAS}(obj, shapefile, field)
+\S4method{classify_from_shapefile}{LAS,SpatialPolygonsDataFrame}(obj, shapefile,
+  field)
 }
 \arguments{
 \item{obj}{An object of the class \code{LAS}}
 
 \item{shapefile}{An object of class SpatialPolygonsDataFrame}
 
-\item{field}{characters. The name of a field of the shapefile or the name of the new field in the LAS object.}
+\item{field}{characters. The name of a field of the shapefile or the name of
+the new field in the LAS object.}
 }
 \value{
-An object of the class \code{LAS} with a new field
+A LAS object with a new colum in the slot \code{data}.
 }
 \description{
 Classify LiDAR points from the polygons in an ESRI shapefile
@@ -27,19 +29,21 @@ Classify LiDAR points from the polygons in an ESRI shapefile
 Classify LAS points based on geographic data found in a shapefile. It checks
 if the LiDAR points are in polygons given in the shapefile. If the parameter
 \code{field} is the name of a field in the shapefile it classifies the points
-based on the data in the shapefile. Else it classifies the points as boolean. TRUE
-if the points are in a polygon, FALSE otherwise. This function allows for filtering
-lakes, for example.
+based on the data in the shapefile. Else it classifies the points as boolean.
+TRUE if the points are in a polygon, FALSE otherwise. This function allows for
+filtering lakes, for example.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
 lidar = readLAS(LASfile)
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 
-# The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-classify_from_shapefile(lidar, lakes, "inlakes")
+# The field "inlake" does not exist in the shapefile.
+# Points are classified as TRUE if in a polygon
+classify_from_shapefile(lidar, lakes, "inlake")
 forest = lasfilter(lidar, inlakes == FALSE)
 plot(lidar)
 plot(forest)
@@ -47,6 +51,7 @@ plot(forest)
 # The field "LAKENAME_1" exists in the shapefile.
 # Points are classified with the value of the polygon
 classify_from_shapefile(lidar, lakes, "LAKENAME_1")
+}
 }
 \seealso{
 \code{\link[rgdal:readOGR]{readOGR} }
