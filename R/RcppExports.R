@@ -12,8 +12,8 @@
 #' @return Logical. FALSE, point is exterior to the polygon, TRUE, point is in interior to the polygon
 #' @references Adaptation of the C function written by W. Randolph Franklin
 #' @export
-pointInPolygon <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_pointInPolygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+point_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
 #' Do points fall in a given polygon?
@@ -26,8 +26,8 @@ pointInPolygon <- function(vertx, verty, pointx, pointy) {
 #' @param pointy numerical array of y-coordinates of points
 #' @return Logical array. FALSE, point is exterior to the polygon, TRUE, point is in interior to the polygon
 #' @export
-pointsInPolygon <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_pointsInPolygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+points_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call('lidR_points_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
 #' Do points fall in a one of the polygons?
@@ -40,8 +40,8 @@ pointsInPolygon <- function(vertx, verty, pointx, pointy) {
 #' @param pointy numerical array of y-coordinates of points
 #' @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a polygon
 #' @export
-pointsInPolygons <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_pointsInPolygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+points_in_polygons <- function(vertx, verty, pointx, pointy) {
+    .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
 #' Read data from a las and laz file with LASlib

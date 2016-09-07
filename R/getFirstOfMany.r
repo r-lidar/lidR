@@ -40,17 +40,11 @@
 #' lidar = readLAS(LASfile)
 #'
 #' firstOfManyReturns = lidar %>% getFirstOfMany
+#' @family getters
 #' @seealso
-#' \code{\link[lidR:getFirst]{getFirst} }
-#' \code{\link[lidR:getFirstLast]{getFirstLast} }
-#' \code{\link[lidR:getFirstOfMany]{getFirstOfMany} }
-#' \code{\link[lidR:getSingle]{getSingle} }
-#' \code{\link[lidR:getLast]{getLast} }
-#' \code{\link[lidR:getGround]{getGround} }
-#' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \link[lidR:lasfilter]{lasfilter}
 #' @export getFirstOfMany
-#' @note \code{getFirstOfMany(obj)} is an alias for \code{extract(obj, NumberOfReturns > 1, ReturnNumber == 1))}
+#' @note \code{getFirstOfMany(obj)} is an alias for \code{lasfilter(obj, NumberOfReturns > 1, ReturnNumber == 1))}
 setGeneric("getFirstOfMany", function(obj){standardGeneric("getFirstOfMany")})
 
 #' @rdname getFirstOfMany
@@ -59,6 +53,6 @@ setMethod("getFirstOfMany", "LAS",
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
 
-		return(extract(obj, NumberOfReturns > 1, ReturnNumber == 1))
+		return(lasfilter(obj, NumberOfReturns > 1, ReturnNumber == 1))
 	}
 )

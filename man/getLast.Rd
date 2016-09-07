@@ -20,7 +20,7 @@ An object of class \code{LAS}
 Select only the last returns i.e. the last returns and the single returns
 }
 \note{
-\code{getLast(obj)} is an alias for \code{extract(obj, ReturnNumber == NumberOfReturns))}
+\code{getLast(obj)} is an alias for \code{lasfilter(obj, ReturnNumber == NumberOfReturns))}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -30,13 +30,11 @@ lidar = readLAS(LASfile)
 lastReturns = lidar \%>\% getLast
 }
 \seealso{
-\code{\link[lidR:getFirst]{getFirst} }
-\code{\link[lidR:getFirstLast]{getFirstLast} }
-\code{\link[lidR:getFirstOfMany]{getFirstOfMany} }
-\code{\link[lidR:getSingle]{getSingle} }
-\code{\link[lidR:getLast]{getLast} }
-\code{\link[lidR:getGround]{getGround} }
-\code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:extract]{extract} }
+\link[lidR:lasfilter]{lasfilter}
+
+Other getters: \code{\link{getFirstLast}},
+  \code{\link{getFirstOfMany}}, \code{\link{getFirst}},
+  \code{\link{getGround}}, \code{\link{getNth}},
+  \code{\link{getSingle}}
 }
 

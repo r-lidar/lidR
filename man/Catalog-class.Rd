@@ -23,7 +23,7 @@ public documentation of las format specification for more informations.
 \seealso{
 \link[lidR:Catalog]{Catalog}
 \link[lidR:plot.Catalog]{plot}
-\link[lidR:processParallel]{processParallel}
-\link[lidR:extractGroundInventory]{extractGroundInventory}
+\link[lidR:process_parallel]{process_parallel}
+\link[lidR:roi_query]{roi_query}
 }
 

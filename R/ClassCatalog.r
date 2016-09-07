@@ -44,38 +44,30 @@
 #' @seealso
 #' \link[lidR:Catalog]{Catalog}
 #' \link[lidR:plot.Catalog]{plot}
-#' \link[lidR:processParallel]{processParallel}
-#' \link[lidR:extractGroundInventory]{extractGroundInventory}
-setClass(
-	Class = "Catalog",
-	representation = representation(
-		headers = "data.frame"
-	)
-)
+#' \link[lidR:process_parallel]{process_parallel}
+#' \link[lidR:roi_query]{roi_query}
+setClass(Class = "Catalog", representation = representation(headers = "data.frame"))
 
-setMethod("initialize", "Catalog",
-	function(.Object, folder, ...)
-	{
-	  if(!is.character(folder))
-	     lidRError("GTG1")
+setMethod("initialize", "Catalog", function(.Object, folder, ...)
+{
+  if (!is.character(folder))
+    lidRError("GTG1")
 
-	  if(!dir.exists(folder))
-	     lidRError("CTG2")
+  if (!dir.exists(folder))
+    lidRError("CTG2")
 
-	  files = list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
+  files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
-	  headers = lapply(files, function(x){readLASheader(x) %>% as.data.frame})
-	  headers = do.call(rbind.data.frame, headers)
-	  headers$filename = files
-	  rownames(headers) <- NULL
+  headers <- lapply(files, function(x)
+  {
+    readLASheader(x) %>% as.data.frame
+  })
 
-	  .Object@headers = headers
+  headers <- do.call(rbind.data.frame, headers)
+  headers$filename <- files
+  rownames(headers) <- NULL
 
-	  return(.Object)
-	}
-)
+  .Object@headers <- headers
 
-
-
-
-
+  return(.Object)
+})
