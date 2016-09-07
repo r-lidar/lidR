@@ -27,31 +27,22 @@
 
 
 
-#' Load a las file and create a 'LAS' object
+#' Create a \code{LAS} object
 #'
-#' Methods to read and create a \code{LAS} object from a vector of .las filename(s)
+#' When a \code{LAS} object is created sevral things are computed on the fly in addition
+#' to the data inputed in the constructor. See \link[lidR:LAS-class]{LAS-class}.
 #'
-#' Methods to read and create a \code{LAS} object from a vector of .las filename(s).
-#' The option fields allows selection of fields to be loaded. Removing redundant fields
-#' saves memory. The option '\code{minimal}' loads only X,Y,Z and gpstime allowing
-#' pulseID and flightlineID to be computed. The option '\code{standard}' loads all fields
-#' apart from UserDate, EdgeofFlighline and PointSourceID. The option '\code{all}' loads everything.
-#'
-#' @param input character or Catalog object. Filename of .las file. Use \link[base:c]{c()} to concatenate several files.
-#' If input is a \link[lidR:Catalog-class]{Catalog} object, all the .las file in the catalog will be loaded.
-#' @param fields character. Can be \code{"minimal"}, \code{"standard"}, \code{"all"}. Default is standard. See details.
-#' @param \dots Unused
+#' @param data a data.table containing the LiDAR data.
+#' @param header a list containing the data from the header of a las file.
 #' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' getData(lidar)
 #' summary(lidar)
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:getData]{getData}
 #' \link[lidR:summary]{summary}
-#' @export readLAS
-LAS <- function(input, fields = "standard", ...) {return(new("LAS", input, fields, ...))}
+#' @export LAS
+LAS <- function(data, header = list()) {return(new("LAS", data, header))}

@@ -3,25 +3,27 @@
 \docType{methods}
 \name{area}
 \alias{area}
-\alias{area,LAS-method}
-\title{Area of a LAS object}
+\alias{area,LAS,ANY-method}
+\alias{area,numeric,numeric-method}
+\title{Compute the area covered by of a set a points.}
 \usage{
-area(obj)
+area(x, y)
 
-\S4method{area}{LAS}(obj)
+\S4method{area}{LAS,ANY}(x, y = NULL)
+
+\S4method{area}{numeric,numeric}(x, y)
 }
 \arguments{
-\item{obj}{An object of the class \code{LAS}}
+\item{x}{An object of the class \code{LAS} or a numeric array of x coordinates}
+
+\item{y}{numeric array of y coordinates}
 }
 \value{
-numeric. The area of the object computed with a convex hull in LAS coordinates units
+numeric. The area of the object computed with a convex hull in coordinates units
 }
 \description{
-Retrieve the area of a LAS object.
-}
-\details{
-area is computed with a convex hull. It is only an approximation if the shape of
-the data is not convex.
+The area is computed with a convex hull. It is only an approximation if the
+shape of the data is not convex.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -31,7 +33,7 @@ lidar = readLAS(LASfile)
 area(lidar)
 }
 \seealso{
-\code{\link[lidR:convexHull]{convexHull} }
-\code{\link[lidR:polygonArea]{polygonArea} }
+\code{\link[lidR:convex_hull]{convex_hull} }
+\code{\link[lidR:polygon_area]{polygon_area} }
 }
 

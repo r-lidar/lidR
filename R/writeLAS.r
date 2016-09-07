@@ -51,7 +51,7 @@ setMethod("writeLAS", "LAS",
     if(!islas)
       lidRError("LAS2", files = file, behaviour = stop)
 
-    file = normalizePath(file)
+    file = path.expand(file)
 
     I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
     time = numeric(0)

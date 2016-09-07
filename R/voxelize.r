@@ -35,7 +35,7 @@
 #' Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
 #' from the cloud of point if there is at least one point in the voxel. For each voxel
 #' the function allows computation of one or several derived metrics in the same way as
-#' the gridMetrics functions.
+#' the grid_metrics functions.
 #' Basically there are no predifined metrics. Users must write their own function to create metrics.
 #' Voxelize will dispach the LiDAR data for each voxel in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).

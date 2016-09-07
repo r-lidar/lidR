@@ -20,7 +20,7 @@ An object of class \code{LAS}
 Select only the first returns.
 }
 \note{
-\code{getFirst(obj)} is an alias for \code{extract(obj, ReturnNumber == 1)}
+\code{getFirst(obj)} is an alias for \code{lasfilter(obj, ReturnNumber == 1)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -30,13 +30,11 @@ lidar = readLAS(LASfile)
 firstReturns = lidar \%>\% getFirst
 }
 \seealso{
-\code{\link[lidR:getFirst]{getFirst} }
-\code{\link[lidR:getFirstLast]{getFirstLast} }
-\code{\link[lidR:getFirstOfMany]{getFirstOfMany} }
-\code{\link[lidR:getSingle]{getSingle} }
-\code{\link[lidR:getLast]{getLast} }
-\code{\link[lidR:getGround]{getGround} }
-\code{\link[lidR:getNth]{getNth} }
-\code{\link[lidR:extract]{extract} }
+\link[lidR:lasfilter]{lasfilter}
+
+Other getters: \code{\link{getFirstLast}},
+  \code{\link{getFirstOfMany}}, \code{\link{getGround}},
+  \code{\link{getLast}}, \code{\link{getNth}},
+  \code{\link{getSingle}}
 }
 

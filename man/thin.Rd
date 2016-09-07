@@ -6,15 +6,15 @@
 \alias{thin,LAS,numeric-method}
 \title{Thin LiDAR data}
 \usage{
-thin(obj, pulseDensity, homogenize = TRUE, resolution = 5)
+thin(obj, grid_density, homogenize = TRUE, resolution = 5)
 
-\S4method{thin}{LAS,numeric}(obj, pulseDensity, homogenize = TRUE,
+\S4method{thin}{LAS,numeric}(obj, grid_density, homogenize = TRUE,
   resolution = 5)
 }
 \arguments{
 \item{obj}{An object of the class \code{LAS}}
 
-\item{pulseDensity}{numeric. The expected pulseDensity}
+\item{grid_density}{numeric. The expected grid_density}
 
 \item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
 
@@ -43,12 +43,12 @@ lidar = readLAS(LASfile)
 
 # By default the method is homogenize = TRUE
 thinned = lidar \%>\% thin(1, resolution = 5)
-lidar   \%>\% pulseDensity \%>\% plot
-thinned \%>\% pulseDensity \%>\% plot
+lidar   \%>\% grid_density \%>\% plot
+thinned \%>\% grid_density \%>\% plot
 
 # Method homogenize = FALSE enables a global pulse density to be reached
 thinned = lidar \%>\% thin(1, homogenize = FALSE)
 thinned \%>\% summary
-thinned \%>\% pulseDensity \%>\% plot
+thinned \%>\% grid_density \%>\% plot
 }
 
