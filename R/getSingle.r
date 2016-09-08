@@ -40,17 +40,11 @@
 #' lidar = readLAS(LASfile)
 #'
 #' singleReturns = lidar %>% getSingle
+#' @family getters
 #' @seealso
-#' \code{\link[lidR:getFirst]{getFirst} }
-#' \code{\link[lidR:getFirstLast]{getFirstLast} }
-#' \code{\link[lidR:getFirstOfMany]{getFirstOfMany} }
-#' \code{\link[lidR:getSingle]{getSingle} }
-#' \code{\link[lidR:getLast]{getLast} }
-#' \code{\link[lidR:getGround]{getGround} }
-#' \code{\link[lidR:getNth]{getNth} }
-#' \code{\link[lidR:extract]{extract} }
+#' \link[lidR:lasfilter]{lasfilter}
 #' @export getSingle
-#' @note \code{getSingle(obj)} is an alias for \code{extract(obj, NumberOfReturns == 1))}
+#' @note \code{getSingle(obj)} is an alias for \code{lasfilter(obj, NumberOfReturns == 1))}
 setGeneric("getSingle", function(obj){standardGeneric("getSingle")})
 
 #' @rdname getSingle
@@ -59,6 +53,6 @@ setMethod("getSingle", "LAS",
 	{
 	  NumberOfReturns <- NULL
 
-		return(extract(obj, NumberOfReturns == 1))
+		return(lasfilter(obj, NumberOfReturns == 1))
 	}
 )
