@@ -27,10 +27,10 @@
 
 
 
-# Test if a function return is valid for the gridMetrics function
+# Test if a function return is valid for the grid_metrics function
 #
 #
-# When a user creates their own function and applies it to the gridMetrics function it can sometimes return
+# When a user creates their own function and applies it to the grid_metrics function it can sometimes return
 # a conceptual error. This function tests if the return is valid before aggregating the
 # data.
 .testFuncSignature = function(metrics, func)

@@ -2,8 +2,8 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
     Applications
-Version: 1.1.2
-Date: 2016-08-22
+Version: 1.2.0
+Date: 2016-08-26
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
     person("Pierrick", "Marie", email = "", role = c("aut", "ctb")),
@@ -18,8 +18,8 @@ License: GPL-3 | file LICENCE
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,methods,stats,utils,grDevices,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,sp,Rcpp
-LazyData: true
+    rgl,methods,stats,utils,grDevices,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,akima,Rcpp
+LazyData: trues
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
