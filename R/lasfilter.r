@@ -63,6 +63,15 @@ setGeneric("lasfilter", function(.data, ...){standardGeneric("lasfilter")})
 setMethod("lasfilter", "LAS",
 	function(.data, ...)
 	{
-		.data@data %>% dplyr::filter(...) %>% LAS(.data@header) %>% return()
+		newdata = .data@data %>% dplyr::filter(...)
+
+		if(dim(newdata)[1] == 0)
+		{
+		  input_list <- as.list(substitute(list(...)))
+		  err = paste(input_list)[-1] %>% paste(collapse=", ")
+		  lidRError("GET1", expression = err)
+		}
+
+		return(LAS(newdata, .data@header))
 	}
 )

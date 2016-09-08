@@ -51,6 +51,7 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR6" = list("This algorithm does not exist."),
 "LDR7" = list("The option '", p$option, "' does not exist."),
 "LDR8" = list("No ReturnNumber field found. 'pulseID' and 'pulse density' cannot be computed from this file."),
+"LDR9" = list("'data' is empty. No point found"),
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
@@ -69,7 +70,10 @@ lidRError = function(code, ..., behaviour = stop)
 "LAS5" = list("Please write only one file at a time"),
 
 # ClassVoxel.r
-"VOX1" = list("This diplay method does not exist.")
+"VOX1" = list("This diplay method does not exist."),
+
+# Getters
+"GET1" = list("No point found with the condition: ", p$expression)
   )
 
   msg = do.call(paste, list(msg, sep=""))
