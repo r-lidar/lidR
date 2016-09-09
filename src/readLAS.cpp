@@ -181,6 +181,8 @@ List readLASdata(CharacterVector file,
       lasdata.push_back(I), field.push_back("Intensity");
     if(ReturnNumber)
       lasdata.push_back(RN), field.push_back("ReturnNumber");
+    if(NumberOfReturns)
+      lasdata.push_back(NoR), field.push_back("NumberOfReturns");
     if(ScanDirectionFlag)
       lasdata.push_back(SDF), field.push_back("ScanDirectionFlag");
     if(EdgeofFlightline)
