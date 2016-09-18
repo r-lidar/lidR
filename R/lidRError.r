@@ -42,15 +42,15 @@ lidRError = function(code, ..., behaviour = stop)
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
 "TFS6" = list("The expression '", p$expression, "' returned a vector of lenght ", p$number,  ". A single number or a list of single number is expected."),
 
-# ClassLAS.r
+# ClassLAS.r set*()
 "LDR1" = list("Invalid parameter data in constructor"),
 "LDR2" = list("Dataset may be invalid: ", p$number, " points below 0 found."),
 "LDR3" = list("Dataset may be invalid: ", p$number, " unclassified points found."),
-"LDR4" = list("No gpstime field found. 'pulseID', 'flightlines' and 'pulse density' cannot be computed from this file."),
+"LDR4" = list("No '", p$infield, "' field found. '", p$outfield, "', cannot be computed from this file."),
 "LDR5" = list("Parameter n of function getNth incorrect."),
 "LDR6" = list("This algorithm does not exist."),
 "LDR7" = list("The option '", p$option, "' does not exist."),
-"LDR8" = list("No ReturnNumber field found. 'pulseID' and 'pulse density' cannot be computed from this file."),
+"LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
 "LDR9" = list("'data' is empty. No point found"),
 
 # ClassGridMetric.r
