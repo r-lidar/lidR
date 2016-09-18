@@ -48,6 +48,9 @@
 #' @param UserData logical. do you want to load UserData field? default: FALSE
 #' @param PointSourceID logical. do you want to load PointSourceID field? default: FALSE
 #' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
+#' @param pulseID logical. do you want to compute extra field pulseID? default: TRUE
+#' @param flightlineID logical. do you want to compute extra field flightlineID? default: TRUE
+#' @param XYZ logical. Overwrite evry other options. Load only X, Y, Z fields. default: FALSE
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -68,7 +71,10 @@ readLAS = function(files,
                    ScanAngle = TRUE,
                    UserData = FALSE,
                    PointSourceID = FALSE,
-                   RGB = TRUE)
+                   RGB = TRUE,
+                   pulseID = TRUE,
+                   flightlineID = TRUE,
+                   XYZonly = FALSE)
 {
   if(class(files)[1] == "Catalog")
     files = files@headers$filename
@@ -93,6 +99,14 @@ readLAS = function(files,
 
   files = normalizePath(files)
 
+  if(XYZonly)
+  {
+    Intensity <- ReturnNumber <- NumberOfReturns <- ScanDirectionFlag <- FALSE
+    EdgeofFlightline <- Classification <- ScanAngle <- UserData <- FALSE
+    PointSourceID <- RGB <- pulseID <- flightlineID <- FALSE
+  }
+
+
   data = lapply(files, function(x)
   {
     as.data.table(readLASdata(x, Intensity,
@@ -112,8 +126,15 @@ readLAS = function(files,
   if(dim(data)[1] == 0 & dim(data)[2] == 0)
     return(invisible(NULL))
 
-  las = LAS(data)
-  las@header = readLASheader(files[1])
+  header = readLASheader(files[1])
+
+  las = LAS(data, header)
+
+  if(pulseID)
+    las@pulseDensity = detect_pulse(las)
+
+  if(flightlineID)
+    detect_flightline(las, 30)
 
   return(las)
 }

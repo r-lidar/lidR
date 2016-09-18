@@ -46,7 +46,10 @@ set.colors = function(x, palette, ncolors = 50, trim = 1)
     x[x > n] = n
   }
 
-  colors = palette(ncolors)[as.numeric(cut(x, breaks = ncolors))]
+  if(diff(range(x)) == 0)
+    colors = palette(ncolors)[1]
+  else
+    colors = palette(ncolors)[as.numeric(cut(x, breaks = ncolors))]
 
 	return(colors)
 }

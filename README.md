@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.2.0%20beta.png) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
+![Version](http://img.shields.io/Version/1.2.0%20beta.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
 R package for airborne LiDAR data manipulation and visualisation for forest applications. 
 
@@ -15,15 +15,14 @@ Please contact the author for any bug or feature request (on github is the best)
 
 # Features (not exhaustive)
 
-- [Read .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
-- Write .las and .laz files
+- [Read write .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
 - [Retrieve indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
 - [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridmetrics.html#cloudmetrics)
 - [Rasterize and to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
 - [Classify and clip data from geographic shapefiles](http://jean-romain.github.io/lidR/classify_from_shapefile.html)
 - [Thin a cloud of points to reach an homogeneous pulse density](http://jean-romain.github.io/lidR/thin.html)
-- [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/extract.html)
+- [Filter cloud of points based on any condition test](http://jean-romain.github.io/lidR/lasfilter.html)
 - [Clip data bases on discs, rectangles or polygons](http://jean-romain.github.io/lidR/clip.html)
 - [Manage a catalog of `.las` tiles](http://jean-romain.github.io/lidR/catalog.html)
 - [Extract automatically a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
@@ -76,7 +75,7 @@ metric = grid_metrics(lidar, 20, mean(Z))
 plot(metric)
 ````
 
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridmetrics-mean.jpg)
+![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
 
 # Changelog
 

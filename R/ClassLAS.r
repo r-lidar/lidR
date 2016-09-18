@@ -126,36 +126,11 @@ setMethod("initialize", "LAS",
 
 	  fields <- names(data)
 	  area   <- data %$% area(X, Y)
-	  dpoint <- data %>% nrow %>% divide_by(area) %>% round(2)
+	  dpoint <- data %>% nrow %>% divide_by(area)
 	  dpulse <- NA_real_
 
-	  if("gpstime" %in% fields)
-	  {
-  	  setorder(data, gpstime)
-
-  	  if (!"pulseID" %in% fields & "ReturnNumber" %in% fields)
-  	  {
-  	    data$pulseID <- .identify_pulse(data$ReturnNumber)
-  	    dpulse <- data$pulseID %>% n_distinct %>% divide_by(area) %>% round(2)
-  	  }
-	    else if (!"pulseID" %in% fields & !"ReturnNumber" %in% fields)
-	    {
-	      lidRError("LDR8", behaviour = message)
-	    }
-      else if ("pulseID" %in% fields)
-      {
-	      dpulse <- data$pulseID %>% n_distinct %>% divide_by(area) %>% round(2)
-      }
-
-  	  if(!"flightlineID" %in% fields)
-  	  {
-  	    data$flightlineID <- .identify_flightlines(data$gpstime)
-  	  }
-	  }
-	  else
-	  {
-	    lidRError("LDR4", behaviour = message)
-	  }
+  	if ("pulseID" %in% fields)
+  	   dpulse <- data$pulseID %>% n_distinct %>% divide_by(area)
 
 	  if(sum(c("R", "G", "B") %in% names(data)) == 3)
 	  {
