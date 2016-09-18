@@ -126,7 +126,7 @@ setMethod("initialize", "LAS",
 
 	  fields <- names(data)
 	  area   <- data %$% area(X, Y)
-	  dpoint <- data %>% nrow %>% divide_by(area) %>% round(2)
+	  dpoint <- data %>% nrow %>% divide_by(area)
 	  dpulse <- NA_real_
 
   	if ("pulseID" %in% fields)
