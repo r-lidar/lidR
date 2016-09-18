@@ -49,13 +49,20 @@ summary.LAS =	function(object, ...)
 {
   size <- format(object.size(object), units = "auto")
 
+  if("pulseID" %in% names(object@data))
+    npulse = dplyr::n_distinct(object@data$pulseID)
+  else
+    npulse = NA
+
   cat(paste("Memory :", size, "\n", sep=" "))
 
   cat("\n")
 
   cat("area :", object@area, "square units\n")
   cat("points :", dim(object@data)[1], "points\n")
-  cat("pulses :", dplyr::n_distinct(object@data$pulseID), "pulses\n")
-  cat("point density :", object@pointDensity, "points/square units\n")
-  cat("pulse density :", object@pulseDensity, "pulses/square units\n")
+  cat("pulses :", npulse , "pulses\n")
+  cat("point density :", round(object@pointDensity,2), "points/square units\n")
+  cat("pulse density :", round(object@pulseDensity,2), "pulses/square units\n\n")
+
+  summary(object@data)
 }
