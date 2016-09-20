@@ -102,13 +102,7 @@ setMethod("roi_query", "Catalog",
     {
       query   = lasindex[i]
 
-      file1  = query$tile1
-      file2  = query$tile2
-      file3  = query$tile3
-      file4  = query$tile4
-
-      files  = c(file1, file2, file3, file4)
-      files  = files[!is.na(files)]
+      files  = query$files[[1]]
 
       X      = query$X[[1]]
       Y      = query$Y[[1]]
