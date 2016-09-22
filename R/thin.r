@@ -71,6 +71,9 @@ setMethod("thin", c("LAS", "numeric"),
   {
 	  pulseID <- gpstime <- NULL
 
+	  if(! "pulseID" %in% names(obj@data))
+	    lidRError("THI1")
+
     if(homogenize == FALSE)
     {
       n = round(grid_density*obj@area)
