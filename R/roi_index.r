@@ -81,29 +81,23 @@ setMethod("roi_index", "Catalog",
                                     minx = X-radius,
                                     miny = Y-radius2)
 
-      coord.plot %<>% dplyr::mutate(tile1 = NA_character_,
-                                    tile2 = NA_character_,
-                                    tile3 = NA_character_,
-                                    tile4 = NA_character_)
 
       cat("Indexing tiles...\n")
-
+      ## Keep all tiles (not just 4)
+      tiles=list()
       for(i in 1:nplot)
       {
         coord = coord.plot[i]
-        tiles = dplyr::filter(coord.tiles,
+        tiles[[i]] = dplyr::filter(coord.tiles,
               (between(coord$minx, minx, maxx) & between(coord$miny, miny, maxy))|
               (between(coord$maxx, minx, maxx) & between(coord$miny, miny, maxy))|
               (between(coord$maxx, minx, maxx) & between(coord$maxy, miny, maxy))|
               (between(coord$minx, minx, maxx) & between(coord$maxy, miny, maxy)))$tile
 
-        coord.plot[i]$tile1 = tiles[1]
-        coord.plot[i]$tile2 = tiles[2]
-        coord.plot[i]$tile3 = tiles[3]
-        coord.plot[i]$tile4 = tiles[4]
-
         p$tick()$print()
       }
+      
+      coord.plot[,`:=`(tiles=tiles)]
 
       cat("\n")
 

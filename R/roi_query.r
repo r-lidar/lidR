@@ -70,7 +70,7 @@ setGeneric("roi_query", function(obj, x, y, radius, radius2 = NULL, roinames = N
 setMethod("roi_query", "Catalog",
   function(obj, x, y, radius, radius2 = NULL, roinames, ...)
   {
-    tile1 <- tile2 <- tile3 <- tile4 <- NULL
+    # tile1 <- tile2 <- tile3 <- tile4 <- NULL
 
     CIRCLE = 0
     RECTANGLE = 1
@@ -87,7 +87,7 @@ setMethod("roi_query", "Catalog",
     lasindex = obj %>% roi_index(x, y, radius, radius2)
 
     # Group the index of idendical queries with the aim to reduce number ofqueries
-    lasindex %<>% dplyr::group_by(tile1, tile2, tile3, tile4) %>%
+    lasindex %<>% dplyr::group_by(tiles) %>%
                   dplyr::summarise(roinames = list(roinames),
                                    X = list(X),
                                    Y = list(Y),
@@ -102,13 +102,7 @@ setMethod("roi_query", "Catalog",
     {
       query   = lasindex[i]
 
-      file1  = query$tile1
-      file2  = query$tile2
-      file3  = query$tile3
-      file4  = query$tile4
-
-      files  = c(file1, file2, file3, file4)
-      files  = files[!is.na(files)]
+      files  = query$tiles[[1]]
 
       X      = query$X[[1]]
       Y      = query$Y[[1]]
