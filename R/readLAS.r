@@ -50,7 +50,8 @@
 #' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
 #' @param pulseID logical. do you want to compute extra field pulseID? default: TRUE
 #' @param flightlineID logical. do you want to compute extra field flightlineID? default: TRUE
-#' @param XYZ logical. Overwrite evry other options. Load only X, Y, Z fields. default: FALSE
+#' @param XYZonly logical. Overwrite every other options. Load only X, Y, Z fields. default: FALSE
+#' @param all logical. Overwrite every other options. Load everything. default: FALSE
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -74,7 +75,8 @@ readLAS = function(files,
                    RGB = TRUE,
                    pulseID = TRUE,
                    flightlineID = TRUE,
-                   XYZonly = FALSE)
+                   XYZonly = FALSE,
+                   all = FALSE)
 {
   if(class(files)[1] == "Catalog")
     files = files@headers$filename
@@ -104,6 +106,13 @@ readLAS = function(files,
     Intensity <- ReturnNumber <- NumberOfReturns <- ScanDirectionFlag <- FALSE
     EdgeofFlightline <- Classification <- ScanAngle <- UserData <- FALSE
     PointSourceID <- RGB <- pulseID <- flightlineID <- FALSE
+  }
+
+  if(all)
+  {
+    Intensity <- ReturnNumber <- NumberOfReturns <- ScanDirectionFlag <- TRUE
+    EdgeofFlightline <- Classification <- ScanAngle <- UserData <- TRUE
+    PointSourceID <- RGB <- pulseID <- flightlineID <- TRUE
   }
 
 
