@@ -73,7 +73,10 @@ lidRError = function(code, ..., behaviour = stop)
 "VOX1" = list("This diplay method does not exist."),
 
 # Getters
-"GET1" = list("No point found with the condition: ", p$expression)
+"GET1" = list("No point found with the condition: ", p$expression),
+
+# Thin
+"THI1" = list("No 'pulseID' field found.  Function 'thin' cannot be ran.")
   )
 
   msg = do.call(paste, list(msg, sep=""))
