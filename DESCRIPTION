@@ -14,6 +14,8 @@ Description: Airborne LiDAR interface for data
     point classification based on geographic shapefiles, space
     rasterization, computation of derived metrics, point filtering, artificial point
     reduction and other manipulations.
+URL: https://github.com/Jean-Romain/lidR
+BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3 | file LICENCE
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
