@@ -100,3 +100,16 @@ setMethod("thin", c("LAS", "numeric"),
     LAS(obj@data[selected], obj@header) %>% return()
 	}
 )
+
+.selectPulseToRemove = function(pulseID, n)
+{
+  p = unique(pulseID)
+
+  if(n > length(p))
+    return(rep(TRUE, length(pulseID)))
+
+  selectedPulses = sample(p, n)
+  selectedPulses = pulseID %in% selectedPulses
+
+  return(selectedPulses)
+}
