@@ -46,7 +46,7 @@
 #' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names
 #' @export roi_index
-#' @importFrom dplyr mutate select progress_estimated
+#' @importFrom dplyr select progress_estimated
 #' @importFrom data.table data.table :=
 setGeneric("roi_index", function(obj, x, y, radius, radius2 = NULL, roinames = NULL){standardGeneric("roi_index")})
 
@@ -71,7 +71,8 @@ setMethod("roi_index", "Catalog",
                               X = x,
                               Y = y,
                               radius = radius,
-                              radius2 = radius2)
+                              radius2 = radius2,
+                              )
 
       coord.plot[,`:=`(maxx=X+radius,
                        maxy = Y+radius2,
