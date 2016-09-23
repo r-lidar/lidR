@@ -87,6 +87,7 @@ plot(metric)
 - Fix: Correct computation of color when reading RBG. R G and B are coded on 16 bits. (issue [#13](https://github.com/Jean-Romain/lidR/issues/13)).
 - Fix: Propage and update header when manipulation of lidar data (issue [#12](https://github.com/Jean-Romain/lidR/issues/12)).
 - Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
+- Add: `roi_query` become more flexible enabling to extract ROI larger than a tile (pull [#25](https://github.com/Jean-Romain/lidR/pull/25))(thanks to @floriandeboissieu)
 - Add: an overloaded operator minus `-` very convenient to normalize a dataset `lidar - dtm` is synonyme to `normalize(lidar, dtm)`
 - Add: `normalize()` enable to substract a digital terrain model to the LiDAR data.
 - Add: `grid_terrain()` enable to compute digital terrain model.
