@@ -54,7 +54,7 @@ setGeneric("roi_index", function(obj, x, y, radius, radius2 = NULL, roinames = N
 setMethod("roi_index", "Catalog",
 	function(obj, x, y, radius, radius2 = NULL, roinames = NULL)
 	{
-	  
+
 	    nplot = length(x)
 	    p     = dplyr::progress_estimated(nplot)
 
@@ -78,23 +78,29 @@ setMethod("roi_index", "Catalog",
                        maxy = Y+radius2,
                        minx = X-radius,
                        miny = Y-radius2)]
-      
+
       cat("Indexing tiles...\n")
       tiles=list()
       for(i in 1:nplot)
       {
         coord = coord.plot[i]
-        
+
         tiles[[i]]= dplyr::filter(coord.tiles,
-                                  (between(minx, coord$minx, coord$maxx) & between(miny, coord$miny, coord$maxy))|
+                                    (between(coord$minx, minx, maxx) & between(coord$miny, miny, maxy))|
+                                    (between(coord$maxx, minx, maxx) & between(coord$miny, miny, maxy))|
+                                    (between(coord$maxx, minx, maxx) & between(coord$maxy, miny, maxy))|
+                                    (between(coord$minx, minx, maxx) & between(coord$maxy, miny, maxy)) |
+                                    (between(minx, coord$minx, coord$maxx) & between(miny, coord$miny, coord$maxy))|
                                     (between(maxx, coord$minx, coord$maxx) & between(miny, coord$miny, coord$maxy))|
                                     (between(maxx, coord$minx, coord$maxx) & between(maxy, coord$miny, coord$maxy))|
-                                    (between(minx, coord$minx, coord$maxx) & between(maxy, coord$miny, coord$maxy)))$tile
-        
+                                    (between(minx, coord$minx, coord$maxx) & between(maxy, coord$miny, coord$maxy))|
+                                    (miny > coord$miny &  maxy < coord$maxy & minx < coord$minx & maxx > coord$maxx)|
+                                    (minx > coord$minx &  maxx < coord$maxx & miny < coord$miny & maxy > coord$maxy))$tile
+
         p$tick()$print()
       }
       coord.plot[,`:=`(tiles=tiles)]
-      
+
       cat("\n")
       coord.plot[,c("maxx", "maxy", "minx", "miny"):=NULL]
 
