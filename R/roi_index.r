@@ -54,6 +54,7 @@ setGeneric("roi_index", function(obj, x, y, radius, radius2 = NULL, roinames = N
 setMethod("roi_index", "Catalog",
 	function(obj, x, y, radius, radius2 = NULL, roinames = NULL)
 	{
+	  
 	    nplot = length(x)
 	    p     = dplyr::progress_estimated(nplot)
 
@@ -71,8 +72,7 @@ setMethod("roi_index", "Catalog",
                               X = x,
                               Y = y,
                               radius = radius,
-                              radius2 = radius2,
-                              )
+                              radius2 = radius2)
 
       coord.plot[,`:=`(maxx=X+radius,
                        maxy = Y+radius2,

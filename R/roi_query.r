@@ -91,7 +91,7 @@ setMethod("roi_query", "Catalog",
                            Y = list(Y),
                            radius = list(radius),
                            radius2 = list(radius2),
-                           tiles=list(unique(unlist(tiles)))),by=paste(tiles)][,paste:=NULL]
+                           tiles=list(unique(unlist(tiles)))),by=list(paste(tiles))][,paste:=NULL]
     
     nqueries = dim(lasindex)[1]
 
@@ -106,7 +106,7 @@ setMethod("roi_query", "Catalog",
       radius = query$radius[[1]]
       radius2 = query$radius2[[1]]
 
-      lidar  = readLAS(query$files, ...)
+      lidar  = readLAS(query$tiles[[1]], ...)
 
       for(j in 1:length(X))
       {
