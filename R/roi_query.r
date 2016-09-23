@@ -46,7 +46,7 @@
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @export roi_query
-#' @importFrom dplyr group_by summarise ungroup progress_estimated
+#' @importFrom dplyr progress_estimated
 #' @importFrom magrittr %>% %<>%
 #' @examples
 #' \dontrun{
