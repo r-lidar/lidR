@@ -59,17 +59,24 @@ devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
     
 # Some examples
 
-
-+--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------+
-| Plot data                                                                            | Compute a simple metric                                                                      |
-+======================================================================================+==============================================================================================+
-| ```r                                                                                 | ```r                                                                                         |
-| lidar = readLAS("myfile.las")                                                        | metric = grid_metrics(lidar, 20, mean(Z))                                                    |
-| plot(lidar)                                                                          | plot(metric)                                                                                 |
-| ```                                                                                  | ```                                                                                          |
-|                                                                                      |                                                                                              |
-| ![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg) | ![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg) |
-+--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------+
+<table>
+  <tr>
+    <th>Plot data</th>
+    <th>Compute a simple metric</th>
+  </tr>
+  <tr>
+    <td>
+<pre>lidar = readLAS("myfile.las")
+plot(lidar)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg" alt="" style="max-width:100%;">
+    </td>
+    <td>
+<pre>metric = grid_metrics(lidar, 20, mean(Z))
+plot(metric)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg" alt="" style="max-width:100%;">
+    </td>
+  </tr>
+</table>
 
 # Changelog
 
