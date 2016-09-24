@@ -70,6 +70,8 @@ setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, ...){
 setMethod("roi_query", "Catalog",
   function(obj, x, y, r, r2 = NULL, roinames = NULL, ...)
   {
+    . <- tiles <- NULL
+
     CIRCLE = 0
     RECTANGLE = 1
 
