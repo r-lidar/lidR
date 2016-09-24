@@ -82,14 +82,12 @@ plot(catalog)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
     </td>
     <td valign="top">
-<pre>dtm = lidar %>%  grid_terrain
+<pre>dtm = grid_terrain(lidar)
 plot(dtm)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
     </td>
   </tr>
 </table>
-
-https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog-selected.png
 
 # Changelog
 
