@@ -39,12 +39,15 @@ Since version 1.1.0 the package contains C++ code. The process to install the pa
     
 ## Install development tools
 
-Install R development package:
+Install R development tools:
 
-| Linux                              | Windows                                                  | Mac                                                               |
-|------------------------------------|----------------------------------------------------------|-------------------------------------------------------------------|
-| `sudo apt-get install r-base-dev`  | [Rtools](https://cran.r-project.org/bin/windows/Rtools/) | [Xcode command line tools](https://developer.apple.com/downloads) |
+| OS      | Install
+|---------|-------------------------------------------------------------------|
+| Linux   | `sudo apt-get install r-base-dev`                                 |
+| Windows | [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/)      |
+| Mac     | [Xcode command line tools](https://developer.apple.com/downloads) |
 
+And install devtools: `install.packages("devtools")`.
 
 ## Install from github with devtools
 
