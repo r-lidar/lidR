@@ -85,17 +85,7 @@ setMethod("roi_index", "Catalog",
       {
         coord = coord.plot[i]
 
-        tiles[[i]]= dplyr::filter(coord.tiles,
-                                    (between(coord$minx, minx, maxx) & between(coord$miny, miny, maxy))|
-                                    (between(coord$maxx, minx, maxx) & between(coord$miny, miny, maxy))|
-                                    (between(coord$maxx, minx, maxx) & between(coord$maxy, miny, maxy))|
-                                    (between(coord$minx, minx, maxx) & between(coord$maxy, miny, maxy)) |
-                                    (between(minx, coord$minx, coord$maxx) & between(miny, coord$miny, coord$maxy))|
-                                    (between(maxx, coord$minx, coord$maxx) & between(miny, coord$miny, coord$maxy))|
-                                    (between(maxx, coord$minx, coord$maxx) & between(maxy, coord$miny, coord$maxy))|
-                                    (between(minx, coord$minx, coord$maxx) & between(maxy, coord$miny, coord$maxy))|
-                                    (miny > coord$miny &  maxy < coord$maxy & minx < coord$minx & maxx > coord$maxx)|
-                                    (minx > coord$minx &  maxx < coord$maxx & miny < coord$miny & maxy > coord$maxy))$tile
+        tiles[[i]]= dplyr::filter(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
 
         p$tick()$print()
       }
