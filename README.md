@@ -82,14 +82,14 @@ plot(metric)</pre>
   </tr>
   <tr>
     <td>
-<pre>catalog = Catalog("<folder of .las files>")
+<pre>catalog = Catalog("folder of .las files")
 plot(catalog)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
     </td>
     <td>
 <pre>dtm = lidar %>%  grid_terrain
 plot(dtm)</pre>
-<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.png" alt="" style="max-width:100%;">
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
     </td>
   </tr>
 </table>
