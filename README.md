@@ -59,23 +59,16 @@ devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
     
 # Some examples
      
-## Plot data
-
-````r
-lidar = readLAS("myfile.las")
-plot(lidar)
-````
-
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
-
-## Compute a simple metric
-
-````r
-metric = grid_metrics(lidar, 20, mean(Z))
-plot(metric)
-````
-
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
++----------------------------------------------------------------------------+------------------------------------------------------------------------------------+
+| Plot data                                                                  | Compute a simple metric                                                            |
++============================================================================+====================================================================================+
+| ```r                                                                       | ```r                                                                               |
+| lidar = readLAS("myfile.las")                                              | metric = grid_metrics(lidar, 20, mean(Z))                                          |
+| plot(lidar)                                                                | plot(metric)                                                                       |
+| ```                                                                        | ```                                                                                |
+|                                                                            |                                                                                    |
+| ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg) | ![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg) |
++----------------------------------------------------------------------------+------------------------------------------------------------------------------------+
 
 # Changelog
 
