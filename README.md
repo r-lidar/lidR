@@ -65,12 +65,12 @@ devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
     <th>Compute a simple metric</th>
   </tr>
   <tr>
-    <td>
+    <td valign="top">
 <pre>lidar = readLAS("myfile.las")
 plot(lidar)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg" alt="" style="max-width:100%;">
     </td>
-    <td>
+    <td valign="top">
 <pre>metric = grid_metrics(lidar, 20, mean(Z))
 plot(metric)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg" alt="" style="max-width:100%;">
@@ -81,12 +81,12 @@ plot(metric)</pre>
     <th>Deal with DTM</th>
   </tr>
   <tr>
-    <td>
+    <td valign="top">
 <pre>catalog = Catalog("folder of .las files")
 plot(catalog)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
     </td>
-    <td>
+    <td valign="top">
 <pre>dtm = lidar %>%  grid_terrain
 plot(dtm)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
