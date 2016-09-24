@@ -38,10 +38,10 @@
 #' @param obj A Catalog object
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI
-#' @param radius numeric or vector. A radius or a set of radii of the ROI. If only
-#' radius is provided (radius2 = NULL) it will extract data falling into a disc.
-#' @param radius2 numeric or vector. A radius or a set of radii of plots. If radius2
-#' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
+#' @param r numeric or vector. A radius or a set of radii of the ROI. If only
+#' radius is provided (r2 = NULL) it will extract data falling into a disc.
+#' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
+#' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names (the ID of the plots for example)
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
@@ -64,13 +64,12 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% roi_query(X, Y, R, R)
 #' }
-setGeneric("roi_query", function(obj, x, y, radius, radius2 = NULL, roinames = NULL, ...){standardGeneric("roi_query")})
+setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, ...){standardGeneric("roi_query")})
 
 #' @rdname roi_query
 setMethod("roi_query", "Catalog",
-  function(obj, x, y, radius, radius2 = NULL, roinames, ...)
+  function(obj, x, y, r, r2 = NULL, roinames = NULL, ...)
   {
-
     CIRCLE = 0
     RECTANGLE = 1
 
@@ -78,42 +77,46 @@ setMethod("roi_query", "Catalog",
     output = vector("list", nplot)
     p      = dplyr::progress_estimated(nplot)
     k      = 1
-    type   = if(is.null(radius2)) CIRCLE else RECTANGLE
+    type   = if(is.null(r2)) CIRCLE else RECTANGLE
 
     if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
+    names(output) = roinames
+
     # Make an index of the file in which are each query
-    lasindex = obj %>% roi_index(x, y, radius, radius2)
+    lasindex = obj %>% roi_index(x, y, r, r2)
 
     # Group the index of idendical queries with the aim to reduce number ofqueries
     lasindex = lasindex[,.(roinames = list(roinames),
-                           X = list(X),
-                           Y = list(Y),
-                           radius = list(radius),
-                           radius2 = list(radius2),
-                           tiles=list(unique(unlist(tiles)))),by=list(paste(tiles))][,paste:=NULL]
-    
+                           X = list(x),
+                           Y = list(y),
+                           r = list(r),
+                           r2 = list(r2),
+                           tiles=list(unique(unlist(tiles)))),
+                        by=list(paste(tiles))][,paste := NULL]
+
     nqueries = dim(lasindex)[1]
 
     cat("Extracting data...\n")
 
     for(i in 1:nqueries)
     {
-      query   = lasindex[i]
+      query = lasindex[i]
 
-      X      = query$X[[1]]
-      Y      = query$Y[[1]]
-      radius = query$radius[[1]]
-      radius2 = query$radius2[[1]]
+      X     = query$X[[1]]
+      Y     = query$Y[[1]]
+      r     = query$r[[1]]
+      r2    = query$r2[[1]]
+      files = query$tiles[[1]]
 
-      lidar  = readLAS(query$tiles[[1]], ...)
+      lidar = readLAS(files,...)
 
       for(j in 1:length(X))
       {
         if(type == CIRCLE)
-          output[[k]] = clipCircle(lidar, X[j], Y[j], radius[j])
+          output[[k]] = clipCircle(lidar, X[j], Y[j], r[j])
         else
-          output[[k]] = clipRectangle(lidar, X[j]-radius[j], Y[j]-radius2[j], X[j]+radius[j], Y[j]+radius2[j])
+          output[[k]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
 
         k = k+1
         p$tick()$print()
@@ -121,8 +124,6 @@ setMethod("roi_query", "Catalog",
     }
 
     cat("\n")
-
-    names(output) = roinames
 
     return(output)
   }
