@@ -6,10 +6,9 @@
 \alias{roi_index,Catalog-method}
 \title{Retrieve the tiles containing ROIs}
 \usage{
-roi_index(obj, x, y, radius, radius2 = NULL, roinames = NULL)
+roi_index(obj, x, y, r, r2 = NULL, roinames = NULL)
 
-\S4method{roi_index}{Catalog}(obj, x, y, radius, radius2 = NULL,
-  roinames = NULL)
+\S4method{roi_index}{Catalog}(obj, x, y, r, r2 = NULL, roinames = NULL)
 }
 \arguments{
 \item{obj}{A Catalog object}
@@ -18,10 +17,10 @@ roi_index(obj, x, y, radius, radius2 = NULL, roinames = NULL)
 
 \item{y}{vector. A set of y plot coordinates}
 
-\item{radius}{numeric or vector. A radius or a set of radii of the ROI. If only
+\item{r}{numeric or vector. A radius or a set of radii of the ROI. If only
 radius is provided (radius2 = NULL) it will extract data falling into a disc.}
 
-\item{radius2}{numeric or vector. A radius or a set of radii of plots. If radius2
+\item{r2}{numeric or vector. A radius or a set of radii of plots. If radius2
 is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.}
 
 \item{roinames}{vector. A set of ROI names}

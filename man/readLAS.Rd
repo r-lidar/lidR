@@ -8,7 +8,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
   EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = TRUE, XYZonly = FALSE)
+  flightlineID = TRUE, XYZonly = FALSE, all = FALSE)
 }
 \arguments{
 \item{files}{array of character or a \link[lidR:Catalog-class]{Catalog} object}
@@ -37,7 +37,9 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 
 \item{flightlineID}{logical. do you want to compute extra field flightlineID? default: TRUE}
 
-\item{XYZ}{logical. Overwrite evry other options. Load only X, Y, Z fields. default: FALSE}
+\item{XYZonly}{logical. Overwrite every other options. Load only X, Y, Z fields. default: FALSE}
+
+\item{all}{logical. Overwrite every other options. Load everything. default: FALSE}
 }
 \value{
 A LAS object
