@@ -96,7 +96,7 @@ forest.colors = function(n)
 #' @seealso
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' @importFrom grDevices colorRampPalette
-#' @export forest.colors
+#' @export random.colors
 random.colors = function(n)
 {
   colfunc <- grDevices::colorRampPalette(sample(colors(distinct = T), n))
