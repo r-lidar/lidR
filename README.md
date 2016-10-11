@@ -39,17 +39,15 @@ Since version 1.1.0 the package contains C++ code. The process to install the pa
     
 ## Install development tools
 
-### Linux users
+Install R development tools:
 
-Install R development package `sudo apt-get install r-base-dev`
+| OS      | Install
+|---------|-------------------------------------------------------------------|
+| Linux   | `sudo apt-get install r-base-dev`                                 |
+| Windows | [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/)      |
+| Mac     | [Xcode command line tools](https://developer.apple.com/downloads) |
 
-### Windows users
-
-Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
-
-### Mac users
-
-Install the [Xcode command line tools](https://developer.apple.com/downloads)
+And install devtools: `install.packages("devtools")`.
 
 ## Install from github with devtools
 
@@ -58,24 +56,41 @@ devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
 ````
     
 # Some examples
-     
-## Plot data
 
-````r
-lidar = readLAS("myfile.las")
-plot(lidar)
-````
-
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/plot3d_1.jpg)
-
-## Compute a simple metric
-
-````r
-metric = grid_metrics(lidar, 20, mean(Z))
-plot(metric)
-````
-
-![](https://github.com/Jean-Romain/lidR/blob/gh-pages/images/gridMetrics-mean.jpg)
+<table>
+  <tr>
+    <th>Plot data</th>
+    <th>Compute a simple metric</th>
+  </tr>
+  <tr>
+    <td valign="top">
+<pre>lidar = readLAS("myfile.las")
+plot(lidar)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg" alt="" style="max-width:100%;">
+    </td>
+    <td valign="top">
+<pre>metric = grid_metrics(lidar, 20, mean(Z))
+plot(metric)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg" alt="" style="max-width:100%;">
+    </td>
+  </tr>
+    <tr>
+    <th>Manage a catalog</th>
+    <th>Deal with DTM</th>
+  </tr>
+  <tr>
+    <td valign="top">
+<pre>catalog = Catalog("folder of .las files")
+plot(catalog)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
+    </td>
+    <td valign="top">
+<pre>dtm = grid_terrain(lidar)
+plot(dtm)</pre>
+<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
+    </td>
+  </tr>
+</table>
 
 # Changelog
 
@@ -87,6 +102,7 @@ plot(metric)
 - Fix: Correct computation of color when reading RBG. R G and B are coded on 16 bits. (issue [#13](https://github.com/Jean-Romain/lidR/issues/13)).
 - Fix: Propage and update header when manipulation of lidar data (issue [#12](https://github.com/Jean-Romain/lidR/issues/12)).
 - Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
+- Add: `roi_query` become more flexible enabling to extract ROI larger than a tile (pull [#25](https://github.com/Jean-Romain/lidR/pull/25))(thanks to @floriandeboissieu)
 - Add: an overloaded operator minus `-` very convenient to normalize a dataset `lidar - dtm` is synonyme to `normalize(lidar, dtm)`
 - Add: `normalize()` enable to substract a digital terrain model to the LiDAR data.
 - Add: `grid_terrain()` enable to compute digital terrain model.
