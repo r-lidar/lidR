@@ -46,7 +46,7 @@ set.colors = function(x, palette, ncolors = 50, trim = 1)
     x[x > n] = n
   }
 
-  if(diff(range(x)) == 0)
+  if(diff(range(x, na.rm = T)) == 0)
     colors = palette(ncolors)[1]
   else
     colors = palette(ncolors)[as.numeric(cut(x, breaks = ncolors))]
@@ -84,5 +84,21 @@ height.colors = function(n)
 forest.colors = function(n)
 {
   colfunc <- grDevices::colorRampPalette(c("darkgreen", "lightgreen"))
+  return(colfunc(n))
+}
+
+
+#' Random palette
+#'
+#' Create a vector of n contiguous random colors.
+#'
+#' @param n The number of colors (> 1) to be in the palette
+#' @seealso
+#' \link[grDevices:colorRamp]{colorRampPalette}
+#' @importFrom grDevices colorRampPalette
+#' @export forest.colors
+random.colors = function(n)
+{
+  colfunc <- grDevices::colorRampPalette(sample(colors(distinct = T), n))
   return(colfunc(n))
 }
