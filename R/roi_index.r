@@ -40,75 +40,48 @@
 #' @param obj A Catalog object
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
-#' @param radius numeric or vector. A radius or a set of radii of the ROI. If only
+#' @param r numeric or vector. A radius or a set of radii of the ROI. If only
 #' radius is provided (radius2 = NULL) it will extract data falling into a disc.
-#' @param radius2 numeric or vector. A radius or a set of radii of plots. If radius2
+#' @param r2 numeric or vector. A radius or a set of radii of plots. If radius2
 #' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names
 #' @export roi_index
-#' @importFrom dplyr mutate select progress_estimated
+#' @importFrom dplyr select
 #' @importFrom data.table data.table :=
-setGeneric("roi_index", function(obj, x, y, radius, radius2 = NULL, roinames = NULL){standardGeneric("roi_index")})
+setGeneric("roi_index", function(obj, x, y, r, r2 = NULL, roinames = NULL){standardGeneric("roi_index")})
 
 #' @rdname roi_index
 setMethod("roi_index", "Catalog",
-	function(obj, x, y, radius, radius2 = NULL, roinames = NULL)
+	function(obj, x, y, r, r2 = NULL, roinames = NULL)
 	{
-	    X <- Y <- tile <- minx <- maxx <- miny <- maxy <- NULL
-	    Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
+	  tile <- minx <- maxx <- miny <- maxy <- NULL
+	  filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
+	  . <- NULL
 
-	    nplot = length(x)
-	    p     = dplyr::progress_estimated(nplot)
+    nplot = length(x)
 
-	    if(is.null(radius2)) radius2 = radius
-	    if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
+	  if(is.null(r2)) r2 = r
+	  if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-	    coord.tiles = obj@headers %>%
+	  coord.tiles = obj@headers %>%
             	      dplyr::select(tile = filename,
             	                    minx = Min.X,
             	                    maxx = Max.X,
             	                    miny = Min.Y,
             	                    maxy = Max.Y)
 
-      coord.plot = data.table(roinames = roinames,
-                              X = x,
-                              Y = y,
-                              radius = radius,
-                              radius2 = radius2)
+    coord.plot = data.table(roinames, x, y, r, r2)
+    coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
 
-      coord.plot %<>% dplyr::mutate(maxx = X+radius,
-                                    maxy = Y+radius2,
-                                    minx = X-radius,
-                                    miny = Y-radius2)
+    tiles = lapply(1:nplot, function(i)
+    {
+      coord = coord.plot[i]
+      dplyr::filter(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
+    })
 
-      coord.plot %<>% dplyr::mutate(tile1 = NA_character_,
-                                    tile2 = NA_character_,
-                                    tile3 = NA_character_,
-                                    tile4 = NA_character_)
+    coord.plot[, tiles := tiles]
+    coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL]
 
-      cat("Indexing tiles...\n")
-
-      for(i in 1:nplot)
-      {
-        coord = coord.plot[i]
-        tiles = dplyr::filter(coord.tiles,
-              (between(coord$minx, minx, maxx) & between(coord$miny, miny, maxy))|
-              (between(coord$maxx, minx, maxx) & between(coord$miny, miny, maxy))|
-              (between(coord$maxx, minx, maxx) & between(coord$maxy, miny, maxy))|
-              (between(coord$minx, minx, maxx) & between(coord$maxy, miny, maxy)))$tile
-
-        coord.plot[i]$tile1 = tiles[1]
-        coord.plot[i]$tile2 = tiles[2]
-        coord.plot[i]$tile3 = tiles[3]
-        coord.plot[i]$tile4 = tiles[4]
-
-        p$tick()$print()
-      }
-
-      cat("\n")
-
-      coord.plot[,c("maxx", "maxy", "minx", "miny"):=NULL]
-
-      return(coord.plot)
+    return(coord.plot[])
 	}
 )
