@@ -65,19 +65,24 @@
 #' @export classify_from_shapefile
 #' @importFrom raster crop
 #' @importFrom data.table setnames :=
-setGeneric("classify_from_shapefile", function(obj, shapefile, field){standardGeneric("classify_from_shapefile")})
+setGeneric("classify_from_shapefile", function(obj, shapefile, field = NULL){standardGeneric("classify_from_shapefile")})
 
 #' @rdname classify_from_shapefile
 #' @useDynLib lidR
 #' @importFrom Rcpp sourceCpp
 setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
-  function(obj, shapefile, field)
+  function(obj, shapefile, field = NULL)
   {
     info <- NULL
 
     npoints = dim(obj@data)[1]
 
-    if(field %in% names(shapefile@data))
+    if(is.null(field))
+    {
+      field = "id"
+      method = 0
+    }
+    else if(field %in% names(shapefile@data))
     {
       method = 1
 
@@ -104,12 +109,17 @@ setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
 
     if(method == 1)
     {
-      ids = ids[ids > 0]
-      values[ids] = polys@data[, field][ids]
+      inpoly = ids > 0
+      values[inpoly] = polys@data[, field][ids[inpoly]]
     }
-
     else if(method == 2)
+    {
       values = ids > 0
+    }
+    else
+    {
+      values = ifelse(ids == 0, NA_real_, ids)
+    }
 
     obj@data[,info:=values]
 
