@@ -6,10 +6,10 @@
 \alias{classify_from_shapefile,LAS,SpatialPolygonsDataFrame-method}
 \title{Classify LiDAR points from the polygons in a shapefile}
 \usage{
-classify_from_shapefile(obj, shapefile, field)
+classify_from_shapefile(obj, shapefile, field = NULL)
 
 \S4method{classify_from_shapefile}{LAS,SpatialPolygonsDataFrame}(obj, shapefile,
-  field)
+  field = NULL)
 }
 \arguments{
 \item{obj}{An object of the class \code{LAS}}
