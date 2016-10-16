@@ -54,6 +54,10 @@ setGeneric("roi_index", function(obj, x, y, r, r2 = NULL, roinames = NULL){stand
 setMethod("roi_index", "Catalog",
 	function(obj, x, y, r, r2 = NULL, roinames = NULL)
 	{
+	  tile <- minx <- maxx <- miny <- maxy <- NULL
+	  filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
+	  . <- NULL
+
     nplot = length(x)
 
 	  if(is.null(r2)) r2 = r

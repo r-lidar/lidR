@@ -6,7 +6,7 @@
 \alias{detect_scanline,LAS-method}
 \title{Retrieve individual scanline}
 \usage{
-detect_scanline(obj, dt = 30)
+detect_scanline(obj)
 
 \S4method{detect_scanline}{LAS}(obj)
 }
