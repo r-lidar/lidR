@@ -53,7 +53,7 @@ setMethod("writeLAS", "LAS",
 
     file = path.expand(file)
 
-    I = RN = NoR = SDF = EoF = C = SA = PSI = R = G = B = integer(0)
+    I = RN = NoR = SDF = EoF = C = SA = UD = PSI = R = G = B = integer(0)
     time = numeric(0)
 
     fields = names(obj@data)
@@ -73,7 +73,7 @@ setMethod("writeLAS", "LAS",
     if("ScanAngle" %in% fields)
       SA = obj@data$ScanAngle
     if("UserData" %in% fields)
-      US = obj@data$UserData
+      UD = obj@data$UserData
     if("gpstime" %in% fields)
       time = obj@data$gpstime
     if("PointSourceID" %in% fields)
@@ -85,6 +85,6 @@ setMethod("writeLAS", "LAS",
       B = obj@data$B
     }
 
-    LASlibWrite(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, PSI, time, R, G, B)
+    LASlibWrite(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, time, R, G, B)
   }
 )
