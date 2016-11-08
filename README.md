@@ -98,6 +98,7 @@ plot(dtm)</pre>
 
 **Note**: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
 
+- Fix: bug and crash in `writeLAS()` with RGB field (issue [#28](https://github.com/Jean-Romain/lidR/issues/28))
 - Fix: `classify_from_shapefile()` misclassified data read from the table of attributes
 - Fix: `readLAS()` returns the NumberOfReturns (forgot since v1.1.0)
 - Fix: Correct computation of color when reading RBG. R G and B are coded on 16 bits. (issue [#13](https://github.com/Jean-Romain/lidR/issues/13)).
