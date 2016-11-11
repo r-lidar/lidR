@@ -89,7 +89,6 @@
 #' plot(metrics, "imean")
 #' #etc.
 #' @export grid_metrics
-#' @importFrom plyr round_any
 #' @importFrom data.table setnames setattr
 setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
 
@@ -101,8 +100,8 @@ setMethod("grid_metrics", "LAS",
 
 	  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-		x_raster = plyr::round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-		y_raster = plyr::round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
+		x_raster = round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
+		y_raster = round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
 		flightlineID = obj@data$flightlineID
 
  		if(is.null(option))
