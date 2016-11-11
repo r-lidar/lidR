@@ -60,7 +60,6 @@
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export thin
-#' @importFrom plyr round_any
 #' @importFrom dplyr n_distinct
 #' @importFrom data.table := setnames setorder
 setGeneric("thin", function(obj, density, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
@@ -83,8 +82,8 @@ setMethod("thin", c("LAS", "numeric"),
     {
       n = round(density*resolution^2)
 
-      x_raster = plyr::round_any(obj@data$X, resolution)
-      y_raster = plyr::round_any(obj@data$Y, resolution)
+      x_raster = round_any(obj@data$X, resolution)
+      y_raster = round_any(obj@data$Y, resolution)
 
       by = list(Xr = x_raster,Yr = y_raster)
 

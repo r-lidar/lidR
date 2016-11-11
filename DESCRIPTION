@@ -20,7 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,methods,stats,utils,grDevices,tools,parallel,raster,rgdal,plyr,rgeos,data.table,dplyr,kknn,Rcpp,sp,lazyeval
+    rgl,methods,stats,utils,grDevices,tools,parallel,raster,rgdal,rgeos,data.table,dplyr,kknn,Rcpp,sp,lazyeval
 LazyData: trues
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1

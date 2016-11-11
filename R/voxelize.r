@@ -75,7 +75,6 @@
 #' plot(voxels, "imean")
 #' #etc.
 #' @export voxelize
-#' @importFrom plyr round_any
 setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
 
 #' @rdname voxelize
@@ -86,9 +85,9 @@ setMethod("voxelize", "LAS",
 
 	      obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-        x_raster = plyr::round_any(obj@data$X, res)
-        y_raster = plyr::round_any(obj@data$Y, res)
-        z_raster = plyr::round_any(obj@data$Z-0.5*res, res)+0.5*res
+        x_raster = round_any(obj@data$X, res)
+        y_raster = round_any(obj@data$Y, res)
+        z_raster = round_any(obj@data$Z-0.5*res, res)+0.5*res
 
         by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
 
