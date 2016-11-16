@@ -28,15 +28,18 @@
 
 
 #' Classify LiDAR points from the polygons in a shapefile
-#'
-#' Classify LiDAR points from the polygons in an ESRI shapefile
-#'
+#''
 #' Classify LAS points based on geographic data found in a shapefile. It checks
 #' if the LiDAR points are in polygons given in the shapefile. If the parameter
-#' \code{field} is the name of a field in the shapefile it classifies the points
-#' based on the data in the shapefile. Else it classifies the points as boolean. TRUE
-#' if the points are in a polygon, FALSE otherwise. This function allows for filtering
-#' lakes, for example.
+#' \code{field} is the name of a field in the attribute data of shapefile it
+#' classifies the points based on the attribute data. Else it classifies the points
+#' as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
+#' allows for filtering lakes, for example.
+#'
+#' The function recognizes only SpatialPolygonsDataFrame containing polygons.
+#' Polygons can be simple, one-part shapes, multi-part polygons, or polygons with
+#' holes.
+#'
 #' @param obj An object of the class \code{LAS}
 #' @param shapefile An object of class SpatialPolygonsDataFrame
 #' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
@@ -78,14 +81,14 @@ setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
     npoints = dim(obj@data)[1]
 
     # No field is provide:
-    # Associate the number of the polygon
+    # Assign the number of the polygon
     if(is.null(field))
     {
       field = "id"
       method = 0
     }
     # The field is the name of a field in the attribute table:
-    # Associate the value of the field
+    # Assign the value of the field
     else if(field %in% names(shapefile@data))
     {
       method = 1
@@ -96,7 +99,7 @@ setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
         values = rep(NA_real_, npoints)
     }
     # The field is not the name of a field in the attribute table:
-    # Associate a boolean if the point is in a polygon or not.
+    # Assign a boolean if the point is in a polygon or not.
     else
     {
       method = 2
@@ -107,54 +110,70 @@ setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
     polys = raster::crop(shapefile, extent(obj))
 
     # No polygon? Return NA or false depending on the method used
-    if(is.null(polys))
-      return(values)
-
-    # Extract the coordinates of each polygon as a list.
-    # The list has 2 levels of depth because of multi part polygons
-    xcoords = lapply(polys@polygons,
-                     function(x)
-                     {
-                       lapply(x@Polygons, function(x){x@coords[,1]})
-                     })
-
-    ycoords = lapply(polys@polygons,
-                     function(x)
-                     {
-                       lapply(x@Polygons, function(x){x@coords[,2]})
-                     })
-
-    # The reduction to 1 level of depth will introduce a lost of information for multi part polygon
-    # Retrieve the real ids of each polygon befor reducing to 1 level depth
-    i = 0
-    lengths = lapply(xcoords, length)  %>%  unlist
-    idpolys = lapply(lengths, function(x){i<<-i+1;rep.int(i,x)}) %>% unlist
-
-    # Make the lists 1 level depth
-    xcoords %<>% unlist(recursive = FALSE)
-    ycoords %<>% unlist(recursive = FALSE)
-
-    # Return the id of each polygon
-    ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
-
-    if(method == 1)
+    if(!is.null(polys))
     {
-      inpoly = ids > 0
-      values[inpoly] = polys@data[, field][idpolys[ids[inpoly]]]
+      # Extract the coordinates of each polygon as a list.
+      # The list has 2 levels of depth because of multi part polygons
+      xcoords = lapply(polys@polygons,
+                       function(x)
+                       {
+                         lapply(x@Polygons, function(x){x@coords[,1]})
+                       })
 
-      message(paste0("Assign the value of field ", field , " from the table of attibutes to the points"))
-    }
-    else if(method == 2)
-    {
-      values = ids > 0
+      ycoords = lapply(polys@polygons,
+                       function(x)
+                       {
+                         lapply(x@Polygons, function(x){x@coords[,2]})
+                       })
 
-      message("Assign a boolean value to the points")
+      is_hole = lapply(polys@polygons,
+                       function(x)
+                       {
+                         lapply(x@Polygons, function(x){x@hole})
+                       })
+
+      # The reduction to 1 level of depth list will introduce a loss of information
+      # for multi-part polygon. Here we need to retrieve the real ids of each polygon
+      # before reducing to 1 level of depth
+      i = 0
+      lengths = lapply(xcoords, length)  %>%  unlist
+      idpolys = lapply(lengths, function(x){i<<-i+1;rep.int(i,x)}) %>% unlist
+
+      # Make the lists 1 level depth
+      xcoords %<>% unlist(recursive = FALSE)
+      ycoords %<>% unlist(recursive = FALSE)
+
+      is_hole %<>% unlist()
+      is_hole = c(FALSE, is_hole)
+
+      # Return the id of each polygon
+      ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
+
+      if(method == 1)
+      {
+        inpoly = ids > 0
+        inhole = is_hole[ids+1]
+        inpoly.nothole = inpoly & !inhole
+
+        id = idpolys[ids[inpoly.nothole]]
+        values[inpoly.nothole] = polys@data[, field][id]
+
+        message(paste0("Assign the value of field ", field , " from the table of attibutes to the points"))
+      }
+      else if(method == 2)
+      {
+        values = ids > 0 & !is_hole[ids+1]
+        message("Assign a boolean value to the points")
+      }
+      else
+      {
+        values = ifelse(ids == 0, NA_real_, ids)
+        message("Assign a number to each individual polygon")
+      }
     }
     else
     {
-      values = ifelse(ids == 0, NA_real_, ids)
-
-      message("Assign a number to each individual polygon")
+      warning("No polygon found within the data", call. = F)
     }
 
     obj@data[,info:=values][]
