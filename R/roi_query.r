@@ -68,65 +68,67 @@ setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, ...){
 
 #' @rdname roi_query
 setMethod("roi_query", "Catalog",
-  function(obj, x, y, r, r2 = NULL, roinames = NULL, ...)
-  {
-    . <- tiles <- NULL
-
-    CIRCLE = 0
-    RECTANGLE = 1
-
-    nplot  = length(x)
-    output = vector("list", nplot)
-    p      = dplyr::progress_estimated(nplot)
-    k      = 1
-    type   = if(is.null(r2)) CIRCLE else RECTANGLE
-
-    if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
-
-    names(output) = roinames
-
-    # Make an index of the file in which are each query
-    lasindex = obj %>% roi_index(x, y, r, r2)
-
-    # Group the index of idendical queries with the aim to reduce number ofqueries
-    lasindex = lasindex[,.(roinames = list(roinames),
-                           X = list(x),
-                           Y = list(y),
-                           r = list(r),
-                           r2 = list(r2),
-                           tiles=list(unique(unlist(tiles)))),
-                        by=list(paste(tiles))][,paste := NULL]
-
-    nqueries = dim(lasindex)[1]
-
-    cat("Extracting data...\n")
-
-    for(i in 1:nqueries)
-    {
-      query = lasindex[i]
-
-      X     = query$X[[1]]
-      Y     = query$Y[[1]]
-      r     = query$r[[1]]
-      r2    = query$r2[[1]]
-      files = query$tiles[[1]]
-
-      lidar = readLAS(files,...)
-
-      for(j in 1:length(X))
-      {
-        if(type == CIRCLE)
-          output[[k]] = clipCircle(lidar, X[j], Y[j], r[j])
-        else
-          output[[k]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
-
-        k = k+1
-        p$tick()$print()
-      }
-    }
-
-    cat("\n")
-
-    return(output)
-  }
+          function(obj, x, y, r, r2 = NULL, roinames = NULL, ...)
+          {
+            CIRCLE = 0
+            RECTANGLE = 1
+            
+            nplot  = length(x)
+            type   = if(is.null(r2)) CIRCLE else RECTANGLE
+            
+            if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
+            
+            # Make an index of the file in which are each query
+            lasindex = obj %>% roi_index(x, y, r, r2,roinames)
+            
+            # Group the index of idendical queries with the aim to reduce number ofqueries
+            lasindex = lasindex[,.(roinames = list(roinames),
+                                   X = list(x),
+                                   Y = list(y),
+                                   r = list(r),
+                                   r2 = list(r2),
+                                   tiles=list(unique(unlist(tiles)))),
+                                by=list(paste(tiles))][,paste := NULL]
+            
+            nqueries = dim(lasindex)[1]
+            
+            cat("Extracting data...\n")
+            
+            p = dplyr::progress_estimated(nplot)
+            output=lapply(X=c(1:nqueries),function(i){
+              require(lidR)
+              query = lasindex[i]
+              
+              X     = query$X[[1]]
+              Y     = query$Y[[1]]
+              r     = query$r[[1]]
+              r2    = query$r2[[1]]
+              files = query$tiles[[1]]
+              
+              lidar = readLAS(files,...) #
+              output=vector("list", length(X))
+              
+              for(j in 1:length(X))
+              {
+                if(type == CIRCLE)
+                  output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
+                else
+                  output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+                
+                p$tick()$print()
+              }
+              names(output)=query$roinames[[1]]
+              rm(list="lidar")
+              gc()
+              return(output)
+            })
+            
+            output=unlist(output)
+            ## set back to the original order
+            output=output[match(roinames,names(output))]
+            
+            cat("\n")
+            
+            return(output)
+          }
 )
