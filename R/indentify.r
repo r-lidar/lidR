@@ -38,29 +38,22 @@
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export detect_pulse
-#' @importFrom data.table setorder
+#' @importFrom data.table setorder,setNumericRounding
 setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 
 #' @rdname detect_pulse
 setMethod("detect_pulse", "LAS",
   function(obj)
   {
-    gpstime <- pulseID <- ReturnNumber <- NULL
-
     fields <- names(obj@data)
     dpulse = NA_real_
 
     if("gpstime" %in% fields)
-    {
+    { 
+      data.table::setNumericRounding(0) # remove rounding for gpstime aggregation
       data.table::setorder(obj@data, gpstime)
-
-      if ("ReturnNumber" %in% fields)
-      {
-        obj@data[, pulseID := .identify_pulse(ReturnNumber)]
-        dpulse <- obj@data$pulseID %>% n_distinct %>% divide_by(obj@area)
-      }
-      else
-        lidRError("LDR4", infield = "ReturnNumber", outfield = "pulseID", behaviour = warning)
+      obj@data[,pulseID:=.GRP,by=gpstime] # aggregate and give group number to each pulse
+      dpulse <- obj@data$pulseID %>% n_distinct %>% divide_by(obj@area)
     }
     else
       lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
@@ -91,8 +84,6 @@ setGeneric("detect_flightline", function(obj, dt = 30){standardGeneric("detect_f
 setMethod("detect_flightline", "LAS",
   function(obj, dt = 30)
   {
-    gpstime <- flightlineID <- NULL
-
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
@@ -120,14 +111,12 @@ setMethod("detect_flightline", "LAS",
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export detect_scanline
 #' @importFrom data.table setorder
-setGeneric("detect_scanline", function(obj){standardGeneric("detect_scanline")})
+setGeneric("detect_scanline", function(obj, dt = 30){standardGeneric("detect_scanline")})
 
 #' @rdname detect_scanline
 setMethod("detect_scanline", "LAS",
   function(obj)
   {
-    gpstime <- scanlineID <- ScanDirectionFlag <- NULL
-
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
@@ -138,7 +127,7 @@ setMethod("detect_scanline", "LAS",
       {
         values = unique(obj$ScanDirectionFlag)
 
-        if(length(values) == 2 & 1 %in% values & 2 %in% values)
+        if(lenght(values) == 2 & 1 %in% values & 2 %in% values)
           obj@data[, scanlineID := .identify_scanline(ScanDirectionFlag)]
         else
            lidRError("LDR8", behaviour = warning)
@@ -152,14 +141,6 @@ setMethod("detect_scanline", "LAS",
     return(invisible())
   }
 )
-
-#' @importFrom dplyr lag
-.identify_pulse = function(ReturnNumber)
-{
-  boo = dplyr::lag(ReturnNumber) >= ReturnNumber
-  boo[1] = TRUE
-  return(cumsum(boo))
-}
 
 #' @importFrom dplyr lag
 .identify_flightlines = function(t, dt)
