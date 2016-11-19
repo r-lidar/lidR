@@ -43,6 +43,7 @@
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
 #' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names (the ID of the plots for example)
+#' @param cl a cluster object, created by package parallel or package snow. If NULL, no parallel computing (default).
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @export roi_query
@@ -64,11 +65,11 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% roi_query(X, Y, R, R)
 #' }
-setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, ...){standardGeneric("roi_query")})
+setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, cl=NULL, ...){standardGeneric("roi_query")})
 
 #' @rdname roi_query
 setMethod("roi_query", "Catalog",
-          function(obj, x, y, r, r2 = NULL, roinames = NULL, ...)
+          function(obj, x, y, r, r2 = NULL, roinames = NULL, cl=NULL, ...)
           {
             CIRCLE = 0
             RECTANGLE = 1
@@ -94,35 +95,64 @@ setMethod("roi_query", "Catalog",
             
             cat("Extracting data...\n")
             
-            p = dplyr::progress_estimated(nplot)
-            output=lapply(X=c(1:nqueries),function(i){
-              require(lidR)
-              query = lasindex[i]
-              
-              X     = query$X[[1]]
-              Y     = query$Y[[1]]
-              r     = query$r[[1]]
-              r2    = query$r2[[1]]
-              files = query$tiles[[1]]
-              
-              lidar = readLAS(files,...) #
-              output=vector("list", length(X))
-              
-              for(j in 1:length(X))
-              {
-                if(type == CIRCLE)
-                  output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
-                else
-                  output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+            if(is.null(cl)){
+              p = dplyr::progress_estimated(nplot)
+              output=lapply(X=c(1:nqueries),function(i){
+                require(lidR)
+                query = lasindex[i]
                 
-                p$tick()$print()
-              }
-              names(output)=query$roinames[[1]]
-              rm(list="lidar")
-              gc()
-              return(output)
-            })
-            
+                X     = query$X[[1]]
+                Y     = query$Y[[1]]
+                r     = query$r[[1]]
+                r2    = query$r2[[1]]
+                files = query$tiles[[1]]
+                
+                lidar = readLAS(files,...) #
+                output=vector("list", length(X))
+                
+                for(j in 1:length(X))
+                {
+                  if(type == CIRCLE)
+                    output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
+                  else
+                    output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+                  
+                  p$tick()$print()
+                }
+                names(output)=query$roinames[[1]]
+                rm(list="lidar")
+                gc()
+                return(output)
+              })
+            }else{
+              parallel::clusterExport(cl, varlist=c(lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
+              output=parallel::parLapply(cl,X=c(1:nqueries),function(i){
+                require(lidR)
+                query = lasindex[i]
+                
+                X     = query$X[[1]]
+                Y     = query$Y[[1]]
+                r     = query$r[[1]]
+                r2    = query$r2[[1]]
+                files = query$tiles[[1]]
+                
+                lidar = readLAS(files,...) #
+                output=vector("list", length(X))
+                
+                for(j in 1:length(X))
+                {
+                  if(type == CIRCLE)
+                    output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
+                  else
+                    output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+                }
+                names(output)=query$roinames[[1]]
+                rm(list="lidar")
+                gc()
+                return(output)
+              })
+            }
+
             output=unlist(output)
             ## set back to the original order
             output=output[match(roinames,names(output))]
