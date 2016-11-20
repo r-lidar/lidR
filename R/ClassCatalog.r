@@ -71,3 +71,11 @@ setMethod("initialize", "Catalog", function(.Object, folder, ...)
 
   return(.Object)
 })
+
+setMethod("[", signature(x="Catalog"),
+          function(x, i) {
+            if (missing(i)) { i = 0 }
+            y=x
+            y@headers=x@headers[i,]
+            y
+          })
