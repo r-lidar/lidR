@@ -38,7 +38,7 @@
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export detect_pulse
-#' @importFrom data.table setorder,setNumericRounding
+#' @importFrom data.table setorder setNumericRounding
 setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 
 #' @rdname detect_pulse
@@ -46,12 +46,12 @@ setMethod("detect_pulse", "LAS",
   function(obj)
   {
     gpstime <- pulseID <- NULL
-    
+
     fields <- names(obj@data)
     dpulse = NA_real_
 
     if("gpstime" %in% fields)
-    { 
+    {
       data.table::setNumericRounding(0) # remove rounding for gpstime aggregation
       data.table::setorder(obj@data, gpstime)
       obj@data[,pulseID:=.GRP,by=gpstime] # aggregate and give group number to each pulse
@@ -87,7 +87,7 @@ setMethod("detect_flightline", "LAS",
   function(obj, dt = 30)
   {
     gpstime <- flightlineID <- NULL
-    
+
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
@@ -122,7 +122,7 @@ setMethod("detect_scanline", "LAS",
   function(obj)
   {
     gpstime <- scanlineID <- ScanDirectionFlag <- NULL
-    
+
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
