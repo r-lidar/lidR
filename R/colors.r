@@ -95,10 +95,10 @@ forest.colors = function(n)
 #' @param n The number of colors (> 1) to be in the palette
 #' @seealso
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices colorRampPalette colors
 #' @export random.colors
 random.colors = function(n)
 {
-  colfunc <- grDevices::colorRampPalette(sample(colors(distinct = T), n))
+  colfunc <- grDevices::colorRampPalette(sample(grDevices::colors(distinct = T), n))
   return(colfunc(n))
 }

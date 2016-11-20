@@ -16,7 +16,7 @@ Description: Airborne LiDAR interface for data
     reduction and other manipulations.
 URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
-License: GPL-3 | file LICENCE
+License: GPL-3
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
 Imports:
