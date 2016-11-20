@@ -22,15 +22,17 @@ classify_from_shapefile(obj, shapefile, field = NULL)
 Nothing. The new field is added by reference in the original data.
 }
 \description{
-Classify LiDAR points from the polygons in an ESRI shapefile
-}
-\details{
 Classify LAS points based on geographic data found in a shapefile. It checks
 if the LiDAR points are in polygons given in the shapefile. If the parameter
-\code{field} is the name of a field in the shapefile it classifies the points
-based on the data in the shapefile. Else it classifies the points as boolean. TRUE
-if the points are in a polygon, FALSE otherwise. This function allows for filtering
-lakes, for example.
+\code{field} is the name of a field in the attribute data of shapefile it
+classifies the points based on the attribute data. Else it classifies the points
+as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
+allows for filtering lakes, for example.
+}
+\details{
+The function recognizes only SpatialPolygonsDataFrame containing polygons.
+Polygons can be simple, one-part shapes, multi-part polygons, or polygons with
+holes.
 }
 \examples{
 \dontrun{

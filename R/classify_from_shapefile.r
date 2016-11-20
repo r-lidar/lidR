@@ -28,7 +28,7 @@
 
 
 #' Classify LiDAR points from the polygons in a shapefile
-#''
+#'
 #' Classify LAS points based on geographic data found in a shapefile. It checks
 #' if the LiDAR points are in polygons given in the shapefile. If the parameter
 #' \code{field} is the name of a field in the attribute data of shapefile it
