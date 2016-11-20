@@ -72,10 +72,16 @@ setMethod("initialize", "Catalog", function(.Object, folder, ...)
   return(.Object)
 })
 
+#' Extract parts of an Catalog object
+#'
+#' @param x object from which to extract element(s) or in which to replace element(s).
+#' @param i indices specifying elements to extract or replace. Indices are numeric or character vectors or empty (missing)
+#' @export
 setMethod("[", signature(x="Catalog"),
-          function(x, i) {
-            if (missing(i)) { i = 0 }
-            y=x
-            y@headers=x@headers[i,]
-            y
-          })
+  function(x, i)
+  {
+    if (missing(i)) { i = 0 }
+    y=x
+    y@headers=x@headers[i,]
+    y
+  })
