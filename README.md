@@ -98,6 +98,8 @@ plot(dtm)</pre>
 
 **Note**: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
 
+- Fix: misidentification of pulseID (pull [#25](https://github.com/Jean-Romain/lidR/pull/31))(thanks to @floriandeboissieu)
+- Fix: `classify_from_shapefile` manage multipart polygons and holes in polygon
 - Fix: bug and crash in `writeLAS()` with RGB field (issue [#28](https://github.com/Jean-Romain/lidR/issues/28))
 - Fix: `classify_from_shapefile()` misclassified data read from the table of attributes
 - Fix: `readLAS()` returns the NumberOfReturns (forgot since v1.1.0)
