@@ -45,6 +45,8 @@ setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 setMethod("detect_pulse", "LAS",
   function(obj)
   {
+    gpstime <- pulseID <- NULL
+    
     fields <- names(obj@data)
     dpulse = NA_real_
 
@@ -84,6 +86,8 @@ setGeneric("detect_flightline", function(obj, dt = 30){standardGeneric("detect_f
 setMethod("detect_flightline", "LAS",
   function(obj, dt = 30)
   {
+    gpstime <- flightlineID <- NULL
+    
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
@@ -111,12 +115,14 @@ setMethod("detect_flightline", "LAS",
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export detect_scanline
 #' @importFrom data.table setorder
-setGeneric("detect_scanline", function(obj, dt = 30){standardGeneric("detect_scanline")})
+setGeneric("detect_scanline", function(obj){standardGeneric("detect_scanline")})
 
 #' @rdname detect_scanline
 setMethod("detect_scanline", "LAS",
   function(obj)
   {
+    gpstime <- scanlineID <- ScanDirectionFlag <- NULL
+    
     fields <- names(obj@data)
 
     if("gpstime" %in% fields)
