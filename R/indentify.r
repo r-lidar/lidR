@@ -45,7 +45,7 @@ setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 setMethod("detect_pulse", "LAS",
   function(obj)
   {
-    gpstime <- pulseID <- NULL
+    gpstime <- pulseID <- .GRP <- NULL
 
     fields <- names(obj@data)
     dpulse = NA_real_
@@ -133,7 +133,7 @@ setMethod("detect_scanline", "LAS",
       {
         values = unique(obj$ScanDirectionFlag)
 
-        if(lenght(values) == 2 & 1 %in% values & 2 %in% values)
+        if(length(values) == 2 & 1 %in% values & 2 %in% values)
           obj@data[, scanlineID := .identify_scanline(ScanDirectionFlag)]
         else
            lidRError("LDR8", behaviour = warning)
