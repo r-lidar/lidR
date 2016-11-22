@@ -54,7 +54,7 @@ setMethod("detect_pulse", "LAS",
     {
       data.table::setNumericRounding(0) # remove rounding for gpstime aggregation
       data.table::setorder(obj@data, gpstime)
-      obj@data[,pulseID:=.GRP,by=gpstime] # aggregate and give group number to each pulse
+      obj@data[, pulseID := .lagisdiff(gpstime)]
       dpulse <- obj@data$pulseID %>% n_distinct %>% divide_by(obj@area)
     }
     else
@@ -93,7 +93,7 @@ setMethod("detect_flightline", "LAS",
     if("gpstime" %in% fields)
     {
       data.table::setorder(obj@data, gpstime)
-      obj@data[, flightlineID := .identify_flightlines(gpstime, dt)]
+      obj@data[, flightlineID := .lagissup(gpstime, dt)]
     }
     else
       lidRError("LDR4", infield = "gpstime", outfield = "flightlineID", behaviour = warning)
@@ -134,7 +134,7 @@ setMethod("detect_scanline", "LAS",
         values = unique(obj$ScanDirectionFlag)
 
         if(length(values) == 2 & 1 %in% values & 2 %in% values)
-          obj@data[, scanlineID := .identify_scanline(ScanDirectionFlag)]
+          obj@data[, scanlineID := .lagisdiff(ScanDirectionFlag)]
         else
            lidRError("LDR8", behaviour = warning)
       }
@@ -149,17 +149,17 @@ setMethod("detect_scanline", "LAS",
 )
 
 #' @importFrom dplyr lag
-.identify_flightlines = function(t, dt)
+.lagissup = function(x, dx)
 {
-  boo = (t - dplyr::lag(t)) > dt
+  boo = (x - dplyr::lag(x)) > dx
   boo[1] = TRUE
   return(cumsum(boo))
 }
 
 #' @importFrom dplyr lag
-.identify_scanline = function(ScanDirectionFlag)
+.lagisdiff = function(x)
 {
-  boo = ScanDirectionFlag != dplyr::lag(ScanDirectionFlag)
+  boo = x != dplyr::lag(x)
   boo[1] = TRUE
   return(cumsum(boo))
 }
