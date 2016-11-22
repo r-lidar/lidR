@@ -108,7 +108,7 @@ setMethod("roi_query", "Catalog",
       r2    = query$r2[[1]]
       files = query$tiles[[1]]
       
-      lidar = readLAS(files) #,...
+      lidar = readLAS(files,...)
       output=vector("list", length(X))
       
       for(j in 1:length(X))
