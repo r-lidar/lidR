@@ -76,17 +76,13 @@ setMethod("roi_query", "Catalog",
     RECTANGLE = 1
 
     nplot  = length(x)
-    output = vector("list", nplot)
-    p      = dplyr::progress_estimated(nplot)
     k      = 1
     type   = if(is.null(r2)) CIRCLE else RECTANGLE
 
     if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-    names(output) = roinames
-
     # Make an index of the file in which are each query
-    lasindex = obj %>% roi_index(x, y, r, r2)
+    lasindex = obj %>% roi_index(x, y, r, r2,roinames)
 
     # Group the index of idendical queries with the aim to reduce number ofqueries
     lasindex = lasindex[,.(roinames = list(roinames),
@@ -101,30 +97,38 @@ setMethod("roi_query", "Catalog",
 
     cat("Extracting data...\n")
 
-    for(i in 1:nqueries)
-    {
+    p = dplyr::progress_estimated(nplot)
+    output=lapply(X=c(1:nqueries),function(i){
+      require(lidR)
       query = lasindex[i]
-
+      
       X     = query$X[[1]]
       Y     = query$Y[[1]]
       r     = query$r[[1]]
       r2    = query$r2[[1]]
       files = query$tiles[[1]]
-
-      lidar = readLAS(files,...)
-
+      
+      lidar = readLAS(files) #,...
+      output=vector("list", length(X))
+      
       for(j in 1:length(X))
       {
         if(type == CIRCLE)
-          output[[k]] = clipCircle(lidar, X[j], Y[j], r[j])
+          output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
         else
-          output[[k]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+          output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
 
-        k = k+1
         p$tick()$print()
       }
-    }
-
+      names(output)=query$roinames[[1]]
+      rm(list="lidar")
+      gc()
+      return(output)
+    })
+    output=unlist(output)
+    ## set back to the original order
+    output=output[match(roinames,names(output))]
+    
     cat("\n")
 
     return(output)
