@@ -79,7 +79,7 @@ setMethod("roi_index", "Catalog",
       dplyr::filter(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
     })
 
-    coord.plot[, tiles := tiles]
+    coord.plot[, tiles := list(tiles)]
     coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL]
 
     return(coord.plot[])
