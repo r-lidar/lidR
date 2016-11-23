@@ -6,10 +6,10 @@
 \alias{roi_query,Catalog-method}
 \title{Extract LiDAR data from based on a set of coordinates}
 \usage{
-roi_query(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = NULL, ...)
+roi_query(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
 
 \S4method{roi_query}{Catalog}(obj, x, y, r, r2 = NULL, roinames = NULL,
-  mc.cores = NULL, ...)
+  mc.cores = 1, ...)
 }
 \arguments{
 \item{obj}{A Catalog object}
