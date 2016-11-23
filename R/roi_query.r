@@ -67,11 +67,11 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% roi_query(X, Y, R, R)
 #' }
-setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = NULL, ...){standardGeneric("roi_query")})
+setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...){standardGeneric("roi_query")})
 
 #' @rdname roi_query
 setMethod("roi_query", "Catalog",
-  function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = NULL, ...)
+  function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
   {
     . <- tiles <- NULL
 
@@ -94,7 +94,7 @@ setMethod("roi_query", "Catalog",
 
     cat("Extracting data...\n")
 
-    if(is.null(mc.cores) | mc.cores == 1)
+    if(mc.cores == 1)
     {
       p = dplyr::progress_estimated(nplot)
       output = lapply(lasindex, .getGrpQuery, shape, p, ...)
