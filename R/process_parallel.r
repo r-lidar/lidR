@@ -57,8 +57,8 @@
 #' but it is much more memory intensive and very not userfriendly as the user must
 #' export himself all the object he needs. Indeed cluster technique implies, among others,
 #' that each child process cannot acces to the parent process memory.
-#' If you want to make the process on 1 core only, use the \code{unix} mode which work simpler
-#' on windows when using only one core (non parallel computing).
+#' If you want to make the process on 1 core only, the function use the \code{unix}
+#' mode which works like a regular loop (non parallel computing).
 #'
 #' @section Egde artifacts:
 #'
@@ -145,7 +145,7 @@ setMethod("process_parallel", "Catalog",
 
       files = x@headers$filename
 
-      if(platform == "unix")
+      if(platform == "unix" | mc.cores == 1)
       {
         cat("Platform mode: unix (fork-exec)\n")
         cat("Num. of cores:", mc.cores, "\n\n")
