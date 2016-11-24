@@ -1,7 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-.Rbuildignore
 *.o
 *.so
 *.dll
