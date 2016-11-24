@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^.*\.o$
 ^LICENSE\.txt$
+^laslib_cpp_to_Rcpp\.sh$
