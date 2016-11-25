@@ -32,7 +32,7 @@
 #include "laswriteitemcompressed_v2.hpp"
 
 #include <assert.h>
-#include <string.h>
+#include <Rcpp.h>
 
 /*
 ===============================================================================

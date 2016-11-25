@@ -32,8 +32,8 @@
 
 #include "bytestreamout.hpp"
 
-#include <stdlib.h>
-#include <string.h>
+
+#include <Rcpp.h>
 
 class ByteStreamOutArray : public ByteStreamOut
 {

@@ -34,6 +34,7 @@
 #include "laswriter.hpp"
 
 #include <stdio.h>
+#include <Rcpp.h>
 
 class LASwriterWRL : public LASwriter
 {

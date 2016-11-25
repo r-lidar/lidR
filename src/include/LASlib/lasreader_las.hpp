@@ -41,6 +41,7 @@
 #include "lasreader.hpp"
 
 #include <stdio.h>
+#include <Rcpp.h>
 
 #ifdef LZ_WIN32_VC6
 #include <fstream.h>

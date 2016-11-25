@@ -33,7 +33,7 @@
 #include "laszip_common_v1.hpp"
 
 #include <assert.h>
-#include <string.h>
+#include <Rcpp.h>
 
 /*
 ===============================================================================

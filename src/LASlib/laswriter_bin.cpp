@@ -2,13 +2,13 @@
 ===============================================================================
 
   FILE:  laswriter_bin.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
 
   COPYRIGHT:
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "laswriter_bin.hpp"
@@ -37,8 +37,8 @@
 #include <io.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
+
+#include <Rcpp.h>
 
 struct TSrow
 {
@@ -89,7 +89,7 @@ BOOL LASwriterBIN::open(const char* file_name, const LASheader* header, const ch
 {
   if (file_name == 0)
   {
-    fprintf(stderr,"ERROR: file name pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
     return FALSE;
   }
 
@@ -97,13 +97,13 @@ BOOL LASwriterBIN::open(const char* file_name, const LASheader* header, const ch
 
   if (file == 0)
   {
-    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, io_buffer_size) != 0)
   {
-    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %u\n", io_buffer_size);
+    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << io_buffer_size << "" << std::endl;
   }
 
   ByteStreamOut* out;
@@ -119,19 +119,20 @@ BOOL LASwriterBIN::open(FILE* file, const LASheader* header, const char* version
 {
   if (file == 0)
   {
-    fprintf(stderr,"ERROR: file pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
     return FALSE;
   }
 
-#ifdef _WIN32
-  if (file == stdout)
+// JR : remove stdoutput
+/*#ifdef _WIN32
+  if (file == stdoutput)
   {
-    if(_setmode( _fileno( stdout ), _O_BINARY ) == -1 )
+    if(_setmode( _fileno( stdoutput ), _O_BINARY ) == -1 )
     {
-      fprintf(stderr, "ERROR: cannot set stdout to binary (untranslated) mode\n");
+      Rcpp::Rcerr << "ERROR: cannot set stdoutput to binary (untranslated) mode" << std::endl;
     }
   }
-#endif
+#endif*/
 
   ByteStreamOut* out;
   if (IS_LITTLE_ENDIAN())
@@ -146,14 +147,14 @@ BOOL LASwriterBIN::open(ByteStreamOut* stream, const LASheader* header, const ch
 {
   if (stream == 0)
   {
-    fprintf(stderr,"ERROR: ByteStreamOut pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: ByteStreamOut pointer is zero" << std::endl;
     return FALSE;
   }
   this->stream = stream;
 
   if (header == 0)
   {
-    fprintf(stderr,"ERROR: LASheader pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: LASheader pointer is zero" << std::endl;
     return FALSE;
   }
 
@@ -173,8 +174,8 @@ BOOL LASwriterBIN::open(ByteStreamOut* stream, const LASheader* header, const ch
   strncpy(tsheader.recog_str, "CXYZ", 4);
   tsheader.npoints = (header->number_of_point_records ? header->number_of_point_records : (U32)header->extended_number_of_point_records);
   double scale = header->x_scale_factor;
-  if (header->y_scale_factor < scale) scale = header->y_scale_factor; 
-  if (header->z_scale_factor < scale) scale = header->z_scale_factor; 
+  if (header->y_scale_factor < scale) scale = header->y_scale_factor;
+  if (header->z_scale_factor < scale) scale = header->z_scale_factor;
   units = tsheader.units = (I32)(1.0 / scale);
   origin_x = tsheader.origin_x = -header->x_offset/scale;
   origin_y = tsheader.origin_y = -header->y_offset/scale;
@@ -250,7 +251,7 @@ BOOL LASwriterBIN::update_header(const LASheader* header, BOOL use_inventory, BO
 I64 LASwriterBIN::close(BOOL update_header)
 {
   I64 bytes = 0;
-  
+
   if (stream)
   {
     if (update_header && p_count != npoints)
@@ -258,9 +259,9 @@ I64 LASwriterBIN::close(BOOL update_header)
       if (!stream->isSeekable())
       {
 #ifdef _WIN32
-        fprintf(stderr, "ERROR: stream not seekable. cannot update header from %I64d to %I64d points.\n", npoints, p_count);
+        Rcpp::Rcerr << "ERROR: stream not seekable. cannot update header from " << npoints << " to " << p_count << " points." << std::endl;
 #else
-        fprintf(stderr, "ERROR: stream not seekable. cannot update header from %lld to %lld points.\n", npoints, p_count);
+        Rcpp::Rcerr << "ERROR: stream not seekable. cannot update header from " << npoints << " to " << p_count << " points." << std::endl;
 #endif
       }
       else

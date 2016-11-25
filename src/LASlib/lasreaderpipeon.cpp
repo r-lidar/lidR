@@ -2,17 +2,17 @@
 ===============================================================================
 
   FILE:  lasreaderpipeon.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2007-2012, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasreaderpipeon.hpp"
@@ -36,14 +36,14 @@
 
 #include "laswriter_las.hpp"
 
-#include <stdlib.h>
-#include <string.h>
+
+#include <Rcpp.h>
 
 BOOL LASreaderPipeOn::open(LASreader* lasreader)
 {
   if (lasreader == 0)
   {
-    fprintf(stderr, "ERROR: no lasreader\n");
+    Rcpp::Rcerr << "ERROR: no lasreader" << std::endl;
     return FALSE;
   }
 
@@ -89,14 +89,14 @@ BOOL LASreaderPipeOn::open(LASreader* lasreader)
 
   if (laswriterlas == 0)
   {
-    fprintf(stderr, "ERROR: allocating laswriterlas\n");
+    Rcpp::Rcerr << "ERROR: allocating laswriterlas" << std::endl;
     return FALSE;
   }
 
-  if (!laswriterlas->open(stdout, &header))
+  if (!laswriterlas->open(Rcpp::Rcout, &header))
   {
     delete laswriterlas;
-    fprintf(stderr, "ERROR: opening laswriterlas to stdout\n");
+    Rcpp::Rcerr << "ERROR: opening laswriterlas to stdoutput" << std::endl;
     return FALSE;
   }
 
@@ -175,7 +175,7 @@ BOOL LASreaderPipeOn::read_point_default()
 
 void LASreaderPipeOn::close(BOOL close_stream)
 {
-  if (lasreader) 
+  if (lasreader)
   {
     lasreader->close(close_stream);
   }
