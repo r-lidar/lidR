@@ -46,8 +46,8 @@
 #include "lasreaderbuffered.hpp"
 #include "lasreaderpipeon.hpp"
 
-#include <stdlib.h>
-#include <string.h>
+
+#include <Rcpp.h>
 
 LASreader::LASreader()
 {
@@ -519,7 +519,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
       for (file_name_current = 0; file_name_current < file_name_number; file_name_current++) lasreadermerged->add_file_name(file_names[file_name_current]);
       if (!lasreadermerged->open())
       {
-        fprintf(stderr,"ERROR: cannot open lasreadermerged with %d file names\n", file_name_number);
+        Rcpp::Rcerr << "ERROR: cannot open lasreadermerged with " << file_name_number << " file names" << std::endl;
         delete lasreadermerged;
         return 0;
       }
@@ -535,7 +535,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
         if (!lasreaderpipeon->open(lasreadermerged))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreadermerged\n");
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreadermerged" << std::endl;
           delete lasreaderpipeon;
           return 0;
         }
@@ -592,7 +592,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
       if (transform) lasreaderbuffered->set_transform(transform);
       if (!lasreaderbuffered->open())
       {
-        fprintf(stderr,"ERROR: cannot open lasreaderbuffered with %d file names\n", file_name_number+neighbor_file_name_number);
+        Rcpp::Rcerr << "ERROR: cannot open lasreaderbuffered with " << file_name_number+neighbor_file_name_number << " file names" << std::endl;
         delete lasreaderbuffered;
         return 0;
       }
@@ -604,7 +604,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
         if (!lasreaderpipeon->open(lasreaderbuffered))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderbuffered\n");
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderbuffered" << std::endl;
           delete lasreaderpipeon;
           return 0;
         }
@@ -657,7 +657,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderlas = new LASreaderLASrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderlas->open(file_name, io_ibuffer_size))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderlas with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderlas with file name '" << file_name << "'" << std::endl;
           delete lasreaderlas;
           return 0;
         }
@@ -684,7 +684,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderlas))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderlas\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderlas" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -708,7 +708,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderbin = new LASreaderBINrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderbin->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderbin with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderbin with file name '" << file_name << "'" << std::endl;
           delete lasreaderbin;
           return 0;
         }
@@ -728,7 +728,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderbin))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderbin\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderbin" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -752,7 +752,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreadershp = new LASreaderSHPrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreadershp->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot open lasreadershp with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreadershp with file name '" << file_name << "'" << std::endl;
           delete lasreadershp;
           return 0;
         }
@@ -767,7 +767,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreadershp))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreadershp\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreadershp" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -791,7 +791,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderqfit = new LASreaderQFITrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderqfit->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderqfit with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderqfit with file name '" << file_name << "'" << std::endl;
           delete lasreaderqfit;
           return 0;
         }
@@ -811,7 +811,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderqfit))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderqfit\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderqfit" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -835,7 +835,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderasc = new LASreaderASCrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderasc->open(file_name, comma_not_point))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderasc with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderasc with file name '" << file_name << "'" << std::endl;
           delete lasreaderasc;
           return 0;
         }
@@ -850,7 +850,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderasc))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderasc\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderasc" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -874,7 +874,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderbil = new LASreaderBILrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderbil->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderbil with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderbil with file name '" << file_name << "'" << std::endl;
           delete lasreaderbil;
           return 0;
         }
@@ -889,7 +889,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderbil))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderbil\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderbil" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -913,7 +913,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           lasreaderdtm = new LASreaderDTMrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
         if (!lasreaderdtm->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderdtm with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderdtm with file name '" << file_name << "'" << std::endl;
           delete lasreaderdtm;
           return 0;
         }
@@ -928,7 +928,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreaderdtm))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderdtm\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderdtm" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -959,7 +959,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         }
         if (!lasreadertxt->open(file_name, parse_string, skip_lines, populate_header))
         {
-          fprintf(stderr,"ERROR: cannot open lasreadertxt with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot open lasreadertxt with file name '" << file_name << "'" << std::endl;
           delete lasreadertxt;
           return 0;
         }
@@ -974,7 +974,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
           LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
           if (!lasreaderpipeon->open(lasreadertxt))
           {
-            fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreadertxt\n");
+            Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreadertxt" << std::endl;
             delete lasreaderpipeon;
             return 0;
           }
@@ -1010,7 +1010,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
       }
       if (!lasreadertxt->open(stdin, 0, parse_string, skip_lines, FALSE))
       {
-        fprintf(stderr,"ERROR: cannot open lasreadertxt with file name '%s'\n", file_name);
+        Rcpp::Rcerr << "ERROR: cannot open lasreadertxt with file name '" << file_name << "'" << std::endl;
         delete lasreadertxt;
         return 0;
       }
@@ -1025,7 +1025,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
         if (!lasreaderpipeon->open(lasreadertxt))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreadertxt\n");
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreadertxt" << std::endl;
           delete lasreaderpipeon;
           return 0;
         }
@@ -1049,7 +1049,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         lasreaderlas = new LASreaderLASrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
       if (!lasreaderlas->open(stdin))
       {
-        fprintf(stderr,"ERROR: cannot open lasreaderlas from stdin \n");
+        Rcpp::Rcerr << "ERROR: cannot open lasreaderlas from stdin " << std::endl;
         delete lasreaderlas;
         return 0;
       }
@@ -1063,7 +1063,7 @@ LASreader* LASreadOpener::open(const CHAR* other_file_name, BOOL reset_after_oth
         LASreaderPipeOn* lasreaderpipeon = new LASreaderPipeOn();
         if (!lasreaderpipeon->open(lasreaderlas))
         {
-          fprintf(stderr,"ERROR: cannot open lasreaderpipeon with lasreaderlas from stdin\n");
+          Rcpp::Rcerr << "ERROR: cannot open lasreaderpipeon with lasreaderlas from stdin" << std::endl;
           delete lasreaderpipeon;
           return 0;
         }
@@ -1085,7 +1085,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
 {
   if (lasreader == 0)
   {
-    fprintf(stderr,"ERROR: pointer to LASreader is NULL\n");
+    Rcpp::Rcerr << "ERROR: pointer to LASreader is NULL" << std::endl;
   }
 
   // make sure the LASreader was closed
@@ -1109,7 +1109,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
       LASreaderMerged* lasreadermerged = (LASreaderMerged*)lasreader;
       if (!lasreadermerged->reopen())
       {
-        fprintf(stderr,"ERROR: cannot reopen lasreadermerged\n");
+        Rcpp::Rcerr << "ERROR: cannot reopen lasreadermerged" << std::endl;
         return FALSE;
       }
       if (inside_rectangle || inside_tile || inside_circle)
@@ -1126,7 +1126,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
       LASreaderBuffered* lasreaderbuffered = (LASreaderBuffered*)lasreader;
       if (!lasreaderbuffered->reopen())
       {
-        fprintf(stderr,"ERROR: cannot reopen lasreaderbuffered\n");
+        Rcpp::Rcerr << "ERROR: cannot reopen lasreaderbuffered" << std::endl;
         return FALSE;
       }
       if (inside_rectangle || inside_tile || inside_circle)
@@ -1147,7 +1147,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderLAS* lasreaderlas = (LASreaderLAS*)lasreader;
         if (!lasreaderlas->open(file_name, io_ibuffer_size))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderlas with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderlas with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (!remain_buffered)
@@ -1169,7 +1169,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderBIN* lasreaderbin = (LASreaderBIN*)lasreader;
         if (!lasreaderbin->open(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderbin with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderbin with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1186,7 +1186,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderSHP* lasreadershp = (LASreaderSHP*)lasreader;
         if (!lasreadershp->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreadershp with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreadershp with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1203,7 +1203,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderQFIT* lasreaderqfit = (LASreaderQFIT*)lasreader;
         if (!lasreaderqfit->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderqfit with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderqfit with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1220,7 +1220,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderASC* lasreaderasc = (LASreaderASC*)lasreader;
         if (!lasreaderasc->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderasc with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderasc with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1237,7 +1237,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderBIL* lasreaderbil = (LASreaderBIL*)lasreader;
         if (!lasreaderbil->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderbil with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderbil with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1254,7 +1254,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderDTM* lasreaderdtm = (LASreaderDTM*)lasreader;
         if (!lasreaderdtm->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreaderdtm with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreaderdtm with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1271,7 +1271,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
         LASreaderTXT* lasreadertxt = (LASreaderTXT*)lasreader;
         if (!lasreadertxt->reopen(file_name))
         {
-          fprintf(stderr,"ERROR: cannot reopen lasreadertxt with file name '%s'\n", file_name);
+          Rcpp::Rcerr << "ERROR: cannot reopen lasreadertxt with file name '" << file_name << "'" << std::endl;
           return FALSE;
         }
         if (inside_rectangle || inside_tile || inside_circle)
@@ -1287,7 +1287,7 @@ BOOL LASreadOpener::reopen(LASreader* lasreader, BOOL remain_buffered)
   }
   else
   {
-    fprintf(stderr,"ERROR: no lasreader input specified\n");
+    Rcpp::Rcerr << "ERROR: no lasreader input specified" << std::endl;
     return FALSE;
   }
 }
@@ -1319,27 +1319,27 @@ LASwaveform13reader* LASreadOpener::open_waveform13(const LASheader* lasheader)
 
 void LASreadOpener::usage() const
 {
-  fprintf(stderr,"Supported LAS Inputs\n");
-  fprintf(stderr,"  -i lidar.las\n");
-  fprintf(stderr,"  -i lidar.laz\n");
-  fprintf(stderr,"  -i lidar1.las lidar2.las lidar3.las -merged\n");
-  fprintf(stderr,"  -i *.las - merged\n");
-  fprintf(stderr,"  -i flight0??.laz flight1??.laz\n");
-  fprintf(stderr,"  -i terrasolid.bin\n");
-  fprintf(stderr,"  -i esri.shp\n");
-  fprintf(stderr,"  -i nasa.qi\n");
-  fprintf(stderr,"  -i lidar.txt -iparse xyzti -iskip 2 (on-the-fly from ASCII)\n");
-  fprintf(stderr,"  -i lidar.txt -iparse xyzi -itranslate_intensity 1024\n");
-  fprintf(stderr,"  -lof file_list.txt\n");
-  fprintf(stderr,"  -stdin (pipe from stdin)\n");
-  fprintf(stderr,"  -rescale 0.01 0.01 0.001\n");
-  fprintf(stderr,"  -rescale_xy 0.01 0.01\n");
-  fprintf(stderr,"  -rescale_z 0.01\n");
-  fprintf(stderr,"  -reoffset 600000 4000000 0\n");
-  fprintf(stderr,"Fast AOI Queries for LAS/LAZ with spatial indexing LAX files\n");
-  fprintf(stderr,"  -inside min_x min_y max_x max_y\n");
-  fprintf(stderr,"  -inside_tile ll_x ll_y size\n");
-  fprintf(stderr,"  -inside_circle center_x center_y radius\n");
+  Rcpp::Rcerr << "Supported LAS Inputs" << std::endl;
+  Rcpp::Rcerr << "  -i lidar.las" << std::endl;
+  Rcpp::Rcerr << "  -i lidar.laz" << std::endl;
+  Rcpp::Rcerr << "  -i lidar1.las lidar2.las lidar3.las -merged" << std::endl;
+  Rcpp::Rcerr << "  -i *.las - merged" << std::endl;
+  Rcpp::Rcerr << "  -i flight0??.laz flight1??.laz" << std::endl;
+  Rcpp::Rcerr << "  -i terrasolid.bin" << std::endl;
+  Rcpp::Rcerr << "  -i esri.shp" << std::endl;
+  Rcpp::Rcerr << "  -i nasa.qi" << std::endl;
+  Rcpp::Rcerr << "  -i lidar.txt -iparse xyzti -iskip 2 (on-the-fly from ASCII)" << std::endl;
+  Rcpp::Rcerr << "  -i lidar.txt -iparse xyzi -itranslate_intensity 1024" << std::endl;
+  Rcpp::Rcerr << "  -lof file_list.txt" << std::endl;
+  Rcpp::Rcerr << "  -stdin (pipe from stdin)" << std::endl;
+  Rcpp::Rcerr << "  -rescale 0.01 0.01 0.001" << std::endl;
+  Rcpp::Rcerr << "  -rescale_xy 0.01 0.01" << std::endl;
+  Rcpp::Rcerr << "  -rescale_z 0.01" << std::endl;
+  Rcpp::Rcerr << "  -reoffset 600000 4000000 0" << std::endl;
+  Rcpp::Rcerr << "Fast AOI Queries for LAS/LAZ with spatial indexing LAX files" << std::endl;
+  Rcpp::Rcerr << "  -inside min_x min_y max_x max_y" << std::endl;
+  Rcpp::Rcerr << "  -inside_tile ll_x ll_y size" << std::endl;
+  Rcpp::Rcerr << "  -inside_circle center_x center_y radius" << std::endl;
 }
 
 BOOL LASreadOpener::parse(int argc, char* argv[])
@@ -1362,7 +1362,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs at least 1 argument: file_name or wild_card\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs at least 1 argument: file_name or wild_card" << std::endl;
         return FALSE;
       }
       *argv[i]='\0';
@@ -1386,7 +1386,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          fprintf(stderr,"ERROR: '%s' needs 3 arguments: ll_x, ll_y, size\n", argv[i]);
+          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: ll_x, ll_y, size" << std::endl;
           return FALSE;
         }
         set_inside_tile((F32)atof(argv[i+1]), (F32)atof(argv[i+2]), (F32)atof(argv[i+3]));
@@ -1396,7 +1396,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          fprintf(stderr,"ERROR: '%s' needs 3 arguments: center_x, center_y, radius\n", argv[i]);
+          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: center_x, center_y, radius" << std::endl;
           return FALSE;
         }
         set_inside_circle(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]));
@@ -1406,7 +1406,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
       {
         if ((i+4) >= argc)
         {
-          fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_x, min_y, max_x, max_y\n", argv[i]);
+          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 4 arguments: min_x, min_y, max_x, max_y" << std::endl;
           return FALSE;
         }
         set_inside_rectangle(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4]));
@@ -1414,7 +1414,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
       }
       else
       {
-        fprintf(stderr,"ERROR: unknown '-inside' option '%s'\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: unknown '-inside' option '" << argv[i] << "'" << std::endl;
         return FALSE;
       }
     }
@@ -1432,12 +1432,12 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: list_of_files\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: list_of_files" << std::endl;
         return FALSE;
       }
       if (!add_list_of_files(argv[i+1]), unique)
       {
-        fprintf(stderr, "ERROR: cannot load list of files '%s'\n", argv[i+1]);
+        Rcpp::Rcerr << "ERROR: cannot load list of files '" << argv[i+1] << "'" << std::endl;
         return FALSE;
       }
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
@@ -1446,7 +1446,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+3) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 3 arguments: rescale_x rescale_y rescale_z\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: rescale_x rescale_y rescale_z" << std::endl;
         return FALSE;
       }
       F64 scale_factor[3];
@@ -1460,7 +1460,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+2) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 2 argument: rescale_x rescale_y\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 argument: rescale_x rescale_y" << std::endl;
         return FALSE;
       }
       F64 scale_factor[3];
@@ -1474,7 +1474,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
         return FALSE;
       }
       F64 scale_factor[3];
@@ -1488,7 +1488,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+3) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 3 arguments: reoffset_x, reoffset_y, reoffset_z\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: reoffset_x, reoffset_y, reoffset_z" << std::endl;
         return FALSE;
       }
       F64 offset[3];
@@ -1517,7 +1517,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
         return FALSE;
       }
       set_translate_intensity((F32)atof(argv[i+1]));
@@ -1527,7 +1527,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
         return FALSE;
       }
       set_scale_intensity((F32)atof(argv[i+1]));
@@ -1537,7 +1537,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
         return FALSE;
       }
       set_translate_scan_angle((F32)atof(argv[i+1]));
@@ -1547,7 +1547,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
         return FALSE;
       }
       set_scale_scan_angle((F32)atof(argv[i+1]));
@@ -1557,7 +1557,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+3) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 3 arguments: data_type name description\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: data_type name description" << std::endl;
         return FALSE;
       }
       if (((i+4) < argc) && (atof(argv[i+4]) != 0.0))
@@ -1599,7 +1599,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: string\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: string" << std::endl;
         return FALSE;
       }
       set_parse_string(argv[i+1]);
@@ -1609,7 +1609,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: number_of_lines\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: number_of_lines" << std::endl;
         return FALSE;
       }
       set_skip_lines(atoi(argv[i+1]));
@@ -1624,7 +1624,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: size\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: size" << std::endl;
         return FALSE;
       }
       set_buffer_size((F32)atof(argv[i+1]));
@@ -1634,7 +1634,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: base name\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: base name" << std::endl;
         return FALSE;
       }
       i++;
@@ -1644,7 +1644,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs at least 1 argument: file_name or wild_card\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs at least 1 argument: file_name or wild_card" << std::endl;
         return FALSE;
       }
       *argv[i]='\0';
@@ -1661,13 +1661,13 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs at least 1 argument: file_name\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs at least 1 argument: file_name" << std::endl;
         return FALSE;
       }
       FILE* file = fopen(argv[i+1], "r");
       if (file == 0)
       {
-        fprintf(stderr, "ERROR: cannot open '%s'\n", argv[i+1]);
+        Rcpp::Rcerr << "ERROR: cannot open '" << argv[i+1] << "'" << std::endl;
         return FALSE;
       }
       CHAR line[1024];
@@ -1704,7 +1704,7 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        fprintf(stderr,"ERROR: '%s' needs 1 argument: size\n", argv[i]);
+        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: size" << std::endl;
         return FALSE;
       }
       set_io_ibuffer_size((I32)atoi(argv[i+1]));
@@ -1740,12 +1740,12 @@ BOOL LASreadOpener::parse(int argc, char* argv[])
   {
     if (file_name_number > 1)
     {
-      fprintf(stderr, "ERROR: neighbors only supported for one buffered input file, not for %d\n", file_name_number);
+      Rcpp::Rcerr << "ERROR: neighbors only supported for one buffered input file, not for " << file_name_number << "" << std::endl;
       return FALSE;
     }
     if (buffer_size == 0.0f)
     {
-      fprintf(stderr, "ERROR: neighbors only make sense when used with '-buffered 50' or similar\n");
+      Rcpp::Rcerr << "ERROR: neighbors only make sense when used with '-buffered 50' or similar" << std::endl;
       return FALSE;
     }
   }
@@ -1972,7 +1972,7 @@ BOOL LASreadOpener::add_file_name(const CHAR* file_name, BOOL unique)
     }
     if (file_names == 0)
     {
-      fprintf(stderr, "ERROR: alloc for file_names pointer array failed at %d\n", file_name_allocated);
+      Rcpp::Rcerr << "ERROR: alloc for file_names pointer array failed at " << file_name_allocated << "" << std::endl;
     }
   }
   file_names[file_name_number] = strdup(file_name);
@@ -1985,7 +1985,7 @@ BOOL LASreadOpener::add_list_of_files(const CHAR* list_of_files, BOOL unique)
   FILE* file = fopen(list_of_files, "r");
   if (file == 0)
   {
-    fprintf(stderr, "ERROR: cannot open '%s'\n", list_of_files);
+    Rcpp::Rcerr << "ERROR: cannot open '" << list_of_files << "'" << std::endl;
     return FALSE;
   }
   CHAR line[1024];
@@ -2098,7 +2098,7 @@ BOOL LASreadOpener::add_neighbor_file_name(const CHAR* neighbor_file_name, BOOL 
     }
     if (neighbor_file_names == 0)
     {
-      fprintf(stderr, "ERROR: alloc for neighbor_file_names pointer array failed at %d\n", neighbor_file_name_allocated);
+      Rcpp::Rcerr << "ERROR: alloc for neighbor_file_names pointer array failed at " << neighbor_file_name_allocated << "" << std::endl;
     }
   }
   neighbor_file_names[neighbor_file_name_number] = strdup(neighbor_file_name);

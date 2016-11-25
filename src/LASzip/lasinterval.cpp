@@ -34,8 +34,9 @@
 #include "bytestreamout.hpp"
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <Rcpp.h>
+
+#include <Rcpp.h>
 #include <assert.h>
 
 #include <map>
@@ -231,7 +232,7 @@ void LASinterval::merge_intervals(U32 maximum_intervals, const BOOL verbose)
   // maybe nothing to do
   if (map.size() <= maximum_intervals)
   {
-    if (verbose) fprintf(stderr,"next largest interval gap is %u\n", diff);
+    if (verbose) Rcpp::Rcerr << "next largest interval gap is " << diff << "" << std::endl;
     return;
   }
 
@@ -277,7 +278,7 @@ void LASinterval::merge_intervals(U32 maximum_intervals, const BOOL verbose)
     }
     map_element++;
   }
-  fprintf(stderr,"largest interval gap increased to %u\n", diff);
+  Rcpp::Rcerr << "largest interval gap increased to " << diff << "" << std::endl;
 
   // update totals
 
@@ -554,25 +555,25 @@ BOOL LASinterval::read(ByteStreamIn* stream)
   char signature[4];
   try { stream->getBytes((U8*)signature, 4); } catch (...)
   {
-    fprintf(stderr,"ERROR (LASinterval): reading signature\n");
+    Rcpp::Rcerr << "ERROR (LASinterval): reading signature" << std::endl;
     return FALSE;
   }
   if (strncmp(signature, "LASV", 4) != 0)
   {
-    fprintf(stderr,"ERROR (LASinterval): wrong signature %4s instead of 'LASV'\n", signature);
+    Rcpp::Rcerr << "ERROR (LASinterval): wrong signature " << signature << " instead of 'LASV'" << std::endl;
     return FALSE;
   }
   U32 version;
   try { stream->get32bitsLE((U8*)&version); } catch (...)
   {
-    fprintf(stderr,"ERROR (LASinterval): reading version\n");
+    Rcpp::Rcerr << "ERROR (LASinterval): reading version" << std::endl;
     return FALSE;
   }
   // read number of cells
   U32 number_cells;
   try { stream->get32bitsLE((U8*)&number_cells); } catch (...)
   {
-    fprintf(stderr,"ERROR (LASinterval): reading number of cells\n");
+    Rcpp::Rcerr << "ERROR (LASinterval): reading number of cells" << std::endl;
     return FALSE;
   }
   // loop over all cells
@@ -582,7 +583,7 @@ BOOL LASinterval::read(ByteStreamIn* stream)
     I32 cell_index;
     try { stream->get32bitsLE((U8*)&cell_index); } catch (...)
     {
-      fprintf(stderr,"ERROR (LASinterval): reading cell index\n");
+      Rcpp::Rcerr << "ERROR (LASinterval): reading cell index" << std::endl;
       return FALSE;
     }
     // create cell and insert into hash
@@ -593,14 +594,14 @@ BOOL LASinterval::read(ByteStreamIn* stream)
     U32 number_intervals;
     try { stream->get32bitsLE((U8*)&number_intervals); } catch (...)
     {
-      fprintf(stderr,"ERROR (LASinterval): reading number of intervals in cell\n");
+      Rcpp::Rcerr << "ERROR (LASinterval): reading number of intervals in cell" << std::endl;
       return FALSE;
     }
     // read number of points in cell
     U32 number_points;
     try { stream->get32bitsLE((U8*)&number_points); } catch (...)
     {
-      fprintf(stderr,"ERROR (LASinterval): reading number of points in cell\n");
+      Rcpp::Rcerr << "ERROR (LASinterval): reading number of points in cell" << std::endl;
       return FALSE;
     }
     start_cell->full = number_points;
@@ -610,13 +611,13 @@ BOOL LASinterval::read(ByteStreamIn* stream)
       // read start of interval
       try { stream->get32bitsLE((U8*)&(cell->start)); } catch (...)
       {
-        fprintf(stderr,"ERROR (LASinterval): reading start %d of interval\n", cell->start);
+        Rcpp::Rcerr << "ERROR (LASinterval): reading start " << cell->start << " of interval" << std::endl;
         return FALSE;
       }
       // read end of interval
       try { stream->get32bitsLE((U8*)&(cell->end)); } catch (...)
       {
-        fprintf(stderr,"ERROR (LASinterval): reading end %d of interval\n", cell->end);
+        Rcpp::Rcerr << "ERROR (LASinterval): reading end " << cell->end << " of interval" << std::endl;
         return FALSE;
       }
       start_cell->total += (cell->end - cell->start + 1);
@@ -637,20 +638,20 @@ BOOL LASinterval::write(ByteStreamOut* stream) const
 {
   if (!stream->putBytes((U8*)"LASV", 4))
   {
-    fprintf(stderr,"ERROR (LASinterval): writing signature\n");
+    Rcpp::Rcerr << "ERROR (LASinterval): writing signature" << std::endl;
     return FALSE;
   }
   U32 version = 0;
   if (!stream->put32bitsLE((U8*)&version))
   {
-    fprintf(stderr,"ERROR (LASinterval): writing version\n");
+    Rcpp::Rcerr << "ERROR (LASinterval): writing version" << std::endl;
     return FALSE;
   }
   // write number of cells
   U32 number_cells = ((my_cell_hash*)cells)->size();
   if (!stream->put32bitsLE((U8*)&number_cells))
   {
-    fprintf(stderr,"ERROR (LASinterval): writing number of cells %d\n", number_cells);
+    Rcpp::Rcerr << "ERROR (LASinterval): writing number of cells " << number_cells << "" << std::endl;
     return FALSE;
   }
   // loop over all cells
@@ -670,19 +671,19 @@ BOOL LASinterval::write(ByteStreamOut* stream) const
     I32 cell_index = (*hash_element).first;
     if (!stream->put32bitsLE((U8*)&cell_index))
     {
-      fprintf(stderr,"ERROR (LASinterval): writing cell index %d\n", cell_index);
+      Rcpp::Rcerr << "ERROR (LASinterval): writing cell index " << cell_index << "" << std::endl;
       return FALSE;
     }
     // write number of intervals in cell
     if (!stream->put32bitsLE((U8*)&number_intervals))
     {
-      fprintf(stderr,"ERROR (LASinterval): writing number of intervals %d in cell\n", number_intervals);
+      Rcpp::Rcerr << "ERROR (LASinterval): writing number of intervals " << number_intervals << " in cell" << std::endl;
       return FALSE;
     }
     // write number of points in cell
     if (!stream->put32bitsLE((U8*)&number_points))
     {
-      fprintf(stderr,"ERROR (LASinterval): writing number of points %d in cell\n", number_points);
+      Rcpp::Rcerr << "ERROR (LASinterval): writing number of points " << number_points << " in cell" << std::endl;
       return FALSE;
     }
     // write intervals
@@ -692,13 +693,13 @@ BOOL LASinterval::write(ByteStreamOut* stream) const
       // write start of interval
       if (!stream->put32bitsLE((U8*)&(cell->start)))
       {
-        fprintf(stderr,"ERROR (LASinterval): writing start %d of interval\n", cell->start);
+        Rcpp::Rcerr << "ERROR (LASinterval): writing start " << cell->start << " of interval" << std::endl;
         return FALSE;
       }
       // write end of interval
       if (!stream->put32bitsLE((U8*)&(cell->end)))
       {
-        fprintf(stderr,"ERROR (LASinterval): writing end %d of interval\n", cell->end);
+        Rcpp::Rcerr << "ERROR (LASinterval): writing end " << cell->end << " of interval" << std::endl;
         return FALSE;
       }
       cell = cell->next;

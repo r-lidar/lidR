@@ -278,8 +278,8 @@ static const unsigned short GCTP_NAD83_Wyoming_West_Central = 4903;
 static const unsigned short GCTP_NAD83_Wyoming_West = 4904;
 static const unsigned short GCTP_NAD83_Puerto_Rico = 5200;
 
-#include <stdlib.h>
-#include <string.h>
+
+#include <Rcpp.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -289,7 +289,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    fprintf(stderr,"ERROR: fine name pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
     return FALSE;
   }
 
@@ -302,13 +302,13 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 2*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 2*LAS_TOOLS_IO_IBUFFER_SIZE);
+    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 2*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
   }
 
   // read the 200 byte header
@@ -316,7 +316,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   CHAR signature[21];
   if (fread(signature, 1, 21, file) != 21)
   {
-    fprintf(stderr, "ERROR: reading 21 byte signature for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 21 byte signature for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
@@ -324,7 +324,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 
   if (strncmp(signature, "PLANS-PC BINARY .DTM", 21) != 0)
   {
-    fprintf(stderr, "ERROR: cannot open DTM file '%s', wrong signature '%21s'\n", file_name, signature);
+    Rcpp::Rcerr << "ERROR: cannot open DTM file '" << file_name << "', wrong signature '" << signature << "21s'" << std::endl;
     return FALSE;
   }
 
@@ -333,7 +333,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   CHAR description[61];
   if (fread(description, 1, 61, file) != 61)
   {
-    fprintf(stderr, "ERROR: reading 61 byte description for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 61 byte description for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
@@ -342,7 +342,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   F32 version;
   if (fread(&version, 4, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 4 byte version for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 4 byte version for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
@@ -350,7 +350,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 
   if (version != 3.1f)
   {
-    fprintf(stderr, "WARNING: expected 3.1 but version is %1.1f\n", version);
+    Rcpp::Rcerr << "WARNING: expected 3.1 but version is " << version << "1.1f" << std::endl;
   }
 
   // read lower left x
@@ -390,7 +390,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 
   if (rotation != 0.0)
   {
-    fprintf(stderr, "WARNING: expected 0.0 but rotation is %g\n", rotation);
+    Rcpp::Rcerr << "WARNING: expected 0.0 but rotation is " << rotation << "" << std::endl;
   }
 
   F64 column_spacing;
@@ -426,43 +426,43 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 
   if (fread(&horizontal_units, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte horizontal_units for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte horizontal_units for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&vertical_units, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte vertical_units for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte vertical_units for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&data_type, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte data_type for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte data_type for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&coordinate_system, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte horizontal_units for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte horizontal_units for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&coordinate_zone, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte coordinate_zone for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte coordinate_zone for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&horizontal_datum, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte horizontal_datum for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte horizontal_datum for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (fread(&vertical_datum, 2, 1, file) != 1)
   {
-    fprintf(stderr, "ERROR: reading 2 byte vertical_datum for '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: reading 2 byte vertical_datum for '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
@@ -481,7 +481,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
       }
       else
       {
-        fprintf(stderr, "UTM zone %d for NAD27 out-of-range\n", (int)coordinate_zone);
+        Rcpp::Rcerr << "UTM zone " << (int)coordinate_zone << " for NAD27 out-of-range" << std::endl;
       }
     }
     else if (horizontal_datum == 2) // GEO_DATUM_NAD83
@@ -496,7 +496,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
       }
       else
       {
-        fprintf(stderr, "UTM zone %d for NAD83 out-of-range\n", (int)coordinate_zone);
+        Rcpp::Rcerr << "UTM zone " << (int)coordinate_zone << " for NAD83 out-of-range" << std::endl;
       }
     }
     else if (horizontal_datum == 3) // GEO_DATUM_WGS84
@@ -902,7 +902,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
         geokey = PCS_NAD83_Puerto_Rico;
         break;
       default:
-        fprintf(stderr, "state plane NAD83 zone %d not implemented\n", (int)coordinate_zone);
+        Rcpp::Rcerr << "state plane NAD83 zone " << (int)coordinate_zone << " not implemented" << std::endl;
       }
     }
 
@@ -982,14 +982,14 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
 
   if (xdim <= 0)
   {
-    fprintf(stderr,"WARNING: xdim was %g. setting to 1.0\n", xdim);
+    Rcpp::Rcerr << "WARNING: xdim was " << xdim << ". setting to 1.0" << std::endl;
     xdim = 1;
   }
 
   if (ydim <= 0)
   {
     ydim = 1;
-    fprintf(stderr,"WARNING: ydim was %g. setting to 1.0\n", ydim);
+    Rcpp::Rcerr << "WARNING: ydim was " << ydim << ". setting to 1.0" << std::endl;
   }
 
   // populate the header as much as it makes sense
@@ -1134,7 +1134,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   }
   else
   {
-    fprintf(stderr,"ERROR: unknown data type %d\n", (I32)data_type);
+    Rcpp::Rcerr << "ERROR: unknown data type " << (I32)data_type << "" << std::endl;
     return FALSE;
   }
 
@@ -1154,7 +1154,7 @@ BOOL LASreaderDTM::open(const CHAR* file_name)
   }
   else
   {
-    fprintf(stderr,"WARNING: DTM raster contains only no data values\n");
+    Rcpp::Rcerr << "WARNING: DTM raster contains only no data values" << std::endl;
     header.min_z = 0;
     header.max_z = 0;
   }
@@ -1218,9 +1218,9 @@ BOOL LASreaderDTM::read_point_default()
       if (fread((void*)&elevation, 4, 1, file) != 1)
       {
 #ifdef _WIN32
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %I64d points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #else
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %lld points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #endif
         npoints = p_count;
         return FALSE;
@@ -1232,9 +1232,9 @@ BOOL LASreaderDTM::read_point_default()
       if (fread((void*)&elev, 4, 1, file) != 1)
       {
 #ifdef _WIN32
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %I64d points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #else
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %lld points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #endif
         npoints = p_count;
         return FALSE;
@@ -1247,9 +1247,9 @@ BOOL LASreaderDTM::read_point_default()
       if (fread((void*)&elev, 2, 1, file) != 1)
       {
 #ifdef _WIN32
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %I64d points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #else
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %lld points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #endif
         npoints = p_count;
         return FALSE;
@@ -1262,9 +1262,9 @@ BOOL LASreaderDTM::read_point_default()
       if (fread((void*)&elev, 8, 1, file) != 1)
       {
 #ifdef _WIN32
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %I64d points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #else
-        fprintf(stderr,"WARNING: end-of-file after %d of %d rows and %d of %d cols. read %lld points\n", row, nrows, col, ncols, p_count);
+        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
 #endif
         npoints = p_count;
         return FALSE;
@@ -1273,7 +1273,7 @@ BOOL LASreaderDTM::read_point_default()
     }
     else
     {
-      fprintf(stderr,"ERROR: unknown data type %d\n", (I32)data_type);
+      Rcpp::Rcerr << "ERROR: unknown data type " << (I32)data_type << "" << std::endl;
       return FALSE;
     }
 
@@ -1312,7 +1312,7 @@ BOOL LASreaderDTM::reopen(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    fprintf(stderr,"ERROR: fine name pointer is zero\n");
+    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
     return FALSE;
   }
 
@@ -1327,13 +1327,13 @@ BOOL LASreaderDTM::reopen(const CHAR* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    fprintf(stderr, "ERROR: cannot reopen file '%s'\n", file_name);
+    Rcpp::Rcerr << "ERROR: cannot reopen file '" << file_name << "'" << std::endl;
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 2*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 2*LAS_TOOLS_IO_IBUFFER_SIZE);
+    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 2*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
   }
 
   col = 0;
@@ -1458,8 +1458,8 @@ void LASreaderDTM::populate_bounding_box()
 
   if ((header.min_x > 0) != (dequant_min_x > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for min_x from %g to %g.\n", header.min_x, dequant_min_x);
-    fprintf(stderr, "         set scale factor for x coarser than %g with '-rescale'\n", header.x_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for min_x from " << header.min_x << " to " << dequant_min_x << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {
@@ -1467,8 +1467,8 @@ void LASreaderDTM::populate_bounding_box()
   }
   if ((header.max_x > 0) != (dequant_max_x > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for max_x from %g to %g.\n", header.max_x, dequant_max_x);
-    fprintf(stderr, "         set scale factor for x coarser than %g with '-rescale'\n", header.x_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for max_x from " << header.max_x << " to " << dequant_max_x << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {
@@ -1476,8 +1476,8 @@ void LASreaderDTM::populate_bounding_box()
   }
   if ((header.min_y > 0) != (dequant_min_y > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for min_y from %g to %g.\n", header.min_y, dequant_min_y);
-    fprintf(stderr, "         set scale factor for y coarser than %g with '-rescale'\n", header.y_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for min_y from " << header.min_y << " to " << dequant_min_y << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {
@@ -1485,8 +1485,8 @@ void LASreaderDTM::populate_bounding_box()
   }
   if ((header.max_y > 0) != (dequant_max_y > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for max_y from %g to %g.\n", header.max_y, dequant_max_y);
-    fprintf(stderr, "         set scale factor for y coarser than %g with '-rescale'\n", header.y_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for max_y from " << header.max_y << " to " << dequant_max_y << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {
@@ -1494,8 +1494,8 @@ void LASreaderDTM::populate_bounding_box()
   }
   if ((header.min_z > 0) != (dequant_min_z > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for min_z from %g to %g.\n", header.min_z, dequant_min_z);
-    fprintf(stderr, "         set scale factor for z coarser than %g with '-rescale'\n", header.z_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for min_z from " << header.min_z << " to " << dequant_min_z << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {
@@ -1503,8 +1503,8 @@ void LASreaderDTM::populate_bounding_box()
   }
   if ((header.max_z > 0) != (dequant_max_z > 0))
   {
-    fprintf(stderr, "WARNING: quantization sign flip for max_z from %g to %g.\n", header.max_z, dequant_max_z);
-    fprintf(stderr, "         set scale factor for z coarser than %g with '-rescale'\n", header.z_scale_factor);
+    Rcpp::Rcerr << "WARNING: quantization sign flip for max_z from " << header.max_z << " to " << dequant_max_z << "." << std::endl;
+    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
   }
   else
   {

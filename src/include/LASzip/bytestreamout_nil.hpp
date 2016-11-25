@@ -36,6 +36,7 @@
 #include "bytestreamout.hpp"
 
 #include <stdio.h>
+#include <Rcpp.h>
 
 class ByteStreamOutNil : public ByteStreamOut
 {
