@@ -42,7 +42,7 @@
 #' meter is meaningless.
 #' @aliases  thin
 #' @param obj An object of the class \code{LAS}
-#' @param grid_density numeric. The expected grid_density
+#' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.
 #' @param resolution numeric. Cell size to compute the pulse density.
 #' @return It returns a \code{LAS} object.
@@ -63,11 +63,11 @@
 #' @importFrom plyr round_any
 #' @importFrom dplyr n_distinct
 #' @importFrom data.table := setnames setorder
-setGeneric("thin", function(obj, grid_density, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
+setGeneric("thin", function(obj, density, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
 
 #' @rdname thin
 setMethod("thin", c("LAS", "numeric"),
-	function(obj, grid_density, homogenize = TRUE, resolution = 5)
+	function(obj, density, homogenize = TRUE, resolution = 5)
   {
 	  pulseID <- gpstime <- NULL
 
@@ -76,12 +76,12 @@ setMethod("thin", c("LAS", "numeric"),
 
     if(homogenize == FALSE)
     {
-      n = round(grid_density*obj@area)
+      n = round(density*obj@area)
       selected = .selectPulseToRemove(obj@data$pulseID, n)
     }
     else
     {
-      n = round(grid_density*resolution^2)
+      n = round(density*resolution^2)
 
       x_raster = plyr::round_any(obj@data$X, resolution)
       y_raster = plyr::round_any(obj@data$Y, resolution)
