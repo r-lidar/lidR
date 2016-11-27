@@ -6,15 +6,15 @@
 \alias{thin,LAS,numeric-method}
 \title{Thin LiDAR data}
 \usage{
-thin(obj, grid_density, homogenize = TRUE, resolution = 5)
+thin(obj, density, homogenize = TRUE, resolution = 5)
 
-\S4method{thin}{LAS,numeric}(obj, grid_density, homogenize = TRUE,
+\S4method{thin}{LAS,numeric}(obj, density, homogenize = TRUE,
   resolution = 5)
 }
 \arguments{
 \item{obj}{An object of the class \code{LAS}}
 
-\item{grid_density}{numeric. The expected grid_density}
+\item{density}{numeric. The expected density}
 
 \item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
 
