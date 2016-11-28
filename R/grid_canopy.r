@@ -45,7 +45,6 @@
 #'
 #' # Local maximum algorithm with a resolution of 2 meters
 #' lidar %>% grid_canopy(2) %>% plot
-#' lidar %>% grid_canopy(2) %>% plot3d
 #' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}

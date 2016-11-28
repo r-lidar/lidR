@@ -31,11 +31,11 @@
 #'
 #' Interpol ground points using a kriging approach and create a rasterized digital terrain
 #' model. The interpolation is done by kriging using a invert distance kernel. The algorithm
-#' uses is the points classified as ground and for each pixel the algorithm use the k nearest
+#' uses the points classified as "ground" and for each pixel the algorithm uses the k nearest
 #' ground point to compute the interpolation.
 #'
 #' @param obj LAS objet
-#' @param res resolution
+#' @param res numeric resolution.
 #' @param k numeric. The number of ground points used to interpolate (see
 #' \link[lidR:get_ground_elevation]{get_ground_elevation})
 #'
@@ -48,13 +48,9 @@
 #'
 #' # plot(lidar)
 #'
-#' # Linear interpolation is fast, linear = FALSE for spline interpolation
-#' dtm = grid_terrain(lidar, linear = TRUE)
+#' dtm = grid_terrain(lidar)
 #'
 #' # plot3d(dtm)
-#'
-#' \dontrun{
-#' }
 #' @seealso
 #' \link[lidR:normalize]{normalize}
 #' @importFrom  data.table := setDT
