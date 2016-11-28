@@ -62,7 +62,7 @@
 #'
 #' # --- Second possibility: read the DTM from a file -----
 #'
-#'\notrun{
+#'\dontrun{
 #' dtm = raster::raster(terrain.tiff)
 #'
 #' lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
