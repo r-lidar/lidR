@@ -6,8 +6,8 @@ Version: 1.2.0
 Date: 2016-08-26
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
-    person("Pierrick", "Marie", email = "", role = c("aut", "ctb")),
-    person("David", "Auty", email = "", role = c("aut","ctb")))
+    person("Pierrick", "Marie", email = "", role = c("ctb")),
+    person("David", "Auty", email = "", role = c("ctb")))
 Description: Airborne LiDAR interface for data
     visualisation and manipulation. It has been designed mainly for use in forestry
     applications. The lidR package allows computation of digital elevation canopy models,
@@ -20,7 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.2.0),magrittr,dtplyr
 Imports:
-    rgl,methods,stats,utils,grDevices,tools,parallel,fields,raster,rgdal,plyr,rgeos,data.table,dplyr,akima,Rcpp
+    rgl,methods,stats,utils,grDevices,tools,parallel,raster,rgdal,plyr,rgeos,data.table,dplyr,kknn,Rcpp,sp
 LazyData: trues
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
