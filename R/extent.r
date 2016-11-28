@@ -43,10 +43,7 @@
 #' extent(lidar)
 #' @seealso \code{\link[raster:extent]{raster::extent} }
 #' @export extent
-#' @importFrom raster extent
-setGeneric("extent", function(x){standardGeneric("extent")})
-
-#' @rdname extent
+#' @importMethodsFrom raster extent
 setMethod("extent", "LAS",
 	function(x)
 	{
