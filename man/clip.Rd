@@ -57,8 +57,8 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
-subset = lidar \%>\% clipRectangle(xleft=685000, ybottom=5018000,
-                                 xright=685100, ytop =5018100)
+subset = lidar \%>\% clipRectangle(xleft=684850, ybottom=5017850,
+                                 xright=684900, ytop =5017900)
 
 plot(subset)
 }
