@@ -98,6 +98,7 @@ plot(dtm)</pre>
 
 **Note**: This version comes with a lot of incompatibilities with the previous versions. I tried to harmonize naming before a first submission to the CRAN.
 
+- Fix: extent does not or is not overrided by `raster` package
 - Fix: assign wrong name in `roi_query` (pull [#33](https://github.com/Jean-Romain/lidR/pull/33))(@floriandeboissieu)
 - Fix: misidentification of pulseID (pull [#31](https://github.com/Jean-Romain/lidR/pull/31))(@floriandeboissieu)
 - Fix: `classify_from_shapefile` manage multipart polygons and holes in polygon
@@ -107,6 +108,8 @@ plot(dtm)</pre>
 - Fix: Correct computation of color when reading RBG. R G and B are coded on 16 bits. (issue [#13](https://github.com/Jean-Romain/lidR/issues/13)).
 - Fix: Propage and update header when manipulation of lidar data (issue [#12](https://github.com/Jean-Romain/lidR/issues/12)).
 - Remove: `getData()`. Useless since acessor `$`. Use `object$data`.
+- Remove: `local_maximum` and `canopy_closure`.
+- Add: parallelization of `roi_query` (pull [#34](https://github.com/Jean-Romain/lidR/pull/34))(@floriandeboissieu)
 - Add: `roi_query` become more flexible enabling to extract ROI larger than a tile (pull [#25](https://github.com/Jean-Romain/lidR/pull/25))(@floriandeboissieu)
 - Add: an overloaded operator minus `-` very convenient to normalize a dataset `lidar - dtm` is synonyme to `normalize(lidar, dtm)`
 - Add: `normalize()` enable to substract a digital terrain model to the LiDAR data.
