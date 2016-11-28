@@ -27,7 +27,7 @@
 
 
 
-#' Tranform a grid_metrics object into a spatial matrix
+#' Tranform a grid_metrics object into a spatial raster object
 #'
 #' @param x a grid_metrics object
 #' @param z character. The field to plot. If NULL, autodetect
@@ -36,17 +36,20 @@
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[data.table:dcast]{dcast}
+#' \link[raster:raster]{raster}
+#' @return A RasterLayer object from package  \link[raster:raster]{raster}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' meanHeight = grid_metrics(lidar, 20, mean(Z))
-#' mtx = as.matrix(meanHeight)
+#' mtx = as.raster(meanHeight)
 #' @importFrom data.table dcast
-#' @export
-#' @method as.matrix gridmetrics
+#' @method as.raster gridmetrics
 #' @importFrom magrittr %>%
-as.matrix.gridmetrics = function(x, z = NULL, ...)
+#' @importMethodsFrom raster as.raster
+#' @export
+as.raster.gridmetrics = function(x, z = NULL, ...)
 {
   X <- NULL
 
@@ -71,10 +74,11 @@ as.matrix.gridmetrics = function(x, z = NULL, ...)
   else(is.null(inargs$fun.aggregate))
     out = data.table::dcast(data = x, formula = X~Y, value.var=z, ...)
 
-  xnames = out$X
   out[, X := NULL]
-  out %<>% as.matrix
-  rownames(out) = xnames
+  mx = out %>% as.matrix
+  mx = apply(mx, 1, rev)
 
-  return(out)
+  layer = raster::raster(mx, xmn = min(x$X), xmx = max(x$X), ymn = min(x$Y), ymx = max(x$Y))
+
+  return(layer)
 }
