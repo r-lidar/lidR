@@ -31,14 +31,19 @@
 #'
 #' Substract digital terrain model (DTM) to the LiDAR data to create a dataset
 #' normalized with the ground at 0. The digital terrain model can comes from
-#' several sources such as external file or own computaion.
+#' several sources such as external file or own computaion. It can also be computed on the
+#' fly.
+#'
+#' When the paramter dtm is not provided the elevation of the ground is computed for each point
+#' of the lidar data with the function \link[lidR:get_ground_elevation]{get_ground_elevation}.
+#' The consequence is a more accurate normalisation. Indeed no rasterizaion impling
+#' innacuracies is required. This method lead to few negatives values.
 #'
 #' @param las a LAS objet
-#' @param dtm a digital terrain model. It can be a RasterLayer from package
-#' \link[raster:raster]{raster} or a DTM from computed with
-#' \link[lidR:grid_terrain]{grid_terrain}. If NULL the function will automatocally
-#' compute it with \link[lidR:grid_terrain]{grid_terrain}.
-#' @param ... optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
+#' @param dtm a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
+#' automatically compute it on the fly. This second solution is more accurate
+#' because no rasterization is done (see details).
+#' @param ... optionnal parameters for \link[lidR:get_ground_elevation]{get_ground_elevation} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @export
@@ -47,67 +52,49 @@
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' plot(lidar)
+#' # plot(lidar)
 #'
-#' # --- First possibility: read the DTM from a file -----
-#' DTMfile <- system.file("extdata", "Topography.tif", package="lidR")
-#' dtm = raster::raster(DTMfile)
+#' # --- First possibility: compute the DTM on the fly -----
+#'
+#' lidar_norm = normalize(lidar)
+#'
+#' # plot(lidar_norm)
+#'
+#' # --- Second possibility: read the DTM from a file -----
+#'
+#'\notrun{
+#' dtm = raster::raster(terrain.tiff)
 #'
 #' lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
 #'
-#' plot(lidar_norm)
+#' # plot(lidar_norm)
+#' }
 #'
-#' # --- Second possibility: compute the DTM with grid_terrain -----
-#'
-#' # Linear interpolation is fast, linear = FALSE for spline interpolation
-#' dtm = grid_terrain(lidar, linear = TRUE)
-#'
-#' lidar_norm = lidar - dtm
-#'
-#' plot(lidar_norm)
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
-#' @importFrom data.table setnames
-#' @importFrom dplyr left_join mutate select filter
-#' @importFrom plyr round_any
+#' @importFrom data.table copy :=
+#' @importFrom raster extract
 normalize = function(las, dtm = NULL, ...)
 {
-  Z <- Zn <- X <- Y <- Z <- NULL
+ . <- Z <- Zn <- Xr <- Yr <- NULL
 
   if(is.null(dtm))
-    dtm = las %>% grid_terrain(...)
+  {
+    ground = getGround(las)
+    Zn = get_ground_elevation(ground, las@data, ...)
+  }
   else if(class(dtm)[1] == "RasterLayer")
-    dtm = as.DTM(dtm)
-  else if(class(dtm)[1] != "DTM")
-    stop("The terrain model is neither a DTM nor a RasterLayer")
+  {
+    Zn = raster::extract(dtm, las@data[, c("X", "Y"), with = F])
+  }
+  else
+    stop("The terrain model is not a RasterLayer")
 
-  if(!identical(c("x", "y", "z"), names(dtm)) | !is.list(dtm) | !is.matrix(dtm$z))
-    stop("Internal representation of the terrain model is not correct.")
+  normalized = data.table::copy(las@data)
+  normalized[, Z := round(Z - Zn, 3)]
 
-  xmin = min(dtm$x)
-  ymin = min(dtm$y)
-  res  = attr(dtm, "res")
-
-  Xr = plyr::round_any(las@data$X-0.5*res-xmin, res)+xmin
-  Yr = plyr::round_any(las@data$Y-0.5*res-ymin, res)+ymin
-  las@data$Xr = Xr
-  las@data$Yr = Yr
-
-  x = match(Xr, dtm$x)
-  y = match(Yr, dtm$y)
-
-  normalized = las@data[, dtm$z[match(Xr, dtm$x), match(Yr, dtm$y)], by=c("Xr","Yr")]
-  data.table::setnames(normalized, c("Xr", "Yr", "Zn"))
-
-  data = dplyr::left_join(las@data, normalized, by=c("Xr", "Yr")) %>%
-    dplyr::mutate(Z = Z-Zn) %>%
-    dplyr::select(-Xr, -Yr, -Zn) %>%
-    dplyr::filter(!is.na(Z))
-
-  class(data) = c("data.table", "data.frame")
-
-  return(LAS(data, las@header))
+  return(LAS(normalized, las@header))
 }
 
 #' Conveniant operator to normalize
@@ -129,12 +116,9 @@ normalize = function(las, dtm = NULL, ...)
 #'
 #' plot(lidar_norm)
 #'
-#' # --- Second possibility: compute the DTM with grid_terrain -----
+#' # --- Second possibility: compute the on the fly -----
 #'
-#' # Linear interpolation is fast, linear = FALSE for spline interpolation
-#' dtm = grid_terrain(lidar, linear = TRUE)
-#'
-#' lidar_norm = lidar - dtm
+#' lidar_norm = normalize(lidar)
 #'
 #' plot(lidar_norm)
 #' @export

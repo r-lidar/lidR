@@ -29,55 +29,57 @@
 
 #' Digital Terrain Model
 #'
-#' Interpol ground points using linear interpolation or spline interpolation and
-#' create a digital terrain model (DTM). This function rely on the
-#' \link[akima:interp]{interp} function from package \code{akima}.
+#' Interpol ground points using a kriging approach and create a rasterized digital terrain
+#' model. The interpolation is done by kriging using a invert distance kernel. The algorithm
+#' uses is the points classified as ground and for each pixel the algorithm use the k nearest
+#' ground point to compute the interpolation.
 #'
 #' @param obj LAS objet
 #' @param res resolution
-#' @param linear using linear or spline interpolation. Default is spline (slower
-#' but more realistic).
-#' @param ... optionnal parameters for \link[akima:interp]{interp}.
+#' @param k numeric. The number of ground points used to interpolate (see
+#' \link[lidR:get_ground_elevation]{get_ground_elevation})
 #'
-#' @return A \code{list} containing the elevation for each cell of the
-#' output grid. The list has the class "DTM" enabling to easily deal with it in
-#' the \code{lidR} package.
+#' @return A RasterLayer from package raster
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' plot(lidar)
+#' # plot(lidar)
 #'
 #' # Linear interpolation is fast, linear = FALSE for spline interpolation
 #' dtm = grid_terrain(lidar, linear = TRUE)
 #'
-#' plot(dtm)
+#' # plot3d(dtm)
 #'
 #' \dontrun{
 #' }
 #' @seealso
-#' \link[akima:interp]{interp}
 #' \link[lidR:normalize]{normalize}
-#' @importFrom akima interp
-setGeneric("grid_terrain", function(obj, res = 1, linear = F, ...){standardGeneric("grid_terrain")})
+#' @importFrom  data.table := setDT
+setGeneric("grid_terrain", function(obj, res = 1, k = 3L){standardGeneric("grid_terrain")})
 
 #' @rdname grid_terrain
 setMethod("grid_terrain", "LAS",
-  function(obj, res = 1 , linear = F, ...)
+  function(obj, res = 1, k =3L)
   {
     X <- Y <- Z <- NULL
 
     ex = extent(obj)
-    xo = seq(floor(ex@xmin),ceiling(ex@xmax), res)
-    yo = seq(floor(ex@ymin),ceiling(ex@ymax), res)
+    xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
+    yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
 
-    ground = obj %>% getGround
-    dtm = ground$data %$% akima::interp(X, Y, Z, xo = xo, yo = yo, linear = linear, ...)
+    grid   = expand.grid(X = xo, Y = yo)
+    setDT(grid)
 
-    class(dtm) = c("DTM", "list")
-    attr(dtm, "res") = res
+    Zg = get_ground_elevation(obj, grid, k)
+    grid[, Z := Zg]
+
+    mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
+    mx = apply(mx, 1, rev)
+
+    dtm = raster::raster(mx, xmn = min(grid$X), xmx = max(grid$X), ymn = min(grid$Y), ymx = max(grid$Y))
 
     return(dtm)
   }
