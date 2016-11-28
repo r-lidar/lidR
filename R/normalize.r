@@ -100,29 +100,9 @@ normalize = function(las, dtm = NULL, ...)
 #' Conveniant operator to normalize
 #'
 #' @param e1 a LAS object
-#' @param e2 a digital terrain model
-#' @examples
-#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#'
-#' lidar = readLAS(LASfile)
-#'
-#' plot(lidar)
-#'
-#' # --- First possibility: read the DTM from a file -----
-#' DTMfile <- system.file("extdata", "Topography.tif", package="lidR")
-#' dtm = raster::raster(DTMfile)
-#'
-#' lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
-#'
-#' plot(lidar_norm)
-#'
-#' # --- Second possibility: compute the on the fly -----
-#'
-#' lidar_norm = normalize(lidar)
-#'
-#' plot(lidar_norm)
+#' @param e2 a RasterLayer
 #' @export
-setMethod("-", "LAS",
+setMethod("-", c("LAS", "RasterLayer"),
   function(e1, e2)
   {
       return(normalize(e1,e2))
