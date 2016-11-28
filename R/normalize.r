@@ -92,7 +92,7 @@ normalize = function(las, dtm = NULL, ...)
     stop("The terrain model is not a RasterLayer")
 
   normalized = data.table::copy(las@data)
-  normalized[, Z := round(Z - Zn, 3)]
+  normalized[, Z := round(Z - Zn, 3)][]
 
   return(LAS(normalized, las@header))
 }
