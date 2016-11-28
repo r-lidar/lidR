@@ -6,47 +6,43 @@
 \alias{grid_terrain,LAS-method}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(obj, res = 1, linear = F, ...)
+grid_terrain(obj, res = 1, k = 3L)
 
-\S4method{grid_terrain}{LAS}(obj, res = 1, linear = F, ...)
+\S4method{grid_terrain}{LAS}(obj, res = 1, k = 3L)
 }
 \arguments{
 \item{obj}{LAS objet}
 
 \item{res}{resolution}
 
-\item{linear}{using linear or spline interpolation. Default is spline (slower
-but more realistic).}
-
-\item{...}{optionnal parameters for \link[akima:interp]{interp}.}
+\item{k}{numeric. The number of ground points used to interpolate (see
+\link[lidR:get_ground_elevation]{get_ground_elevation})}
 }
 \value{
-A \code{list} containing the elevation for each cell of the
-output grid. The list has the class "DTM" enabling to easily deal with it in
-the \code{lidR} package.
+A RasterLayer from package raster
 }
 \description{
-Interpol ground points using linear interpolation or spline interpolation and
-create a digital terrain model (DTM). This function rely on the
-\link[akima:interp]{interp} function from package \code{akima}.
+Interpol ground points using a kriging approach and create a rasterized digital terrain
+model. The interpolation is done by kriging using a invert distance kernel. The algorithm
+uses is the points classified as ground and for each pixel the algorithm use the k nearest
+ground point to compute the interpolation.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
-plot(lidar)
+# plot(lidar)
 
 # Linear interpolation is fast, linear = FALSE for spline interpolation
 dtm = grid_terrain(lidar, linear = TRUE)
 
-plot(dtm)
+# plot3d(dtm)
 
 \dontrun{
 }
 }
 \seealso{
-\link[akima:interp]{interp}
 \link[lidR:normalize]{normalize}
 }
 

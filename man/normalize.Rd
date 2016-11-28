@@ -9,12 +9,11 @@ normalize(las, dtm = NULL, ...)
 \arguments{
 \item{las}{a LAS objet}
 
-\item{dtm}{a digital terrain model. It can be a RasterLayer from package
-\link[raster:raster]{raster} or a DTM from computed with
-\link[lidR:grid_terrain]{grid_terrain}. If NULL the function will automatocally
-compute it with \link[lidR:grid_terrain]{grid_terrain}.}
+\item{dtm}{a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
+automatically compute it on the fly. This second solution is more accurate
+because no rasterization is done (see details).}
 
-\item{...}{optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
+\item{...}{optionnal parameters for \link[lidR:get_ground_elevation]{get_ground_elevation} if
 \code{dtm} parameter is NULL.}
 }
 \value{
@@ -23,31 +22,38 @@ A LAS object.
 \description{
 Substract digital terrain model (DTM) to the LiDAR data to create a dataset
 normalized with the ground at 0. The digital terrain model can comes from
-several sources such as external file or own computaion.
+several sources such as external file or own computaion. It can also be computed on the
+fly.
+}
+\details{
+When the paramter dtm is not provided the elevation of the ground is computed for each point
+of the lidar data with the function \link[lidR:get_ground_elevation]{get_ground_elevation}.
+The consequence is a more accurate normalisation. Indeed no rasterizaion impling
+innacuracies is required. This method lead to few negatives values.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
-plot(lidar)
+# plot(lidar)
 
-# --- First possibility: read the DTM from a file -----
-DTMfile <- system.file("extdata", "Topography.tif", package="lidR")
-dtm = raster::raster(DTMfile)
+# --- First possibility: compute the DTM on the fly -----
+
+lidar_norm = normalize(lidar)
+
+# plot(lidar_norm)
+
+# --- Second possibility: read the DTM from a file -----
+
+\\notrun{
+dtm = raster::raster(terrain.tiff)
 
 lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
 
-plot(lidar_norm)
+# plot(lidar_norm)
+}
 
-# --- Second possibility: compute the DTM with grid_terrain -----
-
-# Linear interpolation is fast, linear = FALSE for spline interpolation
-dtm = grid_terrain(lidar, linear = TRUE)
-
-lidar_norm = lidar - dtm
-
-plot(lidar_norm)
 }
 \seealso{
 \link[raster:raster]{raster}
