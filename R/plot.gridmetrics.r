@@ -75,7 +75,6 @@
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:plot3d]{plot3d}
-#' @importFrom fields image.plot
 #' @export
 #' @rdname plot.gridmetrics
 #' @method plot gridmetrics
@@ -92,9 +91,7 @@ plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
       z = names(x)[3]
   }
 
-  mtx = as.matrix(x, z)
-  X = rownames(mtx) %>% as.numeric
-  Y = colnames(mtx) %>% as.numeric
+  mtx = as.raster(x, z)
 
   if(is.null(inargs$col))
     inargs$col = colorPalette(50)
@@ -105,8 +102,5 @@ plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
   if(is.null(inargs$ylab))
     inargs$ylab = "Y"
 
-  if(is.null(inargs$asp))
-    inargs$asp = 1
-
-  do.call(fields::image.plot, c(list(x = X, y = Y, z = mtx), inargs))
+  do.call(raster::plot, c(list(x = mtx), inargs))
 }
