@@ -29,7 +29,7 @@
 
 #' Get the evelation of the ground for given coordinates
 #'
-#' The algorithm use the k-nearest ground points to the input coordinates to
+#' The algorithm use the k-nearest ground points of the input coordinates to
 #' interpol the elevations at the points of interest. The interpolation is done by kriging
 #' using a invert distance kernel.
 #'
