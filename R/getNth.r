@@ -54,11 +54,7 @@ setGeneric("getNth", function(obj, n){standardGeneric("getNth")})
 setMethod("getNth", "LAS",
 	function(obj, n)
 	{
-	   ReturnNumber <- NULL
-
-	  if(n > max(obj@data$ReturnNumber) | n <= 0)
-	    lidRError("LDR5")
-
+	  ReturnNumber <- NULL
 		return(lasfilter(obj, ReturnNumber == n))
 	}
 )
