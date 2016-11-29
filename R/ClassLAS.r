@@ -106,7 +106,7 @@ setMethod("initialize", "LAS",
 	  if(!is.data.table(data))
 	    lidRError("LDR1")
 
-	  if(dim(data)[1] == 0)
+	  if(nrow(data) == 0)
 	    lidRError("LDR9")
 
 	  # Check if the data are valid. Else: warning -------------------------------
