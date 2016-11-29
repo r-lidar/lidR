@@ -6,30 +6,33 @@
 \alias{lasfilter,LAS-method}
 \title{Return points with matching conditions}
 \usage{
-lasfilter(.data, ...)
+lasfilter(.las, ...)
 
-\S4method{lasfilter}{LAS}(.data, ...)
+\S4method{lasfilter}{LAS}(.las, ...)
 }
 \arguments{
-\item{.data}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
-\item{\dots}{Logical predicates. Multiple conditions are combined with &.}
+\item{\dots}{Logical predicates. Multiple conditions are combined with & or ,}
 }
 \value{
 An object of class \code{LAS}
 }
 \description{
-Return points with matching conditions. \code{lasfilter} is an overloading
-function for \code{LAS} objects which replaces the function
-\code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
+Return points with matching conditions.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-
 lidar = readLAS(LASfile)
 
 # Select the first returns classified as ground
+firstground = lidar \%>\% lasfilter(Classification == 1 & ReturnNumber == 1)
+
+# Multiple arguments are equivalent to &
 firstground = lidar \%>\% lasfilter(Classification == 1, ReturnNumber == 1)
+
+# Multiple criteria
+first_or_ground = lidar \%>\% lasfilter(Classification == 1 | ReturnNumber == 1)
 }
 \seealso{
 \link[dplyr:filter]{filter}
