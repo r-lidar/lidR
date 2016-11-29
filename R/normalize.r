@@ -80,14 +80,9 @@ normalize = function(las, dtm = NULL, ...)
  . <- Z <- Zn <- Xr <- Yr <- NULL
 
   if(is.null(dtm))
-  {
-    ground = getGround(las)
-    Zn = get_ground_elevation(ground, las@data, ...)
-  }
+    Zn = get_ground_elevation(las, las@data, ...)
   else if(class(dtm)[1] == "RasterLayer")
-  {
     Zn = raster::extract(dtm, las@data[, c("X", "Y"), with = F])
-  }
   else
     stop("The terrain model is not a RasterLayer")
 
