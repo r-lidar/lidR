@@ -46,16 +46,24 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_density
-#' @importFrom dplyr rename
 setGeneric("grid_density", function(obj, res = 4){standardGeneric("grid_density")})
 
 #' @rdname grid_density
 setMethod("grid_density", "LAS",
 	function(obj, res = 4)
 	{
-	  pulseID <- V1 <- NULL
+	  pulseID <- density <- X <- NULL
 
-		ret = grid_metrics(obj, res, length(unique(pulseID))/res^2) %>% dplyr::rename(Z = V1)
+	  if(! "pulseID" %in% names(obj@data))
+	  {
+	    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.")
+	    ret = grid_metrics(obj, res, list(density = length(X)/res^2))
+	  }
+	  else
+	  {
+	    ret = grid_metrics(obj, res, list(density = length(unique(pulseID))/res^2))
+	  }
+
     return(ret)
 	}
 )

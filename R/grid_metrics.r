@@ -90,6 +90,7 @@
 #' #etc.
 #' @export grid_metrics
 #' @importFrom plyr round_any
+#' @importFrom data.table setnames setattr
 setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
 
 #' @rdname grid_metrics
@@ -115,9 +116,10 @@ setMethod("grid_metrics", "LAS",
 
 		n = names(stat)
 		n[1:2] = c("X", "Y")
-		setnames(stat, n)
 
-		attr(stat, "class") = c("gridmetrics", attr(stat, "class"))
+		data.table::setnames(stat, n)
+		data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
+		data.table::setattr(stat, "res", res)
 
 		return(stat)
 	}
