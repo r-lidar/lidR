@@ -148,18 +148,18 @@ setMethod("detect_scanline", "LAS",
   }
 )
 
-#' @importFrom dplyr lag
+#' @importFrom data.table shift
 .lagissup = function(x, dx)
 {
-  boo = (x - dplyr::lag(x)) > dx
+  boo = (x - data.table::shift(x)) > dx
   boo[1] = TRUE
   return(cumsum(boo))
 }
 
-#' @importFrom dplyr lag
+#' @importFrom data.table shift
 .lagisdiff = function(x)
 {
-  boo = x != dplyr::lag(x)
+  boo = x != data.table::shift(x)
   boo[1] = TRUE
   return(cumsum(boo))
 }
