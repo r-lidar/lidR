@@ -6,9 +6,10 @@
 \alias{get_ground_elevation,LAS-method}
 \title{Get the evelation of the ground for given coordinates}
 \usage{
-get_ground_elevation(las, coord, k = 7L, kernel = "inv")
+get_ground_elevation(las, coord, k = 7L, kernel = "inv", ...)
 
-\S4method{get_ground_elevation}{LAS}(las, coord, k = 7L, kernel = "inv")
+\S4method{get_ground_elevation}{LAS}(las, coord, k = 7L, kernel = "inv",
+  ...)
 }
 \arguments{
 \item{las}{a LAS objet}
@@ -20,6 +21,8 @@ interest in the columns named X and Y.}
 
 \item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 for possible choices.}
+
+\item{...}{extra parameter for \link[kknn:kknn]{kknn}}
 }
 \value{
 Numeric. The predicted elevations.

@@ -6,9 +6,9 @@
 \alias{grid_terrain,LAS-method}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(obj, res = 1, k = 7L, kernel = "inv")
+grid_terrain(obj, res = 1, k = 7L, kernel = "inv", ...)
 
-\S4method{grid_terrain}{LAS}(obj, res = 1, k = 7L, kernel = "inv")
+\S4method{grid_terrain}{LAS}(obj, res = 1, k = 7L, kernel = "inv", ...)
 }
 \arguments{
 \item{obj}{LAS objet}
@@ -20,6 +20,8 @@ grid_terrain(obj, res = 1, k = 7L, kernel = "inv")
 
 \item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 for possible choices.}
+
+\item{...}{extra parameter for \link[kknn:kknn]{kknn}}
 }
 \value{
 A RasterLayer from package raster

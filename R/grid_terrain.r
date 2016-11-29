@@ -40,7 +40,7 @@
 #' \link[lidR:get_ground_elevation]{get_ground_elevation})
 #' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 #' for possible choices.
-#'
+#' @param ... extra parameter for \link[kknn:kknn]{kknn}
 #' @return A RasterLayer from package raster
 #' @export
 #' @examples
@@ -56,11 +56,11 @@
 #' @seealso
 #' \link[lidR:normalize]{normalize}
 #' @importFrom  data.table := setDT
-setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv"){standardGeneric("grid_terrain")})
+setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv", ...){standardGeneric("grid_terrain")})
 
 #' @rdname grid_terrain
 setMethod("grid_terrain", "LAS",
-  function(obj, res = 1, k = 7L, kernel = "inv")
+  function(obj, res = 1, k = 7L, kernel = "inv", ...)
   {
     X <- Y <- Z <- NULL
 
@@ -71,7 +71,7 @@ setMethod("grid_terrain", "LAS",
     grid   = expand.grid(X = xo, Y = yo)
     setDT(grid)
 
-    Zg = get_ground_elevation(obj, grid, k, kernel)
+    Zg = get_ground_elevation(obj, grid, k, kernel, ...)
     grid[, Z := Zg]
 
     mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix

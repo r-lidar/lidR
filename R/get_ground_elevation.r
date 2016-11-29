@@ -39,6 +39,7 @@
 #' @param k numeric. The number of nearest neighbours
 #' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 #' for possible choices.
+#' @param ... extra parameter for \link[kknn:kknn]{kknn}
 #' @return Numeric. The predicted elevations.
 #' @export
 #' @seealso
@@ -47,11 +48,11 @@
 #' @importFrom data.table copy :=
 #' @importFrom plyr round_any
 #' @importFrom kknn kknn
-setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv"){standardGeneric("get_ground_elevation")})
+setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv", ...){standardGeneric("get_ground_elevation")})
 
 #' @rdname get_ground_elevation
 setMethod("get_ground_elevation", "LAS",
-  function(las, coord, k = 7L, kernel = "inv")
+  function(las, coord, k = 7L, kernel = "inv", ...)
   {
     fields = names(coord)
 
@@ -59,7 +60,7 @@ setMethod("get_ground_elevation", "LAS",
       stop("Parameter coord does not have a column named X or Y")
 
     ground = getGround(las)
-    Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, distance = 1, kernel = kernel)$fitted.values
+    Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, kernel = kernel, ...)$fitted.values
 
     return(Zg)
   }
