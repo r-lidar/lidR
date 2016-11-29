@@ -65,11 +65,13 @@ setMethod("lasfilter", "LAS",
 	{
 		newdata = .data@data %>% dplyr::filter(...)
 
-		if(dim(newdata)[1] == 0)
+		if(nrow(newdata) == 0)
 		{
 		  input_list <- as.list(substitute(list(...)))
 		  err = paste(input_list)[-1] %>% paste(collapse=", ")
-		  lidRError("GET1", expression = err)
+		  lidRError("GET1", expression = err, behaviour = warning)
+
+		  return(NULL)
 		}
 
 		return(LAS(newdata, .data@header))
