@@ -29,15 +29,17 @@
 
 #' Digital Terrain Model
 #'
-#' Interpol ground points using a kriging approach and create a rasterized digital terrain
-#' model. The interpolation is done by kriging using a invert distance kernel. The algorithm
-#' uses the points classified as "ground" and for each pixel the algorithm uses the k nearest
-#' ground point to compute the interpolation.
+#' Interpol ground points using a k neareast neighbourgh approach and create a rasterized
+#' digital terrain model. The interpolation is done by default using an invert distance weighting
+#' (IDW). The algorithm uses the points classified as "ground" and for each pixel the
+#' algorithm uses the k nearest ground point to compute the interpolation.
 #'
 #' @param obj LAS objet
 #' @param res numeric resolution.
 #' @param k numeric. The number of ground points used to interpolate (see
 #' \link[lidR:get_ground_elevation]{get_ground_elevation})
+#' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
+#' for possible choices.
 #'
 #' @return A RasterLayer from package raster
 #' @export
@@ -54,11 +56,11 @@
 #' @seealso
 #' \link[lidR:normalize]{normalize}
 #' @importFrom  data.table := setDT
-setGeneric("grid_terrain", function(obj, res = 1, k = 3L){standardGeneric("grid_terrain")})
+setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv"){standardGeneric("grid_terrain")})
 
 #' @rdname grid_terrain
 setMethod("grid_terrain", "LAS",
-  function(obj, res = 1, k =3L)
+  function(obj, res = 1, k = 7L, kernel = "inv")
   {
     X <- Y <- Z <- NULL
 
@@ -69,7 +71,7 @@ setMethod("grid_terrain", "LAS",
     grid   = expand.grid(X = xo, Y = yo)
     setDT(grid)
 
-    Zg = get_ground_elevation(obj, grid, k)
+    Zg = get_ground_elevation(obj, grid, k, kernel)
     grid[, Z := Zg]
 
     mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix

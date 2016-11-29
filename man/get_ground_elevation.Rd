@@ -6,25 +6,28 @@
 \alias{get_ground_elevation,LAS-method}
 \title{Get the evelation of the ground for given coordinates}
 \usage{
-get_ground_elevation(las, coord, k = 3L)
+get_ground_elevation(las, coord, k = 7L, kernel = "inv")
 
-\S4method{get_ground_elevation}{LAS}(las, coord, k = 3L)
+\S4method{get_ground_elevation}{LAS}(las, coord, k = 7L, kernel = "inv")
 }
 \arguments{
 \item{las}{a LAS objet}
 
-\item{coord}{data.frame containing the at least the coordinates of the points of
+\item{coord}{data.frame containing the coordinates of the points of
 interest in the columns named X and Y.}
 
 \item{k}{numeric. The number of nearest neighbours}
+
+\item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
+for possible choices.}
 }
 \value{
 Numeric. The predicted elevations.
 }
 \description{
-The algorithm use the k-nearest ground points of the input coordinates to
-interpol the elevations at the points of interest. The interpolation is done by kriging
-using a invert distance kernel.
+The algorithm use the k-nearest ground points of each input coordinates of interest to
+interpol the elevations at these coordinates. The interpolation is done by default using
+an invert distance weighting (IDW)
 }
 \seealso{
 \link[kknn:kknn]{kknn}

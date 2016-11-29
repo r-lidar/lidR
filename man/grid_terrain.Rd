@@ -6,9 +6,9 @@
 \alias{grid_terrain,LAS-method}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(obj, res = 1, k = 3L)
+grid_terrain(obj, res = 1, k = 7L, kernel = "inv")
 
-\S4method{grid_terrain}{LAS}(obj, res = 1, k = 3L)
+\S4method{grid_terrain}{LAS}(obj, res = 1, k = 7L, kernel = "inv")
 }
 \arguments{
 \item{obj}{LAS objet}
@@ -17,15 +17,18 @@ grid_terrain(obj, res = 1, k = 3L)
 
 \item{k}{numeric. The number of ground points used to interpolate (see
 \link[lidR:get_ground_elevation]{get_ground_elevation})}
+
+\item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
+for possible choices.}
 }
 \value{
 A RasterLayer from package raster
 }
 \description{
-Interpol ground points using a kriging approach and create a rasterized digital terrain
-model. The interpolation is done by kriging using a invert distance kernel. The algorithm
-uses the points classified as "ground" and for each pixel the algorithm uses the k nearest
-ground point to compute the interpolation.
+Interpol ground points using a k neareast neighbourgh approach and create a rasterized
+digital terrain model. The interpolation is done by default using an invert distance weighting
+(IDW). The algorithm uses the points classified as "ground" and for each pixel the
+algorithm uses the k nearest ground point to compute the interpolation.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
