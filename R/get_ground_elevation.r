@@ -29,14 +29,16 @@
 
 #' Get the evelation of the ground for given coordinates
 #'
-#' The algorithm use the k-nearest ground points of the input coordinates to
-#' interpol the elevations at the points of interest. The interpolation is done by kriging
-#' using a invert distance kernel.
+#' The algorithm use the k-nearest ground points of each input coordinates of interest to
+#' interpol the elevations at these coordinates. The interpolation is done by default using
+#' an invert distance weighting (IDW)
 #'
 #' @param las a LAS objet
-#' @param coord data.frame containing the at least the coordinates of the points of
+#' @param coord data.frame containing the coordinates of the points of
 #' interest in the columns named X and Y.
 #' @param k numeric. The number of nearest neighbours
+#' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
+#' for possible choices.
 #' @return Numeric. The predicted elevations.
 #' @export
 #' @seealso
@@ -45,11 +47,11 @@
 #' @importFrom data.table copy :=
 #' @importFrom plyr round_any
 #' @importFrom kknn kknn
-setGeneric("get_ground_elevation", function(las, coord, k = 3L){standardGeneric("get_ground_elevation")})
+setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv"){standardGeneric("get_ground_elevation")})
 
 #' @rdname get_ground_elevation
 setMethod("get_ground_elevation", "LAS",
-  function(las, coord, k = 3L)
+  function(las, coord, k = 7L, kernel = "inv")
   {
     fields = names(coord)
 
@@ -57,7 +59,7 @@ setMethod("get_ground_elevation", "LAS",
       stop("Parameter coord does not have a column named X or Y")
 
     ground = getGround(las)
-    Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, distance = 1, kernel = "inv")$fitted.values
+    Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, distance = 1, kernel = kernel)$fitted.values
 
     return(Zg)
   }
