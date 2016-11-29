@@ -61,7 +61,7 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
-#' @importFrom data.table data.table rbindlist
+#' @importFrom data.table data.table rbindlist setDT
 readLAS = function(files,
                    Intensity = TRUE,
                    ReturnNumber = TRUE,
@@ -116,18 +116,12 @@ readLAS = function(files,
   }
 
 
-  data = lapply(files, function(x)
+  data = lapply(files, function(file)
   {
-    as.data.table(readLASdata(x, Intensity,
-                              ReturnNumber,
-                              NumberOfReturns,
-                              ScanDirectionFlag,
-                              EdgeofFlightline,
-                              Classification,
-                              ScanAngle,
-                              UserData,
-                              PointSourceID,
-                              RGB))
+    content = readLASdata(file, Intensity, ReturnNumber, NumberOfReturns,
+                                ScanDirectionFlag, EdgeofFlightline, Classification,
+                                ScanAngle, UserData, PointSourceID, RGB)
+    data.table::setDT(content)
   })
 
   data = data.table::rbindlist(data)
