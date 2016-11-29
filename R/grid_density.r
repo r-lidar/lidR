@@ -56,7 +56,7 @@ setMethod("grid_density", "LAS",
 
 	  if(! "pulseID" %in% names(obj@data))
 	  {
-	    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.")
+	    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.", call. = F)
 	    ret = grid_metrics(obj, res, list(density = length(X)/res^2))
 	  }
 	  else
