@@ -47,14 +47,14 @@
 #' @importFrom data.table dcast
 #' @method as.raster gridmetrics
 #' @importFrom magrittr %>%
+#' @importFrom data.table setkeyv
 #' @importMethodsFrom raster as.raster
 #' @export
 as.raster.gridmetrics = function(x, z = NULL, ...)
 {
-  X <- NULL
+  X <- Y <- NULL
 
   inargs <- list(...)
-
 
   multi = duplicated(x, by = c("X","Y")) %>% sum
 
@@ -69,15 +69,16 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
-  rx = range(x$X)
-  ry = range(x$Y)
-  x  = x[, c("X", "Y", z), with=F]
+  res = attr(x, "res")
+  rx  = range(x$X)
+  ry  = range(x$Y)
+  x   = x[, c("X", "Y", z), with=F]
 
-  grid = expand.grid(X = seq(rx[1], rx[2], 20),  Y = seq(ry[1], ry[2], 20))
+  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
   grid = data.table::setDT(grid)
 
-  setkeyv(x, c("X", "Y"))
-  setkeyv(grid, c("X", "Y"))
+  data.table::setkeyv(x, c("X", "Y"))
+  data.table::setkeyv(grid, c("X", "Y"))
 
   data = x[grid]
 

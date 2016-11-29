@@ -49,7 +49,6 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_canopy
-#' @importFrom dplyr rename
 #' @importFrom magrittr %>% %$%
 setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
 
@@ -57,11 +56,9 @@ setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric
 setMethod("grid_canopy", "LAS",
 	function(obj, res = 2, start=c(0,0))
 	{
-	  X <- Y <- Z <- V1 <- NULL
+	  Z <- NULL
 
-	  ret = grid_metrics(obj, res, max(Z), start) %>% dplyr::rename(Z = V1)
-
-	  #lidRError("LDR6")
+	  ret = grid_metrics(obj, res, list(Z = max(Z)), start)
 
     return(ret)
 	}

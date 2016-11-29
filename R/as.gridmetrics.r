@@ -30,16 +30,16 @@
 #'
 #' Set the class gridmetrics to a data.frame. Useful when reading data from a file.
 #' In this case the data.frame does not have the class gridmetrics and cannot easly be
-#' plotted or transformed into a matrix.
+#' plotted or transformed into a raster
 #'
-#' @param x A data.frame
+#' @param x A data.frame or a data.table
+#' @param res numeric the original resolution
 #' @export as.gridmetrics
-#' @importFrom data.table as.data.table
-as.gridmetrics = function(x)
+#' @importFrom data.table setDT
+as.gridmetrics = function(x, res)
 {
-  if(is.data.frame(x)) x = as.data.table(x)
-
+  data.table::setDT(x)
   attr(x, "class") = c("gridmetrics", attr(x, "class"))
-
+  attr(x, "res")   = res
   return(x)
 }
