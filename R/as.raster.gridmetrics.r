@@ -69,10 +69,22 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
       z = names(x)[3]
   }
 
+  rx = range(x$X)
+  ry = range(x$Y)
+  x  = x[, c("X", "Y", z), with=F]
+
+  grid = expand.grid(X = seq(rx[1], rx[2], 20),  Y = seq(ry[1], ry[2], 20))
+  grid = data.table::setDT(grid)
+
+  setkeyv(x, c("X", "Y"))
+  setkeyv(grid, c("X", "Y"))
+
+  data = x[grid]
+
   if(is.null(inargs$fun.aggregate))
-    out = data.table::dcast(data = x, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
+    out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
   else(is.null(inargs$fun.aggregate))
-    out = data.table::dcast(data = x, formula = X~Y, value.var=z, ...)
+    out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
 
   out[, X := NULL]
   mx = out %>% as.matrix
