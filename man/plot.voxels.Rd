@@ -5,7 +5,7 @@
 \title{Plot voxelized LiDAR data}
 \usage{
 \method{plot}{voxels}(x, y, color = "Z", colorPalette = height.colors,
-  bg = "black", display = "points", trim = 1, ...)
+  bg = "black", trim = 1, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{voxels}}
@@ -17,10 +17,6 @@
 \item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
 
 \item{bg}{The color for the background. Default is black.}
-
-\item{display}{character. By default is "points" to plot voxels as points for fast display.
-Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow.
-It cannot be use for a large number of voxels.}
 
 \item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
 Default is 1 meaning that the whole range of the values is used for the color palette.

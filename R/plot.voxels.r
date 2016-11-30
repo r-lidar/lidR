@@ -38,9 +38,6 @@
 #' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
 #' @param bg The color for the background. Default is black.
-#' @param display character. By default is "points" to plot voxels as points for fast display.
-#' Could be set to "cubes" to display nice shaded cube. But "cubes" method is very very slow.
-#' It cannot be use for a large number of voxels.
 #' @param trim numeric. Enables trimming of values when outliers break the color palette range.
 #' Default is 1 meaning that the whole range of the values is used for the color palette.
 #' 0.9 means thant 10% of the hightest values are not used to defined the colors palette.
@@ -61,10 +58,7 @@
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:voxelize]{voxelize}
 #' @export
-#' @importFrom rgl points3d open3d rgl.bg
-#' @importFrom grDevices heat.colors terrain.colors topo.colors
-#' @importFrom magrittr %$%
-plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", display = "points", trim = 1, ...)
+plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", trim = 1, ...)
 {
   inargs <- list(...)
 
@@ -91,12 +85,6 @@ plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "bl
     rgl::open3d()
     rgl::rgl.bg(color = bg)
     do.call(rgl::points3d, c(list(x=x$X, y=x$Y, z=x$Z), inargs))
-  }
-  else if(display == "cubes")
-  {
-    rgl::open3d()
-    rgl::rgl.bg(color = bg)
-    x %$% cube(x$X, x$Y, x$Z, inargs$col, scale = attr(x, "res"))
   }
   else
     lidRError("VOX1")
