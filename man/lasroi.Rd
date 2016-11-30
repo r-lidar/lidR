@@ -7,7 +7,7 @@
 lasroi(.las, ...)
 }
 \arguments{
-\item{obj}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
 \item{\dots}{Optionnal parameters for the plot function}
 }

@@ -34,7 +34,7 @@
 #' \code{lasroi} enable the user to select a region of interest (ROI) drawing
 #' a rectangle with the mouse
 #' @aliases lasroi
-#' @param obj An object of class \code{LAS}
+#' @param .las An object of class \code{LAS}
 #' @param \dots Optionnal parameters for the plot function
 #' @return An object of class \code{LAS}
 #' @examples

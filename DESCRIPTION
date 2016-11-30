@@ -18,7 +18,7 @@ BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:R (>= 3.2.0),magrittr,methods
 Imports:rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,kknn,Rcpp,sp,lazyeval
-Suggest:rgdal
+Suggests:rgdal
 LazyData: trues
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
