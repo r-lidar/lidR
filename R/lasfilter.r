@@ -48,14 +48,10 @@
 #' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
 #' @export
 #' @family lasfilters
-setGeneric("lasfilter", function(.las, ...){standardGeneric("lasfilter")})
-
-setMethod("lasfilter", "LAS",
-  function(.las, ...)
-  {
-    lasfilter_(.las, lazyeval::dots_capture(...))
-  }
-)
+lasfilter = function(.las, ...)
+{
+  lasfilter_(.las, lazyeval::dots_capture(...))
+}
 
 lasfilter_ <- function(.las, conditions)
 {

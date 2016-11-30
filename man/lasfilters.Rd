@@ -4,6 +4,7 @@
 \alias{lasfilterfirst}
 \alias{lasfilterfirstlast}
 \alias{lasfilterfirstofmany}
+\alias{lasfilterground}
 \alias{lasfilterlast}
 \alias{lasfilternth}
 \alias{lasfilters}
@@ -15,6 +16,8 @@ lasfilterfirst(.las)
 lasfilterfirstlast(.las)
 
 lasfilterfirstofmany(.las)
+
+lasfilterground(.las)
 
 lasfilterlast(.las)
 
@@ -54,6 +57,8 @@ firstReturns  = lidar \%>\% lasfilterfirst
 groundReturns = lidar \%>\% lasfilterground
 }
 \seealso{
+Other lasfilters: \code{\link{lasfilter}}
+
 Other lasfilters: \code{\link{lasfilter}}
 
 Other lasfilters: \code{\link{lasfilter}}

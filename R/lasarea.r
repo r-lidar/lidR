@@ -40,14 +40,10 @@
 #'
 #' lasarea(lidar)
 #' @export
-setGeneric("lasarea", function(.las){standardGeneric("lasarea")})
-
-setMethod("lasarea", "LAS",
-	function(.las)
-	{
-		hull = convex_hull(.las@data$X, .las@data$Y)
-		area = polygon_area(hull$x, hull$y)
-		area = round(area,1)
-		return(area)
-	}
-)
+lasarea = function(.las)
+{
+  hull = convex_hull(.las@data$X, .las@data$Y)
+  area = polygon_area(hull$x, hull$y)
+  area = round(area,1)
+  return(area)
+}

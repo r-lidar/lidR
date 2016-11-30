@@ -55,28 +55,24 @@
 #' # plot3d(dtm)
 #' @seealso
 #' \link[lidR:normalize]{normalize}
-setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv", ...){standardGeneric("grid_terrain")})
+grid_terrain = function(obj, res = 1, k = 7L, kernel = "inv", ...)
+{
+  X <- Y <- Z <- NULL
 
-setMethod("grid_terrain", "LAS",
-  function(obj, res = 1, k = 7L, kernel = "inv", ...)
-  {
-    X <- Y <- Z <- NULL
+  ex = extent(obj)
+  xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
+  yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
 
-    ex = extent(obj)
-    xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
-    yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
+  grid   = expand.grid(X = xo, Y = yo)
+  setDT(grid)
 
-    grid   = expand.grid(X = xo, Y = yo)
-    setDT(grid)
+  Zg = lasterrain(obj, grid, k, kernel, ...)
+  grid[, Z := Zg]
 
-    Zg = lasterrain(obj, grid, k, kernel, ...)
-    grid[, Z := Zg]
+  mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
+  mx = apply(mx, 1, rev)
 
-    mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
-    mx = apply(mx, 1, rev)
+  dtm = raster::raster(mx, xmn = min(grid$X), xmx = max(grid$X), ymn = min(grid$Y), ymx = max(grid$Y))
 
-    dtm = raster::raster(mx, xmn = min(grid$X), xmx = max(grid$X), ymn = min(grid$Y), ymx = max(grid$Y))
-
-    return(dtm)
-  }
-)
+  return(dtm)
+}

@@ -89,35 +89,31 @@
 #' plot(metrics, "imean")
 #' #etc.
 #' @export grid_metrics
-setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
+grid_metrics = function(obj, res, func, start = c(0,0), option = NULL)
+{
+  func_call = substitute(func)
 
-setMethod("grid_metrics", "LAS",
-	function(obj, res, func, start = c(0,0), option = NULL)
-	{
-	  func_call = substitute(func)
+  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-	  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+  x_raster = round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
+  y_raster = round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
+  flightlineID = obj@data$flightlineID
 
-		x_raster = round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-		y_raster = round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
-		flightlineID = obj@data$flightlineID
+  if(is.null(option))
+    by = list(Xc = x_raster,Yc = y_raster)
+  else if(option == "split_flightline")
+    by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
+  else
+    lidRError("LDR7", option = option)
 
- 		if(is.null(option))
- 			by = list(Xc = x_raster,Yc = y_raster)
- 		else if(option == "split_flightline")
- 			by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
- 		else
-			lidRError("LDR7", option = option)
+  stat <- obj@data[, c(eval(func_call)), 	by=by]
 
-		stat <- obj@data[, c(eval(func_call)), 	by=by]
+  n = names(stat)
+  n[1:2] = c("X", "Y")
 
-		n = names(stat)
-		n[1:2] = c("X", "Y")
+  data.table::setnames(stat, n)
+  data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
+  data.table::setattr(stat, "res", res)
 
-		data.table::setnames(stat, n)
-		data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
-		data.table::setattr(stat, "res", res)
-
-		return(stat)
-	}
-)
+  return(stat)
+}
