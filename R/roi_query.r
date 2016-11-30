@@ -47,9 +47,6 @@
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @export roi_query
-#' @importFrom utils lsf.str txtProgressBar
-#' @importFrom magrittr %>% %<>%
-#' @importFrom parallel makeCluster stopCluster parLapply clusterExport
 #' @examples
 #' \dontrun{
 #' # Build a Catalog
@@ -66,56 +63,50 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% roi_query(X, Y, R, R)
 #' }
-setGeneric("roi_query", function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...){standardGeneric("roi_query")})
+roi_query = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
+{
+  . <- tiles <- NULL
 
-#' @rdname roi_query
-setMethod("roi_query", "Catalog",
-  function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
+  nplot = length(x)
+  shape = if(is.null(r2)) 0 else 1
+
+  if(is.null(roinames)) roinames = paste0("ROI", 1:nplot)
+
+  # Make an index of the file in which are each query
+  lasindex = obj %>% roi_index(x, y, r, r2,roinames)
+
+  # Group the index of idendical queries with the aim to reduce number ofqueries
+  lasindex = lasindex[, .(roinames = list(roinames),
+                          X = list(x), Y = list(y),
+                          r = list(r), r2 = list(r2),
+                          tiles = list(unique(unlist(tiles)))),
+                      by = list(paste(tiles))][,paste := NULL]
+
+  lasindex = apply(lasindex, 1, as.list)
+
+  cat("Extracting data...\n")
+
+  if(mc.cores == 1)
   {
-    . <- tiles <- NULL
-
-    nplot = length(x)
-    shape = if(is.null(r2)) 0 else 1
-
-    if(is.null(roinames)) roinames = paste0("ROI", 1:nplot)
-
-    # Make an index of the file in which are each query
-    lasindex = obj %>% roi_index(x, y, r, r2,roinames)
-
-    # Group the index of idendical queries with the aim to reduce number ofqueries
-    lasindex = lasindex[, .(roinames = list(roinames),
-                            X = list(x), Y = list(y),
-                            r = list(r), r2 = list(r2),
-                            tiles = list(unique(unlist(tiles)))),
-                        by = list(paste(tiles))][,paste := NULL]
-
-    lasindex = apply(lasindex, 1, as.list)
-
-    cat("Extracting data...\n")
-
-    if(mc.cores == 1)
-    {
-      p = utils::txtProgressBar(max = nplot, style = 3)
-      output = lapply(lasindex, .getGrpQuery, shape, p, ...)
-    }
-    else
-    {
-      cl = parallel::makeCluster(mc.cores, outfile = "")
-      parallel::clusterExport(cl, varlist=c(lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-      output = parallel::parLapply(cl, lasindex, .getGrpQuery, shape, ...)
-      parallel::stopCluster(cl)
-    }
-
-    output = unlist(output)
-    output = output[match(roinames, names(output))]  # set back to the original order
-
-    cat("\n")
-
-    return(output)
+    p = utils::txtProgressBar(max = nplot, style = 3)
+    output = lapply(lasindex, .getGrpQuery, shape, p, ...)
   }
-)
+  else
+  {
+    cl = parallel::makeCluster(mc.cores, outfile = "")
+    parallel::clusterExport(cl, varlist=c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
+    output = parallel::parLapply(cl, lasindex, .getGrpQuery, shape, ...)
+    parallel::stopCluster(cl)
+  }
 
-#' @importFrom utils lsf.str getTxtProgressBar setTxtProgressBar
+  output = unlist(output)
+  output = output[match(roinames, names(output))]  # set back to the original order
+
+  cat("\n")
+
+  return(output)
+}
+
 .getGrpQuery = function(query, shape, p = NULL, ...)
 {
   X      = query$X

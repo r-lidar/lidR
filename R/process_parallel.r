@@ -126,48 +126,41 @@
 #' output = project %>% process_parallel(analyse_tile, varlist = export, platform = "windows")
 #' }
 #' @seealso
-#' \link[lidR:Catalog-class]{catalog}
 #' \link[parallel:mclapply]{mclapply}
 #' \link[parallel:parLapplyLB]{parLapplyLB}
 #' \link[lidR:classify_from_shapefile]{classify_from_shapefile}
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export process_parallel
-#' @importFrom parallel mclapply detectCores
-setGeneric("process_parallel", function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = ""){standardGeneric("process_parallel")})
+process_parallel = function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
+{
+  cat("Begin parallel processing... \n")
 
-#' @rdname process_parallel
-setMethod("process_parallel", "Catalog",
-	function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
-	{
-	    cat("Begin parallel processing... \n")
+  ti = Sys.time()
 
-      ti = Sys.time()
+  files = x$filename
 
-      files = x@headers$filename
+  if(platform == "unix" | mc.cores == 1)
+  {
+    cat("Platform mode: unix (fork-exec)\n")
+    cat("Num. of cores:", mc.cores, "\n\n")
+    out = parallel::mclapply(files, func, mc.preschedule = FALSE, mc.cores = mc.cores)
+  }
+  else
+  {
+    cat("Platform mode: windows (cluster)\n")
+    cat("Num. of cores:", mc.cores, "\n\n")
+    cl <- parallel::makeCluster(getOption("cl.cores", mc.cores))
+    parallel::clusterExport(cl, varlist, envir = environment())
+    out = parallel::parLapplyLB(cl, files, func)
+    parallel::stopCluster(cl)
+  }
 
-      if(platform == "unix" | mc.cores == 1)
-      {
-        cat("Platform mode: unix (fork-exec)\n")
-        cat("Num. of cores:", mc.cores, "\n\n")
-        out = parallel::mclapply(files, func, mc.preschedule = FALSE, mc.cores = mc.cores)
-      }
-      else
-      {
-        cat("Platform mode: windows (cluster)\n")
-        cat("Num. of cores:", mc.cores, "\n\n")
-        cl <- parallel::makeCluster(getOption("cl.cores", mc.cores))
-        parallel::clusterExport(cl, varlist, envir = environment())
-        out = parallel::parLapplyLB(cl, files, func)
-        parallel::stopCluster(cl)
-      }
+  out = do.call(combine, out)
 
-      out = do.call(combine, out)
+  gc()
 
-      gc()
+  tf = Sys.time()
+  cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
-      tf = Sys.time()
-      cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
-
-      return(out)
-	}
-)
+  return(out)
+}

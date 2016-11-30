@@ -60,6 +60,6 @@ lidar = readLAS(LASfile)
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
-\link[lidR:Catalog-class]{Catalog}
+\link[lidR:Catalogs]{Catalog}
 }
 
