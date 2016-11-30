@@ -12,7 +12,7 @@ Catalog(folder, ...)
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
 }
 \value{
-A Catalog object
+A data.frame with the class Catalog
 }
 \description{
 Methods to creates a \code{Catalog} object from a folder name
@@ -23,7 +23,6 @@ the data at the same time. A catalog is a simple way to manage all the file sequ
 reading only the headers.
 }
 \seealso{
-\link[lidR:Catalog]{Catalog-class}
 \link[lidR:plot.Catalog]{plot}
 \link[lidR:process_parallel]{process_parallel}
 \link[lidR:roi_query]{roi_query}

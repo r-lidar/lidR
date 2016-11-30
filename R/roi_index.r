@@ -46,37 +46,31 @@
 #' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names
 #' @export roi_index
-#' @importFrom data.table setnames data.table :=
-setGeneric("roi_index", function(obj, x, y, r, r2 = NULL, roinames = NULL){standardGeneric("roi_index")})
+roi_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
+{
+  tile <- minx <- maxx <- miny <- maxy <- NULL
+  filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
+  . <- NULL
 
-#' @rdname roi_index
-setMethod("roi_index", "Catalog",
-	function(obj, x, y, r, r2 = NULL, roinames = NULL)
-	{
-	  tile <- minx <- maxx <- miny <- maxy <- NULL
-	  filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
-	  . <- NULL
+  nplot = length(x)
 
-    nplot = length(x)
+  if(is.null(r2)) r2 = r
+  if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-	  if(is.null(r2)) r2 = r
-	  if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
+  coord.tiles = with(obj, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y))
+  data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
-	  coord.tiles = with(obj@headers, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y))
-	  data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
+  coord.plot = data.table(roinames, x, y, r, r2)
+  coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
 
-    coord.plot = data.table(roinames, x, y, r, r2)
-    coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
+  tiles = lapply(1:nplot, function(i)
+  {
+    coord = coord.plot[i]
+    subset(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
+  })
 
-    tiles = lapply(1:nplot, function(i)
-    {
-      coord = coord.plot[i]
-      subset(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
-    })
+  coord.plot[, tiles := list(tiles)]
+  coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL]
 
-    coord.plot[, tiles := list(tiles)]
-    coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL]
-
-    return(coord.plot[])
-	}
-)
+  return(coord.plot[])
+}

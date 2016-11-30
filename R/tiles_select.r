@@ -38,31 +38,22 @@
 #' @export
 #' @examples
 #' \dontrun{
-#'
 #' catalog = Catalog("<Path to a folder containing a set of .las files>")
 #' selectedFiles = tiles_select(catalog)
 #' }
 #' @seealso
-#' \link[lidR:Catalog-class]{Catalog-class}
 #' \link[lidR:Catalog]{Catalog}
-#' @importFrom graphics rect identify
-#' @importFrom magrittr %$%
-setGeneric("tiles_select", function(x){standardGeneric("tiles_select")})
+tiles_select = function(x)
+{
+  Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
 
-#' @rdname tiles_select
-setMethod("tiles_select", "Catalog",
-  function(x)
-  {
-    Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
+  graphics::plot(x)
 
-    plot(x)
+  selected = x@headers %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
 
-    selected = x@headers %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
+  x@headers = x@headers[selected,]
 
-    x@headers = x@headers[selected,]
+  x@headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y, col="red")
 
-    x@headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y, col="red")
-
-    return(x)
-  }
-)
+  return(x)
+}
