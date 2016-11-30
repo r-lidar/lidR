@@ -4,10 +4,10 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(obj, res, func, start = c(0, 0), option = NULL)
+grid_metrics(.las, res, func, start = c(0, 0), option = NULL)
 }
 \arguments{
-\item{obj}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of the cells}
 

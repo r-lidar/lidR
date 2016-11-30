@@ -4,10 +4,10 @@
 \alias{lasflightline}
 \title{Retrieve individual flightlines}
 \usage{
-lasflightline(obj, dt = 30)
+lasflightline(.las, dt = 30)
 }
 \arguments{
-\item{obj}{A LAS object}
+\item{.las}{A LAS object}
 
 \item{dt}{numeric. The threshold time lag used to retrieve flightlines}
 }

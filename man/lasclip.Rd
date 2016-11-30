@@ -7,14 +7,14 @@
 \alias{lasclipRectangle}
 \title{Clip LiDAR points}
 \usage{
-lasclipRectangle(obj, xleft, ybottom, xright, ytop, inside = TRUE)
+lasclipRectangle(.las, xleft, ybottom, xright, ytop, inside = TRUE)
 
-lasclipPolygon(obj, x, y, inside = TRUE)
+lasclipPolygon(.las, x, y, inside = TRUE)
 
-lasclipCircle(obj, xcenter, ycenter, radius, inside = TRUE)
+lasclipCircle(.las, xcenter, ycenter, radius, inside = TRUE)
 }
 \arguments{
-\item{obj}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
 \item{xleft}{scalar. of left x position.}
 

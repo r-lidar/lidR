@@ -61,37 +61,39 @@
 #' thinned %>% grid_density %>% plot
 #' @export
 lasthin = function(.las, density, homogenize = TRUE, resolution = 5)
+{
+  pulseID <- gpstime <- NULL
+
+  stopifnotlas(.las)
+
+  if(! "pulseID" %in% names(.las@data))
+    lidRError("THI1")
+
+  if(homogenize == FALSE)
   {
-	  pulseID <- gpstime <- NULL
+    n = round(density*.las@area)
+    selected = .selectPulseToRemove(.las@data$pulseID, n)
+  }
+  else
+  {
+    n = round(density*resolution^2)
 
-	  if(! "pulseID" %in% names(.las@data))
-	    lidRError("THI1")
+    x_raster = round_any(.las@data$X, resolution)
+    y_raster = round_any(.las@data$Y, resolution)
 
-    if(homogenize == FALSE)
-    {
-      n = round(density*.las@area)
-      selected = .selectPulseToRemove(.las@data$pulseID, n)
-    }
-    else
-    {
-      n = round(density*resolution^2)
+    by = list(Xr = x_raster,Yr = y_raster)
 
-      x_raster = round_any(.las@data$X, resolution)
-      y_raster = round_any(.las@data$Y, resolution)
+    selected = .las@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
+    selected[, c("Xr", "Yr") := NULL]
 
-      by = list(Xr = x_raster,Yr = y_raster)
+    setorder(selected, t)
+    setorder(.las@data, gpstime)
 
-      selected = .las@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
-      selected[, c("Xr", "Yr") := NULL]
+    selected = selected$delete
+  }
 
-      setorder(selected, t)
-      setorder(.las@data, gpstime)
-
-      selected = selected$delete
-    }
-
-    LAS(.las@data[selected], .las@header) %>% return()
-	}
+  LAS(.las@data[selected], .las@header) %>% return()
+}
 
 
 .selectPulseToRemove = function(pulseID, n)

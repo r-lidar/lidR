@@ -76,6 +76,8 @@
 #' @export
 grid_metrics3d = function(.las, res, func)
 {
+  stopifnotlas(.las)
+
   func_call = substitute(func)
 
   .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)

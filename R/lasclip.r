@@ -31,7 +31,7 @@
 #'
 #' Clip LiDAR points within a given geometry
 #'
-#' @param obj An object of class \code{LAS}
+#' @param .las An object of class \code{LAS}
 #' @param xleft	scalar. of left x position.
 #' @param ybottom	scalar. of bottom y position.
 #' @param xright scalar. of right x position.
@@ -57,38 +57,38 @@ NULL
 
 #' @export lasclipRectangle
 #' @rdname lasclip
-lasclipRectangle = function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
-	{
-	  X <- Y <- NULL
+lasclipRectangle = function(.las, xleft, ybottom, xright, ytop, inside = TRUE)
+{
+  X <- Y <- NULL
 
-	  if(inside)
-		  return(lasfilter(obj, between(X, xleft, xright), between(Y, ybottom, ytop)))
-	  else
-	    return(lasfilter(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
+  if(inside)
+    return(lasfilter(.las, between(X, xleft, xright), between(Y, ybottom, ytop)))
+  else
+    return(lasfilter(.las, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
 
-	}
+}
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(obj, x, y, inside = TRUE)
-	{
-	  X <- Y <- NULL
+lasclipPolygon = function(.las, x, y, inside = TRUE)
+{
+  X <- Y <- NULL
 
-	  if(inside)
-		  return(lasfilter(obj, points_in_polygon(x,y,X,Y)))
-	  else
-	    return(lasfilter(obj, !points_in_polygon(x,y,X,Y)))
-	}
+  if(inside)
+    return(lasfilter(.las, points_in_polygon(x,y,X,Y)))
+  else
+    return(lasfilter(.las, !points_in_polygon(x,y,X,Y)))
+}
 
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(obj, xcenter, ycenter, radius, inside = TRUE)
-	{
-	  X <- Y <- NULL
+lasclipCircle = function(.las, xcenter, ycenter, radius, inside = TRUE)
+{
+  X <- Y <- NULL
 
-	  if(inside)
-		  return(lasfilter(obj, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
-	  else
-	    return(lasfilter(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
-	}
+  if(inside)
+    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+  else
+    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+}

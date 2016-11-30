@@ -47,6 +47,7 @@
 setMethod("extent", "LAS",
 	function(x)
 	{
+	  stopifnotlas(x)
 		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
 	}
 )

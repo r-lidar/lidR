@@ -4,10 +4,10 @@
 \alias{lasscanline}
 \title{Retrieve individual scanline}
 \usage{
-lasscanline(obj)
+lasscanline(.las)
 }
 \arguments{
-\item{obj}{A LAS object}
+\item{.las}{A LAS object}
 }
 \value{
 Return nothing. The original object is modified in place by reference.

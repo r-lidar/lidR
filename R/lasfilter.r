@@ -50,6 +50,7 @@
 #' @family lasfilters
 lasfilter = function(.las, ...)
 {
+  stopifnotlas(.las)
   lasfilter_(.las, lazyeval::dots_capture(...))
 }
 

@@ -46,18 +46,20 @@
 #' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
 lasterrain = function(.las, coord, k = 7L, kernel = "inv", ...)
-  {
-    fields = names(coord)
+{
+  stopifnotlas(.las)
 
-    if( !"X" %in% fields | !"Y" %in% fields)
-      stop("Parameter coord does not have a column named X or Y",  call. = F)
+  fields = names(coord)
 
-    ground = suppressWarnings(lasfilterground(.las))
+  if( !"X" %in% fields | !"Y" %in% fields)
+    stop("Parameter coord does not have a column named X or Y",  call. = F)
 
-    if(is.null(ground))
-      stop("No ground points found. Impossible to normalize the point cloud.", call. = F)
+  ground = suppressWarnings(lasfilterground(.las))
 
-    Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, kernel = kernel, ...)$fitted.values
+  if(is.null(ground))
+    stop("No ground points found. Impossible to normalize the point cloud.", call. = F)
 
-    return(Zg)
-  }
+  Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, kernel = kernel, ...)$fitted.values
+
+  return(Zg)
+}
