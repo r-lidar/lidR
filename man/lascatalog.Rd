@@ -25,6 +25,6 @@ reading only the headers.
 \seealso{
 \link[lidR:plot.Catalog]{plot}
 \link[lidR:process_parallel]{process_parallel}
-\link[lidR:roi_query]{roi_query}
+\link[lidR:catalog_queries]{catalog_queries}
 }
 
