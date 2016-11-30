@@ -57,7 +57,7 @@ catalog_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
   if(is.null(r2)) r2 = r
   if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-  coord.tiles = with(obj, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y))
+  coord.tiles = with(obj, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y, stringsAsFactors = F))
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
   coord.plot = data.table(roinames, x, y, r, r2)
@@ -70,7 +70,17 @@ catalog_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
   })
 
   coord.plot[, tiles := list(tiles)]
-  coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL]
+  coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL][]
 
-  return(coord.plot[])
+  numfile = coord.plot$tiles %>% sapply(length)
+  n = numfile == 0
+
+  if(sum(n) > 0)
+  {
+    rois = paste(coord.plot$roinames[n], collapse = " ")
+    msg = paste(rois, "in no file.")
+    warning(msg, call. =F)
+  }
+
+  return(coord.plot)
 }
