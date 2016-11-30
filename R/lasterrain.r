@@ -30,10 +30,10 @@
 #' Get the evelation of the ground for given coordinates
 #'
 #' The algorithm use the k-nearest ground points of each input coordinates of interest to
-#' interpol the elevations at these coordinates. The interpolation is done by default using
+#' interpol the elevations at these coordinates. The interpolation is done by using
 #' an invert distance weighting (IDW)
 #'
-#' @param las a LAS objet
+#' @param .las a LAS objet
 #' @param coord data.frame containing the coordinates of the points of
 #' interest in the columns named X and Y.
 #' @param k numeric. The number of nearest neighbours
@@ -45,17 +45,17 @@
 #' @seealso
 #' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
-setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv", ...){standardGeneric("get_ground_elevation")})
+setGeneric("lasterrain", function(.las, coord, k = 7L, kernel = "inv", ...){standardGeneric("lasterrain")})
 
-setMethod("get_ground_elevation", "LAS",
-  function(las, coord, k = 7L, kernel = "inv", ...)
+setMethod("lasterrain", "LAS",
+  function(.las, coord, k = 7L, kernel = "inv", ...)
   {
     fields = names(coord)
 
     if( !"X" %in% fields | !"Y" %in% fields)
       stop("Parameter coord does not have a column named X or Y",  call. = F)
 
-    ground = suppressWarnings(lasfilterground(las))
+    ground = suppressWarnings(lasfilterground(.las))
 
     if(is.null(ground))
       stop("No ground points found. Impossible to normalize the point cloud.", call. = F)

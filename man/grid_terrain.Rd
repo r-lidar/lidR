@@ -12,7 +12,7 @@ grid_terrain(obj, res = 1, k = 7L, kernel = "inv", ...)
 \item{res}{numeric resolution.}
 
 \item{k}{numeric. The number of ground points used to interpolate (see
-\link[lidR:get_ground_elevation]{get_ground_elevation})}
+\link[lidR:lasterrain]{lasterrain})}
 
 \item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 for possible choices.}
