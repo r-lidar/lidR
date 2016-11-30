@@ -38,7 +38,7 @@
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @seealso
 #' \link[lidR:plot.Catalog]{plot}
-#' \link[lidR:process_parallel]{process_parallel}
+#' \link[lidR:catalog_apply]{catalog_apply}
 #' \link[lidR:catalog_queries]{catalog_queries}
 #' @return A data.frame with the class Catalog
 #' @export
