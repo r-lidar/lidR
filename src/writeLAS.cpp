@@ -64,7 +64,6 @@ using namespace Rcpp;
 //' @param G integer array green data
 //' @param B integer array blue data
 //' @return void
-//' @export LASlibWrite
 // [[Rcpp::export]]
 void LASlibWrite(CharacterVector file,
              List LASheader,

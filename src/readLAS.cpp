@@ -59,7 +59,6 @@ using namespace Rcpp;
 //' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
 //'
 //' @return list
-//' @export readLASdata
 // [[Rcpp::export]]
 List readLASdata(CharacterVector file,
              bool Intensity = true,
