@@ -35,7 +35,6 @@
 #' @param x A data.frame or a data.table
 #' @param res numeric the original resolution
 #' @export as.gridmetrics
-#' @importFrom data.table setDT
 as.gridmetrics = function(x, res)
 {
   data.table::setDT(x)

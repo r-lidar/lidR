@@ -34,7 +34,6 @@
 #' @param bg The color for the background. Default is black.
 #' @param \dots Supplementary parameters for \link[rgl:surface3d]{surface3d}
 #' @export
-#' @importFrom rgl surface3d open3d rgl.bg
 plot3d = function(x, y, add = FALSE, bg = "black", ...)
 {
   inargs <- list(...)

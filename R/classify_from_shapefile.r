@@ -66,13 +66,10 @@
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export classify_from_shapefile
-#' @importFrom raster crop
-#' @importFrom data.table setnames :=
 setGeneric("classify_from_shapefile", function(obj, shapefile, field = NULL){standardGeneric("classify_from_shapefile")})
 
 #' @rdname classify_from_shapefile
 #' @useDynLib lidR
-#' @importFrom Rcpp sourceCpp
 setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
   function(obj, shapefile, field = NULL)
   {

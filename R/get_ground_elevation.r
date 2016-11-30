@@ -45,8 +45,6 @@
 #' @seealso
 #' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
-#' @importFrom data.table copy :=
-#' @importFrom kknn kknn
 setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv", ...){standardGeneric("get_ground_elevation")})
 
 #' @rdname get_ground_elevation

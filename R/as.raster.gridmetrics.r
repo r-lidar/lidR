@@ -44,10 +44,7 @@
 #'
 #' meanHeight = grid_metrics(lidar, 20, mean(Z))
 #' mtx = as.raster(meanHeight)
-#' @importFrom data.table dcast
 #' @method as.raster gridmetrics
-#' @importFrom magrittr %>%
-#' @importFrom data.table setkeyv
 #' @importMethodsFrom raster as.raster
 #' @export
 as.raster.gridmetrics = function(x, z = NULL, ...)

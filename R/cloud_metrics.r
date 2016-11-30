@@ -70,7 +70,6 @@
 #'  }
 #'
 #' metrics = cloud_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
-#' @importFrom magrittr %$%
 setGeneric("cloud_metrics", function(obj, func){standardGeneric("cloud_metrics")})
 
 #' @rdname cloud_metrics

@@ -80,12 +80,7 @@ plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "bl
     }
   }
 
-  if(display == "points")
-  {
-    rgl::open3d()
-    rgl::rgl.bg(color = bg)
-    do.call(rgl::points3d, c(list(x=x$X, y=x$Y, z=x$Z), inargs))
-  }
-  else
-    lidRError("VOX1")
+  rgl::open3d()
+  rgl::rgl.bg(color = bg)
+  do.call(rgl::points3d, c(list(x=x$X, y=x$Y, z=x$Z), inargs))
 }

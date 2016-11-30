@@ -44,11 +44,9 @@
 #' @export
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
-#' @importFrom utils object.size
-#' @importFrom data.table uniqueN
 summary.LAS =	function(object, ...)
 {
-  size <- format(object.size(object), units = "auto")
+  size <- format(utils::object.size(object), units = "auto")
 
   if("pulseID" %in% names(object@data))
     npulse = data.table::uniqueN(object@data$pulseID)

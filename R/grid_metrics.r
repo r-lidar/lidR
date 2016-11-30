@@ -89,7 +89,6 @@
 #' plot(metrics, "imean")
 #' #etc.
 #' @export grid_metrics
-#' @importFrom data.table setnames setattr
 setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
 
 #' @rdname grid_metrics

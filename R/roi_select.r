@@ -46,8 +46,6 @@
 #' subset = roi_select(lidar)
 #' }
 #' @export roi_select
-#' @importFrom rgl view3d select3d rgl.close
-#' @importFrom magrittr %$% %>%
 setGeneric("roi_select", function(obj, ...){standardGeneric("roi_select")})
 
 #' @rdname roi_select

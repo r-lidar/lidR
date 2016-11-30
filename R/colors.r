@@ -35,14 +35,12 @@
 #' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR
 #' @param ncolors numeric. The number of colors in the palette.
 #' @param trim numeric.
-#' @importFrom magrittr %>%
-#' @importFrom stats quantile
 set.colors = function(x, palette, ncolors = 50, trim = 1)
 {
 
   if(trim < 1)
   {
-    n = x %>% quantile(trim)
+    n = x %>% stats::quantile(trim)
     x[x > n] = n
   }
 
@@ -64,7 +62,6 @@ set.colors = function(x, palette, ncolors = 50, trim = 1)
 #' \link[lidR:forest.colors]{forest.colors}
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' @importFrom grDevices colorRampPalette
 #' @export height.colors
 height.colors = function(n)
 {
@@ -79,7 +76,6 @@ height.colors = function(n)
 #' @param n The number of colors (> 1) to be in the palette
 #' @seealso
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' @importFrom grDevices colorRampPalette
 #' @export forest.colors
 forest.colors = function(n)
 {
@@ -95,7 +91,6 @@ forest.colors = function(n)
 #' @param n The number of colors (> 1) to be in the palette
 #' @seealso
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' @importFrom grDevices colorRampPalette colors
 #' @export random.colors
 random.colors = function(n)
 {

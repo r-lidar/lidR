@@ -49,7 +49,6 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_canopy
-#' @importFrom magrittr %>% %$%
 setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
 
 #' @rdname grid_canopy
