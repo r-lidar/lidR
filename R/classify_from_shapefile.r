@@ -107,7 +107,7 @@ setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
     }
 
     # Crop the shapefile to minimize the computations removing out of bounds polygons
-    polys = raster::crop(shapefile, extent(obj))
+    polys = raster::crop(shapefile, extent(obj)+20)
 
     # No polygon? Return NA or false depending on the method used
     if(!is.null(polys))
