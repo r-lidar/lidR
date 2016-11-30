@@ -49,11 +49,11 @@ catalog_select = function(x)
 
   graphics::plot(x)
 
-  selected = x@headers %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
+  selected = x %$% graphics::identify((Min.X+Max.X)/2, (Min.Y+Max.Y)/2, plot=F)
 
-  x@headers = x@headers[selected,]
+  x = x[selected,]
 
-  x@headers %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y, col="red")
+  x %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y, col="red")
 
   return(x)
 }
