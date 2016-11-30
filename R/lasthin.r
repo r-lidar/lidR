@@ -31,7 +31,7 @@
 #'
 #' Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 #'
-#' Thin is designed to produce output data sets that have uniform pulse densities
+#' lasthin is designed to produce output data sets that have uniform pulse densities
 #' throughout the coverage area. For each cell, the proportion of pulses that will
 #' be retained is computed using the calculated pulse density and the desired pulse
 #' density. If required pulse density is greater than the local pulse density it returns
@@ -41,7 +41,7 @@
 #' to compute a coherant local pulse density. 25 square meters looks good. 1 square
 #' meter is meaningless.
 #' @aliases  thin
-#' @param obj An object of the class \code{LAS}
+#' @param .las An object of the class \code{LAS}
 #' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.
 #' @param resolution numeric. Cell size to compute the pulse density.
@@ -51,50 +51,49 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lidar %>% thin(1, resolution = 5)
+#' thinned = lidar %>% lasthin(1, resolution = 5)
 #' lidar   %>% grid_density %>% plot
 #' thinned %>% grid_density %>% plot
 #'
 #' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lidar %>% thin(1, homogenize = FALSE)
+#' thinned = lidar %>% lasthin(1, homogenize = FALSE)
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
-#' @export thin
-setGeneric("thin", function(obj, density, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
+#' @export
+setGeneric("lasthin", function(.las, density, homogenize = TRUE, resolution = 5){standardGeneric("lasthin")})
 
-#' @rdname thin
-setMethod("thin", c("LAS", "numeric"),
-	function(obj, density, homogenize = TRUE, resolution = 5)
+setMethod("lasthin", c("LAS", "numeric"),
+	function(.las, density, homogenize = TRUE, resolution = 5)
   {
 	  pulseID <- gpstime <- NULL
 
-	  if(! "pulseID" %in% names(obj@data))
+	  if(! "pulseID" %in% names(.las@data))
 	    lidRError("THI1")
 
     if(homogenize == FALSE)
     {
-      n = round(density*obj@area)
-      selected = .selectPulseToRemove(obj@data$pulseID, n)
+      n = round(density*.las@area)
+      selected = .selectPulseToRemove(.las@data$pulseID, n)
     }
     else
     {
       n = round(density*resolution^2)
 
-      x_raster = round_any(obj@data$X, resolution)
-      y_raster = round_any(obj@data$Y, resolution)
+      x_raster = round_any(.las@data$X, resolution)
+      y_raster = round_any(.las@data$Y, resolution)
 
       by = list(Xr = x_raster,Yr = y_raster)
 
-      selected = obj@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
+      selected = .las@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
       selected[, c("Xr", "Yr") := NULL]
 
       setorder(selected, t)
-      setorder(obj@data, gpstime)
+      setorder(.las@data, gpstime)
 
       selected = selected$delete
     }
 
-    LAS(obj@data[selected], obj@header) %>% return()
+    LAS(.las@data[selected], .las@header) %>% return()
 	}
 )
 
