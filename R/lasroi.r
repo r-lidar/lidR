@@ -31,25 +31,23 @@
 #'
 #' Select an region of interest contained into a rectangle using interactively the mouse
 #'
-#' \code{roi_select} enable the user to select a region of interest (ROI) drawing
+#' \code{lasroi} enable the user to select a region of interest (ROI) drawing
 #' a rectangle with the mouse
-#' @aliases roi_select
+#' @aliases lasroi
 #' @param obj An object of class \code{LAS}
 #' @param \dots Optionnal parameters for the plot function
 #' @return An object of class \code{LAS}
 #' @examples
 #'\dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
-#' subset = roi_select(lidar)
+#' subset = lasroi(lidar)
 #' }
-#' @export roi_select
-setGeneric("roi_select", function(obj, ...){standardGeneric("roi_select")})
+#' @export
+setGeneric("lasroi", function(obj, ...){standardGeneric("lasroi")})
 
-#' @rdname roi_select
-setMethod("roi_select", "LAS",
+setMethod("lasroi", "LAS",
   function(obj, ...)
   {
     X <- Y <- NULL
