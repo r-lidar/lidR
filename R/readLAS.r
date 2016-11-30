@@ -78,7 +78,7 @@ readLAS = function(files,
                    all = FALSE)
 {
   if(class(files)[1] == "Catalog")
-    files = files@headers$filename
+    files = files$filename
 
   valid = file.exists(files)
   islas = tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
