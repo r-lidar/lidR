@@ -52,32 +52,27 @@
 #' @seealso \link[lidR:LAD]{LAD}
 #' @export gap_fraction_profile
 #' @importFrom graphics hist
+#' @importFrom data.table shift
 gap_fraction_profile = function (z, dz = 1)
 {
   maxz = max(z)
 
-  if(maxz < 3*dz)
-    return(NA_real_)
-
-  bk = seq(0, round_any(max(z), dz, ceiling), dz)
+  bk = seq(0, ceiling(maxz), dz)
 
   histogram = graphics::hist(z, breaks = bk, plot = F)
-  height    = histogram$mids
-  histogram = histogram$counts
+  h = histogram$mids
+  p = histogram$counts/sum(histogram$count)
 
-  cs = cumsum(histogram)
-  r = (dplyr::lead(cs)-cs)
-  r[is.na(r)] = 0
-  r = r[-length(r)]
+  p = c(p, 0)
 
-  r = c(length(z)-sum(r), r)
+  cs = cumsum(p)
+  i = data.table::shift(cs) /cs
+  i[is.na(i)] = 0
 
-  r = r/cumsum(r)
+  i[is.nan(i)] = NA
 
-  r[is.nan(r)] = NA
+  z = h[-1]
+  i = i[-c(1, length(i))]
 
-  z = height[-1]
-  r = r[-1]
-
-  return(data.frame(z, gf = 1-r))
+  return(data.frame(z, gf = i))
 }
