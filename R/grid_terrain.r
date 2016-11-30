@@ -37,7 +37,7 @@
 #' @param obj LAS objet
 #' @param res numeric resolution.
 #' @param k numeric. The number of ground points used to interpolate (see
-#' \link[lidR:get_ground_elevation]{get_ground_elevation})
+#' \link[lidR:lasterrain]{lasterrain})
 #' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
 #' for possible choices.
 #' @param ... extra parameter for \link[kknn:kknn]{kknn}
@@ -69,7 +69,7 @@ setMethod("grid_terrain", "LAS",
     grid   = expand.grid(X = xo, Y = yo)
     setDT(grid)
 
-    Zg = get_ground_elevation(obj, grid, k, kernel, ...)
+    Zg = lasterrain(obj, grid, k, kernel, ...)
     grid[, Z := Zg]
 
     mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix

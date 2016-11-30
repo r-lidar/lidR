@@ -35,7 +35,7 @@
 #' fly.
 #'
 #' When the paramter dtm is not provided the elevation of the ground is computed for each point
-#' of the lidar data with the function \link[lidR:get_ground_elevation]{get_ground_elevation}.
+#' of the lidar data with the function \link[lidR:lasterrain]{lasterrain}.
 #' The consequence is a more accurate normalisation. Indeed no rasterizaion impling
 #' innacuracies is required. This method lead to few negatives values.
 #'
@@ -43,7 +43,7 @@
 #' @param dtm a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
 #' automatically compute it on the fly. This second solution is more accurate
 #' because no rasterization is done (see details).
-#' @param ... optionnal parameters for \link[lidR:get_ground_elevation]{get_ground_elevation} if
+#' @param ... optionnal parameters for \link[lidR:lasterrain]{lasterrain} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @export
@@ -78,7 +78,7 @@ normalize = function(las, dtm = NULL, ...)
  . <- Z <- Zn <- Xr <- Yr <- NULL
 
   if(is.null(dtm))
-    Zn = get_ground_elevation(las, las@data, ...)
+    Zn = lasterrain(las, las@data, ...)
   else if(class(dtm)[1] == "RasterLayer")
     Zn = raster::extract(dtm, las@data[, c("X", "Y"), with = F])
   else

@@ -13,7 +13,7 @@ normalize(las, dtm = NULL, ...)
 automatically compute it on the fly. This second solution is more accurate
 because no rasterization is done (see details).}
 
-\item{...}{optionnal parameters for \link[lidR:get_ground_elevation]{get_ground_elevation} if
+\item{...}{optionnal parameters for \link[lidR:lasterrain]{lasterrain} if
 \code{dtm} parameter is NULL.}
 }
 \value{
@@ -27,7 +27,7 @@ fly.
 }
 \details{
 When the paramter dtm is not provided the elevation of the ground is computed for each point
-of the lidar data with the function \link[lidR:get_ground_elevation]{get_ground_elevation}.
+of the lidar data with the function \link[lidR:lasterrain]{lasterrain}.
 The consequence is a more accurate normalisation. Indeed no rasterizaion impling
 innacuracies is required. This method lead to few negatives values.
 }
