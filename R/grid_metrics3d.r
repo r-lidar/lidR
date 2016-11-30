@@ -40,7 +40,6 @@
 #' Voxelize will dispach the LiDAR data for each voxel in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).
 #'
-#' @aliases  voxelize
 #' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
