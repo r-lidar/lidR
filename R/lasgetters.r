@@ -54,94 +54,76 @@ NULL
 #' @export lasfilterfirst
 #' @family lasfilters
 #' @rdname lasfilters
-setGeneric("lasfilterfirst", function(.las){standardGeneric("lasfilterfirst")})
-
-setMethod("lasfilterfirst", "LAS",
-	function(.las)
-	{
-		return(lasfilternth(.las, 1))
-	}
-)
+lasfilterfirst = function(.las)
+{
+  return(lasfilternth(.las, 1))
+}
 
 #' @export lasfilterfirstlast
 #' @family lasfilters
 #' @rdname lasfilters
-setGeneric("lasfilterfirstlast", function(.las){standardGeneric("lasfilterfirstlast")})
+lasfilterfirstlast = function(.las)
+{
+  ReturnNumber <- NumberOfReturns <- NULL
 
-setMethod("lasfilterfirstlast", "LAS",
-	function(.las)
-	{
-	  ReturnNumber <- NumberOfReturns <- NULL
-
-		return(lasfilter(.las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
-	}
-)
+  return(lasfilter(.las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
+}
 
 #' @export lasfilterfirstofmany
 #' @family lasfilters
 #' @rdname lasfilters
-setGeneric("lasfilterfirstofmany", function(.las){standardGeneric("lasfilterfirstofmany")})
+lasfilterfirstofmany = function(.las)
+{
+  NumberOfReturns <- ReturnNumber <- NULL
 
-setMethod("lasfilterfirstofmany", "LAS",
-	function(.las)
-	{
-	  NumberOfReturns <- ReturnNumber <- NULL
+  return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
+}
 
-		return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
-	}
-)
+#' @export lasfilterground
+#' @family lasfilters
+#' @rdname lasfilters
+lasfilterground = function(.las)
+{
+  NumberOfReturns <- ReturnNumber <- NULL
+
+  return(lasfilter(.las, Classification == 2))
+}
 
 #' @family lasfilters
 #' @export lasfilterlast
 #' @rdname lasfilters
-setGeneric("lasfilterlast", function(.las){standardGeneric("lasfilterlast")})
+lasfilterlast = function(.las)
+{
+  NumberOfReturns <- ReturnNumber <- NULL
 
-setMethod("lasfilterlast", "LAS",
-	function(.las)
-	{
-	  NumberOfReturns <- ReturnNumber <- NULL
-
-		return(lasfilter(.las, ReturnNumber == NumberOfReturns))
-	}
-)
+  return(lasfilter(.las, ReturnNumber == NumberOfReturns))
+}
 
 #' @family lasfilters
 #' @export lasfilternth
 #' @rdname lasfilters
-setGeneric("lasfilternth", function(.las, n){standardGeneric("lasfilternth")})
-
-setMethod("lasfilternth", "LAS",
-	function(.las, n)
-	{
-	  ReturnNumber <- NULL
-		return(lasfilter(.las, ReturnNumber == n))
-	}
-)
+lasfilternth = function(.las, n)
+{
+  ReturnNumber <- NULL
+  return(lasfilter(.las, ReturnNumber == n))
+}
 
 #' @family lasfilters
 #' @export lasfiltersingle
 #' @rdname lasfilters
-setGeneric("lasfiltersingle", function(.las){standardGeneric("lasfiltersingle")})
+lasfiltersingle = function(.las)
+{
+  NumberOfReturns <- NULL
 
-setMethod("lasfiltersingle", "LAS",
-	function(.las)
-	{
-	  NumberOfReturns <- NULL
-
-		return(lasfilter(.las, NumberOfReturns == 1))
-	}
-)
+  return(lasfilter(.las, NumberOfReturns == 1))
+}
 
 #' @family lasfilters
 #' @export lasfilterfirstofmany
 #' @rdname lasfilters
-setGeneric("lasfilterfirstofmany", function(.las){standardGeneric("lasfilterfirstofmany")})
+lasfilterfirstofmany = function(.las)
+{
+  NumberOfReturns <- ReturnNumber <- NULL
 
-setMethod("lasfilterfirstofmany", "LAS",
-	function(.las)
-	{
-	  NumberOfReturns <- ReturnNumber <- NULL
-
-		return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
-	}
-)
+  return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
+}

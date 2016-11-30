@@ -45,10 +45,7 @@
 #' subset = lasroi(lidar)
 #' }
 #' @export
-setGeneric("lasroi", function(obj, ...){standardGeneric("lasroi")})
-
-setMethod("lasroi", "LAS",
-  function(obj, ...)
+lasroi = function(obj, ...)
   {
     X <- Y <- NULL
 
@@ -64,4 +61,3 @@ setMethod("lasroi", "LAS",
 
     return(out)
   }
-)

@@ -38,28 +38,24 @@
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export laspulse
-setGeneric("laspulse", function(obj){standardGeneric("laspulse")})
+laspulse = function(obj)
+{
+  gpstime <- pulseID <- .GRP <- NULL
 
-setMethod("laspulse", "LAS",
-  function(obj)
+  fields <- names(obj@data)
+  dpulse = NA_real_
+
+  if("gpstime" %in% fields)
   {
-    gpstime <- pulseID <- .GRP <- NULL
-
-    fields <- names(obj@data)
-    dpulse = NA_real_
-
-    if("gpstime" %in% fields)
-    {
-      data.table::setorder(obj@data, gpstime)
-      obj@data[, pulseID := .lagisdiff(gpstime)][]
-      dpulse <- obj@data$pulseID %>% data.table::uniqueN() %>% divide_by(obj@area)
-    }
-    else
-      lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
-
-    return(invisible(dpulse))
+    data.table::setorder(obj@data, gpstime)
+    obj@data[, pulseID := .lagisdiff(gpstime)][]
+    dpulse <- obj@data$pulseID %>% data.table::uniqueN() %>% divide_by(obj@area)
   }
-)
+  else
+    lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
+
+  return(invisible(dpulse))
+}
 
 
 #' Retrieve individual flightlines
@@ -76,26 +72,22 @@ setMethod("laspulse", "LAS",
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export lasflightline
-setGeneric("lasflightline", function(obj, dt = 30){standardGeneric("lasflightline")})
+lasflightline = function(obj, dt = 30)
+{
+  gpstime <- flightlineID <- NULL
 
-setMethod("lasflightline", "LAS",
-  function(obj, dt = 30)
+  fields <- names(obj@data)
+
+  if("gpstime" %in% fields)
   {
-    gpstime <- flightlineID <- NULL
-
-    fields <- names(obj@data)
-
-    if("gpstime" %in% fields)
-    {
-      data.table::setorder(obj@data, gpstime)
-      obj@data[, flightlineID := .lagissup(gpstime, dt)][]
-    }
-    else
-      lidRError("LDR4", infield = "gpstime", outfield = "flightlineID", behaviour = warning)
-
-    return(invisible())
+    data.table::setorder(obj@data, gpstime)
+    obj@data[, flightlineID := .lagissup(gpstime, dt)][]
   }
-)
+  else
+    lidRError("LDR4", infield = "gpstime", outfield = "flightlineID", behaviour = warning)
+
+  return(invisible())
+}
 
 
 #' Retrieve individual scanline
@@ -109,37 +101,33 @@ setMethod("lasflightline", "LAS",
 #' @param obj A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export lasscanline
-setGeneric("lasscanline", function(obj){standardGeneric("lasscanline")})
+lasscanline = function(obj)
+{
+  gpstime <- scanlineID <- ScanDirectionFlag <- NULL
 
-setMethod("lasscanline", "LAS",
-  function(obj)
+  fields <- names(obj@data)
+
+  if("gpstime" %in% fields)
   {
-    gpstime <- scanlineID <- ScanDirectionFlag <- NULL
+    data.table::setorder(obj@data, gpstime)
 
-    fields <- names(obj@data)
-
-    if("gpstime" %in% fields)
+    if ("ScanDirectionFlag" %in% fields)
     {
-      data.table::setorder(obj@data, gpstime)
+      values = unique(obj$ScanDirectionFlag)
 
-      if ("ScanDirectionFlag" %in% fields)
-      {
-        values = unique(obj$ScanDirectionFlag)
-
-        if(length(values) == 2 & 1 %in% values & 2 %in% values)
-          obj@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
-        else
-           lidRError("LDR8", behaviour = warning)
-      }
+      if(length(values) == 2 & 1 %in% values & 2 %in% values)
+        obj@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
       else
-        lidRError("LDR4", infield = "ScanDirectionFlag", outfield = "scanlineID", behaviour = warning)
+        lidRError("LDR8", behaviour = warning)
     }
     else
-      lidRError("LDR4", infield = "gpstime", outfield = "scanlineID", behaviour = warning)
-
-    return(invisible())
+      lidRError("LDR4", infield = "ScanDirectionFlag", outfield = "scanlineID", behaviour = warning)
   }
-)
+  else
+    lidRError("LDR4", infield = "gpstime", outfield = "scanlineID", behaviour = warning)
+
+  return(invisible())
+}
 
 .lagissup = function(x, dx)
 {

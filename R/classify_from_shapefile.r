@@ -66,117 +66,113 @@
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export
-setGeneric("classify_from_shapefile", function(obj, shapefile, field = NULL){standardGeneric("classify_from_shapefile")})
+classify_from_shapefile = function(obj, shapefile, field = NULL)
+{
+  info <- NULL
 
-setMethod("classify_from_shapefile", c("LAS", "SpatialPolygonsDataFrame"),
-  function(obj, shapefile, field = NULL)
+  npoints = dim(obj@data)[1]
+
+  # No field is provide:
+  # Assign the number of the polygon
+  if(is.null(field))
   {
-    info <- NULL
-
-    npoints = dim(obj@data)[1]
-
-    # No field is provide:
-    # Assign the number of the polygon
-    if(is.null(field))
-    {
-      field = "id"
-      method = 0
-    }
-    # The field is the name of a field in the attribute table:
-    # Assign the value of the field
-    else if(field %in% names(shapefile@data))
-    {
-      method = 1
-
-      if(class(shapefile@data[,field]) == "factor")
-        values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
-      else
-        values = rep(NA_real_, npoints)
-    }
-    # The field is not the name of a field in the attribute table:
-    # Assign a boolean if the point is in a polygon or not.
-    else
-    {
-      method = 2
-      values = logical(npoints)
-    }
-
-    # Crop the shapefile to minimize the computations removing out of bounds polygons
-    polys = raster::crop(shapefile, extent(obj)+20)
-
-    # No polygon? Return NA or false depending on the method used
-    if(!is.null(polys))
-    {
-      # Extract the coordinates of each polygon as a list.
-      # The list has 2 levels of depth because of multi part polygons
-      xcoords = lapply(polys@polygons,
-                       function(x)
-                       {
-                         lapply(x@Polygons, function(x){x@coords[,1]})
-                       })
-
-      ycoords = lapply(polys@polygons,
-                       function(x)
-                       {
-                         lapply(x@Polygons, function(x){x@coords[,2]})
-                       })
-
-      is_hole = lapply(polys@polygons,
-                       function(x)
-                       {
-                         lapply(x@Polygons, function(x){x@hole})
-                       })
-
-      # The reduction to 1 level of depth list will introduce a loss of information
-      # for multi-part polygon. Here we need to retrieve the real ids of each polygon
-      # before reducing to 1 level of depth
-      i = 0
-      lengths = lapply(xcoords, length)  %>%  unlist
-      idpolys = lapply(lengths, function(x){i<<-i+1;rep.int(i,x)}) %>% unlist
-
-      # Make the lists 1 level depth
-      xcoords %<>% unlist(recursive = FALSE)
-      ycoords %<>% unlist(recursive = FALSE)
-
-      is_hole %<>% unlist()
-      is_hole = c(FALSE, is_hole)
-
-      # Return the id of each polygon
-      ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
-
-      if(method == 1)
-      {
-        inpoly = ids > 0
-        inhole = is_hole[ids+1]
-        inpoly.nothole = inpoly & !inhole
-
-        id = idpolys[ids[inpoly.nothole]]
-        values[inpoly.nothole] = polys@data[, field][id]
-
-        message(paste0("Assign the value of field ", field , " from the table of attibutes to the points"))
-      }
-      else if(method == 2)
-      {
-        values = ids > 0 & !is_hole[ids+1]
-        message("Assign a boolean value to the points")
-      }
-      else
-      {
-        values = ifelse(ids == 0, NA_real_, ids)
-        message("Assign a number to each individual polygon")
-      }
-    }
-    else
-    {
-      warning("No polygon found within the data", call. = F)
-    }
-
-    obj@data[,info:=values][]
-
-    colnames = names(obj@data)
-    colnames[length(colnames)] = field
-    data.table::setnames(obj@data, colnames)
-
-    return(invisible(NULL))
+    field = "id"
+    method = 0
   }
-)
+  # The field is the name of a field in the attribute table:
+  # Assign the value of the field
+  else if(field %in% names(shapefile@data))
+  {
+    method = 1
+
+    if(class(shapefile@data[,field]) == "factor")
+      values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
+    else
+      values = rep(NA_real_, npoints)
+  }
+  # The field is not the name of a field in the attribute table:
+  # Assign a boolean if the point is in a polygon or not.
+  else
+  {
+    method = 2
+    values = logical(npoints)
+  }
+
+  # Crop the shapefile to minimize the computations removing out of bounds polygons
+  polys = raster::crop(shapefile, extent(obj)+20)
+
+  # No polygon? Return NA or false depending on the method used
+  if(!is.null(polys))
+  {
+    # Extract the coordinates of each polygon as a list.
+    # The list has 2 levels of depth because of multi part polygons
+    xcoords = lapply(polys@polygons,
+                     function(x)
+                     {
+                       lapply(x@Polygons, function(x){x@coords[,1]})
+                     })
+
+    ycoords = lapply(polys@polygons,
+                     function(x)
+                     {
+                       lapply(x@Polygons, function(x){x@coords[,2]})
+                     })
+
+    is_hole = lapply(polys@polygons,
+                     function(x)
+                     {
+                       lapply(x@Polygons, function(x){x@hole})
+                     })
+
+    # The reduction to 1 level of depth list will introduce a loss of information
+    # for multi-part polygon. Here we need to retrieve the real ids of each polygon
+    # before reducing to 1 level of depth
+    i = 0
+    lengths = lapply(xcoords, length)  %>%  unlist
+    idpolys = lapply(lengths, function(x){i<<-i+1;rep.int(i,x)}) %>% unlist
+
+    # Make the lists 1 level depth
+    xcoords %<>% unlist(recursive = FALSE)
+    ycoords %<>% unlist(recursive = FALSE)
+
+    is_hole %<>% unlist()
+    is_hole = c(FALSE, is_hole)
+
+    # Return the id of each polygon
+    ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
+
+    if(method == 1)
+    {
+      inpoly = ids > 0
+      inhole = is_hole[ids+1]
+      inpoly.nothole = inpoly & !inhole
+
+      id = idpolys[ids[inpoly.nothole]]
+      values[inpoly.nothole] = polys@data[, field][id]
+
+      message(paste0("Assign the value of field ", field , " from the table of attibutes to the points"))
+    }
+    else if(method == 2)
+    {
+      values = ids > 0 & !is_hole[ids+1]
+      message("Assign a boolean value to the points")
+    }
+    else
+    {
+      values = ifelse(ids == 0, NA_real_, ids)
+      message("Assign a number to each individual polygon")
+    }
+  }
+  else
+  {
+    warning("No polygon found within the data", call. = F)
+  }
+
+  obj@data[,info:=values][]
+
+  colnames = names(obj@data)
+  colnames[length(colnames)] = field
+  data.table::setnames(obj@data, colnames)
+
+  return(invisible(NULL))
+}

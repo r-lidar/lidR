@@ -49,15 +49,11 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_canopy
-setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
+grid_canopy = function(obj, res = 2, start=c(0,0))
+{
+  Z <- NULL
 
-setMethod("grid_canopy", "LAS",
-	function(obj, res = 2, start=c(0,0))
-	{
-	  Z <- NULL
+  ret = grid_metrics(obj, res, list(Z = max(Z)), start)
 
-	  ret = grid_metrics(obj, res, list(Z = max(Z)), start)
-
-    return(ret)
-	}
-)
+  return(ret)
+}

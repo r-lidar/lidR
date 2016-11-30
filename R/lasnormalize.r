@@ -73,10 +73,7 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-setGeneric("lasnormalize", function(.las, dtm = NULL, ...){standardGeneric("lasnormalize")})
-
-setMethod("lasnormalize", "LAS",
-  function(.las, dtm = NULL, ...)
+lasnormalize = function(.las, dtm = NULL, ...)
   {
    . <- Z <- Zn <- Xr <- Yr <- NULL
 
@@ -92,7 +89,6 @@ setMethod("lasnormalize", "LAS",
 
     return(LAS(normalized, .las@header))
   }
-)
 
 #' Conveniant operator to lasnormalize
 #'

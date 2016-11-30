@@ -74,30 +74,26 @@
 #' plot(voxels, "imean")
 #' #etc.
 #' @export
-setGeneric("grid_metrics3d", function(.las, res, func){standardGeneric("grid_metrics3d")})
+grid_metrics3d = function(.las, res, func)
+{
+  func_call = substitute(func)
 
-setMethod("grid_metrics3d", "LAS",
-    function(.las, res, func)
-    {
-        func_call = substitute(func)
+  .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-	      .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+  x_raster = round_any(.las@data$X, res)
+  y_raster = round_any(.las@data$Y, res)
+  z_raster = round_any(.las@data$Z-0.5*res, res)+0.5*res
 
-        x_raster = round_any(.las@data$X, res)
-        y_raster = round_any(.las@data$Y, res)
-        z_raster = round_any(.las@data$Z-0.5*res, res)+0.5*res
+  by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
 
-        by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
+  stat <- .las@data[, c(eval(func_call)), by=by]
 
-        stat <- .las@data[, c(eval(func_call)), by=by]
+  n = names(stat)
+  n[1:3] = c("X", "Y", "Z")
+  setnames(stat, n)
 
-        n = names(stat)
-        n[1:3] = c("X", "Y", "Z")
-        setnames(stat, n)
+  attr(stat, "class") = c("voxels", attr(stat, "class"))
+  attr(stat, "res") = res
 
-        attr(stat, "class") = c("voxels", attr(stat, "class"))
-        attr(stat, "res") = res
-
-        return(stat)
-    }
-)
+  return(stat)
+}

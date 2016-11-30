@@ -46,23 +46,19 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_density
-setGeneric("grid_density", function(obj, res = 4){standardGeneric("grid_density")})
+grid_density = function(obj, res = 4)
+{
+  pulseID <- density <- X <- NULL
 
-setMethod("grid_density", "LAS",
-	function(obj, res = 4)
-	{
-	  pulseID <- density <- X <- NULL
+  if(! "pulseID" %in% names(obj@data))
+  {
+    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.", call. = F)
+    ret = grid_metrics(obj, res, list(density = length(X)/res^2))
+  }
+  else
+  {
+    ret = grid_metrics(obj, res, list(density = length(unique(pulseID))/res^2))
+  }
 
-	  if(! "pulseID" %in% names(obj@data))
-	  {
-	    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.", call. = F)
-	    ret = grid_metrics(obj, res, list(density = length(X)/res^2))
-	  }
-	  else
-	  {
-	    ret = grid_metrics(obj, res, list(density = length(unique(pulseID))/res^2))
-	  }
-
-    return(ret)
-	}
-)
+  return(ret)
+}

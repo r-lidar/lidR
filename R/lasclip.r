@@ -57,10 +57,7 @@ NULL
 
 #' @export lasclipRectangle
 #' @rdname lasclip
-setGeneric("lasclipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("lasclipRectangle")})
-
-setMethod("lasclipRectangle", "LAS",
-	function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
+lasclipRectangle = function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
 	{
 	  X <- Y <- NULL
 
@@ -70,14 +67,10 @@ setMethod("lasclipRectangle", "LAS",
 	    return(lasfilter(obj, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
 
 	}
-)
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-setGeneric("lasclipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("lasclipPolygon")})
-
-setMethod("lasclipPolygon", "LAS",
-	function(obj, x, y, inside = TRUE)
+lasclipPolygon = function(obj, x, y, inside = TRUE)
 	{
 	  X <- Y <- NULL
 
@@ -86,15 +79,11 @@ setMethod("lasclipPolygon", "LAS",
 	  else
 	    return(lasfilter(obj, !points_in_polygon(x,y,X,Y)))
 	}
-)
 
 
 #' @export lasclipCircle
 #' @rdname lasclip
-setGeneric("lasclipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("lasclipCircle")})
-
-setMethod("lasclipCircle", "LAS",
-	function(obj, xcenter, ycenter, radius, inside = TRUE)
+lasclipCircle = function(obj, xcenter, ycenter, radius, inside = TRUE)
 	{
 	  X <- Y <- NULL
 
@@ -103,4 +92,3 @@ setMethod("lasclipCircle", "LAS",
 	  else
 	    return(lasfilter(obj, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
 	}
-)

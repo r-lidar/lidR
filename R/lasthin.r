@@ -60,10 +60,7 @@
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export
-setGeneric("lasthin", function(.las, density, homogenize = TRUE, resolution = 5){standardGeneric("lasthin")})
-
-setMethod("lasthin", c("LAS", "numeric"),
-	function(.las, density, homogenize = TRUE, resolution = 5)
+lasthin = function(.las, density, homogenize = TRUE, resolution = 5)
   {
 	  pulseID <- gpstime <- NULL
 
@@ -95,7 +92,7 @@ setMethod("lasthin", c("LAS", "numeric"),
 
     LAS(.las@data[selected], .las@header) %>% return()
 	}
-)
+
 
 .selectPulseToRemove = function(pulseID, n)
 {

@@ -45,10 +45,7 @@
 #' @seealso
 #' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
-setGeneric("lasterrain", function(.las, coord, k = 7L, kernel = "inv", ...){standardGeneric("lasterrain")})
-
-setMethod("lasterrain", "LAS",
-  function(.las, coord, k = 7L, kernel = "inv", ...)
+lasterrain = function(.las, coord, k = 7L, kernel = "inv", ...)
   {
     fields = names(coord)
 
@@ -64,4 +61,3 @@ setMethod("lasterrain", "LAS",
 
     return(Zg)
   }
-)
