@@ -48,7 +48,6 @@
 #' # Multiple criteria
 #' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
 #' @seealso
-#' \link[dplyr:filter]{filter}
 #' \link[lidR:LAS]{Class LAS}
 #' \link[lidR:getFirst]{getFirst}
 #' \link[lidR:getFirstLast]{getFirstLast}
