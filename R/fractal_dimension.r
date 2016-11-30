@@ -76,8 +76,8 @@ fractal_dimension = function(mtx)
     rci <- (rg-1)*max(cg) + cg
     N <- prod(dim(mtx))/(q^2)
 
-	  clip = lapply(1:N, function(x) mtx[rci==x])
-	  box = sapply(clip,max)/q
+	  lasclip = lapply(1:N, function(x) mtx[rci==x])
+	  box = sapply(lasclip,max)/q
 
 	  return(sum(box))
 }
