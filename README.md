@@ -1,6 +1,6 @@
 ![Version](http://img.shields.io/Version/1.0.0%20beta.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
-<div style="background:#ffc3c3;padding:8px;border:solid red;margin:10px;border-radius:10px">**Advertissement for old users: **: I will sumbmit the package to the CRAN soon. The previous version was v1.2.0. The current version is v1.0.0. to be logical and get the foundation right. This version is entirely non compatible with the old v1.2.0 because all the function names changed to get a better coherance. All my privious work was try and error. This version is fixed.
+<div style="background:#ffc3c3;padding:8px;border:solid red;margin:10px;border-radius:10px">**Advertissement for old users: **: I will sumbmit the package to the CRAN soon. The previous version was v1.2.0. The current version is v1.0.0. to be logical and get the foundation right. This version is entirely non compatible with the old v1.2.0 because all the function names changed to get a better coherance. All my privious work was try and error. This version is fixed in the stone.
 </div>
 
 R package for airborne LiDAR data manipulation and visualisation for forest applications. 
