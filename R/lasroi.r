@@ -45,19 +45,21 @@
 #' subset = lasroi(lidar)
 #' }
 #' @export
-lasroi = function(obj, ...)
-  {
-    X <- Y <- NULL
+lasroi = function(.las, ...)
+{
+  X <- Y <- NULL
 
-    plot.LAS(obj, ...)
-    rgl::view3d(0,0)
+  stopifnotlas(.las)
 
-    f = rgl::select3d()
-    keep = obj@data %$% f(X,Y,0)
-    rgl::rgl.close()
+  plot.LAS(.las, ...)
+  rgl::view3d(0,0)
 
-    out = obj %>% lasfilter(keep)
-    plot.LAS(out, ...)
+  f = rgl::select3d()
+  keep = .las@data %$% f(X,Y,0)
+  rgl::rgl.close()
 
-    return(out)
-  }
+  out = .las %>% lasfilter(keep)
+  plot.LAS(out, ...)
+
+  return(out)
+}

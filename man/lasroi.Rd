@@ -4,7 +4,7 @@
 \alias{lasroi}
 \title{Select an region of interest interactively}
 \usage{
-lasroi(obj, ...)
+lasroi(.las, ...)
 }
 \arguments{
 \item{obj}{An object of class \code{LAS}}

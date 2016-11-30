@@ -74,21 +74,23 @@
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
 lasnormalize = function(.las, dtm = NULL, ...)
-  {
-   . <- Z <- Zn <- Xr <- Yr <- NULL
+{
+  . <- Z <- Zn <- Xr <- Yr <- NULL
 
-    if(is.null(dtm))
-      Zn = lasterrain(.las, .las@data, ...)
-    else if(class(dtm)[1] == "RasterLayer")
-      Zn = raster::extract(dtm, .las@data[, c("X", "Y"), with = F])
-    else
-      stop("The terrain model is not a RasterLayer")
+  stopifnotlas(.las)
 
-    normalized = data.table::copy(.las@data)
-    normalized[, Z := round(Z - Zn, 3)][]
+  if(is.null(dtm))
+    Zn = lasterrain(.las, .las@data, ...)
+  else if(class(dtm)[1] == "RasterLayer")
+    Zn = raster::extract(dtm, .las@data[, c("X", "Y"), with = F])
+  else
+    stop("The terrain model is not a RasterLayer")
 
-    return(LAS(normalized, .las@header))
-  }
+  normalized = data.table::copy(.las@data)
+  normalized[, Z := round(Z - Zn, 3)][]
+
+  return(LAS(normalized, .las@header))
+}
 
 #' Conveniant operator to lasnormalize
 #'

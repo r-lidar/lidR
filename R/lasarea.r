@@ -42,6 +42,8 @@
 #' @export
 lasarea = function(.las)
 {
+  stopifnotlas(.las)
+
   hull = convex_hull(.las@data$X, .las@data$Y)
   area = polygon_area(hull$x, hull$y)
   area = round(area,1)

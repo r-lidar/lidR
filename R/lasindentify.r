@@ -34,22 +34,24 @@
 #' beam. Once points are ordered by GPS time the pattern of return number enable
 #' to attribute a new number to the points every first return.
 #'
-#' @param obj A LAS object
+#' @param .las A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export laspulse
-laspulse = function(obj)
+laspulse = function(.las)
 {
   gpstime <- pulseID <- .GRP <- NULL
 
-  fields <- names(obj@data)
+  stopifnotlas(.las)
+
+  fields <- names(.las@data)
   dpulse = NA_real_
 
   if("gpstime" %in% fields)
   {
-    data.table::setorder(obj@data, gpstime)
-    obj@data[, pulseID := .lagisdiff(gpstime)][]
-    dpulse <- obj@data$pulseID %>% data.table::uniqueN() %>% divide_by(obj@area)
+    data.table::setorder(.las@data, gpstime)
+    .las@data[, pulseID := .lagisdiff(gpstime)][]
+    dpulse <- .las@data$pulseID %>% data.table::uniqueN() %>% divide_by(.las@area)
   }
   else
     lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
@@ -67,21 +69,23 @@ laspulse = function(obj)
 #' points is too long it means that is comes from another flightine. The defaut
 #' thresohold is 30 seconds
 #'
-#' @param obj A LAS object
+#' @param .las A LAS object
 #' @param dt numeric. The threshold time lag used to retrieve flightlines
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export lasflightline
-lasflightline = function(obj, dt = 30)
+lasflightline = function(.las, dt = 30)
 {
   gpstime <- flightlineID <- NULL
 
-  fields <- names(obj@data)
+  stopifnotlas(.las)
+
+  fields <- names(.las@data)
 
   if("gpstime" %in% fields)
   {
-    data.table::setorder(obj@data, gpstime)
-    obj@data[, flightlineID := .lagissup(gpstime, dt)][]
+    data.table::setorder(.las@data, gpstime)
+    .las@data[, flightlineID := .lagissup(gpstime, dt)][]
   }
   else
     lidRError("LDR4", infield = "gpstime", outfield = "flightlineID", behaviour = warning)
@@ -98,25 +102,27 @@ lasflightline = function(obj, dt = 30)
 #' order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
 #' retrieve each scanline
 #'
-#' @param obj A LAS object
+#' @param .las A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export lasscanline
-lasscanline = function(obj)
+lasscanline = function(.las)
 {
   gpstime <- scanlineID <- ScanDirectionFlag <- NULL
 
-  fields <- names(obj@data)
+  stopifnotlas(.las)
+
+  fields <- names(.las@data)
 
   if("gpstime" %in% fields)
   {
-    data.table::setorder(obj@data, gpstime)
+    data.table::setorder(.las@data, gpstime)
 
     if ("ScanDirectionFlag" %in% fields)
     {
-      values = unique(obj$ScanDirectionFlag)
+      values = unique(.las$ScanDirectionFlag)
 
       if(length(values) == 2 & 1 %in% values & 2 %in% values)
-        obj@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
+        .las@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
       else
         lidRError("LDR8", behaviour = warning)
     }

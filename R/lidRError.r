@@ -82,3 +82,9 @@ lidRError = function(code, ..., behaviour = stop)
 
   behaviour(msg, call.=F)
 }
+
+stopifnotlas = function(x)
+{
+  if(class(x)[1] != "LAS")
+    stop("First argument is not a LAS object", call. = F)
+}

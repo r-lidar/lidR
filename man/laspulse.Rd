@@ -4,10 +4,10 @@
 \alias{laspulse}
 \title{Retrieve individual pulse}
 \usage{
-laspulse(obj)
+laspulse(.las)
 }
 \arguments{
-\item{obj}{A LAS object}
+\item{.las}{A LAS object}
 }
 \value{
 Return nothing. The original object is modified in place by reference.
