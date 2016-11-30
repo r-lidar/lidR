@@ -37,10 +37,10 @@
 #' @param obj A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
 #'
-#' @export detect_pulse
-setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
+#' @export laspulse
+setGeneric("laspulse", function(obj){standardGeneric("laspulse")})
 
-setMethod("detect_pulse", "LAS",
+setMethod("laspulse", "LAS",
   function(obj)
   {
     gpstime <- pulseID <- .GRP <- NULL
@@ -75,10 +75,10 @@ setMethod("detect_pulse", "LAS",
 #' @param dt numeric. The threshold time lag used to retrieve flightlines
 #' @return Return nothing. The original object is modified in place by reference.
 #'
-#' @export detect_flightline
-setGeneric("detect_flightline", function(obj, dt = 30){standardGeneric("detect_flightline")})
+#' @export lasflightline
+setGeneric("lasflightline", function(obj, dt = 30){standardGeneric("lasflightline")})
 
-setMethod("detect_flightline", "LAS",
+setMethod("lasflightline", "LAS",
   function(obj, dt = 30)
   {
     gpstime <- flightlineID <- NULL
@@ -108,10 +108,10 @@ setMethod("detect_flightline", "LAS",
 #'
 #' @param obj A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
-#' @export detect_scanline
-setGeneric("detect_scanline", function(obj){standardGeneric("detect_scanline")})
+#' @export lasscanline
+setGeneric("lasscanline", function(obj){standardGeneric("lasscanline")})
 
-setMethod("detect_scanline", "LAS",
+setMethod("lasscanline", "LAS",
   function(obj)
   {
     gpstime <- scanlineID <- ScanDirectionFlag <- NULL
