@@ -46,8 +46,7 @@
 #' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names
 #' @export roi_index
-#' @importFrom dplyr select
-#' @importFrom data.table data.table :=
+#' @importFrom data.table setnames data.table :=
 setGeneric("roi_index", function(obj, x, y, r, r2 = NULL, roinames = NULL){standardGeneric("roi_index")})
 
 #' @rdname roi_index
@@ -63,12 +62,8 @@ setMethod("roi_index", "Catalog",
 	  if(is.null(r2)) r2 = r
 	  if(is.null(roinames)) roinames = paste("ROI", 1:nplot, sep="")
 
-	  coord.tiles = obj@headers %>%
-            	      dplyr::select(tile = filename,
-            	                    minx = Min.X,
-            	                    maxx = Max.X,
-            	                    miny = Min.Y,
-            	                    maxy = Max.Y)
+	  coord.tiles = with(obj@headers, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y))
+	  data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
     coord.plot = data.table(roinames, x, y, r, r2)
     coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
@@ -76,7 +71,7 @@ setMethod("roi_index", "Catalog",
     tiles = lapply(1:nplot, function(i)
     {
       coord = coord.plot[i]
-      dplyr::filter(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
+      subset(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
     })
 
     coord.plot[, tiles := list(tiles)]
