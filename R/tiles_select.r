@@ -38,11 +38,11 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' catalog = Catalog("<Path to a folder containing a set of .las files>")
+#' catalog = lascatalog("<Path to a folder containing a set of .las files>")
 #' selectedFiles = tiles_select(catalog)
 #' }
 #' @seealso
-#' \link[lidR:Catalog]{Catalog}
+#' \link[lidR:lascatalog]{Catalog}
 tiles_select = function(x)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL

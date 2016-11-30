@@ -72,7 +72,7 @@ products. The users could, for example, filter the invalid/corrupted data at the
 # about this function
 
 # 1. build a project
-project = Catalog("folder")
+project = lascatalog("folder")
 plot(project)
 
 # 2. load the shapefile you need to filter your points (if needed).
