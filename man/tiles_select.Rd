@@ -21,11 +21,11 @@ The selected files turn red on the plot at the end of the selection.
 }
 \examples{
 \dontrun{
-catalog = Catalog("<Path to a folder containing a set of .las files>")
+catalog = lascatalog("<Path to a folder containing a set of .las files>")
 selectedFiles = tiles_select(catalog)
 }
 }
 \seealso{
-\link[lidR:Catalog]{Catalog}
+\link[lidR:lascatalog]{Catalog}
 }
 

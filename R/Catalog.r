@@ -27,7 +27,7 @@
 
 
 
-#' Build a Catalog object
+#' Build a catalog of las tiles/files
 #'
 #' Methods to creates a \code{Catalog} object from a folder name
 #'
@@ -41,8 +41,8 @@
 #' \link[lidR:process_parallel]{process_parallel}
 #' \link[lidR:roi_query]{roi_query}
 #' @return A data.frame with the class Catalog
-#' @export Catalog
-Catalog = function(folder, ...)
+#' @export
+lascatalog = function(folder, ...)
 {
   if (!is.character(folder))
     lidRError("GTG1")

@@ -50,7 +50,7 @@
 #' @examples
 #' \dontrun{
 #' # Build a Catalog
-#' catalog = Catalog("<Path to a folder containing a set of las or laz files>")
+#' catalog = lascatalog("<Path to a folder containing a set of las or laz files>")
 #'
 #' # Get coordinates from an external file
 #' X = runif(30, 690000, 800000)
