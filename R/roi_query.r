@@ -121,9 +121,9 @@ roi_query = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...
   for(j in 1:length(X))
   {
     if(shape == 0)
-      output[[j]] = clipCircle(lidar, X[j], Y[j], r[j])
+      output[[j]] = lasclipCircle(lidar, X[j], Y[j], r[j])
     else
-      output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
+      output[[j]] = lasclipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
 
     if(!is.null(p))
     {

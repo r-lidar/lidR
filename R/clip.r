@@ -48,16 +48,18 @@
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' subset = lidar %>% clipRectangle(xleft=684850, ybottom=5017850,
+#' subset = lidar %>% lasclipRectangle(xleft=684850, ybottom=5017850,
 #'                                  xright=684900, ytop =5017900)
 #'
 #' plot(subset)
-#' @rdname clip
-#' @export clipRectangle
-setGeneric("clipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("clipRectangle")})
+#' @name lasclip
+NULL
 
-#' @rdname clip
-setMethod("clipRectangle", "LAS",
+#' @export lasclipRectangle
+#' @rdname lasclip
+setGeneric("lasclipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("lasclipRectangle")})
+
+setMethod("lasclipRectangle", "LAS",
 	function(obj, xleft, ybottom, xright, ytop, inside = TRUE)
 	{
 	  X <- Y <- NULL
@@ -70,14 +72,11 @@ setMethod("clipRectangle", "LAS",
 	}
 )
 
+#' @export lasclipPolygon
+#' @rdname lasclip
+setGeneric("lasclipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("lasclipPolygon")})
 
-
-#' @export clipPolygon
-#' @rdname clip
-setGeneric("clipPolygon", function(obj, x, y, inside = TRUE){standardGeneric("clipPolygon")})
-
-#' @rdname clip
-setMethod("clipPolygon", "LAS",
+setMethod("lasclipPolygon", "LAS",
 	function(obj, x, y, inside = TRUE)
 	{
 	  X <- Y <- NULL
@@ -90,12 +89,11 @@ setMethod("clipPolygon", "LAS",
 )
 
 
-#' @export clipCircle
-#' @rdname clip
-setGeneric("clipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("clipCircle")})
+#' @export lasclipCircle
+#' @rdname lasclip
+setGeneric("lasclipCircle", function(obj, xcenter, ycenter, radius, inside = TRUE){standardGeneric("lasclipCircle")})
 
-#' @rdname clip
-setMethod("clipCircle", "LAS",
+setMethod("lasclipCircle", "LAS",
 	function(obj, xcenter, ycenter, radius, inside = TRUE)
 	{
 	  X <- Y <- NULL
