@@ -47,8 +47,7 @@
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @export roi_query
-#' @importFrom dplyr progress_estimated
-#' @importFrom utils lsf.str
+#' @importFrom utils lsf.str txtProgressBar
 #' @importFrom magrittr %>% %<>%
 #' @importFrom parallel makeCluster stopCluster parLapply clusterExport
 #' @examples
@@ -96,7 +95,7 @@ setMethod("roi_query", "Catalog",
 
     if(mc.cores == 1)
     {
-      p = dplyr::progress_estimated(nplot)
+      p = utils::txtProgressBar(max = nplot, style = 3)
       output = lapply(lasindex, .getGrpQuery, shape, p, ...)
     }
     else
@@ -116,6 +115,7 @@ setMethod("roi_query", "Catalog",
   }
 )
 
+#' @importFrom utils lsf.str getTxtProgressBar setTxtProgressBar
 .getGrpQuery = function(query, shape, p = NULL, ...)
 {
   X      = query$X
@@ -135,7 +135,10 @@ setMethod("roi_query", "Catalog",
       output[[j]] = clipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
 
     if(!is.null(p))
-      p$tick()$print()
+    {
+      i = utils::getTxtProgressBar(p) + 1
+      utils::setTxtProgressBar(p, i)
+    }
     else
       cat(sprintf("%s ", query$roinames[j]))
   }
