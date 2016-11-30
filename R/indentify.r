@@ -38,7 +38,7 @@
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export detect_pulse
-#' @importFrom data.table setorder setNumericRounding
+#' @importFrom data.table setorder setNumericRounding uniqueN
 setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 
 #' @rdname detect_pulse
@@ -55,7 +55,7 @@ setMethod("detect_pulse", "LAS",
       data.table::setNumericRounding(0) # remove rounding for gpstime aggregation
       data.table::setorder(obj@data, gpstime)
       obj@data[, pulseID := .lagisdiff(gpstime)][]
-      dpulse <- obj@data$pulseID %>% n_distinct %>% divide_by(obj@area)
+      dpulse <- obj@data$pulseID %>% data.table::uniqueN %>% divide_by(obj@area)
     }
     else
       lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)

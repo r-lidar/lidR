@@ -85,7 +85,7 @@
 #' @importFrom methods new
 #' @importFrom grDevices rgb
 #' @importFrom magrittr %>% %$% divide_by
-#' @importFrom dplyr n_distinct
+#' @importFrom data.table uniqueN
 setClass(
 	Class = "LAS",
 	representation(
@@ -130,7 +130,7 @@ setMethod("initialize", "LAS",
 	  dpulse <- NA_real_
 
   	if ("pulseID" %in% fields)
-  	   dpulse <- data$pulseID %>% n_distinct %>% divide_by(area)
+  	   dpulse <- data$pulseID %>% data.table::uniqueN %>% divide_by(area)
 
 	  if(sum(c("R", "G", "B") %in% names(data)) == 3)
 	  {

@@ -60,7 +60,6 @@
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export thin
-#' @importFrom dplyr n_distinct
 #' @importFrom data.table := setnames setorder
 setGeneric("thin", function(obj, density, homogenize = TRUE, resolution = 5){standardGeneric("thin")})
 
