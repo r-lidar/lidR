@@ -46,11 +46,10 @@
 #'
 #' # Multiple criteria
 #' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
-#' @export lasfilter
+#' @export
 #' @family lasfilters
 setGeneric("lasfilter", function(.las, ...){standardGeneric("lasfilter")})
 
-#' @rdname lasfilter
 setMethod("lasfilter", "LAS",
   function(.las, ...)
   {

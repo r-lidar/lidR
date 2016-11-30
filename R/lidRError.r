@@ -46,7 +46,7 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR2" = list("Dataset may be invalid: ", p$number, " points below 0 found."),
 "LDR3" = list("Dataset may be invalid: ", p$number, " unclassified points found."),
 "LDR4" = list("No '", p$infield, "' field found. '", p$outfield, "', cannot be computed from this file."),
-"LDR5" = list("Parameter n of function getNth incorrect."),
+"LDR5" = list("Parameter n of function lasfilternth incorrect."),
 "LDR6" = list("This algorithm does not exist."),
 "LDR7" = list("The option '", p$option, "' does not exist."),
 "LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
