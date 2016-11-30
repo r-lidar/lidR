@@ -84,6 +84,7 @@
 #' @import magrittr
 #' @import methods
 #' @exportClass LAS
+#' @useDynLib lidR
 setClass(
 	Class = "LAS",
 	representation(
@@ -169,4 +170,24 @@ setMethod("$", "LAS", function(x, name)
   else if(name %in% names(x@header))
     return(x@header[name])
 })
+
+#' Create a \code{LAS} object
+#'
+#' When a \code{LAS} object is created sevral things are computed on the fly in addition
+#' to the data inputed in the constructor. See \link[lidR:LAS-class]{LAS-class}.
+#'
+#' @param data a data.table containing the LiDAR data.
+#' @param header a list containing the data from the header of a las file.
+#' @return An object of class \code{LAS}
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#'
+#' lidar = readLAS(LASfile)
+#'
+#' summary(lidar)
+#' @seealso
+#' \link[lidR:LAS]{Class LAS}
+#' \link[lidR:summary]{summary}
+#' @export LAS
+LAS <- function(data, header = list()) {return(new("LAS", data, header))}
 
