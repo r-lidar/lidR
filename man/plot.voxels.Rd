@@ -36,7 +36,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 lidar = readLAS(LASfile)
 
-voxels = voxelize(lidar, 1, list(Imean = mean(Intensity)))
+voxels = grid_metrics3d(lidar, 1, list(Imean = mean(Intensity)))
 plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 }
 \seealso{
@@ -45,6 +45,6 @@ plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 \link[lidR:forest.colors]{forest.colors}
 \link[grDevices:heat.colors]{heat.colors}
 \link[grDevices:colorRamp]{colorRampPalette}
-\link[lidR:voxelize]{voxelize}
+\link[lidR:grid_metrics3d]{grid_metrics3d}
 }
 

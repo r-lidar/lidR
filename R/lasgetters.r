@@ -84,7 +84,7 @@ lasfilterfirstofmany = function(.las)
 #' @rdname lasfilters
 lasfilterground = function(.las)
 {
-  NumberOfReturns <- ReturnNumber <- NULL
+  Classification <- NULL
 
   return(lasfilter(.las, Classification == 2))
 }
@@ -105,6 +105,7 @@ lasfilterlast = function(.las)
 lasfilternth = function(.las, n)
 {
   ReturnNumber <- NULL
+
   return(lasfilter(.las, ReturnNumber == n))
 }
 
