@@ -40,25 +40,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-//' Read data from a las and laz file with LASlib
-//'
-//' Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
-//'
-//' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
-//'
-//' @param file character. The name of the file which the data are to be read from
-//' @param Intensity logical. do you want to load Intensity field? default: TRUE
-//' @param ReturnNumber logical. do you want to load ReturnNumber field? default: TRUE
-//' @param NumberOfReturns logical. do you want to load NumberOfReturns field? default: TRUE
-//' @param ScanDirectionFlag logical. do you want to load ScanDirectionFlag field? default: FALSE
-//' @param EdgeofFlightline logical. do you want to load EdgeofFlightline field? default: FALSE
-//' @param Classification logical. do you want to load Classification field? default: TRUE
-//' @param ScanAngle logical. do you want to load intensity field? default: TRUE
-//' @param UserData logical. do you want to load UserData field? default: FALSE
-//' @param PointSourceID logical. do you want to load PointSourceID field? default: FALSE
-//' @param RGB logical. do you want to load intensity R,G and B? default: TRUE
-//'
-//' @return list
+// Read data from a las and laz file with LASlib
+//
+// Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
+//
+// This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
+//
+// @param file character. The name of the file which the data are to be read from
+// @param Intensity logical. do you want to load Intensity field? default: TRUE
+// @param ReturnNumber logical. do you want to load ReturnNumber field? default: TRUE
+// @param NumberOfReturns logical. do you want to load NumberOfReturns field? default: TRUE
+// @param ScanDirectionFlag logical. do you want to load ScanDirectionFlag field? default: FALSE
+// @param EdgeofFlightline logical. do you want to load EdgeofFlightline field? default: FALSE
+// @param Classification logical. do you want to load Classification field? default: TRUE
+// @param ScanAngle logical. do you want to load intensity field? default: TRUE
+// @param UserData logical. do you want to load UserData field? default: FALSE
+// @param PointSourceID logical. do you want to load PointSourceID field? default: FALSE
+// @param RGB logical. do you want to load intensity R,G and B? default: TRUE
+//
+// @return list
 // [[Rcpp::export]]
 List readLASdata(CharacterVector file,
              bool Intensity = true,
@@ -215,15 +215,14 @@ List readLASdata(CharacterVector file,
   }
 }
 
-//' Read header in a las or laz file
-//'
-//' Read data from a las  or laz file in format 1 to 4 according to LAS specification and return a list.
-//'
-//' This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
-//'
-//' @param file character. the name of the file which the data are to be read from
-//' @return A list
-//' @export readLASheader
+// Read header in a las or laz file
+//
+// Read data from a las  or laz file in format 1 to 4 according to LAS specification and return a list.
+//
+// This function musn't be used as is. It is an internal function. Please use \link[lidR:readLAS]{readLAS} abstraction.
+//
+// @param file character. the name of the file which the data are to be read from
+// @return A list
 // [[Rcpp::export]]
 List readLASheader(CharacterVector file)
 {
