@@ -133,10 +133,10 @@ readLAS = function(files,
   las = LAS(data, header)
 
   if(pulseID)
-    las@pulseDensity = detect_pulse(las)
+    las@pulseDensity = laspulse(las)
 
   if(flightlineID)
-    detect_flightline(las, 30)
+    lasflightline(las, 30)
 
   return(las)
 }
