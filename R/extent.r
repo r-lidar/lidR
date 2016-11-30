@@ -50,3 +50,7 @@ setMethod("extent", "LAS",
 		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
 	}
 )
+
+#' @export
+#' @rdname extent-LAS-method
+lasextent <- extent
