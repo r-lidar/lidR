@@ -41,7 +41,7 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  voxelize
-#' @param obj An object of class \code{LAS}
+#' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
@@ -51,11 +51,11 @@
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the number of points is computed.
-#' voxelize(lidar, 1, length(Z))
+#' grid_metrics3d(lidar, 1, length(Z))
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the mean scan angle of points is computed.
-#' voxelize(lidar, 1, mean(ScanAngle))
+#' grid_metrics3d(lidar, 1, mean(ScanAngle))
 #'
 #' # Define your own metric function
 #' myMetrics = function(i, angle, pulseID)
@@ -69,29 +69,28 @@
 #'    return(ret)
 #'  }
 #'
-#' voxels = voxelize(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
+#' voxels = grid_metrics3d(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
 #'
 #' plot(voxels, "angle")
 #' plot(voxels, "imean")
 #' #etc.
-#' @export voxelize
-setGeneric("voxelize", function(obj, res, func){standardGeneric("voxelize")})
+#' @export
+setGeneric("grid_metrics3d", function(.las, res, func){standardGeneric("grid_metrics3d")})
 
-#' @rdname voxelize
-setMethod("voxelize", "LAS",
-    function(obj, res, func)
+setMethod("grid_metrics3d", "LAS",
+    function(.las, res, func)
     {
         func_call = substitute(func)
 
-	      obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+	      .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-        x_raster = round_any(obj@data$X, res)
-        y_raster = round_any(obj@data$Y, res)
-        z_raster = round_any(obj@data$Z-0.5*res, res)+0.5*res
+        x_raster = round_any(.las@data$X, res)
+        y_raster = round_any(.las@data$Y, res)
+        z_raster = round_any(.las@data$Z-0.5*res, res)+0.5*res
 
         by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
 
-        stat <- obj@data[, c(eval(func_call)), by=by]
+        stat <- .las@data[, c(eval(func_call)), by=by]
 
         n = names(stat)
         n[1:3] = c("X", "Y", "Z")
