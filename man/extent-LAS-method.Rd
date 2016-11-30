@@ -4,9 +4,12 @@
 \name{extent,LAS-method}
 \alias{extent}
 \alias{extent,LAS-method}
+\alias{lasextent}
 \title{Extent}
 \usage{
 \S4method{extent}{LAS}(x)
+
+extent(x, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{LAS}}
