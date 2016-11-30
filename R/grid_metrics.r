@@ -91,7 +91,6 @@
 #' @export grid_metrics
 setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
 
-#' @rdname grid_metrics
 setMethod("grid_metrics", "LAS",
 	function(obj, res, func, start = c(0,0), option = NULL)
 	{

@@ -57,7 +57,6 @@
 #' \link[lidR:normalize]{normalize}
 setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv", ...){standardGeneric("grid_terrain")})
 
-#' @rdname grid_terrain
 setMethod("grid_terrain", "LAS",
   function(obj, res = 1, k = 7L, kernel = "inv", ...)
   {

@@ -51,7 +51,6 @@
 #' @export grid_canopy
 setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
 
-#' @rdname grid_canopy
 setMethod("grid_canopy", "LAS",
 	function(obj, res = 2, start=c(0,0))
 	{
