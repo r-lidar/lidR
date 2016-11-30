@@ -68,7 +68,7 @@
 #' does not provide internal tools to deal with buffer as it is design for experimental purposes not to output professional
 #' products. The users could, for example, filter the invalid/corrupted data at the edge of the tiles from the output.
 #'
-#' @aliases process_parallel
+#' @aliases catalog_apply
 #' @param x  A Catalog object
 #' @param func A function which has one parameter: the name of a .las or .laz file (see example)
 #' @param platform charater. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".
@@ -113,7 +113,7 @@
 #'
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
-#' output = project %>% process_parallel(analyse_tile)
+#' output = project %>% catalog_apply(analyse_tile)
 #'
 #' #### WINDOWS #####
 #' # This code works both on Unix and Windows platforms. But it is more memory intensive
@@ -123,15 +123,15 @@
 #' # an optional parameter mc.core = 3.
 #' export = c("readLAS", "classify_from_shapefile", "grid_metrics",
 #'            "myMetrics", "lake", "lasfilter", "%<>%")
-#' output = project %>% process_parallel(analyse_tile, varlist = export, platform = "windows")
+#' output = project %>% catalog_apply(analyse_tile, varlist = export, platform = "windows")
 #' }
 #' @seealso
 #' \link[parallel:mclapply]{mclapply}
 #' \link[parallel:parLapplyLB]{parLapplyLB}
 #' \link[lidR:classify_from_shapefile]{classify_from_shapefile}
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' @export process_parallel
-process_parallel = function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
+#' @export catalog_apply
+catalog_apply = function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
 {
   cat("Begin parallel processing... \n")
 
