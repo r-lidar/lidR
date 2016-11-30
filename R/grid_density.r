@@ -48,7 +48,6 @@
 #' @export grid_density
 setGeneric("grid_density", function(obj, res = 4){standardGeneric("grid_density")})
 
-#' @rdname grid_density
 setMethod("grid_density", "LAS",
 	function(obj, res = 4)
 	{
