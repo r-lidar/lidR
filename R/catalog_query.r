@@ -34,7 +34,7 @@
 #' of one or more tiles.\cr
 #' It works only for tiles well organized as a damier.
 #'
-#' @aliases roi_query
+#' @aliases catalog_queries
 #' @param obj A Catalog object
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI
@@ -46,7 +46,7 @@
 #' @param mc.cores numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})
 #' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
-#' @export roi_query
+#' @export catalog_queries
 #' @examples
 #' \dontrun{
 #' # Build a Catalog
@@ -58,12 +58,12 @@
 #' R = 25
 #'
 #' # Return a List of 30 circular LAS objects of 25 m radius (50 m diameter)
-#' catalog %>% roi_query(X, Y, R)
+#' catalog %>% catalog_queries(X, Y, R)
 #'
 #' # Return a List of 30 square LAS objects of 50x50 m
-#' catalog %>% roi_query(X, Y, R, R)
+#' catalog %>% catalog_queries(X, Y, R, R)
 #' }
-roi_query = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
+catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
 {
   . <- tiles <- NULL
 
@@ -73,7 +73,7 @@ roi_query = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...
   if(is.null(roinames)) roinames = paste0("ROI", 1:nplot)
 
   # Make an index of the file in which are each query
-  lasindex = obj %>% roi_index(x, y, r, r2,roinames)
+  lasindex = obj %>% catalog_index(x, y, r, r2,roinames)
 
   # Group the index of idendical queries with the aim to reduce number ofqueries
   lasindex = lasindex[, .(roinames = list(roinames),

@@ -33,10 +33,10 @@
 #' (a ground inventory for example), he can automatically find in which tiles the lidar data associated
 #' to the ROIs from a Catalog are. The algorithm automatically find tiles even for ROIs falling on the edges
 #' of one or more tiles.\cr
-#' It works only for tiles well organized as a damier. This function is used by \link[lidR:roi_query]{roi_query}.
+#' It works only for tiles well organized as a damier. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
 #' Users do not really need it.
 #'
-#' @aliases roi_index
+#' @aliases catalog_index
 #' @param obj A Catalog object
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
@@ -45,8 +45,8 @@
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If radius2
 #' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square obviouly.
 #' @param roinames vector. A set of ROI names
-#' @export roi_index
-roi_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
+#' @export catalog_index
+catalog_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
 {
   tile <- minx <- maxx <- miny <- maxy <- NULL
   filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
