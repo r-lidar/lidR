@@ -32,37 +32,22 @@
 #' The area is computed with a convex hull. It is only an approximation if the
 #' shape of the data is not convex.
 #'
-#' @aliases area
-#' @param x An object of the class \code{LAS} or a numeric array of x coordinates
-#' @param y numeric array of y coordinates
+#' @param .las An object of the class \code{LAS} or a numeric array of x coordinates
 #' @return numeric. The area of the object computed with a convex hull in coordinates units
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
-#' area(lidar)
-#' @export area
-setGeneric("area", function(x, y){standardGeneric("area")})
+#' lasarea(lidar)
+#' @export
+setGeneric("lasarea", function(.las){standardGeneric("lasarea")})
 
-#' @rdname area
-setMethod("area", "LAS",
-	function(x, y = NULL)
+setMethod("lasarea", "LAS",
+	function(.las)
 	{
-		hull = convex_hull(x@data$X, x@data$Y)
+		hull = convex_hull(.las@data$X, .las@data$Y)
 		area = polygon_area(hull$x, hull$y)
 		area = round(area,1)
 		return(area)
 	}
-)
-
-#' @rdname area
-setMethod("area", c("numeric", "numeric"),
-  function(x, y)
-  {
-    hull = convex_hull(x, y)
-    area = polygon_area(hull$x, hull$y)
-    area = round(area,1)
-    return(area)
-  }
 )
