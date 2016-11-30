@@ -39,14 +39,13 @@
 #' The consequence is a more accurate normalisation. Indeed no rasterizaion impling
 #' innacuracies is required. This method lead to few negatives values.
 #'
-#' @param las a LAS objet
+#' @param .las a LAS objet
 #' @param dtm a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
 #' automatically compute it on the fly. This second solution is more accurate
 #' because no rasterization is done (see details).
 #' @param ... optionnal parameters for \link[lidR:lasterrain]{lasterrain} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
-#' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #'
@@ -56,7 +55,7 @@
 #'
 #' # --- First possibility: compute the DTM on the fly -----
 #'
-#' lidar_norm = normalize(lidar)
+#' lidar_norm = lasnormalize(lidar)
 #'
 #' # plot(lidar_norm)
 #'
@@ -73,24 +72,29 @@
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
-normalize = function(las, dtm = NULL, ...)
-{
- . <- Z <- Zn <- Xr <- Yr <- NULL
+#' @export
+setGeneric("lasnormalize", function(.las, dtm = NULL, ...){standardGeneric("lasnormalize")})
 
-  if(is.null(dtm))
-    Zn = lasterrain(las, las@data, ...)
-  else if(class(dtm)[1] == "RasterLayer")
-    Zn = raster::extract(dtm, las@data[, c("X", "Y"), with = F])
-  else
-    stop("The terrain model is not a RasterLayer")
+setMethod("lasnormalize", "LAS",
+  function(.las, dtm = NULL, ...)
+  {
+   . <- Z <- Zn <- Xr <- Yr <- NULL
 
-  normalized = data.table::copy(las@data)
-  normalized[, Z := round(Z - Zn, 3)][]
+    if(is.null(dtm))
+      Zn = lasterrain(.las, .las@data, ...)
+    else if(class(dtm)[1] == "RasterLayer")
+      Zn = raster::extract(dtm, .las@data[, c("X", "Y"), with = F])
+    else
+      stop("The terrain model is not a RasterLayer")
 
-  return(LAS(normalized, las@header))
-}
+    normalized = data.table::copy(.las@data)
+    normalized[, Z := round(Z - Zn, 3)][]
 
-#' Conveniant operator to normalize
+    return(LAS(normalized, .las@header))
+  }
+)
+
+#' Conveniant operator to lasnormalize
 #'
 #' @param e1 a LAS object
 #' @param e2 a RasterLayer
@@ -98,6 +102,6 @@ normalize = function(las, dtm = NULL, ...)
 setMethod("-", c("LAS", "RasterLayer"),
   function(e1, e2)
   {
-      return(normalize(e1,e2))
+      return(lasnormalize(e1,e2))
   }
 )
