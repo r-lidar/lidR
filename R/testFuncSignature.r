@@ -39,6 +39,9 @@
 
   if(is.list(metrics) & !is.data.frame(metrics))
   {
+    if(is.null(names(metrics)))
+      names(metrics) = paste0("#", 1:length(metrics))
+
     classes = sapply(metrics, class)
     test = classes %in% c("integer", "numeric", "logical", "character")
     n = names(metrics[!test])
