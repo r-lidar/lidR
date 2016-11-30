@@ -65,3 +65,7 @@ summary.LAS =	function(object, ...)
 
   summary(object@data)
 }
+
+#' @rdname summary.LAS
+#' @export
+lassummary <- summary.LAS
