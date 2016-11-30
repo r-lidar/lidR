@@ -31,10 +31,9 @@
 #'
 #' Return points with matching conditions.
 #'
-#' @aliases lasfilter
-#' @param .las An object of class \code{LAS}
+#' @param .las An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @param \dots Logical predicates. Multiple conditions are combined with & or ,
-#' @return An object of class \code{LAS}
+#' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -47,16 +46,8 @@
 #'
 #' # Multiple criteria
 #' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
-#' @seealso
-#' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:getFirst]{getFirst}
-#' \link[lidR:getFirstLast]{getFirstLast}
-#' \link[lidR:getFirstOfMany]{getFirstOfMany}
-#' \link[lidR:getSingle]{getSingle}
-#' \link[lidR:getLast]{getLast}
-#' \link[lidR:getGround]{getGround}
-#' \link[lidR:getNth]{getNth}
 #' @export lasfilter
+#' @family lasfilters
 setGeneric("lasfilter", function(.las, ...){standardGeneric("lasfilter")})
 
 #' @rdname lasfilter

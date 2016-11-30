@@ -11,12 +11,12 @@ lasfilter(.las, ...)
 \S4method{lasfilter}{LAS}(.las, ...)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
 
 \item{\dots}{Logical predicates. Multiple conditions are combined with & or ,}
 }
 \value{
-An object of class \code{LAS}
+An object of class \code{\link[lidR:LAS-class]{LAS}}
 }
 \description{
 Return points with matching conditions.
@@ -35,13 +35,6 @@ firstground = lidar \%>\% lasfilter(Classification == 1, ReturnNumber == 1)
 first_or_ground = lidar \%>\% lasfilter(Classification == 1 | ReturnNumber == 1)
 }
 \seealso{
-\link[lidR:LAS]{Class LAS}
-\link[lidR:getFirst]{getFirst}
-\link[lidR:getFirstLast]{getFirstLast}
-\link[lidR:getFirstOfMany]{getFirstOfMany}
-\link[lidR:getSingle]{getSingle}
-\link[lidR:getLast]{getLast}
-\link[lidR:getGround]{getGround}
-\link[lidR:getNth]{getNth}
+Other lasfilters: \code{\link{getters}}
 }
 
