@@ -54,7 +54,7 @@ setMethod("detect_pulse", "LAS",
     {
       data.table::setorder(obj@data, gpstime)
       obj@data[, pulseID := .lagisdiff(gpstime)][]
-      dpulse <- obj@data$pulseID %>% data.table::uniqueN %>% divide_by(obj@area)
+      dpulse <- obj@data$pulseID %>% data.table::uniqueN() %>% divide_by(obj@area)
     }
     else
       lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
