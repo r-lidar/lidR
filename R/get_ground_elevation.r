@@ -56,7 +56,7 @@ setMethod("get_ground_elevation", "LAS",
     if( !"X" %in% fields | !"Y" %in% fields)
       stop("Parameter coord does not have a column named X or Y",  call. = F)
 
-    ground = suppressWarnings(getGround(las))
+    ground = suppressWarnings(lasfilterground(las))
 
     if(is.null(ground))
       stop("No ground points found. Impossible to normalize the point cloud.", call. = F)

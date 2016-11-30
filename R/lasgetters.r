@@ -30,46 +30,45 @@
 #' Select only the some returns
 #'
 #' \itemize{
-#' \item{\code{getFirst} Select only the first returns.}
-#' \item{\code{getFistLast} Select only the first and last returns.}
-#' \item{\code{getGround} Select only the returns classified as ground according to LAS specification v1.3.}
-#' \item{\code{getLast} Select only the last returns i.e. the last returns and the single returns.}
-#' \item{\code{getNth} Select the returns from their position in the return sequence.}
-#' \item{\code{gerFirstOfMany} Select only the first returns from pulses which returned multiple points.}
-#' \item{\code{getSingle} Select only the returns which return only one point.}
+#' \item{\code{lasfilterfirst} Select only the first returns.}
+#' \item{\code{lasfilterfirstLast} Select only the first and last returns.}
+#' \item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification v1.3.}
+#' \item{\code{lasfilterlast} Select only the last returns i.e. the last returns and the single returns.}
+#' \item{\code{lasfilternth} Select the returns from their position in the return sequence.}
+#' \item{\code{lasfilterfirstofmany} Select only the first returns from pulses which returned multiple points.}
+#' \item{\code{lasfiltersingle} Select only the returns which return only one point.}
 #' }
 #' @param .las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param n the position in the return sequence
 #' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' firstReturns  = lidar %>% getFirst
-#' groundReturns = lidar %>% getGround
+#' firstReturns  = lidar %>% lasfilterfirst
+#' groundReturns = lidar %>% lasfilterground
 #' @family lasfilters
-#' @name getters
+#' @name lasfilters
 NULL
 
-#' @export getFirst
+#' @export lasfilterfirst
 #' @family lasfilters
-#' @rdname getters
-setGeneric("getFirst", function(.las){standardGeneric("getFirst")})
+#' @rdname lasfilters
+setGeneric("lasfilterfirst", function(.las){standardGeneric("lasfilterfirst")})
 
-#' @rdname getters
-setMethod("getFirst", "LAS",
+setMethod("lasfilterfirst", "LAS",
 	function(.las)
 	{
-		return(getNth(.las, 1))
+		return(lasfilternth(.las, 1))
 	}
 )
 
-#' @export getFirstLast
+#' @export lasfilterfirstlast
 #' @family lasfilters
-#' @rdname getters
-setGeneric("getFirstLast", function(.las){standardGeneric("getFirstLast")})
+#' @rdname lasfilters
+setGeneric("lasfilterfirstlast", function(.las){standardGeneric("lasfilterfirstlast")})
 
-#' @rdname getters
-setMethod("getFirstLast", "LAS",
+setMethod("lasfilterfirstlast", "LAS",
 	function(.las)
 	{
 	  ReturnNumber <- NumberOfReturns <- NULL
@@ -78,13 +77,12 @@ setMethod("getFirstLast", "LAS",
 	}
 )
 
-#' @export getFirstOfMany
+#' @export lasfilterfirstofmany
 #' @family lasfilters
-#' @rdname getters
-setGeneric("getFirstOfMany", function(.las){standardGeneric("getFirstOfMany")})
+#' @rdname lasfilters
+setGeneric("lasfilterfirstofmany", function(.las){standardGeneric("lasfilterfirstofmany")})
 
-#' @rdname getters
-setMethod("getFirstOfMany", "LAS",
+setMethod("lasfilterfirstofmany", "LAS",
 	function(.las)
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
@@ -94,12 +92,11 @@ setMethod("getFirstOfMany", "LAS",
 )
 
 #' @family lasfilters
-#' @export getLast
-#' @rdname getters
-setGeneric("getLast", function(.las){standardGeneric("getLast")})
+#' @export lasfilterlast
+#' @rdname lasfilters
+setGeneric("lasfilterlast", function(.las){standardGeneric("lasfilterlast")})
 
-#' @rdname  getters
-setMethod("getLast", "LAS",
+setMethod("lasfilterlast", "LAS",
 	function(.las)
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
@@ -109,12 +106,11 @@ setMethod("getLast", "LAS",
 )
 
 #' @family lasfilters
-#' @export getNth
-#' @rdname getters
-setGeneric("getNth", function(.las, n){standardGeneric("getNth")})
+#' @export lasfilternth
+#' @rdname lasfilters
+setGeneric("lasfilternth", function(.las, n){standardGeneric("lasfilternth")})
 
-#' @rdname getters
-setMethod("getNth", "LAS",
+setMethod("lasfilternth", "LAS",
 	function(.las, n)
 	{
 	  ReturnNumber <- NULL
@@ -123,12 +119,11 @@ setMethod("getNth", "LAS",
 )
 
 #' @family lasfilters
-#' @export getSingle
-#' @rdname getters
-setGeneric("getSingle", function(.las){standardGeneric("getSingle")})
+#' @export lasfiltersingle
+#' @rdname lasfilters
+setGeneric("lasfiltersingle", function(.las){standardGeneric("lasfiltersingle")})
 
-#' @rdname getters
-setMethod("getSingle", "LAS",
+setMethod("lasfiltersingle", "LAS",
 	function(.las)
 	{
 	  NumberOfReturns <- NULL
@@ -138,12 +133,11 @@ setMethod("getSingle", "LAS",
 )
 
 #' @family lasfilters
-#' @export getFirstOfMany
-#' @rdname getters
-setGeneric("getFirstOfMany", function(.las){standardGeneric("getFirstOfMany")})
+#' @export lasfilterfirstofmany
+#' @rdname lasfilters
+setGeneric("lasfilterfirstofmany", function(.las){standardGeneric("lasfilterfirstofmany")})
 
-#' @rdname getters
-setMethod("getFirstOfMany", "LAS",
+setMethod("lasfilterfirstofmany", "LAS",
 	function(.las)
 	{
 	  NumberOfReturns <- ReturnNumber <- NULL
