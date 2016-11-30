@@ -40,7 +40,6 @@
 #' @export detect_pulse
 setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 
-#' @rdname detect_pulse
 setMethod("detect_pulse", "LAS",
   function(obj)
   {
@@ -79,7 +78,6 @@ setMethod("detect_pulse", "LAS",
 #' @export detect_flightline
 setGeneric("detect_flightline", function(obj, dt = 30){standardGeneric("detect_flightline")})
 
-#' @rdname detect_flightline
 setMethod("detect_flightline", "LAS",
   function(obj, dt = 30)
   {
@@ -113,7 +111,6 @@ setMethod("detect_flightline", "LAS",
 #' @export detect_scanline
 setGeneric("detect_scanline", function(obj){standardGeneric("detect_scanline")})
 
-#' @rdname detect_scanline
 setMethod("detect_scanline", "LAS",
   function(obj)
   {

@@ -72,7 +72,6 @@
 #' metrics = cloud_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
 setGeneric("cloud_metrics", function(obj, func){standardGeneric("cloud_metrics")})
 
-#' @rdname cloud_metrics
 setMethod("cloud_metrics", "LAS",
 	function(obj, func)
 	{
