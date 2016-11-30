@@ -47,7 +47,6 @@
 #' \link[lidR:grid_terrain]{grid_terrain}
 setGeneric("get_ground_elevation", function(las, coord, k = 7L, kernel = "inv", ...){standardGeneric("get_ground_elevation")})
 
-#' @rdname get_ground_elevation
 setMethod("get_ground_elevation", "LAS",
   function(las, coord, k = 7L, kernel = "inv", ...)
   {
