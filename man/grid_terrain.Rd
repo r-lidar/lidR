@@ -40,6 +40,6 @@ dtm = grid_terrain(lidar)
 # plot3d(dtm)
 }
 \seealso{
-\link[lidR:normalize]{normalize}
+\link[lidR:lasnormalize]{lasnormalize}
 }
 

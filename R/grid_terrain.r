@@ -54,7 +54,7 @@
 #'
 #' # plot3d(dtm)
 #' @seealso
-#' \link[lidR:normalize]{normalize}
+#' \link[lidR:lasnormalize]{lasnormalize}
 grid_terrain = function(obj, res = 1, k = 7L, kernel = "inv", ...)
 {
   X <- Y <- Z <- NULL

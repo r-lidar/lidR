@@ -37,7 +37,7 @@
 #' density. If required pulse density is greater than the local pulse density it returns
 #' an unchanged set of points (it cannot increase the pulse density). In the way
 #' of \code{homogenize = FALSE} it randomly removes pulses to reach the required pulse
-#' density on the whole area (see \code{\link[lidR:area]{area}}). The cell size must be large enough
+#' density on the whole area (see \code{\link[lidR:lasarea]{lasarea}}). The cell size must be large enough
 #' to compute a coherant local pulse density. 25 square meters looks good. 1 square
 #' meter is meaningless.
 #' @aliases  thin
