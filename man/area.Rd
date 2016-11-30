@@ -32,8 +32,4 @@ lidar = readLAS(LASfile)
 
 area(lidar)
 }
-\seealso{
-\code{\link[lidR:convex_hull]{convex_hull} }
-\code{\link[lidR:polygon_area]{polygon_area} }
-}
 

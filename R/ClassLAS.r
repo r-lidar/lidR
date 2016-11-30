@@ -80,11 +80,10 @@
 #' \link[lidR:LAS]{LAS}
 #' @name LAS-class
 #' @rdname LAS-class
+#' @import data.table
+#' @import magrittr
+#' @import methods
 #' @exportClass LAS
-#' @importFrom methods new
-#' @importFrom grDevices rgb
-#' @importFrom magrittr %>% %$% divide_by
-#' @importFrom data.table uniqueN
 setClass(
 	Class = "LAS",
 	representation(
@@ -96,7 +95,6 @@ setClass(
 	)
 )
 
-#' @importFrom data.table is.data.table setorder
 setMethod("initialize", "LAS",
 	function(.Object, data, header = list())
 	{
@@ -162,7 +160,6 @@ setMethod("initialize", "LAS",
 #'
 #' @param x object from which to extract element(s).
 #' @param name A literal character string or a name (possibly backtick quoted).
-#' @importFrom methods slot slotNames
 setMethod("$", "LAS", function(x, name)
 {
   if(name %in% names(x@data))

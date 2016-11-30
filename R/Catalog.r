@@ -37,11 +37,31 @@
 #' @param folder string. The path of a folder containing a set of .las files
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @seealso
-#' \link[lidR:Catalog]{Catalog-class}
 #' \link[lidR:plot.Catalog]{plot}
 #' \link[lidR:process_parallel]{process_parallel}
 #' \link[lidR:roi_query]{roi_query}
-#' @return A Catalog object
+#' @return A data.frame with the class Catalog
 #' @export Catalog
-#' @importFrom methods new
-Catalog <- function(folder, ...) {return(new("Catalog", folder, ...))}
+Catalog = function(folder, ...)
+{
+  if (!is.character(folder))
+    lidRError("GTG1")
+
+  if (!dir.exists(folder))
+    lidRError("CTG2")
+
+  files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
+
+  headers <- lapply(files, function(x)
+  {
+    readLASheader(x) %>% as.data.frame
+  })
+
+  headers <- do.call(rbind.data.frame, headers)
+  headers$filename <- files
+  rownames(headers) <- NULL
+
+  class(headers) = append("Catalog", class(headers))
+
+  return(headers)
+}

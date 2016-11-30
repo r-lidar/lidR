@@ -60,8 +60,6 @@
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:LAS]{Class LAS}
 #' @export
-#' @importFrom rgl points3d open3d rgl.bg
-#' @importFrom grDevices heat.colors terrain.colors topo.colors
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors, bg = "black",  trim = 1, ...)
 {
   inargs <- list(...)

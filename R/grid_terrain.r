@@ -55,7 +55,6 @@
 #' # plot3d(dtm)
 #' @seealso
 #' \link[lidR:normalize]{normalize}
-#' @importFrom  data.table := setDT
 setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv", ...){standardGeneric("grid_terrain")})
 
 #' @rdname grid_terrain

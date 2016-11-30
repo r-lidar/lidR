@@ -42,7 +42,6 @@
 #' mtx = matrix(runif(100), 10, 10)
 #' fractal_dimension(mtx)
 #' @export fractal_dimension
-#' @importFrom stats coefficients lm
 fractal_dimension = function(mtx)
 {
   if( sum(is.na(mtx)) > 0 )

@@ -78,7 +78,6 @@
 #' @export
 #' @rdname plot.gridmetrics
 #' @method plot gridmetrics
-#' @importFrom magrittr %>%
 plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
 {
   inargs = list(...)

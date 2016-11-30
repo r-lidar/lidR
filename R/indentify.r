@@ -38,7 +38,6 @@
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export detect_pulse
-#' @importFrom data.table setorder uniqueN
 setGeneric("detect_pulse", function(obj){standardGeneric("detect_pulse")})
 
 #' @rdname detect_pulse
@@ -78,7 +77,6 @@ setMethod("detect_pulse", "LAS",
 #' @return Return nothing. The original object is modified in place by reference.
 #'
 #' @export detect_flightline
-#' @importFrom data.table setorder
 setGeneric("detect_flightline", function(obj, dt = 30){standardGeneric("detect_flightline")})
 
 #' @rdname detect_flightline
@@ -113,7 +111,6 @@ setMethod("detect_flightline", "LAS",
 #' @param obj A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export detect_scanline
-#' @importFrom data.table setorder
 setGeneric("detect_scanline", function(obj){standardGeneric("detect_scanline")})
 
 #' @rdname detect_scanline
@@ -147,7 +144,6 @@ setMethod("detect_scanline", "LAS",
   }
 )
 
-#' @importFrom data.table shift
 .lagissup = function(x, dx)
 {
   boo = (x - data.table::shift(x)) > dx
@@ -155,7 +151,6 @@ setMethod("detect_scanline", "LAS",
   return(cumsum(boo))
 }
 
-#' @importFrom data.table shift
 .lagisdiff = function(x)
 {
   boo = x != data.table::shift(x)

@@ -27,7 +27,6 @@
 
 
 
-#' @importFrom utils capture.output
 lidRError = function(code, ..., behaviour = stop)
 {
   p <- list(...)
@@ -36,9 +35,9 @@ lidRError = function(code, ..., behaviour = stop)
 
 # testFunctionSignature.r
 "TFS1" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field '", p$metric, "' is a '", p$class, "'"),
-"TFS2" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field ", capture.output(cat(p$metric, sep=" and ")), " are respectively ", capture.output(cat(p$class, sep= " and "))),
+"TFS2" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field ", utils::capture.output(cat(p$metric, sep=" and ")), " are respectively ", utils::capture.output(cat(p$class, sep= " and "))),
 "TFS3" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The field '", p$metric, "' has a length of ", p$number),
-"TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", capture.output(cat(p$metric, sep=" and ")), " have respectively a length of: ", capture.output(cat(p$number, sep=" and "))),
+"TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(p$metric, sep=" and ")), " have respectively a length of: ", utils::capture.output(cat(p$number, sep=" and "))),
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
 "TFS6" = list("The expression '", p$expression, "' returned a vector of lenght ", p$number,  ". A single number or a list of single number is expected."),
 

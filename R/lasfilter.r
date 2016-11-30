@@ -57,8 +57,6 @@
 #' \link[lidR:getGround]{getGround}
 #' \link[lidR:getNth]{getNth}
 #' @export lasfilter
-#' @importFrom lazyeval dots_capture
-#' @importFrom magrittr %>%
 setGeneric("lasfilter", function(.las, ...){standardGeneric("lasfilter")})
 
 #' @rdname lasfilter
@@ -69,7 +67,6 @@ setMethod("lasfilter", "LAS",
   }
 )
 
-#' @importFrom lazyeval f_eval
 lasfilter_ <- function(.las, conditions)
 {
   combined_bools = !logical(nrow(.las@data))

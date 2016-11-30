@@ -54,7 +54,6 @@
 #' plot(subset)
 #' @rdname clip
 #' @export clipRectangle
-#' @importFrom data.table between
 setGeneric("clipRectangle", function(obj, xleft, ybottom, xright, ytop, inside = TRUE){standardGeneric("clipRectangle")})
 
 #' @rdname clip

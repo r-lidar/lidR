@@ -73,8 +73,6 @@
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
-#' @importFrom data.table copy :=
-#' @importFrom raster extract
 normalize = function(las, dtm = NULL, ...)
 {
  . <- Z <- Zn <- Xr <- Yr <- NULL
