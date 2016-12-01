@@ -57,13 +57,9 @@ setMethod("get_ground_elevation", "LAS",
     fields = names(coord)
 
     if( !"X" %in% fields | !"Y" %in% fields)
-      stop("Parameter coord does not have a column named X or Y",  call. = F)
+      stop("Parameter coord does not have a column named X or Y")
 
-    ground = suppressWarnings(getGround(las))
-
-    if(is.null(ground))
-      stop("No ground points found. Impossible to normalize the point cloud.", call. = F)
-
+    ground = getGround(las)
     Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, kernel = kernel, ...)$fitted.values
 
     return(Zg)
