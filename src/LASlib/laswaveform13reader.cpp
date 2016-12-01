@@ -81,13 +81,13 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
 {
   if (file_name == 0)
   {
-    fprintf(stderr,"ERROR: file name pointer is zero\n");
+    throw std::runtime_error(std::string("ERROR: file name pointer is zero"));
     return FALSE;
   }
 
   if (wave_packet_descr == 0)
   {
-    fprintf(stderr,"ERROR: wave packet descriptor pointer is zero\n");
+    throw std::runtime_error(std::string("ERROR: wave packet descriptor pointer is zero"));
     return FALSE;
   }
 
@@ -143,7 +143,7 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
 
   if (file == 0)
   {
-    fprintf(stderr, "ERROR: cannot open waveform file '%s'\n", file_name);
+    throw std::runtime_error(std::string("ERROR: cannot open waveform file '"));
     return FALSE;
   }
 
@@ -167,7 +167,7 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
   char magic[25];
   try { stream->getBytes((U8*)magic, 24); } catch(...)
   {
-    fprintf(stderr,"ERROR: reading waveform descriptor cross-check\n");
+    throw std::runtime_error(std::string("ERROR: reading waveform descriptor cross-check"));
     return FALSE;
   }
 
@@ -178,7 +178,7 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
     U16 i, number;
     try { stream->get16bitsLE((U8*)&number); } catch(...)
     {
-      fprintf(stderr,"ERROR: reading number of waveform descriptors\n");
+      throw std::runtime_error(std::string("ERROR: reading number of waveform descriptors"));
       return FALSE;
     }
     for (i = 0; i < number; i++)
@@ -186,21 +186,21 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
       U16 index;
       try { stream->get16bitsLE((U8*)&index); } catch(...)
       {
-        fprintf(stderr,"ERROR: reading index of waveform descriptor %d\n", i);
+        throw std::runtime_error(std::string("ERROR: reading index of waveform descriptor "));
         return FALSE;
       }
       if (index > 255)
       {
-        fprintf(stderr,"ERROR: cross-check - index %d of waveform descriptor %d out-of-range\n", index, i);
+        throw std::runtime_error(std::string("ERROR: cross-check - index "));
         return FALSE;
       }
       if (wave_packet_descr[index] == 0)
       {
-        fprintf(stderr,"WARNING: cross-check - waveform descriptor %d with index %d unknown\n", i, index);
+        throw std::runtime_error(std::string("WARNING: cross-check - waveform descriptor "));
         I32 dummy;
         try { stream->get32bitsLE((U8*)&dummy); } catch(...)
         {
-          fprintf(stderr,"ERROR: cross-check - reading rest of waveform descriptor %d\n", i);
+          throw std::runtime_error(std::string("ERROR: cross-check - reading rest of waveform descriptor "));
           return FALSE;
         }
         continue;
@@ -208,34 +208,34 @@ BOOL LASwaveform13reader::open(const char* file_name, I64 start_of_waveform_data
       U8 compression;
       try { stream->getBytes(&compression, 1); } catch(...)
       {
-        fprintf(stderr,"ERROR: reading compression of waveform descriptor %d\n", i);
+        throw std::runtime_error(std::string("ERROR: reading compression of waveform descriptor "));
         return FALSE;
       }
       if (compression != wave_packet_descr[index]->getCompressionType())
       {
-        fprintf(stderr,"ERROR: cross-check - compression %d %d of waveform descriptor %d with index %d is different\n", compression, wave_packet_descr[index]->getCompressionType(), i, index);
+        throw std::runtime_error(std::string("ERROR: cross-check - compression "));
         return FALSE;
       }
       U8 nbits;
       try { stream->getBytes(&nbits, 1); } catch(...)
       {
-        fprintf(stderr,"ERROR: reading nbits of waveform descriptor %d\n", i);
+        throw std::runtime_error(std::string("ERROR: reading nbits of waveform descriptor "));
         return FALSE;
       }
       if (nbits != wave_packet_descr[index]->getBitsPerSample())
       {
-        fprintf(stderr,"ERROR: cross-check - nbits %d %d of waveform descriptor %d with index %d is different\n", nbits, wave_packet_descr[index]->getBitsPerSample(), i, index);
+        throw std::runtime_error(std::string("ERROR: cross-check - nbits "));
         return FALSE;
       }
       U16 nsamples;
       try { stream->get16bitsLE((U8*)&nsamples); } catch(...)
       {
-        fprintf(stderr,"ERROR: reading nsamples of waveform descriptor %d\n", i);
+        throw std::runtime_error(std::string("ERROR: reading nsamples of waveform descriptor "));
         return FALSE;
       }
       if (nsamples != wave_packet_descr[index]->getNumberOfSamples())
       {
-        fprintf(stderr,"ERROR: cross-check - nsamples %d %d of waveform descriptor %d with index %d is different\n", nsamples, wave_packet_descr[index]->getNumberOfSamples(), i, index);
+        throw std::runtime_error(std::string("ERROR: cross-check - nsamples "));
         return FALSE;
       }
     }
@@ -264,14 +264,14 @@ BOOL LASwaveform13reader::read_waveform(const LASpoint* point)
 
   if (wave_packet_descr[index] == 0)
   {
-    fprintf(stderr, "ERROR: wavepacket is indexing non-existant descriptor %u\n", index);
+    throw std::runtime_error(std::string("ERROR: wavepacket is indexing non-existant descriptor "));
     return FALSE;
   }
 
   nbits = wave_packet_descr[index]->getBitsPerSample();
   if ((nbits != 8) && (nbits != 16))
   {
-    fprintf(stderr, "ERROR: waveform with %d bits per samples not supported yet\n", nbits);
+    throw std::runtime_error(std::string("ERROR: waveform with "));
     return FALSE;
   }
 
@@ -283,7 +283,7 @@ BOOL LASwaveform13reader::read_waveform(const LASpoint* point)
 
   if (nsamples == 0)
   {
-    fprintf(stderr, "ERROR: waveform has no samples\n");
+    throw std::runtime_error(std::string("ERROR: waveform has no samples"));
     return FALSE;
   }
 
@@ -317,7 +317,7 @@ BOOL LASwaveform13reader::read_waveform(const LASpoint* point)
   {
     try { stream->getBytes(samples, size); } catch(...)
     {
-      fprintf(stderr, "ERROR: cannot read %u bytes for waveform with %u samples of %u bits\n", size, nsamples, nbits);
+      throw std::runtime_error(std::string("ERROR: cannot read "));
       return FALSE;
     }
   }
