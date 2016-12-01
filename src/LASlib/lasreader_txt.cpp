@@ -30,8 +30,8 @@
 */
 #include "lasreader_txt.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -43,20 +43,20 @@ BOOL LASreaderTXT::open(const char* file_name, const char* parse_string, I32 ski
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file name pointer is zero\n");
     return FALSE;
   }
 
   FILE* file = fopen_compressed(file_name, "r", &piped);
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 10*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 10*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 10*LAS_TOOLS_IO_IBUFFER_SIZE);
   }
 
   return open(file, file_name, parse_string, skip_lines, populate_header);
@@ -68,7 +68,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
 
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file pointer is zero\n");
     return FALSE;
   }
 
@@ -107,7 +107,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
         header.add_attribute(attribute);
       }
       catch(...) {
-        Rcpp::Rcerr << "ERROR: initializing attribute " << attribute_descriptions[i] << "" << std::endl;
+        fprintf(stderr,"ERROR: initializing attribute %s\n", attribute_descriptions[i]);
         return FALSE;
       }
     }
@@ -244,7 +244,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
       else
       {
         line[strlen(line)-1] = '\0';
-        Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << parse_less << "'. skipping ..." << std::endl;
+        fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_less);
       }
     }
 
@@ -252,7 +252,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
 
     if (npoints == 0)
     {
-      Rcpp::Rcerr << "ERROR: could not parse any lines with '" << parse_less << "'" << std::endl;
+      fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", parse_less);
       fclose(file);
       file = 0;
       free(parse_less);    
@@ -310,7 +310,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
       else
       {
         line[strlen(line)-1] = '\0';
-        Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << parse_less << "'. skipping ..." << std::endl;
+        fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_less);
       }
     }
     if (npoints > U32_MAX)
@@ -351,13 +351,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     file = fopen_compressed(file_name, "r", &piped);
     if (file == 0)
     {
-      Rcpp::Rcerr << "ERROR: could not open '" << file_name << "' for second pass" << std::endl;
+      fprintf(stderr, "ERROR: could not open '%s' for second pass\n", file_name);
       return FALSE;
     }
 
     if (setvbuf(file, NULL, _IOFBF, 10*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
     {
-      Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 10*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+      fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 10*LAS_TOOLS_IO_IBUFFER_SIZE);
     }
   }
 
@@ -414,13 +414,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%d", &ncols) != 1)
       {
-        Rcpp::Rcerr << "ERROR: parsing number of cols" << std::endl;
+        fprintf(stderr, "ERROR: parsing number of cols\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with number of cols" << std::endl;
+      fprintf(stderr, "ERROR: reading line with number of cols\n");
       return FALSE;
     }
     I32 nrows;
@@ -428,13 +428,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%d", &nrows) != 1)
       {
-        Rcpp::Rcerr << "ERROR: parsing number of rows" << std::endl;
+        fprintf(stderr, "ERROR: parsing number of rows\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with number of rows" << std::endl;
+      fprintf(stderr, "ERROR: reading line with number of rows\n");
       return FALSE;
     }
     npoints = (I64)ncols*(I64)nrows;
@@ -453,13 +453,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf", &(translation[0]), &(translation[1]), &(translation[2])) != 3)
       {
-        Rcpp::Rcerr << "ERROR: parsing translation" << std::endl;
+        fprintf(stderr, "ERROR: parsing translation\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with translation" << std::endl;
+      fprintf(stderr, "ERROR: reading line with translation\n");
       return FALSE;
     }
     F64 rotation_row_0[3];
@@ -467,13 +467,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf", &(rotation_row_0[0]), &(rotation_row_0[1]), &(rotation_row_0[2])) != 3)
       {
-        Rcpp::Rcerr << "ERROR: parsing rotation row 0" << std::endl;
+        fprintf(stderr, "ERROR: parsing rotation row 0\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with rotation row 0" << std::endl;
+      fprintf(stderr, "ERROR: reading line with rotation row 0\n");
       return FALSE;
     }
     F64 rotation_row_1[3];
@@ -481,13 +481,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf", &(rotation_row_1[0]), &(rotation_row_1[1]), &(rotation_row_1[2])) != 3)
       {
-        Rcpp::Rcerr << "ERROR: parsing rotation row 1" << std::endl;
+        fprintf(stderr, "ERROR: parsing rotation row 1\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with rotation row 1" << std::endl;
+      fprintf(stderr, "ERROR: reading line with rotation row 1\n");
       return FALSE;
     }
     F64 rotation_row_2[3];
@@ -495,13 +495,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf", &(rotation_row_2[0]), &(rotation_row_2[1]), &(rotation_row_2[2])) != 3)
       {
-        Rcpp::Rcerr << "ERROR: parsing rotation row 2" << std::endl;
+        fprintf(stderr, "ERROR: parsing rotation row 2\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with rotation row 2" << std::endl;
+      fprintf(stderr, "ERROR: reading line with rotation row 2\n");
       return FALSE;
     }
     F64 transformation_row_0[4];
@@ -509,13 +509,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf %lf", &(transformation_row_0[0]), &(transformation_row_0[1]), &(transformation_row_0[2]), &(transformation_row_0[3])) != 4)
       {
-        Rcpp::Rcerr << "ERROR: parsing transformation row 0" << std::endl;
+        fprintf(stderr, "ERROR: parsing transformation row 0\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with transformation row 0" << std::endl;
+      fprintf(stderr, "ERROR: reading line with transformation row 0\n");
       return FALSE;
     }
     F64 transformation_row_1[4];
@@ -523,13 +523,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf %lf", &(transformation_row_1[0]), &(transformation_row_1[1]), &(transformation_row_1[2]), &(transformation_row_1[3])) != 4)
       {
-        Rcpp::Rcerr << "ERROR: parsing transformation row 1" << std::endl;
+        fprintf(stderr, "ERROR: parsing transformation row 1\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with transformation row 1" << std::endl;
+      fprintf(stderr, "ERROR: reading line with transformation row 1\n");
       return FALSE;
     }
     F64 transformation_row_2[4];
@@ -537,13 +537,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf %lf", &(transformation_row_2[0]), &(transformation_row_2[1]), &(transformation_row_2[2]), &(transformation_row_2[3])) != 4)
       {
-        Rcpp::Rcerr << "ERROR: parsing transformation row 2" << std::endl;
+        fprintf(stderr, "ERROR: parsing transformation row 2\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with transformation row 2" << std::endl;
+      fprintf(stderr, "ERROR: reading line with transformation row 2\n");
       return FALSE;
     }
     F64 transformation_row_3[4];
@@ -551,13 +551,13 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       if (sscanf(line, "%lf %lf %lf %lf", &(transformation_row_3[0]), &(transformation_row_3[1]), &(transformation_row_3[2]), &(transformation_row_3[3])) != 4)
       {
-        Rcpp::Rcerr << "ERROR: parsing transformation row 3" << std::endl;
+        fprintf(stderr, "ERROR: parsing transformation row 3\n");
         return FALSE;
       }
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: reading line with transformation row 3" << std::endl;
+      fprintf(stderr, "ERROR: reading line with transformation row 3\n");
       return FALSE;
     }
 
@@ -615,7 +615,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     else
     {
       line[strlen(line)-1] = '\0';
-      Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << this->parse_string << "'. skipping ..." << std::endl;
+      fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, this->parse_string);
     }
   }
 
@@ -623,7 +623,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
 
   if (i != 1)
   {
-    Rcpp::Rcerr << "ERROR: could not parse any lines with '" << this->parse_string << "'" << std::endl;
+    fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", this->parse_string);
     fclose(this->file);
     this->file = 0;
     free(this->parse_string);
@@ -781,13 +781,13 @@ BOOL LASreaderTXT::seek(const I64 p_index)
       else
       {
         line[strlen(line)-1] = '\0';
-        Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << this->parse_string << "'. skipping ..." << std::endl;
+        fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, this->parse_string);
       }
     }
     // did we manage to parse a line
     if (i != 1)
     {
-      Rcpp::Rcerr << "ERROR: could not parse any lines with '" << this->parse_string << "'" << std::endl;
+      fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", this->parse_string);
       fclose(file);
       file = 0;
       free(this->parse_string);
@@ -820,7 +820,7 @@ BOOL LASreaderTXT::read_point_default()
         else
         {
           line[strlen(line)-1] = '\0';
-          Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << this->parse_string << "'. skipping ..." << std::endl;
+          fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, this->parse_string);
         }
       }
       else
@@ -830,9 +830,9 @@ BOOL LASreaderTXT::read_point_default()
           if (p_count != npoints)
           {
 #ifdef _WIN32
-            Rcpp::Rcerr << "WARNING: end-of-file after " << p_count << " of " << npoints << " points" << std::endl;
+            fprintf(stderr,"WARNING: end-of-file after %I64d of %I64d points\n", p_count, npoints);
 #else
-            Rcpp::Rcerr << "WARNING: end-of-file after " << p_count << " of " << npoints << " points" << std::endl;
+            fprintf(stderr,"WARNING: end-of-file after %lld of %lld points\n", p_count, npoints);
 #endif
           }
         }
@@ -843,9 +843,9 @@ BOOL LASreaderTXT::read_point_default()
             if (p_count != npoints)
             {
 #ifdef _WIN32
-              Rcpp::Rcerr << "WARNING: end-of-file after " << p_count << " of " << npoints << " points" << std::endl;
+              fprintf(stderr,"WARNING: end-of-file after %I64d of %I64d points\n", p_count, npoints);
 #else
-              Rcpp::Rcerr << "WARNING: end-of-file after " << p_count << " of " << npoints << " points" << std::endl;
+              fprintf(stderr,"WARNING: end-of-file after %lld of %lld points\n", p_count, npoints);
 #endif
             }
           }
@@ -907,20 +907,20 @@ BOOL LASreaderTXT::reopen(const char* file_name)
 
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: fine name pointer is zero\n");
     return FALSE;
   }
 
   file = fopen_compressed(file_name, "r", &piped);
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot reopen file '" << file_name << "'" << std::endl;
+    fprintf(stderr, "ERROR: cannot reopen file '%s'\n", file_name);
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 10*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 10*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 10*LAS_TOOLS_IO_IBUFFER_SIZE);
   }
 
   // skip lines if we have to
@@ -941,7 +941,7 @@ BOOL LASreaderTXT::reopen(const char* file_name)
     else
     {
       line[strlen(line)-1] = '\0';
-      Rcpp::Rcerr << "WARNING: cannot parse '" << line << "' with '" << parse_string << "'. skipping ..." << std::endl;
+      fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_string);
     }
   }
 
@@ -949,7 +949,7 @@ BOOL LASreaderTXT::reopen(const char* file_name)
 
   if (i != 1)
   {
-    Rcpp::Rcerr << "ERROR: could not parse any lines with '" << parse_string << "'" << std::endl;
+    fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", parse_string);
     fclose(file);
     file = 0;
     return FALSE;
@@ -1041,7 +1041,7 @@ BOOL LASreaderTXT::parse_attribute(const char* l, I32 index)
     }
     if (temp_i < U8_MIN || temp_i > U8_MAX)
     {
-      Rcpp::Rcerr << "WARNING: attribute " << index << " of type U8 is " << temp_i << ". clamped to [" << U8_MIN << " " << U8_MAX << "] range." << std::endl;
+      fprintf(stderr, "WARNING: attribute %d of type U8 is %d. clamped to [%d %d] range.\n", index, temp_i, U8_MIN, U8_MAX);
       point.set_attribute(attribute_starts[index], U8_CLAMP(temp_i));
     }
     else
@@ -1066,7 +1066,7 @@ BOOL LASreaderTXT::parse_attribute(const char* l, I32 index)
     }
     if (temp_i < I8_MIN || temp_i > I8_MAX)
     {
-      Rcpp::Rcerr << "WARNING: attribute " << index << " of type I8 is " << temp_i << ". clamped to [" << I8_MIN << " " << I8_MAX << "] range." << std::endl;
+      fprintf(stderr, "WARNING: attribute %d of type I8 is %d. clamped to [%d %d] range.\n", index, temp_i, I8_MIN, I8_MAX);
       point.set_attribute(attribute_starts[index], I8_CLAMP(temp_i));
     }
     else
@@ -1091,7 +1091,7 @@ BOOL LASreaderTXT::parse_attribute(const char* l, I32 index)
     }
     if (temp_i < U16_MIN || temp_i > U16_MAX)
     {
-      Rcpp::Rcerr << "WARNING: attribute " << index << " of type U16 is " << temp_i << ". clamped to [" << U16_MIN << " " << U16_MAX << "] range." << std::endl;
+      fprintf(stderr, "WARNING: attribute %d of type U16 is %d. clamped to [%d %d] range.\n", index, temp_i, U16_MIN, U16_MAX);
       point.set_attribute(attribute_starts[index], U16_CLAMP(temp_i));
     }
     else
@@ -1116,7 +1116,7 @@ BOOL LASreaderTXT::parse_attribute(const char* l, I32 index)
     }
     if (temp_i < I16_MIN || temp_i > I16_MAX)
     {
-      Rcpp::Rcerr << "WARNING: attribute " << index << " of type I16 is " << temp_i << ". clamped to [" << I16_MIN << " " << I16_MAX << "] range." << std::endl;
+      fprintf(stderr, "WARNING: attribute %d of type I16 is %d. clamped to [%d %d] range.\n", index, temp_i, I16_MIN, I16_MAX);
       point.set_attribute(attribute_starts[index], I16_CLAMP(temp_i));
     }
     else
@@ -1169,7 +1169,7 @@ BOOL LASreaderTXT::parse_attribute(const char* l, I32 index)
   }
   else
   {
-    Rcpp::Rcerr << "WARNING: attribute " << index << " not (yet) implemented." << std::endl;
+    fprintf(stderr, "WARNING: attribute %d not (yet) implemented.\n", index);
     return FALSE;
   }
   return TRUE;
@@ -1249,7 +1249,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       if (sscanf(l, "%f", &temp_f) != 1) return FALSE;
       if (translate_intensity != 0.0f) temp_f = temp_f+translate_intensity;
       if (scale_intensity != 1.0f) temp_f = temp_f*scale_intensity;
-      if (temp_f < 0.0f || temp_f >= 65535.5f) Rcpp::Rcerr << "WARNING: intensity " << temp_f << " is out of range of unsigned short" << std::endl;
+      if (temp_f < 0.0f || temp_f >= 65535.5f) fprintf(stderr, "WARNING: intensity %g is out of range of unsigned short\n", temp_f);
       point.intensity = (unsigned short)(temp_f+0.5f);
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1260,7 +1260,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       if (sscanf(l, "%f", &temp_f) != 1) return FALSE;
       if (translate_scan_angle != 0.0f) temp_f = temp_f+translate_scan_angle;
       if (scale_scan_angle != 1.0f) temp_f = temp_f*scale_scan_angle;
-      if (temp_f < -128.0f || temp_f > 127.0f) Rcpp::Rcerr << "WARNING: scan angle " << temp_f << " is out of range of char" << std::endl;
+      if (temp_f < -128.0f || temp_f > 127.0f) fprintf(stderr, "WARNING: scan angle %g is out of range of char\n", temp_f);
       point.scan_angle_rank = (char)temp_f;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1269,7 +1269,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 7) Rcpp::Rcerr << "WARNING: return number " << temp_i << " is out of range of three bits" << std::endl;
+      if (temp_i < 0 || temp_i > 7) fprintf(stderr, "WARNING: return number %d is out of range of three bits\n", temp_i);
       point.number_of_returns = temp_i & 7;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1278,7 +1278,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 7) Rcpp::Rcerr << "WARNING: return number " << temp_i << " is out of range of three bits" << std::endl;
+      if (temp_i < 0 || temp_i > 7) fprintf(stderr, "WARNING: return number %d is out of range of three bits\n", temp_i);
       point.return_number = temp_i & 7;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1287,7 +1287,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 3) Rcpp::Rcerr << "WARNING: terrasolid echo encoding " << temp_i << " is out of range of 0 to 3" << std::endl;
+      if (temp_i < 0 || temp_i > 3) fprintf(stderr, "WARNING: terrasolid echo encoding %d is out of range of 0 to 3\n", temp_i);
       if (temp_i == 0) // only echo
       {
         point.number_of_returns = 1;
@@ -1315,7 +1315,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 255) Rcpp::Rcerr << "WARNING: classification " << temp_i << " is out of range of unsigned char" << std::endl;
+      if (temp_i < 0 || temp_i > 255) fprintf(stderr, "WARNING: classification %d is out of range of unsigned char\n", temp_i);
       point.classification = (unsigned char)temp_i;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1324,7 +1324,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 255) Rcpp::Rcerr << "WARNING: user data " << temp_i << " is out of range of unsigned char" << std::endl;
+      if (temp_i < 0 || temp_i > 255) fprintf(stderr, "WARNING: user data %d is out of range of unsigned char\n", temp_i);
       point.user_data = temp_i & 255;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1333,7 +1333,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 65535) Rcpp::Rcerr << "WARNING: point source ID " << temp_i << " is out of range of unsigned short" << std::endl;
+      if (temp_i < 0 || temp_i > 65535) fprintf(stderr, "WARNING: point source ID %d is out of range of unsigned short\n", temp_i);
       point.point_source_ID = temp_i & 65535;
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1342,7 +1342,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 1) Rcpp::Rcerr << "WARNING: edge of flight line flag " << temp_i << " is out of range of boolean flag" << std::endl;
+      if (temp_i < 0 || temp_i > 1) fprintf(stderr, "WARNING: edge of flight line flag %d is out of range of boolean flag\n", temp_i);
       point.edge_of_flight_line = (temp_i ? 1 : 0);
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1351,7 +1351,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t' || l[0] == ';')) l++; // first skip white spaces
       if (l[0] == 0) return FALSE;
       if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
-      if (temp_i < 0 || temp_i > 1) Rcpp::Rcerr << "WARNING: direction of scan flag " << temp_i << " is out of range of boolean flag" << std::endl;
+      if (temp_i < 0 || temp_i > 1) fprintf(stderr, "WARNING: direction of scan flag %d is out of range of boolean flag\n", temp_i);
       point.scan_direction_flag = (temp_i ? 1 : 0);
       while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t' && l[0] != ';') l++; // then advance to next white space
     }
@@ -1393,7 +1393,7 @@ BOOL LASreaderTXT::parse(const char* parse_string)
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: unknown symbol '" << p[0] << "' in parse string" << std::endl;
+      fprintf(stderr, "ERROR: unknown symbol '%c' in parse string\n", p[0]);
     }
     p++;
   }
@@ -1431,35 +1431,35 @@ BOOL LASreaderTXT::check_parse_string(const char* parse_string)
         I32 index = (I32)(p[0] - '0');
         if (index >= header.number_attributes)
         {
-          Rcpp::Rcerr << "ERROR: extra bytes attribute '" << index << "' was not described." << std::endl;
+          fprintf(stderr, "ERROR: extra bytes attribute '%d' was not described.\n", index);
           return FALSE;
         }
         attribute_starts[index] = header.get_attribute_start(index);
       }
       else
       {
-        Rcpp::Rcerr << "ERROR: unknown symbol '" << p[0] << "' in parse string. valid are" << std::endl;
-        Rcpp::Rcerr << "       'x' : the x coordinate" << std::endl;
-        Rcpp::Rcerr << "       'y' : the y coordinate" << std::endl;
-        Rcpp::Rcerr << "       'z' : the z coordinate" << std::endl;
-        Rcpp::Rcerr << "       't' : the gps time" << std::endl;
-        Rcpp::Rcerr << "       'R' : the red channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'G' : the green channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'B' : the blue channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       's' : a string or a number that we don't care about" << std::endl;
-        Rcpp::Rcerr << "       'i' : the intensity" << std::endl;
-        Rcpp::Rcerr << "       'a' : the scan angle" << std::endl;
-        Rcpp::Rcerr << "       'n' : the number of returns of that given pulse" << std::endl;
-        Rcpp::Rcerr << "       'r' : the number of the return" << std::endl;
-        Rcpp::Rcerr << "       'E' : a terrasolid echo encoding" << std::endl;
-        Rcpp::Rcerr << "       'c' : the classification" << std::endl;
-        Rcpp::Rcerr << "       'u' : the user data" << std::endl;
-        Rcpp::Rcerr << "       'p' : the point source ID" << std::endl;
-        Rcpp::Rcerr << "       'e' : the edge of flight line flag" << std::endl;
-        Rcpp::Rcerr << "       'd' : the direction of scan flag" << std::endl;
-        Rcpp::Rcerr << "   '0'-'9' : additional point attributes described as extra bytes" << std::endl;
-        Rcpp::Rcerr << "       'H' : a hexadecimal string encoding the RGB color" << std::endl;
-        Rcpp::Rcerr << "       'I' : a hexadecimal string encoding the intensity" << std::endl;
+        fprintf(stderr, "ERROR: unknown symbol '%c' in parse string. valid are\n", p[0]);
+        fprintf(stderr, "       'x' : the x coordinate\n");
+        fprintf(stderr, "       'y' : the y coordinate\n");
+        fprintf(stderr, "       'z' : the z coordinate\n");
+        fprintf(stderr, "       't' : the gps time\n");
+        fprintf(stderr, "       'R' : the red channel of the RGB field\n");
+        fprintf(stderr, "       'G' : the green channel of the RGB field\n");
+        fprintf(stderr, "       'B' : the blue channel of the RGB field\n");
+        fprintf(stderr, "       's' : a string or a number that we don't care about\n");
+        fprintf(stderr, "       'i' : the intensity\n");
+        fprintf(stderr, "       'a' : the scan angle\n");
+        fprintf(stderr, "       'n' : the number of returns of that given pulse\n");
+        fprintf(stderr, "       'r' : the number of the return\n");
+        fprintf(stderr, "       'E' : a terrasolid echo encoding\n");
+        fprintf(stderr, "       'c' : the classification\n");
+        fprintf(stderr, "       'u' : the user data\n");
+        fprintf(stderr, "       'p' : the point source ID\n");
+        fprintf(stderr, "       'e' : the edge of flight line flag\n");
+        fprintf(stderr, "       'd' : the direction of scan flag\n");
+        fprintf(stderr, "   '0'-'9' : additional point attributes described as extra bytes\n");
+        fprintf(stderr, "       'H' : a hexadecimal string encoding the RGB color\n");
+        fprintf(stderr, "       'I' : a hexadecimal string encoding the intensity\n");
         return FALSE;
       }
     }
@@ -1533,8 +1533,8 @@ void LASreaderTXT::populate_bounding_box()
 
   if ((header.min_x > 0) != (dequant_min_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_x from " << header.min_x << " to " << dequant_min_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for min_x from %g to %g.\n", header.min_x, dequant_min_x);
+    fprintf(stderr, "         set scale factor for x coarser than %g with '-rescale'\n", header.x_scale_factor);
   }
   else
   {
@@ -1542,8 +1542,8 @@ void LASreaderTXT::populate_bounding_box()
   }
   if ((header.max_x > 0) != (dequant_max_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_x from " << header.max_x << " to " << dequant_max_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for max_x from %g to %g.\n", header.max_x, dequant_max_x);
+    fprintf(stderr, "         set scale factor for x coarser than %g with '-rescale'\n", header.x_scale_factor);
   }
   else
   {
@@ -1551,8 +1551,8 @@ void LASreaderTXT::populate_bounding_box()
   }
   if ((header.min_y > 0) != (dequant_min_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_y from " << header.min_y << " to " << dequant_min_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for min_y from %g to %g.\n", header.min_y, dequant_min_y);
+    fprintf(stderr, "         set scale factor for y coarser than %g with '-rescale'\n", header.y_scale_factor);
   }
   else
   {
@@ -1560,8 +1560,8 @@ void LASreaderTXT::populate_bounding_box()
   }
   if ((header.max_y > 0) != (dequant_max_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_y from " << header.max_y << " to " << dequant_max_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for max_y from %g to %g.\n", header.max_y, dequant_max_y);
+    fprintf(stderr, "         set scale factor for y coarser than %g with '-rescale'\n", header.y_scale_factor);
   }
   else
   {
@@ -1569,8 +1569,8 @@ void LASreaderTXT::populate_bounding_box()
   }
   if ((header.min_z > 0) != (dequant_min_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_z from " << header.min_z << " to " << dequant_min_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for min_z from %g to %g.\n", header.min_z, dequant_min_z);
+    fprintf(stderr, "         set scale factor for z coarser than %g with '-rescale'\n", header.z_scale_factor);
   }
   else
   {
@@ -1578,8 +1578,8 @@ void LASreaderTXT::populate_bounding_box()
   }
   if ((header.max_z > 0) != (dequant_max_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_z from " << header.max_z << " to " << dequant_max_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    fprintf(stderr, "WARNING: quantization sign flip for max_z from %g to %g.\n", header.max_z, dequant_max_z);
+    fprintf(stderr, "         set scale factor for z coarser than %g with '-rescale'\n", header.z_scale_factor);
   }
   else
   {

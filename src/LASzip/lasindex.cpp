@@ -31,9 +31,8 @@
 #include "lasindex.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "lasquadtree.hpp"
 #include "lasinterval.hpp"
@@ -98,7 +97,7 @@ void LASindex::complete(U32 minimum_points, I32 maximum_intervals, const BOOL ve
 {
   if (verbose)
   {
-    Rcpp::Rcerr << "before complete " << minimum_points << " " << maximum_intervals << "" << std::endl;
+    fprintf(stderr,"before complete %d %d\n", minimum_points, maximum_intervals);
     print(FALSE);
   }
   if (minimum_points)
@@ -170,7 +169,7 @@ void LASindex::complete(U32 minimum_points, I32 maximum_intervals, const BOOL ve
     }
     if (verbose)
     {
-      Rcpp::Rcerr << "after minimum_points " << minimum_points << "" << std::endl;
+      fprintf(stderr,"after minimum_points %d\n", minimum_points);
       print(FALSE);
     }
   }
@@ -183,7 +182,7 @@ void LASindex::complete(U32 minimum_points, I32 maximum_intervals, const BOOL ve
     interval->merge_intervals(maximum_intervals, verbose);
     if (verbose)
     {
-      Rcpp::Rcerr << "after maximum_intervals " << maximum_intervals << "" << std::endl;
+      fprintf(stderr,"after maximum_intervals %d\n", maximum_intervals);
       print(FALSE);
     }
   }
@@ -209,15 +208,15 @@ void LASindex::print(BOOL verbose)
     }
     if (total_check != interval->total)
     {
-      Rcpp::Rcerr << "ERROR: total_check " << total_check << " != interval->total " << interval->total << "" << std::endl;
+      fprintf(stderr,"ERROR: total_check %d != interval->total %d\n", total_check, interval->total);
     }
-    if (verbose) Rcpp::Rcerr << "cell " << interval->index << " intervals " << intervals << " full " << interval->full << " total " << interval->total << " (" << 100.0f*interval->full/interval->total << ".2f)" << std::endl;
+    if (verbose) fprintf(stderr,"cell %d intervals %d full %d total %d (%.2f)\n", interval->index, intervals, interval->full, interval->total, 100.0f*interval->full/interval->total);
     total_cells++;
     total_full += interval->full;
     total_total += interval->total;
     total_intervals += intervals;
   }
-  if (verbose) Rcpp::Rcerr << "total cells/intervals " << total_cells << "/" << total_intervals << " full " << total_full << " (" << 100.0f*total_full/total_total << ".2f)" << std::endl;
+  if (verbose) fprintf(stderr,"total cells/intervals %d/%d full %d (%.2f)\n", total_cells, total_intervals, total_full, 100.0f*total_full/total_total);
 }
 
 LASquadtree* LASindex::get_spatial() const
@@ -311,7 +310,7 @@ BOOL LASindex::read(const char* file_name)
     stream = new ByteStreamInFileBE(file);
   if (!read(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot read '" << name << "'" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot read '%s'\n", name);
     delete stream;
     fclose(file);
     return FALSE;
@@ -374,7 +373,7 @@ BOOL LASindex::append(const char* file_name) const
       CHAR user_id[16];
       try { bytestreamin->getBytes((U8*)user_id, 16); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << u << "].user_id" << std::endl;
+        fprintf(stderr,"ERROR: reading header.vlrs[%d].user_id\n", u);
         return FALSE;
       }
       if (strcmp(user_id, "laszip encoded") == 0)
@@ -385,13 +384,13 @@ BOOL LASindex::append(const char* file_name) const
       U16 record_id;
       try { bytestreamin->get16bitsLE((U8*)&record_id); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << u << "].record_id" << std::endl;
+        fprintf(stderr,"ERROR: reading header.vlrs[%d].record_id\n", u);
         return FALSE;
       }
       U16 record_length_after_header;
       try { bytestreamin->get16bitsLE((U8*)&record_length_after_header); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << u << "].record_length_after_header" << std::endl;
+        fprintf(stderr,"ERROR: reading header.vlrs[%d].record_length_after_header\n", u);
         return FALSE;
       }
       total += (54 + record_length_after_header);
@@ -424,7 +423,7 @@ BOOL LASindex::append(const char* file_name) const
 
   if (!write(bytestreamout))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot append LAX to '" << file_name << "'" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot append LAX to '%s'\n", file_name);
     delete bytestreamout;
     fclose(file);
     delete lasreader;
@@ -481,7 +480,7 @@ BOOL LASindex::write(const char* file_name) const
   FILE* file = fopen(name, "wb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot open '" << name << "' for write" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot open '%s' for write\n", name);
     free(name);
     return FALSE;
   }
@@ -492,7 +491,7 @@ BOOL LASindex::write(const char* file_name) const
     stream = new ByteStreamOutFileBE(file);
   if (!write(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot write '" << name << "'" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot write '%s'\n", name);
     delete stream;
     fclose(file);
     free(name);
@@ -519,32 +518,32 @@ BOOL LASindex::read(ByteStreamIn* stream)
   char signature[4];
   try { stream->getBytes((U8*)signature, 4); } catch (...)
   {
-    Rcpp::Rcerr << "ERROR (LASindex): reading signature" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): reading signature\n");
     return FALSE;
   }
   if (strncmp(signature, "LASX", 4) != 0)
   {
-    Rcpp::Rcerr << "ERROR (LASindex): wrong signature " << signature << " instead of 'LASX'" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): wrong signature %4s instead of 'LASX'\n", signature);
     return FALSE;
   }
   U32 version;
   try { stream->get32bitsLE((U8*)&version); } catch (...)
   {
-    Rcpp::Rcerr << "ERROR (LASindex): reading version" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): reading version\n");
     return FALSE;
   }
   // read spatial quadtree
   spatial = new LASquadtree();
   if (!spatial->read(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot read LASspatial (LASquadtree)" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot read LASspatial (LASquadtree)\n");
     return FALSE;
   }
   // read interval
   interval = new LASinterval();
   if (!interval->read(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): reading LASinterval" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): reading LASinterval\n");
     return FALSE;
   }
   // tell spatial about the existing cells
@@ -560,25 +559,25 @@ BOOL LASindex::write(ByteStreamOut* stream) const
 {
   if (!stream->putBytes((U8*)"LASX", 4))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): writing signature" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): writing signature\n");
     return FALSE;
   }
   U32 version = 0;
   if (!stream->put32bitsLE((U8*)&version))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): writing version" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): writing version\n");
     return FALSE;
   }
   // write spatial quadtree
   if (!spatial->write(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): cannot write LASspatial (LASquadtree)" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): cannot write LASspatial (LASquadtree)\n");
     return FALSE;
   }
   // write interval
   if (!interval->write(stream))
   {
-    Rcpp::Rcerr << "ERROR (LASindex): writing LASinterval" << std::endl;
+    fprintf(stderr,"ERROR (LASindex): writing LASinterval\n");
     return FALSE;
   }
   return TRUE;
@@ -631,7 +630,7 @@ BOOL LASindex::merge_intervals()
         used_cells++;
       }
     }
-//    Rcpp::Rcerr << "LASindex: used " << used_cells << " cells of total " << interval->get_number_cells() << "" << std::endl;
+//    fprintf(stderr,"LASindex: used %d cells of total %d\n", used_cells, interval->get_number_cells());
     if (used_cells)
     {
       BOOL r = interval->merge();

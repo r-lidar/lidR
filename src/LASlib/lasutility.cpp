@@ -31,9 +31,8 @@
 #include "lasutility.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 LASinventory::LASinventory()
 {
@@ -425,8 +424,8 @@ void LASbin::add_to_bin(I32 bin)
         bins_pos = (U32*)malloc(sizeof(U32)*size_pos);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_pos << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u pos bins\012", size_pos);
+          exit(1);
         }
         for (i = 0; i < size_pos; i++) bins_pos[i] = 0;
       }
@@ -436,8 +435,8 @@ void LASbin::add_to_bin(I32 bin)
         bins_pos = (U32*)realloc(bins_pos, sizeof(U32)*new_size);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u pos bins\012", new_size);
+          exit(1);
         }
         for (i = size_pos; i < new_size; i++) bins_pos[i] = 0;
         size_pos = new_size;
@@ -457,8 +456,8 @@ void LASbin::add_to_bin(I32 bin)
         bins_neg = (U32*)malloc(sizeof(U32)*size_neg);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_neg << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u neg bins\012", size_neg);
+          exit(1);
         }
         for (i = 0; i < size_neg; i++) bins_neg[i] = 0;
       }
@@ -468,8 +467,8 @@ void LASbin::add_to_bin(I32 bin)
         bins_neg = (U32*)realloc(bins_neg, sizeof(U32)*new_size);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u neg bins\012", new_size);
+          exit(1);
         }
         for (i = size_neg; i < new_size; i++) bins_neg[i] = 0;
         size_neg = new_size;
@@ -502,13 +501,13 @@ void LASbin::add(I32 item, I32 value)
         values_pos = (F64*)malloc(sizeof(F64)*size_pos);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_pos << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u pos bins\012", size_pos);
+          exit(1);
         }
         if (values_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_pos << " pos values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u pos values\012", size_pos);
+          exit(1);
         }
         for (i = 0; i < size_pos; i++) { bins_pos[i] = 0; values_pos[i] = 0; }
       }
@@ -519,13 +518,13 @@ void LASbin::add(I32 item, I32 value)
         values_pos = (F64*)realloc(values_pos, sizeof(F64)*new_size);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u pos bins\012", new_size);
+          exit(1);
         }
         if (values_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " pos values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u pos values\012", new_size);
+          exit(1);
         }
         for (i = size_pos; i < new_size; i++) { bins_pos[i] = 0; values_pos[i] = 0; }
         size_pos = new_size;
@@ -547,13 +546,13 @@ void LASbin::add(I32 item, I32 value)
         values_neg = (F64*)malloc(sizeof(F64)*size_neg);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_neg << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u neg bins\012", size_neg);
+          exit(1);
         }
         if (values_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_neg << " neg values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u neg values\012", size_neg);
+          exit(1);
         }
         for (i = 0; i < size_neg; i++) { bins_neg[i] = 0; values_neg[i] = 0; }
       }
@@ -564,13 +563,13 @@ void LASbin::add(I32 item, I32 value)
         values_neg = (F64*)realloc(values_neg, sizeof(F64)*new_size);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u neg bins\012", new_size);
+          exit(1);
         }
         if (values_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " neg values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u neg values\012", new_size);
+          exit(1);
         }
         for (i = size_neg; i < new_size; i++) { bins_neg[i] = 0; values_neg[i] = 0; }
         size_neg = new_size;
@@ -604,13 +603,13 @@ void LASbin::add(F64 item, F64 value)
         values_pos = (F64*)malloc(sizeof(F64)*size_pos);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_pos << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u pos bins\012", size_pos);
+          exit(1);
         }
         if (values_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_pos << " pos values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u pos values\012", size_pos);
+          exit(1);
         }
         for (i = 0; i < size_pos; i++) { bins_pos[i] = 0; values_pos[i] = 0; }
       }
@@ -621,13 +620,13 @@ void LASbin::add(F64 item, F64 value)
         values_pos = (F64*)realloc(values_pos, sizeof(F64)*new_size);
         if (bins_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " pos bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u pos bins\012", new_size);
+          exit(1);
         }
         if (values_pos == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " pos values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u pos values\012", new_size);
+          exit(1);
         }
         for (i = size_pos; i < new_size; i++) { bins_pos[i] = 0; values_pos[i] = 0; }
         size_pos = new_size;
@@ -649,13 +648,13 @@ void LASbin::add(F64 item, F64 value)
         values_neg = (F64*)malloc(sizeof(F64)*size_neg);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_neg << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u neg bins\012", size_neg);
+          exit(1);
         }
         if (values_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: allocating " << size_neg << " neg values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: allocating %u neg values\012", size_neg);
+          exit(1);
         }
         for (i = 0; i < size_neg; i++) { bins_neg[i] = 0; values_neg[i] = 0; }
       }
@@ -666,13 +665,13 @@ void LASbin::add(F64 item, F64 value)
         values_neg = (F64*)realloc(values_neg, sizeof(F64)*new_size);
         if (bins_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " neg bins" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u neg bins\012", new_size);
+          exit(1);
         }
         if (values_neg == 0)
         {
-          Rcpp::Rcerr << "ERROR: reallocating " << new_size << " neg values" << std::endl;
-          throw 1;
+          fprintf(stderr, "ERROR: reallocating %u neg values\012", new_size);
+          exit(1);
         }
         for (i = size_neg; i < new_size; i++) { bins_neg[i] = 0; values_neg[i] = 0; }
         size_neg = new_size;
@@ -877,7 +876,7 @@ BOOL LAShistogram::parse(int argc, char* argv[])
     {
       if ((i+2) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: name step" << std::endl;
+        fprintf(stderr,"ERROR: '%s' needs 2 arguments: name step\n", argv[i]);
         return FALSE;
       }
       if (!histo(argv[i+1], (F32)atof(argv[i+2]))) return FALSE;
@@ -887,7 +886,7 @@ BOOL LAShistogram::parse(int argc, char* argv[])
     {
       if ((i+3) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: name step name_avg" << std::endl;
+        fprintf(stderr,"ERROR: '%s' needs 3 arguments: name step name_avg\n", argv[i]);
         return FALSE;
       }
       if (!histo_avg(argv[i+1], (F32)atof(argv[i+2]), argv[i+3])) return FALSE;
@@ -982,7 +981,7 @@ BOOL LAShistogram::histo(const CHAR* name, F32 step)
     wavepacket_location_bin = new LASbin(step);
   else
   {
-    Rcpp::Rcerr << "ERROR: histogram of '" << name << "' not implemented" << std::endl;
+    fprintf(stderr,"ERROR: histogram of '%s' not implemented\n", name);
     return FALSE;
   }
   is_active = TRUE;
@@ -999,7 +998,7 @@ BOOL LAShistogram::histo_avg(const CHAR* name, F32 step, const CHAR* name_avg)
       classification_bin_scan_angle = new LASbin(step);
     else
     {
-      Rcpp::Rcerr << "ERROR: histogram of '" << name << "' with '" << name_avg << "' averages not implemented" << std::endl;
+      fprintf(stderr,"ERROR: histogram of '%s' with '%s' averages not implemented\n", name, name_avg);
       return FALSE;
     }
   }
@@ -1013,7 +1012,7 @@ BOOL LAShistogram::histo_avg(const CHAR* name, F32 step, const CHAR* name_avg)
       scan_angle_bin_intensity = new LASbin(step);
     else
     {
-      Rcpp::Rcerr << "ERROR: histogram of '" << name << "' with '" << name_avg << "' averages not implemented" << std::endl;
+      fprintf(stderr,"ERROR: histogram of '%s' with '%s' averages not implemented\n", name, name_avg);
       return FALSE;
     }
   }
@@ -1023,13 +1022,13 @@ BOOL LAShistogram::histo_avg(const CHAR* name, F32 step, const CHAR* name_avg)
       return_map_bin_intensity = new LASbin(1);
     else
     {
-      Rcpp::Rcerr << "ERROR: histogram of '" << name << "' with '" << name_avg << "' averages not implemented" << std::endl;
+      fprintf(stderr,"ERROR: histogram of '%s' with '%s' averages not implemented\n", name, name_avg);
       return FALSE;
     }
   }
   else
   {
-    Rcpp::Rcerr << "ERROR: histogram of '" << name << "' not implemented" << std::endl;
+    fprintf(stderr,"ERROR: histogram of '%s' not implemented\n", name);
     return FALSE;
   }
   is_active = TRUE;
