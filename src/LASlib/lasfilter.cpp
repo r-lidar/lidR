@@ -999,8 +999,8 @@ public:
   inline I32 get_command(CHAR* string) const { return sprintf(string, "-%s %g ", name(), fraction); };
   inline BOOL filter(const LASpoint* point)
   {
-    srand(seed);
-    seed = rand();
+    //srand(seed);
+    seed = R::runif(0, RAND_MAX);
     return ((F32)seed/(F32)RAND_MAX) > fraction;
   };
   void reset() { seed = 0; };

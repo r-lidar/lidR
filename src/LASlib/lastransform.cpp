@@ -343,8 +343,8 @@ public:
   inline int get_command(CHAR* string) const { return sprintf(string, "-%s %d %d ", name(), max_raw_offset[0], max_raw_offset[1]); };
   inline void transform(LASpoint* point) {
     I32 r;
-    srand(seed);
-    seed = rand();
+    //srand(seed);
+    seed = R::runif(0, RAND_MAX);
     r = ((seed >> 3) % ((2 * max_raw_offset[0]) + 1)) - max_raw_offset[0];
     point->set_X(point->get_X() + r);
     r = ((seed >> 6) % ((2 * max_raw_offset[1]) + 1)) - max_raw_offset[1];
