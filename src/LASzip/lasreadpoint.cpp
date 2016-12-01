@@ -37,9 +37,8 @@
 #include "lasreaditemcompressed_v2.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 LASreadPoint::LASreadPoint()
 {

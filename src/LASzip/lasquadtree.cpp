@@ -34,9 +34,8 @@
 #include "bytestreamout.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <vector>
 using namespace std;
@@ -590,33 +589,33 @@ BOOL LASquadtree::read(ByteStreamIn* stream)
   char signature[4];
   try { stream->getBytes((U8*)signature, 4); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading LASspatial signature" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading LASspatial signature\n");
     return FALSE;
   }
   if (strncmp(signature, "LASS", 4) != 0)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): wrong LASspatial signature " << signature << " instead of 'LASS'" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): wrong LASspatial signature %4s instead of 'LASS'\n", signature);
     return FALSE;
   }
   U32 type;
   try { stream->getBytes((U8*)&type, 4); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading LASspatial type" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading LASspatial type\n");
     return 0;
   }
   if (type != LAS_SPATIAL_QUAD_TREE)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): unknown LASspatial type " << type << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): unknown LASspatial type %u\n", type);
     return 0;
   }
   try { stream->getBytes((U8*)signature, 4); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading signature" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading signature\n");
     return FALSE;
   }
   if (strncmp(signature, "LASQ", 4) != 0)
   {
-//    Rcpp::Rcerr << "ERROR (LASquadtree): wrong signature " << signature << " instead of 'LASV'" << std::endl;
+//    fprintf(stderr,"ERROR (LASquadtree): wrong signature %4s instead of 'LASV'\n", signature);
 //    return FALSE;
     levels = ((U32*)signature)[0];
   }
@@ -625,45 +624,45 @@ BOOL LASquadtree::read(ByteStreamIn* stream)
     U32 version;
     try { stream->get32bitsLE((U8*)&version); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR (LASquadtree): reading version" << std::endl;
+      fprintf(stderr,"ERROR (LASquadtree): reading version\n");
       return FALSE;
     }
     try { stream->get32bitsLE((U8*)&levels); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR (LASquadtree): reading levels" << std::endl;
+      fprintf(stderr,"ERROR (LASquadtree): reading levels\n");
       return FALSE;
     }
   }
   U32 level_index;
   try { stream->get32bitsLE((U8*)&level_index); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading level_index" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading level_index\n");
     return FALSE;
   }
   U32 implicit_levels;
   try { stream->get32bitsLE((U8*)&implicit_levels); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading implicit_levels" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading implicit_levels\n");
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&min_x); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading min_x" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading min_x\n");
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&max_x); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading max_x" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading max_x\n");
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&min_y); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading min_y" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading min_y\n");
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&max_y); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): reading max_y" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): reading max_y\n");
     return FALSE;
   }
   return TRUE;
@@ -683,65 +682,65 @@ BOOL LASquadtree::write(ByteStreamOut* stream) const
 
   if (!stream->putBytes((U8*)"LASS", 4))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing LASspatial signature" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing LASspatial signature\n");
     return FALSE;
   }
 
   U32 type = LAS_SPATIAL_QUAD_TREE;
   if (!stream->put32bitsLE((U8*)&type))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing LASspatial type " << type << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing LASspatial type %u\n", type);
     return FALSE;
   }
 
   if (!stream->putBytes((U8*)"LASQ", 4))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing signature" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing signature\n");
     return FALSE;
   }
 
   U32 version = 0;
   if (!stream->put32bitsLE((U8*)&version))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing version" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing version\n");
     return FALSE;
   }
 
   if (!stream->put32bitsLE((U8*)&levels))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing levels " << levels << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing levels %u\n", levels);
     return FALSE;
   }
   U32 level_index = 0;
   if (!stream->put32bitsLE((U8*)&level_index))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing level_index " << level_index << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing level_index %u\n", level_index);
     return FALSE;
   }
   U32 implicit_levels = 0;
   if (!stream->put32bitsLE((U8*)&implicit_levels))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing implicit_levels " << implicit_levels << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing implicit_levels %u\n", implicit_levels);
     return FALSE;
   }
   if (!stream->put32bitsLE((U8*)&min_x))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing min_x " << min_x << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing min_x %g\n", min_x);
     return FALSE;
   }
   if (!stream->put32bitsLE((U8*)&max_x))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing max_x " << max_x << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing max_x %g\n", max_x);
     return FALSE;
   }
   if (!stream->put32bitsLE((U8*)&min_y))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing min_y " << min_y << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing min_y %g\n", min_y);
     return FALSE;
   }
   if (!stream->put32bitsLE((U8*)&max_y))
   {
-    Rcpp::Rcerr << "ERROR (LASquadtree): writing max_y " << max_y << "" << std::endl;
+    fprintf(stderr,"ERROR (LASquadtree): writing max_y %g\n", max_y);
     return FALSE;
   }
   return TRUE;
@@ -1533,7 +1532,7 @@ BOOL LASquadtree::setup(F64 bb_min_x, F64 bb_max_x, F64 bb_min_y, F64 bb_max_y, 
 
   if (cells_x == 0 || cells_y == 0)
   {
-    Rcpp::Rcerr << "ERROR: cells_x " << cells_x << " cells_y " << cells_y << "" << std::endl;
+    fprintf(stderr, "ERROR: cells_x %d cells_y %d\n", cells_x, cells_y);
     return FALSE;
   }
 
@@ -1584,7 +1583,7 @@ BOOL LASquadtree::setup(F64 bb_min_x, F64 bb_max_x, F64 bb_min_y, F64 bb_max_y, 
 
   if (cells_x == 0 || cells_y == 0)
   {
-    Rcpp::Rcerr << "ERROR: cells_x " << cells_x << " cells_y " << cells_y << "" << std::endl;
+    fprintf(stderr, "ERROR: cells_x %d cells_y %d\n", cells_x, cells_y);
     return FALSE;
   }
 

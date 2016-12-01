@@ -36,8 +36,8 @@
 #include "laswriteitemcompressed_v1.hpp"
 #include "laswriteitemcompressed_v2.hpp"
 
-#include <Rcpp.h>
-
+#include <string.h>
+#include <stdlib.h>
 
 LASwritePoint::LASwritePoint()
 {

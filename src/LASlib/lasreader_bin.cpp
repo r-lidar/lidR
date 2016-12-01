@@ -33,8 +33,8 @@
 #include "bytestreamin.hpp"
 #include "bytestreamin_file.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -82,7 +82,7 @@ BOOL LASreaderBIN::open(const char* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: fine name pointer is zero\n");
     return FALSE;
   }
 
@@ -91,13 +91,13 @@ BOOL LASreaderBIN::open(const char* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 2*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 2*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %d\n", 2*LAS_TOOLS_IO_IBUFFER_SIZE);
   }
 
   // create input stream
@@ -138,7 +138,7 @@ BOOL LASreaderBIN::open(ByteStreamIn* stream)
 
   if (stream == 0)
   {
-    Rcpp::Rcerr << "ERROR: ByteStreamIn* pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: ByteStreamIn* pointer is zero\n");
     return FALSE;
   }
 
@@ -149,7 +149,7 @@ BOOL LASreaderBIN::open(ByteStreamIn* stream)
   TSheader tsheader;
   try { stream->getBytes((U8*)&tsheader, sizeof(TSheader)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading terrasolid header" << std::endl;
+    fprintf(stderr,"ERROR: reading terrasolid header\n");
     return FALSE;
   }
 
@@ -157,19 +157,19 @@ BOOL LASreaderBIN::open(ByteStreamIn* stream)
 
   if (tsheader.size != sizeof(TSheader))
   {
-    Rcpp::Rcerr << "ERROR: corrupt terrasolid header. size != 56." << std::endl;
+    fprintf(stderr,"ERROR: corrupt terrasolid header. size != 56.\n");
     return FALSE;
   }
 
   if (tsheader.recog_val != 970401)
   {
-    Rcpp::Rcerr << "ERROR: corrupt terrasolid header. recog_val != 979401." << std::endl;
+    fprintf(stderr,"ERROR: corrupt terrasolid header. recog_val != 979401.\n");
     return FALSE;
   }
 
   if (strncmp(tsheader.recog_str, "CXYZ", 4) != 0)
   {
-    Rcpp::Rcerr << "ERROR: corrupt terrasolid header. recog_str != CXYZ." << std::endl;
+    fprintf(stderr,"ERROR: corrupt terrasolid header. recog_str != CXYZ.\n");
     return FALSE;
   }
 
@@ -279,7 +279,7 @@ BOOL LASreaderBIN::read_point_default()
       TSpoint tspoint;
       try { stream->getBytes((U8*)&tspoint, sizeof(TSpoint)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading terrasolid point after " << (U32)p_count << " of " << (U32)npoints << "" << std::endl;
+        fprintf(stderr,"ERROR: reading terrasolid point after %u of %u\n", (U32)p_count, (U32)npoints);
         return FALSE;
       }
       point.set_X(tspoint.x);
@@ -295,7 +295,7 @@ BOOL LASreaderBIN::read_point_default()
       TSrow tsrow;
       try { stream->getBytes((U8*)&tsrow, sizeof(TSrow)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading terrasolid row after " << (U32)p_count << " of " << (U32)npoints << "" << std::endl;
+        fprintf(stderr,"ERROR: reading terrasolid row after %u of %u\n", (U32)p_count, (U32)npoints);
         return FALSE;
       }
       point.set_X(tsrow.x);
@@ -344,7 +344,7 @@ BOOL LASreaderBIN::read_point_default()
       U32 time;
       try { stream->getBytes((U8*)&time, sizeof(U32)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading terrasolid time" << std::endl;
+        fprintf(stderr,"ERROR: reading terrasolid time\n");
         return FALSE;
       }
       point.gps_time = 0.0002*time;
@@ -355,7 +355,7 @@ BOOL LASreaderBIN::read_point_default()
       U8 rgba[4];
       try { stream->getBytes((U8*)rgba, sizeof(U8)*4); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading terrasolid color" << std::endl;
+        fprintf(stderr,"ERROR: reading terrasolid color\n");
         return FALSE;
       }
       point.rgb[0] = 256*rgba[0];
