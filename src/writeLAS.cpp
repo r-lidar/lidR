@@ -149,6 +149,6 @@ void LASlibWrite(CharacterVector file,
   }
   catch (std::exception const& e)
   {
-    Rcerr << "Error: " << e.what() << std::endl;
+    Rcerr << e.what() << std::endl;
   }
 }
