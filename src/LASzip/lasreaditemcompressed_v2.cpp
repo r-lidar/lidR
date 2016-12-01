@@ -32,7 +32,7 @@
 #include "lasreaditemcompressed_v2.hpp"
 
 #include <assert.h>
-#include <Rcpp.h>
+#include <string.h>
 
 struct LASpoint10
 {

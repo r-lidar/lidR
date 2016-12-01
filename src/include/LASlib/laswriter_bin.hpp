@@ -36,7 +36,6 @@
 #include "laswriter.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 class ByteStreamOut;
 
