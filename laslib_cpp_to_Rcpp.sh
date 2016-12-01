@@ -18,12 +18,9 @@
 # all the modifications
 
 # Some extra changes were done
-# lasreaderpipeon.cpp 		  l96 		stdout > Rcpp::Rcout
-# laswriter.cpp			  l132-197 	comment lines
-# laswriter_las.cpp		  l96-105	comment lines
-# laswriter_qfit.cpp		  l82-91	comment lines
-# laswriter_bin.cpp		  l126-135	comment lines
-# bytestreamount_file.hpp 	  l134		stdout > Rcpp::Rcout
+# lasreaderpipeon.cpp      l96        stdout > Rcpp::Rcout
+# laswriter.cpp            l132-197   comment lines
+# bytestreamount_file.hpp  l134       stdout > Rcpp::Rcout
 
 # R is happy now!
 
@@ -63,9 +60,9 @@ perl -pi -w -e 's/fprintf\(stderr,\s*(\".*)(\%g)\s(\%g)\s(\%g)\svs\s(\%g)\s(\%g)
 perl -pi -w -e 's/fprintf\(stderr,\s*(\".*)(\%g)\s(\%g)\s(\%g)\s\/\s(\%g)\s(\%g)\s(\%g)(.*)(\\n\"),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*)\);/Rcpp::Rcerr << $1" << $10 << " " << $11 << " " << $12 << " " << $13 << " " << $14 << " " << $15 << "$8" << std::endl;/g;' $files
 
 # Remove string and stdlib replaced by Rcpp
-perl -pi -w -e 's/#include <string.h>/#include <Rcpp.h>/g;' $files
-perl -pi -w -e 's/#include <stdio.h>/#include <stdio.h>\n#include <Rcpp.h>/g;' $files
-perl -pi -w -e 's/#include <stdlib.h>//g;' $files
+perl -pi -w -e 's/#include <string.h>/#include <string.h>\n#include <Rcpp.h>/g;' $files
+#perl -pi -w -e 's/#include <stdio.h>/#include <stdio.h>\n#include <Rcpp.h>/g;' $files
+#perl -pi -w -e 's/#include <stdlib.h>//g;' $files
 
 ## ====== Remove every exit(1), replace by throw 1
 
@@ -73,8 +70,8 @@ perl -pi -w -e 's/exit\(1\)/throw 1/g;' $files
 
 ## ====== Remove every stdout, replace by Rcpp::Rcout
 
-perl -pi -w -e 's/fileno\(stdout/fileno\(Rcpp::Rcout/g;' $files
-perl -pi -w -e 's/stdout/stdoutput/g;' $files
+#perl -pi -w -e 's/fileno\(stdout/fileno\(Rcpp::Rcout/g;' $files
+#perl -pi -w -e 's/stdout/stdoutput/g;' $files
 
 ## ====== Remove srand and rand, replace rand by R::runif(0, RAND_MAX)
 
