@@ -33,9 +33,8 @@
 #include "lasfilter.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 class LASoperationTranslateX : public LASoperation
@@ -342,8 +341,8 @@ public:
   inline int get_command(CHAR* string) const { return sprintf(string, "-%s %d %d ", name(), max_raw_offset[0], max_raw_offset[1]); };
   inline void transform(LASpoint* point) {
     I32 r;
-    //srand(seed);
-    seed = R::runif(0, RAND_MAX);
+    srand(seed);
+    seed = rand();
     r = ((seed >> 3) % ((2 * max_raw_offset[0]) + 1)) - max_raw_offset[0];
     point->set_X(point->get_X() + r);
     r = ((seed >> 6) % ((2 * max_raw_offset[1]) + 1)) - max_raw_offset[1];
@@ -1088,77 +1087,77 @@ void LAStransform::clean()
 
 void LAStransform::usage() const
 {
-  Rcpp::Rcerr << "Transform coordinates." << std::endl;
-  Rcpp::Rcerr << "  -translate_x -2.5" << std::endl;
-  Rcpp::Rcerr << "  -scale_z 0.3048" << std::endl;
-  Rcpp::Rcerr << "  -rotate_xy 15.0 620000 4100000 (angle + origin)" << std::endl;
-  Rcpp::Rcerr << "  -translate_xyz 0.5 0.5 0" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_y -0.5 1.001" << std::endl;
-  Rcpp::Rcerr << "  -switch_x_y -switch_x_z -switch_y_z" << std::endl;
-  Rcpp::Rcerr << "  -clamp_z_below 70.5" << std::endl;
-  Rcpp::Rcerr << "  -clamp_z 70.5 72.5" << std::endl;
-  Rcpp::Rcerr << "  -copy_attribute_into_z 0" << std::endl;
-  Rcpp::Rcerr << "Transform raw xyz integers." << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_z 20" << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_xyz 1 1 0" << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_xy_at_random 2 2" << std::endl;
-  Rcpp::Rcerr << "  -clamp_raw_z 500 800" << std::endl;
-  Rcpp::Rcerr << "Transform intensity." << std::endl;
-  Rcpp::Rcerr << "  -set_intensity 0" << std::endl;
-  Rcpp::Rcerr << "  -scale_intensity 2.5" << std::endl;
-  Rcpp::Rcerr << "  -translate_intensity 50" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_intensity 0.5 3.1" << std::endl;
-  Rcpp::Rcerr << "  -clamp_intensity 0 255" << std::endl;
-  Rcpp::Rcerr << "  -clamp_intensity_above 255" << std::endl;
-  Rcpp::Rcerr << "Transform scan_angle." << std::endl;
-  Rcpp::Rcerr << "  -scale_scan_angle 1.944445" << std::endl;
-  Rcpp::Rcerr << "  -translate_scan_angle -5" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_scan_angle -0.5 2.1" << std::endl;
-  Rcpp::Rcerr << "Change the return number or return count of points." << std::endl;
-  Rcpp::Rcerr << "  -repair_zero_returns" << std::endl;
-  Rcpp::Rcerr << "  -set_return_number 1" << std::endl;
-  Rcpp::Rcerr << "  -set_extended_return_number 10" << std::endl;
-  Rcpp::Rcerr << "  -change_return_number_from_to 2 1" << std::endl;
-  Rcpp::Rcerr << "  -set_number_of_returns 2" << std::endl;
-  Rcpp::Rcerr << "  -set_number_of_returns 15" << std::endl;
-  Rcpp::Rcerr << "  -change_number_of_returns_from_to 0 2" << std::endl;
-  Rcpp::Rcerr << "Modify the classification." << std::endl;
-  Rcpp::Rcerr << "  -set_classification 2" << std::endl;
-  Rcpp::Rcerr << "  -change_classification_from_to 2 4" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_below_as -5.0 7" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_above_as 70.0 7" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_between_as 2.0 5.0 4" << std::endl;
-  Rcpp::Rcerr << "  -classify_intensity_above_as 200 9" << std::endl;
-  Rcpp::Rcerr << "  -classify_intensity_below_as 30 11 " << std::endl;
-  Rcpp::Rcerr << "  -change_extended_classification_from_to 6 46" << std::endl;
-  Rcpp::Rcerr << "  -move_ancient_to_extended_classification" << std::endl;
-  Rcpp::Rcerr << "Change the flags." << std::endl;
-  Rcpp::Rcerr << "  -set_withheld_flag 0" << std::endl;
-  Rcpp::Rcerr << "  -set_synthetic_flag 1" << std::endl;
-  Rcpp::Rcerr << "  -set_keypoint_flag 0" << std::endl;
-  Rcpp::Rcerr << "  -set_extended_overlap_flag 1" << std::endl;
-  Rcpp::Rcerr << "Modify the extended scanner channel." << std::endl;
-  Rcpp::Rcerr << "  -set_extended_scanner_channel 2" << std::endl;
-  Rcpp::Rcerr << "Modify the user data." << std::endl;
-  Rcpp::Rcerr << "  -set_user_data 0" << std::endl;
-  Rcpp::Rcerr << "  -change_user_data_from_to 23 26" << std::endl;
-  Rcpp::Rcerr << "Modify the point source ID." << std::endl;
-  Rcpp::Rcerr << "  -set_point_source 500" << std::endl;
-  Rcpp::Rcerr << "  -change_point_source_from_to 1023 1024" << std::endl;
-  Rcpp::Rcerr << "  -copy_user_data_into_point_source" << std::endl;
-  Rcpp::Rcerr << "  -bin_Z_into_point_source 200" << std::endl;
-  Rcpp::Rcerr << "  -bin_abs_scan_angle_into_point_source 2" << std::endl;
-  Rcpp::Rcerr << "Transform gps_time." << std::endl;
-  Rcpp::Rcerr << "  -set_gps_time 113556962.005715" << std::endl;
-  Rcpp::Rcerr << "  -translate_gps_time 40.50" << std::endl;
-  Rcpp::Rcerr << "  -adjusted_to_week" << std::endl;
-  Rcpp::Rcerr << "  -week_to_adjusted 1671" << std::endl;
-  Rcpp::Rcerr << "Transform RGB colors." << std::endl;
-  Rcpp::Rcerr << "  -set_RGB 255 0 127" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB 2 4 2" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB_down (by 256)" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB_up (by 256)" << std::endl;
-  Rcpp::Rcerr << "  -switch_R_G -switch_R_B -switch_B_G" << std::endl;
+  fprintf(stderr,"Transform coordinates.\n");
+  fprintf(stderr,"  -translate_x -2.5\n");
+  fprintf(stderr,"  -scale_z 0.3048\n");
+  fprintf(stderr,"  -rotate_xy 15.0 620000 4100000 (angle + origin)\n");
+  fprintf(stderr,"  -translate_xyz 0.5 0.5 0\n");
+  fprintf(stderr,"  -translate_then_scale_y -0.5 1.001\n");
+  fprintf(stderr,"  -switch_x_y -switch_x_z -switch_y_z\n");
+  fprintf(stderr,"  -clamp_z_below 70.5\n");
+  fprintf(stderr,"  -clamp_z 70.5 72.5\n");
+  fprintf(stderr,"  -copy_attribute_into_z 0\n");
+  fprintf(stderr,"Transform raw xyz integers.\n");
+  fprintf(stderr,"  -translate_raw_z 20\n");
+  fprintf(stderr,"  -translate_raw_xyz 1 1 0\n");
+  fprintf(stderr,"  -translate_raw_xy_at_random 2 2\n");
+  fprintf(stderr,"  -clamp_raw_z 500 800\n");
+  fprintf(stderr,"Transform intensity.\n");
+  fprintf(stderr,"  -set_intensity 0\n");
+  fprintf(stderr,"  -scale_intensity 2.5\n");
+  fprintf(stderr,"  -translate_intensity 50\n");
+  fprintf(stderr,"  -translate_then_scale_intensity 0.5 3.1\n");
+  fprintf(stderr,"  -clamp_intensity 0 255\n");
+  fprintf(stderr,"  -clamp_intensity_above 255\n");
+  fprintf(stderr,"Transform scan_angle.\n");
+  fprintf(stderr,"  -scale_scan_angle 1.944445\n");
+  fprintf(stderr,"  -translate_scan_angle -5\n");
+  fprintf(stderr,"  -translate_then_scale_scan_angle -0.5 2.1\n");
+  fprintf(stderr,"Change the return number or return count of points.\n");
+  fprintf(stderr,"  -repair_zero_returns\n");
+  fprintf(stderr,"  -set_return_number 1\n");
+  fprintf(stderr,"  -set_extended_return_number 10\n");
+  fprintf(stderr,"  -change_return_number_from_to 2 1\n");
+  fprintf(stderr,"  -set_number_of_returns 2\n");
+  fprintf(stderr,"  -set_number_of_returns 15\n");
+  fprintf(stderr,"  -change_number_of_returns_from_to 0 2\n");
+  fprintf(stderr,"Modify the classification.\n");
+  fprintf(stderr,"  -set_classification 2\n");
+  fprintf(stderr,"  -change_classification_from_to 2 4\n");
+  fprintf(stderr,"  -classify_z_below_as -5.0 7\n");
+  fprintf(stderr,"  -classify_z_above_as 70.0 7\n");
+  fprintf(stderr,"  -classify_z_between_as 2.0 5.0 4\n");
+  fprintf(stderr,"  -classify_intensity_above_as 200 9\n");
+  fprintf(stderr,"  -classify_intensity_below_as 30 11 \n");
+  fprintf(stderr,"  -change_extended_classification_from_to 6 46\n");
+  fprintf(stderr,"  -move_ancient_to_extended_classification\n");
+  fprintf(stderr,"Change the flags.\n");
+  fprintf(stderr,"  -set_withheld_flag 0\n");
+  fprintf(stderr,"  -set_synthetic_flag 1\n");
+  fprintf(stderr,"  -set_keypoint_flag 0\n");
+  fprintf(stderr,"  -set_extended_overlap_flag 1\n");
+  fprintf(stderr,"Modify the extended scanner channel.\n");
+  fprintf(stderr,"  -set_extended_scanner_channel 2\n");
+  fprintf(stderr,"Modify the user data.\n");
+  fprintf(stderr,"  -set_user_data 0\n");
+  fprintf(stderr,"  -change_user_data_from_to 23 26\n");
+  fprintf(stderr,"Modify the point source ID.\n");
+  fprintf(stderr,"  -set_point_source 500\n");
+  fprintf(stderr,"  -change_point_source_from_to 1023 1024\n");
+  fprintf(stderr,"  -copy_user_data_into_point_source\n");
+  fprintf(stderr,"  -bin_Z_into_point_source 200\n");
+  fprintf(stderr,"  -bin_abs_scan_angle_into_point_source 2\n");
+  fprintf(stderr,"Transform gps_time.\n");
+  fprintf(stderr,"  -set_gps_time 113556962.005715\n");
+  fprintf(stderr,"  -translate_gps_time 40.50\n");
+  fprintf(stderr,"  -adjusted_to_week\n");
+  fprintf(stderr,"  -week_to_adjusted 1671\n");
+  fprintf(stderr,"Transform RGB colors.\n");
+  fprintf(stderr,"  -set_RGB 255 0 127\n");
+  fprintf(stderr,"  -scale_RGB 2 4 2\n");
+  fprintf(stderr,"  -scale_RGB_down (by 256)\n");
+  fprintf(stderr,"  -scale_RGB_up (by 256)\n");
+  fprintf(stderr,"  -switch_R_G -switch_R_B -switch_B_G\n");
 }
 
 BOOL LAStransform::parse(int argc, char* argv[])
@@ -1182,7 +1181,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1193,7 +1192,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1204,7 +1203,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1215,7 +1214,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: offset_x offset_y offset_z" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: offset_x offset_y offset_z\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1226,7 +1225,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: offset scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1237,7 +1236,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: offset scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1248,7 +1247,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: offset scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1261,7 +1260,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            fprintf(stderr,"ERROR: '%s' needs 1 argument: raw_offset\n", argv[i]);
             return FALSE;
           }
           change_coordinates = TRUE;
@@ -1272,7 +1271,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            fprintf(stderr,"ERROR: '%s' needs 1 argument: raw_offset\n", argv[i]);
             return FALSE;
           }
           change_coordinates = TRUE;
@@ -1283,7 +1282,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            fprintf(stderr,"ERROR: '%s' needs 1 argument: raw_offset\n", argv[i]);
             return FALSE;
           }
           change_coordinates = TRUE;
@@ -1294,7 +1293,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+3) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: raw_offset_x raw_offset_y raw_offset_z" << std::endl;
+            fprintf(stderr,"ERROR: '%s' needs 3 arguments: raw_offset_x raw_offset_y raw_offset_z\n", argv[i]);
             return FALSE;
           }
           change_coordinates = TRUE;
@@ -1305,7 +1304,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+2) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: max_raw_offset_x max_raw_offset_y" << std::endl;
+            fprintf(stderr,"ERROR: '%s' needs 2 arguments: max_raw_offset_x max_raw_offset_y\n", argv[i]);
             return FALSE;
           }
           change_coordinates = TRUE;
@@ -1317,7 +1316,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationTranslateIntensity((F32)atof(argv[i+1])));
@@ -1327,7 +1326,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: offset scale\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationTranslateThenScaleIntensity((F32)atof(argv[i+1]), (F32)atof(argv[i+2])));
@@ -1337,7 +1336,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationTranslateScanAngle((F32)atof(argv[i+1])));
@@ -1347,7 +1346,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: offset scale\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationTranslateThenScaleScanAngle((F32)atof(argv[i+1]), (F32)atof(argv[i+2])));
@@ -1357,7 +1356,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationTranslateGpsTime(atof(argv[i+1])));
@@ -1370,7 +1369,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: angle, x, y" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: angle, x, y\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1381,7 +1380,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: angle, x, y" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: angle, x, y\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1395,7 +1394,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: below above\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1406,7 +1405,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: below" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: below\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1417,7 +1416,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: above" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: above\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1428,7 +1427,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: below above\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClampIntensity(U16_CLAMP(atoi(argv[i+1])), U16_CLAMP(atoi(argv[i+2]))));
@@ -1438,7 +1437,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: below" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: below\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClampIntensityBelow(U16_CLAMP(atoi(argv[i+1]))));
@@ -1448,7 +1447,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: above" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: above\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClampIntensityAbove(U16_CLAMP(atoi(argv[i+1]))));
@@ -1458,7 +1457,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: below above\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1472,7 +1471,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: index of attribute" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: index of attribute\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1491,7 +1490,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: classification" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: classification\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetClassification(U8_CLAMP(atoi(argv[i+1]))));
@@ -1501,7 +1500,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetIntensity(U16_CLAMP(atof(argv[i+1]))));
@@ -1511,7 +1510,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetWithheldFlag((U8)atoi(argv[i+1])));
@@ -1521,7 +1520,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetSyntheticFlag((U8)atoi(argv[i+1])));
@@ -1531,7 +1530,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetKeypointFlag((U8)atoi(argv[i+1])));
@@ -1541,7 +1540,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedOverlapFlag((U8)atoi(argv[i+1])));
@@ -1551,7 +1550,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedScannerChannel((U8)atoi(argv[i+1])));
@@ -1561,7 +1560,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetUserData((U8)atoi(argv[i+1])));
@@ -1571,7 +1570,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: psid" << std::endl;
+          fprintf(stderr,"ERROR: '%s' need 1 argument: psid\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetPointSource((U16)atoi(argv[i+1])));
@@ -1581,7 +1580,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: return_number" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: return_number\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetReturnNumber((U8)atoi(argv[i+1])));
@@ -1591,7 +1590,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: extended_return_number" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: extended_return_number\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedReturnNumber((U8)atoi(argv[i+1])));
@@ -1601,7 +1600,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: number_of_returns" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: number_of_returns\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetNumberOfReturns((U8)atoi(argv[i+1])));
@@ -1611,7 +1610,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: extended_number_of_returns" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: extended_number_of_returns\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedNumberOfReturns((U8)atoi(argv[i+1])));
@@ -1621,7 +1620,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetGpsTime(atof(argv[i+1])));
@@ -1631,7 +1630,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: R G B" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: R G B\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationSetRGB((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2]), (U16)atoi(argv[i+3])));
@@ -1644,7 +1643,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_value to_value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangeClassificationFromTo(U8_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
@@ -1654,7 +1653,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_value to_value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangeExtendedClassificationFromTo(U8_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
@@ -1664,7 +1663,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_value to_value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangeUserDataFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
@@ -1674,7 +1673,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_value to_value\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangePointSourceFromTo((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2])));
@@ -1684,7 +1683,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_return_number to_return_number" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_return_number to_return_number\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangeReturnNumberFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
@@ -1694,7 +1693,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_number_of_returns to_number_of_returns" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_number_of_returns to_number_of_returns\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationChangeNumberOfReturnsFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
@@ -1707,7 +1706,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: z_value classification_code" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: z_value classification_code\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClassifyZbelowAs(atof(argv[i+1]), U8_CLAMP(atoi(argv[i+2]))));
@@ -1717,7 +1716,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: z_value classification_code" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: z_value classification_code\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClassifyZaboveAs(atof(argv[i+1]), U8_CLAMP(atoi(argv[i+2]))));
@@ -1727,7 +1726,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: z_min z_max classification_code" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: z_min z_max classification_code\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClassifyZbetweenAs(atof(argv[i+1]), atof(argv[i+2]), U8_CLAMP(atoi(argv[i+3]))));
@@ -1737,7 +1736,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: intensity_value classification_code" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: intensity_value classification_code\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClassifyIntensityBelowAs(U16_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
@@ -1747,7 +1746,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: intensity_value classification_code" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 2 arguments: intensity_value classification_code\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationClassifyIntensityAboveAs(U16_CLAMP(atoi(argv[i+1])), (U8)atoi(argv[i+2])));
@@ -1760,7 +1759,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1771,7 +1770,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1782,7 +1781,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1793,7 +1792,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: scale_x scale_y scale_z" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: scale_x scale_y scale_z\n", argv[i]);
           return FALSE;
         }
         change_coordinates = TRUE;
@@ -1804,7 +1803,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationScaleIntensity((F32)atof(argv[i+1])));
@@ -1814,7 +1813,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: scale\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationScaleScanAngle((F32)atof(argv[i+1])));
@@ -1824,7 +1823,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: scale_R scale_G scale_B" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 3 arguments: scale_R scale_G scale_B\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationScaleRGB((F32)atof(argv[i+1]), (F32)atof(argv[i+2]), (F32)atof(argv[i+3])));
@@ -1880,7 +1879,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: bin_size" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: bin_size\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationBinZintoPointSource(atoi(argv[i+1])));
@@ -1890,7 +1889,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: bin_size" << std::endl;
+          fprintf(stderr,"ERROR: '%s' needs 1 argument: bin_size\n", argv[i]);
           return FALSE;
         }
         add_operation(new LASoperationBinAbsScanAngleIntoPointSource((F32)atof(argv[i+1])));
@@ -1921,7 +1920,7 @@ BOOL LAStransform::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: week" << std::endl;
+        fprintf(stderr,"ERROR: '%s' needs 1 argument: week\n", argv[i]);
         return FALSE;
       }
       add_operation(new LASoperationConvertWeekToAdjustedGps(atoi(argv[i+1])));

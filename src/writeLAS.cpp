@@ -31,9 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include <time.h>
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "laswriter.hpp"
 

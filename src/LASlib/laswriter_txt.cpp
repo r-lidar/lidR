@@ -30,8 +30,8 @@
 */
 #include "laswriter_txt.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 BOOL LASwriterTXT::refile(FILE* file)
 {
@@ -58,7 +58,7 @@ BOOL LASwriterTXT::open(const CHAR* file_name, const LASheader* header, const CH
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file name pointer is zero\n");
     return FALSE;
   }
 
@@ -66,7 +66,7 @@ BOOL LASwriterTXT::open(const CHAR* file_name, const LASheader* header, const CH
 
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
     return FALSE;
   }
 
@@ -79,7 +79,7 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
 {
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file pointer is zero\n");
     return FALSE;
   }
 
@@ -128,7 +128,7 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: unknown seperator '" << separator << "'" << std::endl;
+      fprintf(stderr, "ERROR: unknown seperator '%s'\n", separator);
       return FALSE;
     }
   }
@@ -153,17 +153,17 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
         }
         else if (ptsVLR)
         {
-          Rcpp::Rcerr << "WARNING: found VLR for PTS with wrong payload size of " << ptsVLR->record_length_after_header << "." << std::endl;
+          fprintf(stderr, "WARNING: found VLR for PTS with wrong payload size of %d.\n", ptsVLR->record_length_after_header);
         }
         else if (ptxVLR)
         {
-          Rcpp::Rcerr << "WARNING: found VLR for PTX with wrong payload size of " << ptxVLR->record_length_after_header << "." << std::endl;
+          fprintf(stderr, "WARNING: found VLR for PTX with wrong payload size of %d.\n", ptxVLR->record_length_after_header);
         }
       }
     }
     else
     {
-      Rcpp::Rcerr << "WARNING: found no VLR with PTS or PTX info." << std::endl;
+      fprintf(stderr, "WARNING: found no VLR with PTS or PTX info.\n");
     }
     if (header->version_minor >= 4)
     {
@@ -179,11 +179,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     if (this->parse_string && strcmp(this->parse_string, "xyz") && strcmp(this->parse_string, "xyzi") && strcmp(this->parse_string, "xyziRGB") && strcmp(this->parse_string, "xyzRGB"))
     {
-      Rcpp::Rcerr << "WARNING: the parse string for PTS should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'" << std::endl;
+      fprintf(stderr, "WARNING: the parse string for PTS should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'\n");
     }
     if (separator_sign != ' ')
     {
-      Rcpp::Rcerr << "WARNING: the separator for PTS should be 'space' not '" << separator << "'" << std::endl;
+      fprintf(stderr, "WARNING: the separator for PTS should be 'space' not '%s'\n", separator);
     }
   }
   else if (optx)
@@ -213,13 +213,13 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     {
       if (ptxVLR)
       {
-        Rcpp::Rcerr << "WARNING: found VLR for PTX with wrong payload size of " << ptxVLR->record_length_after_header << "." << std::endl;
+        fprintf(stderr, "WARNING: found VLR for PTX with wrong payload size of %d.\n", ptxVLR->record_length_after_header);
       }
       else
       {
-        Rcpp::Rcerr << "WARNING: found no VLR with PTX info." << std::endl;
+        fprintf(stderr, "WARNING: found no VLR with PTX info.\n");
       }
-      Rcpp::Rcerr << "         outputting PTS instead ..." << std::endl;
+      fprintf(stderr, "         outputting PTS instead ...\n");
       if (header->version_minor >= 4)
       {
 #ifdef _WIN32
@@ -235,11 +235,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     if (this->parse_string && strcmp(this->parse_string, "xyz") && strcmp(this->parse_string, "xyzi") && strcmp(this->parse_string, "xyziRGB") && strcmp(this->parse_string, "xyzRGB"))
     {
-      Rcpp::Rcerr << "WARNING: the parse string for PTX should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'" << std::endl;
+      fprintf(stderr, "WARNING: the parse string for PTX should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'\n");
     }
     if (separator_sign != ' ')
     {
-      Rcpp::Rcerr << "WARNING: the separator for PTX should be 'space' not '" << separator << "'" << std::endl;
+      fprintf(stderr, "WARNING: the separator for PTX should be 'space' not '%s'\n", separator);
     }
   }
 
@@ -419,7 +419,7 @@ BOOL LASwriterTXT::unparse_attribute(const LASpoint* point, I32 index)
   }
   else
   {
-    Rcpp::Rcerr << "WARNING: attribute " << index << " not (yet) implemented." << std::endl;
+    fprintf(stderr, "WARNING: attribute %d not (yet) implemented.\n", index);
     return FALSE;
   }
   return TRUE;
@@ -629,37 +629,37 @@ BOOL LASwriterTXT::check_parse_string(const CHAR* parse_string)
         I32 index = (I32)(p[0] - '0');
         if (index >= header->number_attributes)
         {
-          Rcpp::Rcerr << "ERROR: extra bytes attribute '" << index << "' does not exist." << std::endl;
+          fprintf(stderr, "ERROR: extra bytes attribute '%d' does not exist.\n", index);
           return FALSE;
         }
         attribute_starts[index] = header->get_attribute_start(index);
       }
       else
       {
-        Rcpp::Rcerr << "ERROR: unknown symbol '" << p[0] << "' in parse string. valid are" << std::endl;
-        Rcpp::Rcerr << "       'x' : the x coordinate" << std::endl;
-        Rcpp::Rcerr << "       'y' : the y coordinate" << std::endl;
-        Rcpp::Rcerr << "       'z' : the z coordinate" << std::endl;
-        Rcpp::Rcerr << "       't' : the gps time" << std::endl;
-        Rcpp::Rcerr << "       'R' : the red channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'G' : the green channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'B' : the blue channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       's' : a string or a number that we don't care about" << std::endl;
-        Rcpp::Rcerr << "       'i' : the intensity" << std::endl;
-        Rcpp::Rcerr << "       'a' : the scan angle" << std::endl;
-        Rcpp::Rcerr << "       'n' : the number of returns of that given pulse" << std::endl;
-        Rcpp::Rcerr << "       'r' : the number of the return" << std::endl;
-        Rcpp::Rcerr << "       'c' : the classification" << std::endl;
-        Rcpp::Rcerr << "       'u' : the user data" << std::endl;
-        Rcpp::Rcerr << "       'p' : the point source ID" << std::endl;
-        Rcpp::Rcerr << "       'e' : the edge of flight line flag" << std::endl;
-        Rcpp::Rcerr << "       'd' : the direction of scan flag" << std::endl;
-        Rcpp::Rcerr << "       'M' : the index of the point" << std::endl;
-        Rcpp::Rcerr << "       'w' : the wavepacket descriptor index" << std::endl;
-        Rcpp::Rcerr << "       'W' : all wavepacket attributes" << std::endl;
-        Rcpp::Rcerr << "       'X' : the unscaled and unoffset integer x coordinate" << std::endl;
-        Rcpp::Rcerr << "       'Y' : the unscaled and unoffset integer y coordinate" << std::endl;
-        Rcpp::Rcerr << "       'Z' : the unscaled and unoffset integer z coordinate" << std::endl;
+        fprintf(stderr, "ERROR: unknown symbol '%c' in parse string. valid are\n", p[0]);
+        fprintf(stderr, "       'x' : the x coordinate\n");
+        fprintf(stderr, "       'y' : the y coordinate\n");
+        fprintf(stderr, "       'z' : the z coordinate\n");
+        fprintf(stderr, "       't' : the gps time\n");
+        fprintf(stderr, "       'R' : the red channel of the RGB field\n");
+        fprintf(stderr, "       'G' : the green channel of the RGB field\n");
+        fprintf(stderr, "       'B' : the blue channel of the RGB field\n");
+        fprintf(stderr, "       's' : a string or a number that we don't care about\n");
+        fprintf(stderr, "       'i' : the intensity\n");
+        fprintf(stderr, "       'a' : the scan angle\n");
+        fprintf(stderr, "       'n' : the number of returns of that given pulse\n");
+        fprintf(stderr, "       'r' : the number of the return\n");
+        fprintf(stderr, "       'c' : the classification\n");
+        fprintf(stderr, "       'u' : the user data\n");
+        fprintf(stderr, "       'p' : the point source ID\n");
+        fprintf(stderr, "       'e' : the edge of flight line flag\n");
+        fprintf(stderr, "       'd' : the direction of scan flag\n");
+        fprintf(stderr, "       'M' : the index of the point\n");
+        fprintf(stderr, "       'w' : the wavepacket descriptor index\n");
+        fprintf(stderr, "       'W' : all wavepacket attributes\n");
+        fprintf(stderr, "       'X' : the unscaled and unoffset integer x coordinate\n");
+        fprintf(stderr, "       'Y' : the unscaled and unoffset integer y coordinate\n");
+        fprintf(stderr, "       'Z' : the unscaled and unoffset integer z coordinate\n");
         return FALSE;
       }
     }

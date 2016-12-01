@@ -32,10 +32,9 @@
 #include "mydefs.hpp"
 #include <assert.h>
 
-#include <Rcpp.h>
-
+#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <Rcpp.h>
 
 LASzip::LASzip()
 {
@@ -428,7 +427,7 @@ bool LASzip::setup(U16* num_items, LASitem** items, const U8 point_type, const U
 //    char error[64];
 //    sprintf(error, "point size %d too small for point type %d by %d bytes", point_size, point_type, -extra_bytes_number);
 //    return return_error(error);
-    Rcpp::Rcerr << "WARNING: point size " << point_size << " too small by " << -extra_bytes_number << " bytes for point type " << point_type << ". assuming point_size of " << point_size-extra_bytes_number << "" << std::endl;
+    fprintf(stderr, "WARNING: point size %d too small by %d bytes for point type %d. assuming point_size of %d\n", point_size, -extra_bytes_number, point_type, point_size-extra_bytes_number);
     extra_bytes_number = 0;
   }
 
