@@ -35,7 +35,6 @@
 #include "lasreader.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 class LASreaderASC : public LASreader
 {

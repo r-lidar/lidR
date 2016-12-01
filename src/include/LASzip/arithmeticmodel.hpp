@@ -35,8 +35,7 @@
 #define ARITHMETIC_MODEL_HPP
 
 #include <stdio.h>
-#include <Rcpp.h>
-
+#include <stdlib.h>
 
 #include "mydefs.hpp"
 
