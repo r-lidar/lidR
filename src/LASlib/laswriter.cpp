@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  laswriter.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "laswriter.hpp"
@@ -129,7 +129,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       return 0;
     }
   }
-  else if (use_stdout)
+  /*else if (use_stdout)
   {
     if (format <= LAS_TOOLS_FORMAT_LAZ)
     {
@@ -194,7 +194,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       throw std::runtime_error(std::string("ERROR: unknown format "));
       return 0;
     }
-  }
+  }*/
   else
   {
     throw std::runtime_error(std::string("ERROR: no laswriter output specified"));
@@ -507,7 +507,7 @@ BOOL LASwriteOpener::set_format(I32 format)
   {
     return FALSE;
   }
-  
+
   specified = TRUE;
   this->format = format;
 
@@ -971,7 +971,7 @@ void LASwriteOpener::add_appendix(const CHAR* appendix)
     I32 len = strlen(file_name);
     CHAR* new_file_name = (CHAR*)malloc(len + strlen(appendix) + 5);
     while ((len > 0) && (file_name[len] != '.') && (file_name[len] != '\\') && (file_name[len] != '/') && (file_name[len] != ':')) len--;
-    
+
     if ((len == 0) || (file_name[len] == '\\') || (file_name[len] == '/') || (file_name[len] == ':'))
     {
       sprintf(new_file_name, "%s%s", file_name, appendix);
@@ -995,7 +995,7 @@ void LASwriteOpener::cut_characters(U32 cut)
     I32 len = strlen(file_name);
     CHAR* new_file_name = (CHAR*)malloc(len - cut + 5);
     while ((len > 0) && (file_name[len] != '.') && (file_name[len] != '\\') && (file_name[len] != '/') && (file_name[len] != ':')) len--;
-    
+
     if ((len == 0) || (file_name[len] == '\\') || (file_name[len] == '/') || (file_name[len] == ':'))
     {
       len = strlen(file_name);

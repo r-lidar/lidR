@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  bytestreamout_file.hpp
-  
+
   CONTENTS:
-      
+
     Class for FILE*-based output streams with endian handling.
 
   PROGRAMMERS:
@@ -21,13 +21,13 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_OUT_FILE_H
@@ -130,7 +130,8 @@ inline BOOL ByteStreamOutFile::putBytes(const U8* bytes, U32 num_bytes)
 
 inline BOOL ByteStreamOutFile::isSeekable() const
 {
-  return (file != stdout);
+  return(true);
+  //return (file != stdout);
 }
 
 inline I64 ByteStreamOutFile::tell() const
