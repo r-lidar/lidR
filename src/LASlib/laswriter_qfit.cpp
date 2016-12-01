@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  laswriter_qfit.cpp
-
+  
   CONTENTS:
-
+  
     see corresponding header file
-
+  
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
+  
   CHANGE HISTORY:
-
+  
     see corresponding header file
-
+  
 ===============================================================================
 */
 #include "laswriter_qfit.hpp"
@@ -37,8 +37,8 @@
 #include <io.h>
 #endif
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 BOOL LASwriterQFIT::refile(FILE* file)
 {
@@ -51,7 +51,7 @@ BOOL LASwriterQFIT::open(const char* file_name, const LASheader* header, I32 ver
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file name pointer is zero\n");
     return FALSE;
   }
 
@@ -59,13 +59,13 @@ BOOL LASwriterQFIT::open(const char* file_name, const LASheader* header, I32 ver
 
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    fprintf(stderr, "ERROR: cannot open file '%s'\n", file_name);
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, io_buffer_size) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << io_buffer_size << "" << std::endl;
+    fprintf(stderr, "WARNING: setvbuf() failed with buffer size %u\n", io_buffer_size);
   }
 
   return open(file, header, version);
@@ -75,20 +75,19 @@ BOOL LASwriterQFIT::open(FILE* file, const LASheader* header, I32 version)
 {
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: file pointer is zero\n");
     return FALSE;
   }
 
-// JR : remove stdoutput
-/*#ifdef _WIN32
-  if (file == stdoutput)
+#ifdef _WIN32
+  if (file == stdout)
   {
-    if(_setmode( _fileno( stdoutput ), _O_BINARY ) == -1 )
+    if(_setmode( _fileno( stdout ), _O_BINARY ) == -1 )
     {
-      Rcpp::Rcerr << "ERROR: cannot set stdoutput to binary (untranslated) mode" << std::endl;
+      fprintf(stderr, "ERROR: cannot set stdout to binary (untranslated) mode\n");
     }
   }
-#endif*/
+#endif
 
   ByteStreamOut* out;
   if (IS_LITTLE_ENDIAN())
@@ -109,14 +108,14 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
 {
   if (stream == 0)
   {
-    Rcpp::Rcerr << "ERROR: ByteStreamOut pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: ByteStreamOut pointer is zero\n");
     return FALSE;
   }
   this->stream = stream;
 
   if (header == 0)
   {
-    Rcpp::Rcerr << "ERROR: LASheader pointer is zero" << std::endl;
+    fprintf(stderr,"ERROR: LASheader pointer is zero\n");
     return FALSE;
   }
 
@@ -124,7 +123,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
 
   if (((-361 < header->min_x) && (-361 < header->min_y) && (header->max_x < 361) && (header->max_y < 361)) == FALSE)
   {
-    Rcpp::Rcerr << "ERROR: bounding box (" << header->min_x << " " << header->min_y << " / " << header->max_x << " " << header->max_y << ") exceeds longitude / latitude" << std::endl;
+    fprintf(stderr,"ERROR: bounding box (%g %g / %g %g) exceeds longitude / latitude\n", header->min_x, header->min_y, header->max_x, header->max_y);
     return FALSE;
   }
 
@@ -136,7 +135,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
   {
     rescale_reoffset = TRUE;
   }
-
+  
   if (header->x_offset != 0.0 || header->y_offset != 0.0 || header->z_offset != 0.0)
   {
     rescale_reoffset = TRUE;
@@ -167,7 +166,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
   }
   else
   {
-    Rcpp::Rcerr << "WARNING: version " << version << " of QFIT unknown ... using 48" << std::endl;
+    fprintf(stderr,"WARNING: version %d of QFIT unknown ... using 48\n", version);
     this->version = 48;
   }
 
@@ -175,7 +174,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
 
   if (!stream->put32bitsLE((U8*)&version))
   {
-    Rcpp::Rcerr << "ERROR: while writing version of QFIT header" << std::endl;
+    fprintf(stderr,"ERROR: while writing version of QFIT header\n");
     return FALSE;
   }
 
@@ -186,7 +185,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
 
   if (!stream->putBytes((U8*)buffer, version-4))
   {
-    Rcpp::Rcerr << "ERROR: writing first header record of QFIT header" << std::endl;
+    fprintf(stderr,"ERROR: writing first header record of QFIT header\n");
     return FALSE;
   }
 
@@ -197,12 +196,12 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
 
   if (!stream->put32bitsLE((U8*)&buffer[0]))
   {
-    Rcpp::Rcerr << "ERROR: while writing -9000000 into QFIT header" << std::endl;
+    fprintf(stderr,"ERROR: while writing -9000000 into QFIT header\n");
     return FALSE;
   }
   if (!stream->put32bitsLE((U8*)&buffer[1]))
   {
-    Rcpp::Rcerr << "ERROR: while writing offset into QFIT header" << std::endl;
+    fprintf(stderr,"ERROR: while writing offset into QFIT header\n");
     return FALSE;
   }
 
@@ -212,7 +211,7 @@ BOOL LASwriterQFIT::open(ByteStreamOut* stream, const LASheader* header, I32 ver
   sprintf((char*)buffer, "LAStools by Martin Isenburg");
   if (!stream->putBytes((U8*)buffer, version-8))
   {
-    Rcpp::Rcerr << "ERROR: writing second header record of QFIT header" << std::endl;
+    fprintf(stderr,"ERROR: writing second header record of QFIT header\n");
     return FALSE;
   }
 
@@ -273,7 +272,7 @@ BOOL LASwriterQFIT::update_header(const LASheader* header, BOOL use_inventory, B
 I64 LASwriterQFIT::close(BOOL update_header)
 {
   I64 bytes = 0;
-
+  
   if (stream)
   {
     bytes = stream->tell();

@@ -5,7 +5,7 @@
   
   CONTENTS:
   
-    Reads LIDAR points from another LASreader and writes them also to the stdoutput
+    Reads LIDAR points from another LASreader and writes them also to the stdout
     before returning them to the instance that is reading the points.
 
   PROGRAMMERS:

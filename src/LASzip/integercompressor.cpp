@@ -36,7 +36,7 @@
 #define CREATE_HISTOGRAMS
 #undef CREATE_HISTOGRAMS
 
-
+#include <stdlib.h>
 #include <assert.h>
 
 #ifdef CREATE_HISTOGRAMS
@@ -205,12 +205,12 @@ IntegerCompressor::~IntegerCompressor()
           entropy -= log(prob)*prob/log(2.0);
         }
       }
-      Rcpp::Rcerr << "k: " << k << " number: " << number << " different: " << different << " entropy: " << entropy << " raw: " << (float)(k?k:1) << "1.1f" << std::endl;
+      fprintf(stderr, "k: %d number: %d different: %d entropy: %lg raw: %1.1f\n",k,number,different,entropy, (float)(k?k:1));
       total_number += number;
       total_entropy += (entropy*number);
       total_raw += ((k?k:1)*number);
     }  
-    Rcpp::Rcerr << "TOTAL: number: " << total_number << " entropy: " << total_entropy/total_number << " raw: " << total_raw/total_number << "" << std::endl;
+    fprintf(stderr, "TOTAL: number: %d entropy: %lg raw: %lg\n",total_number,total_entropy/total_number,total_raw/total_number);
   }
 #endif
 }

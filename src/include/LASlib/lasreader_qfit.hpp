@@ -37,7 +37,6 @@
 #include "lasreader.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 class LASreaderQFIT : public LASreader
 {

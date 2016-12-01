@@ -69,11 +69,10 @@
 
 #include "arithmeticencoder.hpp"
 
-#include <Rcpp.h>
+#include <string.h>
 #include <assert.h>
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 FILE* file = 0;
 

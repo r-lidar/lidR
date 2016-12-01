@@ -70,8 +70,7 @@
 #include "arithmeticmodel.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
+#include <stdlib.h>
 
 ArithmeticModel::ArithmeticModel(U32 symbols, BOOL compress)
 {
