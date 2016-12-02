@@ -34,62 +34,66 @@
 #' several sources such as external file or own computaion. It can also be computed on the
 #' fly.
 #'
-#' When the paramter dtm is not provided the elevation of the ground is computed for each point
-#' of the lidar data with the function \link[lidR:lasterrain]{lasterrain}.
-#' The consequence is a more accurate normalisation. Indeed no rasterizaion impling
-#' innacuracies is required. This method lead to few negatives values.
-#'
 #' @param .las a LAS objet
 #' @param dtm a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
-#' automatically compute it on the fly. This second solution is more accurate
-#' because no rasterization is done (see details).
-#' @param ... optionnal parameters for \link[lidR:lasterrain]{lasterrain} if
+#' automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.
+#' @param ... optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @examples
+#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
-#' # plot(lidar)
+#' plot(lidar)
 #'
 #' # --- First possibility: compute the DTM on the fly -----
 #'
 #' lidar_norm = lasnormalize(lidar)
 #'
-#' # plot(lidar_norm)
+#' plot(lidar_norm)
 #'
 #' # --- Second possibility: read the DTM from a file -----
 #'
-#'\dontrun{
 #' dtm = raster::raster(terrain.tiff)
 #'
-#' lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
+#' lidar_norm = lidar - dtm # is synonyme with lasnormalize(lidar, dtm)
 #'
-#' # plot(lidar_norm)
+#' plot(lidar_norm)
 #' }
-#'
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
 lasnormalize = function(.las, dtm = NULL, ...)
 {
-  . <- Z <- Zn <- Xr <- Yr <- NULL
+  . <- Z <- Zn <- X <- Y <- NULL
 
   stopifnotlas(.las)
 
   if(is.null(dtm))
-    Zn = lasterrain(.las, .las@data, ...)
+  {
+    normalized = lasnormalize(.las, grid_terrain(.las, ...))
+    return(normalized)
+  }
   else if(class(dtm)[1] == "RasterLayer")
-    Zn = raster::extract(dtm, .las@data[, c("X", "Y"), with = F])
+  {
+    Zn = raster::extract(dtm, .las@data[, .(X,Y)])
+
+    isna = is.na(Zn)
+  	if(sum(isna) > 0)
+  	{
+  	  Zn = Zn[!isna]
+	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
+  	}
+
+    normalized = data.table::copy(.las@data)[!isna]
+    normalized[, Z := round(Z - Zn, 3)][]
+
+    return(LAS(normalized, .las@header))
+  }
   else
-    stop("The terrain model is not a RasterLayer")
-
-  normalized = data.table::copy(.las@data)
-  normalized[, Z := round(Z - Zn, 3)][]
-
-  return(LAS(normalized, .las@header))
+    stop("The terrain model is not a RasterLayer", call. = F)
 }
 
 #' Conveniant operator to lasnormalize

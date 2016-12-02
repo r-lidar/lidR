@@ -4,40 +4,49 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(obj, res = 1, k = 7L, kernel = "inv", ...)
+grid_terrain(.las, res = 1, method = "knn_idw", k = 3L, linear = T)
 }
 \arguments{
-\item{obj}{LAS objet}
+\item{.las}{LAS objet}
 
 \item{res}{numeric resolution.}
 
-\item{k}{numeric. The number of ground points used to interpolate (see
-\link[lidR:lasterrain]{lasterrain})}
+\item{method}{character can be \code{"knn_idw"} or \code{"akima"}}
 
-\item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
-for possible choices.}
+\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}}
 
-\item{...}{extra parameter for \link[kknn:kknn]{kknn}}
+\item{linear}{logical indicating wether linear or spline interpolation should be used
+when selected method is \code{"akima"}}
 }
 \value{
 A RasterLayer from package raster
 }
 \description{
-Interpol ground points using a k neareast neighbourgh approach and create a rasterized
-digital terrain model. The interpolation is done by default using an invert distance weighting
-(IDW). The algorithm uses the points classified as "ground" and for each pixel the
-algorithm uses the k nearest ground point to compute the interpolation.
+Interpol ground points and create a rasterized digital terrain model. The interpolation
+can be done with two methods: \code{"knn_idw"} or \code{"akima"} (see details). The
+algorithm uses the points classified as "ground" to compute the interpolation. The function
+force the original lowest ground point of each pixel (if exists) to be choose instead of
+the interpolated value.
+}
+\details{
+Methods:
+\itemize{
+\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
+an invert distance weighting (IDW).}
+\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+package \code{akima}. With this method no extrapolation is done outside of the convex hull
+determined by the data points. The DTM could contain NA values.}
+}
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-
 lidar = readLAS(LASfile)
-
-# plot(lidar)
+plot(lidar)
 
 dtm = grid_terrain(lidar)
-
-# plot3d(dtm)
+plot3d(dtm)
+}
 }
 \seealso{
 \link[lidR:lasnormalize]{lasnormalize}

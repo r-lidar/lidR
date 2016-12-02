@@ -4,28 +4,38 @@
 \alias{lasterrain}
 \title{Get the evelation of the ground for given coordinates}
 \usage{
-lasterrain(.las, coord, k = 7L, kernel = "inv", ...)
+lasterrain(.las, coord, method = "knn_idw", k = 3L, linear = F)
 }
 \arguments{
-\item{.las}{a LAS objet}
+\item{.las}{LAS objet}
 
-\item{coord}{data.frame containing the coordinates of the points of
-interest in the columns named X and Y.}
+\item{coord}{data.frame containing  the coordinates of interest in columns X and Y}
 
-\item{k}{numeric. The number of nearest neighbours}
+\item{method}{character can be \code{"knn_idw"} or \code{"akima"}}
 
-\item{kernel}{character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
-for possible choices.}
+\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}}
 
-\item{...}{extra parameter for \link[kknn:kknn]{kknn}}
+\item{linear}{logical indicating wether linear or spline interpolation should be used
+when selected method is \code{"akima"}}
 }
 \value{
 Numeric. The predicted elevations.
 }
 \description{
-The algorithm use the k-nearest ground points of each input coordinates of interest to
-interpol the elevations at these coordinates. The interpolation is done by using
-an invert distance weighting (IDW)
+Interpol ground points and return the elevation at the position of interest given in
+parameter. The interpolation can be done with two methods: \code{"knn_idw"} or
+\code{"akima"} (see details). The algorithm uses the points classified as "ground" to
+compute the interpolation.
+}
+\details{
+Methods:
+\itemize{
+\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
+an invert distance weighting (IDW).}
+\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+package \code{akima}. With this method no extrapolation is done outside of the convex hull
+determined by the ground points.}
+}
 }
 \seealso{
 \link[kknn:kknn]{kknn}
