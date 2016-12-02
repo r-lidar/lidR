@@ -10,10 +10,9 @@ lasnormalize(.las, dtm = NULL, ...)
 \item{.las}{a LAS objet}
 
 \item{dtm}{a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
-automatically compute it on the fly. This second solution is more accurate
-because no rasterization is done (see details).}
+automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.}
 
-\item{...}{optionnal parameters for \link[lidR:lasterrain]{lasterrain} if
+\item{...}{optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
 \code{dtm} parameter is NULL.}
 }
 \value{
@@ -25,35 +24,27 @@ normalized with the ground at 0. The digital terrain model can comes from
 several sources such as external file or own computaion. It can also be computed on the
 fly.
 }
-\details{
-When the paramter dtm is not provided the elevation of the ground is computed for each point
-of the lidar data with the function \link[lidR:lasterrain]{lasterrain}.
-The consequence is a more accurate normalisation. Indeed no rasterizaion impling
-innacuracies is required. This method lead to few negatives values.
-}
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-
 lidar = readLAS(LASfile)
 
-# plot(lidar)
+plot(lidar)
 
 # --- First possibility: compute the DTM on the fly -----
 
 lidar_norm = lasnormalize(lidar)
 
-# plot(lidar_norm)
+plot(lidar_norm)
 
 # --- Second possibility: read the DTM from a file -----
 
-\dontrun{
 dtm = raster::raster(terrain.tiff)
 
-lidar_norm = lidar - dtm # is synonyme with normalize(lidar, dtm)
+lidar_norm = lidar - dtm # is synonyme with lasnormalize(lidar, dtm)
 
-# plot(lidar_norm)
+plot(lidar_norm)
 }
-
 }
 \seealso{
 \link[raster:raster]{raster}

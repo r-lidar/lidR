@@ -29,37 +29,74 @@
 
 #' Get the evelation of the ground for given coordinates
 #'
-#' The algorithm use the k-nearest ground points of each input coordinates of interest to
-#' interpol the elevations at these coordinates. The interpolation is done by using
-#' an invert distance weighting (IDW)
+#' Interpol ground points and return the elevation at the position of interest given in
+#' parameter. The interpolation can be done with two methods: \code{"knn_idw"} or
+#' \code{"akima"} (see details). The algorithm uses the points classified as "ground" to
+#' compute the interpolation.
 #'
-#' @param .las a LAS objet
-#' @param coord data.frame containing the coordinates of the points of
-#' interest in the columns named X and Y.
-#' @param k numeric. The number of nearest neighbours
-#' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
-#' for possible choices.
-#' @param ... extra parameter for \link[kknn:kknn]{kknn}
+#'Methods:
+#'\itemize{
+#'\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
+#' an invert distance weighting (IDW).}
+#'\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+#' package \code{akima}. With this method no extrapolation is done outside of the convex hull
+#' determined by the ground points.}
+#'}
+#' @param .las LAS objet
+#' @param coord data.frame containing  the coordinates of interest in columns X and Y
+#' @param method character can be \code{"knn_idw"} or \code{"akima"}
+#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}
+#' @param linear logical indicating wether linear or spline interpolation should be used
+#' when selected method is \code{"akima"}
 #' @return Numeric. The predicted elevations.
 #' @export
 #' @seealso
 #' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
-lasterrain = function(.las, coord, k = 7L, kernel = "inv", ...)
+lasterrain = function(.las, coord, method = "knn_idw", k = 3L, linear = F)
 {
+  . <- X <- Y <- Z <- NULL
+
   stopifnotlas(.las)
 
-  fields = names(coord)
-
-  if( !"X" %in% fields | !"Y" %in% fields)
+  if( !"X" %in% names(coord) | !"Y" %in% names(coord))
     stop("Parameter coord does not have a column named X or Y",  call. = F)
 
   ground = suppressWarnings(lasfilterground(.las))
 
   if(is.null(ground))
-    stop("No ground points found. Impossible to normalize the point cloud.", call. = F)
+    stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
-  Zg = kknn::kknn(Z~X+Y, ground@data, coord, k = k, kernel = kernel, ...)$fitted.values
+  ground = ground@data[, .(X,Y,Z)]
+
+  if(method == "knn_idw")
+    return(terrain_knn_idw(ground, coord, k))
+  else if(method == "akima")
+    return(terrain_akima(ground, coord, linear))
+  else
+    stop("This method does not exist.")
+}
+
+terrain_knn_idw = function(ground, coord, k = 3L)
+{
+  X <- Y <- Z <- NULL
+
+  Zg = kknn::kknn(Z~X+Y, ground, coord, k = k, kernel = "inv")$fitted.values
 
   return(Zg)
+}
+
+terrain_akima = function(ground, coord, linear)
+{
+  . <- X <- Y <- Z <- Zg <- xc <- yc <- NULL
+
+  xo = unique(coord$X) %>% sort()
+  yo = unique(coord$Y) %>% sort()
+
+  grid = ground %$% akima::interp(X, Y, Z, xo = xo, yo = yo, linear = linear, duplicate = "user", dupfun = min)
+
+  temp = data.table::data.table(xc = match(coord$X, grid$x), yc = match(coord$Y, grid$y))
+  temp[, Zg := grid$z[xc,yc], by = .(xc,yc)]
+
+  return(temp$Zg)
 }
