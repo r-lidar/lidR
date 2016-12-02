@@ -108,3 +108,19 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
 
   return(layer)
 }
+
+#' Tranform a LAS object into a SpatialPointsDataFrame object
+#'
+#' @param .las an object of class LAS
+#' @return An object of class SpatialPointsDataFrame
+#' @seealso
+#' \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+#' @export
+as.SpatialPointsDataFrame = function(.las)
+{
+  X <- Y <- NULL
+
+  stopifnotlas(.las)
+
+  sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
+}
