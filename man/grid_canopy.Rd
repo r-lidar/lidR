@@ -4,21 +4,25 @@
 \alias{grid_canopy}
 \title{Canopy surface model}
 \usage{
-grid_canopy(obj, res = 2, start = c(0, 0))
+grid_canopy(.las, res = 2, subcircle = 0)
 }
 \arguments{
-\item{obj}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.}
+\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
+2 meters i.e. 4 square meters.}
 
-\item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:grid_metrics]{grid_metrics}}
+\item{subcircle}{numeric radius of the circles. To fill empty pixels the algorithm can
+replaces each return by a circle composed by 8 points before to compute the maximum elevation
+in each pixel.}
 }
 \value{
 It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
 }
 \description{
-Creates a canopy surface model using a LiDAR cloud of points. This function is an
-alias for \code{grid_metrics(obj, res, max(Z))}.
+Creates a canopy surface model using a LiDAR cloud of points. For each pixel the
+function returns highest point found. This basic method could be improved by replacing
+each LiDAR return with a small disk
 }
 \details{
 The algorithm used is the local maximum algorithm. It assigns the
