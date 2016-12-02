@@ -40,7 +40,6 @@
 #' density on the whole area (see \code{\link[lidR:lasarea]{lasarea}}). The cell size must be large enough
 #' to compute a coherant local pulse density. 25 square meters looks good. 1 square
 #' meter is meaningless.
-#' @aliases  thin
 #' @param .las An object of the class \code{LAS}
 #' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.

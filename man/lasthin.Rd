@@ -2,7 +2,6 @@
 % Please edit documentation in R/lasthin.r
 \name{lasthin}
 \alias{lasthin}
-\alias{thin}
 \title{Thin LiDAR data}
 \usage{
 lasthin(.las, density, homogenize = TRUE, resolution = 5)
