@@ -55,12 +55,12 @@
 #' @export grid_canopy
 grid_canopy = function(.las, res = 2, subcircle = 0)
 {
-  Z <- NULL
-
-  ex = extent(.las)
+  . <- X <- Y <- Z <- NULL
 
   if(subcircle > 0)
   {
+    ex = extent(.las)
+
     dt = .las@data[, .(X,Y,Z)]
 
     alpha = seq(0, 2*pi, length.out = 9)[-9]
