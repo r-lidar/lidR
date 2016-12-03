@@ -31,7 +31,7 @@
 #'
 #' Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 #'
-#' lasthin is designed to produce output data sets that have uniform pulse densities
+#' lasdecimate is designed to produce output data sets that have uniform pulse densities
 #' throughout the coverage area. For each cell, the proportion of pulses that will
 #' be retained is computed using the calculated pulse density and the desired pulse
 #' density. If required pulse density is greater than the local pulse density it returns
@@ -50,16 +50,16 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lidar %>% lasthin(1, resolution = 5)
+#' thinned = lidar %>% lasdecimate(1, resolution = 5)
 #' lidar   %>% grid_density %>% plot
 #' thinned %>% grid_density %>% plot
 #'
 #' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lidar %>% lasthin(1, homogenize = FALSE)
+#' thinned = lidar %>% lasdecimate(1, homogenize = FALSE)
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export
-lasthin = function(.las, density, homogenize = TRUE, resolution = 5)
+lasdecimate = function(.las, density, homogenize = TRUE, resolution = 5)
 {
   pulseID <- gpstime <- NULL
 
