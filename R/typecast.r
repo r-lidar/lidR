@@ -118,9 +118,22 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
 #' @export
 as.SpatialPointsDataFrame = function(.las)
 {
-  X <- Y <- NULL
+  . <- X <- Y <- NULL
 
   stopifnotlas(.las)
 
   sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
+}
+
+#' Tranform a gridmetric object into a SpatialPixelsDataFrame object
+#'
+#' @param .data an object of class gridmetric
+#' @return An object of class SpatialPixelDataFrame
+#' @seealso
+#' \link[sp:SpatialPixelsDataFrame-class]{SpatialPixelsDataFrame}
+#' @export
+as.SpatialPixelsDataFrame = function(.data)
+{
+  data.table::setDF(.data)
+  sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
 }
