@@ -104,7 +104,7 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
   mx = out %>% as.matrix
   mx = apply(mx, 1, rev)
 
-  layer = raster::raster(mx, xmn = min(x$X), xmx = max(x$X), ymn = min(x$Y), ymx = max(x$Y))
+  layer = raster::raster(mx, xmn = min(x$X)-0.5*res, xmx = max(x$X)+0.5*res, ymn = min(x$Y)-0.5*res, ymx = max(x$Y)+0.5*res)
 
   return(layer)
 }
