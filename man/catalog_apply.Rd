@@ -88,7 +88,7 @@ analyse_tile = function(LASFile)
   lidar = readLAS(LASFile)
 
   # Associate geographic data with lidar points (if needed)
-  lidar \%<>\% classify_from_shapefile(lake, field="inlake")
+  lidar \%<>\% lasclassify(lake, field="inlake")
 
   # filter lake
   lidar \%<>\% lasfilter(lake == FALSE)
@@ -119,7 +119,7 @@ output = project \%>\% catalog_apply(analyse_tile, varlist = export, platform = 
 \seealso{
 \link[parallel:mclapply]{mclapply}
 \link[parallel:parLapplyLB]{parLapplyLB}
-\link[lidR:classify_from_shapefile]{classify_from_shapefile}
+\link[lidR:lasclassify]{lasclassify}
 \link[lidR:grid_metrics]{grid_metrics}
 }
 
