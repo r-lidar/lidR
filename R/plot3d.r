@@ -38,10 +38,10 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
 {
   inargs <- list(...)
 
-  mx = raster::as.matrix(x) %>% apply(1, rev) %>% t
+  mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
   coord = sp::coordinates(x)
-  x = coord[,2] %>% unique %>% sort
-  y = coord[,1] %>% unique %>% sort
+  x = coord[,1] %>% unique %>% sort
+  y = coord[,2] %>% unique %>% sort
 
   if(!add) rgl::open3d()
 
