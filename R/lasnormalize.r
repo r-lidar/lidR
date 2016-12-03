@@ -71,26 +71,27 @@ lasnormalize = function(.las, dtm = NULL, ...)
 
   stopifnotlas(.las)
 
+  normalized = LAS(data.table::copy(.las@data), .las@header)
+
   if(is.null(dtm))
   {
-    normalized = lasnormalize(.las, grid_terrain(.las, ...))
+    normalized = normalized - grid_terrain(normalized, ...)
     return(normalized)
   }
-  else if(class(dtm)[1] == "RasterLayer")
+  else if(is(dtm, "RasterLayer"))
   {
-    Zn = raster::extract(dtm, .las@data[, .(X,Y)])
+    lasclassify(normalized, dtm, "Zn")
 
-    isna = is.na(Zn)
+    isna = is.na(normalized$Zn)
   	if(sum(isna) > 0)
-  	{
-  	  Zn = Zn[!isna]
 	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
-  	}
 
-    normalized = data.table::copy(.las@data)[!isna]
-    normalized[, Z := round(Z - Zn, 3)][]
+    normalized = lasfilter(normalized, !isna)
+    normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
 
-    return(LAS(normalized, .las@header))
+    gc()
+
+    return(normalized)
   }
   else
     stop("The terrain model is not a RasterLayer", call. = F)

@@ -27,22 +27,30 @@
 
 
 
-#' Classify LiDAR points from the polygons in a shapefile
+#' Classify LiDAR points from source data
 #'
-#' Classify LAS points based on geographic data found in a shapefile. It checks
-#' if the LiDAR points are in polygons given in the shapefile. If the parameter
-#' \code{field} is the name of a field in the attribute data of shapefile it
-#' classifies the points based on the attribute data. Else it classifies the points
-#' as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
+#' Classify LAS points based on geographic data found in external sources. It attributes
+#' to each point a value found in the data given as input. External sources can be an ESRI
+#' Shapefile (SpatialPolygonsDataFrame) or a Raster (RasterLayer).
+#'
+#' The function recognizes several type of sources:
+#' \itemize{
+#' \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
+#' multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
+#' given in the shapefile. If the parameter \code{field} is the name of a field in the attribute
+#' data of the shapefile it classifies the points based on this field. Else it classifies
+#' the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
 #' allows for filtering lakes, for example.
+#' }
+#' \item{\code{RasterLayer}: It attriutes to each point the value founded in each pixel of the RasterLayer.
+#' Use the parameter \code{field} to force the name of the new column added in the LAS objct}. This function
+#' is used internally to normalize the lidar dataset and is exported because why not.
+#' }
 #'
-#' The function recognizes only SpatialPolygonsDataFrame containing polygons.
-#' Polygons can be simple, one-part shapes, multi-part polygons, or polygons with
-#' holes.
-#'
-#' @param obj An object of the class \code{LAS}
-#' @param shapefile An object of class SpatialPolygonsDataFrame
-#' @param field characters. The name of a field of the shapefile or the name of the new field in the LAS object.
+#' @param .las An object of the class \code{LAS}
+#' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}
+#' @param field characters. The name of a field in the table of attribute of the shapefile or
+#' the name of the new column in the LAS object (see details)
 #' @return Nothing. The new field is added by reference in the original data.
 #' @examples
 #' \dontrun{
@@ -53,26 +61,38 @@
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-#' classify_from_shapefile(lidar, lakes, "inlakes")
+#' lasclassify(lidar, lakes, "inlakes")
 #' forest = lasfilter(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'
 #' # The field "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the value of the polygon
-#' classify_from_shapefile(lidar, lakes, "LAKENAME_1")
+#' lasclassify(lidar, lakes, "LAKENAME_1")
 #' }
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 #' @export
-classify_from_shapefile = function(obj, shapefile, field = NULL)
+lasclassify = function(.las, source, field = NULL)
+{
+  stopifnotlas(.las)
+
+  if(is(source, "SpatialPolygonsDataFrame"))
+    classify_from_shapefile(.las, source, field)
+  else if(is(source, "RasterLayer"))
+    classify_from_rasterlayer(.las, source, field)
+  else
+    stop("No method for this source format.", call. = F)
+}
+
+classify_from_shapefile = function(.las, shapefile, field = NULL)
 {
   info <- NULL
 
-  npoints = dim(obj@data)[1]
+  npoints = dim(.las@data)[1]
 
-  # No field is provide:
+  # No field is provided:
   # Assign the number of the polygon
   if(is.null(field))
   {
@@ -99,7 +119,7 @@ classify_from_shapefile = function(obj, shapefile, field = NULL)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
-  polys = raster::crop(shapefile, extent(obj)+20)
+  polys = raster::crop(shapefile, extent(.las)+20)
 
   # No polygon? Return NA or false depending on the method used
   if(!is.null(polys))
@@ -139,7 +159,7 @@ classify_from_shapefile = function(obj, shapefile, field = NULL)
     is_hole = c(FALSE, is_hole)
 
     # Return the id of each polygon
-    ids = points_in_polygons(xcoords, ycoords, obj@data$X, obj@data$Y)
+    ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y)
 
     if(method == 1)
     {
@@ -168,11 +188,27 @@ classify_from_shapefile = function(obj, shapefile, field = NULL)
     warning("No polygon found within the data", call. = F)
   }
 
-  obj@data[,info:=values][]
+  .las@data[,info:=values][]
 
-  colnames = names(obj@data)
+  colnames = names(.las@data)
   colnames[length(colnames)] = field
-  data.table::setnames(obj@data, colnames)
+  data.table::setnames(.las@data, colnames)
 
   return(invisible(NULL))
 }
+
+classify_from_rasterlayer = function(.las, raster, field = NULL)
+{
+  . <- X <- Y <- info <- NULL
+
+  if(is.null(field)) field = lazyeval::expr_label(raster)
+
+  values = raster::extract(raster, .las@data[, .(X,Y)])
+
+  .las@data[, info := values][]
+
+  colnames = names(.las@data)
+  colnames[length(colnames)] = field
+  data.table::setnames(.las@data, colnames)
+}
+
