@@ -29,9 +29,9 @@
 
 #' Select a region of interest interactively
 #'
-#' Select a region of interest contained into a rectangle using the mouse interactively
+#' Select a rectangular region of interest interactively using the mouse
 #'
-#' \code{lasroi} enables the user to select a region of interest (ROI) drawing
+#' \code{lasroi} enables the user to select a region of interest (ROI) by drawing
 #' a rectangle with the mouse
 #' @aliases lasroi
 #' @param .las An object of class \code{LAS}
