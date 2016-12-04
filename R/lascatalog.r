@@ -42,7 +42,7 @@
 #' \link[lidR:catalog_queries]{catalog_queries}
 #' @return A data.frame with the class Catalog
 #' @export
-lascatalog = function(folder, ...)
+catalog = function(folder, ...)
 {
   if (!is.character(folder))
     lidRError("GTG1")

@@ -39,7 +39,7 @@ It works only for tiles that are arranged in gridlines.
 \examples{
 \dontrun{
 # Build a Catalog
-catalog = lascatalog("<Path to a folder containing a set of las or laz files>")
+catalog = catalog("<Path to a folder containing a set of las or laz files>")
 
 # Get coordinates from an external file
 X = runif(30, 690000, 800000)

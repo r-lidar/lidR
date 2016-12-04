@@ -11,7 +11,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   flightlineID = TRUE, XYZonly = FALSE, all = FALSE)
 }
 \arguments{
-\item{files}{array of characters or a \link[lidR:lascatalog]{Catalog} object}
+\item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
 
 \item{Intensity}{logical. do you want to load the Intensity field? default: TRUE}
 
@@ -59,6 +59,6 @@ lidar = readLAS(LASfile)
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
-\link[lidR:lascatalog]{Catalog}
+\link[lidR:catalog]{Catalog}
 }
 
