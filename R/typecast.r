@@ -58,8 +58,8 @@ as.gridmetrics = function(x, res)
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' meanHeight = grid_metrics(lidar, 20, mean(Z))
-#' mtx = as.raster(meanHeight)
+#' meanHeight = grid_metrics(lidar, mean(Z))
+#' rmeanHeight = as.raster(meanHeight)
 #' @method as.raster gridmetrics
 #' @importMethodsFrom raster as.raster
 #' @export

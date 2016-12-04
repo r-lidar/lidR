@@ -74,7 +74,7 @@ grid_canopy = function(.las, res = 2, subcircle = 0)
     rm(dt)
   }
 
-  ret = grid_metrics(.las, res, list(Z = max(Z)))
+  ret = grid_metrics(.las, list(Z = max(Z)), res)
 
   rm(.las)
   gc()

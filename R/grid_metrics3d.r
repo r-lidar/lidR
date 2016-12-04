@@ -41,8 +41,8 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @param .las An object of class \code{LAS}
-#' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
+#' @param res numeric. The size of the cells
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -50,11 +50,11 @@
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the number of points is computed.
-#' grid_metrics3d(lidar, 1, length(Z))
+#' grid_metrics3d(lidar, length(Z))
 #'
 #' # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 #' # the mean scan angle of points is computed.
-#' grid_metrics3d(lidar, 1, mean(ScanAngle))
+#' grid_metrics3d(lidar, mean(ScanAngle))
 #'
 #' # Define your own metric function
 #' myMetrics = function(i, angle, pulseID)
@@ -68,13 +68,13 @@
 #'    return(ret)
 #'  }
 #'
-#' voxels = grid_metrics3d(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
+#' voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 #'
 #' plot(voxels, "angle")
 #' plot(voxels, "imean")
 #' #etc.
 #' @export
-grid_metrics3d = function(.las, res, func)
+grid_metrics3d = function(.las, func, res = 1)
 {
   stopifnotlas(.las)
 

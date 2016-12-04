@@ -4,14 +4,14 @@
 \alias{grid_metrics3d}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
-grid_metrics3d(.las, res, func)
+grid_metrics3d(.las, func, res = 1)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{res}{numeric. The size of the cells}
-
 \item{func}{the function to be apply to each cells}
+
+\item{res}{numeric. The size of the cells}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
@@ -35,11 +35,11 @@ lidar = readLAS(LASfile)
 
 # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 # the number of points is computed.
-grid_metrics3d(lidar, 1, length(Z))
+grid_metrics3d(lidar, length(Z))
 
 # Cloud of points is voxelized with a 1 meter resolution and in each voxel
 # the mean scan angle of points is computed.
-grid_metrics3d(lidar, 1, mean(ScanAngle))
+grid_metrics3d(lidar, mean(ScanAngle))
 
 # Define your own metric function
 myMetrics = function(i, angle, pulseID)
@@ -53,7 +53,7 @@ myMetrics = function(i, angle, pulseID)
    return(ret)
  }
 
-voxels = grid_metrics3d(lidar, 20, myMetrics(Intensity, ScanAngle, pulseID))
+voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 
 plot(voxels, "angle")
 plot(voxels, "imean")
