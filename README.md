@@ -1,10 +1,10 @@
 ![Version](http://img.shields.io/Version/1.0.0%20beta.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg)
 
-**Announcement for old users:** *I will sumbmit the package to the CRAN soon. The previous version was v1.2.0. The current version is v1.0.0. to be logical and get the foundation right. This version is entirely non-compatible with the old v1.2.0 because all the function names have changed for improved coherence. All the previous work on this package was trial and error. This version is set in stone.*
+**Announcement for old users:** *I will submit the package to CRAN soon. The previous version was v1.2.0. The current version is v1.0.0. to be logical and get the foundation right. This version is entirely non-compatible with the old v1.2.0 because all the function names have changed for improved coherence. All the previous work on this package was trial and error. This version is set in stone.*
 
-R package for airborne LiDAR data manipulation and visualisation for forest applications. 
+R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
-The lidR package provides functions to read and write `.las` and `.laz` files, plot a point cloud, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles and provides other tools to manipulate LiDAR data. The lidR package is designed mainly for research purposes using an area-based approach.
+The lidR package provides functions to read and write `.las` and `.laz` files, plot a point cloud, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles in multicore, classify data from shapefiles, and provides other tools to manipulate LiDAR data. The lidR package is designed mainly for research purposes using an area-based approach.
 
 lidR provides an open-source and R-based implementation of several classical functions used in software dedicated to LiDAR data manipulation. lidR is flexible because it allows the user to program their own tools and manipulate their own objects in R rather than rely on a set of predefined tools.
 
