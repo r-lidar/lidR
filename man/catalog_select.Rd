@@ -13,11 +13,12 @@ catalog_select(x)
 A Catalog object
 }
 \description{
-Select a set of LAS tile from a Catalog using interactively the mouse
+Select a set of LAS tiles from a Catalog using the mouse interactively
 }
 \details{
-This function enable the user to select a set of las file from a Catalog clicking on the map of the file with the mouse.
-The selected files turn red on the plot at the end of the selection.
+This function enables the user to select a set of las files from a Catalog by clicking
+on the map of the file using the mouse. The selected files will be highlighted in red on
+the plot after selection is complete
 }
 \examples{
 \dontrun{

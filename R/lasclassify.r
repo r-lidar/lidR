@@ -37,13 +37,14 @@
 #' \itemize{
 #' \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
 #' multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
-#' given in the shapefile. If the parameter \code{field} is the name of Otherwise it classifies
+#' given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
+#' of the shapefile it classifies the points based on this field. Otherrwise it classifies
 #' the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
 #' allows filtering of lakes, for example.
 #' }
 #' \item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
-#' Use the parameter \code{field} to force the name of the new column added in the LAS object}. This function
-#' is used internally to normalize the lidar dataset and is exported because some users may find it useful.
+#' Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
+#' is used internally to normalize the lidar dataset and is exported because some users may find it useful.}
 #' }
 #'
 #' @param .las An object of the class \code{LAS}

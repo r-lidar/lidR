@@ -15,11 +15,11 @@ lasflightline(.las, dt = 30)
 Return nothing. The original object is modified in place by reference.
 }
 \description{
-Retrieve each individual flightline by attributing to each point a number. The
-function rely on the GPS time to retrieve each indivudual flighlines. In a
+Retrieve each individual flightline by attributing a number to each point. The
+function depends on the GPS time to retrieve each indivudual flighline. In a
 continuous dataset, once points are ordered by GPS time, the time between two
-consecutive points cannot be important. If the time between two consecutive
-points is too long it means that is comes from another flightine. The defaut
-thresohold is 30 seconds
+consecutive points does not exceed a few milliseconds. If the time between two consecutive
+points is too long it means that it comes from another flightine. The defaut
+thresohold is 30 seconds. A column flightlineID is added in the slot @data
 }
 

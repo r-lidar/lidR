@@ -12,16 +12,16 @@ grid_canopy(.las, res = 2, subcircle = 0)
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
 
-\item{subcircle}{numeric radius of the circles. To fill empty pixels the algorithm can
-replaces each return by a circle composed by 8 points before to compute the maximum elevation
+\item{subcircle}{numeric radius of the circles. To fill empty pixels the algorithm
+replaces each return by a circle composed of 8 points before computing the maximum elevation
 in each pixel.}
 }
 \value{
 It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
 }
 \description{
-Creates a canopy surface model using a LiDAR cloud of points. For each pixel the
-function returns highest point found. This basic method could be improved by replacing
+Creates a canopy surface model using a LiDAR point cloud. For each pixel the
+function returns the highest point found. This basic method could be improved by replacing
 each LiDAR return with a small disk
 }
 \details{

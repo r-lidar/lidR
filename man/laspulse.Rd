@@ -2,7 +2,7 @@
 % Please edit documentation in R/lasindentify.r
 \name{laspulse}
 \alias{laspulse}
-\title{Retrieve individual pulse}
+\title{Retrieve individual pulses}
 \usage{
 laspulse(.las)
 }
@@ -13,9 +13,8 @@ laspulse(.las)
 Return nothing. The original object is modified in place by reference.
 }
 \description{
-Retrieve each individual pulse by attributing to each point a number. The
-function rely on the GPS time and the return number to retrieve each indivudual
-beam. Once points are ordered by GPS time the pattern of return number enable
-to attribute a new number to the points every first return.
+Retrieve each individual pulse by attributing a number to each point. The
+function depends on the GPS time to retrieve each individual
+beam. A column pulseID is added in the slot @data
 }
 

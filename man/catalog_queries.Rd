@@ -15,26 +15,26 @@ catalog_queries(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1,
 \item{y}{vector. A set of y coordinates corresponding to the center of the ROI}
 
 \item{r}{numeric or vector. A radius or a set of radii of the ROI. If only
-r is provided (r2 = NULL) it will extract data falling into a disc.}
+r is provided (r2 = NULL) it will extract data falling onto a disc.}
 
 \item{r2}{numeric or vector. A radius or a set of radii of plots. If r2
-is provided, the selection turns into a rectangular ROI. If r = r2 it is a square obviouly.}
+is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.}
 
-\item{roinames}{vector. A set of ROI names (the ID of the plots for example)}
+\item{roinames}{vector. A set of ROI names (the ID of the plots, for example)}
 
 \item{mc.cores}{numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})}
 
-\item{...}{additionnal parameters for \link[lidR:readLAS]{readLAS}}
+\item{...}{additional parameters for \link[lidR:readLAS]{readLAS}}
 }
 \value{
 A list of LAS objects
 }
 \description{
 When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
-(a ground inventory for example), he can automatically extract the lidar data associated
-to the ROIs from a Catalog. The algorithm automatically extracts ROIs even falling on the edges
-of one or more tiles.\cr
-It works only for tiles well organized as a damier.
+(a ground inventory for example), they can automatically extract the lidar data associated
+with the ROIs from a Catalog. The algorithm will do this even for ROIs falling on the edges of one or
+more tiles.\cr
+It works only for tiles that are arranged in gridlines.
 }
 \examples{
 \dontrun{

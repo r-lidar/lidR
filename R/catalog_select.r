@@ -29,10 +29,20 @@
 
 #' Select LAS files interactively
 #'
-#' Select a set of LAS tiles from a Catalog using the mouse interactively 
+#' Select a set of LAS tiles from a Catalog using the mouse interactively
 #'
-#' This function enables the user to select a set of las files from a Catalog by clicking on the map of the file using the #' mouse.
-#' The selected files will be highlighted in red on the plot after selection is complete
+#' This function enables the user to select a set of las files from a Catalog by clicking
+#' on the map of the file using the mouse. The selected files will be highlighted in red on
+#' the plot after selection is complete
+#' @param x A Catalog object
+#' @return A Catalog object
+#' @export
+#' @examples
+#' \dontrun{
+#' catalog = lascatalog("<Path to a folder containing a set of .las files>")
+#' selectedFiles = catalog_select(catalog)
+#' }
+#' @seealso
 #' \link[lidR:lascatalog]{Catalog}
 catalog_select = function(x)
 {

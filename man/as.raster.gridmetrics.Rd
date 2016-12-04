@@ -2,7 +2,7 @@
 % Please edit documentation in R/typecast.r
 \name{as.raster.gridmetrics}
 \alias{as.raster.gridmetrics}
-\title{Tranform a grid_metrics object into a spatial raster object}
+\title{Transform a grid_metrics object into a spatial raster object}
 \usage{
 \method{as.raster}{gridmetrics}(x, z = NULL, ...)
 }
@@ -17,7 +17,7 @@
 A RasterLayer object from package  \link[raster:raster]{raster}
 }
 \description{
-Tranform a grid_metrics object into a spatial raster object
+Transform a grid_metrics object into a spatial raster object
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

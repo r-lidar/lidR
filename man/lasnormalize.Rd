@@ -2,26 +2,26 @@
 % Please edit documentation in R/lasnormalize.r
 \name{lasnormalize}
 \alias{lasnormalize}
-\title{Substract digital terrain model}
+\title{Subtract digital terrain model}
 \usage{
 lasnormalize(.las, dtm = NULL, ...)
 }
 \arguments{
 \item{.las}{a LAS objet}
 
-\item{dtm}{a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
+\item{dtm}{a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
 automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.}
 
-\item{...}{optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
+\item{...}{optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
 \code{dtm} parameter is NULL.}
 }
 \value{
 A LAS object.
 }
 \description{
-Substract digital terrain model (DTM) to the LiDAR data to create a dataset
-normalized with the ground at 0. The digital terrain model can comes from
-several sources such as external file or own computaion. It can also be computed on the
+Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
+normalized with the ground at 0. The digital terrain model can originate from
+several sources e.g. from an external file or computed by the user. It can also be computed on the
 fly.
 }
 \examples{
@@ -41,7 +41,7 @@ plot(lidar_norm)
 
 dtm = raster::raster(terrain.tiff)
 
-lidar_norm = lidar - dtm # is synonyme with lasnormalize(lidar, dtm)
+lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
 
 plot(lidar_norm)
 }
