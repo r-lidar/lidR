@@ -29,7 +29,7 @@
 
 #' Write a las or laz file
 #'
-#' Write a LAS object into a binary file (.las or .laz m specified in filename)
+#' Write a LAS object into a binary file (.las or .laz specified in filename)
 #'
 #' @param .las an object of class LAS
 #' @param file character. A character string naming an output file
