@@ -43,7 +43,7 @@ as.gridmetrics = function(x, res)
   return(x)
 }
 
-#' Tranform a grid_metrics object into a spatial raster object
+#' Transform a grid_metrics object into a spatial raster object
 #'
 #' @param x a grid_metrics object
 #' @param z character. The field to plot. If NULL, autodetect
@@ -109,7 +109,7 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
   return(layer)
 }
 
-#' Tranform a LAS object into a SpatialPointsDataFrame object
+#' Transform a LAS object into a SpatialPointsDataFrame object
 #'
 #' @param .las an object of class LAS
 #' @return An object of class SpatialPointsDataFrame
@@ -125,7 +125,7 @@ as.SpatialPointsDataFrame = function(.las)
   sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
 }
 
-#' Tranform a gridmetric object into a SpatialPixelsDataFrame object
+#' Transform a gridmetric object into a SpatialPixelsDataFrame object
 #'
 #' @param .data an object of class gridmetric
 #' @return An object of class SpatialPixelDataFrame

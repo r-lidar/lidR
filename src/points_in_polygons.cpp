@@ -32,15 +32,15 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins("cpp0x")]]
 
-// Do point fall in a given polygon?
+// Does a point fall in a given polygon?
 //
-// Verifies for one point whether it fall in a given polygon
+// Verifies for one point whether it falls in a given polygon
 //
 // @param vertx  numerical array of x-coordinates of polygon
 // @param verty  numerical array of y-coordinates of polygon
 // @param pointx numeric. x-coordinate of a point
 // @param pointy numeric. y-coordinate of a point
-// @return Logical. FALSE, point is exterior to the polygon, TRUE, point is in interior to the polygon
+// @return Logical. FALSE, point outside the polygon, TRUE, point is inside the polygon
 // @references Adaptation of the C function written by W. Randolph Franklin
 // @export
 // [[Rcpp::export]]
@@ -67,7 +67,7 @@ bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, fl
 // @param verty  numerical array of y-coordinates of polygon
 // @param pointx numerical array of x-coordinates of points
 // @param pointy numerical array of y-coordinates of points
-// @return Logical array. FALSE, point is exterior to the polygon, TRUE, point is in interior to the polygon
+// @return Logical array. FALSE, points are outside the polygon, TRUE, points are outside the polygon
 // @export
 // [[Rcpp::export]]
 LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy)
@@ -84,15 +84,15 @@ LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, Numeri
   return c;
 }
 
-// Do points fall in a one of the polygons?
+// Do points fall inside a given polygon?
 //
-// Verifies for a set of points whether they fall in one of the given polygon
+// Verifies for a set of points whether they fall inside a given polygon
 //
 // @param vertx  numerical list of array of x-coordinates of polygon
 // @param verty  numerical list of array of y-coordinates of polygon
 // @param pointx numerical array of x-coordinates of points
 // @param pointy numerical array of y-coordinates of points
-// @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a polygon
+// @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a given polygon
 // @export
 // [[Rcpp::export]]
 IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)

@@ -27,18 +27,18 @@
 
 
 
-#' Get the evelation of the ground for given coordinates
+#' Get the elevation of the ground for given coordinates
 #'
-#' Interpol ground points and return the elevation at the position of interest given in
-#' parameter. The interpolation can be done with two methods: \code{"knn_idw"} or
+#' Interpolate ground points and return the elevation at the position of interest given by the
+#' parameter. The interpolation can be done using two methods: \code{"knn_idw"} or
 #' \code{"akima"} (see details). The algorithm uses the points classified as "ground" to
 #' compute the interpolation.
 #'
 #'Methods:
 #'\itemize{
-#'\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
-#' an invert distance weighting (IDW).}
-#'\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+#'\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
+#' an inverse distance weighting (IDW).}
+#'\item{\code{akima}: interpolation depends on the \link[akima:interp]{interp} function from
 #' package \code{akima}. With this method no extrapolation is done outside of the convex hull
 #' determined by the ground points.}
 #'}

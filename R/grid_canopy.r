@@ -29,8 +29,8 @@
 
 #' Canopy surface model
 #'
-#' Creates a canopy surface model using a LiDAR cloud of points. For each pixel the
-#' function returns highest point found. This basic method could be improved by replacing
+#' Creates a canopy surface model using a LiDAR point cloud. For each pixel the
+#' function returns the highest point found. This basic method could be improved by replacing
 #' each LiDAR return with a small disk
 #'
 #' The algorithm used is the local maximum algorithm. It assigns the
@@ -39,8 +39,8 @@
 #' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 #' 2 meters i.e. 4 square meters.
-#' @param subcircle numeric radius of the circles. To fill empty pixels the algorithm can
-#' replaces each return by a circle composed by 8 points before to compute the maximum elevation
+#' @param subcircle numeric radius of the circles. To fill empty pixels the algorithm
+#' replaces each return by a circle composed of 8 points before computing the maximum elevation
 #' in each pixel.
 #' @return It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
 #' @examples

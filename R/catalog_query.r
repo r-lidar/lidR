@@ -29,22 +29,22 @@
 #' Extract LiDAR data from based on a set of coordinates
 #'
 #' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
-#' (a ground inventory for example), he can automatically extract the lidar data associated
-#' to the ROIs from a Catalog. The algorithm automatically extracts ROIs even falling on the edges
-#' of one or more tiles.\cr
-#' It works only for tiles well organized as a damier.
+#' (a ground inventory for example), they can automatically extract the lidar data associated
+#' with the ROIs from a Catalog. The algorithm will do this even for ROIs falling on the edges of one or
+#' more tiles.\cr
+#' It works only for tiles that are arranged in gridlines.
 #'
 #' @aliases catalog_queries
 #' @param obj A Catalog object
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI
 #' @param r numeric or vector. A radius or a set of radii of the ROI. If only
-#' r is provided (r2 = NULL) it will extract data falling into a disc.
+#' r is provided (r2 = NULL) it will extract data falling onto a disc.
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
-#' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square obviouly.
-#' @param roinames vector. A set of ROI names (the ID of the plots for example)
+#' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.
+#' @param roinames vector. A set of ROI names (the ID of the plots, for example)
 #' @param mc.cores numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})
-#' @param ... additionnal parameters for \link[lidR:readLAS]{readLAS}
+#' @param ... additional parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @export catalog_queries
 #' @examples

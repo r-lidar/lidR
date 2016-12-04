@@ -39,7 +39,7 @@ lidRError = function(code, ..., behaviour = stop)
 "TFS3" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The field '", p$metric, "' has a length of ", p$number),
 "TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(p$metric, sep=" and ")), " have respectively a length of: ", utils::capture.output(cat(p$number, sep=" and "))),
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
-"TFS6" = list("The expression '", p$expression, "' returned a vector of lenght ", p$number,  ". A single number or a list of single number is expected."),
+"TFS6" = list("The expression '", p$expression, "' returned a vector of length ", p$number,  ". A single number or a list of single numbers is expected."),
 
 # ClassLAS.r set*()
 "LDR1" = list("Invalid parameter data in constructor"),
@@ -54,11 +54,11 @@ lidRError = function(code, ..., behaviour = stop)
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
-"GDM2" = list(p$number, "duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation have been done using mean function"),
-"GDM3" = list("More than 3 columns: please input the column's name tranform it into a matrix."),
+"GDM2" = list(p$number, "duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
+"GDM3" = list("More than 3 columns: please input the third column's name to transform the data.frame into a matrix."),
 
 # ClassCatalog.r
-"CTG1" = list("Invalid parameter input in constructor. Expected string."),
+"CTG1" = list("Invalid parameter input in constructor. Expected a string."),
 "CTG2" = list("This folder does not exist"),
 
 # readLASheader.r and readLAS.r
@@ -69,13 +69,13 @@ lidRError = function(code, ..., behaviour = stop)
 "LAS5" = list("Please write only one file at a time"),
 
 # ClassVoxel.r
-"VOX1" = list("This diplay method does not exist."),
+"VOX1" = list("This display method does not exist."),
 
 # Getters
 "GET1" = list("No point found with the condition: ", p$expression),
 
 # Thin
-"THI1" = list("No 'pulseID' field found.  Function 'thin' cannot be ran.")
+"THI1" = list("No 'pulseID' field found.  Function 'thin' cannot be run.")
   )
 
   msg = do.call(paste, list(msg, sep=""))

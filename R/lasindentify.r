@@ -27,12 +27,12 @@
 
 
 
-#' Retrieve individual pulse
+#' Retrieve individual pulses
 #'
-#' Retrieve each individual pulse by attributing to each point a number. The
-#' function rely on the GPS time and the return number to retrieve each indivudual
-#' beam. Once points are ordered by GPS time the pattern of return number enable
-#' to attribute a new number to the points every first return.
+#' Retrieve each individual pulse by attributing a number to each point. The
+#' function depends on the GPS time and the return number to retrieve each individual
+#' beam. Once points are ordered by GPS time the pattern of return numbers enables
+#' attribution of a new number to the points every first return.
 #'
 #' @param .las A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
@@ -62,11 +62,11 @@ laspulse = function(.las)
 
 #' Retrieve individual flightlines
 #'
-#' Retrieve each individual flightline by attributing to each point a number. The
-#' function rely on the GPS time to retrieve each indivudual flighlines. In a
+#' Retrieve each individual flightline by attributing a number to each point. The
+#' function depends on the GPS time to retrieve each indivudual flighline. In a
 #' continuous dataset, once points are ordered by GPS time, the time between two
-#' consecutive points cannot be important. If the time between two consecutive
-#' points is too long it means that is comes from another flightine. The defaut
+#' consecutive points does not exceed a few milliseconds. If the time between two consecutive
+#' points is too long it means that it comes from another flightine. The defaut
 #' thresohold is 30 seconds
 #'
 #' @param .las A LAS object

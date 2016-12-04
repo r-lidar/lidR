@@ -29,25 +29,25 @@
 
 #' Digital Terrain Model
 #'
-#' Interpol ground points and create a rasterized digital terrain model. The interpolation
+#' Interpolate ground points and create a rasterized digital terrain model. The interpolation
 #' can be done with two methods: \code{"knn_idw"} or \code{"akima"} (see details). The
 #' algorithm uses the points classified as "ground" to compute the interpolation. The function
-#' force the original lowest ground point of each pixel (if exists) to be choose instead of
+#' forces the original lowest ground point of each pixel (if it exists) to be chosen instead of
 #' the interpolated value.
 #'
 #'Methods:
 #'\itemize{
-#'\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
-#' an invert distance weighting (IDW).}
-#'\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+#'\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
+#' an inverse distance weighting (IDW).}
+#'\item{\code{akima}: interpolation relies on the \link[akima:interp]{interp} function from
 #' package \code{akima}. With this method no extrapolation is done outside of the convex hull
 #' determined by the data points. The DTM could contain NA values.}
 #'}
 #' @param .las LAS objet
 #' @param res numeric resolution.
 #' @param method character can be \code{"knn_idw"} or \code{"akima"}
-#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}
-#' @param linear logical indicating wether linear or spline interpolation should be used
+#' @param k numeric. number of k-nearest neighbour when selected method is \code{"knn_idw"}
+#' @param linear logical indicating whether linear or spline interpolation should be used
 #' when selected method is \code{"akima"}
 #' @return A RasterLayer from package raster
 #' @export

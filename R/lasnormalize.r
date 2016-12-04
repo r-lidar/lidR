@@ -27,17 +27,17 @@
 
 
 
-#' Substract digital terrain model
+#' Subtract digital terrain model
 #'
-#' Substract digital terrain model (DTM) to the LiDAR data to create a dataset
-#' normalized with the ground at 0. The digital terrain model can comes from
-#' several sources such as external file or own computaion. It can also be computed on the
+#' Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
+#' normalized with the ground at 0. The digital terrain model can originate from
+#' several sources e.g. from an external file or computed by the user. It can also be computed on the
 #' fly.
 #'
 #' @param .las a LAS objet
-#' @param dtm a RasterLayer from package \link[raster:raster]{raster}. If NULL the function will
+#' @param dtm a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
 #' automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.
-#' @param ... optionnal parameters for \link[lidR:grid_terrain]{grid_terrain} if
+#' @param ... optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @examples
@@ -57,7 +57,7 @@
 #'
 #' dtm = raster::raster(terrain.tiff)
 #'
-#' lidar_norm = lidar - dtm # is synonyme with lasnormalize(lidar, dtm)
+#' lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
 #'
 #' plot(lidar_norm)
 #' }
@@ -97,7 +97,7 @@ lasnormalize = function(.las, dtm = NULL, ...)
     stop("The terrain model is not a RasterLayer", call. = F)
 }
 
-#' Conveniant operator to lasnormalize
+#' Convenient operator to lasnormalize
 #'
 #' @param e1 a LAS object
 #' @param e2 a RasterLayer
