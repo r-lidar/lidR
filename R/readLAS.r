@@ -36,7 +36,7 @@
 #' The optional logical parameters enable the user to save memory by choosing to load only the fields they need. Indeed, #' the readLAS function does not 'stream' the data. Data is loaded into the
 #' computer's memory (RAM) suboptimally because R does not accommodate many different data types.
 #'
-#' @param files array of characters or a \link[lidR:lascatalog]{Catalog} object
+#' @param files array of characters or a \link[lidR:catalog]{Catalog} object
 #' @param Intensity logical. do you want to load the Intensity field? default: TRUE
 #' @param ReturnNumber logical. do you want to load the ReturnNumber field? default: TRUE
 #' @param NumberOfReturns logical. do you want to load the NumberOfReturns field? default: TRUE
@@ -56,7 +56,7 @@
 #' @export readLAS
 #' @seealso
 #' \link[lidR:LAS-class]{Class LAS}
-#' \link[lidR:lascatalog]{Catalog}
+#' \link[lidR:catalog]{Catalog}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
