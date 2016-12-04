@@ -29,62 +29,57 @@
 
 #' Write a las or laz file
 #'
-#' Write a LAS object into a binary file (.las or .laz m specified in filename)
+#' Write a LAS object into a binary file (.las or .laz specified in filename)
 #'
-#' @param obj an object of class LAS
+#' @param .las an object of class LAS
 #' @param file character. A character string naming an output file
 #' @return void
-#' @export writeLAS
-setGeneric("writeLAS", function(obj, file){standardGeneric("writeLAS")})
+#' @export
+writeLAS = function(.las, file)
+{
+  files <- NULL
 
-#' @rdname writeLAS
-setMethod("writeLAS", "LAS",
-  function(obj, file)
+  islas = tools::file_ext(file) %in% c("las", "laz")
+
+  if(length(file) > 1)
+    lidRError("LAS5", behaviour = stop)
+
+  if(!islas)
+    lidRError("LAS2", files = file, behaviour = stop)
+
+  file = path.expand(file)
+
+  I = RN = NoR = SDF = EoF = C = SA = UD = PSI = R = G = B = integer(0)
+  time = numeric(0)
+
+  fields = names(.las@data)
+
+  if("Intensity" %in% fields)
+    I = .las@data$Intensity
+  if("ReturnNumber" %in% fields)
+    RN = .las@data$ReturnNumber
+  if("NumberOfReturns" %in% fields)
+    NoR = .las@data$NumberOfReturns
+  if("ScanDirectionFlag" %in% fields)
+    SDF = .las@data$ScanDirectionFlag
+  if("EdgeofFlightline" %in% fields)
+    EoF = .las@data$EdgeofFlightline
+  if("Classification" %in% fields)
+    C = .las@data$Classification
+  if("ScanAngle" %in% fields)
+    SA = .las@data$ScanAngle
+  if("UserData" %in% fields)
+    UD = .las@data$UserData
+  if("gpstime" %in% fields)
+    time = .las@data$gpstime
+  if("PointSourceID" %in% fields)
+    PSI = .las@data$PointSourceID
+  if("R" %in% fields & "G" %in% fields & "B" %in% fields )
   {
-    files <- NULL
-
-    islas = tools::file_ext(file) %in% c("las", "laz")
-
-    if(length(file) > 1)
-      lidRError("LAS5", behaviour = stop)
-
-    if(!islas)
-      lidRError("LAS2", files = file, behaviour = stop)
-
-    file = path.expand(file)
-
-    I = RN = NoR = SDF = EoF = C = SA = UD = PSI = R = G = B = integer(0)
-    time = numeric(0)
-
-    fields = names(obj@data)
-
-    if("Intensity" %in% fields)
-      I = obj@data$Intensity
-    if("ReturnNumber" %in% fields)
-      RN = obj@data$ReturnNumber
-    if("NumberOfReturns" %in% fields)
-      NoR = obj@data$NumberOfReturns
-    if("ScanDirectionFlag" %in% fields)
-      SDF = obj@data$ScanDirectionFlag
-    if("EdgeofFlightline" %in% fields)
-      EoF = obj@data$EdgeofFlightline
-    if("Classification" %in% fields)
-      C = obj@data$Classification
-    if("ScanAngle" %in% fields)
-      SA = obj@data$ScanAngle
-    if("UserData" %in% fields)
-      UD = obj@data$UserData
-    if("gpstime" %in% fields)
-      time = obj@data$gpstime
-    if("PointSourceID" %in% fields)
-      PSI = obj@data$PointSourceID
-    if("R" %in% fields & "G" %in% fields & "B" %in% fields )
-    {
-      R = obj@data$R
-      G = obj@data$G
-      B = obj@data$B
-    }
-
-    LASlibWrite(file, obj@header, obj@data$X, obj@data$Y, obj@data$Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, time, R, G, B)
+    R = .las@data$R
+    G = .las@data$G
+    B = .las@data$B
   }
-)
+
+  LASlibWrite(file, .las@header, .las@data$X, .las@data$Y, .las@data$Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, time, R, G, B)
+}

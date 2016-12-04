@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  lastransform.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lastransform.hpp"
@@ -33,10 +33,11 @@
 #include "lasfilter.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdexcept>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
+#include <Rcpp.h>
 
 class LASoperationTranslateX : public LASoperation
 {
@@ -1088,77 +1089,77 @@ void LAStransform::clean()
 
 void LAStransform::usage() const
 {
-  Rcpp::Rcerr << "Transform coordinates." << std::endl;
-  Rcpp::Rcerr << "  -translate_x -2.5" << std::endl;
-  Rcpp::Rcerr << "  -scale_z 0.3048" << std::endl;
-  Rcpp::Rcerr << "  -rotate_xy 15.0 620000 4100000 (angle + origin)" << std::endl;
-  Rcpp::Rcerr << "  -translate_xyz 0.5 0.5 0" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_y -0.5 1.001" << std::endl;
-  Rcpp::Rcerr << "  -switch_x_y -switch_x_z -switch_y_z" << std::endl;
-  Rcpp::Rcerr << "  -clamp_z_below 70.5" << std::endl;
-  Rcpp::Rcerr << "  -clamp_z 70.5 72.5" << std::endl;
-  Rcpp::Rcerr << "  -copy_attribute_into_z 0" << std::endl;
-  Rcpp::Rcerr << "Transform raw xyz integers." << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_z 20" << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_xyz 1 1 0" << std::endl;
-  Rcpp::Rcerr << "  -translate_raw_xy_at_random 2 2" << std::endl;
-  Rcpp::Rcerr << "  -clamp_raw_z 500 800" << std::endl;
-  Rcpp::Rcerr << "Transform intensity." << std::endl;
-  Rcpp::Rcerr << "  -set_intensity 0" << std::endl;
-  Rcpp::Rcerr << "  -scale_intensity 2.5" << std::endl;
-  Rcpp::Rcerr << "  -translate_intensity 50" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_intensity 0.5 3.1" << std::endl;
-  Rcpp::Rcerr << "  -clamp_intensity 0 255" << std::endl;
-  Rcpp::Rcerr << "  -clamp_intensity_above 255" << std::endl;
-  Rcpp::Rcerr << "Transform scan_angle." << std::endl;
-  Rcpp::Rcerr << "  -scale_scan_angle 1.944445" << std::endl;
-  Rcpp::Rcerr << "  -translate_scan_angle -5" << std::endl;
-  Rcpp::Rcerr << "  -translate_then_scale_scan_angle -0.5 2.1" << std::endl;
-  Rcpp::Rcerr << "Change the return number or return count of points." << std::endl;
-  Rcpp::Rcerr << "  -repair_zero_returns" << std::endl;
-  Rcpp::Rcerr << "  -set_return_number 1" << std::endl;
-  Rcpp::Rcerr << "  -set_extended_return_number 10" << std::endl;
-  Rcpp::Rcerr << "  -change_return_number_from_to 2 1" << std::endl;
-  Rcpp::Rcerr << "  -set_number_of_returns 2" << std::endl;
-  Rcpp::Rcerr << "  -set_number_of_returns 15" << std::endl;
-  Rcpp::Rcerr << "  -change_number_of_returns_from_to 0 2" << std::endl;
-  Rcpp::Rcerr << "Modify the classification." << std::endl;
-  Rcpp::Rcerr << "  -set_classification 2" << std::endl;
-  Rcpp::Rcerr << "  -change_classification_from_to 2 4" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_below_as -5.0 7" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_above_as 70.0 7" << std::endl;
-  Rcpp::Rcerr << "  -classify_z_between_as 2.0 5.0 4" << std::endl;
-  Rcpp::Rcerr << "  -classify_intensity_above_as 200 9" << std::endl;
-  Rcpp::Rcerr << "  -classify_intensity_below_as 30 11 " << std::endl;
-  Rcpp::Rcerr << "  -change_extended_classification_from_to 6 46" << std::endl;
-  Rcpp::Rcerr << "  -move_ancient_to_extended_classification" << std::endl;
-  Rcpp::Rcerr << "Change the flags." << std::endl;
-  Rcpp::Rcerr << "  -set_withheld_flag 0" << std::endl;
-  Rcpp::Rcerr << "  -set_synthetic_flag 1" << std::endl;
-  Rcpp::Rcerr << "  -set_keypoint_flag 0" << std::endl;
-  Rcpp::Rcerr << "  -set_extended_overlap_flag 1" << std::endl;
-  Rcpp::Rcerr << "Modify the extended scanner channel." << std::endl;
-  Rcpp::Rcerr << "  -set_extended_scanner_channel 2" << std::endl;
-  Rcpp::Rcerr << "Modify the user data." << std::endl;
-  Rcpp::Rcerr << "  -set_user_data 0" << std::endl;
-  Rcpp::Rcerr << "  -change_user_data_from_to 23 26" << std::endl;
-  Rcpp::Rcerr << "Modify the point source ID." << std::endl;
-  Rcpp::Rcerr << "  -set_point_source 500" << std::endl;
-  Rcpp::Rcerr << "  -change_point_source_from_to 1023 1024" << std::endl;
-  Rcpp::Rcerr << "  -copy_user_data_into_point_source" << std::endl;
-  Rcpp::Rcerr << "  -bin_Z_into_point_source 200" << std::endl;
-  Rcpp::Rcerr << "  -bin_abs_scan_angle_into_point_source 2" << std::endl;
-  Rcpp::Rcerr << "Transform gps_time." << std::endl;
-  Rcpp::Rcerr << "  -set_gps_time 113556962.005715" << std::endl;
-  Rcpp::Rcerr << "  -translate_gps_time 40.50" << std::endl;
-  Rcpp::Rcerr << "  -adjusted_to_week" << std::endl;
-  Rcpp::Rcerr << "  -week_to_adjusted 1671" << std::endl;
-  Rcpp::Rcerr << "Transform RGB colors." << std::endl;
-  Rcpp::Rcerr << "  -set_RGB 255 0 127" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB 2 4 2" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB_down (by 256)" << std::endl;
-  Rcpp::Rcerr << "  -scale_RGB_up (by 256)" << std::endl;
-  Rcpp::Rcerr << "  -switch_R_G -switch_R_B -switch_B_G" << std::endl;
+  throw std::runtime_error(std::string("Transform coordinates."));
+  throw std::runtime_error(std::string("  -translate_x -2.5"));
+  throw std::runtime_error(std::string("  -scale_z 0.3048"));
+  throw std::runtime_error(std::string("  -rotate_xy 15.0 620000 4100000 (angle + origin)"));
+  throw std::runtime_error(std::string("  -translate_xyz 0.5 0.5 0"));
+  throw std::runtime_error(std::string("  -translate_then_scale_y -0.5 1.001"));
+  throw std::runtime_error(std::string("  -switch_x_y -switch_x_z -switch_y_z"));
+  throw std::runtime_error(std::string("  -clamp_z_below 70.5"));
+  throw std::runtime_error(std::string("  -clamp_z 70.5 72.5"));
+  throw std::runtime_error(std::string("  -copy_attribute_into_z 0"));
+  throw std::runtime_error(std::string("Transform raw xyz integers."));
+  throw std::runtime_error(std::string("  -translate_raw_z 20"));
+  throw std::runtime_error(std::string("  -translate_raw_xyz 1 1 0"));
+  throw std::runtime_error(std::string("  -translate_raw_xy_at_random 2 2"));
+  throw std::runtime_error(std::string("  -clamp_raw_z 500 800"));
+  throw std::runtime_error(std::string("Transform intensity."));
+  throw std::runtime_error(std::string("  -set_intensity 0"));
+  throw std::runtime_error(std::string("  -scale_intensity 2.5"));
+  throw std::runtime_error(std::string("  -translate_intensity 50"));
+  throw std::runtime_error(std::string("  -translate_then_scale_intensity 0.5 3.1"));
+  throw std::runtime_error(std::string("  -clamp_intensity 0 255"));
+  throw std::runtime_error(std::string("  -clamp_intensity_above 255"));
+  throw std::runtime_error(std::string("Transform scan_angle."));
+  throw std::runtime_error(std::string("  -scale_scan_angle 1.944445"));
+  throw std::runtime_error(std::string("  -translate_scan_angle -5"));
+  throw std::runtime_error(std::string("  -translate_then_scale_scan_angle -0.5 2.1"));
+  throw std::runtime_error(std::string("Change the return number or return count of points."));
+  throw std::runtime_error(std::string("  -repair_zero_returns"));
+  throw std::runtime_error(std::string("  -set_return_number 1"));
+  throw std::runtime_error(std::string("  -set_extended_return_number 10"));
+  throw std::runtime_error(std::string("  -change_return_number_from_to 2 1"));
+  throw std::runtime_error(std::string("  -set_number_of_returns 2"));
+  throw std::runtime_error(std::string("  -set_number_of_returns 15"));
+  throw std::runtime_error(std::string("  -change_number_of_returns_from_to 0 2"));
+  throw std::runtime_error(std::string("Modify the classification."));
+  throw std::runtime_error(std::string("  -set_classification 2"));
+  throw std::runtime_error(std::string("  -change_classification_from_to 2 4"));
+  throw std::runtime_error(std::string("  -classify_z_below_as -5.0 7"));
+  throw std::runtime_error(std::string("  -classify_z_above_as 70.0 7"));
+  throw std::runtime_error(std::string("  -classify_z_between_as 2.0 5.0 4"));
+  throw std::runtime_error(std::string("  -classify_intensity_above_as 200 9"));
+  throw std::runtime_error(std::string("  -classify_intensity_below_as 30 11 "));
+  throw std::runtime_error(std::string("  -change_extended_classification_from_to 6 46"));
+  throw std::runtime_error(std::string("  -move_ancient_to_extended_classification"));
+  throw std::runtime_error(std::string("Change the flags."));
+  throw std::runtime_error(std::string("  -set_withheld_flag 0"));
+  throw std::runtime_error(std::string("  -set_synthetic_flag 1"));
+  throw std::runtime_error(std::string("  -set_keypoint_flag 0"));
+  throw std::runtime_error(std::string("  -set_extended_overlap_flag 1"));
+  throw std::runtime_error(std::string("Modify the extended scanner channel."));
+  throw std::runtime_error(std::string("  -set_extended_scanner_channel 2"));
+  throw std::runtime_error(std::string("Modify the user data."));
+  throw std::runtime_error(std::string("  -set_user_data 0"));
+  throw std::runtime_error(std::string("  -change_user_data_from_to 23 26"));
+  throw std::runtime_error(std::string("Modify the point source ID."));
+  throw std::runtime_error(std::string("  -set_point_source 500"));
+  throw std::runtime_error(std::string("  -change_point_source_from_to 1023 1024"));
+  throw std::runtime_error(std::string("  -copy_user_data_into_point_source"));
+  throw std::runtime_error(std::string("  -bin_Z_into_point_source 200"));
+  throw std::runtime_error(std::string("  -bin_abs_scan_angle_into_point_source 2"));
+  throw std::runtime_error(std::string("Transform gps_time."));
+  throw std::runtime_error(std::string("  -set_gps_time 113556962.005715"));
+  throw std::runtime_error(std::string("  -translate_gps_time 40.50"));
+  throw std::runtime_error(std::string("  -adjusted_to_week"));
+  throw std::runtime_error(std::string("  -week_to_adjusted 1671"));
+  throw std::runtime_error(std::string("Transform RGB colors."));
+  throw std::runtime_error(std::string("  -set_RGB 255 0 127"));
+  throw std::runtime_error(std::string("  -scale_RGB 2 4 2"));
+  throw std::runtime_error(std::string("  -scale_RGB_down (by 256)"));
+  throw std::runtime_error(std::string("  -scale_RGB_up (by 256)"));
+  throw std::runtime_error(std::string("  -switch_R_G -switch_R_B -switch_B_G"));
 }
 
 BOOL LAStransform::parse(int argc, char* argv[])
@@ -1182,78 +1183,78 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateX((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-translate_y") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateY((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-translate_z") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateZ((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-translate_xyz") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: offset_x offset_y offset_z" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateXYZ((F64)atof(argv[i+1]), (F64)atof(argv[i+2]), (F64)atof(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
       else if (strcmp(argv[i],"-translate_then_scale_x") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateThenScaleX((F64)atof(argv[i+1]), (F64)atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-translate_then_scale_y") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateThenScaleY((F64)atof(argv[i+1]), (F64)atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-translate_then_scale_z") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationTranslateThenScaleZ((F64)atof(argv[i+1]), (F64)atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strncmp(argv[i],"-translate_raw_", 14) == 0)
       {
@@ -1261,107 +1262,107 @@ BOOL LAStransform::parse(int argc, char* argv[])
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            throw std::runtime_error(std::string("ERROR: '"));
             return FALSE;
           }
           change_coordinates = TRUE;
           add_operation(new LASoperationTranslateRawX((I32)atoi(argv[i+1])));
-          *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+          *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
         }
         else if (strcmp(argv[i],"-translate_raw_y") == 0)
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            throw std::runtime_error(std::string("ERROR: '"));
             return FALSE;
           }
           change_coordinates = TRUE;
           add_operation(new LASoperationTranslateRawY((I32)atoi(argv[i+1])));
-          *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+          *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
         }
         else if (strcmp(argv[i],"-translate_raw_z") == 0)
         {
           if ((i+1) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: raw_offset" << std::endl;
+            throw std::runtime_error(std::string("ERROR: '"));
             return FALSE;
           }
           change_coordinates = TRUE;
           add_operation(new LASoperationTranslateRawZ((I32)atoi(argv[i+1])));
-          *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+          *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
         }
         else if (strcmp(argv[i],"-translate_raw_xyz") == 0)
         {
           if ((i+3) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: raw_offset_x raw_offset_y raw_offset_z" << std::endl;
+            throw std::runtime_error(std::string("ERROR: '"));
             return FALSE;
           }
           change_coordinates = TRUE;
           add_operation(new LASoperationTranslateRawXYZ((I32)atoi(argv[i+1]), (I32)atoi(argv[i+2]), (I32)atoi(argv[i+3])));
-          *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+          *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
         }
         else if (strcmp(argv[i],"-translate_raw_xy_at_random") == 0)
         {
           if ((i+2) >= argc)
           {
-            Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: max_raw_offset_x max_raw_offset_y" << std::endl;
+            throw std::runtime_error(std::string("ERROR: '"));
             return FALSE;
           }
           change_coordinates = TRUE;
           add_operation(new LASoperationTranslateRawXYatRandom((I32)atoi(argv[i+1]), (I32)atoi(argv[i+2])));
-          *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+          *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
         }
       }
       else if (strcmp(argv[i],"-translate_intensity") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationTranslateIntensity((F32)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-translate_then_scale_intensity") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationTranslateThenScaleIntensity((F32)atof(argv[i+1]), (F32)atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-translate_scan_angle") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationTranslateScanAngle((F32)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-translate_then_scale_scan_angle") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: offset scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationTranslateThenScaleScanAngle((F32)atof(argv[i+1]), (F32)atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-translate_gps_time") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: offset" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationTranslateGpsTime(atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
     }
     else if (strncmp(argv[i],"-rotate_", 8) == 0)
@@ -1370,23 +1371,23 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: angle, x, y" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationRotateXY((F64)atof(argv[i+1]), (F64)atof(argv[i+2]), (F64)atof(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
       else if (strcmp(argv[i],"-rotate_xz") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: angle, x, y" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationRotateXZ((F64)atof(argv[i+1]), (F64)atof(argv[i+2]), (F64)atof(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
     }
     else if (strncmp(argv[i],"-clamp_", 7) == 0)
@@ -1395,75 +1396,75 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationClampZ(atof(argv[i+1]), atof(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-clamp_z_below") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: below" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationClampZbelow(atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-clamp_z_above") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: above" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationClampZabove(atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-clamp_intensity") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClampIntensity(U16_CLAMP(atoi(argv[i+1])), U16_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-clamp_intensity_below") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: below" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClampIntensityBelow(U16_CLAMP(atoi(argv[i+1]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-clamp_intensity_above") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: above" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClampIntensityAbove(U16_CLAMP(atoi(argv[i+1]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-clamp_raw_z") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: below above" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationClampRawZ((I32)atoi(argv[i+1]), (I32)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
     }
     else if (strncmp(argv[i],"-copy_", 6) == 0)
@@ -1472,17 +1473,17 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: index of attribute" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationCopyAttributeIntoZ(atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-copy_user_data_into_point_source") == 0)
       {
         add_operation(new LASoperationCopyUserDataIntoPointSource());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
     }
     else if (strncmp(argv[i],"-set_", 5) == 0)
@@ -1491,151 +1492,151 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: classification" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetClassification(U8_CLAMP(atoi(argv[i+1]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_intensity") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetIntensity(U16_CLAMP(atof(argv[i+1]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_withheld_flag") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetWithheldFlag((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_synthetic_flag") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetSyntheticFlag((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_keypoint_flag") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetKeypointFlag((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_extended_overlap_flag") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedOverlapFlag((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_extended_scanner_channel") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedScannerChannel((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_user_data") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetUserData((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strncmp(argv[i],"-set_point_source", 17) == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' need 1 argument: psid" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetPointSource((U16)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_return_number") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: return_number" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetReturnNumber((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_extended_return_number") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: extended_return_number" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedReturnNumber((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_number_of_returns") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: number_of_returns" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetNumberOfReturns((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_extended_number_of_returns") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: extended_number_of_returns" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetExtendedNumberOfReturns((U8)atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_gps_time") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetGpsTime(atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-set_RGB") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: R G B" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationSetRGB((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2]), (U16)atoi(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=1;
       }
     }
     else if (strncmp(argv[i],"-change_",8) == 0)
@@ -1644,61 +1645,61 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangeClassificationFromTo(U8_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-change_extended_classification_from_to") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangeExtendedClassificationFromTo(U8_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-change_user_data_from_to") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangeUserDataFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-change_point_source_from_to") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_value to_value" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangePointSourceFromTo((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-change_return_number_from_to") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_return_number to_return_number" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangeReturnNumberFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-change_number_of_returns_from_to") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: from_number_of_returns to_number_of_returns" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationChangeNumberOfReturnsFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
     }
     else if (strncmp(argv[i],"-classify_", 10) == 0)
@@ -1707,51 +1708,51 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: z_value classification_code" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClassifyZbelowAs(atof(argv[i+1]), U8_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-classify_z_above_as") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: z_value classification_code" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClassifyZaboveAs(atof(argv[i+1]), U8_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-classify_z_between_as") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: z_min z_max classification_code" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClassifyZbetweenAs(atof(argv[i+1]), atof(argv[i+2]), U8_CLAMP(atoi(argv[i+3]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
       else if (strcmp(argv[i],"-classify_intensity_below_as") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: intensity_value classification_code" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClassifyIntensityBelowAs(U16_CLAMP(atoi(argv[i+1])), U8_CLAMP(atoi(argv[i+2]))));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
       else if (strcmp(argv[i],"-classify_intensity_above_as") == 0)
       {
         if ((i+2) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 2 arguments: intensity_value classification_code" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationClassifyIntensityAboveAs(U16_CLAMP(atoi(argv[i+1])), (U8)atoi(argv[i+2])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
       }
     }
     else if (strncmp(argv[i],"-scale_", 7) == 0)
@@ -1760,85 +1761,85 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationScaleX((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-scale_y") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationScaleY((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-scale_z") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationScaleZ((F64)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-scale_xyz") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: scale_x scale_y scale_z" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         change_coordinates = TRUE;
         add_operation(new LASoperationScaleXYZ((F64)atof(argv[i+1]), (F64)atof(argv[i+2]), (F64)atof(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
       else if (strcmp(argv[i],"-scale_intensity") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationScaleIntensity((F32)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-scale_scan_angle") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationScaleScanAngle((F32)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-scale_RGB") == 0 || strcmp(argv[i],"-scale_rgb") == 0)
       {
         if ((i+3) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 3 arguments: scale_R scale_G scale_B" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationScaleRGB((F32)atof(argv[i+1]), (F32)atof(argv[i+2]), (F32)atof(argv[i+3])));
-        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+        *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
       }
       else if (strcmp(argv[i],"-scale_RGB_down") == 0 || strcmp(argv[i],"-scale_rgb_down") == 0)
       {
         add_operation(new LASoperationScaleRGBdown());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-scale_RGB_up") == 0 || strcmp(argv[i],"-scale_rgb_up") == 0)
       {
         add_operation(new LASoperationScaleRGBup());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
     }
     else if (strncmp(argv[i],"-switch_", 8) == 0)
@@ -1846,32 +1847,32 @@ BOOL LAStransform::parse(int argc, char* argv[])
       if (strcmp(argv[i],"-switch_x_y") == 0)
       {
         add_operation(new LASoperationSwitchXY());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-switch_x_z") == 0)
       {
         add_operation(new LASoperationSwitchXZ());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-switch_y_z") == 0)
       {
         add_operation(new LASoperationSwitchYZ());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-switch_R_G") == 0)
       {
         add_operation(new LASoperationSwitchRG());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-switch_R_B") == 0)
       {
         add_operation(new LASoperationSwitchRB());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
       else if (strcmp(argv[i],"-switch_G_B") == 0)
       {
         add_operation(new LASoperationSwitchGB());
-        *argv[i]='\0'; 
+        *argv[i]='\0';
       }
     }
     else if (strncmp(argv[i],"-bin_", 5) == 0)
@@ -1880,21 +1881,21 @@ BOOL LAStransform::parse(int argc, char* argv[])
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: bin_size" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationBinZintoPointSource(atoi(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
       else if (strcmp(argv[i],"-bin_abs_scan_angle_into_point_source") == 0)
       {
         if ((i+1) >= argc)
         {
-          Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: bin_size" << std::endl;
+          throw std::runtime_error(std::string("ERROR: '"));
           return FALSE;
         }
         add_operation(new LASoperationBinAbsScanAngleIntoPointSource((F32)atof(argv[i+1])));
-        *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+        *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
       }
     }
     else if (strcmp(argv[i],"-move_ancient_to_extended_classification") == 0)
@@ -1905,32 +1906,32 @@ BOOL LAStransform::parse(int argc, char* argv[])
     else if (strcmp(argv[i],"-flip_waveform_direction") == 0)
     {
       add_operation(new LASoperationFlipWaveformDirection());
-      *argv[i]='\0'; 
+      *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-repair_zero_returns") == 0)
     {
       add_operation(new LASoperationRepairZeroReturns());
-      *argv[i]='\0'; 
+      *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-adjusted_to_week") == 0)
     {
       add_operation(new LASoperationConvertAdjustedGpsToWeek());
-      *argv[i]='\0'; 
+      *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-week_to_adjusted") == 0)
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: week" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       add_operation(new LASoperationConvertWeekToAdjustedGps(atoi(argv[i+1])));
-      *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+      *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
     else if (strcmp(argv[i],"-filtered_transform") == 0)
     {
       is_filtered = TRUE;
-      *argv[i]='\0'; 
+      *argv[i]='\0';
     }
   }
   return TRUE;

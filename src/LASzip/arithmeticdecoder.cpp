@@ -69,7 +69,7 @@
 
 #include "arithmeticdecoder.hpp"
 
-#include <Rcpp.h>
+#include <string.h>
 #include <assert.h>
 
 #include "arithmeticmodel.hpp"

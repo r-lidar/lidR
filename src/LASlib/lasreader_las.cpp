@@ -41,27 +41,27 @@
 #include <io.h>
 #endif
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 BOOL LASreaderLAS::open(const char* file_name, I32 io_buffer_size, BOOL peek_only)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, io_buffer_size) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << io_buffer_size << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: setvbuf() failed with buffer size "));
   }
 
   // create input
@@ -78,7 +78,7 @@ BOOL LASreaderLAS::open(FILE* file, BOOL peek_only)
 {
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file pointer is zero"));
     return FALSE;
   }
 
@@ -87,7 +87,7 @@ BOOL LASreaderLAS::open(FILE* file, BOOL peek_only)
   {
     if(_setmode( _fileno( stdin ), _O_BINARY ) == -1 )
     {
-      Rcpp::Rcerr << "ERROR: cannot set stdin to binary (untranslated) mode" << std::endl;
+      throw std::runtime_error(std::string("ERROR: cannot set stdin to binary (untranslated) mode"));
       return FALSE;
     }
   }
@@ -121,7 +121,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
   if (stream == 0)
   {
-    Rcpp::Rcerr << "ERROR: ByteStreamIn* pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: ByteStreamIn* pointer is zero"));
     return FALSE;
   }
 
@@ -135,165 +135,165 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
   try { stream->getBytes((U8*)header.file_signature, 4); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.file_signature" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.file_signature"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.file_source_ID)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.file_source_ID" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.file_source_ID"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.global_encoding)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.global_encoding" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.global_encoding"));
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&(header.project_ID_GUID_data_1)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.project_ID_GUID_data_1" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.project_ID_GUID_data_1"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.project_ID_GUID_data_2)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.project_ID_GUID_data_2" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.project_ID_GUID_data_2"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.project_ID_GUID_data_3)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.project_ID_GUID_data_3" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.project_ID_GUID_data_3"));
     return FALSE;
   }
   try { stream->getBytes((U8*)header.project_ID_GUID_data_4, 8); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.project_ID_GUID_data_4" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.project_ID_GUID_data_4"));
     return FALSE;
   }
   try { stream->getBytes((U8*)&(header.version_major), 1); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.version_major" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.version_major"));
     return FALSE;
   }
   try { stream->getBytes((U8*)&(header.version_minor), 1); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.version_minor" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.version_minor"));
     return FALSE;
   }
   try { stream->getBytes((U8*)header.system_identifier, 32); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.system_identifier" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.system_identifier"));
     return FALSE;
   }
   try { stream->getBytes((U8*)header.generating_software, 32); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.generating_software" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.generating_software"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.file_creation_day)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.file_creation_day" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.file_creation_day"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.file_creation_year)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.file_creation_year" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.file_creation_year"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.header_size)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.header_size" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.header_size"));
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&(header.offset_to_point_data)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.offset_to_point_data" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.offset_to_point_data"));
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&(header.number_of_variable_length_records)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.number_of_variable_length_records" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.number_of_variable_length_records"));
     return FALSE;
   }
   try { stream->getBytes((U8*)&(header.point_data_format), 1); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.point_data_format" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.point_data_format"));
     return FALSE;
   }
   try { stream->get16bitsLE((U8*)&(header.point_data_record_length)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.point_data_record_length" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.point_data_record_length"));
     return FALSE;
   }
   try { stream->get32bitsLE((U8*)&(header.number_of_point_records)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.number_of_point_records" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.number_of_point_records"));
     return FALSE;
   }
   for (i = 0; i < 5; i++)
   {
     try { stream->get32bitsLE((U8*)&(header.number_of_points_by_return[i])); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR: reading header.number_of_points_by_return " << i << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: reading header.number_of_points_by_return "));
       return FALSE;
     }
   }
   try { stream->get64bitsLE((U8*)&(header.x_scale_factor)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.x_scale_factor" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.x_scale_factor"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.y_scale_factor)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.y_scale_factor" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.y_scale_factor"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.z_scale_factor)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.z_scale_factor" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.z_scale_factor"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.x_offset)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.x_offset" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.x_offset"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.y_offset)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.y_offset" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.y_offset"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.z_offset)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.z_offset" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.z_offset"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.max_x)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.max_x" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.max_x"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.min_x)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.min_x" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.min_x"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.max_y)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.max_y" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.max_y"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.min_y)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.min_y" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.min_y"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.max_z)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.max_z" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.max_z"));
     return FALSE;
   }
   try { stream->get64bitsLE((U8*)&(header.min_z)); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading header.min_z" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading header.min_z"));
     return FALSE;
   }
 
@@ -308,14 +308,14 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
   {
     if (header.header_size < 235)
     {
-      Rcpp::Rcerr << "WARNING: for LAS 1." << header.version_minor << " header_size should at least be 235 but it is only " << header.header_size << "" << std::endl;
+      throw std::runtime_error(std::string("WARNING: for LAS 1."));
       header.user_data_in_header_size = header.header_size - 227;
     }
     else
     {
       try { stream->get64bitsLE((U8*)&(header.start_of_waveform_data_packet_record)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.start_of_waveform_data_packet_record" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.start_of_waveform_data_packet_record"));
         return FALSE;
       }
       header.user_data_in_header_size = header.header_size - 235;
@@ -331,31 +331,31 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
   {
     if (header.header_size < 375)
     {
-      Rcpp::Rcerr << "ERROR: for LAS 1." << header.version_minor << " header_size should at least be 375 but it is only " << header.header_size << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: for LAS 1."));
       return FALSE;
     }
     else
     {
       try { stream->get64bitsLE((U8*)&(header.start_of_first_extended_variable_length_record)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.start_of_first_extended_variable_length_record" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.start_of_first_extended_variable_length_record"));
         return FALSE;
       }
       try { stream->get32bitsLE((U8*)&(header.number_of_extended_variable_length_records)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.number_of_extended_variable_length_records" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.number_of_extended_variable_length_records"));
         return FALSE;
       }
       try { stream->get64bitsLE((U8*)&(header.extended_number_of_point_records)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.extended_number_of_point_records" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.extended_number_of_point_records"));
         return FALSE;
       }
       for (i = 0; i < 15; i++)
       {
         try { stream->get64bitsLE((U8*)&(header.extended_number_of_points_by_return[i])); } catch(...)
         {
-          Rcpp::Rcerr << "ERROR: reading header.extended_number_of_points_by_return[" << i << "]" << std::endl;
+          throw std::runtime_error(std::string("ERROR: reading header.extended_number_of_points_by_return["));
           return FALSE;
         }
       }
@@ -370,7 +370,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
     try { stream->getBytes((U8*)header.user_data_in_header, header.user_data_in_header_size); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR: reading " << header.user_data_in_header_size << " bytes of data into header.user_data_in_header" << std::endl;
+      throw std::runtime_error(std::string("ERROR: reading "));
       return FALSE;
     }
   }
@@ -399,7 +399,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
       if (((int)header.offset_to_point_data - vlrs_size - header.header_size) < 54)
       {
-        Rcpp::Rcerr << "WARNING: only " << (int)header.offset_to_point_data - vlrs_size - header.header_size << " bytes until point block after reading " << i << " of " << header.number_of_variable_length_records << " vlrs. skipping remaining vlrs ..." << std::endl;
+        throw std::runtime_error(std::string("WARNING: only "));
         header.number_of_variable_length_records = i;
         break;
       }
@@ -408,28 +408,28 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
       try { stream->get16bitsLE((U8*)&(header.vlrs[i].reserved)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << i << "].reserved" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.vlrs["));
         return FALSE;
       }
 
       try { stream->getBytes((U8*)header.vlrs[i].user_id, 16); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << i << "].user_id" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.vlrs["));
         return FALSE;
       }
       try { stream->get16bitsLE((U8*)&(header.vlrs[i].record_id)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << i << "].record_id" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.vlrs["));
         return FALSE;
       }
       try { stream->get16bitsLE((U8*)&(header.vlrs[i].record_length_after_header)); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << i << "].record_length_after_header" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.vlrs["));
         return FALSE;
       }
       try { stream->getBytes((U8*)header.vlrs[i].description, 32); } catch(...)
       {
-        Rcpp::Rcerr << "ERROR: reading header.vlrs[" << i << "].description" << std::endl;
+        throw std::runtime_error(std::string("ERROR: reading header.vlrs["));
         return FALSE;
       }
 
@@ -442,7 +442,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 /*
       if (header.vlrs[i].reserved != 0xAABB)
       {
-        Rcpp::Rcerr << "WARNING: wrong header.vlrs[" << i << "].reserved: " << header.vlrs[i].reserved << " != 0xAABB" << std::endl;
+        throw std::runtime_error(std::string("WARNING: wrong header.vlrs["));
       }
 */
 
@@ -450,7 +450,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
       if (((int)header.offset_to_point_data - vlrs_size - header.header_size) < header.vlrs[i].record_length_after_header)
       {
-        Rcpp::Rcerr << "WARNING: only " << (int)header.offset_to_point_data - vlrs_size - header.header_size << " bytes until point block when trying to read " << header.vlrs[i].record_length_after_header << " bytes into header.vlrs[" << i << "].data" << std::endl;
+        throw std::runtime_error(std::string("WARNING: only "));
         header.vlrs[i].record_length_after_header = (int)header.offset_to_point_data - vlrs_size - header.header_size;
       }
 
@@ -480,52 +480,52 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
           try { stream->get16bitsLE((U8*)&(header.laszip->compressor)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading compressor " << (I32)header.laszip->compressor << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading compressor "));
             return FALSE;
           }
           try { stream->get16bitsLE((U8*)&(header.laszip->coder)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading coder " << (I32)header.laszip->coder << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading coder "));
             return FALSE;
           }
           try { stream->getBytes((U8*)&(header.laszip->version_major), 1); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading version_major " << header.laszip->version_major << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading version_major "));
             return FALSE;
           }
           try { stream->getBytes((U8*)&(header.laszip->version_minor), 1); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading version_minor " << header.laszip->version_minor << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading version_minor "));
             return FALSE;
           }
           try { stream->get16bitsLE((U8*)&(header.laszip->version_revision)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading version_revision " << header.laszip->version_revision << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading version_revision "));
             return FALSE;
           }
           try { stream->get32bitsLE((U8*)&(header.laszip->options)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading options " << (I32)header.laszip->options << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading options "));
             return FALSE;
           }
           try { stream->get32bitsLE((U8*)&(header.laszip->chunk_size)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading chunk_size " << header.laszip->chunk_size << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading chunk_size "));
             return FALSE;
           }
           try { stream->get64bitsLE((U8*)&(header.laszip->number_of_special_evlrs)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading number_of_special_evlrs " << (I32)header.laszip->number_of_special_evlrs << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading number_of_special_evlrs "));
             return FALSE;
           }
           try { stream->get64bitsLE((U8*)&(header.laszip->offset_to_special_evlrs)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading offset_to_special_evlrs " << (I32)header.laszip->offset_to_special_evlrs << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading offset_to_special_evlrs "));
             return FALSE;
           }
           try { stream->get16bitsLE((U8*)&(header.laszip->num_items)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading num_items " << header.laszip->num_items << "" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading num_items "));
             return FALSE;
           }
           header.laszip->items = new LASitem[header.laszip->num_items];
@@ -534,17 +534,17 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             U16 type, size, version;
             try { stream->get16bitsLE((U8*)&type); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading type " << type << " of item " << j << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading type "));
               return FALSE;
             }
             try { stream->get16bitsLE((U8*)&size); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading size " << size << " of item " << j << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading size "));
               return FALSE;
             }
             try { stream->get16bitsLE((U8*)&version); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading version " << version << " of item " << j << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading version "));
               return FALSE;
             }
             header.laszip->items[j].type = (LASitem::Type)type;
@@ -570,43 +570,43 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->level)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->level " << header.vlr_lastiling->level << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->level "));
               return FALSE;
             }
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->level_index)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->level_index " << header.vlr_lastiling->level_index << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->level_index "));
               return FALSE;
             }
             try { stream->get32bitsLE(((U8*)header.vlr_lastiling)+8); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->implicit_levels " << header.vlr_lastiling->implicit_levels << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->implicit_levels "));
               return FALSE;
             }
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->min_x)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->min_x " << header.vlr_lastiling->min_x << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->min_x "));
               return FALSE;
             }
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->max_x)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->max_x " << header.vlr_lastiling->max_x << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->max_x "));
               return FALSE;
             }
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->min_y)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->min_y " << header.vlr_lastiling->min_y << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->min_y "));
               return FALSE;
             }
             try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->max_y)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lastiling->max_y " << header.vlr_lastiling->max_y << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->max_y "));
               return FALSE;
             }
           }
           else
           {
-            Rcpp::Rcerr << "ERROR: record_length_after_header of VLR " << header.vlrs[i].user_id << " (" << header.vlrs[i].record_id << ") is " << header.vlrs[i].record_length_after_header << " instead of 28" << std::endl;
+            throw std::runtime_error(std::string("ERROR: record_length_after_header of VLR "));
             return FALSE;
           }
         }
@@ -621,51 +621,51 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->number_of_point_records)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->number_of_point_records " << (U32)header.vlr_lasoriginal->number_of_point_records << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->number_of_point_records "));
               return FALSE;
             }
             for (j = 0; j < 15; j++)
             {
               try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->number_of_points_by_return[j])); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->number_of_points_by_return[" << j << "] " << (U32)header.vlr_lasoriginal->number_of_points_by_return[j] << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->number_of_points_by_return["));
                 return FALSE;
               }
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->min_x)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->min_x " << header.vlr_lasoriginal->min_x << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->min_x "));
               return FALSE;
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->max_x)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->max_x " << header.vlr_lasoriginal->max_x << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->max_x "));
               return FALSE;
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->min_y)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->min_y " << header.vlr_lasoriginal->min_y << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->min_y "));
               return FALSE;
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->max_y)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->max_y " << header.vlr_lasoriginal->max_y << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->max_y "));
               return FALSE;
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->min_z)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->min_z " << header.vlr_lasoriginal->min_z << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->min_z "));
               return FALSE;
             }
             try { stream->get64bitsLE((U8*)&(header.vlr_lasoriginal->max_z)); } catch(...)
             {
-              Rcpp::Rcerr << "ERROR: reading vlr_lasoriginal->max_z " << header.vlr_lasoriginal->max_z << "" << std::endl;
+              throw std::runtime_error(std::string("ERROR: reading vlr_lasoriginal->max_z "));
               return FALSE;
             }
           }
           else
           {
-            Rcpp::Rcerr << "ERROR: record_length_after_header of VLR " << header.vlrs[i].user_id << " (" << header.vlrs[i].record_id << ") is " << header.vlrs[i].record_length_after_header << " instead of 176" << std::endl;
+            throw std::runtime_error(std::string("ERROR: record_length_after_header of VLR "));
             return FALSE;
           }
         }
@@ -675,7 +675,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
           try { stream->getBytes(header.vlrs[i].data, header.vlrs[i].record_length_after_header); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading " << header.vlrs[i].record_length_after_header << " bytes of data into header.vlrs[" << i << "].data" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading "));
             return FALSE;
           }
         }
@@ -699,7 +699,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             if (header.vlr_geo_keys)
             {
-              Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoKeyDirectoryTag" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoKeyDirectoryTag"));
             }
             header.vlr_geo_keys = (LASvlr_geo_keys*)header.vlrs[i].data;
 
@@ -707,15 +707,15 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
             if (header.vlr_geo_keys->key_directory_version != 1)
             {
-              Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->key_directory_version: " << header.vlr_geo_keys->key_directory_version << " != 1" << std::endl;
+              throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->key_directory_version: "));
             }
             if (header.vlr_geo_keys->key_revision != 1)
             {
-              Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->key_revision: " << header.vlr_geo_keys->key_revision << " != 1" << std::endl;
+              throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->key_revision: "));
             }
             if (header.vlr_geo_keys->minor_revision != 0)
             {
-              Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->minor_revision: " << header.vlr_geo_keys->minor_revision << " != 0" << std::endl;
+              throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->minor_revision: "));
             }
             header.vlr_geo_key_entries = (LASvlr_key_entry*)&header.vlr_geo_keys[1];
           }
@@ -723,7 +723,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             if (header.vlr_geo_double_params)
             {
-              Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoF64ParamsTag" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoF64ParamsTag"));
             }
             header.vlr_geo_double_params = (F64*)header.vlrs[i].data;
           }
@@ -731,18 +731,18 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             if (header.vlr_geo_ascii_params)
             {
-              Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoAsciiParamsTag" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoAsciiParamsTag"));
             }
             header.vlr_geo_ascii_params = (CHAR*)header.vlrs[i].data;
           }
           else if ((header.vlrs[i].record_id != 2111) && (header.vlrs[i].record_id != 2112)) // WKT OGC MATH TRANSFORM or WKT OGC COORDINATE SYSTEM
           {
-            Rcpp::Rcerr << "WARNING: unknown LASF_Projection VLR with record_id " << header.vlrs[i].record_id << "." << std::endl;
+            throw std::runtime_error(std::string("WARNING: unknown LASF_Projection VLR with record_id "));
           } 
         }
         else if (header.vlrs[i].record_id != 2112) // GeoAsciiParamsTag
         {
-          Rcpp::Rcerr << "WARNING: no payload for LASF_Projection VLR with record_id " << header.vlrs[i].record_id << "." << std::endl;
+          throw std::runtime_error(std::string("WARNING: no payload for LASF_Projection VLR with record_id "));
         }
       }
       else if (strcmp(header.vlrs[i].user_id, "LASF_Spec") == 0)
@@ -753,7 +753,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
           {
             if (header.vlr_classification)
             {
-              Rcpp::Rcerr << "WARNING: variable length records contain more than one ClassificationLookup" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length records contain more than one ClassificationLookup"));
             }
             header.vlr_classification = (LASvlr_classification*)header.vlrs[i].data;
           }
@@ -778,28 +778,28 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             }
             if (header.vlr_wave_packet_descr[idx])
             {
-              Rcpp::Rcerr << "WARNING: variable length records defines wave packet descr " << idx << " more than once" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length records defines wave packet descr "));
             }
             if (header.vlrs[i].record_length_after_header != 26)
             {
-              Rcpp::Rcerr << "WARNING: variable length record payload for wave packet descr " << idx << " is " << (I32)header.vlrs[i].record_length_after_header << " instead of 26 bytes" << std::endl;
+              throw std::runtime_error(std::string("WARNING: variable length record payload for wave packet descr "));
             }
             header.vlr_wave_packet_descr[idx] = (LASvlr_wave_packet_descr*)header.vlrs[i].data;
             if ((header.vlr_wave_packet_descr[idx]->getBitsPerSample() != 8) && (header.vlr_wave_packet_descr[idx]->getBitsPerSample() != 16))
             {
-              Rcpp::Rcerr << "WARNING: bits per sample for wave packet descr " << idx << " is " << (I32)header.vlr_wave_packet_descr[idx]->getBitsPerSample() << " instead of 8 or 16" << std::endl;
+              throw std::runtime_error(std::string("WARNING: bits per sample for wave packet descr "));
             }
             if (header.vlr_wave_packet_descr[idx]->getNumberOfSamples() == 0)
             {
-              Rcpp::Rcerr << "WARNING: number of samples for wave packet descr " << idx << " is zero" << std::endl;
+              throw std::runtime_error(std::string("WARNING: number of samples for wave packet descr "));
             }
             if (header.vlr_wave_packet_descr[idx]->getNumberOfSamples() > 8096)
             {
-              Rcpp::Rcerr << "WARNING: number of samples of " << header.vlr_wave_packet_descr[idx]->getNumberOfSamples() << " for wave packet descr " << idx << " is with unusually large" << std::endl;
+              throw std::runtime_error(std::string("WARNING: number of samples of "));
             }
             if (header.vlr_wave_packet_descr[idx]->getTemporalSpacing() == 0)
             {
-              Rcpp::Rcerr << "WARNING: temporal spacing for wave packet descr " << idx << " is zero" << std::endl;
+              throw std::runtime_error(std::string("WARNING: temporal spacing for wave packet descr "));
             }
 /*
             // fix for RiPROCESS export error
@@ -815,7 +815,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
         }
         else
         {
-          Rcpp::Rcerr << "WARNING: no payload for LASF_Spec (not specification-conform)." << std::endl;
+          throw std::runtime_error(std::string("WARNING: no payload for LASF_Spec (not specification-conform)."));
         }
       }
       else if ((strcmp(header.vlrs[i].user_id, "laszip encoded") == 0) || ((strcmp(header.vlrs[i].user_id, "LAStools") == 0) && (header.vlrs[i].record_id < 2000)) || (strcmp(header.vlrs[i].user_id, "lastools tile") == 0))
@@ -838,7 +838,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
     try { stream->getBytes((U8*)header.user_data_after_header, header.user_data_after_header_size); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR: reading " << header.user_data_after_header_size << " bytes of data into header.user_data_after_header" << std::endl;
+      throw std::runtime_error(std::string("ERROR: reading "));
       return FALSE;
     }
   }
@@ -850,7 +850,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
     {
       if (!stream->isSeekable())
       {
-        Rcpp::Rcerr << "WARNING: LAS " << header.version_major << "." << header.version_minor << " file has " << header.number_of_extended_variable_length_records << " EVLRs but stream is not seekable ..." << std::endl;
+        throw std::runtime_error(std::string("WARNING: LAS "));
       }
       else
       {
@@ -869,27 +869,27 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
           try { stream->get16bitsLE((U8*)&(header.evlrs[i].reserved)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading header.evlrs[" << i << "].reserved" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading header.evlrs["));
             return FALSE;
           }
           try { stream->getBytes((U8*)header.evlrs[i].user_id, 16); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading header.evlrs[" << i << "].user_id" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading header.evlrs["));
             return FALSE;
           }
           try { stream->get16bitsLE((U8*)&(header.evlrs[i].record_id)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading header.evlrs[" << i << "].record_id" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading header.evlrs["));
             return FALSE;
           }
           try { stream->get64bitsLE((U8*)&(header.evlrs[i].record_length_after_header)); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading header.evlrs[" << i << "].record_length_after_header" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading header.evlrs["));
             return FALSE;
           }
           try { stream->getBytes((U8*)header.evlrs[i].description, 32); } catch(...)
           {
-            Rcpp::Rcerr << "ERROR: reading header.evlrs[" << i << "].description" << std::endl;
+            throw std::runtime_error(std::string("ERROR: reading header.evlrs["));
             return FALSE;
           }
 
@@ -902,7 +902,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 /*
           if (header.evlrs[i].reserved != 0)
           {
-            Rcpp::Rcerr << "WARNING: wrong header.evlrs[" << i << "].reserved: " << header.evlrs[i].reserved << " != 0" << std::endl;
+            throw std::runtime_error(std::string("WARNING: wrong header.evlrs["));
           }
 */
 
@@ -932,52 +932,52 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
               try { stream->get16bitsLE((U8*)&(header.laszip->compressor)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading compressor " << (I32)header.laszip->compressor << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading compressor "));
                 return FALSE;
               }
               try { stream->get16bitsLE((U8*)&(header.laszip->coder)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading coder " << (I32)header.laszip->coder << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading coder "));
                 return FALSE;
               }
               try { stream->getBytes((U8*)&(header.laszip->version_major), 1); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading version_major " << header.laszip->version_major << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading version_major "));
                 return FALSE;
               }
               try { stream->getBytes((U8*)&(header.laszip->version_minor), 1); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading version_minor " << header.laszip->version_minor << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading version_minor "));
                 return FALSE;
               }
               try { stream->get16bitsLE((U8*)&(header.laszip->version_revision)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading version_revision " << header.laszip->version_revision << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading version_revision "));
                 return FALSE;
               }
               try { stream->get32bitsLE((U8*)&(header.laszip->options)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading options " << (I32)header.laszip->options << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading options "));
                 return FALSE;
               }
               try { stream->get32bitsLE((U8*)&(header.laszip->chunk_size)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading chunk_size " << header.laszip->chunk_size << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading chunk_size "));
                 return FALSE;
               }
               try { stream->get64bitsLE((U8*)&(header.laszip->number_of_special_evlrs)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading number_of_special_evlrs " << (I32)header.laszip->number_of_special_evlrs << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading number_of_special_evlrs "));
                 return FALSE;
               }
               try { stream->get64bitsLE((U8*)&(header.laszip->offset_to_special_evlrs)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading offset_to_special_evlrs " << (I32)header.laszip->offset_to_special_evlrs << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading offset_to_special_evlrs "));
                 return FALSE;
               }
               try { stream->get16bitsLE((U8*)&(header.laszip->num_items)); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading num_items " << header.laszip->num_items << "" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading num_items "));
                 return FALSE;
               }
               header.laszip->items = new LASitem[header.laszip->num_items];
@@ -986,17 +986,17 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
                 U16 type, size, version;
                 try { stream->get16bitsLE((U8*)&type); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading type " << type << " of item " << j << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading type "));
                   return FALSE;
                 }
                 try { stream->get16bitsLE((U8*)&size); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading size " << size << " of item " << j << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading size "));
                   return FALSE;
                 }
                 try { stream->get16bitsLE((U8*)&version); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading version " << version << " of item " << j << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading version "));
                   return FALSE;
                 }
                 header.laszip->items[j].type = (LASitem::Type)type;
@@ -1022,43 +1022,43 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
               {
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->level)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->level " << header.vlr_lastiling->level << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->level "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->level_index)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->level_index " << header.vlr_lastiling->level_index << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->level_index "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE(((U8*)header.vlr_lastiling)+8); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->implicit_levels " << header.vlr_lastiling->implicit_levels << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->implicit_levels "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->min_x)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->min_x " << header.vlr_lastiling->min_x << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->min_x "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->max_x)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->max_x " << header.vlr_lastiling->max_x << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->max_x "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->min_y)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->min_y " << header.vlr_lastiling->min_y << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->min_y "));
                   return FALSE;
                 }
                 try { stream->get32bitsLE((U8*)&(header.vlr_lastiling->max_y)); } catch(...)
                 {
-                  Rcpp::Rcerr << "ERROR: reading vlr_lastiling->max_y " << header.vlr_lastiling->max_y << "" << std::endl;
+                  throw std::runtime_error(std::string("ERROR: reading vlr_lastiling->max_y "));
                   return FALSE;
                 }
               }
               else
               {
-                Rcpp::Rcerr << "ERROR: record_length_after_header of EVLR " << header.evlrs[i].user_id << " (" << header.evlrs[i].record_id << ") is " << (U32)header.evlrs[i].record_length_after_header << " instead of 28" << std::endl;
+                throw std::runtime_error(std::string("ERROR: record_length_after_header of EVLR "));
                 return FALSE;
               }
             }
@@ -1068,7 +1068,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
               try { stream->getBytes(header.evlrs[i].data, (U32)header.evlrs[i].record_length_after_header); } catch(...)
               {
-                Rcpp::Rcerr << "ERROR: reading " << (I32)header.evlrs[i].record_length_after_header << " bytes of data into header.evlrs[" << i << "].data" << std::endl;
+                throw std::runtime_error(std::string("ERROR: reading "));
                 return FALSE;
               }
             }
@@ -1090,7 +1090,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             {
               if (header.vlr_geo_keys)
               {
-                Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoKeyDirectoryTag" << std::endl;
+                throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoKeyDirectoryTag"));
               }
               header.vlr_geo_keys = (LASvlr_geo_keys*)header.evlrs[i].data;
 
@@ -1098,15 +1098,15 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
 
               if (header.vlr_geo_keys->key_directory_version != 1)
               {
-                Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->key_directory_version: " << header.vlr_geo_keys->key_directory_version << " != 1" << std::endl;
+                throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->key_directory_version: "));
               }
               if (header.vlr_geo_keys->key_revision != 1)
               {
-                Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->key_revision: " << header.vlr_geo_keys->key_revision << " != 1" << std::endl;
+                throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->key_revision: "));
               }
               if (header.vlr_geo_keys->minor_revision != 0)
               {
-                Rcpp::Rcerr << "WARNING: wrong vlr_geo_keys->minor_revision: " << header.vlr_geo_keys->minor_revision << " != 0" << std::endl;
+                throw std::runtime_error(std::string("WARNING: wrong vlr_geo_keys->minor_revision: "));
               }
               header.vlr_geo_key_entries = (LASvlr_key_entry*)&header.vlr_geo_keys[1];
             }
@@ -1114,7 +1114,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             {
               if (header.vlr_geo_double_params)
               {
-                Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoF64ParamsTag" << std::endl;
+                throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoF64ParamsTag"));
               }
               header.vlr_geo_double_params = (F64*)header.evlrs[i].data;
             }
@@ -1122,7 +1122,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             {
               if (header.vlr_geo_ascii_params)
               {
-                Rcpp::Rcerr << "WARNING: variable length records contain more than one GeoAsciiParamsTag" << std::endl;
+                throw std::runtime_error(std::string("WARNING: variable length records contain more than one GeoAsciiParamsTag"));
               }
               header.vlr_geo_ascii_params = (CHAR*)header.evlrs[i].data;
             }
@@ -1133,7 +1133,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
             {
               if (header.vlr_classification)
               {
-                Rcpp::Rcerr << "WARNING: variable length records contain more than one ClassificationLookup" << std::endl;
+                throw std::runtime_error(std::string("WARNING: variable length records contain more than one ClassificationLookup"));
               }
               header.vlr_classification = (LASvlr_classification*)header.evlrs[i].data;
             }
@@ -1158,7 +1158,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
               }
               if (header.vlr_wave_packet_descr[idx])
               {
-                Rcpp::Rcerr << "WARNING: extended variable length records defines wave packet descr " << idx << " more than once" << std::endl;
+                throw std::runtime_error(std::string("WARNING: extended variable length records defines wave packet descr "));
               }
               header.vlr_wave_packet_descr[idx] = (LASvlr_wave_packet_descr*)header.evlrs[i].data;
             }
@@ -1182,9 +1182,9 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
   {
     if (!header.laszip->check())
     {
-      Rcpp::Rcerr << "ERROR: " << header.laszip->get_error() << "" << std::endl;
-      Rcpp::Rcerr << "       please upgrade to the latest release of LAStools (with LASzip)" << std::endl;
-      Rcpp::Rcerr << "       or contact 'martin.isenburg@rapidlasso.com' for assistance." << std::endl;
+      throw std::runtime_error(std::string("ERROR: "));
+      throw std::runtime_error(std::string("       please upgrade to the latest release of LAStools (with LASzip)"));
+      throw std::runtime_error(std::string("       or contact 'martin.isenburg@rapidlasso.com' for assistance."));
       return FALSE;
     }
   }
@@ -1195,8 +1195,8 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
   {
     if (!header.laszip)
     {
-      Rcpp::Rcerr << "ERROR: this file was compressed with an experimental version of laszip" << std::endl;
-      Rcpp::Rcerr << "ERROR: please contact 'martin.isenburg@rapidlasso.com' for assistance." << std::endl;
+      throw std::runtime_error(std::string("ERROR: this file was compressed with an experimental version of laszip"));
+      throw std::runtime_error(std::string("ERROR: please contact 'martin.isenburg@rapidlasso.com' for assistance."));
       return FALSE;
     }
     header.point_data_format &= 127;
@@ -1260,7 +1260,7 @@ BOOL LASreaderLAS::open(ByteStreamIn* stream, BOOL peek_only)
     }
     catch(...)
     {
-      Rcpp::Rcerr << "ERROR: trying to read " << (U32)header.laszip->number_of_special_evlrs << " internal EVLRs. ignoring ..." << std::endl;
+      throw std::runtime_error(std::string("ERROR: trying to read "));
     }
     stream->seek(here);
   }
@@ -1305,11 +1305,11 @@ BOOL LASreaderLAS::read_point_default()
     {
       if (reader->error())
       {
-        Rcpp::Rcerr << "ERROR: '" << reader->error() << "' after " << (U32)p_count << " of " << (U32)npoints << " points" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
       }
       else
       {
-        Rcpp::Rcerr << "WARNING: end-of-file after " << (U32)p_count << " of " << (U32)npoints << " points" << std::endl;
+        throw std::runtime_error(std::string("WARNING: end-of-file after "));
       }
       return FALSE;
     }
@@ -1345,12 +1345,12 @@ BOOL LASreaderLAS::read_point_default()
     {
       if (reader->check_end() == FALSE)
       {
-        Rcpp::Rcerr << "ERROR: '" << reader->error() << "' when reaching end of encoding" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         p_count--;
       }
       if (reader->warning())
       {
-        Rcpp::Rcerr << "WARNING: '" << reader->warning() << "'" << std::endl;
+        throw std::runtime_error(std::string("WARNING: '"));
       }
       checked_end = TRUE;
     }
@@ -1466,14 +1466,14 @@ BOOL LASreaderLASrescale::open(ByteStreamIn* stream, BOOL peek_only)
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_x_scale_factor << " to " << header.x_scale_factor << " causes LAS integer overflow for min_x" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
       // make sure rescale does not cause integer overflow for max_x
       temp_f = (orig_x_scale_factor*quantizer.get_X(header.max_x))/header.x_scale_factor;
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_x_scale_factor << " to " << header.x_scale_factor << " causes LAS integer overflow for max_x" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
     }
 
@@ -1484,14 +1484,14 @@ BOOL LASreaderLASrescale::open(ByteStreamIn* stream, BOOL peek_only)
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_y_scale_factor << " to " << header.y_scale_factor << " causes LAS integer overflow for min_y" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
       // make sure rescale does not cause integer overflow for max_y
       temp_f = (orig_y_scale_factor*quantizer.get_Y(header.max_y))/header.y_scale_factor;
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_y_scale_factor << " to " << header.y_scale_factor << " causes LAS integer overflow for max_y" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
     }
 
@@ -1502,14 +1502,14 @@ BOOL LASreaderLASrescale::open(ByteStreamIn* stream, BOOL peek_only)
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_z_scale_factor << " to " << header.z_scale_factor << " causes LAS integer overflow for min_z" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
       // make sure rescale does not cause integer overflow for max_z
       temp_f = (orig_z_scale_factor*quantizer.get_Z(header.max_z))/header.z_scale_factor;
       temp_i = I64_QUANTIZE(temp_f);
       if (I32_FITS_IN_RANGE(temp_i) == FALSE)
       {
-        Rcpp::Rcerr << "WARNING: rescaling from " << orig_z_scale_factor << " to " << header.z_scale_factor << " causes LAS integer overflow for max_z" << std::endl;
+        throw std::runtime_error(std::string("WARNING: rescaling from "));
       }
     }
   }
@@ -1606,14 +1606,14 @@ BOOL LASreaderLASreoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_x_offset << " to " << header.x_offset << " causes LAS integer overflow for min_x" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
     // make sure reoffset_x does not cause integer overflow for max_x
     temp_f = ((header.x_scale_factor*quantizer.get_X(header.max_x))+orig_x_offset-header.x_offset)/header.x_scale_factor;
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_x_offset << " to " << header.x_offset << " causes LAS integer overflow for max_x" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
   }
 
@@ -1624,14 +1624,14 @@ BOOL LASreaderLASreoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_y_offset << " to " << header.y_offset << " causes LAS integer overflow for min_y" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
     // make sure reoffset_y does not cause integer overflow for max_y
     temp_f = ((header.y_scale_factor*quantizer.get_Y(header.max_y))+orig_y_offset-header.y_offset)/header.y_scale_factor;
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_y_offset << " to " << header.y_offset << " causes LAS integer overflow for max_y" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
   }
 
@@ -1642,14 +1642,14 @@ BOOL LASreaderLASreoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_z_offset << " to " << header.z_offset << " causes LAS integer overflow for min_z" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
     // make sure rescale does not cause integer overflow for max_z
     temp_f = ((header.z_scale_factor*quantizer.get_Z(header.max_z))+orig_z_offset-header.z_offset)/header.z_scale_factor;
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: reoffsetting from " << orig_z_offset << " to " << header.z_offset << " causes LAS integer overflow for max_z" << std::endl;
+      throw std::runtime_error(std::string("WARNING: reoffsetting from "));
     }
   }
 
@@ -1762,7 +1762,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_x_scale_factor << " to " << header.x_scale_factor << " and reoffsetting from " << orig_x_offset << " to " << header.x_offset << " causes LAS integer overflow for min_x" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
 
     // make sure rescale & reoffset do not cause integer overflow for max_x
@@ -1777,7 +1777,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_x_scale_factor << " to " << header.x_scale_factor << " and reoffsetting from " << orig_x_offset << " to " << header.x_offset << " causes LAS integer overflow for max_x" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
   }
 
@@ -1795,7 +1795,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_y_scale_factor << " to " << header.y_scale_factor << " and reoffsetting from " << orig_y_offset << " to " << header.y_offset << " causes LAS integer overflow for min_y" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
 
     // make sure rescale & reoffset do not cause integer overflow for max_y
@@ -1810,7 +1810,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_y_scale_factor << " to " << header.y_scale_factor << " and reoffsetting from " << orig_y_offset << " to " << header.y_offset << " causes LAS integer overflow for max_y" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
   }
 
@@ -1828,7 +1828,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_z_scale_factor << " to " << header.z_scale_factor << " and reoffsetting from " << orig_z_offset << " to " << header.z_offset << " causes LAS integer overflow for min_z" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
 
     // make sure rescale & reoffset do not cause integer overflow for max_z
@@ -1843,7 +1843,7 @@ BOOL LASreaderLASrescalereoffset::open(ByteStreamIn* stream, BOOL peek_only)
     temp_i = I64_QUANTIZE(temp_f);
     if (I32_FITS_IN_RANGE(temp_i) == FALSE)
     {
-      Rcpp::Rcerr << "WARNING: rescaling from " << orig_z_scale_factor << " to " << header.z_scale_factor << " and reoffsetting from " << orig_z_offset << " to " << header.z_offset << " causes LAS integer overflow for max_z" << std::endl;
+      throw std::runtime_error(std::string("WARNING: rescaling from "));
     }
   }
 

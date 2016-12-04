@@ -30,8 +30,8 @@
 */
 #include "lasreader_shp.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -105,7 +105,7 @@ BOOL LASreaderSHP::open(const char* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -114,7 +114,7 @@ BOOL LASreaderSHP::open(const char* file_name)
   file = fopen_compressed(file_name, "rb", &piped);
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
@@ -158,7 +158,7 @@ BOOL LASreaderSHP::open(const char* file_name)
   from_big_endian(&int_input); 
   if (int_input != 9994)
   {
-    Rcpp::Rcerr << "ERROR: wrong shapefile code " << int_input << " != 9994" << std::endl;
+    throw std::runtime_error(std::string("ERROR: wrong shapefile code "));
     return FALSE;
   }
   if (fread(&int_input, sizeof(int), 1, file) != 1) return false; // unused (BIG)
@@ -173,7 +173,7 @@ BOOL LASreaderSHP::open(const char* file_name)
   from_little_endian(&int_input); 
   if (int_input != 1000)
   {
-    Rcpp::Rcerr << "ERROR: wrong shapefile version " << int_input << " != 1000" << std::endl;
+    throw std::runtime_error(std::string("ERROR: wrong shapefile version "));
     return FALSE;
   }
   if (fread(&int_input, sizeof(int), 1, file) != 1) return false; // shape type (LITTLE)
@@ -181,7 +181,7 @@ BOOL LASreaderSHP::open(const char* file_name)
   shape_type = int_input;
   if (shape_type != 1 && shape_type != 11 && shape_type != 21 && shape_type != 8 && shape_type != 18 && shape_type != 28)
   {
-    Rcpp::Rcerr << "ERROR: wrong shape type " << shape_type << " != 1,11,21,8,18,28" << std::endl;
+    throw std::runtime_error(std::string("ERROR: wrong shape type "));
     return FALSE;
   }
   double double_input;
@@ -298,7 +298,7 @@ BOOL LASreaderSHP::read_point_default()
     from_little_endian(&int_input);
     if (int_input != shape_type)
     {
-      Rcpp::Rcerr << "WARNING: wrong shape type " << int_input << " != " << shape_type << " in record" << std::endl;
+      throw std::runtime_error(std::string("WARNING: wrong shape type "));
     }
     double double_input;
     if (shape_type == 8 || shape_type == 18 || shape_type == 28) // Multipoint
@@ -416,14 +416,14 @@ BOOL LASreaderSHP::reopen(const char* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
   file = fopen_compressed(file_name, "rb", &piped);
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot reopen file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot reopen file '"));
     return FALSE;
   }
 
@@ -566,8 +566,8 @@ void LASreaderSHP::populate_bounding_box()
 
   if ((header.min_x > 0) != (dequant_min_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_x from " << header.min_x << " to " << dequant_min_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_x from "));
+    throw std::runtime_error(std::string("         set scale factor for x coarser than "));
   }
   else
   {
@@ -575,8 +575,8 @@ void LASreaderSHP::populate_bounding_box()
   }
   if ((header.max_x > 0) != (dequant_max_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_x from " << header.max_x << " to " << dequant_max_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_x from "));
+    throw std::runtime_error(std::string("         set scale factor for x coarser than "));
   }
   else
   {
@@ -584,8 +584,8 @@ void LASreaderSHP::populate_bounding_box()
   }
   if ((header.min_y > 0) != (dequant_min_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_y from " << header.min_y << " to " << dequant_min_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_y from "));
+    throw std::runtime_error(std::string("         set scale factor for y coarser than "));
   }
   else
   {
@@ -593,8 +593,8 @@ void LASreaderSHP::populate_bounding_box()
   }
   if ((header.max_y > 0) != (dequant_max_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_y from " << header.max_y << " to " << dequant_max_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_y from "));
+    throw std::runtime_error(std::string("         set scale factor for y coarser than "));
   }
   else
   {
@@ -602,8 +602,8 @@ void LASreaderSHP::populate_bounding_box()
   }
   if ((header.min_z > 0) != (dequant_min_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_z from " << header.min_z << " to " << dequant_min_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_z from "));
+    throw std::runtime_error(std::string("         set scale factor for z coarser than "));
   }
   else
   {
@@ -611,8 +611,8 @@ void LASreaderSHP::populate_bounding_box()
   }
   if ((header.max_z > 0) != (dequant_max_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_z from " << header.max_z << " to " << dequant_max_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_z from "));
+    throw std::runtime_error(std::string("         set scale factor for z coarser than "));
   }
   else
   {

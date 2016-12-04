@@ -29,56 +29,69 @@
 
 #' Digital Terrain Model
 #'
-#' Interpol ground points using a k neareast neighbourgh approach and create a rasterized
-#' digital terrain model. The interpolation is done by default using an invert distance weighting
-#' (IDW). The algorithm uses the points classified as "ground" and for each pixel the
-#' algorithm uses the k nearest ground point to compute the interpolation.
+#' Interpolate ground points and create a rasterized digital terrain model. The interpolation
+#' can be done with two methods: \code{"knn_idw"} or \code{"akima"} (see details). The
+#' algorithm uses the points classified as "ground" to compute the interpolation. The function
+#' forces the original lowest ground point of each pixel (if it exists) to be chosen instead of
+#' the interpolated value.
 #'
-#' @param obj LAS objet
+#'Methods:
+#'\itemize{
+#'\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
+#' an inverse distance weighting (IDW).}
+#'\item{\code{akima}: interpolation relies on the \link[akima:interp]{interp} function from
+#' package \code{akima}. With this method no extrapolation is done outside of the convex hull
+#' determined by the data points. The DTM could contain NA values.}
+#'}
+#' @param .las LAS objet
 #' @param res numeric resolution.
-#' @param k numeric. The number of ground points used to interpolate (see
-#' \link[lidR:get_ground_elevation]{get_ground_elevation})
-#' @param kernel character. Kernel to use. Default is "inv". See \link[kknn:kknn]{kknn}
-#' for possible choices.
-#' @param ... extra parameter for \link[kknn:kknn]{kknn}
+#' @param method character can be \code{"knn_idw"} or \code{"akima"}
+#' @param k numeric. number of k-nearest neighbour when selected method is \code{"knn_idw"}
+#' @param linear logical indicating whether linear or spline interpolation should be used
+#' when selected method is \code{"akima"}
 #' @return A RasterLayer from package raster
 #' @export
 #' @examples
+#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
-#'
-#' # plot(lidar)
+#' plot(lidar)
 #'
 #' dtm = grid_terrain(lidar)
-#'
-#' # plot3d(dtm)
+#' plot3d(dtm)
+#' }
 #' @seealso
-#' \link[lidR:normalize]{normalize}
-#' @importFrom  data.table := setDT
-setGeneric("grid_terrain", function(obj, res = 1, k = 7L, kernel = "inv", ...){standardGeneric("grid_terrain")})
+#' \link[lidR:lasnormalize]{lasnormalize}
+grid_terrain = function(.las, res = 1, method = "knn_idw", k = 3L, linear = T)
+{
+  . <- X <- Y <- Z <- NULL
 
-#' @rdname grid_terrain
-setMethod("grid_terrain", "LAS",
-  function(obj, res = 1, k = 7L, kernel = "inv", ...)
-  {
-    X <- Y <- Z <- NULL
+  res %<>% round(1)
 
-    ex = extent(obj)
-    xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
-    yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
+  ex = extent(.las)
+  xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
+  yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
 
-    grid   = expand.grid(X = xo, Y = yo)
-    setDT(grid)
+  grid = expand.grid(X = xo, Y = yo)
+  data.table::setDT(grid)
 
-    Zg = get_ground_elevation(obj, grid, k, kernel, ...)
-    grid[, Z := Zg]
+  if(method == "knn_idw")
+    Zg = lasterrain(.las, grid, "knn_idw", k = k)
+  else if(method == "akima")
+    Zg = lasterrain(.las, grid, "akima", linear = linear)
+  else
+    stop("This method does not exist.")
 
-    mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
-    mx = apply(mx, 1, rev)
+  grid[, Z := round(Zg, 3)]
 
-    dtm = raster::raster(mx, xmn = min(grid$X), xmx = max(grid$X), ymn = min(grid$Y), ymx = max(grid$Y))
+  # force grounds point to be dominant
+  grid = rbind(grid, grid_metrics(lasfilterground(.las), res, list(Z = min(Z)), start=c(0.5*res,0.5*res)))
+  grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 
-    return(dtm)
-  }
-)
+  mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
+  mx = apply(mx, 1, rev)
+
+  dtm = raster::raster(mx, xmn = min(grid$X)-0.5*res, xmx = max(grid$X)+0.5*res, ymn = min(grid$Y)-0.5*res, ymx = max(grid$Y)+0.5*res)
+
+  return(dtm)
+}

@@ -34,8 +34,8 @@
 #include "lasfilter.hpp"
 #include "lastransform.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 void LASreaderBuffered::set_scale_factor(const F64* scale_factor)
 {
@@ -96,14 +96,14 @@ BOOL LASreaderBuffered::set_file_name(const char* file_name)
   // do we have a file name
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is NULL" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name pointer is NULL"));
     return FALSE;
   }
   // does the file exist
   FILE* file = fopen(file_name, "r");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file '" << file_name << "' cannot be opened" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file '"));
     return FALSE;
   }
   fclose(file);
@@ -117,14 +117,14 @@ BOOL LASreaderBuffered::add_neighbor_file_name(const char* file_name)
   // do we have a file name
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is NULL" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name pointer is NULL"));
     return FALSE;
   }
   // does the file exist
   FILE* file = fopen(file_name, "r");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file '" << file_name << "' cannot be opened" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file '"));
     return FALSE;
   }
   fclose(file);
@@ -142,7 +142,7 @@ BOOL LASreaderBuffered::open()
 {
   if (!lasreadopener.active())
   {
-    Rcpp::Rcerr << "ERROR: no input name" << std::endl;
+    throw std::runtime_error(std::string("ERROR: no input name"));
     return FALSE;
   }
 
@@ -151,7 +151,7 @@ BOOL LASreaderBuffered::open()
   lasreader = lasreadopener.open();
   if (lasreader == 0)
   {
-    Rcpp::Rcerr << "ERROR: opening '" << lasreadopener.get_file_name() << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: opening '"));
     return FALSE;
   }
 
@@ -204,20 +204,20 @@ BOOL LASreaderBuffered::open()
     LASreader* lasreader_neighbor = lasreadopener_neighbors.open();
     if (lasreader_neighbor == 0)
     {
-      Rcpp::Rcerr << "ERROR: opening neighbor '" << lasreadopener_neighbors.get_file_name() << "'" << std::endl;
+      throw std::runtime_error(std::string("ERROR: opening neighbor '"));
       return FALSE;
     }
 
     // a point type change could be problematic
     if (header.point_data_format != lasreader_neighbor->header.point_data_format)
     {
-      if (!point_type_change) Rcpp::Rcerr << "WARNING: files have different point types: " << header.point_data_format << " vs " << lasreader_neighbor->header.point_data_format << "" << std::endl;
+      if (!point_type_change) throw std::runtime_error(std::string("WARNING: files have different point types: "));
       point_type_change = TRUE;
     }
     // a point size change could be problematic
     if (header.point_data_record_length != lasreader_neighbor->header.point_data_record_length)
     {
-      if (!point_size_change) Rcpp::Rcerr << "WARNING: files have different point sizes: " << header.point_data_record_length << " vs " << lasreader_neighbor->header.point_data_record_length << "" << std::endl;
+      if (!point_size_change) throw std::runtime_error(std::string("WARNING: files have different point sizes: "));
       point_size_change = TRUE;
     }
 
@@ -271,7 +271,7 @@ BOOL LASreaderBuffered::open()
       header.extended_number_of_point_records += buffered_points;
     }
 
-    Rcpp::Rcerr << "LASreaderBuffered: adding " << buffered_points << " buffer points." << std::endl;
+    throw std::runtime_error(std::string("LASreaderBuffered: adding "));
   }
 
   // check if the header can support the enlarged bounding box
@@ -289,14 +289,14 @@ BOOL LASreaderBuffered::open()
     }
     if (header.x_scale_factor != x_scale_factor)
     {
-      Rcpp::Rcerr << "WARNING: i changed x_scale_factor from " << header.x_scale_factor << " to " << x_scale_factor << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed x_scale_factor from "));
       header.x_scale_factor = x_scale_factor;
       rescale = TRUE;
     }
     // maybe we changed the resolution ... so do we really need to adjuste the offset
     if ((((header.max_x - header.x_offset) / x_scale_factor) > I32_MAX) || (((header.min_x - header.x_offset) / x_scale_factor) < I32_MIN))
     {
-      Rcpp::Rcerr << "WARNING: i changed x_offset from " << header.x_offset << " to " << x_offset << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed x_offset from "));
       header.x_offset = x_offset;
       reoffset = TRUE;
     }
@@ -315,14 +315,14 @@ BOOL LASreaderBuffered::open()
     }
     if (header.y_scale_factor != y_scale_factor)
     {
-      Rcpp::Rcerr << "WARNING: i changed y_scale_factor from " << header.y_scale_factor << " to " << y_scale_factor << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed y_scale_factor from "));
       header.y_scale_factor = y_scale_factor;
       rescale = TRUE;
     }
     // maybe we changed the resolution ... so do we really need to adjuste the offset
     if ((((header.max_y - header.y_offset) / y_scale_factor) > I32_MAX) || (((header.min_y - header.y_offset) / y_scale_factor) < I32_MIN))
     {
-      Rcpp::Rcerr << "WARNING: i changed y_offset from " << header.y_offset << " to " << y_offset << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed y_offset from "));
       header.y_offset = y_offset;
       reoffset = TRUE;
     }
@@ -341,14 +341,14 @@ BOOL LASreaderBuffered::open()
     }
     if (header.z_scale_factor != z_scale_factor)
     {
-      Rcpp::Rcerr << "WARNING: i changed  z_scale_factor from " << header.z_scale_factor << " to " << z_scale_factor << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed  z_scale_factor from "));
       header.z_scale_factor = z_scale_factor;
       rescale = TRUE;
     }
     // maybe we changed the resolution ... so do we really need to adjuste the offset
     if ((((header.max_z - header.z_offset) / z_scale_factor) > I32_MAX) || (((header.min_z - header.z_offset) / z_scale_factor) < I32_MIN))
     {
-      Rcpp::Rcerr << "WARNING: i changed z_offset from " << header.z_offset << " to " << z_offset << " to accommodate enlarged bounding box" << std::endl;
+      throw std::runtime_error(std::string("WARNING: i changed z_offset from "));
       header.z_offset = z_offset;
       reoffset = TRUE;
     }

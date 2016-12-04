@@ -120,7 +120,7 @@ private:
   BOOL specified;
   BOOL force;
   U32 chunk_size;
-  BOOL use_stdoutput;
+  BOOL use_stdout;
   BOOL use_nil;
   BOOL buffered;
 };

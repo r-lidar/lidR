@@ -36,7 +36,6 @@
 #define LAS_ZIPPER_HPP
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 #include "laszip.hpp"
 

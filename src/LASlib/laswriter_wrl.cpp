@@ -30,15 +30,15 @@
 */
 #include "laswriter_wrl.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 BOOL LASwriterWRL::open(const CHAR* file_name, const LASheader* header, const CHAR* parse_string)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name pointer is zero"));
     return FALSE;
   }
 
@@ -46,7 +46,7 @@ BOOL LASwriterWRL::open(const CHAR* file_name, const LASheader* header, const CH
 
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
@@ -59,7 +59,7 @@ BOOL LASwriterWRL::open(FILE* file, const LASheader* header, const CHAR* parse_s
 {
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file pointer is zero"));
     return FALSE;
   }
 
@@ -80,7 +80,7 @@ BOOL LASwriterWRL::open(FILE* file, const LASheader* header, const CHAR* parse_s
       }
       else
       {
-        Rcpp::Rcerr << "WARNING: points do not have RGB colors" << std::endl;
+        throw std::runtime_error(std::string("WARNING: points do not have RGB colors"));
         if (rgb)
         {
           rgb_alloc = 0;

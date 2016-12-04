@@ -36,14 +36,15 @@
 
 #include "laswriter_las.hpp"
 
-
+#include <stdlib.h>
+#include <string.h>
 #include <Rcpp.h>
 
 BOOL LASreaderPipeOn::open(LASreader* lasreader)
 {
   if (lasreader == 0)
   {
-    Rcpp::Rcerr << "ERROR: no lasreader" << std::endl;
+    throw std::runtime_error(std::string("ERROR: no lasreader"));
     return FALSE;
   }
 
@@ -89,14 +90,14 @@ BOOL LASreaderPipeOn::open(LASreader* lasreader)
 
   if (laswriterlas == 0)
   {
-    Rcpp::Rcerr << "ERROR: allocating laswriterlas" << std::endl;
+    throw std::runtime_error(std::string("ERROR: allocating laswriterlas"));
     return FALSE;
   }
 
   if (!laswriterlas->open(Rcpp::Rcout, &header))
   {
     delete laswriterlas;
-    Rcpp::Rcerr << "ERROR: opening laswriterlas to stdoutput" << std::endl;
+    throw std::runtime_error(std::string("ERROR: opening laswriterlas to stdout"));
     return FALSE;
   }
 
