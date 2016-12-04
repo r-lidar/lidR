@@ -30,7 +30,7 @@
 #' An S4 class to represent the data read in a .las or .laz file
 #'
 #' A LAS object contains the data and the header read in a .las file and
-#' additional values computed on the fly during the loading.
+#' additional values computed on the fly during loading.
 #'
 #' A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with
 #' the data read from a \code{.las} file and other information computed during
@@ -69,7 +69,7 @@
 #'
 #' A \code{LAS} object also contains a slot \code{@header} which contains the
 #' header of the \code{.las} file. See the public documentation of LAS
-#' specifications of file format for more informations.
+#' specifications of file format for more information.
 #'
 #' @slot data data.table. a table representing the LAS data
 #' @slot area numeric. The area of the dataset computed with a convex hull
@@ -173,8 +173,8 @@ setMethod("$", "LAS", function(x, name)
 
 #' Create a \code{LAS} object
 #'
-#' When a \code{LAS} object is created sevral things are computed on the fly in addition
-#' to the data inputed in the constructor. See \link[lidR:LAS-class]{LAS-class}.
+#' When a \code{LAS} object is created several things are computed on the fly in addition
+#' to the data inputted in the constructor. See \link[lidR:LAS-class]{LAS-class}.
 #'
 #' @param data a data.table containing the LiDAR data.
 #' @param header a list containing the data from the header of a las file.

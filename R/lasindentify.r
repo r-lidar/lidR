@@ -65,7 +65,7 @@ laspulse = function(.las)
 #' function depends on the GPS time to retrieve each indivudual flighline. In a
 #' continuous dataset, once points are ordered by GPS time, the time between two
 #' consecutive points does not exceed a few milliseconds. If the time between two consecutive
-#' points is too long it means that it comes from another flightine. The defaut
+#' points is too long it means that the second point is from a different flightine. The default
 #' thresohold is 30 seconds. A column flightlineID is added in the slot @data
 #'
 #' @param .las A LAS object
@@ -97,7 +97,7 @@ lasflightline = function(.las, dt = 30)
 #'
 #' Retrieve each individual scanline by attributing to each point a number. When
 #' data are sampled according to a saw-tooth pattern (oscilating mirror) a scanline
-#' is one line, or row of data. The function rely on the GPS field time to
+#' is one line, or row of data. The function relies on the GPS field time to
 #' order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
 #' retrieve each scanline  A column scanline is added in the slot @data
 #'

@@ -33,7 +33,7 @@
 #' of a grid.
 #'
 #' Computes a series of descriptive statistics defined by the user. Output is a
-#' data.frame in which each line is a raster (single grid cell), each column is a metric.
+#' data.frame in which each line is a raster (single grid cell), and each column is a metric.
 #' grid_metrics is similar to cloud_metrics except it computes metrics within each cell
 #' in the output grid. The grid cell coordinates are pre-determined for a given resolution.
 #' So the algorithm will always provide the same coordinates independently of the dataset.
@@ -48,12 +48,12 @@
 #' \item{\link[lidR:LAD]{LAD}}
 #' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 #' } Basically there are no predifined metrics. Users must write their own functions to create metrics.
-#' grid_metrics will dispach the LiDAR data for each cell in the user's function. The user writes their
+#' grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  grid_metrics
 #' @param .las An object of class \code{LAS}
-#' @param func the function to be apply to each cells
+#' @param func the function to be applied to each cell
 #' @param res numeric. The size of the cells. Default 20.
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
