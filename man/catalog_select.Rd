@@ -22,11 +22,11 @@ the plot after selection is complete
 }
 \examples{
 \dontrun{
-catalog = lascatalog("<Path to a folder containing a set of .las files>")
-selectedFiles = catalog_select(catalog)
+project = catalog("<Path to a folder containing a set of .las files>")
+selectedFiles = catalog_select(project)
 }
 }
 \seealso{
-\link[lidR:lascatalog]{Catalog}
+\link[lidR:catalog]{Catalog}
 }
 

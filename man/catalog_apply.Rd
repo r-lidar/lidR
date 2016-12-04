@@ -69,7 +69,7 @@ output.
 # about this function
 
 # 1. build a project
-project = lascatalog("folder")
+project = catalog("folder")
 plot(project)
 
 # 2. load the shapefile you need to filter your points (if needed).
