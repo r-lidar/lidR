@@ -3,7 +3,7 @@
 \docType{methods}
 \name{-,LAS,RasterLayer-method}
 \alias{-,LAS,RasterLayer-method}
-\title{Conveniant operator to lasnormalize}
+\title{Convenient operator to lasnormalize}
 \usage{
 \S4method{-}{LAS,RasterLayer}(e1, e2)
 }
@@ -13,6 +13,6 @@
 \item{e2}{a RasterLayer}
 }
 \description{
-Conveniant operator to lasnormalize
+Convenient operator to lasnormalize
 }
 

@@ -30,9 +30,8 @@
 #' Retrieve individual pulses
 #'
 #' Retrieve each individual pulse by attributing a number to each point. The
-#' function depends on the GPS time and the return number to retrieve each individual
-#' beam. Once points are ordered by GPS time the pattern of return numbers enables
-#' attribution of a new number to the points every first return.
+#' function depends on the GPS time to retrieve each individual
+#' beam. A column pulseID is added in the slot @data
 #'
 #' @param .las A LAS object
 #' @return Return nothing. The original object is modified in place by reference.
@@ -67,7 +66,7 @@ laspulse = function(.las)
 #' continuous dataset, once points are ordered by GPS time, the time between two
 #' consecutive points does not exceed a few milliseconds. If the time between two consecutive
 #' points is too long it means that it comes from another flightine. The defaut
-#' thresohold is 30 seconds
+#' thresohold is 30 seconds. A column flightlineID is added in the slot @data
 #'
 #' @param .las A LAS object
 #' @param dt numeric. The threshold time lag used to retrieve flightlines
@@ -100,7 +99,7 @@ lasflightline = function(.las, dt = 30)
 #' data are sampled according to a saw-tooth pattern (oscilating mirror) a scanline
 #' is one line, or row of data. The function rely on the GPS field time to
 #' order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
-#' retrieve each scanline
+#' retrieve each scanline  A column scanline is added in the slot @data
 #'
 #' @param .las A LAS object
 #' @return Return nothing. The original object is modified in place by reference.

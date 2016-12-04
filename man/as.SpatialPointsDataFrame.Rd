@@ -2,7 +2,7 @@
 % Please edit documentation in R/typecast.r
 \name{as.SpatialPointsDataFrame}
 \alias{as.SpatialPointsDataFrame}
-\title{Tranform a LAS object into a SpatialPointsDataFrame object}
+\title{Transform a LAS object into a SpatialPointsDataFrame object}
 \usage{
 as.SpatialPointsDataFrame(.las)
 }
@@ -13,7 +13,7 @@ as.SpatialPointsDataFrame(.las)
 An object of class SpatialPointsDataFrame
 }
 \description{
-Tranform a LAS object into a SpatialPointsDataFrame object
+Transform a LAS object into a SpatialPointsDataFrame object
 }
 \seealso{
 \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}

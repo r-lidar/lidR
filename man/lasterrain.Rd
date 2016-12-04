@@ -2,7 +2,7 @@
 % Please edit documentation in R/lasterrain.r
 \name{lasterrain}
 \alias{lasterrain}
-\title{Get the evelation of the ground for given coordinates}
+\title{Get the elevation of the ground for given coordinates}
 \usage{
 lasterrain(.las, coord, method = "knn_idw", k = 3L, linear = F)
 }
@@ -22,17 +22,17 @@ when selected method is \code{"akima"}}
 Numeric. The predicted elevations.
 }
 \description{
-Interpol ground points and return the elevation at the position of interest given in
-parameter. The interpolation can be done with two methods: \code{"knn_idw"} or
+Interpolate ground points and return the elevation at the position of interest given by the
+parameter. The interpolation can be done using two methods: \code{"knn_idw"} or
 \code{"akima"} (see details). The algorithm uses the points classified as "ground" to
 compute the interpolation.
 }
 \details{
 Methods:
 \itemize{
-\item{\code{knn_idw}: interpolation is done using a k neareast neighbourgh approach with
-an invert distance weighting (IDW).}
-\item{\code{akima}: interpolation rely on the \link[akima:interp]{interp} function from
+\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
+an inverse distance weighting (IDW).}
+\item{\code{akima}: interpolation depends on the \link[akima:interp]{interp} function from
 package \code{akima}. With this method no extrapolation is done outside of the convex hull
 determined by the ground points.}
 }

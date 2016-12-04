@@ -2,7 +2,7 @@
 % Please edit documentation in R/typecast.r
 \name{as.SpatialPixelsDataFrame}
 \alias{as.SpatialPixelsDataFrame}
-\title{Tranform a gridmetric object into a SpatialPixelsDataFrame object}
+\title{Transform a gridmetric object into a SpatialPixelsDataFrame object}
 \usage{
 as.SpatialPixelsDataFrame(.data)
 }
@@ -13,7 +13,7 @@ as.SpatialPixelsDataFrame(.data)
 An object of class SpatialPixelDataFrame
 }
 \description{
-Tranform a gridmetric object into a SpatialPixelsDataFrame object
+Transform a gridmetric object into a SpatialPixelsDataFrame object
 }
 \seealso{
 \link[sp:SpatialPixelsDataFrame-class]{SpatialPixelsDataFrame}

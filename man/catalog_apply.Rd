@@ -12,59 +12,56 @@ catalog_apply(x, func, platform = .Platform$OS.type,
 
 \item{func}{A function which has one parameter: the name of a .las or .laz file (see example)}
 
-\item{platform}{charater. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".}
+\item{platform}{character. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".}
 
 \item{mc.cores}{integer. Number of cores used. Default is the number of cores you have on your computer.}
 
 \item{combine}{character. The function used to merge the outputs of the \code{func} function.}
 
-\item{varlist}{charaters vector. For windows mode, character vector of names of objects to export.}
+\item{varlist}{charaters vector. For Windows mode, character vector of names of objects to export.}
 }
 \description{
-The function has different behaviours on MS Windows and Unix platform, read carfully
-the doc, sections "Detail", "Unix" and "Windows". This function provide an immediatly usable
-parallel computing tool but users confortable with multi-core process are better
-to use there own code to have a more flexible tools.
-}
-\details{
-When users have a set of LAS data organized in several tiles it can apply a user function to each tile.
-Examples section describes the procedure to apply to each file beginning with data loading (see example).
-The function automatically detect you operating system and apply the best parallelisation method for your system.
-Unix mechanism is more powerfull. However it is not compatible with Windows (see sections Unix and Windows).
+The function has different behaviours on MS Windows and Unix platforms, so please read
+the documentation carefully, particularly the "Detail", "Unix" and "Windows" sections. This function provide an 
+immediately usable parallel computing tool, but users comfortable with multi-core processes should use their own code #' for greater flexibility.
+When users have a set of LAS data organized into several tiles, it can apply a user function to each tile.
+The "Examples" section describes the procedure to apply to each file, beginning with data loading (see example).
+The function automatically detects your operating system and applies the best parallelization method for your system.
+Unix mechanism is more powerful. However it is not compatible with Windows (see "Unix" and "Windows" sections).
 The Windows mechanism is more complex to use.\cr\cr
-WARNING: there is no buffer mechanism to protect the process again edge artifacs. See section "Edge artifacts".
+WARNING: there is no buffer mechanism to protect the process against edge artifacts. See section "Edge artifacts".
 }
 \section{Unix}{
 
 
-In Unix platform (GNU/Linux and Mac), the parallelization rely on fork-exec technique
-(see \link[parallel:mclapply]{mclapply}). It means, among others, that each child process
-has an acces to the parent process' memory. For example you can call functions from .GlobalEnv
-or any orther environnement. If a code written for Unix is ran on Windows it will works
+On the Unix platform (GNU/Linux and Mac), parallelization relies on the fork-exec technique
+(see \link[parallel:mclapply]{mclapply}). This means that each child process
+has access to the parent process memory. For example, you can call functions from .GlobalEnv
+or any other environment. If code written for Unix is run on Windows it will work,
 but with only one core like a normal loop. If Unix users want to share their code
-to Windows users they are better to force the function to use clustering method.
+with Windows users, they are better to force the function to use the clustering method.
 }
 
 \section{Windows}{
 
 
-In Windows platform (MS Windows), the parallelization rely on cluster
-(see \link[parallel:parLapplyLB]{parLapplyLB}). It works both for Unix and Windows
-but it is much more memory intensive and very not userfriendly as the user must
-export himself all the object he needs. Indeed cluster technique implies, among others,
-that each child process cannot acces to the parent process memory.
-If you want to make the process on 1 core only, the function use the \code{unix}
-mode which works like a regular loop (non parallel computing).
+On the Windows platform (MS Windows), parallelization relies on the cluster technique
+(see \link[parallel:parLapplyLB]{parLapplyLB}). This works for both Unix and Windows
+but it is much more memory intensive and also not very user-friendly, as the user must
+manually export any required objects. This means that each child process cannot access the parent process memory.
+If you want to use only a single core, the function uses the \code{unix}
+mode which works like a regular loop (non-parallel computing).
 }
 
-\section{Egde artifacts}{
+\section{Edge artifacts}{
 
 
 It is very important to take precautions to avoid "edge artifacts" when processing LiDAR tiles.
-If the points from neighboring tiles are not included during certain process it might involve edge artifacts
-at the edges of the tiles. For exemple, empty or incomplete pixels in a rasterization process. The lidR package
-does not provide internal tools to deal with buffer as it is design for experimental purposes not to output professional
-products. The users could, for example, filter the invalid/corrupted data at the edge of the tiles from the output.
+If the points from neighboring tiles are not included during certain processes, this could create edge artifacts
+at the edges of the tiles. For example, empty or incomplete pixels in a rasterization process. The lidR package
+does not provide internal tools to deal with buffers as it is designed for experimental purposes rather than as a
+professional product. Users could, for example, filter the invalid/corrupted data at the edge of the tiles from the 
+output.
 }
 \examples{
 \dontrun{
@@ -98,8 +95,8 @@ analyse_tile = function(LASFile)
   return(metrics)
 }
 #### UNIX #####
-# This code works only on Unix platforms because it rely on shared memory
-# between all the process. See below for a Windows compatible code.
+# This code works only on Unix platforms because it relies on shared memory
+# between all processes. See below for a Windows-compatible code.
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.
@@ -107,7 +104,7 @@ output = project \%>\% catalog_apply(analyse_tile)
 
 #### WINDOWS #####
 # This code works both on Unix and Windows platforms. But it is more memory intensive
-# and more complex (here the exemple is simple enought so it does not change a lot of things)
+# and more complex (here the example is simple enough so it does not change many things)
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.

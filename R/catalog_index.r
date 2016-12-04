@@ -33,7 +33,7 @@
 #' (a ground inventory, for example), they can automatically find the tiles containing the lidar data associated
 #' with the ROIs from a Catalog. The algorithm will do this even for ROIs falling on the edges of one or
 #' more tiles.\cr
-#' It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catal#' og_queries}.
+#' It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
 #' Users do not really need it.
 #'
 #' @aliases catalog_index
@@ -41,9 +41,9 @@
 #' @param x vector. A set of x plot coordinates
 #' @param y vector. A set of y plot coordinates
 #' @param r numeric or vector. A radius or a set of radii of the ROI. If only
-#' r is provided (radius2 = NULL) it will extract data falling onto a disc.
-#' @param r2 numeric or vector. A radius or a set of radii of plots. If radius2
-#' is provided, the selection turns into a rectangular ROI. If radius = radius2 it is a square.
+#' r is provided (r2 = NULL) it will extract data falling onto a disc.
+#' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
+#' is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.
 #' @param roinames vector. A set of ROI names
 #' @export catalog_index
 catalog_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)

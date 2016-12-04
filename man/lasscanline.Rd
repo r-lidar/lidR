@@ -17,6 +17,6 @@ Retrieve each individual scanline by attributing to each point a number. When
 data are sampled according to a saw-tooth pattern (oscilating mirror) a scanline
 is one line, or row of data. The function rely on the GPS field time to
 order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
-retrieve each scanline
+retrieve each scanline  A column scanline is added in the slot @data
 }
 

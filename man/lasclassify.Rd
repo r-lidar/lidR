@@ -11,14 +11,14 @@ lasclassify(.las, source, field = NULL)
 
 \item{source}{An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}}
 
-\item{field}{characters. The name of a field in the table of attribute of the shapefile or
+\item{field}{characters. The name of a field in the table of attributes of the shapefile or
 the name of the new column in the LAS object (see details)}
 }
 \value{
-Nothing. The new field is added by reference in the original data.
+Nothing. The new field is added by reference to the original data.
 }
 \description{
-Classify LAS points based on geographic data found in external sources. It attributes
+Classify LAS points based on geographic data from external sources. It attributes
 to each point a value found in the data given as input. External sources can be an ESRI
 Shapefile (SpatialPolygonsDataFrame) or a Raster (RasterLayer).
 }
@@ -27,14 +27,14 @@ The function recognizes several type of sources:
 \itemize{
 \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
 multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
-given in the shapefile. If the parameter \code{field} is the name of a field in the attribute
-data of the shapefile it classifies the points based on this field. Else it classifies
+given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
+of the shapefile it classifies the points based on this field. Otherrwise it classifies
 the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
-allows for filtering lakes, for example.
+allows filtering of lakes, for example.
 }
-\item{\code{RasterLayer}: It attriutes to each point the value founded in each pixel of the RasterLayer.
-Use the parameter \code{field} to force the name of the new column added in the LAS objct}. This function
-is used internally to normalize the lidar dataset and is exported because why not.
+\item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
+Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
+is used internally to normalize the lidar dataset and is exported because some users may find it useful.}
 }
 }
 \examples{
