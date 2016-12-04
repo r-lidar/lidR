@@ -29,7 +29,7 @@
 
 #' Plot voxelized LiDAR data
 #'
-#' This functions implements a 3D plot method for voxels objects
+#' This function implements a 3D plot method for voxels objects
 #'
 #' By default the function plots points for fast display purposes. It can also plot real voxels.
 #' @aliases plot.voxels
@@ -40,8 +40,8 @@
 #' @param bg The color for the background. Default is black.
 #' @param trim numeric. Enables trimming of values when outliers break the color palette range.
 #' Default is 1 meaning that the whole range of the values is used for the color palette.
-#' 0.9 means thant 10% of the hightest values are not used to defined the colors palette.
-#' In this case the values higher that the 90th percentile are set to the highest color. They are not removed
+#' 0.9 means that 10% of the highest values are not used to define the color palette.
+#' In this case the values higher than the 90th percentile are set to the highest color. They are not removed
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

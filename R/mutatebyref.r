@@ -1,7 +1,7 @@
 # Add new variables by reference
 #
-# mutatebyref adds new column in a data.table or a LAS object and preserves existing as
-# dplyr::mutate does but it does it by reference i.e. without any copy of the memory
+# mutatebyref adds new columns in a data.table or a LAS object and preserves existing columns as
+# dplyr::mutate does, but it does this by reference i.e. without any copy of the memory
 #
 # @param .las a data.table or a LAS object
 # @param \dots Name-value pairs of expressions. Use NULL to drop a variable.

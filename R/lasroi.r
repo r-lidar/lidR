@@ -27,15 +27,15 @@
 
 
 
-#' Select an region of interest interactively
+#' Select a region of interest interactively
 #'
-#' Select an region of interest contained into a rectangle using interactively the mouse
+#' Select a region of interest contained into a rectangle using the mouse interactively
 #'
-#' \code{lasroi} enable the user to select a region of interest (ROI) drawing
+#' \code{lasroi} enables the user to select a region of interest (ROI) drawing
 #' a rectangle with the mouse
 #' @aliases lasroi
 #' @param .las An object of class \code{LAS}
-#' @param \dots Optionnal parameters for the plot function
+#' @param \dots Optional parameters for the plot function
 #' @return An object of class \code{LAS}
 #' @examples
 #'\dontrun{

@@ -27,7 +27,7 @@
 
 #' Predefined filters
 #'
-#' Select only the some returns
+#' Select only some returns
 #'
 #' \itemize{
 #' \item{\code{lasfilterfirst} Select only the first returns.}

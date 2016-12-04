@@ -29,7 +29,7 @@
 #'
 #' Computes the gap fraction profile using the method of Bouvier et al. (see reference)
 #'
-#' The function assessing the number of laser points that actually reached the layer
+#' The function assesses the number of laser points that actually reached the layer
 #' z+dz and those that passed through the layer [z, z+dz]. By definition the layer 0
 #' will always return 0 because no returns pass through the ground. Therefore, the layer 0 is removed
 #' from the returned results.
@@ -77,10 +77,10 @@ gap_fraction_profile = function (z, dz = 1)
 #'
 #' Computes a leaf area density profile based on the method of Bouvier et al. (see reference)
 #'
-#' The function assessing the number of laser points that actually reached the layer
+#' The function assesses the number of laser points that actually reached the layer
 #' z+dz and those that passed through the layer [z, z+dz] (see \link[lidR:gap_fraction_profile]{gap_fraction_profile}).
 #' Then it computes the log of this quantity and divides it by the extinction coefficient k as described in Bouvier
-#' et al. By definition the layer 0 will always return the infinity because no returns pass through
+#' et al. By definition the layer 0 will always return infinity because no returns pass through
 #' the ground. Therefore, the layer 0 is removed from the returned results.
 #'
 #' @param z vector of positive z coordinates
@@ -213,7 +213,7 @@ VCI = function(z, zmax, by = 1)
 #' Computes the fractal dimension of a surface. The fractal dimension is a measure
 #' of roughness.
 #'
-#' Fractal dimension compute the roughness based on the box counting method (see Taud and Parrot).
+#' Fractal dimension computes the roughness based on the box counting method (see Taud and Parrot).
 #' If the input has an NA value, it returns NA. If the input is too small it returns NA.
 #' If the input matrix is not a square matrix, the function cuts the input matrix to create a square matrix.
 #' @param mtx numeric matrix that is the representation of a surface model

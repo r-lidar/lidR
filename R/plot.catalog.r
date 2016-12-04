@@ -29,7 +29,7 @@
 
 #' Plot a Catalog object
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for a Catalog objects
+#' This functions implements a \link[graphics:plot]{plot} method for Catalog objects
 #'
 #' @param x A Catalog object
 #' @param y Unused (inherited from base plot)
