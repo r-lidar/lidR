@@ -23,8 +23,8 @@ Transform a grid_metrics object into a spatial raster object
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-meanHeight = grid_metrics(lidar, 20, mean(Z))
-mtx = as.raster(meanHeight)
+meanHeight = grid_metrics(lidar, mean(Z))
+rmeanHeight = as.raster(meanHeight)
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}

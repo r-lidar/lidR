@@ -4,14 +4,14 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(.las, res, func, start = c(0, 0), option = NULL)
+grid_metrics(.las, func, res = 20, start = c(0, 0), option = NULL)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{res}{numeric. The size of the cells}
-
 \item{func}{the function to be apply to each cells}
+
+\item{res}{numeric. The size of the cells. Default 20.}
 
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0).}
 
@@ -49,10 +49,10 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
-grid_metrics(lidar, 2, max(Z)) \%>\% plot
+grid_metrics(lidar, max(Z), 2) \%>\% plot
 
 # Mean height with 400 m^2 cells
-grid_metrics(lidar, 20, mean(Z)) \%>\% plot
+grid_metrics(lidar, mean(Z)) \%>\% plot
 
 # Define your own metric function
 myMetrics = function(z, i, angle, pulseID)
@@ -68,7 +68,7 @@ myMetrics = function(z, i, angle, pulseID)
    return(ret)
  }
 
-metrics = grid_metrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+metrics = grid_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
 
 plot(metrics, "hmean")
 plot(metrics, "hmax")

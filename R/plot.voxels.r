@@ -48,7 +48,7 @@
 #'
 #' lidar = readLAS(LASfile)
 #'
-#' voxels = grid_metrics3d(lidar, 1, list(Imean = mean(Intensity)))
+#' voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
 #' plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 #' @seealso
 #' \link[rgl:points3d]{points3d}

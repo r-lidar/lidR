@@ -57,7 +57,7 @@ grid_density = function(obj, res = 4)
   }
   else
   {
-    ret = grid_metrics(obj, res, list(density = length(unique(pulseID))/res^2))
+    ret = grid_metrics(obj, list(density = length(unique(pulseID))/res^2), res)
   }
 
   return(ret)

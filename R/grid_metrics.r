@@ -53,8 +53,8 @@
 #'
 #' @aliases  grid_metrics
 #' @param .las An object of class \code{LAS}
-#' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
+#' @param res numeric. The size of the cells. Default 20.
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "grid_metrics" enabling easy plotting.
@@ -63,10 +63,10 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' grid_metrics(lidar, 2, max(Z)) %>% plot
+#' grid_metrics(lidar, max(Z), 2) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' grid_metrics(lidar, 20, mean(Z)) %>% plot
+#' grid_metrics(lidar, mean(Z)) %>% plot
 #'
 #' # Define your own metric function
 #' myMetrics = function(z, i, angle, pulseID)
@@ -82,14 +82,14 @@
 #'    return(ret)
 #'  }
 #'
-#' metrics = grid_metrics(lidar, 20, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#' metrics = grid_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
 #'
 #' plot(metrics, "hmean")
 #' plot(metrics, "hmax")
 #' plot(metrics, "imean")
 #' #etc.
 #' @export grid_metrics
-grid_metrics = function(.las, res, func, start = c(0,0), option = NULL)
+grid_metrics = function(.las, func, res = 20, start = c(0,0), option = NULL)
 {
   stopifnotlas(.las)
 
