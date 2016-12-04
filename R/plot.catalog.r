@@ -38,7 +38,7 @@
 #' @examples
 #' \dontrun{
 #'
-#' catalog = lascatalog("<Path to a folder containing a set of .las files>")
+#' catalog = catalog("<Path to a folder containing a set of .las files>")
 #' plot(catalog)
 #' }
 plot.Catalog = function(x, y, ...)
