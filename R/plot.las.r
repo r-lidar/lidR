@@ -17,7 +17,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -38,9 +38,9 @@
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
 #' @param bg The color for the background. Default is black.
 #' @param trim numeric. Enables trimming of values when outliers break the color palette range.
-#' Default is 1 meaning that the whole range of the values is used for the color palette.
-#' 0.9 means thant 10% of the hightest values are not used to defined the colors palette.
-#' In this case the values higher that the 90th percentile are set to the highest color. They are not removed.
+#' Default is 1, meaning that the whole range of values is used for the color palette.
+#' 0.9 means that 10% of the highest values are not used to define the color palette.
+#' In this case values higher than the 90th percentile are set to the highest color. They are not removed.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -60,8 +60,6 @@
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:LAS]{Class LAS}
 #' @export
-#' @importFrom rgl points3d open3d rgl.bg
-#' @importFrom grDevices heat.colors terrain.colors topo.colors
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors, bg = "black",  trim = 1, ...)
 {
   inargs <- list(...)

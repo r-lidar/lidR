@@ -36,7 +36,6 @@
 #include "bytestreamin.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 extern "C" __int64 _cdecl _ftelli64(FILE*);

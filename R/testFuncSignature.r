@@ -39,6 +39,9 @@
 
   if(is.list(metrics) & !is.data.frame(metrics))
   {
+    if(is.null(names(metrics)))
+      names(metrics) = paste0("#", 1:length(metrics))
+
     classes = sapply(metrics, class)
     test = classes %in% c("integer", "numeric", "logical", "character")
     n = names(metrics[!test])
@@ -63,7 +66,7 @@
   else if(is.data.frame(metrics))
     lidRError("TFS5", expression = funcstring)
   else if(is.vector(metrics) & length(metrics) > 1)
-    lidRError("TFS6", expression = funcstring)
+    lidRError("TFS6", expression = funcstring, number = length(metrics))
   else
     return(0)
 }

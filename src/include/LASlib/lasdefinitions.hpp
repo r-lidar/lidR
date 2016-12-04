@@ -50,9 +50,9 @@
 #define LAS_TOOLS_VERSION 160730
 
 #include <stdio.h>
-#include <Rcpp.h>
-#include <Rcpp.h>
-
+#include <stdexcept>
+#include <string.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include "mydefs.hpp"
@@ -453,38 +453,38 @@ public:
   {
     if (strncmp(file_signature, "LASF", 4) != 0)
     {
-      Rcpp::Rcerr << "ERROR: wrong file signature '" << file_signature << "'" << std::endl;
+      throw std::runtime_error(std::string("ERROR: wrong file signature '"));
       return FALSE;
     }
     if ((version_major != 1) || (version_minor > 4))
     {
-      Rcpp::Rcerr << "WARNING: unknown version " << version_major << "." << version_minor << " (should be 1.0 or 1.1 or 1.2 or 1.3 or 1.4)" << std::endl;
+      throw std::runtime_error(std::string("WARNING: unknown version "));
     }
     if (header_size < 227)
     {
-      Rcpp::Rcerr << "ERROR: header size is " << header_size << " but should be at least 227" << std::endl;
+      throw std::runtime_error(std::string("ERROR: header size is "));
       return FALSE;
     }
     if (offset_to_point_data < header_size)
     {
-      Rcpp::Rcerr << "ERROR: offset to point data " << offset_to_point_data << " is smaller than header size " << header_size << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: offset to point data "));
       return FALSE;
     }
     if (x_scale_factor == 0)
     {
-      Rcpp::Rcerr << "WARNING: x scale factor is zero." << std::endl;
+      throw std::runtime_error(std::string("WARNING: x scale factor is zero."));
     }
     if (y_scale_factor == 0)
     {
-      Rcpp::Rcerr << "WARNING: y scale factor is zero." << std::endl;
+      throw std::runtime_error(std::string("WARNING: y scale factor is zero."));
     }
     if (z_scale_factor == 0)
     {
-      Rcpp::Rcerr << "WARNING: z scale factor is zero." << std::endl;
+      throw std::runtime_error(std::string("WARNING: z scale factor is zero."));
     }
     if (max_x < min_x || max_y < min_y || max_z < min_z)
     {
-      Rcpp::Rcerr << "WARNING: invalid bounding box [ " << min_x << " " << min_y << " " << min_z << " " << max_x << " " << max_y << " " << max_z << " ]" << std::endl;
+      throw std::runtime_error(std::string("WARNING: invalid bounding box [ "));
     }
     return TRUE;
   };

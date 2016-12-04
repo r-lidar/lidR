@@ -1,27 +1,22 @@
 Package: lidR
 Type: Package
-Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry
-    Applications
-Version: 1.2.0
-Date: 2016-08-26
+Title: Airborne LiDAR Data Manipulations and Visualisation for Forestry Applications
+Version: 1.0.0
+Date: 2016-12-4
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
     person("Pierrick", "Marie", email = "", role = c("ctb")),
-    person("David", "Auty", email = "", role = c("ctb")))
-Description: Airborne LiDAR interface for data
-    visualisation and manipulation. It has been designed mainly for use in forestry
-    applications. The lidR package allows computation of digital elevation canopy models,
-    point classification based on geographic shapefiles, space
-    rasterization, computation of derived metrics, point filtering, artificial point
-    reduction and other manipulations.
+    person("David", "Auty", email = "", role = c("aut", "ctb")))
+Description: Airborne LiDAR interface for data visualisation and manipulation. Read/write 
+    las/laz files, rasterization, computation of metrics, point filtering, artificial point 
+    reduction, classification from geographic data, normalization and other manipulations.
 URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
-Depends:
-    R (>= 3.2.0),magrittr,dtplyr
-Imports:
-    rgl,methods,stats,utils,grDevices,tools,parallel,raster,rgdal,plyr,rgeos,data.table,dplyr,kknn,Rcpp,sp
-LazyData: trues
+Depends:R (>= 3.1.0),magrittr,methods
+Imports:rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,kknn,Rcpp,sp,lazyeval,akima
+Suggests:rgdal
+LazyData: true
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp

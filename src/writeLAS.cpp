@@ -31,40 +31,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include <time.h>
 #include <stdio.h>
-#include <Rcpp.h>
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "laswriter.hpp"
 
 using namespace Rcpp;
 
-//' Write a las file with LASlib
-//'
-//' Methods to write las files using LASlib
-//'
-//' This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
-//'
-//' @param file character. filename of .las file
-//' @param LASheader list a header from a LAS object
-//' @param X numeric array X data
-//' @param Y numeric array Y data
-//' @param Z numeric array Z data
-//' @param I integer array intensity data
-//' @param RN integer array return number data
-//' @param NoR integer array number of returns data
-//' @param SDF integer array scan direction flag data
-//' @param EoF integer array edge of flightline data
-//' @param C integer array classification data
-//' @param SA integer array scan angle data
-//' @param UD integer array user data data
-//' @param PSI integer array point source id data
-//' @param T numeric array gpstime data
-//' @param R integer array red data
-//' @param G integer array green data
-//' @param B integer array blue data
-//' @return void
-//' @export LASlibWrite
+// Write a las file with LASlib
+//
+// Methods to write las files using LASlib
+//
+// This function musn't be used as is. It is an internal function. Please use \link[lidR:writeLAS]{writeLAS} abstraction.
+//
+// @param file character. filename of .las file
+// @param LASheader list a header from a LAS object
+// @param X numeric array X data
+// @param Y numeric array Y data
+// @param Z numeric array Z data
+// @param I integer array intensity data
+// @param RN integer array return number data
+// @param NoR integer array number of returns data
+// @param SDF integer array scan direction flag data
+// @param EoF integer array edge of flightline data
+// @param C integer array classification data
+// @param SA integer array scan angle data
+// @param UD integer array user data data
+// @param PSI integer array point source id data
+// @param T numeric array gpstime data
+// @param R integer array red data
+// @param G integer array green data
+// @param B integer array blue data
+// @return void
 // [[Rcpp::export]]
 void LASlibWrite(CharacterVector file,
              List LASheader,
@@ -151,6 +149,6 @@ void LASlibWrite(CharacterVector file,
   }
   catch (std::exception const& e)
   {
-    Rcerr << "Error: " << e.what() << std::endl;
+    Rcerr << e.what() << std::endl;
   }
 }

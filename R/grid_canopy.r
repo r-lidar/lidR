@@ -29,15 +29,19 @@
 
 #' Canopy surface model
 #'
-#' Creates a canopy surface model using a LiDAR cloud of points. This function is an
-#' alias for \code{grid_metrics(obj, res, max(Z))}.
+#' Creates a canopy surface model using a LiDAR point cloud. For each pixel the
+#' function returns the highest point found. This basic method could be improved by replacing
+#' each LiDAR return with a small disk
 #'
 #' The algorithm used is the local maximum algorithm. It assigns the
 #' elevation of the highest return within each grid cell to the grid cell center.
 #' @aliases  grid_canopy
-#' @param obj An object of class \code{LAS}
-#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 2 units i.e. 4 square units cells.
-#' @param start vector of x and y coordinates for the reference raster. Default is (0,0) see \link[lidR:grid_metrics]{grid_metrics}
+#' @param .las An object of class \code{LAS}
+#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
+#' 2 meters i.e. 4 square meters.
+#' @param subcircle numeric radius of the circles. To fill empty pixels the algorithm
+#' replaces each return by a circle composed of 8 points before computing the maximum elevation
+#' in each pixel.
 #' @return It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -49,17 +53,45 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_canopy
-#' @importFrom magrittr %>% %$%
-setGeneric("grid_canopy", function(obj, res = 2, start = c(0,0)){standardGeneric("grid_canopy")})
+grid_canopy = function(.las, res = 2, subcircle = 0)
+{
+  . <- X <- Y <- Z <- NULL
 
-#' @rdname grid_canopy
-setMethod("grid_canopy", "LAS",
-	function(obj, res = 2, start=c(0,0))
-	{
-	  Z <- NULL
+  if(subcircle > 0)
+  {
+    ex = extent(.las)
 
-	  ret = grid_metrics(obj, res, list(Z = max(Z)), start)
+    dt = .las@data[, .(X,Y,Z)]
 
-    return(ret)
-	}
-)
+    alpha = seq(0, 2*pi, length.out = 9)[-9]
+    px = subcircle*cos(alpha)
+    py = subcircle*sin(alpha)
+
+    dt = dt[, subcircled(X,Y,Z, px,py), by = rownames(dt)][, rownames := NULL]
+    dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
+    .las = LAS(dt)
+
+    rm(dt)
+  }
+
+  ret = grid_metrics(.las, res, list(Z = max(Z)))
+
+  rm(.las)
+  gc()
+
+  return(ret)
+}
+
+subcircled = function(x, y, z, px, py)
+{
+  i = which.max(z)
+  x = x[i]
+  y = y[i]
+  z = z[i]
+
+  x = x + px
+  y = y + py
+  z = rep(z, length(px))
+
+  list(X = x, Y = y, Z = z)
+}

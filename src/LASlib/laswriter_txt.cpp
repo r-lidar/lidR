@@ -30,8 +30,8 @@
 */
 #include "laswriter_txt.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 BOOL LASwriterTXT::refile(FILE* file)
 {
@@ -58,7 +58,7 @@ BOOL LASwriterTXT::open(const CHAR* file_name, const LASheader* header, const CH
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: file name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name pointer is zero"));
     return FALSE;
   }
 
@@ -66,7 +66,7 @@ BOOL LASwriterTXT::open(const CHAR* file_name, const LASheader* header, const CH
 
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
@@ -79,7 +79,7 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
 {
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: file pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file pointer is zero"));
     return FALSE;
   }
 
@@ -128,7 +128,7 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: unknown seperator '" << separator << "'" << std::endl;
+      throw std::runtime_error(std::string("ERROR: unknown seperator '"));
       return FALSE;
     }
   }
@@ -153,17 +153,17 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
         }
         else if (ptsVLR)
         {
-          Rcpp::Rcerr << "WARNING: found VLR for PTS with wrong payload size of " << ptsVLR->record_length_after_header << "." << std::endl;
+          throw std::runtime_error(std::string("WARNING: found VLR for PTS with wrong payload size of "));
         }
         else if (ptxVLR)
         {
-          Rcpp::Rcerr << "WARNING: found VLR for PTX with wrong payload size of " << ptxVLR->record_length_after_header << "." << std::endl;
+          throw std::runtime_error(std::string("WARNING: found VLR for PTX with wrong payload size of "));
         }
       }
     }
     else
     {
-      Rcpp::Rcerr << "WARNING: found no VLR with PTS or PTX info." << std::endl;
+      throw std::runtime_error(std::string("WARNING: found no VLR with PTS or PTX info."));
     }
     if (header->version_minor >= 4)
     {
@@ -179,11 +179,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     if (this->parse_string && strcmp(this->parse_string, "xyz") && strcmp(this->parse_string, "xyzi") && strcmp(this->parse_string, "xyziRGB") && strcmp(this->parse_string, "xyzRGB"))
     {
-      Rcpp::Rcerr << "WARNING: the parse string for PTS should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'" << std::endl;
+      throw std::runtime_error(std::string("WARNING: the parse string for PTS should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'"));
     }
     if (separator_sign != ' ')
     {
-      Rcpp::Rcerr << "WARNING: the separator for PTS should be 'space' not '" << separator << "'" << std::endl;
+      throw std::runtime_error(std::string("WARNING: the separator for PTS should be 'space' not '"));
     }
   }
   else if (optx)
@@ -213,13 +213,13 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     {
       if (ptxVLR)
       {
-        Rcpp::Rcerr << "WARNING: found VLR for PTX with wrong payload size of " << ptxVLR->record_length_after_header << "." << std::endl;
+        throw std::runtime_error(std::string("WARNING: found VLR for PTX with wrong payload size of "));
       }
       else
       {
-        Rcpp::Rcerr << "WARNING: found no VLR with PTX info." << std::endl;
+        throw std::runtime_error(std::string("WARNING: found no VLR with PTX info."));
       }
-      Rcpp::Rcerr << "         outputting PTS instead ..." << std::endl;
+      throw std::runtime_error(std::string("         outputting PTS instead ..."));
       if (header->version_minor >= 4)
       {
 #ifdef _WIN32
@@ -235,11 +235,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     if (this->parse_string && strcmp(this->parse_string, "xyz") && strcmp(this->parse_string, "xyzi") && strcmp(this->parse_string, "xyziRGB") && strcmp(this->parse_string, "xyzRGB"))
     {
-      Rcpp::Rcerr << "WARNING: the parse string for PTX should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'" << std::endl;
+      throw std::runtime_error(std::string("WARNING: the parse string for PTX should be 'xyz', 'xyzi', 'xyziRGB', or 'xyzRGB'"));
     }
     if (separator_sign != ' ')
     {
-      Rcpp::Rcerr << "WARNING: the separator for PTX should be 'space' not '" << separator << "'" << std::endl;
+      throw std::runtime_error(std::string("WARNING: the separator for PTX should be 'space' not '"));
     }
   }
 
@@ -419,7 +419,7 @@ BOOL LASwriterTXT::unparse_attribute(const LASpoint* point, I32 index)
   }
   else
   {
-    Rcpp::Rcerr << "WARNING: attribute " << index << " not (yet) implemented." << std::endl;
+    throw std::runtime_error(std::string("WARNING: attribute "));
     return FALSE;
   }
   return TRUE;
@@ -629,37 +629,37 @@ BOOL LASwriterTXT::check_parse_string(const CHAR* parse_string)
         I32 index = (I32)(p[0] - '0');
         if (index >= header->number_attributes)
         {
-          Rcpp::Rcerr << "ERROR: extra bytes attribute '" << index << "' does not exist." << std::endl;
+          throw std::runtime_error(std::string("ERROR: extra bytes attribute '"));
           return FALSE;
         }
         attribute_starts[index] = header->get_attribute_start(index);
       }
       else
       {
-        Rcpp::Rcerr << "ERROR: unknown symbol '" << p[0] << "' in parse string. valid are" << std::endl;
-        Rcpp::Rcerr << "       'x' : the x coordinate" << std::endl;
-        Rcpp::Rcerr << "       'y' : the y coordinate" << std::endl;
-        Rcpp::Rcerr << "       'z' : the z coordinate" << std::endl;
-        Rcpp::Rcerr << "       't' : the gps time" << std::endl;
-        Rcpp::Rcerr << "       'R' : the red channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'G' : the green channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       'B' : the blue channel of the RGB field" << std::endl;
-        Rcpp::Rcerr << "       's' : a string or a number that we don't care about" << std::endl;
-        Rcpp::Rcerr << "       'i' : the intensity" << std::endl;
-        Rcpp::Rcerr << "       'a' : the scan angle" << std::endl;
-        Rcpp::Rcerr << "       'n' : the number of returns of that given pulse" << std::endl;
-        Rcpp::Rcerr << "       'r' : the number of the return" << std::endl;
-        Rcpp::Rcerr << "       'c' : the classification" << std::endl;
-        Rcpp::Rcerr << "       'u' : the user data" << std::endl;
-        Rcpp::Rcerr << "       'p' : the point source ID" << std::endl;
-        Rcpp::Rcerr << "       'e' : the edge of flight line flag" << std::endl;
-        Rcpp::Rcerr << "       'd' : the direction of scan flag" << std::endl;
-        Rcpp::Rcerr << "       'M' : the index of the point" << std::endl;
-        Rcpp::Rcerr << "       'w' : the wavepacket descriptor index" << std::endl;
-        Rcpp::Rcerr << "       'W' : all wavepacket attributes" << std::endl;
-        Rcpp::Rcerr << "       'X' : the unscaled and unoffset integer x coordinate" << std::endl;
-        Rcpp::Rcerr << "       'Y' : the unscaled and unoffset integer y coordinate" << std::endl;
-        Rcpp::Rcerr << "       'Z' : the unscaled and unoffset integer z coordinate" << std::endl;
+        throw std::runtime_error(std::string("ERROR: unknown symbol '"));
+        throw std::runtime_error(std::string("       'x' : the x coordinate"));
+        throw std::runtime_error(std::string("       'y' : the y coordinate"));
+        throw std::runtime_error(std::string("       'z' : the z coordinate"));
+        throw std::runtime_error(std::string("       't' : the gps time"));
+        throw std::runtime_error(std::string("       'R' : the red channel of the RGB field"));
+        throw std::runtime_error(std::string("       'G' : the green channel of the RGB field"));
+        throw std::runtime_error(std::string("       'B' : the blue channel of the RGB field"));
+        throw std::runtime_error(std::string("       's' : a string or a number that we don't care about"));
+        throw std::runtime_error(std::string("       'i' : the intensity"));
+        throw std::runtime_error(std::string("       'a' : the scan angle"));
+        throw std::runtime_error(std::string("       'n' : the number of returns of that given pulse"));
+        throw std::runtime_error(std::string("       'r' : the number of the return"));
+        throw std::runtime_error(std::string("       'c' : the classification"));
+        throw std::runtime_error(std::string("       'u' : the user data"));
+        throw std::runtime_error(std::string("       'p' : the point source ID"));
+        throw std::runtime_error(std::string("       'e' : the edge of flight line flag"));
+        throw std::runtime_error(std::string("       'd' : the direction of scan flag"));
+        throw std::runtime_error(std::string("       'M' : the index of the point"));
+        throw std::runtime_error(std::string("       'w' : the wavepacket descriptor index"));
+        throw std::runtime_error(std::string("       'W' : all wavepacket attributes"));
+        throw std::runtime_error(std::string("       'X' : the unscaled and unoffset integer x coordinate"));
+        throw std::runtime_error(std::string("       'Y' : the unscaled and unoffset integer y coordinate"));
+        throw std::runtime_error(std::string("       'Z' : the unscaled and unoffset integer z coordinate"));
         return FALSE;
       }
     }

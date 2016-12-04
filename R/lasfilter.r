@@ -29,51 +29,55 @@
 
 #' Return points with matching conditions
 #'
-#' Return points with matching conditions. \code{lasfilter} is an overloading
-#' function for \code{LAS} objects which replaces the function
-#' \code{\link[dplyr:filter]{filter}} from \code{\link[dplyr:dplyr]{dplyr}} package.
+#' Return points with matching conditions.
 #'
-#' @aliases lasfilter
-#' @param .data An object of class \code{LAS}
-#' @param \dots Logical predicates. Multiple conditions are combined with &.
-#' @return An object of class \code{LAS}
+#' @param .las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param \dots Logical predicates. Multiple conditions are combined with & or ,
+#' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
 #' # Select the first returns classified as ground
+#' firstground = lidar %>% lasfilter(Classification == 1 & ReturnNumber == 1)
+#'
+#' # Multiple arguments are equivalent to &
 #' firstground = lidar %>% lasfilter(Classification == 1, ReturnNumber == 1)
-#' @seealso
-#' \link[dplyr:filter]{filter}
-#' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:getFirst]{getFirst}
-#' \link[lidR:getFirstLast]{getFirstLast}
-#' \link[lidR:getFirstOfMany]{getFirstOfMany}
-#' \link[lidR:getSingle]{getSingle}
-#' \link[lidR:getLast]{getLast}
-#' \link[lidR:getGround]{getGround}
-#' \link[lidR:getNth]{getNth}
-#' @export lasfilter
-#' @importFrom dplyr filter
-#' @importFrom magrittr %>%
-setGeneric("lasfilter", function(.data, ...){standardGeneric("lasfilter")})
+#'
+#' # Multiple criteria
+#' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
+#' @export
+#' @family lasfilters
+lasfilter = function(.las, ...)
+{
+  stopifnotlas(.las)
+  lasfilter_(.las, lazyeval::dots_capture(...))
+}
 
-#' @rdname lasfilter
-setMethod("lasfilter", "LAS",
-	function(.data, ...)
-	{
-		newdata = .data@data %>% dplyr::filter(...)
+lasfilter_ <- function(.las, conditions)
+{
+  combined_bools = !logical(nrow(.las@data))
 
-		if(nrow(newdata) == 0)
-		{
-		  input_list <- as.list(substitute(list(...)))
-		  err = paste(input_list)[-1] %>% paste(collapse=", ")
-		  lidRError("GET1", expression = err, behaviour = warning)
+  for(condition in conditions)
+  {
+    bools <- lazyeval::f_eval(condition, .las@data)
 
-		  return(NULL)
-		}
+    if (!is.logical(bools))
+      stop("`conditions` must be logical.", call. = FALSE)
 
-		return(LAS(newdata, .data@header))
-	}
-)
+    bools[is.na(bools)] <- FALSE
+    combined_bools = combined_bools & bools
+  }
+
+  if(sum(combined_bools) == 0)
+  {
+		err = paste(conditions) %>% paste(collapse=" & ")
+		lidRError("GET1", expression = err, behaviour = warning)
+
+		return(NULL)
+  }
+
+  return(LAS(.las@data[combined_bools], .las@header))
+}
+
+

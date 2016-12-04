@@ -36,8 +36,8 @@
 #include "laswriter_wrl.hpp"
 #include "laswriter_txt.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #define DIRECTORY_SLASH '\\'
@@ -47,7 +47,7 @@
 
 BOOL LASwriteOpener::is_piped() const
 {
-  return ((file_name == 0) && use_stdoutput);
+  return ((file_name == 0) && use_stdout);
 }
 
 LASwriter* LASwriteOpener::open(const LASheader* header)
@@ -57,7 +57,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     LASwriterLAS* laswriterlas = new LASwriterLAS();
     if (!laswriterlas->open(header, (format == LAS_TOOLS_FORMAT_LAZ ? LASZIP_COMPRESSOR_CHUNKED : LASZIP_COMPRESSOR_NONE), 2, chunk_size))
     {
-      Rcpp::Rcerr << "ERROR: cannot open laswriterlas to NULL" << std::endl;
+      throw std::runtime_error(std::string("ERROR: cannot open laswriterlas to NULL"));
       delete laswriterlas;
       return 0;
     }
@@ -70,7 +70,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       LASwriterLAS* laswriterlas = new LASwriterLAS();
       if (!laswriterlas->open(file_name, header, (format == LAS_TOOLS_FORMAT_LAZ ? LASZIP_COMPRESSOR_CHUNKED : LASZIP_COMPRESSOR_NONE), 2, chunk_size, io_obuffer_size))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterlas with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterlas with file name '"));
         delete laswriterlas;
         return 0;
       }
@@ -83,7 +83,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       else if (optx) laswritertxt->set_ptx(TRUE);
       if (!laswritertxt->open(file_name, header, parse_string, separator))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswritertxt with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswritertxt with file name '"));
         delete laswritertxt;
         return 0;
       }
@@ -95,7 +95,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       LASwriterBIN* laswriterbin = new LASwriterBIN();
       if (!laswriterbin->open(file_name, header, "ts8"))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterbin with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterbin with file name '"));
         delete laswriterbin;
         return 0;
       }
@@ -106,7 +106,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       LASwriterQFIT* laswriterqfit = new LASwriterQFIT();
       if (!laswriterqfit->open(file_name, header, 40))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterqfit with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterqfit with file name '"));
         delete laswriterqfit;
         return 0;
       }
@@ -117,7 +117,7 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       LASwriterWRL* laswriterwrl = new LASwriterWRL();
       if (!laswriterwrl->open(file_name, header, parse_string))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterwrl with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterwrl with file name '"));
         delete laswriterwrl;
         return 0;
       }
@@ -125,18 +125,18 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: unknown format " << format << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: unknown format "));
       return 0;
     }
   }
-  /*else if (use_stdoutput) // JR : remove stdoutput
+  /*else if (use_stdout)
   {
     if (format <= LAS_TOOLS_FORMAT_LAZ)
     {
       LASwriterLAS* laswriterlas = new LASwriterLAS();
-      if (!laswriterlas->open(stdoutput, header, (format == LAS_TOOLS_FORMAT_LAZ ? LASZIP_COMPRESSOR_CHUNKED : LASZIP_COMPRESSOR_NONE), 2, chunk_size))
+      if (!laswriterlas->open(stdout, header, (format == LAS_TOOLS_FORMAT_LAZ ? LASZIP_COMPRESSOR_CHUNKED : LASZIP_COMPRESSOR_NONE), 2, chunk_size))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterlas to stdoutput" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterlas to stdout"));
         delete laswriterlas;
         return 0;
       }
@@ -147,9 +147,9 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
       LASwriterTXT* laswritertxt = new LASwriterTXT();
       if (opts) laswritertxt->set_pts(TRUE);
       else if (optx) laswritertxt->set_ptx(TRUE);
-      if (!laswritertxt->open(stdoutput, header, parse_string, separator))
+      if (!laswritertxt->open(stdout, header, parse_string, separator))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswritertxt to stdoutput" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswritertxt to stdout"));
         delete laswritertxt;
         return 0;
       }
@@ -159,9 +159,9 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     else if (format == LAS_TOOLS_FORMAT_BIN)
     {
       LASwriterBIN* laswriterbin = new LASwriterBIN();
-      if (!laswriterbin->open(stdoutput, header, "ts8"))
+      if (!laswriterbin->open(stdout, header, "ts8"))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterbin to stdoutput" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterbin to stdout"));
         delete laswriterbin;
         return 0;
       }
@@ -170,9 +170,9 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     else if (format == LAS_TOOLS_FORMAT_QFIT)
     {
       LASwriterQFIT* laswriterqfit = new LASwriterQFIT();
-      if (!laswriterqfit->open(stdoutput, header, 40))
+      if (!laswriterqfit->open(stdout, header, 40))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterbin to stdoutput" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterbin to stdout"));
         delete laswriterqfit;
         return 0;
       }
@@ -181,9 +181,9 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     else if (format == LAS_TOOLS_FORMAT_VRML)
     {
       LASwriterWRL* laswriterwrl = new LASwriterWRL();
-      if (!laswriterwrl->open(stdoutput, header, parse_string))
+      if (!laswriterwrl->open(stdout, header, parse_string))
       {
-        Rcpp::Rcerr << "ERROR: cannot open laswriterwrl with file name '" << file_name << "'" << std::endl;
+        throw std::runtime_error(std::string("ERROR: cannot open laswriterwrl with file name '"));
         delete laswriterwrl;
         return 0;
       }
@@ -191,13 +191,13 @@ LASwriter* LASwriteOpener::open(const LASheader* header)
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: unknown format " << format << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: unknown format "));
       return 0;
     }
   }*/
   else
   {
-    Rcpp::Rcerr << "ERROR: no laswriter output specified" << std::endl;
+    throw std::runtime_error(std::string("ERROR: no laswriter output specified"));
     return 0;
   }
 }
@@ -219,18 +219,18 @@ LASwaveform13writer* LASwriteOpener::open_waveform13(const LASheader* lasheader)
 
 void LASwriteOpener::usage() const
 {
-  Rcpp::Rcerr << "Supported LAS Outputs" << std::endl;
-  Rcpp::Rcerr << "  -o lidar.las" << std::endl;
-  Rcpp::Rcerr << "  -o lidar.laz" << std::endl;
-  Rcpp::Rcerr << "  -o xyzta.txt -oparse xyzta (on-the-fly to ASCII)" << std::endl;
-  Rcpp::Rcerr << "  -o terrasolid.bin" << std::endl;
-  Rcpp::Rcerr << "  -o nasa.qi" << std::endl;
-  Rcpp::Rcerr << "  -odir C:" << DIRECTORY_SLASH << "ata" << DIRECTORY_SLASH << "round (specify output directory)" << std::endl;
-  Rcpp::Rcerr << "  -odix _classified (specify file name appendix)" << std::endl;
-  Rcpp::Rcerr << "  -ocut 2 (cut the last two characters from name)" << std::endl;
-  Rcpp::Rcerr << "  -olas -olaz -otxt -obin -oqfit (specify format)" << std::endl;
-  Rcpp::Rcerr << "  -stdoutput (pipe to stdoutput)" << std::endl;
-  Rcpp::Rcerr << "  -nil    (pipe to NULL)" << std::endl;
+  throw std::runtime_error(std::string("Supported LAS Outputs"));
+  throw std::runtime_error(std::string("  -o lidar.las"));
+  throw std::runtime_error(std::string("  -o lidar.laz"));
+  throw std::runtime_error(std::string("  -o xyzta.txt -oparse xyzta (on-the-fly to ASCII)"));
+  throw std::runtime_error(std::string("  -o terrasolid.bin"));
+  throw std::runtime_error(std::string("  -o nasa.qi"));
+  throw std::runtime_error(std::string("  -odir C:"));
+  throw std::runtime_error(std::string("  -odix _classified (specify file name appendix)"));
+  throw std::runtime_error(std::string("  -ocut 2 (cut the last two characters from name)"));
+  throw std::runtime_error(std::string("  -olas -olaz -otxt -obin -oqfit (specify format)"));
+  throw std::runtime_error(std::string("  -stdout (pipe to stdout)"));
+  throw std::runtime_error(std::string("  -nil    (pipe to NULL)"));
 }
 
 BOOL LASwriteOpener::parse(int argc, char* argv[])
@@ -251,7 +251,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: file_name" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_file_name(argv[i+1]);
@@ -261,7 +261,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: directory" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_directory(argv[i+1]);
@@ -271,7 +271,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: appendix" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_appendix(argv[i+1]);
@@ -281,7 +281,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: number of characters to cut" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_cut(atoi(argv[i+1]));
@@ -328,23 +328,23 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
       format = LAS_TOOLS_FORMAT_VRML;
       *argv[i]='\0';
     }
-    else if (strcmp(argv[i],"-stdoutput") == 0)
+    else if (strcmp(argv[i],"-stdout") == 0)
     {
-      use_stdoutput = TRUE;
+      use_stdout = TRUE;
       use_nil = FALSE;
       *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-nil") == 0)
     {
       use_nil = TRUE;
-      use_stdoutput = FALSE;
+      use_stdout = FALSE;
       *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-chunk_size") == 0)
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: number_points" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_chunk_size(atoi(argv[i+1]));
@@ -354,7 +354,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: string" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_parse_string(argv[i+1]);
@@ -364,7 +364,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: separator" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_separator(argv[i+1]);
@@ -374,7 +374,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: scale" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_scale_rgb((F32)atof(argv[i+1]));
@@ -394,7 +394,7 @@ BOOL LASwriteOpener::parse(int argc, char* argv[])
     {
       if ((i+1) >= argc)
       {
-        Rcpp::Rcerr << "ERROR: '" << argv[i] << "' needs 1 argument: size" << std::endl;
+        throw std::runtime_error(std::string("ERROR: '"));
         return FALSE;
       }
       set_io_obuffer_size((I32)atoi(argv[i+1]));
@@ -416,10 +416,10 @@ void LASwriteOpener::set_directory(const CHAR* directory)
   {
     if (strstr(directory, ";") || strstr(directory, "\""))
     {
-      Rcpp::Rcerr << "WARNING: specified '-odir' seems to contain a substring '\\\"' such" << std::endl;
-      Rcpp::Rcerr << "         as -odir \"D:\\\" or -odir \"..\\tiles\\\". this command will" << std::endl;
-      Rcpp::Rcerr << "         probably fail. please use -odir \"D:\" or -odir \"..\\tiles\"" << std::endl;
-      Rcpp::Rcerr << "         instead." << std::endl;
+      throw std::runtime_error(std::string("WARNING: specified '-odir' seems to contain a substring '\\\"' such"));
+      throw std::runtime_error(std::string("         as -odir \"D:\\\" or -odir \"..\\tiles\\\". this command will"));
+      throw std::runtime_error(std::string("         probably fail. please use -odir \"D:\" or -odir \"..\\tiles\""));
+      throw std::runtime_error(std::string("         instead."));
     }
     this->directory = strdup(directory);
     int len = strlen(this->directory);
@@ -690,7 +690,7 @@ void LASwriteOpener::make_file_name(const CHAR* file_name, I32 file_number)
     }
     if (file_num)
     {
-      Rcpp::Rcerr << "WARNING: file name number " << file_number << " too big to store in '" << this->file_name << "'. use more digits." << std::endl;
+      throw std::runtime_error(std::string("WARNING: file name number "));
     }
   }
   else
@@ -790,9 +790,9 @@ void LASwriteOpener::make_file_name(const CHAR* file_name, I32 file_number)
       {
         this->file_name = strdup("temp.txt");
       }
-      Rcpp::Rcerr << "WARNING: generated output name '" << file_name << "'" << std::endl;
-      Rcpp::Rcerr << "         identical to input name. changed to '" << this->file_name << "'." << std::endl;
-      Rcpp::Rcerr << "         you can override this safety measure with '-oforce'." << std::endl;
+      throw std::runtime_error(std::string("WARNING: generated output name '"));
+      throw std::runtime_error(std::string("         identical to input name. changed to '"));
+      throw std::runtime_error(std::string("         you can override this safety measure with '-oforce'."));
     }
   }
 }
@@ -943,7 +943,7 @@ void LASwriteOpener::set_scale_rgb(F32 scale_rgb)
 
 BOOL LASwriteOpener::active() const
 {
-  return (file_name != 0 || use_stdoutput || use_nil);
+  return (file_name != 0 || use_stdout || use_nil);
 }
 
 void LASwriteOpener::add_directory(const CHAR* directory)
@@ -1027,7 +1027,7 @@ LASwriteOpener::LASwriteOpener()
   specified = FALSE;
   force = FALSE;
   chunk_size = LASZIP_CHUNK_SIZE_DEFAULT;
-  use_stdoutput = FALSE;
+  use_stdout = FALSE;
   use_nil = FALSE;
 }
 

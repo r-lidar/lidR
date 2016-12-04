@@ -33,8 +33,8 @@
 #include "bytestreamin.hpp"
 #include "bytestreamin_file.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -44,7 +44,7 @@ BOOL LASreaderQFIT::open(const char* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -53,7 +53,7 @@ BOOL LASreaderQFIT::open(const char* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
@@ -125,7 +125,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
 
   if (stream == 0)
   {
-    Rcpp::Rcerr << "ERROR: ByteStreamIn* pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: ByteStreamIn* pointer is zero"));
     return FALSE;
   }
 
@@ -135,7 +135,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
 
   try { stream->get32bitsLE((U8*)&version); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading QFIT header" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading QFIT header"));
     return FALSE;
   }
 
@@ -156,7 +156,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
     }
     else
     {
-      Rcpp::Rcerr << "ERROR: corrupt QFIT header." << std::endl;
+      throw std::runtime_error(std::string("ERROR: corrupt QFIT header."));
       return FALSE;
     }
   }
@@ -165,7 +165,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
 
   try { stream->getBytes((U8*)buffer, version); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading " << version << " bytes until point start offset from QFIT header" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading "));
     return FALSE;
   }
 
@@ -173,7 +173,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
 
   try { if (little_endian) stream->get32bitsLE((U8*)&offset); else stream->get32bitsBE((U8*)&offset); } catch(...)
   {
-    Rcpp::Rcerr << "ERROR: reading point start offset from QFIT header" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading point start offset from QFIT header"));
     return FALSE;
   }
 
@@ -212,7 +212,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
     header.add_attribute(scan_azimuth);
   }
   catch(...) {
-    Rcpp::Rcerr << "ERROR: initializing attribute scan_azimuth" << std::endl;
+    throw std::runtime_error(std::string("ERROR: initializing attribute scan_azimuth"));
     return FALSE;
   }
 
@@ -225,7 +225,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
     header.add_attribute(pitch);
   }
   catch(...) {
-    Rcpp::Rcerr << "ERROR: initializing attribute pitch" << std::endl;
+    throw std::runtime_error(std::string("ERROR: initializing attribute pitch"));
     return FALSE;
   }
 
@@ -238,7 +238,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
     header.add_attribute(roll);
   }
   catch(...) {
-    Rcpp::Rcerr << "ERROR: initializing attribute roll" << std::endl;
+    throw std::runtime_error(std::string("ERROR: initializing attribute roll"));
     return FALSE;
   }
 
@@ -249,7 +249,7 @@ BOOL LASreaderQFIT::open(ByteStreamIn* stream)
       header.add_attribute(pulse_width);
     }
     catch(...) {
-      Rcpp::Rcerr << "ERROR: initializing attribute pulse width" << std::endl;
+      throw std::runtime_error(std::string("ERROR: initializing attribute pulse width"));
       return FALSE;
     }
   }
@@ -314,7 +314,7 @@ BOOL LASreaderQFIT::read_point_default()
   {
     try { stream->getBytes((U8*)buffer, version); } catch(...)
     {
-      Rcpp::Rcerr << "ERROR: reading QFIT point after " << (U32)p_count << " of " << (U32)npoints << "" << std::endl;
+      throw std::runtime_error(std::string("ERROR: reading QFIT point after "));
       return FALSE;
     }
 
@@ -402,7 +402,7 @@ BOOL LASreaderQFIT::reopen(const char* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -411,7 +411,7 @@ BOOL LASreaderQFIT::reopen(const char* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 

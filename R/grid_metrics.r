@@ -52,7 +52,7 @@
 #' function without considering grid cells, only a cloud of points (see example).
 #'
 #' @aliases  grid_metrics
-#' @param obj An object of class \code{LAS}
+#' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of the cells
 #' @param func the function to be apply to each cells
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
@@ -89,38 +89,33 @@
 #' plot(metrics, "imean")
 #' #etc.
 #' @export grid_metrics
-#' @importFrom plyr round_any
-#' @importFrom data.table setnames setattr
-setGeneric("grid_metrics", function(obj, res, func, start=c(0,0), option = NULL){standardGeneric("grid_metrics")})
+grid_metrics = function(.las, res, func, start = c(0,0), option = NULL)
+{
+  stopifnotlas(.las)
 
-#' @rdname grid_metrics
-setMethod("grid_metrics", "LAS",
-	function(obj, res, func, start = c(0,0), option = NULL)
-	{
-	  func_call = substitute(func)
+  func_call = substitute(func)
 
-	  obj@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+  .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
-		x_raster = plyr::round_any(obj@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-		y_raster = plyr::round_any(obj@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
-		flightlineID = obj@data$flightlineID
+  x_raster = round_any(.las@data$X-0.5*res-start[1], res)+0.5*res+start[1]
+  y_raster = round_any(.las@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
+  flightlineID = .las@data$flightlineID
 
- 		if(is.null(option))
- 			by = list(Xc = x_raster,Yc = y_raster)
- 		else if(option == "split_flightline")
- 			by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
- 		else
-			lidRError("LDR7", option = option)
+  if(is.null(option))
+    by = list(Xc = x_raster,Yc = y_raster)
+  else if(option == "split_flightline")
+    by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
+  else
+    lidRError("LDR7", option = option)
 
-		stat <- obj@data[, c(eval(func_call)), 	by=by]
+  stat <- .las@data[, c(eval(func_call)), 	by=by]
 
-		n = names(stat)
-		n[1:2] = c("X", "Y")
+  n = names(stat)
+  n[1:2] = c("X", "Y")
 
-		data.table::setnames(stat, n)
-		data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
-		data.table::setattr(stat, "res", res)
+  data.table::setnames(stat, n)
+  data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
+  data.table::setattr(stat, "res", res)
 
-		return(stat)
-	}
-)
+  return(stat)
+}

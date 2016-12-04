@@ -36,7 +36,6 @@
 #include "bytestreamout.hpp"
 
 #include <stdio.h>
-#include <Rcpp.h>
 
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 extern "C" int _cdecl _fseeki64(FILE*, __int64, int);
@@ -131,7 +130,8 @@ inline BOOL ByteStreamOutFile::putBytes(const U8* bytes, U32 num_bytes)
 
 inline BOOL ByteStreamOutFile::isSeekable() const
 {
-  return (file != Rcpp::Rcout);
+  return(true);
+  //return (file != stdout);
 }
 
 inline I64 ByteStreamOutFile::tell() const

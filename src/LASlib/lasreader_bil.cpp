@@ -30,8 +30,8 @@
 */
 #include "lasreader_bil.hpp"
 
-
-#include <Rcpp.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -41,7 +41,7 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -53,7 +53,7 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
 
   if (!read_hdr_file(file_name))
   {
-    Rcpp::Rcerr << "ERROR: reading the *.hdr file for '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: reading the *.hdr file for '"));
     return FALSE;
   }
 
@@ -61,7 +61,7 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
 
   if (!read_blw_file(file_name))
   {
-    Rcpp::Rcerr << "WARNING: reading the *.blw file for '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: reading the *.blw file for '"));
   }
 
   // check that we have all the needed info
@@ -69,25 +69,25 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
   if (xdim <= 0)
   {
     xdim = 1;
-    Rcpp::Rcerr << "WARNING: xdim was not set. setting to " << xdim << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: xdim was not set. setting to "));
   }
 
   if (ydim <= 0)
   {
     ydim = 1;
-    Rcpp::Rcerr << "WARNING: ydim was not set. setting to " << ydim << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: ydim was not set. setting to "));
   }
 
   if (ulxcenter == F64_MAX)
   {
     ulxcenter = 0.5*xdim;
-    Rcpp::Rcerr << "WARNING: ulxcenter was not set. setting to " << ulxcenter << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: ulxcenter was not set. setting to "));
   }
 
   if (ulycenter == F64_MAX)
   {
     ulycenter = (-0.5+nrows)*ydim;
-    Rcpp::Rcerr << "WARNING: ulycenter was not set. setting to " << ulycenter << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: ulycenter was not set. setting to "));
   }
 
   // open the BIL file
@@ -95,13 +95,13 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot open file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot open file '"));
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 2*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 2*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: setvbuf() failed with buffer size "));
   }
 
   // populate the header as much as it makes sense
@@ -271,7 +271,7 @@ BOOL LASreaderBIL::open(const CHAR* file_name)
   }
   else
   {
-    Rcpp::Rcerr << "WARNING: BIL raster contains only no data values" << std::endl;
+    throw std::runtime_error(std::string("WARNING: BIL raster contains only no data values"));
     header.min_z = 0;
     header.max_z = 0;
   }
@@ -285,7 +285,7 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -298,7 +298,7 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
 
   if ((len == 0) && (file_name_hdr[len] != '.'))
   {
-    Rcpp::Rcerr << "ERROR: file name '" << file_name << "' is not a valid BIL file" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name '"));
     return FALSE;
   }
 
@@ -320,7 +320,7 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
     if (file == 0)
     {
       file_name_hdr[len] = '\0';
-      Rcpp::Rcerr << "ERROR: cannot open files '" << file_name_hdr << ".hdr' or '" << file_name_hdr << ".HDR'" << std::endl;
+      throw std::runtime_error(std::string("ERROR: cannot open files '"));
       return FALSE;
     }
   }
@@ -373,12 +373,12 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
       {
         if (strcmp(layout, "bil") && strcmp(layout, "BIL"))
         {
-          Rcpp::Rcerr << "WARNING: " << dummy << " '" << layout << "' not recognized by LASreader_bil" << std::endl;
+          throw std::runtime_error(std::string("WARNING: "));
         }
       }
       else
       {
-        Rcpp::Rcerr << "WARNING: argument of " << dummy << " missing for LASreader_bil" << std::endl;
+        throw std::runtime_error(std::string("WARNING: argument of "));
       }
     }
     else if (strstr(line, "pixeltype") || strstr(line, "PIXELTYPE"))
@@ -387,7 +387,7 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
       sscanf(line, "%s %s", dummy, pixeltype);
       if (strcmp(pixeltype, "float") && strcmp(pixeltype, "FLOAT"))
       {
-        Rcpp::Rcerr << "WARNING: pixeltype '" << pixeltype << "' not recognized by LASreader_bil" << std::endl;
+        throw std::runtime_error(std::string("WARNING: pixeltype '"));
       }
       else
       {
@@ -404,7 +404,7 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
       sscanf(line, "%s %s", dummy, byteorder);
       if (strcmp(byteorder, "i") && strcmp(byteorder, "I"))
       {
-        Rcpp::Rcerr << "WARNING: byteorder '" << byteorder << "' not recognized by LASreader_bil" << std::endl;
+        throw std::runtime_error(std::string("WARNING: byteorder '"));
       }
     }
     else if (strstr(line, "ulxmap") || strstr(line, "ULXMAP"))
@@ -439,11 +439,11 @@ BOOL LASreaderBIL::read_hdr_file(const CHAR* file_name)
 
   if ((ncols <= 0) || (nrows <= 0) || (nbands <= 0) || (nbits <= 0))
   {
-    Rcpp::Rcerr << "WARNING: not able to find all entries in HDR file" << std::endl;
-    Rcpp::Rcerr << "       ncols  = " << ncols << "" << std::endl;
-    Rcpp::Rcerr << "       nrows  = " << nrows << "" << std::endl;
-    Rcpp::Rcerr << "       nbands = " << nbands << "" << std::endl;
-    Rcpp::Rcerr << "       nbits  = " << nbits << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: not able to find all entries in HDR file"));
+    throw std::runtime_error(std::string("       ncols  = "));
+    throw std::runtime_error(std::string("       nrows  = "));
+    throw std::runtime_error(std::string("       nbands = "));
+    throw std::runtime_error(std::string("       nbits  = "));
     return FALSE;
   }
 
@@ -454,7 +454,7 @@ BOOL LASreaderBIL::read_blw_file(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
@@ -467,7 +467,7 @@ BOOL LASreaderBIL::read_blw_file(const CHAR* file_name)
 
   if ((len == 0) && (file_name_bwl[len] != '.'))
   {
-    Rcpp::Rcerr << "ERROR: file name '" << file_name << "' is not a valid BIL file" << std::endl;
+    throw std::runtime_error(std::string("ERROR: file name '"));
     return FALSE;
   }
 
@@ -488,7 +488,7 @@ BOOL LASreaderBIL::read_blw_file(const CHAR* file_name)
     if (file == 0)
     {
       file_name_bwl[len] = '\0';
-      Rcpp::Rcerr << "WARNING: cannot open files '" << file_name_bwl << ".blw' or '" << file_name_bwl << ".BLW'" << std::endl;
+      throw std::runtime_error(std::string("WARNING: cannot open files '"));
       free(file_name_bwl);
       return FALSE;
     }
@@ -500,36 +500,36 @@ BOOL LASreaderBIL::read_blw_file(const CHAR* file_name)
 
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   sscanf(line, "%f", &xdim);
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   sscanf(line, "%f", &ydim);
   ydim = -1*ydim;
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   sscanf(line, "%lf", &ulxcenter);
   if (!fgets(line, 256, file))
   {
-    Rcpp::Rcerr << "WARNING: corrupt world file" << std::endl;
+    throw std::runtime_error(std::string("WARNING: corrupt world file"));
     return FALSE;
   }
   sscanf(line, "%lf", &ulycenter);
@@ -595,9 +595,9 @@ BOOL LASreaderBIL::read_point_default()
         if (fread((void*)&elevation, 4, 1, file) != 1)
         {
 #ifdef _WIN32
-          Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+          throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #else
-          Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+          throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #endif
           npoints = p_count;
           return FALSE;
@@ -609,9 +609,9 @@ BOOL LASreaderBIL::read_point_default()
         if (fread((void*)&elev, 4, 1, file) != 1)
         {
 #ifdef _WIN32
-          Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+          throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #else
-          Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+          throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #endif
           npoints = p_count;
           return FALSE;
@@ -625,9 +625,9 @@ BOOL LASreaderBIL::read_point_default()
       if (fread((void*)&elev, 2, 1, file) != 1)
       {
 #ifdef _WIN32
-        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+        throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #else
-        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+        throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #endif
         npoints = p_count;
         return FALSE;
@@ -640,9 +640,9 @@ BOOL LASreaderBIL::read_point_default()
       if (fread((void*)rgb, 1, nbands, file) != (U32)nbands)
       {
 #ifdef _WIN32
-        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+        throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #else
-        Rcpp::Rcerr << "WARNING: end-of-file after " << row << " of " << nrows << " rows and " << col << " of " << ncols << " cols. read " << p_count << " points" << std::endl;
+        throw std::runtime_error(std::string("WARNING: end-of-file after "));
 #endif
         npoints = p_count;
         return FALSE;
@@ -685,20 +685,20 @@ BOOL LASreaderBIL::reopen(const CHAR* file_name)
 {
   if (file_name == 0)
   {
-    Rcpp::Rcerr << "ERROR: fine name pointer is zero" << std::endl;
+    throw std::runtime_error(std::string("ERROR: fine name pointer is zero"));
     return FALSE;
   }
 
   file = fopen(file_name, "rb");
   if (file == 0)
   {
-    Rcpp::Rcerr << "ERROR: cannot reopen file '" << file_name << "'" << std::endl;
+    throw std::runtime_error(std::string("ERROR: cannot reopen file '"));
     return FALSE;
   }
 
   if (setvbuf(file, NULL, _IOFBF, 2*LAS_TOOLS_IO_IBUFFER_SIZE) != 0)
   {
-    Rcpp::Rcerr << "WARNING: setvbuf() failed with buffer size " << 2*LAS_TOOLS_IO_IBUFFER_SIZE << "" << std::endl;
+    throw std::runtime_error(std::string("WARNING: setvbuf() failed with buffer size "));
   }
 
   col = 0;
@@ -817,8 +817,8 @@ void LASreaderBIL::populate_bounding_box()
 
   if ((header.min_x > 0) != (dequant_min_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_x from " << header.min_x << " to " << dequant_min_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_x from "));
+    throw std::runtime_error(std::string("         set scale factor for x coarser than "));
   }
   else
   {
@@ -826,8 +826,8 @@ void LASreaderBIL::populate_bounding_box()
   }
   if ((header.max_x > 0) != (dequant_max_x > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_x from " << header.max_x << " to " << dequant_max_x << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for x coarser than " << header.x_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_x from "));
+    throw std::runtime_error(std::string("         set scale factor for x coarser than "));
   }
   else
   {
@@ -835,8 +835,8 @@ void LASreaderBIL::populate_bounding_box()
   }
   if ((header.min_y > 0) != (dequant_min_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_y from " << header.min_y << " to " << dequant_min_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_y from "));
+    throw std::runtime_error(std::string("         set scale factor for y coarser than "));
   }
   else
   {
@@ -844,8 +844,8 @@ void LASreaderBIL::populate_bounding_box()
   }
   if ((header.max_y > 0) != (dequant_max_y > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_y from " << header.max_y << " to " << dequant_max_y << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for y coarser than " << header.y_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_y from "));
+    throw std::runtime_error(std::string("         set scale factor for y coarser than "));
   }
   else
   {
@@ -853,8 +853,8 @@ void LASreaderBIL::populate_bounding_box()
   }
   if ((header.min_z > 0) != (dequant_min_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for min_z from " << header.min_z << " to " << dequant_min_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for min_z from "));
+    throw std::runtime_error(std::string("         set scale factor for z coarser than "));
   }
   else
   {
@@ -862,8 +862,8 @@ void LASreaderBIL::populate_bounding_box()
   }
   if ((header.max_z > 0) != (dequant_max_z > 0))
   {
-    Rcpp::Rcerr << "WARNING: quantization sign flip for max_z from " << header.max_z << " to " << dequant_max_z << "." << std::endl;
-    Rcpp::Rcerr << "         set scale factor for z coarser than " << header.z_scale_factor << " with '-rescale'" << std::endl;
+    throw std::runtime_error(std::string("WARNING: quantization sign flip for max_z from "));
+    throw std::runtime_error(std::string("         set scale factor for z coarser than "));
   }
   else
   {
