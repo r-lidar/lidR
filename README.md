@@ -17,23 +17,22 @@ Please contact the author for bug reports or feature requests (on github, prefer
 
 # Features (not exhaustive)
 
-- [Read write .las and .laz files](http://jean-romain.github.io/lidR/loadLidar.html)
-- [Retrieve indiviual pulses](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
-- [Retrieve individual flightlines](http://jean-romain.github.io/lidR/loadLidar.html#dynamically-computed-fields)
-- [Compute any set of metrics on a cloud of points](http://jean-romain.github.io/lidR/gridmetrics.html#cloudmetrics)
-- [Rasterize and to compute a set of metrics using an area based approach](http://jean-romain.github.io/lidR/gridmetrics.html)
-- [Classify and clip data from geographic shapefiles](http://jean-romain.github.io/lidR/classify_from_shapefile.html)
-- [Thin a cloud of points to reach a homogeneous pulse density](http://jean-romain.github.io/lidR/thin.html)
-- [Filter a cloud of points based on any condition test](http://jean-romain.github.io/lidR/lasfilter.html)
-- [Clip data based on discs, rectangles or polygons](http://jean-romain.github.io/lidR/clip.html)
-- [Manage a catalog of `.las` tiles](http://jean-romain.github.io/lidR/catalog.html)
-- [Automatically extract a set of ground plot inventories (even plots falling between two or more tiles)](http://jean-romain.github.io/lidR/catalog.html#extract-a-ground-inventory)
-- [Analyse a full set of tiles in parallel computing](http://jean-romain.github.io/lidR/catalog.html#process-all-the-file-of-a-catalog)
-- Compute a digital terrain model (DTM).
-- Normalize a point cloud substracting a DTM (computed or read from a file).
-- [Compute a digital canopy model](http://jean-romain.github.io/lidR/canopy.html)
-- [Plot 3D LiDAR data](http://jean-romain.github.io/lidR/plotLidar.html)
-- [plot metrics in 2D and 3D](http://jean-romain.github.io/lidR/gridmetrics.html)
+- [Read write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki/readLAS)
+- [Retrieve indiviual pulses](https://github.com/Jean-Romain/lidR/wiki/readLAS#dynamically-computed-fields)
+- [Retrieve individual flightlines](https://github.com/Jean-Romain/lidR/wiki/readLAS#dynamically-computed-fields)
+- [Compute any set of metrics on a cloud of points](https://github.com/Jean-Romain/lidR/wiki/grid_metrics#cloudmetrics)
+- [Rasterize and to compute a set of metrics using an area based approach](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
+- [Classify and clip data from geographic shapefiles](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
+- [Thin a cloud of points to reach a homogeneous pulse density](https://github.com/Jean-Romain/lidR/wiki/lasdecimate)
+- [Filter a cloud of points based on any condition test](https://github.com/Jean-Romain/lidR/wiki/lasfilter)
+- [Clip data based on discs, rectangles or polygons](https://github.com/Jean-Romain/lidR/wiki/lasclip)
+- [Manage a catalog of `.las` tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
+- [Automatically extract a set of ground plot inventories (even plots falling between two or more tiles)](https://github.com/Jean-Romain/lidR/wiki/catalog#extract-a-ground-inventory)
+- [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog#process-all-the-file-of-a-catalog)
+- [Compute a digital terrain model (DTM).](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
+- [Normalize a point cloud substracting a DTM (computed or read from a file).](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
+- [Compute a digital canopy model](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
+- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki/lasplot)
 
 # Install lidR from github
 
