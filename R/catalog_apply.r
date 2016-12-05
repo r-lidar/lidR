@@ -29,11 +29,12 @@
 
 #' Apply a function to a set of tiles using several cores.
 #'
-#' The function has different behaviours on MS Windows and Unix platforms, so please read
-#' the documentation carefully, particularly the "Detail", "Unix" and "Windows" sections. This function provide an 
+#' The function behaves differently on the MS Windows and Unix platforms, so please read
+#' the documentation carefully, particularly the "Details", "Unix" and "Windows" sections. This function provides an
 #' immediately usable parallel computing tool, but users comfortable with multi-core processes should use their own code #' for greater flexibility.
-#' When users have a set of LAS data organized into several tiles, it can apply a user function to each tile.
-#' The "Examples" section describes the procedure to apply to each file, beginning with data loading (see example).
+#' When a user has a LAS dataset organized into several tiles, it applies a user function to each tile.
+#' The "Examples" section describes the procedure to apply functions to each file, beginning with data loading (see
+#' example).
 #' The function automatically detects your operating system and applies the best parallelization method for your system.
 #' Unix mechanism is more powerful. However it is not compatible with Windows (see "Unix" and "Windows" sections).
 #' The Windows mechanism is more complex to use.\cr\cr
@@ -45,25 +46,25 @@
 #' (see \link[parallel:mclapply]{mclapply}). This means that each child process
 #' has access to the parent process memory. For example, you can call functions from .GlobalEnv
 #' or any other environment. If code written for Unix is run on Windows it will work,
-#' but with only one core like a normal loop. If Unix users want to share their code
-#' with Windows users, they are better to force the function to use the clustering method.
+#' but with only one core, like a normal loop. If Unix users want to share their code
+#' with Windows users, it would be better to force the function to use the clustering method.
 #'
 #' @section Windows:
 #'
 #' On the Windows platform (MS Windows), parallelization relies on the cluster technique
 #' (see \link[parallel:parLapplyLB]{parLapplyLB}). This works for both Unix and Windows
-#' but it is much more memory intensive and also not very user-friendly, as the user must
+#' but it is much more memory-intensive and also not very user-friendly, as the user must
 #' manually export any required objects. This means that each child process cannot access the parent process memory.
 #' If you want to use only a single core, the function uses the \code{unix}
 #' mode which works like a regular loop (non-parallel computing).
 #'
 #' @section Edge artifacts:
 #'
-#' It is very important to take precautions to avoid "edge artifacts" when processing LiDAR tiles.
-#' If the points from neighboring tiles are not included during certain processes, this could create edge artifacts
+#' It is very important to take precautions to avoid 'edge artifacts' when processing LiDAR tiles.
+#' If the points from neighboring tiles are not included during certain processes, this could create 'edge artifacts'
 #' at the edges of the tiles. For example, empty or incomplete pixels in a rasterization process. The lidR package
 #' does not provide internal tools to deal with buffers as it is designed for experimental purposes rather than as a
-#' professional product. Users could, for example, filter the invalid/corrupted data at the edge of the tiles from the 
+#' professional product. Users could, for example, filter the invalid/corrupted data at the edge of the tiles from the
 #' output.
 #'
 #' @aliases catalog_apply
@@ -114,8 +115,8 @@
 #' output = project %>% catalog_apply(analyse_tile)
 #'
 #' #### WINDOWS #####
-#' # This code works both on Unix and Windows platforms. But it is more memory intensive
-#' # and more complex (here the example is simple enough so it does not change many things)
+#' # This code works on both Unix and Windows platforms. But it is more memory-intensive
+#' # and more complex on Windows (here the example is simple enough so it does not change many things)
 #'
 #' # 4. Process the project. By default it detects how many cores you have. But you can add
 #' # an optional parameter mc.core = 3.
