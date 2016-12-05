@@ -62,11 +62,11 @@ laspulse = function(.las)
 #' Retrieve individual flightlines
 #'
 #' Retrieve each individual flightline by attributing a number to each point. The
-#' function depends on the GPS time to retrieve each indivudual flighline. In a
+#' function depends on the GPS time to retrieve each indivudual flightline. In a
 #' continuous dataset, once points are ordered by GPS time, the time between two
 #' consecutive points does not exceed a few milliseconds. If the time between two consecutive
-#' points is too long it means that the second point is from a different flightine. The default
-#' thresohold is 30 seconds. A column flightlineID is added in the slot @data
+#' points is too long it means that the second point is from a different flightline. The default
+#' threshold is 30 seconds. A column flightlineID is added in the slot @data
 #'
 #' @param .las A LAS object
 #' @param dt numeric. The threshold time lag used to retrieve flightlines
