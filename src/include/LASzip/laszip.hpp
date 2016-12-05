@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  laszip.hpp
-  
+
   CONTENTS:
-  
+
     Contains LASitem and LASchunk structs as well as the IDs of the currently
     supported entropy coding scheme
 
@@ -22,30 +22,32 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     25 February 2016 -- depreciating old libLAS laszipper/lasunzipper binding
-    29 July 2013 -- reorganized to create an easy-to-use LASzip DLL 
+    29 July 2013 -- reorganized to create an easy-to-use LASzip DLL
     5 December 2011 -- learns the chunk table if it is missing (e.g. truncated LAZ)
     6 October 2011 -- large file support, ability to read with missing chunk table
-    23 June 2011 -- turned on LASzip version 2.0 compressor with chunking 
+    23 June 2011 -- turned on LASzip version 2.0 compressor with chunking
     8 May 2011 -- added an option for variable chunking via chunk()
     23 April 2011 -- changed interface for simplicity and chunking support
     20 March 2011 -- incrementing LASZIP_VERSION to 1.2 for improved compression
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- refactored from lasdefinitions after movies with silke
-  
+
 ===============================================================================
 */
 #ifndef LASZIP_HPP
 #define LASZIP_HPP
 
+#include <stdint.h>
+
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 #define LZ_WIN32_VC6
 typedef __int64   SIGNED_INT64;
 #else
-typedef long long SIGNED_INT64;
+typedef int64_t SIGNED_INT64;
 #endif
 
 #if defined(_MSC_VER) && \
@@ -123,7 +125,7 @@ public:
   unsigned char version_minor;
   unsigned short version_revision;
   unsigned int options;
-  unsigned int chunk_size; 
+  unsigned int chunk_size;
   SIGNED_INT64 number_of_special_evlrs; /* must be -1 if unused */
   SIGNED_INT64 offset_to_special_evlrs; /* must be -1 if unused */
   unsigned short num_items;
