@@ -76,7 +76,7 @@
 #' @param varlist charaters vector. For Windows mode, character vector of names of objects to export.
 #' @examples
 #' \dontrun{
-#' # Visit http://jean-romain.github.io/lidR/catalog.html for more examples
+#' # Visit http://jean-romain.github.io/lidR/wiki for more examples
 #' # about this function
 #'
 #' # 1. build a project
@@ -155,7 +155,6 @@ catalog_apply = function(x, func, platform=.Platform$OS.type, mc.cores = paralle
   }
 
   out = do.call(combine, out)
-u
   gc()
 
   tf = Sys.time()
