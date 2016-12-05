@@ -47,8 +47,8 @@
 #' @param UserData logical. do you want to load the UserData field? default: FALSE
 #' @param PointSourceID logical. do you want to load the PointSourceID field? default: FALSE
 #' @param RGB logical. do you want to load R,G and B fields? default: TRUE
-#' @param pulseID logical. do you want to compute the extra field pulseID? default: TRUE
-#' @param flightlineID logical. do you want to compute the extra field flightlineID? default: TRUE
+#' @param pulseID logical. do you want to compute the extra field \link[lidR:laspulse]{pulseID}? default: TRUE
+#' @param flightlineID logical. do you want to compute the extra field \link[lidR:lasflightline]{flightlineID}? default: TRUE
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
 #'
@@ -136,6 +136,8 @@ readLAS = function(files,
 
   if(flightlineID)
     lasflightline(las, 30)
+
+  gc()
 
   return(las)
 }
