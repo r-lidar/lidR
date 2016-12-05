@@ -155,7 +155,7 @@ catalog_apply = function(x, func, platform=.Platform$OS.type, mc.cores = paralle
   }
 
   out = do.call(combine, out)
-
+u
   gc()
 
   tf = Sys.time()
