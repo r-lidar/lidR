@@ -53,17 +53,24 @@ summary.LAS =	function(object, ...)
   else
     npulse = NA
 
+  s   = lasarea(object)
+  npt = nrow(object@data)
+  npu = object@data$pulseID %>% data.table::uniqueN()
+  dpt = npt/s
+  dpu = npu/s
+  fie = names(object@data)
+
   cat(paste("Memory :", size, "\n", sep=" "))
 
   cat("\n")
 
-  cat("area :", object@area, "square units\n")
-  cat("points :", dim(object@data)[1], "points\n")
-  cat("pulses :", npulse , "pulses\n")
-  cat("point density :", round(object@pointDensity,2), "points/square units\n")
-  cat("pulse density :", round(object@pulseDensity,2), "pulses/square units\n\n")
+  cat("area:", s, "m^2\n")
+  cat("points:", npt, "points\n")
+  cat("pulses:", npu , "pulses\n")
+  cat("point density:", round(dpt, 2), "points/m^2\n")
+  cat("pulse density:", round(dpu, 2), "pulses/m^2\n\n")
 
-  summary(object@data)
+  cat("Fields:", fie, "\n\n")
 }
 
 #' @rdname summary.LAS
