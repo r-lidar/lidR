@@ -75,7 +75,7 @@ lidRError = function(code, ..., behaviour = stop)
 "GET1" = list("No point found with the condition: ", p$expression),
 
 # Thin
-"THI1" = list("No 'pulseID' field found.  Function 'thin' cannot be run.")
+"THI1" = list("No 'pulseID' field found.  Function 'lasdecimate' cannot be run.")
   )
 
   msg = do.call(paste, list(msg, sep=""))
