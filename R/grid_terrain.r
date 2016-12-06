@@ -85,7 +85,7 @@ grid_terrain = function(.las, res = 1, method = "knn_idw", k = 3L, linear = T)
   grid[, Z := round(Zg, 3)]
 
   # force grounds point to be dominant
-  grid = rbind(grid, grid_metrics(lasfilterground(.las), res, list(Z = min(Z)), start=c(0.5*res,0.5*res)))
+  grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res, start=c(0.5*res,0.5*res)))
   grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 
   mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
