@@ -2,23 +2,23 @@
 % Please edit documentation in R/lasroi.r
 \name{lasroi}
 \alias{lasroi}
-\title{Select an region of interest interactively}
+\title{Select a region of interest interactively}
 \usage{
 lasroi(.las, ...)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{\dots}{Optionnal parameters for the plot function}
+\item{\dots}{Optional parameters for the plot function}
 }
 \value{
 An object of class \code{LAS}
 }
 \description{
-Select an region of interest contained into a rectangle using interactively the mouse
+Select a rectangular region of interest interactively using the mouse
 }
 \details{
-\code{lasroi} enable the user to select a region of interest (ROI) drawing
+\code{lasroi} enables the user to select a region of interest (ROI) by drawing
 a rectangle with the mouse
 }
 \examples{

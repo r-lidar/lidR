@@ -20,10 +20,10 @@ A data.frame containing the bin elevations (z) and leaf area density for each bi
 Computes a leaf area density profile based on the method of Bouvier et al. (see reference)
 }
 \details{
-The function assessing the number of laser points that actually reached the layer
+The function assesses the number of laser points that actually reached the layer
 z+dz and those that passed through the layer [z, z+dz] (see \link[lidR:gap_fraction_profile]{gap_fraction_profile}).
 Then it computes the log of this quantity and divides it by the extinction coefficient k as described in Bouvier
-et al. By definition the layer 0 will always return the infinity because no returns pass through
+et al. By definition the layer 0 will always return infinity because no returns pass through
 the ground. Therefore, the layer 0 is removed from the returned results.
 }
 \examples{

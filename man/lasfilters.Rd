@@ -36,7 +36,7 @@ lasfilterfirstofmany(.las)
 An object of class \code{\link[lidR:LAS-class]{LAS}}
 }
 \description{
-Select only the some returns
+Select only some returns
 }
 \details{
 \itemize{

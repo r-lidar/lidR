@@ -15,8 +15,8 @@ LAS(data, header = list())
 An object of class \code{LAS}
 }
 \description{
-When a \code{LAS} object is created sevral things are computed on the fly in addition
-to the data inputed in the constructor. See \link[lidR:LAS-class]{LAS-class}.
+When a \code{LAS} object is created several things are computed on the fly in addition
+to the data inputted in the constructor. See \link[lidR:LAS-class]{LAS-class}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

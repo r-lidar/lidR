@@ -11,7 +11,8 @@ lasdecimate(.las, density, homogenize = TRUE, resolution = 5)
 
 \item{density}{numeric. The expected density}
 
-\item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density on the whole area.}
+\item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform
+dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.}
 
 \item{resolution}{numeric. Cell size to compute the pulse density.}
 }
@@ -25,11 +26,11 @@ Thin LIDAR data randomly removes a given proportion of pulses to reach specific 
 lasdecimate is designed to produce output data sets that have uniform pulse densities
 throughout the coverage area. For each cell, the proportion of pulses that will
 be retained is computed using the calculated pulse density and the desired pulse
-density. If required pulse density is greater than the local pulse density it returns
-an unchanged set of points (it cannot increase the pulse density). In the way
-of \code{homogenize = FALSE} it randomly removes pulses to reach the required pulse
-density on the whole area (see \code{\link[lidR:lasarea]{lasarea}}). The cell size must be large enough
-to compute a coherant local pulse density. 25 square meters looks good. 1 square
+density. If the required pulse density is greater than the local pulse density it returns
+an unchanged set of points (it cannot increase the pulse density). If \code{homogenize = FALSE} is selected, it
+randomly removes pulses to reach the required pulse density over the whole area
+(see \code{\link[lidR:lasarea]{lasarea}}). The cell size must be large enough
+to compute a coherent local pulse density; 25 square meters looks good, but 1 square
 meter is meaningless.
 }
 \examples{

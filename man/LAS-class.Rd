@@ -6,7 +6,7 @@
 \title{An S4 class to represent the data read in a .las or .laz file}
 \description{
 A LAS object contains the data and the header read in a .las file and
-additional values computed on the fly during the loading.
+additional values computed on the fly during loading.
 }
 \details{
 A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with
@@ -24,40 +24,26 @@ data loading. The fields read from the las file are named:
 \item{\code{UserData}}
 \item{\code{PointSourceID}}
 }
-When a \code{LAS} object is built, two other variables are computed in the
+3 other fields can be computed is desired:
 slot \code{@data}:
 \itemize{
-\item{\code{pulseID}: }{a unique identifying number for each pulse so the
-beam origin of each point is known}
+\item{\code{pulseID}: a unique identifying number for each pulse so the
+beam origin of each point is known (see \link[lidR:laspulse]{laspulse})}
 
-\item{\code{flightlineID}: }{a unique identifying number for the flightline
-so the flightline origin of each point is known}
+\item{\code{flightlineID}: a unique identifying number for the flightline
+so the flightline origin of each point is known (see \link[lidR:lasflightline]{lasflightline})}
+
+\item{\code{color}: the hexadecimal name of the color of the point if R, G and B
+fields exist (see \link[lidR:lascolor]{lascolor})}
 }
-
-A \code{LAS} object contains other information in slots \code{@area},
-\code{@pointDensity} and \code{@pulseDensity}:
-\itemize{
-\item{\code{area}: }{is computed with a convex hull. It is only an
-approximation if the shape of the data is not convex.}
-
-\item{\code{points} and \code{pulse density}: }{are computed using the
-computed area. Also an approximation if the data are not convex}
-}
-
 A \code{LAS} object also contains a slot \code{@header} which contains the
 header of the \code{.las} file. See the public documentation of LAS
-specifications of file format for more informations.
+specifications of file format for more information.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{data}}{data.table. a table representing the LAS data}
-
-\item{\code{area}}{numeric. The area of the dataset computed with a convex hull}
-
-\item{\code{pointDensity}}{numeric. The point density of the dataset}
-
-\item{\code{pulseDensity}}{numeric. The pulse density of the dataset}
 
 \item{\code{header}}{list. A list of information contained in the las file header.}
 }}

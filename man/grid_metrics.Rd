@@ -9,7 +9,7 @@ grid_metrics(.las, func, res = 20, start = c(0, 0), option = NULL)
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{func}{the function to be apply to each cells}
+\item{func}{the function to be applied to each cell}
 
 \item{res}{numeric. The size of the cells. Default 20.}
 
@@ -26,7 +26,7 @@ of a grid.
 }
 \details{
 Computes a series of descriptive statistics defined by the user. Output is a
-data.frame in which each line is a raster (single grid cell), each column is a metric.
+data.frame in which each line is a raster (single grid cell), and each column is a metric.
 grid_metrics is similar to cloud_metrics except it computes metrics within each cell
 in the output grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
@@ -41,7 +41,7 @@ The following existing function can help the user to compute some metrics:
 \item{\link[lidR:LAD]{LAD}}
 \item{\link[lidR:fractal_dimension]{fractal_dimension}}
 } Basically there are no predifined metrics. Users must write their own functions to create metrics.
-grid_metrics will dispach the LiDAR data for each cell in the user's function. The user writes their
+grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user writes their
 function without considering grid cells, only a cloud of points (see example).
 }
 \examples{

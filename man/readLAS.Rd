@@ -8,7 +8,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
   EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = TRUE, XYZonly = FALSE, all = FALSE)
+  flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE)
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
@@ -33,9 +33,11 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 
 \item{RGB}{logical. do you want to load R,G and B fields? default: TRUE}
 
-\item{pulseID}{logical. do you want to compute the extra field pulseID? default: TRUE}
+\item{pulseID}{logical. do you want to compute the extra field \link[lidR:laspulse]{pulseID}? default: TRUE}
 
-\item{flightlineID}{logical. do you want to compute the extra field flightlineID? default: TRUE}
+\item{flightlineID}{logical. do you want to compute the extra field \link[lidR:lasflightline]{flightlineID}? default: FALSE}
+
+\item{color}{logical. do you want to compute the extra field \link[lidR:lascolor]{color}? default: FALSE}
 
 \item{XYZonly}{logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE}
 
