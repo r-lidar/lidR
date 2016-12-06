@@ -44,7 +44,8 @@
 #' }
 #' \item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
 #' Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
-#' is used internally to normalize the lidar dataset and is exported because some users may find it useful.}
+#' is used internally to normalize the lidar dataset and is exported because some users may find it useful
+#'  (for example to colorize the point cloud using a georeferenced RGB image.}
 #' }
 #'
 #' @param .las An object of the class \code{LAS}
