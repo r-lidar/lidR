@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  laswriter_txt.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,17 +21,18 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "laswriter_txt.hpp"
 
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 BOOL LASwriterTXT::refile(FILE* file)
 {
@@ -167,11 +168,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
     }
     if (header->version_minor >= 4)
     {
-#ifdef _WIN32
+/*#ifdef _WIN32
       fprintf(file, "%I64d       \012", header->extended_number_of_point_records);
-#else
-      fprintf(file, "%lld       \012", header->extended_number_of_point_records);
-#endif
+#else*/
+      fprintf(file, "%ld       \012", header->extended_number_of_point_records);
+//#endif
     }
     else
     {
@@ -222,11 +223,11 @@ BOOL LASwriterTXT::open(FILE* file, const LASheader* header, const CHAR* parse_s
       throw std::runtime_error(std::string("         outputting PTS instead ..."));
       if (header->version_minor >= 4)
       {
-#ifdef _WIN32
+/*#ifdef _WIN32
         fprintf(file, "%I64d       \012", header->extended_number_of_point_records);
-#else
-        fprintf(file, "%lld       \012", header->extended_number_of_point_records);
-#endif
+#else*/
+        fprintf(file, "%ld       \012", header->extended_number_of_point_records);
+//#endif
       }
       else
       {
@@ -503,18 +504,18 @@ BOOL LASwriterTXT::write_point(const LASpoint* point)
         fprintf(file, "%d", point->get_rgb()[2]);
       break;
     case 'm': // the index of the point (count starts at 0)
-#ifdef _WIN32
+/*#ifdef _WIN32
       fprintf(file, "%I64d", p_count-1);
-#else
-      fprintf(file, "%lld", p_count-1);
-#endif
+#else*/
+      fprintf(file, "%ld", p_count-1);
+//#endif
       break;
     case 'M': // the index of the point (count starts at 1)
-#ifdef _WIN32
+/*#ifdef _WIN32
       fprintf(file, "%I64d", p_count);
-#else
-      fprintf(file, "%lld", p_count);
-#endif
+#else*/
+      fprintf(file, "%ld", p_count);
+//#endif
       break;
     case 'w': // the wavepacket descriptor index
       fprintf(file, "%d", point->wavepacket.getIndex());

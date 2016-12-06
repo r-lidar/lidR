@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  lasreader_txt.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasreader_txt.hpp"
@@ -92,7 +92,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     {
       I32 type = (attributes_data_types[i]-1)%10;
       I32 dim = (attributes_data_types[i]-1)/10 + 1;
-      try { 
+      try {
         LASattribute attribute(type, attribute_names[i], attribute_descriptions[i], dim);
         if (attribute_scales[i] != 1.0 || attribute_offsets[i] != 0.0)
         {
@@ -195,7 +195,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
   point.init(&header, header.point_data_format, header.point_data_record_length, &header);
 
   // we do not know yet how many points to expect
-  
+
   npoints = 0;
 
   // should we perform an extra pass to fully populate the header
@@ -214,7 +214,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
       parse_less = strdup(parse_string);
       for (i = 0; i < (int)strlen(parse_string); i++)
       {
-        if (parse_less[i] != 'x' && parse_less[i] != 'y' && parse_less[i] != 'z' && parse_less[i] != 'r' && (parse_less[i] < '0' || parse_less[i] > '0')) 
+        if (parse_less[i] != 'x' && parse_less[i] != 'y' && parse_less[i] != 'z' && parse_less[i] != 'r' && (parse_less[i] < '0' || parse_less[i] > '0'))
         {
           parse_less[i] = 's';
         }
@@ -255,7 +255,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
       throw std::runtime_error(std::string("ERROR: could not parse any lines with '"));
       fclose(file);
       file = 0;
-      free(parse_less);    
+      free(parse_less);
       return FALSE;
     }
 
@@ -331,9 +331,9 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     free(parse_less);
 
     // close the input file
-    
+
     fclose(file);
-    
+
     // populate scale and offset
 
     populate_scale_and_offset();
@@ -381,11 +381,11 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
   {
     if (fgets(line, 512, file))
     {
-#ifdef _WIN32
+/*#ifdef _WIN32
       sscanf(line, "%I64d", &npoints);
-#else
-      sscanf(line, "%lld", &npoints);
-#endif
+#else*/
+      sscanf(line, "%ld", &npoints);
+//#endif
       if (npoints > U32_MAX)
       {
         header.version_minor = 4;
@@ -630,7 +630,7 @@ BOOL LASreaderTXT::open(FILE* file, const char* file_name, const char* parse_str
     this->parse_string = 0;
     return FALSE;
   }
-  
+
   if (!populated_header)
   {
     // init the bounding box that we will incrementally compute
@@ -1371,10 +1371,10 @@ BOOL LASreaderTXT::parse(const char* parse_string)
       if (l[0] == 0) return FALSE;
       hex_string[0] = l[0]; hex_string[1] = l[1];
       sscanf(hex_string,"%x",&hex_value);
-      point.rgb[0] = hex_value; 
+      point.rgb[0] = hex_value;
       hex_string[0] = l[2]; hex_string[1] = l[3];
       sscanf(hex_string,"%x",&hex_value);
-      point.rgb[1] = hex_value; 
+      point.rgb[1] = hex_value;
       hex_string[0] = l[4]; hex_string[1] = l[5];
       sscanf(hex_string,"%x",&hex_value);
       point.rgb[2] = hex_value;

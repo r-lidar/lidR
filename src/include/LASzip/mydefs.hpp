@@ -57,13 +57,13 @@ typedef unsigned int       U32;
 typedef unsigned short     U16;
 typedef unsigned char      U8;
 
-#if defined(_WIN32) && ! defined (__MINGW32__) // 64 byte integer under Windows
+/*#if defined(_WIN32) && ! defined (__MINGW32__) // 64 byte integer under Windows
 typedef unsigned __int64   U64;
 typedef __int64            I64;
-#else                                          // 64 byte integer elsewhere ...
+#else                                          // 64 byte integer elsewhere ...*/
 typedef uint64_t           U64;
 typedef int64_t            I64;
-#endif
+//#endif
 
 typedef float              F32;
 typedef double             F64;

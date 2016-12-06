@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  lasutility.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasutility.hpp"
@@ -748,17 +748,17 @@ void LASbin::report(FILE* file, const CHAR* name, const CHAR* name_avg) const
   }
   if (count)
   {
-#ifdef _WIN32
+/*#ifdef _WIN32
     if (name)
       fprintf(file, "  average %s %g for %I64d element(s)\012", name, total/count, count);
     else
       fprintf(file, "  average %g for %I64d element(s)\012", total/count, count);
-#else
+#else*/
     if (name)
-      fprintf(file, "  average %s %g for %lld element(s)\012", name, total/count, count);
+      fprintf(file, "  average %s %g for %ld element(s)\012", name, total/count, count);
     else
-      fprintf(file, "  average %g for %lld element(s)\012", total/count, count);
-#endif
+      fprintf(file, "  average %g for %ld element(s)\012", total/count, count);
+//#endif
   }
 }
 
@@ -881,7 +881,7 @@ BOOL LAShistogram::parse(int argc, char* argv[])
         return FALSE;
       }
       if (!histo(argv[i+1], (F32)atof(argv[i+2]))) return FALSE;
-      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
+      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
     else if (strcmp(argv[i],"-histo_avg") == 0)
     {
@@ -891,7 +891,7 @@ BOOL LAShistogram::parse(int argc, char* argv[])
         return FALSE;
       }
       if (!histo_avg(argv[i+1], (F32)atof(argv[i+2]), argv[i+3])) return FALSE;
-      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
+      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
     }
   }
   return TRUE;
@@ -1457,7 +1457,7 @@ BOOL LASoccupancyGrid::write_asc_grid(const CHAR* file_name) const
   fprintf(file, "nrows %d\012", max_y-min_y+1);
   fprintf(file, "xllcorner %f\012", grid_spacing*min_x);
   fprintf(file, "yllcorner %f\012", grid_spacing*min_y);
-  fprintf(file, "cellsize %lf\012", grid_spacing);
+  fprintf(file, "cellsize %f\012", grid_spacing);
   fprintf(file, "NODATA_value %d\012", 0);
   fprintf(file, "\012");
   I32 pos_x, pos_y;
@@ -1486,7 +1486,7 @@ LASoccupancyGrid::LASoccupancyGrid(F32 grid_spacing)
   this->grid_spacing = -grid_spacing;
   minus_ankers = 0;
   minus_minus_size = 0;
-  minus_minus = 0; 
+  minus_minus = 0;
   minus_minus_sizes = 0;
   minus_plus_size = 0;
   minus_plus = 0;
