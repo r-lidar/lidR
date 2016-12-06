@@ -1,7 +1,8 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-sudo: required & dist: trusty
+sudo: required
+dist: trusty
 cache: packages
 apt_packages:
   - libnetcdf-dev
