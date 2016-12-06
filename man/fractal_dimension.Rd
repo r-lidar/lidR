@@ -17,7 +17,7 @@ Computes the fractal dimension of a surface. The fractal dimension is a measure
 of roughness.
 }
 \details{
-Fractal dimension compute the roughness based on the box counting method (see Taud and Parrot).
+Fractal dimension computes the roughness based on the box counting method (see Taud and Parrot).
 If the input has an NA value, it returns NA. If the input is too small it returns NA.
 If the input matrix is not a square matrix, the function cuts the input matrix to create a square matrix.
 }

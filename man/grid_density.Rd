@@ -4,19 +4,19 @@
 \alias{grid_density}
 \title{Pulse density surface model}
 \usage{
-grid_density(obj, res = 4)
+grid_density(.las, res = 4)
 }
 \arguments{
-\item{obj}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.}
 }
 \value{
-It returns a \code{data.table} with the class \code{grid_metrics} which which enables easier plotting.
+It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting.
 }
 \description{
 Creates a pulse density map using a LiDAR cloud of points. This function is an alias
-for \code{grid_metrics(obj, res, length(unique(pulseID))/res^2)}.
+for \code{grid_metrics(obj, length(unique(pulseID))/res^2), res}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

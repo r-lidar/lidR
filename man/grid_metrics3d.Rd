@@ -14,7 +14,7 @@ grid_metrics3d(.las, func, res = 1)
 \item{res}{numeric. The size of the cells}
 }
 \value{
-It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling to easier plotting.
+It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling easier plotting.
 }
 \description{
 Voxelize the cloud of points and compute a series of descriptive statistics for
@@ -22,22 +22,22 @@ each voxel.
 }
 \details{
 Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
-from the cloud of point if there is at least one point in the voxel. For each voxel
+from the cloud of points if there is at least one point in the voxel. For each voxel
 the function allows computation of one or several derived metrics in the same way as
 the grid_metrics functions.
-Basically there are no predifined metrics. Users must write their own function to create metrics.
-Voxelize will dispach the LiDAR data for each voxel in the user's function. The user writes their
+Basically there are no predefined metrics. Users must write their own function to create metrics.
+Voxelize will dispatch the LiDAR data for each voxel in the user's function. The user writes their
 function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-# Cloud of points is voxelized with a 1 meter resolution and in each voxel
+# Cloud of points is voxelized with a 1-meter resolution and in each voxel
 # the number of points is computed.
 grid_metrics3d(lidar, length(Z))
 
-# Cloud of points is voxelized with a 1 meter resolution and in each voxel
+# Cloud of points is voxelized with a 1-meter resolution and in each voxel
 # the mean scan angle of points is computed.
 grid_metrics3d(lidar, mean(ScanAngle))
 
