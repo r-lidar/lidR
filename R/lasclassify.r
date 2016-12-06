@@ -80,11 +80,15 @@ lasclassify = function(.las, source, field = NULL)
   stopifnotlas(.las)
 
   if(is(source, "SpatialPolygonsDataFrame"))
-    classify_from_shapefile(.las, source, field)
+    values = classify_from_shapefile(.las, source, field)
   else if(is(source, "RasterLayer"))
-    classify_from_rasterlayer(.las, source, field)
+    values = classify_from_rasterlayer(.las, source, field)
   else
     stop("No method for this source format.", call. = F)
+
+  .las@data[,(field) := values][]
+
+  return(invisible())
 }
 
 classify_from_shapefile = function(.las, shapefile, field = NULL)
@@ -186,16 +190,10 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   }
   else
   {
-    warning("No polygon found within the data", call. = F)
+    message("No polygon found within the data", call. = F)
   }
 
-  .las@data[,info:=values][]
-
-  colnames = names(.las@data)
-  colnames[length(colnames)] = field
-  data.table::setnames(.las@data, colnames)
-
-  return(invisible(NULL))
+  return(values)
 }
 
 classify_from_rasterlayer = function(.las, raster, field = NULL)
@@ -206,10 +204,6 @@ classify_from_rasterlayer = function(.las, raster, field = NULL)
 
   values = raster::extract(raster, .las@data[, .(X,Y)])
 
-  .las@data[, info := values][]
-
-  colnames = names(.las@data)
-  colnames[length(colnames)] = field
-  data.table::setnames(.las@data, colnames)
+  return(values)
 }
 
