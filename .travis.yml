@@ -1,20 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-sudo: requiered
+sudo: false
 cache: packages
-apt_packages:
-  - libnetcdf-dev
-  - udunits-bin
-  - libudunits2-dev
-  - netcdf-bin
-  - libproj-dev
-  - libcurl4-gnutls-dev
-  - libdap-dev
-  - libgdal-dev
-  - libgdal1h
-  - libhdf5-7
-  - libhdf5-dev
-  - libhdf5-serial-dev
-  - libgdal-dev
-  - libgdal1-dev
+r_binary_packages:
+  - rgdal
