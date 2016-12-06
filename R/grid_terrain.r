@@ -80,7 +80,7 @@ grid_terrain = function(.las, res = 1, method = "knn_idw", k = 3L, linear = T)
   else if(method == "akima")
     Zg = lasterrain(.las, grid, "akima", linear = linear)
   else
-    stop("This method does not exist.")
+    stop(paste("Method", method,  "does not exist."), call. = F)
 
   grid[, Z := round(Zg, 3)]
 
