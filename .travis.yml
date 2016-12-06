@@ -1,5 +1,10 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
 sudo: false
 cache: packages
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
