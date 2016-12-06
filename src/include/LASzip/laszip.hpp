@@ -43,12 +43,12 @@
 
 #include <stdint.h>
 
-#if defined(_MSC_VER) && (_MSC_VER < 1300)
-#define LZ_WIN32_VC6
-typedef __int64   SIGNED_INT64;
-#else
+//#if defined(_MSC_VER) && (_MSC_VER < 1300)
+//#define LZ_WIN32_VC6
+//typedef __int64   SIGNED_INT64;
+//#else
 typedef int64_t SIGNED_INT64;
-#endif
+//#endif
 
 #if defined(_MSC_VER) && \
     (_MSC_FULL_VER >= 150000000)
