@@ -48,7 +48,8 @@
 #' @param PointSourceID logical. do you want to load the PointSourceID field? default: FALSE
 #' @param RGB logical. do you want to load R,G and B fields? default: TRUE
 #' @param pulseID logical. do you want to compute the extra field \link[lidR:laspulse]{pulseID}? default: TRUE
-#' @param flightlineID logical. do you want to compute the extra field \link[lidR:lasflightline]{flightlineID}? default: TRUE
+#' @param flightlineID logical. do you want to compute the extra field \link[lidR:lasflightline]{flightlineID}? default: FALSE
+#' @param color logical. do you want to compute the extra field \link[lidR:lascolor]{color}? default: FALSE
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
 #'
@@ -72,7 +73,8 @@ readLAS = function(files,
                    PointSourceID = FALSE,
                    RGB = TRUE,
                    pulseID = TRUE,
-                   flightlineID = TRUE,
+                   flightlineID = FALSE,
+                   color = FALSE,
                    XYZonly = FALSE,
                    all = FALSE)
 {
@@ -124,18 +126,21 @@ readLAS = function(files,
 
   data = data.table::rbindlist(data)
 
-  if(dim(data)[1] == 0 & dim(data)[2] == 0)
-    return(invisible(NULL))
+  if(nrow(data) == 0 || ncol(data) == 0)
+    return(invisible())
 
   header = readLASheader(files[1])
 
   las = LAS(data, header)
 
   if(pulseID)
-    las@pulseDensity = laspulse(las)
+    laspulse(las)
 
   if(flightlineID)
     lasflightline(las, 30)
+
+  if(color)
+    lascolor(las)
 
   gc()
 

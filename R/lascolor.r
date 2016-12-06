@@ -40,7 +40,7 @@
 #' @export
 lascolor = function(.las, nbits = 16)
 {
-  color<- NULL
+  color <-R <- G <- B <- NULL
   maxcol = 2^nbits-1
 
   stopifnotlas(.las)

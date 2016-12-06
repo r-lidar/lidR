@@ -47,34 +47,23 @@
 #' \item{\code{UserData}}
 #' \item{\code{PointSourceID}}
 #' }
-#' When a \code{LAS} object is built, two other variables are computed in the
+#' 3 other fields can be computed is desired:
 #' slot \code{@data}:
 #' \itemize{
-#' \item{\code{pulseID}: }{a unique identifying number for each pulse so the
-#' beam origin of each point is known}
+#' \item{\code{pulseID}: a unique identifying number for each pulse so the
+#' beam origin of each point is known (see \link[lidR:laspulse]{laspulse})}
 #'
-#' \item{\code{flightlineID}: }{a unique identifying number for the flightline
-#' so the flightline origin of each point is known}
+#' \item{\code{flightlineID}: a unique identifying number for the flightline
+#' so the flightline origin of each point is known (see \link[lidR:lasflightline]{lasflightline})}
+#'
+#' \item{\code{color}: the hexadecimal name of the color of the point if R, G and B
+#' fields exist (see \link[lidR:lascolor]{lascolor})}
 #' }
-#'
-#' A \code{LAS} object contains other information in slots \code{@area},
-#' \code{@pointDensity} and \code{@pulseDensity}:
-#' \itemize{
-#' \item{\code{area}: }{is computed with a convex hull. It is only an
-#' approximation if the shape of the data is not convex.}
-#'
-#' \item{\code{points} and \code{pulse density}: }{are computed using the
-#' computed area. Also an approximation if the data are not convex}
-#' }
-#'
 #' A \code{LAS} object also contains a slot \code{@header} which contains the
 #' header of the \code{.las} file. See the public documentation of LAS
 #' specifications of file format for more information.
 #'
 #' @slot data data.table. a table representing the LAS data
-#' @slot area numeric. The area of the dataset computed with a convex hull
-#' @slot pointDensity numeric. The point density of the dataset
-#' @slot pulseDensity numeric. The pulse density of the dataset
 #' @slot header list. A list of information contained in the las file header.
 #' @seealso
 #' \link[lidR:LAS]{LAS}
@@ -88,11 +77,8 @@
 setClass(
 	Class = "LAS",
 	representation(
-		data 					= "data.table",
-		area 					= "numeric",
-		pointDensity 	= "numeric",
-		pulseDensity 	= "numeric",
-		header        = "list"
+		data 	 = "data.table",
+		header = "list"
 	)
 )
 
@@ -100,6 +86,9 @@ setMethod("initialize", "LAS",
 	function(.Object, data, header = list())
 	{
 	  gpstime <- R <- G <- B <- X <- Y <- NULL
+
+	  if(is.data.frame(data))
+	    data.table::setDT(data)
 
 	  if(!is.data.table(data))
 	    lidRError("LDR1")
@@ -109,32 +98,7 @@ setMethod("initialize", "LAS",
 
 	  # Check if the data are valid. Else: warning -------------------------------
 
-	  negvalues = sum(data$Z < 0)
-	  if(negvalues > 0)
-	    lidRError("LDR2", number = negvalues, behaviour = warning)
-
-	  if("Classification" %in% names(data))
-	  {
-	    class0 = sum(data$Classification == 0)
-	    if(class0 > 0)
-	      lidRError("LDR3", number = class0, behaviour = warning)
-	  }
-
-	  # Compute extra data -------------------------------------------------------
-
-	  fields <- names(data)
-	  area   <- data %$% area(X, Y)
-	  dpoint <- data %>% nrow %>% divide_by(area)
-	  dpulse <- NA_real_
-
-  	if ("pulseID" %in% fields)
-  	   dpulse <- data$pulseID %>% data.table::uniqueN() %>% divide_by(area)
-
-	  if(sum(c("R", "G", "B") %in% names(data)) == 3)
-	  {
-	    if(is.null(data$color))
-  	    data$color <- data %$% grDevices::rgb(R/65535, G/65535, B/65535)
-	  }
+	  lascheck(data)
 
 	  # Update header ------------------------------------------------------------
 
@@ -149,9 +113,6 @@ setMethod("initialize", "LAS",
 
 	  .Object@data         <- data
 	  .Object@header       <- header
-	  .Object@area         <- area
-	  .Object@pointDensity <- dpoint
-	  .Object@pulseDensity <- dpulse
 
 	  return(.Object)
 	}

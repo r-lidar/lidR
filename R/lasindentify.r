@@ -50,12 +50,11 @@ laspulse = function(.las)
   {
     data.table::setorder(.las@data, gpstime)
     .las@data[, pulseID := .lagisdiff(gpstime)][]
-    dpulse <- .las@data$pulseID %>% data.table::uniqueN() %>% divide_by(.las@area)
   }
   else
     lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
 
-  return(invisible(dpulse))
+  return(invisible())
 }
 
 
