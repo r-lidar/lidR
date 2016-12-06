@@ -30,7 +30,7 @@
 #' Pulse density surface model
 #'
 #' Creates a pulse density map using a LiDAR cloud of points. This function is an alias
-#' for \code{grid_metrics(obj, res, length(unique(pulseID))/res^2)}.
+#' for \code{grid_metrics(obj, length(unique(pulseID))/res^2), res}.
 #'
 #' @aliases grid_density
 #' @param .las An object of class \code{LAS}
