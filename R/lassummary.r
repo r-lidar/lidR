@@ -49,13 +49,12 @@ summary.LAS =	function(object, ...)
   size <- format(utils::object.size(object), units = "auto")
 
   if("pulseID" %in% names(object@data))
-    npulse = data.table::uniqueN(object@data$pulseID)
+    npu = data.table::uniqueN(object@data$pulseID)
   else
-    npulse = NA
+    npu = NA
 
   s   = lasarea(object)
   npt = nrow(object@data)
-  npu = object@data$pulseID %>% data.table::uniqueN()
   dpt = npt/s
   dpu = npu/s
   fie = names(object@data)
