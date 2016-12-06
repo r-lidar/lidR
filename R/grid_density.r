@@ -33,7 +33,7 @@
 #' for \code{grid_metrics(obj, res, length(unique(pulseID))/res^2)}.
 #'
 #' @aliases grid_density
-#' @param obj An object of class \code{LAS}
+#' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
 #' @return It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting.
 #' @examples
@@ -46,18 +46,18 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export grid_density
-grid_density = function(obj, res = 4)
+grid_density = function(.las, res = 4)
 {
   pulseID <- density <- X <- NULL
 
-  if(! "pulseID" %in% names(obj@data))
+  if(! "pulseID" %in% names(.las@data))
   {
-    warning("No column named pulseID found. The pulse density cannot be computed. Computes the point density instead of the pulse density.", call. = F)
-    ret = grid_metrics(obj, res, list(density = length(X)/res^2))
+    warning("No column named pulseID found. The pulse density cannot be computed. Compute the point density instead of the pulse density.", call. = F)
+    ret = grid_metrics(.las, list(density = length(X)/res^2), res)
   }
   else
   {
-    ret = grid_metrics(obj, list(density = length(unique(pulseID))/res^2), res)
+    ret = grid_metrics(.las, list(density = length(unique(pulseID))/res^2), res)
   }
 
   return(ret)
