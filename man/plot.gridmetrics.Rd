@@ -4,7 +4,7 @@
 \alias{plot.gridmetrics}
 \title{Plot an object of class grid_metrics in 2D}
 \usage{
-\method{plot}{gridmetrics}(x, z = NULL, colorPalette = height.colors, ...)
+\method{plot}{gridmetrics}(x, z = NULL, colorPalette = height.colors)
 }
 \arguments{
 \item{x}{A data.frame or data.table of class grid_metrics.}
@@ -12,14 +12,9 @@
 \item{z}{character. The field to plot. If NULL, autodetect.}
 
 \item{colorPalette}{function. A color palette function. Default is \code{height.colors} provided by the package lidR}
-
-\item{\dots}{Supplementary parameters for \link[fields:image.plot]{image.plot}}
 }
 \description{
-This functions implements a \link[graphics:plot]{plot} method for a grid_metrics data.frame
-}
-\details{
-The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
+This functions implements a plot method for a gridmetrics data.frame
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

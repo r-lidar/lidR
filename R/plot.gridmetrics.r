@@ -29,14 +29,11 @@
 
 #' Plot an object of class grid_metrics in 2D
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for a grid_metrics data.frame
-#'
-#' The \dots param provides additional arguments to \link[fields:image.plot]{image.plot}.
+#' This functions implements a plot method for a gridmetrics data.frame
 #'
 #' @param x A data.frame or data.table of class grid_metrics.
 #' @param z character. The field to plot. If NULL, autodetect.
 #' @param colorPalette function. A color palette function. Default is \code{height.colors} provided by the package lidR
-#' @param \dots Supplementary parameters for \link[fields:image.plot]{image.plot}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -76,7 +73,7 @@
 #' @export
 #' @rdname plot.gridmetrics
 #' @method plot gridmetrics
-plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
+plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors)
 {
   inargs = list(...)
 
