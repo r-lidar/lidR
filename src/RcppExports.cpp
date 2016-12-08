@@ -5,6 +5,33 @@
 
 using namespace Rcpp;
 
+// itc_treetops
+IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize);
+RcppExport SEXP lidR_itc_treetops(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
+    Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(itc_treetops(Canopy, searchWinSize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// itc_expandcrowns
+IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, double TRESHSeed, double TRESHCrown, double DIST);
+RcppExport SEXP lidR_itc_expandcrowns(SEXP CanopySEXP, SEXP MaximaSEXP, SEXP TRESHSeedSEXP, SEXP TRESHCrownSEXP, SEXP DISTSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type Maxima(MaximaSEXP);
+    Rcpp::traits::input_parameter< double >::type TRESHSeed(TRESHSeedSEXP);
+    Rcpp::traits::input_parameter< double >::type TRESHCrown(TRESHCrownSEXP);
+    Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
+    rcpp_result_gen = Rcpp::wrap(itc_expandcrowns(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST));
+    return rcpp_result_gen;
+END_RCPP
+}
 // point_in_polygon
 bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
 RcppExport SEXP lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
