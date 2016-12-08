@@ -60,8 +60,7 @@
 #' fields exist (see \link[lidR:lascolor]{lascolor})}
 #' }
 #' A \code{LAS} object also contains a slot \code{@header} which contains the
-#' header of the \code{.las} file. See the public documentation of LAS
-#' specifications of file format for more information.
+#' header of the \code{.las} file. See the ASPRS documentation for the LAS file format for more information.
 #'
 #' @slot data data.table. a table representing the LAS data
 #' @slot header list. A list of information contained in the las file header.
