@@ -4,8 +4,7 @@ Title: Airborne LiDAR Data Manipulation and Visualization for Forestry Applicati
 Version: 1.0.0
 Date: 2016-12-4
 Authors@R: c(
-    person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")),
-    person("Pierrick", "Marie", email = "", role = c("ctb")),
+    person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb")))
 Description: Airborne LiDAR interface for data manipulation and visualization. Read/write 
     las/laz files, rasterization, computation of metrics, point filtering, artificial point 
