@@ -26,10 +26,10 @@
 # ===============================================================================
 
 
-#' Extract LiDAR data from based on a set of coordinates
+#' Extract LiDAR data based on a set of coordinates
 #'
-#' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
-#' (a ground inventory for example), they can automatically extract the lidar data associated
+#' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI),
+#' a ground inventory for example, they can automatically extract the lidar data associated
 #' with the ROIs from a Catalog. The algorithm will do this even for ROIs falling on the edges of one or
 #' more tiles.\cr
 #' It works only for tiles that are arranged in gridlines.
@@ -50,14 +50,14 @@
 #' @examples
 #' \dontrun{
 #' # Build a Catalog
-#' catalog = catalog("<Path to a folder containing a set of las or laz files>")
+#' catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 #'
 #' # Get coordinates from an external file
 #' X = runif(30, 690000, 800000)
 #' Y = runif(30, 5010000, 5020000)
 #' R = 25
 #'
-#' # Return a List of 30 circular LAS objects of 25 m radius (50 m diameter)
+#' # Return a List of 30 circular LAS objects of 25 m radius
 #' catalog %>% catalog_queries(X, Y, R)
 #'
 #' # Return a List of 30 square LAS objects of 50x50 m
@@ -75,7 +75,7 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   # Make an index of the file in which are each query
   lasindex = obj %>% catalog_index(x, y, r, r2,roinames)
 
-  # Group the index of idendical queries with the aim to reduce number ofqueries
+  # Group the index of identical queries with the aim of reducing the number of queries
   lasindex = lasindex[, .(roinames = list(roinames),
                           X = list(x), Y = list(y),
                           r = list(r), r2 = list(r2),

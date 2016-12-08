@@ -29,11 +29,10 @@
 
 #' Compute the area covered by of a set a points.
 #'
-#' The area is computed with a convex hull. It is only an approximation if the
-#' shape of the data is not convex.
+#' The area is computed by appling a convex hull. If the data are not convex, the resulting area is only an approximation.
 #'
 #' @param .las An object of the class \code{LAS} or a numeric array of x coordinates
-#' @return numeric. The area of the object computed with a convex hull in coordinates units
+#' @return numeric. The area of the object computed in the same units as the coordinate reference system
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
