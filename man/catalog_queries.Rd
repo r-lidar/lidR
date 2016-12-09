@@ -2,7 +2,7 @@
 % Please edit documentation in R/catalog_query.r
 \name{catalog_queries}
 \alias{catalog_queries}
-\title{Extract LiDAR data from based on a set of coordinates}
+\title{Extract LiDAR data based on a set of coordinates}
 \usage{
 catalog_queries(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1,
   ...)
@@ -30,8 +30,8 @@ is provided, the selection turns into a rectangular ROI. If r = r2 it is a squar
 A list of LAS objects
 }
 \description{
-When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
-(a ground inventory for example), they can automatically extract the lidar data associated
+When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI),
+a ground inventory for example, they can automatically extract the lidar data associated
 with the ROIs from a Catalog. The algorithm will do this even for ROIs falling on the edges of one or
 more tiles.\cr
 It works only for tiles that are arranged in gridlines.
@@ -39,14 +39,14 @@ It works only for tiles that are arranged in gridlines.
 \examples{
 \dontrun{
 # Build a Catalog
-catalog = catalog("<Path to a folder containing a set of las or laz files>")
+catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 
 # Get coordinates from an external file
 X = runif(30, 690000, 800000)
 Y = runif(30, 5010000, 5020000)
 R = 25
 
-# Return a List of 30 circular LAS objects of 25 m radius (50 m diameter)
+# Return a List of 30 circular LAS objects of 25 m radius
 catalog \%>\% catalog_queries(X, Y, R)
 
 # Return a List of 30 square LAS objects of 50x50 m

@@ -15,7 +15,7 @@ catalog(folder, ...)
 A data.frame with the class Catalog
 }
 \description{
-Methods to creates a \code{Catalog} object from a folder name
+Methods to create a \code{Catalog} object from a folder name
 }
 \details{
 A catalog is the representation of a set of las files. A computer cannot load all
