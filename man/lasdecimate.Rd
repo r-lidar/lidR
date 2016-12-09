@@ -23,15 +23,15 @@ It returns a \code{LAS} object.
 Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 }
 \details{
-lasdecimate is designed to produce output data sets that have uniform pulse densities
+lasdecimate is designed to produce output datasets that have uniform pulse densities
 throughout the coverage area. For each cell, the proportion of pulses that will
-be retained is computed using the calculated pulse density and the desired pulse
-density. If the required pulse density is greater than the local pulse density it returns
+be retained is computed using the actual pulse density and the desired pulse
+density. If the required pulse density is greater than the actual pulse density it returns
 an unchanged set of points (it cannot increase the pulse density). If \code{homogenize = FALSE} is selected, it
 randomly removes pulses to reach the required pulse density over the whole area
 (see \code{\link[lidR:lasarea]{lasarea}}). The cell size must be large enough
-to compute a coherent local pulse density; 25 square meters looks good, but 1 square
-meter is meaningless.
+to compute a coherent local pulse density i.e., in a standard airborne LidAR flight, 25 square meters would be
+feasible; however, an extent too small to thin (e.g. <1 square meter) would not be feasible.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

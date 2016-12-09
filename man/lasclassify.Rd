@@ -18,8 +18,8 @@ the name of the new column in the LAS object (see details)}
 Nothing. The new field is added by reference to the original data.
 }
 \description{
-Classify LAS points based on geographic data from external sources. It attributes
-to each point a value found in the data given as input. External sources can be an ESRI
+Classify LAS points based on geographic data from external sources. It adds an attribute
+to each point based on a value found in the external data. External sources can be an ESRI
 Shapefile (SpatialPolygonsDataFrame) or a Raster (RasterLayer).
 }
 \details{
@@ -28,7 +28,7 @@ The function recognizes several type of sources:
 \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
 multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
 given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
-of the shapefile it classifies the points based on this field. Otherrwise it classifies
+of the shapefile it assigns the points to a class of that field name. Otherrwise it classifies
 the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
 allows filtering of lakes, for example.
 }
