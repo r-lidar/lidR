@@ -79,11 +79,15 @@ lasterrain = function(.las, coord, method = "knn_idw", k = 3L, linear = F)
 
 terrain_knn_idw = function(ground, coord, k = 3L)
 {
-  X <- Y <- Z <- NULL
+  X <- Y <- NULL
 
-  Zg = kknn::kknn(Z~X+Y, ground, coord, k = k, kernel = "inv")$fitted.values
+  nn = RANN::nn2(ground[, .(X,Y)], coord[, .(X,Y)], k = k)
+  idx = nn$nn.idx
+  w = 1/nn$nn.dist
+  w = ifelse(is.infinite(w), 1e8, w)
+  z = matrix(ground[as.numeric(idx)]$Z, ncol = dim(w)[2])
 
-  return(Zg)
+  return(rowSums(z*w)/rowSums(w))
 }
 
 terrain_akima = function(ground, coord, linear)
