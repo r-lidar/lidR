@@ -39,8 +39,8 @@ The following existing function can help the user to compute some metrics:
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:fractal_dimension]{fractal_dimension}}
-} Basically there are no predefined metrics. Users must write their own functions to create metrics.
+\item{\link[lidR:stdmetrics]{stdmetrics}}
+} Users must write their own functions to create metrics.
 grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user writes their
 function without considering grid cells, only a cloud of points (see example).
 }
