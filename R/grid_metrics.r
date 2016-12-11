@@ -46,8 +46,8 @@
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
-#' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
-#' } Basically there are no predefined metrics. Users must write their own functions to create metrics.
+#' \item{\link[lidR:stdmetrics]{stdmetrics}}
+#' } Users must write their own functions to create metrics.
 #' grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).
 #'
@@ -94,6 +94,9 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), option = NULL)
   stopifnotlas(.las)
 
   func_call = substitute(func)
+
+  if(is(func_call, "name"))
+    func_call = eval(func_call)
 
   .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 

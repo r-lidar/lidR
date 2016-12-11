@@ -27,7 +27,7 @@ example functions can serve as a guide to help users compute their own metrics:
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:fractal_dimension]{fractal_dimension}}
+\item{\link[lidR:stdmetrics]{stdmetrics}}
 }
 }
 \examples{
