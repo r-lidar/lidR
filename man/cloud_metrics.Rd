@@ -27,7 +27,7 @@ function can help the user to compute some metrics:
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:fractal_dimension]{fractal_dimension}}
+\item{\link[lidR:stdmetrics]{stdmetrics}}
 }
 }
 \examples{

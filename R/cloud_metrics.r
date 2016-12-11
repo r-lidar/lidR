@@ -40,7 +40,7 @@
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
-#' \item{\link[lidR:fractal_dimension]{fractal_dimension}}
+#' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' }
 #' @aliases cloud_metrics
 #' @param obj An object of class \code{LAS}
@@ -73,6 +73,10 @@
 cloud_metrics = function(obj, func)
 {
   func_call = substitute(func)
+
+  if(is(func_call, "name"))
+    func_call = eval(func_call)
+
   metric = obj@data %$% eval(func_call)
   return(metric)
 }
