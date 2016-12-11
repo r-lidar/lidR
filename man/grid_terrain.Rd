@@ -4,51 +4,46 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(.las, res = 1, method = "knn_idw", k = 3L, linear = T)
+grid_terrain(.las, res = 1, ...)
 }
 \arguments{
 \item{.las}{LAS objet}
 
 \item{res}{numeric resolution.}
 
-\item{method}{character can be \code{"knn_idw"} or \code{"akima"}}
-
-\item{k}{numeric. number of k-nearest neighbour when selected method is \code{"knn_idw"}}
-
-\item{linear}{logical indicating whether linear or spline interpolation should be used
-when selected method is \code{"akima"}}
+\item{...}{parameters for \link[lidR:lasterrain]{lasterrain}. Select the method and
+its parameters for spatial interpolation.}
 }
 \value{
 A RasterLayer from package raster
 }
 \description{
 Interpolate ground points and create a rasterized digital terrain model. The interpolation
-can be done with two methods: \code{"knn_idw"} or \code{"akima"} (see details). The
-algorithm uses the points classified as "ground" to compute the interpolation. The function
-forces the original lowest ground point of each pixel (if it exists) to be chosen instead of
-the interpolated value.
-}
-\details{
-Methods:
-\itemize{
-\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
-an inverse distance weighting (IDW).}
-\item{\code{akima}: interpolation relies on the \link[akima:interp]{interp} function from
-package \code{akima}. With this method no extrapolation is done outside of the convex hull
-determined by the data points. The DTM could contain NA values.}
-}
+is base on \link[lidR:lasterrain]{lasterrain} which provides 3 methods for spatial interpolation:
+\code{"knn_idw"}, \code{"akima"} and \code{"kriging"}. The algorithm uses the points classified as "ground"
+to compute the interpolation. The function forces the original lowest ground point of each
+pixel (if it exists) to be chosen instead of the interpolated values.
 }
 \examples{
-\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)
 plot(lidar)
 
-dtm = grid_terrain(lidar)
-plot3d(dtm)
+dtm1 = grid_terrain(lidar, method = "knnidw")
+dtm2 = grid_terrain(lidar, method = "akima")
+
+raster::plot(dtm1, col = height.colors(50))
+raster::plot(dtm2, col = height.colors(50))
+plot3d(dtm1)
+plot3d(dtm2)
+
+\dontrun{
+dtm3 = grid_terrain(lidar, method = "kriging")
+raster::plot(dtm3, col = height.colors(50))
 }
 }
 \seealso{
+\link[lidR:lasterrain]{lasterrain}
 \link[lidR:lasnormalize]{lasnormalize}
 }
 
