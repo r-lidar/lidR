@@ -4,41 +4,52 @@
 \alias{lasterrain}
 \title{Get the elevation of the ground for given coordinates}
 \usage{
-lasterrain(.las, coord, method = "knn_idw", k = 3L, linear = F)
+lasterrain(.las, coord, method, k = 6L, linear = F,
+  model = gstat::vgm(0.59, "Sph", 874))
 }
 \arguments{
 \item{.las}{LAS objet}
 
 \item{coord}{data.frame containing  the coordinates of interest in columns X and Y}
 
-\item{method}{character can be \code{"knn_idw"} or \code{"akima"}}
+\item{method}{character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)}
 
-\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}}
+\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}}
 
 \item{linear}{logical indicating wether linear or spline interpolation should be used
 when selected method is \code{"akima"}}
+
+\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
+\code{"kriging"}}
 }
 \value{
 Numeric. The predicted elevations.
 }
 \description{
 Interpolate ground points and return the elevation at the position of interest given by the
-parameter. The interpolation can be done using two methods: \code{"knn_idw"} or
-\code{"akima"} (see details). The algorithm uses the points classified as "ground" to
+parameter. The interpolation can be done using 3 methods: \code{"knnidw"},
+\code{"akima"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
 compute the interpolation.
 }
 \details{
-Methods:
-\itemize{
-\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
-an inverse distance weighting (IDW).}
-\item{\code{akima}: interpolation depends on the \link[akima:interp]{interp} function from
-package \code{akima}. With this method no extrapolation is done outside of the convex hull
-determined by the ground points.}
+\describe{
+\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
+an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
+data interpolation.}
+\item{\code{akima}}{Interpolation depends on the \link[akima:interp]{interp} function from
+package \code{akima}. This method is relatively fast and more advanced than knnidw and provide
+good digital terrain model. Notice that with this method no extrapolation is done outside of t
+he convex hull determined by the ground points.}
+\item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
+function. This method is very slow and very difficult to manipulate but it is also the
+most regognized method to interpolate spatial data.}
 }
 }
 \seealso{
-\link[kknn:kknn]{kknn}
 \link[lidR:grid_terrain]{grid_terrain}
+\link[lidR:lasnormalize]{lasnormalize}
+\link[gstat:vgm]{vgm}
+\link[gstat:krige]{krige}
+\link[akima:interp]{interp}
 }
 

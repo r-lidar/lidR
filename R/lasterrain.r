@@ -30,30 +30,39 @@
 #' Get the elevation of the ground for given coordinates
 #'
 #' Interpolate ground points and return the elevation at the position of interest given by the
-#' parameter. The interpolation can be done using two methods: \code{"knn_idw"} or
-#' \code{"akima"} (see details). The algorithm uses the points classified as "ground" to
+#' parameter. The interpolation can be done using 3 methods: \code{"knnidw"},
+#' \code{"akima"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
 #' compute the interpolation.
 #'
-#'Methods:
-#'\itemize{
-#'\item{\code{knn_idw}: interpolation is done using a k-nearest neighbour approach with
-#' an inverse distance weighting (IDW).}
-#'\item{\code{akima}: interpolation depends on the \link[akima:interp]{interp} function from
-#' package \code{akima}. With this method no extrapolation is done outside of the convex hull
-#' determined by the ground points.}
-#'}
+#'\describe{
+#'\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
+#' an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
+#' data interpolation.}
+#'\item{\code{akima}}{Interpolation depends on the \link[akima:interp]{interp} function from
+#' package \code{akima}. This method is relatively fast and more advanced than knnidw and provide
+#' good digital terrain model. Notice that with this method no extrapolation is done outside of t
+#' he convex hull determined by the ground points.}
+#' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
+#' function. This method is very slow and very difficult to manipulate but it is also the
+#' most regognized method to interpolate spatial data.}
+#' }
 #' @param .las LAS objet
 #' @param coord data.frame containing  the coordinates of interest in columns X and Y
-#' @param method character can be \code{"knn_idw"} or \code{"akima"}
-#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knn_idw"}
+#' @param method character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)
+#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}
 #' @param linear logical indicating wether linear or spline interpolation should be used
 #' when selected method is \code{"akima"}
+#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
+#' \code{"kriging"}
 #' @return Numeric. The predicted elevations.
 #' @export
 #' @seealso
-#' \link[kknn:kknn]{kknn}
 #' \link[lidR:grid_terrain]{grid_terrain}
-lasterrain = function(.las, coord, method = "knn_idw", k = 3L, linear = F)
+#' \link[lidR:lasnormalize]{lasnormalize}
+#' \link[gstat:vgm]{vgm}
+#' \link[gstat:krige]{krige}
+#' \link[akima:interp]{interp}
+lasterrain = function(.las, coord, method, k = 6L, linear = F, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- X <- Y <- Z <- NULL
 
@@ -69,17 +78,27 @@ lasterrain = function(.las, coord, method = "knn_idw", k = 3L, linear = F)
 
   ground = ground@data[, .(X,Y,Z)]
 
-  if(method == "knn_idw")
-    return(terrain_knn_idw(ground, coord, k))
+  if(method == "knnidw")
+  {
+    cat("[using inverse distance weighting]\n")
+    return(terrain_knnidw(ground, coord, k))
+  }
   else if(method == "akima")
+  {
+    cat("[using Akima's interpolation]\n")
     return(terrain_akima(ground, coord, linear))
+  }
+  else if(method == "kriging")
+  {
+    return(terrain_kriging(ground, coord, model))
+  }
   else
     stop("This method does not exist.")
 }
 
-terrain_knn_idw = function(ground, coord, k = 3L)
+terrain_knnidw = function(ground, coord, k = 3L)
 {
-  X <- Y <- NULL
+  . <- X <- Y <- NULL
 
   nn = RANN::nn2(ground[, .(X,Y)], coord[, .(X,Y)], k = k)
   idx = nn$nn.idx
@@ -103,4 +122,12 @@ terrain_akima = function(ground, coord, linear)
   temp[, Zg := grid$z[xc,yc], by = .(xc,yc)]
 
   return(temp$Zg)
+}
+
+terrain_kriging = function(ground, coord, model)
+{
+  X <- Y <- Z <- NULL
+
+  x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model)
+  return(x$var1.pred)
 }

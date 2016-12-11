@@ -49,7 +49,7 @@
 #'
 #' # --- First possibility: compute the DTM on the fly -----
 #'
-#' lidar_norm = lasnormalize(lidar)
+#' lidar_norm = lasnormalize(lidar, method = "knnidw")
 #'
 #' plot(lidar_norm)
 #'
