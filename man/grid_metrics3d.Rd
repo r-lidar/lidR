@@ -9,9 +9,9 @@ grid_metrics3d(.las, func, res = 1)
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{func}{the function to be apply to each cells}
+\item{func}{the function to be apply to each voxel.}
 
-\item{res}{numeric. The size of the cells}
+\item{res}{numeric. The size of the voxels}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling easier plotting.
@@ -24,10 +24,10 @@ each voxel.
 Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
 from the cloud of points if there is at least one point in the voxel. For each voxel
 the function allows computation of one or several derived metrics in the same way as
-the grid_metrics functions.
+the \link[lidR:grid_metrics]{grid_metrics} functions.
 Basically there are no predefined metrics. Users must write their own function to create metrics.
 Voxelize will dispatch the LiDAR data for each voxel in the user's function. The user writes their
-function without considering grid cells, only a cloud of points (see example).
+function without considering voxels, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -58,5 +58,8 @@ voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 plot(voxels, "angle")
 plot(voxels, "imean")
 #etc.
+}
+\seealso{
+\link[lidR:grid_metrics]{grid_metrics}
 }
 

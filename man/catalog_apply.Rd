@@ -8,36 +8,39 @@ catalog_apply(x, func, platform = .Platform$OS.type,
   mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
 }
 \arguments{
-\item{x}{A Catalog object}
+\item{x}{A \link[lidR:catalog]{Catalog} object}
 
 \item{func}{A function which has one parameter: the name of a .las or .laz file (see example)}
 
-\item{platform}{character. Can be "windows" or "unix". Default is autodetect. See sections "Details", "Unix" and  "Windows".}
+\item{platform}{character. Can be \code{"windows"} or \code{"unix"}. Default is autodetect.
+See sections "Details", "Unix" and  "Windows".}
 
 \item{mc.cores}{integer. Number of cores used. Default is the number of cores you have on your computer.}
 
 \item{combine}{character. The function used to merge the outputs of the \code{func} function.}
 
-\item{varlist}{charaters vector. For Windows mode, character vector of names of objects to export.}
+\item{varlist}{charaters vector. For \code{'windows'} mode, character vector of names of objects to export.}
 }
 \description{
 The function behaves differently on the MS Windows and Unix platforms, so please read
-the documentation carefully, particularly the "Details", "Unix" and "Windows" sections. This function provides an
-immediately usable parallel computing tool, but users comfortable with multi-core processes should use their own code #' for greater flexibility.
-When a user has a LAS dataset organized into several tiles, it applies a user function to each tile.
-The "Examples" section describes the procedure to apply functions to each file, beginning with data loading (see
-example).
-The function automatically detects your operating system and applies the best parallelization method for your system.
-Unix mechanism is more powerful. However it is not compatible with Windows (see "Unix" and "Windows" sections).
-The Windows mechanism is more complex to use.\cr\cr
-WARNING: there is no buffer mechanism to protect the process against edge artifacts. See section "Edge artifacts".
+the documentation carefully, particularly the "Details", "Unix" and "Windows" sections.
+This function provides an immediately usable parallel computing tool, but users comfortable
+with multi-core processes should use their own code for greater flexibility. When a user
+has a LAS dataset organized into several tiles, it applies a user function to each tile.
+The "Examples" section describes the procedure to apply functions to each file, beginning
+with data loading (see example). The function automatically detects your operating system and
+applies the best parallelization method for your system. Unix mechanism is more powerful.
+However it is not compatible with Windows (see "Unix" and "Windows" sections). The Windows
+mechanism is more complex to use.\cr\cr
+\strong{Warning:} there is no buffer mechanism to protect the process against edge artifacts.
+See section "Edge artifacts".
 }
 \section{Unix}{
 
 
 On the Unix platform (GNU/Linux and Mac), parallelization relies on the fork-exec technique
 (see \link[parallel:mclapply]{mclapply}). This means that each child process
-has access to the parent process memory. For example, you can call functions from .GlobalEnv
+has access to the parent process memory. For example, you can call functions from \code{.GlobalEnv}
 or any other environment. If code written for Unix is run on Windows it will work,
 but with only one core, like a normal loop. If Unix users want to share their code
 with Windows users, it would be better to force the function to use the clustering method.
@@ -79,45 +82,44 @@ lake = rgdal::readOGR("folder", "shapefile")
 # 3 build the function which analyses a tile (a file).
 # This function input is only the path of a .las file
 # see the following template
-
 analyse_tile = function(LASFile)
 {
   # Load the data
   lidar = readLAS(LASFile)
 
   # Associate geographic data with lidar points (if needed)
-  lidar \%<>\% lasclassify(lake, field="inlake")
+  lidar \%<>\% lasclassify(lake, field="lake")
 
   # filter lake
   lidar \%<>\% lasfilter(lake == FALSE)
-  # compute all metrics
-  metrics = grid_metrics(lidar, 20, myMetrics(X,Y,Z,Intensity,ScanAngle,pulseID))
+
+  # compute standard metrics
+  metrics = grid_metrics(lidar, .stdmetrics)
 
   return(metrics)
 }
+
 #### UNIX #####
 # This code works only on Unix platforms because it relies on shared memory
 # between all processes. See below for a Windows-compatible code.
 
-# 4. Process the project. By default it detects how many cores you have. But you can add
-# an optional parameter mc.core = 3.
+# 4. Process the project. By default it detects how many cores you have. But you
+# can add an optional parameter mc.core = 3.
 output = project \%>\% catalog_apply(analyse_tile)
 
 #### WINDOWS #####
-# This code works on both Unix and Windows platforms. But it is more memory-intensive
-# and more complex on Windows (here the example is simple enough so it does not change many things)
+# This code works on both Unix and Windows platforms. But it is more
+# memory-intensive and more complex on Windows (here the example is simple enough
+# so it does not change many things)
 
 # 4. Process the project. By default it detects how many cores you have. But you can add
 # an optional parameter mc.core = 3.
-export = c("readLAS", "classify_from_shapefile", "grid_metrics",
-           "myMetrics", "lake", "lasfilter", "\%<>\%")
+export = c("readLAS", "lasclassify", "grid_metrics", "myMetrics", "lake", "lasfilter", "\%<>\%")
 output = project \%>\% catalog_apply(analyse_tile, varlist = export, platform = "windows")
 }
 }
 \seealso{
 \link[parallel:mclapply]{mclapply}
 \link[parallel:parLapplyLB]{parLapplyLB}
-\link[lidR:lasclassify]{lasclassify}
-\link[lidR:grid_metrics]{grid_metrics}
 }
 

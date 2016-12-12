@@ -38,15 +38,16 @@
 #' \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
 #' multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
 #' given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
-#' of the shapefile it assigns the points to a class of that field name. Otherrwise it classifies
+#' of the shapefile it assigns to the points the values of that field. Otherwise it classifies
 #' the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
 #' allows filtering of lakes, for example.
 #' }
 #' \item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
 #' Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
 #' is used internally to normalize the lidar dataset and is exported because some users may find it useful
-#'  (for example to colorize the point cloud using a georeferenced RGB image.}
+#' (for example to colorize the point cloud using a georeferenced RGB image.}
 #' }
+#' More examples avaible on lidR wiki: https://github.com/Jean-Romain/lidR/wiki/lasclassify
 #'
 #' @param .las An object of the class \code{LAS}
 #' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}
@@ -54,7 +55,6 @@
 #' the name of the new column in the LAS object (see details)
 #' @return Nothing. The new field is added by reference to the original data.
 #' @examples
-#' \dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
@@ -62,15 +62,14 @@
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
 #' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-#' lasclassify(lidar, lakes, "inlakes")
+#' lasclassify(lidar, lakes, "inlakes") # New column 'inlakes' is added.
 #' forest = lasfilter(lidar, inlakes == FALSE)
 #' plot(lidar)
 #' plot(forest)
 #'
 #' # The field "LAKENAME_1" exists in the shapefile.
-#' # Points are classified with the value of the polygon
-#' lasclassify(lidar, lakes, "LAKENAME_1")
-#' }
+#' # Points are classified with the values of the polygons
+#' lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
 #' @seealso
 #' \code{\link[rgdal:readOGR]{readOGR} }
 #' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }

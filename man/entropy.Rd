@@ -9,7 +9,7 @@ entropy(z, by = 1, zmax = NULL)
 \arguments{
 \item{z}{vector of positive z coordinates}
 
-\item{by}{numeric. The thickeness of the layers used (height bin)}
+\item{by}{numeric. The thickness of the layers used (height bin)}
 
 \item{zmax}{numeric. Used to turn the function entropy to the function \link[lidR:VCI]{VCI}.}
 }

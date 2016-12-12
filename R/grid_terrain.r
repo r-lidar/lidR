@@ -31,7 +31,7 @@
 #'
 #' Interpolate ground points and create a rasterized digital terrain model. The interpolation
 #' is base on \link[lidR:lasterrain]{lasterrain} which provides 3 methods for spatial interpolation:
-#' \code{"knn_idw"}, \code{"akima"} and \code{"kriging"}. The algorithm uses the points classified as "ground"
+#' \code{"knnidw"}, \code{"akima"} and \code{"kriging"}. The algorithm uses the points classified as "ground"
 #' to compute the interpolation. The function forces the original lowest ground point of each
 #' pixel (if it exists) to be chosen instead of the interpolated values.
 #'
@@ -61,6 +61,7 @@
 #' @seealso
 #' \link[lidR:lasterrain]{lasterrain}
 #' \link[lidR:lasnormalize]{lasnormalize}
+#' \link[raster:raster]{RasterLayer}
 grid_terrain = function(.las, res = 1, ...)
 {
   . <- X <- Y <- Z <- NULL

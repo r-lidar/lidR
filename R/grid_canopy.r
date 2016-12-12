@@ -31,10 +31,8 @@
 #'
 #' Creates a canopy surface model using a LiDAR point cloud. For each pixel the
 #' function returns the highest point found. This basic method could be improved by replacing
-#' each LiDAR return with a small disk
+#' each LiDAR return with a small disk.
 #'
-#' The algorithm used is the local maximum algorithm. It assigns the
-#' elevation of the highest return within each grid cell to the grid cell center.
 #' @aliases  grid_canopy
 #' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
@@ -42,16 +40,25 @@
 #' @param subcircle numeric radius of the circles. To fill empty pixels the algorithm
 #' replaces each return by a circle composed of 8 points before computing the maximum elevation
 #' in each pixel.
-#' @return It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
+#' @return It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting and
+#' RasterLayer casting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # Local maximum algorithm with a resolution of 2 meters
 #' lidar %>% grid_canopy(2) %>% plot
+#'
+#' # Local maximum algorithm with a resolution of 1 meters
+#' lidar %>% grid_canopy(1) %>% plot
+#'
+#' # Local maximum algorithm with a resolution of 1 meters replacing each
+#' # point by a 20 cm radius circle of 8 points
+#' lidar %>% grid_canopy(1, 0.2) %>% plot
 #' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
+#' \link[lidR:as.raster.gridmetrics]{as.raster}
 #' @export grid_canopy
 grid_canopy = function(.las, res = 2, subcircle = 0)
 {

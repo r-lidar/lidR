@@ -20,6 +20,6 @@ function depends on the GPS time to retrieve each indivudual flightline. In a
 continuous dataset, once points are ordered by GPS time, the time between two
 consecutive points does not exceed a few milliseconds. If the time between two consecutive
 points is too long it means that the second point is from a different flightline. The default
-threshold is 30 seconds. A column flightlineID is added in the slot @data
+threshold is 30 seconds. A column  '\code{flightlineID}' is added in the slot  \code{@data}
 }
 

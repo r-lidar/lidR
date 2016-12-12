@@ -24,7 +24,6 @@ Returns an Extent object of a \code{LAS} object.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-
 lidar = readLAS(LASfile)
 
 extent(lidar)

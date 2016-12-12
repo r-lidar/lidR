@@ -52,7 +52,8 @@ Read las or laz files in format 1 to 4 according to LAS specification and return
 \details{
 If several files are given the returned LAS object is considered as one LAS file.
 The information retained in the header will be read from the first file in the list.
-The optional logical parameters enable the user to save memory by choosing to load only the fields they need. Indeed, #' the readLAS function does not 'stream' the data. Data is loaded into the
+The optional logical parameters enable the user to save memory by choosing to load only the fields they need. Indeed,
+the readLAS function does not 'stream' the data. Data is loaded into the
 computer's memory (RAM) suboptimally because R does not accommodate many different data types.
 }
 \examples{

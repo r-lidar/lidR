@@ -37,7 +37,6 @@
 #' @return Extent object
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
 #' extent(lidar)

@@ -21,7 +21,7 @@
 
 \item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
 Default is 1, meaning that the whole range of values is used for the color palette.
-0.9 means that 10% of the highest values are not used to define the color palette.
+0.9 means that 10\% of the highest values are not used to define the color palette.
 In this case values higher than the 90th percentile are set to the highest color. They are not removed.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d}}
@@ -31,7 +31,6 @@ This functions implements a 3D plot method for LAS objects
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-
 lidar = readLAS(LASfile)
 
 plot(lidar)

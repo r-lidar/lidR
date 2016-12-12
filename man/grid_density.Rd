@@ -9,14 +9,15 @@ grid_density(.las, res = 4)
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.}
+\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.}
 }
 \value{
-It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting.
+It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting and
+RasterLayer casting.
 }
 \description{
 Creates a pulse density map using a LiDAR cloud of points. This function is an alias
-for \code{grid_metrics(obj, length(unique(pulseID))/res^2), res}.
+for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

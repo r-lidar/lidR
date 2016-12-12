@@ -29,25 +29,26 @@
 
 #' Compute metrics for a cloud of points
 #'
-#' Computes a series of user-defined descriptive statistics for a LiDAR dataset
-#'
-#' Computes a series of descriptive statistics for a LiDAR data set. Cloudmetrics
-#' computes a single set of metrics for the entire data set. See \link[lidR:grid_metrics]{grid_metrics}
-#' to compute metrics on a grid. Basically there are no predifined metrics. Users
-#' must write their own functions to create metrics (see example). The following existing
-#' example functions can serve as a guide to help users compute their own metrics:
+#' \code{cloud_metrics} computes a series of user-defined descriptive statistics for a LiDAR dataset.
+#' See \link[lidR:grid_metrics]{grid_metrics} to compute metrics on a grid. Basically there are
+#' no predifined metrics. Users must write their own functions to create metrics (see example).
+#' The following existing functions can serve as a guide to help users compute their own metrics:
 #' \itemize{
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' }
-#' @aliases cloud_metrics
 #' @param obj An object of class \code{LAS}
-#' @param func The function to be applied to a cloud of points
-#' @return It returns a \code{data.table} containing the metrics
+#' @param func The function to be applied to a cloud of points. Function must return a \code{list} (see example)
+#' @return It returns a \code{list} containing the metrics
 #' @export cloud_metrics
-#' @seealso \link[lidR:grid_metrics]{grid_metrics}
+#' @seealso
+#' \link[lidR:grid_metrics]{grid_metrics}
+#' \link[lidR:stdmetrics]{stdmetrics}
+#' \link[lidR:entropy]{entropy}
+#' \link[lidR:VCI]{VCI}
+#' \link[lidR:LAD]{LAD}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -70,6 +71,9 @@
 #'  }
 #'
 #' metrics = cloud_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#'
+#' # Predefined metrics
+#' cloud_metrics(lidar, .stdmetrics)
 cloud_metrics = function(obj, func)
 {
   func_call = substitute(func)
