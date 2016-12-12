@@ -84,8 +84,6 @@ setClass(
 setMethod("initialize", "LAS",
 	function(.Object, data, header = list())
 	{
-	  gpstime <- R <- G <- B <- X <- Y <- NULL
-
 	  if(is.data.frame(data))
 	    data.table::setDT(data)
 
@@ -110,8 +108,8 @@ setMethod("initialize", "LAS",
 
 	  # Build returned object  ---------------------------------------------------
 
-	  .Object@data         <- data
-	  .Object@header       <- header
+	  .Object@data   <- data
+	  .Object@header <- header
 
 	  return(.Object)
 	}
