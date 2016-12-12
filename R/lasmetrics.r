@@ -27,10 +27,10 @@
 
 #' Predefined standard metrics function
 #'
-#' Predefined function usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:cloud_metrics]{cloud_metrics}
+#' Predefined functions usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:cloud_metrics]{cloud_metrics}
 #' and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
-#' to compute user-defined metrics rather than to provide them. However, for efficiency, a set of standard metrics is
-#' already predefined to save time. To use these functions please read the Details and Examples sections.
+#' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of 
+#' standard metrics has been predefined. To use these functions please read the Details and Examples sections.
 #'
 #' The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
 #' \itemize{
