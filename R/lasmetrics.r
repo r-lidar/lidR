@@ -29,7 +29,7 @@
 #'
 #' Predefined functions usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:cloud_metrics]{cloud_metrics}
 #' and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
-#' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of 
+#' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
 #' standard metrics has been predefined. To use these functions please read the Details and Examples sections.
 #'
 #' The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
@@ -40,9 +40,11 @@
 #' \item{\code{q}: refers to quantile}
 #' \item{\code{a}: refers to the ScanAngle}
 #' \item{\code{n}: refers to a number (a count)}
+#' \item{\code{p}: refers to a percentage}
 #' }
-#' For example the metric named \code{zq60} refers to the elevation, quantile, 60 i.e. the 60th percentile of elevations. #' The metric \code{nground} refers to a count of the number of points classified as ground. 
-#' The function \code{stdmetric_i} refers to metrics of intensity.A description of each existing metric can be found
+#' For example the metric named \code{zq60} refers to the elevation, quantile, 60 i.e. the 60th percentile of elevations.
+#' The metric \code{pground} refers to a percentage. It is the percentage of points classified as ground.
+#' The function \code{stdmetric_i} refers to metrics of intensity. A description of each existing metric can be found
 #' on the lidR wiki page: https://github.com/Jean-Romain/lidR/wiki/stdmetrics.\cr\cr
 #' Some functions have optional parameters. If these parameters are not provided the function
 #' computes only a subset of existing metrics. For example \code{stdmetrics_i} requires the intensity
@@ -368,21 +370,31 @@ fractal_dimension = function(mtx)
 stdmetrics_z = function(z, dz = 1)
 {
   zmax <- zmean <- zsd <- zcv <- zskew <- zkurt <- zentropy <- NULL
+
   n = length(z)
+  zmax  = max(z)
+  zmean = mean(z)
 
   probs = seq(0.05, 0.95, 0.05)
   zq 	  = as.list(stats::quantile(z, probs))
   names(zq) = paste("zq", probs*100, sep="")
 
+  d =  hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
+  d = d$counts / sum(d$counts)*100
+  d = cumsum(d)[1:9]
+  d = as.list(d)
+  names(d) = paste0("zpcum", 1:9)
+
   metrics = list(
-    zmax = max(z),
-    zmean = mean(z),
+    zmax  = zmax,
+    zmean = zmean,
     zsd   = stats::sd(z),
     zskew = (sum((z - zmean)^3)/n)/(sum((z - zmean)^2)/n)^(3/2),
     zkurt = n * sum((z - zmean)^4)/(sum((z - zmean)^2)^2),
     zentropy  = entropy(z, dz)
   )
-  metrics = c(metrics, zq)
+
+  metrics = c(metrics, zq, d)
 
   return(metrics)
 }
@@ -398,16 +410,19 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
   itot <- imax <- imean <- isd <- icv <- iskew <- ikurt <- NULL
   icumzq10 <- icumzq30 <- icumzq50 <- icumzq70 <- icumzq90 <- NULL
   itot1st <- itot2sd <- itot3rd <- itot4th  <- itot5th <- NULL
+
   n = length(i)
+  itot = sum(i)
+  imean = mean(i)
 
   probs = seq(0.05, 0.95, 0.05)
   iq 	  = as.list(stats::quantile(i, probs))
   names(iq) = paste("iq", probs*100, sep="")
 
   metrics = list(
-    itot = sum(i),
+    itot = itot,
     imax  = max(i),
-    imean = mean(i),
+    imean = imean,
     isd   = stats::sd(i),
     iskew = (sum((i - imean)^3)/n)/(sum((i - imean)^2)/n)^(3/2),
     ikurt = n * sum((i - imean)^4)/(sum((i - imean)^2)^2)
@@ -415,38 +430,23 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 
   if(!is.null(class))
   {
-    metrics = c(metrics, list(itotground = sum(i[class == 2])))
+    metrics = c(metrics, list(ipground = sum(i[class == 2])/itot*100))
   }
 
   if(!is.null(z))
   {
     zq = stats::quantile(z, probs = seq(0.1, 0.9, 0.2))
 
-    icum = list(
-      icumzq10 = sum(i[z <= zq[1]]),
-      icumzq30 = sum(i[z <= zq[2]]),
-      icumzq50 = sum(i[z <= zq[3]]),
-      icumzq70 = sum(i[z <= zq[3]]),
-      icumzq90 = sum(i[z <= zq[5]])
+    ipcum = list(
+      ipcumzq10 = sum(i[z <= zq[1]])/itot*100,
+      ipcumzq30 = sum(i[z <= zq[2]])/itot*100,
+      ipcumzq50 = sum(i[z <= zq[3]])/itot*100,
+      ipcumzq70 = sum(i[z <= zq[3]])/itot*100,
+      ipcumzq90 = sum(i[z <= zq[5]])/itot*100
     )
 
-    metrics = c(metrics, icum)
+    metrics = c(metrics, ipcum)
   }
-
-  if(!is.null(rn))
-  {
-    itox = list(
-      itot1st = sum(i[rn == 1]),
-      itot2nd = sum(i[rn == 2]),
-      itot3rd = sum(i[rn == 3]),
-      itot4th = sum(i[rn == 4]),
-      itot5th = sum(i[rn == 5])
-    )
-
-    metrics = c(metrics, itox)
-  }
-
-  return(metrics)
 }
 
 #' @rdname stdmetrics
@@ -460,15 +460,16 @@ stdmetrics_rn = function(rn, class = NULL)
   nground <- NULL
 
   n = length(rn)
-  nrn = table(factor(rn, levels=c(1:9)))
-  nrn = as.list(nrn)
-  names(nrn) = paste0("n", names(nrn), "th")
 
-  metrics = nrn
+  prn = table(factor(rn, levels=c(1:9)))/n*100
+  prn = as.list(prn)
+  names(prn) = paste0("p", names(prn), "th")
+
+  metrics = prn
 
   if(!is.null(class))
   {
-    metrics = c(metrics, list(nground = sum(class == 2)))
+    metrics = c(metrics, list(pground = sum(class == 2)/n*100))
   }
 
   return(metrics)
@@ -485,14 +486,16 @@ stdmetrics_pulse = function(pulseID, rn)
 {
   . <- nr <- NULL
 
+  n = length(rn)
+
   dt = data.table::data.table(pulseID, rn)
 
   np_with_x_return = dt[, .(nr = max(rn)), by = pulseID][, .N, by = nr]
   data.table::setorder(np_with_x_return, nr)
 
   np = numeric(9)
-  names(np) = paste0("npulse", 1:9, "return")
-  np[np_with_x_return$nr] = np_with_x_return$N
+  names(np) = paste0("ppulse", 1:9, "return")
+  np[np_with_x_return$nr] = np_with_x_return$N/n*100
   np = as.list(np)
 
   return(np)
@@ -526,7 +529,6 @@ stdmetrics_ctrl = function(x, y, z, a)
 #' @rdname stdmetrics
 #' @export
 .stdmetrics_ctrl = expression(stdmetrics_ctrl(X, Y, Z, ScanAngle))
-
 
 # canopy = canopyMatrix(x,y,z, canopyResolution)
 
