@@ -48,45 +48,42 @@ stdmetrics_ctrl(x, y, z, a)
 
 \item{pulseID}{The number referencing each pulse}
 
-\item{dz}{Layer thickness for metric requiering such data such as \link[lidR:entropy]{entropy}}
+\item{dz}{Layer thickness for metrics requiring this data, such as \link[lidR:entropy]{entropy}}
 }
 \description{
-Predefined function usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:cloud_metrics]{cloud_metrics}
-and their convenient shortcuts. The philosophy of \code{lidR} package is to provide an easy way
-to compute your own new metrics not to provide them. However a set of classical metric is
-already predefined to save time, save pain and to ensure computation efficiency. To use
-these function please read Details and examples sections.
+Predefined functions usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:cloud_metrics]{cloud_metrics}
+and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
+to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
+standard metrics has been predefined. To use these functions please read the Details and Examples sections.
 }
 \details{
-The function names, their parameters and the output names  of the metrics rely on a nomenclature chose to get short
-names and labels:
+The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
 \itemize{
-\item{\code{z}: refer to the elevation}
-\item{\code{i}: refer to the intensity}
-\item{\code{rn}: refer to the return number}
-\item{\code{q}: refer to quantile}
-\item{\code{a}: refer to the ScanAngle}
-\item{\code{n}: refer to a number (a count)}
-\item{\code{p}: refer to a percentatge}
+\item{\code{z}: refers to the elevation}
+\item{\code{i}: refers to the intensity}
+\item{\code{rn}: refers to the return number}
+\item{\code{q}: refers to quantile}
+\item{\code{a}: refers to the ScanAngle}
+\item{\code{n}: refers to a number (a count)}
+\item{\code{p}: refers to a percentage}
 }
-For example the metric named \code{zq60} refer to the elavation, quantile, 60.
-It's the 60th percentile of elevations. The metric \code{pground} refer to a percentage. It's the
-percentage of returnclassified as ground. The function \code{stdmetric_i} refer to metrics of
-intensity. If a doubt subsist you can retrive a description of each existing metric
+For example the metric named \code{zq60} refers to the elevation, quantile, 60 i.e. the 60th percentile of elevations.
+The metric \code{pground} refers to a percentage. It is the percentage of points classified as ground.
+The function \code{stdmetric_i} refers to metrics of intensity. A description of each existing metric can be found
 on the lidR wiki page: https://github.com/Jean-Romain/lidR/wiki/stdmetrics.\cr\cr
-Some functions have optional parameters. If these parameter are not provided the function
-computes only a subset of existing metrics. For example \code{stdmetrics_i} requieres the intensity
-values, but if the elevation values are provided it can computed more metrics such as cumulative
+Some functions have optional parameters. If these parameters are not provided the function
+computes only a subset of existing metrics. For example \code{stdmetrics_i} requires the intensity
+values, but if the elevation values are provided it can compute additional metrics such as cumulative
 intensity at a given percentile of height.\cr\cr
-Each function have a convenient variable associated. It is the name of the function with a
-dot before the name. It enables to use the function without writing parametrers. The cost
-of such feature is a non flexibility. It corresponds to a predefined behaviour (see examples)
+Each function has a convenient associated variable. It is the name of the function, with a
+dot before the name. This enables the function to be used without writing parameters. The cost
+of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile, all = TRUE)
 
-# All the predefined function
+# All the predefined functions
 lidar \%>\% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
                                   ReturnNumber, Classification, pulseID,
                                   dz = 1))
@@ -100,7 +97,7 @@ lidar \%>\% grid_metrics(stdmetrics_i(Intensity))
 # All the metrics from intensities
 lidar \%>\% grid_metrics(stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 
-# Super convinient shortcut
+# Super convenient shortcut
 lidar \%>\% grid_metrics(.stdmetrics_i)
 
 # Compute the metrics only on first return
@@ -113,7 +110,7 @@ lidar \%>\% lasfilter(Z > 2) \%>\% grid_metrics(.stdmetrics_z)
 lidar \%>\% cloud_metrics(.stdmetrics)
 
 # Combine some predefined function with your own new metrics
-# Here convenient shortcut are no more usable.
+# Here convenient shortcuts are no longer usable.
 myMetrics = function(z, i)
 {
   metrics = list(
@@ -126,7 +123,7 @@ myMetrics = function(z, i)
 
 lidar \%>\% grid_metrics(myMetrics(Z, Intensity))
 
-# You can write your own convenient shorcut like that
+# You can write your own convenient shorcut like this:
 .myMetrics = expression(myMetrics(Z,Intensity))
 
 lidar \%>\% grid_metrics(.myMetrics)

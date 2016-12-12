@@ -28,12 +28,8 @@ In this case the values higher than the 90th percentile are set to the highest c
 \description{
 This function implements a 3D plot method for voxels objects
 }
-\details{
-By default the function plots points for fast display purposes. It can also plot real voxels.
-}
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-
 lidar = readLAS(LASfile)
 
 voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))

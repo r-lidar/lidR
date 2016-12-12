@@ -15,12 +15,9 @@ catalog(folder, ...)
 A data.frame with the class Catalog
 }
 \description{
-Methods to create a \code{Catalog} object from a folder name
-}
-\details{
-A catalog is the representation of a set of las files. A computer cannot load all
-the data at the same time. A catalog is a simple way to manage all the file sequentially
-reading only the headers.
+Build a \code{Catalog} object from a folder name. A catalog is the representation of a set
+of las files. A computer cannot load all the data at the same time. A catalog is a simple
+way to manage all the file sequentially reading only the headers.
 }
 \seealso{
 \link[lidR:plot.Catalog]{plot}

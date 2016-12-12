@@ -15,6 +15,6 @@ Return nothing. The original object is modified in place by reference.
 \description{
 Retrieve each individual pulse by attributing a number to each point. The
 function depends on the GPS time to retrieve each individual
-beam. A column pulseID is added in the slot @data
+beam. A column '\code{pulseID}' is added in the slot \code{@data}
 }
 

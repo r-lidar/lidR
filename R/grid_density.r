@@ -30,12 +30,13 @@
 #' Pulse density surface model
 #'
 #' Creates a pulse density map using a LiDAR cloud of points. This function is an alias
-#' for \code{grid_metrics(obj, length(unique(pulseID))/res^2), res}.
+#' for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
 #' @aliases grid_density
 #' @param .las An object of class \code{LAS}
-#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 units i.e. 16 square units cells.
-#' @return It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting.
+#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
+#' @return It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting and
+#' RasterLayer casting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -45,7 +46,7 @@
 #' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' @export grid_density
+#' @export
 grid_density = function(.las, res = 4)
 {
   pulseID <- density <- X <- NULL

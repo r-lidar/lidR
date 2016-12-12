@@ -29,11 +29,10 @@
 
 #' Select LAS files interactively
 #'
-#' Select a set of LAS tiles from a Catalog using the mouse interactively
-#'
-#' This function enables the user to select a set of las files from a Catalog by clicking
+#' Select a set of LAS tiles from a Catalog using the mouse interactively. This function
+#' enables the user to select a set of las files from a Catalog by clicking
 #' on the map of the file using the mouse. The selected files will be highlighted in red on
-#' the plot after selection is complete
+#' the plot after selection is complete.
 #' @param x A Catalog object
 #' @return A Catalog object
 #' @export

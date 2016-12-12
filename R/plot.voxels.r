@@ -31,7 +31,6 @@
 #'
 #' This function implements a 3D plot method for voxels objects
 #'
-#' By default the function plots points for fast display purposes. It can also plot real voxels.
 #' @aliases plot.voxels
 #' @param x An object of the class \code{voxels}
 #' @param y Unused (inherited from R base)
@@ -45,7 +44,6 @@
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
 #' voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))

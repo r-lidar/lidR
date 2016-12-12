@@ -41,7 +41,6 @@
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @examples
-#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
@@ -53,6 +52,7 @@
 #'
 #' plot(lidar_norm)
 #'
+#' \dontrun{
 #' # --- Second possibility: read the DTM from a file -----
 #'
 #' dtm = raster::raster(terrain.tiff)

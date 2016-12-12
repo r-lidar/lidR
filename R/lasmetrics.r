@@ -310,21 +310,21 @@ VCI = function(z, zmax, by = 1)
   return(entropy(z, by, zmax))
 }
 
-#' fractal_dimension
-#'
-#' Computes the fractal dimension of a surface. The fractal dimension is a measure
-#' of roughness.
-#'
-#' Fractal dimension computes the roughness based on the box counting method (see Taud and Parrot).
-#' If the input has an NA value, it returns NA. If the input is too small it returns NA.
-#' If the input matrix is not a square matrix, the function cuts the input matrix to create a square matrix.
-#' @param mtx numeric matrix that is the representation of a surface model
-#' @return numeric. A number between 0 and 3. 3 being the dimension of a volume
-#' @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
-#' @examples
-#' mtx = matrix(runif(100), 10, 10)
-#' fractal_dimension(mtx)
-#' @export fractal_dimension
+# fractal_dimension
+#
+# Computes the fractal dimension of a surface. The fractal dimension is a measure
+# of roughness.
+#
+# Fractal dimension computes the roughness based on the box counting method (see Taud and Parrot).
+# If the input has an NA value, it returns NA. If the input is too small it returns NA.
+# If the input matrix is not a square matrix, the function cuts the input matrix to create a square matrix.
+# @param mtx numeric matrix that is the representation of a surface model
+# @return numeric. A number between 0 and 3. 3 being the dimension of a volume
+# @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
+# @examples
+# mtx = matrix(runif(100), 10, 10)
+# fractal_dimension(mtx)
+# @export fractal_dimension
 fractal_dimension = function(mtx)
 {
   if( sum(is.na(mtx)) > 0 )
@@ -379,7 +379,7 @@ stdmetrics_z = function(z, dz = 1)
   zq 	  = as.list(stats::quantile(z, probs))
   names(zq) = paste("zq", probs*100, sep="")
 
-  d =  hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
+  d = graphics::hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
   d = d$counts / sum(d$counts)*100
   d = cumsum(d)[1:9]
   d = as.list(d)

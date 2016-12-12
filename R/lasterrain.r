@@ -30,7 +30,7 @@
 #' Get the elevation of the ground for given coordinates
 #'
 #' Interpolate ground points and return the elevation at the position of interest given by the
-#' parameter. The interpolation can be done using 3 methods: \code{"knnidw"},
+#' user. The interpolation can be done using 3 methods: \code{"knnidw"},
 #' \code{"akima"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
 #' compute the interpolation.
 #'
@@ -39,9 +39,9 @@
 #' an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
 #' data interpolation.}
 #'\item{\code{akima}}{Interpolation depends on the \link[akima:interp]{interp} function from
-#' package \code{akima}. This method is relatively fast and more advanced than knnidw and provide
-#' good digital terrain model. Notice that with this method no extrapolation is done outside of t
-#' he convex hull determined by the ground points.}
+#' package \code{akima}. This method is relatively fast and more advanced than \code{knnidw} and provides
+#' good digital terrain models. Notice that with this method no extrapolation is done outside of
+#' the convex hull determined by the ground points.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
 #' function. This method is very slow and very difficult to manipulate but it is also the
 #' most regognized method to interpolate spatial data.}
@@ -62,7 +62,7 @@
 #' \link[gstat:vgm]{vgm}
 #' \link[gstat:krige]{krige}
 #' \link[akima:interp]{interp}
-lasterrain = function(.las, coord, method, k = 6L, linear = F, model = gstat::vgm(.59, "Sph", 874))
+lasterrain = function(.las, coord, method, k = 6L, linear = TRUE, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- X <- Y <- Z <- NULL
 

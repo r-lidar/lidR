@@ -17,16 +17,13 @@ replaces each return by a circle composed of 8 points before computing the maxim
 in each pixel.}
 }
 \value{
-It returns a \code{data.table} with the class \code{grid_metrics} which enables easier plotting.
+It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting and
+RasterLayer casting.
 }
 \description{
 Creates a canopy surface model using a LiDAR point cloud. For each pixel the
 function returns the highest point found. This basic method could be improved by replacing
-each LiDAR return with a small disk
-}
-\details{
-The algorithm used is the local maximum algorithm. It assigns the
-elevation of the highest return within each grid cell to the grid cell center.
+each LiDAR return with a small disk.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -34,9 +31,17 @@ lidar = readLAS(LASfile)
 
 # Local maximum algorithm with a resolution of 2 meters
 lidar \%>\% grid_canopy(2) \%>\% plot
+
+# Local maximum algorithm with a resolution of 1 meters
+lidar \%>\% grid_canopy(1) \%>\% plot
+
+# Local maximum algorithm with a resolution of 1 meters replacing each
+# point by a 20 cm radius circle of 8 points
+lidar \%>\% grid_canopy(1, 0.2) \%>\% plot
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
+\link[lidR:as.raster.gridmetrics]{as.raster}
 
 Other grid_alias: \code{\link{grid_density}}
 }

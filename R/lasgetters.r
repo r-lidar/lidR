@@ -31,7 +31,7 @@
 #'
 #' \itemize{
 #' \item{\code{lasfilterfirst} Select only the first returns.}
-#' \item{\code{lasfilterfirstLast} Select only the first and last returns.}
+#' \item{\code{lasfilterfirstlast} Select only the first and last returns.}
 #' \item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification v1.3.}
 #' \item{\code{lasfilterlast} Select only the last returns i.e. the last returns and the single returns.}
 #' \item{\code{lasfilternth} Select the returns from their position in the return sequence.}

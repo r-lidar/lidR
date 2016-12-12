@@ -25,7 +25,6 @@ several sources e.g. from an external file or computed by the user. It can also 
 fly.
 }
 \examples{
-\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)
 
@@ -37,6 +36,7 @@ lidar_norm = lasnormalize(lidar, method = "knnidw")
 
 plot(lidar_norm)
 
+\dontrun{
 # --- Second possibility: read the DTM from a file -----
 
 dtm = raster::raster(terrain.tiff)
