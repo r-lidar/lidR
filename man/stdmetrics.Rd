@@ -67,10 +67,11 @@ names and labels:
 \item{\code{q}: refer to quantile}
 \item{\code{a}: refer to the ScanAngle}
 \item{\code{n}: refer to a number (a count)}
+\item{\code{p}: refer to a percentatge}
 }
 For example the metric named \code{zq60} refer to the elavation, quantile, 60.
-It's the 60th percentile of elevations. The metric \code{nground} refer to a count. It's the
-number of point classified as ground. The function \code{stdmetric_i} refer to metrics of
+It's the 60th percentile of elevations. The metric \code{pground} refer to a percentage. It's the
+percentage of returnclassified as ground. The function \code{stdmetric_i} refer to metrics of
 intensity. If a doubt subsist you can retrive a description of each existing metric
 on the lidR wiki page: https://github.com/Jean-Romain/lidR/wiki/stdmetrics.\cr\cr
 Some functions have optional parameters. If these parameter are not provided the function
