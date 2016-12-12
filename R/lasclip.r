@@ -29,9 +29,14 @@
 
 #' Clip LiDAR points
 #'
-#' Clip LiDAR points within a given geometry
+#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
 #'
 #' @param .las An object of class \code{LAS}
+#' @param geometry charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
+#' \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}
+#' @param coord matrix or data.frame. The coordinates of the minimum points requiered to fully
+#' describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
+#' matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix
 #' @param xleft	scalar. of left x position.
 #' @param ybottom	scalar. of bottom y position.
 #' @param xright scalar. of right x position.
@@ -45,15 +50,60 @@
 #' @return An object of class \code{LAS}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
 #' lidar = readLAS(LASfile)
 #'
-#' subset = lidar %>% lasclipRectangle(xleft=684850, ybottom=5017850,
-#'                                  xright=684900, ytop =5017900)
-#'
+#' subset = lidar %>% lasclipRectangle(xleft  = 684850, ybottom = 5017850,
+#'                                     xright = 684900, ytop    = 5017900)
 #' plot(subset)
+#'
+#' msphere = matrix(c(684850, 5017850, 10, 10), ncol = 4)
+#' subset = lidar %>% lasclip("sphere", msphere)
+#' plot(subset)
+#'
+#' mrect = matrix(c(684850, 684900, 5017850, 5017900), ncol = 2)
+#' subset = lidar %>% lasclip("rectangle", mrect)
 #' @name lasclip
-NULL
+#' @export
+lasclip = function(.las, geometry, coord, inside = TRUE)
+{
+  if(is.matrix(coord))
+    coord = data.table::as.data.table(coord)
+  else if(is.data.frame(coord))
+    data.table::setDT(coord)
+  else if(!data.table::is.data.table(coord))
+    stop("'coord' must be a matrix, a data.frame or a data.table")
+
+  if(dim(coord)[2] == 2)
+  {
+    data.table::setnames(coord, c("x", "y"))
+    data.table::setorderv(coord, c("x", "y"))
+  }
+  else if(dim(coord)[2] == 3)
+  {
+    data.table::setnames(coord, c("x", "y", "z"))
+    data.table::setorderv(coord, c("x", "y", "z"))
+  }
+  else if(dim(coord)[2] == 4)
+  {
+    data.table::setnames(coord, c("x", "y", "z", "r"))
+  }
+  else
+    stop("Dimension incorrect for 'coord'")
+
+  if(geometry == "circle")
+    return(lasclipCircle(.las, coord$x[1], coord$y[1], coord$z[1], inside))
+  else if(geometry == "rectangle")
+    return(lasclipRectangle(.las, coord$x[1], coord$y[1], coord$x[2], coord$y[2], inside))
+  else if(geometry == "polygon")
+    return(lasclipPolygon(.las, coord$x, coord$y, inside))
+  else if(geometry == "cuboid")
+    return(lasclipCuboid(.las, coord$x[1], coord$y[1], coord$z[1], coord$x[2], coord$y[2], coord$z[2], inside))
+  else if(geometry == "sphere")
+    return(lasclipSphere(.las, coord$x[1], coord$y[1], coord$z[1], coord$r[1], inside))
+  else
+    stop("Geometry no supported.")
+}
+
 
 #' @export lasclipRectangle
 #' @rdname lasclip
@@ -65,7 +115,6 @@ lasclipRectangle = function(.las, xleft, ybottom, xright, ytop, inside = TRUE)
     return(lasfilter(.las, between(X, xleft, xright), between(Y, ybottom, ytop)))
   else
     return(lasfilter(.las, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
-
 }
 
 #' @export lasclipPolygon
@@ -92,3 +141,25 @@ lasclipCircle = function(.las, xcenter, ycenter, radius, inside = TRUE)
   else
     return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
 }
+
+lasclipCuboid = function(.las, xleft, ybottom, zbottom, xright, ytop, ztop, inside = TRUE)
+{
+  X <- Y <- Z <- NULL
+
+  if(inside)
+    return(lasfilter(.las, between(X, xleft, xright), between(Y, ybottom, ytop), between(Z, zbottom, ztop)))
+  else
+    return(lasfilter(.las, !between(X, xleft, xright), !between(Y, ybottom, ytop), !between(Z, zbottom, ztop)))
+}
+
+
+lasclipSphere = function(.las, xcenter, ycenter, zcenter, radius, inside = TRUE)
+{
+  X <- Y <- Z <- NULL
+
+  if(inside)
+    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 + (Z - zcenter)^2 <= radius^2))
+  else
+    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 + (Z - zcenter)^2 > radius^2))
+}
+

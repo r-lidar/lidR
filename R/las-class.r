@@ -84,8 +84,6 @@ setClass(
 setMethod("initialize", "LAS",
 	function(.Object, data, header = list())
 	{
-	  gpstime <- R <- G <- B <- X <- Y <- NULL
-
 	  if(is.data.frame(data))
 	    data.table::setDT(data)
 
@@ -110,8 +108,8 @@ setMethod("initialize", "LAS",
 
 	  # Build returned object  ---------------------------------------------------
 
-	  .Object@data         <- data
-	  .Object@header       <- header
+	  .Object@data   <- data
+	  .Object@header <- header
 
 	  return(.Object)
 	}
@@ -133,18 +131,9 @@ setMethod("$", "LAS", function(x, name)
 
 #' Create a \code{LAS} object
 #'
-#' When a \code{LAS} object is created several things are computed on the fly in addition
-#' to the data inputted in the constructor. See \link[lidR:LAS-class]{LAS-class}.
-#'
 #' @param data a data.table containing the LiDAR data.
 #' @param header a list containing the data from the header of a las file.
 #' @return An object of class \code{LAS}
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#'
-#' lidar = readLAS(LASfile)
-#'
-#' summary(lidar)
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
 #' \link[lidR:summary]{summary}
