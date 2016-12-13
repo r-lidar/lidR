@@ -18,36 +18,31 @@ Please contact the author for bug reports or feature requests (on github, prefer
 # Features (not exhaustive)
 
 - [Read write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki/readLAS)
+- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki/lasplot)
 - [Retrieve indiviual pulses and flightlines](https://github.com/Jean-Romain/lidR/wiki/readLAS#dynamically-computed-fields)
+- [Compute any set of metrics using an area based approach](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
 - [Compute any set of metrics on a cloud of points](https://github.com/Jean-Romain/lidR/wiki/cloud_metrics)
-- [Rasterize and to compute a set of metrics using an area based approach](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
 - [Classify and clip data from geographic shapefiles](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
-- [Thin a cloud of points to reach a homogeneous pulse density](https://github.com/Jean-Romain/lidR/wiki/lasdecimate)
+- [Colorize a point cloud from RGB images](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
 - [Filter a cloud of points based on any condition test](https://github.com/Jean-Romain/lidR/wiki/lasfilter)
 - [Clip data based on discs, rectangles or polygons](https://github.com/Jean-Romain/lidR/wiki/lasclip)
 - [Manage a catalog of `.las` tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
-- [Automatically extract a set of ground plot inventories (even plots falling between two or more tiles)](https://github.com/Jean-Romain/lidR/wiki/catalog_queries)
+- [Thin a point cloud to reach a homogeneous pulse density](https://github.com/Jean-Romain/lidR/wiki/lasdecimate)
+- [Automatically extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki/catalog_queries)
 - [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog_#process-all-the-file-of-a-catalog_apply)
-- [Compute a digital terrain model (DTM).](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
-- [Normalize a point cloud substracting a DTM (computed or read from a file).](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
-- [Compute a digital canopy model](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
-- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki/lasplot)
+- [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
+- [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
+- [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
 
 # Install lidR from github
 
-The package contains C++ code. To install the package from github you need development tools to be able to compile C++ code.
+The package contains C++ code. To install the package from github make sure you have a working development environment.
 
-Install R development tools:
+* **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
+* **Mac**: Install `Xcode` from the Mac App Store.
+* **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
 
-| OS      | Install
-|---------|-------------------------------------------------------------------|
-| Linux   | `sudo apt-get install r-base-dev`                                 |
-| Windows | [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/)      |
-| Mac     | [Xcode command line tools](https://developer.apple.com/downloads) |
-
-And install devtools: `install.packages("devtools")`.
-
-## Install from github with devtools
+Install devtools: `install.packages("devtools")`, then:
 
 ````r
 devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
@@ -67,7 +62,7 @@ plot(lidar)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg" alt="" style="max-width:100%;">
     </td>
     <td valign="top">
-<pre>metric = grid_metrics(lidar, 20, mean(Z))
+<pre>metric = grid_metrics(lidar, mean(Z))
 plot(metric)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg" alt="" style="max-width:100%;">
     </td>
@@ -78,13 +73,13 @@ plot(metric)</pre>
   </tr>
   <tr>
     <td valign="top">
-<pre>catalog = Catalog("folder of .las files")
-plot(catalog)</pre>
+<pre>ctg = catalog("folder of .las files")
+plot(ctg)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
     </td>
     <td valign="top">
 <pre>dtm = grid_terrain(lidar)
-plot(dtm)</pre>
+plot3d(dtm)</pre>
 <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
     </td>
   </tr>
