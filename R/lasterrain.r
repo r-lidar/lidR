@@ -113,6 +113,9 @@ terrain_akima = function(ground, coord, linear)
 {
   . <- X <- Y <- Z <- Zg <- xc <- yc <- NULL
 
+  if (!requireNamespace("akima", quietly = TRUE))
+    stop("'akima' package is needed for this function to work. Please install it.", call. = F)
+
   xo = unique(coord$X) %>% sort()
   yo = unique(coord$Y) %>% sort()
 
@@ -127,6 +130,9 @@ terrain_akima = function(ground, coord, linear)
 terrain_kriging = function(ground, coord, model)
 {
   X <- Y <- Z <- NULL
+
+  if (!requireNamespace("gstat", quietly = TRUE))
+    stop("'gstat' package is needed for this function to work. Please install it.", call. = F)
 
   x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model)
   return(x$var1.pred)
