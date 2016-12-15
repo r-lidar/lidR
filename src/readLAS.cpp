@@ -39,8 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-int get_format(U8);
-
 // Read data from a las and laz file with LASlib
 //
 // Read data from a las or laz file in format 1 to 4 according to LAS specification and return a list.
@@ -75,9 +73,6 @@ List readLASdata(CharacterVector file,
 {
   try
   {
-    NumericVector X,Y,Z,T;
-    IntegerVector I,RN,NoR,SDF,EoF,C,SA,UD,PSI,R,G,B;
-
     std::string filestd = as<std::string>(file);
 
     LASreadOpener lasreadopener;
@@ -89,58 +84,85 @@ List readLASdata(CharacterVector file,
       throw std::runtime_error("LASlib internal error. See message above.");
 
     U8 point_type = lasreader->header.point_data_format;
-    int format    = get_format(point_type);
-    int n         = lasreader->header.number_of_point_records;
-    bool hasrgb   = format == 2 || format == 3;
-    bool hasgpst  = format == 1 || format == 3;
+    int format;
+    int n = lasreader->header.number_of_point_records;
 
-
-    // Intialize memory only if necessary
-    X = NumericVector(n);
-    Y = NumericVector(n);
-    Z = NumericVector(n);
-
-    if(hasgpst)           T   = NumericVector(n);
-    if(Intensity)         I   = IntegerVector(n);
-    if(ReturnNumber)      RN  = IntegerVector(n);
-    if(NumberOfReturns)   NoR = IntegerVector(n);
-    if(ScanDirectionFlag) SDF = IntegerVector(n);
-    if(EdgeofFlightline)  EoF = IntegerVector(n);
-    if(Classification)    C   = IntegerVector(n);
-    if(ScanAngle)         SA  = IntegerVector(n);
-    if(UserData)          UD  = IntegerVector(n);
-    if(PointSourceID)     PSI = IntegerVector(n);
-    if(RGB && hasrgb)
+    switch (point_type)
     {
-      R   = IntegerVector(n);
-      G   = IntegerVector(n);
-      B   = IntegerVector(n);
+    case 0:
+      format = 0;
+      break;
+    case 1:
+      format = 1;
+      break;
+    case 2:
+      format = 2;
+      break;
+    case 3:
+      format = 3;
+      break;
+    case 4:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 5:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 6:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 7:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 8:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 9:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    case 10:
+      throw std::runtime_error("LAS format not yet supported");
+      break;
+    default:
+      throw std::runtime_error("LAS format not valid");
     }
 
-    // Set data
-    unsigned long int i = 0;
+
+    NumericVector X(n);
+    NumericVector Y(n);
+    NumericVector Z(n);
+    IntegerVector I(n);
+    IntegerVector RN(n);
+    IntegerVector NoR(n);
+    IntegerVector SDF(n);
+    IntegerVector EoF(n);
+    IntegerVector C(n);
+    IntegerVector SA(n);
+    IntegerVector UD(n);
+    IntegerVector PSI(n);
+    NumericVector T(n);
+    IntegerVector R(n);
+    IntegerVector G(n);
+    IntegerVector B(n);
+
+    unsigned int i = 0;
     while (lasreader->read_point())
     {
       X[i]   = lasreader->point.get_x();
       Y[i]   = lasreader->point.get_y();
       Z[i]   = lasreader->point.get_z();
-
-      if(hasgpst)           T[i]   = lasreader->point.get_gps_time();
-      if(Intensity)         I[i]   = lasreader->point.get_intensity();
-      if(ReturnNumber)      RN[i]  = lasreader->point.get_return_number();
-      if(NumberOfReturns)   NoR[i] = lasreader->point.get_number_of_returns();
-      if(ScanDirectionFlag) SDF[i] = lasreader->point.get_scan_direction_flag();
-      if(EdgeofFlightline)  EoF[i] = lasreader->point.get_edge_of_flight_line();
-      if(Classification)    C[i]   = lasreader->point.get_classification();
-      if(ScanAngle)         SA[i]  = lasreader->point.get_scan_angle_rank();
-      if(UserData)          UD[i]  = lasreader->point.get_user_data();
-      if(PointSourceID)     PSI[i] = lasreader->point.get_point_source_ID();
-      if(RGB && hasrgb)
-      {
-        R[i]   = lasreader->point.get_R();
-        G[i]   = lasreader->point.get_G();
-        B[i]   = lasreader->point.get_B();
-      }
+      I[i]   = lasreader->point.get_intensity();
+      RN[i]  = lasreader->point.get_return_number();
+      NoR[i] = lasreader->point.get_number_of_returns();
+      SDF[i] = lasreader->point.get_scan_direction_flag();
+      EoF[i] = lasreader->point.get_edge_of_flight_line();
+      C[i]   = lasreader->point.get_classification();
+      SA[i]  = lasreader->point.get_scan_angle_rank();
+      UD[i]  = lasreader->point.get_user_data();
+      PSI[i] = lasreader->point.get_point_source_ID();
+      T[i]   = lasreader->point.get_gps_time();
+      R[i]   = lasreader->point.get_R();
+      G[i]   = lasreader->point.get_G();
+      B[i]   = lasreader->point.get_B();
 
       i++;
     }
@@ -154,22 +176,32 @@ List readLASdata(CharacterVector file,
     field.push_back("Y");
     field.push_back("Z");
 
-    if(hasgpst)           lasdata.push_back(T),   field.push_back("gpstime");
-    if(Intensity)         lasdata.push_back(I),   field.push_back("Intensity");
-    if(ReturnNumber)      lasdata.push_back(RN),  field.push_back("ReturnNumber");
-    if(NumberOfReturns)   lasdata.push_back(NoR), field.push_back("NumberOfReturns");
-    if(ScanDirectionFlag) lasdata.push_back(SDF), field.push_back("ScanDirectionFlag");
-    if(EdgeofFlightline)  lasdata.push_back(EoF), field.push_back("EdgeofFlightline");
-    if(Classification)    lasdata.push_back(C),   field.push_back("Classification");
-    if(ScanAngle)         lasdata.push_back(SA),  field.push_back("ScanAngle");
-    if(UserData)          lasdata.push_back(UD),  field.push_back("UserData");
-    if(PointSourceID)     lasdata.push_back(PSI), field.push_back("PointSourceID");
-    if(RGB && hasrgb)
+    if(Intensity)
+      lasdata.push_back(I), field.push_back("Intensity");
+    if(ReturnNumber)
+      lasdata.push_back(RN), field.push_back("ReturnNumber");
+    if(NumberOfReturns)
+      lasdata.push_back(NoR), field.push_back("NumberOfReturns");
+    if(ScanDirectionFlag)
+      lasdata.push_back(SDF), field.push_back("ScanDirectionFlag");
+    if(EdgeofFlightline)
+      lasdata.push_back(EoF), field.push_back("EdgeofFlightline");
+    if(Classification)
+      lasdata.push_back(C), field.push_back("Classification");
+    if(ScanAngle)
+      lasdata.push_back(SA), field.push_back("ScanAngle");
+    if(UserData)
+      lasdata.push_back(UD), field.push_back("UserData");
+    if(PointSourceID)
+      lasdata.push_back(PSI), field.push_back("PointSourceID");
+    if(RGB && (format == 2 || format == 3))
     {
       lasdata.push_back(R), field.push_back("R");
       lasdata.push_back(G), field.push_back("G");
       lasdata.push_back(B), field.push_back("B");
     }
+    if(format == 1 || format == 3)
+      lasdata.push_back(T); field.push_back("gpstime");
 
     lasdata.names() = field;
 
@@ -287,50 +319,4 @@ List readLASheader(CharacterVector file)
     Rcerr << "Error: " << e.what() << std::endl;
     return(List(0));
   }
-}
-
-int get_format(U8 point_type)
-{
-    int format;
-
-    switch (point_type)
-    {
-    case 0:
-      format = 0;
-      break;
-    case 1:
-      format = 1;
-      break;
-    case 2:
-      format = 2;
-      break;
-    case 3:
-      format = 3;
-      break;
-    case 4:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 5:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 6:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 7:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 8:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 9:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    case 10:
-      throw std::runtime_error("LAS format not yet supported");
-      break;
-    default:
-      throw std::runtime_error("LAS format not valid");
-    }
-
-    return(format);
 }
