@@ -10,12 +10,14 @@ as.SpatialPointsDataFrame(.las)
 \item{.las}{an object of class LAS}
 }
 \value{
-An object of class SpatialPointsDataFrame
+An object of class \code{SpatialPointsDataFrame}
 }
 \description{
 Transform a LAS object into a SpatialPointsDataFrame object
 }
 \seealso{
-\link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+Other cast: \code{\link{as.SpatialPixelsDataFrame}},
+  \code{\link{as.lasmetrics}},
+  \code{\link{as.raster.lasmetrics}}
 }
 

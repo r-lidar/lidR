@@ -45,7 +45,7 @@
 #' For example the metric named \code{zq60} refers to the elevation, quantile, 60 i.e. the 60th percentile of elevations.
 #' The metric \code{pground} refers to a percentage. It is the percentage of points classified as ground.
 #' The function \code{stdmetric_i} refers to metrics of intensity. A description of each existing metric can be found
-#' on the lidR wiki page: https://github.com/Jean-Romain/lidR/wiki/stdmetrics.\cr\cr
+#' on the \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
 #' Some functions have optional parameters. If these parameters are not provided the function
 #' computes only a subset of existing metrics. For example \code{stdmetrics_i} requires the intensity
 #' values, but if the elevation values are provided it can compute additional metrics such as cumulative
@@ -93,9 +93,10 @@
 #' myMetrics = function(z, i)
 #' {
 #'   metrics = list(
-#'     mymetric1 = mean(z*i),       # Mean of products of z by intensity
-#'     mymetric2 = mean(z[i > 20])  # Mean elevation of point with an intensity > 20
-#'   )
+#'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+#'      zimean  = mean(z*i),       # Mean products of z by intensity
+#'      zsqmean = sqrt(mean(z^2))  # Quadratic mean
+#'    )
 #'
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }

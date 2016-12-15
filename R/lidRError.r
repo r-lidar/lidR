@@ -48,7 +48,7 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR4" = list("No '", p$infield, "' field found. '", p$outfield, "', cannot be computed from this file."),
 "LDR5" = list("Parameter n of function lasfilternth incorrect."),
 "LDR6" = list("This algorithm does not exist."),
-"LDR7" = list("The option '", p$option, "' does not exist."),
+"LDR7" = list("'flighlineID': no such field in the dataset. Check function 'lasflighline'"),
 "LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
 "LDR9" = list("'data' is empty. No point found"),
 

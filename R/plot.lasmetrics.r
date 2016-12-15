@@ -27,13 +27,13 @@
 
 
 
-#' Plot an object of class grid_metrics in 2D
+#' Plot an object of class lasmetrics in 2D
 #'
-#' This functions implements a plot method for a \code{gridmetrics} data.frame
+#' This functions implements a plot method for a \code{lasmetrics} data.frame
 #'
 #' The \dots param provides additional arguments to \link[raster:plot]{plot}.
 #'
-#' @param x A data.frame or data.table of class grid_metrics.
+#' @param x A data.frame or data.table of class \code{lasmetrics}.
 #' @param z character. The field to plot. If NULL, autodetect.
 #' @param colorPalette function. A color palette function. Default is \code{height.colors} provided by the package lidR
 #' @param \dots Supplementary parameters for \link[raster:plot]{plot}
@@ -74,9 +74,8 @@
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' @export
-#' @rdname plot.gridmetrics
-#' @method plot gridmetrics
-plot.gridmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
+#' @method plot lasmetrics
+plot.lasmetrics = function(x, z = NULL, colorPalette = height.colors, ...)
 {
   inargs = list(...)
 

@@ -37,8 +37,9 @@ so the flightline origin of each point is known (see \link[lidR:lasflightline]{l
 fields exist (see \link[lidR:lascolor]{lascolor})}
 }
 A \code{LAS} object also contains a slot \code{@header} which contains the
-header of the \code{.las} file. See the ASPRS documentation for the LAS file format for more information.\cr
-http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf
+header of the \code{.las} file. See the ASPRS documentation for the
+\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
+for more information.\cr
 }
 \section{Slots}{
 

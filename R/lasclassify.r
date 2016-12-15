@@ -47,7 +47,7 @@
 #' is used internally to normalize the lidar dataset and is exported because some users may find it useful
 #' (for example to colorize the point cloud using a georeferenced RGB image.}
 #' }
-#' More examples avaible on lidR wiki: https://github.com/Jean-Romain/lidR/wiki/lasclassify
+#' More examples avaible on \href{https://github.com/Jean-Romain/lidR/wiki/lasclassify}{lidR wiki}.
 #'
 #' @param .las An object of the class \code{LAS}
 #' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}

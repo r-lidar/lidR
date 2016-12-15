@@ -37,27 +37,29 @@
 #' grid_metrics is similar to cloud_metrics except it computes metrics within each cell
 #' in the output grid. The grid cell coordinates are pre-determined for a given resolution.
 #' So the algorithm will always provide the same coordinates independently of the dataset.
-#' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers: (10,10), (10,30), (30,10) etc..
-#' When start = (-10, -10) and res = 20 grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc..
-#' In Quebec (Canada) reference is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each cell is a classical function (see examples) that returns a labelled list of metrics.
+#' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
+#' (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will
+#' produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada) reference
+#' is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each
+#' cell is a classical function (see examples) that returns a labelled list of metrics.
 #' The following existing function can help the user to compute some metrics:
-#'
 #' \itemize{
+#' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
-#' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' } Users must write their own functions to create metrics.
-#' grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user writes their
-#' function without considering grid cells, only a cloud of points (see example).
+#' grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user
+#' writes their function without considering grid cells, only a cloud of points (see example).
 #'
-#' @aliases  grid_metrics
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be applied to each cell
 #' @param res numeric. The size of the cells. Default 20.
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
-#' @param option character. Could be \code{"split_flightline"}. In this case the algorithm will compute the metrics for each flightline individually. It returns the same cells several times in overlap.
-#' @return It returns a \code{data.table} containing the metrics for each cell. The table has the class "grid_metrics" enabling easy plotting.
+#' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
+#' flightline individually. It returns the same cells several times in overlap.
+#' @return It returns a \code{data.table} containing the metrics for each cell. The table
+#' has the class "lasmetrics" enabling easy plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -68,28 +70,26 @@
 #' # Mean height with 400 m^2 cells
 #' grid_metrics(lidar, mean(Z)) %>% plot
 #'
-#' # Define your own metric function
-#' myMetrics = function(z, i, angle, pulseID)
+#' # Define your own new metrics
+#' myMetrics = function(z, i)
 #' {
-#'   ret = list(
-#'         npulse  = length(unique(pulseID)),
-#'         hmean   = mean(z),
-#'         hmax    = max(z),
-#'         imean   = mean(i),
-#'         angle   = mean(abs(angle))
-#'         )
+#'   metrics = list(
+#'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+#'      zimean  = mean(z*i),       # Mean products of z by intensity
+#'      zsqmean = sqrt(mean(z^2))  # Quadratic mean
+#'    )
 #'
-#'    return(ret)
-#'  }
+#'    return(metrics)
+#' }
 #'
-#' metrics = grid_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
+#' metrics = grid_metrics(lidar, myMetrics(Z, Intensity))
 #'
-#' plot(metrics, "hmean")
-#' plot(metrics, "hmax")
-#' plot(metrics, "imean")
+#' plot(metrics, "zwimean")
+#' plot(metrics, "zimean")
+#' plot(metrics, "zsqmean")
 #' #etc.
-#' @export grid_metrics
-grid_metrics = function(.las, func, res = 20, start = c(0,0), option = NULL)
+#' @export
+grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE)
 {
   stopifnotlas(.las)
 
@@ -102,22 +102,21 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), option = NULL)
 
   x_raster = round_any(.las@data$X-0.5*res-start[1], res)+0.5*res+start[1]
   y_raster = round_any(.las@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
-  flightlineID = .las@data$flightlineID
 
-  if(is.null(option))
+  if(!splitlines)
     by = list(Xc = x_raster,Yc = y_raster)
-  else if(option == "split_flightline")
-    by = list(Xc = x_raster,Yc = y_raster, flightline = flightlineID)
+  else if("flightlineID" %in% names(.las@data))
+    by = list(Xc = x_raster,Yc = y_raster, flightline = .las@data$flightlineID)
   else
-    lidRError("LDR7", option = option)
+    lidRError("LDR7")
 
-  stat <- .las@data[, c(eval(func_call)), 	by=by]
+  stat <- .las@data[, c(eval(func_call)), by = by]
 
   n = names(stat)
   n[1:2] = c("X", "Y")
 
   data.table::setnames(stat, n)
-  data.table::setattr(stat, "class", c("gridmetrics", attr(stat, "class")))
+  data.table::setattr(stat, "class", c("lasmetrics", attr(stat, "class")))
   data.table::setattr(stat, "res", res)
 
   return(stat)

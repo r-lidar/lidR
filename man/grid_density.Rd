@@ -12,7 +12,7 @@ grid_density(.las, res = 4)
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.}
 }
 \value{
-It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting and
+It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
 RasterLayer casting.
 }
 \description{

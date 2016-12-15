@@ -29,10 +29,9 @@
 
 #' Plot voxelized LiDAR data
 #'
-#' This function implements a 3D plot method for voxels objects
+#' This function implements a 3D plot method for 'lasmetrics3d' objects
 #'
-#' @aliases plot.voxels
-#' @param x An object of the class \code{voxels}
+#' @param x An object of the class \code{'lasmetrics3d'}
 #' @param y Unused (inherited from R base)
 #' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
 #' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
@@ -49,14 +48,15 @@
 #' voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
 #' plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
 #' @seealso
+#' \link[lidR:grid_metrics3d]{grid_metrics3d}
 #' \link[rgl:points3d]{points3d}
 #' \link[lidR:height.colors]{height.colors}
 #' \link[lidR:forest.colors]{forest.colors}
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
-#' \link[lidR:grid_metrics3d]{grid_metrics3d}
 #' @export
-plot.voxels = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", trim = 1, ...)
+#' @method plot lasmetrics3d
+plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", trim = 1, ...)
 {
   inargs <- list(...)
 

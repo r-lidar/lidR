@@ -43,7 +43,8 @@
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be apply to each voxel.
 #' @param res numeric. The size of the voxels
-#' @return It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling easier plotting.
+#' @return It returns a \code{data.table} containing the metrics for each voxel. The table
+#' has the class \code{lasmetrics3d} enabling easier plotting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -60,13 +61,13 @@
 #' myMetrics = function(i, angle, pulseID)
 #' {
 #'   ret = list(
-#'         npulse  = length(unique(pulseID)),
-#'         angle   = mean(angle),
-#'         imean   = mean(i)
-#'         )
+#'      npulse  = length(unique(pulseID)),
+#'      angle   = mean(angle),
+#'      imean   = mean(i)
+#'    )
 #'
 #'    return(ret)
-#'  }
+#' }
 #'
 #' voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 #'
@@ -82,6 +83,9 @@ grid_metrics3d = function(.las, func, res = 1)
 
   func_call = substitute(func)
 
+  if(is(func_call, "name"))
+    func_call = eval(func_call)
+
   .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
 
   x_raster = round_any(.las@data$X, res)
@@ -96,7 +100,7 @@ grid_metrics3d = function(.las, func, res = 1)
   n[1:3] = c("X", "Y", "Z")
   setnames(stat, n)
 
-  attr(stat, "class") = c("voxels", attr(stat, "class"))
+  attr(stat, "class") = c("lasmetrics3d", attr(stat, "class"))
   attr(stat, "res") = res
 
   return(stat)
