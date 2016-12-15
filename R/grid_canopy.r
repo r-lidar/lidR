@@ -40,7 +40,7 @@
 #' @param subcircle numeric radius of the circles. To fill empty pixels the algorithm
 #' replaces each return by a circle composed of 8 points before computing the maximum elevation
 #' in each pixel.
-#' @return It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting and
+#' @return It returns a \code{data.table} with the class \code{lasmetrics} which enables easier plotting and
 #' RasterLayer casting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -58,7 +58,7 @@
 #' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:as.raster.gridmetrics]{as.raster}
+#' \link[lidR:as.raster.lasmetrics]{as.raster}
 #' @export grid_canopy
 grid_canopy = function(.las, res = 2, subcircle = 0)
 {

@@ -17,7 +17,7 @@ replaces each return by a circle composed of 8 points before computing the maxim
 in each pixel.}
 }
 \value{
-It returns a \code{data.table} with the class \code{gridmetrics} which enables easier plotting and
+It returns a \code{data.table} with the class \code{lasmetrics} which enables easier plotting and
 RasterLayer casting.
 }
 \description{
@@ -41,7 +41,7 @@ lidar \%>\% grid_canopy(1, 0.2) \%>\% plot
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
-\link[lidR:as.raster.gridmetrics]{as.raster}
+\link[lidR:as.raster.lasmetrics]{as.raster}
 
 Other grid_alias: \code{\link{grid_density}}
 }

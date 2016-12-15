@@ -26,33 +26,35 @@
 # ===============================================================================
 
 
-#' Set the class gridmetrics to a data.frame or a data.table
+#' Set the class 'lasmetrics' to a data.frame or a data.table
 #'
-#' Set the class gridmetrics to a data.frame. Useful when reading data from a file.
-#' In this case the data.frame does not have the class gridmetrics and cannot easly be
+#' Set the class lasmetrics to a data.frame. Useful when reading data from a file.
+#' In this case the data.frame does not have the class lasmetrics and cannot easly be
 #' plotted or transformed into a raster
 #'
 #' @param x A data.frame or a data.table
 #' @param res numeric the original resolution
-#' @export as.gridmetrics
-as.gridmetrics = function(x, res)
+#' @return Nothing. Object is updated in place by reference.
+#' @export
+#' @family cast
+as.lasmetrics = function(x, res)
 {
   data.table::setDT(x)
-  attr(x, "class") = c("gridmetrics", attr(x, "class"))
-  attr(x, "res")   = res
-  return(x)
+  data.table::setattr(x, "class") = c("lasmetrics", attr(x, "class"))
+  data.table::setattr(x, "res")   = res
 }
 
-#' Transform a grid_metrics object into a spatial raster object
+#' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
 #'
-#' @param x a grid_metrics object
+#' @param x a \code{lasmetrics} object
 #' @param z character. The field to plot. If NULL, autodetect
 #' @param \dots other parameters for \link[data.table:dcast]{dcast}
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
-#' \link[data.table:dcast]{dcast}
+#' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[raster:raster]{raster}
+#' \link[data.table:dcast]{dcast}
 #' @return A RasterLayer object from package  \link[raster:raster]{raster}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -60,10 +62,11 @@ as.gridmetrics = function(x, res)
 #'
 #' meanHeight = grid_metrics(lidar, mean(Z))
 #' rmeanHeight = as.raster(meanHeight)
-#' @method as.raster gridmetrics
+#' @method as.raster lasmetrics
 #' @importMethodsFrom raster as.raster
 #' @export
-as.raster.gridmetrics = function(x, z = NULL, ...)
+#' @family cast
+as.raster.lasmetrics = function(x, z = NULL, ...)
 {
   X <- Y <- NULL
 
@@ -112,10 +115,9 @@ as.raster.gridmetrics = function(x, z = NULL, ...)
 #' Transform a LAS object into a SpatialPointsDataFrame object
 #'
 #' @param .las an object of class LAS
-#' @return An object of class SpatialPointsDataFrame
-#' @seealso
-#' \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+#' @return An object of class \code{SpatialPointsDataFrame}
 #' @export
+#' @family cast
 as.SpatialPointsDataFrame = function(.las)
 {
   . <- X <- Y <- NULL
@@ -128,18 +130,17 @@ as.SpatialPointsDataFrame = function(.las)
   sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
 }
 
-#' Transform a gridmetric object into a SpatialPixelsDataFrame object
+#' Transform a \code{'lasmetrics'} object into a SpatialPixelsDataFrame object
 #'
-#' @param .data an object of class gridmetric
-#' @return An object of class SpatialPixelDataFrame
-#' @seealso
-#' \link[sp:SpatialPixelsDataFrame-class]{SpatialPixelsDataFrame}
+#' @param .data an object of class \code{lasmetrics}
+#' @return An object of class \code{SpatialPixelDataFrame}
 #' @export
+#' @family cast
 as.SpatialPixelsDataFrame = function(.data)
 {
   if (!requireNamespace("sp", quietly = TRUE))
     stop("'sp' package is needed for this function to work. Please install it.", call. = F)
 
-  data.table::setDF(.data)
+  .data = as.data.frame(.data)
   sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
 }

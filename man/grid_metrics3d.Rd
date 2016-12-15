@@ -14,7 +14,8 @@ grid_metrics3d(.las, func, res = 1)
 \item{res}{numeric. The size of the voxels}
 }
 \value{
-It returns a \code{data.table} containing the metrics for each voxel. The table has the class "voxels" enabling easier plotting.
+It returns a \code{data.table} containing the metrics for each voxel. The table
+has the class \code{lasmetrics3d} enabling easier plotting.
 }
 \description{
 Voxelize the cloud of points and compute a series of descriptive statistics for
@@ -45,13 +46,13 @@ grid_metrics3d(lidar, mean(ScanAngle))
 myMetrics = function(i, angle, pulseID)
 {
   ret = list(
-        npulse  = length(unique(pulseID)),
-        angle   = mean(angle),
-        imean   = mean(i)
-        )
+     npulse  = length(unique(pulseID)),
+     angle   = mean(angle),
+     imean   = mean(i)
+   )
 
    return(ret)
- }
+}
 
 voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 

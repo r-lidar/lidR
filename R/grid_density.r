@@ -35,7 +35,7 @@
 #' @aliases grid_density
 #' @param .las An object of class \code{LAS}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
-#' @return It returns a \code{data.table} of the class \code{grid_metrics} which enables easier plotting and
+#' @return It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
 #' RasterLayer casting.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

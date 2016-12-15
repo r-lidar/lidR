@@ -20,10 +20,10 @@ See \link[lidR:grid_metrics]{grid_metrics} to compute metrics on a grid. Basical
 no predifined metrics. Users must write their own functions to create metrics (see example).
 The following existing functions can serve as a guide to help users compute their own metrics:
 \itemize{
+\item{\link[lidR:stdmetrics]{stdmetrics}}
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-\item{\link[lidR:stdmetrics]{stdmetrics}}
 }
 }
 \examples{
@@ -31,23 +31,21 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 cloud_metrics(lidar, max(Z))
-cloud_metrics(lidar, mean(Z))
+cloud_metrics(lidar, mean(ScanAngle))
 
-# Define your own metric function
-myMetrics = function(z, i, angle, pulseID)
+# Define your own new metrics
+myMetrics = function(z, i)
 {
-  ret = list(
-        npulse  = length(unique(pulseID)),
-        hmean   = mean(z),
-        hmax    = max(z),
-        imean   = mean(i),
-        angle   = mean(abs(angle))
-        )
+  metrics = list(
+     zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+     zimean  = mean(z*i),       # Mean products of z by intensity
+     zsqmean = sqrt(mean(z^2))  # Quadratic mean
+   )
 
-   return(ret)
- }
+   return(metrics)
+}
 
-metrics = cloud_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
+metrics = cloud_metrics(lidar, myMetrics(Z, Intensity))
 
 # Predefined metrics
 cloud_metrics(lidar, .stdmetrics)

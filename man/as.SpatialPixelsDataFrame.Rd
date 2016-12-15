@@ -2,20 +2,22 @@
 % Please edit documentation in R/typecast.r
 \name{as.SpatialPixelsDataFrame}
 \alias{as.SpatialPixelsDataFrame}
-\title{Transform a gridmetric object into a SpatialPixelsDataFrame object}
+\title{Transform a \code{'lasmetrics'} object into a SpatialPixelsDataFrame object}
 \usage{
 as.SpatialPixelsDataFrame(.data)
 }
 \arguments{
-\item{.data}{an object of class gridmetric}
+\item{.data}{an object of class \code{lasmetrics}}
 }
 \value{
-An object of class SpatialPixelDataFrame
+An object of class \code{SpatialPixelDataFrame}
 }
 \description{
-Transform a gridmetric object into a SpatialPixelsDataFrame object
+Transform a \code{'lasmetrics'} object into a SpatialPixelsDataFrame object
 }
 \seealso{
-\link[sp:SpatialPixelsDataFrame-class]{SpatialPixelsDataFrame}
+Other cast: \code{\link{as.SpatialPointsDataFrame}},
+  \code{\link{as.lasmetrics}},
+  \code{\link{as.raster.lasmetrics}}
 }
 
