@@ -112,7 +112,7 @@ void LASlibWrite(CharacterVector file,
 
     LASwriter* laswriter = laswriteopener.open(&header);
 
-    if(0 == laswriter | NULL == laswriter)
+    if(0 == laswriter || NULL == laswriter)
       throw std::runtime_error("LASlib internal error. See message above.");
 
     for(int i = 0 ; i < X.length() ; i++)
@@ -146,6 +146,8 @@ void LASlibWrite(CharacterVector file,
     laswriter->update_header(&header, TRUE);
     I64 total_bytes = laswriter->close();
     delete laswriter;
+
+    Rcout << "Wrote " << total_bytes << " bytes" << std::endl;
   }
   catch (std::exception const& e)
   {

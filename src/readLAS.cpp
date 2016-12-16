@@ -85,7 +85,7 @@ List readLASdata(CharacterVector file,
 
     LASreader* lasreader = lasreadopener.open();
 
-    if(0 == lasreader | NULL == lasreader)
+    if(0 == lasreader || NULL == lasreader)
       throw std::runtime_error("LASlib internal error. See message above.");
 
     U8 point_type = lasreader->header.point_data_format;
