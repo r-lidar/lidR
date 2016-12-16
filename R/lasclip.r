@@ -29,7 +29,7 @@
 
 #' Clip LiDAR points
 #'
-#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
+#' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 #'
 #' @param .las An object of class \code{LAS}
 #' @param geometry charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},

@@ -23,14 +23,14 @@ It returns a \code{data.table} containing the metrics for each cell. The table
 has the class "lasmetrics" enabling easy plotting.
 }
 \description{
-Computes a series of descriptive statistics for a LiDAR dataset for each cell
+Computes a series of descriptive statistics for a LiDAR dataset within each cell
 of a grid.
 }
 \details{
 Computes a series of descriptive statistics defined by the user. Output is a
 data.frame in which each line is a raster (single grid cell), and each column is a metric.
 grid_metrics is similar to cloud_metrics except it computes metrics within each cell
-in the output grid. The grid cell coordinates are pre-determined for a given resolution.
+in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
 (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will
@@ -43,9 +43,9 @@ The following existing function can help the user to compute some metrics:
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-} Users must write their own functions to create metrics.
-grid_metrics will dispatch the LiDAR data for each cell in the user's function. The user
-writes their function without considering grid cells, only a cloud of points (see example).
+} Users must write their own functions to create metrics. \code{grid_metrics} will
+dispatch the LiDAR data for each cell in the user's function. The user writes their
+function without considering grid cells, only a cloud of points (see example).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

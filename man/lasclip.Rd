@@ -49,7 +49,7 @@ matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix}
 An object of class \code{LAS}
 }
 \description{
-Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
+Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
