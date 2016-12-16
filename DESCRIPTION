@@ -22,3 +22,4 @@ LazyData: true
 SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
+Encoding: UTF-8
