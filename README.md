@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.0.0%20beta.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg) [![Travis-CI Build Status](https://travis-ci.org/Jean-Romain/lidR.svg?branch=master)](https://travis-ci.org/Jean-Romain/lidR)
+![Version](http://img.shields.io/Version/1.0.0.png)  ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) ![CRAN](https://img.shields.io/badge/CRAN-not%20yet-lightgray.svg) [![Travis-CI Build Status](https://travis-ci.org/Jean-Romain/lidR.svg?branch=master)](https://travis-ci.org/Jean-Romain/lidR)
 
 **Announcement for old users:** *I will submit the package to CRAN soon. The previous version was v1.2.0. The current version is v1.0.0. to be logical and get the foundation right. This version is entirely non-compatible with the old v1.2.0 because all the function names have changed for improved coherence. All the previous work on this package was trial and error. This version is set in stone.*
 
