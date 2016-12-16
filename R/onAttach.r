@@ -6,3 +6,7 @@
     packageStartupMessage("lidR ", v, ". For help, for up-to-date version, to report a bug visit https://github.com/Jean-Romain/lidR")
   }
 }
+
+.onUnload <- function (libpath) {
+  library.dynam.unload("lidR", libpath)
+}
