@@ -26,9 +26,9 @@ Possibly mis-spelled words in DESCRIPTION:
 `rasterization`: this word exists.
 
 * checking installed package size ... NOTE
-  installed size is  6.5Mb
+  installed size is  7.5Mb
   sub-directories of 1Mb or more:
-    libs   5.5Mb
+    libs   6.6Mb
 
 The source code of the `LASlib` library is included and compiled into the package.
 `LASlib` is not packaged for Linux and contains deprecated code. 
