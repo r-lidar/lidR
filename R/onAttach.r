@@ -3,7 +3,7 @@
   if (interactive())
   {
     v = utils::packageVersion("lidR")
-    packageStartupMessage("lidR ", v, ". For help, for up-to-date version, to report a bug visit https://github.com/Jean-Romain/lidR")
+    packageStartupMessage("lidR ", v, ". For help, for the most up-to-date version or to report a bug, visit https://github.com/Jean-Romain/lidR")
   }
 }
 
