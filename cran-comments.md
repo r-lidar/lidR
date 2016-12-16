@@ -8,7 +8,22 @@
 There were no ERRORs or WARNINGs. 
 
 ### On GNU/Linux
-There were 2 NOTEs:
+There were 3 NOTEs:
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Jean-Romain Roussel <jean-romain.roussel.1@ulaval.ca>'
+
+New submission
+
+Possibly mis-spelled words in DESCRIPTION:
+  LiDAR (3:17, 10:23)
+  las (11:5)
+  laz (11:9)
+  rasterization (11:20)
+
+`LiDAR`: is an acronym for 'light detection and ranging'. No confusion can happen with this well-known term.
+`las` and `laz`: are two formats of standardized binary files used to store LiDAR data.
+`rasterization`: this word exists.
 
 * checking installed package size ... NOTE
   installed size is  6.5Mb
@@ -25,15 +40,7 @@ GNU make is a SystemRequirements.
 GNU make serves only to use the wildcard both in makevar and makevar.win 
 Nobody has reported an issue relative to GNU make on Windows.
 
-### On Windows 7
-There was 1 NOTE:
-
-* checking for GNU extensions in Makefiles ... NOTE
-GNU make is a SystemRequirements.
-
-See GNU/Linux section
-
-### On CRAN win-builder (release)
+### On Windows
 There were 2 NOTEs:
 
 * checking CRAN incoming feasibility ... NOTE
@@ -47,9 +54,7 @@ Possibly mis-spelled words in DESCRIPTION:
   laz (11:9)
   rasterization (11:20)
 
-`LiDAR`: is an acronym for 'light detection and ranging'. No confusion can happen with this well-known term.
-`las` and `laz`: are two formats of standardized binary files used to store LiDAR data.
-`rasterization`: this word exists.
+See GNU/Linux section
 
 * checking for GNU extensions in Makefiles ... NOTE
 GNU make is a SystemRequirements.
