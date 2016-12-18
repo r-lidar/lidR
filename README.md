@@ -34,7 +34,7 @@ Please contact the author for bug reports or feature requests (on github, prefer
 
 # Install lidR from github
 
-The package contains C++ code. To install the package from github make sure you have a working development environment.
+To install the package from github make sure you have a working development environment.
 
 * **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
 * **Mac**: Install `Xcode` from the Mac App Store.
@@ -43,6 +43,7 @@ The package contains C++ code. To install the package from github make sure you 
 Install devtools: `install.packages("devtools")`, then:
 
 ````r
+devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
 devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
 ````
     
