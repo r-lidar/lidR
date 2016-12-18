@@ -81,5 +81,5 @@ writeLAS = function(.las, file)
     B = .las@data$B
   }
 
-  LASlibWrite(file, .las@header, .las@data$X, .las@data$Y, .las@data$Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, time, R, G, B)
+  rlas::writelas(file, .las@header, .las@data$X, .las@data$Y, .las@data$Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, time, R, G, B)
 }

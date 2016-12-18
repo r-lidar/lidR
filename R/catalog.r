@@ -52,7 +52,7 @@ catalog = function(folder, ...)
 
   headers <- lapply(files, function(x)
   {
-    readLASheader(x) %>% as.data.frame
+    rlas::readlasheader(x) %>% as.data.frame
   })
 
   headers <- do.call(rbind.data.frame, headers)
