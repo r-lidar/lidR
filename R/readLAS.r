@@ -119,10 +119,9 @@ readLAS = function(files,
 
   data = lapply(files, function(file)
   {
-    content = readLASdata(file, Intensity, ReturnNumber, NumberOfReturns,
-                                ScanDirectionFlag, EdgeofFlightline, Classification,
-                                ScanAngle, UserData, PointSourceID, RGB)
-    data.table::setDT(content)
+    rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
+                      ScanDirectionFlag, EdgeofFlightline, Classification,
+                      ScanAngle, UserData, PointSourceID, RGB)
   })
 
   data = data.table::rbindlist(data)
@@ -130,7 +129,7 @@ readLAS = function(files,
   if(nrow(data) == 0 || ncol(data) == 0)
     return(invisible())
 
-  header = readLASheader(files[1])
+  header = rlas::readlasheader(files[1])
 
   las = LAS(data, header)
 

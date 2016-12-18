@@ -13,15 +13,3 @@ points_in_polygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-readLASdata <- function(file, Intensity = TRUE, ReturnNumber = TRUE, NumberOfReturns = TRUE, ScanDirectionFlag = FALSE, EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE, UserData = FALSE, PointSourceID = FALSE, RGB = TRUE) {
-    .Call('lidR_readLASdata', PACKAGE = 'lidR', file, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeofFlightline, Classification, ScanAngle, UserData, PointSourceID, RGB)
-}
-
-readLASheader <- function(file) {
-    .Call('lidR_readLASheader', PACKAGE = 'lidR', file)
-}
-
-LASlibWrite <- function(file, LASheader, X, Y, Z, I = integer(0), RN = integer(0), NoR = integer(0), SDF = integer(0), EoF = integer(0), C = integer(0), SA = integer(0), UD = integer(0), PSI = integer(0), T = numeric(0), R = integer(0), G = integer(0), B = integer(0)) {
-    invisible(.Call('lidR_LASlibWrite', PACKAGE = 'lidR', file, LASheader, X, Y, Z, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, T, R, G, B))
-}
-
