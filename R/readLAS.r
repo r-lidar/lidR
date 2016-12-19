@@ -126,7 +126,7 @@ readLAS = function(files,
 
   data = data.table::rbindlist(data)
 
-  if(nrow(data) == 0 || ncol(data) == 0)
+  if(nrow(data) == 0 | ncol(data) == 0)
     return(invisible())
 
   header = rlas::readlasheader(files[1])
