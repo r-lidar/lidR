@@ -62,8 +62,8 @@ writeLAS = function(.las, file)
     NoR = .las@data$NumberOfReturns
   if("ScanDirectionFlag" %in% fields)
     SDF = .las@data$ScanDirectionFlag
-  if("EdgeofFlightline" %in% fields)
-    EoF = .las@data$EdgeofFlightline
+  if("EdgeOfFlightline" %in% fields)
+    EoF = .las@data$EdgeOfFlightline
   if("Classification" %in% fields)
     C = .las@data$Classification
   if("ScanAngle" %in% fields)

@@ -6,7 +6,7 @@
 \usage{
 readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
-  EdgeofFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
+  EdgeOfFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
   flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE)
 }
@@ -21,7 +21,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 
 \item{ScanDirectionFlag}{logical. do you want to load the ScanDirectionFlag field? default: FALSE}
 
-\item{EdgeofFlightline}{logical. do you want to load the EdgeofFlightline field? default: FALSE}
+\item{EdgeOfFlightline}{logical. do you want to load the EdgeOfFlightline field? default: FALSE}
 
 \item{Classification}{logical. do you want to load the Classification field? default: TRUE}
 
