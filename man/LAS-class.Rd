@@ -18,7 +18,7 @@ data loading. The fields read from the las file are named:
 \item{\code{ReturnNumber}}
 \item{\code{NumberOfReturns}}
 \item{\code{ScanDirectionFlag}}
-\item{\code{EdgeofFlightline}}
+\item{\code{EdgeOfFlightline}}
 \item{\code{Classification}}
 \item{\code{ScanAngle}}
 \item{\code{UserData}}

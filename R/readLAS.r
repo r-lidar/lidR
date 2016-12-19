@@ -42,7 +42,7 @@
 #' @param ReturnNumber logical. do you want to load the ReturnNumber field? default: TRUE
 #' @param NumberOfReturns logical. do you want to load the NumberOfReturns field? default: TRUE
 #' @param ScanDirectionFlag logical. do you want to load the ScanDirectionFlag field? default: FALSE
-#' @param EdgeofFlightline logical. do you want to load the EdgeofFlightline field? default: FALSE
+#' @param EdgeOfFlightline logical. do you want to load the EdgeOfFlightline field? default: FALSE
 #' @param Classification logical. do you want to load the Classification field? default: TRUE
 #' @param ScanAngle logical. do you want to load the ScanAngle field? default: TRUE
 #' @param UserData logical. do you want to load the UserData field? default: FALSE
@@ -67,7 +67,7 @@ readLAS = function(files,
                    ReturnNumber = TRUE,
                    NumberOfReturns = TRUE,
                    ScanDirectionFlag = FALSE,
-                   EdgeofFlightline = FALSE,
+                   EdgeOfFlightline = FALSE,
                    Classification = TRUE,
                    ScanAngle = TRUE,
                    UserData = FALSE,
@@ -105,14 +105,14 @@ readLAS = function(files,
   if(XYZonly)
   {
     Intensity <- ReturnNumber <- NumberOfReturns <- ScanDirectionFlag <- FALSE
-    EdgeofFlightline <- Classification <- ScanAngle <- UserData <- FALSE
+    EdgeOfFlightline <- Classification <- ScanAngle <- UserData <- FALSE
     PointSourceID <- RGB <- pulseID <- flightlineID <- FALSE
   }
 
   if(all)
   {
     Intensity <- ReturnNumber <- NumberOfReturns <- ScanDirectionFlag <- TRUE
-    EdgeofFlightline <- Classification <- ScanAngle <- UserData <- TRUE
+    EdgeOfFlightline <- Classification <- ScanAngle <- UserData <- TRUE
     PointSourceID <- RGB <- pulseID <- flightlineID <- TRUE
   }
 
@@ -120,7 +120,7 @@ readLAS = function(files,
   data = lapply(files, function(file)
   {
     rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
-                      ScanDirectionFlag, EdgeofFlightline, Classification,
+                      ScanDirectionFlag, EdgeOfFlightline, Classification,
                       ScanAngle, UserData, PointSourceID, RGB)
   })
 
