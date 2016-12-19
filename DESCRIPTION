@@ -18,7 +18,6 @@ Depends:R (>= 3.1.0),magrittr,methods
 Imports:rlas,rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
 Suggests:rgdal,akima,gstat,sp
 LazyData: true
-SystemRequirements: GNU make
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
 Encoding: UTF-8
