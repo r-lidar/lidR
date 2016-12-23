@@ -86,4 +86,6 @@ plot3d(dtm)</pre>
 
 # Changelog
 
-no changelog
+### v1.0.1
+
+* Changes: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
