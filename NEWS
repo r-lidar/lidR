@@ -1,4 +1,4 @@
-lidR v1.0.1 (Release date: 2016-??-??)
+lidR v1.0.1 (Release date: 2016-12-30)
 ==============
 
 Changes: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
