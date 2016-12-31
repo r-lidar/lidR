@@ -81,7 +81,7 @@ catalog_index =	function(obj, x, y, r, r2 = NULL, roinames = NULL)
   if(sum(n) > 0)
   {
     rois = paste(coord.plot$roinames[n], collapse = " ")
-    msg = paste(rois, "in no file.")
+    msg = paste(rois, "not found.")
     warning(msg, call. =F)
   }
 
