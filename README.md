@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.0.2.png) ![licence](https://img.shields.io/badge/CRAN-1.0.2-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+![Github](https://img.shields.io/badge/github-1.0.2-green.svg) ![Devel](https://img.shields.io/badge/devel-1.1.0.dev-green.svg) ![CRAN](https://img.shields.io/badge/CRAN-1.0.2-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
@@ -31,21 +31,20 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
 - [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
 - [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
+- Individual tree segmentation
 
 # Install lidR from github
+
+```r
+devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
+devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
+```
 
 To install the package from github make sure you have a working development environment.
 
 * **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
 * **Mac**: Install `Xcode` from the Mac App Store.
 * **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
-
-Install devtools: `install.packages("devtools")`, then:
-
-````r
-devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
-devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
-````
     
 # Some examples
 
@@ -88,6 +87,8 @@ plot3d(dtm)</pre>
 
 ### v1.1.0
 
+* New: `lastree()` for individual tree segmentation.
+* New: `readLAS()` gains a parameter `filter` from `rlas (>= 1.1.0)`
 * New: `roi_queries()` relies on `rlas (>= 1.1.0)` enabling to use streaming filters. This way it saves a lot a memory and it is much more faster.
 * Change: `roi_queries()` lost the parameter `...` all the field are loaded by default.
 
