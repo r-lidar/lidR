@@ -13,11 +13,9 @@ Possibly mis-spelled words in DESCRIPTION:
   LiDAR (3:17, 12:23)
   las (13:5)
   laz (13:9)
-  rasterization (13:20)
   
-`LiDAR`: is an acronym for 'light detection and ranging'. No confusion can happen with this well-known term.
-`las` and `laz`: are two formats of standardized binary files used to store LiDAR data.
-`rasterization` this word exists.
+`LiDAR`: is an acronym for 'light detection and ranging'. No confusion can happen with this well-known term. Explained in description on Kurt Hornik's demand
+`las` and `laz`: are two formats of standardized binary files used to store LiDAR data..
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package
