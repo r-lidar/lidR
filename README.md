@@ -1,4 +1,4 @@
-![Version](http://img.shields.io/Version/1.0.1.png) ![licence](https://img.shields.io/badge/CRAN-1.0.1-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+![Version](http://img.shields.io/Version/1.0.2.png) ![licence](https://img.shields.io/badge/CRAN-1.0.2-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
@@ -88,4 +88,4 @@ plot3d(dtm)</pre>
 
 ### v1.0.1
 
-* Changes: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
+* Change: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
