@@ -86,6 +86,11 @@ plot3d(dtm)</pre>
 
 # Changelog
 
+### v1.1.0
+
+* New: `roi_queries()` relies on `rlas (>= 1.1.0)` enabling to use streaming filters. This way it saves a lot a memory and it is much more faster.
+* Change: `roi_queries()` lost the parameter `...` all the field are loaded by default.
+
 ### v1.0.1
 
-* Changes: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
+* Change: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.

@@ -8,7 +8,8 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
   EdgeOfFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE)
+  flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE,
+  filter = "")
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
@@ -42,6 +43,9 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 \item{XYZonly}{logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE}
 
 \item{all}{logical. Overwrite all other options. Load everything. default: FALSE}
+
+\item{filter}{character. filter data while reading the file (streaming filter) without
+allocating any useless memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
 }
 \value{
 A LAS object
