@@ -53,6 +53,8 @@
 #' @param color logical. do you want to compute the extra field \link[lidR:lascolor]{color}? default: FALSE
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
+#' @param filter character. filter data while reading the file (streaming filter) without
+#' allocating any useless memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -77,7 +79,8 @@ readLAS = function(files,
                    flightlineID = FALSE,
                    color = FALSE,
                    XYZonly = FALSE,
-                   all = FALSE)
+                   all = FALSE,
+                   filter = "")
 {
   if(class(files)[1] == "Catalog")
     files = files$filename
@@ -121,7 +124,7 @@ readLAS = function(files,
   {
     rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
                       ScanDirectionFlag, EdgeOfFlightline, Classification,
-                      ScanAngle, UserData, PointSourceID, RGB)
+                      ScanAngle, UserData, PointSourceID, RGB, filter)
   })
 
   data = data.table::rbindlist(data)

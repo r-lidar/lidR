@@ -44,7 +44,6 @@
 #' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.
 #' @param roinames vector. A set of ROI names (the ID of the plots, for example)
 #' @param mc.cores numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})
-#' @param ... additional parameters for \link[lidR:readLAS]{readLAS}
 #' @return A list of LAS objects
 #' @seealso
 #' \link[lidR:readLAS]{readLAS}
@@ -67,7 +66,7 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% catalog_queries(X, Y, R, R)
 #' }
-catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 1, ...)
+catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = parallel::detectCores())
 {
   . <- tiles <- NULL
 
@@ -77,29 +76,33 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   if(is.null(roinames)) roinames = paste0("ROI", 1:nplot)
 
   # Make an index of the file in which are each query
-  lasindex = obj %>% catalog_index(x, y, r, r2,roinames)
+  lasindex = obj %>% catalog_index(x, y, r, r2, roinames)
 
-  # Group the index of identical queries with the aim of reducing the number of queries
-  lasindex = lasindex[, .(roinames = list(roinames),
-                          X = list(x), Y = list(y),
-                          r = list(r), r2 = list(r2),
-                          tiles = list(unique(unlist(tiles)))),
-                      by = list(paste(tiles))][,paste := NULL]
+  # Remove potential unproper queries (out of existing files)
+  keep = lasindex[, length(tiles[[1]]) > 0, by = roinames]$V1
+  lasindex = lasindex[keep]
+  roinames = roinames[keep]
 
+  # Transform as list
   lasindex = apply(lasindex, 1, as.list)
+
+  # Recompute the number of queries
+  nplot = length(lasindex)
+
+  print(nplot)
 
   cat("Extracting data...\n")
 
   if(mc.cores == 1)
   {
     p = utils::txtProgressBar(max = nplot, style = 3)
-    output = lapply(lasindex, .getGrpQuery, shape, p, ...)
+    output = lapply(lasindex, .getQuery, shape, p)
   }
   else
   {
     cl = parallel::makeCluster(mc.cores, outfile = "")
     parallel::clusterExport(cl, varlist=c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, lasindex, .getGrpQuery, shape, ...)
+    output = parallel::parLapply(cl, lasindex, .getQuery, shape)
     parallel::stopCluster(cl)
   }
 
@@ -111,36 +114,24 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   return(output)
 }
 
-.getGrpQuery = function(query, shape, p = NULL, ...)
+.getQuery = function(query, shape, p = NULL, ...)
 {
-  X      = query$X
-  Y      = query$Y
-  r      = query$r
-  r2     = query$r2
-  files  = query$tiles
+  if(shape == 0)
+    filter = query %$% paste("-keep_circle", x, y, r)
+  else
+    filter = query %$% paste("-keep_xy", x-r, y-r2, x+r, y+r2)
 
-  lidar  = readLAS(files, ...)
-  output = vector("list", length(X))
+  lidardata = list(readLAS(query$tiles, all = TRUE, filter = filter))
+  names(lidardata) = query$roinames
 
-  for(j in 1:length(X))
+  if(!is.null(p))
   {
-    if(shape == 0)
-      output[[j]] = lasclipCircle(lidar, X[j], Y[j], r[j])
-    else
-      output[[j]] = lasclipRectangle(lidar, X[j]-r[j], Y[j]-r2[j], X[j]+r[j], Y[j]+r2[j])
-
-    if(!is.null(p))
-    {
-      i = utils::getTxtProgressBar(p) + 1
-      utils::setTxtProgressBar(p, i)
-    }
-    else
-      cat(sprintf("%s ", query$roinames[j]))
+    i = utils::getTxtProgressBar(p) + 1
+    utils::setTxtProgressBar(p, i)
   }
+  else
+    cat(sprintf("%s ", query$roinames))
 
-  names(output) = query$roinames[[1]]
-  rm(list = "lidar") ; gc()
-
-  return(output)
+  return(lidardata)
 }
 
