@@ -91,6 +91,7 @@ plot3d(dtm)</pre>
 * New: `readLAS()` gains a parameter `filter` from `rlas (>= 1.1.0)`
 * New: `roi_queries()` relies on `rlas (>= 1.1.0)` enabling to use streaming filters. This way it saves a lot a memory and it is much more faster.
 * Change: `roi_queries()` lost the parameter `...` all the field are loaded by default.
+* Change: `colorPalette` parameter in `plot.LAS()` expect now a list of colors instead of a function. Use `height.colors(50)` instead  of `height.colors`
 
 ### v1.0.1
 
