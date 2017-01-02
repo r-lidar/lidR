@@ -12,7 +12,7 @@
 #'
 #' This is the algorithm developped by M. Dalponte (see references). This algorithm exists
 #' in the package \code{itcSegment}. This version is stricly identical to the original one but had entierly been
-#' cleaned of useless code and rewritten in C++. It is 6 times faster. The name of the paramters are those
+#' cleaned of useless code and rewritten in pure C++. It is 6 times faster. The name of the paramters are those
 #' you can find in orginal Dalponte's code in \code{itcSegment} package. Dalponte's algorithm is a canopy
 #' surface model based method. An image of the canopy is expected.
 #' \describe{
@@ -50,13 +50,8 @@ lastrees <-function(.las, algorithm, image = NULL, extra = FALSE, ...)
 
 dalponte2012 = function(.las, image, extra, searchWinSize = 3, TRESHSeed = 0.45, TRESHCrown = 0.55, DIST = 10, th = 2)
 {
-  if(searchWinSize == F) searchWinSize = 3
-  if(TRESHSeed == F) TRESHSeed = 0.45
-  if(TRESHCrown == F) TRESHCrown = 0.55
-  if(DIST == F) DIST = 10
-
   if (searchWinSize < 3 | searchWinSize %% 2 == 0)
-    stop("ERROR: searchWinSize not correct")
+    stop("searchWinSize not correct", call. = FALSE)
 
   l = dim(image)[1]
   w = dim(image)[2]
