@@ -32,6 +32,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_table
+IntegerVector fast_table(IntegerVector x, int size);
+RcppExport SEXP lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type size(sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_table(x, size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // point_in_polygon
 bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
 RcppExport SEXP lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {

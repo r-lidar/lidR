@@ -102,12 +102,24 @@ setMethod("initialize", "LAS",
 
 	  # Update header ------------------------------------------------------------
 
-	  header["Min X"] = min(data$X)
-	  header["Min Y"] = min(data$Y)
-	  header["Min Z"] = min(data$Z)
-	  header["Max X"] = max(data$X)
-	  header["Max Y"] = max(data$Y)
-	  header["Max Z"] = max(data$Z)
+	  if("ReturnNumber" %in% names(data))
+	  {
+	    number_of <- fast_table(data$ReturnNumber, 5L)
+
+	    header["Number of 1st return"] <- number_of[1]
+	    header["Number of 2nd return"] <- number_of[2]
+	    header["Number of 3rd return"] <- number_of[3]
+	    header["Number of 4th return"] <- number_of[4]
+	    header["Number of 5th return"] <- number_of[5]
+	  }
+
+	  header["Number of point records"] <- dim(data)[1]
+	  header["Min X"] <- min(data$X)
+	  header["Min Y"] <- min(data$Y)
+	  header["Min Z"] <- min(data$Z)
+	  header["Max X"] <- max(data$X)
+	  header["Max Y"] <- max(data$Y)
+	  header["Max Z"] <- max(data$Z)
 
 	  # Build returned object  ---------------------------------------------------
 
