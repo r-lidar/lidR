@@ -9,6 +9,10 @@ itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
     .Call('lidR_itc_expandcrowns', PACKAGE = 'lidR', Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
+fast_table <- function(x, size = 5L) {
+    .Call('lidR_fast_table', PACKAGE = 'lidR', x, size)
+}
+
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
