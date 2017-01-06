@@ -4,14 +4,12 @@
 \alias{set.colors}
 \title{Automatic colorization}
 \usage{
-set.colors(x, palette, ncolors = 50, trim = 1)
+set.colors(x, palette, trim = 1)
 }
 \arguments{
 \item{x}{A vector}
 
 \item{palette}{function. A color palette function. Default is \code{height.colors} provided by the package lidR}
-
-\item{ncolors}{numeric. The number of colors in the palette.}
 
 \item{trim}{numeric.}
 }
