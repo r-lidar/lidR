@@ -38,10 +38,10 @@
 #'\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 #' an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
 #' data interpolation.}
-#'\item{\code{akima}}{Interpolation depends on the \link[akima:interp]{interp} function from
-#' package \code{akima}. This method is relatively fast and more advanced than \code{knnidw} and provides
-#' good digital terrain models. Notice that with this method no extrapolation is done outside of
-#' the convex hull determined by the ground points.}
+#'\item{\code{delaunay}}{Interpolation based on Delaunay triagulation using \link[akima:interp]{interp}
+#' function from package \code{akima}. This method is relatively fast and more advanced than
+#'\code{knnidw} and provides good digital terrain models. Notice that with this method no
+#'extrapolation is done outside of the convex hull determined by the ground points.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
 #' function. This method is very slow and very difficult to manipulate but it is also the
 #' most regognized method to interpolate spatial data.}
@@ -50,8 +50,6 @@
 #' @param coord data.frame containing  the coordinates of interest in columns X and Y
 #' @param method character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}
-#' @param linear logical indicating wether linear or spline interpolation should be used
-#' when selected method is \code{"akima"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
 #' \code{"kriging"}
 #' @return Numeric. The predicted elevations.
@@ -62,7 +60,7 @@
 #' \link[gstat:vgm]{vgm}
 #' \link[gstat:krige]{krige}
 #' \link[akima:interp]{interp}
-lasterrain = function(.las, coord, method, k = 6L, linear = TRUE, model = gstat::vgm(.59, "Sph", 874))
+lasterrain = function(.las, coord, method, k = 6L, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- X <- Y <- Z <- NULL
 
@@ -83,10 +81,10 @@ lasterrain = function(.las, coord, method, k = 6L, linear = TRUE, model = gstat:
     cat("[using inverse distance weighting]\n")
     return(terrain_knnidw(ground, coord, k))
   }
-  else if(method == "akima")
+  else if(method == "delaunay")
   {
-    cat("[using Akima's interpolation]\n")
-    return(terrain_akima(ground, coord, linear))
+    cat("[using Delaunay triangulation]\n")
+    return(terrain_delaunay(ground, coord))
   }
   else if(method == "kriging")
   {
@@ -109,7 +107,7 @@ terrain_knnidw = function(ground, coord, k = 3L)
   return(rowSums(z*w)/rowSums(w))
 }
 
-terrain_akima = function(ground, coord, linear)
+terrain_delaunay = function(ground, coord)
 {
   . <- X <- Y <- Z <- Zg <- xc <- yc <- NULL
 
@@ -119,7 +117,7 @@ terrain_akima = function(ground, coord, linear)
   xo = unique(coord$X) %>% sort()
   yo = unique(coord$Y) %>% sort()
 
-  grid = ground %$% akima::interp(X, Y, Z, xo = xo, yo = yo, linear = linear, duplicate = "user", dupfun = min)
+  grid = ground %$% akima::interp(X, Y, Z, xo = xo, yo = yo, duplicate = "user", dupfun = min)
 
   temp = data.table::data.table(xc = match(coord$X, grid$x), yc = match(coord$Y, grid$y))
   temp[, Zg := grid$z[xc,yc], by = .(xc,yc)]
@@ -137,3 +135,36 @@ terrain_kriging = function(ground, coord, model)
   x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model)
   return(x$var1.pred)
 }
+
+# terrain_delaunay = function(ground, coord)
+# {
+#   # Computes Delaunay triangulation
+#   triangles <-  deldir::deldir(ground$X, ground$Y) %>%  deldir::triang.list()
+#
+#   # Comptutes equation of planes
+#   eq = lapply(triangles, function(x)
+#   {
+#     x = data.table::data.table(x)
+#     x[, z := ground$Z[ptNum]][, ptNum := NULL]
+#
+#     u = x[1] - x[2]
+#     v = x[1] - x[3]
+#
+#     n = c(u$y*v$z-u$z*v$y, u$z*v$x-u$x*v$z, u$x*v$y-u$y*v$x)
+#     n[4] = sum(-n*x[3])
+#
+#     return(n)
+#   })
+#
+#   eq = do.call(rbind, eq)
+#
+#   xcoords = lapply(triangles, function(x){ x$x })
+#   ycoords = lapply(triangles, function(x){ x$y })
+#
+#   ids = lidR:::points_in_polygons(xcoords, ycoords, coord$X, coord$Y)
+#
+#   z = rep(NA, dim(coord)[1])
+#   z[ids > 0] = -(coord$X[ids > 0]*eq[ids,1] + coord$Y[ids > 0]*eq[ids,2]+eq[ids,4])/eq[ids,3]
+#
+#   return(z)
+# }

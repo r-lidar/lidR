@@ -4,8 +4,8 @@
 \alias{lasterrain}
 \title{Get the elevation of the ground for given coordinates}
 \usage{
-lasterrain(.las, coord, method, k = 6L, linear = TRUE,
-  model = gstat::vgm(0.59, "Sph", 874))
+lasterrain(.las, coord, method, k = 6L, model = gstat::vgm(0.59, "Sph",
+  874))
 }
 \arguments{
 \item{.las}{LAS objet}
@@ -15,9 +15,6 @@ lasterrain(.las, coord, method, k = 6L, linear = TRUE,
 \item{method}{character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)}
 
 \item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}}
-
-\item{linear}{logical indicating wether linear or spline interpolation should be used
-when selected method is \code{"akima"}}
 
 \item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
 \code{"kriging"}}
@@ -36,10 +33,10 @@ compute the interpolation.
 \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
 data interpolation.}
-\item{\code{akima}}{Interpolation depends on the \link[akima:interp]{interp} function from
-package \code{akima}. This method is relatively fast and more advanced than \code{knnidw} and provides
-good digital terrain models. Notice that with this method no extrapolation is done outside of
-the convex hull determined by the ground points.}
+\item{\code{delaunay}}{Interpolation based on Delaunay triagulation using \link[akima:interp]{interp}
+function from package \code{akima}. This method is relatively fast and more advanced than
+\code{knnidw} and provides good digital terrain models. Notice that with this method no
+extrapolation is done outside of the convex hull determined by the ground points.}
 \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
 function. This method is very slow and very difficult to manipulate but it is also the
 most regognized method to interpolate spatial data.}
