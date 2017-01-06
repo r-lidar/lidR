@@ -48,40 +48,7 @@ To install the package from github make sure you have a working development envi
     
 # Some examples
 
-<table>
-  <tr>
-    <th>Plot data</th>
-    <th>Compute a simple metric</th>
-  </tr>
-  <tr>
-    <td valign="top">
-<pre>lidar = readLAS("myfile.las")
-plot(lidar)</pre>
-<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/plot3d_1.jpg" alt="" style="max-width:100%;">
-    </td>
-    <td valign="top">
-<pre>metric = grid_metrics(lidar, mean(Z))
-plot(metric)</pre>
-<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/gridMetrics-mean.jpg" alt="" style="max-width:100%;">
-    </td>
-  </tr>
-    <tr>
-    <th>Manage a catalog</th>
-    <th>Deal with DTM</th>
-  </tr>
-  <tr>
-    <td valign="top">
-<pre>ctg = catalog("folder of .las files")
-plot(ctg)</pre>
-<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/catalog.png" alt="" style="max-width:100%;">
-    </td>
-    <td valign="top">
-<pre>dtm = grid_terrain(lidar)
-plot3d(dtm)</pre>
-<img src="https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/dtm.jpg" alt="" style="max-width:100%;">
-    </td>
-  </tr>
-</table>
+![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/examplereadme.png)
 
 # Changelog
 
@@ -92,6 +59,7 @@ plot3d(dtm)</pre>
 * Change: `roi_queries()` relies on `rlas (>= 1.1.0)` enabling to use streaming filters. This way it saves a lot a memory and it is much more faster.
 * Change: `roi_queries()` lost the parameter `...` all the field are loaded by default.
 * Change: `colorPalette` parameter in `plot.LAS()` expect now a list of colors instead of a function. Use `height.colors(50)` instead  of `height.colors`
+* Change: in `lasterrain()` the method called `akima` is now called `delaunay` because it corresponds to what is actually computed. Function loosed its parameter `linear`.
 * Fix: the header of `LAS` objects automatically updates `Number of point records` and `Number of nth return`.
 
 ### v1.0.1

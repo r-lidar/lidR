@@ -35,7 +35,7 @@ implemented. See relative sections
 
 This is the algorithm developped by M. Dalponte (see references). This algorithm exists
 in the package \code{itcSegment}. This version is stricly identical to the original one but had entierly been
-cleaned of useless code and rewritten in C++. It is 6 times faster. The name of the paramters are those
+cleaned of useless code and rewritten in pure C++. It is 6 times faster. The name of the paramters are those
 you can find in orginal Dalponte's code in \code{itcSegment} package. Dalponte's algorithm is a canopy
 surface model based method. An image of the canopy is expected.
 \describe{
