@@ -33,7 +33,15 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
 - Individual tree segmentation
 
-# Install lidR from github
+# Install `lidR`
+
+* The latest released version from CRAN with
+
+```r
+install.packages("lidR")
+```
+
+* The latest development version from github with
 
 ```r
 devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
