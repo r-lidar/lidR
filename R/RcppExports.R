@@ -13,6 +13,18 @@ fast_table <- function(x, size = 5L) {
     .Call('lidR_fast_table', PACKAGE = 'lidR', x, size)
 }
 
+fast_countequal <- function(x, t) {
+    .Call('lidR_fast_countequal', PACKAGE = 'lidR', x, t)
+}
+
+fast_countbelow <- function(x, t) {
+    .Call('lidR_fast_countbelow', PACKAGE = 'lidR', x, t)
+}
+
+fast_countover <- function(x, t) {
+    .Call('lidR_fast_countover', PACKAGE = 'lidR', x, t)
+}
+
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
