@@ -44,6 +44,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_countequal
+int fast_countequal(NumericVector x, double t);
+RcppExport SEXP lidR_fast_countequal(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countequal(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fast_countbelow
+int fast_countbelow(NumericVector x, double t);
+RcppExport SEXP lidR_fast_countbelow(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countbelow(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fast_countover
+int fast_countover(NumericVector x, double t);
+RcppExport SEXP lidR_fast_countover(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countover(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
 // point_in_polygon
 bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
 RcppExport SEXP lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
