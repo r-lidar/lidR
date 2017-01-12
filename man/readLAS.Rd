@@ -8,7 +8,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
   EdgeOfFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE,
+  flightlineID = FALSE, color = TRUE, XYZonly = FALSE, all = FALSE,
   filter = "")
 }
 \arguments{
