@@ -90,6 +90,10 @@ lasterrain = function(.las, coord, method, k = 6L, model = gstat::vgm(.59, "Sph"
   {
     return(terrain_kriging(ground, coord, model))
   }
+  else if(method == "akima")
+  {
+    stop("Method 'akima' is called 'delaunay' since version 1.1.0")
+  }
   else
     stop("This method does not exist.")
 }
