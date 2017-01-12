@@ -4,8 +4,8 @@
 \alias{plot.lasmetrics3d}
 \title{Plot voxelized LiDAR data}
 \usage{
-\method{plot}{lasmetrics3d}(x, y, color = "Z", colorPalette = height.colors,
-  bg = "black", trim = 1, ...)
+\method{plot}{lasmetrics3d}(x, y, color = "Z",
+  colorPalette = height.colors(50), bg = "black", trim = 1, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{'lasmetrics3d'}}
@@ -33,7 +33,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
-plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
+plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
 }
 \seealso{
 \link[lidR:grid_metrics3d]{grid_metrics3d}
