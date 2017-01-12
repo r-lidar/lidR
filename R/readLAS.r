@@ -77,7 +77,7 @@ readLAS = function(files,
                    RGB = TRUE,
                    pulseID = TRUE,
                    flightlineID = FALSE,
-                   color = FALSE,
+                   color = TRUE,
                    XYZonly = FALSE,
                    all = FALSE,
                    filter = "")
@@ -143,7 +143,7 @@ readLAS = function(files,
     lasflightline(las, 30)
 
   if(color)
-    lascolor(las)
+    suppressWarnings(lascolor(las))
 
   gc()
 

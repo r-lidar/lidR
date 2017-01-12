@@ -40,8 +40,8 @@ lidar = readLAS(LASfile)
 plot(lidar)
 
 # Outliers of intensity breaks the color range. Use the trim parameter.
-plot(lidar, color = "Intensity", colorPalette = heat.colors)
-plot(lidar, color = "Intensity", colorPalette = heat.colors, trim = 0.99)
+plot(lidar, color = "Intensity", colorPalette = heat.colors(50))
+plot(lidar, color = "Intensity", colorPalette = heat.colors(50), trim = 0.99)
 }
 \seealso{
 \link[rgl:points3d]{points3d}

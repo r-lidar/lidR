@@ -74,13 +74,14 @@
 #' @import data.table
 #' @import magrittr
 #' @import methods
+#' @include lasheader-class.r
 #' @exportClass LAS
 #' @useDynLib lidR
 setClass(
 	Class = "LAS",
 	representation(
 		data 	 = "data.table",
-		header = "list"
+		header = "LASheader"
 	)
 )
 
@@ -96,6 +97,9 @@ setMethod("initialize", "LAS",
 	  if(nrow(data) == 0)
 	    lidRError("LDR9")
 
+	  if(!is(header, "LASheader"))
+	    header = LASheader(header)
+
 	  # Check if the data are valid. Else: warning -------------------------------
 
 	  lascheck(data)
@@ -106,20 +110,20 @@ setMethod("initialize", "LAS",
 	  {
 	    number_of <- fast_table(data$ReturnNumber, 5L)
 
-	    header["Number of 1st return"] <- number_of[1]
-	    header["Number of 2nd return"] <- number_of[2]
-	    header["Number of 3rd return"] <- number_of[3]
-	    header["Number of 4th return"] <- number_of[4]
-	    header["Number of 5th return"] <- number_of[5]
+	    header@data["Number of 1st return"] <- number_of[1]
+	    header@data["Number of 2nd return"] <- number_of[2]
+	    header@data["Number of 3rd return"] <- number_of[3]
+	    header@data["Number of 4th return"] <- number_of[4]
+	    header@data["Number of 5th return"] <- number_of[5]
 	  }
 
-	  header["Number of point records"] <- dim(data)[1]
-	  header["Min X"] <- min(data$X)
-	  header["Min Y"] <- min(data$Y)
-	  header["Min Z"] <- min(data$Z)
-	  header["Max X"] <- max(data$X)
-	  header["Max Y"] <- max(data$Y)
-	  header["Max Z"] <- max(data$Z)
+	  header@data["Number of point records"] <- dim(data)[1]
+	  header@data["Min X"] <- min(data$X)
+	  header@data["Min Y"] <- min(data$Y)
+	  header@data["Min Z"] <- min(data$Z)
+	  header@data["Max X"] <- max(data$X)
+	  header@data["Max Y"] <- max(data$Y)
+	  header@data["Max Z"] <- max(data$Z)
 
 	  # Build returned object  ---------------------------------------------------
 
@@ -140,8 +144,8 @@ setMethod("$", "LAS", function(x, name)
     return(as.numeric(unlist(x@data[,name,with=F])))
   else if(name %in% slotNames(x))
     return(slot(x, name))
-  else if(name %in% names(x@header))
-    return(x@header[name])
+  else if(name %in% names(x@header@data))
+    return(x@header@data[name])
 })
 
 #' Create a \code{LAS} object
@@ -183,7 +187,7 @@ setMethod("show", "LAS",
     cat("fields       :", length(fie), "\n")
     cat("field names  :", fie, "\n\n")
 
-    return(invisible())
+    print(object@header)
   }
 )
 

@@ -47,7 +47,7 @@
 #' plot(lidar)
 #'
 #' dtm1 = grid_terrain(lidar, method = "knnidw")
-#' dtm2 = grid_terrain(lidar, method = "akima")
+#' dtm2 = grid_terrain(lidar, method = "delaunay")
 #'
 #' raster::plot(dtm1, col = height.colors(50))
 #' raster::plot(dtm2, col = height.colors(50))
