@@ -116,6 +116,8 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 
 .getQuery = function(query, shape, p = NULL, ...)
 {
+  x <- y <- r <- r2 <- NULL
+
   if(shape == 0)
     filter = query %$% paste("-keep_circle", x, y, r)
   else
