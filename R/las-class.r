@@ -74,13 +74,14 @@
 #' @import data.table
 #' @import magrittr
 #' @import methods
+#' @include lasheader-class.r
 #' @exportClass LAS
 #' @useDynLib lidR
 setClass(
 	Class = "LAS",
 	representation(
 		data 	 = "data.table",
-		header = "list"
+		header = "LASheader"
 	)
 )
 
@@ -96,6 +97,9 @@ setMethod("initialize", "LAS",
 	  if(nrow(data) == 0)
 	    lidRError("LDR9")
 
+	  if(!is(header, "LASheader"))
+	    header = LASheader(header)
+
 	  # Check if the data are valid. Else: warning -------------------------------
 
 	  lascheck(data)
@@ -106,20 +110,20 @@ setMethod("initialize", "LAS",
 	  {
 	    number_of <- fast_table(data$ReturnNumber, 5L)
 
-	    header["Number of 1st return"] <- number_of[1]
-	    header["Number of 2nd return"] <- number_of[2]
-	    header["Number of 3rd return"] <- number_of[3]
-	    header["Number of 4th return"] <- number_of[4]
-	    header["Number of 5th return"] <- number_of[5]
+	    header@data["Number of 1st return"] <- number_of[1]
+	    header@data["Number of 2nd return"] <- number_of[2]
+	    header@data["Number of 3rd return"] <- number_of[3]
+	    header@data["Number of 4th return"] <- number_of[4]
+	    header@data["Number of 5th return"] <- number_of[5]
 	  }
 
-	  header["Number of point records"] <- dim(data)[1]
-	  header["Min X"] <- min(data$X)
-	  header["Min Y"] <- min(data$Y)
-	  header["Min Z"] <- min(data$Z)
-	  header["Max X"] <- max(data$X)
-	  header["Max Y"] <- max(data$Y)
-	  header["Max Z"] <- max(data$Z)
+	  header@data["Number of point records"] <- dim(data)[1]
+	  header@data["Min X"] <- min(data$X)
+	  header@data["Min Y"] <- min(data$Y)
+	  header@data["Min Z"] <- min(data$Z)
+	  header@data["Max X"] <- max(data$X)
+	  header@data["Max Y"] <- max(data$Y)
+	  header@data["Max Z"] <- max(data$Z)
 
 	  # Build returned object  ---------------------------------------------------
 
@@ -140,8 +144,8 @@ setMethod("$", "LAS", function(x, name)
     return(as.numeric(unlist(x@data[,name,with=F])))
   else if(name %in% slotNames(x))
     return(slot(x, name))
-  else if(name %in% names(x@header))
-    return(x@header[name])
+  else if(name %in% names(x@header@data))
+    return(x@header@data[name])
 })
 
 #' Create a \code{LAS} object
@@ -171,7 +175,6 @@ setMethod("show", "LAS",
     dpu = npu/s
     fie = names(object@data)
     ext = extent(object)
-    x   = object@header
 
     cat("class        : LAS\n")
     cat("memory       :", size, "\n")
@@ -184,66 +187,7 @@ setMethod("show", "LAS",
     cat("fields       :", length(fie), "\n")
     cat("field names  :", fie, "\n\n")
 
-    cat("File signature:          ", x$`File Signature`, "\n")
-    cat("File source ID:          ", x$`File Source ID`, "\n")
-    cat("Global encoding:         ", x$`Global Encoding`, "\n")
-    cat("Project ID - GUID:       ", x$`Project ID - GUID`, "\n")
-    cat("Version:                  ", x$`Version Major`, ".", x$`Version Minor`, "\n", sep = "")
-    cat("System identifier:       ", x$`System Identifier`, "\n")
-    cat("Generating software:     ", x$`Generating Software`, "\n")
-    cat("File creation d/y:        ", x$`File Creation Day of Year`, "/", x$`File Creation Year`, "\n", sep = "")
-    cat("header size:             ", x$`Header Size`, "\n")
-    cat("Offset to point data:    ", x$`Offset to point data`, "\n")
-    cat("Num. var. length record: ", x$`Number of variable length records`, "\n")
-    cat("Point data format:       ", x$`Point Data Format ID`, "\n")
-    cat("Point data record length:", x$`Point Data Record Length`, "\n")
-    cat("Num. of point records:   ", x$`Number of point records`, "\n")
-    cat("Num. of points by return:", x$`Number of 1st return`, x$`Number of 2nd return`, x$`Number of 3rd return`, x$`Number of 4th return`, x$`Number of 5th return`, "\n")
-    cat("Scale factor X Y Z:      ", x$`X scale factor`, x$`Y scale factor`, x$`Z scale factor`, "\n")
-    cat("Offset X Y Z:            ", x$`X offset`, x$`Y offset`, x$`Z offset`, "\n")
-    cat("min X Y Z:               ", x$`Min X`, x$`Min Y`, x$`Min Z`, "\n")
-    cat("max X Y Z:               ", x$`Max X`, x$`Max Y`, x$`Max Z`, "\n")
-
-    n = length(x$`Variable Length Records`)
-
-    if(n == 0)
-    {
-      cat("Variable length records:  void\n")
-      return(invisible())
-    }
-
-    cat("Variable length records: \n")
-
-    for(i in 1:n)
-    {
-      vlr = x$`Variable Length Records`[[i]]
-
-      cat("   Variable length record", i, "of", n, "\n")
-      cat("       Reserved:            ", vlr$reserved, "\n")
-      cat("       User ID:             ", vlr$`user ID`, "\n")
-      cat("       record ID:           ", vlr$`record ID`, "\n")
-      cat("       Length after header: ", vlr$`length after header`, "\n")
-      cat("       Description:         ", vlr$description, "\n")
-
-      if(vlr$`record ID` == 34735)
-      {
-        cat("       Tags:\n")
-        lapply(vlr[[6]], function(xx)
-        {
-          cat("          Key", xx$key, "tiff_tag_location", xx$`tiff tag location`, "count", xx$count, "value offset", xx$`value offset`, "\n")
-        })
-      }
-      else if(vlr$`record ID` == 34736)
-      {
-        cat("       data:                ", vlr[[6]], "\n")
-      }
-      else if(vlr$`record ID` == 34737)
-      {
-        cat("       data:                ", vlr[[6]], "\n")
-      }
-    }
-
-    return(invisible())
+    print(object@header)
   }
 )
 
