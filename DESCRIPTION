@@ -21,7 +21,7 @@ Depends:
 Imports:
     rlas,rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
 Suggests:
-    rgdal,akima,gstat,sp
+    rgdal,akima,gstat,sp,testthat
 LazyData: true
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
