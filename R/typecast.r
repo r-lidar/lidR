@@ -44,29 +44,7 @@ as.lasmetrics = function(x, res)
   data.table::setattr(x, "res")   = res
 }
 
-#' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
-#'
-#' @param x a \code{lasmetrics} object
-#' @param z character. The field to plot. If NULL, autodetect
-#' @param \dots other parameters for \link[data.table:dcast]{dcast}
-#' @seealso
-#' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:grid_canopy]{grid_canopy}
-#' \link[lidR:grid_canopy]{grid_canopy}
-#' \link[raster:raster]{raster}
-#' \link[data.table:dcast]{dcast}
-#' @return A RasterLayer object from package  \link[raster:raster]{raster}
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' meanHeight = grid_metrics(lidar, mean(Z))
-#' rmeanHeight = as.raster(meanHeight)
-#' @method as.raster lasmetrics
-#' @importMethodsFrom raster as.raster
-#' @export
-#' @family cast
-as.raster.lasmetrics = function(x, z = NULL, ...)
+as.matrix.lasmetrics = function(x, z = NULL, ...)
 {
   X <- Y <- NULL
 
@@ -107,6 +85,35 @@ as.raster.lasmetrics = function(x, z = NULL, ...)
   mx = out %>% as.matrix
   mx = apply(mx, 1, rev)
 
+  return(mx)
+}
+
+#' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
+#'
+#' @param x a \code{lasmetrics} object
+#' @param z character. The field to plot. If NULL, autodetect
+#' @param \dots other parameters for \link[data.table:dcast]{dcast}
+#' @seealso
+#' \link[lidR:grid_metrics]{grid_metrics}
+#' \link[lidR:grid_canopy]{grid_canopy}
+#' \link[lidR:grid_canopy]{grid_canopy}
+#' \link[raster:raster]{raster}
+#' \link[data.table:dcast]{dcast}
+#' @return A RasterLayer object from package  \link[raster:raster]{raster}
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' lidar = readLAS(LASfile)
+#'
+#' meanHeight = grid_metrics(lidar, mean(Z))
+#' rmeanHeight = as.raster(meanHeight)
+#' @method as.raster lasmetrics
+#' @importMethodsFrom raster as.raster
+#' @export
+#' @family cast
+as.raster.lasmetrics = function(x, z = NULL, ...)
+{
+  res   = attr(x, "res")
+  mx    = as.matrix(x, z)
   layer = raster::raster(mx, xmn = min(x$X)-0.5*res, xmx = max(x$X)+0.5*res, ymn = min(x$Y)-0.5*res, ymx = max(x$Y)+0.5*res)
 
   return(layer)
