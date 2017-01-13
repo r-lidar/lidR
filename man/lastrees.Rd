@@ -10,7 +10,7 @@ lastrees(.las, algorithm, image = NULL, extra = FALSE, ...)
 \item{.las}{An object of the class \code{LAS}}
 
 \item{algorithm}{string. The name of an algorithm. Can be \code{"dalponte2012"}, \code{"li2012"}.
-(see sections relative to each algorithm)}
+(see sections relevant to each algorithm)}
 
 \item{image}{an image of the canopy if the algorithm works on canopy surface model.
 but some algorithms work on the raw point cloud. You can compute it with grid_canopy or read it from external file.}
@@ -22,22 +22,22 @@ of the local maxima and the map of the crowns.}
 \item{...}{parameter for the algorithms. Depends on the algorithm used (see details about the algoritms)}
 }
 \description{
-Individual tree segmentation with several possible algorithm (see details). The function
-attribute to each point of the point cloud an number to identify from with detected tree
-the point comes from. By defaut the classification is done at the point level. However it is possible
-to return a raster image of the classification with some algoithms. There are currently 1 algorithm
-implemented. See relative sections
+Individual tree segmentation with several possible algorithms (see details). The function
+attributes to each point of the point cloud a number to identify fwhich detected tree
+the point comes from. By default the classification is done at the point level. However, with some algorithms it is 
+possible to return a raster image of the classification. There is currently 1 algorithm
+implemented. See relevant sections.
 }
 \section{Dalponte 2012}{
 
 
 \code{algorithm = "dalponte2012"}
 
-This is the algorithm developped by M. Dalponte (see references). This algorithm exists
-in the package \code{itcSegment}. This version is stricly identical to the original one but had entierly been
-cleaned of useless code and rewritten in pure C++. It is 6 times faster. The name of the paramters are those
-you can find in orginal Dalponte's code in \code{itcSegment} package. Dalponte's algorithm is a canopy
-surface model based method. An image of the canopy is expected.
+This is the algorithm developpd by M. Dalponte (see references). This algorithm exists
+in the package \code{itcSegment}. This version is identical to the original but with superfluous code
+removed and rewritten in pure C++. Consequently it is 6 times faster. The names of the parameters are the same as those
+in Dalponte's \code{itcSegment} package. Dalponte's algorithm is a canopy
+surface model-based method. An image of the canopy is expected.
 \describe{
 \item{\code{searchWinSize}}{Size (in pixels) of the moving window used to the detect the local maxima. It should be an odd number larger than 3. Default 3}
 \item{\code{TRESHSeed}}{Growing threshold 1. It should be between 0 and 1. Default 0.45}
