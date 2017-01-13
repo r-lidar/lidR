@@ -40,6 +40,7 @@ Collate:
     'grid_metrics.r'
     'grid_metrics3d.r'
     'grid_terrain.r'
+    'interpolations.r'
     'lasheader-class.r'
     'las-class.r'
     'lasarea.r'
