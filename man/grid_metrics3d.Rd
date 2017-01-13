@@ -4,7 +4,7 @@
 \alias{grid_metrics3d}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
-grid_metrics3d(.las, func, res = 1)
+grid_metrics3d(.las, func, res = 1, debug = FALSE)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -12,6 +12,8 @@ grid_metrics3d(.las, func, res = 1)
 \item{func}{the function to be apply to each voxel.}
 
 \item{res}{numeric. The size of the voxels}
+
+\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table

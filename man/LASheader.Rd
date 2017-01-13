@@ -18,6 +18,5 @@ Create a \code{LASheader} object
 \seealso{
 \link[lidR:LASheader]{Class LASheader}
 \link[lidR:LAS]{Class LAS}
-\link[lidR:summary]{summary}
 }
 

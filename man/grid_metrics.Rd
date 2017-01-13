@@ -4,7 +4,8 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE)
+grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
+  debug = FALSE)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -17,6 +18,8 @@ grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE)
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlap.}
+
+\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each cell. The table
@@ -29,7 +32,7 @@ of a grid.
 \details{
 Computes a series of descriptive statistics defined by the user. Output is a
 data.frame in which each line is a raster (single grid cell), and each column is a metric.
-grid_metrics is similar to cloud_metrics except it computes metrics within each cell
+grid_metrics is similar to \code{lasmetrics} except it computes metrics within each cell
 in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:

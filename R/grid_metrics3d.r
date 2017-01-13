@@ -43,6 +43,7 @@
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be apply to each voxel.
 #' @param res numeric. The size of the voxels
+#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting.
 #' @examples
@@ -77,7 +78,7 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
-grid_metrics3d = function(.las, func, res = 1)
+grid_metrics3d = function(.las, func, res = 1, debug = FALSE)
 {
   stopifnotlas(.las)
 
@@ -86,7 +87,8 @@ grid_metrics3d = function(.las, func, res = 1)
   if(is(func_call, "name"))
     func_call = eval(func_call)
 
-  .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+  if(debug)
+    .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
 
   x_raster = round_any(.las@data$X, res)
   y_raster = round_any(.las@data$Y, res)
