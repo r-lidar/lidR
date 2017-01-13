@@ -63,7 +63,6 @@ setMethod("initialize", "LASheader",
 #' @seealso
 #' \link[lidR:LASheader]{Class LASheader}
 #' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:summary]{summary}
 #' @export LAS
 LASheader <- function(data = list()) {return(new("LASheader", data))}
 

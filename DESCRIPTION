@@ -68,7 +68,6 @@ Collate:
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
-    'testFuncSignature.r'
     'typecast.r'
     'utils.r'
     'writeLAS.r'

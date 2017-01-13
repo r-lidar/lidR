@@ -155,7 +155,6 @@ setMethod("$", "LAS", function(x, name)
 #' @return An object of class \code{LAS}
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:summary]{summary}
 #' @export LAS
 LAS <- function(data, header = list()) {return(new("LAS", data, header))}
 
