@@ -54,7 +54,7 @@ lidRError = function(code, ..., behaviour = stop)
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
-"GDM2" = list(p$number, "duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
+"GDM2" = list(p$number, " duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
 "GDM3" = list("More than 3 columns: please input the third column's name to transform the data.frame into a matrix."),
 
 # ClassCatalog.r
