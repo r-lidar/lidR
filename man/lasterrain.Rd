@@ -4,7 +4,7 @@
 \alias{lasterrain}
 \title{Get the elevation of the ground for given coordinates}
 \usage{
-lasterrain(.las, coord, method, k = 6L, model = gstat::vgm(0.59, "Sph",
+lasterrain(.las, coord, method, k = 10L, model = gstat::vgm(0.59, "Sph",
   874))
 }
 \arguments{
@@ -12,9 +12,9 @@ lasterrain(.las, coord, method, k = 6L, model = gstat::vgm(0.59, "Sph",
 
 \item{coord}{data.frame containing  the coordinates of interest in columns X and Y}
 
-\item{method}{character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)}
+\item{method}{character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
 
-\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}}
+\item{k}{numeric. number of k nearest neibourgh when selected method is \code{"knnidw"} or \code{"kriging"}}
 
 \item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
 \code{"kriging"}}
@@ -25,7 +25,7 @@ Numeric. The predicted elevations.
 \description{
 Interpolate ground points and return the elevation at the position of interest given by the
 user. The interpolation can be done using 3 methods: \code{"knnidw"},
-\code{"akima"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
+\code{"delaunay"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
 compute the interpolation.
 }
 \details{
@@ -34,12 +34,13 @@ compute the interpolation.
 an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
 data interpolation.}
 \item{\code{delaunay}}{Interpolation based on Delaunay triagulation using \link[akima:interp]{interp}
-function from package \code{akima}. This method is relatively fast and more advanced than
+function from package \code{akima}. This method is relatively fast. It makes a linear interpolation
+within each triangle.
 \code{knnidw} and provides good digital terrain models. Notice that with this method no
 extrapolation is done outside of the convex hull determined by the ground points.}
 \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
-function. This method is very slow and very difficult to manipulate but it is also the
-most regognized method to interpolate spatial data.}
+function. This method mix the KNN approach and the kriging approach. For each point of interest
+it kriges the terrain using the k-nearest neighbours ground points. }
 }
 }
 \seealso{

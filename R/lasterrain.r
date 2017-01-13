@@ -31,7 +31,7 @@
 #'
 #' Interpolate ground points and return the elevation at the position of interest given by the
 #' user. The interpolation can be done using 3 methods: \code{"knnidw"},
-#' \code{"akima"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
+#' \code{"delaunay"} or \code{"kriging"} (see details). The algorithm uses the points classified as "ground" to
 #' compute the interpolation.
 #'
 #'\describe{
@@ -39,17 +39,18 @@
 #' an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
 #' data interpolation.}
 #'\item{\code{delaunay}}{Interpolation based on Delaunay triagulation using \link[akima:interp]{interp}
-#' function from package \code{akima}. This method is relatively fast and more advanced than
+#' function from package \code{akima}. This method is relatively fast. It makes a linear interpolation
+#' within each triangle.
 #'\code{knnidw} and provides good digital terrain models. Notice that with this method no
 #'extrapolation is done outside of the convex hull determined by the ground points.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
-#' function. This method is very slow and very difficult to manipulate but it is also the
-#' most regognized method to interpolate spatial data.}
+#' function. This method mix the KNN approach and the kriging approach. For each point of interest
+#' it kriges the terrain using the k-nearest neighbours ground points. }
 #' }
 #' @param .las LAS objet
 #' @param coord data.frame containing  the coordinates of interest in columns X and Y
-#' @param method character can be \code{"knnidw"}, \code{"akima"} or \code{"kriging"} (see details)
-#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"}
+#' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
+#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"} or \code{"kriging"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
 #' \code{"kriging"}
 #' @return Numeric. The predicted elevations.
@@ -60,7 +61,7 @@
 #' \link[gstat:vgm]{vgm}
 #' \link[gstat:krige]{krige}
 #' \link[akima:interp]{interp}
-lasterrain = function(.las, coord, method, k = 6L, model = gstat::vgm(.59, "Sph", 874))
+lasterrain = function(.las, coord, method, k = 10L, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- X <- Y <- Z <- NULL
 
@@ -88,7 +89,7 @@ lasterrain = function(.las, coord, method, k = 6L, model = gstat::vgm(.59, "Sph"
   }
   else if(method == "kriging")
   {
-    return(terrain_kriging(ground, coord, model))
+    return(terrain_kriging(ground, coord, model, k))
   }
   else if(method == "akima")
   {
@@ -98,7 +99,7 @@ lasterrain = function(.las, coord, method, k = 6L, model = gstat::vgm(.59, "Sph"
     stop("This method does not exist.")
 }
 
-terrain_knnidw = function(ground, coord, k = 3L)
+terrain_knnidw = function(ground, coord, k)
 {
   . <- X <- Y <- NULL
 
@@ -129,14 +130,14 @@ terrain_delaunay = function(ground, coord)
   return(temp$Zg)
 }
 
-terrain_kriging = function(ground, coord, model)
+terrain_kriging = function(ground, coord, model, k)
 {
   X <- Y <- Z <- NULL
 
   if (!requireNamespace("gstat", quietly = TRUE))
     stop("'gstat' package is needed for this function to work. Please install it.", call. = F)
 
-  x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model)
+  x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model, nmax = k)
   return(x$var1.pred)
 }
 
