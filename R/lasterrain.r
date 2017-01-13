@@ -36,23 +36,23 @@
 #'
 #'\describe{
 #'\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is a very fast but also basic method for spatial
+#' an inverse distance weighting (IDW). This is fast but also basic method for spatial
 #' data interpolation.}
-#'\item{\code{delaunay}}{Interpolation based on Delaunay triagulation using \link[akima:interp]{interp}
-#' function from package \code{akima}. This method is relatively fast. It makes a linear interpolation
-#' within each triangle.
-#'\code{knnidw} and provides good digital terrain models. Notice that with this method no
-#'extrapolation is done outside of the convex hull determined by the ground points.}
+#'\item{\code{delaunay}}{Interpolation based on Delaunay triangulation using \link[akima:interp]{interp}
+#' function from package \code{akima}. This method is very fast. It makes a linear interpolation
+#' within each triangle and provides good digital terrain models. Notice that with this method no
+#' extrapolation is done outside of the convex hull determined by the ground points.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
 #' function. This method mix the KNN approach and the kriging approach. For each point of interest
-#' it kriges the terrain using the k-nearest neighbours ground points. }
+#' it kriges the terrain using the k-nearest neighbours ground points. This method more difficult
+#' to manipulate but it is also the most regognized method to interpolate spatial data. }
 #' }
 #' @param .las LAS objet
 #' @param coord data.frame containing  the coordinates of interest in columns X and Y
 #' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"} or \code{"kriging"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
-#' \code{"kriging"}
+#' \code{"kriging"}. If null it performed an ordinary or weighted least squares prediction.
 #' @return Numeric. The predicted elevations.
 #' @export
 #' @seealso
