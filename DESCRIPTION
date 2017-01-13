@@ -51,7 +51,6 @@ Collate:
     'lasdecimate.r'
     'lasextent.r'
     'lasfilter.r'
-    'lasgetters.r'
     'lasindentify.r'
     'lasmetrics.r'
     'lasnormalize.r'
