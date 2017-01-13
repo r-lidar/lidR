@@ -31,7 +31,6 @@
 #'
 #' This functions implements a \link[base:summary]{summary} method for LAS objects
 #'
-#' @aliases summary
 #' @param object An object of the class \code{LAS}
 #' @param \dots Unused (inherited from R base)
 #' @examples
@@ -48,7 +47,3 @@ summary.LAS =	function(object, ...)
 {
   print(object)
 }
-
-#' @rdname summary.LAS
-#' @export
-lassummary <- summary.LAS
