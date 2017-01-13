@@ -18,20 +18,20 @@ interpolate = function(points, coord, method, k, model)
     stop(paste0("Method '", method, "' does not exist."), call. = FALSE)
 }
 
-interpolate_knnidw = function(ground, coord, k)
+interpolate_knnidw = function(points, coord, k)
 {
   . <- X <- Y <- NULL
 
-  nn = RANN::nn2(ground[, .(X,Y)], coord[, .(X,Y)], k = k)
+  nn = RANN::nn2(points[, .(X,Y)], coord[, .(X,Y)], k = k)
   idx = nn$nn.idx
   w = 1/nn$nn.dist
   w = ifelse(is.infinite(w), 1e8, w)
-  z = matrix(ground[as.numeric(idx)]$Z, ncol = dim(w)[2])
+  z = matrix(points[as.numeric(idx)]$Z, ncol = dim(w)[2])
 
   return(rowSums(z*w)/rowSums(w))
 }
 
-interpolate_delaunay = function(ground, coord)
+interpolate_delaunay = function(points, coord)
 {
   . <- X <- Y <- Z <- Zg <- xc <- yc <- NULL
 
@@ -41,7 +41,7 @@ interpolate_delaunay = function(ground, coord)
   xo = unique(coord$X) %>% sort()
   yo = unique(coord$Y) %>% sort()
 
-  grid = ground %$% akima::interp(X, Y, Z, xo = xo, yo = yo, duplicate = "user", dupfun = min)
+  grid = points %$% akima::interp(X, Y, Z, xo = xo, yo = yo, duplicate = "user", dupfun = min)
 
   temp = data.table::data.table(xc = match(coord$X, grid$x), yc = match(coord$Y, grid$y))
   temp[, Zg := grid$z[xc,yc], by = .(xc,yc)]
@@ -49,27 +49,27 @@ interpolate_delaunay = function(ground, coord)
   return(temp$Zg)
 }
 
-interpolate_kriging = function(ground, coord, model, k)
+interpolate_kriging = function(points, coord, model, k)
 {
   X <- Y <- Z <- NULL
 
   if (!requireNamespace("gstat", quietly = TRUE))
     stop("'gstat' package is needed for this function to work. Please install it.", call. = F)
 
-  x  = gstat::krige(Z~X+Y, location = ~X+Y, data = ground, newdata = coord, model, nmax = k)
+  x  = gstat::krige(Z~X+Y, location = ~X+Y, data = points, newdata = coord, model, nmax = k)
   return(x$var1.pred)
 }
 
-# interpolate_delaunay = function(ground, coord)
+# interpolate_delaunay = function(points, coord)
 # {
 #   # Computes Delaunay triangulation
-#   triangles <-  deldir::deldir(ground$X, ground$Y) %>%  deldir::triang.list()
+#   triangles <-  deldir::deldir(points$X, points$Y) %>%  deldir::triang.list()
 #
 #   # Comptutes equation of planes
 #   eq = lapply(triangles, function(x)
 #   {
 #     x = data.table::data.table(x)
-#     x[, z := ground$Z[ptNum]][, ptNum := NULL]
+#     x[, z := points$Z[ptNum]][, ptNum := NULL]
 #
 #     u = x[1] - x[2]
 #     v = x[1] - x[3]

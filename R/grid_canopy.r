@@ -35,7 +35,7 @@
 #'
 #' The algorithm rely on the 'local maximum'. For each pixel the function returns the highest
 #' point found. This method implies that the resulting surface model can contains empty pixels.
-#' Those 'hole' can be filled by interpolation. The interpolation is internally based on the
+#' Those 'holes' can be filled by interpolation. The interpolation is internally based on the
 #' same functions than in the function \link[lidR:lasterrain]{lasterrain}. Therefore the
 #' documentation of \link[lidR:lasterrain]{lasterrain} is applicable to this function too.
 #' (see also examples)
@@ -106,10 +106,11 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 
     data.table::setkeyv(grid, c("X", "Y"))
     data.table::setkeyv(dsm, c("X", "Y"))
+    data.table::setattr(dsm, "class", class(grid))
 
-    dsm = grid[dsm]
+    dsm = dsm[grid]
 
-    z = lidR:::interpolate(dsm[!is.na(Z)], dsm[is.na(Z)], method = na.fill, ...)
+    z = interpolate(dsm[!is.na(Z)], dsm[is.na(Z)], method = na.fill, ...)
 
     dsm[is.na(Z), Z := z]
 
