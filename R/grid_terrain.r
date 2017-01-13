@@ -79,10 +79,7 @@ grid_terrain = function(.las, res = 1, ...)
   grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res, start=c(0.5*res,0.5*res)))
   grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 
-  mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
-  mx = apply(mx, 1, rev)
+  as.lasmetrics(grid, res)
 
-  dtm = raster::raster(mx, xmn = min(grid$X)-0.5*res, xmx = max(grid$X)+0.5*res, ymn = min(grid$Y)-0.5*res, ymx = max(grid$Y)+0.5*res)
-
-  return(dtm)
+  return(as.raster(grid))
 }
