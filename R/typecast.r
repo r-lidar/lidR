@@ -40,8 +40,8 @@
 as.lasmetrics = function(x, res)
 {
   data.table::setDT(x)
-  data.table::setattr(x, "class") = c("lasmetrics", attr(x, "class"))
-  data.table::setattr(x, "res")   = res
+  data.table::setattr(x, "class", c("lasmetrics", attr(x, "class")))
+  data.table::setattr(x, "res", res)
 }
 
 as.matrix.lasmetrics = function(x, z = NULL, ...)
@@ -53,7 +53,7 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
   multi = duplicated(x, by = c("X","Y")) %>% sum
 
   if(multi > 0 & is.null(inargs$fun.aggregate))
-    lidRError("GDM2", number = multi, behavior = message)
+    lidRError("GDM2", number = multi, behaviour = warning)
 
   if(is.null(z))
   {
@@ -78,7 +78,7 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 
   if(is.null(inargs$fun.aggregate))
     out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
-  else(is.null(inargs$fun.aggregate))
+  else
     out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
 
   out[, X := NULL]
