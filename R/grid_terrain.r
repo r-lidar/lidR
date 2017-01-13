@@ -67,13 +67,9 @@ grid_terrain = function(.las, res = 1, ...)
   . <- X <- Y <- Z <- NULL
 
   res %<>% round(1)
-
   ex = extent(.las)
-  xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
-  yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
 
-  grid = expand.grid(X = xo, Y = yo)
-  data.table::setDT(grid)
+  grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
   Zg = lasterrain(.las, grid, ...)
 
