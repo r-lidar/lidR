@@ -88,20 +88,20 @@ readLAS = function(files,
   valid = file.exists(files)
   islas = tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
 
-  if( sum(!valid) > 0)
+  if(sum(valid) == 0 | sum(islas) == 0)
+    lidRError("LAS3", behaviour = stop)
+
+  if(sum(!valid) > 0)
   {
     lidRError("LAS1", files = files[!valid], behaviour = warning)
     files = files[valid]
   }
 
-  if( sum(!islas) > 0 )
+  if (sum(!islas) > 0)
   {
     lidRError("LAS2", files = files[!islas], behaviour = warning)
     files = files[islas]
   }
-
-  if (sum(valid) == 0 | sum(islas) == 0)
-    lidRError("LAS3", behaviour = stop)
 
   files = normalizePath(files)
 

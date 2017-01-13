@@ -8,7 +8,7 @@ test_that("read las works", {
 })
 
 test_that("read unexisting file fails", {
-  expect_error(suppressWarnings(readLAS("unexistingfile.las")))
+  expect_error(readLAS("unexistingfile.las"))
 })
 
 las = readLAS(LASfile, XYZonly = TRUE)
