@@ -34,8 +34,8 @@ each LiDAR return with a small disk. An interpolation for empty pixels is also a
 The algorithm rely on the 'local maximum'. For each pixel the function returns the highest
 point found. This method implies that the resulting surface model can contains empty pixels.
 Those 'holes' can be filled by interpolation. The interpolation is internally based on the
-same functions than in the function \link[lidR:lasterrain]{lasterrain}. Therefore the
-documentation of \link[lidR:lasterrain]{lasterrain} is applicable to this function too.
+same functions than in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
+documentation of \link[lidR:grid_terrain]{grid_terrain} is applicable to this function too.
 (see also examples)
 }
 \examples{
