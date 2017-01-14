@@ -42,8 +42,8 @@ area = function(x, y)
 
 make_grid = function(xmin, xmax, ymin, ymax, res)
 {
-  xo = seq(floor(xmin), ceiling(xmax), res) %>% round(1)
-  yo = seq(floor(ymin), ceiling(ymax), res) %>% round(1)
+  xo = seq(floor(xmin), ceiling(xmax), res) %>% round(2)
+  yo = seq(floor(ymin), ceiling(ymax), res) %>% round(2)
 
   grid = expand.grid(X = xo, Y = yo)
   data.table::setDT(grid)
