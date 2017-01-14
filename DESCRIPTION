@@ -56,7 +56,6 @@ Collate:
     'lasnormalize.r'
     'lasroi.r'
     'lassummary.r'
-    'lasterrain.r'
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
