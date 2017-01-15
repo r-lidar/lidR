@@ -4,7 +4,7 @@
 \alias{lasdecimate}
 \title{Thin LiDAR data}
 \usage{
-lasdecimate(.las, density, homogenize = TRUE, resolution = 5)
+lasdecimate(.las, density, homogenize = TRUE, res = 5)
 }
 \arguments{
 \item{.las}{An object of the class \code{LAS}}
@@ -14,7 +14,7 @@ lasdecimate(.las, density, homogenize = TRUE, resolution = 5)
 \item{homogenize}{logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform
 dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.}
 
-\item{resolution}{numeric. Cell size to compute the pulse density.}
+\item{res}{numeric. Cell size to compute the pulse density.}
 }
 \value{
 It returns a \code{LAS} object.
@@ -39,7 +39,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # By default the method is homogenize = TRUE
-thinned = lidar \%>\% lasdecimate(1, resolution = 5)
+thinned = lidar \%>\% lasdecimate(1, res = 5)
 lidar   \%>\% grid_density \%>\% plot
 thinned \%>\% grid_density \%>\% plot
 
