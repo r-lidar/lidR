@@ -7,19 +7,19 @@ test_that("grid in grid_canopy is appropriated", {
   x1 = grid_canopy(las, 1)
   x2 = grid_canopy(las, 2)
 
-  expect_equal(min(x0$X), 0)
-  expect_equal(min(x1$X), 0)
-  expect_equal(min(x2$X), 0)
-  expect_equal(max(x0$X), 100)
-  expect_equal(max(x1$X), 100)
-  expect_equal(max(x2$X), 100)
+  expect_equal(min(x0$X), 0.25)
+  expect_equal(min(x1$X), 0.5)
+  expect_equal(min(x2$X), 1)
+  expect_equal(max(x0$X), 99.75)
+  expect_equal(max(x1$X), 99.5)
+  expect_equal(max(x2$X), 99)
 
-  expect_equal(min(x0$Y), 0)
-  expect_equal(min(x1$Y), 0)
-  expect_equal(min(x2$Y), 0)
-  expect_equal(max(x0$Y), 100)
-  expect_equal(max(x1$Y), 100)
-  expect_equal(max(x2$Y), 100)
+  expect_equal(min(x0$Y), 0.25)
+  expect_equal(min(x1$Y), 0.5)
+  expect_equal(min(x2$Y), 1)
+  expect_equal(max(x0$Y), 99.75)
+  expect_equal(max(x1$Y), 99.5)
+  expect_equal(max(x2$Y), 99)
 })
 
 test_that("grid in grid_metric is appropriated", {
@@ -84,10 +84,10 @@ test_that("make_grid make an appropriated grid", {
   expect_equal(sum(x$X %in% g$X), length(x$X))
 
   x = grid_canopy(las, 2)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 2, start = c(1,1))
+  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 2)
 
   x = grid_canopy(las, 1)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 1, start = c(0.5,0.5))
+  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 1)
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 })
