@@ -102,14 +102,11 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE
   if(debug)
     .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
 
-  x_raster = round_any(.las@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-  y_raster = round_any(.las@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
+  by = group_grid(.las@data$X, .las@data$Y, res, start)
 
-  if(!splitlines)
-    by = list(Xc = x_raster,Yc = y_raster)
-  else if("flightlineID" %in% names(.las@data))
-    by = list(Xc = x_raster,Yc = y_raster, flightline = .las@data$flightlineID)
-  else
+  if(splitlines & "flightlineID" %in% names(.las@data))
+    by = c(by, flightline = .las@data$flightlineID)
+  else if(splitlines & !"flightlineID" %in% names(.las@data))
     lidRError("LDR7")
 
   stat <- .las@data[, c(eval(func_call)), by = by]

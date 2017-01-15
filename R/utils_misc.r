@@ -30,13 +30,42 @@ round_any <- function(x, accuracy, f = round)
   f(x / accuracy) * accuracy
 }
 
-make_grid = function(xmin, xmax, ymin, ymax, res)
+make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
 {
-  xo = seq(round_any(xmin, res), round_any(xmax, res), res) %>% round(2)
-  yo = seq(round_any(ymin, res), round_any(ymax, res), res) %>% round(2)
+  xo = seq(f_grid(xmin, res, start[1]), f_grid(xmax, res, start[1]), res) %>% round(2)
+  yo = seq(f_grid(ymin, res, start[2]), f_grid(ymax, res, start[2]), res) %>% round(2)
 
   grid = expand.grid(X = xo, Y = yo)
   data.table::setDT(grid)
 
   return(grid)
+}
+
+group_grid = function(x, y, res, start = c(0,0))
+{
+  xgrid = f_grid(x, res, start[1])
+  ygrid = f_grid(y, res, start[2])
+
+  return(list(Xgrid = xgrid, Ygrid = ygrid))
+}
+
+f_grid = function(x, res, start)
+{
+  round_any(x-0.5*res-start, res)+0.5*res+start
+}
+
+dummy_las = function(n)
+{
+  dt = data.table::data.table(
+    X = stats::runif(n, 0, 100),
+    Y = stats::runif(n, 0, 100),
+    Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n)),
+    Classification = c(rep(1, 0.8*n), rep(2, 0.2*n)),
+    Intensity = stats::rnorm(n, 50, 10),
+    ReturnNumber    = rep(c(1,1,1,2,3,1,2,1,2,1), n/10),
+    NumberOfReturns = rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
+
+  las = LAS(dt)
+
+  return(las)
 }

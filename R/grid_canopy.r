@@ -97,7 +97,7 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
     rm(dt)
   }
 
-  dsm = grid_metrics(.las, list(Z = max(Z)), res, start = c(0.5*res, 0.5*res))
+  dsm   = grid_metrics(.las, list(Z = max(Z)), res)
 
   if(na.fill != "none")
   {
