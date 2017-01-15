@@ -103,7 +103,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
   grid[, Z := round(Zg, 3)]
 
   # force grounds point to be dominant
-  grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res, start=c(0.5*res,0.5*res)))
+  grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
   grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 
   as.lasmetrics(grid, res)

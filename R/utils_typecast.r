@@ -69,7 +69,7 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
   x   = x[, c("X", "Y", z), with=F]
 
   grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
-  grid = data.table::setDT(grid)
+  data.table::setDT(grid)
 
   data.table::setkeyv(x, c("X", "Y"))
   data.table::setkeyv(grid, c("X", "Y"))
@@ -83,7 +83,6 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 
   out[, X := NULL]
   mx = out %>% as.matrix
-  mx = apply(mx, 1, rev)
 
   return(mx)
 }
@@ -112,8 +111,10 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, ...)
 {
-  res   = attr(x, "res")
-  mx    = as.matrix(x, z)
+  res = attr(x, "res")
+  mx  = as.matrix(x, z)
+  mx  = apply(mx, 1, rev)
+
   layer = raster::raster(mx, xmn = min(x$X)-0.5*res, xmx = max(x$X)+0.5*res, ymn = min(x$Y)-0.5*res, ymx = max(x$Y)+0.5*res)
 
   return(layer)
