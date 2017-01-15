@@ -66,6 +66,7 @@ Collate:
     'plot3d.r'
     'readLAS.r'
     'utils_colors.r'
+    'utils_geometry.r'
     'utils_interpolations.r'
     'utils_misc.r'
     'utils_typecast.r'
