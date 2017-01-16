@@ -58,7 +58,6 @@
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlap.
-#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table
 #' has the class "lasmetrics" enabling easy plotting.
 #' @examples
@@ -90,7 +89,7 @@
 #' plot(metrics, "zsqmean")
 #' #etc.
 #' @export
-grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE, debug = FALSE)
+grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE)
 {
   stopifnotlas(.las)
 
@@ -99,13 +98,12 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE
   if(is(func_call, "name"))
     func_call = eval(func_call)
 
-  if(debug)
-    .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
+  .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
 
   by = group_grid(.las@data$X, .las@data$Y, res, start)
 
   if(splitlines & "flightlineID" %in% names(.las@data))
-    by = c(by, flightline = .las@data$flightlineID)
+    by = c(by, list(flightline = .las@data$flightlineID))
   else if(splitlines & !"flightlineID" %in% names(.las@data))
     lidRError("LDR7")
 
