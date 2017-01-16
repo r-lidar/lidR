@@ -58,7 +58,6 @@ Collate:
     'lidRError.r'
     'metrics.r'
     'mutatebyref.r'
-    'onAttach.r'
     'plot.catalog.r'
     'plot.las.r'
     'plot.lasmetrics.r'
@@ -71,3 +70,4 @@ Collate:
     'utils_misc.r'
     'utils_typecast.r'
     'writeLAS.r'
+    'zzz.r'
