@@ -9,11 +9,11 @@ lastrees(.las, algorithm, image = NULL, extra = FALSE, ...)
 \arguments{
 \item{.las}{An object of the class \code{LAS}}
 
-\item{algorithm}{string. The name of an algorithm. Can be \code{"dalponte2012"}, \code{"li2012"}.
+\item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2012"}, \code{"li2012"}.
 (see sections relevant to each algorithm)}
 
-\item{image}{an image of the canopy if the algorithm works on canopy surface model.
-but some algorithms work on the raw point cloud. You can compute it with grid_canopy or read it from external file.}
+\item{image}{RasterLayer. Image of the canopy if the algorithm works on canopy surface model.
+But some algorithms work on the raw point cloud. You can compute it with grid_canopy or read it from external file.}
 
 \item{extra}{logical. By defaut the function works at the point cloud level and return nothing.
 If \code{extra = TRUE} the function return a list of 2 \link[raster:raster]{RasterLayer} with the position
@@ -23,8 +23,8 @@ of the local maxima and the map of the crowns.}
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
-attributes to each point of the point cloud a number to identify fwhich detected tree
-the point comes from. By default the classification is done at the point level. However, with some algorithms it is 
+attributes to each point of the point cloud a number to identify from which detected tree
+the point comes from. By default the classification is done at the point level. However, with some algorithms it is
 possible to return a raster image of the classification. There is currently 1 algorithm
 implemented. See relevant sections.
 }
@@ -34,9 +34,9 @@ implemented. See relevant sections.
 \code{algorithm = "dalponte2012"}
 
 This is the algorithm developpd by M. Dalponte (see references). This algorithm exists
-in the package \code{itcSegment}. This version is identical to the original but with superfluous code
+in the package \pkg{itcSegment}. This version is identical to the original but with superfluous code
 removed and rewritten in pure C++. Consequently it is 6 times faster. The names of the parameters are the same as those
-in Dalponte's \code{itcSegment} package. Dalponte's algorithm is a canopy
+in Dalponte's \pkg{itcSegment} package. Dalponte's algorithm is a canopy
 surface model-based method. An image of the canopy is expected.
 \describe{
 \item{\code{searchWinSize}}{Size (in pixels) of the moving window used to the detect the local maxima. It should be an odd number larger than 3. Default 3}
@@ -51,6 +51,29 @@ surface model-based method. An image of the canopy is expected.
 
 
 Not yet implemented
+}
+\examples{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las = readLAS(LASfile, XYZonly = TRUE, filter = "-keep_xy 684850 5017850 684900 5017900")
+
+# compute a canopy image
+chm = grid_canopy(las, res = 0.5, na.fill = "knnidw", k = 4)
+chm = as.raster(chm)
+
+# smoothing post-process
+kernel = matrix(1,3,3)
+chm = raster::focal(chm, w = kernel, fun = mean)
+
+# check the image
+raster::plot(chm, col = height.colors(50))
+
+r = lastrees(las, "dalponte2012", chm, extra = TRUE,
+             searchWinSize = 3, TRESHSeed = 0.45,
+             TRESHCrown = 0.55, DIST = 10, th = 0)
+
+raster::plot(r[[1]], col = random.colors(38))
+raster::plot(r[[2]], col = random.colors(38))
+plot(las, color = "treeID", colorPalette = random.colors(38))
 }
 \references{
 M. Dalponte, F. Reyes, K. Kandare, and D. Gianelle, "Delineation of Individual Tree Crowns from ALS and Hyperspectral data: a comparison among four methods," European Journal of Remote Sensing, Vol. 48, pp. 365-382, 2015.
