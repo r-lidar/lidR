@@ -2,12 +2,12 @@
 % Please edit documentation in R/plot3d.r
 \name{plot3d}
 \alias{plot3d}
-\title{Plot a wireframe of a RasterLayer object}
+\title{Plot a wireframe of a \code{RasterLayer} or a \code{lasmetrics} object}
 \usage{
 plot3d(x, y, add = FALSE, bg = "black", ...)
 }
 \arguments{
-\item{x}{An object of the class RasterLayer}
+\item{x}{An object of the class \code{RasterLayer} or \code{lasmetrics}}
 
 \item{y}{Unused (inherited from R base)}
 
@@ -18,6 +18,6 @@ plot3d(x, y, add = FALSE, bg = "black", ...)
 \item{\dots}{Supplementary parameters for \link[rgl:surface3d]{surface3d}}
 }
 \description{
-Plot a wireframe of a RasterLayer object
+Plot a wireframe of a \code{RasterLayer} or a \code{lasmetrics} object
 }
 

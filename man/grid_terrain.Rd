@@ -54,9 +54,9 @@ dtm2 = grid_terrain(lidar, method = "delaunay")
 dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
 
 \dontrun{
-raster::plot(dtm1, col = height.colors(50))
-raster::plot(dtm2, col = height.colors(50))
-raster::plot(dtm3, col = height.colors(50))
+plot(dtm1)
+plot(dtm2)
+plot(dtm3)
 plot3d(dtm1)
 plot3d(dtm2)
 plot3d(dtm3)

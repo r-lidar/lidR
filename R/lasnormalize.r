@@ -35,8 +35,9 @@
 #' fly.
 #'
 #' @param .las a LAS objet
-#' @param dtm a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
-#' automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.
+#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+#' If NULL the function will automatically compute it on the fly using the function
+#' \link[lidR:grid_terrain]{grid_terrain}.
 #' @param ... optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
 #' \code{dtm} parameter is NULL.
 #' @return A LAS object.
@@ -75,7 +76,14 @@ lasnormalize = function(.las, dtm = NULL, ...)
 
   if(is.null(dtm))
   {
-    normalized = normalized - grid_terrain(normalized, ...)
+    dtm = grid_terrain(normalized, ...) %>% as.raster()
+    normalized = normalized - dtm
+    return(normalized)
+  }
+  else if(is(dtm, "lasmetrics"))
+  {
+    dtm = as.raster(dtm)
+    normalized = normalized - dtm
     return(normalized)
   }
   else if(is(dtm, "RasterLayer"))
@@ -94,7 +102,7 @@ lasnormalize = function(.las, dtm = NULL, ...)
     return(normalized)
   }
   else
-    stop("The terrain model is not a RasterLayer", call. = F)
+    stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
 }
 
 #' Convenient operator to lasnormalize

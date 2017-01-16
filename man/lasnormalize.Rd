@@ -9,8 +9,9 @@ lasnormalize(.las, dtm = NULL, ...)
 \arguments{
 \item{.las}{a LAS objet}
 
-\item{dtm}{a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
-automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.}
+\item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+If NULL the function will automatically compute it on the fly using the function
+\link[lidR:grid_terrain]{grid_terrain}.}
 
 \item{...}{optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
 \code{dtm} parameter is NULL.}
