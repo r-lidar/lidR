@@ -4,8 +4,7 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
-  debug = FALSE)
+grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -18,8 +17,6 @@ grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlap.}
-
-\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each cell. The table
