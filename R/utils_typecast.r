@@ -78,7 +78,7 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 
   if(is.null(inargs$fun.aggregate))
     out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
-  else(is.null(inargs$fun.aggregate))
+  else
     out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
 
   out[, X := NULL]
