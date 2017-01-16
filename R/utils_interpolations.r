@@ -1,5 +1,8 @@
 interpolate = function(points, coord, method, k, model)
 {
+  if(dim(coord)[1] == 0)
+    return(numeric(0))
+
   if(method == "knnidw")
   {
     cat("[using inverse distance weighting]\n")
