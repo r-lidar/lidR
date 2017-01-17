@@ -36,10 +36,7 @@
 #'
 #' @param .las a LAS objet
 #' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
-#' If NULL the function will automatically compute it on the fly using the function
 #' \link[lidR:grid_terrain]{grid_terrain}.
-#' @param ... optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
-#' \code{dtm} parameter is NULL.
 #' @return A LAS object.
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -47,12 +44,7 @@
 #'
 #' plot(lidar)
 #'
-#' # --- First option: compute the DTM on the fly -----
-#'
-#' lidar_norm = lasnormalize(lidar, method = "knnidw", k = 10L)
-#' plot(lidar_norm)
-#'
-#' # --- Second option: compute the DTM with grid_terrain -----
+#' # --- First option: compute the DTM with grid_terrain -----
 #'
 #' dtm = grid_terrain(lidar, method = "delaunay")
 #' lidar_norm = lasnormalize(lidar, dtm)
@@ -60,28 +52,23 @@
 #' plot(lidar_norm)
 #'
 #' \dontrun{
-#' # --- Third option: read the DTM from a file -----
+#' # --- Second option: read the DTM from a file -----
 #'
 #' dtm = raster::raster(terrain.tiff)
-#' lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
+#' lidar_norm = lidar - dtm
 #' plot(lidar_norm)
 #' }
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm = NULL, ...)
+lasnormalize = function(.las, dtm)
 {
   . <- Z <- Zn <- X <- Y <- NULL
 
   stopifnotlas(.las)
 
-  if(is.null(dtm))
-  {
-    dtm = grid_terrain(.las, ...) %>% as.raster()
-    return(lasnormalize(.las, dtm))
-  }
-  else if(is(dtm, "lasmetrics"))
+  if(is(dtm, "lasmetrics"))
   {
     dtm = as.raster(dtm)
     return(lasnormalize(.las, dtm))
