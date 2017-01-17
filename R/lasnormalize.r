@@ -47,19 +47,23 @@
 #'
 #' plot(lidar)
 #'
-#' # --- First possibility: compute the DTM on the fly -----
+#' # --- First option: compute the DTM on the fly -----
 #'
-#' lidar_norm = lasnormalize(lidar, method = "knnidw")
+#' lidar_norm = lasnormalize(lidar, method = "knnidw", k = 10L)
+#' plot(lidar_norm)
 #'
+#' # --- Second option: compute the DTM with grid_terrain -----
+#'
+#' dtm = grid_terrain(lidar, method = "delaunay")
+#' lidar_norm = lasnormalize(lidar, dtm)
+#' plot(dtm)
 #' plot(lidar_norm)
 #'
 #' \dontrun{
-#' # --- Second possibility: read the DTM from a file -----
+#' # --- Third option: read the DTM from a file -----
 #'
 #' dtm = raster::raster(terrain.tiff)
-#'
 #' lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
-#'
 #' plot(lidar_norm)
 #' }
 #' @seealso
@@ -72,30 +76,29 @@ lasnormalize = function(.las, dtm = NULL, ...)
 
   stopifnotlas(.las)
 
-  normalized = LAS(data.table::copy(.las@data), .las@header)
-
   if(is.null(dtm))
   {
-    dtm = grid_terrain(normalized, ...) %>% as.raster()
-    normalized = normalized - dtm
-    return(normalized)
+    dtm = grid_terrain(.las, ...) %>% as.raster()
+    return(lasnormalize(.las, dtm))
   }
   else if(is(dtm, "lasmetrics"))
   {
     dtm = as.raster(dtm)
-    normalized = normalized - dtm
-    return(normalized)
+    return(lasnormalize(.las, dtm))
   }
   else if(is(dtm, "RasterLayer"))
   {
+    normalized = LAS(data.table::copy(.las@data), .las@header)
+
     lasclassify(normalized, dtm, "Zn")
 
-    isna = is.na(normalized$Zn)
+    isna = is.na(normalized@data$Zn)
+
   	if(sum(isna) > 0)
 	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
 
-    normalized = lasfilter(normalized, !isna)
     normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
+    normalized = lasfilter(normalized, !isna)
 
     gc()
 
