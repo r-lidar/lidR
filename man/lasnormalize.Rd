@@ -31,19 +31,23 @@ lidar = readLAS(LASfile)
 
 plot(lidar)
 
-# --- First possibility: compute the DTM on the fly -----
+# --- First option: compute the DTM on the fly -----
 
-lidar_norm = lasnormalize(lidar, method = "knnidw")
+lidar_norm = lasnormalize(lidar, method = "knnidw", k = 10L)
+plot(lidar_norm)
 
+# --- Second option: compute the DTM with grid_terrain -----
+
+dtm = grid_terrain(lidar, method = "delaunay")
+lidar_norm = lasnormalize(lidar, dtm)
+plot(dtm)
 plot(lidar_norm)
 
 \dontrun{
-# --- Second possibility: read the DTM from a file -----
+# --- Third option: read the DTM from a file -----
 
 dtm = raster::raster(terrain.tiff)
-
 lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
-
 plot(lidar_norm)
 }
 }
