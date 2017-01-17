@@ -42,7 +42,7 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
     x = as.raster(x)
 
   if(!is(x, "RasterLayer"))
-    stop("Object not supporter")
+    stop("Object not supported")
 
   mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
   coord = sp::coordinates(x)
