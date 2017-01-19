@@ -87,22 +87,41 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   stopifnotlas(.las)
 
-  ex = extent(.las)
-
-  grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
-
   ground = suppressWarnings(lasfilterground(.las))
 
   if(is.null(ground))
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
-  ground = ground@data[, .(X,Y,Z)]
+  ground  = ground@data[, .(X,Y,Z)]
+
+  # test integrity of the data
+  dup_xyz  = duplicated(ground, by = c("X", "Y", "Z"))
+  dup_xy   = duplicated(ground, by = c("X", "Y"))
+  ndup_xyz = sum(dup_xyz)
+  ndup_xy  = sum(dup_xy & !dup_xyz)
+
+  # ground points that share X Y Z coordinates does not make sense but we can retain only one of them
+  if(ndup_xyz > 0)
+  {
+    ground = ground[!dup_xyz]
+    warning(paste0(ndup_xyz, " duplicated ground points with the same X Y Z coordinates than other ones were removed."), call. = FALSE)
+  }
+
+  # ground points that share X Y but Z coordinates does not make sense
+  if(ndup_xy > 0)
+  {
+    ground = ground[, .(Z = min(Z)), by = .(X,Y)]
+    warning(paste0(ndup_xy, " duplicated ground points with the same X Y coordinates but different Z coordinates. min Z were retained"), call. = FALSE)
+  }
+
+  ext  = extent(.las)
+  grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
 
   Zg = interpolate(ground, grid, method, k, model)
 
   grid[, Z := round(Zg, 3)]
 
-  # force grounds point to be dominant
+  # force ground point to be dominant
   grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
   grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 

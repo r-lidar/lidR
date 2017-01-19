@@ -71,7 +71,7 @@ interpolate_delaunay = function(points, coord)
   xo = unique(coord$X) %>% sort()
   yo = unique(coord$Y) %>% sort()
 
-  grid = points %$% akima::interp(X, Y, Z, xo = xo, yo = yo, duplicate = "user", dupfun = min)
+  grid = points %$% akima::interp(X, Y, Z, xo = xo, yo = yo)
 
   temp = data.table::data.table(xc = match(coord$X, grid$x), yc = match(coord$Y, grid$y))
   temp[, Zg := grid$z[xc,yc], by = .(xc,yc)]
