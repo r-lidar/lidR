@@ -100,19 +100,14 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
   ndup_xyz = sum(dup_xyz)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
-  # ground points that share X Y Z coordinates does not make sense but we can retain only one of them
   if(ndup_xyz > 0)
-  {
-    ground = ground[!dup_xyz]
-    warning(paste0(ndup_xyz, " duplicated ground points with the same X Y Z coordinates than other ones were removed."), call. = FALSE)
-  }
+    warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
 
-  # ground points that share X Y but Z coordinates does not make sense
   if(ndup_xy > 0)
-  {
+    warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+
+  if(ndup_xy > 0 | ndup_xyz > 0)
     ground = ground[, .(Z = min(Z)), by = .(X,Y)]
-    warning(paste0(ndup_xy, " duplicated ground points with the same X Y coordinates but different Z coordinates. min Z were retained"), call. = FALSE)
-  }
 
   ext  = extent(.las)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
