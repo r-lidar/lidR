@@ -86,6 +86,6 @@ forest.colors = function(n)
 #' @family lidrpalettes
 random.colors = function(n)
 {
-  colfunc <- grDevices::colorRampPalette(sample(grDevices::colors(distinct = T), n))
-  return(colfunc(n))
+  col = sample(grDevices::colors(distinct = T), n)
+  return(col)
 }
