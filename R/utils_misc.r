@@ -32,8 +32,8 @@ round_any <- function(x, accuracy, f = round)
 
 make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
 {
-  xo = seq(f_grid(xmin, res, start[1]), f_grid(xmax, res, start[1]), res) %>% round(2)
-  yo = seq(f_grid(ymin, res, start[2]), f_grid(ymax, res, start[2]), res) %>% round(2)
+  xo = seq(f_grid(xmin, res, start[1]), f_grid(xmax, res, start[1]), res)
+  yo = seq(f_grid(ymin, res, start[2]), f_grid(ymax, res, start[2]), res)
 
   grid = expand.grid(X = xo, Y = yo)
   data.table::setDT(grid)
