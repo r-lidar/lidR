@@ -17,4 +17,12 @@ lascheck = function(data)
     if(class0 > 0)
       lidRError("LDR3", number = class0, behaviour = warning)
   }
+
+  if("ReturnNumber" %in% fields)
+  {
+    class0 = fast_countequal(data$ReturnNumber, 0)
+
+    if(class0 > 0)
+      lidRError("LDR10", number = class0, behaviour = warning)
+  }
 }
