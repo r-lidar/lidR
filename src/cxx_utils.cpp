@@ -37,7 +37,7 @@ IntegerVector fast_table(IntegerVector x, int size = 5)
 
   for (IntegerVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
   {
-    if (*it <= size)
+    if (*it <= size && *it > 0)
       tbl(*it-1)++;
   }
 
