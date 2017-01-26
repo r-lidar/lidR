@@ -86,9 +86,9 @@ forest.colors = function(n)
 #' @family lidrpalettes
 random.colors = function(n)
 {
-  h = runif(n, 0, 1);
-  s = runif(n, 0.2, 1);
-  l = runif(n, 0.8, 1);
+  h = stats::runif(n, 0, 1);
+  s = stats::runif(n, 0.2, 1);
+  l = stats::runif(n, 0.8, 1);
 
   return(grDevices::hsv(h,s,l))
 }
@@ -98,9 +98,9 @@ random.colors = function(n)
 #' @family lidrpalettes
 pastel.colors = function(n)
 {
-  h = runif(n, 0, 360);
-  c = runif(n, 42, 98);
-  l = runif(n, 40, 90);
+  h = stats::runif(n, 0, 360);
+  c = stats::runif(n, 42, 98);
+  l = stats::runif(n, 40, 90);
 
-  return(grDevices::hcl(h,s,l))
+  return(grDevices::hcl(h,c,l))
 }
