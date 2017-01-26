@@ -54,7 +54,7 @@ set.colors = function(x, palette, trim = 1)
 
 #' Palettes
 #'
-#' Create a vector of n contiguous colors
+#' Create a vector of n contiguous (or not) colors
 #'
 #' @param n The number of colors (> 1) to be in the palette
 #' @family lidrpalettes
@@ -86,6 +86,21 @@ forest.colors = function(n)
 #' @family lidrpalettes
 random.colors = function(n)
 {
-  col = sample(grDevices::colors(distinct = T), n)
-  return(col)
+  h = runif(n, 0, 1);
+  s = runif(n, 0.2, 1);
+  l = runif(n, 0.8, 1);
+
+  return(grDevices::hsv(h,s,l))
+}
+
+#' @export
+#' @rdname lidrpalettes
+#' @family lidrpalettes
+pastel.colors = function(n)
+{
+  h = runif(n, 0, 360);
+  c = runif(n, 42, 98);
+  l = runif(n, 40, 90);
+
+  return(grDevices::hcl(h,s,l))
 }
