@@ -4,6 +4,7 @@
 \alias{forest.colors}
 \alias{height.colors}
 \alias{lidrpalettes}
+\alias{pastel.colors}
 \alias{random.colors}
 \title{Palettes}
 \usage{
@@ -12,6 +13,8 @@ height.colors(n)
 forest.colors(n)
 
 random.colors(n)
+
+pastel.colors(n)
 }
 \arguments{
 \item{n}{The number of colors (> 1) to be in the palette}
