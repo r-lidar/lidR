@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <Rcpp.h>
 using namespace Rcpp;
 
+// Defined in cxx_utils.cpp
 int which_max(NumericVector);
 IntegerVector which_true(LogicalVector);
 NumericVector distance(NumericVector, NumericVector, double, double);
@@ -134,43 +135,4 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
   Rcout << std::endl;
 
   return idtree;
-}
-
-int which_max(NumericVector x)
-{
-  int n = -1;
-  double max = -INFINITY;
-
-  for (int i = 0, end = x.length() ; i < end ; i++)
-  {
-    if (x(i) >= max)
-    {
-      max = x(i);
-      n = i;
-    }
-  }
-
-  return n;
-}
-
-IntegerVector which_true(LogicalVector x)
-{
-  int n = 0;
-  IntegerVector y;
-
-  for (LogicalVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it)
-      y.push_back(n);
-
-    n++;
-  }
-
-  return y;
-}
-
-NumericVector distance(NumericVector x1, NumericVector y1, double x2, double y2)
-{
-  NumericVector y = sqrt( pow((x1-x2),2) + pow((y1-y2),2));
-  return y;
 }

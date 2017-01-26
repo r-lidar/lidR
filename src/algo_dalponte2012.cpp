@@ -31,43 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <algorithm>
 using namespace Rcpp;
 
-NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
-{
-  int nrow = y.nrow();
-  NumericVector out(nrow);
-
-  for(int i = 0 ; i < nrow ; i++)
-    out(i) = x(y(i,0), y(i,1));
-
-  return(out);
-}
-
-IntegerMatrix which_equal(IntegerMatrix mtx, double val)
-{
-  int l = mtx.nrow();
-  int w = mtx.ncol();
-
-  NumericVector x;
-  NumericVector y;
-
-  for(int i = 0 ; i < l ; i++)
-  {
-    for(int j = 0 ; j < w ; j++)
-    {
-      if(mtx(i,j) == val)
-      {
-        x.push_back(i);
-        y.push_back(j);
-      }
-    }
-  }
-
-  IntegerMatrix m(x.length(), 2);
-  m(_, 0) = x;
-  m(_, 1) = y;
-
-  return(m);
-}
+// Defined in cxx_utils.cpp
+NumericVector filter_xx(NumericMatrix x, IntegerMatrix y);
+IntegerMatrix which_equal(IntegerMatrix mtx, double val);
 
 // [[Rcpp::export]]
 IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize)
