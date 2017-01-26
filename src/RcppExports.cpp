@@ -32,6 +32,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// algo_li2012
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, NumericVector dt, double R);
+RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dtSEXP, SEXP RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type R(RSEXP);
+    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt, R));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {

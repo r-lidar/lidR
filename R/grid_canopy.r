@@ -92,7 +92,7 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 
     dt = dt[, subcircled(X,Y,Z, px,py), by = rownames(dt)][, rownames := NULL]
     dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
-    .las = LAS(dt)
+    .las = suppressWarnings(LAS(dt))
 
     rm(dt)
   }

@@ -21,11 +21,12 @@ Depends:
 Imports:
     rlas,rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
 Suggests:
-    rgdal,akima,gstat,sp,testthat
+    rgdal,akima,gstat,sp,testthat,EBImage
 LazyData: true
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
 Encoding: UTF-8
+biocViews:
 Collate:
     'RcppExports.R'
     'catalog.r'
