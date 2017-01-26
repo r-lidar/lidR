@@ -20,7 +20,7 @@ pastel.colors(n)
 \item{n}{The number of colors (> 1) to be in the palette}
 }
 \description{
-Create a vector of n contiguous colors
+Create a vector of n contiguous (or not) colors
 }
 \seealso{
 \link[grDevices:heat.colors]{grDevices::Palettes}

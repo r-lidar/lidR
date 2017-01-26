@@ -9,6 +9,10 @@ itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
     .Call('lidR_itc_expandcrowns', PACKAGE = 'lidR', Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
+algo_li2012 <- function(X, Y, Z, dt, R) {
+    .Call('lidR_algo_li2012', PACKAGE = 'lidR', X, Y, Z, dt, R)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call('lidR_fast_table', PACKAGE = 'lidR', x, size)
 }
