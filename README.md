@@ -1,4 +1,4 @@
-![](/home/jr/Bureau/lidr-ban.png)<br/>
+![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/lidr-ban.png)<br/>
 
 ![CRAN](https://img.shields.io/badge/CRAN-1.0.2-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.0.2-green.svg) ![Devel](https://img.shields.io/badge/devel-1.1.0.dev-yellowgreen.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
