@@ -69,6 +69,9 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
   inargs$col = color
 
+  if(!is.null(inargs$size))
+    inargs$size = 1.5
+
   if(length(color) == 1)
   {
     if(color %in% names(x@data))
