@@ -1,3 +1,5 @@
+![](/home/jr/Bureau/lidr-ban.png)<br/>
+
 ![CRAN](https://img.shields.io/badge/CRAN-1.0.2-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.0.2-green.svg) ![Devel](https://img.shields.io/badge/devel-1.1.0.dev-yellowgreen.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
@@ -31,7 +33,7 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
 - [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
 - [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
-- Individual tree segmentation
+- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki/lastrees)
 
 # Install `lidR`
 
@@ -58,18 +60,6 @@ To install the package from github make sure you have a working development envi
 
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/examplereadme.png)
 
-# Changelog
+# Changelogs
 
-### v1.1.0
-
-* New: `lastree()` for individual tree segmentation.
-* New: `readLAS()` gains a parameter `filter` from `rlas (>= 1.1.0)`
-* Change: `roi_queries()` relies on `rlas (>= 1.1.0)` enabling to use streaming filters. This way it saves a lot a memory and it is much more faster.
-* Change: `roi_queries()` lost the parameter `...` all the field are loaded by default.
-* Change: `colorPalette` parameter in `plot.LAS()` expect now a list of colors instead of a function. Use `height.colors(50)` instead  of `height.colors`
-* Change: in `lasterrain()` the method called `akima` is now called `delaunay` because it corresponds to what is actually computed. Function loosed its parameter `linear`.
-* Fix: the header of `LAS` objects automatically updates `Number of point records` and `Number of nth return`.
-
-### v1.0.1
-
-* Change: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
+[See changelogs on the wiki page](https://github.com/Jean-Romain/lidR/wiki)
