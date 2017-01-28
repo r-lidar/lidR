@@ -46,16 +46,15 @@ IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize)
 
   double hws  = searchWinSize/2;
   int    fhws = floor(hws);
-  int    chws = ceil(hws);
 
   NumericMatrix FIL;
   IntegerMatrix temp;
 
   IntegerMatrix Maxima(l, w);
 
-  for (int r = chws ; r < l-chws ; r++)
+  for (int r = fhws ; r < l-fhws ; r++)
   {
-    for(int k = chws ; k <  w-chws ; k++)
+    for(int k = fhws ; k <  w-fhws ; k++)
     {
       minR = (r - fhws);
       minC = (k - fhws);
@@ -65,7 +64,7 @@ IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize)
       FIL  = Canopy(Range(minR,maxR), Range(minC,maxC));
       temp = Maxima(Range(minR,maxR), Range(minC,maxC));
 
-      if (FIL(chws-1,chws-1) == max(FIL) && max(temp) == 0 && max(FIL) != 0)
+      if (FIL(fhws,fhws) == max(FIL) && max(temp) == 0 && max(FIL) != 0)
       {
         Maxima(r,k) = index;
         index++;
