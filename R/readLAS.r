@@ -27,9 +27,9 @@
 
 
 
-#' Read las or laz files
+#' Read .las or .laz files
 #'
-#' Read las or laz files in format 1 to 4 according to LAS specification and return an object of class LAS
+#' Read .las or .laz files in format 1 to 4 according to LAS specification and return an object of class LAS
 #'
 #' If several files are given the returned LAS object is considered as one LAS file.
 #' The information retained in the header will be read from the first file in the list.
@@ -54,7 +54,7 @@
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
 #' @param filter character. filter data while reading the file (streaming filter) without
-#' allocating any useless memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
+#' allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
 #'
 #' @return A LAS object
 #' @export readLAS
