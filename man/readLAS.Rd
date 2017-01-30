@@ -2,13 +2,14 @@
 % Please edit documentation in R/readLAS.r
 \name{readLAS}
 \alias{readLAS}
-\title{Read las or laz files}
+\title{Read .las or .laz files}
 \usage{
 readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
   EdgeOfFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
   UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = FALSE, color = FALSE, XYZonly = FALSE, all = FALSE)
+  flightlineID = FALSE, color = TRUE, XYZonly = FALSE, all = FALSE,
+  filter = "")
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
@@ -42,12 +43,15 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 \item{XYZonly}{logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE}
 
 \item{all}{logical. Overwrite all other options. Load everything. default: FALSE}
+
+\item{filter}{character. filter data while reading the file (streaming filter) without
+allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
 }
 \value{
 A LAS object
 }
 \description{
-Read las or laz files in format 1 to 4 according to LAS specification and return an object of class LAS
+Read .las or .laz files in format 1 to 4 according to LAS specification and return an object of class LAS
 }
 \details{
 If several files are given the returned LAS object is considered as one LAS file.

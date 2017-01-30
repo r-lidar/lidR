@@ -35,10 +35,8 @@
 #' fly.
 #'
 #' @param .las a LAS objet
-#' @param dtm a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
-#' automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.
-#' @param ... optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
-#' \code{dtm} parameter is NULL.
+#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+#' \link[lidR:grid_terrain]{grid_terrain}.
 #' @return A LAS object.
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -46,55 +44,55 @@
 #'
 #' plot(lidar)
 #'
-#' # --- First possibility: compute the DTM on the fly -----
+#' # --- First option: compute the DTM with grid_terrain -----
 #'
-#' lidar_norm = lasnormalize(lidar, method = "knnidw")
-#'
+#' dtm = grid_terrain(lidar, method = "delaunay")
+#' lidar_norm = lasnormalize(lidar, dtm)
+#' plot(dtm)
 #' plot(lidar_norm)
 #'
 #' \dontrun{
-#' # --- Second possibility: read the DTM from a file -----
+#' # --- Second option: read the DTM from a file -----
 #'
 #' dtm = raster::raster(terrain.tiff)
-#'
-#' lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
-#'
+#' lidar_norm = lidar - dtm
 #' plot(lidar_norm)
 #' }
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm = NULL, ...)
+lasnormalize = function(.las, dtm)
 {
   . <- Z <- Zn <- X <- Y <- NULL
 
   stopifnotlas(.las)
 
-  normalized = LAS(data.table::copy(.las@data), .las@header)
-
-  if(is.null(dtm))
+  if(is(dtm, "lasmetrics"))
   {
-    normalized = normalized - grid_terrain(normalized, ...)
-    return(normalized)
+    dtm = as.raster(dtm)
+    return(lasnormalize(.las, dtm))
   }
   else if(is(dtm, "RasterLayer"))
   {
+    normalized = LAS(data.table::copy(.las@data), .las@header)
+
     lasclassify(normalized, dtm, "Zn")
 
-    isna = is.na(normalized$Zn)
+    isna = is.na(normalized@data$Zn)
+
   	if(sum(isna) > 0)
 	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
 
-    normalized = lasfilter(normalized, !isna)
     normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
+    normalized = lasfilter(normalized, !isna)
 
     gc()
 
     return(normalized)
   }
   else
-    stop("The terrain model is not a RasterLayer", call. = F)
+    stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
 }
 
 #' Convenient operator to lasnormalize

@@ -31,7 +31,6 @@
 #'
 #' This functions implements a \link[base:summary]{summary} method for LAS objects
 #'
-#' @aliases summary
 #' @param object An object of the class \code{LAS}
 #' @param \dots Unused (inherited from R base)
 #' @examples
@@ -46,32 +45,5 @@
 #' \link[lidR:LAS]{Class LAS}
 summary.LAS =	function(object, ...)
 {
-  size <- format(utils::object.size(object), units = "auto")
-
-  if("pulseID" %in% names(object@data))
-    npu = data.table::uniqueN(object@data$pulseID)
-  else
-    npu = NA
-
-  s   = lasarea(object)
-  npt = nrow(object@data)
-  dpt = npt/s
-  dpu = npu/s
-  fie = names(object@data)
-  ext = extent(object)
-
-  cat("class        : LAS\n")
-  cat("memory       :", size, "\n")
-  cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("area         :", s, "m^2\n")
-  cat("points       :", npt, "points\n")
-  cat("pulses       :", npu , "pulses\n")
-  cat("point density:", round(dpt, 2), "points/m^2\n")
-  cat("pulse density:", round(dpu, 2), "pulses/m^2\n")
-  cat("fields       :", length(fie), "\n")
-  cat("field names  :", fie, "\n\n")
+  print(object)
 }
-
-#' @rdname summary.LAS
-#' @export
-lassummary <- summary.LAS

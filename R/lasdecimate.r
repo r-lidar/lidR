@@ -45,14 +45,14 @@
 #' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform
 #' dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.
-#' @param resolution numeric. Cell size to compute the pulse density.
+#' @param res numeric. Cell size to compute the pulse density.
 #' @return It returns a \code{LAS} object.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lidar %>% lasdecimate(1, resolution = 5)
+#' thinned = lidar %>% lasdecimate(1, res = 5)
 #' lidar   %>% grid_density %>% plot
 #' thinned %>% grid_density %>% plot
 #'
@@ -61,7 +61,7 @@
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export
-lasdecimate = function(.las, density, homogenize = TRUE, resolution = 5)
+lasdecimate = function(.las, density, homogenize = TRUE, res = 5)
 {
   pulseID <- gpstime <- NULL
 
@@ -73,19 +73,15 @@ lasdecimate = function(.las, density, homogenize = TRUE, resolution = 5)
   if(homogenize == FALSE)
   {
     n = round(density*lasarea(.las))
-    selected = .selectPulseToRemove(.las@data$pulseID, n)
+    selected = selected_pulses(.las@data$pulseID, n)
   }
   else
   {
-    n = round(density*resolution^2)
+    n = round(density*res^2)
 
-    x_raster = round_any(.las@data$X, resolution)
-    y_raster = round_any(.las@data$Y, resolution)
+    by = group_grid(.las@data$X, .las@data$Y, res)
 
-    by = list(Xr = x_raster,Yr = y_raster)
-
-    selected = .las@data[, list(delete = .selectPulseToRemove(pulseID, n), t = gpstime), by=by]
-    selected[, c("Xr", "Yr") := NULL]
+    selected = .las@data[, list(delete = selected_pulses(pulseID, n), t = gpstime), by=by]
 
     setorder(selected, t)
     setorder(.las@data, gpstime)
@@ -96,8 +92,7 @@ lasdecimate = function(.las, density, homogenize = TRUE, resolution = 5)
   LAS(.las@data[selected], .las@header) %>% return()
 }
 
-
-.selectPulseToRemove = function(pulseID, n)
+selected_pulses = function(pulseID, n)
 {
   p = unique(pulseID)
 

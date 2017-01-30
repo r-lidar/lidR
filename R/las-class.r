@@ -74,13 +74,14 @@
 #' @import data.table
 #' @import magrittr
 #' @import methods
+#' @include lasheader-class.r
 #' @exportClass LAS
 #' @useDynLib lidR
 setClass(
 	Class = "LAS",
 	representation(
 		data 	 = "data.table",
-		header = "list"
+		header = "LASheader"
 	)
 )
 
@@ -96,18 +97,33 @@ setMethod("initialize", "LAS",
 	  if(nrow(data) == 0)
 	    lidRError("LDR9")
 
+	  if(!is(header, "LASheader"))
+	    header = LASheader(header)
+
 	  # Check if the data are valid. Else: warning -------------------------------
 
 	  lascheck(data)
 
 	  # Update header ------------------------------------------------------------
 
-	  header["Min X"] = min(data$X)
-	  header["Min Y"] = min(data$Y)
-	  header["Min Z"] = min(data$Z)
-	  header["Max X"] = max(data$X)
-	  header["Max Y"] = max(data$Y)
-	  header["Max Z"] = max(data$Z)
+	  if("ReturnNumber" %in% names(data))
+	  {
+	    number_of <- fast_table(data$ReturnNumber, 5L)
+
+	    header@data["Number of 1st return"] <- number_of[1]
+	    header@data["Number of 2nd return"] <- number_of[2]
+	    header@data["Number of 3rd return"] <- number_of[3]
+	    header@data["Number of 4th return"] <- number_of[4]
+	    header@data["Number of 5th return"] <- number_of[5]
+	  }
+
+	  header@data["Number of point records"] <- dim(data)[1]
+	  header@data["Min X"] <- min(data$X)
+	  header@data["Min Y"] <- min(data$Y)
+	  header@data["Min Z"] <- min(data$Z)
+	  header@data["Max X"] <- max(data$X)
+	  header@data["Max Y"] <- max(data$Y)
+	  header@data["Max Z"] <- max(data$Z)
 
 	  # Build returned object  ---------------------------------------------------
 
@@ -128,8 +144,8 @@ setMethod("$", "LAS", function(x, name)
     return(as.numeric(unlist(x@data[,name,with=F])))
   else if(name %in% slotNames(x))
     return(slot(x, name))
-  else if(name %in% names(x@header))
-    return(x@header[name])
+  else if(name %in% names(x@header@data))
+    return(x@header@data[name])
 })
 
 #' Create a \code{LAS} object
@@ -139,7 +155,38 @@ setMethod("$", "LAS", function(x, name)
 #' @return An object of class \code{LAS}
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
-#' \link[lidR:summary]{summary}
 #' @export LAS
 LAS <- function(data, header = list()) {return(new("LAS", data, header))}
+
+setMethod("show", "LAS",
+  function(object)
+  {
+    size <- format(utils::object.size(object), units = "auto")
+
+    if("pulseID" %in% names(object@data))
+      npu = data.table::uniqueN(object@data$pulseID)
+    else
+      npu = NA
+
+    s   = lasarea(object)
+    npt = nrow(object@data)
+    dpt = npt/s
+    dpu = npu/s
+    fie = names(object@data)
+    ext = extent(object)
+
+    cat("class        : LAS\n")
+    cat("memory       :", size, "\n")
+    cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
+    cat("area         :", s, "m^2\n")
+    cat("points       :", npt, "points\n")
+    cat("pulses       :", npu , "pulses\n")
+    cat("point density:", round(dpt, 2), "points/m^2\n")
+    cat("pulse density:", round(dpu, 2), "pulses/m^2\n")
+    cat("fields       :", length(fie), "\n")
+    cat("field names  :", fie, "\n\n")
+
+    print(object@header)
+  }
+)
 

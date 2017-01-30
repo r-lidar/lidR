@@ -26,9 +26,9 @@
 # ===============================================================================
 
 
-#' Plot a wireframe of a RasterLayer object
+#' Plot a wireframe of a \code{RasterLayer} or a \code{lasmetrics} object
 #'
-#' @param x An object of the class RasterLayer
+#' @param x An object of the class \code{RasterLayer} or \code{lasmetrics}
 #' @param y Unused (inherited from R base)
 #' @param add logical. if TRUE, add to current 3D plot.
 #' @param bg The color for the background. Default is black.
@@ -38,14 +38,20 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
 {
   inargs <- list(...)
 
+  if(is(x, "lasmetrics"))
+    x = as.raster(x)
+
+  if(!is(x, "RasterLayer"))
+    stop("Object not supported")
+
   mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
   coord = sp::coordinates(x)
   x = coord[,1] %>% unique %>% sort
   y = coord[,2] %>% unique %>% sort
 
-  if(!add) rgl::open3d()
+  if(!add)
+    rgl::open3d()
 
   rgl::rgl.bg(color = bg)
-
   rgl::surface3d(x, y, mx, front="lines", col="white", ...)
 }

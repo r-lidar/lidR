@@ -40,8 +40,51 @@
 as.lasmetrics = function(x, res)
 {
   data.table::setDT(x)
-  data.table::setattr(x, "class") = c("lasmetrics", attr(x, "class"))
-  data.table::setattr(x, "res")   = res
+  data.table::setattr(x, "class", c("lasmetrics", attr(x, "class")))
+  data.table::setattr(x, "res", res)
+}
+
+as.matrix.lasmetrics = function(x, z = NULL, ...)
+{
+  X <- Y <- NULL
+
+  inargs <- list(...)
+
+  multi = duplicated(x, by = c("X","Y")) %>% sum
+
+  if(multi > 0 & is.null(inargs$fun.aggregate))
+    lidRError("GDM2", number = multi, behaviour = warning)
+
+  if(is.null(z))
+  {
+    if(length(names(x)) > 3)
+      lidRError("GDM3")
+    else
+      z = names(x)[3]
+  }
+
+  res = attr(x, "res")
+  rx  = range(x$X)
+  ry  = range(x$Y)
+  x   = x[, c("X", "Y", z), with=F]
+
+  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
+  data.table::setDT(grid)
+
+  data.table::setkeyv(x, c("X", "Y"))
+  data.table::setkeyv(grid, c("X", "Y"))
+
+  data = x[grid]
+
+  if(is.null(inargs$fun.aggregate))
+    out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
+  else
+    out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
+
+  out[, X := NULL]
+  mx = out %>% as.matrix
+
+  return(mx)
 }
 
 #' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
@@ -68,44 +111,9 @@ as.lasmetrics = function(x, res)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, ...)
 {
-  X <- Y <- NULL
-
-  inargs <- list(...)
-
-  multi = duplicated(x, by = c("X","Y")) %>% sum
-
-  if(multi > 0 & is.null(inargs$fun.aggregate))
-    lidRError("GDM2", number = multi, behavior = message)
-
-  if(is.null(z))
-  {
-    if(length(names(x)) > 3)
-      lidRError("GDM3")
-    else
-      z = names(x)[3]
-  }
-
   res = attr(x, "res")
-  rx  = range(x$X)
-  ry  = range(x$Y)
-  x   = x[, c("X", "Y", z), with=F]
-
-  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
-  grid = data.table::setDT(grid)
-
-  data.table::setkeyv(x, c("X", "Y"))
-  data.table::setkeyv(grid, c("X", "Y"))
-
-  data = x[grid]
-
-  if(is.null(inargs$fun.aggregate))
-    out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
-  else(is.null(inargs$fun.aggregate))
-    out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
-
-  out[, X := NULL]
-  mx = out %>% as.matrix
-  mx = apply(mx, 1, rev)
+  mx  = as.matrix(x, z)
+  mx  = apply(mx, 1, rev)
 
   layer = raster::raster(mx, xmn = min(x$X)-0.5*res, xmx = max(x$X)+0.5*res, ymn = min(x$Y)-0.5*res, ymx = max(x$Y)+0.5*res)
 

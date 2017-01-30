@@ -4,16 +4,13 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm = NULL, ...)
+lasnormalize(.las, dtm)
 }
 \arguments{
 \item{.las}{a LAS objet}
 
-\item{dtm}{a RasterLayer object from package \link[raster:raster]{raster}. If NULL the function will
-automatically compute it on the fly using the function \link[lidR:grid_terrain]{grid_terrain}.}
-
-\item{...}{optional parameters for \link[lidR:grid_terrain]{grid_terrain} if
-\code{dtm} parameter is NULL.}
+\item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+\link[lidR:grid_terrain]{grid_terrain}.}
 }
 \value{
 A LAS object.
@@ -30,19 +27,18 @@ lidar = readLAS(LASfile)
 
 plot(lidar)
 
-# --- First possibility: compute the DTM on the fly -----
+# --- First option: compute the DTM with grid_terrain -----
 
-lidar_norm = lasnormalize(lidar, method = "knnidw")
-
+dtm = grid_terrain(lidar, method = "delaunay")
+lidar_norm = lasnormalize(lidar, dtm)
+plot(dtm)
 plot(lidar_norm)
 
 \dontrun{
-# --- Second possibility: read the DTM from a file -----
+# --- Second option: read the DTM from a file -----
 
 dtm = raster::raster(terrain.tiff)
-
-lidar_norm = lidar - dtm # is synonymous with lasnormalize(lidar, dtm)
-
+lidar_norm = lidar - dtm
 plot(lidar_norm)
 }
 }

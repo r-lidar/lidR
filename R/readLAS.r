@@ -27,9 +27,9 @@
 
 
 
-#' Read las or laz files
+#' Read .las or .laz files
 #'
-#' Read las or laz files in format 1 to 4 according to LAS specification and return an object of class LAS
+#' Read .las or .laz files in format 1 to 4 according to LAS specification and return an object of class LAS
 #'
 #' If several files are given the returned LAS object is considered as one LAS file.
 #' The information retained in the header will be read from the first file in the list.
@@ -53,6 +53,8 @@
 #' @param color logical. do you want to compute the extra field \link[lidR:lascolor]{color}? default: FALSE
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
+#' @param filter character. filter data while reading the file (streaming filter) without
+#' allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -75,9 +77,10 @@ readLAS = function(files,
                    RGB = TRUE,
                    pulseID = TRUE,
                    flightlineID = FALSE,
-                   color = FALSE,
+                   color = TRUE,
                    XYZonly = FALSE,
-                   all = FALSE)
+                   all = FALSE,
+                   filter = "")
 {
   if(class(files)[1] == "Catalog")
     files = files$filename
@@ -85,20 +88,20 @@ readLAS = function(files,
   valid = file.exists(files)
   islas = tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
 
-  if( sum(!valid) > 0)
+  if(sum(valid) == 0 | sum(islas) == 0)
+    lidRError("LAS3", behaviour = stop)
+
+  if(sum(!valid) > 0)
   {
     lidRError("LAS1", files = files[!valid], behaviour = warning)
     files = files[valid]
   }
 
-  if( sum(!islas) > 0 )
+  if (sum(!islas) > 0)
   {
     lidRError("LAS2", files = files[!islas], behaviour = warning)
     files = files[islas]
   }
-
-  if (sum(valid) == 0 | sum(islas) == 0)
-    lidRError("LAS3", behaviour = stop)
 
   files = normalizePath(files)
 
@@ -121,7 +124,7 @@ readLAS = function(files,
   {
     rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
                       ScanDirectionFlag, EdgeOfFlightline, Classification,
-                      ScanAngle, UserData, PointSourceID, RGB)
+                      ScanAngle, UserData, PointSourceID, RGB, filter)
   })
 
   data = data.table::rbindlist(data)
@@ -140,7 +143,7 @@ readLAS = function(files,
     lasflightline(las, 30)
 
   if(color)
-    lascolor(las)
+    suppressWarnings(lascolor(las))
 
   gc()
 

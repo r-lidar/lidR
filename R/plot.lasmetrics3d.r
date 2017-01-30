@@ -46,7 +46,7 @@
 #' lidar = readLAS(LASfile)
 #'
 #' voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
-#' plot(voxels, color = "Imean", colorPalette = heat.colors, trim=0.99)
+#' plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
 #' @seealso
 #' \link[lidR:grid_metrics3d]{grid_metrics3d}
 #' \link[rgl:points3d]{points3d}
@@ -56,7 +56,7 @@
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' @export
 #' @method plot lasmetrics3d
-plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors, bg = "black", trim = 1, ...)
+plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, ...)
 {
   inargs <- list(...)
 
@@ -70,7 +70,7 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors, bg
 
       if(is.numeric(data))
       {
-        inargs$col = set.colors(data, colorPalette, 50, trim)
+        inargs$col = set.colors(data, colorPalette, trim)
         inargs$col[is.na(inargs$col)] = "lightgray"
       }
       else if(is.character(data))

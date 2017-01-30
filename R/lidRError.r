@@ -51,10 +51,11 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR7" = list("'flighlineID': no such field in the dataset. Check function 'lasflighline'"),
 "LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
 "LDR9" = list("'data' is empty. No point found"),
+"LDR10" = list("Dataset is invalid: ", p$number, " points with a return number of 0 found."),
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
-"GDM2" = list(p$number, "duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
+"GDM2" = list(p$number, " duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
 "GDM3" = list("More than 3 columns: please input the third column's name to transform the data.frame into a matrix."),
 
 # ClassCatalog.r
