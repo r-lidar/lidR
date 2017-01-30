@@ -51,8 +51,8 @@
 #' @param .las LAS objet
 #' @param res numeric resolution.
 #' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
-#' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"#' }
-#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is
+#' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
+#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
 #' If null it performs an ordinary or weighted least squares prediction.
 #' @return A \code{RasterLayer} from package raster
 #' @export
