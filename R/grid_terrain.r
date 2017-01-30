@@ -37,23 +37,23 @@
 #'
 #' \describe{
 #' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is fast but also basic method for spatial
+#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
 #' data interpolation.}
-#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation using \link[akima:interp]{interp}
+#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation using the \link[akima:interp]{interp}
 #' function from package \code{akima}. This method is very fast. It makes a linear interpolation
-#' within each triangle. Notice that with this method no extrapolation is done outside of the
+#' within each triangle. Note that with this method no extrapolation is done outside of the
 #' convex hull determined by the ground points.}
-#' \item{\code{kriging}}{Interpolation is done by universal kriging using \link[gstat:krige]{krige}
-#' function. This method mix the KNN approach and the kriging approach. For each point of interest
-#' it kriges the terrain using the k-nearest neighbours ground points. This method is more difficult
-#' to manipulate but it is also the most advanced method to interpolate spatial data. }
+#' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
+#' function. This method combines the KNN approach with the kriging approach. For each point of interest
+#' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
+#' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #' @param .las LAS objet
 #' @param res numeric resolution.
 #' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
-#' @param k numeric. number of k nearest neibourgh when selected method is \code{"knnidw"} or \code{"kriging"}
-#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when selected method is
-#' \code{"kriging"}. If null it performed an ordinary or weighted least squares prediction.
+#' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"#' }
+#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is
+#' If null it performs an ordinary or weighted least squares prediction.
 #' @return A \code{RasterLayer} from package raster
 #' @export
 #' @examples

@@ -31,9 +31,9 @@
 #'
 #' Creates a canopy surface model using a LiDAR point cloud. For each pixel the
 #' function returns the highest point found. This basic method could be improved by replacing
-#' each LiDAR return with a small disk. An interpolation for empty pixels is also avaible.
+#' each LiDAR return with a small disk. An interpolation for empty pixels is also available.
 #'
-#' The algorithm rely on the 'local maximum'. For each pixel the function returns the highest
+#' The algorithm relies on the 'local maximum'. For each pixel the function returns the highest
 #' point found. This method implies that the resulting surface model can contains empty pixels.
 #' Those 'holes' can be filled by interpolation. The interpolation is internally based on the
 #' same functions than in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
