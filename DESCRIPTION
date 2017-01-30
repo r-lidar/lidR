@@ -26,7 +26,7 @@ LazyData: true
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
 Encoding: UTF-8
-biocViews:
+biocViews: 
 Collate:
     'RcppExports.R'
     'catalog.r'
@@ -50,6 +50,7 @@ Collate:
     'lasdecimate.r'
     'lasextent.r'
     'lasfilter.r'
+    'lasground.r'
     'lasindentify.r'
     'lasmetrics.r'
     'lasnormalize.r'
