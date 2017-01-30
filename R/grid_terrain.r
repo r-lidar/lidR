@@ -30,63 +30,97 @@
 #' Digital Terrain Model
 #'
 #' Interpolate ground points and create a rasterized digital terrain model. The interpolation
-#' is base on \link[lidR:lasterrain]{lasterrain} which provides 3 methods for spatial interpolation:
-#' \code{"knnidw"}, \code{"akima"} and \code{"kriging"}. The algorithm uses the points classified as "ground"
-#' to compute the interpolation. The function forces the original lowest ground point of each
-#' pixel (if it exists) to be chosen instead of the interpolated values.
+#' can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
+#' details). The algorithm uses the points classified as "ground" to compute the interpolation.
+#' The function forces the original lowest ground point of each pixel (if it exists) to be
+#' chosen instead of the interpolated values.
 #'
+#' \describe{
+#' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
+#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
+#' data interpolation.}
+#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation using the \link[akima:interp]{interp}
+#' function from package \code{akima}. This method is very fast. It makes a linear interpolation
+#' within each triangle. Note that with this method no extrapolation is done outside of the
+#' convex hull determined by the ground points.}
+#' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
+#' function. This method combines the KNN approach with the kriging approach. For each point of interest
+#' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
+#' to manipulate but it is also the most advanced method for interpolating spatial data. }
+#' }
 #' @param .las LAS objet
 #' @param res numeric resolution.
-#' @param ... parameters for \link[lidR:lasterrain]{lasterrain}. Select the method and
-#' its parameters for spatial interpolation.
-#' @return A RasterLayer from package raster
+#' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
+#' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
+#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
+#' If null it performs an ordinary or weighted least squares prediction.
+#' @return A \code{RasterLayer} from package raster
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #' plot(lidar)
 #'
-#' dtm1 = grid_terrain(lidar, method = "knnidw")
-#' dtm2 = grid_terrain(lidar, method = "akima")
-#'
-#' raster::plot(dtm1, col = height.colors(50))
-#' raster::plot(dtm2, col = height.colors(50))
-#' plot3d(dtm1)
-#' plot3d(dtm2)
+#' dtm1 = grid_terrain(lidar, method = "knnidw", k = 6)
+#' dtm2 = grid_terrain(lidar, method = "delaunay")
+#' dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
 #'
 #' \dontrun{
-#' dtm3 = grid_terrain(lidar, method = "kriging")
-#' raster::plot(dtm3, col = height.colors(50))
+#' plot(dtm1)
+#' plot(dtm2)
+#' plot(dtm3)
+#' plot3d(dtm1)
+#' plot3d(dtm2)
+#' plot3d(dtm3)
 #' }
 #' @seealso
-#' \link[lidR:lasterrain]{lasterrain}
+#' \link[lidR:grid_terrain]{grid_terrain}
+#' \link[lidR:lasnormalize]{lasnormalize}
+#' \link[gstat:vgm]{vgm}
+#' \link[gstat:krige]{krige}
+#' \link[akima:interp]{interp}
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[raster:raster]{RasterLayer}
-grid_terrain = function(.las, res = 1, ...)
+grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- X <- Y <- Z <- NULL
 
-  res %<>% round(1)
+  stopifnotlas(.las)
 
-  ex = extent(.las)
-  xo = seq(floor(ex@xmin),ceiling(ex@xmax), res) %>% round(1)
-  yo = seq(floor(ex@ymin),ceiling(ex@ymax), res) %>% round(1)
+  ground = suppressWarnings(lasfilterground(.las))
 
-  grid = expand.grid(X = xo, Y = yo)
-  data.table::setDT(grid)
+  if(is.null(ground))
+    stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
-  Zg = lasterrain(.las, grid, ...)
+  ground  = ground@data[, .(X,Y,Z)]
+
+  # test integrity of the data
+  dup_xyz  = duplicated(ground, by = c("X", "Y", "Z"))
+  dup_xy   = duplicated(ground, by = c("X", "Y"))
+  ndup_xyz = sum(dup_xyz)
+  ndup_xy  = sum(dup_xy & !dup_xyz)
+
+  if(ndup_xyz > 0)
+    warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
+
+  if(ndup_xy > 0)
+    warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+
+  if(ndup_xy > 0 | ndup_xyz > 0)
+    ground = ground[, .(Z = min(Z)), by = .(X,Y)]
+
+  ext  = extent(.las)
+  grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
+
+  Zg = interpolate(ground, grid, method, k, model)
 
   grid[, Z := round(Zg, 3)]
 
-  # force grounds point to be dominant
-  grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res, start=c(0.5*res,0.5*res)))
+  # force ground point to be dominant
+  grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
   grid = grid[, list(Z = min(Z)), by = .(X,Y)]
 
-  mx = data.table::dcast(grid, X~Y, value.var = "Z")[, X := NULL] %>%  as.matrix
-  mx = apply(mx, 1, rev)
+  as.lasmetrics(grid, res)
 
-  dtm = raster::raster(mx, xmn = min(grid$X)-0.5*res, xmx = max(grid$X)+0.5*res, ymn = min(grid$Y)-0.5*res, ymx = max(grid$Y)+0.5*res)
-
-  return(dtm)
+  return(grid)
 }

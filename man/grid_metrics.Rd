@@ -29,7 +29,7 @@ of a grid.
 \details{
 Computes a series of descriptive statistics defined by the user. Output is a
 data.frame in which each line is a raster (single grid cell), and each column is a metric.
-grid_metrics is similar to cloud_metrics except it computes metrics within each cell
+grid_metrics is similar to \code{lasmetrics} except it computes metrics within each cell
 in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:

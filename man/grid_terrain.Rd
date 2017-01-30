@@ -4,46 +4,70 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(.las, res = 1, ...)
+grid_terrain(.las, res = 1, method, k = 10L, model = gstat::vgm(0.59,
+  "Sph", 874))
 }
 \arguments{
 \item{.las}{LAS objet}
 
 \item{res}{numeric resolution.}
 
-\item{...}{parameters for \link[lidR:lasterrain]{lasterrain}. Select the method and
-its parameters for spatial interpolation.}
+\item{method}{character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
+
+\item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
+
+\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
+If null it performs an ordinary or weighted least squares prediction.}
 }
 \value{
-A RasterLayer from package raster
+A \code{RasterLayer} from package raster
 }
 \description{
 Interpolate ground points and create a rasterized digital terrain model. The interpolation
-is base on \link[lidR:lasterrain]{lasterrain} which provides 3 methods for spatial interpolation:
-\code{"knnidw"}, \code{"akima"} and \code{"kriging"}. The algorithm uses the points classified as "ground"
-to compute the interpolation. The function forces the original lowest ground point of each
-pixel (if it exists) to be chosen instead of the interpolated values.
+can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
+details). The algorithm uses the points classified as "ground" to compute the interpolation.
+The function forces the original lowest ground point of each pixel (if it exists) to be
+chosen instead of the interpolated values.
+}
+\details{
+\describe{
+\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
+an inverse distance weighting (IDW). This is a fast but basic method for spatial
+data interpolation.}
+\item{\code{delaunay}}{Interpolation based on Delaunay triangulation using the \link[akima:interp]{interp}
+function from package \code{akima}. This method is very fast. It makes a linear interpolation
+within each triangle. Note that with this method no extrapolation is done outside of the
+convex hull determined by the ground points.}
+\item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
+function. This method combines the KNN approach with the kriging approach. For each point of interest
+it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
+to manipulate but it is also the most advanced method for interpolating spatial data. }
+}
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)
 plot(lidar)
 
-dtm1 = grid_terrain(lidar, method = "knnidw")
-dtm2 = grid_terrain(lidar, method = "akima")
-
-raster::plot(dtm1, col = height.colors(50))
-raster::plot(dtm2, col = height.colors(50))
-plot3d(dtm1)
-plot3d(dtm2)
+dtm1 = grid_terrain(lidar, method = "knnidw", k = 6)
+dtm2 = grid_terrain(lidar, method = "delaunay")
+dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
 
 \dontrun{
-dtm3 = grid_terrain(lidar, method = "kriging")
-raster::plot(dtm3, col = height.colors(50))
+plot(dtm1)
+plot(dtm2)
+plot(dtm3)
+plot3d(dtm1)
+plot3d(dtm2)
+plot3d(dtm3)
 }
 }
 \seealso{
-\link[lidR:lasterrain]{lasterrain}
+\link[lidR:grid_terrain]{grid_terrain}
+\link[lidR:lasnormalize]{lasnormalize}
+\link[gstat:vgm]{vgm}
+\link[gstat:krige]{krige}
+\link[akima:interp]{interp}
 \link[lidR:lasnormalize]{lasnormalize}
 \link[raster:raster]{RasterLayer}
 }

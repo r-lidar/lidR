@@ -4,7 +4,7 @@
 \alias{grid_canopy}
 \title{Canopy surface model}
 \usage{
-grid_canopy(.las, res = 2, subcircle = 0)
+grid_canopy(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -12,9 +12,14 @@ grid_canopy(.las, res = 2, subcircle = 0)
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
 
-\item{subcircle}{numeric radius of the circles. To fill empty pixels the algorithm
-replaces each return by a circle composed of 8 points before computing the maximum elevation
+\item{subcircle}{numeric radius of the circles. To get less empty pixels the algorithm
+can replaces each return by a circle composed of 8 points before computing the maximum elevation
 in each pixel.}
+
+\item{na.fill}{character. name of an algorithm used to interpolate the data an fill the empty pixels.
+Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
+
+\item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
 }
 \value{
 It returns a \code{data.table} with the class \code{lasmetrics} which enables easier plotting and
@@ -23,7 +28,15 @@ RasterLayer casting.
 \description{
 Creates a canopy surface model using a LiDAR point cloud. For each pixel the
 function returns the highest point found. This basic method could be improved by replacing
-each LiDAR return with a small disk.
+each LiDAR return with a small disk. An interpolation for empty pixels is also available.
+}
+\details{
+The algorithm relies on the 'local maximum'. For each pixel the function returns the highest
+point found. This method implies that the resulting surface model can contains empty pixels.
+Those 'holes' can be filled by interpolation. The interpolation is internally based on the
+same functions than in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
+documentation of \link[lidR:grid_terrain]{grid_terrain} is applicable to this function too.
+(see also examples)
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -32,12 +45,19 @@ lidar = readLAS(LASfile)
 # Local maximum algorithm with a resolution of 2 meters
 lidar \%>\% grid_canopy(2) \%>\% plot
 
-# Local maximum algorithm with a resolution of 1 meters
-lidar \%>\% grid_canopy(1) \%>\% plot
-
 # Local maximum algorithm with a resolution of 1 meters replacing each
 # point by a 20 cm radius circle of 8 points
 lidar \%>\% grid_canopy(1, 0.2) \%>\% plot
+
+# Local maximum algorithm with a resolution of 1 meters replacing each
+# point by a 10 cm radius circle of 8 points and interpolating the empty
+# pixels using the 3-nearest neighbor and an inverted distance wighning.
+grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3) \%>\% plot
+
+\dontrun{
+grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) \%>\% plot
+grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") \%>\% plot
+}
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}

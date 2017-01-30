@@ -34,7 +34,7 @@
 #'
 #' Computes a series of descriptive statistics defined by the user. Output is a
 #' data.frame in which each line is a raster (single grid cell), and each column is a metric.
-#' grid_metrics is similar to cloud_metrics except it computes metrics within each cell
+#' grid_metrics is similar to \code{lasmetrics} except it computes metrics within each cell
 #' in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 #' So the algorithm will always provide the same coordinates independently of the dataset.
 #' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
@@ -98,16 +98,13 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE
   if(is(func_call, "name"))
     func_call = eval(func_call)
 
-  .las@data %$% eval(func_call) %>% .testFuncSignature(func_call)
+  .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
 
-  x_raster = round_any(.las@data$X-0.5*res-start[1], res)+0.5*res+start[1]
-  y_raster = round_any(.las@data$Y-0.5*res-start[2], res)+0.5*res+start[2]
+  by = group_grid(.las@data$X, .las@data$Y, res, start)
 
-  if(!splitlines)
-    by = list(Xc = x_raster,Yc = y_raster)
-  else if("flightlineID" %in% names(.las@data))
-    by = list(Xc = x_raster,Yc = y_raster, flightline = .las@data$flightlineID)
-  else
+  if(splitlines & "flightlineID" %in% names(.las@data))
+    by = c(by, list(flightline = .las@data$flightlineID))
+  else if(splitlines & !"flightlineID" %in% names(.las@data))
     lidRError("LDR7")
 
   stat <- .las@data[, c(eval(func_call)), by = by]
@@ -120,4 +117,42 @@ grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE
   data.table::setattr(stat, "res", res)
 
   return(stat)
+}
+
+.debug_grid_metrics = function(metrics, func)
+{
+  funcstring = deparse(func)
+
+  if(is.list(metrics) & !is.data.frame(metrics))
+  {
+    if(is.null(names(metrics)))
+      names(metrics) = paste0("#", 1:length(metrics))
+
+    classes = sapply(metrics, class)
+    test = classes %in% c("integer", "numeric", "logical", "character")
+    n = names(metrics[!test])
+    c = classes[!test]
+
+    if(sum(!test) == 1)
+      lidRError("TFS1", expression = funcstring, metric = n, class = c)
+    else if(sum(!test) > 1)
+      lidRError("TFS2", expression = funcstring, metric = n, class = c)
+
+    size = sapply(metrics, length)
+    test = size == 1
+
+    n = names(metrics[!test])
+    c = size[!test]
+
+    if(sum(!test) == 1)
+      lidRError("TFS3", expression = funcstring, metric = n, number = c)
+    else if(sum(!test) > 1)
+      lidRError("TFS4", expression = funcstring, metric = n, number = c)
+  }
+  else if(is.data.frame(metrics))
+    lidRError("TFS5", expression = funcstring)
+  else if(is.vector(metrics) & length(metrics) > 1)
+    lidRError("TFS6", expression = funcstring, number = length(metrics))
+  else
+    return(0)
 }

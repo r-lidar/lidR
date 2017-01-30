@@ -33,10 +33,10 @@
 #'
 #' @param x A vector
 #' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR
-#' @param ncolors numeric. The number of colors in the palette.
 #' @param trim numeric.
-set.colors = function(x, palette, ncolors = 50, trim = 1)
+set.colors = function(x, palette, trim = 1)
 {
+  ncolors = length(palette)
 
   if(trim < 1)
   {
@@ -45,16 +45,16 @@ set.colors = function(x, palette, ncolors = 50, trim = 1)
   }
 
   if(diff(range(x, na.rm = T)) == 0)
-    colors = palette(ncolors)[1]
+    colors = palette[1]
   else
-    colors = palette(ncolors)[as.numeric(cut(x, breaks = ncolors))]
+    colors = palette[as.numeric(cut(x, breaks = ncolors))]
 
 	return(colors)
 }
 
 #' Palettes
 #'
-#' Create a vector of n contiguous colors
+#' Create a vector of n contiguous (or not) colors
 #'
 #' @param n The number of colors (> 1) to be in the palette
 #' @family lidrpalettes
@@ -86,6 +86,21 @@ forest.colors = function(n)
 #' @family lidrpalettes
 random.colors = function(n)
 {
-  colfunc <- grDevices::colorRampPalette(sample(grDevices::colors(distinct = T), n))
-  return(colfunc(n))
+  h = stats::runif(n, 0, 1);
+  s = stats::runif(n, 0.2, 1);
+  l = stats::runif(n, 0.8, 1);
+
+  return(grDevices::hsv(h,s,l))
+}
+
+#' @export
+#' @rdname lidrpalettes
+#' @family lidrpalettes
+pastel.colors = function(n)
+{
+  h = stats::runif(n, 0, 360);
+  c = stats::runif(n, 42, 98);
+  l = stats::runif(n, 40, 90);
+
+  return(grDevices::hcl(h,c,l))
 }
