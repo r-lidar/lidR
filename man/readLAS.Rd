@@ -2,7 +2,7 @@
 % Please edit documentation in R/readLAS.r
 \name{readLAS}
 \alias{readLAS}
-\title{Read las or laz files}
+\title{Read .las or .laz files}
 \usage{
 readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
   NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
@@ -45,13 +45,13 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 \item{all}{logical. Overwrite all other options. Load everything. default: FALSE}
 
 \item{filter}{character. filter data while reading the file (streaming filter) without
-allocating any useless memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
+allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
 }
 \value{
 A LAS object
 }
 \description{
-Read las or laz files in format 1 to 4 according to LAS specification and return an object of class LAS
+Read .las or .laz files in format 1 to 4 according to LAS specification and return an object of class LAS
 }
 \details{
 If several files are given the returned LAS object is considered as one LAS file.
