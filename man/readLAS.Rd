@@ -45,7 +45,7 @@ readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
 \item{all}{logical. Overwrite all other options. Load everything. default: FALSE}
 
 \item{filter}{character. filter data while reading the file (streaming filter) without
-allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
+allocating any additional memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
 }
 \value{
 A LAS object
