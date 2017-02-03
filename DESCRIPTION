@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.1.0.9000
+Version: 1.1.0
 Date: 2016-12-31
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
@@ -12,14 +12,15 @@ Authors@R: c(
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
-    classification from geographic data, normalization and other manipulations.
+    classification from geographic data, normalization, individual tree segmentation
+    and other manipulations.
 URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas,rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
+    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
 Suggests:
     rgdal,akima,gstat,sp,testthat,EBImage
 LazyData: true
