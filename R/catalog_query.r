@@ -35,7 +35,8 @@
 #' It works only for tiles that are arranged in gridlines.
 #'
 #' @aliases catalog_queries
-#' @param obj A Catalog object
+#' @param obj A Catalog object        if(!lasfilter.filter(&lasreader->point))
+
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI
 #' @param r numeric or vector. A radius or a set of radii of the ROI. If only
@@ -119,9 +120,9 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   x <- y <- r <- r2 <- NULL
 
   if(shape == 0)
-    filter = query %$% paste("-keep_circle", x, y, r)
+    filter = query %$% paste("-inside_circle", x, y, r)
   else
-    filter = query %$% paste("-keep_xy", x-r, y-r2, x+r, y+r2)
+    filter = query %$% paste("-inside", x-r, y-r2, x+r, y+r2)
 
   lidardata = list(readLAS(query$tiles, all = TRUE, filter = filter))
   names(lidardata) = query$roinames
