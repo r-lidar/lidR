@@ -35,7 +35,7 @@
 #' It works only for tiles that are arranged in gridlines.
 #'
 #' @aliases catalog_queries
-#' @param obj A Catalog object        if(!lasfilter.filter(&lasreader->point))
+#' @param obj A Catalog object
 
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI

@@ -64,6 +64,7 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
   }
 
   res = attr(x, "res")
+
   rx  = range(x$X)
   ry  = range(x$Y)
   x   = x[, c("X", "Y", z), with=F]
@@ -111,7 +112,25 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, ...)
 {
-  res = attr(x, "res")
+  if(is.null(attr(x, "res")))
+  {
+    dx = x$X %>% unique %>% sort %>% diff
+    dy = x$Y %>% unique %>% sort %>% diff
+    ts = table(c(dx, dy))
+
+    if(length(ts) == 1)
+      res = dx[1]
+    else
+    {
+      res = median(c(dx,dy)) %>% round(2)
+      message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+    }
+
+    data.table::setattr(x, "res", res)
+  }
+  else
+    res = attr(x, "res")
+
   mx  = as.matrix(x, z)
   mx  = apply(mx, 1, rev)
 

@@ -54,7 +54,7 @@
 #' @param XYZonly logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE
 #' @param all logical. Overwrite all other options. Load everything. default: FALSE
 #' @param filter character. filter data while reading the file (streaming filter) without
-#' allocating any memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
+#' allocating any additional memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).
 #'
 #' @return A LAS object
 #' @export readLAS
