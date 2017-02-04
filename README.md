@@ -60,6 +60,6 @@ To install the package from github make sure you have a working development envi
 
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/examplereadme.png)
 
-# Changelogs
+# Changelog
 
-[See changelogs on the wiki page](https://github.com/Jean-Romain/lidR/wiki)
+[See changelogs on NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
