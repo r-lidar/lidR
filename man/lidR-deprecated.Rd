@@ -2,8 +2,8 @@
 % Please edit documentation in R/deprecated.r
 \docType{package}
 \name{lidR-deprecated}
-\alias{cloud_metrics}
 \alias{lidR-deprecated}
+\alias{cloud_metrics}
 \alias{lidR-deprecated-package}
 \title{Deprecated function(s) in the lidR package}
 \usage{

@@ -37,4 +37,3 @@ Other cast: \code{\link{as.SpatialPixelsDataFrame}},
   \code{\link{as.SpatialPointsDataFrame}},
   \code{\link{as.lasmetrics}}
 }
-

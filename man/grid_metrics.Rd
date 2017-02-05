@@ -76,4 +76,3 @@ plot(metrics, "zimean")
 plot(metrics, "zsqmean")
 #etc.
 }
-

@@ -16,4 +16,3 @@ set.colors(x, palette, trim = 1)
 \description{
 Attribute a color to each element of a vector
 }
-

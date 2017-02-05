@@ -50,4 +50,3 @@ Shannon, Claude E. (1948), "A mathematical theory of communication," Bell System
 \seealso{
 \link[lidR:VCI]{VCI}
 }
-

@@ -48,8 +48,8 @@ for more information.\cr
 
 \item{\code{header}}{list. A list of information contained in the las file header.}
 }}
+
 \seealso{
 \link[lidR:LAS]{LAS}
 \link[lidR:readLAS]{readLAS}
 }
-

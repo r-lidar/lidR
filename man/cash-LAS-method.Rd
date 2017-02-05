@@ -15,4 +15,3 @@
 \description{
 Extract parts of a LAS object
 }
-

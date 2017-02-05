@@ -46,4 +46,3 @@ plot(lidar_norm)
 \link[raster:raster]{raster}
 \link[lidR:grid_terrain]{grid_terrain}
 }
-

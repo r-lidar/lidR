@@ -17,4 +17,3 @@ Retrieve each individual pulse by attributing a number to each point. The
 function depends on the GPS time to retrieve each individual
 beam. A column '\code{pulseID}' is added in the slot \code{@data}
 }
-

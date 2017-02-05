@@ -56,4 +56,3 @@ catalog \%>\% catalog_queries(X, Y, R, R)
 \link[lidR:catalog]{Catalog}
 \link[lidR:catalog_queries]{catalog_queries}
 }
-
