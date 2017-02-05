@@ -15,4 +15,3 @@
 \description{
 Convenient operator to lasnormalize
 }
-

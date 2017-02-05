@@ -20,4 +20,3 @@ Create a \code{LAS} object
 \seealso{
 \link[lidR:LAS]{Class LAS}
 }
-

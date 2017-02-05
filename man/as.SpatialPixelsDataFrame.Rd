@@ -20,4 +20,3 @@ Other cast: \code{\link{as.SpatialPointsDataFrame}},
   \code{\link{as.lasmetrics}},
   \code{\link{as.raster.lasmetrics}}
 }
-

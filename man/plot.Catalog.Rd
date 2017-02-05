@@ -23,4 +23,3 @@ catalog = catalog("<Path to a folder containing a set of .las files>")
 plot(catalog)
 }
 }
-

@@ -21,4 +21,3 @@ lidar = readLAS(LASfile)
 
 lasarea(lidar)
 }
-

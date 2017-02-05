@@ -60,4 +60,3 @@ lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
 \code{\link[rgdal:readOGR]{readOGR} }
 \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 }
-
