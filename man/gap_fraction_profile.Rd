@@ -39,4 +39,3 @@ Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing pre
 \seealso{
 \link[lidR:LAD]{LAD}
 }
-

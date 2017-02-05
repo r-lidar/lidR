@@ -20,4 +20,3 @@ Return nothing. The original object is modified in place by reference.
 Compute the hexadecimale name of a color from RGB fields. A column 'color' is added in the
 slot @data
 }
-

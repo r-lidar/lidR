@@ -62,4 +62,3 @@ plot(metrics, "imean")
 \link[grDevices:heat.colors]{heat.colors}
 \link[grDevices:colorRamp]{colorRampPalette}
 }
-

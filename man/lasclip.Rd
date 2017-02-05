@@ -2,9 +2,9 @@
 % Please edit documentation in R/lasclip.r
 \name{lasclip}
 \alias{lasclip}
-\alias{lasclipCircle}
-\alias{lasclipPolygon}
 \alias{lasclipRectangle}
+\alias{lasclipPolygon}
+\alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
 lasclip(.las, geometry, coord, inside = TRUE)
@@ -66,4 +66,3 @@ plot(subset)
 mrect = matrix(c(684850, 684900, 5017850, 5017900), ncol = 2)
 subset = lidar \%>\% lasclip("rectangle", mrect)
 }
-

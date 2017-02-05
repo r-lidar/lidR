@@ -29,4 +29,3 @@ lidar = readLAS(LASfile)
 subset = lasroi(lidar)
 }
 }
-

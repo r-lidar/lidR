@@ -65,4 +65,3 @@ plot(voxels, "imean")
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
 }
-

@@ -88,6 +88,7 @@ computation speed. The lower the value, the faster the method. Default is 10.}
 The current implementation is known to be slow. Improvements are possible in future
 package versions.
 }
+
 \examples{
 LASfile <- system.file("extdata", "Tree.laz", package="lidR")
 las = readLAS(LASfile, XYZonly = TRUE, filter = "-drop_z_below 0")
@@ -125,4 +126,3 @@ airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–124
 Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
 trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 }
-

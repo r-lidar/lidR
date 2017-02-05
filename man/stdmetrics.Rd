@@ -2,18 +2,18 @@
 % Please edit documentation in R/metrics.r
 \docType{data}
 \name{stdmetrics}
-\alias{.stdmetrics}
-\alias{.stdmetrics_ctrl}
-\alias{.stdmetrics_i}
-\alias{.stdmetrics_pulse}
-\alias{.stdmetrics_rn}
-\alias{.stdmetrics_z}
 \alias{stdmetrics}
-\alias{stdmetrics_ctrl}
-\alias{stdmetrics_i}
-\alias{stdmetrics_pulse}
-\alias{stdmetrics_rn}
+\alias{.stdmetrics}
 \alias{stdmetrics_z}
+\alias{.stdmetrics_z}
+\alias{stdmetrics_i}
+\alias{.stdmetrics_i}
+\alias{stdmetrics_rn}
+\alias{.stdmetrics_rn}
+\alias{stdmetrics_pulse}
+\alias{.stdmetrics_pulse}
+\alias{stdmetrics_ctrl}
+\alias{.stdmetrics_ctrl}
 \title{Predefined standard metrics function}
 \format{An object of class \code{expression} of length 1.}
 \usage{
@@ -134,4 +134,3 @@ lidar \%>\% grid_metrics(.myMetrics)
 \link[lidR:lasmetrics]{lasmetrics}
 }
 \keyword{datasets}
-

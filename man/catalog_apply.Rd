@@ -67,6 +67,7 @@ does not provide internal tools to deal with buffers as it is designed for exper
 professional product. Users could, for example, filter the invalid/corrupted data at the edge of the tiles from the
 output.
 }
+
 \examples{
 \dontrun{
 # Visit http://jean-romain.github.io/lidR/wiki for more examples
@@ -122,4 +123,3 @@ output = project \%>\% catalog_apply(analyse_tile, varlist = export, platform = 
 \link[parallel:mclapply]{mclapply}
 \link[parallel:parLapplyLB]{parLapplyLB}
 }
-

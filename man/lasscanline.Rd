@@ -19,4 +19,3 @@ is one line, or row of data. The function relies on the GPS field time to
 order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
 retrieve each scanline  A column '\code{scanline}' is added in the slot \code{@data}
 }
-
