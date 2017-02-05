@@ -12,36 +12,36 @@ lastrees(.las, algorithm, image = NULL, ..., extra = FALSE)
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
 \code{"watershed"} or \code{"li2012"} (see sections relevant to each algorithm).}
 
-\item{image}{RasterLayer. Image of the canopy if the algorithm works on canopy surface model.
+\item{image}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface model.
 But some algorithms work on the raw point cloud (see relevant sections). You can compute
 it with \link{grid_canopy} or read it from external file.}
 
-\item{...}{parameters for the algorithms. Depends on the algorithm used (see details about the algoritms)}
+\item{...}{parameters for the algorithms. These depend on the algorithm used (see details about the algorithms)}
 
-\item{extra}{logical. By defaut the function works at the point cloud level and return nothing.
-If \code{extra = TRUE} the function can return a \link[raster:raster]{RasterLayer} or a list of 2 RasterLayer
-with the position of the local maxima and the map of the crowns depending of the algorithm used.}
+\item{extra}{logical. By default the function works at the point cloud level and returns nothing.
+If \code{extra = TRUE} the function can return a \link[raster:raster]{RasterLayer} or a list of 2 RasterLayers
+with the positions of the local maxima and a map of the crowns, depending on the algorithm used.}
 }
 \value{
 Nothing, the point cloud is updated by reference. If \code{extra = TRUE},
-\code{"dalponte2012"} returns two RasterLayer, \code{"watershed"} returns one RasterLayer
-and \code{"Li2012"} does not support \code{extra} parameter.
+\code{"dalponte2012"} returns two RasterLayers, \code{"watershed"} returns one RasterLayer
+and \code{"Li2012"} does not support the \code{extra} parameter.
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
-attributes to each point of the point cloud a number to identify from which detected tree
+attributes to each point of the point cloud a number identifying the detected tree
 the point comes from (\code{treeID} column). By default the classification is done at the
 point level. However, with some algorithms it is possible to return a raster image of the
-classification. There is currently 3 algorithms implemented. See relevant sections.
+classification. There are currently 3 algorithms implemented. See relevant sections.
 }
 \section{Dalponte 2016}{
 
 
-This is the algorithm developped by Dalponte and Coomes (see references). This algorithm exists
+This is the algorithm developed by Dalponte and Coomes (see references). This algorithm exists
 in the package \pkg{itcSegment}. This version is identical to the original but with
 superfluous code removed and rewritten in pure C++. Consequently it is 6 times faster.
-Notice that this algorithm perform strictly a segmentation while orginal method as implemented
-in \code{itcSegment} and described in the manuscript perform also a pre and post-process when
+Note that this algorithm strictly performs a segmentation while the original method as implemented
+in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
 these tasks are expected to be done by the user.
 The names of the parameters are the same as those in Dalponte's \code{itcSegment} package.
 Dalponte's algorithm is a canopy surface model-based method. An image of the canopy is
@@ -62,7 +62,7 @@ local maxima. It should be an odd number larger than 3. Default 3}
 This method relies on the \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
 method. It is based on the bioconductor package \pkg{EBIimage}. You need to install
 this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
-Watershed algorithm is a canopy surface model-based method. An image of the canopy is
+The Watershed algorithm is a canopy surface model-based method. An image of the canopy is
 expected.
 \describe{
 \item{\code{th}}{Numeric. Number value below which a pixel cannot be a crown. Default 2}
@@ -74,18 +74,18 @@ expected.
 \section{Li 2012}{
 
 
-This method is an implementation of Li et al. (see references) algorithm made by \pkg{lidR}
-author. It may have some differences with the original method because a mis-interpretation
-of the manuscript cannot be excluded. This method works at the point cloud level. An
+This method is an implementation of the Li et al. (see references) algorithm made by \pkg{lidR}
+author. It may have some differences compared with the original method due to potential  mis-interpretation
+of the Li et al. manuscript. This method works at the point cloud level. An
 image of the canopy is \emph{not} expected.
 \describe{
-\item{\code{dt1}}{Numeric. Thresold number 1. See reference page 79. Default is 1.5}
-\item{\code{dt2}}{Numeric. Thresold number 2. See reference page 79. Default is 2}
+\item{\code{dt1}}{Numeric. Threshold number 1. See reference page 79. Default is 1.5}
+\item{\code{dt2}}{Numeric. Threshold number 2. See reference page 79. Default is 2}
 \item{\code{R}}{Numeric. Maximum radius of a crown. Any value greater than a crown is
-good because this parameter does not affect the result. However it affects a lot the
+good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
 }
-The current implementation is known to be slow. Improvements might be done in further
+The current implementation is known to be slow. Improvements are possible in future
 package versions.
 }
 \examples{
