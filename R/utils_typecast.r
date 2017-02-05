@@ -122,7 +122,7 @@ as.raster.lasmetrics = function(x, z = NULL, ...)
       res = dx[1]
     else
     {
-      res = median(c(dx,dy)) %>% round(2)
+      res = stats::median(c(dx,dy)) %>% round(2)
       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
     }
 
