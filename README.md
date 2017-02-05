@@ -1,6 +1,6 @@
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/gh-pages/images/lidr-ban.png)<br/>
 
-![CRAN](https://img.shields.io/badge/CRAN-1.1.0-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.1.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+![CRAN](https://img.shields.io/badge/CRAN-1.1.0-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.2.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
