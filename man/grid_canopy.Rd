@@ -65,4 +65,3 @@ grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") \%>\% plot
 
 Other grid_alias: \code{\link{grid_density}}
 }
-

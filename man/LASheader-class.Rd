@@ -13,9 +13,9 @@ the data read from a \code{.las} file.
 \describe{
 \item{\code{data}}{list. A list of information contained in the las file header.}
 }}
+
 \seealso{
 \link[lidR:LAS]{LASheader}
 \link[lidR:LAS]{LAS}
 \link[lidR:readLAS]{readLAS}
 }
-

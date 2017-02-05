@@ -20,4 +20,3 @@ plot3d(x, y, add = FALSE, bg = "black", ...)
 \description{
 Plot a wireframe of a \code{RasterLayer} or a \code{lasmetrics} object
 }
-

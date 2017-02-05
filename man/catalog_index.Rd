@@ -33,4 +33,3 @@ Users do not really need it.
 \link[lidR:catalog]{Catalog}
 \link[lidR:catalog_queries]{catalog_queries}
 }
-

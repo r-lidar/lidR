@@ -19,4 +19,3 @@ Create a \code{LASheader} object
 \link[lidR:LASheader]{Class LASheader}
 \link[lidR:LAS]{Class LAS}
 }
-

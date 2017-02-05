@@ -43,4 +43,3 @@ plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
 \link[grDevices:heat.colors]{heat.colors}
 \link[grDevices:colorRamp]{colorRampPalette}
 }
-

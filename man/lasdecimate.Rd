@@ -48,4 +48,3 @@ thinned = lidar \%>\% lasdecimate(1, homogenize = FALSE)
 thinned \%>\% summary
 thinned \%>\% grid_density \%>\% plot
 }
-

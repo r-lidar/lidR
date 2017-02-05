@@ -24,4 +24,3 @@ way to manage all the file sequentially reading only the headers.
 \link[lidR:catalog_apply]{catalog_apply}
 \link[lidR:catalog_queries]{catalog_queries}
 }
-

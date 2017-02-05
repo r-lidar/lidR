@@ -33,4 +33,3 @@ first_or_ground = lidar \%>\% lasfilter(Classification == 1 | ReturnNumber == 1)
 \seealso{
 Other lasfilters: \code{\link{lasfilters}}
 }
-

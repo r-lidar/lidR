@@ -2,8 +2,8 @@
 % Please edit documentation in R/lasextent.r
 \docType{methods}
 \name{extent,LAS-method}
-\alias{extent}
 \alias{extent,LAS-method}
+\alias{extent}
 \alias{lasextent}
 \title{Extent}
 \usage{
@@ -31,4 +31,3 @@ extent(lidar)
 \seealso{
 \code{\link[raster:extent]{raster::extent} }
 }
-

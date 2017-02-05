@@ -57,4 +57,3 @@ lasmetrics(lidar, .stdmetrics)
 \link[lidR:VCI]{VCI}
 \link[lidR:LAD]{LAD}
 }
-

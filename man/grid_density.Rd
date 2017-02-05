@@ -31,4 +31,3 @@ lidar \%>\% grid_density(10) \%>\% plot
 
 Other grid_alias: \code{\link{grid_canopy}}
 }
-

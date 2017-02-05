@@ -25,4 +25,3 @@ summary(lidar)
 \seealso{
 \link[lidR:LAS]{Class LAS}
 }
-

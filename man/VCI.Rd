@@ -35,4 +35,3 @@ van Ewijk, K. Y., Treitz, P. M., & Scott, N. A. (2011). Characterizing Forest Su
 \seealso{
 \link[lidR:entropy]{entropy}
 }
-

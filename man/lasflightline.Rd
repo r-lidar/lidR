@@ -22,4 +22,3 @@ consecutive points does not exceed a few milliseconds. If the time between two c
 points is too long it means that the second point is from a different flightline. The default
 threshold is 30 seconds. A column  '\code{flightlineID}' is added in the slot  \code{@data}
 }
-

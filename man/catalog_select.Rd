@@ -27,4 +27,3 @@ selectedFiles = catalog_select(project)
 \seealso{
 \link[lidR:catalog]{Catalog}
 }
-

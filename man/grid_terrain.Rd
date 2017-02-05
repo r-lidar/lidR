@@ -71,4 +71,3 @@ plot3d(dtm3)
 \link[lidR:lasnormalize]{lasnormalize}
 \link[raster:raster]{RasterLayer}
 }
-
