@@ -132,7 +132,7 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
   {
     # Create new cloud to hold the filtered results. Apply the morphological
     # opening operation at the current window size.
-    cloud_f = applyMorphologicalOpening(cloud, window_sizes[i])
+    cloud_f = MorphologicalOpening(cloud, window_sizes[i])
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold.
@@ -146,12 +146,12 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
   return(cloud$idx)
 }
 
-applyMorphologicalOpening = function(cloud_in, resolution)
+MorphologicalOpening = function(cloud_in, resolution)
 {
   cloud_temp = data.table::copy(cloud_in)
   cloud_out  = data.table::copy(cloud_in)
-  n = dim(cloud_in)[1]
 
+  n = dim(cloud_in)[1]
   half_res = resolution / 2
 
   for (p_idx in 1:n)
