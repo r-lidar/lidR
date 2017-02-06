@@ -1,4 +1,6 @@
-### lidR v1.1.0 (in developement)
+### lidR v1.2.0 (in develpment)
+
+### lidR v1.1.0 (Release date: 2017-02-05)
 
 #### NEW
 
@@ -23,21 +25,18 @@
 * [#39](https://github.com/Jean-Romain/lidR/issues/39) - interpolation with duplicated ground points
 
 
-lidR v1.0.2 (Release date: 2016-12-31)
---------------
+### lidR v1.0.2 (Release date: 2016-12-31)
 
 Third submission
 
 * Change: explain LiDAR in the Description on Kurt Hornik's demand
 
-lidR v1.0.1 (Release date: 2016-12-30)
---------------
+### lidR v1.0.1 (Release date: 2016-12-30)
 
 Second submission - rejected
 
 * Change: split the package in two parts. 'lidR' rely on 'rlas' to read binary files.
 
-lidR v1.0.0 (Release date: 201-12-16)
---------------
+### lidR v1.0.0 (Release date: 201-12-16)
 
 First submission - rejected
