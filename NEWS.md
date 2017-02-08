@@ -1,5 +1,9 @@
 ### lidR v1.2.0 (in development)
 
+#### NEW FEATURES
+
+* internally `lascheck` perform more tests to check if the header is in accordance with the data.
+
 ### lidR v1.1.0 (Release date: 2017-02-05)
 
 #### NEW FEATURES
