@@ -62,7 +62,7 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm, na.rm=...)
+lasnormalize = function(.las, dtm, keep_Zdtm=FALSE, ...)
 {
   . <- Z <- Zn <- X <- Y <- NULL
 
@@ -80,6 +80,8 @@ lasnormalize = function(.las, dtm, na.rm=...)
     normalized@data$Zground=raster::extract(dtm, normalized@data[,.(X,Y)], ...)
 
     normalized@data[, Z := Z - Zdtm][]
+    if(!keep_Zdtm)
+      normalized@data[, Zdtm := NULL]
 
     gc()
 
