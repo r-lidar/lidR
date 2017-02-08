@@ -77,7 +77,7 @@ lasnormalize = function(.las, dtm, keep_Zdtm=FALSE, ...)
   {
     normalized = LAS(data.table::copy(.las@data), .las@header)
 
-    normalized@data$Zground=raster::extract(dtm, normalized@data[,.(X,Y)], ...)
+    normalized@data$Zdtm=raster::extract(dtm, normalized@data[,.(X,Y)], ...)
 
     normalized@data[, Z := Z - Zdtm][]
     if(!keep_Zdtm)
