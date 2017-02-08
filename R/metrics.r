@@ -139,6 +139,7 @@ stdmetrics = function(x, y, z, i, a, rn, class, pulseID, dz = 1)
 #'
 #' @param z vector of positive z coordinates
 #' @param dz numeric. The thickness of the layers used (height bin)
+#' @param z0 numeric. The bottom limit of the profile
 #' @return A data.frame containing the bin elevations (z) and the gap fraction for each bin (gf)
 #' @examples
 #' z = c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
@@ -152,15 +153,14 @@ stdmetrics = function(x, y, z, i, a, rn, class, pulseID, dz = 1)
 #' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 #' @seealso \link[lidR:LAD]{LAD}
 #' @export gap_fraction_profile
-gap_fraction_profile = function (z, dz = 1)
+gap_fraction_profile = function (z, dz = 1, z0 = 2)
 {
-  maxz = max(z)
 
-  bk = seq(0, ceiling(maxz), dz)
+  bk = seq(floor((min(z)-z0)/dz)*dz+z0, ceiling((maxz-z0)/dz)*dz+z0, dz)
 
   histogram = graphics::hist(z, breaks = bk, plot = F)
   h = histogram$mids
-  p = histogram$counts/sum(histogram$count)
+  p = histogram$counts/sum(histogram$counts)
 
   p = c(p, 0)
 
@@ -173,7 +173,7 @@ gap_fraction_profile = function (z, dz = 1)
   z = h[-1]
   i = i[-c(1, length(i))]
 
-  return(data.frame(z, gf = i))
+  return(data.frame(z[z>z0], gf = i[z>z0])
 }
 
 #' Leaf area density
@@ -189,6 +189,7 @@ gap_fraction_profile = function (z, dz = 1)
 #' @param z vector of positive z coordinates
 #' @param dz numeric. The thickness of the layers used (height bin)
 #' @param k numeric. is the extinction coefficient
+#' @param z0 numeric. The bottom limit of the profile
 #' @return A data.frame containing the bin elevations (z) and leaf area density for each bin (lad)
 #' @examples
 #' z = c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
@@ -200,7 +201,7 @@ gap_fraction_profile = function (z, dz = 1)
 #' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 #' @seealso \link[lidR:gap_fraction_profile]{gap_fraction_profile}
 #' @export LAD
-LAD = function(z, dz = 1, k = 0.5) # (Bouvier et al. 2015)
+LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
 	ld = gap_fraction_profile(z, dz)
 
@@ -208,7 +209,7 @@ LAD = function(z, dz = 1, k = 0.5) # (Bouvier et al. 2015)
 	  return(NA_real_)
 
 	lad = ld$gf
-	lad = -log(lad)/k
+	lad = -log(lad)/(k*dz)
 
 	lad[is.infinite(lad)] = NA
 
