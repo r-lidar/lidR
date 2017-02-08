@@ -173,7 +173,7 @@ gap_fraction_profile = function (z, dz = 1, z0 = 2)
   z = h[-1]
   i = i[-c(1, length(i))]
 
-  return(data.frame(z[z>z0], gf = i[z>z0])
+  return(data.frame(z[z>z0], gf = i[z>z0]))
 }
 
 #' Leaf area density
@@ -203,7 +203,7 @@ gap_fraction_profile = function (z, dz = 1, z0 = 2)
 #' @export LAD
 LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
-	ld = gap_fraction_profile(z, dz)
+	ld = gap_fraction_profile(z, dz, z0)
 
 	if(anyNA(ld))
 	  return(NA_real_)
