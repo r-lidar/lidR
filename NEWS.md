@@ -1,3 +1,6 @@
+### FIXE
+* [#48](https://github.com/Jean-Romain/lidR/pull/48) `gap_fraction_profile()` bug with negative values (thanks to Florian de Boissieu)
+
 ### lidR v1.1.0 (Release date: 2017-02-05)
 
 #### NEW
