@@ -62,7 +62,7 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm, ...)
+lasnormalize = function(.las, dtm, na.rm=...)
 {
   . <- Z <- Zn <- X <- Y <- NULL
 
@@ -79,12 +79,7 @@ lasnormalize = function(.las, dtm, ...)
 
     normalized@data$Zground=raster::extract(dtm, normalized@data[,.(X,Y)], ...)
 
-    isna = is.na(normalized@data$Zn)
-
-  	if(sum(isna) > 0)
-	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
-
-    normalized@data[, Z := Z - Zground][]
+    normalized@data[, Z := Z - Zdtm][]
 
     gc()
 
