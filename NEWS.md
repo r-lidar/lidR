@@ -2,6 +2,7 @@
 
 #### NEW FEATURES
 
+* `lasnormalize` allows for "non-discretized" normalization i.e interpolating each points instead of using a raster.
 * new function `grid_hexametrics`. Area based approach in hexagonal cells.
 * internally `lascheck` perform more tests to check if the header is in accordance with the data.
 

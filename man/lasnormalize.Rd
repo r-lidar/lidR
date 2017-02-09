@@ -4,13 +4,18 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm)
+lasnormalize(.las, dtm = NULL, ...)
 }
 \arguments{
 \item{.las}{a LAS objet}
 
 \item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
 \link[lidR:grid_terrain]{grid_terrain}.}
+
+\item{...}{if \code{dtm = NULL} the algorithm does not use rasterized data. It computes
+the interpolation for each point (much slower). User can pass a method of interpolation
+and the parameters requiered for this method. Avaible methods and parameters are the
+same as in \link{grid_terrain}. Refer to this function.}
 }
 \value{
 A LAS object.
@@ -18,29 +23,28 @@ A LAS object.
 \description{
 Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
 normalized with the ground at 0. The digital terrain model can originate from
-several sources e.g. from an external file or computed by the user. It can also be computed on the
-fly.
+several sources e.g. from an external file or computed by the user. It can also be computed
+on the fly. In this case each point is interpolated and there is no innacuracy due
+to the discretization of the terrain.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
 
-plot(lidar)
+plot(las)
 
-# --- First option: compute the DTM with grid_terrain -----
+# --- First option: compute a raster DTM with grid_terrain -----
+# (or read it from a file)
 
-dtm = grid_terrain(lidar, method = "delaunay")
-lidar_norm = lasnormalize(lidar, dtm)
+dtm = grid_terrain(las, method = "kriging", k = 8L)
+nlas = lasnormalize(las, dtm)
 plot(dtm)
-plot(lidar_norm)
+plot(nlas)
 
-\dontrun{
-# --- Second option: read the DTM from a file -----
+# --- Second option: interpol each point (no discretization) -----
 
-dtm = raster::raster(terrain.tiff)
-lidar_norm = lidar - dtm
-plot(lidar_norm)
-}
+nlas = lasnormalize(las, method = "kriging", k = 8L, model = gstat::vgm(0.59, "Sph", 874))
+plot(nlas)
 }
 \seealso{
 \link[raster:raster]{raster}
