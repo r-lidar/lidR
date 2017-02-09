@@ -4,12 +4,14 @@
 \alias{gap_fraction_profile}
 \title{Gap fraction profile}
 \usage{
-gap_fraction_profile(z, dz = 1)
+gap_fraction_profile(z, dz = 1, z0 = 2)
 }
 \arguments{
 \item{z}{vector of positive z coordinates}
 
 \item{dz}{numeric. The thickness of the layers used (height bin)}
+
+\item{z0}{numeric. The bottom limit of the profile}
 }
 \value{
 A data.frame containing the bin elevations (z) and the gap fraction for each bin (gf)
