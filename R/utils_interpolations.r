@@ -27,8 +27,25 @@
 
 interpolate = function(points, coord, method, k, model)
 {
+  . <- X <- Y <- Z <- NULL
+
   if(dim(coord)[1] == 0)
     return(numeric(0))
+
+  # test integrity of the data
+  dup_xyz  = duplicated(points, by = c("X", "Y", "Z"))
+  dup_xy   = duplicated(points, by = c("X", "Y"))
+  ndup_xyz = sum(dup_xyz)
+  ndup_xy  = sum(dup_xy & !dup_xyz)
+
+  if(ndup_xyz > 0)
+    warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
+
+  if(ndup_xy > 0)
+    warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+
+  if(ndup_xy > 0 | ndup_xyz > 0)
+    points = points[, .(Z = min(Z)), by = .(X,Y)]
 
   if(method == "knnidw")
   {

@@ -31,68 +31,78 @@
 #'
 #' Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
 #' normalized with the ground at 0. The digital terrain model can originate from
-#' several sources e.g. from an external file or computed by the user. It can also be computed on the
-#' fly.
+#' several sources e.g. from an external file or computed by the user. It can also be computed
+#' on the fly. In this case each point is interpolated and there is no innacuracy due
+#' to the discretization of the terrain.
 #'
 #' @param .las a LAS objet
 #' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
 #' \link[lidR:grid_terrain]{grid_terrain}.
+#' @param ... if \code{dtm = NULL} the algorithm does not use rasterized data. It computes
+#' the interpolation for each point (much slower). User can pass a method of interpolation
+#' and the parameters requiered for this method. Avaible methods and parameters are the
+#' same as in \link{grid_terrain}. Refer to this function.
 #' @return A LAS object.
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' las = readLAS(LASfile)
 #'
-#' plot(lidar)
+#' plot(las)
 #'
-#' # --- First option: compute the DTM with grid_terrain -----
+#' # --- First option: compute a raster DTM with grid_terrain -----
+#' # (or read it from a file)
 #'
-#' dtm = grid_terrain(lidar, method = "delaunay")
-#' lidar_norm = lasnormalize(lidar, dtm)
+#' dtm = grid_terrain(las, method = "kriging", k = 8L)
+#' nlas = lasnormalize(las, dtm)
 #' plot(dtm)
-#' plot(lidar_norm)
+#' plot(nlas)
 #'
-#' \dontrun{
-#' # --- Second option: read the DTM from a file -----
+#' # --- Second option: interpol each point (no discretization) -----
 #'
-#' dtm = raster::raster(terrain.tiff)
-#' lidar_norm = lidar - dtm
-#' plot(lidar_norm)
-#' }
+#' nlas = lasnormalize(las, method = "kriging", k = 8L, model = gstat::vgm(0.59, "Sph", 874))
+#' plot(nlas)
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm)
+lasnormalize = function(.las, dtm = NULL, ...)
 {
-  . <- Z <- Zn <- X <- Y <- NULL
+  . <- Z <- Zn <- X <- Y <- Classification <- NULL
 
   stopifnotlas(.las)
 
-  if(is(dtm, "lasmetrics"))
+  if(is.null(dtm))
   {
-    dtm = as.raster(dtm)
-    return(lasnormalize(.las, dtm))
-  }
-  else if(is(dtm, "RasterLayer"))
-  {
+    dots = list(...)
+
+    if(dots$method == "delaunay")
+      stop("Method 'delaunay' not avaible for non rasterized normalization.", call. = F)
+
     normalized = LAS(data.table::copy(.las@data), .las@header)
-
-    lasclassify(normalized, dtm, "Zn")
-
-    isna = is.na(normalized@data$Zn)
-
-  	if(sum(isna) > 0)
-	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
-
-    normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
-    normalized = lasfilter(normalized, !isna)
-
-    gc()
-
-    return(normalized)
+    Zground = interpolate(.las@data[Classification == 2, .(X,Y,Z)], .las@data[, .(X,Y)], ...)
+    normalized@data[, Zn := Zground][]
+    isna = is.na(Zground)
   }
   else
-    stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
+  {
+    if(is(dtm, "lasmetrics"))
+      dtm = as.raster(dtm)
+
+    if(!is(dtm, "RasterLayer"))
+      stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
+
+    normalized = LAS(data.table::copy(.las@data), .las@header)
+    lasclassify(normalized, dtm, "Zn")
+    isna = is.na(normalized@data$Zn)
+  }
+
+  if(sum(isna) > 0)
+    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
+
+  normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
+  normalized = lasfilter(normalized, !isna)
+
+  return(normalized)
 }
 
 #' Convenient operator to lasnormalize
