@@ -29,6 +29,10 @@ fast_countover <- function(x, t) {
     .Call('lidR_fast_countover', PACKAGE = 'lidR', x, t)
 }
 
+get_normales <- function(M, N, X) {
+    .Call('lidR_get_normales', PACKAGE = 'lidR', M, N, X)
+}
+
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }

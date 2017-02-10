@@ -20,9 +20,9 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval
+    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval,geometry,gstat
 Suggests:
-    rgdal,akima,gstat,sp,testthat,EBImage,hexbin
+    rgdal,sp,testthat,EBImage,hexbin
 LazyData: true
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp
