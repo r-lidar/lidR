@@ -54,7 +54,7 @@
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
 #' If null it performs an ordinary or weighted least squares prediction.
-#' @return A \code{RasterLayer} from package raster
+#' @return A \code{lasmetrics} data.table.
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
