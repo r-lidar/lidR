@@ -126,8 +126,10 @@ readLAS = function(files,
     data   = rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
                                ScanDirectionFlag, EdgeOfFlightline, Classification,
                                ScanAngle, UserData, PointSourceID, RGB, filter)
-
-    lascheck(data, header, hard = T)
+    if(length(filter) > 0)
+      lascheck(data, header, hard = F)
+    else
+      lascheck(data, header, hard = T)
 
     return(data)
   })
