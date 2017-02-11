@@ -90,8 +90,6 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   # Recompute the number of queries
   nplot = length(lasindex)
 
-  print(nplot)
-
   cat("Extracting data...\n")
 
   if(mc.cores == 1)
