@@ -55,7 +55,7 @@ interpolate = function(points, coord, method, k, model)
   else if(method == "delaunay")
   {
     cat("[using Delaunay triangulation]\n")
-    return(interpolate_delaunay(points, coord))
+    return(interpolate_delaunay(points, coord, 0))
   }
   else if(method == "kriging")
   {
@@ -85,8 +85,10 @@ interpolate_kriging = function(points, coord, model, k)
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord)
+interpolate_delaunay <- function(points, coord, th)
 {
+  pitfree = th > 0
+
   X <- as.matrix(points)
   Y <- as.matrix(coord)
 
@@ -98,11 +100,17 @@ interpolate_delaunay <- function(points, coord)
   active <- dn[uidx,]
   active <- cbind(active, uidx)
 
-  N = matrix(NA, nrow = nrow(dn), ncol = 4)
-  N = get_normales(active, N, X)
+  N = get_normales(active, X, nrow(dn), pitfree)
   N = N[idx,]
 
   z = -(Y[,1]*N[,1] + Y[,2]*N[,2]+N[,4])/N[,3]
+
+  if(pitfree)
+  {
+    delete = N[,5] > th
+    delete[is.na(delete)] = FALSE
+    z[delete] = NA
+  }
 
   return(z)
 }
