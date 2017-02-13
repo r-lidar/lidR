@@ -153,8 +153,8 @@ dalponte2012 = function(.las, image, extra, searchWinSize = 3, TRESHSeed = 0.45,
   l = dim(image)[1]
   w = dim(image)[2]
 
-  Canopy <- matrix(w, l, data = image, byrow = FALSE)
-  Canopy <- Canopy[1:w, l:1]
+  Canopy <- raster::as.matrix(image)
+  Canopy <- t(apply(Canopy, 2, rev))
   Canopy[is.na(Canopy) | Canopy < th] <- 0
 
   Maxima = itc_treetops(Canopy, searchWinSize)
