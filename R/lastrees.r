@@ -194,8 +194,8 @@ watershed = function(.las, image, extra, th = 2, tolerance = 1, ext = 1)
   l = dim(image)[1]
   w = dim(image)[2]
 
-  Canopy <- matrix(w, l, data = image, byrow = FALSE)
-  Canopy <- Canopy[1:w, l:1]
+  Canopy <- raster::as.matrix(image)
+  Canopy <- t(apply(Canopy, 2, rev))
   Canopy[Canopy < th] <- NA
 
   if (!requireNamespace("EBImage", quietly = TRUE))
