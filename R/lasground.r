@@ -29,29 +29,28 @@
 #' Classify points as ground or not ground
 #'
 #' Implements a Progressive Morphological Filter for segmentation of ground points.
-#' The function updates the field \code{Classification}. The points classified as 'ground'
-#' get the value 2 according to las specifications (See the ASPRS documentation for the
+#' The function updates the field \code{Classification} of the input LAS obect. The points
+#' classified as 'ground' get the value 2 according to las specifications (See the ASPRS
+#' documentation for the
 #' \href{http:#www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-#' This function is an implementation of Zhang et al. (2003) algorithm inspired from the
-#' implementation made in the PCL library (see references).
+#' This function is an implementation of Zhang et al. (2003) algorithm (see reference)
 #'
 #' @param .las a LAS object
-#' @param MaxWinSize maximum window size to be used in filtering ground returns (see references)
-#' @param slope  slope value to be used in computing the height threshold (see references)
-#' @param InitDist initial height above the parameterized ground surface to be considered a ground return (see references)
-#' @param MaxDist maximum height above the parameterized ground surface to be considered a ground return (see references)
-#' @param CellSize cell size
-#' @param base numeric. control the windows sizes
-#' @param exponential logical. control the windows sizes
+#' @param MaxWinSize nueric. Maximum window size to be used in filtering ground returns (see references)
+#' @param Slope  numeric. Slope value to be used in computing the height threshold (see references)
+#' @param InitDist numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)
+#' @param MaxDist numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)
+#' @param CellSize numeric. Cell size
+#' @param ... Any additional specific parameters to be passed to the progressive morphological filter.
+#' These include:\cr
+#' - \code{exponential}\cr
+#' - \code{base}\cr
 #' @return Nothing. The original LAS object is updated by reference. The 'Classification'
 #' column contains 2 for ground according to LAS specifications.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
 #' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
-#' \cr\cr
-#' R. B. Rusu and S. Cousins, "3D is here: Point Cloud Library (PCL)," Robotics and Automation
-#' (ICRA), 2011 IEEE International Conference on, Shanghai, 2011, pp. 1-4. doi: 10.1109/ICRA.2011.5980567
 #' @export
 #' @examples
 #' \dontrun{
@@ -62,11 +61,17 @@
 #'
 #' plot(las, color = "Classification")
 #' }
-#' @seealso
-#' \link[lidR:LAS-class]{LAS}
 #' @importFrom data.table :=
-lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist = 3.0, CellSize = 1.0, base = 2.0, exponential = TRUE)
+lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist = 3.0, CellSize = 1.0, ...)
 {
+  dots = list(...)
+
+  if(is.null(dots$base)) dots$base = 2
+  if(is.null(dots$exponential)) dots$exponential = TRUE
+
+  exponential = dots$exponential
+  base = dots$base
+
   cloud = .las@data[, .(X,Y,Z)]
   cloud[, idx := 1:dim(cloud)[1]]
 
@@ -85,7 +90,7 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
     .las@data[, Classification := 0]
   }
 
-  idx = MorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
+  idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
 
   message(paste(length(idx), "ground points found."))
 
@@ -94,7 +99,7 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
   return(invisible())
 }
 
-MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
+ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
 {
   # Compute the series of window sizes and height thresholds
   height_thresholds = c()
@@ -130,16 +135,12 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
   # Progressively filter ground returns using morphological open
   for (i in 1:length(window_sizes))
   {
-    cat("Pass", i, "of", length(window_sizes), "\n")
-
-    # Create new cloud to hold the filtered results. Apply the morphological
-    # opening operation at the current window size.
-    cloud_f = MorphologicalOpening(cloud, window_sizes[i])
+    Z_f = MorphologicalOpening(cloud, window_sizes[i])
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold.
-    diff = cloud$Z - cloud_f$Z
-    indices = ifelse(diff < height_thresholds[i], TRUE, FALSE)
+    diff = cloud$Z - Z_f
+    indices = diff < height_thresholds[i]
 
     # Limit filtering to those points currently considered ground returns
     cloud = cloud[indices]
@@ -147,63 +148,3 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
 
   return(cloud$idx)
 }
-
-MorphologicalOpening = function(cloud_in, resolution)
-{
-  quad = SearchTrees::createTree(cloud_in[, .(X,Y)])
-
-  cloud_temp = data.table::copy(cloud_in)
-  cloud_out  = data.table::copy(cloud_in)
-
-  # because it's faster to loop over a data.frame
-  data.table::setDF(cloud_temp)
-
-  n = dim(cloud_in)[1]
-  half_res = resolution / 2
-
-  for (p_idx in 1:n)
-  {
-    u = cloud_temp[p_idx,]
-
-    minx = u$X - half_res
-    miny = u$Y - half_res
-    maxx = u$X + half_res
-    maxy = u$Y + half_res
-
-    pt1_indices = SearchTrees::rectLookup(quad, c(minx, miny), c(maxx, maxy))
-    #pt1_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
-
-    if (length(pt1_indices) > 0)
-    {
-      v = cloud_temp[pt1_indices,]
-      min_pt = min(v$Z)
-      cloud_out[p_idx, Z := min_pt]
-    }
-  }
-
-  cloud_temp = data.table::copy(cloud_out)
-  data.table::setDF(cloud_temp)
-
-  for (p_idx in 1:n)
-  {
-    u = cloud_temp[p_idx,]
-
-    minx = u$X - half_res
-    miny = u$Y - half_res
-    maxx = u$X + half_res
-    maxy = u$Y + half_res
-
-    pt2_indices = SearchTrees::rectLookup(quad, c(minx, miny), c(maxx, maxy))
-    #pt2_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
-
-    if (length(pt2_indices) > 0)
-    {
-      v = cloud_temp[pt2_indices,]
-      max_pt = max(v$Z)
-      cloud_out[p_idx, Z := max_pt]
-    }
-  }
-
-  return(cloud_out[])
-}
-

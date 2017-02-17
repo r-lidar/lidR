@@ -95,6 +95,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// MorphologicalOpening
+NumericVector MorphologicalOpening(DataFrame cloud_in, double resolution);
+RcppExport SEXP lidR_MorphologicalOpening(SEXP cloud_inSEXP, SEXP resolutionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type cloud_in(cloud_inSEXP);
+    Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
+    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(cloud_in, resolution));
+    return rcpp_result_gen;
+END_RCPP
+}
 // point_in_polygon
 bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
 RcppExport SEXP lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {

@@ -29,6 +29,10 @@ fast_countover <- function(x, t) {
     .Call('lidR_fast_countover', PACKAGE = 'lidR', x, t)
 }
 
+MorphologicalOpening <- function(cloud_in, resolution) {
+    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', cloud_in, resolution)
+}
+
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
