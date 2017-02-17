@@ -130,6 +130,8 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
   # Progressively filter ground returns using morphological open
   for (i in 1:length(window_sizes))
   {
+    cat("Pass", i, "of", length(window_sizes), "\n")
+
     # Create new cloud to hold the filtered results. Apply the morphological
     # opening operation at the current window size.
     cloud_f = MorphologicalOpening(cloud, window_sizes[i])
@@ -148,52 +150,60 @@ MorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, MaxDist, Cell
 
 MorphologicalOpening = function(cloud_in, resolution)
 {
+  quad = SearchTrees::createTree(cloud_in[, .(X,Y)])
+
   cloud_temp = data.table::copy(cloud_in)
   cloud_out  = data.table::copy(cloud_in)
+
+  # because it's faster to loop over a data.frame
+  data.table::setDF(cloud_temp)
 
   n = dim(cloud_in)[1]
   half_res = resolution / 2
 
   for (p_idx in 1:n)
   {
-    u = cloud_temp[p_idx]
+    u = cloud_temp[p_idx,]
 
     minx = u$X - half_res
     miny = u$Y - half_res
     maxx = u$X + half_res
     maxy = u$Y + half_res
 
-    pt1_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
+    pt1_indices = SearchTrees::rectLookup(quad, c(minx, miny), c(maxx, maxy))
+    #pt1_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
 
-    if (sum(pt1_indices) > 0)
+    if (length(pt1_indices) > 0)
     {
-      v = cloud_temp[pt1_indices]
+      v = cloud_temp[pt1_indices,]
       min_pt = min(v$Z)
       cloud_out[p_idx, Z := min_pt]
     }
   }
 
   cloud_temp = data.table::copy(cloud_out)
+  data.table::setDF(cloud_temp)
 
   for (p_idx in 1:n)
   {
-    u = cloud_temp[p_idx]
+    u = cloud_temp[p_idx,]
 
     minx = u$X - half_res
     miny = u$Y - half_res
     maxx = u$X + half_res
     maxy = u$Y + half_res
 
-    pt2_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
+    pt2_indices = SearchTrees::rectLookup(quad, c(minx, miny), c(maxx, maxy))
+    #pt2_indices = data.table::between(cloud_temp$X, minx, maxx) & data.table::between(cloud_temp$Y, miny, maxy)
 
-    if (sum(pt2_indices) > 0)
+    if (length(pt2_indices) > 0)
     {
-      v = cloud_temp[pt2_indices]
+      v = cloud_temp[pt2_indices,]
       max_pt = max(v$Z)
       cloud_out[p_idx, Z := max_pt]
     }
   }
 
-  return(cloud_out)
+  return(cloud_out[])
 }
 
