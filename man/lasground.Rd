@@ -5,24 +5,25 @@
 \title{Classify points as ground or not ground}
 \usage{
 lasground(.las, MaxWinSize = 20, Slope = 1, InitDist = 0.5, MaxDist = 3,
-  CellSize = 1, base = 2, exponential = TRUE)
+  CellSize = 1, ...)
 }
 \arguments{
 \item{.las}{a LAS object}
 
-\item{MaxWinSize}{maximum window size to be used in filtering ground returns (see references)}
+\item{MaxWinSize}{nueric. Maximum window size to be used in filtering ground returns (see references)}
 
-\item{InitDist}{initial height above the parameterized ground surface to be considered a ground return (see references)}
+\item{Slope}{numeric. Slope value to be used in computing the height threshold (see references)}
 
-\item{MaxDist}{maximum height above the parameterized ground surface to be considered a ground return (see references)}
+\item{InitDist}{numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)}
 
-\item{CellSize}{cell size}
+\item{MaxDist}{numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)}
 
-\item{base}{numeric. control the windows sizes}
+\item{CellSize}{numeric. Cell size}
 
-\item{exponential}{logical. control the windows sizes}
-
-\item{slope}{slope value to be used in computing the height threshold (see references)}
+\item{...}{Any additional specific parameters to be passed to the progressive morphological filter.
+These include:\cr
+- \code{exponential}\cr
+- \code{base}\cr}
 }
 \value{
 Nothing. The original LAS object is updated by reference. The 'Classification'
