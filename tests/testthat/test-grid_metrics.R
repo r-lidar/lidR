@@ -1,6 +1,6 @@
 context("grid_metrics")
 
-las = lidR:::dummy_las(1000)
+las = lidR:::dummy_las(2000)
 
 test_that("grid_metrics works", {
   x = grid_metrics(las, mean(Z))

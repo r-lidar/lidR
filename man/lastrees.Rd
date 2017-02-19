@@ -103,22 +103,21 @@ chm = raster::focal(chm, w = kernel, fun = mean)
 chm = raster::focal(chm, w = kernel, fun = mean)
 raster::plot(chm, col = height.colors(50)) # check the image
 
-# segmentation (default parameters but th = 4 + extra output)
-extra = lastrees(las, "dalponte2016", chm, th = 4, extra = TRUE)
+# segmentation (default parameters but th = 5 + extra output)
+extra = lastrees(las, "dalponte2016", chm, th = 5, extra = TRUE)
 
 # plot points that actually are trees
 trees = lasfilter(las, !is.na(treeID))
 plot(trees, color = "treeID", colorPalette = random.colors(100))
 
-\dontrun{
-lastrees(las, "watershed", chm, th = 4)
+# plot crowns
+library(raster)
+crown.shp <- rasterToPolygons(extra$Crown, dissolve = TRUE)
 
-tree = lasfilter(las, !is.na(treeID))
-plot(tree, color = "treeID", colorPalette = random.colors(100))
+plot(chm, col = height.colors(50))
+plot(crown.shp, add = T)
+plot(extra$Maxima, col = "black", add = T)
 
-lastrees(las, "li2012")
-plot(las, color = "treeID", colorPalette = random.colors(100))
-}
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
