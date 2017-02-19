@@ -42,13 +42,13 @@
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Tree.laz", package="lidR")
-#' las = readLAS(LASfile, filter = "-drop_z_below 0")
+#' las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-drop_z_below 0")
 #'
 #' # Basic triangulation and rasterization
 #' chm1 = grid_tincanopy(las, thresholds = 0)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_egde = 1)
+#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1)
 #'
 #' plot(chm1)
 #' plot(chm2)
@@ -57,6 +57,7 @@
 #' Remote Sensing, 80(9), 863-872.
 grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 0.5)
 {
+  . <- X <- Y <- Z <- ReturnNumber <- NULL
   ex = extent(.las)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
   z = rep(NA, (dim(grid)[1]))

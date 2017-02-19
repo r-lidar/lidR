@@ -123,8 +123,8 @@
 #' crown.shp <- rasterToPolygons(extra$Crown, dissolve = TRUE)
 #'
 #' plot(chm, col = height.colors(50))
-#' plot(crown.shp, add = T)
-#' plot(extra$Maxima, col = "black", add = T)
+#' plot(crown.shp, add = TRUE)
+#' plot(extra$Maxima, col = "black", add = TRUE)
 #'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
