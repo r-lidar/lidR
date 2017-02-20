@@ -126,7 +126,14 @@ readLAS = function(files,
     data   = rlas::readlasdata(file, Intensity, ReturnNumber, NumberOfReturns,
                                ScanDirectionFlag, EdgeOfFlightline, Classification,
                                ScanAngle, UserData, PointSourceID, RGB, filter)
-    if(length(filter) > 0)
+
+    # Can happend if filter is badly used
+    if(dim(data)[1] == 0)
+       return(NULL)
+
+    # If filter is used, obviously header would not be in accordance with the data.
+    # Thus, hard check is useless
+    if(nchar(filter) > 0)
       lascheck(data, header, hard = F)
     else
       lascheck(data, header, hard = T)
@@ -141,7 +148,7 @@ readLAS = function(files,
 
   header = rlas::readlasheader(files[1])
 
-  las = LAS(data, header)
+  las = LAS(data, header, check = F)
 
   if(pulseID)
     laspulse(las)
