@@ -38,14 +38,12 @@ documentation for the
 This function is an implementation of Zhang et al. (2003) algorithm (see reference)
 }
 \examples{
-\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, XYZonly = TRUE)
 
 lasground(las, MaxWinSize = 40, Slope = 1, MaxDist = 5, InitDist = 0.01, CellSize = 7)
 
 plot(las, color = "Classification")
-}
 }
 \references{
 Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive

@@ -37,14 +37,14 @@
 #'
 #' @param .las a LAS object
 #' @param MaxWinSize nueric. Maximum window size to be used in filtering ground returns (see references)
-#' @param Slope  numeric. Slope value to be used in computing the height threshold (see references)
+#' @param Slope  numeric. Slope value to be used in computing the height thresholds(see references)
 #' @param InitDist numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)
 #' @param MaxDist numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)
 #' @param CellSize numeric. Cell size
 #' @param ... Any additional specific parameters to be passed to the progressive morphological filter.
 #' These include:\cr
-#' - \code{exponential}\cr
-#' - \code{base}\cr
+#' - \code{exponential} logical. Default is TRUE.\cr
+#' - \code{base} numeric. Default is 2\cr
 #' @return Nothing. The original LAS object is updated by reference. The 'Classification'
 #' column contains 2 for ground according to LAS specifications.
 #' @references
@@ -53,14 +53,12 @@
 #' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
 #' @export
 #' @examples
-#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile, XYZonly = TRUE)
 #'
 #' lasground(las, MaxWinSize = 40, Slope = 1, MaxDist = 5, InitDist = 0.01, CellSize = 7)
 #'
 #' plot(las, color = "Classification")
-#' }
 #' @importFrom data.table :=
 lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist = 3.0, CellSize = 1.0, ...)
 {
@@ -137,7 +135,7 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
   # Progressively filter ground returns using morphological open
   for (i in 1:length(window_sizes))
   {
-    Z_f = MorphologicalOpening(cloud, window_sizes[i])
+    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i])
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold.

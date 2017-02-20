@@ -4,46 +4,28 @@
 int QuadTree::nMain = 0;
 int QuadTree::nChildren = 0;
 
-//Constructor
-Point::Point()
-{
-}
+Point::Point(){}
+Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
+Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id) {}
 
-Point::Point(const double x, const double y) : x(x), y(y), id(0)
-{
-}
+BoundingBox::BoundingBox(){}
+BoundingBox::BoundingBox(const Point center, const Point half_res) : center(center), half_res(half_res) {}
 
-Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id)
-{
-}
-
-//Constructors
-BoundingBox::BoundingBox()
-{
-}
-BoundingBox::BoundingBox(const Point center, const Point halfDim) : center(center), halfDim(halfDim)
-{
-}
-
-//See if this BB contains the point p
 bool BoundingBox::contains(const Point& p)
 {
-  //Check to see if the point is within the boundaries of the BB.
-	if(p.x >= center.x - halfDim.x && p.x <= center.x + halfDim.x &&	p.y >= center.y - halfDim.y && p.y <= center.y + halfDim.y)
+	if(p.x >= center.x - half_res.x && p.x <= center.x + half_res.x &&	p.y >= center.y - half_res.y && p.y <= center.y + half_res.y)
 		return true;
 	else
 		return false;
 }
 
-//Checks if this bounding box and the argument BB overlaps.
 bool BoundingBox::intersects(const BoundingBox& b)
 {
-	//Box A is this, B is b. LE/RE/TE/BE = Left/Right/Top/Bottom Edge.
-	//The following is true if there is overlap between the two rectangles.
-	if(center.x - halfDim.x <= b.center.x + b.halfDim.x && //LE of A is to the left of B's RE
-	   center.x + halfDim.x >= b.center.x - b.halfDim.x && //RE of A is to the right of B's LE
-	   center.y - halfDim.y <= b.center.y + b.halfDim.y && //BE of A is below TE of B
-	   center.y + halfDim.y >= b.center.y - b.halfDim.y)   //TE of A is above BE of B
+
+	if(center.x - half_res.x <= b.center.x + b.half_res.x &&
+	   center.x + half_res.x >= b.center.x - b.half_res.x &&
+	   center.y - half_res.y <= b.center.y + b.half_res.y &&
+	   center.y + half_res.y >= b.center.y - b.half_res.y)
 	{
 		return true;
 	}
@@ -51,7 +33,6 @@ bool BoundingBox::intersects(const BoundingBox& b)
 		return false;
 }
 
-//Constructor for user
 QuadTree::QuadTree(const double cx, const double cy, const double range)
 {
   MAX_DEPTH = 6;
@@ -59,23 +40,22 @@ QuadTree::QuadTree(const double cx, const double cy, const double range)
 	boundary = BoundingBox(Point(cx, cy), Point(range, range));
 	depth = 1;
 
-	nE = 0;
-	nW = 0;
-	sE = 0;
-	sW = 0;
+	NE = 0;
+	NW = 0;
+	SE = 0;
+	SW = 0;
 }
 
-//Internal constructor used when splitting a node
-QuadTree::QuadTree(const BoundingBox boundary, const int in_depth) : boundary(boundary)
+QuadTree::QuadTree(const BoundingBox boundary, const int parent_depth) : boundary(boundary)
 {
   MAX_DEPTH = 6;
 
-	depth = in_depth + 1;
+	depth = parent_depth + 1;
 
-	nE = 0;
-	nW = 0;
-	sE = 0;
-	sW = 0;
+	NE = 0;
+	NW = 0;
+	SE = 0;
+	SW = 0;
 }
 
 bool QuadTree::insert(const Point& p)
@@ -89,16 +69,16 @@ bool QuadTree::insert(const Point& p)
 		return true;
 	}
 
-	if(nW == 0)
+	if(NW == 0)
 		subdivide();
 
-	if(nW->insert(p))
+	if(NW->insert(p))
 		return true;
-	if(nE->insert(p))
+	if(NE->insert(p))
 		return true;
-	if(sW->insert(p))
+	if(SW->insert(p))
 		return true;
-	if(sE->insert(p))
+	if(SE->insert(p))
 		return true;
 
 	return false;
@@ -106,18 +86,18 @@ bool QuadTree::insert(const Point& p)
 
 void QuadTree::subdivide()
 {
-	double halfDim_half = boundary.halfDim.x * 0.5;
+	double half_res_half = boundary.half_res.x * 0.5;
 
-  Point p(halfDim_half, halfDim_half);
-  Point pNE(boundary.center.x + halfDim_half, boundary.center.y + halfDim_half);
-  Point pNW(boundary.center.x - halfDim_half, boundary.center.y + halfDim_half);
-  Point pSE(boundary.center.x + halfDim_half, boundary.center.y - halfDim_half);
-  Point pSW(boundary.center.x - halfDim_half, boundary.center.y - halfDim_half);
+  Point p(half_res_half, half_res_half);
+  Point pNE(boundary.center.x + half_res_half, boundary.center.y + half_res_half);
+  Point pNW(boundary.center.x - half_res_half, boundary.center.y + half_res_half);
+  Point pSE(boundary.center.x + half_res_half, boundary.center.y - half_res_half);
+  Point pSW(boundary.center.x - half_res_half, boundary.center.y - half_res_half);
 
-	nE = new QuadTree(BoundingBox(pNE, p), depth);
-	nW = new QuadTree(BoundingBox(pNW, p), depth);
-	sE = new QuadTree(BoundingBox(pSE, p), depth);
-	sW = new QuadTree(BoundingBox(pSW, p), depth);
+	NE = new QuadTree(BoundingBox(pNE, p), depth);
+	NW = new QuadTree(BoundingBox(pNW, p), depth);
+	SE = new QuadTree(BoundingBox(pSE, p), depth);
+	SW = new QuadTree(BoundingBox(pSW, p), depth);
 }
 
 void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, const int method)
@@ -125,7 +105,6 @@ void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, cons
 	if(!boundary.intersects(bb))
 		return;
 
-	//Deepest level reached. Collect and add the points from this QuadTree.
 	if(depth == MAX_DEPTH)
 	{
 		switch(method)
@@ -138,21 +117,20 @@ void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, cons
 		}
 	}
 
-	//No points here. Check children, return if there are none.
-	if(nW == 0)
+	if(NW == 0)
 		return;
 
-	nE->range_lookup(bb, res, method);
-	nW->range_lookup(bb, res, method);
-	sE->range_lookup(bb, res, method);
-	sW->range_lookup(bb, res, method);
+	NE->range_lookup(bb, res, method);
+	NW->range_lookup(bb, res, method);
+	SE->range_lookup(bb, res, method);
+	SW->range_lookup(bb, res, method);
 
 	return;
 }
 
-void QuadTree::rect_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
+void QuadTree::rect_lookup(const double xc, const double yc, const double range, std::vector<Point*>& res)
 {
-	range_lookup(BoundingBox(Point(cx, cy), Point(range, range)), res, 1);
+	range_lookup(BoundingBox(Point(xc, yc), Point(range, range)), res, 1);
 	return;
 }
 
@@ -162,7 +140,6 @@ void QuadTree::circle_lookup(const double cx, const double cy, const double rang
 	return;
 }
 
-//A method for collecting the points within a BB that is a square.
 void QuadTree::getPointsSquare(const BoundingBox bb, std::vector<Point>& points, std::vector<Point*>& res)
 {
 	for(std::vector<Point>::iterator it = points.begin(); it != points.end(); it++)
@@ -173,12 +150,11 @@ void QuadTree::getPointsSquare(const BoundingBox bb, std::vector<Point>& points,
 	return;
 }
 
-//A method for collecting the points within a bounding circle.
 void QuadTree::getPointsCircle(const BoundingBox bb, std::vector<Point>& points, std::vector<Point*>& res)
 {
 	for(std::vector<Point>::iterator it = points.begin(); it != points.end(); it++)
 	{
-		if(in_circle(bb.center, (*it), bb.halfDim.x))
+		if(in_circle(bb.center, (*it), bb.half_res.x))
 			res.push_back(&(*it));
 	}
 	return;
@@ -200,5 +176,5 @@ bool QuadTree::in_rect(const BoundingBox& bb, const Point& p)
 	A = A < 0 ? -A : A;
 	B = B < 0 ? -B : B;
 
-	return(A <= bb.halfDim.x && B <= bb.halfDim.y);
+	return(A <= bb.half_res.x && B <= bb.half_res.y);
 }
