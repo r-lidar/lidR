@@ -64,6 +64,8 @@
 #' @importFrom data.table :=
 lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist = 3.0, CellSize = 1.0, ...)
 {
+  . <- X <- Y <- Z <- Classification <- NULL
+
   dots = list(...)
 
   if(is.null(dots$base)) dots$base = 2
@@ -77,7 +79,7 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
 
   if("Classification" %in% names(.las@data))
   {
-    nground = lidR:::fast_countequal(.las@data$Classification, 2)
+    nground = fast_countequal(.las@data$Classification, 2)
 
     if(nground > 0)
     {
