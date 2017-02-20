@@ -28,6 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
 #include <Rcpp.h>
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+
 using namespace Rcpp;
 
 // Defined in cxx_utils.cpp
@@ -40,10 +43,10 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
 {
   bool finish = false;
 
-  int previous = -1;
   int ni = X.length();
   int k = 1;
 
+  Progress p(ni, true);
 
   IntegerVector idpoint = seq_len(ni)-1;
   IntegerVector idtree(ni);
@@ -56,13 +59,10 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
     LogicalVector P(n);
     LogicalVector N(n);
 
-    // display progress
-    int progress = (1-(double)n/(double)ni)*100;
-    if(progress % 2 == 0 && progress != previous)
-    {
-      previous = progress;
-      Rcout << progress << "% ";
-    }
+    if (Progress::check_abort() )
+      return  IntegerVector::create(0);
+    else
+      p.update(ni-n);
 
     // element 0 is the current highest points and is in P
     P(0) = true;
