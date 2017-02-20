@@ -116,7 +116,7 @@ stdmetrics = function(x, y, z, i, a, rn, class, pulseID, dz = 1)
 {
   C  = stdmetrics_ctrl(x, y, z, a)
   Z  = stdmetrics_z(z, dz)
-  I  = stdmetrics_i(i, class, rn)
+  I  = stdmetrics_i(i, z, class, rn)
   RN = stdmetrics_rn(rn, class)
   PU = stdmetrics_pulse(pulseID, rn)
 
