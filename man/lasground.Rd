@@ -31,18 +31,18 @@ column contains 2 for ground according to LAS specifications.
 }
 \description{
 Implements a Progressive Morphological Filter for segmentation of ground points.
-The function updates the field \code{Classification}. The points classified as 'ground'
-get the value 2 according to las specifications (See the ASPRS documentation for the
-\href{http:#www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-This function is an implementation of Zhang et al. (2003) algorithm inspired from the
-implementation made in the PCL library (see references).
+The function updates the field \code{Classification} of the input LAS obect. The points
+classified as 'ground' get the value 2 according to las specifications (See the ASPRS
+documentation for the
+\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
+This function is an implementation of Zhang et al. (2003) algorithm (see reference)
 }
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, XYZonly = TRUE)
 
-lasground(las, MaxWinSize = 40, Slope = 3, MaxDist = 4, InitDist = 0.01, CellSize = 8)
+lasground(las, MaxWinSize = 40, Slope = 1, MaxDist = 5, InitDist = 0.01, CellSize = 7)
 
 plot(las, color = "Classification")
 }
@@ -51,10 +51,4 @@ plot(las, color = "Classification")
 Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
 Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
-\cr\cr
-R. B. Rusu and S. Cousins, "3D is here: Point Cloud Library (PCL)," Robotics and Automation
-(ICRA), 2011 IEEE International Conference on, Shanghai, 2011, pp. 1-4. doi: 10.1109/ICRA.2011.5980567
-}
-\seealso{
-\link[lidR:LAS-class]{LAS}
 }
