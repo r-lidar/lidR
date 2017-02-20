@@ -12,7 +12,7 @@ lasground(.las, MaxWinSize = 20, Slope = 1, InitDist = 0.5, MaxDist = 3,
 
 \item{MaxWinSize}{nueric. Maximum window size to be used in filtering ground returns (see references)}
 
-\item{Slope}{numeric. Slope value to be used in computing the height threshold (see references)}
+\item{Slope}{numeric. Slope value to be used in computing the height thresholds(see references)}
 
 \item{InitDist}{numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)}
 
@@ -22,8 +22,8 @@ lasground(.las, MaxWinSize = 20, Slope = 1, InitDist = 0.5, MaxDist = 3,
 
 \item{...}{Any additional specific parameters to be passed to the progressive morphological filter.
 These include:\cr
-- \code{exponential}\cr
-- \code{base}\cr}
+- \code{exponential} logical. Default is TRUE.\cr
+- \code{base} numeric. Default is 2\cr}
 }
 \value{
 Nothing. The original LAS object is updated by reference. The 'Classification'
