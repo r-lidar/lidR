@@ -119,6 +119,48 @@ int which_max(NumericVector x)
   return n;
 }
 
+// [[Rcpp::export]]
+NumericMatrix get_normales(IntegerMatrix M, NumericMatrix X, int size, bool edge_size = false)
+{
+  NumericMatrix N(size, 5);
+  std::fill(N.begin(), N.end(), NA_REAL);
+
+  for(int i = 0, end = M.nrow(); i < end ; i++)
+  {
+    int p1 = M(i,0)-1;
+    int p2 = M(i,1)-1;
+    int p3 = M(i,2)-1;
+    int j  = M(i,3)-1;
+
+    NumericVector A = NumericVector::create(X(p1,0), X(p1,1), X(p1,2));
+    NumericVector B = NumericVector::create(X(p2,0), X(p2,1), X(p2,2));
+    NumericVector C = NumericVector::create(X(p3,0), X(p3,1), X(p3,2));
+
+    NumericVector u = A - B;
+    NumericVector v = A - C;
+    NumericVector w = B - C;
+
+    NumericVector n = NumericVector::create(u(1)*v(2)-u(2)*v(1), u(2)*v(0)-u(0)*v(2), u(0)*v(1)-u(1)*v(0));
+    n.push_back(sum(-n*C));
+
+    N(j,0) = n(0);
+    N(j,1) = n(1);
+    N(j,2) = n(2);
+    N(j,3) = n(3);
+
+    if(edge_size)
+    {
+      u.erase(2);
+      v.erase(2);
+      w.erase(2);
+      NumericVector e = NumericVector::create(sqrt(sum(pow(u, 2))), sqrt(sum(pow(v, 2))), sqrt(sum(pow(w, 2))));
+      N(j,4) = max(e);
+    }
+  }
+
+  return N;
+}
+
 IntegerMatrix which_equal(IntegerMatrix mtx, double val)
 {
   int l = mtx.nrow();

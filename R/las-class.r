@@ -102,7 +102,7 @@ setMethod("initialize", "LAS",
 
 	  # Check if the data are valid. Else: warning -------------------------------
 
-	  lascheck(data)
+	  lascheck(data, header, hard = F)
 
 	  # Update header ------------------------------------------------------------
 

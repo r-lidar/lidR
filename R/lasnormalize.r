@@ -31,68 +31,77 @@
 #'
 #' Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
 #' normalized with the ground at 0. The digital terrain model can originate from
-#' several sources e.g. from an external file or computed by the user. It can also be computed on the
-#' fly.
+#' several sources e.g. from an external file or computed by the user. It can also be computed
+#' on the fly. In this case the algorithm does not use rasterized data and each point is
+#' interpolated. There is no innacuracy due to the discretization of the terrain (but
+#' slower).
 #'
 #' @param .las a LAS objet
-#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 #' \link[lidR:grid_terrain]{grid_terrain}.
-#' @return A LAS object.
+#' @param method character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
+#' \code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details)
+#' @param k numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
+#' method is either \code{"knnidw"} or \code{"kriging"}
+#' @param model Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
+#' when the selected method is \code{"kriging"}. If null it performs an ordinary or weighted least
+#' squares prediction.
+#' @return A \code{LAS} object
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' las = readLAS(LASfile)
 #'
-#' plot(lidar)
+#' plot(las)
 #'
-#' # --- First option: compute the DTM with grid_terrain -----
+#' # --- First option: compute a raster DTM with grid_terrain -----
+#' # (or read it from a file)
 #'
-#' dtm = grid_terrain(lidar, method = "delaunay")
-#' lidar_norm = lasnormalize(lidar, dtm)
+#' dtm = grid_terrain(las, method = "kriging", k = 10L)
+#' nlas = lasnormalize(las, dtm)
 #' plot(dtm)
-#' plot(lidar_norm)
+#' plot(nlas)
 #'
-#' \dontrun{
-#' # --- Second option: read the DTM from a file -----
+#' # --- Second option: interpol each point (no discretization) -----
 #'
-#' dtm = raster::raster(terrain.tiff)
-#' lidar_norm = lidar - dtm
-#' plot(lidar_norm)
-#' }
+#' nlas = lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+#' plot(nlas)
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm)
+lasnormalize = function(.las, dtm = NULL, method = "none", k = 10L, model = gstat::vgm(.59, "Sph", 874))
 {
-  . <- Z <- Zn <- X <- Y <- NULL
+  . <- Z <- Zn <- X <- Y <- Classification <- NULL
 
   stopifnotlas(.las)
 
-  if(is(dtm, "lasmetrics"))
-  {
-    dtm = as.raster(dtm)
-    return(lasnormalize(.las, dtm))
-  }
-  else if(is(dtm, "RasterLayer"))
+  if(is.null(dtm))
   {
     normalized = LAS(data.table::copy(.las@data), .las@header)
-
-    lasclassify(normalized, dtm, "Zn")
-
-    isna = is.na(normalized@data$Zn)
-
-  	if(sum(isna) > 0)
-	    warning(paste0(sum(isna), " points with NA elevation points found and removed."), call. = F)
-
-    normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
-    normalized = lasfilter(normalized, !isna)
-
-    gc()
-
-    return(normalized)
+    Zground = interpolate(.las@data[Classification == 2, .(X,Y,Z)], .las@data[, .(X,Y)], method = method, k = k, model = model)
+    normalized@data[, Zn := Zground][]
+    isna = is.na(Zground)
   }
   else
-    stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
+  {
+    if(is(dtm, "lasmetrics"))
+      dtm = as.raster(dtm)
+
+    if(!is(dtm, "RasterLayer"))
+      stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
+
+    normalized = LAS(data.table::copy(.las@data), .las@header)
+    lasclassify(normalized, dtm, "Zn")
+    isna = is.na(normalized@data$Zn)
+  }
+
+  if(sum(isna) > 0)
+    warning(paste0(sum(isna), " points outside of the convex hull were removed."), call. = F)
+
+  normalized@data[, Z := round(Z - Zn, 3)][, Zn := NULL][]
+  normalized = lasfilter(normalized, !isna)
+
+  return(normalized)
 }
 
 #' Convenient operator to lasnormalize

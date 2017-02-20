@@ -4,7 +4,7 @@
 \alias{LAD}
 \title{Leaf area density}
 \usage{
-LAD(z, dz = 1, k = 0.5)
+LAD(z, dz = 1, k = 0.5, z0 = 2)
 }
 \arguments{
 \item{z}{vector of positive z coordinates}
@@ -12,6 +12,8 @@ LAD(z, dz = 1, k = 0.5)
 \item{dz}{numeric. The thickness of the layers used (height bin)}
 
 \item{k}{numeric. is the extinction coefficient}
+
+\item{z0}{numeric. The bottom limit of the profile}
 }
 \value{
 A data.frame containing the bin elevations (z) and leaf area density for each bin (lad)

@@ -1,27 +1,39 @@
-### lidR v1.2.0 (in develpment)
+### lidR v1.2.0 (in development)
+
+#### NEW FEATURES
+
+* new function `grid_tincanopy`. Canopy height model using Khosravipour et al. pitfree algorithm.
+* `lasnormalize` allows for "non-discretized" normalization i.e interpolating each points instead of using a raster.
+* new function `grid_hexametrics`. Area based approach in hexagonal cells.
+* internally `lascheck` perform more tests to check if the header is in accordance with the data.
+
+#### BUG FIXES
+
+* [#48](https://github.com/Jean-Romain/lidR/pull/48) `gap_fraction_profile()` bug with negative values (thanks to Florian de Boissieu)
+
 
 ### lidR v1.1.0 (Release date: 2017-02-05)
 
-#### NEW
+#### NEW FEATURES
 
 * `lastree()` for individual tree segmentation
 * `readLAS()` gains a parameter `filter` from `rlas (>= 1.1.0)`
-* `catalog_queries()` relies on `rlas (>= 1.1.0)`. It saves a lot of memory, it is twice to six times faster and support .lax files.
+* `catalog_queries()` relies on `rlas (>= 1.1.0)`. It saves a lot of memory, it is 2 to 6 times faster and supports .lax files.
 
-#### CHANGE
+#### OTHER CHANGES
 
-* `colorPalette` parameter in `plot.LAS()` expect now a list of colors instead of a function. Use `height.colors(50)` instead of `height.colors`
+* `colorPalette` parameter in `plot.LAS()` now expects a list of colors instead of a function. Use `height.colors(50)` instead of `height.colors`
 * The header of a LAS object is now an S4 class called `LASheader`
 * The spatial interpolation method called `akima` is now called `delaunay` because it corresponds to what is actually computed.
-* The spatial interpolation method called `akima` loosed its parameter `linear`.
-* The spatial interpolation method called `kriging` perform now a KNN kriging.
+* The spatial interpolation method called `akima` lost its parameter `linear`.
+* The spatial interpolation method called `kriging` now performs a KNN kriging.
 * `catalog_queries()` lost the parameter `...` all the fields are loaded by default.
 * Removed `lasterrain()` which was not consistent with other functions and not useful.
 
-#### FIXE
+#### BUG FIXES
 
 * The header of LAS objects automatically updates `Number of point records` and `Number of nth return`.
-* `lasnormalize()` updates the header and return warnings for some behaviors
+* `lasnormalize()` updates the header and returns warnings for some behaviors
 * [#39](https://github.com/Jean-Romain/lidR/issues/39) - interpolation with duplicated ground points
 
 
