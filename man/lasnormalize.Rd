@@ -4,43 +4,54 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm)
+lasnormalize(.las, dtm = NULL, method = "none", k = 10L,
+  model = gstat::vgm(0.59, "Sph", 874))
 }
 \arguments{
 \item{.las}{a LAS objet}
 
-\item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object.
+\item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 \link[lidR:grid_terrain]{grid_terrain}.}
+
+\item{method}{character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
+\code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details)}
+
+\item{k}{numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
+method is either \code{"knnidw"} or \code{"kriging"}}
+
+\item{model}{Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
+when the selected method is \code{"kriging"}. If null it performs an ordinary or weighted least
+squares prediction.}
 }
 \value{
-A LAS object.
+A \code{LAS} object
 }
 \description{
 Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
 normalized with the ground at 0. The digital terrain model can originate from
-several sources e.g. from an external file or computed by the user. It can also be computed on the
-fly.
+several sources e.g. from an external file or computed by the user. It can also be computed
+on the fly. In this case the algorithm does not use rasterized data and each point is
+interpolated. There is no innacuracy due to the discretization of the terrain (but
+slower).
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
 
-plot(lidar)
+plot(las)
 
-# --- First option: compute the DTM with grid_terrain -----
+# --- First option: compute a raster DTM with grid_terrain -----
+# (or read it from a file)
 
-dtm = grid_terrain(lidar, method = "delaunay")
-lidar_norm = lasnormalize(lidar, dtm)
+dtm = grid_terrain(las, method = "kriging", k = 10L)
+nlas = lasnormalize(las, dtm)
 plot(dtm)
-plot(lidar_norm)
+plot(nlas)
 
-\dontrun{
-# --- Second option: read the DTM from a file -----
+# --- Second option: interpol each point (no discretization) -----
 
-dtm = raster::raster(terrain.tiff)
-lidar_norm = lidar - dtm
-plot(lidar_norm)
-}
+nlas = lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+plot(nlas)
 }
 \seealso{
 \link[raster:raster]{raster}

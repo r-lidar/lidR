@@ -20,7 +20,7 @@ grid_terrain(.las, res = 1, method, k = 10L, model = gstat::vgm(0.59,
 If null it performs an ordinary or weighted least squares prediction.}
 }
 \value{
-A \code{RasterLayer} from package raster
+A \code{lasmetrics} data.table.
 }
 \description{
 Interpolate ground points and create a rasterized digital terrain model. The interpolation

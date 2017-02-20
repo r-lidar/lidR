@@ -12,17 +12,17 @@ grid_canopy(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
 
-\item{subcircle}{numeric radius of the circles. To get less empty pixels the algorithm
-can replaces each return by a circle composed of 8 points before computing the maximum elevation
+\item{subcircle}{numeric radius of the circles. To obtain fewer empty pixels the algorithm
+can replace each return with a circle composed of 8 points before computing the maximum elevation
 in each pixel.}
 
-\item{na.fill}{character. name of an algorithm used to interpolate the data an fill the empty pixels.
+\item{na.fill}{character. name of the algorithm used to interpolate the data and fill the empty pixels.
 Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
 
 \item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
 }
 \value{
-It returns a \code{data.table} with the class \code{lasmetrics} which enables easier plotting and
+It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 RasterLayer casting.
 }
 \description{
@@ -32,10 +32,10 @@ each LiDAR return with a small disk. An interpolation for empty pixels is also a
 }
 \details{
 The algorithm relies on the 'local maximum'. For each pixel the function returns the highest
-point found. This method implies that the resulting surface model can contains empty pixels.
-Those 'holes' can be filled by interpolation. The interpolation is internally based on the
-same functions than in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
-documentation of \link[lidR:grid_terrain]{grid_terrain} is applicable to this function too.
+point found. This method implies that the resulting surface model can contain empty pixels.
+Those 'holes' can be filled by interpolation. Internally, the interpolation is based on the same method
+used in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
+documentation for \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.
 (see also examples)
 }
 \examples{
@@ -45,14 +45,14 @@ lidar = readLAS(LASfile)
 # Local maximum algorithm with a resolution of 2 meters
 lidar \%>\% grid_canopy(2) \%>\% plot
 
-# Local maximum algorithm with a resolution of 1 meters replacing each
+# Local maximum algorithm with a resolution of 1 meter replacing each
 # point by a 20 cm radius circle of 8 points
 lidar \%>\% grid_canopy(1, 0.2) \%>\% plot
 
-# Local maximum algorithm with a resolution of 1 meters replacing each
+# Local maximum algorithm with a resolution of 1 meter replacing each
 # point by a 10 cm radius circle of 8 points and interpolating the empty
-# pixels using the 3-nearest neighbor and an inverted distance wighning.
-grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3) \%>\% plot
+# pixels using the 3-nearest neighbours and an inverse-distance weighting.
+grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3) \%>\% plot
 
 \dontrun{
 grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) \%>\% plot

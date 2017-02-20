@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^.*\.o$
 ^LICENSE\.txt$
+^Contributing\.md$
 ^laslib_cpp_to_Rcpp\.sh$
 ^\.travis\.yml$
 ^cran-comments\.md$

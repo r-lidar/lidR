@@ -54,7 +54,7 @@
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
 #' If null it performs an ordinary or weighted least squares prediction.
-#' @return A \code{RasterLayer} from package raster
+#' @return A \code{lasmetrics} data.table.
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -93,21 +93,6 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
   ground  = ground@data[, .(X,Y,Z)]
-
-  # test integrity of the data
-  dup_xyz  = duplicated(ground, by = c("X", "Y", "Z"))
-  dup_xy   = duplicated(ground, by = c("X", "Y"))
-  ndup_xyz = sum(dup_xyz)
-  ndup_xy  = sum(dup_xy & !dup_xyz)
-
-  if(ndup_xyz > 0)
-    warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
-
-  if(ndup_xy > 0)
-    warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
-
-  if(ndup_xy > 0 | ndup_xyz > 0)
-    ground = ground[, .(Z = min(Z)), by = .(X,Y)]
 
   ext  = extent(.las)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
