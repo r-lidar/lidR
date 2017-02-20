@@ -443,7 +443,7 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
       ipcumzq10 = sum(i[z <= zq[1]])/itot*100,
       ipcumzq30 = sum(i[z <= zq[2]])/itot*100,
       ipcumzq50 = sum(i[z <= zq[3]])/itot*100,
-      ipcumzq70 = sum(i[z <= zq[3]])/itot*100,
+      ipcumzq70 = sum(i[z <= zq[4]])/itot*100,
       ipcumzq90 = sum(i[z <= zq[5]])/itot*100
     )
 
