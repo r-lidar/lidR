@@ -10,7 +10,10 @@
 
 #### BUG FIXES
 
-* [#48](https://github.com/Jean-Romain/lidR/pull/48) `gap_fraction_profile()` bug with negative values (thanks to Florian de Boissieu)
+* [[#48](https://github.com/Jean-Romain/lidR/pull/48)] `gap_fraction_profile()` bug with negative values (thanks to Florian de Boissieu)
+* [[#49](https://github.com/Jean-Romain/lidR/pull/49)]] typo error leading to the wrong metric in  `stdmetric_i` 
+* [[#50](https://github.com/Jean-Romain/lidR/pull/50)]] typo error leading to the wrong metric in  `stdmetric` 
+
 
 
 ### lidR v1.1.0 (Release date: 2017-02-05)
@@ -35,7 +38,7 @@
 
 * The header of LAS objects automatically updates `Number of point records` and `Number of nth return`.
 * `lasnormalize()` updates the header and returns warnings for some behaviors
-* [#39](https://github.com/Jean-Romain/lidR/issues/39) - interpolation with duplicated ground points
+* [[#39](https://github.com/Jean-Romain/lidR/issues/39)] interpolation with duplicated ground points
 
 
 ### lidR v1.0.2 (Release date: 2016-12-31)
