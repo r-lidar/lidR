@@ -4,8 +4,8 @@
 
 * new function `lasground` for ground segmentation.
 * new function `grid_tincanopy`. Canopy height model using Khosravipour et al. pitfree algorithm.
-* `lasnormalize` allows for "non-discretized" normalization i.e interpolating each points instead of using a raster.
 * new function `grid_hexametrics`. Area based approach in hexagonal cells.
+* `lasnormalize` allows for "non-discretized" normalization i.e interpolating each points instead of using a raster.
 * internally `lascheck` perform more tests to check if the header is in accordance with the data.
 
 #### BUG FIXES

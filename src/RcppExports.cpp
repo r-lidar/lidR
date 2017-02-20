@@ -110,14 +110,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // MorphologicalOpening
-NumericVector MorphologicalOpening(DataFrame cloud_in, double resolution);
-RcppExport SEXP lidR_MorphologicalOpening(SEXP cloud_inSEXP, SEXP resolutionSEXP) {
+NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution);
+RcppExport SEXP lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type cloud_in(cloud_inSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
-    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(cloud_in, resolution));
+    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(X, Y, Z, resolution));
     return rcpp_result_gen;
 END_RCPP
 }

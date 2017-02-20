@@ -33,8 +33,8 @@ get_normales <- function(M, X, size, edge_size = FALSE) {
     .Call('lidR_get_normales', PACKAGE = 'lidR', M, X, size, edge_size)
 }
 
-MorphologicalOpening <- function(cloud_in, resolution) {
-    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', cloud_in, resolution)
+MorphologicalOpening <- function(X, Y, Z, resolution) {
+    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', X, Y, Z, resolution)
 }
 
 point_in_polygon <- function(vertx, verty, pointx, pointy) {

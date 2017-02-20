@@ -15,7 +15,7 @@ struct Point
 
 struct BoundingBox
 {
-	Point center, halfDim;
+	Point center, half_res;
 
 	BoundingBox();
 	BoundingBox(const Point,const Point);
@@ -39,10 +39,10 @@ class QuadTree
 		int depth;
 		BoundingBox boundary;
 		std::vector<Point> points;
-		QuadTree* nE;
-		QuadTree* nW;
-		QuadTree* sE;
-		QuadTree* sW;
+		QuadTree* NE;
+		QuadTree* NW;
+		QuadTree* SE;
+		QuadTree* SW;
 
 		QuadTree(const BoundingBox, const int);
 

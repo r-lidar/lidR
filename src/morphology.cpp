@@ -4,12 +4,8 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector MorphologicalOpening(DataFrame cloud_in, double resolution)
+NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution)
 {
-  NumericVector X = cloud_in["X"];
-  NumericVector Y = cloud_in["Y"];
-  NumericVector Z = cloud_in["Z"];
-
   NumericVector Z_temp = clone(Z);
   NumericVector Z_out  = clone(Z);
 
