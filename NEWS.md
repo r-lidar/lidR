@@ -11,8 +11,9 @@
 #### BUG FIXES
 
 * [[#48](https://github.com/Jean-Romain/lidR/pull/48)] `gap_fraction_profile()` bug with negative values (thanks to Florian de Boissieu)
-* [[#49](https://github.com/Jean-Romain/lidR/pull/49)]] typo error leading to the wrong metric in  `stdmetric_i` 
-* [[#50](https://github.com/Jean-Romain/lidR/pull/50)]] typo error leading to the wrong metric in  `stdmetric` 
+* [[#49](https://github.com/Jean-Romain/lidR/pull/49)] typo error leading to the wrong metric in  `stdmetric_i` 
+* [[#50](https://github.com/Jean-Romain/lidR/pull/50)] typo error leading to the wrong metric in  `stdmetric` 
+* Fix bug in `stdmetric_z` when `max(Z) = 0`
 
 
 
