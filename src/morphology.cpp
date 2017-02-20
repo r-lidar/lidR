@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include <limits>
 #include "QuadTree.h"
 
 using namespace Rcpp;
@@ -6,34 +7,17 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution)
 {
-  NumericVector Z_temp = clone(Z);
-  NumericVector Z_out  = clone(Z);
-
   int n = X.length();
   double half_res = resolution / 2;
 
-  double xmin = min(X);
-  double xmax = max(X);
-  double ymin = min(Y);
-  double ymax = max(Y);
-  double xrange = xmax - xmin;
-  double yrange = ymax - ymin;
-  double range = xrange > yrange ? xrange/2 : yrange/2;
+  NumericVector Z_temp = clone(Z);
+  NumericVector Z_out  = clone(Z);
 
-  QuadTree tree( (xmin+xmax)/2, (ymin+ymax)/2, range);
-
-  for(int i = 0 ; i < n ; i++)
-	{
-		Point p(X[i], Y[i], i);
-		tree.insert(p);
-  }
+  QuadTree tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
   // Dilate
   for (int i = 0 ; i < n ; i++)
   {
-    Point center(X[i], Y[i]);
-    Point hlfdim(half_res, half_res);
-
     std::vector<Point*> pts;
     tree.rect_lookup(X[i], Y[i], half_res, pts);
 
@@ -55,9 +39,6 @@ NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVect
   // erode
   for (int i = 0 ; i < n ; i++)
   {
-    Point center(X[i], Y[i]);
-    Point hlfdim(half_res, half_res);
-
     std::vector<Point*> pts;
     tree.rect_lookup(X[i], Y[i], half_res, pts);
 
