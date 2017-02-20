@@ -30,8 +30,8 @@ class QuadTree
 		static int nChildren;
 		QuadTree(const double, const double, const double);
 		bool insert(const Point&);
-		void querySquare(const double, const double, const double, std::vector<Point*>&);
-		void queryCircle(const double, const double, const double, std::vector<Point*>&);
+		void rect_lookup(const double, const double, const double, std::vector<Point*>&);
+		void circle_lookup(const double, const double, const double, std::vector<Point*>&);
 
 
 	private:
@@ -47,7 +47,7 @@ class QuadTree
 		QuadTree(const BoundingBox, const int);
 
 		void subdivide();
-		void queryRange(const BoundingBox, std::vector<Point*>&, const int);
+		void range_lookup(const BoundingBox, std::vector<Point*>&, const int);
 		void getPointsSquare(const BoundingBox, std::vector<Point>&, std::vector<Point*>&);
 		void getPointsCircle(const BoundingBox, std::vector<Point>&, std::vector<Point*>&);
 		bool in_circle(const Point&, const Point&, const double);

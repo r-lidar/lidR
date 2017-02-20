@@ -39,7 +39,7 @@ NumericVector MorphologicalOpening(DataFrame cloud_in, double resolution)
     Point hlfdim(half_res, half_res);
 
     std::vector<Point*> pts;
-    tree.querySquare(X[i], Y[i], half_res, pts);
+    tree.rect_lookup(X[i], Y[i], half_res, pts);
 
     double min_pt(std::numeric_limits<double>::max());
 
@@ -63,7 +63,7 @@ NumericVector MorphologicalOpening(DataFrame cloud_in, double resolution)
     Point hlfdim(half_res, half_res);
 
     std::vector<Point*> pts;
-    tree.querySquare(X[i], Y[i], half_res, pts);
+    tree.rect_lookup(X[i], Y[i], half_res, pts);
 
     double max_pt(std::numeric_limits<double>::min());
 

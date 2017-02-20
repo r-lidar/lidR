@@ -32,7 +32,7 @@
 #' The function updates the field \code{Classification} of the input LAS obect. The points
 #' classified as 'ground' get the value 2 according to las specifications (See the ASPRS
 #' documentation for the
-#' \href{http:#www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
+#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 #' This function is an implementation of Zhang et al. (2003) algorithm (see reference)
 #'
 #' @param .las a LAS object
@@ -57,7 +57,7 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile, XYZonly = TRUE)
 #'
-#' lasground(las, MaxWinSize = 40, Slope = 3, MaxDist = 4, InitDist = 0.01, CellSize = 8)
+#' lasground(las, MaxWinSize = 40, Slope = 1, MaxDist = 5, InitDist = 0.01, CellSize = 7)
 #'
 #' plot(las, color = "Classification")
 #' }

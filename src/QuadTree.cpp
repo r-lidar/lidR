@@ -120,7 +120,7 @@ void QuadTree::subdivide()
 	sW = new QuadTree(BoundingBox(pSW, p), depth);
 }
 
-void QuadTree::queryRange(const BoundingBox bb, std::vector<Point*>& res, const int method)
+void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, const int method)
 {
 	if(!boundary.intersects(bb))
 		return;
@@ -142,23 +142,23 @@ void QuadTree::queryRange(const BoundingBox bb, std::vector<Point*>& res, const 
 	if(nW == 0)
 		return;
 
-	nE->queryRange(bb, res, method);
-	nW->queryRange(bb, res, method);
-	sE->queryRange(bb, res, method);
-	sW->queryRange(bb, res, method);
+	nE->range_lookup(bb, res, method);
+	nW->range_lookup(bb, res, method);
+	sE->range_lookup(bb, res, method);
+	sW->range_lookup(bb, res, method);
 
 	return;
 }
 
-void QuadTree::querySquare(const double cx, const double cy, const double range, std::vector<Point*>& res)
+void QuadTree::rect_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
 {
-	queryRange(BoundingBox(Point(cx, cy), Point(range, range)), res, 1);
+	range_lookup(BoundingBox(Point(cx, cy), Point(range, range)), res, 1);
 	return;
 }
 
-void QuadTree::queryCircle(const double cx, const double cy, const double range, std::vector<Point*>& res)
+void QuadTree::circle_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
 {
-	queryRange(BoundingBox(Point(cx, cy), Point(range, range)), res, 2);
+	range_lookup(BoundingBox(Point(cx, cy), Point(range, range)), res, 2);
 	return;
 }
 
