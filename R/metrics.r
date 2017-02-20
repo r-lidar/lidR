@@ -381,10 +381,17 @@ stdmetrics_z = function(z, dz = 1)
   zq 	  = as.list(stats::quantile(z, probs))
   names(zq) = paste("zq", probs*100, sep="")
 
-  d = graphics::hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
-  d = d$counts / sum(d$counts)*100
-  d = cumsum(d)[1:9]
-  d = as.list(d)
+  if(zmax <= 0)
+  {
+    d = rep(0, 9)
+  }
+  else
+  {
+    d = graphics::hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
+    d = d$counts / sum(d$counts)*100
+    d = cumsum(d)[1:9]
+    d = as.list(d)
+  }
   names(d) = paste0("zpcum", 1:9)
 
   metrics = list(
