@@ -26,8 +26,6 @@ struct BoundingBox
 class QuadTree
 {
 	public:
-		static int nMain;
-		static int nChildren;
 		QuadTree(const double, const double, const double);
 		static QuadTree create(const std::vector<double>, const std::vector<double>);
 		bool insert(const Point&);
