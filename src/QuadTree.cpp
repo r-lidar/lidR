@@ -2,9 +2,6 @@
 #include <cmath>
 #include <limits>
 
-int QuadTree::nMain = 0;
-int QuadTree::nChildren = 0;
-
 Point::Point(){}
 Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
 Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id) {}
