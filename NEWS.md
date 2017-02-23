@@ -15,6 +15,9 @@
 * [[#50](https://github.com/Jean-Romain/lidR/pull/50)] typo error leading to the wrong metric in  `stdmetric` 
 * Fix bug in `stdmetric_z` when `max(Z) = 0`
 
+#### OTHER CHANGES
+
+* Slightly faster point classification from shapefiles.
 
 
 ### lidR v1.1.0 (Release date: 2017-02-05)
