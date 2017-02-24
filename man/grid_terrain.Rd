@@ -5,7 +5,7 @@
 \title{Digital Terrain Model}
 \usage{
 grid_terrain(.las, res = 1, method, k = 10L, model = gstat::vgm(0.59,
-  "Sph", 874))
+  "Sph", 874), keep_lowest = FALSE)
 }
 \arguments{
 \item{.las}{LAS objet}
@@ -16,8 +16,11 @@ grid_terrain(.las, res = 1, method, k = 10L, model = gstat::vgm(0.59,
 
 \item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
 
-\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method is \code{"kriging"}.
-If null it performs an ordinary or weighted least squares prediction.}
+\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
+is \code{"kriging"}. If null it performs an ordinary or weighted least squares prediction.}
+
+\item{keep_lowest}{logical. The function forces the original lowest ground point of each
+pixel (if it exists) to be chosen instead of the interpolated values.}
 }
 \value{
 A \code{lasmetrics} data.table.
@@ -26,8 +29,6 @@ A \code{lasmetrics} data.table.
 Interpolate ground points and create a rasterized digital terrain model. The interpolation
 can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
 details). The algorithm uses the points classified as "ground" to compute the interpolation.
-The function forces the original lowest ground point of each pixel (if it exists) to be
-chosen instead of the interpolated values.
 }
 \details{
 \describe{

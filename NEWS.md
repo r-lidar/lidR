@@ -18,6 +18,7 @@
 #### OTHER CHANGES
 
 * Slightly faster point classification from shapefiles.
+* [[#51](https://github.com/Jean-Romain/lidR/pull/51)] in `grid_terrain`, forcing the lowest point to be retained is now an option `keep_lowest = FALSE`
 
 
 ### lidR v1.1.0 (Release date: 2017-02-05)
