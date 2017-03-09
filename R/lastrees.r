@@ -186,6 +186,8 @@ li2012 = function(.las, dt1 = 1.5, dt2 = 2, R = 10)
   id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, c(dt1, dt2), R = R)
 
   .las@data[, treeID := id]
+
+  return(invisible())
 }
 
 watershed = function(.las, image, extra, th = 2, tolerance = 1, ext = 1)
