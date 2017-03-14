@@ -71,10 +71,9 @@ lasfilter_ <- function(.las, conditions)
 
   if(sum(combined_bools) == 0)
   {
-		err = paste(conditions) %>% paste(collapse=" & ")
-		lidRError("GET1", expression = err, behaviour = warning)
-
-		return(NULL)
+    err = paste(conditions) %>% paste(collapse=" & ")
+    lidRError("GET1", expression = err, behaviour = warning)
+    return(NULL)
   }
 
   return(LAS(.las@data[combined_bools], .las@header))
@@ -120,7 +119,6 @@ lasfilterfirst = function(.las)
 lasfilterfirstlast = function(.las)
 {
   ReturnNumber <- NumberOfReturns <- NULL
-
   return(lasfilter(.las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
 }
 
@@ -130,7 +128,6 @@ lasfilterfirstlast = function(.las)
 lasfilterfirstofmany = function(.las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-
   return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
 }
 
@@ -140,7 +137,6 @@ lasfilterfirstofmany = function(.las)
 lasfilterground = function(.las)
 {
   Classification <- NULL
-
   return(lasfilter(.las, Classification == 2))
 }
 
@@ -150,7 +146,6 @@ lasfilterground = function(.las)
 lasfilterlast = function(.las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-
   return(lasfilter(.las, ReturnNumber == NumberOfReturns))
 }
 
@@ -160,7 +155,6 @@ lasfilterlast = function(.las)
 lasfilternth = function(.las, n)
 {
   ReturnNumber <- NULL
-
   return(lasfilter(.las, ReturnNumber == n))
 }
 
@@ -170,7 +164,6 @@ lasfilternth = function(.las, n)
 lasfiltersingle = function(.las)
 {
   NumberOfReturns <- NULL
-
   return(lasfilter(.las, NumberOfReturns == 1))
 }
 
@@ -180,7 +173,6 @@ lasfiltersingle = function(.las)
 lasfilterfirstofmany = function(.las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-
   return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
 }
 

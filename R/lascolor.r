@@ -46,9 +46,7 @@ lascolor = function(.las, nbits = 16)
   stopifnotlas(.las)
 
   if(sum(c("R", "G", "B") %in% names(.las@data)) == 3)
-	{
-	  .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
-  }
+    .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
   else
     lidRError("LDR4", infield = "RGB", outfield = "color", behaviour = warning)
 
