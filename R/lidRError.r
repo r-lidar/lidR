@@ -52,6 +52,7 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
 "LDR9" = list("'data' is empty. No point found"),
 "LDR10" = list("Dataset is invalid: ", p$number, " points with a return number of 0 found."),
+"LDR11" = list("'", p$what, "' was missing in the header. The value ", p$num, " was automatically attributed"),
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
