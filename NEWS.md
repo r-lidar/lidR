@@ -14,6 +14,8 @@
 * [[#49](https://github.com/Jean-Romain/lidR/pull/49)] typo error leading to the wrong metric in  `stdmetric_i` 
 * [[#50](https://github.com/Jean-Romain/lidR/pull/50)] typo error leading to the wrong metric in  `stdmetric` 
 * Fix bug in `stdmetric_z` when `max(Z) = 0`
+* [[#54](https://github.com/Jean-Romain/lidR/pull/54)] better recomputation of the header of LAS objects.
+
 
 #### OTHER CHANGES
 
