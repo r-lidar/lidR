@@ -109,9 +109,7 @@ lasnormalize = function(.las, dtm = NULL, method = "none", k = 10L, model = gsta
 #' @param e1 a LAS object
 #' @param e2 a RasterLayer
 #' @export
-setMethod("-", c("LAS", "RasterLayer"),
-  function(e1, e2)
-  {
-      return(lasnormalize(e1,e2))
-  }
-)
+setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
+{
+  return(lasnormalize(e1,e2))
+})

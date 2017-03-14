@@ -78,62 +78,135 @@
 #' @exportClass LAS
 #' @useDynLib lidR
 setClass(
-	Class = "LAS",
-	representation(
-		data 	 = "data.table",
-		header = "LASheader"
-	)
+  Class = "LAS",
+  representation(
+    data 	 = "data.table",
+    header = "LASheader"
+  )
 )
 
-setMethod("initialize", "LAS",
-	function(.Object, data, header, check)
-	{
-	  if(is.data.frame(data))
-	    data.table::setDT(data)
+setMethod("initialize", "LAS", function(.Object, data, header, check)
+{
+  if(is.data.frame(data))
+    data.table::setDT(data)
 
-	  if(!is.data.table(data))
-	    lidRError("LDR1")
+  if(!is.data.table(data))
+    lidRError("LDR1")
 
-	  if(nrow(data) == 0)
-	    lidRError("LDR9")
+  if(nrow(data) == 0)
+    lidRError("LDR9")
 
-	  if(!is(header, "LASheader"))
-	    header = LASheader(header)
+  if(!is(header, "LASheader"))
+    header = LASheader(header)
 
-	  # Check if the data are valid. Else: warning -------------------------------
+  # Check if the data are valid. Else: warning -------------------------------
 
-	  if(check)
-	    lascheck(data, header, hard = F)
+  if(check)
+    lascheck(data, header, hard = F)
 
-	  # Update header ------------------------------------------------------------
+  # Update header ------------------------------------------------------------
 
-	  if("ReturnNumber" %in% names(data))
-	  {
-	    number_of <- fast_table(data$ReturnNumber, 5L)
+  if("ReturnNumber" %in% names(data))
+  {
+    number_of <- fast_table(data$ReturnNumber, 5L)
 
-	    header@data["Number of 1st return"] <- number_of[1]
-	    header@data["Number of 2nd return"] <- number_of[2]
-	    header@data["Number of 3rd return"] <- number_of[3]
-	    header@data["Number of 4th return"] <- number_of[4]
-	    header@data["Number of 5th return"] <- number_of[5]
-	  }
+    header@data["Number of 1st return"] <- number_of[1]
+    header@data["Number of 2nd return"] <- number_of[2]
+    header@data["Number of 3rd return"] <- number_of[3]
+    header@data["Number of 4th return"] <- number_of[4]
+    header@data["Number of 5th return"] <- number_of[5]
+  }
 
-	  header@data["Number of point records"] <- dim(data)[1]
-	  header@data["Min X"] <- min(data$X)
-	  header@data["Min Y"] <- min(data$Y)
-	  header@data["Min Z"] <- min(data$Z)
-	  header@data["Max X"] <- max(data$X)
-	  header@data["Max Y"] <- max(data$Y)
-	  header@data["Max Z"] <- max(data$Z)
+  header@data["Number of point records"] <- dim(data)[1]
+  header@data["Min X"] <- min(data$X)
+  header@data["Min Y"] <- min(data$Y)
+  header@data["Min Z"] <- min(data$Z)
+  header@data["Max X"] <- max(data$X)
+  header@data["Max Y"] <- max(data$Y)
+  header@data["Max Z"] <- max(data$Z)
 
-	  # Build returned object  ---------------------------------------------------
+  header@data["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
+  header@data["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
 
-	  .Object@data   <- data
-	  .Object@header <- header
+  if("gpstime" %in% names(data)) # format 1 or 3
+  {
+    if(any(c("R", "G", "B") %in% names(data)))
+    {
+      header@data["Point Data Format ID"] = 3
+      header@data["Point Data Record Length"] = 34
+    }
+    else
+    {
+      header@data["Point Data Format ID"] = 1
+      header@data["Point Data Record Length"] = 28
+    }
+  }
+  else # format 0 or 2
+  {
+    if(any(c("R", "G", "B") %in% names(data)))
+    {
+      header@data["Point Data Format ID"] = 2
+      header@data["Point Data Record Length"] = 26
+    }
+    else
+    {
+      header@data["Point Data Format ID"] = 0
+      header@data["Point Data Record Length"] = 20
+    }
+  }
 
-	  return(.Object)
-	}
-)
+  if(is.null(header@data[["Version Major"]]))
+    header@data["Version Major"] = 1
+
+  if(is.null(header@data[["Version Minor"]]))
+    header@data["Version Minor"] = 2
+
+  if(is.null(header@data[["X offset"]]))
+  {
+    header@data["X offset"] = header@data[["Min X"]]
+    lidRError("LDR11", what = "X offset", num = round(header@data[["Min X"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@data[["Y offset"]]))
+  {
+    header@data["Y offset"] = header@data[["Min Y"]]
+    lidRError("LDR11", what = "Y offset", num = round(header@data[["Min Y"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@data[["Z offset"]]))
+  {
+    header@data["Z offset"] = header@data[["Min Z"]]
+    lidRError("LDR11", what = "Z offset", num = round(header@data[["Min Z"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@data[["X scale factor"]]))
+  {
+    header@data["X scale factor"] = 0.01
+    lidRError("LDR11", what = "X scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@data[["Y scale factor"]]))
+  {
+    header@data["Y scale factor"] = 0.01
+    lidRError("LDR11", what = "Y scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@data[["Z scale factor"]]))
+  {
+    header@data["Z scale factor"] = 0.01
+    lidRError("LDR11", what = "Z scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@data[["File Source ID"]]))
+    header@data["File Source ID"] = 0
+
+  # Build returned object  ---------------------------------------------------
+
+  .Object@data   <- data
+  .Object@header <- header
+
+  return(.Object)
+})
 
 #' Extract parts of a LAS object
 #'
@@ -160,35 +233,33 @@ setMethod("$", "LAS", function(x, name)
 #' @export LAS
 LAS <- function(data, header = list(), check = TRUE) {return(new("LAS", data, header, check))}
 
-setMethod("show", "LAS",
-  function(object)
-  {
-    size <- format(utils::object.size(object), units = "auto")
+setMethod("show", "LAS", function(object)
+{
+  size <- format(utils::object.size(object), units = "auto")
 
-    if("pulseID" %in% names(object@data))
-      npu = data.table::uniqueN(object@data$pulseID)
-    else
-      npu = NA
+  if("pulseID" %in% names(object@data))
+    npu = data.table::uniqueN(object@data$pulseID)
+  else
+    npu = NA
 
-    s   = lasarea(object)
-    npt = nrow(object@data)
-    dpt = npt/s
-    dpu = npu/s
-    fie = names(object@data)
-    ext = extent(object)
+  s   = lasarea(object)
+  npt = nrow(object@data)
+  dpt = npt/s
+  dpu = npu/s
+  fie = names(object@data)
+  ext = extent(object)
 
-    cat("class        : LAS\n")
-    cat("memory       :", size, "\n")
-    cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
-    cat("area         :", s, "m^2\n")
-    cat("points       :", npt, "points\n")
-    cat("pulses       :", npu , "pulses\n")
-    cat("point density:", round(dpt, 2), "points/m^2\n")
-    cat("pulse density:", round(dpu, 2), "pulses/m^2\n")
-    cat("fields       :", length(fie), "\n")
-    cat("field names  :", fie, "\n\n")
+  cat("class        : LAS\n")
+  cat("memory       :", size, "\n")
+  cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
+  cat("area         :", s, "m^2\n")
+  cat("points       :", npt, "points\n")
+  cat("pulses       :", npu , "pulses\n")
+  cat("point density:", round(dpt, 2), "points/m^2\n")
+  cat("pulse density:", round(dpu, 2), "pulses/m^2\n")
+  cat("fields       :", length(fie), "\n")
+  cat("field names  :", fie, "\n\n")
 
-    print(object@header)
-  }
-)
+  print(object@header)
+})
 
