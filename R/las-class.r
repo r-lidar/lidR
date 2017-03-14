@@ -126,6 +126,81 @@ setMethod("initialize", "LAS",
 	  header@data["Max Y"] <- max(data$Y)
 	  header@data["Max Z"] <- max(data$Z)
 
+	  header@data["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
+	  header@data["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
+
+	  if("gpstime" %in% names(data)) # format 1 or 3
+	  {
+	    if(any(c("R", "G", "B") %in% names(data)))
+	    {
+	      header@data["Point Data Format ID"] = 3
+	      header@data["Point Data Record Length"] = 34
+	    }
+	    else
+	    {
+	      header@data["Point Data Format ID"] = 1
+	      header@data["Point Data Record Length"] = 28
+	    }
+	  }
+	  else # format 0 or 2
+	  {
+	    if(any(c("R", "G", "B") %in% names(data)))
+	    {
+	 	    header@data["Point Data Format ID"] = 2
+	 	    header@data["Point Data Record Length"] = 26
+	    }
+	    else
+	    {
+	      header@data["Point Data Format ID"] = 0
+	      header@data["Point Data Record Length"] = 20
+	    }
+	  }
+
+	  if(is.null(header@data[["Version Major"]]))
+	    header@data["Version Major"] = 1
+
+	  if(is.null(header@data[["Version Minor"]]))
+	    header@data["Version Minor"] = 2
+
+	  if(is.null(header@data[["X offset"]]))
+	  {
+	    header@data["X offset"] = header@data[["Min X"]]
+	    lidRError("LDR11", what = "X offset", num = round(header@data[["Min X"]],2), behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["Y offset"]]))
+	  {
+	    header@data["Y offset"] = header@data[["Min Y"]]
+	    lidRError("LDR11", what = "Y offset", num = round(header@data[["Min Y"]],2), behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["Z offset"]]))
+	  {
+	    header@data["Z offset"] = header@data[["Min Z"]]
+	    lidRError("LDR11", what = "Z offset", num = round(header@data[["Min Z"]],2), behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["X scale factor"]]))
+	  {
+	    header@data["X scale factor"] = 0.01
+	    lidRError("LDR11", what = "X scale factor", num = 0.01, behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["Y scale factor"]]))
+	  {
+	    header@data["Y scale factor"] = 0.01
+	    lidRError("LDR11", what = "Y scale factor", num = 0.01, behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["Z scale factor"]]))
+	  {
+	    header@data["Z scale factor"] = 0.01
+	    lidRError("LDR11", what = "Z scale factor", num = 0.01, behaviour = warning)
+	  }
+
+	  if(is.null(header@data[["File Source ID"]]))
+	    header@data["File Source ID"] = 0
+
 	  # Build returned object  ---------------------------------------------------
 
 	  .Object@data   <- data
