@@ -65,7 +65,7 @@ dummy_las = function(n)
     ReturnNumber    = rep(c(1,1,1,2,3,1,2,1,2,1), n/10),
     NumberOfReturns = rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
 
-  las = LAS(dt)
+  las = suppressWarnings(LAS(dt))
 
   return(las)
 }
