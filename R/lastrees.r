@@ -118,6 +118,7 @@
 #' trees = lasfilter(las, !is.na(treeID))
 #' plot(trees, color = "treeID", colorPalette = random.colors(100))
 #'
+#'\dontrun{
 #' # plot crowns
 #' library(raster)
 #' crown.shp <- rasterToPolygons(extra$Crown, dissolve = TRUE)
@@ -125,6 +126,7 @@
 #' plot(chm, col = height.colors(50))
 #' plot(crown.shp, add = TRUE)
 #' plot(extra$Maxima, col = "black", add = TRUE)
+#' }
 #'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
