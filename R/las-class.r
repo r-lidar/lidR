@@ -76,7 +76,7 @@
 #' @import methods
 #' @include lasheader-class.r
 #' @exportClass LAS
-#' @useDynLib lidR
+#' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAS",
   representation(
