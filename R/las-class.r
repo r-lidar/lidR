@@ -161,6 +161,23 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   if(is.null(header@data[["Version Minor"]]))
     header@data["Version Minor"] = 2
 
+  if(is.null(header@data[["X offset"]]) & is.null(header@data[["Y offset"]]) & is.null(header@data[["Z offset"]]))
+  {
+    header@data["X offset"] = header@data[["Min X"]]
+    header@data["Y offset"] = header@data[["Min Y"]]
+    header@data["Z offset"] = header@data[["Min Z"]]
+    num = c(header@data[["Min X"]], header@data[["Min Y"]], header@data[["Min Z"]])
+    lidRError("LDR12", what = "X Y and Z offsets", num = round(num,2), behaviour = warning)
+  }
+
+  if(is.null(header@data[["X scale factor"]]) & is.null(header@data[["Y scale factor"]]) & is.null(header@data[["Z scale factor"]]))
+  {
+    header@data["X scale factor"] = 0.01
+    header@data["Y scale factor"] = 0.01
+    header@data["Z scale factor"] = 0.01
+    lidRError("LDR12", what = "X Y and Z scale factors", num = rep(0.01,3), behaviour = warning)
+  }
+
   if(is.null(header@data[["X offset"]]))
   {
     header@data["X offset"] = header@data[["Min X"]]
