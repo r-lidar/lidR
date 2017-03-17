@@ -25,19 +25,19 @@
 #
 # ===============================================================================
 
-#' Canopy height model based on triangular irregular network.
+#' Canopy height model based on a triangular irregular network.
 #'
-#' Interpolation of a triangular irregular network constructed from first returns. This function
-#' enable for the use of the pitfree algorithm developped by Khosravipour et al. (see reference).
+#' Interpolation of a triangular irregular network constructed from first returns.This function
+#' enables use of the pit-free algorithm developed by Khosravipour et al. (see reference).
 #'
 #'
 #' @param .las A LAS object
 #' @param res numeric resolution
-#' @param thresholds numeric array. Set of height threhold. If \code{thresholds = 0} the algorithm
-#' is a strict rasterizaton of the triangulation of the first returns. However if an array is given
-#' the function becomes the the Khosravipour et al. pitfree algorithm.
-#' @param max_edge  numeric. Maximum edge length of a triangle in the Delaunay triangulation
-#' used to constrain the pitfree algorithm (see reference).
+#' @param thresholds numeric array. Set of height threholds. If \code{thresholds = 0} the algorithm
+#' is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
+#' the function it becomes the Khosravipour et al. pit-free algorithm.
+#' @param max_edge  numeric. Maximum edge-length of a triangle in the Delaunay triangulation
+#' used to constrain the pit-free algorithm (see reference).
 #' @return An object of class \code{lasmetrics}
 #' @export
 #' @examples
