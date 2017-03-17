@@ -30,13 +30,13 @@
 #' Compute metrics for hexagonal cells
 #'
 #' Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
-#' from an hexagonal grid pattern. This function is identical to \link{grid_metrics}
-#' but with hexagonal cells instead of classical squared pixels. Please refer to
-#' \link{grid_metrics} for more informations.
+#' from a hexagonal grid pattern. This function is identical to \link{grid_metrics}
+#' but with hexagonal cells instead of classical square pixels. Please refer to
+#' \link{grid_metrics} for more information.
 #'
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be applied to each hexagonal cell
-#' @param res numeric. The inscribed circle radius of an hexagon. Default 20.
+#' @param res numeric. The inscribed circle radius of a hexagon. Default = 20.
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlaps.
 #' @return It returns a \code{data.table} containing the metrics for each hexagonal cell. The table

@@ -29,11 +29,11 @@
 
 #' Subtract digital terrain model
 #'
-#' Subtract digital terrain model (DTM) from the LiDAR data to create a dataset
-#' normalized with the ground at 0. The digital terrain model can originate from
+#' Subtract digital terrain model (DTM) from LiDAR data to create a dataset
+#' normalized with the ground at 0. The STM can originate from
 #' several sources e.g. from an external file or computed by the user. It can also be computed
 #' on the fly. In this case the algorithm does not use rasterized data and each point is
-#' interpolated. There is no innacuracy due to the discretization of the terrain (but
+#' interpolated. There is no innacuracy due to the discretization of the terrain (but it is
 #' slower).
 #'
 #' @param .las a LAS objet
@@ -44,7 +44,7 @@
 #' @param k numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
 #' method is either \code{"knnidw"} or \code{"kriging"}
 #' @param model Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
-#' when the selected method is \code{"kriging"}. If null it performs an ordinary or weighted least
+#' when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
 #' squares prediction.
 #' @return A \code{LAS} object
 #' @examples
@@ -53,7 +53,7 @@
 #'
 #' plot(las)
 #'
-#' # --- First option: compute a raster DTM with grid_terrain -----
+#' # --- First option: compute a raster DTM with grid_terrain ---
 #' # (or read it from a file)
 #'
 #' dtm = grid_terrain(las, method = "kriging", k = 10L)
@@ -61,7 +61,7 @@
 #' plot(dtm)
 #' plot(nlas)
 #'
-#' # --- Second option: interpol each point (no discretization) -----
+#' # --- Second option: interpolate each point (no discretization) ---
 #'
 #' nlas = lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
 #' plot(nlas)
