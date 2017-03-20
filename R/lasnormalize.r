@@ -30,7 +30,7 @@
 #' Subtract digital terrain model
 #'
 #' Subtract digital terrain model (DTM) from LiDAR data to create a dataset
-#' normalized with the ground at 0. The STM can originate from
+#' normalized with the ground at 0. The DTM can originate from
 #' several sources e.g. from an external file or computed by the user. It can also be computed
 #' on the fly. In this case the algorithm does not use rasterized data and each point is
 #' interpolated. There is no innacuracy due to the discretization of the terrain (but it is
