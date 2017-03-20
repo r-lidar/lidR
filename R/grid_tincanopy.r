@@ -27,7 +27,7 @@
 
 #' Canopy height model based on a triangular irregular network.
 #'
-#' Interpolation of a triangular irregular network constructed from first returns.This function
+#' Interpolation of a triangular irregular network constructed from first returns. This function
 #' enables use of the pit-free algorithm developed by Khosravipour et al. (see reference).
 #'
 #'

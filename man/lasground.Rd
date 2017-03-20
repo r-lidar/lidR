@@ -10,11 +10,11 @@ lasground(.las, MaxWinSize = 20, Slope = 1, InitDist = 0.5, MaxDist = 3,
 \arguments{
 \item{.las}{a LAS object}
 
-\item{MaxWinSize}{nueric. Maximum window size to be used in filtering ground returns (see references)}
+\item{MaxWinSize}{numeric. Maximum window size to be used in filtering ground returns (see references)}
 
-\item{Slope}{numeric. Slope value to be used in computing the height thresholds(see references)}
+\item{Slope}{numeric. Slope value to be used in computing the height thresholds (see references)}
 
-\item{InitDist}{numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)}
+\item{InitDist}{numeric. Initial height above the parameterized ground surface to be considered a ground return (see references)}
 
 \item{MaxDist}{numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)}
 
@@ -26,16 +26,16 @@ These include:\cr
 - \code{base} numeric. Default is 2\cr}
 }
 \value{
-Nothing. The original LAS object is updated by reference. The 'Classification'
-column contains 2 for ground according to LAS specifications.
+Nothing. The original LAS object is updated by reference. In the 'Classification'
+column a value of 2 denotes ground according to LAS specifications.
 }
 \description{
 Implements a Progressive Morphological Filter for segmentation of ground points.
 The function updates the field \code{Classification} of the input LAS obect. The points
-classified as 'ground' get the value 2 according to las specifications (See the ASPRS
+classified as 'ground' are assigned a value of 2 according to las specifications (See the ASPRS
 documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-This function is an implementation of Zhang et al. (2003) algorithm (see reference)
+This function is an implementation of the Zhang et al. (2003) algorithm (see reference)
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
