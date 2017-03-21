@@ -76,7 +76,7 @@
 #' @import methods
 #' @include lasheader-class.r
 #' @exportClass LAS
-#' @useDynLib lidR
+#' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAS",
   representation(
@@ -125,6 +125,7 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   header@data["Max Y"] <- max(data$Y)
   header@data["Max Z"] <- max(data$Z)
 
+  header@data["File Signature"] = "LASF"
   header@data["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
   header@data["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
 
@@ -161,44 +162,75 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   if(is.null(header@data[["Version Minor"]]))
     header@data["Version Minor"] = 2
 
-  if(is.null(header@data[["X offset"]]))
+  if(is.null(header@data[["X offset"]]) & is.null(header@data[["Y offset"]]) & is.null(header@data[["Z offset"]]))
   {
+    header@data["X offset"] = header@data[["Min X"]]
+    header@data["Y offset"] = header@data[["Min Y"]]
+    header@data["Z offset"] = header@data[["Min Z"]]
+    num = c(header@data[["Min X"]], header@data[["Min Y"]], header@data[["Min Z"]])
+    lidRError("LDR12", what = "X Y and Z offsets", num = round(num,2), behaviour = warning)
+  }
+
+  if(is.null(header@data[["X scale factor"]]) & is.null(header@data[["Y scale factor"]]) & is.null(header@data[["Z scale factor"]]))
+  {
+    header@data["X scale factor"] = 0.01
+    header@data["Y scale factor"] = 0.01
+    header@data["Z scale factor"] = 0.01
+    lidRError("LDR12", what = "X Y and Z scale factors", num = rep(0.01,3), behaviour = warning)
+  }
+
+  if(is.null(header@data[["X offset"]])) {
     header@data["X offset"] = header@data[["Min X"]]
     lidRError("LDR11", what = "X offset", num = round(header@data[["Min X"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["Y offset"]]))
-  {
+  if(is.null(header@data[["Y offset"]])) {
     header@data["Y offset"] = header@data[["Min Y"]]
     lidRError("LDR11", what = "Y offset", num = round(header@data[["Min Y"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["Z offset"]]))
-  {
+  if(is.null(header@data[["Z offset"]])) {
     header@data["Z offset"] = header@data[["Min Z"]]
     lidRError("LDR11", what = "Z offset", num = round(header@data[["Min Z"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["X scale factor"]]))
-  {
+  if(is.null(header@data[["X scale factor"]])) {
     header@data["X scale factor"] = 0.01
     lidRError("LDR11", what = "X scale factor", num = 0.01, behaviour = warning)
   }
 
-  if(is.null(header@data[["Y scale factor"]]))
-  {
+  if(is.null(header@data[["Y scale factor"]])) {
     header@data["Y scale factor"] = 0.01
     lidRError("LDR11", what = "Y scale factor", num = 0.01, behaviour = warning)
   }
 
-  if(is.null(header@data[["Z scale factor"]]))
-  {
+  if(is.null(header@data[["Z scale factor"]])) {
     header@data["Z scale factor"] = 0.01
     lidRError("LDR11", what = "Z scale factor", num = 0.01, behaviour = warning)
   }
 
   if(is.null(header@data[["File Source ID"]]))
     header@data["File Source ID"] = 0
+
+  if(is.null(header@data[["System Identifier"]]))
+    header@data["System Identifier"] = "lidR"
+
+  if(is.null(header@data[["Generating Software"]]))
+    header@data["Generating Software"] = paste("lidR", utils::packageVersion("lidR"))
+
+  if(is.null(header@data[["Header Size"]]))
+    header@data["Header Size"] = 227
+
+  if(is.null(header@data[["Offset to point data"]]))
+    header@data["Offset to point data"] = 227
+
+  if(is.null(header@data[["Project ID - GUID"]]))
+    header@data["Project ID - GUID"] = 0
+
+  if(is.null(header@data[["Global Encoding"]]))
+    header@data["Global Encoding"] = 0
+
+  header@data["Number of variable length records"] = length(header@data[["Variable Length Records"]])
 
   # Build returned object  ---------------------------------------------------
 
@@ -252,11 +284,11 @@ setMethod("show", "LAS", function(object)
   cat("class        : LAS\n")
   cat("memory       :", size, "\n")
   cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("area         :", s, "m^2\n")
+  cat("area         :", s, "m\u00B2 (convex hull)\n")
   cat("points       :", npt, "points\n")
   cat("pulses       :", npu , "pulses\n")
-  cat("point density:", round(dpt, 2), "points/m^2\n")
-  cat("pulse density:", round(dpu, 2), "pulses/m^2\n")
+  cat("point density:", round(dpt, 2), "points/m\u00B2\n")
+  cat("pulse density:", round(dpu, 2), "pulses/m\u00B2\n")
   cat("fields       :", length(fie), "\n")
   cat("field names  :", fie, "\n\n")
 
