@@ -30,7 +30,7 @@
 #' Individual tree segmentation with several possible algorithms (see details). The function
 #' attributes to each point of the point cloud a number identifying the detected tree
 #' the point comes from (\code{treeID} column). By default the classification is done at the
-#' point level. However, with some algorithms it is possible to return a raster image of the
+#' point cloud level. However, with some algorithms it is possible to return a raster image of the
 #' classification. There are currently 3 algorithms implemented. See relevant sections.
 #'
 #' @param .las An object of the class \code{LAS}
@@ -52,7 +52,7 @@
 #'
 #' This is the algorithm developed by Dalponte and Coomes (see references). This algorithm exists
 #' in the package \pkg{itcSegment}. This version is identical to the original but with
-#' superfluous code removed and rewritten in pure C++. Consequently it is 6 times faster.
+#' superfluous code removed and rewritten in C++. Consequently it is 6 times faster.
 #' Note that this algorithm strictly performs a segmentation while the original method as implemented
 #' in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
 #' these tasks are expected to be done by the user.
@@ -111,20 +111,12 @@
 #' chm = raster::focal(chm, w = kernel, fun = mean)
 #' raster::plot(chm, col = height.colors(50)) # check the image
 #'
-#' # segmentation (default parameters but th = 5 + extra output)
-#' extra = lastrees(las, "dalponte2016", chm, th = 5, extra = TRUE)
+#' # segmentation
+#' lastrees(las, "dalponte2016", chm, th = 5)
 #'
 #' # plot points that actually are trees
 #' trees = lasfilter(las, !is.na(treeID))
 #' plot(trees, color = "treeID", colorPalette = random.colors(100))
-#'
-#' # plot crowns
-#' library(raster)
-#' crown.shp <- rasterToPolygons(extra$Crown, dissolve = TRUE)
-#'
-#' plot(chm, col = height.colors(50))
-#' plot(crown.shp, add = TRUE)
-#' plot(extra$Maxima, col = "black", add = TRUE)
 #'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
