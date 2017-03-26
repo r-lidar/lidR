@@ -1,4 +1,4 @@
-### lidR v1.2.0 (in development)
+### lidR v1.2.0 (Release date: 2017-03-26)
 
 #### NEW FEATURES
 
