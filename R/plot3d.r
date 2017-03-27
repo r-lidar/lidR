@@ -45,9 +45,8 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
     stop("Object not supported")
 
   mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
-  coord = sp::coordinates(x)
-  x = coord[,1] %>% unique %>% sort
-  y = coord[,2] %>% unique %>% sort
+  x  = raster::xFromRow(x) %>% sort
+  y  = raster::yFromRow(x) %>% sort
 
   if(!add)
     rgl::open3d()
