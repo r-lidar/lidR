@@ -1,3 +1,9 @@
+### lidR v1.2.1 (in development)
+
+#### BUG FIXES
+
+* Installation failed if package sp was missing.
+
 ### lidR v1.2.0 (Release date: 2017-03-26)
 
 #### NEW FEATURES
@@ -16,12 +22,10 @@
 * Fix bug in `stdmetric_z` when `max(Z) = 0`
 * [[#54](https://github.com/Jean-Romain/lidR/pull/54)] better recomputation of the header of LAS objects.
 
-
 #### OTHER CHANGES
 
 * Slightly faster point classification from shapefiles.
 * [[#51](https://github.com/Jean-Romain/lidR/pull/51)] in `grid_terrain`, forcing the lowest point to be retained is now an option `keep_lowest = FALSE`
-
 
 ### lidR v1.1.0 (Release date: 2017-02-05)
 
