@@ -3,6 +3,7 @@
 #### BUG FIXES
 
 * Installation failed if package sp was missing.
+* Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
 
 ### lidR v1.2.0 (Release date: 2017-03-26)
 
