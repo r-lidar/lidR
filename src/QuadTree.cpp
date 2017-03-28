@@ -56,7 +56,15 @@ QuadTree::QuadTree(const BoundingBox boundary, const int parent_depth) : boundar
   SW = 0;
 }
 
-QuadTree QuadTree::create(const std::vector<double> x, const std::vector<double> y)
+QuadTree::~QuadTree()
+{
+  delete NE;
+  delete NW;
+  delete SE;
+  delete SW;
+}
+
+QuadTree* QuadTree::create(const std::vector<double> x, const std::vector<double> y)
 {
   int n = x.size();
 
@@ -83,12 +91,12 @@ QuadTree QuadTree::create(const std::vector<double> x, const std::vector<double>
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
 
-  QuadTree tree( (xmin+xmax)/2, (ymin+ymax)/2, range);
+  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range);
 
   for(int i = 0 ; i < n ; i++)
   {
     Point p(x[i], y[i], i);
-    tree.insert(p);
+    tree->insert(p);
   }
 
   return tree;
