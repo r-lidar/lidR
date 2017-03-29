@@ -45,12 +45,12 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
     stop("Object not supported")
 
   mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
-  x  = raster::xFromRow(x) %>% sort
-  y  = raster::yFromRow(x) %>% sort
+  x_  = raster::xFromCol(x) %>% sort
+  y_  = raster::yFromRow(x) %>% sort
 
   if(!add)
     rgl::open3d()
 
   rgl::rgl.bg(color = bg)
-  rgl::surface3d(x, y, mx, front="lines", col="white", ...)
+  rgl::surface3d(x_, y_, mx, front="lines", col="white", ...)
 }
