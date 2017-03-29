@@ -5,6 +5,10 @@
 * Installation failed if package sp was missing.
 * Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
 
+#### OTHER CHANGES
+
+* Li et al. algorithm for tree segmentation is 40 times faster than in v1.2.0
+
 ### lidR v1.2.0 (Release date: 2017-03-26)
 
 #### NEW FEATURES
