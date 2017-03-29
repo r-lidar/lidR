@@ -34,14 +34,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // Defined in cxx_utils.cpp
-int which_max(NumericVector);
-IntegerVector which_true(LogicalVector);
 NumericVector distance(NumericVector, NumericVector, double, double);
 
 // [[Rcpp::export]]
 IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, NumericVector dt, double R)
 {
   bool finish = false;
+
+  double dt1 = dt(0);
+  double dt2 = dt(1);
 
   int ni = X.length();
   int k = 1;
@@ -56,8 +57,13 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
   while(!finish)
   {
     int n = X.length();
-    LogicalVector P(n);
+
+    if(n == 0)
+      return idtree;
+
+    // Intial step not point in P or N
     LogicalVector N(n);
+    NumericVector XP,XN,YP,YN;
 
     if (Progress::check_abort() )
       return  IntegerVector::create(0);
@@ -65,74 +71,64 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
       p.update(ni-n);
 
     // element 0 is the current highest points and is in P
-    P(0) = true;
+    XP.push_back(X(0));
+    YP.push_back(Y(0));
+
+    // Compute the distance between the local max u and all the other point
     d = distance(X, Y, X(0), Y(0));
 
-    // exit if no point in N
-    if(max(d) < dt(1))
+    // No point within a radius dt1 means no more point in N: exit
+    if(max(d) < dt1)
     {
-      finish = true;
-
-      for (IntegerVector::iterator it = idpoint.begin(), end = idpoint.end() ; it != end ; ++it)
-        idtree[*it] = k;
+      idtree[idpoint] = k;
+      return idtree;
     }
     else
     {
-      // the farthest point is in N
-      N[which_max(d)] = true;
+      // Add dummy point in N
+      XN.push_back(X(0)+100);
+      YN.push_back(Y(0)+100);
 
-      // Save a lot of time by do not testing too far points
-      LogicalVector too_far = d >= R;
-      IntegerVector non_too_far_id = which_true(!too_far);
-      IntegerVector too_far_id = which_true(too_far);
-
-      for (IntegerVector::iterator i = too_far_id.begin(), end = too_far_id.end() ; i != end ; ++i)
+      for (int i = 0 ; i < X.length() ; ++i)
       {
-        P[*i] = false;
-        N[*i] = true;
-      }
-
-      // loop over all the points which are not too far
-      for (IntegerVector::iterator i = non_too_far_id.begin(), end = non_too_far_id.end() ; i != end ; ++i)
-      {
-        double dmin1 = min(distance(X[P], Y[P], X(*i), Y(*i)));
-        double dmin2 = min(distance(X[N], Y[N], X(*i), Y(*i)));
-
-        double ddt = (Z(*i) > 15) ? dt(1) : dt(0);
-
-        if (dmin1 > ddt)
+        if(d[i] > R)            // If d > R those points are not the current segmented tree
         {
-          N[*i] = true;
-          P[*i] = false;
+          N[i] = true;
         }
-        else if (dmin1 <= ddt & dmin1 <= dmin2)
+        else                    // If d <= R classify point base on Li et al. rules
         {
-          N[*i] = false;
-          P[*i] = true;
-        }
-        else if (dmin1 <= ddt & dmin1 > dmin2)
-        {
-          N[*i] = true;
-          P[*i] = false;
+          double dmin1 = min(distance(XP, YP, X[i], Y[i]));
+          double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+
+          double ddt = (Z[i] > 15) ? dt2 : dt1;
+
+          if ( (dmin1 > ddt) || (dmin1 <= ddt & dmin1 > dmin2) )
+          {
+            N[i] = true;
+            XN.push_back(X(i));
+            YN.push_back(Y(i));
+          }
+          else if (dmin1 <= ddt & dmin1 <= dmin2)
+          {
+            XP.push_back(X(i));
+            YP.push_back(Y(i));
+
+            int id = idpoint[i];
+            idtree[id] = k;
+          }
         }
       }
 
-      IntegerVector id = idpoint[P];
-
-      for (IntegerVector::iterator i = id.begin(), end = id.end() ; i != end ; ++i)
-        idtree[*i] = k;
-
+      // Increase current id
       k++;
 
+      // Keep the point in N and redo the loop with remining points
       X = X[N];
       Y = Y[N];
       Z = Z[N];
       idpoint = idpoint[N];
-
     }
   }
-
-  Rcout << std::endl;
 
   return idtree;
 }
