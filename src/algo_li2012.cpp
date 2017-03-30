@@ -37,30 +37,21 @@ using namespace Rcpp;
 NumericVector distance(NumericVector, NumericVector, double, double);
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, NumericVector dt, double R)
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, const double dt1, const double dt2, const double R)
 {
-  bool finish = false;
-
-  double dt1 = dt(0);
-  double dt2 = dt(1);
+  bool end = false;
 
   int ni = X.length();
-  int k = 1;
+  int n  = ni;
+  int k  = 1;
 
   Progress p(ni, true);
 
   IntegerVector idpoint = seq_len(ni)-1;
   IntegerVector idtree(ni);
 
-  NumericVector d;
-
-  while(!finish)
+  while(!end)
   {
-    int n = X.length();
-
-    if(n == 0)
-      return idtree;
-
     // Intial step not point in P or N
     LogicalVector N(n);
     NumericVector XP,XN,YP,YN;
@@ -74,60 +65,53 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
     XP.push_back(X(0));
     YP.push_back(Y(0));
 
+    // Add dummy point in N
+    XN.push_back(X(0)+100);
+    YN.push_back(Y(0)+100);
+
     // Compute the distance between the local max u and all the other point
-    d = distance(X, Y, X(0), Y(0));
+    NumericVector d = distance(X, Y, X(0), Y(0));
 
-    // No point within a radius dt1 means no more point in N: exit
-    if(max(d) < dt1)
+    for (int i = 1 ; i < n ; ++i)
     {
-      idtree[idpoint] = k;
-      return idtree;
-    }
-    else
-    {
-      // Add dummy point in N
-      XN.push_back(X(0)+100);
-      YN.push_back(Y(0)+100);
-
-      for (int i = 0 ; i < X.length() ; ++i)
+      if(d[i] > R)            // If d > R those points are not the current segmented tree
       {
-        if(d[i] > R)            // If d > R those points are not the current segmented tree
+        N[i] = true;
+      }
+      else                    // If d <= R classify point base on Li et al. rules
+      {
+        double dmin1 = min(distance(XP, YP, X[i], Y[i]));
+        double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+        double dt    = (Z[idpoint[i]] > 15) ? dt2 : dt1;
+
+        if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
         {
           N[i] = true;
+          XN.push_back(X(i));
+          YN.push_back(Y(i));
         }
-        else                    // If d <= R classify point base on Li et al. rules
+        else if (dmin1 <= dt & dmin1 <= dmin2)
         {
-          double dmin1 = min(distance(XP, YP, X[i], Y[i]));
-          double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+          XP.push_back(X(i));
+          YP.push_back(Y(i));
 
-          double ddt = (Z[i] > 15) ? dt2 : dt1;
-
-          if ( (dmin1 > ddt) || (dmin1 <= ddt & dmin1 > dmin2) )
-          {
-            N[i] = true;
-            XN.push_back(X(i));
-            YN.push_back(Y(i));
-          }
-          else if (dmin1 <= ddt & dmin1 <= dmin2)
-          {
-            XP.push_back(X(i));
-            YP.push_back(Y(i));
-
-            int id = idpoint[i];
-            idtree[id] = k;
-          }
+          idtree[idpoint[i]] = k;
         }
       }
-
-      // Increase current id
-      k++;
-
-      // Keep the point in N and redo the loop with remining points
-      X = X[N];
-      Y = Y[N];
-      Z = Z[N];
-      idpoint = idpoint[N];
     }
+
+    // Increase current tree id
+    k++;
+
+    // Keep the point in N and redo the loop with remining points
+    X = X[N];
+    Y = Y[N];
+    idpoint = idpoint[N];
+
+    n = X.length();
+
+    if(n == 0)
+      end = true;
   }
 
   return idtree;
