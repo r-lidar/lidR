@@ -33,17 +33,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // algo_li2012
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, NumericVector dt, double R);
-RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dtSEXP, SEXP RSEXP) {
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, const double dt1, const double dt2, const double R);
+RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< double >::type R(RSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt, R));
+    Rcpp::traits::input_parameter< const NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< const double >::type dt1(dt1SEXP);
+    Rcpp::traits::input_parameter< const double >::type dt2(dt2SEXP);
+    Rcpp::traits::input_parameter< const double >::type R(RSEXP);
+    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt1, dt2, R));
     return rcpp_result_gen;
 END_RCPP
 }

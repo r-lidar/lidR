@@ -11,7 +11,7 @@ grid_hexametrics(.las, func, res = 20, splitlines = FALSE)
 
 \item{func}{the function to be applied to each hexagonal cell}
 
-\item{res}{numeric. The inscribed circle radius of an hexagon. Default 20.}
+\item{res}{numeric. The inscribed circle radius of a hexagon. Default = 20.}
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlaps.}
@@ -22,9 +22,9 @@ has the class "lashexametrics" enabling easy plotting.
 }
 \description{
 Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
-from an hexagonal grid pattern. This function is identical to \link{grid_metrics}
-but with hexagonal cells instead of classical squared pixels. Please refer to
-\link{grid_metrics} for more informations.
+from a hexagonal grid pattern. This function is identical to \link{grid_metrics}
+but with hexagonal cells instead of classical square pixels. Please refer to
+\link{grid_metrics} for more information.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
