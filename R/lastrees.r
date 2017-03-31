@@ -117,20 +117,6 @@
 #' # plot points that actually are trees
 #' trees = lasfilter(las, !is.na(treeID))
 #' plot(trees, color = "treeID", colorPalette = random.colors(100))
-#'
-<<<<<<< HEAD
-#'\dontrun{
-#' # plot crowns
-#' library(raster)
-#' crown.shp <- rasterToPolygons(extra$Crown, dissolve = TRUE)
-#'
-#' plot(chm, col = height.colors(50))
-#' plot(crown.shp, add = TRUE)
-#' plot(extra$Maxima, col = "black", add = TRUE)
-#' }
-#'
-=======
->>>>>>> 0b38ea5267a7eb08c56ccaafd24d9f0e723876a0
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575\cr\cr
