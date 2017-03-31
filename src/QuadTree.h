@@ -27,7 +27,8 @@ class QuadTree
 {
 	public:
 		QuadTree(const double, const double, const double);
-		static QuadTree create(const std::vector<double>, const std::vector<double>);
+	  ~QuadTree();
+		static QuadTree* create(const std::vector<double>, const std::vector<double>);
 		bool insert(const Point&);
 		void rect_lookup(const double, const double, const double, std::vector<Point*>&);
 		void circle_lookup(const double, const double, const double, std::vector<Point*>&);

@@ -27,37 +27,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-#include <Rcpp.h>
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
+#include <Rcpp.h>
 
 using namespace Rcpp;
 
 // Defined in cxx_utils.cpp
-int which_max(NumericVector);
-IntegerVector which_true(LogicalVector);
 NumericVector distance(NumericVector, NumericVector, double, double);
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, NumericVector dt, double R)
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, const double dt1, const double dt2, const double R)
 {
-  bool finish = false;
+  bool end = false;
 
   int ni = X.length();
-  int k = 1;
+  int n  = ni;
+  int k  = 1;
 
   Progress p(ni, true);
 
   IntegerVector idpoint = seq_len(ni)-1;
   IntegerVector idtree(ni);
 
-  NumericVector d;
-
-  while(!finish)
+  while(!end)
   {
-    int n = X.length();
-    LogicalVector P(n);
+    // Intial step not point in P or N
     LogicalVector N(n);
+    NumericVector XP,XN,YP,YN;
 
     if (Progress::check_abort() )
       return  IntegerVector::create(0);
@@ -65,74 +62,56 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, NumericVector Z, Num
       p.update(ni-n);
 
     // element 0 is the current highest points and is in P
-    P(0) = true;
-    d = distance(X, Y, X(0), Y(0));
+    XP.push_back(X(0));
+    YP.push_back(Y(0));
 
-    // exit if no point in N
-    if(max(d) < dt(1))
+    // Add dummy point in N
+    XN.push_back(X(0)+100);
+    YN.push_back(Y(0)+100);
+
+    // Compute the distance between the local max u and all the other point
+    NumericVector d = distance(X, Y, X(0), Y(0));
+
+    for (int i = 1 ; i < n ; ++i)
     {
-      finish = true;
-
-      for (IntegerVector::iterator it = idpoint.begin(), end = idpoint.end() ; it != end ; ++it)
-        idtree[*it] = k;
-    }
-    else
-    {
-      // the farthest point is in N
-      N[which_max(d)] = true;
-
-      // Save a lot of time by do not testing too far points
-      LogicalVector too_far = d >= R;
-      IntegerVector non_too_far_id = which_true(!too_far);
-      IntegerVector too_far_id = which_true(too_far);
-
-      for (IntegerVector::iterator i = too_far_id.begin(), end = too_far_id.end() ; i != end ; ++i)
+      if(d[i] > R)            // If d > R those points are not the current segmented tree
       {
-        P[*i] = false;
-        N[*i] = true;
+        N[i] = true;
       }
-
-      // loop over all the points which are not too far
-      for (IntegerVector::iterator i = non_too_far_id.begin(), end = non_too_far_id.end() ; i != end ; ++i)
+      else                    // If d <= R classify point base on Li et al. rules
       {
-        double dmin1 = min(distance(X[P], Y[P], X(*i), Y(*i)));
-        double dmin2 = min(distance(X[N], Y[N], X(*i), Y(*i)));
+        double dmin1 = min(distance(XP, YP, X[i], Y[i]));
+        double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+        double dt    = (Z[idpoint[i]] > 15) ? dt2 : dt1;
 
-        double ddt = (Z(*i) > 15) ? dt(1) : dt(0);
-
-        if (dmin1 > ddt)
+        if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
         {
-          N[*i] = true;
-          P[*i] = false;
+          N[i] = true;
+          XN.push_back(X(i));
+          YN.push_back(Y(i));
         }
-        else if (dmin1 <= ddt & dmin1 <= dmin2)
+        else if (dmin1 <= dt & dmin1 <= dmin2)
         {
-          N[*i] = false;
-          P[*i] = true;
-        }
-        else if (dmin1 <= ddt & dmin1 > dmin2)
-        {
-          N[*i] = true;
-          P[*i] = false;
+          XP.push_back(X(i));
+          YP.push_back(Y(i));
+          idtree[idpoint[i]] = k;
         }
       }
-
-      IntegerVector id = idpoint[P];
-
-      for (IntegerVector::iterator i = id.begin(), end = id.end() ; i != end ; ++i)
-        idtree[*i] = k;
-
-      k++;
-
-      X = X[N];
-      Y = Y[N];
-      Z = Z[N];
-      idpoint = idpoint[N];
-
     }
+
+    // Increase current tree id
+    k++;
+
+    // Keep the point in N and redo the loop with remining points
+    X = X[N];
+    Y = Y[N];
+    idpoint = idpoint[N];
+
+    n = X.length();
+
+    if(n == 0)
+      end = true;
   }
-
-  Rcout << std::endl;
 
   return idtree;
 }

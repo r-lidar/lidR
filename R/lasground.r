@@ -30,23 +30,23 @@
 #'
 #' Implements a Progressive Morphological Filter for segmentation of ground points.
 #' The function updates the field \code{Classification} of the input LAS obect. The points
-#' classified as 'ground' get the value 2 according to las specifications (See the ASPRS
+#' classified as 'ground' are assigned a value of 2 according to las specifications (See the ASPRS
 #' documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-#' This function is an implementation of Zhang et al. (2003) algorithm (see reference)
+#' This function is an implementation of the Zhang et al. (2003) algorithm (see reference)
 #'
 #' @param .las a LAS object
-#' @param MaxWinSize nueric. Maximum window size to be used in filtering ground returns (see references)
-#' @param Slope  numeric. Slope value to be used in computing the height thresholds(see references)
-#' @param InitDist numeric. Iinitial height above the parameterized ground surface to be considered a ground return (see references)
+#' @param MaxWinSize numeric. Maximum window size to be used in filtering ground returns (see references)
+#' @param Slope  numeric. Slope value to be used in computing the height thresholds (see references)
+#' @param InitDist numeric. Initial height above the parameterized ground surface to be considered a ground return (see references)
 #' @param MaxDist numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)
 #' @param CellSize numeric. Cell size
 #' @param ... Any additional specific parameters to be passed to the progressive morphological filter.
 #' These include:\cr
 #' - \code{exponential} logical. Default is TRUE.\cr
 #' - \code{base} numeric. Default is 2\cr
-#' @return Nothing. The original LAS object is updated by reference. The 'Classification'
-#' column contains 2 for ground according to LAS specifications.
+#' @return Nothing. The original LAS object is updated by reference. In the 'Classification'
+#' column a value of 2 denotes ground according to LAS specifications.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
@@ -132,13 +132,13 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
     iteration = iteration + 1
   }
 
-  # Progressively filter ground returns using morphological open
+  # Filter ground returns using a progressive morphological filter
   for (i in 1:length(window_sizes))
   {
     Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i])
 
     # Find indices of the points whose difference between the source and
-    # filtered point clouds is less than the current height threshold.
+    # filtered point clouds is less than the current height threshold
     diff = cloud$Z - Z_f
     indices = diff < height_thresholds[i]
 

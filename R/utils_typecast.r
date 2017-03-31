@@ -148,12 +148,7 @@ as.raster.lasmetrics = function(x, z = NULL, ...)
 as.SpatialPointsDataFrame = function(.las)
 {
   . <- X <- Y <- NULL
-
-  if (!requireNamespace("sp", quietly = TRUE))
-    stop("'sp' package is needed for this function to work. Please install it.", call. = F)
-
   stopifnotlas(.las)
-
   sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
 }
 
@@ -165,9 +160,6 @@ as.SpatialPointsDataFrame = function(.las)
 #' @family cast
 as.SpatialPixelsDataFrame = function(.data)
 {
-  if (!requireNamespace("sp", quietly = TRUE))
-    stop("'sp' package is needed for this function to work. Please install it.", call. = F)
-
   .data = as.data.frame(.data)
   sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
 }

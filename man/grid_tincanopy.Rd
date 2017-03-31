@@ -2,7 +2,7 @@
 % Please edit documentation in R/grid_tincanopy.r
 \name{grid_tincanopy}
 \alias{grid_tincanopy}
-\title{Canopy height model based on triangular irregular network.}
+\title{Canopy height model based on a triangular irregular network.}
 \usage{
 grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
   max_edge = 0.5)
@@ -12,19 +12,19 @@ grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
 
 \item{res}{numeric resolution}
 
-\item{thresholds}{numeric array. Set of height threhold. If \code{thresholds = 0} the algorithm
-is a strict rasterizaton of the triangulation of the first returns. However if an array is given
-the function becomes the the Khosravipour et al. pitfree algorithm.}
+\item{thresholds}{numeric array. Set of height threholds. If \code{thresholds = 0} the algorithm
+is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
+the function it becomes the Khosravipour et al. pit-free algorithm.}
 
-\item{max_edge}{numeric. Maximum edge length of a triangle in the Delaunay triangulation
-used to constrain the pitfree algorithm (see reference).}
+\item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation
+used to constrain the pit-free algorithm (see reference).}
 }
 \value{
 An object of class \code{lasmetrics}
 }
 \description{
 Interpolation of a triangular irregular network constructed from first returns. This function
-enable for the use of the pitfree algorithm developped by Khosravipour et al. (see reference).
+enables use of the pit-free algorithm developed by Khosravipour et al. (see reference).
 }
 \examples{
 LASfile <- system.file("extdata", "Tree.laz", package="lidR")

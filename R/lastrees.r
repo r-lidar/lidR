@@ -30,7 +30,7 @@
 #' Individual tree segmentation with several possible algorithms (see details). The function
 #' attributes to each point of the point cloud a number identifying the detected tree
 #' the point comes from (\code{treeID} column). By default the classification is done at the
-#' point level. However, with some algorithms it is possible to return a raster image of the
+#' point cloud level. However, with some algorithms it is possible to return a raster image of the
 #' classification. There are currently 3 algorithms implemented. See relevant sections.
 #'
 #' @param .las An object of the class \code{LAS}
@@ -52,7 +52,7 @@
 #'
 #' This is the algorithm developed by Dalponte and Coomes (see references). This algorithm exists
 #' in the package \pkg{itcSegment}. This version is identical to the original but with
-#' superfluous code removed and rewritten in pure C++. Consequently it is 6 times faster.
+#' superfluous code removed and rewritten in C++. Consequently it is 6 times faster.
 #' Note that this algorithm strictly performs a segmentation while the original method as implemented
 #' in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
 #' these tasks are expected to be done by the user.
@@ -111,13 +111,14 @@
 #' chm = raster::focal(chm, w = kernel, fun = mean)
 #' raster::plot(chm, col = height.colors(50)) # check the image
 #'
-#' # segmentation (default parameters but th = 5 + extra output)
-#' extra = lastrees(las, "dalponte2016", chm, th = 5, extra = TRUE)
+#' # segmentation
+#' lastrees(las, "dalponte2016", chm, th = 5)
 #'
 #' # plot points that actually are trees
 #' trees = lasfilter(las, !is.na(treeID))
 #' plot(trees, color = "treeID", colorPalette = random.colors(100))
 #'
+<<<<<<< HEAD
 #'\dontrun{
 #' # plot crowns
 #' library(raster)
@@ -128,6 +129,8 @@
 #' plot(extra$Maxima, col = "black", add = TRUE)
 #' }
 #'
+=======
+>>>>>>> 0b38ea5267a7eb08c56ccaafd24d9f0e723876a0
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575\cr\cr
@@ -183,9 +186,12 @@ li2012 = function(.las, dt1 = 1.5, dt2 = 2, R = 10)
 {
   treeID <- NULL
 
+  if(dt1 > dt2)  stop("dt1 greater than dt2", call. = FALSE)
+  if(R <= 0)     stop("R <= 0", call. = FALSE)
+
   data.table::setorderv(.las@data, "Z", order=-1L)
 
-  id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, c(dt1, dt2), R = R)
+  id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, dt1, dt2, R = R)
 
   .las@data[, treeID := id][]
 
