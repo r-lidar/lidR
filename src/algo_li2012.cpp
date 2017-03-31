@@ -40,6 +40,12 @@ NumericVector distance(NumericVector, NumericVector, double, double);
 IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, const double dt1, const double dt2, const double R)
 {
   bool end = false;
+<<<<<<< HEAD
+=======
+
+  double dt1 = dt(0);
+  double dt2 = dt(1);
+>>>>>>> 7c8b4401a5a7ebde68b6e7581993fc5922176992
 
   int ni = X.length();
   int n  = ni;
@@ -82,7 +88,11 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
       {
         double dmin1 = min(distance(XP, YP, X[i], Y[i]));
         double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+<<<<<<< HEAD
         double dt    = (Z[idpoint[i]] > 15) ? dt2 : dt1;
+=======
+        double dt    = (Z[i] > 15) ? dt2 : dt1;
+>>>>>>> 7c8b4401a5a7ebde68b6e7581993fc5922176992
 
         if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
         {
@@ -95,7 +105,12 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
           XP.push_back(X(i));
           YP.push_back(Y(i));
 
+<<<<<<< HEAD
           idtree[idpoint[i]] = k;
+=======
+          int id = idpoint[i];
+          idtree[id] = k;
+>>>>>>> 7c8b4401a5a7ebde68b6e7581993fc5922176992
         }
       }
     }
@@ -106,6 +121,10 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
     // Keep the point in N and redo the loop with remining points
     X = X[N];
     Y = Y[N];
+<<<<<<< HEAD
+=======
+    Z = Z[N];
+>>>>>>> 7c8b4401a5a7ebde68b6e7581993fc5922176992
     idpoint = idpoint[N];
 
     n = X.length();
