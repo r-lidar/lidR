@@ -201,7 +201,19 @@ NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
 
 NumericVector distance(NumericVector x1, NumericVector y1, double x2, double y2)
 {
-  NumericVector y = sqrt( pow((x1-x2),2) + pow((y1-y2),2));
+  int n = x1.length();
+  NumericVector y(n);
+  NumericVector::iterator i1, i2, i3, end1, end2, end3;
+
+  for( i1 = x1.begin(), i2 = y1.begin(), i3 = y.begin(), end1 = x1.end(), end2 = y1.end(), end3 = y.end();
+       i1 < end1 && i2 < end2 && i3 < end3;
+        ++i1, ++i2 , ++i3)
+  {
+    double dx = *i1-x2;
+    double dy = *i2-y2;
+    *i3 = std::sqrt(dx*dx+dy*dy);
+  }
+
   return y;
 }
 
