@@ -64,6 +64,7 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
     // element 0 is the current highest points and is in P
     XP.push_back(X(0));
     YP.push_back(Y(0));
+    idtree[idpoint[0]] = k;
 
     // Add dummy point in N
     XN.push_back(X(0)+100);
