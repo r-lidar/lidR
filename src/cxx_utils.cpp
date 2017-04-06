@@ -86,39 +86,6 @@ int fast_countover(NumericVector x, double t)
   return n;
 }
 
-IntegerVector which_true(LogicalVector x)
-{
-  int n = 0;
-  IntegerVector y;
-
-  for (LogicalVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it)
-      y.push_back(n);
-
-    n++;
-  }
-
-  return y;
-}
-
-int which_max(NumericVector x)
-{
-  int n = -1;
-  double max = -INFINITY;
-
-  for (int i = 0, end = x.length() ; i < end ; i++)
-  {
-    if (x(i) >= max)
-    {
-      max = x(i);
-      n = i;
-    }
-  }
-
-  return n;
-}
-
 // [[Rcpp::export]]
 NumericMatrix get_normales(IntegerMatrix M, NumericMatrix X, int size, bool edge_size = false)
 {
