@@ -27,7 +27,7 @@
 
 #' Predefined standard metrics function
 #'
-#' Predefined functions usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:lasmetrics]{lasmetrics}
+#' Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics},
 #' and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
 #' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
 #' standard metrics has been predefined. To use these functions please read the Details and Examples sections.
@@ -85,8 +85,9 @@
 #' # Compute the metrics with a threshold at 2 meters
 #' lidar %>% lasfilter(Z > 2) %>% grid_metrics(.stdmetrics_z)
 #'
-#' # Works also with lasmetrics
+#' # Works also with lasmetrics and grid_hexametrics
 #' lidar %>% lasmetrics(.stdmetrics)
+#' lidar %>% grid_hexametrics(.stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
