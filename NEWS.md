@@ -9,6 +9,7 @@
 
 * Installation failed if package sp was missing.
 * Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
+* In dalponte's algorithm there was a bug due to the use of std::abs which work with intergers instead of std::fabs which work with doubles.
 
 #### OTHER CHANGES
 
