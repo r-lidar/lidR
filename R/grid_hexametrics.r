@@ -30,9 +30,9 @@
 #' Compute metrics for hexagonal cells
 #'
 #' Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
-#' from a hexagonal grid pattern. This function is identical to \link{grid_metrics}
-#' but with hexagonal cells instead of classical square pixels. Please refer to
-#' \link{grid_metrics} for more information.
+#' from a hexagonal grid pattern. This function is identical to \link{grid_metrics} or
+#' \link{grid_metrics3d} or \link{tree_metrics} but with hexagonal cells instead of classical
+#' square pixels. Please refer to \link{grid_metrics} for more information.
 #'
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be applied to each hexagonal cell

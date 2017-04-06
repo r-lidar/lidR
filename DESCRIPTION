@@ -71,6 +71,7 @@ Collate:
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
+    'tree_metrics.r'
     'utils_colors.r'
     'utils_geometry.r'
     'utils_interpolations.r'

@@ -14,6 +14,8 @@
 \alias{.stdmetrics_pulse}
 \alias{stdmetrics_ctrl}
 \alias{.stdmetrics_ctrl}
+\alias{stdtreemetrics}
+\alias{.stdtreemetrics}
 \title{Predefined standard metrics function}
 \format{An object of class \code{expression} of length 1.}
 \usage{
@@ -40,6 +42,10 @@ stdmetrics_pulse(pulseID, rn)
 stdmetrics_ctrl(x, y, z, a)
 
 .stdmetrics_ctrl
+
+stdtreemetrics(x, y, z)
+
+.stdtreemetrics
 }
 \arguments{
 \item{x, y, z, i, a}{Coordinates of the points, Intensity and ScanAngle}
@@ -77,7 +83,10 @@ values, but if the elevation values are provided it can compute additional metri
 intensity at a given percentile of height.\cr\cr
 Each function has a convenient associated variable. It is the name of the function, with a
 dot before the name. This enables the function to be used without writing parameters. The cost
-of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)
+of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr\cr
+\code{stdtreemetrics} is a special function which works with \link{tree_metrics}. Actually
+it works also with orther function but the output does not make sense since the metric are
+mainly designed to be computed at the tree level.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

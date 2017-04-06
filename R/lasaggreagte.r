@@ -57,6 +57,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 
     by = list(Xr = hbin_coord$x[hbin_pos_ids], Yr = hbin_coord$y[hbin_pos_ids])
   }
+  # Aggregation on hexagonal cells (grid_hexametrics)
   else if (by == "TREE")
   {
     if(! "treeID" %in% names(.las@data))
@@ -67,6 +68,8 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     by = .las@data$treeID
   }
 
+  # split flightlines option is alway possible but wrapper functions (the exported one) can
+  # restrain possibilities
   if(splitlines & "flightlineID" %in% names(.las@data))
     by = c(by, list(flightline = .las@data$flightlineID))
   else if(splitlines & !"flightlineID" %in% names(.las@data))

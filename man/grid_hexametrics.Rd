@@ -24,9 +24,9 @@ has the class "lashexametrics" enabling easy plotting.
 }
 \description{
 Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
-from a hexagonal grid pattern. This function is identical to \link{grid_metrics}
-but with hexagonal cells instead of classical square pixels. Please refer to
-\link{grid_metrics} for more information.
+from a hexagonal grid pattern. This function is identical to \link{grid_metrics} or
+\link{grid_metrics3d} or \link{tree_metrics} but with hexagonal cells instead of classical
+square pixels. Please refer to \link{grid_metrics} for more information.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
