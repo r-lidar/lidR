@@ -45,6 +45,7 @@ Collate:
     'grid_tincanopy.r'
     'lasheader-class.r'
     'las-class.r'
+    'lasaggreagte.r'
     'lasarea.r'
     'lascheck.r'
     'lasclassify.r'
