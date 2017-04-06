@@ -27,7 +27,7 @@
 
 #' Predefined standard metrics function
 #'
-#' Predefined functions usable in \link[lidR:grid_metrics]{grid_metrics} and \link[lidR:lasmetrics]{lasmetrics}
+#' Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics},
 #' and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
 #' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
 #' standard metrics has been predefined. To use these functions please read the Details and Examples sections.
@@ -52,7 +52,10 @@
 #' intensity at a given percentile of height.\cr\cr
 #' Each function has a convenient associated variable. It is the name of the function, with a
 #' dot before the name. This enables the function to be used without writing parameters. The cost
-#' of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)
+#' of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr\cr
+#' \code{stdtreemetrics} is a special function which works with \link{tree_metrics}. Actually
+#' it works also with orther function but the output does not make sense since the metric are
+#' mainly designed to be computed at the tree level.
 #'
 #' @param x,y,z,i,a Coordinates of the points, Intensity and ScanAngle
 #' @param rn,class ReturnNumber, Classification
@@ -85,8 +88,9 @@
 #' # Compute the metrics with a threshold at 2 meters
 #' lidar %>% lasfilter(Z > 2) %>% grid_metrics(.stdmetrics_z)
 #'
-#' # Works also with lasmetrics
+#' # Works also with lasmetrics and grid_hexametrics
 #' lidar %>% lasmetrics(.stdmetrics)
+#' lidar %>% grid_hexametrics(.stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -538,6 +542,35 @@ stdmetrics_ctrl = function(x, y, z, a)
 #' @rdname stdmetrics
 #' @export
 .stdmetrics_ctrl = expression(stdmetrics_ctrl(X, Y, Z, ScanAngle))
+
+#' @rdname stdmetrics
+#' @export
+stdtreemetrics = function(x, y, z)
+{
+  npoints = length(x)
+
+  j = which.max(z)
+
+  zmax = z[j]
+  xmax = x[j]
+  ymax = y[j]
+
+  convhull.area = area(x,y)
+
+  metrics = list(
+    npoints = npoints,
+    convhull_area = convhull.area,
+    zmax.z = zmax,
+    zmax.x = xmax,
+    zmax.y = ymax
+  )
+
+  return(metrics)
+}
+
+#' @rdname stdmetrics
+#' @export
+.stdtreemetrics = expression(stdtreemetrics(X, Y, Z))
 
 # canopy = canopyMatrix(x,y,z, canopyResolution)
 

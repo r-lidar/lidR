@@ -4,7 +4,8 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE)
+grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
+  debug = FALSE)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -17,19 +18,20 @@ grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE)
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlap.}
+
+\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each cell. The table
 has the class "lasmetrics" enabling easy plotting.
 }
 \description{
-Computes a series of descriptive statistics for a LiDAR dataset within each cell
-of a grid.
+Computes a series of descriptive statistics defined by the user for a LiDAR dataset within
+each pixel of a raster. Output is a data.frame in which each line is a pixel (single grid cell),
+and each column is a metric.
 }
 \details{
-Computes a series of descriptive statistics defined by the user. Output is a
-data.frame in which each line is a raster (single grid cell), and each column is a metric.
-grid_metrics is similar to \code{lasmetrics} except it computes metrics within each cell
+\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
 in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
@@ -55,7 +57,7 @@ lidar = readLAS(LASfile)
 grid_metrics(lidar, max(Z), 2) \%>\% plot
 
 # Mean height with 400 m^2 cells
-grid_metrics(lidar, mean(Z)) \%>\% plot
+grid_metrics(lidar, mean(Z), 20) \%>\% plot
 
 # Define your own new metrics
 myMetrics = function(z, i)

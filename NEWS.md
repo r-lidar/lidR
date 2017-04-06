@@ -1,5 +1,10 @@
 ### lidR v1.2.1 (in development)
 
+#### NEW FEATURES
+
+* new function `tree_metrics`.
+* new function `stdtreemetrics`.
+
 #### BUG FIXES
 
 * Installation failed if package sp was missing.
