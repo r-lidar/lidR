@@ -39,6 +39,7 @@
 #' @param res numeric. The inscribed circle radius of a hexagon. Default = 20.
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlaps.
+#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each hexagonal cell. The table
 #' has the class "lashexametrics" enabling easy plotting.
 #' @examples
@@ -70,49 +71,13 @@
 #' plot(metrics, "zsqmean")
 #' #etc.
 #' @export
-grid_hexametrics = function(.las, func, res = 20, splitlines = FALSE)
+grid_hexametrics = function(.las, func, res = 20, splitlines = FALSE, debug = FALSE)
 {
-  if (!requireNamespace("hexbin", quietly = TRUE))
-    stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
-
   stopifnotlas(.las)
 
-  func_call = substitute(func)
+  call = substitute(func)
 
-  if(is(func_call, "name"))
-    func_call = eval(func_call)
-
-  .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
-
-  ext = extent(.las)
-  xmin = round_any(ext@xmin, res)
-  xmax = round_any(ext@xmax, res)
-  if(xmax < ext@xmax) xmax = xmax + res
-  if(xmin > ext@xmin) xmin = xmin - res
-
-  xbins = (xmax - xmin)/res
-
-  hbin_data  = hexbin::hexbin(.las@data$X, .las@data$Y, xbins = xbins, xbnds = c(xmin, xmax), IDs = TRUE)
-  hbin_coord = hexbin::hcell2xy(hbin_data)
-  hbin_ids   = hbin_data@cID
-  hbin_pos   = cumsum(1:max(hbin_data@cell) %in% hbin_data@cell)
-  hbin_pos_ids = hbin_pos[hbin_ids]
-
-  by = list(Xr = hbin_coord$x[hbin_pos_ids], Yr = hbin_coord$y[hbin_pos_ids])
-
-  if(splitlines & "flightlineID" %in% names(.las@data))
-    by = c(by, list(flightline = .las@data$flightlineID))
-  else if(splitlines & !"flightlineID" %in% names(.las@data))
-    lidRError("LDR7")
-
-  stat <- .las@data[, c(eval(func_call)), by = by]
-
-  n = names(stat)
-  n[1:2] = c("X", "Y")
-
-  data.table::setnames(stat, n)
-  data.table::setattr(stat, "class", c("lashexametrics", attr(stat, "class")))
-  data.table::setattr(stat, "res", res)
+  stat <- lasaggregate(.las, by = "HEXA", call, res, NA, c("X", "Y"), splitlines, debug)
 
   return(stat)
 }

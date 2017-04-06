@@ -4,7 +4,7 @@
 \alias{grid_hexametrics}
 \title{Compute metrics for hexagonal cells}
 \usage{
-grid_hexametrics(.las, func, res = 20, splitlines = FALSE)
+grid_hexametrics(.las, func, res = 20, splitlines = FALSE, debug = FALSE)
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}}
@@ -15,6 +15,8 @@ grid_hexametrics(.las, func, res = 20, splitlines = FALSE)
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlaps.}
+
+\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each hexagonal cell. The table
