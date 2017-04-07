@@ -35,6 +35,7 @@ Collate:
     'catalog_index.r'
     'catalog_query.r'
     'catalog_select.r'
+    'constant.R'
     'deprecated.r'
     'grid_canopy.r'
     'grid_density.r'

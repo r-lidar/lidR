@@ -41,10 +41,10 @@ writeLAS = function(.las, file)
 
   islas = tools::file_ext(file) %in% c("las", "laz")
 
-  if(length(file) > 1)
+  if (length(file) > 1)
     lidRError("LAS5", behaviour = stop)
 
-  if(!islas)
+  if (!islas)
     lidRError("LAS2", files = file, behaviour = stop)
 
   file = path.expand(file)
@@ -54,27 +54,29 @@ writeLAS = function(.las, file)
 
   fields = names(.las@data)
 
-  if("Intensity" %in% fields)
+  nolasvalidfield = fields[!fields %in% .LASVALIDFIELDS]
+
+  if ("Intensity" %in% fields)
     I = .las@data$Intensity
-  if("ReturnNumber" %in% fields)
+  if ("ReturnNumber" %in% fields)
     RN = .las@data$ReturnNumber
-  if("NumberOfReturns" %in% fields)
+  if ("NumberOfReturns" %in% fields)
     NoR = .las@data$NumberOfReturns
-  if("ScanDirectionFlag" %in% fields)
+  if ("ScanDirectionFlag" %in% fields)
     SDF = .las@data$ScanDirectionFlag
-  if("EdgeOfFlightline" %in% fields)
+  if ("EdgeOfFlightline" %in% fields)
     EoF = .las@data$EdgeOfFlightline
-  if("Classification" %in% fields)
+  if ("Classification" %in% fields)
     C = .las@data$Classification
-  if("ScanAngle" %in% fields)
+  if ("ScanAngle" %in% fields)
     SA = .las@data$ScanAngle
-  if("UserData" %in% fields)
+  if ("UserData" %in% fields)
     UD = .las@data$UserData
-  if("gpstime" %in% fields)
+  if ("gpstime" %in% fields)
     time = .las@data$gpstime
-  if("PointSourceID" %in% fields)
+  if ("PointSourceID" %in% fields)
     PSI = .las@data$PointSourceID
-  if("R" %in% fields & "G" %in% fields & "B" %in% fields )
+  if ("R" %in% fields & "G" %in% fields & "B" %in% fields )
   {
     R = .las@data$R
     G = .las@data$G
@@ -82,4 +84,12 @@ writeLAS = function(.las, file)
   }
 
   rlas::writelas(file, .las@header@data, .las@data$X, .las@data$Y, .las@data$Z, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
+
+  if (0 <= length(nolasvalidfield))
+  {
+    for (i in 1:length(nolasvalidfield))
+      message("Column ", nolasvalidfield[i], " skipped. It does not meet las specifications.")
+  }
+
+  return(invisible())
 }
