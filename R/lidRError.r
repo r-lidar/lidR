@@ -48,11 +48,12 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR4" = list("No '", p$infield, "' field found. '", p$outfield, "', cannot be computed from this file."),
 "LDR5" = list("Parameter n of function lasfilternth incorrect."),
 "LDR6" = list("This algorithm does not exist."),
-"LDR7" = list("'flighlineID': no such field in the dataset. Check function 'lasflighline'"),
+"LDR7" = list("'flightlineID': no such field in the dataset. Check function 'lasflightline'"),
 "LDR8" = list("ScanDirectionFlag field is not valid according to LAS specifications. Cannot compute 'scanlineID'"),
 "LDR9" = list("'data' is empty. No point found"),
 "LDR10" = list("Dataset is invalid: ", p$number, " points with a return number of 0 found."),
-"LDR11" = list("'", p$what, "' was missing in the header. The value ", p$num, " was automatically attributed"),
+"LDR11" = list("'", p$what, "' was missing in the header. The value ", p$num, " was automatically attributed."),
+"LDR12" = list(p$what, " were missing in the header. The values ", utils::capture.output(cat(p$num, sep=" ")), " were automatically attributed."),
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),

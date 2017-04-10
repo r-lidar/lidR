@@ -62,6 +62,12 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
   z = rep(NA, (dim(grid)[1]))
 
+  if(! "ReturnNumber" %in% names(.las@data))
+     stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
+
+  if(fast_countequal(.las@data$ReturnNumber, 1) == 0)
+    stop("No first returns found. Aborded.", call. = FALSE)
+
   cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
 
   if(length(thresholds) == 1 & thresholds[1] == 0)

@@ -29,12 +29,11 @@
 
 #' Rasterize the space and compute metrics for each cell
 #'
-#' Computes a series of descriptive statistics for a LiDAR dataset within each cell
-#' of a grid.
+#' Computes a series of descriptive statistics defined by the user for a LiDAR dataset within
+#' each pixel of a raster. Output is a data.frame in which each line is a pixel (single grid cell),
+#' and each column is a metric.
 #'
-#' Computes a series of descriptive statistics defined by the user. Output is a
-#' data.frame in which each line is a raster (single grid cell), and each column is a metric.
-#' grid_metrics is similar to \code{lasmetrics} except it computes metrics within each cell
+#' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
 #' in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
 #' So the algorithm will always provide the same coordinates independently of the dataset.
 #' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
@@ -58,6 +57,7 @@
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0).
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlap.
+#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table
 #' has the class "lasmetrics" enabling easy plotting.
 #' @examples
@@ -68,7 +68,7 @@
 #' grid_metrics(lidar, max(Z), 2) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' grid_metrics(lidar, mean(Z)) %>% plot
+#' grid_metrics(lidar, mean(Z), 20) %>% plot
 #'
 #' # Define your own new metrics
 #' myMetrics = function(z, i)
@@ -89,70 +89,13 @@
 #' plot(metrics, "zsqmean")
 #' #etc.
 #' @export
-grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE)
+grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE, debug = FALSE)
 {
   stopifnotlas(.las)
 
-  func_call = substitute(func)
+  call = substitute(func)
 
-  if(is(func_call, "name"))
-    func_call = eval(func_call)
-
-  .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
-
-  by = group_grid(.las@data$X, .las@data$Y, res, start)
-
-  if(splitlines & "flightlineID" %in% names(.las@data))
-    by = c(by, list(flightline = .las@data$flightlineID))
-  else if(splitlines & !"flightlineID" %in% names(.las@data))
-    lidRError("LDR7")
-
-  stat <- .las@data[, c(eval(func_call)), by = by]
-
-  n = names(stat)
-  n[1:2] = c("X", "Y")
-
-  data.table::setnames(stat, n)
-  data.table::setattr(stat, "class", c("lasmetrics", attr(stat, "class")))
-  data.table::setattr(stat, "res", res)
+  stat <- lasaggregate(.las, by = "XY", call, res, start, c("X", "Y"), splitlines, debug)
 
   return(stat)
-}
-
-.debug_grid_metrics = function(metrics, func)
-{
-  funcstring = deparse(func)
-
-  if(is.list(metrics) & !is.data.frame(metrics))
-  {
-    if(is.null(names(metrics)))
-      names(metrics) = paste0("#", 1:length(metrics))
-
-    classes = sapply(metrics, class)
-    test = classes %in% c("integer", "numeric", "logical", "character")
-    n = names(metrics[!test])
-    c = classes[!test]
-
-    if(sum(!test) == 1)
-      lidRError("TFS1", expression = funcstring, metric = n, class = c)
-    else if(sum(!test) > 1)
-      lidRError("TFS2", expression = funcstring, metric = n, class = c)
-
-    size = sapply(metrics, length)
-    test = size == 1
-
-    n = names(metrics[!test])
-    c = size[!test]
-
-    if(sum(!test) == 1)
-      lidRError("TFS3", expression = funcstring, metric = n, number = c)
-    else if(sum(!test) > 1)
-      lidRError("TFS4", expression = funcstring, metric = n, number = c)
-  }
-  else if(is.data.frame(metrics))
-    lidRError("TFS5", expression = funcstring)
-  else if(is.vector(metrics) & length(metrics) > 1)
-    lidRError("TFS6", expression = funcstring, number = length(metrics))
-  else
-    return(0)
 }

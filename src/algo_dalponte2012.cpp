@@ -131,7 +131,7 @@ IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, doubl
           {
             rr   = filData(i, 0);
             kk   = filData(i, 1);
-            gfil = (filData(i,2) != 0 && filData(i,2) > (rvSeed*TRESHSeed) && (filData(i,2) > (rvCrown*TRESHCrown)) && (filData(i,2) <= (rvSeed+(rvSeed*0.05))) && (abs(coordSeed(0,0)-filData(i,0)) < DIST) && (abs(coordSeed(0,1)-filData(i,1)) < DIST));
+            gfil = (filData(i,2) != 0 && filData(i,2) > (rvSeed*TRESHSeed) && (filData(i,2) > (rvCrown*TRESHCrown)) && (filData(i,2) <= (rvSeed+(rvSeed*0.05))) && (fabs(coordSeed(0,0)-filData(i,0)) < DIST) && (fabs(coordSeed(0,1)-filData(i,1)) < DIST));
 
             if(gfil && Crowns(rr, kk) == 0 && Canopy(rr, kk) != 0)
             {
