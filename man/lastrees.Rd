@@ -109,7 +109,6 @@ lastrees(las, "dalponte2016", chm, th = 5)
 # plot points that actually are trees
 trees = lasfilter(las, !is.na(treeID))
 plot(trees, color = "treeID", colorPalette = random.colors(100))
-
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from

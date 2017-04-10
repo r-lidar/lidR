@@ -1,9 +1,19 @@
 ### lidR v1.2.1 (in development)
 
+#### NEW FEATURES
+
+* new function `tree_metrics`.
+* new function `stdtreemetrics`.
+
 #### BUG FIXES
 
 * Installation failed if package sp was missing.
 * Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
+* In dalponte's algorithm there was a bug due to the use of std::abs which work with intergers instead of std::fabs which work with doubles.
+
+#### OTHER CHANGES
+
+* Li et al. algorithm for tree segmentation is 40 times faster than in v1.2.0
 
 ### lidR v1.2.0 (Release date: 2017-03-26)
 

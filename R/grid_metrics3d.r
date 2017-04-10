@@ -82,28 +82,9 @@ grid_metrics3d = function(.las, func, res = 1, debug = FALSE)
 {
   stopifnotlas(.las)
 
-  func_call = substitute(func)
+  call = substitute(func)
 
-  if(is(func_call, "name"))
-    func_call = eval(func_call)
-
-  if(debug)
-    .las@data %$% eval(func_call) %>% .debug_grid_metrics(func_call)
-
-  x_raster = round_any(.las@data$X, res)
-  y_raster = round_any(.las@data$Y, res)
-  z_raster = round_any(.las@data$Z-0.5*res, res)+0.5*res
-
-  by = list(Xc = x_raster, Yc = y_raster, Zc = z_raster)
-
-  stat <- .las@data[, c(eval(func_call)), by=by]
-
-  n = names(stat)
-  n[1:3] = c("X", "Y", "Z")
-  setnames(stat, n)
-
-  attr(stat, "class") = c("lasmetrics3d", attr(stat, "class"))
-  attr(stat, "res") = res
+  stat <- lasaggregate(.las, by = "XYZ", call, res, c(0,0,0), c("X", "Y", "Z"), FALSE, debug)
 
   return(stat)
 }

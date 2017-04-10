@@ -49,6 +49,15 @@ group_grid = function(x, y, res, start = c(0,0))
   return(list(Xgrid = xgrid, Ygrid = ygrid))
 }
 
+group_grid_3d = function(x, y, z, res, start = c(0,0,0))
+{
+  xgrid = f_grid(x, res, start[1])
+  ygrid = f_grid(y, res, start[2])
+  zgrid = f_grid(z, res, start[3])
+
+  return(list(Xgrid = xgrid, Ygrid = ygrid, Zgrid = zgrid))
+}
+
 f_grid = function(x, res, start)
 {
   round_any(x-0.5*res-start, res)+0.5*res+start

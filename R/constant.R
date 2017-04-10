@@ -1,0 +1,1 @@
+.LASVALIDFIELDS = c("X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "gpstime", "PointSourceID", "R", "G", "B")
