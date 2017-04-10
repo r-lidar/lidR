@@ -34,10 +34,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // Defined in cxx_utils.cpp
-NumericVector distance(NumericVector, NumericVector, double, double);
+NumericVector sqdistance(NumericVector, NumericVector, double, double);
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, const double dt1, const double dt2, const double R)
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R)
 {
   bool end = false;
 
@@ -49,6 +49,10 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
 
   IntegerVector idpoint = seq_len(ni)-1;
   IntegerVector idtree(ni);
+
+  R = R * R;
+  dt1 = dt1 * dt1;
+  dt2 = dt2 * dt2;
 
   while(!end)
   {
@@ -71,7 +75,7 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
     YN.push_back(Y(0)+100);
 
     // Compute the distance between the local max u and all the other point
-    NumericVector d = distance(X, Y, X(0), Y(0));
+    NumericVector d = sqdistance(X, Y, X(0), Y(0));
 
     for (int i = 1 ; i < n ; ++i)
     {
@@ -81,8 +85,8 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
       }
       else                    // If d <= R classify point base on Li et al. rules
       {
-        double dmin1 = min(distance(XP, YP, X[i], Y[i]));
-        double dmin2 = min(distance(XN, YN, X[i], Y[i]));
+        double dmin1 = min(sqdistance(XP, YP, X[i], Y[i]));
+        double dmin2 = min(sqdistance(XN, YN, X[i], Y[i]));
         double dt    = (Z[idpoint[i]] > 15) ? dt2 : dt1;
 
         if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )

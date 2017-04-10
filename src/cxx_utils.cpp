@@ -166,7 +166,7 @@ NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
   return(out);
 }
 
-NumericVector distance(NumericVector x1, NumericVector y1, double x2, double y2)
+NumericVector sqdistance(NumericVector x1, NumericVector y1, double x2, double y2)
 {
   int n = x1.length();
   NumericVector y(n);
@@ -178,7 +178,7 @@ NumericVector distance(NumericVector x1, NumericVector y1, double x2, double y2)
   {
     double dx = *i1-x2;
     double dy = *i2-y2;
-    *i3 = std::sqrt(dx*dx+dy*dy);
+    *i3 = dx * dx + dy * dy;
   }
 
   return y;
