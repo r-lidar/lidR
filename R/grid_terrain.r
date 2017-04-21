@@ -89,7 +89,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   ground = suppressWarnings(lasfilterground(.las))
 
-  if(is.null(ground))
+  if (is.null(ground))
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
   ground  = ground@data[, .(X,Y,Z)]
@@ -97,12 +97,22 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
   ext  = extent(.las)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
 
+  hull = convex_hull(.las$X, .las$Y)
+
+  # buffer around convex hull
+  sphull = sp::Polygon(hull)
+  sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
+  hull = rgeos::gBuffer(sphull, width = res)
+  hull = hull@polygons[[1]]@Polygons[[1]]@coords
+
+  grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
+
   Zg = interpolate(ground, grid, method, k, model)
 
   grid[, Z := round(Zg, 3)]
 
   # force lowest ground point to be dominant
-  if(keep_lowest)
+  if (keep_lowest)
   {
     grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
     grid = grid[, list(Z = min(Z)), by = .(X,Y)]
