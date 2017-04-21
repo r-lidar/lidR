@@ -109,7 +109,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   Zg = interpolate(ground, grid, method, k, model)
 
-  grid[, Z := round(Zg, 3)]
+  grid[, Z := round(Zg, 3)][]
 
   # force lowest ground point to be dominant
   if (keep_lowest)
