@@ -14,6 +14,7 @@
 #### OTHER CHANGES
 
 * Li et al. algorithm for tree segmentation is 40 times faster than in v1.2.0
+* In grid_terrain, the interpolation is done only within the convex hull of the point cloud
 
 ### lidR v1.2.0 (Release date: 2017-03-26)
 
