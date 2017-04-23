@@ -29,7 +29,7 @@ interpolate = function(points, coord, method, k, model)
 {
   . <- X <- Y <- Z <- NULL
 
-  if(dim(coord)[1] == 0)
+  if (dim(coord)[1] == 0)
     return(numeric(0))
 
   # test integrity of the data
@@ -38,26 +38,26 @@ interpolate = function(points, coord, method, k, model)
   ndup_xyz = sum(dup_xyz)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
-  if(ndup_xyz > 0)
+  if (ndup_xyz > 0)
     warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
 
-  if(ndup_xy > 0)
+  if (ndup_xy > 0)
     warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
 
-  if(ndup_xy > 0 | ndup_xyz > 0)
+  if (ndup_xy > 0 | ndup_xyz > 0)
     points = points[, .(Z = min(Z)), by = .(X,Y)]
 
-  if(method == "knnidw")
+  if (method == "knnidw")
   {
     cat("[using inverse distance weighting]\n")
     return(interpolate_knnidw(points, coord, k))
   }
-  else if(method == "delaunay")
+  else if (method == "delaunay")
   {
     cat("[using Delaunay triangulation]\n")
-    return(interpolate_delaunay(points, coord, 0))
+    return(interpolate_delaunay(points, coord))
   }
-  else if(method == "kriging")
+  else if (method == "kriging")
   {
     return(interpolate_kriging(points, coord, model, k))
   }
@@ -85,29 +85,30 @@ interpolate_kriging = function(points, coord, model, k)
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord, th)
+interpolate_delaunay <- function(points, coord, th = 0)
 {
-  pitfree = th > 0
+  pitfree = th > 0  # specific case if using khosravipour algorithm in grid_tincanopy
 
   X <- as.matrix(points)
   Y <- as.matrix(coord)
 
   dn   <- suppressMessages(geometry::delaunayn(X[,1:2]))
-  idx  <- geometry::tsearch(X[,1],X[,2],dn,Y[,1],Y[,2])
-  uidx <- unique(idx)
-  uidx <- uidx[!is.na(uidx)]
+  idx  <- geometry::tsearch(X[,1], X[,2], dn, Y[,1], Y[,2])
 
-  active <- dn[uidx,]
-  active <- cbind(active, uidx)
+  #uidx <- unique(idx)
+  #uidx <- uidx[!is.na(uidx)]
 
-  N = get_normales(active, X, nrow(dn), pitfree)
+  #active <- dn[uidx,]
+  #active <- cbind(active, uidx)
+
+  N = triangle_information(dn, X)
   N = N[idx,]
 
-  z = -(Y[,1]*N[,1] + Y[,2]*N[,2]+N[,4])/N[,3]
+  z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]
 
-  if(pitfree)
+  if (pitfree)
   {
-    delete = N[,5] > th
+    delete = N[,7] > th
     delete[is.na(delete)] = FALSE
     z[delete] = NA
   }
