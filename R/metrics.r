@@ -371,6 +371,19 @@ fractal_dimension = function(mtx)
 	  return(sum(box))
 }
 
+rumple_index = function(x,y,z)
+{
+  X = cbind(x,y,z)
+  dn = suppressMessages(geometry::delaunayn(X[,1:2]))
+  N = triangle_information(dn, X)
+
+  area  = sum(N[,5])
+  parea = sum(N[,6])
+  rumple = area/parea
+
+  return(rumple)
+}
+
 #' @rdname stdmetrics
 #' @export
 stdmetrics_z = function(z, dz = 1)

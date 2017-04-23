@@ -86,18 +86,22 @@ int fast_countover(NumericVector x, double t)
   return n;
 }
 
+// @param M a matrix n x 4 describing a delaunay triangulation. Each row a set of indices to the points + a triangle id
+// This matrix is expected to be pruned of useless triangles in attempt to reduce the computation times
+// @param X a matrix m x 3 with the points coordinates
+// @param size the number of triangle in original dataset
+// @return n x 6 matrix with 3 coord of normal vector, intercept, area, projected area, max edge size
 // [[Rcpp::export]]
-NumericMatrix get_normales(IntegerMatrix M, NumericMatrix X, int size, bool edge_size = false)
+NumericMatrix triangle_information(IntegerMatrix M, NumericMatrix X)
 {
-  NumericMatrix N(size, 5);
+  NumericMatrix N(M.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);
 
-  for(int i = 0, end = M.nrow(); i < end ; i++)
+  for (int i = 0, end = M.nrow() ; i < end ; i++)
   {
     int p1 = M(i,0)-1;
     int p2 = M(i,1)-1;
     int p3 = M(i,2)-1;
-    int j  = M(i,3)-1;
 
     NumericVector A = NumericVector::create(X(p1,0), X(p1,1), X(p1,2));
     NumericVector B = NumericVector::create(X(p2,0), X(p2,1), X(p2,2));
@@ -107,23 +111,33 @@ NumericMatrix get_normales(IntegerMatrix M, NumericMatrix X, int size, bool edge
     NumericVector v = A - C;
     NumericVector w = B - C;
 
-    NumericVector n = NumericVector::create(u(1)*v(2)-u(2)*v(1), u(2)*v(0)-u(0)*v(2), u(0)*v(1)-u(1)*v(0));
-    n.push_back(sum(-n*C));
+    // Cross product
+    NumericVector n(3);
+    n(0) = u(1)*v(2)-u(2)*v(1);
+    n(1) = u(2)*v(0)-u(0)*v(2);
+    n(2) = u(0)*v(1)-u(1)*v(0);
 
-    N(j,0) = n(0);
-    N(j,1) = n(1);
-    N(j,2) = n(2);
-    N(j,3) = n(3);
+    // normal vector
+    N(i,0) = n(0);
+    N(i,1) = n(1);
+    N(i,2) = n(2);
 
-    if(edge_size)
-    {
-      u.erase(2);
-      v.erase(2);
-      w.erase(2);
-      NumericVector e = NumericVector::create(sqrt(sum(pow(u, 2))), sqrt(sum(pow(v, 2))), sqrt(sum(pow(w, 2))));
-      N(j,4) = max(e);
-    }
+    // intercept
+    N(i,3) = sum(-n*C);
+
+    // area and projected area
+    N(i,4) = 0.5 * sqrt(n(0) * n(0) + n(1) * n(1) + n(2) * n(2));
+    N(i,5) = 0.5 * n(2);
+
+    // max edge length
+    u.erase(2);
+    v.erase(2);
+    w.erase(2);
+    NumericVector e = NumericVector::create(sqrt(sum(pow(u, 2))), sqrt(sum(pow(v, 2))), sqrt(sum(pow(w, 2))));
+    N(i,6) = max(e);
   }
+
+  colnames(N) = CharacterVector::create("nx", "ny", "nz", "intercept", "xyzarea", "xyarea", "maxedge");
 
   return N;
 }

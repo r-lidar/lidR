@@ -96,17 +96,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_normales
-NumericMatrix get_normales(IntegerMatrix M, NumericMatrix X, int size, bool edge_size);
-RcppExport SEXP lidR_get_normales(SEXP MSEXP, SEXP XSEXP, SEXP sizeSEXP, SEXP edge_sizeSEXP) {
+// triangle_information
+NumericMatrix triangle_information(IntegerMatrix M, NumericMatrix X);
+RcppExport SEXP lidR_triangle_information(SEXP MSEXP, SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerMatrix >::type M(MSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type size(sizeSEXP);
-    Rcpp::traits::input_parameter< bool >::type edge_size(edge_sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_normales(M, X, size, edge_size));
+    rcpp_result_gen = Rcpp::wrap(triangle_information(M, X));
     return rcpp_result_gen;
 END_RCPP
 }
