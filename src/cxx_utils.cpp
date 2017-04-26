@@ -126,8 +126,8 @@ NumericMatrix triangle_information(IntegerMatrix M, NumericMatrix X)
     N(i,3) = sum(-n*C);
 
     // area and projected area
-    N(i,4) = 0.5 * sqrt(n(0) * n(0) + n(1) * n(1) + n(2) * n(2));
-    N(i,5) = 0.5 * n(2);
+    N(i,4) = std::fabs(0.5 * sqrt(n(0) * n(0) + n(1) * n(1) + n(2) * n(2)));
+    N(i,5) = std::fabs(0.5 * n(2));
 
     // max edge length
     u.erase(2);
