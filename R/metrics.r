@@ -373,6 +373,14 @@ fractal_dimension = function(mtx)
 
 rumple_index = function(x,y,z)
 {
+  if(length(x) != length(y) | length(x) != length(z))
+    stop("Different lengths for x,y,z", call. = FALSE)
+
+  keep = !(is.na(x) | is.na(y) | is.na(z))
+  x = x[keep]
+  y = y[keep]
+  z = z[keep]
+
   X = cbind(x,y,z)
   dn = suppressMessages(geometry::delaunayn(X[,1:2]))
   N = triangle_information(dn, X)
