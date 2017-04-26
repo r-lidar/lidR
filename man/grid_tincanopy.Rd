@@ -5,7 +5,7 @@
 \title{Canopy height model based on a triangular irregular network.}
 \usage{
 grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
-  max_edge = 0.5)
+  max_edge = 1)
 }
 \arguments{
 \item{.las}{A LAS object}
@@ -34,7 +34,7 @@ las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-dro
 chm1 = grid_tincanopy(las, thresholds = 0)
 
 # Khosravipour et al. pitfree algorithm
-chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1)
+chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1.5)
 
 plot(chm1)
 plot(chm2)

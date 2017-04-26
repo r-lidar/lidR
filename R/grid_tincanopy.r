@@ -48,14 +48,14 @@
 #' chm1 = grid_tincanopy(las, thresholds = 0)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1)
+#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1.5)
 #'
 #' plot(chm1)
 #' plot(chm2)
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 0.5)
+grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 1)
 {
   . <- X <- Y <- Z <- ReturnNumber <- NULL
   ex = extent(.las)
