@@ -10,8 +10,8 @@ lidR provides an open-source and R-based implementation of several classical fun
 
 Please contact the author for bug reports or feature requests (on github, preferably). I enjoy implementing new features!
 
-1. [Features](#features)
-2. [Install lidR from github](#install-lidr-from-github)
+1. [Features](#features-not-exhaustive)
+2. [Install lidR](#install-lidr)
 3. [Some examples](#some-examples)
 4. [Changelog](#changelog)
 
@@ -33,7 +33,7 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
 - [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
 - [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
-- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki/lastrees)
+- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki/Tree-segmentation-from-A-to-Z)
 
 # Install `lidR`
 
