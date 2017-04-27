@@ -29,7 +29,7 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Manage a catalog of `.las` tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
 - [Thin a point cloud to reach a homogeneous pulse density](https://github.com/Jean-Romain/lidR/wiki/lasdecimate)
 - [Automatically extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki/catalog_queries)
-- [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog#process-all-the-file-of-a-catalog_apply)
+- [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog_apply)
 - [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/grid_canopy)
 - [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
 - [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
