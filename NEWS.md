@@ -4,6 +4,7 @@
 
 * new function `tree_metrics`.
 * new function `stdtreemetrics`.
+* `grid_tincanopy` gain a parameter `subcircle` like `grid_canopy`
 
 #### BUG FIXES
 
