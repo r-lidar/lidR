@@ -10,11 +10,13 @@
 * Installation failed if package sp was missing.
 * Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
 * In dalponte's algorithm there was a bug due to the use of std::abs which work with intergers instead of std::fabs which work with doubles.
+* In `grid_tincanopy` a `x > 0` instead of `x >= 0` leaded to weird canopy height models
 
 #### OTHER CHANGES
 
 * Li et al. algorithm for tree segmentation is 40 times faster than in v1.2.0
-* In grid_terrain, the interpolation is done only within the convex hull of the point cloud
+* In `grid_terrain`, the interpolation is done only within the convex hull of the point cloud
+* `grid_tincanopy` makes the triangulation only for highest return per grid cell.
 
 ### lidR v1.2.0 (Release date: 2017-03-26)
 

@@ -68,7 +68,16 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   if(fast_countequal(.las@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborded.", call. = FALSE)
 
+  # Select only the highest point with the grid
+  f = function(x,y,z) {
+    i = which.max(z)
+    return(list(X = x[i], Y = y[i], Z = z[i]))
+  }
+
   cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
+
+  by = group_grid(cloud$X, cloud$Y, res)
+  cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
 
   if(length(thresholds) == 1 & thresholds[1] == 0)
     cat("[Delaunay triangulation of first returns]")
@@ -82,7 +91,7 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
     else
       edge = max_edge
 
-    pts = cloud[Z > th]
+    pts = cloud[Z >= th]
     Ztemp = interpolate_delaunay(pts, grid, edge)
     z = pmax(z, Ztemp, na.rm = T)
   }
