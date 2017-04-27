@@ -80,17 +80,12 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 {
   . <- X <- Y <- Z <- NULL
 
-  if(subcircle > 0)
+  if (subcircle > 0)
   {
     ex = extent(.las)
 
     dt = .las@data[, .(X,Y,Z)]
-
-    alpha = seq(0, 2*pi, length.out = 9)[-9]
-    px = subcircle*cos(alpha)
-    py = subcircle*sin(alpha)
-
-    dt = dt[, subcircled(X,Y,Z, px,py), by = rownames(dt)][, rownames := NULL]
+    dt = subcircled(dt, subcircle, 8)
     dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
     .las = suppressWarnings(LAS(dt))
 
@@ -99,7 +94,7 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 
   dsm   = grid_metrics(.las, list(Z = max(Z)), res)
 
-  if(na.fill != "none")
+  if (na.fill != "none")
   {
     ex = extent(.las)
     grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
@@ -121,18 +116,4 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
   gc()
 
   return(dsm)
-}
-
-subcircled = function(x, y, z, px, py)
-{
-  i = which.max(z)
-  x = x[i]
-  y = y[i]
-  z = z[i]
-
-  x = x + px
-  y = y + py
-  z = rep(z, length(px))
-
-  list(X = x, Y = y, Z = z)
 }

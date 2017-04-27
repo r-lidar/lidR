@@ -38,6 +38,8 @@
 #' the function it becomes the Khosravipour et al. pit-free algorithm.
 #' @param max_edge  numeric. Maximum edge-length of a triangle in the Delaunay triangulation
 #' used to constrain the pit-free algorithm (see reference).
+#' @param subcircle numeric radius of the circles. To obtain fewer pits the algorithm
+#' can replace each return with a circle composed of 8 points before computing the triangulation.
 #' @return An object of class \code{lasmetrics}
 #' @export
 #' @examples
@@ -55,38 +57,52 @@
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 1)
+grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 1, subcircle = 0)
 {
-  . <- X <- Y <- Z <- ReturnNumber <- NULL
-  ex = extent(.las)
-  grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
-  z = rep(NA, (dim(grid)[1]))
+  . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
 
-  if(! "ReturnNumber" %in% names(.las@data))
+  if (!"ReturnNumber" %in% names(.las@data))
      stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
 
-  if(fast_countequal(.las@data$ReturnNumber, 1) == 0)
+  if (fast_countequal(.las@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborded.", call. = FALSE)
 
-  # Select only the highest point with the grid
+  if (length(thresholds) == 1 & thresholds[1] == 0)
+    cat("[Delaunay triangulation of first returns]")
+  else if (length(thresholds) > 1)
+    cat("[Khosravipour et al. pitfree algorithm]")
+
+  # Create the coordinates of interpolation (pixel coordinates)
+  ex = extent(.las)
+  grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
+
+  # Initialize the interpolated values with NAs
+  z = rep(NA, (dim(grid)[1]))
+
+  # Get only first returns and coordinates (nothing else needed)
+  cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
+
+  # subcircled the data
+  if (subcircle > 0)
+  {
+    ex = extent(.las)
+    cloud = subcircled(cloud, subcircle, 8)
+    cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
+  }
+
+  # Select only the highest points within the grid cells (reduce the computations)
   f = function(x,y,z) {
     i = which.max(z)
     return(list(X = x[i], Y = y[i], Z = z[i]))
   }
 
-  cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
-
   by = group_grid(cloud$X, cloud$Y, res)
   cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
 
-  if(length(thresholds) == 1 & thresholds[1] == 0)
-    cat("[Delaunay triangulation of first returns]")
-  else if(length(thresholds) > 1)
-    cat("[Khosravipour et al. pitfree algorithm]")
-
-  for(th in thresholds)
+  # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
+  for (th in thresholds)
   {
-    if(th == 0)
+    if (th == 0)
       edge = 0
     else
       edge = max_edge

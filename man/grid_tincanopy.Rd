@@ -5,7 +5,7 @@
 \title{Canopy height model based on a triangular irregular network.}
 \usage{
 grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
-  max_edge = 1)
+  max_edge = 1, subcircle = 0)
 }
 \arguments{
 \item{.las}{A LAS object}
@@ -18,6 +18,9 @@ the function it becomes the Khosravipour et al. pit-free algorithm.}
 
 \item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation
 used to constrain the pit-free algorithm (see reference).}
+
+\item{subcircle}{numeric radius of the circles. To obtain fewer pits the algorithm
+can replace each return with a circle composed of 8 points before computing the triangulation.}
 }
 \value{
 An object of class \code{lasmetrics}
