@@ -64,6 +64,7 @@ Collate:
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
+    'metrics_canopy_roughtness.r'
     'mutatebyref.r'
     'plot.catalog.r'
     'plot.las.r'
