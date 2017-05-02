@@ -82,6 +82,8 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 
   if (subcircle > 0)
   {
+    verbose("Subcircle the points...")
+
     ex = extent(.las)
 
     dt = .las@data[, .(X,Y,Z)]
@@ -92,10 +94,14 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
     rm(dt)
   }
 
+  verbose("Grid highest points in each cell...")
+
   dsm   = grid_metrics(.las, list(Z = max(Z)), res)
 
   if (na.fill != "none")
   {
+    verbose("Interpolation of empty cells...")
+
     ex = extent(.las)
     grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
