@@ -78,7 +78,6 @@
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[gstat:vgm]{vgm}
 #' \link[gstat:krige]{krige}
-#' \link[akima:interp]{interp}
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[raster:raster]{RasterLayer}
 grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)

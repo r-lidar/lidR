@@ -68,7 +68,6 @@ plot3d(dtm3)
 \link[lidR:lasnormalize]{lasnormalize}
 \link[gstat:vgm]{vgm}
 \link[gstat:krige]{krige}
-\link[akima:interp]{interp}
 \link[lidR:lasnormalize]{lasnormalize}
 \link[raster:raster]{RasterLayer}
 }
