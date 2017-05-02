@@ -62,6 +62,7 @@
 #' \link[grDevices:heat.colors]{heat.colors}
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' \link[lidR:LAS]{Class LAS}
+#' @method plot LAS
 #' @export
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, ...)
 {

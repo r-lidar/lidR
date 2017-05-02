@@ -73,8 +73,8 @@ fractal_dimension = function(x, plot = FALSE)
 
   if (plot)
   {
-    plot(log(nbbox) ~ log(q))
-    abline(lm)
+    graphics::plot(log(nbbox) ~ log(q))
+    graphics::abline(lm)
   }
 
   return(abs(as.numeric(stats::coefficients(lm)[2])))
@@ -134,8 +134,8 @@ rumple_index = function(x, res)
   kernel[2,3] = -1
   kernel[3,2] = -1
 
-  y = focal(r, w = kernel, fun = sum, na.rm = TRUE)
-  y = as.matrix(y)
+  y = raster::focal(r, w = kernel, fun = sum, na.rm = TRUE)
+  y = raster::as.matrix(y)
   y = y[,-1]
   y = y[-1,]
   y[, dim(y)[2]] = 0
