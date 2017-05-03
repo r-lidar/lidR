@@ -36,8 +36,11 @@
 #' @param thresholds numeric array. Set of height threholds. If \code{thresholds = 0} the algorithm
 #' is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
 #' the function it becomes the Khosravipour et al. pit-free algorithm.
-#' @param max_edge  numeric. Maximum edge-length of a triangle in the Delaunay triangulation
-#' used to constrain the pit-free algorithm (see reference).
+#' @param max_edge  numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
+#' It is used to constrain the pit-free algorithm (see reference) and to trim dummy interpolation
+#' on non-convex areas. The first number is the value for the classical triangulation (thrshold = 0),
+#' the second number is the value for pit-free algorithm for (thresolds > 0). If \code{max_edge = 0}
+#' no trimming will be done.
 #' @param subcircle numeric radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle composed of 8 points before computing the triangulation.
 #' @return An object of class \code{lasmetrics}
@@ -47,19 +50,22 @@
 #' las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-drop_z_below 0")
 #'
 #' # Basic triangulation and rasterization
-#' chm1 = grid_tincanopy(las, thresholds = 0)
+#' chm1 = grid_tincanopy(las, thresholds = 0, max_edge = 0)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1.5)
+#' chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
 #'
 #' plot(chm1)
 #' plot(chm2)
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = 1, subcircle = 0)
+grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
+
+  if (length(thresholds) > 1 & length(max_edge) < 2)
+    stop("'max_egde' should contain 2 numbers", call. = FALSE)
 
   if (!"ReturnNumber" %in% names(.las@data))
      stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
@@ -68,11 +74,13 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
     stop("No first returns found. Aborded.", call. = FALSE)
 
   if (length(thresholds) == 1 & thresholds[1] == 0)
-    cat("[Delaunay triangulation of first returns]")
+    cat("[Delaunay triangulation of first returns]\n")
   else if (length(thresholds) > 1)
-    cat("[Khosravipour et al. pitfree algorithm]")
+    cat("[Khosravipour et al. pitfree algorithm]\n")
 
   # Create the coordinates of interpolation (pixel coordinates)
+  verbose("Generate interpolation coordinates...")
+
   ex = extent(.las)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
@@ -80,17 +88,21 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   z = rep(NA, (dim(grid)[1]))
 
   # Get only first returns and coordinates (nothing else needed)
+  verbose("Select first returns...")
   cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
 
   # subcircled the data
   if (subcircle > 0)
   {
+    verbose("Subcircle the points...")
+
     ex = extent(.las)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }
 
-  # Select only the highest points within the grid cells (reduce the computations)
+  verbose("Select only the highest points within the grid cells...")
+
   f = function(x,y,z) {
     i = which.max(z)
     return(list(X = x[i], Y = y[i], Z = z[i]))
@@ -102,10 +114,12 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
   for (th in thresholds)
   {
+    verbose(paste0("Triangulation pass 1 of ", length(thresholds), "..."))
+
     if (th == 0)
-      edge = 0
+      edge = max_edge[1]
     else
-      edge = max_edge
+      edge = max_edge[2]
 
     pts = cloud[Z >= th]
     Ztemp = interpolate_delaunay(pts, grid, edge)
@@ -113,6 +127,7 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   }
 
   grid[, Z := z][]
+  grid = grid[!is.na(Z)]
   as.lasmetrics(grid,res)
 
   return(grid)
