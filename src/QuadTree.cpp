@@ -172,11 +172,12 @@ void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, cons
   return;
 }
 
-void QuadTree::rect_lookup(const double xc, const double yc, const double range, std::vector<Point*>& res)
+void QuadTree::rect_lookup(const double xc, const double yc, const double half_width, const double half_height, std::vector<Point*>& res)
 {
-  range_lookup(BoundingBox(Point(xc, yc), Point(range, range)), res, 1);
+  range_lookup(BoundingBox(Point(xc, yc), Point(half_width, half_height)), res, 1);
   return;
 }
+
 
 void QuadTree::circle_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
 {

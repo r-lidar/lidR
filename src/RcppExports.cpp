@@ -164,3 +164,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tsearch
+IntegerVector tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi);
+RcppExport SEXP lidR_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
+    rcpp_result_gen = Rcpp::wrap(tsearch(x, y, elem, xi, yi));
+    return rcpp_result_gen;
+END_RCPP
+}
