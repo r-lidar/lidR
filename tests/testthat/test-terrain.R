@@ -11,9 +11,9 @@ data.table::setkey(truedtm, X, Y)
 test_that("terrain works with knnidw", {
   dtm = grid_terrain(las, 1, method = "knnidw", k = 10L)
   data.table::setkey(dtm, X, Y)
-  diff = dtm - truedtm
-  expect_equal(dim(dtm)[1], 10000)
-  expect_lt(mean(abs(diff$Z)), 0.2)
+  diff = truedtm[dtm]
+  diffZ = abs(diff$Z - diff$i.Z)
+  expect_lt(mean(diffZ), 0.2)
 })
 
 test_that("terrain works with delaunay", {
@@ -26,7 +26,7 @@ test_that("terrain works with delaunay", {
 test_that("terrain works with kriging", {
   dtm = grid_terrain(las, 1, method = "kriging", k = 10L)
   data.table::setkey(dtm, X, Y)
-  diff = dtm - truedtm
-  expect_equal(dim(dtm)[1], 10000)
-  expect_lt(mean(abs(diff$Z)), 0.07)
+  diff = truedtm[dtm]
+  diffZ = abs(diff$Z - diff$i.Z)
+  expect_lt(mean(diffZ), 0.07)
 })

@@ -37,10 +37,9 @@
 #' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 #' an inverse distance weighting (IDW). This is a fast but basic method for spatial
 #' data interpolation.}
-#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation using the \link[akima:interp]{interp}
-#' function from package \code{akima}. This method is very fast. It makes a linear interpolation
-#' within each triangle. Note that with this method no extrapolation is done outside of the
-#' convex hull determined by the ground points.}
+#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
+#' interpolation within each triangle. Note that with this method no extrapolation is done
+#' outside of the convex hull determined by the ground points.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
 #' function. This method combines the KNN approach with the kriging approach. For each point of interest
 #' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
@@ -78,7 +77,6 @@
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[gstat:vgm]{vgm}
 #' \link[gstat:krige]{krige}
-#' \link[akima:interp]{interp}
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[raster:raster]{RasterLayer}
 grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
@@ -87,12 +85,16 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   stopifnotlas(.las)
 
+  verbose("Select ground points...")
+
   ground = suppressWarnings(lasfilterground(.las))
 
   if (is.null(ground))
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
   ground  = ground@data[, .(X,Y,Z)]
+
+  verbose("Generate interpolation coordinates...")
 
   ext  = extent(.las)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
@@ -107,6 +109,8 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
 
+  verbose("Interpolation of ground points...")
+
   Zg = interpolate(ground, grid, method, k, model)
 
   grid[, Z := round(Zg, 3)][]
@@ -114,6 +118,8 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
   # force lowest ground point to be dominant
   if (keep_lowest)
   {
+    verbose("Force the lowest ground points...")
+
     grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
     grid = grid[, list(Z = min(Z)), by = .(X,Y)]
   }
