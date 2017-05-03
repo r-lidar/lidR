@@ -41,6 +41,7 @@
 #' summary(lidar)
 #'
 #' @export
+#' @method summary LAS
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
 summary.LAS =	function(object, ...)

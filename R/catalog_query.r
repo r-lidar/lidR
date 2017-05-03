@@ -76,6 +76,8 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 
   if(is.null(roinames)) roinames = paste0("ROI", 1:nplot)
 
+  verbose("Indexation of the files...")
+
   # Make an index of the file in which are each query
   lasindex = obj %>% catalog_index(x, y, r, r2, roinames)
 
@@ -90,7 +92,7 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
   # Recompute the number of queries
   nplot = length(lasindex)
 
-  cat("Extracting data...\n")
+  verbose("Extract data...")
 
   if(mc.cores == 1)
   {

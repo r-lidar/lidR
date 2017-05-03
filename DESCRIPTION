@@ -20,7 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval,geometry,gstat,sp
+    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval,geometry,gstat,sp,settings
 Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true
@@ -64,7 +64,9 @@ Collate:
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
+    'metrics_canopy_roughtness.r'
     'mutatebyref.r'
+    'option.r'
     'plot.catalog.r'
     'plot.las.r'
     'plot.lashexametrics.r'

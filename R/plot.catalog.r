@@ -34,6 +34,7 @@
 #' @param x A Catalog object
 #' @param y Unused (inherited from base plot)
 #' @param \dots Unused (inherited from base plot)
+#' @method plot Catalog
 #' @export
 #' @examples
 #' \dontrun{

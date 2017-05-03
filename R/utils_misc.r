@@ -63,6 +63,12 @@ f_grid = function(x, res, start)
   round_any(x-0.5*res-start, res)+0.5*res+start
 }
 
+verbose = function(...)
+{
+  if(LIDROPTIONS("verbose"))
+    cat(..., "\n")
+}
+
 dummy_las = function(n)
 {
   dt = data.table::data.table(

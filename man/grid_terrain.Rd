@@ -35,10 +35,9 @@ details). The algorithm uses the points classified as "ground" to compute the in
 \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 an inverse distance weighting (IDW). This is a fast but basic method for spatial
 data interpolation.}
-\item{\code{delaunay}}{Interpolation based on Delaunay triangulation using the \link[akima:interp]{interp}
-function from package \code{akima}. This method is very fast. It makes a linear interpolation
-within each triangle. Note that with this method no extrapolation is done outside of the
-convex hull determined by the ground points.}
+\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
+interpolation within each triangle. Note that with this method no extrapolation is done
+outside of the convex hull determined by the ground points.}
 \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
 function. This method combines the KNN approach with the kriging approach. For each point of interest
 it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
@@ -68,7 +67,6 @@ plot3d(dtm3)
 \link[lidR:lasnormalize]{lasnormalize}
 \link[gstat:vgm]{vgm}
 \link[gstat:krige]{krige}
-\link[akima:interp]{interp}
 \link[lidR:lasnormalize]{lasnormalize}
 \link[raster:raster]{RasterLayer}
 }

@@ -48,7 +48,11 @@ catalog = function(folder, ...)
   if (!dir.exists(folder))
     lidRError("CTG2")
 
+  verbose("Look for las or laz files...")
+
   files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
+
+  verbose("Read the files...")
 
   headers <- lapply(files, function(x)
   {
