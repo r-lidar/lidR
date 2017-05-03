@@ -1,3 +1,5 @@
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
 #include <Rcpp.h>
 #include "QuadTree.h"
 
@@ -47,12 +49,19 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   int nelem = elem.nrow();
   int np = xi.size();
 
+  Progress p(nelem, true);
+
   IntegerVector output(np);
   std::fill(output.begin(), output.end(), NA_INTEGER);
 
   // Loop over each triangle
   for (int k = 0; k < nelem; k++)
   {
+    if (Progress::check_abort() )
+      return output;
+    else
+      p.update(k);
+
     // Retrieve triangle A B C coordinates
 
     int iA = elem(k, 0) - 1;
