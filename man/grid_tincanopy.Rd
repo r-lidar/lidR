@@ -5,7 +5,7 @@
 \title{Canopy height model based on a triangular irregular network.}
 \usage{
 grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
-  max_edge = 1, subcircle = 0)
+  max_edge = c(0, 1), subcircle = 0)
 }
 \arguments{
 \item{.las}{A LAS object}
@@ -16,8 +16,11 @@ grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
 is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
 the function it becomes the Khosravipour et al. pit-free algorithm.}
 
-\item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation
-used to constrain the pit-free algorithm (see reference).}
+\item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
+It is used to constrain the pit-free algorithm (see reference) and to trim dummy interpolation
+on non-convex areas. The first number is the value for the classical triangulation (thrshold = 0),
+the second number is the value for pit-free algorithm for (thresolds > 0). If \code{max_edge = 0}
+no trimming will be done.}
 
 \item{subcircle}{numeric radius of the circles. To obtain fewer pits the algorithm
 can replace each return with a circle composed of 8 points before computing the triangulation.}
@@ -34,10 +37,10 @@ LASfile <- system.file("extdata", "Tree.laz", package="lidR")
 las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-drop_z_below 0")
 
 # Basic triangulation and rasterization
-chm1 = grid_tincanopy(las, thresholds = 0)
+chm1 = grid_tincanopy(las, thresholds = 0, max_edge = 0)
 
 # Khosravipour et al. pitfree algorithm
-chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = 1.5)
+chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
 
 plot(chm1)
 plot(chm2)
