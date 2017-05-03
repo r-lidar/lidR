@@ -93,7 +93,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
   Y <- as.matrix(coord)
 
   dn   <- suppressMessages(geometry::delaunayn(X[,1:2]))
-  idx  <- geometry::tsearch(X[,1], X[,2], dn, Y[,1], Y[,2])
+  idx  <- tsearch(X[,1], X[,2], dn, Y[,1], Y[,2])
 
   #uidx <- unique(idx)
   #uidx <- uidx[!is.na(uidx)]
