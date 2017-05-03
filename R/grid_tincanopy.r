@@ -112,9 +112,11 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
 
   # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
+  i = 1
   for (th in thresholds)
   {
-    verbose(paste0("Triangulation pass 1 of ", length(thresholds), "..."))
+    verbose(paste0("Triangulation pass ", i, " of ", length(thresholds), "..."))
+    i =  i+ 1
 
     if (th == 0)
       edge = max_edge[1]

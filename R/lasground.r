@@ -90,6 +90,8 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
     .las@data[, Classification := 0]
   }
 
+  verbose("Progressive morphological filter...")
+
   idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
 
   message(paste(length(idx), "ground points found."))
@@ -135,6 +137,8 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
   # Filter ground returns using a progressive morphological filter
   for (i in 1:length(window_sizes))
   {
+    verbose(paste0("Pass ", i, " of ", length(window_sizes), "..."))
+
     Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i])
 
     # Find indices of the points whose difference between the source and
