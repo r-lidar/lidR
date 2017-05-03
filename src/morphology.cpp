@@ -49,7 +49,7 @@ NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVect
   for (int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], half_res, pts);
+    tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
     double min_pt(std::numeric_limits<double>::max());
 
@@ -70,7 +70,7 @@ NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVect
   for (int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], half_res, pts);
+    tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
     double max_pt(std::numeric_limits<double>::min());
 

@@ -49,3 +49,7 @@ points_in_polygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
+tsearch <- function(x, y, elem, xi, yi) {
+    .Call('lidR_tsearch', PACKAGE = 'lidR', x, y, elem, xi, yi)
+}
+
