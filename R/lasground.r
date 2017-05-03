@@ -138,6 +138,7 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
   for (i in 1:length(window_sizes))
   {
     verbose(paste0("Pass ", i, " of ", length(window_sizes), "..."))
+    verbose(paste0("Windows size = ", window_sizes[i], " ; height_threshold = ", height_thresholds[i]))
 
     Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i])
 
