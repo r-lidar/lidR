@@ -38,16 +38,27 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     if (!requireNamespace("hexbin", quietly = TRUE))
       stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
 
+    res = ((2*res*res)/(3*sqrt(3))) %>% sqrt %>% round(2)
+
     ext = extent(.las)
     xmin = round_any(ext@xmin, res)
     xmax = round_any(ext@xmax, res)
+    ymin = round_any(ext@ymin, res)
+    ymax = round_any(ext@ymax, res)
 
     if(xmax < ext@xmax) xmax = xmax + res
     if(xmin > ext@xmin) xmin = xmin - res
+    if(ymax < ext@ymax) ymax = ymax + res
+    if(ymin > ext@ymin) ymin = ymin - res
 
-    xbins = (xmax - xmin)/res
+    dx = (xmax - xmin)
+    dy = (ymax - ymin)
 
-    hbin_data  = hexbin::hexbin(.las@data$X, .las@data$Y, xbins = xbins, xbnds = c(xmin, xmax), IDs = TRUE)
+
+
+    xbins = (xmax - xmin)/(2*res)
+
+    hbin_data  = hexbin::hexbin(.las@data$X, .las@data$Y, shape = dy/dx,  xbins = xbins, xbnds = c(xmin, xmax), IDs = TRUE)
     hbin_coord = hexbin::hcell2xy(hbin_data)
     hbin_ids   = hbin_data@cID
     hbin_pos   = cumsum(1:max(hbin_data@cell) %in% hbin_data@cell)
