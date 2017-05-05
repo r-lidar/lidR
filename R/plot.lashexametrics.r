@@ -59,7 +59,6 @@ plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ..
   }
 
   res = attr(x, "res")
-  half_res = res/2
 
   x_ = x$X
   y_ = x$Y
@@ -72,33 +71,38 @@ plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ..
      y = mean(y_),
      type = "n",
      axes = TRUE,
-     xlim=c(min(x_)-half_res, max(x_)+half_res),
-     ylim=c(min(y_)-half_res, max(y_)+half_res),
+     xlim=c(min(x_)-res, max(x_)+res),
+     ylim=c(min(y_)-res, max(y_)+res),
      xlab="X", ylab= "Y",
      asp=1, xaxs="i", yaxs="i")
 
   for(i in 1:length(x_))
-    hexagon(x_[i], y_[i], r = half_res, col = col[i])
+    hexagon(x_[i], y_[i], r = res, col = col[i])
 }
 
-hexagon <- function (x, y, r = 1, col = col)
+hexagon <- function (xc, yc, r = 1, col = col)
 {
   cpi6 = cos(pi/6)
   spi6 = sin(pi/6)
 
-  graphics::polygon(
-          x = c(x - r*cpi6,
-                x - r*cpi6,
-                x,
-                x + r*cpi6,
-                x + r*cpi6,
-                x),
-          y = c(y - r * spi6,
-                y + r * spi6,
-                y + r,
-                y + r * spi6,
-                y - r * spi6,
-                y - r),
-          col = col, border= col)
+  x = c(xc - r*cpi6,
+        xc - r*cpi6,
+        xc,
+        xc + r*cpi6,
+        xc + r*cpi6,
+        xc)
+  y = c(yc - r * spi6,
+        yc + r * spi6,
+        yc + r,
+        yc + r * spi6,
+        yc - r * spi6,
+        yc - r)
+
+  X = complex(re = x, im = y)
+  #C = complex(re = xc, im = yc)
+  #R = complex(re = cos(-pi/6), im = sin(-pi/6))
+  #X = ((X-C)*R)+C
+
+  graphics::polygon(Re(X), Im(X), col = col, border= col)
 }
 
