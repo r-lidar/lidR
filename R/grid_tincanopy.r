@@ -123,8 +123,8 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
     else
       edge = max_edge[2]
 
-    pts = cloud[Z >= th]
-    Ztemp = interpolate_delaunay(pts, grid, edge)
+    cloud = cloud[Z >= th]
+    Ztemp = interpolate_delaunay(cloud, grid, edge)
     z = pmax(z, Ztemp, na.rm = T)
   }
 
