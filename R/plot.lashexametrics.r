@@ -50,9 +50,9 @@
 #' @method plot lashexametrics
 plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ...)
 {
-  if(is.null(z))
+  if (is.null(z))
   {
-    if(length(names(x)) > 3)
+    if (length(names(x)) > 3)
       lidRError("GDM1")
     else
       z = names(x)[3]
@@ -71,16 +71,16 @@ plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ..
      y = mean(y_),
      type = "n",
      axes = TRUE,
-     xlim=c(min(x_)-res, max(x_)+res),
-     ylim=c(min(y_)-res, max(y_)+res),
-     xlab="X", ylab= "Y",
-     asp=1, xaxs="i", yaxs="i")
+     xlim = c(min(x_) - res, max(x_) + res),
+     ylim = c(min(y_) - res, max(y_) + res),
+     xlab = "X", ylab = "Y",
+     asp = 1, xaxs = "i", yaxs = "i")
 
-  for(i in 1:length(x_))
+  for (i in 1:length(x_))
     hexagon(x_[i], y_[i], r = res, col = col[i])
 }
 
-hexagon <- function (xc, yc, r = 1, col = col)
+hexagon <- function(xc, yc, r = 1, col = col)
 {
   cpi6 = cos(pi/6)
   spi6 = sin(pi/6)
@@ -98,11 +98,6 @@ hexagon <- function (xc, yc, r = 1, col = col)
         yc - r * spi6,
         yc - r)
 
-  X = complex(re = x, im = y)
-  #C = complex(re = xc, im = yc)
-  #R = complex(re = cos(-pi/6), im = sin(-pi/6))
-  #X = ((X-C)*R)+C
-
-  graphics::polygon(Re(X), Im(X), col = col, border= col)
+  graphics::polygon(x, y, col = col, border = col)
 }
 
