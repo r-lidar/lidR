@@ -35,9 +35,9 @@ lidRError = function(code, ..., behaviour = stop)
 
 # testFunctionSignature.r
 "TFS1" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field '", p$metric, "' is a '", p$class, "'"),
-"TFS2" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field ", utils::capture.output(cat(p$metric, sep=" and ")), " are respectively ", utils::capture.output(cat(p$class, sep= " and "))),
+"TFS2" = list("The expression '", p$expression, "' returned a list in which all elements are not a single numeric or logical value. The field ", utils::capture.output(cat(p$metric, sep = " and ")), " are respectively ", utils::capture.output(cat(p$class, sep= " and "))),
 "TFS3" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The field '", p$metric, "' has a length of ", p$number),
-"TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(p$metric, sep=" and ")), " have respectively a length of: ", utils::capture.output(cat(p$number, sep=" and "))),
+"TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(p$metric, sep = " and ")), " have respectively a length of: ", utils::capture.output(cat(p$number, sep=" and "))),
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
 "TFS6" = list("The expression '", p$expression, "' returned a vector of length ", p$number,  ". A single number or a list of single numbers is expected."),
 
@@ -53,7 +53,7 @@ lidRError = function(code, ..., behaviour = stop)
 "LDR9" = list("'data' is empty. No point found"),
 "LDR10" = list("Dataset is invalid: ", p$number, " points with a return number of 0 found."),
 "LDR11" = list("'", p$what, "' was missing in the header. The value ", p$num, " was automatically attributed."),
-"LDR12" = list(p$what, " were missing in the header. The values ", utils::capture.output(cat(p$num, sep=" ")), " were automatically attributed."),
+"LDR12" = list(p$what, " were missing in the header. The values ", utils::capture.output(cat(p$num, sep = " ")), " were automatically attributed."),
 
 # ClassGridMetric.r
 "GDM1" = list("More than 3 columns in the variable: please input the metric name to plot it."),
@@ -81,13 +81,13 @@ lidRError = function(code, ..., behaviour = stop)
 "THI1" = list("No 'pulseID' field found.  Function 'lasdecimate' cannot be run.")
   )
 
-  msg = do.call(paste, list(msg, sep=""))
+  msg = do.call(paste, list(msg, sep = ""))
 
-  behaviour(msg, call.=F)
+  behaviour(msg, call. = F)
 }
 
 stopifnotlas = function(x)
 {
-  if(class(x)[1] != "LAS")
+  if (!is(x, "LAS"))
     stop("First argument is not a LAS object", call. = F)
 }
