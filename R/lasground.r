@@ -92,7 +92,7 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
 
   verbose("Progressive morphological filter...")
 
-  idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
+  idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential, LIDROPTIONS("progress"))
 
   message(paste(length(idx), "ground points found."))
 

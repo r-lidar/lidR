@@ -36,6 +36,9 @@ It works only for tiles that are arranged in gridlines.
 }
 \examples{
 \dontrun{
+# Global option to display a progressbar
+lidr_option(progress = TRUE)
+
 # Build a Catalog
 catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 

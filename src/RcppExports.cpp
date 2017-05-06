@@ -33,8 +33,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // algo_li2012
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R);
-RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP) {
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar);
+RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP displaybarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,7 +44,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type dt1(dt1SEXP);
     Rcpp::traits::input_parameter< double >::type dt2(dt2SEXP);
     Rcpp::traits::input_parameter< double >::type R(RSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt1, dt2, R));
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt1, dt2, R, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -109,8 +110,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // MorphologicalOpening
-NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution);
-RcppExport SEXP lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP) {
+NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
+RcppExport SEXP lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -118,7 +119,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
-    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(X, Y, Z, resolution));
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(X, Y, Z, resolution, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -165,8 +167,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // tsearch
-IntegerVector tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi);
-RcppExport SEXP lidR_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP) {
+IntegerVector tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar);
+RcppExport SEXP lidR_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP diplaybarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -175,7 +177,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
-    rcpp_result_gen = Rcpp::wrap(tsearch(x, y, elem, xi, yi));
+    Rcpp::traits::input_parameter< bool >::type diplaybar(diplaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(tsearch(x, y, elem, xi, yi, diplaybar));
     return rcpp_result_gen;
 END_RCPP
 }

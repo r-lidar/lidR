@@ -37,7 +37,7 @@ using namespace Rcpp;
 NumericVector sqdistance(NumericVector, NumericVector, double, double);
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R)
+IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar = false)
 {
   bool end = false;
 
@@ -45,7 +45,7 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
   int n  = ni;
   int k  = 1;
 
-  Progress p(ni, true);
+  Progress p(ni, displaybar);
 
   IntegerVector idpoint = seq_len(ni)-1;
   IntegerVector idtree(ni);
