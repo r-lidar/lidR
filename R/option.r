@@ -1,7 +1,8 @@
 
-LIDROPTIONS <- settings::options_manager(verbose = FALSE, debug = FALSE,
-                                         .allowed = list(verbose = settings::inlist(TRUE, FALSE),
-                                                         debug   = settings::inlist(TRUE, FALSE)))
+LIDROPTIONS <- settings::options_manager(verbose = FALSE, debug = FALSE, progress = FALSE,
+                                         .allowed = list(verbose  = settings::inlist(TRUE, FALSE),
+                                                         debug    = settings::inlist(TRUE, FALSE),
+                                                         progress = settings::inlist(TRUE, FALSE)))
 
 #' Set or get global options for lidR package
 #'
@@ -11,7 +12,7 @@ LIDROPTIONS <- settings::options_manager(verbose = FALSE, debug = FALSE,
 #' The following options are supported
 #' \itemize{
 #'  \item{\code{verbose}}{(\code{logical}) Make the package talkative. }
-#'  \item{\code{debug}}{(\code{logical}) If you encounter a bug maybe that option would enable to find the problem more easily. }
+#'  \item{\code{progress}}{(\code{logical}) Display progress bars when avaible. }
 #' }
 #'
 #' @export

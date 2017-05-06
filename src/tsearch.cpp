@@ -42,14 +42,14 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
 }
 
 // [[Rcpp::export]]
-IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi)
+IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi),as< std::vector<double> >(yi));
 
   int nelem = elem.nrow();
   int np = xi.size();
 
-  Progress p(nelem, true);
+  Progress p(nelem, diplaybar);
 
   IntegerVector output(np);
   std::fill(output.begin(), output.end(), NA_INTEGER);

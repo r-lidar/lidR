@@ -123,11 +123,11 @@
 #' Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
 #' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 #' @export
-lastrees <-function(.las, algorithm, image = NULL, ..., extra = FALSE)
+lastrees <- function(.las, algorithm, image = NULL, ..., extra = FALSE)
 {
-  if(algorithm == "dalponte2016" )
+  if (algorithm == "dalponte2016" )
     return(dalponte2012(.las, image, extra, ...))
-  else if(algorithm == "watershed")
+  else if (algorithm == "watershed")
     return(watershed(.las, image, extra, ...))
   else if (algorithm == "li2012")
     return(li2012(.las, ...))
@@ -157,7 +157,7 @@ dalponte2012 = function(.las, image, extra, searchWinSize = 3, TRESHSeed = 0.45,
 
   lasclassify(.las, Crowns, "treeID")
 
-  if(extra == FALSE)
+  if (extra == FALSE)
     return(invisible(NULL))
   else
   {
@@ -172,12 +172,12 @@ li2012 = function(.las, dt1 = 1.5, dt2 = 2, R = 10)
 {
   treeID <- NULL
 
-  if(dt1 > dt2)  stop("dt1 greater than dt2", call. = FALSE)
-  if(R <= 0)     stop("R <= 0", call. = FALSE)
+  if (dt1 > dt2)  stop("dt1 greater than dt2", call. = FALSE)
+  if (R <= 0)     stop("R <= 0", call. = FALSE)
 
-  data.table::setorderv(.las@data, "Z", order=-1L)
+  data.table::setorderv(.las@data, "Z", order = -1L)
 
-  id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, dt1, dt2, R = R)
+  id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, dt1, dt2, R = R, LIDROPTIONS("progress"))
 
   .las@data[, treeID := id][]
 
@@ -203,7 +203,7 @@ watershed = function(.las, image, extra, th = 2, tolerance = 1, ext = 1)
 
   lasclassify(.las, Crowns, "treeID")
 
-  if(extra == FALSE)
+  if (extra == FALSE)
     return(invisible(NULL))
   else
   {

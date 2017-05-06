@@ -9,8 +9,8 @@ itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
     .Call('lidR_itc_expandcrowns', PACKAGE = 'lidR', Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
-algo_li2012 <- function(X, Y, Z, dt1, dt2, R) {
-    .Call('lidR_algo_li2012', PACKAGE = 'lidR', X, Y, Z, dt1, dt2, R)
+algo_li2012 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
+    .Call('lidR_algo_li2012', PACKAGE = 'lidR', X, Y, Z, dt1, dt2, R, displaybar)
 }
 
 fast_table <- function(x, size = 5L) {
@@ -33,8 +33,8 @@ triangle_information <- function(M, X) {
     .Call('lidR_triangle_information', PACKAGE = 'lidR', M, X)
 }
 
-MorphologicalOpening <- function(X, Y, Z, resolution) {
-    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', X, Y, Z, resolution)
+MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
+    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', X, Y, Z, resolution, displaybar)
 }
 
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
@@ -49,7 +49,7 @@ points_in_polygons <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-tsearch <- function(x, y, elem, xi, yi) {
-    .Call('lidR_tsearch', PACKAGE = 'lidR', x, y, elem, xi, yi)
+tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
+    .Call('lidR_tsearch', PACKAGE = 'lidR', x, y, elem, xi, yi, diplaybar)
 }
 

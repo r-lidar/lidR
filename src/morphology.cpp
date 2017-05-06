@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution)
+NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar = false)
 {
   int n = X.length();
   double half_res = resolution / 2;
@@ -46,7 +46,7 @@ NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVect
 
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
-  Progress p(2*n, true);
+  Progress p(2*n, displaybar);
 
   // Dilate
   for (int i = 0 ; i < n ; i++)
