@@ -97,9 +97,13 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 
   verbose("Extract data...")
 
-  if (mc.cores == 1 & LIDROPTIONS("progress"))
+  if (mc.cores == 1)
   {
-    p = utils::txtProgressBar(max = nplot, style = 3)
+    if (LIDROPTIONS("progress"))
+      p = utils::txtProgressBar(max = nplot, style = 3)
+    else
+      p = NULL
+
     output = lapply(lasindex, .getQuery, shape, p)
   }
   else
