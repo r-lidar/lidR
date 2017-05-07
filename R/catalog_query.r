@@ -74,6 +74,20 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 {
   . <- tiles <- NULL
 
+  objtxt = lazyeval::expr_text(obj)
+  xtxt   = lazyeval::expr_text(x)
+  ytxt   = lazyeval::expr_text(y)
+  rtxt   = lazyeval::expr_text(r)
+
+  if (!is(obj, "Catalog"))
+    stop(paste0(objtxt, " is not a Catalog."), call. = FALSE)
+
+  if (length(x) != length(y))
+    stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
+
+  if (length(r) > 1 & (length(x) != length(r)))
+    stop(paste0(xtxt, " is not same length as ", rtxt), call. = FALSE)
+
   nplot = length(x)
   shape = if (is.null(r2)) 0 else 1
 
