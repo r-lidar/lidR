@@ -94,7 +94,7 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
 
   verbose("Progressive morphological filter...")
 
-  idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential, LIDROPTIONS("progress"))
+  idx = ProgressiveMorphologicalFilter(cloud, MaxWinSize, Slope, InitDist, MaxDist, CellSize, base, exponential)
 
   message(paste(length(idx), "ground points found."))
 
@@ -142,7 +142,7 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
     verbose(paste0("Pass ", i, " of ", length(window_sizes), "..."))
     verbose(paste0("Windows size = ", window_sizes[i], " ; height_threshold = ", height_thresholds[i]))
 
-    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i])
+    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i], LIDROPTIONS("progress"))
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold
