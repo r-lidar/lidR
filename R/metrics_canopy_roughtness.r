@@ -44,27 +44,27 @@ fractal_dimension = function(x, plot = FALSE)
 {
   if (is(x, "RasterLayer"))
     x = raster::as.matrix(x)
-  else if(!is.matrix(x))
+  else if (!is.matrix(x))
     stop("fractal_dimension: mtx should be a RasterLayer or a Matrix", call. = FALSE)
 
   mtx = x
 
-  if( sum(is.na(mtx)) > 0 )
+  if ( sum(is.na(mtx)) > 0 )
     return(NA_real_)
 
   size = min(dim(mtx))
 
-  if( size < 6)
+  if ( size < 6)
     return(NA_real_)
 
-  size = ifelse(size %% 2 == 0, size, size-1)
+  size = ifelse(size %% 2 == 0, size, size - 1)
 
   mtx = mtx[1:size, 1:size]
 
   q = 1:size
   q = q[size %% q == 0]
 
-  if(length(q) < 3)
+  if (length(q) < 3)
     return(as.numeric(NA))
 
   nbbox = sapply(q, countBox, mtx = mtx)
@@ -82,9 +82,9 @@ fractal_dimension = function(x, plot = FALSE)
 
 countBox = function(q, mtx)
 {
-	  rg  <- (row(mtx)-1) %/% q + 1
-    cg  <- (col(mtx)-1) %/% q + 1
-    rci <- (rg-1) * max(cg) + cg
+	  rg  <- (row(mtx) - 1) %/% q + 1
+    cg  <- (col(mtx) - 1) %/% q + 1
+    rci <- (rg - 1) * max(cg) + cg
     N   <- prod(dim(mtx))/(q^2)
 
 	  clip = lapply(1:N, function(x) mtx[rci == x])
@@ -94,77 +94,132 @@ countBox = function(q, mtx)
 }
 
 
-#' Rumple index roughness
+#' Rumple index of roughness
 #'
-#' Computes the roughness of a surface represented by a matrix as the ratio between visible area
-#' over the projected area.
+#' Computes the roughness of a surface as the ratio between visible area over the ground area.
+#' For each type of input the function make the Delaunay triangulation of the points and computes
+#' the ratio between the area of the triangle and the area or the convexhull (area of the
+#' triangles projected on plane X-Y).
 #'
-#' @param x A matrix or a RasterLayer. The surface.
-#' @param res numeric the resolution of the surface
+#' @param x A RasterLayer or a lasmetrics or a vector of x point coordinates.
+#' @param y numeric if x is a vector of coordinates: the y coordinates.
+#' @param z numeric if x is a vector of coordinates: the z coordinates.
+#' @param ... unused
 #'
 #' @return numeric.
 #'
 #' @export
 #' @examples
+#' x = runif(20, 0, 100)
+#' y = runif(20, 0, 100)
+#'
 #' # Perfectly flat surface, rumple_index = 1
-#' surface = matrix(rep(2, 100), 10)
-#' rumple_index(surface, 1)
+#' z = rep(10, 20)
+#' rumple_index(x, y, z)
 #'
 #' # Rought surface, rumple_index > 1
-#' surface = matrix(runif(100), 10)
-#' rumple_index(surface, 1)
+#' z = runif(20, 0, 10)
+#' rumple_index(x, y, z)
 #'
-#' # This measure of roughness is scale dependent
-#' rumple_index(surface, 1)
-#' rumple_index(surface, 2)
-rumple_index = function(x, res)
+#' # More rought surface, rumple_index increases
+#' z = runif(20, 0, 50)
+#' rumple_index(x, y, z)
+#'
+#' # Measure of roughness is scale dependent
+#' rumple_index(x, y, z)
+#' rumple_index(x/10, y/10, z)
+#'
+#' # Use with a canopy height model
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile)
+#' chm = las %>% grid_canopy
+#' rumple_index(chm)
+rumple_index <- function(x, y = NULL, z = NULL, ...)
 {
+  xtxt   = lazyeval::expr_text(x)
+  ytxt   = lazyeval::expr_text(y)
+  ztxt   = lazyeval::expr_text(z)
+
   if (is(x, "RasterLayer"))
-    x = raster::as.matrix(x)
-  else if(!is.matrix(x))
-    stop("x should be a RasterLayer or a Matrix")
+  {
+    p = raster::rasterToPoints(x)
+    x = p[, 1]
+    y = p[, 2]
+    z = p[, 3]
+    option = "Qz"
+  }
+  else if (is(x, "lasmetrics"))
+  {
+    p = x
+    x = p$X
+    y = p$Y
+    z = p[, 3] %>% unlist
+    option = "Qz"
+  }
+  else if (is.numeric(x) & is.numeric(y) & is.numeric(z))
+  {
+    if (length(x) != length(y))
+      stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
 
-  x = cbind(0, x)
-  x = rbind(0, x)
+    if (length(x) != length(z))
+      stop(paste0(xtxt, " is not same length as ", ztxt), call. = FALSE)
 
-  r = raster::raster(x)
+    option = ""
+  }
+  else
+    stop("No method for inputs", call. = FALSE)
 
-  kernel = matrix(rep(0,9), ncol = 3)
-  kernel[2,2] = 2
-  kernel[2,3] = -1
-  kernel[3,2] = -1
+  keep = !is.na(z)
+  x = x[keep]
+  y = y[keep]
+  z = z[keep]
 
-  y = raster::focal(r, w = kernel, fun = sum, na.rm = TRUE)
-  y = raster::as.matrix(y)
-  y = y[,-1]
-  y = y[-1,]
-  y[, dim(y)[2]] = 0
-  y[dim(y)[1], ] = 0
-  y[is.na(x)] = NA
-  y = abs(y)
-
-  z = res^2 + res*y
-
-  return( sum(z, na.rm = T)/(sum(!is.na(z))*res^2) )
+  return(rumple_index_internal(x,y,z, option))
 }
 
-# rumple_index = function(x,y,z)
+# rumple_index_raster = function(x, res)
 # {
-#   if(length(x) != length(y) | length(x) != length(z))
-#     stop("Different lengths for x,y,z", call. = FALSE)
+#   x = cbind(0, x)
+#   x = rbind(0, x)
 #
-#   keep = !(is.na(x) | is.na(y) | is.na(z))
-#   x = x[keep]
-#   y = y[keep]
-#   z = z[keep]
+#   r = raster::raster(x)
 #
-#   X = cbind(x,y,z)
-#   dn = suppressMessages(geometry::delaunayn(X[,1:2]))
-#   N = triangle_information(dn, X)
+#   kernel = matrix(rep(0,9), ncol = 3)
+#   kernel[2,2] = 2
+#   kernel[2,3] = -1
+#   kernel[3,2] = -1
 #
-#   area  = sum(N[,5])
-#   parea = sum(N[,6])
-#   rumple = area/parea
+#   y = raster::focal(r, w = kernel, fun = sum, na.rm = TRUE)
+#   y = raster::as.matrix(y)
+#   y = y[,-1]
+#   y = y[-1,]
+#   y[, dim(y)[2]] = 0
+#   y[dim(y)[1], ] = 0
+#   y[is.na(x)] = NA
+#   y = abs(y)
 #
-#   return(rumple)
+#   z = res^2 + res*y
+#
+#   return( sum(z, na.rm = T)/(sum(!is.na(z))*res^2) )
 # }
+
+rumple_index_internal = function(x,y,z, options = "")
+{
+  if (length(x) != length(y) | length(x) != length(z))
+    stop("Different lengths for x,y,z", call. = FALSE)
+
+  keep = !(is.na(x) | is.na(y) | is.na(z))
+  x = x[keep]
+  y = y[keep]
+  z = z[keep]
+
+  X = cbind(x,y,z)
+  dn = suppressMessages(geometry::delaunayn(X[,1:2], options = options))
+  N = triangle_information(dn, X)
+
+  area  = sum(N[,5])
+  parea = sum(N[,6])
+  rumple = area/parea
+
+  return(rumple)
+}

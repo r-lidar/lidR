@@ -2,32 +2,51 @@
 % Please edit documentation in R/metrics_canopy_roughtness.r
 \name{rumple_index}
 \alias{rumple_index}
-\title{Rumple index roughness}
+\title{Rumple index of roughness}
 \usage{
-rumple_index(x, res)
+rumple_index(x, y = NULL, z = NULL, ...)
 }
 \arguments{
-\item{x}{A matrix or a RasterLayer. The surface.}
+\item{x}{A matrix or a RasterLayer or lasmetrics or a vector of x point coordinates.}
 
-\item{res}{numeric the resolution of the surface}
+\item{y}{numeric if x is a vector of coorinates: the y coordinates.}
+
+\item{z}{numeric if x is a vector of coordinates: the z coordinates.}
+
+\item{...}{unused}
 }
 \value{
 numeric.
 }
 \description{
-Computes the roughness of a surface represented by a matrix as the ratio between visible area
-over the projected area.
+Computes the roughness of a surface as the ratio between visible area over the ground area.
+For each type of input the function make the Delaunay triangulation of the points and computes
+the ratio between the area of the triangle and the area or the convexhull (area of the
+triangles projected on plane X-Y).
 }
 \examples{
+x = runif(20, 0, 100)
+y = runif(20, 0, 100)
+
 # Perfectly flat surface, rumple_index = 1
-surface = matrix(rep(2, 100), 10)
-rumple_index(surface, 1)
+z = rep(10, 20)
+rumple_index(x, y, z)
 
 # Rought surface, rumple_index > 1
-surface = matrix(runif(100), 10)
-rumple_index(surface, 1)
+z = runif(20, 0, 10)
+rumple_index(x, y, z)
 
-# This measure of roughness is scale dependent
-rumple_index(surface, 1)
-rumple_index(surface, 2)
+# More rought surface, rumple_index increases
+z = runif(20, 0, 50)
+rumple_index(x, y, z)
+
+# Measure of roughness is scale dependent
+rumple_index(x, y, z)
+rumple_index(x/10, y/10, z)
+
+# Use with a canopy height model
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las = readLAS(LASfile)
+chm = las \%>\% grid_canopy
+rumple_index(chm)
 }

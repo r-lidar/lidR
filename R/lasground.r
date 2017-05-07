@@ -64,10 +64,12 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
 {
   . <- X <- Y <- Z <- Classification <- NULL
 
+  stopifnotlas(.las)
+
   dots = list(...)
 
-  if(is.null(dots$base)) dots$base = 2
-  if(is.null(dots$exponential)) dots$exponential = TRUE
+  if (is.null(dots$base)) dots$base = 2
+  if (is.null(dots$exponential)) dots$exponential = TRUE
 
   exponential = dots$exponential
   base = dots$base
@@ -75,11 +77,11 @@ lasground = function(.las, MaxWinSize = 20, Slope = 1.0, InitDist = 0.5, MaxDist
   cloud = .las@data[, .(X,Y,Z)]
   cloud[, idx := 1:dim(cloud)[1]]
 
-  if("Classification" %in% names(.las@data))
+  if ("Classification" %in% names(.las@data))
   {
     nground = fast_countequal(.las@data$Classification, 2)
 
-    if(nground > 0)
+    if (nground > 0)
     {
       warning(paste0("Orginal dataset already contains ", nground, " ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
       .las@data[Classification == 2, Classification := 0]
@@ -114,9 +116,9 @@ ProgressiveMorphologicalFilter = function(cloud, MaxWinSize, Slope, InitDist, Ma
   {
     # Determine the initial window size.
     if (exponential)
-      window_size = CellSize * ( (2.0 * base^iteration) + 1 )
+      window_size = CellSize * ((2.0 * base^iteration) + 1 )
     else
-      window_size = CellSize * (2.0 * (iteration+1) * base + 1)
+      window_size = CellSize * (2.0 * (iteration + 1) * base + 1)
 
     # Calculate the height threshold to be used in the next iteration.
     if (iteration == 0)
