@@ -7,9 +7,9 @@
 rumple_index(x, y = NULL, z = NULL, ...)
 }
 \arguments{
-\item{x}{A matrix or a RasterLayer or lasmetrics or a vector of x point coordinates.}
+\item{x}{A RasterLayer or a lasmetrics or a vector of x point coordinates.}
 
-\item{y}{numeric if x is a vector of coorinates: the y coordinates.}
+\item{y}{numeric if x is a vector of coordinates: the y coordinates.}
 
 \item{z}{numeric if x is a vector of coordinates: the z coordinates.}
 

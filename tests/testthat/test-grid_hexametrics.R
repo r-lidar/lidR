@@ -1,11 +1,6 @@
 context("grid_hexametrics")
 
-las = lidR:::dummy_las(3000)
-
-test_that("grid_hexametrics works", {
-  x = grid_hexametrics(las, mean(Z))
-  expect_equal(dim(x), c(30,3))
-})
+las = lidR:::dummy_las(4000)
 
 test_that("grid_hexametrics space hexa properly", {
   x = grid_hexametrics(las, mean(Z), 20)
