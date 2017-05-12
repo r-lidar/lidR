@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -92,11 +94,15 @@ LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, Numeri
 // @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a given polygon
 // @export
 // [[Rcpp::export]]
-IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
 {
+  // Since lidR incoporate a QuadTree this algo could be rewritten with a QuadTree.
+
   int npoints = pointx.length();
   int nvert   = vertx.length();
   IntegerVector id(npoints);
+
+  Progress p(npoints, displaybar);
 
   // find bouding boxes to fast the agorithm
   NumericVector bbxmin(nvert), bbxmax(nvert), bbymin(nvert), bbymax(nvert);
@@ -112,6 +118,11 @@ IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVect
   {
     bool found = false;
     int j = 0;
+
+    if (Progress::check_abort() )
+      return  id;
+    else
+      p.update(i);
 
     while (!found && j < nvert)
     {
