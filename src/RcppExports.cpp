@@ -153,8 +153,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // points_in_polygons
-IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy);
-RcppExport SEXP lidR_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar);
+RcppExport SEXP lidR_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP, SEXP displaybarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -162,7 +162,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type verty(vertySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy));
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }

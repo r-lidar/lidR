@@ -45,8 +45,8 @@ points_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call('lidR_points_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
 }
 
-points_in_polygons <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
+    .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy, displaybar)
 }
 
 tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {

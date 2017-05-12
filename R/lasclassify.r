@@ -78,9 +78,9 @@ lasclassify = function(.las, source, field = NULL)
 {
   stopifnotlas(.las)
 
-  if(is(source, "SpatialPolygonsDataFrame"))
+  if (is(source, "SpatialPolygonsDataFrame"))
     values = classify_from_shapefile(.las, source, field)
-  else if(is(source, "RasterLayer"))
+  else if (is(source, "RasterLayer"))
     values = classify_from_rasterlayer(.las, source, field)
   else
     stop("No method for this source format.", call. = F)
@@ -98,18 +98,18 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
 
   # No field is provided:
   # Assign the number of the polygon
-  if(is.null(field))
+  if (is.null(field))
   {
     field = "id"
     method = 0
   }
   # The field is the name of a field in the attribute table:
   # Assign the value of the field
-  else if(field %in% names(shapefile@data))
+  else if (field %in% names(shapefile@data))
   {
     method = 1
 
-    if(class(shapefile@data[,field]) == "factor")
+    if (class(shapefile@data[,field]) == "factor")
       values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
     else
       values = rep(NA_real_, npoints)
@@ -123,11 +123,15 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
-  polys = raster::crop(shapefile, extent(.las)+20)
+  verbose("Crop the shapefile")
+  polys = raster::crop(shapefile, extent(.las) + 20)
+
 
   # No polygon? Return NA or false depending on the method used
-  if(!is.null(polys))
+  if (!is.null(polys))
   {
+    verbose("Analyse polygons...")
+
     # Extract the coordinates of each polygon as a list.
     # The list has 2 levels of depth because of multi part polygons
     xcoords = lapply(polys@polygons,
@@ -153,7 +157,7 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     # before reducing to 1 level of depth
     i = 0
     lengths = lapply(xcoords, length)  %>%  unlist
-    idpolys = lapply(lengths, function(x){i<<-i+1;rep.int(i,x)}) %>% unlist
+    idpolys = lapply(lengths, function(x){i <<- i + 1 ; rep.int(i,x)}) %>% unlist
 
     # Make the lists 1 level depth
     xcoords %<>% unlist(recursive = FALSE)
@@ -163,28 +167,32 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     is_hole = c(FALSE, is_hole)
 
     # Return the id of each polygon
-    ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y)
+    verbose("Test whether points fall in a given polygon...")
 
-    if(method == 1)
+    ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
+
+    if (method == 1)
     {
+      verbose("Retrieve correspondances in the table of attributes")
+
       inpoly = ids > 0
-      inhole = is_hole[ids+1]
+      inhole = is_hole[ids + 1]
       inpoly.nothole = inpoly & !inhole
 
       id = idpolys[ids[inpoly.nothole]]
       values[inpoly.nothole] = polys@data[, field][id]
 
-      message(paste0("Assign the value of field ", field , " from the table of attibutes to the points"))
+      message(paste0("Assigned the value of field ", field , " from the table of attibutes to the points"))
     }
-    else if(method == 2)
+    else if (method == 2)
     {
-      values = ids > 0 & !is_hole[ids+1]
-      message("Assign a boolean value to the points")
+      values = ids > 0 & !is_hole[ids + 1]
+      message("Assigned a boolean value to the points")
     }
     else
     {
       values = ifelse(ids == 0, NA_real_, ids)
-      message("Assign a number to each individual polygon")
+      message("Assigned a number to each individual polygon")
     }
   }
   else
@@ -199,7 +207,7 @@ classify_from_rasterlayer = function(.las, raster, field = NULL)
 {
   . <- X <- Y <- info <- NULL
 
-  if(is.null(field)) field = lazyeval::expr_label(raster)
+  if (is.null(field)) field = lazyeval::expr_label(raster)
 
   values = raster::extract(raster, .las@data[, .(X,Y)])
 
