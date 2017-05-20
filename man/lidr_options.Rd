@@ -2,9 +2,12 @@
 % Please edit documentation in R/option.r
 \name{lidr_options}
 \alias{lidr_options}
+\alias{lidR_reset}
 \title{Set or get global options for lidR package}
 \usage{
 lidr_options(...)
+
+lidR_reset()
 }
 \arguments{
 \item{...}{Option names to retrieve option values or \code{[key]=[value]} pairs to set options.}
@@ -14,10 +17,17 @@ Set or get global options for lidR package
 }
 \section{Supported options}{
 
-The following options are supported
+The following options are supported:
 \itemize{
- \item{\code{verbose}}{(\code{logical}) Make the package talkative. }
- \item{\code{progress}}{(\code{logical}) Display progress bars when avaible. }
+ \item{\code{verbose} (\code{logical}) Make the package talkative. }
+ \item{\code{progress} (\code{logical}) Display progress bars when avaible. }
 }
 }
 
+\examples{
+lidr_options(verbose = TRUE)
+lidr_options(progress = TRUE)
+
+# Reset default options
+lidr_reset()
+}
