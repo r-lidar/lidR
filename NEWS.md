@@ -6,6 +6,7 @@
 * new function `stdtreemetrics`.
 * `grid_tincanopy` gain a parameter `subcircle` like `grid_canopy`
 * new function `rumple_index` for measuring roughness of a digital model (terrain or canopy)
+* global options avaible with `lidr_options()`
 
 #### BUG FIXES
 

@@ -96,7 +96,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   dn   <- suppressMessages(geometry::delaunayn(X[,1:2]))
 
-  verbose("Search for the enclosing Delaunay convex hull...")
+  verbose("Searching for the enclosing Delaunay convex hull...")
 
   idx  <- tsearch(X[,1], X[,2], dn, Y[,1], Y[,2], LIDROPTIONS("progress"))
 
@@ -106,7 +106,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
   #active <- dn[uidx,]
   #active <- cbind(active, uidx)
 
-  verbose("Rasterization of the triangulation...")
+  verbose("Rasterizating of the triangulation...")
 
   N = triangle_information(dn, X)
   N = N[idx,]
@@ -115,7 +115,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   if (pitfree)
   {
-    verbose("Remove too wide triangles...")
+    verbose("Removing too wide triangles...")
 
     delete = N[,7] > th
     delete[is.na(delete)] = FALSE

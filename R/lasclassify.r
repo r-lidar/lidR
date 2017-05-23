@@ -123,14 +123,14 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
-  verbose("Crop the shapefile")
+  verbose("Croping the shapefile")
   polys = raster::crop(shapefile, extent(.las) + 20)
 
 
   # No polygon? Return NA or false depending on the method used
   if (!is.null(polys))
   {
-    verbose("Analyse polygons...")
+    verbose("Analysing the polygons...")
 
     # Extract the coordinates of each polygon as a list.
     # The list has 2 levels of depth because of multi part polygons
@@ -167,13 +167,13 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     is_hole = c(FALSE, is_hole)
 
     # Return the id of each polygon
-    verbose("Test whether points fall in a given polygon...")
+    verbose("Testing whether points fall in a given polygon...")
 
     ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
 
     if (method == 1)
     {
-      verbose("Retrieve correspondances in the table of attributes")
+      verbose("Retrieving correspondances in the table of attributes")
 
       inpoly = ids > 0
       inhole = is_hole[ids + 1]

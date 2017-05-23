@@ -85,7 +85,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   stopifnotlas(.las)
 
-  verbose("Select ground points...")
+  verbose("Selecting ground points...")
 
   ground = suppressWarnings(lasfilterground(.las))
 
@@ -94,7 +94,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   ground  = ground@data[, .(X,Y,Z)]
 
-  verbose("Generate interpolation coordinates...")
+  verbose("Generating interpolation coordinates...")
 
   ext  = extent(.las)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
@@ -109,7 +109,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
 
   grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
 
-  verbose("Interpolation of ground points...")
+  verbose("Interpolating ground points...")
 
   Zg = interpolate(ground, grid, method, k, model)
 
@@ -118,7 +118,7 @@ grid_terrain = function(.las, res = 1, method, k = 10L, model = gstat::vgm(.59, 
   # force lowest ground point to be dominant
   if (keep_lowest)
   {
-    verbose("Force the lowest ground points...")
+    verbose("Forcing the lowest ground points to be retained...")
 
     grid = rbind(grid, grid_metrics(lasfilterground(.las), list(Z = min(Z)), res))
     grid = grid[, list(Z = min(Z)), by = .(X,Y)]
