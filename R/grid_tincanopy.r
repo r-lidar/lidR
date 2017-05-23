@@ -79,7 +79,7 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
     cat("[Khosravipour et al. pitfree algorithm]\n")
 
   # Create the coordinates of interpolation (pixel coordinates)
-  verbose("Generate interpolation coordinates...")
+  verbose("Generating interpolation coordinates...")
 
   ex = extent(.las)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
@@ -94,14 +94,14 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   # subcircled the data
   if (subcircle > 0)
   {
-    verbose("Subcircle the points...")
+    verbose("Subcircling the points...")
 
     ex = extent(.las)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }
 
-  verbose("Select only the highest points within the grid cells...")
+  verbose("Selecting only the highest points within the grid cells...")
 
   f = function(x,y,z) {
     i = which.max(z)
