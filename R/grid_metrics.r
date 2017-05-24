@@ -115,7 +115,7 @@ grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, f
     if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
     if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
 
-    stat <- grid_catalog(x, grid_metrics, res, filter, func = call)
+    stat <- grid_catalog(x, grid_metrics, res, filter, 0, func = call)
   }
   else
   {
