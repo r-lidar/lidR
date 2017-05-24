@@ -26,7 +26,7 @@ Please contact the author for bug reports or feature requests (on github, prefer
 - [Colorize a point cloud from RGB images](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
 - [Filter a cloud of points based on any condition test](https://github.com/Jean-Romain/lidR/wiki/lasfilter)
 - [Clip data based on discs, rectangles or polygons](https://github.com/Jean-Romain/lidR/wiki/lasclip)
-- [Manage a catalog of `.las` tiles](https://github.com/Jean-Romain/lidR/wiki"if not there would be less fun in the world/catalog)
+- [Manage a catalog of `.las` tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
 - [Thin a point cloud to reach a homogeneous pulse density](https://github.com/Jean-Romain/lidR/wiki/lasdecimate)
 - [Automatically extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki/catalog_queries)
 - [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog_apply)
