@@ -62,7 +62,7 @@ grid_density = function(x, res = 4)
   }
   else if(is(x, "Catalog"))
   {
-    ret <- grid_catalog(x, grid_density, res, "")
+    ret <- grid_catalog(x, grid_density, res, "", 0)
   }
   else
   {
