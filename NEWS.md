@@ -4,10 +4,13 @@
 
 * `grid_metrics` accept a catalog as input. Enable to grid an entiere area in a continuous way.
 * `grid_density` inherit of this new feature as well
+* `catalog_queries` has now a parameter `filter` for streaming filters
 
 #### OTHER CHANGES
 
-* `plot.Catalog
+* `plot.Catalog` accept for usual `plot` parameter
+* `catalog_queries` and `catalog_apply` do not expect a parameter `mc.core`. This is now driven by global options in `lidr_options`.
+* `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 
 ### lidR v1.2.1 (in development)
 
