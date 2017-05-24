@@ -1,3 +1,14 @@
+### lidR v1.3.0 (in development)
+
+#### NEW FEATURES
+
+* `grid_metrics` accept a catalog as input. Enable to grid an entiere area in a continuous way.
+* `grid_density` inherit of this new feature as well
+
+#### OTHER CHANGES
+
+* `plot.Catalog
+
 ### lidR v1.2.1 (in development)
 
 #### NEW FEATURES

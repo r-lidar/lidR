@@ -44,7 +44,8 @@
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
 #' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.
 #' @param roinames vector. A set of ROI names (the ID of the plots, for example)
-#' @param mc.cores numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' @param ... internal use only.
 #' @return A list of LAS objects
 #' @seealso
 #' \link[lidR:readLAS]{readLAS}
@@ -70,7 +71,7 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% catalog_queries(X, Y, R, R)
 #' }
-catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = parallel::detectCores())
+catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = "", ...)
 {
   . <- tiles <- NULL
 
@@ -87,6 +88,8 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 
   if (length(r) > 1 & (length(x) != length(r)))
     stop(paste0(xtxt, " is not same length as ", rtxt), call. = FALSE)
+
+  param = lazyeval::dots_capture(...)
 
   nplot = length(x)
   shape = if (is.null(r2)) 0 else 1
@@ -111,39 +114,44 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, mc.cores = 
 
   verbose("Extracting data...")
 
-  if (mc.cores == 1)
-  {
-    if (LIDROPTIONS("progress"))
-      p = utils::txtProgressBar(max = nplot, style = 3)
-    else
-      p = NULL
+  # Internal use only to force to disable the progressbar against what is in the options
+  if (LIDROPTIONS("progress") & is.null(param$disable_bar))
+    p = utils::txtProgressBar(max = nplot, style = 3)
+  else
+    p = NULL
 
-    output = lapply(lasindex, .getQuery, shape, p)
-  }
+  # Internal use only to force one core computation against what is requested in the options
+  if (!is.null(param$nomulticore))
+    mc.cores = 1
+  else
+    mc.cores = LIDROPTIONS("multicore")
+
+  if (mc.cores == 1)
+    output = lapply(lasindex, .getQuery, shape, filter, p)
   else
   {
     cl = parallel::makeCluster(mc.cores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, lasindex, .getQuery, shape)
+    output = parallel::parLapply(cl, lasindex, .getQuery, shape, filter)
     parallel::stopCluster(cl)
   }
 
   output = unlist(output)
   output = output[match(roinames, names(output))]  # set back to the original order
 
-  cat("\n")
-
   return(output)
 }
 
-.getQuery = function(query, shape, p = NULL, ...)
+.getQuery = function(query, shape, filter, p = NULL, ...)
 {
   x <- y <- r <- r2 <- NULL
 
   if (shape == 0)
-    filter = query %$% paste("-inside_circle", x, y, r)
+    clip_filter = query %$% paste("-inside_circle", x, y, r)
   else
-    filter = query %$% paste("-inside", x - r, y - r2, x + r, y + r2)
+    clip_filter = query %$% paste("-inside", x - r, y - r2, x + r, y + r2)
+
+  filter = paste(filter, clip_filter)
 
   lidardata = list(readLAS(query$tiles, all = TRUE, filter = filter))
   names(lidardata) = query$roinames

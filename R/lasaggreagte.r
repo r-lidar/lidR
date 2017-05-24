@@ -1,9 +1,9 @@
 lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 {
-  if(is(call, "name"))
+  if (is(call, "name"))
     call = eval(call)
 
-  if(debug)
+  if (LIDROPTIONS("debug"))
     .las@data %$% eval(call) %>% .debug_metrics(call)
 
   if(by %in% c("XY", "XYZ", "HEXA"))

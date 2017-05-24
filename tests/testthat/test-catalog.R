@@ -9,12 +9,14 @@ test_that("build catalog works", {
 })
 
 test_that("catalog queries works", {
+  lidr_options(multicore = 1)
+
   x = c(684850, 684880)
   y = c(5017850, 5017880)
   r = 20
   n = c("plot1", "pouik2")
   ctg = catalog(folder)
-  req = catalog_queries(ctg, x, y, r, roinames = n, mc.cores = 1)
+  req = catalog_queries(ctg, x, y, r, roinames = n)
 
   expect_equal(length(req), 2)
   expect_true(is(req[[1]], "LAS"))

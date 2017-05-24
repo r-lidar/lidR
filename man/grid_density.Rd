@@ -4,10 +4,10 @@
 \alias{grid_density}
 \title{Pulse density surface model}
 \usage{
-grid_density(.las, res = 4)
+grid_density(x, res = 4)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{x}{An object of class \link{LAS} or a \link{catalog}}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.}
 }
@@ -28,6 +28,4 @@ lidar \%>\% grid_density(10) \%>\% plot
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
-
-Other grid_alias: \code{\link{grid_canopy}}
 }

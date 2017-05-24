@@ -4,22 +4,24 @@
 \alias{grid_metrics}
 \title{Rasterize the space and compute metrics for each cell}
 \usage{
-grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
-  debug = FALSE)
+grid_metrics(x, func, res = 20, start = c(0, 0), splitlines = FALSE,
+  filter = "")
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
 
-\item{func}{the function to be applied to each cell}
+\item{func}{the function to be applied to each cell (see section "Parameter func")}
 
 \item{res}{numeric. The size of the cells. Default 20.}
 
-\item{start}{vector x and y coordinates for the reference raster. Default is (0,0).}
+\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").}
 
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlap.}
 
-\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
+If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+user cannot manipulate the lidar data himself but can use streaming filters instead.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each cell. The table
@@ -27,19 +29,17 @@ has the class "lasmetrics" enabling easy plotting.
 }
 \description{
 Computes a series of descriptive statistics defined by the user for a LiDAR dataset within
-each pixel of a raster. Output is a data.frame in which each line is a pixel (single grid cell),
-and each column is a metric.
+each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
+and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
+\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
+computes metrics within each cell in a predefinded grid. The grid cell coordinates are
+pre-determined for a given resolution.
 }
-\details{
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
-in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
-So the algorithm will always provide the same coordinates independently of the dataset.
-When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-(10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will
-produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada) reference
-is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each
-cell is a classical function (see examples) that returns a labelled list of metrics.
-The following existing function can help the user to compute some metrics:
+\section{Parameter \code{func}}{
+
+The function to be applied  to each cell is a classical function (see examples) that
+returns a labelled list of metrics.The following existing function can help the user to
+compute some metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics}}
 \item{\link[lidR:entropy]{entropy}}
@@ -49,6 +49,24 @@ The following existing function can help the user to compute some metrics:
 dispatch the LiDAR data for each cell in the user's function. The user writes their
 function without considering grid cells, only a cloud of points (see example).
 }
+
+\section{Parameter \code{start}}{
+
+The algorithm will always provide the same coordinates independently of the dataset.
+When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
+(10,10), (10,30), (30,10) etc..  When start = (-10, -10) and res = 20 grid_metrics will
+produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
+reference is (-831600,  117980) in the NAD83 coordinate system.
+}
+
+\section{Use with a \code{Catalog}}{
+
+When the parameter \code{x} is a catalog the function will process the entiere dataset
+in a continuous way using a multicore process. Parallel computing is set by defaut to
+the number of core avaible in the computer. The user can modify the global options using
+the function \link{lidr_options}
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
