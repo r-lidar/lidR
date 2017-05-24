@@ -33,7 +33,7 @@
 #' for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
 #' @aliases grid_density
-#' @param .las An object of class \code{LAS}
+#' @param x An object of class \link{LAS} or a \link{catalog}
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
 #' @return It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
 #' RasterLayer casting.
@@ -43,22 +43,31 @@
 #'
 #' lidar %>% grid_density(5) %>% plot
 #' lidar %>% grid_density(10) %>% plot
-#' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
-grid_density = function(.las, res = 4)
+grid_density = function(x, res = 4)
 {
   pulseID <- density <- X <- NULL
 
-  if(! "pulseID" %in% names(.las@data))
+  if (is(x, "LAS"))
   {
-    warning("No column named pulseID found. The pulse density cannot be computed. Compute the point density instead of the pulse density.", call. = F)
-    ret = grid_metrics(.las, list(density = length(X)/res^2), res)
+    if(! "pulseID" %in% names(x@data))
+    {
+      warning("No column named pulseID found. The pulse density cannot be computed. Compute the point density instead of the pulse density.", call. = F)
+      ret = grid_metrics(x, list(density = length(X)/res^2), res)
+    }
+    else
+      ret = grid_metrics(x, list(density = length(unique(pulseID))/res^2), res)
+  }
+  else if(is(x, "Catalog"))
+  {
+    ret <- grid_catalog(x, grid_density, res, "")
   }
   else
   {
-    ret = grid_metrics(.las, list(density = length(unique(pulseID))/res^2), res)
+    xtxt = lazyeval::expr_text(x)
+    stop(paste0(xtxt, " is not neither a LAS nor a Catalog object."), call. = FALSE)
   }
 
   return(ret)

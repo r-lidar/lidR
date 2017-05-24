@@ -1,5 +1,8 @@
 
-LIDROPTIONS <- settings::options_manager(verbose = FALSE, debug = FALSE, progress = FALSE,
+LIDROPTIONS <- settings::options_manager(verbose = FALSE,
+                                         progress = FALSE,
+                                         debug = FALSE,
+                                         multicore = parallel::detectCores(),
                                          .allowed = list(verbose  = settings::inlist(TRUE, FALSE),
                                                          debug    = settings::inlist(TRUE, FALSE),
                                                          progress = settings::inlist(TRUE, FALSE)))
@@ -13,6 +16,7 @@ LIDROPTIONS <- settings::options_manager(verbose = FALSE, debug = FALSE, progres
 #' \itemize{
 #'  \item{\code{verbose} (\code{logical}) Make the package talkative. }
 #'  \item{\code{progress} (\code{logical}) Display progress bars when avaible. }
+#'  \item{\code{multicore} (\code{numeric}) For parallel processe process fix the number of core to use.}
 #' }
 #'
 #' @examples
@@ -30,4 +34,4 @@ lidr_options <- function(...)
 
 #' @export
 #' @rdname lidr_options
-lidR_reset = function() { settings::reset(LIDROPTIONS) }
+lidr_reset = function() { settings::reset(LIDROPTIONS) }

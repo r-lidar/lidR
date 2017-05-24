@@ -11,10 +11,6 @@ test_that("grid_hexametrics space hexa properly", {
   expect_true(0 %in% x$X)
 })
 
-test_that("grid_hexametrics debug mode works", {
-  expect_error(grid_hexametrics(las, LAD(Z), debug = TRUE))
-})
-
 test_that("grid_hexametrics return an error if splitline and no flightlineID", {
   expect_error(grid_hexametrics(las, mean(Z), splitlines = T))
 })

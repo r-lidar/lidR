@@ -62,6 +62,4 @@ grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") \%>\% plot
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
 \link[lidR:as.raster.lasmetrics]{as.raster}
-
-Other grid_alias: \code{\link{grid_density}}
 }

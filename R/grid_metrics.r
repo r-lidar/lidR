@@ -30,18 +30,16 @@
 #' Rasterize the space and compute metrics for each cell
 #'
 #' Computes a series of descriptive statistics defined by the user for a LiDAR dataset within
-#' each pixel of a raster. Output is a data.frame in which each line is a pixel (single grid cell),
-#' and each column is a metric.
+#' each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
+#' and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
+#' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
+#' computes metrics within each cell in a predefinded grid. The grid cell coordinates are
+#' pre-determined for a given resolution.
 #'
-#' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
-#' in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
-#' So the algorithm will always provide the same coordinates independently of the dataset.
-#' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-#' (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will
-#' produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada) reference
-#' is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each
-#' cell is a classical function (see examples) that returns a labelled list of metrics.
-#' The following existing function can help the user to compute some metrics:
+#' @section Parameter \code{func}:
+#' The function to be applied  to each cell is a classical function (see examples) that
+#' returns a labelled list of metrics.The following existing function can help the user to
+#' compute some metrics:
 #' \itemize{
 #' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' \item{\link[lidR:entropy]{entropy}}
@@ -51,13 +49,28 @@
 #' dispatch the LiDAR data for each cell in the user's function. The user writes their
 #' function without considering grid cells, only a cloud of points (see example).
 #'
-#' @param .las An object of class \code{LAS}
-#' @param func the function to be applied to each cell
+#' @section Parameter \code{start}:
+#' The algorithm will always provide the same coordinates independently of the dataset.
+#' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
+#' (10,10), (10,30), (30,10) etc..  When start = (-10, -10) and res = 20 grid_metrics will
+#' produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
+#' reference is (-831600,  117980) in the NAD83 coordinate system.
+#'
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. The user can modify the global options using
+#' the function \link{lidr_options}
+#'
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param func the function to be applied to each cell (see section "Parameter func")
 #' @param res numeric. The size of the cells. Default 20.
-#' @param start vector x and y coordinates for the reference raster. Default is (0,0).
+#' @param start vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlap.
-#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return It returns a \code{data.table} containing the metrics for each cell. The table
 #' has the class "lasmetrics" enabling easy plotting.
 #' @examples
@@ -89,13 +102,26 @@
 #' plot(metrics, "zsqmean")
 #' #etc.
 #' @export
-grid_metrics = function(.las, func, res = 20, start = c(0,0), splitlines = FALSE, debug = FALSE)
+grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
-  stopifnotlas(.las)
-
   call = substitute(func)
 
-  stat <- lasaggregate(.las, by = "XY", call, res, start, c("X", "Y"), splitlines, debug)
+  if (is(x, "LAS"))
+  {
+    stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
+  }
+  else if (is(x, "Catalog"))
+  {
+    if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
+    if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
+
+    stat <- grid_catalog(x, grid_metrics, res, filter, func = call)
+  }
+  else
+  {
+    xtxt = lazyeval::expr_text(x)
+    stop(paste0(xtxt, " is not neither a LAS nor a Catalog object."), call. = FALSE)
+  }
 
   return(stat)
 }
