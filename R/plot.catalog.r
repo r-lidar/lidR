@@ -33,7 +33,7 @@
 #'
 #' @param x A Catalog object
 #' @param y Unused (inherited from base plot)
-#' @param \dots Unused (inherited from base plot)
+#' @param \dots inherited from base plot
 #' @method plot Catalog
 #' @export
 #' @examples
@@ -46,6 +46,8 @@ plot.Catalog = function(x, y, ...)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
 
+  param = list(...)
+
   xmin = min(x$Min.X)
   xmax = max(x$Max.X)
   ymin = min(x$Min.Y)
@@ -54,7 +56,31 @@ plot.Catalog = function(x, y, ...)
   xcenter = (x$Min.X+x$Max.X)/2
   ycenter = (x$Min.Y+x$Max.Y)/2
 
-  graphics::plot(xcenter, ycenter, xlim=c(xmin, xmax), col="white", ylim = c(ymin, ymax), asp=1, xlab="X", ylab="Y")
+  if (is.null(param$xlim))
+    param$xlim = c(xmin, xmax)
+
+  if (is.null(param$ylim))
+    param$ylim = c(ymin, ymax)
+
+  if (is.null(param$xlab))
+    param$xlab = "X"
+
+  if (is.null(param$ylab))
+    param$ylab = "Y"
+
+  if (is.null(param$asp))
+    param$xlab = "X"
+
+  if (is.null(param$asp))
+    param$asp = 1
+
+  if (is.null(param$col))
+    param$col = "white"
+
+  param$x = xcenter
+  param$y = ycenter
+
+  do.call(graphics::plot, param)
   x %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y)
 }
 
