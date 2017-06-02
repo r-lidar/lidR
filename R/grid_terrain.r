@@ -45,9 +45,16 @@
 #' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
 #' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
-#' @param x An object of class \link{LAS} or a \link{catalog}
-#' @param res numeric resolution.
-#' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
+#'
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. A buffer is requiered.
+#' The user can modify the global options using the function \link{catalog_options}.
+#'
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param res numeric. resolution.
+#' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
 #' is \code{"kriging"}. If null it performs an ordinary or weighted least squares prediction.
@@ -85,7 +92,11 @@ grid_terrain = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sp
 
   if (is(x, "Catalog"))
   {
-    terrain = grid_catalog(x, grid_terrain, res, filter = "-keep_class 2", buffer = 50, method = method, k = k, model = model, keep_lowest = keep_lowest)
+    buffer  = CATALOGOPTIONS("buffer")
+    by_file = CATALOGOPTIONS("by_file")
+
+    terrain = grid_catalog(x, grid_terrain, res, "-keep_class 2", buffer, by_file,
+                           method = method, k = k, model = model, keep_lowest = keep_lowest)
     return(terrain)
   }
 

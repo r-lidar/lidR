@@ -59,8 +59,8 @@
 #' @section Use with a \code{Catalog}:
 #' When the parameter \code{x} is a catalog the function will process the entiere dataset
 #' in a continuous way using a multicore process. Parallel computing is set by defaut to
-#' the number of core avaible in the computer. The user can modify the global options using
-#' the function \link{lidr_options}
+#' the number of core avaible in the computer. No buffer is requiered. The user can modify
+#' the global options using the function \link{catalog_options}.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param func the function to be applied to each cell (see section "Parameter func")
@@ -106,22 +106,19 @@ grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, f
 {
   call = substitute(func)
 
-  if (is(x, "LAS"))
-  {
-    stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
-  }
-  else if (is(x, "Catalog"))
+  if (is(x, "Catalog"))
   {
     if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
     if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
 
-    stat <- grid_catalog(x, grid_metrics, res, filter, 0, func = call)
+    stat <- grid_catalog(x, grid_metrics, res, filter, 0, FALSE, func = call)
+
+    return(stat)
   }
-  else
-  {
-    xtxt = lazyeval::expr_text(x)
-    stop(paste0(xtxt, " is not neither a LAS nor a Catalog object."), call. = FALSE)
-  }
+
+  stopifnotlas(x)
+
+  stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
 
   return(stat)
 }
