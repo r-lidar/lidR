@@ -8,11 +8,11 @@ grid_terrain(x, res = 1, method, k = 10L, model = gstat::vgm(0.59, "Sph",
   874), keep_lowest = FALSE)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog}}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
 
-\item{res}{numeric resolution.}
+\item{res}{numeric. resolution.}
 
-\item{method}{character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
+\item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
 
 \item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
 
@@ -44,6 +44,14 @@ it kriges the terrain using the k-nearest neighbour ground points. This method i
 to manipulate but it is also the most advanced method for interpolating spatial data. }
 }
 }
+\section{Use with a \code{Catalog}}{
+
+When the parameter \code{x} is a catalog the function will process the entiere dataset
+in a continuous way using a multicore process. Parallel computing is set by defaut to
+the number of core avaible in the computer. A buffer is requiered.
+The user can modify the global options using the function \link{catalog_options}.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)

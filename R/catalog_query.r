@@ -121,10 +121,10 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
     p = NULL
 
   # Internal use only to force one core computation against what is requested in the options
-  if (!is.null(param$nomulticore))
+  if (!is.null(param$no_multicore))
     mc.cores = 1
   else
-    mc.cores = LIDROPTIONS("multicore")
+    mc.cores = CATALOGOPTIONS("multicore")
 
   if (mc.cores == 1)
     output = lapply(lasindex, .getQuery, shape, filter, p)

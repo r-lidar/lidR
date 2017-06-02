@@ -32,8 +32,14 @@
 #' Creates a pulse density map using a LiDAR cloud of points. This function is an alias
 #' for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. No buffer is requiered. The user can modify
+#' the global options using the function \link{catalog_options}.
+#'
 #' @aliases grid_density
-#' @param x An object of class \link{LAS} or a \link{catalog}
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
 #' @return It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
 #' RasterLayer casting.
@@ -62,7 +68,7 @@ grid_density = function(x, res = 4)
   }
   else if(is(x, "Catalog"))
   {
-    ret <- grid_catalog(x, grid_density, res, "", 0)
+    ret <- grid_catalog(x, grid_density, res, "", 0, FALSE)
   }
   else
   {

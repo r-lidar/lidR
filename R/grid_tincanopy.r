@@ -33,7 +33,13 @@
 #' developed by Khosravipour et al. witch is based on the computation of a set of classical
 #' trigulation at different heights (see reference).
 #'
-#' @param .las A LAS object
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. A buffer is requiered. The user can modify
+#' the global options using the function \link{catalog_options}.
+#'
+#' @param x A LAS object
 #' @param res numeric. resolution
 #' @param thresholds numeric. Set of height threholds. If \code{thresholds = 0} the algorithm
 #' is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
@@ -65,17 +71,29 @@
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
+grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
+
+  if (is(x, "Catalog"))
+  {
+    buffer  = CATALOGOPTIONS("buffer")
+    by_file = CATALOGOPTIONS("by_file")
+
+    canopy = grid_catalog(x, grid_tincanopy, res, "-keep_first", buffer, by_file,
+                           thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
+    return(canopy)
+  }
+
+  stopifnotlas(x)
 
   if (length(thresholds) > 1 & length(max_edge) < 2)
     stop("'max_egde' should contain 2 numbers", call. = FALSE)
 
-  if (!"ReturnNumber" %in% names(.las@data))
+  if (!"ReturnNumber" %in% names(x@data))
      stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
 
-  if (fast_countequal(.las@data$ReturnNumber, 1) == 0)
+  if (fast_countequal(x@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborded.", call. = FALSE)
 
   if (length(thresholds) == 1 & thresholds[1] == 0)
@@ -86,7 +104,7 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   # Create the coordinates of interpolation (pixel coordinates)
   verbose("Generating interpolation coordinates...")
 
-  ex = extent(.las)
+  ex = extent(x)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
   # Initialize the interpolated values with NAs
@@ -94,14 +112,14 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
 
   # Get only first returns and coordinates (nothing else needed)
   verbose("Select first returns...")
-  cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
+  cloud = x@data[ReturnNumber == 1, .(X,Y,Z)]
 
   # subcircled the data
   if (subcircle > 0)
   {
     verbose("Subcircling the points...")
 
-    ex = extent(.las)
+    ex = extent(x)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }

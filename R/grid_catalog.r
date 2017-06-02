@@ -1,66 +1,128 @@
-grid_catalog <- function(ctg, grid_func, res, filter, buffer, ...)
+grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 {
-  Min.X <- Min.Y <- Max.X <- Max.Y <- NULL
+  Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
+  # Store some stuff in readable variables
   param = list(...)
+  fname = lazyeval::expr_text(grid_func)
+  dir   = paste0(dirname(ctg$filename[1]),  "/", fname, "/")
+  cores = CATALOGOPTIONS("multicore")
+  pbar  = LIDROPTIONS("progress")
+  onhdd = CATALOGOPTIONS("return_virtual_raster")
 
-  # Tweak to enable non-standard evaluation of func in grid_metrics
-  if (!is.null(param$func))
-  {
+  # Tweak to enable non-standard evaluation of func in grid_metrics-alike functions
+  if (!is.null(param$func)) {
     if (is.call(param$func))
       param$func = as.expression(param$func)
   }
 
-  X = make_cluster(ctg, res, buffer)
+  # Test of memory to prevent memory overflow
+  surface = sum(with(ctg, (Max.X - Min.X) * (Max.Y - Min.Y)))
+  npixel  = surface / (res*res)
+  nmetric = 3 # Must find a way to access this number
+  nbytes  = npixel * nmetric * 8
+
+  if (nbytes > CATALOGOPTIONS("memory_limit_warning") & !onhdd)
+  {
+    size = utils:::format.object_size(nbytes, "auto")
+    text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
+    choices = c(
+      "Proceed anyway",
+      "Store the results on my disk an return a virtual raster mosaic",
+      "Abort, let me configure myself with 'catalog_options()'")
+
+    cat(text)
+    choice = utils::menu(choices)
+
+    if (choice == 2)
+      onhdd = TRUE
+    else if (choice == 3)
+      return(invisible())
+  }
+
+  # Create a pattern of sub areas to be sequentially processed
+  X = make_cluster(ctg, res, buffer, by_file)
   X = apply(X, 1, as.list)
 
-  if (LIDROPTIONS("progress"))
-    p = utils::txtProgressBar(max = length(X), style = 3)
-  else
-    p = NULL
+  # Add the path to the saved file (if saved)
+  X = lapply(X, function(x)
+  {
+    x$path = paste0(dir, fname, "_ROI", x$name, ".tiff")
+    return(x)
+  })
 
-  mc.cores = LIDROPTIONS("multicore")
+  # Enable progress bar
+  if (pbar) p = utils::txtProgressBar(max = length(X), style = 3)
 
-  if(mc.cores == 1)
+  # Create or clean the directory
+  if (onhdd)
+  {
+    if (!dir.exists(dir))
+      dir.create(dir)
+    else
+      unlink(dir, recursive = TRUE) ; dir.create(dir)
+  }
+
+  # Computations done within sequential or parallel loop in .getMetrics
+  if (cores == 1)
   {
     verbose("Computing sequentially the metrics for each cluster...")
-
-    output = lapply(X, .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param, p = p)
+    output = lapply(X, .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param, save_as_tiff = onhdd, p = p)
   }
   else
   {
-    verbose("Computing sequentially (multicore) the metrics for each cluster...")
-
-    cl = parallel::makeCluster(mc.cores, outfile = "")
+    verbose("Computing in parallel the metrics for each cluster...")
+    cl = parallel::makeCluster(cores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, X, fun = .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param)
+    output = parallel::parLapply(cl, X, fun = .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param, save_as_tiff = onhdd, p = p)
     parallel::stopCluster(cl)
   }
 
-  ._class = class(output[[1]])
-
-  output = data.table::rbindlist(output)
-  data.table::setattr(output, "class", ._class)
+  # Post process of the results (return adequate object)
+  if (!onhdd)
+  {
+    ._class = class(output[[1]])
+    output = data.table::rbindlist(output)
+    data.table::setattr(output, "class", ._class)
+  }
+  else
+  {
+    # Build virtual raster mosaic and return it
+    ras_lst = list.files(dir, full.names=T, pattern=".tif$")
+    save_in = paste0(dir, "/", fname, ".vrt")
+    gdalUtils::gdalbuildvrt(ras_lst, save_in)
+    output  = raster::stack(save_in)
+  }
 
   return(output)
 }
 
-.getMetrics = function(X, grid_func, ctg, res, filter, param, p = NULL)
+# Apply for a given ROI of a catlog a grid_* function
+#
+# @param X list. the coordinates of the region of interest (rectangular)
+# @param grid_func function. the grid_* function to be applied
+# @param ctg  Catalog.
+# @param res numric. the resolution to apply the grid_* function
+# @param filter character. the streaming filter to be applied
+# @param param list. the parameter of the function grid_function but res
+# @param p progressbar.
+.getMetrics = function(X, grid_func, ctg, res, filter, param, save_as_tiff, p)
 {
   Y <- NULL
 
+  # Convenient variables for readability
   xleft   = X$xleft
   xright  = X$xright
   ybottom = X$ybottom
   ytop    = X$ytop
   name    = paste0("ROI", X$name)
+  path    = X$path
+  xcenter = (xleft + xright)/2
+  ycenter = (ybottom + ytop)/2
+  width   = (X$xrightbuff - X$xleftbuff)/2
 
-  x = (xleft + xright)/2
-  y = (ybottom + ytop)/2
-  r = (X$xrightbuff - X$xleftbuff)/2
-
-
-  las = catalog_queries(ctg, x, y, r, r, name, filter, disable_bar = T, nomulticore = T)[[1]]
+  # Extract the ROI as a LAS object
+  las = catalog_queries(ctg, xcenter, ycenter, width, width, name, filter, disable_bar = T, no_multicore = T)[[1]]
 
   # Skip if the ROI fall in a void area
   if (is.null(las)) return(NULL)
@@ -75,54 +137,70 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, ...)
 
   param$x = las
   param$res  = res
-
   m = do.call(grid_func, args = param)
   m = m[X >= xleft & X <= xright & Y >= ybottom & Y <= ytop]  # remove the buffer
 
+  # Update progress bar
   if (!is.null(p))
   {
     i = utils::getTxtProgressBar(p) + 1
     utils::setTxtProgressBar(p, i)
   }
 
-  return(m)
+  # Return results or write file
+  if (!save_as_tiff)
+    return(m)
+  else
+  {
+    m = as.raster(m)
+    directory = dirname(path)
+    raster::writeRaster(m, path, format = "GTiff")
+    return(NULL)
+  }
 }
 
-make_cluster = function(ctg, res, buffer = 0)
+make_cluster = function(ctg, res, buffer, by_file)
 {
-  # Will process subtiles of 500 by 500 m
-  size = 500
+  if (by_file)
+  {
+    X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
+    names(X) = c("xleft", "xright", "ybottom", "ytop")
+  }
+  else
+  {
+    # Will process subtiles of 1 km^2
+    size = CATALOGOPTIONS("tiling_size")
 
-  # dimension of the clusters (width = height)
-  width = ceiling(size/res) * res
+    # dimension of the clusters (width = height)
+    width = ceiling(size/res) * res
 
-  #verbose("Computing the bounding box of the catalog...")
+    verbose("Computing the bounding box of the catalog...")
 
-  # Bounding box of the catalog
-  bbox = ctg %$% c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y))
+    # Bounding box of the catalog
+    bbox = ctg %$% c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y))
 
-  # Buffer around the bbox as a multiple of the resolution
-  buffered_bbox = bbox + c(-res, -res, +res, +res)
-  buffered_bbox = round_any(buffered_bbox, res)
-  buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
+    # Buffer around the bbox as a multiple of the resolution
+    buffered_bbox = bbox + c(-res, -res, +res, +res)
+    buffered_bbox = round_any(buffered_bbox, res)
+    buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
 
-  #verbose("Creating a set of cluster for the catalog...")
+    verbose("Creating a set of cluster for the catalog...")
 
-  # Generate coordinates of sub bounding boxes
-  xleft   = seq(buffered_bbox[1], buffered_bbox[3], width)
-  ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
+    # Generate coordinates of sub bounding boxes
+    xleft   = seq(buffered_bbox[1], buffered_bbox[3], width)
+    ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
 
-  X = expand.grid(xleft = xleft, ybottom = ybottom)
+    X = expand.grid(xleft = xleft, ybottom = ybottom)
 
-  X$xright = X$xleft + width
-  X$ytop   = X$ybottom + width
+    X$xright = X$xleft + width
+    X$ytop   = X$ybottom + width
+  }
 
   X$xleftbuff   = X$xleft - buffer
   X$ybottombuff = X$ybottom - buffer
   X$xrightbuff  = X$xright + buffer
   X$ytopbuff    = X$ytop + buffer
-
-  X$name = 1:nrow(X)
+  X$name        = 1:nrow(X)
 
   # Plot the pattern
   xrange = c(min(X$xleft), max(X$xright))

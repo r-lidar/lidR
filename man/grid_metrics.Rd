@@ -63,8 +63,8 @@ reference is (-831600,  117980) in the NAD83 coordinate system.
 
 When the parameter \code{x} is a catalog the function will process the entiere dataset
 in a continuous way using a multicore process. Parallel computing is set by defaut to
-the number of core avaible in the computer. The user can modify the global options using
-the function \link{lidr_options}
+the number of core avaible in the computer. No buffer is requiered. The user can modify
+the global options using the function \link{catalog_options}.
 }
 
 \examples{

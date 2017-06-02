@@ -1,15 +1,21 @@
 ### lidR v1.3.0 (in development)
 
+This version is dedicated to extend each function to an entiere catalog in a seamless way.
+
 #### NEW FEATURES
 
-* `grid_metrics` accept a catalog as input. Enable to grid an entiere area in a continuous way.
+* `grid_metrics` accept a catalog as input. Enable to grid an entiere catalog in a continuous way.
 * `grid_density` inherit of this new feature as well
-* `catalog_queries` has now a parameter `filter` for streaming filters
+* `grid_terrain` inherit of this new feature as well
+* `grid_canopy` inherit of this new feature as well
+* `grid_tincanopy` inherit of this new feature as well
+* `catalog_queries` has now a parameter `filter` for streaming filters while loading the data
+* `grid_metrics` has now a parameter `filter` for streaming filters when used with a catalog
 
 #### OTHER CHANGES
 
 * `plot.Catalog` accept for usual `plot` parameter
-* `catalog_queries` and `catalog_apply` do not expect a parameter `mc.core`. This is now driven by global options in `lidr_options`.
+* `catalog_queries` and `catalog_apply` do not expect a parameter `mc.core`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 
 ### lidR v1.2.1 (in development)
