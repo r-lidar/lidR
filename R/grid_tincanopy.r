@@ -53,6 +53,9 @@
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle composed of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 #' RasterLayer casting.
 #' @export
@@ -71,7 +74,7 @@
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
+grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
 
@@ -80,7 +83,7 @@ grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge =
     buffer  = CATALOGOPTIONS("buffer")
     by_file = CATALOGOPTIONS("by_file")
 
-    canopy = grid_catalog(x, grid_tincanopy, res, "-keep_first", buffer, by_file,
+    canopy = grid_catalog(x, grid_tincanopy, res, filter, buffer, by_file,
                            thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
     return(canopy)
   }

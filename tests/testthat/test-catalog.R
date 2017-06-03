@@ -9,7 +9,7 @@ test_that("build catalog works", {
 })
 
 test_that("catalog queries works", {
-  lidr_options(multicore = 1)
+  catalog_options(multicore = 1)
 
   x = c(684850, 684880)
   y = c(5017850, 5017880)

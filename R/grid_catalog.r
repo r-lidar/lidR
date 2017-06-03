@@ -152,6 +152,9 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
     return(m)
   else
   {
+    if (nrow(m) == 0)
+      return(NULL)
+
     m = as.raster(m)
     directory = dirname(path)
     raster::writeRaster(m, path, format = "GTiff")
@@ -161,6 +164,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 
 make_cluster = function(ctg, res, buffer, by_file)
 {
+
   if (by_file)
   {
     X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
@@ -177,7 +181,7 @@ make_cluster = function(ctg, res, buffer, by_file)
     verbose("Computing the bounding box of the catalog...")
 
     # Bounding box of the catalog
-    bbox = ctg %$% c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y))
+    bbox = with(ctg, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
 
     # Buffer around the bbox as a multiple of the resolution
     buffered_bbox = bbox + c(-res, -res, +res, +res)
@@ -207,10 +211,10 @@ make_cluster = function(ctg, res, buffer, by_file)
   yrange = c(min(X$ybottom), max(X$ytop))
   title  = "Pattern of clusters"
   graphics::plot(ctg, main = title, xlim = xrange, ylim = yrange)
-  X %$% graphics::rect(xleft, ybottom, xright, ytop, border = "red")
+  with(X, graphics::rect(xleft, ybottom, xright, ytop, border = "red"))
 
   if (buffer > 0)
-    X %$% graphics::rect(xleftbuff, ybottombuff, xrightbuff, ytopbuff, border = "darkgreen", lty = "dotted")
+    with(X, graphics::rect(xleftbuff, ybottombuff, xrightbuff, ytopbuff, border = "darkgreen", lty = "dotted"))
 
   return(X)
 }

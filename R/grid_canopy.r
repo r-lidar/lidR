@@ -56,6 +56,9 @@
 #' @param na.fill character. name of the algorithm used to interpolate the data and fill the empty pixels.
 #' Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).
 #' @param ... extra parameters for the algorithm used to interpolate the empty pixels (see details)
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 #' RasterLayer casting.
 #' @examples
@@ -83,7 +86,7 @@
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:as.raster.lasmetrics]{as.raster}
 #' @export grid_canopy
-grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ...)
+grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
 {
   . <- X <- Y <- Z <- NULL
 
@@ -92,7 +95,7 @@ grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ...)
     buffer  = CATALOGOPTIONS("buffer")
     by_file = CATALOGOPTIONS("by_file")
 
-    canopy = grid_catalog(x, grid_canopy, res, "-keep_first", buffer, by_file,
+    canopy = grid_catalog(x, grid_canopy, res, filter, buffer, by_file,
                           subcircle = subcircle, na.fill = na.fill, ...)
 
     return(canopy)
