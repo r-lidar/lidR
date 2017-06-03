@@ -4,7 +4,8 @@
 \alias{grid_canopy}
 \title{Canopy surface model}
 \usage{
-grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...)
+grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
+  filter = "-keep_first")
 }
 \arguments{
 \item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
@@ -20,6 +21,10 @@ in each pixel.}
 Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
 
 \item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
+
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
+If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+user cannot manipulate the lidar data himself but can use streaming filters instead.}
 }
 \value{
 It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
