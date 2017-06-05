@@ -76,19 +76,13 @@
 #' Remote Sensing, 80(9), 863-872.
 grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
+  UseMethod("grid_tincanopy", x)
+}
+
+#' @export
+grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+{
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
-
-  if (is(x, "Catalog"))
-  {
-    buffer  = CATALOGOPTIONS("buffer")
-    by_file = CATALOGOPTIONS("by_file")
-
-    canopy = grid_catalog(x, grid_tincanopy, res, filter, buffer, by_file,
-                           thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
-    return(canopy)
-  }
-
-  stopifnotlas(x)
 
   if (length(thresholds) > 1 & length(max_edge) < 2)
     stop("'max_egde' should contain 2 numbers", call. = FALSE)
@@ -159,4 +153,15 @@ grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge =
   as.lasmetrics(grid,res)
 
   return(grid)
+}
+
+#' @export
+grid_tincanopy.Catalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+{
+  buffer  = CATALOGOPTIONS("buffer")
+  by_file = CATALOGOPTIONS("by_file")
+
+  canopy = grid_catalog(x, grid_tincanopy, res, filter, buffer, by_file,
+                        thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
+  return(canopy)
 }

@@ -88,20 +88,13 @@
 #' @export grid_canopy
 grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
 {
+  UseMethod("grid_canopy", x)
+}
+
+#' @export
+grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+{
   . <- X <- Y <- Z <- NULL
-
-  if (is(x, "Catalog"))
-  {
-    buffer  = CATALOGOPTIONS("buffer")
-    by_file = CATALOGOPTIONS("by_file")
-
-    canopy = grid_catalog(x, grid_canopy, res, filter, buffer, by_file,
-                          subcircle = subcircle, na.fill = na.fill, ...)
-
-    return(canopy)
-  }
-
-  stopifnotlas(x)
 
   if (subcircle > 0)
   {
@@ -156,3 +149,16 @@ grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter 
 
   return(dsm)
 }
+
+#' @export
+grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+{
+  buffer  = CATALOGOPTIONS("buffer")
+  by_file = CATALOGOPTIONS("by_file")
+
+  canopy = grid_catalog(x, grid_canopy, res, filter, buffer, by_file,
+                        subcircle = subcircle, na.fill = na.fill, ...)
+
+  return(canopy)
+}
+

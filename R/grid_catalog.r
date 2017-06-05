@@ -21,10 +21,11 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   npixel  = surface / (res*res)
   nmetric = 3 # Must find a way to access this number
   nbytes  = npixel * nmetric * 8
+  class(nbytes) = "object_size"
 
   if (nbytes > CATALOGOPTIONS("memory_limit_warning") & !onhdd)
   {
-    size = utils:::format.object_size(nbytes, "auto")
+    size = format(nbytes, "auto")
     text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
     choices = c(
       "Proceed anyway",
