@@ -88,19 +88,13 @@
 #' \link[raster:raster]{RasterLayer}
 grid_terrain = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
+  UseMethod("grid_terrain", x)
+}
+
+#' @export
+grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
   . <- X <- Y <- Z <- NULL
-
-  if (is(x, "Catalog"))
-  {
-    buffer  = CATALOGOPTIONS("buffer")
-    by_file = CATALOGOPTIONS("by_file")
-
-    terrain = grid_catalog(x, grid_terrain, res, "-keep_class 2", buffer, by_file,
-                           method = method, k = k, model = model, keep_lowest = keep_lowest)
-    return(terrain)
-  }
-
-  stopifnotlas(x)
 
   verbose("Selecting ground points...")
 
@@ -144,4 +138,15 @@ grid_terrain = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sp
   as.lasmetrics(grid, res)
 
   return(grid)
+}
+
+#' @export
+grid_terrain.Catalog = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
+  buffer  = CATALOGOPTIONS("buffer")
+  by_file = CATALOGOPTIONS("by_file")
+
+  terrain = grid_catalog(x, grid_terrain, res, "-keep_class 2", buffer, by_file,
+                         method = method, k = k, model = model, keep_lowest = keep_lowest)
+  return(terrain)
 }

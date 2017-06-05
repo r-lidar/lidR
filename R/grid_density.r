@@ -54,27 +54,30 @@
 #' @export
 grid_density = function(x, res = 4)
 {
+  UseMethod("grid_density", x)
+}
+
+
+#' @export
+grid_density.LAS = function(x, res = 4)
+{
   pulseID <- density <- X <- NULL
 
-  if (is(x, "LAS"))
+  if(! "pulseID" %in% names(x@data))
   {
-    if(! "pulseID" %in% names(x@data))
-    {
-      warning("No column named pulseID found. The pulse density cannot be computed. Compute the point density instead of the pulse density.", call. = F)
-      ret = grid_metrics(x, list(density = length(X)/res^2), res)
-    }
-    else
-      ret = grid_metrics(x, list(density = length(unique(pulseID))/res^2), res)
-  }
-  else if(is(x, "Catalog"))
-  {
-    ret <- grid_catalog(x, grid_density, res, "", 0, FALSE)
+    warning("No column named pulseID found. The pulse density cannot be computed. Computing the point density instead of the pulse density.", call. = F)
+    ret = grid_metrics(x, list(density = length(X)/res^2), res)
   }
   else
-  {
-    xtxt = lazyeval::expr_text(x)
-    stop(paste0(xtxt, " is not neither a LAS nor a Catalog object."), call. = FALSE)
-  }
+    ret = grid_metrics(x, list(density = length(unique(pulseID))/res^2), res)
+
+  return(ret)
+}
+
+#' @export
+grid_density.Catalog = function(x, res = 4)
+{
+  ret <- grid_catalog(x, grid_density, res, "", 0, FALSE)
 
   return(ret)
 }

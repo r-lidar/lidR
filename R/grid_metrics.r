@@ -104,21 +104,28 @@
 #' @export
 grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
+  UseMethod("grid_metrics", x)
+}
+
+#' @export
+grid_metrics.LAS = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
+{
   call = substitute(func)
 
-  if (is(x, "Catalog"))
-  {
-    if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
-    if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
-
-    stat <- grid_catalog(x, grid_metrics, res, filter, 0, FALSE, func = call)
-
-    return(stat)
-  }
-
-  stopifnotlas(x)
-
   stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
+
+  return(stat)
+}
+
+#' @export
+grid_metrics.Catalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
+{
+  call = substitute(func)
+
+  if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
+  if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
+
+  stat <- grid_catalog(x, grid_metrics, res, filter, 0, FALSE, func = call)
 
   return(stat)
 }
