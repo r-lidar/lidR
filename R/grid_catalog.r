@@ -118,8 +118,8 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   ytop    = X$ytop
   name    = paste0("ROI", X$name)
   path    = X$path
-  xcenter = (xleft + xright)/2
-  ycenter = (ybottom + ytop)/2
+  xcenter = X$xcenter
+  ycenter = X$ycenter
   width   = (X$xrightbuff - X$xleftbuff)/2
 
   # Extract the ROI as a LAS object
@@ -210,8 +210,8 @@ make_cluster = function(ctg, res, buffer, by_file)
   X$name        = 1:nrow(X)
 
   # Remove cluster outside the catalog
-  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width / 2, width / 2))
-  keep     = sapply(lasindex$tiles, length) > 0
+  index = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width / 2, width / 2))
+  keep  = sapply(index$tiles, length) > 0
   X = X[keep,]
 
   # Plot the pattern
