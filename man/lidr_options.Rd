@@ -2,12 +2,12 @@
 % Please edit documentation in R/option.r
 \name{lidr_options}
 \alias{lidr_options}
-\alias{lidR_reset}
+\alias{lidr_reset}
 \title{Set or get global options for lidR package}
 \usage{
 lidr_options(...)
 
-lidR_reset()
+lidr_reset()
 }
 \arguments{
 \item{...}{Option names to retrieve option values or \code{[key]=[value]} pairs to set options.}

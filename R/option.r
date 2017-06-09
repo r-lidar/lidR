@@ -30,4 +30,4 @@ lidr_options <- function(...)
 
 #' @export
 #' @rdname lidr_options
-lidR_reset = function() { settings::reset(LIDROPTIONS) }
+lidr_reset = function() { settings::reset(LIDROPTIONS) }
