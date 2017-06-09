@@ -5,7 +5,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   # Store some stuff in readable variables
   param = list(...)
   fname = lazyeval::expr_text(grid_func)
-  dir   = paste0(dirname(ctg$filename[1]),  "/", fname, "/")
+  dir   = paste0(tempdir(),  "/", fname, "/")
   cores = CATALOGOPTIONS("multicore")
   pbar  = LIDROPTIONS("progress")
   onhdd = CATALOGOPTIONS("return_virtual_raster")
@@ -165,7 +165,6 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 
 make_cluster = function(ctg, res, buffer, by_file)
 {
-
   if (by_file)
   {
     X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
