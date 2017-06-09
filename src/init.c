@@ -13,7 +13,7 @@ extern SEXP lidR_fast_countbelow(SEXP, SEXP);
 extern SEXP lidR_fast_countequal(SEXP, SEXP);
 extern SEXP lidR_fast_countover(SEXP, SEXP);
 extern SEXP lidR_fast_table(SEXP, SEXP);
-extern SEXP lidR_triangle_information(SEXP, SEXP);
+extern SEXP lidR_tinfo(SEXP, SEXP);
 extern SEXP lidR_itc_expandcrowns(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lidR_itc_treetops(SEXP, SEXP);
 extern SEXP lidR_MorphologicalOpening(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -28,7 +28,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"lidR_fast_countequal",      (DL_FUNC) &lidR_fast_countequal,      2},
     {"lidR_fast_countover",       (DL_FUNC) &lidR_fast_countover,       2},
     {"lidR_fast_table",           (DL_FUNC) &lidR_fast_table,           2},
-    {"lidR_triangle_information", (DL_FUNC) &lidR_triangle_information, 2},
+    {"lidR_tinfo",                (DL_FUNC) &lidR_tinfo,                2},
     {"lidR_itc_expandcrowns",     (DL_FUNC) &lidR_itc_expandcrowns,     5},
     {"lidR_itc_treetops",         (DL_FUNC) &lidR_itc_treetops,         2},
     {"lidR_MorphologicalOpening", (DL_FUNC) &lidR_MorphologicalOpening, 5},

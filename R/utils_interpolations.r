@@ -108,7 +108,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Rasterizating of the triangulation...")
 
-  N = triangle_information(dn, X)
+  N = tinfo(dn, X)
   N = N[idx,]
 
   z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]
