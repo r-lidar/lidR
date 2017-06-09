@@ -106,7 +106,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
   #active <- dn[uidx,]
   #active <- cbind(active, uidx)
 
-  verbose("Rasterizating of the triangulation...")
+  verbose("Rasterizing the triangulation...")
 
   N = tinfo(dn, X)
   N = N[idx,]
