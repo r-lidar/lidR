@@ -14,7 +14,7 @@ lastrees(.las, algorithm, image = NULL, ..., extra = FALSE)
 
 \item{image}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface model.
 But some algorithms work on the raw point cloud (see relevant sections). You can compute
-it with \link{grid_canopy} or read it from external file.}
+it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.}
 
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details about the algorithms)}
 
@@ -25,7 +25,7 @@ with the positions of the local maxima and a map of the crowns, depending on the
 \value{
 Nothing, the point cloud is updated by reference. If \code{extra = TRUE},
 \code{"dalponte2012"} returns two RasterLayers, \code{"watershed"} returns one RasterLayer
-and \code{"Li2012"} does not support the \code{extra} parameter.
+and \code{"li2012"} does not support the \code{extra} parameter.
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
