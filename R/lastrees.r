@@ -38,7 +38,7 @@
 #' \code{"watershed"} or \code{"li2012"} (see sections relevant to each algorithm).
 #' @param image RasterLayer. Image of the canopy if the algorithm works on a canopy surface model.
 #' But some algorithms work on the raw point cloud (see relevant sections). You can compute
-#' it with \link{grid_canopy} or read it from external file.
+#' it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details about the algorithms)
 #' @param extra logical. By default the function works at the point cloud level and returns nothing.
 #' If \code{extra = TRUE} the function can return a \link[raster:raster]{RasterLayer} or a list of 2 RasterLayers
@@ -46,7 +46,7 @@
 #'
 #' @return Nothing, the point cloud is updated by reference. If \code{extra = TRUE},
 #' \code{"dalponte2012"} returns two RasterLayers, \code{"watershed"} returns one RasterLayer
-#' and \code{"Li2012"} does not support the \code{extra} parameter.
+#' and \code{"li2012"} does not support the \code{extra} parameter.
 #'
 #' @section Dalponte 2016:
 #'

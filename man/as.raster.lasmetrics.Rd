@@ -11,7 +11,7 @@
 
 \item{z}{character. If 3 columns or more, the field to extract. If NULL return a RasterStack.}
 
-\item{\dots}{other parameters for \link[data.table:dcast]{dcast}}
+\item{\dots}{unused}
 }
 \value{
 A \link[raster:RasterLayer-class]{RasterLayer} object from package \pkg{raster}

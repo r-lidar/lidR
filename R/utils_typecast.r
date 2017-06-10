@@ -48,7 +48,7 @@ as.lasmetrics = function(x, res)
 #'
 #' @param x a \code{lasmetrics} object
 #' @param z character. If 3 columns or more, the field to extract. If NULL return a RasterStack.
-#' @param \dots other parameters for \link[data.table:dcast]{dcast}
+#' @param \dots unused
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
