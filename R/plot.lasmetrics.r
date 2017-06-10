@@ -41,33 +41,20 @@
 #' @param \dots Supplementary parameters for \link[raster:plot]{plot}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' las = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' grid_canopy(lidar) %>% plot
+#' grid_canopy(las) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' grid_metrics(lidar, mean(Z)) %>% plot
+#' grid_metrics(las, mean(Z)) %>% plot
 #'
-#' # Define your own metric function
-#' myMetrics = function(z, i, angle, pulseID)
-#' {
-#'   ret = list(
-#'         npulse  = length(unique(pulseID)),
-#'         hmean   = mean(z),
-#'         hmax    = max(z),
-#'         imean   = mean(i),
-#'         angle   = mean(abs(angle))
-#'         )
+#' # With multiple metrics
+#' metrics = grid_metrics(las, .stdmetrics_z)
 #'
-#'    return(ret)
-#'  }
-#'
-#' metrics = grid_metrics(lidar, myMetrics(Z, Intensity, ScanAngle, pulseID))
-#'
-#' plot(metrics, "hmean")
-#' plot(metrics, "hmax")
-#' plot(metrics, "imean")
+#' plot(metrics)
+#' plot(metrics, "zmean")
+#' plot(metrics, "zmax")
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
@@ -81,23 +68,15 @@ plot.lasmetrics = function(x, z = NULL, colorPalette = height.colors(50), ...)
 {
   inargs = list(...)
 
-  if(is.null(z))
-  {
-    if(length(names(x)) > 3)
-      lidRError("GDM1")
-    else
-      z = names(x)[3]
-  }
-
   mtx = as.raster(x, z)
 
-  if(is.null(inargs$col))
+  if (is.null(inargs$col))
     inargs$col = colorPalette
 
-  if(is.null(inargs$xlab))
+  if (is.null(inargs$xlab))
     inargs$xlab = "X"
 
-  if(is.null(inargs$ylab))
+  if (is.null(inargs$ylab))
     inargs$ylab = "Y"
 
   do.call(raster::plot, c(list(x = mtx), inargs))
