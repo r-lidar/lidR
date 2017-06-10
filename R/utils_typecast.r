@@ -44,62 +44,18 @@ as.lasmetrics = function(x, res)
   data.table::setattr(x, "res", res)
 }
 
-as.matrix.lasmetrics = function(x, z = NULL, ...)
-{
-  X <- Y <- NULL
-
-  inargs <- list(...)
-
-  multi = duplicated(x, by = c("X","Y")) %>% sum
-
-  if(multi > 0 & is.null(inargs$fun.aggregate))
-    lidRError("GDM2", number = multi, behaviour = warning)
-
-  if(is.null(z))
-  {
-    if(length(names(x)) > 3)
-      lidRError("GDM3")
-    else
-      z = names(x)[3]
-  }
-
-  res = attr(x, "res")
-
-  rx  = range(x$X)
-  ry  = range(x$Y)
-  x   = x[, c("X", "Y", z), with=F]
-
-  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
-  data.table::setDT(grid)
-
-  data.table::setkeyv(x, c("X", "Y"))
-  data.table::setkeyv(grid, c("X", "Y"))
-
-  data = x[grid]
-
-  if(is.null(inargs$fun.aggregate))
-    out = data.table::dcast(data = data, formula = X~Y, value.var=z, fun.aggregate = mean, ...)
-  else
-    out = data.table::dcast(data = data, formula = X~Y, value.var=z, ...)
-
-  out[, X := NULL]
-  mx = out %>% as.matrix
-
-  return(mx)
-}
-
 #' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
 #'
 #' @param x a \code{lasmetrics} object
-#' @param z character. The field to plot. If NULL, autodetect
+#' @param z character. If 3 columns or more, the field to extract. If NULL return a RasterStack.
 #' @param \dots other parameters for \link[data.table:dcast]{dcast}
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[lidR:grid_canopy]{grid_canopy}
 #' \link[raster:raster]{raster}
-#' \link[data.table:dcast]{dcast}
-#' @return A RasterLayer object from package  \link[raster:raster]{raster}
+#' @return A \link[raster:RasterLayer-class]{RasterLayer} object from package \pkg{raster}
+#' or a \link[raster:RasterStack-class]{RasterStack} if there are several layers.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -112,31 +68,53 @@ as.matrix.lasmetrics = function(x, z = NULL, ...)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, ...)
 {
-  if(is.null(attr(x, "res")))
+  if (!is.null(z))
+    x = x[, c("X", "Y", z), with = FALSE]
+
+  # Guess the resolution of the raster is the info is missing
+  if (is.null(attr(x, "res")))
   {
-    dx = x$X %>% unique %>% sort %>% diff
-    dy = x$Y %>% unique %>% sort %>% diff
-    ts = table(c(dx, dy))
+     dx = x$X %>% unique %>% sort %>% diff
+     dy = x$Y %>% unique %>% sort %>% diff
+     ts = table(c(dx, dy))
 
-    if(length(ts) == 1)
-      res = dx[1]
-    else
-    {
-      res = stats::median(c(dx,dy)) %>% round(2)
-      message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
-    }
+     if (length(ts) == 1)
+       res = dx[1]
+     else
+     {
+       res = stats::median(c(dx,dy)) %>% round(2)
+       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+     }
 
-    data.table::setattr(x, "res", res)
-  }
+     data.table::setattr(x, "res", res)
+   }
+
+  res = attr(x, "res")
+
+  # raster or sp package cannot deal when the grid has empty column/rows
+  # autocompletion with NAs
+  rx  = range(x$X)
+  ry  = range(x$Y)
+
+  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
+  data.table::setDT(grid)
+
+  data.table::setkeyv(x, c("X", "Y"))
+  data.table::setkeyv(grid, c("X", "Y"))
+
+  data = x[grid]
+
+  # Convert to raster
+  data.table::setDF(data)
+  sp::coordinates(data) <- ~ X + Y
+  sp::gridded(data) <- TRUE   # coerce to SpatialPixelsDataFrame
+
+  if (ncol(x) <= 3)
+    raster <- raster::raster(data)
   else
-    res = attr(x, "res")
+    raster <- raster::stack(data)
 
-  mx  = as.matrix(x, z)
-  mx  = apply(mx, 1, rev)
-
-  layer = raster::raster(mx, xmn = min(x$X)-0.5*res, xmx = max(x$X)+0.5*res, ymn = min(x$Y)-0.5*res, ymx = max(x$Y)+0.5*res)
-
-  return(layer)
+  return(raster)
 }
 
 #' Transform a LAS object into a SpatialPointsDataFrame object
@@ -163,3 +141,79 @@ as.SpatialPixelsDataFrame = function(.data)
   .data = as.data.frame(.data)
   sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
 }
+
+
+# OLD CODES
+
+# as.matrix.lasmetrics = function(x, z = NULL, ...)
+# {
+#   X <- Y <- NULL
+#
+#   inargs <- list(...)
+#
+#   multi = duplicated(x, by = c("X","Y")) %>% sum
+#
+#   if (multi > 0 & is.null(inargs$fun.aggregate))
+#     lidRError("GDM2", number = multi, behaviour = warning)
+#
+#   if (is.null(z))
+#   {
+#     if (length(names(x)) > 3)
+#       lidRError("GDM3")
+#     else
+#       z = names(x)[3]
+#   }
+#
+#   res = attr(x, "res")
+#
+#   rx  = range(x$X)
+#   ry  = range(x$Y)
+#   x   = x[, c("X", "Y", z), with = F]
+#
+#   grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
+#   data.table::setDT(grid)
+#
+#   data.table::setkeyv(x, c("X", "Y"))
+#   data.table::setkeyv(grid, c("X", "Y"))
+#
+#   data = x[grid]
+#
+#   if (is.null(inargs$fun.aggregate))
+#     out = data.table::dcast(data = data, formula = X~Y, value.var = z, fun.aggregate = mean, ...)
+#   else
+#     out = data.table::dcast(data = data, formula = X~Y, value.var = z, ...)
+#
+#   out[, X := NULL]
+#   mx = out %>% as.matrix
+#
+#   return(mx)
+# }
+
+# as.raster.lasmetrics = function(x, z = NULL, ...)
+# {
+#   if (is.null(attr(x, "res")))
+#   {
+#     dx = x$X %>% unique %>% sort %>% diff
+#     dy = x$Y %>% unique %>% sort %>% diff
+#     ts = table(c(dx, dy))
+#
+#     if (length(ts) == 1)
+#       res = dx[1]
+#     else
+#     {
+#       res = stats::median(c(dx,dy)) %>% round(2)
+#       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+#     }
+#
+#     data.table::setattr(x, "res", res)
+#   }
+#   else
+#     res = attr(x, "res")
+#
+#   mx  = as.matrix(x, z)
+#   mx  = apply(mx, 1, rev)
+#
+#   layer = raster::raster(mx, xmn = min(x$X) - 0.5*res, xmx = max(x$X) + 0.5*res, ymn = min(x$Y) - 0.5*res, ymx = max(x$Y) + 0.5*res)
+#
+#   return(layer)
+# }

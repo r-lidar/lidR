@@ -73,6 +73,7 @@ myMetrics = function(z, i)
 
 metrics = grid_metrics(lidar, myMetrics(Z, Intensity))
 
+plot(metrics)
 plot(metrics, "zwimean")
 plot(metrics, "zimean")
 plot(metrics, "zsqmean")
