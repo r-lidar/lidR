@@ -9,12 +9,13 @@
 \arguments{
 \item{x}{a \code{lasmetrics} object}
 
-\item{z}{character. The field to plot. If NULL, autodetect}
+\item{z}{character. If 3 columns or more, the field to extract. If NULL return a RasterStack.}
 
 \item{\dots}{other parameters for \link[data.table:dcast]{dcast}}
 }
 \value{
-A RasterLayer object from package  \link[raster:raster]{raster}
+A \link[raster:RasterLayer-class]{RasterLayer} object from package \pkg{raster}
+or a \link[raster:RasterStack-class]{RasterStack} if there are several layers.
 }
 \description{
 Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
@@ -31,7 +32,6 @@ rmeanHeight = as.raster(meanHeight)
 \link[lidR:grid_canopy]{grid_canopy}
 \link[lidR:grid_canopy]{grid_canopy}
 \link[raster:raster]{raster}
-\link[data.table:dcast]{dcast}
 
 Other cast: \code{\link{as.SpatialPixelsDataFrame}},
   \code{\link{as.SpatialPointsDataFrame}},

@@ -18,10 +18,13 @@
 
 #### OTHER CHANGES
 
-* Li et al. algorithm for tree segmentation is dozen to thouthand times faster than in v1.2.0
-* In `grid_terrain`, the interpolation is done only within the convex hull of the point cloud
+* `lastrees` Li et al. algorithm for tree segmentation is dozen to thouthand times faster than in v1.2.0
+*  `grid_terrain`, the interpolation is done only within the convex hull of the point cloud
 * `grid_tincanopy` makes the triangulation only for highest return per grid cell.
 * `grid_tincanopy` and `grid_terrain` using Delaunay triangulation are dozen to hundred times faster than in v1.2.0
+* `as.raster` relies on `sp` and is more flexible
+* `as.raster` automatically return a `RasterStack` if no information is provided.
+* `plot.lasmetrics` inherit of `as.raster` changes and can display a `RasterStack`
 
 ### lidR v1.2.0 (Release date: 2017-03-26)
 
