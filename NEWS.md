@@ -34,6 +34,7 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 * Memory leak in the QuadTree. Memory is now free when a QuadTree is deleted.
 * In dalponte's algorithm there was a bug due to the use of std::abs which work with intergers instead of std::fabs which works with doubles.
 * In `grid_tincanopy` a `x > 0` instead of `x >= 0` leaded to weird canopy height models
+* Boudaries were ommited during the rasterization of the delaunay triangulation
 
 #### OTHER CHANGES
 

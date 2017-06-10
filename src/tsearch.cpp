@@ -26,7 +26,7 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
     double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
     double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
 
-    if ((s < 0) != (t < 0))
+    if ((s <= 0) != (t <= 0))
         return false;
 
     double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
@@ -38,7 +38,7 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
         A = -A;
     }
 
-    return s > 0 && t > 0 && (s + t) <= A;
+    return s >= 0 && t >= 0 && (s + t) <= A;
 }
 
 // [[Rcpp::export]]
