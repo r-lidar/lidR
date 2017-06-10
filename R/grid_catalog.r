@@ -1,19 +1,48 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
 grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
   # Store some stuff in readable variables
-  param = list(...)
-  fname = lazyeval::expr_text(grid_func)
-  dir   = paste0(tempdir(),  "/", fname, "/")
-  cores = CATALOGOPTIONS("multicore")
-  pbar  = LIDROPTIONS("progress")
-  onhdd = CATALOGOPTIONS("return_virtual_raster")
+  callparam = list(...)
+  funcname  = lazyeval::expr_text(grid_func)
+  exportdir = tempdir() %+%  "/" %+% funcname %+% "/"
 
-  # Tweak to enable non-standard evaluation of func in grid_metrics-alike functions
-  if (!is.null(param$func)) {
-    if (is.call(param$func))
-      param$func = as.expression(param$func)
+  progress  = LIDROPTIONS("progress")
+  numcores  = CATALOGOPTIONS("multicore")
+  savevrt   = CATALOGOPTIONS("return_virtual_raster")
+  memlimwar = CATALOGOPTIONS("memory_limit_warning")
+
+  # Tweak to enable non-standard evaluation of 'func' in grid_metrics-alike functions
+  if (!is.null(callparam$func)) {
+    if (is.call(callparam$func))
+      callparam$func = as.expression(callparam$func)
   }
 
   # Test of memory to prevent memory overflow
@@ -23,7 +52,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   nbytes  = npixel * nmetric * 8
   class(nbytes) = "object_size"
 
-  if (nbytes > CATALOGOPTIONS("memory_limit_warning") & !onhdd)
+  if (nbytes > memlimwar & !savevrt)
   {
     size = format(nbytes, "auto")
     text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
@@ -36,52 +65,53 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
     choice = utils::menu(choices)
 
     if (choice == 2)
-      onhdd = TRUE
+      savevrt = TRUE
     else if (choice == 3)
       return(invisible())
   }
 
-  # Create a pattern of sub areas to be sequentially processed
-  X = make_cluster(ctg, res, buffer, by_file)
-  X = apply(X, 1, as.list)
+  # Create a pattern of clusters to be sequentially processed
+  ctg_clusters = catalog_makecluster(ctg, res, buffer, by_file)
+  ctg_clusters = apply(ctg_clusters, 1, as.list)
 
   # Add the path to the saved file (if saved)
-  X = lapply(X, function(x)
+  ctg_clusters = lapply(ctg_clusters, function(x)
   {
-    x$path = paste0(dir, fname, "_ROI", x$name, ".tiff")
+    x$path = exportdir %+% funcname %+% "_ROI" %+% x$name %+% ".tiff"
     return(x)
   })
 
   # Enable progress bar
-  if (pbar) p = utils::txtProgressBar(max = length(X), style = 3)
+  if (progress) p = utils::txtProgressBar(max = length(ctg_clusters), style = 3)
 
-  # Create or clean the directory
-  if (onhdd)
+  # Create or clean the temporary directory
+  if (savevrt)
   {
-    if (!dir.exists(dir))
-      dir.create(dir)
+    if (!dir.exists(exportdir))
+      dir.create(exportdir)
     else
-      unlink(dir, recursive = TRUE) ; dir.create(dir)
+      unlink(exportdir, recursive = TRUE) ; dir.create(exportdir)
   }
 
   # Computations done within sequential or parallel loop in .getMetrics
-  if (cores == 1)
+  if (numcores == 1)
   {
     verbose("Computing sequentially the metrics for each cluster...")
-    output = lapply(X, .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param, save_as_tiff = onhdd, p = p)
+    output = lapply(ctg_clusters, apply_grid_func, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = callparam, save_tiff = savevrt, p = p)
   }
   else
   {
     verbose("Computing in parallel the metrics for each cluster...")
-    cl = parallel::makeCluster(cores, outfile = "")
+    cl = parallel::makeCluster(numcores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, X, fun = .getMetrics, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = param, save_as_tiff = onhdd, p = p)
+    output = parallel::parLapply(cl, ctg_clusters, fun = apply_grid_func, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = callparam, save_tiff = savevrt, p = p)
     parallel::stopCluster(cl)
   }
 
   # Post process of the results (return adequate object)
-  if (!onhdd)
+  if (!savevrt)
   {
+    # Return a data.table
     ._class = class(output[[1]])
     output = data.table::rbindlist(output)
     data.table::setattr(output, "class", ._class)
@@ -89,10 +119,10 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   else
   {
     # Build virtual raster mosaic and return it
-    ras_lst = list.files(dir, full.names=T, pattern=".tif$")
-    save_in = paste0(dir, "/", fname, ".vrt")
+    ras_lst = list.files(exportdir, full.names = TRUE, pattern = ".tiff$")
+    save_in = exportdir %+% "/" %+% funcname %+% ".vrt"
     gdalUtils::gdalbuildvrt(ras_lst, save_in)
-    output  = raster::stack(save_in)
+    output = raster::stack(save_in)
   }
 
   return(output)
@@ -107,20 +137,20 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res
 # @param p progressbar.
-.getMetrics = function(X, grid_func, ctg, res, filter, param, save_as_tiff, p)
+apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save_tiff, p)
 {
-  Y <- NULL
+  X <- Y <- NULL
 
-  # Convenient variables for readability
-  xleft   = X$xleft
-  xright  = X$xright
-  ybottom = X$ybottom
-  ytop    = X$ytop
-  name    = paste0("ROI", X$name)
-  path    = X$path
-  xcenter = X$xcenter
-  ycenter = X$ycenter
-  width   = (X$xrightbuff - X$xleftbuff)/2
+  # Variables for readability
+  xleft   = ctg_cluster$xleft
+  xright  = ctg_cluster$xright
+  ybottom = ctg_cluster$ybottom
+  ytop    = ctg_cluster$ytop
+  name    = "ROI" %+% ctg_cluster$name
+  path    = ctg_cluster$path
+  xcenter = (xleft + xright)/2
+  ycenter = (ybottom + ytop)/2
+  width   = (ctg_cluster$xrightbuff - ctg_cluster$xleftbuff)/2
 
   # Extract the ROI as a LAS object
   las = catalog_queries(ctg, xcenter, ycenter, width, width, name, filter, disable_bar = T, no_multicore = T)[[1]]
@@ -131,15 +161,18 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   # Because catalog_queries keep point inside the boundingbox (close interval) but point which
   # are exactly on the boundaries are counted twice. Here a post-process to make an open
   # interval on left and bottom edge of the boudingbox.
-  las = lasfilter(las, X > xleft, Y > ybottom)
+  las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
 
   # Very unprobable but who knows...
   if (is.null(las)) return(NULL)
 
+  # Call the function
   param$x = las
   param$res  = res
   m = do.call(grid_func, args = param)
-  m = m[X >= xleft & X <= xright & Y >= ybottom & Y <= ytop]  # remove the buffer
+
+  # Remove the buffer
+  m = m[X >= xleft & X <= xright & Y >= ybottom & Y <= ytop]
 
   # Update progress bar
   if (!is.null(p))
@@ -149,7 +182,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   }
 
   # Return results or write file
-  if (!save_as_tiff)
+  if (!save_tiff)
     return(m)
   else
   {
@@ -157,72 +190,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
       return(NULL)
 
     m = as.raster(m)
-    directory = dirname(path)
     raster::writeRaster(m, path, format = "GTiff")
     return(NULL)
   }
 }
-
-make_cluster = function(ctg, res, buffer, by_file)
-{
-  if (by_file)
-  {
-    X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
-    names(X) = c("xleft", "xright", "ybottom", "ytop")
-  }
-  else
-  {
-    # Will process subtiles of 1 km^2
-    size = CATALOGOPTIONS("tiling_size")
-
-    # dimension of the clusters (width = height)
-    width = ceiling(size/res) * res
-
-    verbose("Computing the bounding box of the catalog...")
-
-    # Bounding box of the catalog
-    bbox = with(ctg, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
-
-    # Buffer around the bbox as a multiple of the resolution
-    buffered_bbox = bbox + c(-res, -res, +res, +res)
-    buffered_bbox = round_any(buffered_bbox, res)
-    buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
-
-    verbose("Creating a set of cluster for the catalog...")
-
-    # Generate coordinates of sub bounding boxes
-    xleft   = seq(buffered_bbox[1], buffered_bbox[3], width)
-    ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
-
-    X = expand.grid(xleft = xleft, ybottom = ybottom)
-
-    X$xright = X$xleft + width
-    X$ytop   = X$ybottom + width
-  }
-
-  X$xcenter     = (X$xleft + X$xright) / 2
-  X$ycenter     = (X$ybottom + X$ytop) / 2
-  X$xleftbuff   = X$xleft - buffer
-  X$ybottombuff = X$ybottom - buffer
-  X$xrightbuff  = X$xright + buffer
-  X$ytopbuff    = X$ytop + buffer
-  X$name        = 1:nrow(X)
-
-  # Remove cluster outside the catalog
-  index = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width / 2, width / 2))
-  keep  = sapply(index$tiles, length) > 0
-  X = X[keep,]
-
-  # Plot the pattern
-  xrange = c(min(X$xleft), max(X$xright))
-  yrange = c(min(X$ybottom), max(X$ytop))
-  title  = "Pattern of clusters"
-  graphics::plot(ctg, main = title, xlim = xrange, ylim = yrange)
-  with(X, graphics::rect(xleft, ybottom, xright, ytop, border = "red"))
-
-  if (buffer > 0)
-    with(X, graphics::rect(xleftbuff, ybottombuff, xrightbuff, ytopbuff, border = "darkgreen", lty = "dotted"))
-
-  return(X)
-}
-
