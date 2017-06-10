@@ -215,7 +215,7 @@ rumple_index_internal = function(x,y,z, options = "")
 
   X = cbind(x,y,z)
   dn = suppressMessages(geometry::delaunayn(X[,1:2], options = options))
-  N = triangle_information(dn, X)
+  N = tinfo(dn, X)
 
   area  = sum(N[,5])
   parea = sum(N[,6])
