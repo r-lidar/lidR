@@ -97,18 +97,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// triangle_information
-NumericMatrix triangle_information(IntegerMatrix M, NumericMatrix X);
-RcppExport SEXP lidR_triangle_information(SEXP MSEXP, SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type M(MSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(triangle_information(M, X));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MorphologicalOpening
 NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
 RcppExport SEXP lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
@@ -164,6 +152,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
     Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
     rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tinfo
+NumericMatrix tinfo(IntegerMatrix M, NumericMatrix X);
+RcppExport SEXP lidR_tinfo(SEXP MSEXP, SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type M(MSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(tinfo(M, X));
     return rcpp_result_gen;
 END_RCPP
 }
