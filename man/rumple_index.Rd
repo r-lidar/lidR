@@ -7,22 +7,22 @@
 rumple_index(x, y = NULL, z = NULL, ...)
 }
 \arguments{
-\item{x}{A RasterLayer or a lasmetrics or a vector of x point coordinates.}
+\item{x}{A 'RasterLayer' or a 'lasmetrics' object, or a vector of x point coordinates.}
 
-\item{y}{numeric if x is a vector of coordinates: the y coordinates.}
+\item{y}{numeric. If \code{x} is a vector of coordinates: the associated y coordinates.}
 
-\item{z}{numeric if x is a vector of coordinates: the z coordinates.}
+\item{z}{numeric. If \code{x} is a vector of coordinates: the associated z coordinates.}
 
 \item{...}{unused}
 }
 \value{
-numeric.
+numeric. The computed Rumple index.
 }
 \description{
-Computes the roughness of a surface as the ratio between visible area over the ground area.
-For each type of input the function make the Delaunay triangulation of the points and computes
-the ratio between the area of the triangle and the area or the convexhull (area of the
-triangles projected on plane X-Y).
+Computes the roughness of a surface as the ratio between the area of a surface and its
+projected area on the ground. For each type of input the function makes a Delaunay
+triangulation of the points and computes the ratio between the area of the triangles and
+the area or the convexhull (i.e. the projected area of the triangles on the X-Y plane).
 }
 \examples{
 x = runif(20, 0, 100)
@@ -32,11 +32,11 @@ y = runif(20, 0, 100)
 z = rep(10, 20)
 rumple_index(x, y, z)
 
-# Rought surface, rumple_index > 1
+# Rough surface, rumple_index > 1
 z = runif(20, 0, 10)
 rumple_index(x, y, z)
 
-# More rought surface, rumple_index increases
+# Rougher surface, rumple_index increases
 z = runif(20, 0, 50)
 rumple_index(x, y, z)
 
