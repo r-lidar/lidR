@@ -7,52 +7,52 @@
 tree_metrics(.las, func, debug = FALSE)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{.las}{An object of class \code{LAS}.}
 
-\item{func}{the function to be applied to each tree}
+\item{func}{The function to be applied to each tree.}
 
-\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
+\item{debug}{logical. When facing a non trivial error, try \code{debug = TRUE}.}
 }
 \value{
-It returns a \code{data.table} containing the metrics for each tree.
+Returns a \code{data.table} containing the metrics for each segmented tree.
 }
 \description{
 Once the trees are segmented with \link{lastrees}, computes a series of descriptive statistics
-defined by the user for each individual tree. Output is a table in which each line is a tree,
+defined by the user for each individual tree. The output is a table in which each line is a tree,
 and each column is a metric. \code{tree_metrics} is similar to \link{lasmetrics} or \link{grid_metrics}
-or \link{grid_metrics3d} or \link{grid_hexametrics} except it computes metrics for each tree.
+or \link{grid_metrics3d} or \link{grid_hexametrics}, except it computes metrics for each segmented tree.
 }
 \details{
-The following existing functions can help the user to compute some metrics:
+The following existing functions contain a small set of pre-defined metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics_tree}}
 } Users must write their own functions to create their own metrics. \code{tree_metrics} will
-dispatch the LiDAR data for each tree in the user's function. The user writes their
-function without considering grid cells, only a cloud of points (see example).
+dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
+are defined without the need to considering each segmented tree i.e. only the point cloud (see examples).
 }
 \examples{
 LASfile <- system.file("extdata", "Tree.laz", package="lidR")
-las = readLAS(LASfile, Classification = FALSE, filter = "-drop_z_below 0")
+las = readLAS(LASfile, filter = "-drop_z_below 0")
 
-# segment tree (refer to lastrees)
+# segment trees (see lastrees)
 lastrees(las, algorithm = "li2012")
 
 # Max height for each tree
 tree_metrics(las, mean(Z))
 
 # Define your own new metrics
-myMetrics = function(z)
+myMetrics = function(z, i)
 {
   metrics = list(
-     zmean = mean(z),
-     zmax  = max(z),
+     imean = mean(i),
+     imax  = max(i),
      npoint = length(z)
    )
 
    return(metrics)
 }
 
-metrics = tree_metrics(las, myMetrics(Intensity))
+metrics = tree_metrics(las, myMetrics(Z, Intensity))
 
 # predefined metrics (see ?stdmetrics)
 metrics = tree_metrics(las, .stdtreemetrics)
