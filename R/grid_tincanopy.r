@@ -33,7 +33,6 @@
 #' developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 #' trigulations at different heights (see reference).
 #'
-<<<<<<< HEAD
 #' @section Use with a \code{Catalog}:
 #' When the parameter \code{x} is a catalog the function will process the entiere dataset
 #' in a continuous way using a multicore process. Parallel computing is set by defaut to
@@ -41,11 +40,7 @@
 #' the global options using the function \link{catalog_options}.
 #'
 #' @param x A LAS object
-#' @param res numeric. resolution
-=======
-#' @param .las A LAS object.
 #' @param res numeric. Resolution of the canopy height model.
->>>>>>> devel
 #' @param thresholds numeric. Set of height threholds. If \code{thresholds = 0} the algorithm
 #' is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
 #' the function it becomes the Khosravipour et al. pit-free algorithm.
@@ -58,14 +53,10 @@
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle composed of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
-<<<<<<< HEAD
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
 #' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
 #' user cannot manipulate the lidar data himself but can use streaming filters instead.
-#' @return It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
-=======
 #' @return Returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
->>>>>>> devel
 #' RasterLayer casting.
 #' @export
 #' @examples
@@ -99,13 +90,8 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   if (!"ReturnNumber" %in% names(x@data))
      stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
 
-<<<<<<< HEAD
   if (fast_countequal(x@data$ReturnNumber, 1) == 0)
-    stop("No first returns found. Aborded.", call. = FALSE)
-=======
-  if (fast_countequal(.las@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborted.", call. = FALSE)
->>>>>>> devel
 
   if (length(thresholds) == 1 & thresholds[1] == 0)
     cat("[Delaunay triangulation of first returns]\n")
@@ -122,7 +108,6 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   z = rep(NA, (dim(grid)[1]))
 
   # Get only first returns and coordinates (nothing else needed)
-
   verbose("Selecting first returns...")
   cloud = x@data[ReturnNumber == 1, .(X,Y,Z)]
 
