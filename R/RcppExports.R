@@ -2,54 +2,54 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 itc_treetops <- function(Canopy, searchWinSize) {
-    .Call('lidR_itc_treetops', PACKAGE = 'lidR', Canopy, searchWinSize)
+    .Call(lidR_itc_treetops, Canopy, searchWinSize)
 }
 
 itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
-    .Call('lidR_itc_expandcrowns', PACKAGE = 'lidR', Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
+    .Call(lidR_itc_expandcrowns, Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
 algo_li2012 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
-    .Call('lidR_algo_li2012', PACKAGE = 'lidR', X, Y, Z, dt1, dt2, R, displaybar)
+    .Call(lidR_algo_li2012, X, Y, Z, dt1, dt2, R, displaybar)
 }
 
 fast_table <- function(x, size = 5L) {
-    .Call('lidR_fast_table', PACKAGE = 'lidR', x, size)
+    .Call(lidR_fast_table, x, size)
 }
 
 fast_countequal <- function(x, t) {
-    .Call('lidR_fast_countequal', PACKAGE = 'lidR', x, t)
+    .Call(lidR_fast_countequal, x, t)
 }
 
 fast_countbelow <- function(x, t) {
-    .Call('lidR_fast_countbelow', PACKAGE = 'lidR', x, t)
+    .Call(lidR_fast_countbelow, x, t)
 }
 
 fast_countover <- function(x, t) {
-    .Call('lidR_fast_countover', PACKAGE = 'lidR', x, t)
+    .Call(lidR_fast_countover, x, t)
 }
 
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
-    .Call('lidR_MorphologicalOpening', PACKAGE = 'lidR', X, Y, Z, resolution, displaybar)
+    .Call(lidR_MorphologicalOpening, X, Y, Z, resolution, displaybar)
 }
 
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_point_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+    .Call(lidR_point_in_polygon, vertx, verty, pointx, pointy)
 }
 
 points_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call('lidR_points_in_polygon', PACKAGE = 'lidR', vertx, verty, pointx, pointy)
+    .Call(lidR_points_in_polygon, vertx, verty, pointx, pointy)
 }
 
 points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
-    .Call('lidR_points_in_polygons', PACKAGE = 'lidR', vertx, verty, pointx, pointy, displaybar)
+    .Call(lidR_points_in_polygons, vertx, verty, pointx, pointy, displaybar)
 }
 
 tinfo <- function(M, X) {
-    .Call('lidR_tinfo', PACKAGE = 'lidR', M, X)
+    .Call(lidR_tinfo, M, X)
 }
 
 tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
-    .Call('lidR_tsearch', PACKAGE = 'lidR', x, y, elem, xi, yi, diplaybar)
+    .Call(lidR_tsearch, x, y, elem, xi, yi, diplaybar)
 }
 

@@ -105,7 +105,14 @@ catalog_makecluster = function(ctg, res, buffer, by_file)
   X$ybottombuff = X$ybottom - buffer
   X$xrightbuff  = X$xright + buffer
   X$ytopbuff    = X$ytop + buffer
+  X$xcenter     = (X$xleft + X$xright)/2
+  X$ycenter     = (X$ybottom + X$ytop)/2
   X$name        = 1:nrow(X)
+
+  # Remove cluster outside the catalog
+  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2))
+  keep     = sapply(lasindex$tiles, length) > 0
+  X = X[keep,]
 
   # Plot the pattern
   xrange = c(min(X$xleft), max(X$xright))
