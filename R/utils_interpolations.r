@@ -115,7 +115,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   if (pitfree)
   {
-    verbose("Removing too wide triangles...")
+    verbose("Removing triangles larger than threshold...")
 
     delete = N[,7] > th
     delete[is.na(delete)] = FALSE
