@@ -119,7 +119,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   else
   {
     # Build virtual raster mosaic and return it
-    ras_lst = list.files(exportdir, full.names = TRUE, pattern = ".tiff$")
+    ras_lst = list.files(exportdir, full.names = TRUE, pattern = ".tif$")
     save_in = exportdir %+% "/" %+% funcname %+% ".vrt"
     gdalUtils::gdalbuildvrt(ras_lst, save_in)
     output = raster::stack(save_in)
@@ -148,8 +148,8 @@ apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save
   ytop    = ctg_cluster$ytop
   name    = "ROI" %+% ctg_cluster$name
   path    = ctg_cluster$path
-  xcenter = (xleft + xright)/2
-  ycenter = (ybottom + ytop)/2
+  xcenter = ctg_cluster$xcenter
+  ycenter = ctg_cluster$ycenter
   width   = (ctg_cluster$xrightbuff - ctg_cluster$xleftbuff)/2
 
   # Extract the ROI as a LAS object
@@ -173,6 +173,7 @@ apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save
 
   # Remove the buffer
   m = m[X >= xleft & X <= xright & Y >= ybottom & Y <= ytop]
+  as.lasmetrics(m, res)
 
   # Update progress bar
   if (!is.null(p))
