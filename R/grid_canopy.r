@@ -98,7 +98,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 
   if (subcircle > 0)
   {
-    verbose("Subcircling the points...")
+    verbose("Subcircling points...")
 
     ex = extent(x)
 
