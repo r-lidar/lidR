@@ -82,7 +82,7 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
 
   if (subcircle > 0)
   {
-    verbose("Subcircling the points...")
+    verbose("Subcircling points...")
 
     ex = extent(.las)
 

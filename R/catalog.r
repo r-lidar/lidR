@@ -52,7 +52,7 @@ catalog = function(folder, ...)
 
   files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
-  verbose("Reading the files...")
+  verbose("Reading files...")
 
   headers <- lapply(files, function(x)
   {
