@@ -13,7 +13,7 @@ lasarea(.las)
 numeric. The area of the object computed in the same units as the coordinate reference system
 }
 \description{
-The area is computed by appling a convex hull. If the data are not convex, the resulting area is only an approximation.
+The area is computed by on the convex hull. If the data are not convex, the resulting area is only an approximation.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

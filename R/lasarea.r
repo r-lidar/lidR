@@ -29,7 +29,7 @@
 
 #' Compute the area covered by of a set a points.
 #'
-#' The area is computed by appling a convex hull. If the data are not convex, the resulting area is only an approximation.
+#' The area is computed by on the convex hull. If the data are not convex, the resulting area is only an approximation.
 #'
 #' @param .las An object of the class \code{LAS} or a numeric array of x coordinates
 #' @return numeric. The area of the object computed in the same units as the coordinate reference system

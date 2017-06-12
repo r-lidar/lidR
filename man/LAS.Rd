@@ -11,7 +11,7 @@ LAS(data, header = list(), check = TRUE)
 
 \item{header}{a list containing the data from the header of a las file.}
 
-\item{check}{logical. constitency tests while building the object.}
+\item{check}{logical. consistency tests while building the object.}
 }
 \value{
 An object of class \code{LAS}

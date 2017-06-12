@@ -8,7 +8,7 @@ grid_terrain(.las, res = 1, method, k = 10L, model = gstat::vgm(0.59,
   "Sph", 874), keep_lowest = FALSE)
 }
 \arguments{
-\item{.las}{LAS objet}
+\item{.las}{LAS object}
 
 \item{res}{numeric resolution.}
 
