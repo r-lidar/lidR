@@ -29,7 +29,7 @@
 #' Classify points as ground or not ground
 #'
 #' Implements a Progressive Morphological Filter for segmentation of ground points.
-#' The function updates the field \code{Classification} of the input LAS obect. The points
+#' The function updates the field \code{Classification} of the input LAS object. The points
 #' classified as 'ground' are assigned a value of 2 according to las specifications (See the ASPRS
 #' documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).

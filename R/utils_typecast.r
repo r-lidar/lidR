@@ -29,7 +29,7 @@
 #' Set the class 'lasmetrics' to a data.frame or a data.table
 #'
 #' Set the class lasmetrics to a data.frame. Useful when reading data from a file.
-#' In this case the data.frame does not have the class lasmetrics and cannot easly be
+#' In this case the data.frame does not have the class lasmetrics and cannot easily be
 #' plotted or transformed into a raster
 #'
 #' @param x A data.frame or a data.table

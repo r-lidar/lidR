@@ -258,7 +258,7 @@ setMethod("$", "LAS", function(x, name)
 #'
 #' @param data a data.table containing the LiDAR data.
 #' @param header a list containing the data from the header of a las file.
-#' @param check logical. constitency tests while building the object.
+#' @param check logical. consistency tests while building the object.
 #' @return An object of class \code{LAS}
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}

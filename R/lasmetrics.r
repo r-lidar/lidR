@@ -31,7 +31,7 @@
 #'
 #' \code{lasmetrics} computes a series of user-defined descriptive statistics for a LiDAR dataset.
 #' See \link[lidR:grid_metrics]{grid_metrics} to compute metrics on a grid. Basically there are
-#' no predifined metrics. Users must write their own functions to create metrics (see example).
+#' no predefined metrics. Users must write their own functions to create metrics (see example).
 #' The following existing functions can serve as a guide to help users compute their own metrics:
 #' \itemize{
 #' \item{\link[lidR:stdmetrics]{stdmetrics}}
