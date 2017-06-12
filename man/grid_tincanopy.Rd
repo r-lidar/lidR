@@ -12,15 +12,15 @@ grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
 
 \item{res}{numeric. Resolution of the canopy height model.}
 
-\item{thresholds}{numeric. Set of height threholds. If \code{thresholds = 0} the algorithm
-is a strict rasterizaton of the triangulation of the first returns. However, if an array is passed to
+\item{thresholds}{numeric. Set of height thresholds. If \code{thresholds = 0} the algorithm
+is a strict rasterization of the triangulation of the first returns. However, if an array is passed to
 the function it becomes the Khosravipour et al. pit-free algorithm.}
 
 \item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
 If a triangle has an edge greater than this value it will be removed. It is used to drive
 the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
 The first number is the value for the classical triangulation (threshold = 0),
-the second number is the value for the pit-free algorithm for (thresolds > 0). If \code{max_edge = 0}
+the second number is the value for the pit-free algorithm for (thresholds > 0). If \code{max_edge = 0}
 no trimming will be done.}
 
 \item{subcircle}{numeric. Radius of the circles. To obtain fewer pits the algorithm
@@ -36,7 +36,7 @@ Canopy height model based on triangulation of first returns. Depending on the in
 this function computes a simple Delaunay triangulation of the first returns with a linear
 interpolation within each triangle. This function also enables the use of the pit-free algorithm
 developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
-trigulations at different heights (see reference).
+triangulations at different heights (see reference).
 }
 \examples{
 LASfile = system.file("extdata", "Tree.laz", package="lidR")

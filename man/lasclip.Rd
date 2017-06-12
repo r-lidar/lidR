@@ -21,7 +21,7 @@ lasclipCircle(.las, xcenter, ycenter, radius, inside = TRUE)
 \item{geometry}{charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
 \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}}
 
-\item{coord}{matrix or data.frame. The coordinates of the minimum points requiered to fully
+\item{coord}{matrix or data.frame. The coordinates of the minimum points required to fully
 describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
 matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix}
 
@@ -41,9 +41,9 @@ matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix}
 
 \item{xcenter}{scalar. x disc center}
 
-\item{ycenter}{calar. y disc center}
+\item{ycenter}{scalar. y disc center}
 
-\item{radius}{a scalar. Disc radius}
+\item{radius}{scalar. Disc radius}
 }
 \value{
 An object of class \code{LAS}

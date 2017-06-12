@@ -19,7 +19,7 @@ grid_metrics(.las, func, res = 20, start = c(0, 0), splitlines = FALSE,
 \item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
 flightline individually. It returns the same cells several times in overlap.}
 
-\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
+\item{debug}{logical. If you encounter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each cell. The table
@@ -32,7 +32,7 @@ and each column is a metric.
 }
 \details{
 \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
-in a predefinded grid. The grid cell coordinates are pre-determined for a given resolution.
+in a predefined grid. The grid cell coordinates are pre-determined for a given resolution.
 So the algorithm will always provide the same coordinates independently of the dataset.
 When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
 (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will

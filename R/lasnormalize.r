@@ -33,10 +33,10 @@
 #' normalized with the ground at 0. The DTM can originate from
 #' several sources e.g. from an external file or computed by the user. It can also be computed
 #' on the fly. In this case the algorithm does not use rasterized data and each point is
-#' interpolated. There is no innacuracy due to the discretization of the terrain (but it is
+#' interpolated. There is no inacuracy due to the discretization of the terrain (but it is
 #' slower).
 #'
-#' @param .las a LAS objet
+#' @param .las a LAS object
 #' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 #' \link[lidR:grid_terrain]{grid_terrain}.
 #' @param method character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},

@@ -61,7 +61,7 @@ laspulse = function(.las)
 #' Retrieve individual flightlines
 #'
 #' Retrieve each individual flightline by attributing a number to each point. The
-#' function depends on the GPS time to retrieve each indivudual flightline. In a
+#' function depends on the GPS time to retrieve each individual flightline. In a
 #' continuous dataset, once points are ordered by GPS time, the time between two
 #' consecutive points does not exceed a few milliseconds. If the time between two consecutive
 #' points is too long it means that the second point is from a different flightline. The default
@@ -95,9 +95,9 @@ lasflightline = function(.las, dt = 30)
 #' Retrieve individual scanline
 #'
 #' Retrieve each individual scanline by attributing to each point a number. When
-#' data are sampled according to a saw-tooth pattern (oscilating mirror) a scanline
+#' data are sampled according to a saw-tooth pattern (oscillating mirror) a scanline
 #' is one line, or row of data. The function relies on the GPS field time to
-#' order the data. Then, the 'ScanDirectionFlag' field (when avaible) is used to
+#' order the data. Then, the 'ScanDirectionFlag' field (when available) is used to
 #' retrieve each scanline  A column '\code{scanline}' is added in the slot \code{@data}
 #'
 #' @param .las A LAS object

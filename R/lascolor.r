@@ -29,13 +29,13 @@
 
 #' Compute the color from RGB fields
 #'
-#' Compute the hexadecimale name of a color from RGB fields. A column 'color' is added in the
+#' Compute the hexadecimal name of a color from RGB fields. A column 'color' is added in the
 #' slot @data
 #'
 #' @param .las A LAS object
 #' @param nbits the number of bits used to store the R G and B field. Default is 16 bits i.e.
 #' each channel ranged between 0 and 65535 as defined in LAS specifications. But sometime this rule
-#' is not respected. You can force the defaut behavior. A 8 bit color ranged between 0 and 255.
+#' is not respected. You can force the default behavior. A 8 bit color ranged between 0 and 255.
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export
 lascolor = function(.las, nbits = 16)

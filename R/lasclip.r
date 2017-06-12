@@ -34,7 +34,7 @@
 #' @param .las An object of class \code{LAS}
 #' @param geometry charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
 #' \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}
-#' @param coord matrix or data.frame. The coordinates of the minimum points requiered to fully
+#' @param coord matrix or data.frame. The coordinates of the minimum points required to fully
 #' describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
 #' matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix
 #' @param xleft	scalar. of left x position.
@@ -44,8 +44,8 @@
 #' @param x	numerical array. x-coordinates of polygon
 #' @param y	numerical array. y-coordinates of polygon
 #' @param xcenter	scalar. x disc center
-#' @param ycenter	calar. y disc center
-#' @param radius a scalar. Disc radius
+#' @param ycenter	scalar. y disc center
+#' @param radius scalar. Disc radius
 #' @param inside logical. Keep data inside or outside the shape
 #' @return An object of class \code{LAS}
 #' @examples

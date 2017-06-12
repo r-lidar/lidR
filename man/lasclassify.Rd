@@ -37,7 +37,7 @@ Use the parameter \code{field} to force the name of the new column added in the 
 is used internally to normalize the lidar dataset and is exported because some users may find it useful
 (for example to colorize the point cloud using a georeferenced RGB image.}
 }
-More examples avaible on \href{https://github.com/Jean-Romain/lidR/wiki/lasclassify}{lidR wiki}.
+More examples available on \href{https://github.com/Jean-Romain/lidR/wiki/lasclassify}{lidR wiki}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

@@ -13,7 +13,7 @@ grid_metrics3d(.las, func, res = 1, debug = FALSE)
 
 \item{res}{numeric. The size of the voxels}
 
-\item{debug}{logical. If you encouter a non trivial error try \code{debug = TRUE}.}
+\item{debug}{logical. If you encounter a non trivial error try \code{debug = TRUE}.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table

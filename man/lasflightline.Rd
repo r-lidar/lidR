@@ -16,7 +16,7 @@ Return nothing. The original object is modified in place by reference.
 }
 \description{
 Retrieve each individual flightline by attributing a number to each point. The
-function depends on the GPS time to retrieve each indivudual flightline. In a
+function depends on the GPS time to retrieve each individual flightline. In a
 continuous dataset, once points are ordered by GPS time, the time between two
 consecutive points does not exceed a few milliseconds. If the time between two consecutive
 points is too long it means that the second point is from a different flightline. The default

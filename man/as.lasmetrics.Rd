@@ -16,7 +16,7 @@ Nothing. Object is updated in place by reference.
 }
 \description{
 Set the class lasmetrics to a data.frame. Useful when reading data from a file.
-In this case the data.frame does not have the class lasmetrics and cannot easly be
+In this case the data.frame does not have the class lasmetrics and cannot easily be
 plotted or transformed into a raster
 }
 \seealso{

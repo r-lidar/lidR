@@ -43,7 +43,7 @@
 #' @param .las An object of class \code{LAS}
 #' @param func the function to be apply to each voxel.
 #' @param res numeric. The size of the voxels
-#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
+#' @param debug logical. If you encounter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting.
 #' @examples
