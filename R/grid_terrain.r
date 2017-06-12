@@ -45,7 +45,7 @@
 #' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
 #' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
-#' @param .las LAS objet
+#' @param .las LAS object
 #' @param res numeric resolution.
 #' @param method character can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}

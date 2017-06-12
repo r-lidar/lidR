@@ -39,7 +39,7 @@
 #' @param res numeric. The inscribed circle radius of a hexagon. Default = 20.
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlaps.
-#' @param debug logical. If you encouter a non trivial error try \code{debug = TRUE}.
+#' @param debug logical. If you encounter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each hexagonal cell. The table
 #' has the class "lashexametrics" enabling easy plotting.
 #' @examples
