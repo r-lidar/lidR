@@ -32,8 +32,14 @@
 #' Creates a pulse density map using a LiDAR cloud of points. This function is an alias
 #' for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. No buffer is requiered. The user can modify
+#' the global options using the function \link{catalog_options}.
+#'
 #' @aliases grid_density
-#' @param .las An object of class \code{LAS}
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
 #' @return It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
 #' RasterLayer casting.
@@ -43,23 +49,35 @@
 #'
 #' lidar %>% grid_density(5) %>% plot
 #' lidar %>% grid_density(10) %>% plot
-#' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
-grid_density = function(.las, res = 4)
+grid_density = function(x, res = 4)
+{
+  UseMethod("grid_density", x)
+}
+
+
+#' @export
+grid_density.LAS = function(x, res = 4)
 {
   pulseID <- density <- X <- NULL
 
-  if(! "pulseID" %in% names(.las@data))
+  if(! "pulseID" %in% names(x@data))
   {
-    warning("No column named pulseID found. The pulse density cannot be computed. Compute the point density instead of the pulse density.", call. = F)
-    ret = grid_metrics(.las, list(density = length(X)/res^2), res)
+    warning("No column named pulseID found. The pulse density cannot be computed. Computing the point density instead of the pulse density.", call. = F)
+    ret = grid_metrics(x, list(density = length(X)/res^2), res)
   }
   else
-  {
-    ret = grid_metrics(.las, list(density = length(unique(pulseID))/res^2), res)
-  }
+    ret = grid_metrics(x, list(density = length(unique(pulseID))/res^2), res)
+
+  return(ret)
+}
+
+#' @export
+grid_density.Catalog = function(x, res = 4)
+{
+  ret <- grid_catalog(x, grid_density, res, "", 0, FALSE)
 
   return(ret)
 }

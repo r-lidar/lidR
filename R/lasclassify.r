@@ -80,7 +80,7 @@ lasclassify = function(.las, source, field = NULL)
 
   if (is(source, "SpatialPolygonsDataFrame"))
     values = classify_from_shapefile(.las, source, field)
-  else if (is(source, "RasterLayer"))
+  else if (is(source, "RasterLayer") | is(source, "RasterStack"))
     values = classify_from_rasterlayer(.las, source, field)
   else
     stop("No method for this source format.", call. = F)

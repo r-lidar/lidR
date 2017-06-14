@@ -39,8 +39,15 @@
 #' used in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
 #' documentation for \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.
 #' (see also examples)
+#'
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. A small buffer is requiered.
+#' The user can modify the global options using the function \link{catalog_options}.
+#'
 #' @aliases  grid_canopy
-#' @param .las An object of class \code{LAS}
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 #' 2 meters i.e. 4 square meters.
 #' @param subcircle numeric radius of the circles. To obtain fewer empty pixels the algorithm
@@ -49,6 +56,9 @@
 #' @param na.fill character. name of the algorithm used to interpolate the data and fill the empty pixels.
 #' Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).
 #' @param ... extra parameters for the algorithm used to interpolate the empty pixels (see details)
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 #' RasterLayer casting.
 #' @examples
@@ -76,7 +86,13 @@
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:as.raster.lasmetrics]{as.raster}
 #' @export grid_canopy
-grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
+grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+{
+  UseMethod("grid_canopy", x)
+}
+
+#' @export
+grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
 {
   . <- X <- Y <- Z <- NULL
 
@@ -84,26 +100,36 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
   {
     verbose("Subcircling points...")
 
-    ex = extent(.las)
+    ex = extent(x)
 
-    dt = .las@data[, .(X,Y,Z)]
+    dt = x@data[, .(X,Y,Z)]
     dt = subcircled(dt, subcircle, 8)
     dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
-    .las = suppressWarnings(LAS(dt))
+    x = suppressWarnings(LAS(dt))
 
     rm(dt)
   }
 
   verbose("Gridding highest points in each cell...")
 
-  dsm   = grid_metrics(.las, list(Z = max(Z)), res)
+  dsm   = grid_metrics(x, list(Z = max(Z)), res)
 
   if (na.fill != "none")
   {
     verbose("Interpolating empty cells...")
 
-    ex = extent(.las)
+    ex = extent(x)
     grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
+
+    hull = convex_hull(x$X, x$Y)
+
+    # buffer around convex hull
+    sphull = sp::Polygon(hull)
+    sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
+    hull = rgeos::gBuffer(sphull, width = res)
+    hull = hull@polygons[[1]]@Polygons[[1]]@coords
+
+    grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
 
     data.table::setkeyv(grid, c("X", "Y"))
     data.table::setkeyv(dsm, c("X", "Y"))
@@ -118,8 +144,21 @@ grid_canopy = function(.las, res = 2, subcircle = 0, na.fill = "none", ...)
     as.lasmetrics(dsm, res)
   }
 
-  rm(.las)
+  rm(x)
   gc()
 
   return(dsm)
 }
+
+#' @export
+grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+{
+  buffer  = CATALOGOPTIONS("buffer")
+  by_file = CATALOGOPTIONS("by_file")
+
+  canopy = grid_catalog(x, grid_canopy, res, filter, buffer, by_file,
+                        subcircle = subcircle, na.fill = na.fill, ...)
+
+  return(canopy)
+}
+

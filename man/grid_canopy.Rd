@@ -4,10 +4,11 @@
 \alias{grid_canopy}
 \title{Canopy surface model}
 \usage{
-grid_canopy(.las, res = 2, subcircle = 0, na.fill = "none", ...)
+grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
+  filter = "-keep_first")
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
@@ -20,6 +21,10 @@ in each pixel.}
 Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
 
 \item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
+
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
+If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+user cannot manipulate the lidar data himself but can use streaming filters instead.}
 }
 \value{
 It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
@@ -38,6 +43,14 @@ used in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
 documentation for \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.
 (see also examples)
 }
+\section{Use with a \code{Catalog}}{
+
+When the parameter \code{x} is a catalog the function will process the entiere dataset
+in a continuous way using a multicore process. Parallel computing is set by defaut to
+the number of core avaible in the computer. A small buffer is requiered.
+The user can modify the global options using the function \link{catalog_options}.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
@@ -62,6 +75,4 @@ grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") \%>\% plot
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
 \link[lidR:as.raster.lasmetrics]{as.raster}
-
-Other grid_alias: \code{\link{grid_density}}
 }

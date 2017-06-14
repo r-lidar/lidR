@@ -22,12 +22,14 @@ The following options are supported:
 \itemize{
  \item{\code{verbose} (\code{logical}) Make the package "talkative". }
  \item{\code{progress} (\code{logical}) Display progress bars when available. }
+ \item{\code{debug} (\code{logical}) Turn the package to debug mode when available.}
 }
 }
 
 \examples{
 lidr_options(verbose = TRUE)
 lidr_options(progress = TRUE)
+lidr_options()
 
 # Reset default options
 lidr_reset()
