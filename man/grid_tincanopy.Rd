@@ -4,11 +4,11 @@
 \alias{grid_tincanopy}
 \title{Canopy height model based on a triangulation.}
 \usage{
-grid_tincanopy(.las, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
-  max_edge = c(0, 1), subcircle = 0)
+grid_tincanopy(x, res = 0.5, thresholds = c(0, 2, 5, 10, 15),
+  max_edge = c(0, 1), subcircle = 0, filter = "-keep_first")
 }
 \arguments{
-\item{.las}{A LAS object.}
+\item{x}{A LAS object}
 
 \item{res}{numeric. Resolution of the canopy height model.}
 
@@ -26,6 +26,10 @@ no trimming will be done.}
 \item{subcircle}{numeric. Radius of the circles. To obtain fewer pits the algorithm
 can replace each return with a circle composed of 8 points before computing the triangulation
 (see also \link{grid_canopy}).}
+
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
+If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+user cannot manipulate the lidar data himself but can use streaming filters instead.}
 }
 \value{
 Returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
@@ -38,6 +42,14 @@ interpolation within each triangle. This function also enables the use of the pi
 developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 triangulations at different heights (see reference).
 }
+\section{Use with a \code{Catalog}}{
+
+When the parameter \code{x} is a catalog the function will process the entiere dataset
+in a continuous way using a multicore process. Parallel computing is set by defaut to
+the number of core avaible in the computer. A buffer is requiered. The user can modify
+the global options using the function \link{catalog_options}.
+}
+
 \examples{
 LASfile = system.file("extdata", "Tree.laz", package="lidR")
 las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-drop_z_below 0")

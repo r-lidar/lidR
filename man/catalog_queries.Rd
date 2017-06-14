@@ -4,8 +4,8 @@
 \alias{catalog_queries}
 \title{Extract LiDAR data based on a set of coordinates}
 \usage{
-catalog_queries(obj, x, y, r, r2 = NULL, roinames = NULL,
-  mc.cores = parallel::detectCores())
+catalog_queries(obj, x, y, r, r2 = NULL, roinames = NULL, filter = "",
+  ...)
 }
 \arguments{
 \item{obj}{A Catalog object}
@@ -22,7 +22,9 @@ is provided, the selection turns into a rectangular ROI. If r = r2 it is a squar
 
 \item{roinames}{vector. A set of ROI names (the ID of the plots, for example)}
 
-\item{mc.cores}{numeric. The number of cores for parallel processing (see \link[parallel:makeCluster]{makeCluster})}
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).}
+
+\item{...}{internal use only.}
 }
 \value{
 A list of LAS objects

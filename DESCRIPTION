@@ -2,8 +2,8 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.2.1
-Date: 2017-05-23
+Version: 1.3.0.9000
+Date: 2017-05-24
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -20,7 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval,geometry,gstat,sp,settings
+    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,RANN,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils
 Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true
@@ -38,6 +38,7 @@ Collate:
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
+    'grid_catalog.r'
     'grid_density.r'
     'grid_hexametrics.r'
     'grid_metrics.r'

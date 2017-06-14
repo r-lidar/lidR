@@ -60,12 +60,76 @@ group_grid_3d = function(x, y, z, res, start = c(0,0,0))
 
 f_grid = function(x, res, start)
 {
-  round_any(x-0.5*res-start, res)+0.5*res+start
+  round_any(x - 0.5 * res - start, res) + 0.5 * res + start
+}
+
+catalog_makecluster = function(ctg, res, buffer, by_file)
+{
+
+  if (by_file)
+  {
+    X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
+    names(X) = c("xleft", "xright", "ybottom", "ytop")
+  }
+  else
+  {
+    # Will process subtiles of 1 km^2
+    size = CATALOGOPTIONS("tiling_size")
+
+    # dimension of the clusters (width = height)
+    width = ceiling(size/res) * res
+
+    verbose("Computing the bounding box of the catalog...")
+
+    # Bounding box of the catalog
+    bbox = with(ctg, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
+
+    # Buffer around the bbox as a multiple of the resolution
+    buffered_bbox = bbox + c(-res, -res, +res, +res)
+    buffered_bbox = round_any(buffered_bbox, res)
+    buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
+
+    verbose("Creating a set of cluster for the catalog...")
+
+    # Generate coordinates of sub bounding boxes
+    xleft   = seq(buffered_bbox[1], buffered_bbox[3], width)
+    ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
+
+    X = expand.grid(xleft = xleft, ybottom = ybottom)
+
+    X$xright = X$xleft + width
+    X$ytop   = X$ybottom + width
+  }
+
+  X$xleftbuff   = X$xleft - buffer
+  X$ybottombuff = X$ybottom - buffer
+  X$xrightbuff  = X$xright + buffer
+  X$ytopbuff    = X$ytop + buffer
+  X$xcenter     = (X$xleft + X$xright)/2
+  X$ycenter     = (X$ybottom + X$ytop)/2
+  X$name        = 1:nrow(X)
+
+  # Remove cluster outside the catalog
+  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2))
+  keep     = sapply(lasindex$tiles, length) > 0
+  X = X[keep,]
+
+  # Plot the pattern
+  xrange = c(min(X$xleft), max(X$xright))
+  yrange = c(min(X$ybottom), max(X$ytop))
+  title  = "Pattern of clusters"
+  graphics::plot(ctg, main = title, xlim = xrange, ylim = yrange)
+  with(X, graphics::rect(xleft, ybottom, xright, ytop, border = "red"))
+
+  if (buffer > 0)
+    with(X, graphics::rect(xleftbuff, ybottombuff, xrightbuff, ytopbuff, border = "darkgreen", lty = "dotted"))
+
+  return(X)
 }
 
 verbose = function(...)
 {
-  if(LIDROPTIONS("verbose"))
+  if (LIDROPTIONS("verbose"))
     cat(..., "\n")
 }
 
@@ -84,3 +148,5 @@ dummy_las = function(n)
 
   return(las)
 }
+
+`%+%` <- function(a, b) paste0(a, b)

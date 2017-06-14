@@ -11,7 +11,7 @@
 
 \item{y}{Unused (inherited from base plot)}
 
-\item{\dots}{Unused (inherited from base plot)}
+\item{\dots}{inherited from base plot}
 }
 \description{
 This functions implements a \link[graphics:plot]{plot} method for Catalog objects

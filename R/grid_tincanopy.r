@@ -33,7 +33,13 @@
 #' developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 #' triangulations at different heights (see reference).
 #'
-#' @param .las A LAS object.
+#' @section Use with a \code{Catalog}:
+#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' in a continuous way using a multicore process. Parallel computing is set by defaut to
+#' the number of core avaible in the computer. A buffer is requiered. The user can modify
+#' the global options using the function \link{catalog_options}.
+#'
+#' @param x A LAS object
 #' @param res numeric. Resolution of the canopy height model.
 #' @param thresholds numeric. Set of height thresholds. If \code{thresholds = 0} the algorithm
 #' is a strict rasterization of the triangulation of the first returns. However, if an array is passed to
@@ -47,6 +53,9 @@
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle composed of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
+#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
+#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return Returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 #' RasterLayer casting.
 #' @export
@@ -65,17 +74,23 @@
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
+grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+{
+  UseMethod("grid_tincanopy", x)
+}
+
+#' @export
+grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
 
   if (length(thresholds) > 1 & length(max_edge) < 2)
     stop("'max_egde' should contain 2 numbers", call. = FALSE)
 
-  if (!"ReturnNumber" %in% names(.las@data))
+  if (!"ReturnNumber" %in% names(x@data))
      stop("No column 'ReturnNumber' found. This fields is needed to extract first returns", call. = FALSE)
 
-  if (fast_countequal(.las@data$ReturnNumber, 1) == 0)
+  if (fast_countequal(x@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborted.", call. = FALSE)
 
   if (length(thresholds) == 1 & thresholds[1] == 0)
@@ -86,7 +101,7 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   # Create the coordinates of interpolation (pixel coordinates)
   verbose("Generating interpolation coordinates...")
 
-  ex = extent(.las)
+  ex = extent(x)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
   # Initialize the interpolated values with NAs
@@ -94,14 +109,14 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
 
   # Get only first returns and coordinates (nothing else needed)
   verbose("Selecting first returns...")
-  cloud = .las@data[ReturnNumber == 1, .(X,Y,Z)]
+  cloud = x@data[ReturnNumber == 1, .(X,Y,Z)]
 
   # subcircle the data
   if (subcircle > 0)
   {
     verbose("Subcircling points...")
 
-    ex = extent(.las)
+    ex = extent(x)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }
@@ -138,4 +153,15 @@ grid_tincanopy = function(.las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edg
   as.lasmetrics(grid,res)
 
   return(grid)
+}
+
+#' @export
+grid_tincanopy.Catalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+{
+  buffer  = CATALOGOPTIONS("buffer")
+  by_file = CATALOGOPTIONS("by_file")
+
+  canopy = grid_catalog(x, grid_tincanopy, res, filter, buffer, by_file,
+                        thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
+  return(canopy)
 }
