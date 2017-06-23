@@ -74,7 +74,6 @@
 #' @param func A function which has one parameter: the name of a .las or .laz file (see example)
 #' @param platform character. Can be \code{"windows"} or \code{"unix"}. Default is autodetect.
 #' See sections "Details", "Unix" and  "Windows".
-#' @param mc.cores integer. Number of cores used. Default is the number of cores you have on your computer.
 #' @param combine character. The function used to merge the outputs of the \code{func} function.
 #' @param varlist charaters vector. For \code{'windows'} mode, character vector of names of objects to export.
 #' @examples
@@ -131,13 +130,15 @@
 #' \link[parallel:mclapply]{mclapply}
 #' \link[parallel:parLapplyLB]{parLapplyLB}
 #' @export
-catalog_apply = function(x, func, platform=.Platform$OS.type, mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
+catalog_apply = function(x, func, platform=.Platform$OS.type, combine = "rbind", varlist = "")
 {
   cat("Begin parallel processing... \n")
 
   ti = Sys.time()
 
   files = x$filename
+
+  mc.cores = CATALOGOPTIONS("multicore")
 
   if(platform == "unix" | mc.cores == 1)
   {

@@ -15,7 +15,7 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 #### OTHER CHANGES
 
 * `plot.Catalog` accept for usual `plot` parameter
-* `catalog_queries` and `catalog_apply` do not expect a parameter `mc.core`. This is now driven by global options in `catalog_options()`.
+* `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 
 ### lidR v1.2.1 (Release data: 2017-06-12)
