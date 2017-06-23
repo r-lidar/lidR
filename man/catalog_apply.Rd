@@ -4,8 +4,8 @@
 \alias{catalog_apply}
 \title{Apply a function to a set of tiles using several cores.}
 \usage{
-catalog_apply(x, func, platform = .Platform$OS.type,
-  mc.cores = parallel::detectCores(), combine = "rbind", varlist = "")
+catalog_apply(x, func, platform = .Platform$OS.type, combine = "rbind",
+  varlist = "")
 }
 \arguments{
 \item{x}{A \link[lidR:catalog]{Catalog} object}
@@ -14,8 +14,6 @@ catalog_apply(x, func, platform = .Platform$OS.type,
 
 \item{platform}{character. Can be \code{"windows"} or \code{"unix"}. Default is autodetect.
 See sections "Details", "Unix" and  "Windows".}
-
-\item{mc.cores}{integer. Number of cores used. Default is the number of cores you have on your computer.}
 
 \item{combine}{character. The function used to merge the outputs of the \code{func} function.}
 
