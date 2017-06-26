@@ -94,7 +94,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Delaunay triangulation...")
 
-  dn   <- suppressMessages(geometry::delaunayn(X[,1:2]))
+  dn   <- suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
 
   verbose("Searching for the enclosing Delaunay convex hull...")
 
