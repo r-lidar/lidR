@@ -44,7 +44,19 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
 // [[Rcpp::export]]
 IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi),as< std::vector<double> >(yi));
+  // Shift the point cloud to the origin to avoid computer precision error
+  // The shift is done by reference to save memory. The original data is shift back at the end
+
+  double minx = min(x);
+  double miny = min(y);
+  x = x - minx;
+  y = y - miny;
+  xi = xi - minx;
+  yi = yi - miny;
+
+  // Algorithm
+
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi), as< std::vector<double> >(yi));
 
   int nelem = elem.nrow();
   int np = xi.size();
@@ -102,6 +114,12 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   }
 
   delete tree;
+
+  // Shift back the data
+  x = x + minx;
+  y = y + miny;
+  xi = xi + minx;
+  yi = yi + miny;
 
   return(output);
 }
