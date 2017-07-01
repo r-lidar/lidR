@@ -4,12 +4,13 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 
 #### NEW FEATURES
 
-* `grid_metrics` accept a catalog as input. Enable to grid an entiere catalog in a continuous way.
+* `catalog_apply` has been entierily re-designed. It is more flexible, more user-friendly and enable for loading buffered data.
+* `catalog_queries` has now a parameter `filter` for streaming filters while loading the data
+* `grid_metrics` accept a catalog as input. It enables to grid an entiere catalog in a continuous way.
 * `grid_density` inherit of this new feature as well
 * `grid_terrain` inherit of this new feature as well
 * `grid_canopy` inherit of this new feature as well
 * `grid_tincanopy` inherit of this new feature as well
-* `catalog_queries` has now a parameter `filter` for streaming filters while loading the data
 * `grid_metrics` has now a parameter `filter` for streaming filters when used with a catalog
 
 #### OTHER CHANGES
