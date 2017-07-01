@@ -68,19 +68,17 @@ QuadTree* QuadTree::create(const std::vector<double> x, const std::vector<double
 {
   int n = x.size();
 
-  double xmin(std::numeric_limits<double>::max());
-  double ymin(std::numeric_limits<double>::max());
-  double xmax(std::numeric_limits<double>::min());
-  double ymax(std::numeric_limits<double>::min());
+  double xmin = x[0];
+  double ymin = y[0];
+  double xmax = x[0];
+  double ymax = y[0];
 
   for(int i = 0 ; i < n ; i++)
   {
-
     if(x[i] < xmin)
       xmin = x[i];
     else if(x[i] > xmax)
       xmax = x[i];
-
     if(y[i] < ymin)
       ymin = y[i];
     else if(y[i] > ymax)
