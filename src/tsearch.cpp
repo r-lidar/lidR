@@ -23,13 +23,13 @@ static inline double min (double a, double b, double c)
 
 bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
 {
-    double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
-    double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+    float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
+    float t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
 
     if ((s <= 0) != (t <= 0))
         return false;
 
-    double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+    float  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
 
     if (A < 0)
     {
@@ -44,7 +44,19 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
 // [[Rcpp::export]]
 IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi),as< std::vector<double> >(yi));
+  // Shift the point cloud to the origin to avoid computer precision error
+  // The shift is done by reference to save memory. The original data is shift back at the end
+
+  double minx = min(x);
+  double miny = min(y);
+  x = x - minx;
+  y = y - miny;
+  xi = xi - minx;
+  yi = yi - miny;
+
+  // Algorithm
+
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi), as< std::vector<double> >(yi));
 
   int nelem = elem.nrow();
   int np = xi.size();
@@ -102,6 +114,12 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   }
 
   delete tree;
+
+  // Shift back the data
+  x = x + minx;
+  y = y + miny;
+  xi = xi + minx;
+  yi = yi + miny;
 
   return(output);
 }
