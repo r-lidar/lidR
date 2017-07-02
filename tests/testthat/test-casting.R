@@ -3,6 +3,7 @@ context("casting")
 library(raster)
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las = readLAS(LASfile)
+lasflightline(las)
 
 test_that("as.raster return a correct raster layer (simple case)", {
 
@@ -92,6 +93,26 @@ test_that("as.raster return a correct raster stack (simple case)", {
   expect_true(is(out, "RasterStack"))
   expect_equal(dim(out), c(24, 24, depth))
   expect_equal(res(out), c(10, 10))
+})
+
+test_that("as.raster return a correct raster layer with duplicated entries", {
+
+  out = grid_metrics(las, max(Z), splitlines = TRUE)
+  out = as.raster(out)
+
+  expect_true(is(out, "RasterLayer"))
+  expect_equal(dim(out), c(13, 12, 1))
+  expect_equal(res(out), c(20, 20))
+})
+
+test_that("as.raster return the same output both with dcast and sp", {
+
+  out = grid_metrics(las, max(Z))
+  out1 = as.raster(out)
+  out2 = as.raster(out, spbackend = TRUE)
+  out2@data@names <- ""
+
+  expect_equal(out1, out2)
 })
 
 test_that("as.raster guess the resolution properly", {
