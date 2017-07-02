@@ -18,6 +18,7 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 * `plot.Catalog` accept for usual `plot` parameter
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
+* `as.raster` relies both on the fast former code (v1.2.0) to return a RasterLayer and the new code (v1.2.1) to return a RasterStack. This change enable for a faster results in most cases
 
 #### BUG FIXES
 

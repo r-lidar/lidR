@@ -47,8 +47,12 @@ as.lasmetrics = function(x, res)
 #' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
 #'
 #' @param x a \code{lasmetrics} object
-#' @param z character. If 3 columns or more, the field to extract. If NULL return a RasterStack.
-#' @param \dots unused
+#' @param z character. If 3 columns or more, the names of the field to extract. If NULL returns
+#' a RasterStack instead of a RasterLayer.
+#' @param fun.aggregate Should the data be aggregated before casting? If the table doesn't
+#' contain a single observation for each cell, then aggregation defaults to mean value with
+#' a message.
+#' @param ... Internal use only.
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:grid_canopy]{grid_canopy}
@@ -66,33 +70,57 @@ as.lasmetrics = function(x, res)
 #' @importMethodsFrom raster as.raster
 #' @export
 #' @family cast
-as.raster.lasmetrics = function(x, z = NULL, ...)
+as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 {
+  X <- .SD <- flightline <- NULL
+
+  inargs = list(...)
+
+  # Select the column(s)
+
   if (!is.null(z))
     x = x[, c("X", "Y", z), with = FALSE]
 
   # Guess the resolution of the raster is the info is missing
+
   if (is.null(attr(x, "res")))
   {
-     dx = x$X %>% unique %>% sort %>% diff
-     dy = x$Y %>% unique %>% sort %>% diff
-     ts = table(c(dx, dy))
+    verbose("Retrieving the resolution of the raster...")
 
-     if (length(ts) == 1)
-       res = dx[1]
-     else
-     {
-       res = stats::median(c(dx,dy)) %>% round(2)
-       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
-     }
+    dx = x$X %>% unique %>% sort %>% diff
+    dy = x$Y %>% unique %>% sort %>% diff
+    ts = table(c(dx, dy))
 
-     data.table::setattr(x, "res", res)
-   }
+    if (length(ts) == 1)
+      res = dx[1]
+    else
+    {
+      res = stats::median(c(dx,dy)) %>% round(2)
+      message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+    }
+
+    data.table::setattr(x, "res", res)
+  }
 
   res = attr(x, "res")
 
-  # raster or sp package cannot deal when the grid has empty column/rows
-  # autocompletion with NAs
+  # Aggregate the duplicated entries
+
+  verbose("Checking for duplicated entries...")
+
+  multi = duplicated(x, by = c("X","Y")) %>% sum
+
+  if (multi > 0)
+  {
+    verbose("Aggregating duplicated entries...")
+    x = x[, lapply(.SD, fun.aggregate), by = c("X", "Y")][, flightline := NULL]
+    message("Duplicated entries were found and aggregated.")
+  }
+
+  # Autocompletion of the grid with NAs
+
+  verbose("Filling empty data with NAs...")
+
   rx  = range(x$X)
   ry  = range(x$Y)
 
@@ -102,19 +130,38 @@ as.raster.lasmetrics = function(x, z = NULL, ...)
   data.table::setkeyv(x, c("X", "Y"))
   data.table::setkeyv(grid, c("X", "Y"))
 
-  data = x[grid]
+  x = x[grid]
 
   # Convert to raster
-  data.table::setDF(data)
-  sp::coordinates(data) <- ~ X + Y
-  sp::gridded(data) <- TRUE   # coerce to SpatialPixelsDataFrame
 
-  if (ncol(x) <= 3)
-    raster <- raster::raster(data)
-  else
-    raster <- raster::stack(data)
+  if (ncol(x) <= 3 && is.null(inargs$spbackend)) # Use the data.table way which is much master (approx 3 times)
+  {
+    verbose("Casting into raster with dcast...")
 
-  return(raster)
+    out = data.table::dcast(data = x, formula = X~Y, value.var = names(x)[3])
+    out[, X := NULL]
+    out = out %>% as.matrix %>% apply(1, rev)
+
+    xmn = min(x$X) - 0.5 * res
+    xmx = max(x$X) + 0.5 * res
+    ymn = min(x$Y) - 0.5 * res
+    ymx = max(x$Y) + 0.5 * res
+
+    return(raster::raster(out, xmn = xmn, xmx = xmx, ymn = ymn, ymx = ymx))
+  }
+  else # Use the sp way to get and return a raster stack
+  {
+    verbose("Casting into raster with sp")
+
+    out = as.data.frame(x)
+    sp::coordinates(out) <- ~ X + Y
+    sp::gridded(out) <- TRUE   # coerce to SpatialPixelsDataFrame
+
+    if (ncol(out) <= 3)
+      return(raster::raster(out))
+    else
+      return(raster::stack(out))
+  }
 }
 
 #' Transform a LAS object into a SpatialPointsDataFrame object
@@ -141,79 +188,3 @@ as.SpatialPixelsDataFrame = function(.data)
   .data = as.data.frame(.data)
   sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
 }
-
-
-# OLD CODES
-
-# as.matrix.lasmetrics = function(x, z = NULL, ...)
-# {
-#   X <- Y <- NULL
-#
-#   inargs <- list(...)
-#
-#   multi = duplicated(x, by = c("X","Y")) %>% sum
-#
-#   if (multi > 0 & is.null(inargs$fun.aggregate))
-#     lidRError("GDM2", number = multi, behaviour = warning)
-#
-#   if (is.null(z))
-#   {
-#     if (length(names(x)) > 3)
-#       lidRError("GDM3")
-#     else
-#       z = names(x)[3]
-#   }
-#
-#   res = attr(x, "res")
-#
-#   rx  = range(x$X)
-#   ry  = range(x$Y)
-#   x   = x[, c("X", "Y", z), with = F]
-#
-#   grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
-#   data.table::setDT(grid)
-#
-#   data.table::setkeyv(x, c("X", "Y"))
-#   data.table::setkeyv(grid, c("X", "Y"))
-#
-#   data = x[grid]
-#
-#   if (is.null(inargs$fun.aggregate))
-#     out = data.table::dcast(data = data, formula = X~Y, value.var = z, fun.aggregate = mean, ...)
-#   else
-#     out = data.table::dcast(data = data, formula = X~Y, value.var = z, ...)
-#
-#   out[, X := NULL]
-#   mx = out %>% as.matrix
-#
-#   return(mx)
-# }
-
-# as.raster.lasmetrics = function(x, z = NULL, ...)
-# {
-#   if (is.null(attr(x, "res")))
-#   {
-#     dx = x$X %>% unique %>% sort %>% diff
-#     dy = x$Y %>% unique %>% sort %>% diff
-#     ts = table(c(dx, dy))
-#
-#     if (length(ts) == 1)
-#       res = dx[1]
-#     else
-#     {
-#       res = stats::median(c(dx,dy)) %>% round(2)
-#       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
-#     }
-#
-#     data.table::setattr(x, "res", res)
-#   }
-#   else
-#     res = attr(x, "res")
-#
-#   mx  = as.matrix(x, z)
-#   mx  = apply(mx, 1, rev)
-#
-#   layer = raster::raster(mx, xmn = min(x$X) - 0.5*res, xmx = max(x$X) + 0.5*res, ymn = min(x$Y) - 0.5*res, ymx = max(x$Y) + 0.5*res)
-#
-#   return(layer)
-# }
