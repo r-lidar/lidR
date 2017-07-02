@@ -23,13 +23,13 @@ static inline double min (double a, double b, double c)
 
 bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
 {
-    float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
-    float t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+    double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
+    double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
 
     if ((s <= 0) != (t <= 0))
         return false;
 
-    float  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+    double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
 
     if (A < 0)
     {
@@ -38,7 +38,10 @@ bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
         A = -A;
     }
 
-    return s >= 0 && t >= 0 && (s + t) <= A;
+    //*Rcpp::Rcout << std::setprecision(12) << "s = " << s << " t = " << t << " s+t = " << s+t << " A = " << A << std::endl;
+    //*Rcpp::Rcout << std::setprecision(12) << "s+t <= A : " << ((s + t) <= A) << std::endl;
+
+    return s >= 0 && t >= 0 && (int)((s + t)*1000) <= (int)(A*1000);
 }
 
 // [[Rcpp::export]]
@@ -47,8 +50,8 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   // Shift the point cloud to the origin to avoid computer precision error
   // The shift is done by reference to save memory. The original data is shift back at the end
 
-  double minx = min(x);
-  double miny = min(y);
+  double minx = mean(x);
+  double miny = mean(y);
   x = x - minx;
   y = y - miny;
   xi = xi - minx;
