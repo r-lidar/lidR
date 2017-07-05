@@ -142,19 +142,13 @@ rumple_index <- function(x, y = NULL, z = NULL, ...)
 
   if (is(x, "RasterLayer"))
   {
-    p = raster::rasterToPoints(x)
-    x = p[, 1]
-    y = p[, 2]
-    z = p[, 3]
-    option = "Qz"
+    p = raster::as.matrix(x)
+    return(sp::surfaceArea(p))
   }
   else if (is(x, "lasmetrics"))
   {
-    p = x
-    x = p$X
-    y = p$Y
-    z = p[, 3] %>% unlist
-    option = "Qz"
+    p = x %>% as.raster %>% raster::as.matrix()
+    return(sp::surfaceArea(p))
   }
   else if (is.numeric(x) & is.numeric(y) & is.numeric(z))
   {
@@ -164,17 +158,15 @@ rumple_index <- function(x, y = NULL, z = NULL, ...)
     if (length(x) != length(z))
       stop(paste0(xtxt, " is not same length as ", ztxt), call. = FALSE)
 
-    option = ""
+    keep = !is.na(z)
+    x = x[keep]
+    y = y[keep]
+    z = z[keep]
+
+    return(rumple_index_internal(x,y,z, "QbB"))
   }
   else
     stop("No method for inputs", call. = FALSE)
-
-  keep = !is.na(z)
-  x = x[keep]
-  y = y[keep]
-  z = z[keep]
-
-  return(rumple_index_internal(x,y,z, option))
 }
 
 # rumple_index_raster = function(x, res)
@@ -216,6 +208,9 @@ rumple_index_internal = function(x,y,z, options = "")
   X = cbind(x,y,z)
   dn = suppressMessages(geometry::delaunayn(X[,1:2], options = options))
   N = tinfo(dn, X)
+
+  #plot(x,y, asp = 1)
+  #geometry::trimesh(dn, x,y, asp = 1)
 
   area  = sum(N[,5])
   parea = sum(N[,6])
