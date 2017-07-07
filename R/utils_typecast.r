@@ -39,9 +39,8 @@
 #' @family cast
 as.lasmetrics = function(x, res)
 {
-  data.table::setDT(x)
-  data.table::setattr(x, "class", c("lasmetrics", attr(x, "class")))
   data.table::setattr(x, "res", res)
+  data.table::setattr(x, "class", c("lasmetrics", "data.table", "data.frame"))
 }
 
 #' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
