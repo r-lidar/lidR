@@ -97,9 +97,10 @@ countBox = function(q, mtx)
 #' Rumple index of roughness
 #'
 #' Computes the roughness of a surface as the ratio between the area of a surface and its
-#' projected area on the ground. For each type of input the function makes a Delaunay
-#' triangulation of the points and computes the ratio between the area of the triangles and
-#' the area or the convexhull (i.e. the projected area of the triangles on the X-Y plane).
+#' projected area on the ground. If the input is a grided object (lasmetric or raster) the
+#' function computes the surfaces using Jenness's algorithm (see references). If the input
+#' is a points cloud the function uses a Delaunay triangulation of the points and computes
+#' the area of each triangle.
 #'
 #' @param x A 'RasterLayer' or a 'lasmetrics' object, or a vector of x point coordinates.
 #' @param y numeric. If \code{x} is a vector of coordinates: the associated y coordinates.
@@ -134,39 +135,63 @@ countBox = function(q, mtx)
 #' las = readLAS(LASfile)
 #' chm = las %>% grid_canopy
 #' rumple_index(chm)
-rumple_index <- function(x, y = NULL, z = NULL, ...)
+#' @references
+#' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829–839.
+rumple_index = function(x, y = NULL, z = NULL, ...)
+{
+  UseMethod("rumple_index", x)
+}
+
+#' @export
+rumple_index.lasmetrics <- function(x, y = NULL, z = NULL, ...)
+{
+  res = attr(x, "res")
+  x = x %>% as.raster %>% raster::as.matrix()
+  return(rumple_index.matrix(x, res, res))
+}
+
+#' @export
+rumple_index.RasterLayer <- function(x, y = NULL, z = NULL, ...)
+{
+  res = raster::res(x)
+  x = raster::as.matrix(x)
+  return(rumple_index.matrix(x, res[1], res[2]))
+}
+
+rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
+{
+  area  = sp::surfaceArea(x, y, z)
+  parea = sum(!is.na(x))*y*z
+  return(area/parea)
+}
+
+#' @export
+rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 {
   xtxt   = lazyeval::expr_text(x)
   ytxt   = lazyeval::expr_text(y)
   ztxt   = lazyeval::expr_text(z)
 
-  if (is(x, "RasterLayer"))
-  {
-    p = raster::as.matrix(x)
-    return(sp::surfaceArea(p))
-  }
-  else if (is(x, "lasmetrics"))
-  {
-    p = x %>% as.raster %>% raster::as.matrix()
-    return(sp::surfaceArea(p))
-  }
-  else if (is.numeric(x) & is.numeric(y) & is.numeric(z))
-  {
-    if (length(x) != length(y))
-      stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
+  if (!is.numeric(y) | !is.numeric(z))
+    stop("y or z is missing.", call. = FALSE)
 
-    if (length(x) != length(z))
-      stop(paste0(xtxt, " is not same length as ", ztxt), call. = FALSE)
+  if (length(x) != length(y))
+    stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
 
-    keep = !is.na(z)
-    x = x[keep]
-    y = y[keep]
-    z = z[keep]
+  if (length(x) != length(z))
+    stop(paste0(xtxt, " is not same length as ", ztxt), call. = FALSE)
 
-    return(rumple_index_internal(x,y,z, "QbB"))
-  }
-  else
-    stop("No method for inputs", call. = FALSE)
+  if (length(x) != length(y) | length(x) != length(z))
+    stop("Different lengths for x,y,z", call. = FALSE)
+
+  X = cbind(x,y,z)
+  dn = suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
+  N = tinfo(dn, X)
+
+  area  = sum(N[,5])
+  parea = sum(N[,6])
+  rumple = area/parea
+  return(rumple)
 }
 
 # rumple_index_raster = function(x, res)
@@ -197,24 +222,5 @@ rumple_index <- function(x, y = NULL, z = NULL, ...)
 
 rumple_index_internal = function(x,y,z, options = "")
 {
-  if (length(x) != length(y) | length(x) != length(z))
-    stop("Different lengths for x,y,z", call. = FALSE)
 
-  keep = !(is.na(x) | is.na(y) | is.na(z))
-  x = x[keep]
-  y = y[keep]
-  z = z[keep]
-
-  X = cbind(x,y,z)
-  dn = suppressMessages(geometry::delaunayn(X[,1:2], options = options))
-  N = tinfo(dn, X)
-
-  #plot(x,y, asp = 1)
-  #geometry::trimesh(dn, x,y, asp = 1)
-
-  area  = sum(N[,5])
-  parea = sum(N[,6])
-  rumple = area/parea
-
-  return(rumple)
 }

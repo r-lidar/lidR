@@ -89,10 +89,10 @@ test_that("tinfo works", {
   x <- c(0, 1, 0)
   y <- c(0, 0, 1)
   z <- c(1, 0, 0)
-  p <- cbind(x, y, z)
-  tri <- matrix(c(1, 2, 3, 1), 1, 4)
+  X <- cbind(x, y, z)
+  D <- matrix(c(1, 2, 3, 1), 1, 4)
 
-  info = lidR:::tinfo(tri, p)
+  info = lidR:::tinfo(D, X)
 
   # normal vector is (1,1,1)
   n = c(info[,1], info[,2], info[,3]) %>% as.numeric
@@ -109,6 +109,38 @@ test_that("tinfo works", {
 
   # Max edge size is sqrt(2)
   expect_equal(as.numeric(info[,7]), sqrt(2))
+
+  D <- matrix(c(1, 2, 3, 1), 1, 4)
+
+  x = c(0,0,1)
+  y = c(0,1,1)
+  z = c(0,0,1)
+  X = cbind(x,y,z)
+
+  I = as.numeric(lidR:::tinfo(D, X))
+
+  expect_equal(I[5], sqrt(2)/2)
+  expect_equal(I[6], 1/2)
+
+  x = c(0,0,1)
+  y = c(0,1,0)
+  z = c(0,1,1)
+  X = cbind(x,y,z)
+
+  I = as.numeric(lidR:::tinfo(D, X))
+
+  expect_equal(I[5], sqrt(3)/2)
+  expect_equal(I[6], 1/2)
+
+  x = c(0,0,1)
+  y = c(0,1,1)
+  z = c(0,0,2)
+  X = cbind(x,y,z)
+
+  I = as.numeric(lidR:::tinfo(D, X))
+
+  expect_equal(I[5], sqrt(5)/2)
+  expect_equal(I[6], 1/2)
 })
 
 
