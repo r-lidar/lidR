@@ -20,9 +20,10 @@ numeric. The computed Rumple index.
 }
 \description{
 Computes the roughness of a surface as the ratio between the area of a surface and its
-projected area on the ground. For each type of input the function makes a Delaunay
-triangulation of the points and computes the ratio between the area of the triangles and
-the area or the convexhull (i.e. the projected area of the triangles on the X-Y plane).
+projected area on the ground. If the input is a grided object (lasmetric or raster) the
+function computes the surfaces using Jenness's algorithm (see references). If the input
+is a points cloud the function uses a Delaunay triangulation of the points and computes
+the area of each triangle.
 }
 \examples{
 x = runif(20, 0, 100)
@@ -49,4 +50,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 chm = las \%>\% grid_canopy
 rumple_index(chm)
+}
+\references{
+Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829–839.
 }
