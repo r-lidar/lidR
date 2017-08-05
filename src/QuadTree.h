@@ -23,6 +23,21 @@ struct BoundingBox
 	bool intersects(const BoundingBox&);
 };
 
+double dist(const Point& lhs, const Point& rhs);
+
+struct DistanceFunc
+{
+  DistanceFunc(const Point& _p) : p(_p) {}
+
+  bool operator()(const Point* lhs, const Point* rhs) const
+  {
+    return dist(p, *lhs) < dist(p, *rhs);
+  }
+
+private:
+  Point p;
+};
+
 class QuadTree
 {
 	public:
@@ -32,11 +47,12 @@ class QuadTree
 		bool insert(const Point&);
 		void rect_lookup(const double, const double, const double, const double, std::vector<Point*>&);
 		void circle_lookup(const double, const double, const double, std::vector<Point*>&);
-
+		void knn_lookup(const double, const double, const int, std::vector<Point*>&);
 
 	private:
 		int MAX_DEPTH;
 		int depth;
+		int npoints;
 		BoundingBox boundary;
 		std::vector<Point> points;
 		QuadTree* NE;
