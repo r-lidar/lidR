@@ -17,6 +17,22 @@ double dist(const Point& lhs, const Point& rhs)
   return dx * dx + dy * dy;
 }
 
+static inline double max (double a, double b, double c)
+{
+  if (a < b)
+    return (b < c ? c : b);
+  else
+    return (a < c ? c : a);
+}
+
+static inline double min (double a, double b, double c)
+{
+  if (a > b)
+    return (b > c ? c : b);
+  else
+    return (a > c ? c : a);
+}
+
 bool BoundingBox::contains(const Point& p)
 {
   if(p.x >= center.x - half_res.x && p.x <= center.x + half_res.x &&	p.y >= center.y - half_res.y && p.y <= center.y + half_res.y)
@@ -195,6 +211,33 @@ void QuadTree::circle_lookup(const double cx, const double cy, const double rang
   return;
 }
 
+void QuadTree::triangle_lookup(const Point& A, const Point& B, const Point& C, std::vector<Point*>& res)
+{
+  // Boundingbox of A B C
+  double rminx = min(A.x, B.x, C.x);
+  double rmaxx = max(A.x, B.x, C.x);
+  double rminy = min(A.y, B.y, C.y);
+  double rmaxy = max(A.y, B.y, C.y);
+
+  double xcenter = (rminx + rmaxx)/2;
+  double ycenter = (rminy + rmaxy)/2;
+  double half_width = (rmaxx - rminx)/2;
+  double half_height = (rmaxy - rminy )/2;
+
+  // Boundingbox lookup
+  std::vector<Point*> points;
+  rect_lookup(xcenter, ycenter, half_width, half_height, points);
+
+  // Compute if the points are in A B C
+  for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
+  {
+    if (in_triangle(**it, A, B, C))
+      res.push_back(*it);
+  }
+
+  return;
+}
+
 void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::vector<Point*>& res)
 {
   double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
@@ -260,4 +303,24 @@ bool QuadTree::in_rect(const BoundingBox& bb, const Point& p)
   B = B < 0 ? -B : B;
 
   return(A <= bb.half_res.x && B <= bb.half_res.y);
+}
+
+bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, const Point& p2)
+{
+  double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
+  double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+
+  if ((s <= 0) != (t <= 0))
+    return false;
+
+  double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+
+  if (A < 0)
+  {
+    s = -s;
+    t = -t;
+    A = -A;
+  }
+
+  return s >= 0 && t >= 0 && (int)((s + t)*1000) <= (int)(A*1000);
 }
