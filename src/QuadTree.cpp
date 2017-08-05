@@ -1,6 +1,7 @@
 #include "QuadTree.h"
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 Point::Point(){}
 Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
@@ -8,6 +9,13 @@ Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id) 
 
 BoundingBox::BoundingBox(){}
 BoundingBox::BoundingBox(const Point center, const Point half_res) : center(center), half_res(half_res) {}
+
+double dist(const Point& lhs, const Point& rhs)
+{
+  double dx = lhs.x - rhs.x;
+  double dy = lhs.y - rhs.y;
+  return dx * dx + dy * dy;
+}
 
 bool BoundingBox::contains(const Point& p)
 {
@@ -34,6 +42,7 @@ bool BoundingBox::intersects(const BoundingBox& b)
 QuadTree::QuadTree(const double cx, const double cy, const double range)
 {
   MAX_DEPTH = 6;
+  npoints = 0;
 
   boundary = BoundingBox(Point(cx, cy), Point(range, range));
   depth = 1;
@@ -47,6 +56,7 @@ QuadTree::QuadTree(const double cx, const double cy, const double range)
 QuadTree::QuadTree(const BoundingBox boundary, const int parent_depth) : boundary(boundary)
 {
   MAX_DEPTH = 6;
+  npoints = 0;
 
   depth = parent_depth + 1;
 
@@ -104,6 +114,8 @@ bool QuadTree::insert(const Point& p)
 {
   if(!boundary.contains(p))
     return false;
+
+  npoints++;
 
   if(depth == MAX_DEPTH)
   {
@@ -180,6 +192,34 @@ void QuadTree::rect_lookup(const double xc, const double yc, const double half_w
 void QuadTree::circle_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
 {
   range_lookup(BoundingBox(Point(cx, cy), Point(range, range)), res, 2);
+  return;
+}
+
+void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::vector<Point*>& res)
+{
+  double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
+  double density = npoints / area;                              // Approx point density
+
+  // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
+  double radius = std::sqrt((double)k / (density * 3.14));
+
+  Point p(cx, cy);
+  std::vector<Point*> pts;
+
+  // Get at least k point within a circle
+  int n = 0;
+  while (n < k)
+  {
+    pts.clear();
+    circle_lookup(p.x, p.y, radius, pts);
+    n = pts.size();
+    radius *= 1.5;
+  }
+
+  std::sort(pts.begin(), pts.end(), DistanceFunc(p));
+
+  for (int i = 0 ; i < k ; i++) res.push_back(pts[i]);
+
   return;
 }
 
