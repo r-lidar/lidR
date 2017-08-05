@@ -5,45 +5,6 @@
 
 using namespace Rcpp;
 
-static inline double max (double a, double b, double c)
-{
-  if (a < b)
-    return (b < c ? c : b);
-  else
-    return (a < c ? c : a);
-}
-
-static inline double min (double a, double b, double c)
-{
-  if (a > b)
-    return (b > c ? c : b);
-  else
-    return (a > c ? c : a);
-}
-
-bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
-{
-    double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
-    double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
-
-    if ((s <= 0) != (t <= 0))
-        return false;
-
-    double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
-
-    if (A < 0)
-    {
-        s = -s;
-        t = -t;
-        A = -A;
-    }
-
-    //*Rcpp::Rcout << std::setprecision(12) << "s = " << s << " t = " << t << " s+t = " << s+t << " A = " << A << std::endl;
-    //*Rcpp::Rcout << std::setprecision(12) << "s+t <= A : " << ((s + t) <= A) << std::endl;
-
-    return s >= 0 && t >= 0 && (int)((s + t)*1000) <= (int)(A*1000);
-}
-
 // [[Rcpp::export]]
 IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
@@ -87,32 +48,15 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
     Point B(x(iB), y(iB));
     Point C(x(iC), y(iC));
 
-    // Boundingbox of A B C
-
-    double rminx = min(A.x, B.x, C.x);
-    double rmaxx = max(A.x, B.x, C.x);
-    double rminy = min(A.y, B.y, C.y);
-    double rmaxy = max(A.y, B.y, C.y);
-
-    double xcenter = (rminx + rmaxx)/2;
-    double ycenter = (rminy + rmaxy)/2;
-    double half_width = (rmaxx - rminx)/2;
-    double half_height = (rmaxy - rminy )/2;
-
-    // QuadTree search of points in enclosing boundingbox
-
+    // QuadTree search of points in the triangle
     std::vector<Point*> points;
-    tree->rect_lookup(xcenter, ycenter, half_width, half_height, points);
+    tree->triangle_lookup(A, B, C, points);
 
-    // Compute if the points are in A B C
-
-    for (int i = 0 ; i < points.size() ; i++)
+    // Return the id of the triangle
+    for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
     {
-      if (PointInTriangle(*points[i], A, B, C))
-      {
-        int id = points[i]->id;
+        int id = (*it)->id;
         output(id) = k + 1;
-      }
     }
   }
 
