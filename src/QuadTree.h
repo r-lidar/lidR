@@ -50,6 +50,8 @@ class QuadTree
 		void triangle_lookup(const Point&, const Point&, const Point&, std::vector<Point*>&);
 		void circle_lookup(const double, const double, const double, std::vector<Point*>&);
 		void knn_lookup(const double, const double, const int, std::vector<Point*>&);
+		int get_npoints();
+		BoundingBox get_bbox();
 
 	private:
 		int MAX_DEPTH;
@@ -62,9 +64,7 @@ class QuadTree
 		QuadTree* SE;
 		QuadTree* SW;
 		QuadTree* parent;
-
 		QuadTree(const BoundingBox, const QuadTree*);
-
 		void subdivide();
 		void range_lookup(const BoundingBox, std::vector<Point*>&, const int);
 		void getPointsSquare(const BoundingBox, std::vector<Point>&, std::vector<Point*>&);
