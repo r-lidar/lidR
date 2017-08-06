@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <iostream>
 
 Point::Point(){}
 Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
@@ -35,7 +36,10 @@ static inline double min (double a, double b, double c)
 
 bool BoundingBox::contains(const Point& p)
 {
-  if(p.x >= center.x - half_res.x && p.x <= center.x + half_res.x &&	p.y >= center.y - half_res.y && p.y <= center.y + half_res.y)
+  if(p.x >= center.x - half_res.x &&
+     p.x <= center.x + half_res.x &&
+     p.y >= center.y - half_res.y &&
+     p.y <= center.y + half_res.y)
     return true;
   else
     return false;
@@ -69,12 +73,12 @@ QuadTree::QuadTree(const double cx, const double cy, const double range)
   SW = 0;
 }
 
-QuadTree::QuadTree(const BoundingBox boundary, const int parent_depth) : boundary(boundary)
+QuadTree::QuadTree(const BoundingBox boundary, const QuadTree* parent) : boundary(boundary)
 {
   MAX_DEPTH = 6;
   npoints = 0;
 
-  depth = parent_depth + 1;
+  depth = parent->depth + 1;
 
   NE = 0;
   NW = 0;
@@ -154,6 +158,61 @@ bool QuadTree::insert(const Point& p)
   return false;
 }
 
+void QuadTree::remove(const Point& p)
+{
+  Point O(0,0);
+  BoundingBox bb(p, O);
+
+  // Search in which leaf is the point p
+  QuadTree *tree = 0;
+  tree_lookup(bb, &tree);
+
+  if (tree == 0)
+    return;
+
+  // Look at the points in the tree and find which one is p
+  int i = 0;
+  while(tree->points[i].x != p.x && tree->points[i].y != p.y && i < tree->points.size())
+    i++;
+
+  if (i >= tree->points.size())
+    return;
+
+  // Remove this point
+  tree->points.erase(tree->points.begin() + i);
+  npoints--;
+
+  // Delete iteratively the leaves
+  while(tree != 0)
+  {
+    if(tree->points.size() == 0)
+    {
+      if(tree->parent->NE->points.size() == 0 &&
+         tree->parent->NW->points.size() == 0 &&
+         tree->parent->SE->points.size() == 0 &&
+         tree->parent->SW->points.size() == 0)
+      {
+        tree->parent->NE = 0;
+        tree->parent->NW = 0;
+        tree->parent->SE = 0;
+        tree->parent->SW = 0;
+
+        QuadTree* parent = tree->parent;
+
+        delete tree;
+
+        tree = parent;
+      }
+      else
+        tree = 0;
+    }
+    else
+      tree = 0;
+  }
+
+  return;
+}
+
 void QuadTree::subdivide()
 {
   double half_res_half = boundary.half_res.x * 0.5;
@@ -164,10 +223,10 @@ void QuadTree::subdivide()
   Point pSE(boundary.center.x + half_res_half, boundary.center.y - half_res_half);
   Point pSW(boundary.center.x - half_res_half, boundary.center.y - half_res_half);
 
-  NE = new QuadTree(BoundingBox(pNE, p), depth);
-  NW = new QuadTree(BoundingBox(pNW, p), depth);
-  SE = new QuadTree(BoundingBox(pSE, p), depth);
-  SW = new QuadTree(BoundingBox(pSW, p), depth);
+  NE = new QuadTree(BoundingBox(pNE, p), this);
+  NW = new QuadTree(BoundingBox(pNW, p), this);
+  SE = new QuadTree(BoundingBox(pSE, p), this);
+  SW = new QuadTree(BoundingBox(pSW, p), this);
 }
 
 void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, const int method)
@@ -262,6 +321,25 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
   std::sort(pts.begin(), pts.end(), DistanceFunc(p));
 
   for (int i = 0 ; i < k ; i++) res.push_back(pts[i]);
+
+  return;
+}
+
+void QuadTree::tree_lookup(const BoundingBox bb, QuadTree** tree)
+{
+  if(!boundary.intersects(bb))
+    return;
+
+  if(depth == MAX_DEPTH)
+    *tree = this;
+
+  if(NW == 0)
+    return;
+
+  NE->tree_lookup(bb, tree);
+  NW->tree_lookup(bb, tree);
+  SE->tree_lookup(bb, tree);
+  SW->tree_lookup(bb, tree);
 
   return;
 }
