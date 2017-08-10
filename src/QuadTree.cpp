@@ -160,6 +160,7 @@ bool QuadTree::insert(const Point& p)
 
 void QuadTree::remove(const Point& p)
 {
+  std::cout << "remove P(" << p.x << " " << p.y << ")" << std::endl;
   Point O(0,0);
   BoundingBox bb(p, O);
 
@@ -170,10 +171,14 @@ void QuadTree::remove(const Point& p)
   if (tree == 0)
     return;
 
+  std::cout << "tree = " << tree << " size = " << tree->points.size() << std::endl;
+
   // Look at the points in the tree and find which one is p
   int i = 0;
   while(tree->points[i].x != p.x && tree->points[i].y != p.y && i < tree->points.size())
     i++;
+
+  std::cout << "i = " << i << std::endl;
 
   if (i >= tree->points.size())
     return;
@@ -183,7 +188,7 @@ void QuadTree::remove(const Point& p)
   npoints--;
 
   // Delete iteratively the leaves
-  while(tree != 0)
+  /*while(tree != 0)
   {
     if(tree->points.size() == 0)
     {
@@ -208,7 +213,7 @@ void QuadTree::remove(const Point& p)
     }
     else
       tree = 0;
-  }
+  }*/
 
   return;
 }
@@ -403,12 +408,12 @@ bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, con
   return s >= 0 && t >= 0 && (int)((s + t)*1000) <= (int)(A*1000);
 }
 
-BoundingBox QuadTree::get_bbox()
+BoundingBox QuadTree::bbox()
 {
   return this->boundary;
 }
 
-int QuadTree::get_npoints()
+int QuadTree::count()
 {
   return this->npoints;
 }
