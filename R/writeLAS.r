@@ -85,7 +85,7 @@ writeLAS = function(.las, file)
 
   rlas::writelas(file, .las@header@data, .las@data$X, .las@data$Y, .las@data$Z, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
 
-  if (0 <= length(nolasvalidfield))
+  if (length(nolasvalidfield) > 0)
   {
     for (i in 1:length(nolasvalidfield))
       message("Column ", nolasvalidfield[i], " skipped. It does not meet las specifications.")
