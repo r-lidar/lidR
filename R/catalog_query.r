@@ -153,7 +153,7 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
 
   filter = paste(filter, clip_filter)
 
-  lidardata = list(readLAS(query$tiles, all = TRUE, filter = filter))
+  lidardata = list(suppressWarnings(readLAS(query$tiles, T,T,T,T,T,T,T,T,T,F,F,F,F,F, filter = filter)))
   names(lidardata) = query$roinames
 
   if (!is.null(p))

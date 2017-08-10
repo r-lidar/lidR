@@ -34,6 +34,7 @@ Collate:
     'catalog_apply.r'
     'catalog_index.r'
     'catalog_query.r'
+    'catalog_reshape.r'
     'catalog_select.r'
     'constant.R'
     'deprecated.r'

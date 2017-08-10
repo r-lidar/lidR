@@ -63,7 +63,7 @@ f_grid = function(x, res, start)
   round_any(x - 0.5 * res - start, res) + 0.5 * res + start
 }
 
-catalog_makecluster = function(ctg, res, buffer, by_file)
+catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"))
 {
 
   if (by_file)
@@ -73,9 +73,6 @@ catalog_makecluster = function(ctg, res, buffer, by_file)
   }
   else
   {
-    # Will process subtiles of 1 km^2
-    size = CATALOGOPTIONS("tiling_size")
-
     # dimension of the clusters (width = height)
     width = ceiling(size/res) * res
 

@@ -12,6 +12,7 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 * `grid_canopy` inherit of this new feature as well
 * `grid_tincanopy` inherit of this new feature as well
 * `grid_metrics` has now a parameter `filter` for streaming filters when used with a catalog
+* new function `catalog_reshape`
 
 #### OTHER CHANGES
 
@@ -23,6 +24,7 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 #### BUG FIXES
 
 * Computer precision errors lead to holes in raster computed from a Delaunay triangulation.
+* Message in `writeLAS` for skipped fields when no field is skipped is know correct.
 
 ### lidR v1.2.1 (Release data: 2017-06-12)
 
