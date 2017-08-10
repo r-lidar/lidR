@@ -50,8 +50,8 @@ class QuadTree
 		void triangle_lookup(const Point&, const Point&, const Point&, std::vector<Point*>&);
 		void circle_lookup(const double, const double, const double, std::vector<Point*>&);
 		void knn_lookup(const double, const double, const int, std::vector<Point*>&);
-		int get_npoints();
-		BoundingBox get_bbox();
+		int count();
+		BoundingBox bbox();
 
 	private:
 		int MAX_DEPTH;

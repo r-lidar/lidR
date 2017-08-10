@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
 #include <Rcpp.h>
+#include "QuadTree.h"
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -137,6 +138,23 @@ NumericVector sqdistance(NumericVector x1, NumericVector y1, double x2, double y
     double dx = *i1-x2;
     double dy = *i2-y2;
     *i3 = dx * dx + dy * dy;
+  }
+
+  return y;
+}
+
+std::vector<double> sqdistance(std::vector<Point*>& pts, Point u)
+{
+  int n = pts.size();
+  std::vector<double> y(n);
+  std::vector<double>::iterator iy, endy;
+  std::vector<Point*>::iterator ip, endp;
+
+  for(ip = pts.begin(), iy = y.begin(), endp = pts.end(), endy = y.end() ; iy< endy && ip < endp ; ++iy, ++ip)
+  {
+    double dx = (*ip)->x - u.x;
+    double dy = (*ip)->y - u.y;
+    *iy = dx * dx + dy * dy;
   }
 
   return y;

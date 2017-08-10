@@ -9,6 +9,10 @@ itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
     .Call(lidR_itc_expandcrowns, Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
+algo_li2012_v2 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
+    .Call(lidR_algo_li2012_v2, X, Y, Z, dt1, dt2, R, displaybar)
+}
+
 algo_li2012 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
     .Call(lidR_algo_li2012, X, Y, Z, dt1, dt2, R, displaybar)
 }
@@ -43,6 +47,10 @@ points_in_polygon <- function(vertx, verty, pointx, pointy) {
 
 points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
     .Call(lidR_points_in_polygons, vertx, verty, pointx, pointy, displaybar)
+}
+
+test_knn <- function(X, Y, x, y, k) {
+    .Call(lidR_test_knn, X, Y, x, y, k)
 }
 
 tinfo <- function(M, X) {

@@ -131,6 +131,8 @@ lastrees <- function(.las, algorithm, image = NULL, ..., extra = FALSE)
     return(watershed(.las, image, extra, ...))
   else if (algorithm == "li2012")
     return(li2012(.las, ...))
+  else if (algorithm == "li2012v2")
+    return(li2012v2(.las, ...))
   else
     stop("This algorithm does not exist.", call. = FALSE)
 }
@@ -178,6 +180,22 @@ li2012 = function(.las, dt1 = 1.5, dt2 = 2, R = 10)
   data.table::setorderv(.las@data, "Z", order = -1L)
 
   id = algo_li2012(.las@data$X, .las@data$Y, .las@data$Z, dt1, dt2, R = R, LIDROPTIONS("progress"))
+
+  .las@data[, treeID := id][]
+
+  return(invisible())
+}
+
+li2012v2 = function(.las, dt1 = 1.5, dt2 = 2, R = 10)
+{
+  treeID <- NULL
+
+  if (dt1 > dt2)  stop("dt1 greater than dt2", call. = FALSE)
+  if (R <= 0)     stop("R <= 0", call. = FALSE)
+
+  data.table::setorderv(.las@data, "Z", order = -1L)
+
+  id = algo_li2012_v2(.las@data$X, .las@data$Y, .las@data$Z, dt1, dt2, R = R, LIDROPTIONS("progress"))
 
   .las@data[, treeID := id][]
 

@@ -32,6 +32,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// algo_li2012_v2
+IntegerVector algo_li2012_v2(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar);
+RcppExport SEXP lidR_algo_li2012_v2(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< double >::type dt1(dt1SEXP);
+    Rcpp::traits::input_parameter< double >::type dt2(dt2SEXP);
+    Rcpp::traits::input_parameter< double >::type R(RSEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(algo_li2012_v2(X, Y, Z, dt1, dt2, R, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // algo_li2012
 IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar);
 RcppExport SEXP lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP displaybarSEXP) {
@@ -152,6 +169,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
     Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
     rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_knn
+IntegerVector test_knn(NumericVector X, NumericVector Y, double x, double y, int k);
+RcppExport SEXP lidR_test_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_knn(X, Y, x, y, k));
     return rcpp_result_gen;
 END_RCPP
 }
