@@ -31,12 +31,10 @@
 #' When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI),
 #' a ground inventory for example, they can automatically extract the lidar data associated
 #' with the ROIs from a \link[lidR:catalog]{Catalog}. The algorithm will do this even for ROIs
-#' falling on the edges of one or more tiles.\cr
-#' It works only for tiles that are arranged in gridlines.
+#' falling on the edges of one or more tiles.
 #'
 #' @aliases catalog_queries
 #' @param obj A Catalog object
-
 #' @param x vector. A set of x coordinates corresponding to the center of the ROI
 #' @param y vector. A set of y coordinates corresponding to the center of the ROI
 #' @param r numeric or vector. A radius or a set of radii of the ROI. If only
