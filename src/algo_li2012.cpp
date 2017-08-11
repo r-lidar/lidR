@@ -47,8 +47,6 @@ IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector 
   int n  = ni;
   int k  = 1;
 
-  Rcout << "Li2012 v1" << std::endl;
-
   Progress p(ni, displaybar);
 
   IntegerVector idpoint = seq_len(ni)-1;
@@ -152,8 +150,6 @@ IntegerVector algo_li2012_v2(NumericVector X, NumericVector Y, const NumericVect
   int n = ni;
   int k = 1;
   int j = 0;
-
-  Rcout << "Li2012 v2" << std::endl;
 
   Progress p(ni, displaybar);
 
