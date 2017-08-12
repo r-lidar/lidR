@@ -41,9 +41,9 @@
 #' r is provided (r2 = NULL) it will extract data falling onto a disc.
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
 #' is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.
+#' @param buffer numeric. Add a buffer area around the ROI. If \code{buffer} > 0 the LAS objects
 #' @param roinames vector. A set of ROI names (the ID of the plots, for example)
-#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' @param ... internal use only.
+#' @param ... Any argument avaible in \link{readLAS} to reduce the amount of data loaded.
 #' @return A list of LAS objects
 #' @seealso
 #' \link[lidR:readLAS]{readLAS}
@@ -69,14 +69,13 @@
 #' # Return a List of 30 square LAS objects of 50x50 m
 #' catalog %>% catalog_queries(X, Y, R, R)
 #' }
-catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = "", ...)
+catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
-  . <- tiles <- NULL
-
   objtxt = lazyeval::expr_text(obj)
   xtxt   = lazyeval::expr_text(x)
   ytxt   = lazyeval::expr_text(y)
   rtxt   = lazyeval::expr_text(r)
+  btxt   = lazyeval::expr_text(buffer)
 
   if (!is(obj, "Catalog"))
     stop(paste0(objtxt, " is not a Catalog."), call. = FALSE)
@@ -87,17 +86,48 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
   if (length(r) > 1 & (length(x) != length(r)))
     stop(paste0(xtxt, " is not same length as ", rtxt), call. = FALSE)
 
-  param = lazyeval::dots_capture(...)
+  if (length(buffer) > 1 & (length(x) != length(buffer)))
+    stop(paste0(xtxt, " is not same length as ", btxt), call. = FALSE)
 
-  nplot = length(x)
-  shape = if (is.null(r2)) 0 else 1
+  if (any(buffer < 0))
+    stop("Buffer size must be a positive value", call. = FALSE)
 
-  if (is.null(roinames)) roinames = paste0("ROI", 1:nplot)
+  ncores   = CATALOGOPTIONS("multicore")
+  progress = LIDROPTIONS("progress")
+  filter   = ""
+
+  param = list(...)
+  if (!is.null(param$filter))
+    filter = param$filter
+
+  output = catalog_queries_internal(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
+
+  return(output)
+}
+
+catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
+{
+  nplots <- length(x)
+  shape  <- .LIDRRECTANGLE
+  pbar   <- NULL
+
+  if (is.null(r2))
+    shape <- .LIDRCIRCLE
+
+  if (is.null(roinames))
+    roinames <- paste0("ROI", 1:nplots)
+
+  if (progress)
+    pbar <- utils::txtProgressBar(max = nplots, style = 3)
+
+  if (nplots <= ncores)
+    ncores = nplots
 
   verbose("Indexing files...")
 
   # Make an index of the file in which are each query
-  lasindex = obj %>% catalog_index(x, y, r, r2, roinames)
+  lasindex = catalog_index(obj, x, y, r, r2, buffer, roinames)
+  lasindex$buffer = buffer
 
   # Remove potential unproper queries (out of existing files)
   keep = lasindex[, length(tiles[[1]]) > 0, by = roinames]$V1
@@ -105,32 +135,21 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
   roinames = roinames[keep]
 
   # Transform as list
-  lasindex = apply(lasindex, 1, as.list)
+  queries = apply(lasindex, 1, as.list)
 
   # Recompute the number of queries
-  nplot = length(lasindex)
+  nplot = length(queries)
 
   verbose("Extracting data...")
 
-  # Internal use only to force to disable the progressbar against what is in the options
-  if (LIDROPTIONS("progress") & is.null(param$disable_bar))
-    p = utils::txtProgressBar(max = nplot, style = 3)
-  else
-    p = NULL
-
-  # Internal use only to force one core computation against what is requested in the options
-  if (nplot <= 2 | !is.null(param$no_multicore))
-    mc.cores = 1
-  else
-    mc.cores = CATALOGOPTIONS("multicore")
-
-  if (mc.cores == 1)
-    output = lapply(lasindex, .getQuery, shape, filter, p)
+  # Computation
+  if (ncores == 1)
+    output = lapply(queries, .get_query, shape, filter, pbar, ...)
   else
   {
     cl = parallel::makeCluster(mc.cores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, lasindex, .getQuery, shape, filter)
+    output = parallel::parLapply(cl, queries, .get_query, shape, filter, NULL, ...)
     parallel::stopCluster(cl)
   }
 
@@ -140,19 +159,50 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
   return(output)
 }
 
-.getQuery = function(query, shape, filter, p = NULL, ...)
+.get_query = function(query, shape, filter, p = NULL, ...)
 {
-  x <- y <- r <- r2 <- NULL
+  # Variables for readability
+  x     <- query$x
+  y     <- query$y
+  r     <- query$r
+  r2    <- query$r2
+  buff  <- query$buffer
+  tiles <- query$tiles
 
-  if (shape == 0)
-    clip_filter = query %$% paste("-inside_circle", x, y, r)
+  xleft   <- x - r
+  xright  <- x + r
+  ybottom <- y - r2
+  ytop    <- y + r2
+
+  if (shape == .LIDRCIRCLE)
+    clip_filter = paste("-inside_circle", x, y, r)
+  else if (shape == .LIDRRECTANGLE)
+    clip_filter = paste("-inside", xleft, ybottom, xright, ytop)
   else
-    clip_filter = query %$% paste("-inside", x - r, y - r2, x + r, y + r2)
+    stop("Something went wrong internaly in .get_query(). Process aborted.")
 
-  filter = paste(filter, clip_filter)
+  # Merge spatial filter with user's filters
+  filter = paste(clip_filter, filter)
 
-  lidardata = list(suppressWarnings(readLAS(query$tiles, T,T,T,T,T,T,T,T,T,F,F,F,F,F, filter = filter)))
-  names(lidardata) = query$roinames
+  las = readLAS(tiles, filter = filter, ...)
+
+  # Add informations about buffer
+  if (query$buffer > 0)
+  {
+    las@data[, buffer := 0]
+
+    if (shape == .LIDRCIRCLE)
+    {
+      las@data[(X-x)^2 + (Y-y)^2 > (r-buff)^2, buffer := 1]
+    }
+    else
+    {
+      las@data[Y < ybottom + buff, buffer := 1]
+      las@data[X < xleft   + buff, buffer := 2]
+      las@data[Y > ytop    - buff, buffer := 3]
+      las@data[X > xright  - buff, buffer := 4]
+    }
+  }
 
   if (!is.null(p))
   {
@@ -162,6 +212,10 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, roinames = NULL, filter = ""
   else
     cat(sprintf("%s ", query$roinames))
 
-  return(lidardata)
+  output = list(NULL)
+  names(output) <- query$roinames
+  output[[1]] = las
+
+  return(output)
 }
 

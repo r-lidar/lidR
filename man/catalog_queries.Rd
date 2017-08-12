@@ -4,8 +4,7 @@
 \alias{catalog_queries}
 \title{Extract LiDAR data based on a set of coordinates}
 \usage{
-catalog_queries(obj, x, y, r, r2 = NULL, roinames = NULL, filter = "",
-  ...)
+catalog_queries(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 }
 \arguments{
 \item{obj}{A Catalog object}
@@ -20,11 +19,11 @@ r is provided (r2 = NULL) it will extract data falling onto a disc.}
 \item{r2}{numeric or vector. A radius or a set of radii of plots. If r2
 is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.}
 
+\item{buffer}{numeric. Add a buffer area around the ROI. If \code{buffer} > 0 the LAS objects}
+
 \item{roinames}{vector. A set of ROI names (the ID of the plots, for example)}
 
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).}
-
-\item{...}{internal use only.}
+\item{...}{Any argument avaible in \link{readLAS} to reduce the amount of data loaded.}
 }
 \value{
 A list of LAS objects
