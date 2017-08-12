@@ -74,8 +74,12 @@
 #' @export
 tree_metrics = function(.las, func, debug = FALSE)
 {
-  stopifnotlas(.las)
+  UseMethod("tree_metrics", .las)
+}
 
+#' @export
+tree_metrics.LAS = function(.las, func, debug = FALSE)
+{
   call = substitute(func)
 
   stat <- lasaggregate(.las, by = "TREE", call, NA, NA, c("tree"), FALSE, debug)
