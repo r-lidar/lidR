@@ -56,15 +56,11 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
   ext <- match.arg(ext)
 
-  if(!dir.exists(path))
-    stop(paste(path, "does not exist."))
-
-  ti = Sys.time()
-
-  numcores = CATALOGOPTIONS("multicore")
+  ncores = CATALOGOPTIONS("multicore")
 
   # Create a pattern of clusters to be sequentially processed
   ctg_clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
+  ctg_clusters = apply(ctg_clusters, 1, as.list)
 
   text = paste0("This is how the catalog will be reshaped. Do you want to continue?")
   choices = c("yes","no")
@@ -75,29 +71,31 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if (choice == 2)
     return(invisible(NULL))
 
-  ctg_clusters = apply(ctg_clusters, 1, as.list)
+  if(!dir.exists(path))
+    dir.create(path, recursive = TRUE)
+
+  files <- list.files(path, pattern = "(?i)\\.la(s|z)$")
+
+  if(length(files) > 0)
+    stop("The output folder already contains las or laz files. Operation aborted.")
+
+  ti = Sys.time()
 
   # Computations done within sequential or parallel loop in .getMetrics
-  if (numcores == 1)
+  if (ncores == 1)
   {
     output = lapply(ctg_clusters, reshape_func, path = path, prefix = prefix, ext = ext)
   }
   else
   {
     cat("Begin parallel processing... \n")
-    cat("Num. of cores:", numcores, "\n\n")
+    cat("Num. of cores:", ncores, "\n\n")
 
-    cl = parallel::makeCluster(numcores, outfile = "")
+    cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
     output = parallel::parLapply(cl, ctg_clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
     parallel::stopCluster(cl)
   }
-
-  # cl <- parallel::makeCluster(getOption("cl.cores", mc.cores))
-  # parallel::clusterExport(cl, varlist, envir = environment())
-  # out = parallel::parLapplyLB(cl, files, func)
-  # parallel::stopCluster(cl)
-
 
   tf = Sys.time()
   cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
@@ -105,36 +103,55 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   return(catalog(path))
 }
 
-
-reshape_func = function(ctg_cluster, path, prefix, ext)
+reshape_func = function(cluster, path, prefix, ext)
 {
   X <- Y <- NULL
 
   # Variables for readability
-  xleft   = ctg_cluster$xleft
-  xright  = ctg_cluster$xright
-  ybottom = ctg_cluster$ybottom
-  ytop    = ctg_cluster$ytop
-  name    = "ROI" %+% ctg_cluster$name
-  xcenter = ctg_cluster$xcenter
-  ycenter = ctg_cluster$ycenter
-  width   = (ctg_cluster$xrightbuff - ctg_cluster$xleftbuff)/2
+  xcenter = cluster$xcenter
+  ycenter = cluster$ycenter
+  xleft   = cluster$xleft
+  xright  = cluster$xright
+  ybottom = cluster$ybottom
+  ytop    = cluster$ytop
+  name    = cluster$name
+  width   = (xright - xleft)/2
 
-  path = paste0(path, "/", prefix, "-", ctg_cluster$name , ".", ext)
+  path = paste0(path, "/", prefix, name , ".", ext)
 
   # Extract the ROI as a LAS object
-  las = catalog_queries(ctg, xcenter, ycenter, width, width, name, filter = " ", disable_bar = T, no_multicore = T)[[1]]
+  las = catalog_queries_internal(
+            obj = ctg,
+            x = xcenter,
+            y = ycenter,
+            r = width,
+            r2 = width,
+            buffer = 0,
+            roinames = name,
+            filter = "",
+            ncores = 1,
+            progress = FALSE,
+            ScanDirectionFlag = TRUE,
+            EdgeOfFlightline = TRUE,
+            UserData = TRUE,
+            PointSourceID = TRUE,
+            pulseID = FALSE)[[1]]
 
   # Skip if the ROI fall in a void area
-  if (is.null(las)) return(NULL)
+  if (is.null(las))
+    return(NULL)
 
   # Because catalog_queries keep point inside the boundingbox (close interval) but point which
   # are exactly on the boundaries are counted twice. Here a post-process to make an open
   # interval on left and bottom edge of the boudingbox.
-  las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
+  n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
+
+  if (n > 0)
+    las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
 
   # Very unprobable but who knows...
-  if (is.null(las)) return(NULL)
+  if (is.null(las))
+    return(NULL)
 
   writeLAS(las, path)
 
