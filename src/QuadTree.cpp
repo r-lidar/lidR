@@ -160,7 +160,6 @@ bool QuadTree::insert(const Point& p)
 
 void QuadTree::remove(const Point& p)
 {
-  std::cout << "remove P(" << p.x << " " << p.y << ")" << std::endl;
   Point O(0,0);
   BoundingBox bb(p, O);
 
@@ -171,14 +170,10 @@ void QuadTree::remove(const Point& p)
   if (tree == 0)
     return;
 
-  std::cout << "tree = " << tree << " size = " << tree->points.size() << std::endl;
-
   // Look at the points in the tree and find which one is p
   int i = 0;
   while(tree->points[i].x != p.x && tree->points[i].y != p.y && i < tree->points.size())
     i++;
-
-  std::cout << "i = " << i << std::endl;
 
   if (i >= tree->points.size())
     return;

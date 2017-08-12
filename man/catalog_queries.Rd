@@ -32,7 +32,7 @@ A list of LAS objects
 \description{
 From a set of (x, y) coordinates corresponding to a the centers of regions of interest (ROI),
 a ground inventory for example, the function automatically extract the lidar data associated
-with the ROIs from a \link{Catalog}. The algorithm will do this even for ROIs falling on
+with the ROIs from a \link{catalog}. The algorithm will do this even for ROIs falling on
 the edges of one or more tiles. The extracted lidar data can be buffered. In this case the
 function add a buffer area around the ROI and the LAS object returned have an extra column
 named '\code{buffer}' which state for each point if the point is a point in the buffer or

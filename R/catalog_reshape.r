@@ -93,7 +93,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, ctg_clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
+    output = parallel::parLapply(cl, ctg_clusters, fun = reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
     parallel::stopCluster(cl)
   }
 
@@ -103,7 +103,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   return(catalog(path))
 }
 
-reshape_func = function(cluster, path, prefix, ext)
+reshape_func = function(cluster, ctg, path, prefix, ext)
 {
   X <- Y <- NULL
 

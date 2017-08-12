@@ -56,7 +56,7 @@
 #' the left, top and right buffer (see example).
 #'
 #' @aliases catalog_apply
-#' @param x A \link[lidR:catalog]{Catalog} object
+#' @param ctg A \link[lidR:catalog]{Catalog} object
 #' @param func A user's function for which the first input is a LAS object.
 #' @param ... optionnal extra arguments for the user's defined function
 #' @examples
@@ -65,7 +65,7 @@
 #' # This example is a dummy exemple. It is more efficient to load the entiere file than
 #' # splitting it in several pieces to process even using sevral cores.
 #'
-#' 1. build a project (here a single file catalog for the need of the example).
+#' # 1. build a project (here a single file catalog for the need of the example).
 #' folder <- system.file("extdata", "", package="lidR")
 #' project = catalog(folder)
 #' project = project[1,]
@@ -73,10 +73,10 @@
 #'
 #' # 2. set some global catalog options
 #' # For the need of this dummy example the clustering size is 80 m and the buffer is 15 m using
-#' # a single core.
-#' catalog_options(buffer = 15, multicore = 4, tiling_size = 80)
+#' # a single core (because this example is ran on CRAN server when package is submitted).
+#' catalog_options(buffer = 15, multicore = 1, tiling_size = 80)
 #'
-#' 3. load the shapefile you need to filter your points.
+#' # 3. load the shapefile you need to filter your points.
 #' lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 #'
 #' # 4. build the function which analyses each cluster of the catalog.
@@ -137,16 +137,16 @@
 #' }
 #'
 #' # Evering thing is now well defined, let process over an entiere catalog whith
-#' # hundred of files (here a single one...)
+#' # hundred of files (but here a single one for the example...)
 #'
 #' # 4. Process the project.
 #' output = catalog_apply(project, tree_area, lake = lake_shp)
 #'
-#' # 5. Post process the output result (depend of what is the output). Here each values
+#' # 5. Post process the output result (depend on what is the output). Here each values
 #' # of the list is a data.table, so rbindlist makes the job
 #' output = data.table::rbindlist(output)
 #'
-#' output %$% plot(x,y, cex = sqrt(area/pi)/5, col = maxbuff +1, asp = 1)
+#' output %$% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
 #' @export
 catalog_apply = function(ctg, func, ...)
 {
