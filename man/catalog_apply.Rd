@@ -2,12 +2,14 @@
 % Please edit documentation in R/catalog_apply.r
 \name{catalog_apply}
 \alias{catalog_apply}
-\title{Apply a user defined function to an entire catalog}
+\title{Apply a user defined function to an entire catalog in a continuous way}
 \usage{
 catalog_apply(ctg, func, ...)
 }
 \arguments{
-\item{func}{A function which has one parameter: the name of a .las or .laz file (see example)}
+\item{func}{A user's function for which the first input is a LAS object.}
+
+\item{...}{optionnal extra arguments for the user's defined function}
 
 \item{x}{A \link[lidR:catalog]{Catalog} object}
 }
@@ -41,27 +43,32 @@ the left, top and right buffer (see example).
 }
 
 \examples{
-# Visit http://jean-romain.github.io/lidR/wiki for more examples
-# about this function
+# Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
+# version of this example.
+# This example is a dummy exemple. It is more efficient to load the entiere file than
+# splitting it in several pieces to process even using sevral cores.
 
-# 1. build a project (here a single tiny file catalog for the need of example)
+1. build a project (here a single file catalog for the need of the example).
 folder <- system.file("extdata", "", package="lidR")
 project = catalog(folder)
 project = project[1,]
 plot(project)
 
 # 2. set some global catalog options
-# For the need of this dummy example the clustering size is 80 m and the buffer is 10 m using
+# For the need of this dummy example the clustering size is 80 m and the buffer is 15 m using
 # a single core.
-catalog_options(by_file = FALSE, buffer = 10, multicore = 1, tiling_size = 80)
+catalog_options(buffer = 15, multicore = 4, tiling_size = 80)
 
-# 3. load the shapefile you need to filter your points.
+3. load the shapefile you need to filter your points.
 lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 
-# 4. build the function which analyses a cluster of the catalog.
-# This function first argument is a LAS object. See the following template:
-myAnalyse = function(las, lake)
+# 4. build the function which analyses each cluster of the catalog.
+# This function first argument is a LAS object. The internal routine take care of feeding this
+# function. The other arguments can be freely choosen by the user. See the following template:
+tree_area = function(las, lake)
 {
+  # The las argument is a LAS object with each field loaded and an extra column 'buffer'
+
   # Associate geographic data with lidar points
   lasclassify(las, lake, field = "lake")
 
@@ -72,16 +79,55 @@ myAnalyse = function(las, lake)
   # to segment tree properly. This is just a proof of concept)
   lastrees(las, algorithm = "li2012")
 
-  # count the trees
-  num_tree = length(unique(las@data$treeID))
+  # Here we used the function tree_metric to compute some metrics for each tree. This
+  # function is defined later in the global environnement.
+  m = tree_metrics(las, myMetrics(X, Y, Z, buffer))
 
-  return(num_tree)
+  # If min buffer is 0 it means the trees were at least parlty in the non buffered area so we
+  # want to keep this trees.
+  # In an other hand the trees wich are on the edge of the buffered area will be counted
+  # twice. So we must remove the tree on the left side and on the bottom side of the buffer
+  # If max buffer is <= 2 it means that the trees belong inside the area of interest or in
+  # the left side or in the bottom side or both
+  m = m[minbuff == 0 & maxbuff <= 2]
+
+  # Remove buffering information which are no longer usefull
+  m[, c("minbuff","maxbuff") := NULL]
+
+  return(m)
 }
 
-# 4. Process the project.
-output = catalog_apply(project, myAnalyse, lake = lake_shp)
+# This function enable to extract, for a single tree, the position of the highest point and
+# some informations about the buffing position of the tree. The function tree_metrics take
+# care of mapping along each tree.
+myMetrics <- function(x, y, z, buff)
+{
+  i = which.max(z)
+  xcenter = x[i]
+  ycenter = y[i]
+  A = lidR:::area(x,y)  # here we used an internal lidR function not exported for users
+  minbuff = min(buff)
+  maxbuff = max(buff)
 
-# 5. Post process the output results (depend of what is the output)
-output = unlist(output)
-total_trees = sum(output)
+  return(
+    list(
+      x = xcenter,
+      y = ycenter,
+      area = A,
+      minbuff = minbuff,
+      maxbuff = maxbuff
+    ))
+}
+
+# Evering thing is now well defined, let process over an entiere catalog whith
+# hundred of files (here a single one...)
+
+# 4. Process the project.
+output = catalog_apply(project, tree_area, lake = lake_shp)
+
+# 5. Post process the output result (depend of what is the output). Here each values
+# of the list is a data.table, so rbindlist makes the job
+output = data.table::rbindlist(output)
+
+output \%$\% plot(x,y, cex = sqrt(area/pi)/5, col = maxbuff +1, asp = 1)
 }
