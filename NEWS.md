@@ -5,18 +5,20 @@ This version is dedicated to extend each function to an entiere catalog in a sea
 #### NEW FEATURES
 
 * `catalog_apply` has been entierily re-designed. It is more flexible, more user-friendly and enable for loading buffered data.
-* `catalog_queries` has now a parameter `filter` for streaming filters while loading the data
+* `catalog_queries` has now an argument `...` to pass any argument of `readLAS`.
+* `catalog_queries` has now an argument `buffer` to load extra buffered points around the region of interest.
 * `grid_metrics` accept a catalog as input. It enables to grid an entiere catalog in a continuous way.
 * `grid_density` inherit of this new feature as well
 * `grid_terrain` inherit of this new feature as well
 * `grid_canopy` inherit of this new feature as well
 * `grid_tincanopy` inherit of this new feature as well
-* `grid_metrics` has now a parameter `filter` for streaming filters when used with a catalog
+* `grid_metrics` has now a an argument `filter` for streaming filters when used with a catalog
 * new function `catalog_reshape`
 
 #### OTHER CHANGES
 
-* `plot.Catalog` accept for usual `plot` parameter
+* `catalog_queries` is no longer an exported function. It is now an internal function.
+* `plot.Catalog` accept for usual `plot` parameters
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 * `as.raster` relies both on the fast former code (v1.2.0) to return a RasterLayer and the new code (v1.2.1) to return a RasterStack. This change enable for a faster results in most cases
