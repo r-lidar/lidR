@@ -30,7 +30,7 @@
 #'
 #' From a set of (x, y) coordinates corresponding to a the centers of regions of interest (ROI),
 #' a ground inventory for example, the function automatically extract the lidar data associated
-#' with the ROIs from a \link{Catalog}. The algorithm will do this even for ROIs falling on
+#' with the ROIs from a \link{catalog}. The algorithm will do this even for ROIs falling on
 #' the edges of one or more tiles. The extracted lidar data can be buffered. In this case the
 #' function add a buffer area around the ROI and the LAS object returned have an extra column
 #' named '\code{buffer}' which state for each point if the point is a point in the buffer or
@@ -130,6 +130,7 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 
 catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
 {
+  tiles <-
   nplots <- length(x)
   shape  <- .LIDRRECTANGLE
   pbar   <- NULL
@@ -170,7 +171,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
     output = lapply(queries, .get_query, shape, filter, pbar, ...)
   else
   {
-    cl = parallel::makeCluster(mc.cores, outfile = "")
+    cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
     output = parallel::parLapply(cl, queries, .get_query, shape, filter, NULL, ...)
     parallel::stopCluster(cl)
@@ -184,6 +185,8 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
 
 .get_query = function(query, shape, filter, p = NULL, ...)
 {
+  X <- Y <- buffer <- NULL
+
   # Variables for readability
   x     <- query$x
   y     <- query$y
