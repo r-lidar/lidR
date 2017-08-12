@@ -9,19 +9,20 @@ catalog_queries(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 \arguments{
 \item{obj}{A Catalog object}
 
-\item{x}{vector. A set of x coordinates corresponding to the center of the ROI}
+\item{x}{vector. A set of x coordinates corresponding to the center of the ROIs}
 
-\item{y}{vector. A set of y coordinates corresponding to the center of the ROI}
+\item{y}{vector. A set of y coordinates corresponding to the center of the ROIs}
 
-\item{r}{numeric or vector. A radius or a set of radii of the ROI. If only
+\item{r}{numeric or vector. A radius or a set of radii of the ROIs. If only
 r is provided (r2 = NULL) it will extract data falling onto a disc.}
 
 \item{r2}{numeric or vector. A radius or a set of radii of plots. If r2
-is provided, the selection turns into a rectangular ROI. If r = r2 it is a square.}
+is provided, the selection turns into a rectangular ROI (if r = r2 it is a square).}
 
-\item{buffer}{numeric. Add a buffer area around the ROI. If \code{buffer} > 0 the LAS objects}
+\item{buffer}{numeric. Add a buffer area around the ROI. See relevant sections.}
 
-\item{roinames}{vector. A set of ROI names (the ID of the plots, for example)}
+\item{roinames}{vector. A set of ROI names (the ID of the plots, for example) to label the
+returned list.}
 
 \item{...}{Any argument avaible in \link{readLAS} to reduce the amount of data loaded.}
 }
@@ -29,16 +30,34 @@ is provided, the selection turns into a rectangular ROI. If r = r2 it is a squar
 A list of LAS objects
 }
 \description{
-When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI),
-a ground inventory for example, they can automatically extract the lidar data associated
-with the ROIs from a \link[lidR:catalog]{Catalog}. The algorithm will do this even for ROIs
-falling on the edges of one or more tiles.
+From a set of (x, y) coordinates corresponding to a the centers of regions of interest (ROI),
+a ground inventory for example, the function automatically extract the lidar data associated
+with the ROIs from a \link{Catalog}. The algorithm will do this even for ROIs falling on
+the edges of one or more tiles. The extracted lidar data can be buffered. In this case the
+function add a buffer area around the ROI and the LAS object returned have an extra column
+named '\code{buffer}' which state for each point if the point is a point in the buffer or
+from the ROI (see more in section Buffer).
 }
+\section{Buffer}{
+
+If the ROIs are buffered then the LAS objects returned by the function have extra points.
+The LAS objects received by the user have a special colum called 'buffer' which enable,
+for each point, to know if the point comes from a buffered areas or not. Points
+from not buffered areas (the ROI) have a 'buffer' value of 0 while points from buffered
+areas have a 'buffer' value greater than 0.\cr\cr
+For a circular ROI, points in the buffered area have a buffer value of 1. For a rectangular
+ROI the points in the buffer area have a buffer value of 1, 2, 3 or 4. 1 being the bottom
+buffer and 2, 3 and 4 being respectively the left, top and right buffer.
+}
+
+\section{Multicore computation}{
+
+The process is done using several cores. To change the setting of how a catalog is processed
+use \link{catalog_options}.
+}
+
 \examples{
 \dontrun{
-# Global option to display a progressbar
-lidr_option(progress = TRUE)
-
 # Build a Catalog
 catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 
@@ -52,10 +71,19 @@ catalog \%>\% catalog_queries(X, Y, R)
 
 # Return a List of 30 square LAS objects of 50x50 m
 catalog \%>\% catalog_queries(X, Y, R, R)
+
+# Return a List of 30 circular LAS objects of 30 m radius. 25 m being the ROI and 5 m
+# being a buffered area. The LAS objects have an extra column called 'buffer' to
+# differentiate the points
+catalog \%>\% catalog_queries(X, Y, R, buffer = 5)
+
+# Return a List of 30 circular LAS objects of 25 m radius for which only the field X Y and
+# Z have been loaded and Z values < 0 where removed.
+catalog \%>\% catalog_queries(X, Y, R, XYZonly = TRUE, filter = "-drop_z_below 0")
 }
 }
 \seealso{
-\link[lidR:readLAS]{readLAS}
-\link[lidR:catalog]{Catalog}
-\link[lidR:catalog_queries]{catalog_queries}
+\link{readLAS}
+\link{catalog}
+\link{catalog_options}
 }

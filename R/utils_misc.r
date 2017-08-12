@@ -107,7 +107,7 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   X$name        = 1:nrow(X)
 
   # Remove cluster outside the catalog
-  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2))
+  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, ""))
   keep     = sapply(lasindex$tiles, length) > 0
   X = X[keep,]
 
