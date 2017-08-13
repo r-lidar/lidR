@@ -58,7 +58,8 @@
 #' @aliases catalog_apply
 #' @param ctg A \link[lidR:catalog]{Catalog} object
 #' @param func A user's function for which the first input is a LAS object.
-#' @param ... optionnal extra arguments for the user's defined function
+#' @param args A list of extra argments to pass in the function 'func'
+#' @param ... Any argument avaible in \link{readLAS} to reduce the amount of data loaded.
 #' @examples
 #' # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 #' # version of this example.
@@ -138,8 +139,12 @@
 #' # Evering thing is now well defined, let process over an entiere catalog whith
 #' # hundred of files (but here a single one for the example...)
 #'
-#' # 4. Process the project.
-#' output = catalog_apply(project, tree_area, lake = lake_shp)
+#' # 4. Process the project. The arguments of the user's function must
+#' # belong in a labelled list. We also pass extra agurment to the function readLAS
+#' # to load only X Y and Z coordinates. This way we save a huge amount of memory wich
+#' # is useful for the current process.
+#' fargs = list(lake = lake_shp)
+#' output = catalog_apply(project, tree_area, fargs, XYZonly = TRUE)
 #'
 #' # 5. Post process the output result (depend on what is the output). Here each values
 #' # of the list is a data.table, so rbindlist makes the job
@@ -147,7 +152,7 @@
 #'
 #' output %$% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
 #' @export
-catalog_apply = function(ctg, func, ...)
+catalog_apply = function(ctg, func, func_args, ...)
 {
   ti      <- Sys.time()
   ncores  <- CATALOGOPTIONS("multicore")
@@ -159,11 +164,11 @@ catalog_apply = function(ctg, func, ...)
   ctg_clusters <- catalog_makecluster(ctg, res, buffer, by_file)
   ctg_clusters <- apply(ctg_clusters, 1, as.list)
 
-  output <- catalog_apply_internal(ctg, ctg_clusters, func, ncores, ...)
+  output <- catalog_apply_internal(ctg, ctg_clusters, func, func_args, ncores, ...)
   return(output)
 }
 
-catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
+catalog_apply_internal = function(ctg, clusters, func, func_args, ncores, ...)
 {
   if (length(clusters) < ncores)
     ncores = length(clusters)
@@ -173,7 +178,7 @@ catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
   # Computations done within sequential or parallel loop in .getMetrics
   if (ncores == 1)
   {
-    output = lapply(clusters, .cluster_apply_func, func = func, ctg = ctg, ...)
+    output = lapply(clusters, .cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
   }
   else
   {
@@ -187,7 +192,7 @@ catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
     parallel::clusterExport(cl, varlist, envir)
     parallel::clusterEvalQ(cl, library("lidR"))
 
-    output = parallel::parLapply(cl, clusters, fun = .cluster_apply_func, func = func, ctg = ctg, ...)
+    output = parallel::parLapply(cl, clusters, fun = .cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
     parallel::stopCluster(cl)
   }
 
@@ -198,7 +203,7 @@ catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
 }
 
 
-.cluster_apply_func = function(ctg_cluster, func, ctg, ...)
+.cluster_apply_func = function(ctg_cluster, func, ctg, func_args, ...)
 {
   X <- Y <- NULL
 
@@ -215,7 +220,7 @@ catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
   buffer  = ctg_cluster$xrightbuff - ctg_cluster$xright
 
   # Extract the ROI as a LAS object
-  las = catalog_queries_internal(ctg, xcenter, ycenter, width, width, buffer, name, "", 1, FALSE, all = TRUE)[[1]]
+  las = catalog_queries_internal(ctg, xcenter, ycenter, width, width, buffer, name, "", 1, FALSE, ...)[[1]]
 
   # Skip if the ROI fall in a void area
   if (is.null(las)) return(NULL)
@@ -235,5 +240,5 @@ catalog_apply_internal = function(ctg, clusters, func, ncores, ...)
   }
 
   # Call the function
-  return(func(las, ...))
+  return(do.call(func, c(las, func_args)))
 }
