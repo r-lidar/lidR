@@ -26,6 +26,7 @@ Major changes are mainly:
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 * `as.raster` relies both on the fast former code from v1.2.0 to return a RasterLayer and the new code from v1.2.1 to return a RasterStack. This change enable for a faster results in most cases
+* `catalog` can build a catalog from a set of paths to files instead a path to a folder.
 
 #### BUG FIXES
 
