@@ -43,21 +43,23 @@
 catalog = function(folder, ...)
 {
   if (!is.character(folder))
-    lidRError("GTG1")
+    stop("'folder' must be a character string")
 
-  if (!dir.exists(folder))
-    lidRError("CTG2")
+  finfo <- file.info(folder)
 
-  verbose("Looking for las or laz files...")
-
-  files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
+  if (all(!finfo$isdir))
+    files <- folder
+  else if (!dir.exists(folder))
+    stop(paste(folder, " does not exist"))
+  else
+    files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
   verbose("Reading files...")
 
   headers <- lapply(files, function(x)
   {
-    header = rlas::readlasheader(x)
-    header$`Variable Length Records` = NULL
+    header <- rlas::readlasheader(x)
+    header$`Variable Length Records` <- NULL
     return(as.data.frame(header))
   })
 
@@ -65,7 +67,7 @@ catalog = function(folder, ...)
   headers$filename <- files
   rownames(headers) <- NULL
 
-  class(headers) = append("Catalog", class(headers))
+  class(headers) <- append("Catalog", class(headers))
 
   return(headers)
 }

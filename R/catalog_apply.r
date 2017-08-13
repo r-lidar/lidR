@@ -66,9 +66,8 @@
 #' # splitting it in several pieces to process even using sevral cores.
 #'
 #' # 1. build a project (here a single file catalog for the need of the example).
-#' folder <- system.file("extdata", "", package="lidR")
-#' project = catalog(folder)
-#' project = project[1,]
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' project = catalog(LASfile)
 #' plot(project)
 #'
 #' # 2. set some global catalog options
