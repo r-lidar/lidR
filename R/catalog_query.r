@@ -130,10 +130,9 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 
 catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
 {
-  tiles <-
   nplots <- length(x)
   shape  <- .LIDRRECTANGLE
-  pbar   <- NULL
+  tiles  <- pbar <- NULL
 
   if (is.null(r2))
     shape <- .LIDRCIRCLE
@@ -200,9 +199,9 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
   ybottom <- y - r2
   ytop    <- y + r2
 
-  if (shape == .LIDRCIRCLE)
+  if (shape == LIDRCIRCLE)
     clip_filter = paste("-inside_circle", x, y, r)
-  else if (shape == .LIDRRECTANGLE)
+  else if (shape == LIDRRECTANGLE)
     clip_filter = paste("-inside", xleft, ybottom, xright, ytop)
   else
     stop("Something went wrong internaly in .get_query(). Process aborted.")
@@ -223,10 +222,10 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
     }
     else
     {
-      las@data[Y < ybottom + buff, buffer := 1]
-      las@data[X < xleft   + buff, buffer := 2]
-      las@data[Y > ytop    - buff, buffer := 3]
-      las@data[X > xright  - buff, buffer := 4]
+      las@data[Y < ybottom + buff, buffer := LIDRBOTTOMBUFFER]
+      las@data[X < xleft   + buff, buffer := LIDRLEFTBUFFER]
+      las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
+      las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
     }
   }
 
