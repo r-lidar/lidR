@@ -30,15 +30,15 @@
 
 #' Reshape (retile) a catalog
 #'
-#' The function split or merge files to reshape original files (las or laz) of a catalog
-#' in smaller or bigger files. The new files are written in a dedicated folder. The function
-#' first display the pattern of the new tiling and asks the user to validate the command.
+#' This function splits or merges files to reshape the original catolog files (.las or .laz)
+#' into smaller or bigger files. The new files are written in a dedicated folder. The function
+#' first displays the pattern of the new tiling and then asks the user to validate the command.
 #'
 #' @param ctg  A \link[lidR:catalog]{Catalog} object
 #' @param size scalar. The size of the new tiles
-#' @param path string. The folder where to save the new files
+#' @param path string. The folder where the new files should be saved
 #' @param prefix character. The initial part of the name of the written files
-#' @param ext character. Format of the written files. Can be "las" or "laz".
+#' @param ext character. Format of the written files. Can be ".las" or ".laz".
 #'
 #' @return A new catalog object
 #' @seealso \link{catalog}
@@ -47,7 +47,7 @@
 #' \dontrun{
 #' ctg = catalog("path/to/catalog")
 #'
-#' # Will create a new set of las files 500 by 500 wide in the folder
+#' # Will create a new set of .las files 500 by 500 wide in the folder
 #' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
 #' # Forest_3.las and so on.
 #' newctg = catalog_reshape(ctg, 500, "path/to/new/catalog", "Forest_")
@@ -77,7 +77,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   files <- list.files(path, pattern = "(?i)\\.la(s|z)$")
 
   if(length(files) > 0)
-    stop("The output folder already contains las or laz files. Operation aborted.")
+    stop("The output folder already contains .las or .laz files. Operation aborted.")
 
   ti = Sys.time()
 
@@ -137,19 +137,19 @@ reshape_func = function(cluster, ctg, path, prefix, ext)
             PointSourceID = TRUE,
             pulseID = FALSE)[[1]]
 
-  # Skip if the ROI fall in a void area
+  # Skip if the ROI falls in a void area
   if (is.null(las))
     return(NULL)
 
-  # Because catalog_queries keep point inside the boundingbox (close interval) but point which
-  # are exactly on the boundaries are counted twice. Here a post-process to make an open
-  # interval on left and bottom edge of the boudingbox.
+  # Catalog_queries keep points inside the boundingbox (close interval), but points that
+  # are exactly on the boundaries are counted twice. Here is a post-process to make an open
+  # interval on the left and bottom edges of the boundingbox.
   n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
 
   if (n > 0)
     las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
 
-  # Very unprobable but who knows...
+  # Very unlikely but who knows...
   if (is.null(las))
     return(NULL)
 
