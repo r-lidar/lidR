@@ -33,6 +33,14 @@ fast_countover <- function(x, t) {
     .Call(lidR_fast_countover, x, t)
 }
 
+knn <- function(X, Y, x, y, k) {
+    .Call(lidR_knn, X, Y, x, y, k)
+}
+
+knnidw <- function(X, Y, Z, x, y, k) {
+    .Call(lidR_knnidw, X, Y, Z, x, y, k)
+}
+
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
     .Call(lidR_MorphologicalOpening, X, Y, Z, resolution, displaybar)
 }

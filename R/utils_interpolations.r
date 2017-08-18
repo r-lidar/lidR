@@ -67,15 +67,16 @@ interpolate = function(points, coord, method, k, model)
 
 interpolate_knnidw = function(points, coord, k)
 {
-  . <- X <- Y <- NULL
+  #nn = RANN::nn2(points[, .(X,Y)], coord[, .(X,Y)], k = k)
+  #nn = knn(points$X, points$Y, coord$X, coord$Y, k)
+  #dx = nn$nn.idx
+  #w = 1/nn$nn.dist
+  #w = ifelse(is.infinite(w), 1e8, w)
+  #z = matrix(points[as.numeric(idx)]$Z, ncol = dim(w)[2])
 
-  nn = RANN::nn2(points[, .(X,Y)], coord[, .(X,Y)], k = k)
-  idx = nn$nn.idx
-  w = 1/nn$nn.dist
-  w = ifelse(is.infinite(w), 1e8, w)
-  z = matrix(points[as.numeric(idx)]$Z, ncol = dim(w)[2])
+  z = knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k)
 
-  return(rowSums(z*w)/rowSums(w))
+  return(z)
 }
 
 interpolate_kriging = function(points, coord, model, k)
