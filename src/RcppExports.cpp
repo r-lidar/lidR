@@ -114,6 +114,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// knn
+Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
+RcppExport SEXP lidR_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(knn(X, Y, x, y, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// knnidw
+NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k);
+RcppExport SEXP lidR_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(knnidw(X, Y, Z, x, y, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MorphologicalOpening
 NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
 RcppExport SEXP lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
