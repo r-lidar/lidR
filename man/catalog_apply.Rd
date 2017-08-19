@@ -40,7 +40,8 @@ on the metric being computed, some output results could appear several times.\cr
 The LAS object received by the user-defined function has a special column called 'buffer_side'
 which indicates, for each point, if it comes from a buffered area or not. Points
 from non-buffered areas have a 'buffer_side' value of zero, while points from buffered areas
-have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the #' left, top and right buffers, respectively (see example).
+have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the
+left, top and right buffers, respectively (see example).
 }
 
 \examples{
