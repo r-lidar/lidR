@@ -21,38 +21,38 @@ is provided, the selection turns into a rectangular ROI (if r = r2 it is a squar
 
 \item{buffer}{numeric. Add a buffer area around the ROI. See relevant sections.}
 
-\item{roinames}{vector. A set of ROI names (the ID of the plots, for example) to label the
+\item{roinames}{vector. A set of ROI names (the plot IDs, for example) to label the
 returned list.}
 
-\item{...}{Any argument avaible in \link{readLAS} to reduce the amount of data loaded.}
+\item{...}{Any argument available in \link{readLAS} to reduce the amount of data loaded.}
 }
 \value{
 A list of LAS objects
 }
 \description{
-From a set of (x, y) coordinates corresponding to a the centers of regions of interest (ROI),
-a ground inventory for example, the function automatically extract the lidar data associated
+From a set of (x, y) coordinates corresponding to the centers of regions of interest (ROIs),
+for example a ground inventory, the function automatically extracts the lidar data associated
 with the ROIs from a \link{catalog}. The algorithm will do this even for ROIs falling on
 the edges of one or more tiles. The extracted lidar data can be buffered. In this case the
-function add a buffer area around the ROI and the LAS object returned have an extra column
-named '\code{buffer}' which state for each point if the point is a point in the buffer or
-from the ROI (see more in section Buffer).
+function adds a buffer area around the ROIs, and the LAS object returned has an extra column
+named '\code{buffer}' which indicates, for each point, if the point is in the buffer or
+from the ROI (see more in the section Buffer).
 }
 \section{Buffer}{
 
 If the ROIs are buffered then the LAS objects returned by the function have extra points.
-The LAS objects received by the user have a special colum called 'buffer' which enable,
-for each point, to know if the point comes from a buffered areas or not. Points
-from not buffered areas (the ROI) have a 'buffer' value of 0 while points from buffered
-areas have a 'buffer' value greater than 0.\cr\cr
+The LAS objects received by the user contain a special column called 'buffer', which indicates,
+for each point, if it comes from a buffered area or not. Points from non-buffered areas (i.e. 
+the ROI) have a 'buffer' value of 0, while those from buffered areas have a 'buffer' value 
+greater than 0.\cr\cr
 For a circular ROI, points in the buffered area have a buffer value of 1. For a rectangular
-ROI the points in the buffer area have a buffer value of 1, 2, 3 or 4. 1 being the bottom
-buffer and 2, 3 and 4 being respectively the left, top and right buffer.
+ROI the points in the buffer area have a buffer value of 1, 2, 3 or 4, where 1 is the bottom
+buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
 }
 
 \section{Multicore computation}{
 
-The process is done using several cores. To change the setting of how a catalog is processed
+The process is done using several cores. To change the settings of how a catalog is processed
 use \link{catalog_options}.
 }
 
@@ -77,8 +77,8 @@ catalog \%>\% catalog_queries(X, Y, R, R)
 # differentiate the points
 catalog \%>\% catalog_queries(X, Y, R, buffer = 5)
 
-# Return a List of 30 circular LAS objects of 25 m radius for which only the field X Y and
-# Z have been loaded and Z values < 0 where removed.
+# Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
+# Z have been loaded and Z values < 0 were removed.
 catalog \%>\% catalog_queries(X, Y, R, XYZonly = TRUE, filter = "-drop_z_below 0")
 }
 }
