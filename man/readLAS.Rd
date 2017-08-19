@@ -4,65 +4,50 @@
 \alias{readLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, Intensity = TRUE, ReturnNumber = TRUE,
-  NumberOfReturns = TRUE, ScanDirectionFlag = FALSE,
-  EdgeOfFlightline = FALSE, Classification = TRUE, ScanAngle = TRUE,
-  UserData = FALSE, PointSourceID = FALSE, RGB = TRUE, pulseID = TRUE,
-  flightlineID = FALSE, color = TRUE, XYZonly = FALSE, all = FALSE,
-  filter = "")
+readLAS(files, select = "xyztinrcaRGB", filter = "", ...)
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
 
-\item{Intensity}{logical. do you want to load the Intensity field? default: TRUE}
+\item{select}{character. select only columns of interest to save memory (see details)}
 
-\item{ReturnNumber}{logical. do you want to load the ReturnNumber field? default: TRUE}
+\item{filter}{character. streaming filters - filter data while reading the file (see details)}
 
-\item{NumberOfReturns}{logical. do you want to load the NumberOfReturns field? default: TRUE}
-
-\item{ScanDirectionFlag}{logical. do you want to load the ScanDirectionFlag field? default: FALSE}
-
-\item{EdgeOfFlightline}{logical. do you want to load the EdgeOfFlightline field? default: FALSE}
-
-\item{Classification}{logical. do you want to load the Classification field? default: TRUE}
-
-\item{ScanAngle}{logical. do you want to load the ScanAngle field? default: TRUE}
-
-\item{UserData}{logical. do you want to load the UserData field? default: FALSE}
-
-\item{PointSourceID}{logical. do you want to load the PointSourceID field? default: FALSE}
-
-\item{RGB}{logical. do you want to load R,G and B fields? default: TRUE}
-
-\item{pulseID}{logical. do you want to compute the extra field \link[lidR:laspulse]{pulseID}? default: TRUE}
-
-\item{flightlineID}{logical. do you want to compute the extra field \link[lidR:lasflightline]{flightlineID}? default: FALSE}
-
-\item{color}{logical. do you want to compute the extra field \link[lidR:lascolor]{color}? default: FALSE}
-
-\item{XYZonly}{logical. Overwrite all other options. Load only X, Y, Z fields. default: FALSE}
-
-\item{all}{logical. Overwrite all other options. Load everything. default: FALSE}
-
-\item{filter}{character. filter data while reading the file (streaming filter) without
-allocating any additional memory. (see \link[rlas:readlasdata]{rlas::readlasdata}).}
+\item{...}{compatibility with former arguments from lidR (<= 1.2.1)}
 }
 \value{
 A LAS object
 }
 \description{
-Read .las or .laz files in format 1 to 4 according to LAS specification and return an object of class LAS
+Read .las or .laz files in format 1 to 3 according to LAS specification and return an
+object of class LAS. If several files are given the returned LAS object is considered
+as one LAS file. The information retained in the header will be read from the first file
+in the list. The optional parameters enable the user to save a lot of memory by choosing
+to load only fields or points requiered. These internal options are much more memory efficient
+than any other R code.
 }
 \details{
-If several files are given the returned LAS object is considered as one LAS file.
-The information retained in the header will be read from the first file in the list.
-The optional logical parameters enable the user to save memory by choosing to load only the fields they need. Indeed,
-the readLAS function does not 'stream' the data. Data is loaded into the
-computer's memory (RAM) suboptimally because R does not accommodate many different data types.
+The 'select' argument specifies which data will actually be loaded. For example, 'xyzia'
+means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
+The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
+r - return number, c - classification, u - user data, p - point source ID, e - edge of
+flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
+channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enable
+to load everythings. \cr
+x, y, z are implicite and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
+equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicite than
+\code{select = ""}\cr\cr
+The 'filter' argument enable to filter the point cloud while reading. This is much more
+efficient than \link{lasfilter} in many ways. If the desired filters are known before to read
+the file, the internal filters should always be prefered. The avaible filters are those
+from \code{LASlib} and can be found running the following command: rlas:::lasfilterusage()
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
+las = readLAS(LASfile, select = "xyz")
+las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
+las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}

@@ -21,6 +21,7 @@ Major changes are mainly:
 
 #### OTHER CHANGES
 
+* `readLAS` arguments changed. The new syntax is simpler. The former syntax is still supported but raise a warning for deprecated usages.
 * `catalog_queries` is no longer an exported function. It is now an internal function.
 * `plot.Catalog` accept for usual `plot` arguments
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
