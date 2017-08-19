@@ -119,7 +119,7 @@ QuadTree* QuadTree::create(const std::vector<double> x, const std::vector<double
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
 
-  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range);
+  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range*1.01);
 
   for(int i = 0 ; i < n ; i++)
   {
@@ -320,7 +320,8 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
 
   std::sort(pts.begin(), pts.end(), DistanceFunc(p));
 
-  for (int i = 0 ; i < k ; i++) res.push_back(pts[i]);
+  for (int i = 0 ; i < k ; i++)
+    res.push_back(pts[i]);
 
   return;
 }
