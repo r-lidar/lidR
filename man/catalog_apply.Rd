@@ -2,27 +2,29 @@
 % Please edit documentation in R/catalog_apply.r
 \name{catalog_apply}
 \alias{catalog_apply}
-\title{Apply a user defined function to an entire catalog in a continuous way}
+\title{Apply a user-defined function to an entire catalog in a continuous way}
 \usage{
-catalog_apply(ctg, func, ...)
+catalog_apply(ctg, func, func_args, ...)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{Catalog} object}
 
 \item{func}{A user's function for which the first input is a LAS object.}
 
-\item{...}{optionnal extra arguments for the user's defined function}
+\item{func_args}{A list of extra arguments to pass in the function 'func'}
+
+\item{...}{Any argument available in \link{readLAS} to reduce the amount of data loaded.}
 }
 \description{
-This function enable to apply a user defined routine over an entiere catalog using a multi-core
-process. When a user has a dataset organized into several files, it applies a user defined
-function to the entiere catalog by automatically splitting the catalog into several clusters.
-The clustering pattern can be either split as a set of squared areas or can be split by file.
-The clustering pattern can be modified using the global catalog options with \link{catalog_options}.
-The "Examples" section describes the procedure to apply functions to the catalog, beginning
+This function enables application of a user-defined routine over an entire catalog using a
+multi-core process. When a user has a dataset organized into several files, it applies the
+user-defined function to the entire catalog by automatically splitting it into several
+clusters. The clustering pattern can be either split into a set of squared areas or split by
+file. The clustering pattern can be modified using the global catalog options with \link{catalog_options}.
+The "Examples" section describes the procedure for applying functions to the catalog, beginning
 with data loading (see example). \cr\cr
-\strong{Warning:} there is a buffer mechanism to load buffered data and to avoid edge artifacts
-but no mechnism to remove the buffer after applying the user defined functions since this task.
+\strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
+but no mechanism to remove the buffer after applying user-defined functions, since this task
 is very specific to each process. See section "Edge artifacts".
 }
 \section{Edge artifacts}{
@@ -30,40 +32,40 @@ is very specific to each process. See section "Edge artifacts".
 
 It is very important to take precautions to avoid 'edge artifacts' when processing LiDAR
 tiles. If the points from neighboring tiles are not included during certain processes,
-this could create 'edge artifacts' at the edges of the tiles. For example, empty or incomplete
+this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
 pixels in a rasterization process. The lidR package provides internal tools to load buffered
-data. However there is not mechanism to remove the results computed in the buffered area
-since this task depends on the output of the user defined function. Therefore, depending
-on what the user is computing some outputs results can appear several time.\cr\cr
-The LAS object received by the user defined function has a special colum called 'buffer_side'
-which enable, for each point, to know if the point comes from a buffered areas or not. Points
-from not buffered areas have a 'buffer_side' of zero while points from buffered areas have
-a 'buffer_side' of 1, 2, 3 or 4. 1 being the bottom buffer and 2, 3 and 4 being respectively
-the left, top and right buffer (see example).
+data. However there is no mechanism to remove the results computed in the buffered area
+since this task depends on the output of the user-defined function. Therefore, depending
+on the metric being computed, some output results could appear several times.\cr\cr
+The LAS object received by the user-defined function has a special column called 'buffer_side'
+which indicates, for each point, if it comes from a buffered area or not. Points
+from non-buffered areas have a 'buffer_side' value of zero, while points from buffered areas
+have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the #' left, top and right buffers, respectively (see example).
 }
 
 \examples{
 # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 # version of this example.
-# This example is a dummy exemple. It is more efficient to load the entiere file than
-# splitting it in several pieces to process even using sevral cores.
+# This is a dummy example. It is more efficient to load the entire file than
+# splitting it into several pieces to process, even when using several cores.
 
-# 1. build a project (here a single file catalog for the need of the example).
+# 1. Build a project (here, a single file catalog for the purposes of this example).
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project = catalog(LASfile)
 plot(project)
 
-# 2. set some global catalog options
-# For the need of this dummy example the clustering size is 80 m and the buffer is 15 m using
-# a single core (because this example is ran on CRAN server when package is submitted).
+# 2. Set some global catalog options
+# For this dummy example, the clustering size is 80 m and the buffer is 15 m using
+# a single core (because this example is run on the CRAN server when the package is submitted).
 catalog_options(buffer = 15, multicore = 1, tiling_size = 80)
 
-# 3. load the shapefile you need to filter your points.
+# 3. Load the shapefile needed to filter your points.
 lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 
-# 4. build the function which analyses each cluster of the catalog.
-# This function first argument is a LAS object. The internal routine take care of feeding this
-# function. The other arguments can be freely choosen by the user. See the following template:
+# 4. Build the function which analyses each cluster of the catalog.
+# The function's first argument is a LAS object. The internal routine takes care of feeding
+# this function. The other arguments can be freely choosen by the user. See the following
+# template:
 tree_area = function(las, lake)
 {
   # The las argument is a LAS object with each field loaded and an extra column 'buffer'
@@ -75,29 +77,29 @@ tree_area = function(las, lake)
   las \%<>\% lasfilter(lake == FALSE, Z > 4)
 
   # segment trees (in this example the low point density does not enable
-  # to segment tree properly. This is just a proof of concept)
+  # accurate segmentation of trees. This is just a proof-of-concept)
   lastrees(las, algorithm = "li2012")
 
   # Here we used the function tree_metric to compute some metrics for each tree. This
-  # function is defined later in the global environnement.
+  # function is defined later in the global environment.
   m = tree_metrics(las, myMetrics(X, Y, Z, buffer))
 
-  # If min buffer is 0 it means the trees were at least parlty in the non buffered area so we
-  # want to keep this trees.
-  # In an other hand the trees wich are on the edge of the buffered area will be counted
+  # If min buffer is 0 it means the trees were at least partly in the non-buffered area, so we
+  # want to keep these trees.
+  # However, the trees that are on the edge of the buffered area will be counted
   # twice. So we must remove the tree on the left side and on the bottom side of the buffer
-  # If max buffer is <= 2 it means that the trees belong inside the area of interest or in
-  # the left side or in the bottom side or both
+  # If max buffer is <= 2 it means that the trees belong inside the area of interest, on
+  # the left side or the bottom side, or both.
   m = m[minbuff == 0 & maxbuff <= 2]
 
-  # Remove buffering information which are no longer usefull
+  # Remove buffering information that is no longer useful
   m[, c("minbuff","maxbuff") := NULL]
 
   return(m)
 }
 
-# This function enable to extract, for a single tree, the position of the highest point and
-# some informations about the buffing position of the tree. The function tree_metrics take
+# This function enables users to extract, for a single tree, the position of the highest point
+# and some information about the buffering position of the tree. The function tree_metrics takes
 # care of mapping along each tree.
 myMetrics <- function(x, y, z, buff)
 {
@@ -118,14 +120,18 @@ myMetrics <- function(x, y, z, buff)
     ))
 }
 
-# Evering thing is now well defined, let process over an entiere catalog whith
-# hundred of files (but here a single one for the example...)
+# Everything is now well defined, so now we can process over an entire catalog with
+# hundreds of files (but for this example we'll use just one file...)
 
-# 4. Process the project.
-output = catalog_apply(project, tree_area, lake = lake_shp)
+# 4. Process the project. The arguments of the user's function must
+# belong in a labelled list. We also pass extra arguments to the function readLAS
+# to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
+# can be used for the current process.
+fargs = list(lake = lake_shp)
+output = catalog_apply(project, tree_area, fargs, XYZonly = TRUE)
 
-# 5. Post process the output result (depend on what is the output). Here each values
-# of the list is a data.table, so rbindlist makes the job
+# 5. Post-process the output result (depending on the output computed). Here, each value
+# of the list is a data.table, so rbindlist does the job:
 output = data.table::rbindlist(output)
 
 output \%$\% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)

@@ -29,10 +29,10 @@
 
 #' Apply a user-defined function to an entire catalog in a continuous way
 #'
-#' This function enables application of a user-defined routine over an entire catalog using a 
-#' multi-core process. When a user has a dataset organized into several files, it applies the 
-#' user-defined function to the entire catalog by automatically splitting it into several 
-#' clusters. The clustering pattern can be either split into a set of squared areas or split by 
+#' This function enables application of a user-defined routine over an entire catalog using a
+#' multi-core process. When a user has a dataset organized into several files, it applies the
+#' user-defined function to the entire catalog by automatically splitting it into several
+#' clusters. The clustering pattern can be either split into a set of squared areas or split by
 #' file. The clustering pattern can be modified using the global catalog options with \link{catalog_options}.
 #' The "Examples" section describes the procedure for applying functions to the catalog, beginning
 #' with data loading (see example). \cr\cr
@@ -51,13 +51,14 @@
 #' on the metric being computed, some output results could appear several times.\cr\cr
 #' The LAS object received by the user-defined function has a special column called 'buffer_side'
 #' which indicates, for each point, if it comes from a buffered area or not. Points
-#' from non-buffered areas have a 'buffer_side' value of zero, while points from buffered areas 
-#' have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the #' left, top and right buffers, respectively (see example).
+#' from non-buffered areas have a 'buffer_side' value of zero, while points from buffered areas
+#' have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the
+#' left, top and right buffers, respectively (see example).
 #'
 #' @aliases catalog_apply
 #' @param ctg A \link[lidR:catalog]{Catalog} object
 #' @param func A user's function for which the first input is a LAS object.
-#' @param args A list of extra arguments to pass in the function 'func'
+#' @param func_args A list of extra arguments to pass in the function 'func'
 #' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.
 #' @examples
 #' # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
@@ -79,8 +80,8 @@
 #' lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 #'
 #' # 4. Build the function which analyses each cluster of the catalog.
-#' # The function's first argument is a LAS object. The internal routine takes care of feeding 
-#' # this function. The other arguments can be freely choosen by the user. See the following 
+#' # The function's first argument is a LAS object. The internal routine takes care of feeding
+#' # this function. The other arguments can be freely choosen by the user. See the following
 #' # template:
 #' tree_area = function(las, lake)
 #' {
@@ -114,7 +115,7 @@
 #'   return(m)
 #' }
 #'
-#' # This function enables users to extract, for a single tree, the position of the highest point 
+#' # This function enables users to extract, for a single tree, the position of the highest point
 #' # and some information about the buffering position of the tree. The function tree_metrics takes
 #' # care of mapping along each tree.
 #' myMetrics <- function(x, y, z, buff)
