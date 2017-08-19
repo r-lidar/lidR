@@ -231,6 +231,8 @@ void QuadTree::subdivide()
 
 void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, const int method)
 {
+  std::cout << "bb(" <<  bb.center.x - bb.half_res.x << "," << bb.center.y - bb.half_res.x << "," << bb.center.x + bb.half_res.x << "," << bb.center.y + bb.half_res.x << ")" << std::endl;
+
   if(!boundary.intersects(bb))
     return;
 
@@ -305,9 +307,13 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
   // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
   double radius = std::sqrt((double)k / (density * 3.14));
 
+  std::cout << "radius = " << radius << std::endl;
+
   Point p(cx, cy);
   std::vector<Point*> pts;
 
+  std::cout << "p(" << p.x << "," << p.y << ")" << std::endl;
+  std::cout << "bb(" <<  boundary.center.x - boundary.half_res.x << "," << boundary.center.y - boundary.half_res.x << "," << boundary.center.x + boundary.half_res.x << "," << boundary.center.y + boundary.half_res.x << ")" << std::endl;
   // Get at least k point within a circle
   int n = 0;
   while (n < k)
@@ -316,11 +322,18 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
     circle_lookup(p.x, p.y, radius, pts);
     n = pts.size();
     radius *= 1.5;
+
+    std::cout << "n = " << n << std::endl;
+
+    for(int j = 0 ; j < pts.size() ; j++)
+      std::cout << "p(" << pts[j]->x << "," << pts[j]->y << "," << pts[j]->id << ")" << std::endl;
   }
 
   std::sort(pts.begin(), pts.end(), DistanceFunc(p));
 
   for (int i = 0 ; i < k ; i++) res.push_back(pts[i]);
+
+  //std::cout << "p(" << res[0]->x << "," << res[0]->y << ")" << std::endl;
 
   return;
 }
