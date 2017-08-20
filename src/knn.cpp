@@ -77,8 +77,6 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
     std::vector<Point*> pts;
     tree->knn_lookup(x[i], y[i], k, pts);
 
-    Rcout << "x = " << x[i] << " y = " << y[i] << std::endl;
-
     double sum_zw = 0;
     double sum_w  = 0;
 
@@ -89,8 +87,6 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
       double d  = std::sqrt(dx*dx + dy*dy);
       double w;
       double z = Z[pts[j]->id];
-
-      Rcout << "    x = " << pts[j]->x << " y = " << pts[j]->y << " d = " << d << std::endl;
 
       if (d > 0)
       {

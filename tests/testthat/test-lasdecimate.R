@@ -7,7 +7,7 @@ test_that("lasdecimate returns an error if pulseID not found", {
 })
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, pulseID = T)
+las = readLAS(LASfile)
 
 test_that("lasdecimate homogenize works", {
   lasdec = lasdecimate(las, density = 0.5, res = 5)
