@@ -2,14 +2,18 @@
 % Please edit documentation in R/grid_density.r
 \name{grid_density}
 \alias{grid_density}
-\title{Pulse density surface model}
+\title{Map the pulse or point density}
 \usage{
-grid_density(x, res = 4)
+grid_density(x, res = 4, filter = "")
 }
 \arguments{
 \item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.}
+
+\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
+If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
+user cannot manipulate the lidar data himself but can use streaming filters instead.}
 }
 \value{
 It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
@@ -17,11 +21,11 @@ RasterLayer casting.
 }
 \description{
 Creates a pulse density map using a LiDAR cloud of points. This function is an alias
-for \code{grid_metrics(obj, f, res} with \code{f} = \code{length(unique(pulseID))/res^2)}
+for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
 }
 \section{Use with a \code{Catalog}}{
 
-When the parameter \code{x} is a catalog the function will process the entiere dataset
+When the parameter \code{x} is a catalog the function processes the entiere dataset
 in a continuous way using a multicore process. Parallel computing is set by defaut to
 the number of core avaible in the computer. No buffer is requiered. The user can modify
 the global options using the function \link{catalog_options}.

@@ -29,35 +29,40 @@
 
 #' Canopy surface model
 #'
-#' Creates a canopy surface model using a LiDAR point cloud. For each pixel the
-#' function returns the highest point found. This basic method could be improved by replacing
-#' each LiDAR return with a small disk. An interpolation for empty pixels is also available.
+#' Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
+#' returns the highest point found (point-to-raster). This basic method could be improved
+#' by replacing each LiDAR return with a small disk. An interpolation for empty pixels is
+#' also available.
 #'
-#' The algorithm relies on the 'local maximum'. For each pixel the function returns the highest
-#' point found. This method implies that the resulting surface model can contain empty pixels.
-#' Those 'holes' can be filled by interpolation. Internally, the interpolation is based on the same method
-#' used in the function \link[lidR:grid_terrain]{grid_terrain}. Therefore the
-#' documentation for \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.
-#' (see also examples)
+#' The algorithm relies on a point-to-raster approach. For each pixel the elevation of the
+#' highest point is found and attributed to this pixel. This method implies that the resulting
+#' surface model can contain empty pixels. Those 'holes' can be filled by interpolation.
+#' Internally, the interpolation is based on the same method used in the function
+#' \link[lidR:grid_terrain]{grid_terrain}. Therefore the' documentation for
+#' \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.(see also
+#' examples)\cr\cr
+#' The 'subcircle' tweak replace each point by 8 points around the original one. This enable
+#' to virtualy 'emulate' the fact that a lidar point is not actually a point but more realisticly
+#' a spot. This tweak densify the point cloud and the resulting canopy model is smotther with
+#' fewer 'pits' and empty pixels.
 #'
 #' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a catalog the function will process the entiere dataset
+#' When the parameter \code{x} is a \link{Catalog} the function processes the entiere dataset
 #' in a continuous way using a multicore process. Parallel computing is set by defaut to
-#' the number of core avaible in the computer. A small buffer is requiered.
-#' The user can modify the global options using the function \link{catalog_options}.
+#' the number of core avaible in the computer. The user can modify the global options using
+#' the function \link{catalog_options}.
 #'
 #' @aliases  grid_canopy
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 #' 2 meters i.e. 4 square meters.
-#' @param subcircle numeric radius of the circles. To obtain fewer empty pixels the algorithm
-#' can replace each return with a circle composed of 8 points before computing the maximum elevation
-#' in each pixel.
+#' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
+#' can replace each return with a circle composed of 8 points (see details).
 #' @param na.fill character. name of the algorithm used to interpolate the data and fill the empty pixels.
 #' Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).
 #' @param ... extra parameters for the algorithm used to interpolate the empty pixels (see details)
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
 #' user cannot manipulate the lidar data himself but can use streaming filters instead.
 #' @return It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
 #' RasterLayer casting.
@@ -153,11 +158,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
 {
-  buffer  = CATALOGOPTIONS("buffer")
-  by_file = CATALOGOPTIONS("by_file")
-
-  canopy = grid_catalog(x, grid_canopy, res, filter, buffer, by_file,
-                        subcircle = subcircle, na.fill = na.fill, ...)
+  canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 
   return(canopy)
 }
