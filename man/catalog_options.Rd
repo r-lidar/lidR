@@ -3,7 +3,7 @@
 \name{catalog_options}
 \alias{catalog_options}
 \alias{catalog_reset}
-\title{Set or get global options for \link{catalog} tools}
+\title{Options Settings for the \link{catalog} tools}
 \usage{
 catalog_options(...)
 
@@ -14,29 +14,33 @@ catalog_reset()
 options.}
 }
 \description{
-Set or get global options for \link{catalog} tools
+Allow the user to set and examine a variety of global options that affect the way in which
+lidR process an entire catalog.
 }
 \section{Supported options}{
 
 The following options are supported:
 \itemize{
- \item{\code{return_virtual_raster} (logical) functions which return raster-alike
+ \item{\code{buffer} (numeric) - When applying a function to an entiere catalog
+ processing sequentially sub-areas (clusters) some algotihms (such as \link{grid_terrain})
+ requiere a buffer around the area to avoid edge effects. Default is 15 m.}
+ \item{\code{multicore} (numeric) - For parallel processes, fix the number of
+ core to use. Default is the number of core you have.}
+ \item{\code{tiling_size} (numeric) - To process an entiere catalog, the algorithm split the
+ dataset in several square sub-areas (clusters) to process them sequentially. This is the
+ size of each square cluster. Default is 1000 (1 km^2).}
+ \item{\code{by_file} (logical) - This option overwrite the option \code{tiling_size}. Instead
+ of processing the catalog by arbitrary split areas, it forces to process by file. Buffering
+ is still avaible.}
+ \item{\code{return_virtual_raster} (logical) - Functions which return raster-alike
  data such as \link{grid_metrics}, \link{grid_terrain} and other \code{grid_*} functions
  may return huge amount of data for large catalog or hight resolution (typically
- \code{grid_terrain} with a resolution of 1 meter). Switching this options enable to
- store the data on the hard disk and return a light weight virtual raster mosaic.}
- \item{\code{buffer} (numeric) when applying a function to an entiere catalog
- processing sequentially sub-areas some algotihms (such as \link{grid_terrain}) requiere
- a buffer around the area. Default is 30 m.}
- \item{\code{multicore} (numeric) for parallel processes, fix the number of
- core to use. Default is the number of core you have.}
- \item{\code{memory_limit_warning} (numeric) when applying a function to an entiere
- catalog, an internal function try to estimate the size of the output before to run the
+ \code{grid_terrain} with a resolution of 1 meter). Switching this options to \code{TRUE}
+ enable to store the data on the hard disk and return a light weight virtual raster mosaic.}
+ \item{\code{memory_limit_warning} (numeric) - When applying a function to an entiere
+ catalog, an internal function tries to estimate the size of the output before to run the
  algorithm in attempt to prevent memory overflow. This value (in bytes) is the threshold
- before to get a warning. Set to \code{Inf} to disable.},
- \item{\code{tiling_size} (numeric) to process an entiere catalog, the algorithm split the
- dataset in several squqre subareas to process them sequentially. This is the size of a square.
- Defaul is 1000 (1 km^2).}
+ before to get a warning. Default is 5e8 (500 Mb). Set to \code{Inf} to disable.}
  }
 }
 
