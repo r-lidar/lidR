@@ -42,8 +42,8 @@ from the ROI (see more in the section Buffer).
 
 If the ROIs are buffered then the LAS objects returned by the function have extra points.
 The LAS objects received by the user contain a special column called 'buffer', which indicates,
-for each point, if it comes from a buffered area or not. Points from non-buffered areas (i.e. 
-the ROI) have a 'buffer' value of 0, while those from buffered areas have a 'buffer' value 
+for each point, if it comes from a buffered area or not. Points from non-buffered areas (i.e.
+the ROI) have a 'buffer' value of 0, while those from buffered areas have a 'buffer' value
 greater than 0.\cr\cr
 For a circular ROI, points in the buffered area have a buffer value of 1. For a rectangular
 ROI the points in the buffer area have a buffer value of 1, 2, 3 or 4, where 1 is the bottom

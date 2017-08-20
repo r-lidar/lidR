@@ -39,8 +39,8 @@
 #' @section Buffer:
 #' If the ROIs are buffered then the LAS objects returned by the function have extra points.
 #' The LAS objects received by the user contain a special column called 'buffer', which indicates,
-#' for each point, if it comes from a buffered area or not. Points from non-buffered areas (i.e. 
-#' the ROI) have a 'buffer' value of 0, while those from buffered areas have a 'buffer' value 
+#' for each point, if it comes from a buffered area or not. Points from non-buffered areas (i.e.
+#' the ROI) have a 'buffer' value of 0, while those from buffered areas have a 'buffer' value
 #' greater than 0.\cr\cr
 #' For a circular ROI, points in the buffered area have a buffer value of 1. For a rectangular
 #' ROI the points in the buffer area have a buffer value of 1, 2, 3 or 4, where 1 is the bottom
@@ -131,11 +131,11 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
 {
   nplots <- length(x)
-  shape  <- .LIDRRECTANGLE
+  shape  <- LIDRRECTANGLE
   tiles  <- pbar <- NULL
 
   if (is.null(r2))
-    shape <- .LIDRCIRCLE
+    shape <- LIDRCIRCLE
 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
@@ -216,7 +216,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
   {
     las@data[, buffer := 0]
 
-    if (shape == .LIDRCIRCLE)
+    if (shape == LIDRCIRCLE)
     {
       las@data[(X-x)^2 + (Y-y)^2 > (r-buff)^2, buffer := 1]
     }
