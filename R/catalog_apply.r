@@ -77,6 +77,7 @@
 #' catalog_options(buffer = 15, multicore = 1, tiling_size = 80)
 #'
 #' # 3. Load the shapefile needed to filter your points.
+#' folder <- system.file("extdata", "", package="lidR")
 #' lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 #'
 #' # 4. Build the function which analyses each cluster of the catalog.
