@@ -46,11 +46,11 @@
 #' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #'
-#' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a catalog the function will process the entiere dataset
-#' in a continuous way using a multicore process. Parallel computing is set by defaut to
-#' the number of core avaible in the computer. A buffer is requiered.
-#' The user can modify the global options using the function \link{catalog_options}.
+#' @section Use with a \link{catalog}:
+#' When the parameter \code{x} is a \link[lidR:Catalog]{catalog} the function processes the
+#' entiere dataset in a continuous way using a multicore process. Parallel computing is set
+#' by defaut to the number of core avaible in the computer. A buffer is requiered to avoid
+#' edge artifacts. The user can modify the global options using the function \link{catalog_options}.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
 #' @param res numeric. resolution.
@@ -143,10 +143,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
 #' @export
 grid_terrain.Catalog = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-  buffer  = CATALOGOPTIONS("buffer")
-  by_file = CATALOGOPTIONS("by_file")
+  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "-keep_class 2", method = method, k = k, model = model, keep_lowest = keep_lowest)
 
-  terrain = grid_catalog(x, grid_terrain, res, "-keep_class 2", buffer, by_file,
-                         method = method, k = k, model = model, keep_lowest = keep_lowest)
   return(terrain)
 }

@@ -25,11 +25,14 @@
 #
 # ===============================================================================
 
-grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
+grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
+  # ========================================
   # Store some stuff in readable variables
+  # ========================================
+
   callparam = list(...)
   funcname  = lazyeval::expr_text(grid_func)
   exportdir = tempdir() %+%  "/" %+% funcname %+% "/"
@@ -38,15 +41,14 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
   numcores  = CATALOGOPTIONS("multicore")
   savevrt   = CATALOGOPTIONS("return_virtual_raster")
   memlimwar = CATALOGOPTIONS("memory_limit_warning")
+  buffer    = CATALOGOPTIONS("buffer")
+  by_file   = CATALOGOPTIONS("by_file")
 
-  # Tweak to enable non-standard evaluation of 'func' in grid_metrics-alike functions
-  if (!is.null(callparam$func)) {
-    if (is.call(callparam$func))
-      callparam$func = as.expression(callparam$func)
-  }
-
+  # ========================================
   # Test of memory to prevent memory overflow
-  surface = sum(with(ctg, (Max.X - Min.X) * (Max.Y - Min.Y)))
+  # ========================================
+
+  surface = sum(with(catalog, (Max.X - Min.X) * (Max.Y - Min.Y)))
   npixel  = surface / (res*res)
   nmetric = 3 # Must find a way to access this number
   nbytes  = npixel * nmetric * 8
@@ -70,8 +72,12 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
       return(invisible())
   }
 
-  # Create a pattern of clusters to be sequentially processed
-  ctg_clusters = catalog_makecluster(ctg, res, buffer, by_file)
+  # ========================================
+  # Create a pattern of clusters to be
+  # sequentially processed
+  # ========================================
+
+  ctg_clusters = catalog_makecluster(catalog, res, buffer, by_file)
   ctg_clusters = apply(ctg_clusters, 1, as.list)
 
   # Add the path to the saved file (if saved)
@@ -81,8 +87,27 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
     return(x)
   })
 
-  # Enable progress bar
-  if (progress) p = utils::txtProgressBar(max = length(ctg_clusters), style = 3)
+  # =========================================
+  # Some settings
+  # =========================================
+
+  # Tweak to enable non-standard evaluation
+  if (!is.null(callparam$func))
+  {
+    if (is.call(callparam$func))
+      callparam$func = as.expression(callparam$func)
+  }
+
+  # Enable progress bar working even with multicore
+  if (progress)
+  {
+    pfile = tempfile()
+    write(0, pfile)
+    pbar  = utils::txtProgressBar(max = length(ctg_clusters), style = 3)
+    attr(pbar, "file") = pfile
+  }
+  else
+    pbar = NULL
 
   # Create or clean the temporary directory
   if (savevrt)
@@ -93,18 +118,37 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
       unlink(exportdir, recursive = TRUE) ; dir.create(exportdir)
   }
 
-  # Computations done within sequential or parallel loop in .getMetrics
+  # ========================================
+  # Computation over the entire catalog
+  # ========================================
+
   if (numcores == 1)
   {
     verbose("Computing sequentially the metrics for each cluster...")
-    output = lapply(ctg_clusters, apply_grid_func, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = callparam, save_tiff = savevrt, p = p)
+    output = lapply(ctg_clusters, FUN = apply_grid_func,
+                    grid_func = grid_func,
+                    catalog   = catalog,
+                    res       = res,
+                    param     = callparam,
+                    save_tiff = savevrt,
+                    p         = pbar,
+                    filter    = filter,
+                    select    = select)
   }
   else
   {
     verbose("Computing in parallel the metrics for each cluster...")
     cl = parallel::makeCluster(numcores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, ctg_clusters, fun = apply_grid_func, grid_func = grid_func, ctg = ctg, res = res, filter = filter, param = callparam, save_tiff = savevrt, p = p)
+    output = parallel::parLapply(cl, ctg_clusters, fun = apply_grid_func,
+                                 grid_func = grid_func,
+                                 catalog   = catalog,
+                                 res       = res,
+                                 param     = callparam,
+                                 save_tiff = savevrt,
+                                 p         = pbar,
+                                 filter    = filter,
+                                 select    = select)
     parallel::stopCluster(cl)
   }
 
@@ -137,7 +181,7 @@ grid_catalog <- function(ctg, grid_func, res, filter, buffer, by_file, ...)
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res
 # @param p progressbar.
-apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save_tiff, p)
+apply_grid_func = function(ctg_cluster, grid_func, catalog, res, param, save_tiff, p, filter, select, ...)
 {
   X <- Y <- NULL
 
@@ -151,12 +195,14 @@ apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save
   xcenter = ctg_cluster$xcenter
   ycenter = ctg_cluster$ycenter
   width   = (ctg_cluster$xrightbuff - ctg_cluster$xleftbuff)/2
+  buffer  =  ctg_cluster$xrightbuff - xright
 
   # Extract the ROI as a LAS object
-  las = catalog_queries(ctg, xcenter, ycenter, width, width, name, filter, disable_bar = T, no_multicore = T)[[1]]
+  las = catalog_queries_internal(catalog, xcenter, ycenter, width, width, buffer, name, 1, FALSE, filter = filter, select = select)[[1]]
 
   # Skip if the ROI fall in a void area
-  if (is.null(las)) return(NULL)
+  if (is.null(las))
+    return(NULL)
 
   # Because catalog_queries keep point inside the boundingbox (close interval) but point which
   # are exactly on the boundaries are counted twice. Here a post-process to make an open
@@ -164,7 +210,8 @@ apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save
   las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
 
   # Very unprobable but who knows...
-  if (is.null(las)) return(NULL)
+  if (is.null(las))
+    return(NULL)
 
   # Call the function
   param$x = las
@@ -178,8 +225,10 @@ apply_grid_func = function(ctg_cluster, grid_func, ctg, res, filter, param, save
   # Update progress bar
   if (!is.null(p))
   {
-    i = utils::getTxtProgressBar(p) + 1
+    pfile = attr(p, "file")
+    i = data.table::fread(pfile)$V1 + 1
     utils::setTxtProgressBar(p, i)
+    write(i, pfile)
   }
 
   # Return results or write file

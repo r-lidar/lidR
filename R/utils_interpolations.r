@@ -49,12 +49,12 @@ interpolate = function(points, coord, method, k, model)
 
   if (method == "knnidw")
   {
-    cat("[using inverse distance weighting]\n")
+    verbose("[using inverse distance weighting]\n")
     return(interpolate_knnidw(points, coord, k))
   }
   else if (method == "delaunay")
   {
-    cat("[using Delaunay triangulation]\n")
+    verbose("[using Delaunay triangulation]\n")
     return(interpolate_delaunay(points, coord))
   }
   else if (method == "kriging")

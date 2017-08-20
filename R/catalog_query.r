@@ -117,18 +117,13 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 
   ncores   = CATALOGOPTIONS("multicore")
   progress = LIDROPTIONS("progress")
-  filter   = ""
 
-  param = list(...)
-  if (!is.null(param$filter))
-    filter = param$filter
-
-  output = catalog_queries_internal(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
+  output = catalog_queries_internal(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
 
   return(output)
 }
 
-catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, ncores, progress, ...)
+catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
 {
   nplots <- length(x)
   shape  <- LIDRRECTANGLE
@@ -167,7 +162,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
 
   # Computation
   if (ncores == 1)
-    output = lapply(queries, .get_query, shape, filter, pbar, ...)
+    output = lapply(queries, .get_query, shape, filter, p = pbar, ...)
   else
   {
     cl = parallel::makeCluster(ncores, outfile = "")
@@ -234,8 +229,6 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, filter, 
     i = utils::getTxtProgressBar(p) + 1
     utils::setTxtProgressBar(p, i)
   }
-  else
-    cat(sprintf("%s ", query$roinames))
 
   output = list(NULL)
   names(output) <- query$roinames
