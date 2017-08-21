@@ -46,11 +46,11 @@ to manipulate but it is also the most advanced method for interpolating spatial 
 }
 \section{Use with a \link{catalog}}{
 
-When the parameter \code{x} is a \link[lidR:Catalog]{catalog} the function processes the
+When the parameter \code{x} is a \link[lidR:catalog]{Catalog} the function processes the
 entiere dataset in a continuous way using a multicore process. Parallel computing is set
 by defaut to the number of core avaible in the computer. A buffer is requiered to avoid
 edge artifacts. The user can modify the global options using the function \link{catalog_options}.\cr\cr
-\code{lidR} support .lax file. You will speed-up \empah{a lot} the computation with a spatial
+\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
 index.
 }
 

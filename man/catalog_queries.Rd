@@ -37,7 +37,7 @@ the edges of one or more tiles. The extracted lidar data can be buffered. In thi
 function adds a buffer area around the ROIs, and the LAS object returned has an extra column
 named '\code{buffer}' which indicates, for each point, if the point is in the buffer or
 from the ROI (see more in the section Buffer).\cr\cr
-\code{lidR} support .lax file. You will speed-up \empah{a lot} the computation with a spatial
+\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
 index.
 }
 \section{Buffer}{
