@@ -38,7 +38,9 @@
 #' with data loading (see example). \cr\cr
 #' \strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
 #' but no mechanism to remove the buffer after applying user-defined functions, since this task
-#' is very specific to each process. See section "Edge artifacts".
+#' is very specific to each process. See section "Edge artifacts".\cr\cr
+#' \code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
+#' index.
 #'
 #' @section Edge artifacts:
 #'

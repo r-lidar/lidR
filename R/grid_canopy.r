@@ -47,10 +47,12 @@
 #' fewer 'pits' and empty pixels.
 #'
 #' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a \link{Catalog} the function processes the entiere dataset
+#' When the parameter \code{x} is a \link{catalog} the function processes the entiere dataset
 #' in a continuous way using a multicore process. Parallel computing is set by defaut to
 #' the number of core avaible in the computer. The user can modify the global options using
-#' the function \link{catalog_options}.
+#' the function \link{catalog_options}.\cr\cr
+#' \code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
+#' index.
 #'
 #' @aliases  grid_canopy
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")

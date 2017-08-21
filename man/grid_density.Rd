@@ -28,7 +28,9 @@ for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID
 When the parameter \code{x} is a catalog the function processes the entiere dataset
 in a continuous way using a multicore process. Parallel computing is set by defaut to
 the number of core avaible in the computer. No buffer is requiered. The user can modify
-the global options using the function \link{catalog_options}.
+the global options using the function \link{catalog_options}.\cr\cr
+\code{lidR} support .lax file. You will speed-up \empah{a lot} the computation with a spatial
+index.
 }
 
 \examples{
