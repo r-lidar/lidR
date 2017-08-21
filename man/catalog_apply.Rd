@@ -4,7 +4,7 @@
 \alias{catalog_apply}
 \title{Apply a user-defined function to an entire catalog in a continuous way}
 \usage{
-catalog_apply(ctg, func, func_args, ...)
+catalog_apply(ctg, func, func_args = NULL, ...)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{Catalog} object}

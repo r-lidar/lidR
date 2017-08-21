@@ -164,12 +164,12 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
 
   # Computation
   if (ncores == 1)
-    output = lapply(queries, .get_query, shape, filter, p = pbar, ...)
+    output = lapply(queries, .get_query, shape, p = pbar, ...)
   else
   {
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, queries, .get_query, shape, filter, NULL, ...)
+    output = parallel::parLapply(cl, queries, .get_query, shape, p = pbar, ...)
     parallel::stopCluster(cl)
   }
 
@@ -179,7 +179,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   return(output)
 }
 
-.get_query = function(query, shape, filter, p = NULL, ...)
+.get_query = function(query, shape, p = NULL, ...)
 {
   X <- Y <- buffer <- NULL
 
@@ -196,17 +196,25 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   ybottom <- y - r2
   ytop    <- y + r2
 
+  param = list(...)
+
   if (shape == LIDRCIRCLE)
-    clip_filter = paste("-inside_circle", x, y, r)
+    filter = paste("-inside_circle", x, y, r)
   else if (shape == LIDRRECTANGLE)
-    clip_filter = paste("-inside", xleft, ybottom, xright, ytop)
+    filter = paste("-inside", xleft, ybottom, xright, ytop)
   else
     stop("Something went wrong internaly in .get_query(). Process aborted.")
 
   # Merge spatial filter with user's filters
-  filter = paste(clip_filter, filter)
+  if (!is.null(param$filter))
+    filter = paste(filter, param$filter)
 
-  las = readLAS(tiles, filter = filter, ...)
+  if (!is.null(param$select))
+    select = param$select
+  else
+    select = "*"
+
+  las = readLAS(tiles, filter = filter, select =  select)
 
   # Add information about the buffer
   if (query$buffer > 0)

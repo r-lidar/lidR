@@ -156,88 +156,84 @@
 #'
 #' output %$% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
 #' @export
-catalog_apply = function(ctg, func, func_args, ...)
+catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
-  ti      <- Sys.time()
-  ncores  <- CATALOGOPTIONS("multicore")
-  buffer  <- CATALOGOPTIONS("buffer")
-  by_file <- CATALOGOPTIONS("by_file")
-  res     <- 1
+  ncores   <- CATALOGOPTIONS("multicore")
+  buffer   <- CATALOGOPTIONS("buffer")
+  by_file  <- CATALOGOPTIONS("by_file")
+  res      <- 1
 
-  # Create a pattern of clusters to be sequentially processed
-  ctg_clusters <- catalog_makecluster(ctg, res, buffer, by_file)
-  ctg_clusters <- apply(ctg_clusters, 1, as.list)
+  clusters <- catalog_makecluster(ctg, res, buffer, by_file)
+  clusters <- apply(clusters, 1, as.list)
 
-  output <- catalog_apply_internal(ctg, ctg_clusters, func, func_args, ncores, ...)
-  return(output)
+  return(catalog_apply_internal(ctg, clusters, func, func_args, ncores, ...))
 }
 
-catalog_apply_internal = function(ctg, clusters, func, func_args, ncores, ...)
+catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, ...)
 {
-  if (length(clusters) < ncores)
-    ncores = length(clusters)
-
   ti <- Sys.time()
 
-  # Computations done within sequential or parallel loops in .getMetrics
+  if (length(clusters) < ncores)
+    ncores <- length(clusters)
+
   if (ncores == 1)
-  {
-    output = lapply(clusters, .cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
-  }
+     output <- lapply(clusters, cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
   else
   {
     cat("Begin parallel processing... \n")
     cat("Num. of cores:", ncores, "\n\n")
 
-    varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment()))
-    envir   = environment()
+    varlist <- c(utils::lsf.str(envir = globalenv()), ls(envir = environment()))
+    envir   <- environment()
 
-    cl = parallel::makeCluster(ncores, outfile = "")
+    cl <- parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist, envir)
     parallel::clusterEvalQ(cl, library("lidR"))
 
-    output = parallel::parLapply(cl, clusters, fun = .cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
+    output <- parallel::parLapply(cl, clusters, fun = cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
     parallel::stopCluster(cl)
   }
 
-  tf = Sys.time()
+  tf <- Sys.time()
+
   cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
   return(output)
 }
 
 
-.cluster_apply_func = function(ctg_cluster, func, ctg, func_args, ...)
+cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
 {
   X <- Y <- NULL
 
   # Variables for readability
-  xleft   = ctg_cluster$xleft
-  xright  = ctg_cluster$xright
-  ybottom = ctg_cluster$ybottom
-  ytop    = ctg_cluster$ytop
-  name    = "ROI" %+% ctg_cluster$name
-  path    = ctg_cluster$path
-  xcenter = ctg_cluster$xcenter
-  ycenter = ctg_cluster$ycenter
-  width   = (xright - xleft)/2
-  buffer  = ctg_cluster$xrightbuff - ctg_cluster$xright
+  xleft   <- cluster$xleft
+  xright  <- cluster$xright
+  ybottom <- cluster$ybottom
+  ytop    <- cluster$ytop
+  name    <- "ROI" %+% cluster$name
+  path    <- cluster$path
+  xcenter <- cluster$xcenter
+  ycenter <- cluster$ycenter
+  width   <- (xright - xleft)/2
+  buffer  <- cluster$xrightbuff - cluster$xright
 
   # Extract the ROI as a LAS object
-  las = catalog_queries_internal(ctg, xcenter, ycenter, width, width, buffer, name, "", 1, FALSE, ...)[[1]]
+  las <- catalog_queries_internal(ctg, xcenter, ycenter, width, width, buffer, name, 1, FALSE, ...)[[1]]
 
   # Skip if the ROI falls in a void area
-  if (is.null(las)) return(NULL)
+  if (is.null(las))
+    return(NULL)
 
   # Catalog_queries keep points inside the boundingbox (close interval), while points that
   # are exactly on the boundaries are counted twice. Here is a post-process to make an open
   # interval on the left and bottom edges of the boundingbox.
   if (buffer == 0)
   {
-    n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
+    n <- fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
 
     if (n > 0)
-      las = suppressWarnings(lasfilter(las, X = xleft, Y > ybottom))
+      las <- suppressWarnings(lasfilter(las, X = xleft, Y > ybottom))
 
     if (is.null(las))
       return(NULL)
