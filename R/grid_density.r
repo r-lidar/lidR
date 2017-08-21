@@ -36,7 +36,9 @@
 #' When the parameter \code{x} is a catalog the function processes the entiere dataset
 #' in a continuous way using a multicore process. Parallel computing is set by defaut to
 #' the number of core avaible in the computer. No buffer is requiered. The user can modify
-#' the global options using the function \link{catalog_options}.
+#' the global options using the function \link{catalog_options}.\cr\cr
+#' \code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
+#' index.
 #'
 #' @aliases grid_density
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
