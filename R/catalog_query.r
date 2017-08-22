@@ -137,8 +137,16 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
 
+  # Enable progress bar working even with multicore
   if (progress)
-    pbar <- utils::txtProgressBar(max = nplots, style = 3)
+  {
+    pfile = tempfile()
+    write(0, pfile)
+    pbar  = utils::txtProgressBar(max = length(ctg_clusters), style = 3)
+    attr(pbar, "file") = pfile
+  }
+  else
+    pbar = NULL
 
   if (nplots <= ncores)
     ncores = nplots
@@ -216,6 +224,9 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
 
   las = readLAS(tiles, filter = filter, select =  select)
 
+  if (is.null(las))
+    return(NULL)
+
   # Add information about the buffer
   if (query$buffer > 0)
   {
@@ -234,10 +245,13 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     }
   }
 
+  # Update progress bar
   if (!is.null(p))
   {
-    i = utils::getTxtProgressBar(p) + 1
+    pfile = attr(p, "file")
+    i = data.table::fread(pfile)$V1 + 1
     utils::setTxtProgressBar(p, i)
+    write(i, pfile)
   }
 
   output = list(NULL)
