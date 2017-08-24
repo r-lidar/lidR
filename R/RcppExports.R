@@ -65,3 +65,7 @@ tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
     .Call(`_lidR_tsearch`, x, y, elem, xi, yi, diplaybar)
 }
 
+update_list_by_ref <- function(x, name, value) {
+    invisible(.Call(`_lidR_update_list_by_ref`, x, name, value))
+}
+

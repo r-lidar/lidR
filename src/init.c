@@ -24,6 +24,7 @@ extern SEXP _lidR_points_in_polygons(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_tsearch(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_knn(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_knnidw(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _lidR_update_list_by_ref(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_algo_li2012",          (DL_FUNC) &_lidR_algo_li2012,          7},
@@ -42,6 +43,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_tsearch",              (DL_FUNC) &_lidR_tsearch,              6},
     {"_lidR_knn",                  (DL_FUNC) &_lidR_knn,                  5},
     {"_lidR_knnidw",               (DL_FUNC) &_lidR_knnidw,               6},
+    {"_lidR_update_list_by_ref",   (DL_FUNC) &_lidR_update_list_by_ref,   3},
     {NULL, NULL, 0}
 };
 

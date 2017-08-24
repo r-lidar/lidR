@@ -28,7 +28,10 @@ A \code{lasmetrics} data.table.
 \description{
 Interpolate ground points and create a rasterized digital terrain model. The interpolation
 can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
-details). The algorithm uses the points classified as "ground" to compute the interpolation.
+details). The algorithm uses the points classified as "ground" to compute the interpolation.\cr
+Depending on the interpolation method, the edges of the dataset can be more or less poorly
+interpolated. A buffer around the region of interest is always recommended to avoid edge
+effects.
 }
 \details{
 \describe{
@@ -36,8 +39,9 @@ details). The algorithm uses the points classified as "ground" to compute the in
 an inverse distance weighting (IDW). This is a fast but basic method for spatial
 data interpolation.}
 \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-interpolation within each triangle. Note that with this method no extrapolation is done
-outside of the convex hull determined by the ground points.}
+interpolation within each triangle. There are usually few cells outside the convex hull,
+determined by the ground points at the very edge of the dataset which cannot be interpolated
+with a triangulation. Extrapolation is done using knnidw.}
 \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
 function. This method combines the KNN approach with the kriging approach. For each point of interest
 it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult

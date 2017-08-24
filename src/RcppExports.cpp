@@ -231,3 +231,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// update_list_by_ref
+void update_list_by_ref(Rcpp::List x, CharacterVector name, double value);
+RcppExport SEXP _lidR_update_list_by_ref(SEXP xSEXP, SEXP nameSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type name(nameSEXP);
+    Rcpp::traits::input_parameter< double >::type value(valueSEXP);
+    update_list_by_ref(x, name, value);
+    return R_NilValue;
+END_RCPP
+}

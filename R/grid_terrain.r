@@ -31,15 +31,19 @@
 #'
 #' Interpolate ground points and create a rasterized digital terrain model. The interpolation
 #' can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
-#' details). The algorithm uses the points classified as "ground" to compute the interpolation.
+#' details). The algorithm uses the points classified as "ground" to compute the interpolation.\cr
+#' Depending on the interpolation method, the edges of the dataset can be more or less poorly
+#' interpolated. A buffer around the region of interest is always recommended to avoid edge
+#' effects.
 #'
 #' \describe{
 #' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 #' an inverse distance weighting (IDW). This is a fast but basic method for spatial
 #' data interpolation.}
 #' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-#' interpolation within each triangle. Note that with this method no extrapolation is done
-#' outside of the convex hull determined by the ground points.}
+#' interpolation within each triangle. There are usually few cells outside the convex hull,
+#' determined by the ground points at the very edge of the dataset which cannot be interpolated
+#' with a triangulation. Extrapolation is done using knnidw.}
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
 #' function. This method combines the KNN approach with the kriging approach. For each point of interest
 #' it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
@@ -96,31 +100,50 @@ grid_terrain = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sp
 #' @export
 grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-  . <- X <- Y <- Z <- NULL
+  . <- X <- Y <- Z <- Classification <- NULL
+
+  # ========================
+  # Select the ground points
+  # ========================
 
   verbose("Selecting ground points...")
 
-  ground = suppressWarnings(lasfilterground(x))
+  if (!"Classification" %in% names(x@data))
+    stop("LAS object does not contain 'Classification' data")
 
-  if (is.null(ground))
+  ground = x@data[Classification == LASGROUND, .(X,Y,Z)]
+
+  if (nrow(ground) == 0)
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
 
-  ground  = ground@data[, .(X,Y,Z)]
+  # =================================
+  # Find where to interpolate the DTM
+  # =================================
 
   verbose("Generating interpolation coordinates...")
+
+  # All the coordinates in the extent
 
   ext  = extent(x)
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
 
+  # Keep only those in the convex hull of the point
+  # Otherwise algorithms are able to extrapolate the terrain
+
   hull = convex_hull(x$X, x$Y)
 
-  # buffer around convex hull
   sphull = sp::Polygon(hull)
   sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-  hull = rgeos::gBuffer(sphull, width = res)
+  hull = rgeos::gBuffer(sphull, width = 0.5*res)
   hull = hull@polygons[[1]]@Polygons[[1]]@coords
 
-  grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
+  keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
+
+  grid = grid[keep]
+
+  # =======================
+  # Interpolate the terrain
+  # =======================
 
   verbose("Interpolating ground points...")
 

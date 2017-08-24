@@ -4,8 +4,8 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm = NULL, method = "none", k = 10L,
-  model = gstat::vgm(0.59, "Sph", 874))
+lasnormalize(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
+  "Sph", 874), copy = FALSE)
 }
 \arguments{
 \item{.las}{a LAS object}
@@ -22,17 +22,41 @@ method is either \code{"knnidw"} or \code{"kriging"}}
 \item{model}{Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
 when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
 squares prediction.}
+
+\item{copy}{By default the point cloud is updated in place by reference. User can force
+the function to return a new point cloud. Set TRUE to get a compatibility with versions < 1.3.0}
 }
 \value{
-A \code{LAS} object
+The function returns NULL. The LAS object is updated by reference. Z is now the normalized
+elevation, A new column 'Zref' records the former elevations values. This is a way to save memory
+avoiding copies of the point cloud. But if \code{copy = TRUE}, a new LAS object is returned and the
+original one is not modified.
 }
 \description{
-Subtract digital terrain model (DTM) from LiDAR data to create a dataset
-normalized with the ground at 0. The DTM can originate from
-several sources e.g. from an external file or computed by the user. It can also be computed
-on the fly. In this case the algorithm does not use rasterized data and each point is
-interpolated. There is no inacuracy due to the discretization of the terrain (but it is
-slower).
+Subtract digital terrain model (DTM) from LiDAR data to create a dataset normalized with
+the ground at 0. The DTM can originate from several sources e.g. from an external file or
+computed by the user. It can also be computed on the fly. In this case the algorithm does
+not use rasterized data and each point is interpolated. There is no inacuracy due to the
+discretization of the terrain the resolution of the terrain is virtually infinite (but
+it is slower).\cr
+Depending on the interpolation method, the edges of the dataset can be more or less poorly
+interpolated. A buffer around the region of interest is always recommended to avoid edge
+effects.
+}
+\details{
+\describe{
+\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
+an inverse distance weighting (IDW). This is a fast but basic method for spatial
+data interpolation.}
+\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
+interpolation within each triangle. There are usually few points outside the convex hull,
+determined by the ground points at the very edge of the dataset which cannot be interpolated
+with a triangulation. Extrapolation is done using knnidw.}
+\item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
+function. This method combines the KNN approach with the kriging approach. For each point of interest
+it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
+to manipulate but it is also the most advanced method for interpolating spatial data. }
+}
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -44,14 +68,16 @@ plot(las)
 # (or read it from a file)
 
 dtm = grid_terrain(las, method = "kriging", k = 10L)
-nlas = lasnormalize(las, dtm)
+lasnormalize(las, dtm)
+
 plot(dtm)
-plot(nlas)
+plot(las)
 
 # --- Second option: interpolate each point (no discretization) ---
+las = readLAS(LASfile)
 
-nlas = lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
-plot(nlas)
+lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+plot(las)
 }
 \seealso{
 \link[raster:raster]{raster}
