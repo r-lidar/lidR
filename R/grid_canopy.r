@@ -128,7 +128,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
     ex = extent(x)
     grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
-    hull = convex_hull(x$X, x$Y)
+    hull = convex_hull(x@data$X, x@data$Y)
 
     # buffer around convex hull
     sphull = sp::Polygon(hull)
