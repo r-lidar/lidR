@@ -142,7 +142,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   {
     pfile = tempfile()
     write(0, pfile)
-    pbar  = utils::txtProgressBar(max = length(ctg_clusters), style = 3)
+    pbar  = utils::txtProgressBar(max = nplots, style = 3)
     attr(pbar, "file") = pfile
   }
   else
