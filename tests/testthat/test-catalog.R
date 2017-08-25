@@ -21,6 +21,6 @@ test_that("catalog queries works", {
   expect_equal(length(req), 2)
   expect_true(is(req[[1]], "LAS"))
   expect_true(is(req[[2]], "LAS"))
-  expect_equal(diff(range(req[[1]]$X)), 2*r, tolerance = .5)
-  expect_equal(diff(range(req[[1]]$Y)), 2*r, tolerance = .5)
+  expect_equal(diff(range(req[[1]]@data$X)), 2*r, tolerance = .5)
+  expect_equal(diff(range(req[[1]]@data$Y)), 2*r, tolerance = .5)
 })

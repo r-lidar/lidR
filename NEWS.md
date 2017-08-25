@@ -41,7 +41,7 @@ Major changes are mainly:
 
 * `grid_terrain` with delaunay allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
 * `grid_terrain` with knnidw allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
-
+* `lasnormalize` and `lasclassify` do not rely on `raster::extract` anymore but on internal `fast_extract` which is memory efficient and more than 15 times faster.
 
 ### lidR v1.2.1 (Release data: 2017-06-12)
 
