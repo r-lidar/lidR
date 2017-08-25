@@ -1,9 +1,10 @@
 library(lidR)
-library(profvis)
+library(lineprof)
 
 las = readLAS("~/Documents/Haliburton dataset/Landscape LiDAR/CN_683_5016.las")
 
 dtm = grid_terrain(las, method = "delaunay")
+
 l = profvis(lasnormalize(las, dtm))
 l
 
@@ -14,10 +15,10 @@ l
 
 # v1.3.0
 # minors issues
-# - as.raster is the bottleneck (but function is more than 15 times faster than v1.2.1)
+# - as.raster is now the bottleneck (but function is more than 15 times faster than v1.2.1)
 
 l = profvis(lasnormalize(las, method = "delaunay"))
-shine(l)
+l
 
 # v1.2.1
 # major issues:

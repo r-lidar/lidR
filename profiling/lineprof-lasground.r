@@ -7,7 +7,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 
 l = profvis(lasground(las))
-shine(l)
+l
 
 # v1.2.1
 # major issues
