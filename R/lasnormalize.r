@@ -117,7 +117,11 @@ lasnormalize = function(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(.5
     if(!is(dtm, "RasterLayer"))
       stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
 
-    Zground = raster::extract(dtm, .las@data[, .(X,Y)])
+    xres = raster::res(dtm)[1]
+    xmin = dtm@extent@xmin
+    ymin = dtm@extent@ymin
+    dtm  = raster::as.matrix(dtm)
+    Zground = fast_extract(dtm, .las@data$X, .las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
 
     isna = is.na(Zground)
     nnas = sum(isna)

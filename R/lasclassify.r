@@ -207,10 +207,14 @@ classify_from_rasterlayer = function(.las, raster, field = NULL)
 {
   . <- X <- Y <- info <- NULL
 
-  if (is.null(field)) field = lazyeval::expr_label(raster)
+  if (is.null(field))
+    field = lazyeval::expr_label(raster)
 
-  values = raster::extract(raster, .las@data[, .(X,Y)])
-
+  xres = raster::res(raster)[1]
+  xmin = raster@extent@xmin
+  ymin = raster@extent@ymin
+  m  = raster::as.matrix(raster)
+  values = fast_extract(m, .las@data$X, .las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
   return(values)
 }
 

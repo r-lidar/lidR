@@ -33,6 +33,10 @@ fast_countover <- function(x, t) {
     .Call(`_lidR_fast_countover`, x, t)
 }
 
+fast_extract <- function(r, x, y, xmin, ymin, res) {
+    .Call(`_lidR_fast_extract`, r, x, y, xmin, ymin, res)
+}
+
 knn <- function(X, Y, x, y, k) {
     .Call(`_lidR_knn`, X, Y, x, y, k)
 }

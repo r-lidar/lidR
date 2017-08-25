@@ -14,6 +14,7 @@ extern SEXP _lidR_fast_countbelow(SEXP, SEXP);
 extern SEXP _lidR_fast_countequal(SEXP, SEXP);
 extern SEXP _lidR_fast_countover(SEXP, SEXP);
 extern SEXP _lidR_fast_table(SEXP, SEXP);
+extern SEXP _lidR_fast_extract(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_tinfo(SEXP, SEXP);
 extern SEXP _lidR_itc_expandcrowns(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_itc_treetops(SEXP, SEXP);
@@ -33,6 +34,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countequal",      (DL_FUNC) &_lidR_fast_countequal,      2},
     {"_lidR_fast_countover",       (DL_FUNC) &_lidR_fast_countover,       2},
     {"_lidR_fast_table",           (DL_FUNC) &_lidR_fast_table,           2},
+    {"_lidR_fast_extract",         (DL_FUNC) &_lidR_fast_extract,         6},
     {"_lidR_tinfo",                (DL_FUNC) &_lidR_tinfo,                2},
     {"_lidR_itc_expandcrowns",     (DL_FUNC) &_lidR_itc_expandcrowns,     5},
     {"_lidR_itc_treetops",         (DL_FUNC) &_lidR_itc_treetops,         2},

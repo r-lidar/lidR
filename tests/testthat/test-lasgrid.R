@@ -64,30 +64,30 @@ test_that("grid in grid_metric is appropriated even with start", {
 test_that("make_grid make an appropriated grid", {
 
   x = grid_metrics(las, length(Z), 10)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 10)
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 10)
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 
   x = grid_metrics(las, length(Z), 20)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 20)
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 20)
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 
   x = grid_metrics(las, length(Z), 20, start = c(-5,10))
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 20, start = c(-5,10))
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 20, start = c(-5,10))
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 
   x = grid_metrics(las, length(Z), 10, start = c(-5,8))
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 10, start = c(-5,8))
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 10, start = c(-5,8))
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 
   x = grid_canopy(las, 2)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 2)
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 2)
 
   x = grid_canopy(las, 1)
-  g = lidR:::make_grid(min(las$X), max(las$X), min(las$Y), max(las$X), 1)
+  g = lidR:::make_grid(min(las@data$X), max(las@data$X), min(las@data$Y), max(las@data$X), 1)
 
   expect_equal(sum(x$X %in% g$X), length(x$X))
 })

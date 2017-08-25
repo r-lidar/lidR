@@ -114,6 +114,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_extract
+NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, double xmin, double ymin, double res);
+RcppExport SEXP _lidR_fast_extract(SEXP rSEXP, SEXP xSEXP, SEXP ySEXP, SEXP xminSEXP, SEXP yminSEXP, SEXP resSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< double >::type xmin(xminSEXP);
+    Rcpp::traits::input_parameter< double >::type ymin(yminSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_extract(r, x, y, xmin, ymin, res));
+    return rcpp_result_gen;
+END_RCPP
+}
 // knn
 Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
 RcppExport SEXP _lidR_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
