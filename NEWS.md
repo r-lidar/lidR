@@ -30,11 +30,18 @@ Major changes are mainly:
 * `as.raster` relies both on the fast former code from v1.2.0 to return a RasterLayer and the new code from v1.2.1 to return a RasterStack. This change enable for a faster results in most cases
 * `catalog` can build a catalog from a set of paths to files instead a path to a folder.
 * removed dependencie to `RANN` package using internal k-nearest neigbourg search (2 to 3 times faster)
+* removed `$` access to LAS attribute (incredibly slow)
 
 #### BUG FIXES
 
 * Computer precision errors lead to holes in raster computed from a Delaunay triangulation.
 * Message in `writeLAS` for skipped fields when no field is skipped is know correct.
+
+#### ENHANCEMENTS
+
+* `grid_terrain` with delaunay allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
+* `grid_terrain` with knnidw allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
+
 
 ### lidR v1.2.1 (Release data: 2017-06-12)
 

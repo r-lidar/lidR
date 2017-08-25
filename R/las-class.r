@@ -240,20 +240,6 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   return(.Object)
 })
 
-#' Extract parts of a LAS object
-#'
-#' @param x object from which to extract element(s).
-#' @param name A literal character string or a name (possibly backtick quoted).
-setMethod("$", "LAS", function(x, name)
-{
-  if(name %in% names(x@data))
-    return(as.numeric(unlist(x@data[,name,with=F])))
-  else if(name %in% slotNames(x))
-    return(slot(x, name))
-  else if(name %in% names(x@header@data))
-    return(x@header@data[name])
-})
-
 #' Create a \code{LAS} object
 #'
 #' @param data a data.table containing the LiDAR data.

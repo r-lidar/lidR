@@ -151,9 +151,6 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
     as.lasmetrics(dsm, res)
   }
 
-  rm(x)
-  gc()
-
   return(dsm)
 }
 

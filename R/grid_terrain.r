@@ -130,7 +130,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
   # Keep only those in the convex hull of the point
   # Otherwise algorithms are able to extrapolate the terrain
 
-  hull = convex_hull(x$X, x$Y)
+  hull = convex_hull(x@data$X, x@data$Y)
 
   sphull = sp::Polygon(hull)
   sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
