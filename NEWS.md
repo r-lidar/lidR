@@ -23,7 +23,7 @@ Major changes are mainly:
 
 * `lasnormalize` update the point cloud by reference and avoid deep copies. An option `copy = TRUE` is avaible for compatibility with former versions.
 * `readLAS` arguments changed. The new syntax is simpler. The former syntax is still supported but raise a warning for deprecated usages.
-* `catalog_queries` is no longer an exported function. It is now an internal function.
+* `catalog_index` is no longer an exported function. It is now an internal function.
 * `plot.Catalog` accept for usual `plot` arguments
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
