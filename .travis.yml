@@ -22,5 +22,8 @@ apt_packages:
   - libhdf5-serial-dev
   - libgdal-dev
   - libgdal1-dev
+  - libfftw3-3
+  - libfftw3-dev
+  - libtiff5-dev
 bioc_packages:
   - EBImage
