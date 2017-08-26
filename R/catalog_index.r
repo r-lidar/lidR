@@ -51,7 +51,7 @@
 catalog_index =	function(obj, x, y, r, r2, buffer, roinames)
 {
   tile <- minx <- maxx <- miny <- maxy <- NULL
-  filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
+  filename <- `Min X` <- `Max X` <- `Min.Y` <- `Max Y` <- NULL
   . <- NULL
 
   nplot = length(x)
@@ -68,7 +68,7 @@ catalog_index =	function(obj, x, y, r, r2, buffer, roinames)
     r2 = r2 + buffer
   }
 
-  coord.tiles = with(obj, data.frame(filename, Min.X, Max.X, Min.Y, maxy = Max.Y, stringsAsFactors = F))
+  coord.tiles = with(obj, data.frame(filename, `Min X`, `Max X`, `Min Y`, maxy = `Max Y`, stringsAsFactors = F))
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
   coord.plot = data.table(roinames, x, y, r, r2)

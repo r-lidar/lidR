@@ -48,13 +48,13 @@ plot.Catalog = function(x, y, ...)
 
   param = list(...)
 
-  xmin = min(x$Min.X)
-  xmax = max(x$Max.X)
-  ymin = min(x$Min.Y)
-  ymax = max(x$Max.Y)
+  xmin = min(x$`Min X`)
+  xmax = max(x$`Max X`)
+  ymin = min(x$`Min Y`)
+  ymax = max(x$`Max Y`)
 
-  xcenter = (x$Min.X+x$Max.X)/2
-  ycenter = (x$Min.Y+x$Max.Y)/2
+  xcenter = (xmin + xmax)/2
+  ycenter = (ymin + ymax)/2
 
   if (is.null(param$xlim))
     param$xlim = c(xmin, xmax)
@@ -81,6 +81,6 @@ plot.Catalog = function(x, y, ...)
   param$y = ycenter
 
   do.call(graphics::plot, param)
-  x %$% graphics::rect(Min.X, Min.Y, Max.X, Max.Y)
+  graphics::rect(x$`Min X`, x$`Min Y`, x$`Max X`, x$`Max Y`)
 }
 
