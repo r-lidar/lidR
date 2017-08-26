@@ -2,7 +2,7 @@
 
 language: r
 sudo: required
-dist: trusty
+dist: xenial
 cache: packages
 apt_packages:
   - libnetcdf-dev
