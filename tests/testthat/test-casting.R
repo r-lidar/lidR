@@ -110,8 +110,6 @@ test_that("as.raster return the same output both with dcast and sp", {
   out = grid_metrics(las, max(Z))
   out1 = as.raster(out)
   out2 = as.raster(out, spbackend = TRUE)
-  out2@data@names <- ""
-
   expect_equal(out1, out2)
 })
 
