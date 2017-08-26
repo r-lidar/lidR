@@ -1,7 +1,9 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-use_bioc: true
+r: bioc-devel
+bioc_required: true
+bioc_use_devel: true
 sudo: required
 dist: xenial
 cache: packages
@@ -20,3 +22,5 @@ apt_packages:
   - libhdf5-serial-dev
   - libgdal-dev
   - libgdal1-dev
+bioc_packages:
+  - EBImage
