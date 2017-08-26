@@ -107,7 +107,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 
   verbose("Checking for duplicated entries...")
 
-  multi = duplicated(x, by = c("X","Y")) %>% sum
+  multi = sum(duplicated(x, by = c("X","Y")))
 
   if (multi > 0)
   {
@@ -116,41 +116,31 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     message("Duplicated entries were found and aggregated.")
   }
 
-  # Autocompletion of the grid with NAs
-
-  verbose("Filling empty data with NAs...")
-
-  rx  = range(x$X)
-  ry  = range(x$Y)
-
-  grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
-  data.table::setDT(grid)
-
-  data.table::setkeyv(x, c("X", "Y"))
-  data.table::setkeyv(grid, c("X", "Y"))
-
-  x = x[grid]
-
   # Convert to raster
 
   if (ncol(x) <= 3 && is.null(inargs$spbackend)) # Use the data.table way which is much master (approx 3 times)
   {
-    verbose("Casting into raster with dcast...")
-
-    out = data.table::dcast(data = x, formula = X~Y, value.var = names(x)[3])
-    out[, X := NULL]
-    out = out %>% as.matrix %>% apply(1, rev)
-
-    xmn = min(x$X) - 0.5 * res
-    xmx = max(x$X) + 0.5 * res
-    ymn = min(x$Y) - 0.5 * res
-    ymx = max(x$Y) + 0.5 * res
-
-    return(raster::raster(out, xmn = xmn, xmx = xmx, ymn = ymn, ymx = ymx))
+    verbose("Casting into RasterLayer with raster")
+    return(raster::rasterFromXYZ(x))
   }
   else # Use the sp way to get and return a raster stack
   {
-    verbose("Casting into raster with sp")
+    # Autocompletion of the grid with NAs
+
+    verbose("Filling empty data with NAs...")
+
+    rx  = range(x$X)
+    ry  = range(x$Y)
+
+    grid = expand.grid(X = seq(rx[1], rx[2], res),  Y = seq(ry[1], ry[2], res))
+    data.table::setDT(grid)
+
+    data.table::setkeyv(x, c("X", "Y"))
+    data.table::setkeyv(grid, c("X", "Y"))
+
+    x = x[grid]
+
+    verbose("Casting into RasterStack with sp")
 
     out = as.data.frame(x)
     sp::coordinates(out) <- ~ X + Y
