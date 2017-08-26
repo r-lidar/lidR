@@ -65,10 +65,9 @@ f_grid = function(x, res, start)
 
 catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"))
 {
-
   if (by_file)
   {
-    X = ctg[, c("Min.X", "Max.X", "Min.Y", "Max.Y")]
+    X = ctg[, c("Min X", "Max X", "Min Y", "Max Y")]
     names(X) = c("xleft", "xright", "ybottom", "ytop")
   }
   else
@@ -79,7 +78,7 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     verbose("Computing the bounding box of the catalog...")
 
     # Bounding box of the catalog
-    bbox = with(ctg, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
+    bbox = with(ctg, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
 
     # Buffer around the bbox as a multiple of the resolution
     buffered_bbox = bbox + c(-res, -res, +res, +res)

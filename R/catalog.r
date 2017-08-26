@@ -60,10 +60,11 @@ catalog = function(folder, ...)
   {
     header <- rlas::readlasheader(x)
     header$`Variable Length Records` <- NULL
-    return(as.data.frame(header))
+    data.table::setDT(header)
+    return(header)
   })
 
-  headers <- do.call(rbind.data.frame, headers)
+  headers <- data.table::rbindlist(headers)
   headers$filename <- files
   rownames(headers) <- NULL
 
