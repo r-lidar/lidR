@@ -27,3 +27,7 @@ apt_packages:
   - libtiff5-dev
 bioc_packages:
   - EBImage
+r_packages:
+  - covr
+after_success:
+  - Rscript -e 'library(covr);codecov()'
