@@ -41,3 +41,8 @@ test_that("read multiple files works", {
   las2 = readLAS(rep(LASfile, 3))
   expect_equal(3*dim(las@data)[1], dim(las2@data)[1])
 })
+
+test_that("print las works", {
+  las  = readLAS(LASfile)
+  summary(las)
+})

@@ -49,23 +49,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// algo_li2012_v2
-IntegerVector algo_li2012_v2(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar);
-RcppExport SEXP _lidR_algo_li2012_v2(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP displaybarSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< double >::type dt1(dt1SEXP);
-    Rcpp::traits::input_parameter< double >::type dt2(dt2SEXP);
-    Rcpp::traits::input_parameter< double >::type R(RSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_li2012_v2(X, Y, Z, dt1, dt2, R, displaybar));
-    return rcpp_result_gen;
-END_RCPP
-}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {

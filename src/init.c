@@ -9,7 +9,6 @@
 
 /* .Call calls */
 extern SEXP _lidR_algo_li2012(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _lidR_algo_li2012_v2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_fast_countbelow(SEXP, SEXP);
 extern SEXP _lidR_fast_countequal(SEXP, SEXP);
 extern SEXP _lidR_fast_countover(SEXP, SEXP);
@@ -29,7 +28,6 @@ extern SEXP _lidR_update_list_by_ref(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_algo_li2012",          (DL_FUNC) &_lidR_algo_li2012,          7},
-    {"_lidR_algo_li2012_v2",       (DL_FUNC) &_lidR_algo_li2012_v2,       7},
     {"_lidR_fast_countbelow",      (DL_FUNC) &_lidR_fast_countbelow,      2},
     {"_lidR_fast_countequal",      (DL_FUNC) &_lidR_fast_countequal,      2},
     {"_lidR_fast_countover",       (DL_FUNC) &_lidR_fast_countover,       2},

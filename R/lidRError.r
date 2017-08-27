@@ -39,7 +39,7 @@ lidRError = function(code, ..., behaviour = stop)
 "TFS3" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The field '", p$metric, "' has a length of ", p$number),
 "TFS4" = list("The expression '", p$expression, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(p$metric, sep = " and ")), " have respectively a length of: ", utils::capture.output(cat(p$number, sep=" and "))),
 "TFS5" = list("The expression '", p$expression, "' returned a data.frame. A single number or a list of single number is expected."),
-"TFS6" = list("The expression '", p$expression, "' returned a vector of length ", p$number,  ". A single number or a list of single numbers is expected."),
+"TFS6" = list("The expression '", p$expression, "' returned a vector of length ", p$number,  ". A single number or a list of single number is expected."),
 
 # ClassLAS.r set*()
 "LDR1" = list("Invalid parameter data in constructor"),

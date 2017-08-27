@@ -159,6 +159,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
     ._class = class(output[[1]])
     output = data.table::rbindlist(output)
     data.table::setattr(output, "class", ._class)
+    data.table::setattr(output, "res", res)
   }
   else
   {

@@ -13,10 +13,6 @@ algo_li2012 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
     .Call(`_lidR_algo_li2012`, X, Y, Z, dt1, dt2, R, displaybar)
 }
 
-algo_li2012_v2 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
-    .Call(`_lidR_algo_li2012_v2`, X, Y, Z, dt1, dt2, R, displaybar)
-}
-
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
