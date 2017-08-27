@@ -93,13 +93,13 @@
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[lidR:as.raster.lasmetrics]{as.raster}
 #' @export grid_canopy
-grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
   UseMethod("grid_canopy", x)
 }
 
 #' @export
-grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
   . <- X <- Y <- Z <- NULL
 
@@ -155,7 +155,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 }
 
 #' @export
-grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "-keep_first")
+grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 

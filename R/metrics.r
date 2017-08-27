@@ -177,10 +177,10 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
 
   i[is.nan(i)] = NA
 
-  z = h[-1]
-  i = i[-c(1, length(i))]
+  z = h #[-1]
+  i = i[-length(i)] #[-c(1, length(i))]
 
-  return(data.frame(z[z>z0], gf = i[z>z0]))
+  return(data.frame(z = z[z>z0], gf = i[z>z0]))
 }
 
 #' Leaf area density
@@ -268,7 +268,7 @@ entropy = function(z, by = 1, zmax = NULL)
 	  zmax = max(z)
 
 	# If zmax < 3 it is meaningless to compute entropy
-	if(zmax < 2)
+	if(zmax < 2 * by)
 		return(NA_real_)
 
   if(min(z) < 0)

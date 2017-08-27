@@ -1,10 +1,18 @@
+bool = function() { settings::inlist(TRUE, FALSE) }
 
-LIDROPTIONS <- settings::options_manager(verbose = FALSE,
-                                         progress = FALSE,
-                                         debug = FALSE,
-                                         .allowed = list(verbose  = settings::inlist(TRUE, FALSE),
-                                                         debug    = settings::inlist(TRUE, FALSE),
-                                                         progress = settings::inlist(TRUE, FALSE)))
+LIDROPTIONS <- settings::options_manager(
+  verbose = FALSE,
+  progress = FALSE,
+  debug = FALSE,
+  interactive = TRUE,
+
+  .allowed = list(
+    verbose  = bool(),
+    debug    = bool(),
+    progress = bool(),
+    interactive = bool()
+  )
+)
 
 #' Options Settings for the lidR package
 #'
@@ -41,12 +49,23 @@ lidr_options <- function(...)
 lidr_reset = function() { settings::reset(LIDROPTIONS) }
 
 
-CATALOGOPTIONS <- settings::options_manager(return_virtual_raster = FALSE,
-                                            buffer = 15,
-                                            by_file = FALSE,
-                                            multicore = parallel::detectCores(),
-                                            memory_limit_warning = 5e8,
-                                            tiling_size = 1000)
+CATALOGOPTIONS <- settings::options_manager(
+  return_virtual_raster = FALSE,
+  buffer = 15,
+  by_file = FALSE,
+  multicore = parallel::detectCores(),
+  memory_limit_warning = 5e8,
+  tiling_size = 1000,
+
+  .allowed = list(
+    return_virtual_raster  = bool(),
+    buffer = settings::inrange(0, Inf),
+    by_file = bool(),
+    multicore = settings::inrange(1, Inf),
+    memory_limit_warning = settings::inrange(0, Inf),
+    tiling_size = settings::inrange(0, Inf)
+  )
+)
 
 #' Options Settings for the \link{catalog} tools
 #'

@@ -158,61 +158,6 @@ bool QuadTree::insert(const Point& p)
   return false;
 }
 
-void QuadTree::remove(const Point& p)
-{
-  Point O(0,0);
-  BoundingBox bb(p, O);
-
-  // Search in which leaf is the point p
-  QuadTree *tree = 0;
-  tree_lookup(bb, &tree);
-
-  if (tree == 0)
-    return;
-
-  // Look at the points in the tree and find which one is p
-  int i = 0;
-  while(tree->points[i].x != p.x && tree->points[i].y != p.y && i < tree->points.size())
-    i++;
-
-  if (i >= tree->points.size())
-    return;
-
-  // Remove this point
-  tree->points.erase(tree->points.begin() + i);
-  npoints--;
-
-  // Delete iteratively the leaves
-  /*while(tree != 0)
-  {
-    if(tree->points.size() == 0)
-    {
-      if(tree->parent->NE->points.size() == 0 &&
-         tree->parent->NW->points.size() == 0 &&
-         tree->parent->SE->points.size() == 0 &&
-         tree->parent->SW->points.size() == 0)
-      {
-        tree->parent->NE = 0;
-        tree->parent->NW = 0;
-        tree->parent->SE = 0;
-        tree->parent->SW = 0;
-
-        QuadTree* parent = tree->parent;
-
-        delete tree;
-
-        tree = parent;
-      }
-      else
-        tree = 0;
-    }
-    else
-      tree = 0;
-  }*/
-
-  return;
-}
-
 void QuadTree::subdivide()
 {
   double half_res_half = boundary.half_res.x * 0.5;
@@ -322,25 +267,6 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
 
   for (int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);
-
-  return;
-}
-
-void QuadTree::tree_lookup(const BoundingBox bb, QuadTree** tree)
-{
-  if(!boundary.intersects(bb))
-    return;
-
-  if(depth == MAX_DEPTH)
-    *tree = this;
-
-  if(NW == 0)
-    return;
-
-  NE->tree_lookup(bb, tree);
-  NW->tree_lookup(bb, tree);
-  SE->tree_lookup(bb, tree);
-  SW->tree_lookup(bb, tree);
 
   return;
 }

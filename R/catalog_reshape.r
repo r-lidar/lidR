@@ -56,20 +56,24 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
   ext <- match.arg(ext)
 
-  ncores = CATALOGOPTIONS("multicore")
+  ncores  = CATALOGOPTIONS("multicore")
+  interact = LIDROPTIONS("interactive")
 
   # Create a pattern of clusters to be sequentially processed
   ctg_clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
   ctg_clusters = apply(ctg_clusters, 1, as.list)
 
-  text = paste0("This is how the catalog will be reshaped. Do you want to continue?")
-  choices = c("yes","no")
+  if(interact)
+  {
+    text = paste0("This is how the catalog will be reshaped. Do you want to continue?")
+    choices = c("yes","no")
 
-  cat(text)
-  choice = utils::menu(choices)
+    cat(text)
+    choice = utils::menu(choices)
 
-  if (choice == 2)
-    return(invisible(NULL))
+    if (choice == 2)
+      return(invisible(NULL))
+  }
 
   if(!dir.exists(path))
     dir.create(path, recursive = TRUE)
@@ -84,7 +88,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   # Computations done within sequential or parallel loop in .getMetrics
   if (ncores == 1)
   {
-    output = lapply(ctg_clusters, reshape_func, path = path, prefix = prefix, ext = ext)
+    output = lapply(ctg_clusters, reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
   }
   else
   {
@@ -131,11 +135,7 @@ reshape_func = function(cluster, ctg, path, prefix, ext)
             filter = "",
             ncores = 1,
             progress = FALSE,
-            ScanDirectionFlag = TRUE,
-            EdgeOfFlightline = TRUE,
-            UserData = TRUE,
-            PointSourceID = TRUE,
-            pulseID = FALSE)[[1]]
+            select = "xyztianrcupeRGB")[[1]]
 
   # Skip if the ROI falls in a void area
   if (is.null(las))

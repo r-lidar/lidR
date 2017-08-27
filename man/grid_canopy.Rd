@@ -5,7 +5,7 @@
 \title{Canopy surface model}
 \usage{
 grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
-  filter = "-keep_first")
+  filter = "")
 }
 \arguments{
 \item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}

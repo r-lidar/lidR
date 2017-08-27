@@ -225,20 +225,6 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   if (is.null(las))
     return(NULL)
 
-  # Catalog_queries keep points inside the boundingbox (close interval), while points that
-  # are exactly on the boundaries are counted twice. Here is a post-process to make an open
-  # interval on the left and bottom edges of the boundingbox.
-  if (buffer == 0)
-  {
-    n <- fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
-
-    if (n > 0)
-      las <- suppressWarnings(lasfilter(las, X = xleft, Y > ybottom))
-
-    if (is.null(las))
-      return(NULL)
-  }
-
   # Call the function
   return(do.call(func, c(las, func_args)))
 }
