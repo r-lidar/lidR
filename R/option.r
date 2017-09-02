@@ -16,7 +16,7 @@ LIDROPTIONS <- settings::options_manager(
 
 #' Options Settings for the lidR package
 #'
-#' Allow the user to set and examine a variety of global options that affect the way in which
+#' Allows the user to set and examine a variety of global options that affect the way in which
 #' lidR computes and displays its results.
 #'
 #' @param ... Option names to retrieve option values or \code{[key]=[value]} pairs to set options.
@@ -25,8 +25,8 @@ LIDROPTIONS <- settings::options_manager(
 #' The following options are supported:
 #' \itemize{
 #'  \item{\code{verbose} (\code{logical}) Make the package "talkative". }
-#'  \item{\code{progress} (\code{logical}) Display progress bars when available. }
-#'  \item{\code{debug} (\code{logical}) Turn the package to debug mode when available.}
+#'  \item{\code{progress} (\code{logical}) Display progress bar when available. }
+#'  \item{\code{debug} (\code{logical}) Switch the package to debug mode when available.}
 #' }
 #'
 #' @examples
@@ -70,7 +70,7 @@ CATALOGOPTIONS <- settings::options_manager(
 #' Options Settings for the \link{catalog} tools
 #'
 #' Allow the user to set and examine a variety of global options that affect the way in which
-#' lidR process an entire catalog.
+#' lidR processes an entire catalog.
 #'
 #' @param ... Option names to retrieve option values or \code{[key]=[value]} pairs to set
 #' options.
@@ -78,26 +78,26 @@ CATALOGOPTIONS <- settings::options_manager(
 #' @section Supported options:
 #' The following options are supported:
 #' \itemize{
-#'  \item{\code{buffer} (numeric) - When applying a function to an entiere catalog
-#'  processing sequentially sub-areas (clusters) some algotihms (such as \link{grid_terrain})
-#'  requiere a buffer around the area to avoid edge effects. Default is 15 m.}
+#'  \item{\code{buffer} (numeric) - When applying a function to an entire catalog
+#'  sequentially processing sub-areas (clusters) some algorithms (such as \link{grid_terrain})
+#'  require a buffer around the area to avoid edge effects. Default is 15 m.}
 #'  \item{\code{multicore} (numeric) - For parallel processes, fix the number of
-#'  core to use. Default is the number of core you have.}
-#'  \item{\code{tiling_size} (numeric) - To process an entiere catalog, the algorithm split the
-#'  dataset in several square sub-areas (clusters) to process them sequentially. This is the
+#'  cores to use. Default is the number of cores you have.}
+#'  \item{\code{tiling_size} (numeric) - To process an entire catalog, the algorithm splits the
+#'  dataset into several square sub-areas (clusters) to process them sequentially. This is the
 #'  size of each square cluster. Default is 1000 (1 km^2).}
-#'  \item{\code{by_file} (logical) - This option overwrite the option \code{tiling_size}. Instead
-#'  of processing the catalog by arbitrary split areas, it forces to process by file. Buffering
-#'  is still avaible.}
-#'  \item{\code{return_virtual_raster} (logical) - Functions which return raster-alike
+#'  \item{\code{by_file} (logical) - This option overwrites the option \code{tiling_size}. Instead
+#'  of processing the catalog by arbitrary split areas, it forces processing by file. Buffering
+#'  is still available.}
+#'  \item{\code{return_virtual_raster} (logical) - Functions which return raster-like
 #'  data such as \link{grid_metrics}, \link{grid_terrain} and other \code{grid_*} functions
-#'  may return huge amount of data for large catalog or hight resolution (typically
-#'  \code{grid_terrain} with a resolution of 1 meter). Switching this options to \code{TRUE}
-#'  enable to store the data on the hard disk and return a light weight virtual raster mosaic.}
-#'  \item{\code{memory_limit_warning} (numeric) - When applying a function to an entiere
-#'  catalog, an internal function tries to estimate the size of the output before to run the
-#'  algorithm in attempt to prevent memory overflow. This value (in bytes) is the threshold
-#'  before to get a warning. Default is 5e8 (500 Mb). Set to \code{Inf} to disable.}
+#'  may return huge amounts of data for large catalogs or high resolution data (typically
+#'  \code{grid_terrain} with a resolution of 1 meter). Switching this option to \code{TRUE}
+#'  enables storage of the data on the hard disk and returns a lightweight virtual raster mosaic.}
+#'  \item{\code{memory_limit_warning} (numeric) - When applying a function to an entire
+#'  catalog, an internal function tries to estimate the size of the output before running the
+#'  algorithm in an attempt to prevent memory overflow. This value (in bytes) is the threshold
+#'  before a warning is given. Default is 5e8 (500 Mb). Set to \code{Inf} to disable.}
 #'  }
 #'
 #' @examples

@@ -96,10 +96,10 @@ countBox = function(q, mtx)
 
 #' Rumple index of roughness
 #'
-#' Computes the roughness of a surface as the ratio between the area of a surface and its
-#' projected area on the ground. If the input is a grided object (lasmetric or raster) the
+#' Computes the roughness of a surface as the ratio between its area and its
+#' projected area on the ground. If the input is a gridded object (lasmetric or raster) the
 #' function computes the surfaces using Jenness's algorithm (see references). If the input
-#' is a points cloud the function uses a Delaunay triangulation of the points and computes
+#' is a point cloud the function uses a Delaunay triangulation of the points and computes
 #' the area of each triangle.
 #'
 #' @param x A 'RasterLayer' or a 'lasmetrics' object, or a vector of x point coordinates.
@@ -126,7 +126,7 @@ countBox = function(q, mtx)
 #' z = runif(20, 0, 50)
 #' rumple_index(x, y, z)
 #'
-#' # Measure of roughness is scale dependent
+#' # Measure of roughness is scale-dependent
 #' rumple_index(x, y, z)
 #' rumple_index(x/10, y/10, z)
 #'

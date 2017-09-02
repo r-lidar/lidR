@@ -31,14 +31,14 @@
 #' Reshape (retile) a catalog
 #'
 #' This function splits or merges files to reshape the original catolog files (.las or .laz)
-#' into smaller or bigger files. The new files are written in a dedicated folder. The function
+#' into smaller or larger files. The new files are written in a dedicated folder. The function
 #' first displays the pattern of the new tiling and then asks the user to validate the command.
 #'
 #' @param ctg  A \link[lidR:catalog]{Catalog} object
-#' @param size scalar. The size of the new tiles
-#' @param path string. The folder where the new files should be saved
-#' @param prefix character. The initial part of the name of the written files
-#' @param ext character. Format of the written files. Can be ".las" or ".laz".
+#' @param size scalar. The size of the new tiles.
+#' @param path string. The folder where the new files should be saved.
+#' @param prefix character. The initial part of the name of the written files.
+#' @param ext character. The format of the written files. Can be ".las" or ".laz".
 #'
 #' @return A new catalog object
 #' @seealso \link{catalog}
@@ -47,9 +47,9 @@
 #' \dontrun{
 #' ctg = catalog("path/to/catalog")
 #'
-#' # Will create a new set of .las files 500 by 500 wide in the folder
+#' # Create a new set of .las files 500 by 500 wide in the folder
 #' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
-#' # Forest_3.las and so on.
+#' # Forest_3.las, and so on.
 #' newctg = catalog_reshape(ctg, 500, "path/to/new/catalog", "Forest_")
 #' }
 catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
@@ -141,7 +141,7 @@ reshape_func = function(cluster, ctg, path, prefix, ext)
   if (is.null(las))
     return(NULL)
 
-  # Catalog_queries keep points inside the boundingbox (close interval), but points that
+  # Catalog_queries keeps points inside the boundingbox (close interval), but points that
   # are exactly on the boundaries are counted twice. Here is a post-process to make an open
   # interval on the left and bottom edges of the boundingbox.
   n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)

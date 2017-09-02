@@ -29,25 +29,27 @@
 
 #' Map the pulse or point density
 #'
-#' Creates a pulse density map using a LiDAR cloud of points. This function is an alias
+#' Creates a pulse density map using a LiDAR point cloud. This function is an alias
 #' for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
 #' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a catalog the function processes the entiere dataset
-#' in a continuous way using a multicore process. Parallel computing is set by defaut to
-#' the number of core avaible in the computer. No buffer is requiered. The user can modify
+#' When the parameter \code{x} is a catalog the function processes the entire dataset
+#' in a continuous way using a multicore process. Parallel computing is set by default to
+#' the number of cores available in the computer. No buffer is required. The user can modify
 #' the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
-#' index.
+#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' spatial index.
 #'
 #' @aliases grid_density
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
-#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16 square meters.
+#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
+#' square meters.
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
 #' If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
-#' user cannot manipulate the lidar data himself but can use streaming filters instead.
-#' @return It returns a \code{data.table} of the class \code{lasmetrics} which enables easier plotting and
-#' RasterLayer casting.
+#' user cannot manipulate the lidar data directly but can use streaming filters instead.
+#' @return Returns a \code{data.table} of class \code{lasmetrics} which enables easier
+#' plotting and RasterLayer casting.
+#' 
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
