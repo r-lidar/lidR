@@ -35,7 +35,7 @@
 #' function adds a buffer area around the ROIs, and the LAS object returned has an extra column
 #' named '\code{buffer}' which indicates, for each point, if the point is in the buffer or
 #' from the ROI (see more in the section Buffer).\cr\cr
-#' \code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
+#' \code{lidR} support .lax file. You will speed-up the computation \emph{a lot} with a spatial
 #' index.
 #'
 #' @section Buffer:
@@ -53,13 +53,13 @@
 #' use \link{catalog_options}.
 #'
 #' @param obj A Catalog object
-#' @param x vector. A set of x coordinates corresponding to the center of the ROIs
-#' @param y vector. A set of y coordinates corresponding to the center of the ROIs
+#' @param x vector. A set of x coordinates corresponding to the centers of the ROIs
+#' @param y vector. A set of y coordinates corresponding to the centers of the ROIs
 #' @param r numeric or vector. A radius or a set of radii of the ROIs. If only
 #' r is provided (r2 = NULL) it will extract data falling onto a disc.
 #' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
 #' is provided, the selection turns into a rectangular ROI (if r = r2 it is a square).
-#' @param buffer numeric. Add a buffer area around the ROI. See relevant sections.
+#' @param buffer numeric. Adds a buffer area around the ROI. See relevant sections.
 #' @param roinames vector. A set of ROI names (the plot IDs, for example) to label the
 #' returned list.
 #' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.
@@ -87,7 +87,7 @@
 #'
 #' # Return a List of 30 circular LAS objects of 30 m radius. 25 m being the ROI and 5 m
 #' # being a buffered area. The LAS objects have an extra column called 'buffer' to
-#' # differentiate the points
+#' # differentiate the points.
 #' catalog %>% catalog_queries(X, Y, R, buffer = 5)
 #'
 #' # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
@@ -137,7 +137,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
 
-  # Enable progress bar working even with multicore
+  # Enable the progress bar even with multicore
   if (progress)
   {
     pfile = tempfile()
@@ -153,11 +153,11 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
 
   verbose("Indexing files...")
 
-  # Make an index of the file in which are each query
+  # Make an index of the files containing each query
   lasindex = catalog_index(obj, x, y, r, r2, buffer, roinames)
   lasindex$buffer = buffer
 
-  # Remove potential unproper queries (out of existing files)
+  # Remove potential improper queries (out of existing files)
   keep = lasindex[, length(tiles[[1]]) > 0, by = roinames]$V1
   lasindex = lasindex[keep]
   roinames = roinames[keep]
@@ -211,7 +211,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   else if (shape == LIDRRECTANGLE)
     filter = paste("-inside", xleft, ybottom, xright, ytop)
   else
-    stop("Something went wrong internaly in .get_query(). Process aborted.")
+    stop("Something went wrong internally in .get_query(). Process aborted.")
 
   # Merge spatial filter with user's filters
   if (!is.null(param$filter))

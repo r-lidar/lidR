@@ -29,28 +29,32 @@
 
 #' Read .las or .laz files
 #'
-#' Read .las or .laz files in format 1 to 3 according to LAS specification and return an
+#' Reads .las or .laz files in format 1 to 3 according to LAS specification and returns an
 #' object of class LAS. If several files are given the returned LAS object is considered
 #' as one LAS file. The information retained in the header will be read from the first file
-#' in the list. The optional parameters enable the user to save a lot of memory by choosing
-#' to load only fields or points requiered. These internal options are much more memory efficient
-#' than any other R code.
+#' in the list. The optional parameters enable the user to save a substantial amount of memory by
+#' choosing to load only the fields or points required. These internal options are much more memory
+#' efficient than any other R code.
 #'
 #' The 'select' argument specifies which data will actually be loaded. For example, 'xyzia'
 #' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 #' The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
 #' r - return number, c - classification, u - user data, p - point source ID, e - edge of
 #' flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
-#' channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enable
-#' to load everythings. \cr
-#' x, y, z are implicite and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
-#' equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicite than.
-#' \code{select = ""}.\cr Three extra data can be computed on the fly with the folowing flags:
-#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS})\cr\cr
-#' The 'filter' argument enable to filter the point cloud while reading. This is much more
-#' efficient than \link{lasfilter} in many ways. If the desired filters are known before to read
-#' the file, the internal filters should always be prefered. The avaible filters are those
-#' from \code{LASlib} and can be found running the following command: rlas:::lasfilterusage()
+#' channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enables
+#' everything to be loaded. \cr
+#' x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
+#' equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than 
+#' \code{select ""}.\cr 
+#' 
+#' Three extra metrics can be computed on the fly with the folowing flags:
+#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS)\cr\cr
+#' 
+#' The 'filter' argument allows filtering of the point cloud while reading files. This is much
+#' more efficient than \link{lasfilter} in many ways. If the desired filters are known before
+#' reading the file, the internal filters should always be preferred. The available filters are
+#' those from \code{LASlib} and can be found by running the following command: 
+#' rlas:::lasfilterusae()
 #'
 #' @param files array of characters or a \link[lidR:catalog]{Catalog} object
 #' @param select character. select only columns of interest to save memory (see details)
@@ -203,7 +207,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
     else
       data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, filter)
 
-    # Can happend if filter is badly used
+    # Can happen if filter is badly used
     if (dim(data)[1] == 0)
       return(NULL)
 

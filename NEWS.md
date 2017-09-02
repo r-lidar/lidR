@@ -1,47 +1,47 @@
 ### lidR v1.3.0 (in development)
 
-This version is dedicated to extend functions and processes to an entiere catalogs in a continuous way.
-Major changes are mainly:
+This version is dedicated to extending functions and processes to an entire catalog in a continuous way.
+Major changes are:
 * How `catalog_apply` works. More powerful but no longer compatible with previous releases
-* Former existing functions which now natively support a ` Catalog` 
+* Former existing functions that now natively support a `Catalog` 
 * Management of buffered areas
 
 #### NEW FEATURES
 
-* `catalog_apply` has been entierily re-designed. It is more flexible, more user-friendly and enable for loading buffered data.
+* `catalog_apply` has been entirely re-designed. It is more flexible, more user-friendly and enables loading of buffered data.
 * `catalog_queries` has now an argument `...` to pass any argument of `readLAS`.
 * `catalog_queries` has now an argument `buffer` to load extra buffered points around the region of interest.
-* `grid_metrics` accept a catalog as input. It enables to grid an entiere catalog in a continuous way.
-* `grid_density` inherit of this new feature as well
-* `grid_terrain` inherit of this new feature as well
-* `grid_canopy` inherit of this new feature as well
-* `grid_tincanopy` inherit of this new feature as well
-* `grid_metrics` has now a an argument `filter` for streaming filters when used with a catalog
+* `grid_metrics` accepts a catalog as input. It allows users to grid an entire catalog in a continuous way.
+* `grid_density` also inherits this new feature
+* `grid_terrain` also inherits this new feature
+* `grid_canopy` also inherits this new feature
+* `grid_tincanopy` also inherits this new feature
+* `grid_metrics` has now has an argument `filter` for streaming filters when used with a catalog
 * New function `catalog_reshape`
 
 #### OTHER CHANGES
 
-* `lasnormalize` update the point cloud by reference and avoid deep copies. An option `copy = TRUE` is avaible for compatibility with former versions.
-* `readLAS` arguments changed. The new syntax is simpler. The former syntax is still supported but raise a warning for deprecated usages.
+* `lasnormalize` updates the point cloud by reference and avoids making deep copies. An option `copy = TRUE` is available for compatibility with former versions.
+* `readLAS` arguments changed. The new syntax is simpler. The previous syntax is still supported but raises a warning for deprecated usages.
 * `catalog_index` is no longer an exported function. It is now an internal function.
-* `plot.Catalog` accept for usual `plot` arguments
+* `plot.Catalog` accepts the usual `plot` arguments
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
-* `catalog` can build a catalog from a set of paths to files instead a path to a folder.
-* removed dependencie to `RANN` package using internal k-nearest neigbourg search (2 to 3 times faster)
+* `catalog` can build a catalog from a set of paths to files instead of a path to a folder.
+* removed dependencies to `RANN` package using internal k-nearest neighbor search (2 to 3 times faster)
 * removed `$` access to LAS attribute (incredibly slow)
 
 #### BUG FIXES
 
 * Computer precision errors lead to holes in raster computed from a Delaunay triangulation.
-* Message in `writeLAS` for skipped fields when no field is skipped is know correct.
+* Message in `writeLAS` for skipped fields when no field is skipped is now correct.
 
 #### ENHANCEMENTS
 
-* `grid_terrain` with delaunay allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
-* `grid_terrain` with knnidw allocate fewer memory, makes fewer deep copies and is 2 to 3 times faster
-* `lasnormalize` and `lasclassify` do not rely on `raster::extract` anymore but on internal `fast_extract` which is memory efficient and more than 15 times faster.
-* `catalog` enable to build a Catalog 8 times faster.
+* `grid_terrain` with delaunay allocates less memory, makes fewer deep copies and is 2 to 3 times faster
+* `grid_terrain` with knnidw allocates less memory, makes fewer deep copies and is 2 to 3 times faster
+* `lasnormalize` and `lasclassify` no longer rely on `raster::extract` but on internal `fast_extract`, which is memory efficient and more than 15 times faster.
+* `catalog` enables a Catalog to be built 8 times faster than previously.
 
 ### lidR v1.2.1 (Release data: 2017-06-12)
 
@@ -51,13 +51,13 @@ Major changes are mainly:
 * new function `stdtreemetrics`.
 * `grid_tincanopy()` gains a parameter `subcircle` like `grid_canopy()`
 * new function `rumple_index` for measuring roughness of a digital model (terrain or canopy)
-* global options to parameterize the package - avaible with `lidr_options()`
+* global options to parameterize the package - available with `lidr_options()`
 
 #### BUG FIXES
 
 * Installation fails if package sp is missing.
 * Memory leak in QuadTree algorithm. Memory is now free after QuadTree deletion.
-* Dalponte's algorithm had a bug due to the use of std::abs which works with intergers. Replaced by std::fabs which works with doubles.
+* Dalponte's algorithm had a bug due to the use of std::abs which works with integers. Replaced by std::fabs which works with doubles.
 * In `grid_tincanopy` `x > 0` was replaced by `x >= 0` to avoid errors in the canopy height models
 * Triangle boudaries are now taken into account in the rasterization of the Delaunay triangulation
 
