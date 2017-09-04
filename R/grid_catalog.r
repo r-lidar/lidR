@@ -29,6 +29,8 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
+  ti <- Sys.time()
+
   # ========================================
   # Store some stuff in readable variables
   # ========================================
@@ -37,7 +39,8 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   funcname  = lazyeval::expr_text(grid_func)
   exportdir = tempdir() %+%  "/" %+% funcname %+% "/"
 
-  progress  = LIDROPTIONS("progress")
+  LIDROPTIONS(progress = FALSE) # Disable functions progress bars
+  progress  = CATALOGOPTIONS("progress")
   numcores  = CATALOGOPTIONS("multicore")
   savevrt   = CATALOGOPTIONS("return_virtual_raster")
   memlimwar = CATALOGOPTIONS("memory_limit_warning")
@@ -169,6 +172,10 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
     gdalUtils::gdalbuildvrt(ras_lst, save_in)
     output = raster::stack(save_in)
   }
+
+  tf <- Sys.time()
+
+  cat("\nProcess done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
   return(output)
 }

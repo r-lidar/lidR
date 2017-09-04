@@ -54,6 +54,7 @@ CATALOGOPTIONS <- settings::options_manager(
   buffer = 15,
   by_file = FALSE,
   multicore = parallel::detectCores(),
+  progress = TRUE,
   memory_limit_warning = 5e8,
   tiling_size = 1000,
 
@@ -62,6 +63,7 @@ CATALOGOPTIONS <- settings::options_manager(
     buffer = settings::inrange(0, Inf),
     by_file = bool(),
     multicore = settings::inrange(1, Inf),
+    progress = bool(),
     memory_limit_warning = settings::inrange(0, Inf),
     tiling_size = settings::inrange(0, Inf)
   )
@@ -78,6 +80,7 @@ CATALOGOPTIONS <- settings::options_manager(
 #' @section Supported options:
 #' The following options are supported:
 #' \itemize{
+#'  \item{\code{progress} (\code{logical}) Display progress bar. Default is TRUE. }
 #'  \item{\code{buffer} (numeric) - When applying a function to an entire catalog
 #'  sequentially processing sub-areas (clusters) some algorithms (such as \link{grid_terrain})
 #'  require a buffer around the area to avoid edge effects. Default is 15 m.}

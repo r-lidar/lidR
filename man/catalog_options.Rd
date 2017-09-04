@@ -21,6 +21,7 @@ lidR processes an entire catalog.
 
 The following options are supported:
 \itemize{
+ \item{\code{progress} (\code{logical}) Display progress bar. Default is TRUE. }
  \item{\code{buffer} (numeric) - When applying a function to an entire catalog
  sequentially processing sub-areas (clusters) some algorithms (such as \link{grid_terrain})
  require a buffer around the area to avoid edge effects. Default is 15 m.}

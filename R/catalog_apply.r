@@ -161,6 +161,8 @@
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
+  LIDROPTIONS(progress = FALSE) # Disable functions progress bars
+  progress  = CATALOGOPTIONS("progress")
   ncores   <- CATALOGOPTIONS("multicore")
   buffer   <- CATALOGOPTIONS("buffer")
   by_file  <- CATALOGOPTIONS("by_file")
@@ -169,18 +171,36 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   clusters <- catalog_makecluster(ctg, res, buffer, by_file)
   clusters <- apply(clusters, 1, as.list)
 
-  return(catalog_apply_internal(ctg, clusters, func, func_args, ncores, ...))
+  return(catalog_apply_internal(ctg, clusters, func, func_args, ncores, progress, ...))
 }
 
-catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, ...)
+catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, progress, ...)
 {
   ti <- Sys.time()
 
   if (length(clusters) < ncores)
     ncores <- length(clusters)
 
+  # Enable progress bar working even with multicore
+  pbar = NULL
+  if (progress)
+  {
+    pfile = tempfile()
+    write(0, pfile)
+    pbar  = utils::txtProgressBar(max = length(clusters), style = 3)
+    attr(pbar, "file") = pfile
+  }
+
+
   if (ncores == 1)
-     output <- lapply(clusters, cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
+  {
+     output <- lapply(clusters, FUN = cluster_apply_func,
+                      func = func,
+                      ctg = ctg,
+                      func_args = func_args,
+                      p = pbar,
+                      ...)
+  }
   else
   {
     cat("Begin parallel processing... \n")
@@ -193,19 +213,25 @@ catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, ...)
     parallel::clusterExport(cl, varlist, envir)
     parallel::clusterEvalQ(cl, library("lidR"))
 
-    output <- parallel::parLapply(cl, clusters, fun = cluster_apply_func, func = func, ctg = ctg, func_args = func_args, ...)
+    output <- parallel::parLapply(cl, clusters, fun = cluster_apply_func,
+                        func = func,
+                        ctg = ctg,
+                        func_args = func_args,
+                        p = pbar,
+                        ...)
+
     parallel::stopCluster(cl)
   }
 
   tf <- Sys.time()
 
-  cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
+  cat("\nProcess done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
   return(output)
 }
 
 
-cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
+cluster_apply_func <- function(cluster, func, ctg, func_args, p, ...)
 {
   X <- Y <- NULL
 
@@ -227,6 +253,15 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   # Skip if the ROI falls in a void area
   if (is.null(las))
     return(NULL)
+
+  # Update progress bar
+  if (!is.null(p))
+  {
+    pfile = attr(p, "file")
+    i = data.table::fread(pfile)$V1 + 1
+    utils::setTxtProgressBar(p, i)
+    write(i, pfile)
+  }
 
   # Call the function
   return(do.call(func, c(las, func_args)))
