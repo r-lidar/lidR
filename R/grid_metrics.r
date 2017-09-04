@@ -37,7 +37,7 @@
 #' pre-determined for a given resolution.
 #'
 #' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-#' computes metrics within each cell in a predefined grid. The grid cell coordinates are 
+#' computes metrics within each cell in a predefined grid. The grid cell coordinates are
 #' pre-determined for a given resolution, so the algorithm will always provide the same coordinates
 #' independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
 #' following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
@@ -69,7 +69,7 @@
 #' in a continuous way using a multicore process. Parallel computing is set by default to
 #' the number of core available in the computer. No buffer is required. The user can modify
 #' the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")

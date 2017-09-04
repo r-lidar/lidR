@@ -1,6 +1,6 @@
 ### lidR v1.3.0 (in development)
 
-This version is dedicated to extending functions and processes to an entire catalog in a continuous way.
+This version is dedicated to extending functions and processes to entire catalogs in a continuous way.
 Major changes are:
 * How `catalog_apply` works. More powerful but no longer compatible with previous releases
 * Former existing functions that now natively support a `Catalog` 
@@ -43,7 +43,7 @@ Major changes are:
 * `lasnormalize` and `lasclassify` no longer rely on `raster::extract` but on internal `fast_extract`, which is memory efficient and more than 15 times faster.
 * `catalog` enables a Catalog to be built 8 times faster than previously.
 
-### lidR v1.2.1 (Release data: 2017-06-12)
+### lidR v1.2.1 (Release date: 2017-06-12)
 
 #### NEW FEATURES
 

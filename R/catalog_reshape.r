@@ -141,17 +141,17 @@ reshape_func = function(cluster, ctg, path, prefix, ext)
   if (is.null(las))
     return(NULL)
 
-  # Catalog_queries keeps points inside the boundingbox (close interval), but points that
-  # are exactly on the boundaries are counted twice. Here is a post-process to make an open
-  # interval on the left and bottom edges of the boundingbox.
-  n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
-
-  if (n > 0)
-    las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
-
-  # Very unlikely but who knows...
-  if (is.null(las))
-    return(NULL)
+  # # Catalog_queries keeps points inside the boundingbox (close interval), but points that
+  # # are exactly on the boundaries are counted twice. Here is a post-process to make an open
+  # # interval on the left and bottom edges of the boundingbox.
+  # n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
+  #
+  # if (n > 0)
+  #   las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
+  #
+  # # Very unlikely but who knows...
+  # if (is.null(las))
+  #   return(NULL)
 
   writeLAS(las, path)
 

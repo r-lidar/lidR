@@ -9,29 +9,29 @@ catalog_reshape(ctg, size, path, prefix, ext = c("las", "laz"))
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{Catalog} object}
 
-\item{size}{scalar. The size of the new tiles}
+\item{size}{scalar. The size of the new tiles.}
 
-\item{path}{string. The folder where the new files should be saved}
+\item{path}{string. The folder where the new files should be saved.}
 
-\item{prefix}{character. The initial part of the name of the written files}
+\item{prefix}{character. The initial part of the name of the written files.}
 
-\item{ext}{character. Format of the written files. Can be ".las" or ".laz".}
+\item{ext}{character. The format of the written files. Can be ".las" or ".laz".}
 }
 \value{
 A new catalog object
 }
 \description{
 This function splits or merges files to reshape the original catolog files (.las or .laz)
-into smaller or bigger files. The new files are written in a dedicated folder. The function
+into smaller or larger files. The new files are written in a dedicated folder. The function
 first displays the pattern of the new tiling and then asks the user to validate the command.
 }
 \examples{
 \dontrun{
 ctg = catalog("path/to/catalog")
 
-# Will create a new set of .las files 500 by 500 wide in the folder
+# Create a new set of .las files 500 by 500 wide in the folder
 # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
-# Forest_3.las and so on.
+# Forest_3.las, and so on.
 newctg = catalog_reshape(ctg, 500, "path/to/new/catalog", "Forest_")
 }
 }

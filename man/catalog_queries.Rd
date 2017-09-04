@@ -9,9 +9,9 @@ catalog_queries(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 \arguments{
 \item{obj}{A Catalog object}
 
-\item{x}{vector. A set of x coordinates corresponding to the center of the ROIs}
+\item{x}{vector. A set of x coordinates corresponding to the centers of the ROIs}
 
-\item{y}{vector. A set of y coordinates corresponding to the center of the ROIs}
+\item{y}{vector. A set of y coordinates corresponding to the centers of the ROIs}
 
 \item{r}{numeric or vector. A radius or a set of radii of the ROIs. If only
 r is provided (r2 = NULL) it will extract data falling onto a disc.}
@@ -19,7 +19,7 @@ r is provided (r2 = NULL) it will extract data falling onto a disc.}
 \item{r2}{numeric or vector. A radius or a set of radii of plots. If r2
 is provided, the selection turns into a rectangular ROI (if r = r2 it is a square).}
 
-\item{buffer}{numeric. Add a buffer area around the ROI. See relevant sections.}
+\item{buffer}{numeric. Adds a buffer area around the ROI. See relevant sections.}
 
 \item{roinames}{vector. A set of ROI names (the plot IDs, for example) to label the
 returned list.}
@@ -37,7 +37,7 @@ the edges of one or more tiles. The extracted lidar data can be buffered. In thi
 function adds a buffer area around the ROIs, and the LAS object returned has an extra column
 named '\code{buffer}' which indicates, for each point, if the point is in the buffer or
 from the ROI (see more in the section Buffer).\cr\cr
-\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
+\code{lidR} support .lax file. You will speed-up the computation \emph{a lot} with a spatial
 index.
 }
 \section{Buffer}{
@@ -76,7 +76,7 @@ catalog \%>\% catalog_queries(X, Y, R, R)
 
 # Return a List of 30 circular LAS objects of 30 m radius. 25 m being the ROI and 5 m
 # being a buffered area. The LAS objects have an extra column called 'buffer' to
-# differentiate the points
+# differentiate the points.
 catalog \%>\% catalog_queries(X, Y, R, buffer = 5)
 
 # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and

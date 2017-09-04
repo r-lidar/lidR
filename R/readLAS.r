@@ -44,16 +44,16 @@
 #' channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enables
 #' everything to be loaded. \cr
 #' x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
-#' equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than 
-#' \code{select ""}.\cr 
-#' 
+#' equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than
+#' \code{select ""}.\cr
+#'
 #' Three extra metrics can be computed on the fly with the folowing flags:
-#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS)\cr\cr
-#' 
+#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}\cr\cr
+#'
 #' The 'filter' argument allows filtering of the point cloud while reading files. This is much
 #' more efficient than \link{lasfilter} in many ways. If the desired filters are known before
 #' reading the file, the internal filters should always be preferred. The available filters are
-#' those from \code{LASlib} and can be found by running the following command: 
+#' those from \code{LASlib} and can be found by running the following command:
 #' rlas:::lasfilterusae()
 #'
 #' @param files array of characters or a \link[lidR:catalog]{Catalog} object
