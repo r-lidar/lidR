@@ -80,6 +80,9 @@ tree_area = function(las, lake)
   # filter lakes, and low elevation points
   las \%<>\% lasfilter(lake == FALSE, Z > 4)
 
+  if (is.null(las))
+    return(NULL)
+
   # segment trees (in this example the low point density does not enable
   # accurate segmentation of trees. This is just a proof-of-concept)
   lastrees(las, algorithm = "li2012")
