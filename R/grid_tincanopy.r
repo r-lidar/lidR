@@ -38,7 +38,7 @@
 #' in a continuous way using a multicore process. Parallel computing is set by default to
 #' the number of cores available in the computer. A buffer is required. The user can modify
 #' the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
 #' @param x A LAS object

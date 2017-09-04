@@ -23,11 +23,11 @@ Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
 If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data himself but can use streaming filters instead.}
+user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{
-It returns a \code{data.table} with the class \code{lasmetrics}, which enables easier plotting and
-RasterLayer casting.
+Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
+plotting and RasterLayer casting.
 }
 \description{
 Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
@@ -40,22 +40,22 @@ The algorithm relies on a point-to-raster approach. For each pixel the elevation
 highest point is found and attributed to this pixel. This method implies that the resulting
 surface model can contain empty pixels. Those 'holes' can be filled by interpolation.
 Internally, the interpolation is based on the same method used in the function
-\link[lidR:grid_terrain]{grid_terrain}. Therefore the' documentation for
-\link[lidR:grid_terrain]{grid_terrain} is also applicable to this function.(see also
-examples)\cr\cr
-The 'subcircle' tweak replace each point by 8 points around the original one. This enable
-to virtualy 'emulate' the fact that a lidar point is not actually a point but more realisticly
-a spot. This tweak densify the point cloud and the resulting canopy model is smotther with
-fewer 'pits' and empty pixels.
+\link[lidR:grid_terrain]{grid_terrain}. Therefore the documentation for
+\link[lidR:grid_terrain]{grid_terrain} is also applicable to this function (see also
+examples).\cr\cr
+The 'subcircle' tweak replaces each point with 8 points around the original one. This allows
+for virtual 'emulation' of the fact that a lidar point is not a point as such, but more 
+realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
+smoother and contains fewer 'pits' and empty pixels.
 }
 \section{Use with a \code{Catalog}}{
 
-When the parameter \code{x} is a \link{catalog} the function processes the entiere dataset
-in a continuous way using a multicore process. Parallel computing is set by defaut to
-the number of core avaible in the computer. The user can modify the global options using
+When the parameter \code{x} is a \link{catalog} the function processes the entire dataset
+in a continuous way using a multicore process. Parallel computing is set by default to
+the number of core available in the computer. The user can modify the global options using
 the function \link{catalog_options}.\cr\cr
-\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
-index.
+\code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+spatial index.
 }
 
 \examples{

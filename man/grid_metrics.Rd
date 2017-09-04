@@ -21,35 +21,33 @@ flightline individually. It returns the same cells several times in overlap.}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
 If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data himself but can use streaming filters instead.}
+user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{
-It returns a \code{data.table} containing the metrics for each cell. The table
+Returns a \code{data.table} containing the metrics for each cell. The table
 has the class "lasmetrics" enabling easy plotting.
 }
 \description{
-Computes a series of descriptive statistics defined by the user for a LiDAR dataset within
+Computes a series of user-defined descriptive statistics for a LiDAR dataset within
 each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
 and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
 \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-computes metrics within each cell in a predefinded grid. The grid cell coordinates are
+computes metrics within each cell in a predefined grid. The grid cell coordinates are
 pre-determined for a given resolution.
 }
 \details{
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it computes metrics within each cell
-in a predefined grid. The grid cell coordinates are pre-determined for a given resolution.
-So the algorithm will always provide the same coordinates independently of the dataset.
-When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-(10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20 grid_metrics will
-produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada) reference
-is (-831600,  117980) in the NAD83 coordinate system. The function to be applied to each
-cell is a classical function (see examples) that returns a labelled list of metrics.
-The following existing function can help the user to compute some metrics:
+\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
+computes metrics within each cell in a predefined grid. The grid cell coordinates are
+pre-determined for a given resolution, so the algorithm will always provide the same coordinates
+independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
+following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
+grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec
+(Canada) the reference is (-831600,  117980) in the NAD83 coordinate system.
 }
 \section{Parameter \code{func}}{
 
-The function to be applied  to each cell is a classical function (see examples) that
-returns a labelled list of metrics.The following existing function can help the user to
+The function to be applied to each cell is a classical function (see examples) that
+returns a labelled list of metrics. The following existing functions allows the user to
 compute some metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics}}
@@ -58,7 +56,7 @@ compute some metrics:
 \item{\link[lidR:LAD]{LAD}}
 } Users must write their own functions to create metrics. \code{grid_metrics} will
 dispatch the LiDAR data for each cell in the user's function. The user writes their
-function without considering grid cells, only a cloud of points (see example).
+function without considering grid cells, only a point cloud (see example).
 }
 
 \section{Parameter \code{start}}{
@@ -72,12 +70,12 @@ reference is (-831600,  117980) in the NAD83 coordinate system.
 
 \section{Use with a \code{Catalog}}{
 
-When the parameter \code{x} is a catalog the function will process the entiere dataset
-in a continuous way using a multicore process. Parallel computing is set by defaut to
-the number of core avaible in the computer. No buffer is requiered. The user can modify
+When the parameter \code{x} is a catalog the function will process the entire dataset
+in a continuous way using a multicore process. Parallel computing is set by default to
+the number of core available in the computer. No buffer is required. The user can modify
 the global options using the function \link{catalog_options}.\cr\cr
-\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
-index.
+\code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
+spatial index.
 }
 
 \examples{

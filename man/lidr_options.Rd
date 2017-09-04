@@ -13,7 +13,7 @@ lidr_reset()
 \item{...}{Option names to retrieve option values or \code{[key]=[value]} pairs to set options.}
 }
 \description{
-Allow the user to set and examine a variety of global options that affect the way in which
+Allows the user to set and examine a variety of global options that affect the way in which
 lidR computes and displays its results.
 }
 \section{Supported options}{
@@ -21,8 +21,8 @@ lidR computes and displays its results.
 The following options are supported:
 \itemize{
  \item{\code{verbose} (\code{logical}) Make the package "talkative". }
- \item{\code{progress} (\code{logical}) Display progress bars when available. }
- \item{\code{debug} (\code{logical}) Turn the package to debug mode when available.}
+ \item{\code{progress} (\code{logical}) Display progress bar when available. }
+ \item{\code{debug} (\code{logical}) Switch the package to debug mode when available.}
 }
 }
 

@@ -7,11 +7,11 @@
 catalog_apply(ctg, func, func_args = NULL, ...)
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{Catalog} object}
+\item{ctg}{A \link[lidR:catalog]{Catalog} object.}
 
-\item{func}{A user's function for which the first input is a LAS object.}
+\item{func}{A user-defined function for which the first input is a LAS object.}
 
-\item{func_args}{A list of extra arguments to pass in the function 'func'}
+\item{func_args}{A list of extra arguments to pass in the function 'func'.}
 
 \item{...}{Any argument available in \link{readLAS} to reduce the amount of data loaded.}
 }
@@ -26,8 +26,8 @@ with data loading (see example). \cr\cr
 \strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
 but no mechanism to remove the buffer after applying user-defined functions, since this task
 is very specific to each process. See section "Edge artifacts".\cr\cr
-\code{lidR} support .lax file. You will speed-up \emph{a lot} the computation with a spatial
-index.
+\code{lidR} supports .lax files. Computation speed will be \emph{signifcantly} improved with a
+spatial index.
 }
 \section{Edge artifacts}{
 
@@ -36,7 +36,7 @@ It is very important to take precautions to avoid 'edge artifacts' when processi
 tiles. If the points from neighboring tiles are not included during certain processes,
 this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
 pixels in a rasterization process. The lidR package provides internal tools to load buffered
-data. However there is no mechanism to remove the results computed in the buffered area
+data. However, there is no mechanism to remove the results computed in the buffered area
 since this task depends on the output of the user-defined function. Therefore, depending
 on the metric being computed, some output results could appear several times.\cr\cr
 The LAS object received by the user-defined function has a special column called 'buffer_side'
@@ -50,7 +50,7 @@ left, top and right buffers, respectively (see example).
 # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 # version of this example.
 # This is a dummy example. It is more efficient to load the entire file than
-# splitting it into several pieces to process, even when using several cores.
+# splitting it into several pieces to process, even when using multiple cores.
 
 # 1. Build a project (here, a single file catalog for the purposes of this example).
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -66,9 +66,9 @@ catalog_options(buffer = 15, multicore = 1, tiling_size = 80)
 folder <- system.file("extdata", "", package="lidR")
 lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
 
-# 4. Build the function which analyses each cluster of the catalog.
-# The function's first argument is a LAS object. The internal routine takes care of feeding
-# this function. The other arguments can be freely choosen by the user. See the following
+# 4. Build the function that analyzes each cluster of the catalog.
+# The function's first argument is a LAS object. The internal routine takes care of
+# this part. The other arguments can be freely choosen by the user. See the following
 # template:
 tree_area = function(las, lake)
 {
@@ -91,7 +91,7 @@ tree_area = function(las, lake)
   # If min buffer is 0 it means the trees were at least partly in the non-buffered area, so we
   # want to keep these trees.
   # However, the trees that are on the edge of the buffered area will be counted
-  # twice. So we must remove the tree on the left side and on the bottom side of the buffer
+  # twice. So we must remove the trees on the left side and on the bottom side of the buffer
   # If max buffer is <= 2 it means that the trees belong inside the area of interest, on
   # the left side or the bottom side, or both.
   m = m[minbuff == 0 & maxbuff <= 2]
@@ -125,9 +125,9 @@ myMetrics <- function(x, y, z, buff)
 }
 
 # Everything is now well defined, so now we can process over an entire catalog with
-# hundreds of files (but for this example we'll use just one file...)
+# hundreds of files (but in this example we use just one file...)
 
-# 4. Process the project. The arguments of the user's function must
+# 4. Process the project. The arguments of the user-defined function must
 # belong in a labelled list. We also pass extra arguments to the function readLAS
 # to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
 # can be used for the current process.

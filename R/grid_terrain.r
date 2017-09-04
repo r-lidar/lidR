@@ -44,7 +44,7 @@
 #' interpolation within each triangle. There are usually few cells outside the convex hull,
 #' determined by the ground points at the very edge of the dataset that cannot be interpolated
 #' with a triangulation. Extrapolation is done using knnidw.}
-#' \item{\code{kriging}}{Interpolation is done by universal kriging using the 
+#' \item{\code{kriging}}{Interpolation is done by universal kriging using the
 #' \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging
 #' approach. For each point of interest the terrain is kriged using the k-nearest neighbour ground
 #' points. This method is more difficult to manipulate but it is also the most advanced method for
@@ -55,8 +55,8 @@
 #' When the parameter \code{x} is a \link[lidR:catalog]{Catalog} the function processes the
 #' entire dataset in a continuous way using a multicore process. Parallel computing is set
 #' by default to the number of core available in the computer. A buffer is required to avoid
-#' edge artifacts. The user can modify the global options using the function \link{catalog_option.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' edge artifacts. The user can modify the global options using the function \link{catalog_options}.\cr\cr
+#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")

@@ -37,7 +37,7 @@
 #' in a continuous way using a multicore process. Parallel computing is set by default to
 #' the number of cores available in the computer. No buffer is required. The user can modify
 #' the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
 #' @aliases grid_density
@@ -49,7 +49,7 @@
 #' user cannot manipulate the lidar data directly but can use streaming filters instead.
 #' @return Returns a \code{data.table} of class \code{lasmetrics} which enables easier
 #' plotting and RasterLayer casting.
-#' 
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
