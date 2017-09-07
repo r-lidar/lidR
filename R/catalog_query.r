@@ -118,7 +118,7 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
     stop("Buffer size must be a positive value", call. = FALSE)
 
   ncores   = CATALOGOPTIONS("multicore")
-  progress = LIDROPTIONS("progress")
+  progress = CATALOGOPTIONS("progress")
 
   output = catalog_queries_internal(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
 
@@ -176,13 +176,12 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   else
   {
     cl = parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
+    parallel::clusterExport(cl, varlist = NULL, envir = NULL)
     output = parallel::parLapply(cl, queries, .get_query, shape, p = pbar, ...)
     parallel::stopCluster(cl)
   }
 
-  output = unlist(output)
-  output = output[match(roinames, names(output))]  # set back to the original order
+  names(output) <- roinames
 
   return(output)
 }
@@ -254,10 +253,6 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     write(i, pfile)
   }
 
-  output = list(NULL)
-  names(output) <- query$roinames
-  output[[1]] = las
-
-  return(output)
+  return(las)
 }
 
