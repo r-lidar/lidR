@@ -41,20 +41,21 @@
 #' The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
 #' r - return number, c - classification, u - user data, p - point source ID, e - edge of
 #' flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
-#' channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enables
-#' everything to be loaded. \cr
+#' channel of RGB color, B - blue channel of RGB color, * - is the wildcard and enables
+#' everything from the LAS file. \cr
 #' x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
 #' equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than
-#' \code{select ""}.\cr
+#' \code{select = ""}.\cr
 #'
 #' Three extra metrics can be computed on the fly with the folowing flags:
-#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}\cr\cr
+#' P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}.
+#' The symbol + is a shortcut for 'PFC'.\cr\cr
 #'
 #' The 'filter' argument allows filtering of the point cloud while reading files. This is much
 #' more efficient than \link{lasfilter} in many ways. If the desired filters are known before
 #' reading the file, the internal filters should always be preferred. The available filters are
 #' those from \code{LASlib} and can be found by running the following command:
-#' rlas:::lasfilterusae()
+#' rlas:::lasfilterusage()
 #'
 #' @param files array of characters or a \link[lidR:catalog]{Catalog} object
 #' @param select character. select only columns of interest to save memory (see details)
@@ -72,7 +73,8 @@
 #' las = readLAS(LASfile, select = "xyz")
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+#' las = readLAS(LASfile, select = "*+")
+readLAS = function(files, select = "xyztinrcaRGB", filter = "", ...)
 {
   `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
 
@@ -116,25 +118,30 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
   t <- i <- r <- n <- s <- d <- e <- c <- a <- u <- p <- RGB <- P <- Fl <- C <- FALSE
 
-  if ("\\*" %is_in% select)
-    select = "xyztirndecaupRGBPFC"
+  options = select
 
-  if ("i" %is_in% select) i <- TRUE
-  if ("t" %is_in% select) t <- TRUE
-  if ("r" %is_in% select) r <- TRUE
-  if ("n" %is_in% select) n <- TRUE
-  if ("d" %is_in% select) d <- TRUE
-  if ("e" %is_in% select) e <- TRUE
-  if ("c" %is_in% select) c <- TRUE
-  if ("a" %is_in% select) a <- TRUE
-  if ("u" %is_in% select) u <- TRUE
-  if ("p" %is_in% select) p <- TRUE
-  if ("R" %is_in% select) RGB <- TRUE
-  if ("G" %is_in% select) RGB <- TRUE
-  if ("B" %is_in% select) RGB <- TRUE
-  if ("P" %is_in% select) P <- TRUE
-  if ("F" %is_in% select) Fl <- TRUE
-  if ("C" %is_in% select) C <- TRUE
+  if ("\\*" %is_in% select)
+    options = "xyztirndecaupRGB"
+
+  if ("\\+" %is_in% select)
+    options = paste0(options, "PFC")
+
+  if ("i" %is_in% options) i <- TRUE
+  if ("t" %is_in% options) t <- TRUE
+  if ("r" %is_in% options) r <- TRUE
+  if ("n" %is_in% options) n <- TRUE
+  if ("d" %is_in% options) d <- TRUE
+  if ("e" %is_in% options) e <- TRUE
+  if ("c" %is_in% options) c <- TRUE
+  if ("a" %is_in% options) a <- TRUE
+  if ("u" %is_in% options) u <- TRUE
+  if ("p" %is_in% options) p <- TRUE
+  if ("R" %is_in% options) RGB <- TRUE
+  if ("G" %is_in% options) RGB <- TRUE
+  if ("B" %is_in% options) RGB <- TRUE
+  if ("P" %is_in% options) P <- TRUE
+  if ("F" %is_in% options) Fl <- TRUE
+  if ("C" %is_in% options) C <- TRUE
 
   # ===========================
   # Former syntax compatibility
@@ -146,7 +153,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
   if (any(pnames %in% oldnames))
   {
-    warning("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
+    message("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
 
     if (!is.null(oldparam$Intensity))
       i <- oldparam$Intensity
