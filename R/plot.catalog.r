@@ -44,8 +44,6 @@
 #' }
 plot.Catalog = function(x, y, ...)
 {
-  Min.X <- Min.Y <- Max.X <- Max.Y <- filename <- NULL
-
   param = list(...)
 
   xmin = min(x$`Min X`)
