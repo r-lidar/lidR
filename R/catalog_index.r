@@ -51,7 +51,7 @@
 catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
 {
   tile <- minx <- maxx <- miny <- maxy <- NULL
-  filename <- `Min X` <- `Max X` <- `Min.Y` <- `Max Y` <- NULL
+  filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
   . <- NULL
 
   nplot <- length(x)

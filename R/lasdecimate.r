@@ -49,7 +49,7 @@
 #' @return It returns a \code{LAS} object.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' lidar = readLAS(LASfile, select = "xyztP")
 #'
 #' # By default the method is homogenize = TRUE
 #' thinned = lidar %>% lasdecimate(1, res = 5)

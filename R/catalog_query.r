@@ -137,37 +137,26 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
 
   # Make an index of the files containing each query
   queries = catalog_index(obj, x, y, r, r2, buffer, roinames)
+  nplots  = length(queries)
 
-  # Recompute the number of queries
-  nplots = length(queries)
-
-  # Enable the progress bar even with multicore
   if (progress)
-  {
-    pfile = tempfile()
-    write(0, pfile)
-    pbar  = utils::txtProgressBar(min = 0, max = nplots, style = 3)
-    attr(pbar, "file") = pfile
-    cat("\n")
-  }
+    pbar  = txtProgressBarMulticore(min = 0, max = nplots, style = 3)
 
   if (nplots <= ncores)
-  {
     ncores = nplots
-  }
 
   verbose("Extracting data...")
 
   # Computation
   if (ncores == 1)
   {
-    output = sapply(queries, .get_query, p = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
+    output = sapply(queries, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
   }
   else
   {
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = NULL, envir = NULL)
-    output = parallel::parSapply(cl, queries, .get_query, p = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
+    output = parallel::parSapply(cl, queries, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
     parallel::stopCluster(cl)
 
     # This patch solves issue #73 in a dirty way waiting for a better solution for issue
@@ -179,7 +168,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   return(output)
 }
 
-.get_query = function(query, p = NULL, ...)
+.get_query = function(query, pb = NULL, ...)
 {
   X <- Y <- buffer <- NULL
 
@@ -191,61 +180,52 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   buff    <- query$buffer
   tiles   <- query$tiles
   shape   <- query$shape
-  buffer  <- query$buffer
 
   xleft   <- x - r
   xright  <- x + r
   ybottom <- y - r2
   ytop    <- y + r2
 
-  param = list(...)
+  select  <- "*"
+  param   <- list(...)
 
   if (shape == LIDRCIRCLE)
-    filter = paste("-inside_circle", x, y, r)
+    filter <- paste("-inside_circle", x, y, r)
   else if (shape == LIDRRECTANGLE)
-    filter = paste("-inside", xleft, ybottom, xright, ytop)
+    filter <- paste("-inside", xleft, ybottom, xright, ytop)
   else
     stop("Something went wrong internally in .get_query(). Process aborted.")
 
-  # Update progress bar
-  if (!is.null(p))
-  {
-    pfile = attr(p, "file")
-    i = data.table::fread(pfile)$V1 + 1
-    utils::setTxtProgressBar(p, i)
-    write(i, pfile)
-  }
+  if (!is.null(pb))
+    addTxtProgressBarMulticore(pb, 1)
 
   # Merge spatial filter with user's filters
   if (!is.null(param$filter))
-    filter = paste(filter, param$filter)
+    filter <- paste(filter, param$filter)
 
   if (!is.null(param$select))
-    select = param$select
-  else
-    select = "*"
+    select <- param$select
 
-  las = readLAS(tiles, filter = filter, select =  select)
+  las <- readLAS(tiles, filter = filter, select = select)
 
   if (is.null(las))
     return(NULL)
 
-  # Add information about the buffer
-  if (buffer > 0)
-  {
-    las@data[, buffer := 0]
+  if (buff == 0)
+    return(las)
 
-    if (shape == LIDRCIRCLE)
-    {
-      las@data[(X-x)^2 + (Y-y)^2 > (r-buff)^2, buffer := 1]
-    }
-    else
-    {
-      las@data[Y < ybottom + buff, buffer := LIDRBOTTOMBUFFER]
-      las@data[X < xleft   + buff, buffer := LIDRLEFTBUFFER]
-      las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
-      las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
-    }
+  las@data[, buffer := 0]
+
+  if (shape == LIDRCIRCLE)
+  {
+    las@data[(X-x)^2 + (Y-y)^2 > (r-buff)^2, buffer := LIDRBUFFER]
+  }
+  else
+  {
+    las@data[Y < ybottom + buff, buffer := LIDRBOTTOMBUFFER]
+    las@data[X < xleft   + buff, buffer := LIDRLEFTBUFFER]
+    las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
+    las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
   }
 
   return(las)

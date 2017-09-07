@@ -82,6 +82,7 @@ Collate:
     'utils_geometry.r'
     'utils_interpolations.r'
     'utils_misc.r'
+    'utils_progress.r'
     'utils_typecast.r'
     'writeLAS.r'
     'zzz.r'
