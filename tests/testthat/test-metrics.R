@@ -1,7 +1,7 @@
 context("metrics")
 
 test_that("gap fraction returns proper values", {
-  Z = runif(10000, 0, 5)
+  Z = runif(50000, 0, 5)
   gf = 1-gap_fraction_profile(Z, 1, 0)$gf
 
   expect_equal(gf, c(1, 0.5, 0.333, 0.25, 0.2), tolerance = 0.01)

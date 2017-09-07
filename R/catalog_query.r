@@ -128,56 +128,46 @@ catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
 {
   nplots <- length(x)
-  shape  <- LIDRRECTANGLE
   tiles  <- pbar <- NULL
-
-  if (is.null(r2))
-    shape <- LIDRCIRCLE
 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
+
+  verbose("Indexing files...")
+
+  # Make an index of the files containing each query
+  queries = catalog_index(obj, x, y, r, r2, buffer, roinames)
+
+  # Recompute the number of queries
+  nplots = length(queries)
 
   # Enable the progress bar even with multicore
   if (progress)
   {
     pfile = tempfile()
     write(0, pfile)
-    pbar  = utils::txtProgressBar(max = nplots, style = 3)
+    pbar  = utils::txtProgressBar(min = 0, max = nplots, style = 3)
     attr(pbar, "file") = pfile
+    cat("\n")
   }
-  else
-    pbar = NULL
 
   if (nplots <= ncores)
+  {
     ncores = nplots
-
-  verbose("Indexing files...")
-
-  # Make an index of the files containing each query
-  lasindex = catalog_index(obj, x, y, r, r2, buffer, roinames)
-  lasindex$buffer = buffer
-
-  # Remove potential improper queries (out of existing files)
-  keep = lasindex[, length(tiles[[1]]) > 0, by = roinames]$V1
-  lasindex = lasindex[keep]
-  roinames = roinames[keep]
-
-  # Transform as list
-  queries = apply(lasindex, 1, as.list)
-
-  # Recompute the number of queries
-  nplot = length(queries)
+  }
 
   verbose("Extracting data...")
 
   # Computation
   if (ncores == 1)
-    output = lapply(queries, .get_query, shape, p = pbar, ...)
+  {
+    output = sapply(queries, .get_query, p = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
+  }
   else
   {
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = NULL, envir = NULL)
-    output = parallel::parLapply(cl, queries, .get_query, shape, p = pbar, ...)
+    output = parallel::parSapply(cl, queries, .get_query, p = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
     parallel::stopCluster(cl)
 
     # This patch solves issue #73 in a dirty way waiting for a better solution for issue
@@ -186,22 +176,22 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
       output[[i]]@data <- data.table::copy(output[[i]]@data)
   }
 
-  data.table::setattr(output, "names", roinames)
-
   return(output)
 }
 
-.get_query = function(query, shape, p = NULL, ...)
+.get_query = function(query, p = NULL, ...)
 {
   X <- Y <- buffer <- NULL
 
   # Variables for readability
-  x     <- query$x
-  y     <- query$y
-  r     <- query$r
-  r2    <- query$r2
-  buff  <- query$buffer
-  tiles <- query$tiles
+  x       <- query$x
+  y       <- query$y
+  r       <- query$r
+  r2      <- query$r2
+  buff    <- query$buffer
+  tiles   <- query$tiles
+  shape   <- query$shape
+  buffer  <- query$buffer
 
   xleft   <- x - r
   xright  <- x + r
@@ -216,6 +206,15 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     filter = paste("-inside", xleft, ybottom, xright, ytop)
   else
     stop("Something went wrong internally in .get_query(). Process aborted.")
+
+  # Update progress bar
+  if (!is.null(p))
+  {
+    pfile = attr(p, "file")
+    i = data.table::fread(pfile)$V1 + 1
+    utils::setTxtProgressBar(p, i)
+    write(i, pfile)
+  }
 
   # Merge spatial filter with user's filters
   if (!is.null(param$filter))
@@ -232,7 +231,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     return(NULL)
 
   # Add information about the buffer
-  if (query$buffer > 0)
+  if (buffer > 0)
   {
     las@data[, buffer := 0]
 
@@ -247,15 +246,6 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
       las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
       las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
     }
-  }
-
-  # Update progress bar
-  if (!is.null(p))
-  {
-    pfile = attr(p, "file")
-    i = data.table::fread(pfile)$V1 + 1
-    utils::setTxtProgressBar(p, i)
-    write(i, pfile)
   }
 
   return(las)

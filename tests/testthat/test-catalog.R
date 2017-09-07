@@ -2,6 +2,8 @@ context("test-catalog")
 
 folder <- system.file("extdata", "", package="lidR")
 
+catalog_options(multicore = 1, progress = FALSE)
+
 test_that("build catalog works", {
   ctg = catalog(folder)
   expect_equal(dim(ctg)[1], 3)
@@ -9,8 +11,6 @@ test_that("build catalog works", {
 })
 
 test_that("catalog queries works", {
-  catalog_options(multicore = 1)
-
   x = c(684850, 684880)
   y = c(5017850, 5017880)
   r = 20
@@ -26,8 +26,6 @@ test_that("catalog queries works", {
 })
 
 test_that("catalog queries works with buffer", {
-  catalog_options(multicore = 1)
-
   x = c(684850, 684880)
   y = c(5017850, 5017880)
   r = 20
@@ -43,8 +41,6 @@ test_that("catalog queries works with buffer", {
 })
 
 test_that("catalog queries works when no data", {
-  catalog_options(multicore = 1)
-
   x = c(6848, 684880)
   y = c(5017850, 5017880)
   r = 20
@@ -58,8 +54,6 @@ test_that("catalog queries works when no data", {
 })
 
 test_that("catalog queries works with the two shapes", {
-  catalog_options(multicore = 1)
-
   x = c(684850)
   y = c(5017850)
   r = 20
@@ -80,8 +74,6 @@ test_that("catalog queries works with the two shapes", {
 })
 
 test_that("catalog queries support readLAS options", {
-  catalog_options(multicore = 1)
-
   x = c(684850)
   y = c(5017850)
   r = 20
@@ -118,7 +110,6 @@ test_that("catalog reshape works", {
 
 test_that("catalog apply works", {
   catalog_options(multicore = 1, tiling_size = 100, buffer = 0)
-  lidr_options(progress = TRUE)
 
   ctg = catalog(folder)
   ctg = ctg[1]

@@ -37,7 +37,7 @@
 # Users do not really need it.
 #
 # @aliases catalog_index
-# @param obj A Catalog object
+# @param catalog A Catalog object
 # @param x vector. A set of x plot coordinates
 # @param y vector. A set of y plot coordinates
 # @param r numeric or vector. A radius or a set of radii of the ROI. If only
@@ -48,50 +48,62 @@
 # @seealso
 # \link[lidR:catalog]{Catalog}
 # \link[lidR:catalog_queries]{catalog_queries}
-catalog_index =	function(obj, x, y, r, r2, buffer, roinames)
+catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
 {
   tile <- minx <- maxx <- miny <- maxy <- NULL
   filename <- `Min X` <- `Max X` <- `Min.Y` <- `Max Y` <- NULL
   . <- NULL
 
-  nplot = length(x)
+  nplot <- length(x)
+  shape <- LIDRRECTANGLE
 
   if(is.null(r2))
-    r2 = r
-
-  if (is.null(roinames))
-    roinames = paste("ROI", 1:nplot, sep="")
+  {
+    r2    <- r
+    shape <- LIDRCIRCLE
+  }
 
   if (buffer > 0)
   {
-    r = r + buffer
-    r2 = r2 + buffer
+    r  <- r + buffer
+    r2 <- r2 + buffer
   }
 
-  coord.tiles = with(obj, data.frame(filename, `Min X`, `Max X`, `Min Y`, maxy = `Max Y`, stringsAsFactors = F))
+  coord.tiles <- catalog[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
-  coord.plot = data.table(roinames, x, y, r, r2)
+  coord.plot <- data.table(roinames, x, y, r, r2)
   coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
 
-  tiles = lapply(1:nplot, function(i)
+  tiles <- lapply(1:nplot, function(i)
   {
-    coord = coord.plot[i]
-    subset(coord.tiles, !(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny))$tile
+    coord <- coord.plot[i]
+    coord.tiles[!(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny)]$tile
   })
 
+  coord.plot[, `:=`(buffer = buffer, shape = shape)]
   coord.plot[, tiles := list(tiles)]
   coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL][]
 
-  numfile = coord.plot$tiles %>% sapply(length)
-  n = numfile == 0
+  # Check if some files were outside the catalog
+  numfile <- coord.plot$tiles %>% sapply(length)
+  n <- numfile == 0
 
   if(sum(n) > 0)
   {
-    rois = paste(coord.plot$roinames[n], collapse = " ")
-    msg = paste(rois, "not found.")
-    warning(msg, call. =F)
+    for (roi in coord.plot$roinames[n])
+    {
+      msg = paste(roi, "is outside the catalog.")
+      warning(msg, call. = FALSE)
+    }
   }
 
-  return(coord.plot)
+  keep = !n
+  coord.plot = coord.plot[keep]
+  roinames = roinames[keep]
+
+  queries = apply(coord.plot, 1, as.list)
+  names(queries) = roinames
+
+  return(queries)
 }

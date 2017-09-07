@@ -36,14 +36,14 @@ lascheck = function(data, header, hard = F)
   negvalues = fast_countbelow(data$Z, 0)
 
   if(negvalues > 0)
-    warning(paste0("Dataset may be invalid: ", negvalues, " points below 0 found."), call. = F)
+    message(paste0(negvalues, " points below 0 found."), call. = F)
 
   if("Classification" %in% fields)
   {
     class0 = fast_countequal(data$Classification, 0)
 
     if(class0 > 0)
-      warning(paste0("Dataset may be invalid: ", class0, " unclassified points found."), call. = F)
+      message(paste0(class0, " unclassified points found."), call. = F)
   }
 
   if("ReturnNumber" %in% fields)

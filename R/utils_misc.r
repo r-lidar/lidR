@@ -92,6 +92,7 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
 
     X = expand.grid(xleft = xleft, ybottom = ybottom)
+    data.table::setDT(X)
 
     X$xright = X$xleft + width
     X$ytop   = X$ybottom + width
@@ -106,9 +107,8 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   X$name        = 1:nrow(X)
 
   # Remove cluster outside the catalog
-  lasindex = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, ""))
-  keep     = sapply(lasindex$tiles, length) > 0
-  X = X[keep,]
+  queries = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, X$name))
+  X = X[name %in% names(queries)]
 
   # Plot the pattern
   xrange = c(min(X$xleft), max(X$xright))
