@@ -4,7 +4,7 @@
 \alias{readLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS(files, select = "xyztinrcaRGB", filter = "", ...)
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
@@ -32,20 +32,21 @@ means that the x, y, and z coordinates, the intensity and the scan angle will be
 The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
 r - return number, c - classification, u - user data, p - point source ID, e - edge of
 flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
-channel of RGB color, B - blue channel of RGB color and * - is the wildcard and enables
-everything to be loaded. \cr
+channel of RGB color, B - blue channel of RGB color, * - is the wildcard and enables
+everything from the LAS file. \cr
 x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
 equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than
-\code{select ""}.\cr
+\code{select = ""}.\cr
 
 Three extra metrics can be computed on the fly with the folowing flags:
-P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}\cr\cr
+P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}.
+The symbol + is a shortcut for 'PFC'.\cr\cr
 
 The 'filter' argument allows filtering of the point cloud while reading files. This is much
 more efficient than \link{lasfilter} in many ways. If the desired filters are known before
 reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command:
-rlas:::lasfilterusae()
+rlas:::lasfilterusage()
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -53,6 +54,7 @@ las = readLAS(LASfile)
 las = readLAS(LASfile, select = "xyz")
 las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
+las = readLAS(LASfile, select = "*+")
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
