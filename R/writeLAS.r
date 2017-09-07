@@ -54,7 +54,7 @@ writeLAS = function(.las, file)
 
   fields = names(.las@data)
 
-  nolasvalidfield = fields[!fields %in% .LASVALIDFIELDS]
+  nolasvalidfield = fields[!fields %in% LASFIELDS]
 
   if ("Intensity" %in% fields)
     I = .las@data$Intensity

@@ -36,7 +36,7 @@ pulse density does not have meaning at this scale.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+lidar = readLAS(LASfile, select = "xyztP")
 
 # By default the method is homogenize = TRUE
 thinned = lidar \%>\% lasdecimate(1, res = 5)

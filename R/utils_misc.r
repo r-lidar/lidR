@@ -65,6 +65,8 @@ f_grid = function(x, res, start)
 
 catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"))
 {
+  name <- NULL
+
   if (by_file)
   {
     X = ctg[, c("Min X", "Max X", "Min Y", "Max Y")]

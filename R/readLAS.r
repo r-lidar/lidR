@@ -74,7 +74,7 @@
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 #' las = readLAS(LASfile, select = "*+")
-readLAS = function(files, select = "xyztinrcaRGB", filter = "", ...)
+readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 {
   `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
 
