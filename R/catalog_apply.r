@@ -110,7 +110,7 @@
 #'   # If min buffer is 0 it means the trees were at least partly in the non-buffered area, so we
 #'   # want to keep these trees.
 #'   # However, the trees that are on the edge of the buffered area will be counted
-#'   # twice. So we must remove the trees on the left side and on the bottom side of the buffer
+#'   # twice. So we must remove the trees on the right side and on the top side of the buffer
 #'   # If max buffer is <= 2 it means that the trees belong inside the area of interest, on
 #'   # the left side or the bottom side, or both.
 #'   m = m[minbuff == 0 & maxbuff <= 2]
