@@ -162,7 +162,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     # This patch solves issue #73 in a dirty way waiting for a better solution for issue
     # 2333 in data.table
     for (i in 1:length(output))
-      output[[i]]@data <- data.table::copy(output[[i]]@data)
+      output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
   }
 
   return(output)
