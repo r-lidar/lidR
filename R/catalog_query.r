@@ -226,6 +226,7 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
     las@data[X < xleft   + buff, buffer := LIDRLEFTBUFFER]
     las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
     las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
+    las@data[(X > xright - buff) & (Y < ybottom + buff), buffer := LIDRBOTTOMBUFFER]
   }
 
   return(las)
