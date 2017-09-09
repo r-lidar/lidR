@@ -32,17 +32,25 @@
 #' This functions implements a \link[graphics:plot]{plot} method for Catalog objects
 #'
 #' @param x A Catalog object
-#' @param y Unused (inherited from base plot)
+#' @param y A proj4 string for the location of the catalog. This enable to load a map from
+#' google map and use it as background.
+#' @param type character. Choose from 'roadmap', 'satellite', 'hybrid', 'terrain'
 #' @param \dots inherited from base plot
 #' @method plot Catalog
 #' @export
 #' @examples
 #' \dontrun{
-#'
-#' catalog = catalog("<Path to a folder containing a set of .las files>")
+#' ctg = catalog("<Path to a folder containing a set of .las files>")
 #' plot(catalog)
+#'
+#' # Exemple with a single file
+#' proj4   <- "+proj=utm +zone=17"
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#'
+#' ctg = catalog(LASfile)
+#' plot(ctg, proj4)
 #' }
-plot.Catalog = function(x, y, ...)
+plot.Catalog = function(x, y, type = "terrain", ...)
 {
   param = list(...)
 
@@ -79,6 +87,18 @@ plot.Catalog = function(x, y, ...)
   param$y = ycenter
 
   do.call(graphics::plot, param)
-  graphics::rect(x$`Min X`, x$`Min Y`, x$`Max X`, x$`Max Y`)
+
+  if (!missing(y))
+  {
+    ext = raster::extent(min(x$`Min X`), max(x$`Max X`), min(x$`Min Y`), max(x$`Max Y`))
+    r <- raster::raster()
+    raster::extent(r) <- ext
+    sp::proj4string(r) <- y
+    gm <- dismo::gmap(x = r, type = type, scale = 1, rgb = TRUE)
+    gm <- raster::projectRaster(gm, crs = y)
+    raster::plotRGB(gm, add = TRUE, alpha = 230)
+  }
+
+  graphics::rect(x$`Min X`, x$`Min Y`, x$`Max X`, x$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
 }
 
