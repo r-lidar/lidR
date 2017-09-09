@@ -48,12 +48,31 @@ catalog_select = function(x)
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- NULL
 
   graphics::plot(x)
+  selected = with(x, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
+  return(x[selected])
+}
 
-  selected = x %$% graphics::identify((`Min X` + `Max X`)/2, (`Min Y` + `Max Y`)/2, plot=F)
+identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
+{
+  n <- length(minx)
+  x <- (minx + maxx)/2
+  y <- (miny + maxy)/2
 
-  x = x[selected,]
+  sel <- rep(FALSE, n)
 
-  x %$% graphics::rect(`Min X`, `Min Y`, `Max X`, `Max Y`, col="red")
+  while(sum(sel) < n)
+  {
+    ans <- graphics::identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
 
-  return(x)
+    if(!length(ans))
+      break
+
+    ans <- which(!sel)[ans]
+
+    graphics::rect(minx[ans], miny[ans], maxx[ans], maxy[ans], col = "forestgreen")
+
+    sel[ans] <- TRUE
+  }
+
+  return(which(sel))
 }
