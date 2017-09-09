@@ -30,6 +30,7 @@ Major changes are:
 * `catalog` can build a catalog from a set of paths to files instead of a path to a folder.
 * removed dependencies to `RANN` package using internal k-nearest neighbor search (2 to 3 times faster)
 * removed `$` access to LAS attribute (incredibly slow)
+* `catalog_select` is more pleasant to use.
 
 #### BUG FIXES
 
