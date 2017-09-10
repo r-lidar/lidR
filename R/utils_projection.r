@@ -33,6 +33,7 @@ get_epsg = function(header)
     if (tag$key == 3072)
        epsg = tag$`value offset`
   }
+
   return(epsg)
 }
 
@@ -40,13 +41,11 @@ get_epsg = function(header)
 .epsg2proj = function(code)
 {
   if (is.null(code))
-    return(NA_character_)
+    return(sp::CRS())
 
-  url = paste0("http://spatialreference.org/ref/epsg/", code, "/proj4/")
+  crs = tryCatch(sp::CRS(paste0("+init=epsg:", code)), error = function (e) sp::CRS())
 
-  proj = tryCatch(readLines(url, warn = F), error = function (e) NA_character_)
-
-  return(proj)
+  return(crs)
 }
 
 .epsg2wkt = function(code)
