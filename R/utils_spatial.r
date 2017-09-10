@@ -56,3 +56,50 @@ setMethod("extent", "LAScatalog",
     return(raster::extent(min(x@data$`Min X`), max(x@data$`Max X`), min(x@data$`Min Y`), max(x@data$`Max Y`)))
   }
 )
+
+#' Surface covered by a \code{LAS} object or by a \code{LAScatalog}.
+#'
+#' The area is computed with the convex hull for \code{LAS} objects or x,y coordinates. If
+#' the data is not convex, the resulting area is only an approximation. The area is computed
+#' as the sum of the extents of each file for a \code{LAScatalog}.
+#'
+#' @param x An object of the class \code{LAS} or \code{LAScatalog} or numeric
+#' @param y If x is numeric, then provide also y.
+#' @return numeric. The area of the object computed in the same units as the coordinate reference system
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile)
+#' area(las)
+#' @export
+area <- function(x, y)
+{
+  UseMethod("area", x)
+}
+
+#' @export
+area.numeric <- function(x, y)
+{
+  stopifnot(is.numeric(y))
+  stopifnot(length(x) == length(y))
+
+  hull <- convex_hull(x, y)
+  area <- polygon_area(hull$x, hull$y)
+  area <- round(area, 1)
+  return(area)
+}
+
+#' @export
+area.LAS <- function(x, y)
+{
+  return(area(x@data$X, x@data$Y))
+}
+
+#' @export
+area.LAScatalog <- function(x, y)
+{
+  x <- x@data
+  area <- sum((x$`Max X` - x$`Min X`) * (x$`Max X` - x$`Min X`))
+  return(area)
+}
+
+
