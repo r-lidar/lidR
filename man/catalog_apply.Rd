@@ -7,7 +7,7 @@
 catalog_apply(ctg, func, func_args = NULL, ...)
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{Catalog} object.}
+\item{ctg}{A \link[lidR:catalog]{LAScatalog} object.}
 
 \item{func}{A user-defined function for which the first input is a LAS object.}
 

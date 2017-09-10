@@ -28,7 +28,7 @@ can replace each return with a circle composed of 8 points before computing the 
 (see also \link{grid_canopy}).}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{

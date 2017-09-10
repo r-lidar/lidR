@@ -72,14 +72,14 @@
 #' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param func the function to be applied to each cell (see section "Parameter func")
 #' @param res numeric. The size of the cells. Default 20.
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").
 #' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
 #' flightline individually. It returns the same cells several times in overlap.
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 #' user cannot manipulate the lidar data directly but can use streaming filters instead.
 #' @return Returns a \code{data.table} containing the metrics for each cell. The table
 #' has the class "lasmetrics" enabling easy plotting.
@@ -133,8 +133,8 @@ grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines
 {
   call = substitute(func)
 
-  if (any(start != 0))  warning("Parameter start is currently disabled for Catalogs")
-  if (splitlines)       warning("Parameter splitlines is currently disabled for Catalogs")
+  if (any(start != 0))  warning("Parameter start is currently disabled for LAScatalogs")
+  if (splitlines)       warning("Parameter splitlines is currently disabled for LAScatalogs")
 
   stat <- grid_catalog(x, grid_metrics, res, "*+", filter, func = call)
 

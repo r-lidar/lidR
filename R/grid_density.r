@@ -41,11 +41,11 @@
 #' spatial index.
 #'
 #' @aliases grid_density
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 #' square meters.
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
+#' If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 #' user cannot manipulate the lidar data directly but can use streaming filters instead.
 #' @return Returns a \code{data.table} of class \code{lasmetrics} which enables easier
 #' plotting and RasterLayer casting.

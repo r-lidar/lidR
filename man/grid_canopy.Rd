@@ -8,7 +8,7 @@ grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
   filter = "")
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
@@ -22,7 +22,7 @@ Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
 \item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If \code{x} is a \code{Catalog} the function \link{readLAS} is called internally. The
+If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{

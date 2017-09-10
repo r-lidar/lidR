@@ -58,7 +58,7 @@
 #' left, top and right buffers, respectively (see example).
 #'
 #' @aliases catalog_apply
-#' @param ctg A \link[lidR:catalog]{Catalog} object.
+#' @param ctg A \link[lidR:catalog]{LAScatalog} object.
 #' @param func A user-defined function for which the first input is a LAS object.
 #' @param func_args A list of extra arguments to pass in the function 'func'.
 #' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.

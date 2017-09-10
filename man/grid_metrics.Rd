@@ -8,7 +8,7 @@ grid_metrics(x, func, res = 20, start = c(0, 0), splitlines = FALSE,
   filter = "")
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
 
 \item{func}{the function to be applied to each cell (see section "Parameter func")}
 
@@ -20,7 +20,7 @@ grid_metrics(x, func, res = 20, start = c(0, 0), splitlines = FALSE,
 flightline individually. It returns the same cells several times in overlap.}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{
