@@ -9,8 +9,8 @@ test_that("Test if I/O are equal", {
   o = readLAS(ofile)
 
   # Because those field are expepected to be different
-  i@header@data["Generating Software"] <- NULL
-  o@header@data["Generating Software"] <- NULL
+  i@header@PHB["Generating Software"] <- NULL
+  o@header@PHB["Generating Software"] <- NULL
 
   expect_equal(i@data, o@data)
   expect_equal(i@header, o@header)

@@ -29,12 +29,14 @@
 
 #' An S4 class to represent the data read in a .las or .laz file
 #'
-#' A LAS object contains the data and the header read in a .las file and
-#' additional values computed on the fly during loading.
+#' A LAS object is the representation of a las/laz files.
 #'
-#' A \code{LAS} object contains a \code{data.table} in the slot \code{@data} with
-#' the data read from a \code{.las} file and other information computed during
-#' data loading. The fields read from the las file are named:
+#' A \code{LAS} object contains a
+#' \code{data.table} in the slot \code{@data} with the data read from a \code{las/laz} file,
+#' a \link[lidR:LASheader-class]{LASheader} in the slot \code{@header} (see the ASPRS documentation for the
+#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
+#' for more information) and a \link[sp:CRS]{CRS} (coordinates reference system) in the
+#' slot \code{@crs}. In the slot \code{@data} The fields read from the las/laz file are named:
 #' \itemize{
 #' \item{\code{X Y Z}}
 #' \item{\code{Intensity}}
@@ -59,13 +61,9 @@
 #' \item{\code{color}: the hexadecimal name of the color of the point if R, G and B
 #' fields exist (see \link[lidR:lascolor]{lascolor})}
 #' }
-#' A \code{LAS} object also contains a slot \code{@header} which contains the
-#' header of the \code{.las} file. See the ASPRS documentation for the
-#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
-#' for more information.\cr
-#'
 #' @slot data data.table. a table representing the LAS data
 #' @slot header list. A list of information contained in the las file header.
+#' @slot crs A \link[sp:CRS]{CRS} object.
 #' @seealso
 #' \link[lidR:LAS]{LAS}
 #' \link[lidR:readLAS]{readLAS}
@@ -74,14 +72,16 @@
 #' @import data.table
 #' @import magrittr
 #' @import methods
-#' @include lasheader-class.r
+#' @include class-lasheader.r
+#' @importClassesFrom sp CRS
 #' @exportClass LAS
 #' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAS",
   representation(
     data 	 = "data.table",
-    header = "LASheader"
+    header = "LASheader",
+    crs = "CRS"
   )
 )
 
@@ -110,132 +110,133 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   {
     number_of <- fast_table(data$ReturnNumber, 5L)
 
-    header@data["Number of 1st return"] <- number_of[1]
-    header@data["Number of 2nd return"] <- number_of[2]
-    header@data["Number of 3rd return"] <- number_of[3]
-    header@data["Number of 4th return"] <- number_of[4]
-    header@data["Number of 5th return"] <- number_of[5]
+    header@PHB["Number of 1st return"] <- number_of[1]
+    header@PHB["Number of 2nd return"] <- number_of[2]
+    header@PHB["Number of 3rd return"] <- number_of[3]
+    header@PHB["Number of 4th return"] <- number_of[4]
+    header@PHB["Number of 5th return"] <- number_of[5]
   }
 
-  header@data["Number of point records"] <- dim(data)[1]
-  header@data["Min X"] <- min(data$X)
-  header@data["Min Y"] <- min(data$Y)
-  header@data["Min Z"] <- min(data$Z)
-  header@data["Max X"] <- max(data$X)
-  header@data["Max Y"] <- max(data$Y)
-  header@data["Max Z"] <- max(data$Z)
+  header@PHB["Number of point records"] <- dim(data)[1]
+  header@PHB["Min X"] <- min(data$X)
+  header@PHB["Min Y"] <- min(data$Y)
+  header@PHB["Min Z"] <- min(data$Z)
+  header@PHB["Max X"] <- max(data$X)
+  header@PHB["Max Y"] <- max(data$Y)
+  header@PHB["Max Z"] <- max(data$Z)
 
-  header@data["File Signature"] = "LASF"
-  header@data["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
-  header@data["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
+  header@PHB["File Signature"] = "LASF"
+  header@PHB["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
+  header@PHB["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
 
   if("gpstime" %in% names(data)) # format 1 or 3
   {
     if(any(c("R", "G", "B") %in% names(data)))
     {
-      header@data["Point Data Format ID"] = 3
-      header@data["Point Data Record Length"] = 34
+      header@PHB["Point Data Format ID"] = 3
+      header@PHB["Point Data Record Length"] = 34
     }
     else
     {
-      header@data["Point Data Format ID"] = 1
-      header@data["Point Data Record Length"] = 28
+      header@PHB["Point Data Format ID"] = 1
+      header@PHB["Point Data Record Length"] = 28
     }
   }
   else # format 0 or 2
   {
     if(any(c("R", "G", "B") %in% names(data)))
     {
-      header@data["Point Data Format ID"] = 2
-      header@data["Point Data Record Length"] = 26
+      header@PHB["Point Data Format ID"] = 2
+      header@PHB["Point Data Record Length"] = 26
     }
     else
     {
-      header@data["Point Data Format ID"] = 0
-      header@data["Point Data Record Length"] = 20
+      header@PHB["Point Data Format ID"] = 0
+      header@PHB["Point Data Record Length"] = 20
     }
   }
 
-  if(is.null(header@data[["Version Major"]]))
-    header@data["Version Major"] = 1
+  if(is.null(header@PHB[["Version Major"]]))
+    header@PHB["Version Major"] = 1
 
-  if(is.null(header@data[["Version Minor"]]))
-    header@data["Version Minor"] = 2
+  if(is.null(header@PHB[["Version Minor"]]))
+    header@PHB["Version Minor"] = 2
 
-  if(is.null(header@data[["X offset"]]) & is.null(header@data[["Y offset"]]) & is.null(header@data[["Z offset"]]))
+  if(is.null(header@PHB[["X offset"]]) & is.null(header@PHB[["Y offset"]]) & is.null(header@PHB[["Z offset"]]))
   {
-    header@data["X offset"] = header@data[["Min X"]]
-    header@data["Y offset"] = header@data[["Min Y"]]
-    header@data["Z offset"] = header@data[["Min Z"]]
-    num = c(header@data[["Min X"]], header@data[["Min Y"]], header@data[["Min Z"]])
+    header@PHB["X offset"] = header@PHB[["Min X"]]
+    header@PHB["Y offset"] = header@PHB[["Min Y"]]
+    header@PHB["Z offset"] = header@PHB[["Min Z"]]
+    num = c(header@PHB[["Min X"]], header@PHB[["Min Y"]], header@PHB[["Min Z"]])
     lidRError("LDR12", what = "X Y and Z offsets", num = round(num,2), behaviour = warning)
   }
 
-  if(is.null(header@data[["X scale factor"]]) & is.null(header@data[["Y scale factor"]]) & is.null(header@data[["Z scale factor"]]))
+  if(is.null(header@PHB[["X scale factor"]]) & is.null(header@PHB[["Y scale factor"]]) & is.null(header@PHB[["Z scale factor"]]))
   {
-    header@data["X scale factor"] = 0.01
-    header@data["Y scale factor"] = 0.01
-    header@data["Z scale factor"] = 0.01
+    header@PHB["X scale factor"] = 0.01
+    header@PHB["Y scale factor"] = 0.01
+    header@PHB["Z scale factor"] = 0.01
     lidRError("LDR12", what = "X Y and Z scale factors", num = rep(0.01,3), behaviour = warning)
   }
 
-  if(is.null(header@data[["X offset"]])) {
-    header@data["X offset"] = header@data[["Min X"]]
-    lidRError("LDR11", what = "X offset", num = round(header@data[["Min X"]],2), behaviour = warning)
+  if(is.null(header@PHB[["X offset"]])) {
+    header@PHB["X offset"] = header@PHB[["Min X"]]
+    lidRError("LDR11", what = "X offset", num = round(header@PHB[["Min X"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["Y offset"]])) {
-    header@data["Y offset"] = header@data[["Min Y"]]
-    lidRError("LDR11", what = "Y offset", num = round(header@data[["Min Y"]],2), behaviour = warning)
+  if(is.null(header@PHB[["Y offset"]])) {
+    header@PHB["Y offset"] = header@PHB[["Min Y"]]
+    lidRError("LDR11", what = "Y offset", num = round(header@PHB[["Min Y"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["Z offset"]])) {
-    header@data["Z offset"] = header@data[["Min Z"]]
-    lidRError("LDR11", what = "Z offset", num = round(header@data[["Min Z"]],2), behaviour = warning)
+  if(is.null(header@PHB[["Z offset"]])) {
+    header@PHB["Z offset"] = header@PHB[["Min Z"]]
+    lidRError("LDR11", what = "Z offset", num = round(header@PHB[["Min Z"]],2), behaviour = warning)
   }
 
-  if(is.null(header@data[["X scale factor"]])) {
-    header@data["X scale factor"] = 0.01
+  if(is.null(header@PHB[["X scale factor"]])) {
+    header@PHB["X scale factor"] = 0.01
     lidRError("LDR11", what = "X scale factor", num = 0.01, behaviour = warning)
   }
 
-  if(is.null(header@data[["Y scale factor"]])) {
-    header@data["Y scale factor"] = 0.01
+  if(is.null(header@PHB[["Y scale factor"]])) {
+    header@PHB["Y scale factor"] = 0.01
     lidRError("LDR11", what = "Y scale factor", num = 0.01, behaviour = warning)
   }
 
-  if(is.null(header@data[["Z scale factor"]])) {
-    header@data["Z scale factor"] = 0.01
+  if(is.null(header@PHB[["Z scale factor"]])) {
+    header@PHB["Z scale factor"] = 0.01
     lidRError("LDR11", what = "Z scale factor", num = 0.01, behaviour = warning)
   }
 
-  if(is.null(header@data[["File Source ID"]]))
-    header@data["File Source ID"] = 0
+  if(is.null(header@PHB[["File Source ID"]]))
+    header@PHB["File Source ID"] = 0
 
-  if(is.null(header@data[["System Identifier"]]))
-    header@data["System Identifier"] = "lidR"
+  if(is.null(header@PHB[["System Identifier"]]))
+    header@PHB["System Identifier"] = "lidR"
 
-  if(is.null(header@data[["Generating Software"]]))
-    header@data["Generating Software"] = paste("lidR", utils::packageVersion("lidR"))
+  if(is.null(header@PHB[["Generating Software"]]))
+    header@PHB["Generating Software"] = paste("lidR", utils::packageVersion("lidR"))
 
-  if(is.null(header@data[["Header Size"]]))
-    header@data["Header Size"] = 227
+  if(is.null(header@PHB[["Header Size"]]))
+    header@PHB["Header Size"] = 227
 
-  if(is.null(header@data[["Offset to point data"]]))
-    header@data["Offset to point data"] = 227
+  if(is.null(header@PHB[["Offset to point data"]]))
+    header@PHB["Offset to point data"] = 227
 
-  if(is.null(header@data[["Project ID - GUID"]]))
-    header@data["Project ID - GUID"] = 0
+  if(is.null(header@PHB[["Project ID - GUID"]]))
+    header@PHB["Project ID - GUID"] = 0
 
-  if(is.null(header@data[["Global Encoding"]]))
-    header@data["Global Encoding"] = 0
+  if(is.null(header@PHB[["Global Encoding"]]))
+    header@PHB["Global Encoding"] = 0
 
-  header@data["Number of variable length records"] = length(header@data[["Variable Length Records"]])
+  header@PHB["Number of variable length records"] = length(header@PHB[["Variable Length Records"]])
 
   # Build returned object  ---------------------------------------------------
 
   .Object@data   <- data
   .Object@header <- header
+  .Object@crs    <- sp::CRS(epsg2proj(get_epsg(header)))
 
   return(.Object)
 })
@@ -276,8 +277,8 @@ setMethod("show", "LAS", function(object)
   cat("point density:", round(dpt, 2), "points/m\u00B2\n")
   cat("pulse density:", round(dpu, 2), "pulses/m\u00B2\n")
   cat("fields       :", length(fie), "\n")
-  cat("field names  :", fie, "\n\n")
+  cat("field names  :", fie, "\n")
+  cat("coord. ref.  :", object@crs@projargs, "\n\n")
 
   print(object@header)
 })
-

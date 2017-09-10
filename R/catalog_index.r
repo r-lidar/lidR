@@ -69,7 +69,7 @@ catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
     r2 <- r2 + buffer
   }
 
-  coord.tiles <- catalog[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
+  coord.tiles <- catalog@data[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
   coord.plot <- data.table(roinames, x, y, r, r2)

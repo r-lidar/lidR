@@ -42,15 +42,15 @@
 #' \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function (see also
 #' examples).\cr\cr
 #' The 'subcircle' tweak replaces each point with 8 points around the original one. This allows
-#' for virtual 'emulation' of the fact that a lidar point is not a point as such, but more 
+#' for virtual 'emulation' of the fact that a lidar point is not a point as such, but more
 #' realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
 #' smoother and contains fewer 'pits' and empty pixels.
 #'
-#' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a \link{catalog} the function processes the entire dataset
-#' in a continuous way using a multicore process. Parallel computing is set by default to
-#' the number of core available in the computer. The user can modify the global options using
-#' the function \link{catalog_options}.\cr\cr
+#' @section Use with a \code{LAScatalog}:
+#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
+#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
+#' by default to the number of core available in the computer. The user can modify the global
+#' options using the function \link{catalog_options}.\cr\cr
 #' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
@@ -68,7 +68,7 @@
 #' user cannot manipulate the lidar data directly but can use streaming filters instead.
 #' @return Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
 #' plotting and RasterLayer casting.
-#' 
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -156,7 +156,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 }
 
 #' @export
-grid_canopy.Catalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 

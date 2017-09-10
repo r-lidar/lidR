@@ -32,11 +32,11 @@
 #' Creates a pulse density map using a LiDAR point cloud. This function is an alias
 #' for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
 #'
-#' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a catalog the function processes the entire dataset
-#' in a continuous way using a multicore process. Parallel computing is set by default to
-#' the number of cores available in the computer. No buffer is required. The user can modify
-#' the global options using the function \link{catalog_options}.\cr\cr
+#' @section Use with a \code{LAScatalog}:
+#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
+#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
+#' by default to the number of core available in the computer. The user can modify the global
+#' options using the function \link{catalog_options}.\cr\cr
 #' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
@@ -82,7 +82,7 @@ grid_density.LAS = function(x, res = 4, filter = "")
 }
 
 #' @export
-grid_density.Catalog = function(x, res = 4, filter = "-drop_z_below 0")
+grid_density.LAScatalog = function(x, res = 4, filter = "-drop_z_below 0")
 {
   ret <- grid_catalog(x, grid_density, res, "xyztP", filter)
 

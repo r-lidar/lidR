@@ -1,7 +1,7 @@
 context("canopy")
 
 
-las = dummy_las(10000)
+las = lidR:::dummy_las(10000)
 
 test_that("grid_canopy works", {
   chm1 = grid_canopy(las, 4)

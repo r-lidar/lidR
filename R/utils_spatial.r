@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,32 +25,34 @@
 #
 # ===============================================================================
 
-
-
 #' Extent
 #'
-#' Returns an Extent object of a \code{LAS} object.
+#' Returns an Extent object of a \code{LAS} or \code{LAScatalog} object.
 #'
-#' @aliases extent
-#' @param x An object of the class \code{LAS}
+#' @rdname extent
+#' @param x An object of the class \code{LAS} or \code{LAScatalog}
 #' @param \dots Unused
-#' @return Extent object
+#' @return Extent object from \pkg{raster}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' extent(lidar)
+#' las = readLAS(LASfile)
+#' extent(las)
 #' @seealso \code{\link[raster:extent]{raster::extent} }
-#' @export extent
+#' @export
 #' @importMethodsFrom raster extent
 setMethod("extent", "LAS",
-	function(x)
+	function(x, ...)
 	{
-	  stopifnotlas(x)
 		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
 	}
 )
 
+#' @rdname extent
 #' @export
-#' @rdname extent-LAS-method
-lasextent <- extent
+#' @importMethodsFrom raster extent
+setMethod("extent", "LAScatalog",
+  function(x, ...)
+  {
+    return(raster::extent(min(x@data$`Min X`), max(x@data$`Max X`), min(x@data$`Min Y`), max(x@data$`Max Y`)))
+  }
+)
