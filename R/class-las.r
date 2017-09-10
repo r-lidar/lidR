@@ -236,7 +236,7 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
 
   .Object@data   <- data
   .Object@header <- header
-  .Object@crs    <- sp::CRS(epsg2proj(get_epsg(header)))
+  .Object@crs    <- epsg2proj(get_epsg(header))
 
   return(.Object)
 })
