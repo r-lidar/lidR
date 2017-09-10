@@ -64,11 +64,11 @@
 #' produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
 #' reference is (-831600,  117980) in the NAD83 coordinate system.
 #'
-#' @section Use with a \code{Catalog}:
-#' When the parameter \code{x} is a catalog the function will process the entire dataset
-#' in a continuous way using a multicore process. Parallel computing is set by default to
-#' the number of core available in the computer. No buffer is required. The user can modify
-#' the global options using the function \link{catalog_options}.\cr\cr
+#' @section Use with a \code{LAScatalog}:
+#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
+#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
+#' by default to the number of core available in the computer. The user can modify the global
+#' options using the function \link{catalog_options}.\cr\cr
 #' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
@@ -129,7 +129,7 @@ grid_metrics.LAS = function(x, func, res = 20, start = c(0,0), splitlines = FALS
 }
 
 #' @export
-grid_metrics.Catalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
+grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
   call = substitute(func)
 

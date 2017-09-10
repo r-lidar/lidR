@@ -96,14 +96,17 @@
 #' }
 catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
+  UseMethod("catalog_queries", obj)
+}
+
+#' @export
+catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+{
   objtxt = lazyeval::expr_text(obj)
   xtxt   = lazyeval::expr_text(x)
   ytxt   = lazyeval::expr_text(y)
   rtxt   = lazyeval::expr_text(r)
   btxt   = lazyeval::expr_text(buffer)
-
-  if (!is(obj, "Catalog"))
-    stop(paste0(objtxt, " is not a Catalog."), call. = FALSE)
 
   if (length(x) != length(y))
     stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)

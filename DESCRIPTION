@@ -20,7 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,dismo
+    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,dismo,memoise
 Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true
@@ -30,12 +30,15 @@ Encoding: UTF-8
 biocViews: 
 Collate: 
     'RcppExports.R'
-    'catalog.r'
     'catalog_apply.r'
     'catalog_index.r'
+    'catalog_makecluster.r'
     'catalog_query.r'
     'catalog_reshape.r'
     'catalog_select.r'
+    'class-lasheader.r'
+    'class-las.r'
+    'class-lascatalog.r'
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
@@ -46,8 +49,6 @@ Collate:
     'grid_metrics3d.r'
     'grid_terrain.r'
     'grid_tincanopy.r'
-    'lasheader-class.r'
-    'las-class.r'
     'lasaggreagte.r'
     'lasarea.r'
     'lascheck.r'
@@ -55,7 +56,6 @@ Collate:
     'lasclip.r'
     'lascolor.r'
     'lasdecimate.r'
-    'lasextent.r'
     'lasfilter.r'
     'lasground.r'
     'lasindentify.r'
@@ -83,6 +83,8 @@ Collate:
     'utils_interpolations.r'
     'utils_misc.r'
     'utils_progress.r'
+    'utils_projection.r'
+    'utils_spatial.r'
     'utils_typecast.r'
     'writeLAS.r'
     'zzz.r'

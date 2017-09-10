@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,16 +27,15 @@
 
 
 
-#' Plot a Catalog object
+#' Plot a LAScatalog object
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for Catalog objects
+#' This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects
 #'
-#' @param x A Catalog object
-#' @param y A proj4 string for the location of the catalog. This enable to load a map from
-#' google map and use it as background.
-#' @param type character. Choose from 'roadmap', 'satellite', 'hybrid', 'terrain'
+#' @param x A LAScatalog object
+#' @param y character. If the catalog have a valid CRS, a google map background will be displayed.
+#' Choose from 'roadmap', 'satellite', 'hybrid', 'terrain', 'none'.
 #' @param \dots inherited from base plot
-#' @method plot Catalog
+#' @method plot LAScatalog
 #' @export
 #' @examples
 #' \dontrun{
@@ -50,14 +49,14 @@
 #' ctg = catalog(LASfile)
 #' plot(ctg, proj4)
 #' }
-plot.Catalog = function(x, y, type = "terrain", ...)
+plot.LAScatalog = function(x, y = "terrain", ...)
 {
   param = list(...)
 
-  xmin = min(x$`Min X`)
-  xmax = max(x$`Max X`)
-  ymin = min(x$`Min Y`)
-  ymax = max(x$`Max Y`)
+  xmin = min(x@data$`Min X`)
+  xmax = max(x@data$`Max X`)
+  ymin = min(x@data$`Min Y`)
+  ymax = max(x@data$`Max Y`)
 
   xcenter = (xmin + xmax)/2
   ycenter = (ymin + ymax)/2
@@ -88,17 +87,17 @@ plot.Catalog = function(x, y, type = "terrain", ...)
 
   do.call(graphics::plot, param)
 
-  if (!missing(y))
+  if (!is.na(x@crs@projargs) & y != "none")
   {
-    ext = raster::extent(min(x$`Min X`), max(x$`Max X`), min(x$`Min Y`), max(x$`Max Y`))
+    ext <- extent(x)
     r <- raster::raster()
     raster::extent(r) <- ext
-    sp::proj4string(r) <- y
-    gm <- dismo::gmap(x = r, type = type, scale = 1, rgb = TRUE)
-    gm <- raster::projectRaster(gm, crs = y)
+    sp::proj4string(r) <- x@crs@projargs
+    gm <- dismo::gmap(x = r, type = y, scale = 1, rgb = TRUE)
+    gm <- raster::projectRaster(gm, crs = x@crs@projargs)
     raster::plotRGB(gm, add = TRUE, alpha = 230)
   }
 
-  graphics::rect(x$`Min X`, x$`Min Y`, x$`Max X`, x$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+  graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
 }
 
