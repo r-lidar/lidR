@@ -261,7 +261,7 @@ setMethod("show", "LAS", function(object)
   else
     npu = NA
 
-  s   = lasarea(object)
+  s   = area(object)
   npt = nrow(object@data)
   dpt = npt/s
   dpu = npu/s

@@ -108,16 +108,13 @@ catalog <- function(folder, ...)
 
 setMethod("show", "LAScatalog", function(object)
 {
-  size <- format(utils::object.size(object), units = "auto")
-
-  x = object@data
-
-  surface = sum((x$`Max X` - x$`Min X`) * (x$`Max X` - x$`Min X`))
-  npoints = sum(x$`Number of point records`)
-  ext     = extent(object)
+  memsize <- format(utils::object.size(object), units = "auto")
+  surface <- area(object)
+  npoints <- sum(object@data$`Number of point records`)
+  ext     <- extent(object)
 
   cat("class       : LAScatalog\n")
-  cat("memory      :", size, "\n")
+  cat("memory      :", memsize, "\n")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("area        :", surface, "m\u00B2\n")
   cat("points      :", npoints, "points\n")

@@ -113,7 +113,7 @@ myMetrics <- function(x, y, z, buff)
   i = which.max(z)
   xcenter = x[i]
   ycenter = y[i]
-  A = lidR:::area(x,y)  # here we used an internal lidR function not exported for users
+  A = area(x,y)
   minbuff = min(buff)
   maxbuff = max(buff)
 

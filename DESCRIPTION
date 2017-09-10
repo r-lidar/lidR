@@ -50,7 +50,6 @@ Collate:
     'grid_terrain.r'
     'grid_tincanopy.r'
     'lasaggreagte.r'
-    'lasarea.r'
     'lascheck.r'
     'lasclassify.r'
     'lasclip.r'
