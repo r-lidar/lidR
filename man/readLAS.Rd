@@ -7,7 +7,7 @@
 readLAS(files, select = "xyztinrcaRGBP", filter = "", ...)
 }
 \arguments{
-\item{files}{array of characters or a \link[lidR:catalog]{Catalog} object}
+\item{files}{array of characters or a \link[lidR:catalog]{LAScatalog} object}
 
 \item{select}{character. select only columns of interest to save memory (see details)}
 
@@ -58,5 +58,5 @@ las = readLAS(LASfile, select = "*+")
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
-\link[lidR:catalog]{Catalog}
+\link[lidR:catalog]{LAScatalog}
 }

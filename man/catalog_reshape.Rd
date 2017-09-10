@@ -7,7 +7,7 @@
 catalog_reshape(ctg, size, path, prefix, ext = c("las", "laz"))
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{Catalog} object}
+\item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
 
 \item{size}{scalar. The size of the new tiles.}
 

@@ -59,7 +59,7 @@
 #' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param res numeric. resolution.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}

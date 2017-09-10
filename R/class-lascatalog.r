@@ -61,7 +61,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs)
 
 #' Build a catalog of las tiles/files
 #'
-#' Build a \link[lidR:LAScatalog-class]{Catalog} object from a folder name. A catalog is the representation of a set
+#' Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the representation of a set
 #' of las files. A computer cannot load all the data at the same time. A catalog is a simple
 #' way to manage all the file sequentially reading only the headers.
 #' @param folder string. The path of a folder containing a set of .las files
@@ -71,7 +71,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs)
 #' \link[lidR:plot.LAScatalog]{plot}
 #' \link{catalog_apply}
 #' \link{catalog_queries}
-#' @return A data.frame with the class Catalog
+#' @return A \code{LAScatalog} object
 #' @export
 catalog <- function(folder, ...)
 {

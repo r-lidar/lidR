@@ -7,7 +7,7 @@
 catalog_queries(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 }
 \arguments{
-\item{obj}{A Catalog object}
+\item{obj}{A LAScatalog object}
 
 \item{x}{vector. A set of x coordinates corresponding to the centers of the ROIs}
 
@@ -60,7 +60,7 @@ use \link{catalog_options}.
 
 \examples{
 \dontrun{
-# Build a Catalog
+# Build a LAScatalog
 catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 
 # Get coordinates from an external file

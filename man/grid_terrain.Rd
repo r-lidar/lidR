@@ -8,7 +8,7 @@ grid_terrain(x, res = 1, method, k = 10L, model = gstat::vgm(0.59, "Sph",
   874), keep_lowest = FALSE)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")}
+\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
 
 \item{res}{numeric. resolution.}
 

@@ -31,13 +31,13 @@
 #
 # When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
 # (a ground inventory, for example), they can automatically find the tiles containing the lidar data associated
-# with the ROIs from a \link[lidR:catalog]{Catalog}. The algorithm will do this even for ROIs falling on the edges of one or
+# with the ROIs from a \link[lidR:catalog]{LAScatalog}. The algorithm will do this even for ROIs falling on the edges of one or
 # more tiles.\cr
 # It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
 # Users do not really need it.
 #
 # @aliases catalog_index
-# @param catalog A Catalog object
+# @param catalog A LAScatalog object
 # @param x vector. A set of x plot coordinates
 # @param y vector. A set of y plot coordinates
 # @param r numeric or vector. A radius or a set of radii of the ROI. If only
@@ -46,7 +46,7 @@
 # is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.
 # @param roinames vector. A set of ROI names
 # @seealso
-# \link[lidR:catalog]{Catalog}
+# \link[lidR:catalog]{LAScatalog}
 # \link[lidR:catalog_queries]{catalog_queries}
 catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
 {
