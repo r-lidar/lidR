@@ -32,8 +32,7 @@
 #' This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects
 #'
 #' @param x A LAScatalog object
-#' @param y character. If the catalog have a valid CRS, a google map background will be displayed.
-#' Choose from 'roadmap', 'satellite', 'hybrid', 'terrain', 'none'.
+#' @param y logical. Disable interactive display
 #' @param \dots inherited from base plot
 #' @method plot LAScatalog
 #' @export
@@ -49,7 +48,7 @@
 #' ctg = catalog(LASfile)
 #' plot(ctg, proj4)
 #' }
-plot.LAScatalog = function(x, y = "terrain", ...)
+plot.LAScatalog = function(x, y = TRUE, ...)
 {
   param = list(...)
 
@@ -85,19 +84,16 @@ plot.LAScatalog = function(x, y = "terrain", ...)
   param$x = xcenter
   param$y = ycenter
 
-  do.call(graphics::plot, param)
 
-  if (!is.na(x@crs@projargs) & y != "none")
+
+  if (!is.na(x@crs@projargs) & y)
   {
-    ext <- extent(x)
-    r <- raster::raster()
-    raster::extent(r) <- ext
-    sp::proj4string(r) <- x@crs@projargs
-    gm <- dismo::gmap(x = r, type = y, scale = 1, rgb = TRUE)
-    gm <- raster::projectRaster(gm, crs = x@crs@projargs)
-    raster::plotRGB(gm, add = TRUE, alpha = 230)
+    mapview::mapview(as.spatial(x))
   }
-
-  graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+  else
+  {
+    do.call(graphics::plot, param)
+    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+  }
 }
 

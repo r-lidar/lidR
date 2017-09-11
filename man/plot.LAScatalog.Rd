@@ -4,13 +4,12 @@
 \alias{plot.LAScatalog}
 \title{Plot a LAScatalog object}
 \usage{
-\method{plot}{LAScatalog}(x, y = "terrain", ...)
+\method{plot}{LAScatalog}(x, y = TRUE, ...)
 }
 \arguments{
 \item{x}{A LAScatalog object}
 
-\item{y}{character. If the catalog have a valid CRS, a google map background will be displayed.
-Choose from 'roadmap', 'satellite', 'hybrid', 'terrain', 'none'.}
+\item{y}{logical. Disable interactive display}
 
 \item{\dots}{inherited from base plot}
 }

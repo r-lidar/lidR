@@ -171,7 +171,7 @@ as.spatial = function(x)
 as.spatial.LAS = function(x)
 {
   . <- X <- Y <- NULL
-  sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
+  sp::SpatialPointsDataFrame(x@data[,.(X,Y)], x@data[, 3:ncol(x@data), with = F])
 }
 
 #' @export
