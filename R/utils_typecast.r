@@ -153,27 +153,48 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
   }
 }
 
-#' Transform a LAS object into a SpatialPointsDataFrame object
+#' Transform a lidR object into sp object
 #'
-#' @param .las an object of class LAS
-#' @return An object of class \code{SpatialPointsDataFrame}
+#' LAS, LAScatalog, lasmetrics are tranformed respectively into SpatialPointsDataFrame,
+#' SpatialPolygonsDataFrame, SpatialPixelsDataFrame
+#'
+#' @param x an object from the lidR package
+#' @return An object from sp
 #' @export
 #' @family cast
-as.SpatialPointsDataFrame = function(.las)
+as.spatial = function(x)
+{
+  UseMethod("as.spatial", x)
+}
+
+#' @export
+as.spatial.LAS = function(x)
 {
   . <- X <- Y <- NULL
-  stopifnotlas(.las)
   sp::SpatialPointsDataFrame(.las@data[,.(X,Y)], .las@data[, 3:ncol(.las@data), with = F])
 }
 
-#' Transform a \code{'lasmetrics'} object into a SpatialPixelsDataFrame object
-#'
-#' @param .data an object of class \code{lasmetrics}
-#' @return An object of class \code{SpatialPixelDataFrame}
 #' @export
-#' @family cast
-as.SpatialPixelsDataFrame = function(.data)
+as.spatial.lasmetrics = function(x)
 {
-  .data = as.data.frame(.data)
+  .data = as.data.frame(x)
   sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
+}
+
+#' @export
+as.spatial.LAScatalog = function(x)
+{
+  xmin <- x@data$`Min X`
+  xmax <- x@data$`Max X`
+  ymin <- x@data$`Min Y`
+  ymax <- x@data$`Max Y`
+  ids  <- as.character(seq_along(xmin))
+
+  pgeom <- lapply(seq_along(ids), function(xi)
+  {
+    mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
+    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
+  })
+
+  sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), x@data)
 }
