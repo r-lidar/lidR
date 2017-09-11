@@ -47,9 +47,24 @@ catalog_select = function(x)
 {
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- NULL
 
-  graphics::plot(x)
-  selected = with(x, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
-  return(x[selected])
+  if (!is.na(x@crs@projargs))
+  {
+    catalog <- as.spatial(x)
+    sfdata <- mapedit::selectFeatures(catalog)
+    data.table::setDT(sfdata)
+    sfdata[, geometry := NULL]
+    newnames <- gsub(x = names(sfdata), pattern = "(\\.)+", replacement = " ")
+    data.table::setnames(sfdata, names(sfdata), newnames)
+    x@data <- sfdata
+    return(x)
+  }
+  else
+  {
+    graphics::plot(x)
+    selected = with(x@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
+    x@data <- x@data[selected]
+    return(x)
+  }
 }
 
 identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)

@@ -12,7 +12,7 @@ catalog(folder, ...)
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
 }
 \value{
-A data.frame with the class LAScatalog
+A \code{LAScatalog} object
 }
 \description{
 Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the representation of a set
