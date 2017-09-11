@@ -45,7 +45,7 @@
 #' \link[lidR:catalog]{LAScatalog}
 catalog_select = function(x)
 {
-  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- NULL
+  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
   if (!is.na(x@crs@projargs))
   {
