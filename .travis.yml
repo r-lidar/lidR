@@ -5,7 +5,7 @@ r: bioc-devel
 bioc_required: true
 bioc_use_devel: true
 sudo: required
-dist: xenial
+dist: trusty
 cache: packages
 before_install:
   - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
@@ -18,7 +18,7 @@ apt_packages:
   - netcdf-bin
   - libcurl4-gnutls-dev
   - libdap-dev
-  - libgdal1i
+  - libgdal1h
   - libhdf5-7
   - libhdf5-dev
   - libhdf5-serial-dev
