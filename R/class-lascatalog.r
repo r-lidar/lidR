@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,20 +27,53 @@
 
 
 
+#' An S4 class to represent a set of a .las or .laz files
+#'
+#' A LAScatalog object is a representation of a set of las/laz files
+#'
+#' @slot data data.table. A table representing the header of each file.
+#' @slot crs A \link[sp:CRS]{CRS} object.
+#' @seealso
+#' \link[lidR:LAS-class]{LAS}
+#' \link[lidR:LAS]{LAS}
+#' \link[lidR:readLAS]{readLAS}
+#' @import data.table
+#' @import magrittr
+#' @import methods
+#' @include class-lasheader.r
+#' @importClassesFrom sp CRS
+#' @exportClass LAS
+#' @useDynLib lidR, .registration = TRUE
+setClass(
+  Class = "LAScatalog",
+  representation(
+    data = "data.table",
+    crs  = "CRS"
+  )
+)
+
+setMethod("initialize", "LAScatalog", function(.Object, data, crs)
+{
+  .Object@data <- data
+  .Object@crs  <- crs
+  return(.Object)
+})
+
 #' Build a catalog of las tiles/files
 #'
-#' Build a \code{Catalog} object from a folder name. A catalog is the representation of a set
+#' Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the representation of a set
 #' of las files. A computer cannot load all the data at the same time. A catalog is a simple
 #' way to manage all the file sequentially reading only the headers.
 #' @param folder string. The path of a folder containing a set of .las files
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @seealso
-#' \link[lidR:plot.Catalog]{plot}
-#' \link[lidR:catalog_apply]{catalog_apply}
-#' \link[lidR:catalog_queries]{catalog_queries}
-#' @return A data.frame with the class Catalog
+#' \link{LAScatalog-class}
+#' \link[lidR:plot.LAScatalog]{plot}
+#' \link{catalog_apply}
+#' \link{catalog_queries}
+#' @return A \code{LAScatalog} object
 #' @export
-catalog = function(folder, ...)
+catalog <- function(folder, ...)
 {
   if (!is.character(folder))
     stop("'folder' must be a character string")
@@ -56,6 +89,9 @@ catalog = function(folder, ...)
 
   verbose("Reading files...")
 
+  header <- LASheader(rlas::readlasheader(files[1]))
+  crs <- epsg2proj(get_epsg(header))
+
   headers <- lapply(files, function(x)
   {
     header <- rlas::readlasheader(x)
@@ -66,9 +102,22 @@ catalog = function(folder, ...)
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
-  rownames(headers) <- NULL
 
-  class(headers) <- append("Catalog", class(headers))
-
-  return(headers)
+  return(new("LAScatalog", headers, crs))
 }
+
+setMethod("show", "LAScatalog", function(object)
+{
+  memsize <- format(utils::object.size(object), units = "auto")
+  surface <- area(object)
+  npoints <- sum(object@data$`Number of point records`)
+  ext     <- extent(object)
+
+  cat("class       : LAScatalog\n")
+  cat("memory      :", memsize, "\n")
+  cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
+  cat("area        :", surface, "m\u00B2\n")
+  cat("points      :", npoints, "points\n")
+  cat("coord. ref. :", object@crs@projargs, "\n")
+})
+

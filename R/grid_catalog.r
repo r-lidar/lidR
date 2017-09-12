@@ -178,7 +178,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
 #
 # @param X list. the coordinates of the region of interest (rectangular)
 # @param grid_func function. the grid_* function to be applied
-# @param ctg  Catalog.
+# @param ctg  LAScatalog.
 # @param res numric. the resolution to apply the grid_* function
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res

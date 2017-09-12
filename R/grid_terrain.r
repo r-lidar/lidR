@@ -51,15 +51,15 @@
 #' interpolating spatial data. }
 #' }
 #'
-#' @section Use with a \link{catalog}:
-#' When the parameter \code{x} is a \link[lidR:catalog]{Catalog} the function processes the
-#' entire dataset in a continuous way using a multicore process. Parallel computing is set
+#' @section Use with a \code{LAScatalog}:
+#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
+#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
 #' by default to the number of core available in the computer. A buffer is required to avoid
 #' edge artifacts. The user can modify the global options using the function \link{catalog_options}.\cr\cr
 #' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 #' spatial index.
 #'
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a Catalog")
+#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param res numeric. resolution.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
@@ -167,7 +167,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
 }
 
 #' @export
-grid_terrain.Catalog = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain.LAScatalog = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   terrain = grid_catalog(x, grid_terrain, res, "xyzc", "-keep_class 2", method = method, k = k, model = model, keep_lowest = keep_lowest)
 

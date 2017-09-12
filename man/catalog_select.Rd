@@ -7,14 +7,14 @@
 catalog_select(x)
 }
 \arguments{
-\item{x}{A Catalog object}
+\item{x}{A LAScatalog object}
 }
 \value{
-A Catalog object
+A LAScatalog object
 }
 \description{
-Select a set of LAS tiles from a Catalog using the mouse interactively. This function
-enables the user to select a set of las files from a Catalog by clicking
+Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
+enables the user to select a set of las files from a LAScatalog by clicking
 on the map of the file using the mouse. The selected files will be highlighted in red on
 the plot after selection is complete.
 }
@@ -25,5 +25,5 @@ selectedFiles = catalog_select(project)
 }
 }
 \seealso{
-\link[lidR:catalog]{Catalog}
+\link[lidR:catalog]{LAScatalog}
 }

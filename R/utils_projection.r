@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,26 +25,40 @@
 #
 # ===============================================================================
 
-
-
-#' Compute the area covered by of a set a points.
-#'
-#' The area is computed by on the convex hull. If the data are not convex, the resulting area is only an approximation.
-#'
-#' @param .las An object of the class \code{LAS} or a numeric array of x coordinates
-#' @return numeric. The area of the object computed in the same units as the coordinate reference system
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' lasarea(lidar)
-#' @export
-lasarea = function(.las)
+get_epsg = function(header)
 {
-  stopifnotlas(.las)
+  epsg = NULL
+  for (tag in header@VLR$GeoKeyDirectoryTag$tag)
+  {
+    if (tag$key == 3072)
+       epsg = tag$`value offset`
+  }
 
-  hull = convex_hull(.las@data$X, .las@data$Y)
-  area = polygon_area(hull$x, hull$y)
-  area = round(area,1)
-  return(area)
+  return(epsg)
 }
+
+
+.epsg2proj = function(code)
+{
+  if (is.null(code))
+    return(sp::CRS())
+
+  crs = tryCatch(sp::CRS(paste0("+init=epsg:", code)), error = function (e) sp::CRS())
+
+  return(crs)
+}
+
+.epsg2wkt = function(code)
+{
+  if (is.null(code))
+    return(NA_character_)
+
+  url = paste0("http://spatialreference.org/ref/epsg/", code, "/ogcwkt/")
+
+  proj = tryCatch(readLines(url, warn = F), error = function (e) NA_character_)
+
+  return(proj)
+}
+
+epsg2proj = memoise::memoise(.epsg2proj)
+epsg2wkt = memoise::memoise(.epsg2wkt)

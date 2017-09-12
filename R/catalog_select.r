@@ -29,12 +29,12 @@
 
 #' Select LAS files interactively
 #'
-#' Select a set of LAS tiles from a Catalog using the mouse interactively. This function
-#' enables the user to select a set of las files from a Catalog by clicking
+#' Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
+#' enables the user to select a set of las files from a LAScatalog by clicking
 #' on the map of the file using the mouse. The selected files will be highlighted in red on
 #' the plot after selection is complete.
-#' @param x A Catalog object
-#' @return A Catalog object
+#' @param x A LAScatalog object
+#' @return A LAScatalog object
 #' @export
 #' @examples
 #' \dontrun{
@@ -42,14 +42,29 @@
 #' selectedFiles = catalog_select(project)
 #' }
 #' @seealso
-#' \link[lidR:catalog]{Catalog}
+#' \link[lidR:catalog]{LAScatalog}
 catalog_select = function(x)
 {
-  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- NULL
+  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
-  graphics::plot(x)
-  selected = with(x, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
-  return(x[selected])
+  if (!is.na(x@crs@projargs))
+  {
+    catalog <- as.spatial(x)
+    sfdata <- mapedit::selectFeatures(catalog)
+    data.table::setDT(sfdata)
+    sfdata[, geometry := NULL]
+    newnames <- gsub(x = names(sfdata), pattern = "(\\.)+", replacement = " ")
+    data.table::setnames(sfdata, names(sfdata), newnames)
+    x@data <- sfdata
+    return(x)
+  }
+  else
+  {
+    graphics::plot(x)
+    selected = with(x@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
+    x@data <- x@data[selected]
+    return(x)
+  }
 }
 
 identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
