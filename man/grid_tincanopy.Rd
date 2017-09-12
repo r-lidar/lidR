@@ -28,7 +28,7 @@ can replace each return with a circle composed of 8 points before computing the 
 (see also \link{grid_canopy}).}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If the input is a \code{Catalog} the function \link{readLAS} is called internally. The
+If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
 user cannot manipulate the lidar data directly but can use streaming filters instead.}
 }
 \value{
@@ -42,12 +42,12 @@ interpolation within each triangle. This function also enables the use of the pi
 developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 triangulations at different heights (see reference).
 }
-\section{Use with a \code{Catalog}}{
+\section{Use with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a catalog the function will process the entire dataset
-in a continuous way using a multicore process. Parallel computing is set by default to
-the number of cores available in the computer. A buffer is required. The user can modify
-the global options using the function \link{catalog_options}.\cr\cr
+When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
+the entire dataset in a continuous way using a multicore process. Parallel computing is set
+by default to the number of core available in the computer. A buffer is required. The user
+can modify the global options using the function \link{catalog_options}.\cr\cr
 \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 spatial index.
 }

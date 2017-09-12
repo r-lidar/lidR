@@ -135,8 +135,8 @@ lasnormalize = function(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(.5
     .las@data[, Zref := Z]
     .las@data[, Z := round(Z - Zground, 3)]
     .las@data[]
-    update_list_by_ref(.las@header@data, "Min Z", min(.las@data$Z))
-    update_list_by_ref(.las@header@data, "Max Z", max(.las@data$Z))
+    update_list_by_ref(.las@header@PHB, "Min Z", min(.las@data$Z))
+    update_list_by_ref(.las@header@PHB, "Max Z", max(.las@data$Z))
     lascheck(.las@data, .las@header)
     return(invisible())
   }

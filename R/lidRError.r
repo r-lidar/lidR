@@ -60,7 +60,7 @@ lidRError = function(code, ..., behaviour = stop)
 "GDM2" = list(p$number, " duplicated rasters have been found. X,Y variables do not identify a single observation for each output cell. Automatic aggregation has been done using the mean function"),
 "GDM3" = list("More than 3 columns: please input the third column's name to transform the data.frame into a matrix."),
 
-# ClassCatalog.r
+# ClassLAScatalog.r
 "CTG1" = list("Invalid parameter input in constructor. Expected a string."),
 "CTG2" = list("This folder does not exist"),
 

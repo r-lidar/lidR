@@ -38,7 +38,6 @@ rmeanHeight = as.raster(meanHeight)
 \link[lidR:grid_canopy]{grid_canopy}
 \link[raster:raster]{raster}
 
-Other cast: \code{\link{as.SpatialPixelsDataFrame}},
-  \code{\link{as.SpatialPointsDataFrame}},
-  \code{\link{as.lasmetrics}}
+Other cast: \code{\link{as.lasmetrics}},
+  \code{\link{as.spatial}}
 }

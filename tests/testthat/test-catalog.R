@@ -6,8 +6,8 @@ catalog_options(multicore = 1, progress = FALSE)
 
 test_that("build catalog works", {
   ctg = catalog(folder)
-  expect_equal(dim(ctg)[1], 3)
-  expect_equal(dim(ctg)[2], 34)
+  expect_equal(dim(ctg@data)[1], 3)
+  expect_equal(dim(ctg@data)[2], 34)
 })
 
 test_that("catalog queries works", {
@@ -98,28 +98,28 @@ test_that("catalog reshape works", {
   lidr_options(interactive = FALSE)
 
   ctg = catalog(folder)
-  ctg = ctg[1]
+  ctg@data = ctg@data[1]
   temp = tempfile()
 
   ctg2 = catalog_reshape(ctg, 80, temp, prefix = "test_")
 
   unlink(temp, recursive = T)
 
-  expect_equal(nrow(ctg2), 9)
+  expect_equal(nrow(ctg2@data), 9)
 })
 
 test_that("catalog apply works", {
   catalog_options(multicore = 1, tiling_size = 100, buffer = 0)
 
   ctg = catalog(folder)
-  ctg = ctg[1]
+  ctg@data = ctg@data[1]
 
   test = function(las){ return(nrow(las@data)) }
 
   req = catalog_apply(ctg, test)
 
   s1 = do.call(sum, req)
-  s2 = sum(ctg$`Number of point records`)
+  s2 = sum(ctg@data$`Number of point records`)
 
   expect_equal(s1,s2)
 
@@ -128,7 +128,7 @@ test_that("catalog apply works", {
   req = catalog_apply(ctg, test)
 
   s1 = do.call(sum, req)
-  s2 = sum(ctg$`Number of 1st return`)
+  s2 = sum(ctg@data$`Number of 1st return`)
 
   expect_equal(s1,s2)
 

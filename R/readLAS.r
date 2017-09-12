@@ -57,7 +57,7 @@
 #' those from \code{LASlib} and can be found by running the following command:
 #' rlas:::lasfilterusage()
 #'
-#' @param files array of characters or a \link[lidR:catalog]{Catalog} object
+#' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
 #' @param ... compatibility with former arguments from lidR (<= 1.2.1)
@@ -66,7 +66,7 @@
 #' @export readLAS
 #' @seealso
 #' \link[lidR:LAS-class]{Class LAS}
-#' \link[lidR:catalog]{Catalog}
+#' \link[lidR:catalog]{LAScatalog}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
@@ -78,7 +78,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 {
   `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
 
-  if (is(files, "Catalog"))
+  if (is(files, "LAScatalog"))
     files <- files$filename
 
   # ===================================

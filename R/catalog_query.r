@@ -52,7 +52,7 @@
 #' The process is done using several cores. To change the settings of how a catalog is processed
 #' use \link{catalog_options}.
 #'
-#' @param obj A Catalog object
+#' @param obj A LAScatalog object
 #' @param x vector. A set of x coordinates corresponding to the centers of the ROIs
 #' @param y vector. A set of y coordinates corresponding to the centers of the ROIs
 #' @param r numeric or vector. A radius or a set of radii of the ROIs. If only
@@ -71,7 +71,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' # Build a Catalog
+#' # Build a LAScatalog
 #' catalog = catalog("<Path to a folder containing a set of .las or .laz files>")
 #'
 #' # Get coordinates from an external file
@@ -96,14 +96,17 @@
 #' }
 catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
+  UseMethod("catalog_queries", obj)
+}
+
+#' @export
+catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+{
   objtxt = lazyeval::expr_text(obj)
   xtxt   = lazyeval::expr_text(x)
   ytxt   = lazyeval::expr_text(y)
   rtxt   = lazyeval::expr_text(r)
   btxt   = lazyeval::expr_text(buffer)
-
-  if (!is(obj, "Catalog"))
-    stop(paste0(objtxt, " is not a Catalog."), call. = FALSE)
 
   if (length(x) != length(y))
     stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)

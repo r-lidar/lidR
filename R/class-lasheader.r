@@ -29,11 +29,12 @@
 
 #' An S4 class to represent the header read in a .las or .laz file
 #'
-#' A \code{LAS} object contains a \code{list} in the slot \code{@data} with
-#' the data read from a \code{.las} file.
-#' @slot data list. A list of information contained in the las file header.
+#' A \code{LASheader} object contains a \code{list} in the slot \code{@PHB} with
+#' the data read from the Public Header Block and \code{list} in the slot \code{@VLR} with
+#' the data read from the Variable Lenght Records
+#' @slot PHB list. Represents the Public Header Block
+#' @slot VLR list. Represents the Variable Length Records
 #' @seealso
-#' \link[lidR:LAS]{LASheader}
 #' \link[lidR:LAS]{LAS}
 #' \link[lidR:readLAS]{readLAS}
 #' @name LASheader-class
@@ -41,7 +42,7 @@
 #' @exportClass LASheader
 setClass(
   Class = "LASheader",
-  representation(data = "list")
+  representation(PHB = "list", VLR = "list")
 )
 
 setMethod("initialize", "LASheader", function(.Object, data = list())
@@ -49,7 +50,13 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
   if(!is.list(data))
     lidRError("LDR1")
 
-  .Object@data <- data
+  vlr <- list()
+  if (!is.null(data$`Variable Length Records`))
+    vlr <- data$`Variable Length Records`
+
+  .Object@PHB <- data
+  .Object@PHB$`Variable Length Records` <- NULL
+  .Object@VLR <- vlr
 
   return(.Object)
 })
@@ -66,7 +73,7 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 
 setMethod("show", "LASheader",  function(object)
 {
-  x = object@data
+  x = object@PHB
 
   cat("File signature:          ", x$`File Signature`, "\n")
   cat("File source ID:          ", x$`File Source ID`, "\n")
@@ -88,7 +95,7 @@ setMethod("show", "LASheader",  function(object)
   cat("min X Y Z:               ", x$`Min X`, x$`Min Y`, x$`Min Z`, "\n")
   cat("max X Y Z:               ", x$`Max X`, x$`Max Y`, x$`Max Z`, "\n")
 
-  n = length(x$`Variable Length Records`)
+  n = length(object@VLR)
 
   if(n == 0)
   {
@@ -100,10 +107,10 @@ setMethod("show", "LASheader",  function(object)
 
   for(i in 1:n)
   {
-    vlr = x$`Variable Length Records`[[i]]
+    vlr = object@VLR[[i]]
 
     cat("   Variable length record", i, "of", n, "\n")
-    cat("       Reserved:            ", vlr$reserved, "\n")
+    cat("       Reserve:            ", vlr$reserved, "\n")
     cat("       User ID:             ", vlr$`user ID`, "\n")
     cat("       record ID:           ", vlr$`record ID`, "\n")
     cat("       Length after header: ", vlr$`length after header`, "\n")

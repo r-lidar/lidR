@@ -5,9 +5,13 @@
 \alias{lidR-deprecated}
 \alias{cloud_metrics}
 \alias{lidR-deprecated-package}
+\alias{lidR-deprecated}
+\alias{lasarea}
 \title{Deprecated function(s) in the lidR package}
 \usage{
 cloud_metrics(...)
+
+lasarea(...)
 }
 \arguments{
 \item{...}{Parameters to be passed to the modern version of the function}
@@ -21,6 +25,7 @@ removed.
 
 \itemize{
 \item{\code{\link{lasmetrics}} replace old \code{cloud_metrics}}
+\item{\code{\link{area}} replace old \code{lasarea}}
 }
 }
 

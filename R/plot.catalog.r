@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,29 +27,35 @@
 
 
 
-#' Plot a Catalog object
+#' Plot a LAScatalog object
 #'
-#' This functions implements a \link[graphics:plot]{plot} method for Catalog objects
+#' This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects
 #'
-#' @param x A Catalog object
-#' @param y Unused (inherited from base plot)
+#' @param x A LAScatalog object
+#' @param y logical. Disable interactive display
 #' @param \dots inherited from base plot
-#' @method plot Catalog
+#' @method plot LAScatalog
 #' @export
 #' @examples
 #' \dontrun{
-#'
-#' catalog = catalog("<Path to a folder containing a set of .las files>")
+#' ctg = catalog("<Path to a folder containing a set of .las files>")
 #' plot(catalog)
+#'
+#' # Exemple with a single file
+#' proj4   <- "+proj=utm +zone=17"
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#'
+#' ctg = catalog(LASfile)
+#' plot(ctg, proj4)
 #' }
-plot.Catalog = function(x, y, ...)
+plot.LAScatalog = function(x, y = TRUE, ...)
 {
   param = list(...)
 
-  xmin = min(x$`Min X`)
-  xmax = max(x$`Max X`)
-  ymin = min(x$`Min Y`)
-  ymax = max(x$`Max Y`)
+  xmin = min(x@data$`Min X`)
+  xmax = max(x@data$`Max X`)
+  ymin = min(x@data$`Min Y`)
+  ymax = max(x@data$`Max Y`)
 
   xcenter = (xmin + xmax)/2
   ycenter = (ymin + ymax)/2
@@ -78,7 +84,16 @@ plot.Catalog = function(x, y, ...)
   param$x = xcenter
   param$y = ycenter
 
-  do.call(graphics::plot, param)
-  graphics::rect(x$`Min X`, x$`Min Y`, x$`Max X`, x$`Max Y`)
+
+
+  if (!is.na(x@crs@projargs) & y)
+  {
+    mapview::mapview(as.spatial(x))
+  }
+  else
+  {
+    do.call(graphics::plot, param)
+    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+  }
 }
 

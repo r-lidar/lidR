@@ -20,7 +20,6 @@ In this case the data.frame does not have the class lasmetrics and cannot easily
 plotted or transformed into a raster
 }
 \seealso{
-Other cast: \code{\link{as.SpatialPixelsDataFrame}},
-  \code{\link{as.SpatialPointsDataFrame}},
-  \code{\link{as.raster.lasmetrics}}
+Other cast: \code{\link{as.raster.lasmetrics}},
+  \code{\link{as.spatial}}
 }

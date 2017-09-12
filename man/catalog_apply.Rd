@@ -7,7 +7,7 @@
 catalog_apply(ctg, func, func_args = NULL, ...)
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{Catalog} object.}
+\item{ctg}{A \link[lidR:catalog]{LAScatalog} object.}
 
 \item{func}{A user-defined function for which the first input is a LAS object.}
 
@@ -113,7 +113,7 @@ myMetrics <- function(x, y, z, buff)
   i = which.max(z)
   xcenter = x[i]
   ycenter = y[i]
-  A = lidR:::area(x,y)  # here we used an internal lidR function not exported for users
+  A = area(x,y)
   minbuff = min(buff)
   maxbuff = max(buff)
 

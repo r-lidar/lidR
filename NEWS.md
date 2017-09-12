@@ -22,15 +22,19 @@ Major changes are:
 #### OTHER CHANGES
 
 * `lasnormalize` updates the point cloud by reference and avoids making deep copies. An option `copy = TRUE` is available for compatibility with former versions.
-* `readLAS` arguments changed. The new syntax is simpler. The previous syntax is still supported but raises a warning for deprecated usages.
+* `readLAS` arguments changed. The new syntax is simpler. The previous syntax is still supported.
 * `catalog_index` is no longer an exported function. It is now an internal function.
 * `plot.Catalog` accepts the usual `plot` arguments
 * `catalog_queries` and `catalog_apply` do not expect a parameter `mc.cores`. This is now driven by global options in `catalog_options()`.
 * `grid_metrics` and `lasmetrics` do not expect a parameter `debug`. This is now driven by global options in `lidr_options`.
 * `catalog` can build a catalog from a set of paths to files instead of a path to a folder.
-* removed dependencies to `RANN` package using internal k-nearest neighbor search (2 to 3 times faster)
 * removed `$` access to LAS attribute (incredibly slow)
-* `catalog_select` is more pleasant to use.
+* `catalog_select` is more pleasant an more interactive to use.
+* S3 `Catalog` class is now a S4 `LAScatalog` class
+* `LAS` and `LAScatalog` class gain a slot `crs` automatically filled with a proj4 string
+* `plot.LAScatalog` display a google map background if the catalog has a CRS.
+* `plot.LAScatalog` gains an argument `y` to display a either a terrain, raod, satellite map.
+* `lasarea` is deprecated. Use the more generic function `area`
 
 #### BUG FIXES
 
@@ -42,7 +46,8 @@ Major changes are:
 * `grid_terrain` with delaunay allocates less memory, makes fewer deep copies and is 2 to 3 times faster
 * `grid_terrain` with knnidw allocates less memory, makes fewer deep copies and is 2 to 3 times faster
 * `lasnormalize` and `lasclassify` no longer rely on `raster::extract` but on internal `fast_extract`, which is memory efficient and more than 15 times faster.
-* `catalog` enables a Catalog to be built 8 times faster than previously.
+* `catalog` enables a `LAScatalog` to be built 8 times faster than previously.
+* removed dependencies to `RANN` package using internal k-nearest neighbor search (2 to 3 times faster)
 
 ### lidR v1.2.1 (Release date: 2017-06-12)
 
