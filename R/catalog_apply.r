@@ -213,7 +213,7 @@ catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, progr
     parallel::clusterExport(cl, varlist, envir)
     parallel::clusterEvalQ(cl, library("lidR"))
 
-    output <- parallel::parLapply(cl, clusters, fun = cluster_apply_func,
+    output <- parallel::parLapplyLB(cl, clusters, fun = cluster_apply_func,
                         func = func,
                         ctg = ctg,
                         func_args = func_args,
