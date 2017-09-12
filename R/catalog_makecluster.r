@@ -78,7 +78,7 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   xrange = c(min(X$xleft), max(X$xright))
   yrange = c(min(X$ybottom), max(X$ytop))
   title  = "Pattern of clusters"
-  plot.LAScatalog(ctg, main = title, xlim = xrange, ylim = yrange)
+  plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
   with(X, graphics::rect(xleft, ybottom, xright, ytop, border = "red"))
 
   if (buffer > 0)
