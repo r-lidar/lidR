@@ -109,8 +109,11 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   X$name        = 1:nrow(X)
 
   # Remove cluster outside the catalog
-  queries = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, X$name))
-  X = X[name %in% names(queries)]
+  if (!by_file)
+  {
+    queries = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, X$name))
+    X = X[name %in% names(queries)]
+  }
 
   # Plot the pattern
   xrange = c(min(X$xleft), max(X$xright))
