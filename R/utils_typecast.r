@@ -195,6 +195,6 @@ as.spatial.LAScatalog = function(x)
     mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
     sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
   })
-
-  sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), x@data)
+  data = data.frame(x@data)
+  sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), data)
 }
