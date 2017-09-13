@@ -84,8 +84,6 @@ plot.LAScatalog = function(x, y = TRUE, ...)
   param$x = xcenter
   param$y = ycenter
 
-
-
   if (!is.na(x@crs@projargs) & y)
   {
     mapview::mapview(as.spatial(x))
@@ -95,7 +93,5 @@ plot.LAScatalog = function(x, y = TRUE, ...)
     do.call(graphics::plot, param)
     graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
   }
-
-  return(invisible())
 }
 
