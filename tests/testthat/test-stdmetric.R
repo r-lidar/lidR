@@ -6,7 +6,7 @@ las = readLAS(LASfile, filter = "-keep_xy 684766.4 5017773 684866.4 5017973")
 xall = grid_metrics(las, .stdmetrics, 20)
 
 test_that("stdmetric return the same result than .stdmetric", {
-  y = grid_metrics(las, stdmetrics(X,Y,Z, Intensity, ScanAngle, ReturnNumber, Classification, pulseID), 20)
+  y = grid_metrics(las, stdmetrics(X,Y,Z, Intensity, ScanAngle, ReturnNumber, Classification), 20)
   expect_identical(xall, y)
 })
 
