@@ -79,7 +79,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
 
   if (is(files, "LAScatalog"))
-    files <- files$filename
+    files <- files@data$filename
 
   # ===================================
   # rlas version 1.1.5 has new options
