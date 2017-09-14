@@ -267,18 +267,29 @@ setMethod("show", "LAS", function(object)
   dpu = npu/s
   fie = names(object@data)
   ext = extent(object)
+  phb = object@header@PHB
 
-  cat("class        : LAS\n")
+  cat("class        : LAS (", phb$`File Signature`, " v", phb$`Version Major`, ".", phb$`Version Minor`, ")\n", sep = "")
   cat("memory       :", size, "\n")
   cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("area         :", s, "m\u00B2 (convex hull)\n")
-  cat("points       :", npt, "points\n")
-  cat("pulses       :", npu , "pulses\n")
-  cat("point density:", round(dpt, 2), "points/m\u00B2\n")
-  cat("pulse density:", round(dpu, 2), "pulses/m\u00B2\n")
-  cat("fields       :", length(fie), "\n")
+  cat("points       :", npt, "points, ", npu , "pulses\n")
+  cat("density      :", round(dpt, 2), "points/m\u00B2, ", round(dpu, 2), "pulses/m\u00B2\n")
   cat("field names  :", fie, "\n")
   cat("coord. ref.  :", object@crs@projargs, "\n\n")
-
-  print(object@header)
 })
+
+#' LiDAR data summary
+#'
+#' Print a summary of a LAS object
+#'
+#' @param object A LAS object
+#' @param ... unused
+#' @method summary LAS
+#' @export
+summary.LAS <- function(object, ...)
+{
+  print(object)
+  print(object@header)
+}
+
