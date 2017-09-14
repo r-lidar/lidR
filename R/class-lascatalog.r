@@ -118,6 +118,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("area        :", surface, "m\u00B2\n")
   cat("points      :", npoints, "points\n")
+  cat("density     :", round(npoints/surface, 1), "points/m\u00B2\n")
+  cat("num. files  :", dim(object@data)[1], "\n")
   cat("coord. ref. :", object@crs@projargs, "\n")
 })
-

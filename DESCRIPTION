@@ -63,7 +63,6 @@ Collate:
     'lasmetrics.r'
     'lasnormalize.r'
     'lasroi.r'
-    'lassummary.r'
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
