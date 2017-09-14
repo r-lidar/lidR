@@ -198,7 +198,7 @@ apply_grid_func = function(ctg_cluster, grid_func, catalog, res, param, save_tif
   ycenter <- ctg_cluster$ycenter
   width   <- (xright - xleft)/2
   height  <- (ytop - ybottom)/2
-  buffer  <-  ctg_cluster$xrightbuff - xright
+  buffer  <- 0.1*res
 
   # Update progress bar
   if (!is.null(pb))
