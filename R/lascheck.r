@@ -36,7 +36,7 @@ lascheck = function(data, header, hard = F)
   negvalues = fast_countbelow(data$Z, 0)
 
   if(negvalues > 0)
-    message(paste0(negvalues, " points below 0 found."), call. = F)
+    warning(paste0(negvalues, " points below 0 found."), call. = F)
 
   if("Classification" %in% fields)
   {
