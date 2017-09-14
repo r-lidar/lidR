@@ -67,7 +67,7 @@
 #'
 #' # All the predefined functions
 #' lidar %>% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
-#'                                   ReturnNumber, Classification, pulseID,
+#'                                   ReturnNumber, Classification,
 #'                                   dz = 1))
 #'
 #' # Convenient shortcut
@@ -119,21 +119,21 @@
 #' \link{tree_metrics}
 #' @rdname stdmetrics
 #' @export
-stdmetrics = function(x, y, z, i, a, rn, class, pulseID, dz = 1)
+stdmetrics = function(x, y, z, i, a, rn, class, dz = 1)
 {
   C  = stdmetrics_ctrl(x, y, z, a)
   Z  = stdmetrics_z(z, dz)
   I  = stdmetrics_i(i, z, class, rn)
   RN = stdmetrics_rn(rn, class)
-  PU = stdmetrics_pulse(pulseID, rn)
+  #PU = stdmetrics_pulse(pulseID, rn)
 
-  metrics = c(C, Z, I, RN, PU)
+  metrics = c(C, Z, I, RN)
   return(metrics)
 }
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics = expression(stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, pulseID, dz = 1))
+.stdmetrics = expression(stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
 
 #' Gap fraction profile
 #'
@@ -422,16 +422,14 @@ stdmetrics_rn = function(rn, class = NULL)
 
   n = length(rn)
 
-  prn = table(factor(rn, levels=c(1:9)))/n*100
+  prn = table(factor(rn, levels=c(1:5)))/n*100
   prn = as.list(prn)
   names(prn) = paste0("p", names(prn), "th")
 
   metrics = prn
 
   if(!is.null(class))
-  {
     metrics = c(metrics, list(pground = sum(class == 2)/n*100))
-  }
 
   return(metrics)
 }

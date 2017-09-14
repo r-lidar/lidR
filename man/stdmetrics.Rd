@@ -19,7 +19,7 @@
 \title{Predefined standard metrics functions}
 \format{An object of class \code{expression} of length 1.}
 \usage{
-stdmetrics(x, y, z, i, a, rn, class, pulseID, dz = 1)
+stdmetrics(x, y, z, i, a, rn, class, dz = 1)
 
 .stdmetrics
 
@@ -52,9 +52,9 @@ stdtreemetrics(x, y, z)
 
 \item{rn, class}{ReturnNumber, Classification}
 
-\item{pulseID}{The number referencing each pulse}
-
 \item{dz}{Layer thickness for metrics requiring this data, such as \link[lidR:entropy]{entropy}}
+
+\item{pulseID}{The number referencing each pulse}
 }
 \description{
 Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics}, \link{tree_metrics},
@@ -94,7 +94,7 @@ lidar = readLAS(LASfile, all = TRUE)
 
 # All the predefined functions
 lidar \%>\% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
-                                  ReturnNumber, Classification, pulseID,
+                                  ReturnNumber, Classification,
                                   dz = 1))
 
 # Convenient shortcut

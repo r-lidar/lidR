@@ -1,6 +1,6 @@
 context("grid_catalog")
 
-catalog_options(multicore = 1, tiling_size = 160, buffer = 20)
+catalog_options(multicore = 1, tiling_size = 160, buffer = 0)
 
 file <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(file)
