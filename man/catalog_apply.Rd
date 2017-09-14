@@ -60,7 +60,7 @@ plot(project)
 # 2. Set some global catalog options
 # For this dummy example, the clustering size is 80 m and the buffer is 15 m using
 # a single core (because this example is run on the CRAN server when the package is submitted).
-catalog_options(buffer = 15, multicore = 1, tiling_size = 80)
+catalog_options(buffer = 15, multicore = 1, tiling_size = 120)
 
 # 3. Load the shapefile needed to filter your points.
 folder <- system.file("extdata", "", package="lidR")

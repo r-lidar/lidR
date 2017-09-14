@@ -27,11 +27,11 @@
 
 convex_hull = function(x, y)
 {
-	data = data.frame(x,y)
-	ch <- grDevices::chull(x,y)
-	coords <- data[c(ch, ch[1]), ]
-	rownames(coords) = NULL
-	return(coords)
+  i <- grDevices::chull(x,y)
+  i <- c(i, i[1])
+  coords <- list(x = x[i], y = y[i])
+  data.table::setDF(coords)
+  return(coords)
 }
 
 polygon_area = function(x, y)
