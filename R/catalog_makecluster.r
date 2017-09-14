@@ -33,6 +33,7 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   {
     X = ctg@data[, c("Min X", "Max X", "Min Y", "Max Y")]
     names(X) = c("xleft", "xright", "ybottom", "ytop")
+    X$byfile = TRUE
   }
   else
   {
@@ -60,6 +61,8 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
 
     X$xright = X$xleft + width
     X$ytop   = X$ybottom + width
+
+    X$byfile = FALSE
   }
 
   X$xleftbuff   = X$xleft - buffer

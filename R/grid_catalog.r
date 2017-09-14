@@ -196,7 +196,8 @@ apply_grid_func = function(ctg_cluster, grid_func, catalog, res, param, save_tif
   path    <- ctg_cluster$path
   xcenter <- ctg_cluster$xcenter
   ycenter <- ctg_cluster$ycenter
-  width   <- (ctg_cluster$xrightbuff - ctg_cluster$xleftbuff)/2
+  width   <- (xright - xleft)/2
+  height  <- (ytop - ybottom)/2
   buffer  <-  ctg_cluster$xrightbuff - xright
 
   # Update progress bar
@@ -204,7 +205,7 @@ apply_grid_func = function(ctg_cluster, grid_func, catalog, res, param, save_tif
     addTxtProgressBarMulticore(pb, 1)
 
   # Extract the ROI as a LAS object
-  las <- catalog_queries_internal(catalog, xcenter, ycenter, width, width, buffer, name, 1, FALSE, filter = filter, select = select)[[1]]
+  las <- catalog_queries_internal(catalog, xcenter, ycenter, width, height, buffer, name, 1, FALSE, filter = filter, select = select)[[1]]
 
   # Skip if the ROI fall in a void area
   if (is.null(las))

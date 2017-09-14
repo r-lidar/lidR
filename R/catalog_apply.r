@@ -241,14 +241,17 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, p, ...)
   ybottom <- cluster$ybottom
   ytop    <- cluster$ytop
   name    <- "ROI" %+% cluster$name
-  path    <- cluster$path
   xcenter <- cluster$xcenter
   ycenter <- cluster$ycenter
   width   <- (xright - xleft)/2
+  height  <- (ytop - ybottom)/2
   buffer  <- cluster$xrightbuff - cluster$xright
 
   # Extract the ROI as a LAS object
-  las <- catalog_queries_internal(ctg, xcenter, ycenter, width, width, buffer, name, 1, FALSE, ...)[[1]]
+  if (cluster$byfile & buffer == 0)
+    las <- readLAS(ctg@data$filename[cluster$name], ...)
+  else
+    las <- catalog_queries_internal(ctg, xcenter, ycenter, width, height, buffer, name, 1, FALSE, ...)[[1]]
 
   # Skip if the ROI falls in a void area
   if (is.null(las))
