@@ -158,7 +158,14 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
+  oldbuffer <- CATALOGOPTIONS("buffer")
+
+  if (subcircle == 0)
+    CATALOGOPTIONS(buffer = res)
+
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
+
+  CATALOGOPTIONS(buffer = oldbuffer)
 
   return(canopy)
 }
