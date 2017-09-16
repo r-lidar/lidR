@@ -327,7 +327,7 @@ bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, con
     A = -A;
   }
 
-  return s >= 0 && t >= 0 && (int)((s + t)*1000) <= (int)(A*1000);
+  return s >= 0 && t >= 0 && (s + t) <= A;
 }
 
 BoundingBox QuadTree::bbox()
