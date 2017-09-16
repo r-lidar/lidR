@@ -40,8 +40,8 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   // Shift the point cloud to the origin to avoid computer precision error
   // The shift is done by reference to save memory. The original data is shift back at the end
 
-  double minx = mean(x);
-  double miny = mean(y);
+  double minx = min(x);
+  double miny = min(y);
   x = x - minx;
   y = y - miny;
   xi = xi - minx;
