@@ -62,13 +62,13 @@ test_that("catalog queries works with the two shapes", {
   ctg = catalog(folder)
   req = catalog_queries(ctg, x, y, r, r, roinames = n)
 
-  a = lasarea(req$plot1)
+  a = area(req$plot1)
 
   expect_equal(a, 4*r**2, tolerance = 0.01)
 
   req = catalog_queries(ctg, x, y, r, roinames = n)
 
-  a = lasarea(req$plot1)
+  a = area(req$plot1)
 
   expect_equal(a, pi*r**2, tolerance = 0.02)
 })

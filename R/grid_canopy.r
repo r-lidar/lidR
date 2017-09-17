@@ -51,7 +51,7 @@
 #' the entire dataset in a continuous way using a multicore process. Parallel computing is set
 #' by default to the number of core available in the computer. The user can modify the global
 #' options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax file. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @aliases  grid_canopy
@@ -158,7 +158,14 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
+  oldbuffer <- CATALOGOPTIONS("buffer")
+
+  if (subcircle == 0)
+    CATALOGOPTIONS(buffer = res)
+
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
+
+  CATALOGOPTIONS(buffer = oldbuffer)
 
   return(canopy)
 }

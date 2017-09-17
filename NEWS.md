@@ -1,4 +1,4 @@
-### lidR v1.3.0 (in development)
+### lidR v1.3.0 (Release date: 2017-10-16)
 
 This version is dedicated to extending functions and processes to entire catalogs in a continuous way.
 Major changes are:

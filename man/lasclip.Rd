@@ -18,7 +18,7 @@ lasclipCircle(.las, xcenter, ycenter, radius, inside = TRUE)
 \arguments{
 \item{.las}{An object of class \code{LAS}}
 
-\item{geometry}{charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
+\item{geometry}{characters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
 \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}}
 
 \item{coord}{matrix or data.frame. The coordinates of the minimum points required to fully

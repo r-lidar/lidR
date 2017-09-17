@@ -38,7 +38,7 @@
 #' the entire dataset in a continuous way using a multicore process. Parallel computing is set
 #' by default to the number of core available in the computer. A buffer is required. The user
 #' can modify the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @param x A LAS object
@@ -160,7 +160,14 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 #' @export
 grid_tincanopy.LAScatalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
+  oldbuffer <- CATALOGOPTIONS("buffer")
+
+  if (subcircle == 0)
+    CATALOGOPTIONS(buffer = res)
+
   canopy = grid_catalog(x, grid_tincanopy, res, "xyzr", filter, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
+
+  CATALOGOPTIONS(buffer = oldbuffer)
 
   return(canopy)
 }

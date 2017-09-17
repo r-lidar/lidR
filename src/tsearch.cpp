@@ -37,16 +37,6 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
-  // Shift the point cloud to the origin to avoid computer precision error
-  // The shift is done by reference to save memory. The original data is shift back at the end
-
-  double minx = mean(x);
-  double miny = mean(y);
-  x = x - minx;
-  y = y - miny;
-  xi = xi - minx;
-  yi = yi - miny;
-
   // Algorithm
 
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi), as< std::vector<double> >(yi));
@@ -90,12 +80,6 @@ IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, Num
   }
 
   delete tree;
-
-  // Shift back the data
-  x = x + minx;
-  y = y + miny;
-  xi = xi + minx;
-  yi = yi + miny;
 
   return(output);
 }

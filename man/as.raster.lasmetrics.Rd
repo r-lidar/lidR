@@ -12,7 +12,7 @@
 \item{z}{character. If 3 columns or more, the names of the field to extract. If NULL returns
 a RasterStack instead of a RasterLayer.}
 
-\item{fun.aggregate}{Should the data be aggregated before casting? If the table doesn't
+\item{fun.aggregate}{Should the data be aggregated before casting? If the table does not
 contain a single observation for each cell, then aggregation defaults to mean value with
 a message.}
 
