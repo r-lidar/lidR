@@ -54,6 +54,8 @@ class QuadTree
 
 	private:
 		int MAX_DEPTH;
+	  double EPSILON;
+	  double EPSILONSQ;
 		int depth;
 		int npoints;
 		BoundingBox boundary;
@@ -71,6 +73,8 @@ class QuadTree
 		bool in_circle(const Point&, const Point&, const double);
 		bool in_rect(const BoundingBox&, const Point&);
 		bool in_triangle(const Point&, const Point&, const Point&, const Point&);
+		double distanceSquarePointToSegment(const Point&, const Point&, const Point&);
+
 };
 
 #endif //QT_H
