@@ -62,6 +62,8 @@ bool BoundingBox::intersects(const BoundingBox& b)
 QuadTree::QuadTree(const double cx, const double cy, const double range)
 {
   MAX_DEPTH = 6;
+  EPSILON = 0.001;
+  EPSILONSQ = EPSILON*EPSILON;
   npoints = 0;
 
   boundary = BoundingBox(Point(cx, cy), Point(range, range));
@@ -76,6 +78,8 @@ QuadTree::QuadTree(const double cx, const double cy, const double range)
 QuadTree::QuadTree(const BoundingBox boundary, const QuadTree* parent) : boundary(boundary)
 {
   MAX_DEPTH = 6;
+  EPSILON = 0.001;
+  EPSILONSQ = EPSILON*EPSILON;
   npoints = 0;
 
   depth = parent->depth + 1;
@@ -218,10 +222,10 @@ void QuadTree::circle_lookup(const double cx, const double cy, const double rang
 void QuadTree::triangle_lookup(const Point& A, const Point& B, const Point& C, std::vector<Point*>& res)
 {
   // Boundingbox of A B C
-  double rminx = min(A.x, B.x, C.x);
-  double rmaxx = max(A.x, B.x, C.x);
-  double rminy = min(A.y, B.y, C.y);
-  double rmaxy = max(A.y, B.y, C.y);
+  double rminx = min(A.x, B.x, C.x)-EPSILON;
+  double rmaxx = max(A.x, B.x, C.x)+EPSILON;
+  double rminy = min(A.y, B.y, C.y)-EPSILON;
+  double rmaxy = max(A.y, B.y, C.y)+EPSILON;
 
   double xcenter = (rminx + rmaxx)/2;
   double ycenter = (rminy + rmaxy)/2;
@@ -312,22 +316,44 @@ bool QuadTree::in_rect(const BoundingBox& bb, const Point& p)
 
 bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, const Point& p2)
 {
-  double s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
-  double t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+  double denominator = (p0.x*(p1.y - p2.y) + p0.y*(p2.x - p1.x) + p1.x*p2.y - p1.y*p2.x);
+  double t1 = (p.x*(p2.y - p0.y) + p.y*(p0.x - p2.x) - p0.x*p2.y + p0.y*p2.x) / denominator;
+  double t2 = (p.x*(p1.y - p0.y) + p.y*(p0.x - p1.x) - p0.x*p1.y + p0.y*p1.x) / -denominator;
+  double s = t1 + t2;
 
-  if ((s <= 0) != (t <= 0))
-    return false;
+  if (0 <= t1 && t1 <= 1 && 0 <= t2 && t2 <= 1 && s <= 1)
+    return true;
 
-  double  A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+  // see http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 
-  if (A < 0)
+  if (distanceSquarePointToSegment(p0, p1, p) <= EPSILONSQ)
+    return true;
+  if (distanceSquarePointToSegment(p1, p2, p) <= EPSILONSQ)
+    return true;
+  if (distanceSquarePointToSegment(p2, p0, p) <= EPSILONSQ)
+    return true;
+
+  return false;
+}
+
+double QuadTree::distanceSquarePointToSegment(const Point& p1, const Point& p2, const Point& p)
+{
+  double p1_p2_squareLength = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y);
+  double dotProduct = ((p.x - p1.x)*(p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y)) / p1_p2_squareLength;
+
+  if ( dotProduct < 0 )
   {
-    s = -s;
-    t = -t;
-    A = -A;
+    return (p.x - p1.x)*(p.x - p1.x) + (p.y - p1.y)*(p.y - p1.y);
   }
-
-  return s >= 0 && t >= 0 && (s + t) <= A;
+  else if ( dotProduct <= 1 )
+  {
+    double p_p1_squareLength = (p1.x - p.x)*(p1.x - p.x) + (p1.y - p.y)*(p1.y - p.y);
+    return p_p1_squareLength - dotProduct * dotProduct * p1_p2_squareLength;
+  }
+  else
+  {
+    return (p.x - p2.x)*(p.x - p2.x) + (p.y - p2.y)*(p.y - p2.y);
+  }
 }
 
 BoundingBox QuadTree::bbox()
