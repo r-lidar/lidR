@@ -197,31 +197,18 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   # Read the files
   # ==================
 
-  data = lapply(files, function(file)
-  {
-    header = rlas::readlasheader(file)
+  header = rlas::readlasheader(files[1])
+  data   = rlas::readlasdata(files, i, r, n, d, e, c, a, u, p, RGB, t, filter)
 
-    data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, filter)
-
-    # Can happen if filter is badly used
-    if (dim(data)[1] == 0)
-      return(NULL)
-
-    # If filter is used, header will not be in accordance with the data. Hard check is useless
-    if (nchar(filter) > 0)
-      lascheck(data, header, hard = F)
-    else
-      lascheck(data, header, hard = T)
-
-    return(data)
-  })
-
-  data = data.table::rbindlist(data)
-
+  # Can happen if filter is badly used
   if (nrow(data) == 0 | ncol(data) == 0)
     return(invisible())
 
-  header <- rlas::readlasheader(files[1])
+  # If filter is used, header will not be in accordance with the data. Hard check is useless
+  if (nchar(filter) > 0 | length(files) > 1)
+    lascheck(data, header, hard = F)
+  else
+    lascheck(data, header, hard = T)
 
   las <- LAS(data, header, check = F)
 
