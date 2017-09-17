@@ -81,14 +81,6 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   if (is(files, "LAScatalog"))
     files <- files@data$filename
 
-  # ===================================
-  # rlas version 1.1.5 has new options
-  # which lead to incompatibilities.
-  # ===================================
-
-  vrlas = utils::packageVersion("rlas")
-  rlas_gt_1.1.4 = vrlas > package_version("1.1.4")
-
   # ==================
   # Test the files
   # ==================
@@ -209,10 +201,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   {
     header = rlas::readlasheader(file)
 
-    if (rlas_gt_1.1.4)
-      data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, t, filter)
-    else
-      data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, filter)
+    data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, filter)
 
     # Can happen if filter is badly used
     if (dim(data)[1] == 0)
