@@ -48,7 +48,7 @@ as.lasmetrics = function(x, res)
 #' @param x a \code{lasmetrics} object
 #' @param z character. If 3 columns or more, the names of the field to extract. If NULL returns
 #' a RasterStack instead of a RasterLayer.
-#' @param fun.aggregate Should the data be aggregated before casting? If the table doesn't
+#' @param fun.aggregate Should the data be aggregated before casting? If the table does not
 #' contain a single observation for each cell, then aggregation defaults to mean value with
 #' a message.
 #' @param ... Internal use only.
@@ -155,7 +155,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 
 #' Transform a lidR object into sp object
 #'
-#' LAS, LAScatalog, lasmetrics are tranformed respectively into SpatialPointsDataFrame,
+#' LAS, LAScatalog, lasmetrics are transformed respectively into SpatialPointsDataFrame,
 #' SpatialPolygonsDataFrame, SpatialPixelsDataFrame
 #'
 #' @param x an object from the lidR package

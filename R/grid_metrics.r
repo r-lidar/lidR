@@ -69,7 +69,7 @@
 #' the entire dataset in a continuous way using a multicore process. Parallel computing is set
 #' by default to the number of core available in the computer. The user can modify the global
 #' options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
@@ -136,7 +136,12 @@ grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines
   if (any(start != 0))  warning("Parameter start is currently disabled for LAScatalogs")
   if (splitlines)       warning("Parameter splitlines is currently disabled for LAScatalogs")
 
+  oldbuffer <- CATALOGOPTIONS("buffer")
+  CATALOGOPTIONS(buffer = 0)
+
   stat <- grid_catalog(x, grid_metrics, res, "*+", filter, func = call)
+
+  CATALOGOPTIONS(buffer = oldbuffer)
 
   return(stat)
 }

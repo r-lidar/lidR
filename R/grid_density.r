@@ -82,9 +82,14 @@ grid_density.LAS = function(x, res = 4, filter = "")
 }
 
 #' @export
-grid_density.LAScatalog = function(x, res = 4, filter = "-drop_z_below 0")
+grid_density.LAScatalog = function(x, res = 4, filter = "")
 {
+  oldbuffer <- CATALOGOPTIONS("buffer")
+  CATALOGOPTIONS(buffer = 0)
+
   ret <- grid_catalog(x, grid_density, res, "xyztP", filter)
+
+  CATALOGOPTIONS(buffer = oldbuffer)
 
   return(ret)
 }
