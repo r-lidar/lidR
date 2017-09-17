@@ -38,7 +38,7 @@ x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an emp
 equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than
 \code{select = ""}.\cr
 
-Three extra metrics can be computed on the fly with the folowing flags:
+Three extra metrics can be computed on the fly with the following flags:
 P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}.
 The symbol + is a shortcut for 'PFC'.\cr\cr
 

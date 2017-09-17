@@ -32,7 +32,7 @@
 #' Subtract digital terrain model (DTM) from LiDAR data to create a dataset normalized with
 #' the ground at 0. The DTM can originate from several sources e.g. from an external file or
 #' computed by the user. It can also be computed on the fly. In this case the algorithm does
-#' not use rasterized data and each point is interpolated. There is no inacuracy due to the
+#' not use rasterized data and each point is interpolated. There is no inaccuracy due to the
 #' discretization of the terrain the resolution of the terrain is virtually infinite (but
 #' it is slower).\cr
 #' Depending on the interpolation method, the edges of the dataset can be more or less poorly

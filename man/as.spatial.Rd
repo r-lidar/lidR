@@ -13,7 +13,7 @@ as.spatial(x)
 An object from sp
 }
 \description{
-LAS, LAScatalog, lasmetrics are tranformed respectively into SpatialPointsDataFrame,
+LAS, LAScatalog, lasmetrics are transformed respectively into SpatialPointsDataFrame,
 SpatialPolygonsDataFrame, SpatialPixelsDataFrame
 }
 \seealso{
