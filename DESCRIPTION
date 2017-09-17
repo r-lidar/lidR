@@ -33,6 +33,7 @@ biocViews:
 Collate: 
     'RcppExports.R'
     'catalog_apply.r'
+    'catalog_clip.r'
     'catalog_index.r'
     'catalog_makecluster.r'
     'catalog_query.r'

@@ -1,3 +1,10 @@
+### lidR v1.4.0 (In development)
+
+#### NEW FEATURES
+
+* `lasclip` and `lasclip*` can extract from a catalog
+* `lasclip` supports `sp::Polygon` object
+
 ### lidR v1.3.0 (Release date: 2017-10-16)
 
 This version is dedicated to extending functions and processes to entire catalogs in a continuous way.

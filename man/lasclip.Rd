@@ -7,62 +7,49 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(.las, geometry, coord, inside = TRUE)
+lasclip(x, geometry, ofile = "")
 
-lasclipRectangle(.las, xleft, ybottom, xright, ytop, inside = TRUE)
+lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "")
 
-lasclipPolygon(.las, x, y, inside = TRUE)
+lasclipPolygon(x, xpoly, ypoly, ofile = "")
 
-lasclipCircle(.las, xcenter, ycenter, radius, inside = TRUE)
+lasclipCircle(x, xcenter, ycenter, radius, ofile = "")
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{x}{An object of class \code{LAS} or \code{LAScatalog}}
 
-\item{geometry}{characters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
-\code{"polygon"}, \code{"cuboid"} or \code{"sphere"}}
+\item{geometry}{an geomtric object. Currently \code{Polygon} from sp is supported.}
 
-\item{coord}{matrix or data.frame. The coordinates of the minimum points required to fully
-describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
-matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix}
+\item{ofile}{character write the result in a file or load it into R. If \code{ofile = ""}
+the result is loaded}
 
-\item{inside}{logical. Keep data inside or outside the shape}
+\item{xleft}{scalar of left x position of rectangle}
 
-\item{xleft}{scalar. of left x position.}
+\item{ybottom}{scalar of bottom y position of rectangle.}
 
-\item{ybottom}{scalar. of bottom y position.}
+\item{xright}{scalar of right x position of rectangle}
 
-\item{xright}{scalar. of right x position.}
+\item{ytop}{scalar of top y position of rectangle}
 
-\item{ytop}{scalar. of top y position.}
+\item{xcenter}{scalar x disc center}
+
+\item{ycenter}{scalar y disc center}
+
+\item{radius}{scalar disc radius}
 
 \item{x}{numerical array. x-coordinates of polygon}
 
 \item{y}{numerical array. y-coordinates of polygon}
-
-\item{xcenter}{scalar. x disc center}
-
-\item{ycenter}{scalar. y disc center}
-
-\item{radius}{scalar. Disc radius}
 }
 \value{
-An object of class \code{LAS}
+An object of class \code{LAS} or NULL if the results is immediatly written in a file.
 }
 \description{
 Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
-
-subset = lidar \%>\% lasclipRectangle(xleft  = 684850, ybottom = 5017850,
-                                    xright = 684900, ytop    = 5017900)
+las = readLAS(LASfile)
+subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 plot(subset)
-
-msphere = matrix(c(684850, 5017850, 10, 10), ncol = 4)
-subset = lidar \%>\% lasclip("sphere", msphere)
-plot(subset)
-
-mrect = matrix(c(684850, 684900, 5017850, 5017900), ncol = 2)
-subset = lidar \%>\% lasclip("rectangle", mrect)
 }

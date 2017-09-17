@@ -26,7 +26,7 @@
 # ===============================================================================
 
 
-catalog_clip_inpoly = function(catalog, xpoly, ypoly, ofile)
+catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
 {
   xmin <- min(xpoly)
   xmax <- max(xpoly)
@@ -37,11 +37,16 @@ catalog_clip_inpoly = function(catalog, xpoly, ypoly, ofile)
   w    <- xmax - xmin
   h    <- ymax - ymin
 
-  filter <- paste("-inside", xmin, ymin, xmax, ymax)
-  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1)
+  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1, "roi")
   files  <- unlist(index$filename)
 
-  streaming_clip(files, filter, ofile, xpoly, ypoly)
+  header = rlas::readlasheader(index$roi$tiles[1])
+  data   = rlas:::streamlasdata(index$roi$tiles, filter = "", ofile = ofile, xpoly = xpoly, ypoly = ypoly)
+
+  if (nrow(data) == 0)
+    return (invisible())
+
+  return(LAS(data, header))
 }
 
 catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
@@ -52,10 +57,15 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
   h  <- ymax - ymin
 
   filter <- paste("-inside", xmin, ymin, xmax, ymax)
-  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1)
-  files  <- unlist(index$filename)
+  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1, "roi")
 
-  streaming_clip(files, filter, ofile)
+  header = rlas::readlasheader(index$roi$tiles[1])
+  data   = rlas:::streamlasdata(index$roi$tiles, filter = filter, ofile = ofile)
+
+  if (nrow(data) == 0)
+    return (invisible())
+
+  return(LAS(data, header))
 }
 
 catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
@@ -63,8 +73,14 @@ catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
   w  <- 2*radius
 
   filter <- paste("-inside_circle", xcenter, ycenter, radius)
-  index  <- catalog_index(catalog, xc, yc, w, w, buffer = 1)
+  index  <- catalog_index(catalog, xc, yc, w, w, buffer = 1, "roi")
   files  <- unlist(index$filename)
 
-  streaming_clip(files, filter, ofile)
+  header = rlas::readlasheader(index$roi$tiles[1])
+  data   = rlas:::streamlasdata(index$roi$tiles, filter = filter, ofile = ofile)
+
+  if (nrow(data) == 0)
+    return (invisible())
+
+  return(LAS(data, header))
 }

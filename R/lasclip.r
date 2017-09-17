@@ -31,37 +31,25 @@
 #'
 #' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 #'
-#' @param x An object of class \code{LAS}
-#' @param geometry characters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
-#' \code{"polygon"}
-#' @param coord matrix or data.frame. The coordinates of the minimum points required to fully
-#' describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
-#' matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix
-#' @param xleft	scalar. of left x position.
-#' @param ybottom	scalar. of bottom y position.
-#' @param xright scalar. of right x position.
-#' @param ytop scalar. of top y position.
+#' @param x An object of class \code{LAS} or \code{LAScatalog}
+#' @param geometry an geomtric object. Currently \code{Polygon} from sp is supported.
+#' @param xleft	scalar of left x position of rectangle
+#' @param ybottom	scalar of bottom y position of rectangle.
+#' @param xright scalar of right x position of rectangle
+#' @param ytop scalar of top y position of rectangle
 #' @param x	numerical array. x-coordinates of polygon
 #' @param y	numerical array. y-coordinates of polygon
-#' @param xcenter	scalar. x disc center
-#' @param ycenter	scalar. y disc center
-#' @param radius scalar. Disc radius
-#' @param inside logical. Keep data inside or outside the shape
-#' @return An object of class \code{LAS}
+#' @param xcenter	scalar x disc center
+#' @param ycenter	scalar y disc center
+#' @param radius scalar disc radius
+#' @param ofile character write the result in a file or load it into R. If \code{ofile = ""}
+#' the result is loaded
+#' @return An object of class \code{LAS} or NULL if the results is immediatly written in a file.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' subset = lidar %>% lasclipRectangle(xleft  = 684850, ybottom = 5017850,
-#'                                     xright = 684900, ytop    = 5017900)
+#' las = readLAS(LASfile)
+#' subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 #' plot(subset)
-#'
-#' msphere = matrix(c(684850, 5017850, 10, 10), ncol = 4)
-#' subset = lidar %>% lasclip("sphere", msphere)
-#' plot(subset)
-#'
-#' mrect = matrix(c(684850, 684900, 5017850, 5017900), ncol = 2)
-#' subset = lidar %>% lasclip("rectangle", mrect)
 #' @name lasclip
 #' @export
 #' @export
@@ -98,9 +86,9 @@ lasclip.LAScatalog = function(x, geometry, ofile = "")
   }
 }
 
-# ========
-# POLYGON
-# ========
+# =========
+# RECTANGLE
+# =========
 
 #' @export lasclipRectangle
 #' @rdname lasclip
@@ -110,16 +98,16 @@ lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "")
 }
 
 #' @export
-lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop)
+lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "")
 {
   X <- Y <- NULL
   return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop)))
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop)
+lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "")
 {
-  return(catalog_query_rect(x, xleft, xright, ybottom, ytop))
+  return(catalog_clip_rect(x, xleft, xright, ybottom, ytop, ofile))
 }
 
 # ========
@@ -133,15 +121,17 @@ lasclipPolygon = function(x, xpoly, ypoly, ofile = "")
   UseMethod("lasclipPolygon", x)
 }
 
+#' @export
 lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "")
 {
   X <- Y <- NULL
   return(lasfilter(x, points_in_polygon(xpoly,ypoly, X, Y)))
 }
 
+#' @export
 lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "")
 {
-  return(catalog_query_poly(x, xpoly, ypoly, ofile))
+  return(catalog_clip_poly(x, xpoly, ypoly, ofile))
 }
 
 # ========
@@ -167,7 +157,7 @@ lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "")
 #' @export
 lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "")
 {
-  return(catalog_clip_circle(x, xcenter, ycenter, radius, ofile))
+  return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile))
 }
 
 
