@@ -30,7 +30,7 @@
 
 #' Reshape (retile) a catalog
 #'
-#' This function splits or merges files to reshape the original catolog files (.las or .laz)
+#' This function splits or merges files to reshape the original catalog files (.las or .laz)
 #' into smaller or larger files. The new files are written in a dedicated folder. The function
 #' first displays the pattern of the new tiling and then asks the user to validate the command.
 #'

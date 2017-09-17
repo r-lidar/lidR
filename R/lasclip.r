@@ -32,7 +32,7 @@
 #' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 #'
 #' @param .las An object of class \code{LAS}
-#' @param geometry charaters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
+#' @param geometry characters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
 #' \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}
 #' @param coord matrix or data.frame. The coordinates of the minimum points required to fully
 #' describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
