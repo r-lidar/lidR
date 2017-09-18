@@ -169,7 +169,6 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   res      <- 1
 
   clusters <- catalog_makecluster(ctg, res, buffer, by_file)
-  clusters <- apply(clusters, 1, as.list)
 
   return(catalog_apply_internal(ctg, clusters, func, func_args, ncores, progress, ...))
 }
@@ -233,29 +232,7 @@ catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, progr
 
 cluster_apply_func <- function(cluster, func, ctg, func_args, p, ...)
 {
-  X <- Y <- NULL
-
-  # Variables for readability
-  xleft   <- cluster$xleft
-  xright  <- cluster$xright
-  ybottom <- cluster$ybottom
-  ytop    <- cluster$ytop
-  name    <- "ROI" %+% cluster$name
-  xcenter <- cluster$xcenter
-  ycenter <- cluster$ycenter
-  width   <- (xright - xleft)/2
-  height  <- (ytop - ybottom)/2
-  buffer  <- cluster$xrightbuff - cluster$xright
-
-  # Extract the ROI as a LAS object
-  if (cluster$byfile & buffer == 0)
-    las <- readLAS(ctg@data$filename[cluster$name], ...)
-  else
-    las <- catalog_queries_internal(ctg, xcenter, ycenter, width, height, buffer, name, 1, FALSE, ...)[[1]]
-
-  # Skip if the ROI falls in a void area
-  if (is.null(las))
-    return(NULL)
+  las = readLAS(cluster, ...)
 
   # Update progress bar
   if (!is.null(p))
@@ -265,6 +242,10 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, p, ...)
     utils::setTxtProgressBar(p, i)
     write(i, pfile)
   }
+
+  # Skip if the ROI falls in a void area
+  if (is.null(las))
+    return(NULL)
 
   # Call the function
   return(do.call(func, c(las, func_args)))
