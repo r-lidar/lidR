@@ -76,10 +76,58 @@
 #' las = readLAS(LASfile, select = "*+")
 readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 {
-  `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
+  UseMethod("readLAS", files)
+}
 
-  if (is(files, "LAScatalog"))
-    files <- files@data$filename
+#' @export
+readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+{
+  return(readLAS(files@data$filename, select, filter, ...))
+}
+
+#' @export
+readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+{
+  filter = paste(files@filter, filter)
+  las = readLAS(files@files, select, filter, ...)
+
+  if (is.null(las))
+    return(invisible())
+
+  if (files@buffer > 0)
+  {
+    ybottom = files@bbox$ymin
+    ytop    = files@bbox$ymax
+    xleft   = files@bbox$xmin
+    xright  = files@bbox$xmax
+    xc      = files@center$x
+    yc      = files@center$y
+    r       = (files@width - 2*files@buffer)/2
+
+    las@data[, buffer := 0]
+
+    if (files@shape == LIDRCIRCLE)
+    {
+      las@data[(X-xc)^2 + (Y-yc)^2 > r^2, buffer := LIDRBUFFER]
+    }
+    else
+    {
+      las@data[Y < ybottom, buffer := LIDRBOTTOMBUFFER]
+      las@data[X < xleft,   buffer := LIDRLEFTBUFFER]
+      las@data[Y > ytop,    buffer := LIDRTOPBUFFER]
+      las@data[X > xright,  buffer := LIDRRIGHTBUFFER]
+      las@data[(X > xright) & (Y < ybottom), buffer := LIDRBOTTOMBUFFER]
+    }
+  }
+
+  return(las)
+}
+
+
+#' @export
+readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+{
+  `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
 
   # ==================
   # Test the files

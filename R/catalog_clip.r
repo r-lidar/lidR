@@ -34,14 +34,13 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
   ymax <- max(ypoly)
   xc   <- (xmax + xmin)/2
   yc   <- (ymax + ymin)/2
-  w    <- xmax - xmin
-  h    <- ymax - ymin
+  w    <- xmax - xmin + 1
+  h    <- ymax - ymin + 1
 
-  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1, "roi")
-  files  <- unlist(index$filename)
+  cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
 
-  header = rlas::readlasheader(index$roi$tiles[1])
-  data   = rlas:::streamlasdata(index$roi$tiles, filter = "", ofile = ofile, xpoly = xpoly, ypoly = ypoly)
+  header = rlas::readlasheader(cluster@files[1])
+  data   = rlas:::streamlasdata(cluster@files, filter = "", ofile = ofile, xpoly = xpoly, ypoly = ypoly)
 
   if (nrow(data) == 0)
     return (invisible())
@@ -56,11 +55,10 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
   w  <- xmax - xmin
   h  <- ymax - ymin
 
-  filter <- paste("-inside", xmin, ymin, xmax, ymax)
-  index  <- catalog_index(catalog, xc, yc, w, h, buffer = 1, "roi")
+  cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
 
-  header = rlas::readlasheader(index$roi$tiles[1])
-  data   = rlas:::streamlasdata(index$roi$tiles, filter = filter, ofile = ofile)
+  header = rlas::readlasheader(cluster@files[1])
+  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile)
 
   if (nrow(data) == 0)
     return (invisible())
@@ -70,14 +68,10 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
 
 catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
 {
-  w  <- 2*radius
+  cluster  <- catalog_index(catalog, xc, yc, r, 0, 0, "ROI")[[1]]
 
-  filter <- paste("-inside_circle", xcenter, ycenter, radius)
-  index  <- catalog_index(catalog, xc, yc, w, w, buffer = 1, "roi")
-  files  <- unlist(index$filename)
-
-  header = rlas::readlasheader(index$roi$tiles[1])
-  data   = rlas:::streamlasdata(index$roi$tiles, filter = filter, ofile = ofile)
+  header = rlas::readlasheader(cluster@files[1])
+  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile)
 
   if (nrow(data) == 0)
     return (invisible())

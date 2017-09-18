@@ -33,12 +33,12 @@ test_that("clip circle works", {
   expect_true(extent(circ) <= raster::extent(40,60,40,60))
 })
 
-test_that("clip generic with cuboid works", {
-  mcube = matrix(c(10,10,0,50,50,20), nrow = 2, byrow = T)
-  cube = lasclip(las, geometry = "cuboid", mcube)
-  expect_true(extent(cube) <= raster::extent(10,50,10,50))
-  expect_lt(max(cube@data$Z), 20)
-})
+# test_that("clip generic with cuboid works", {
+#   mcube = matrix(c(10,10,0,50,50,20), nrow = 2, byrow = T)
+#   cube = lasclip(las, geometry = "cuboid", mcube)
+#   expect_true(extent(cube) <= raster::extent(10,50,10,50))
+#   expect_lt(max(cube@data$Z), 20)
+# })
 
 # test_that("clip generic with cuboid order the coordinates", {
 #   mcube = matrix(c(50,50,20,10,10,0), nrow = 2, byrow = T)

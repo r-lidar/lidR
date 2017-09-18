@@ -2,10 +2,9 @@
 % Please edit documentation in R/catalog_index.r
 \name{catalog_index}
 \alias{catalog_index}
-\title{It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
-Users do not really need it.}
+\title{Retrieve the files containing ROIs}
 \usage{
-catalog_index(catalog, x, y, r, r2, buffer, roinames)
+catalog_index(catalog, x, y, w, h, buffer, roinames)
 }
 \arguments{
 \item{catalog}{A LAScatalog object}
@@ -14,20 +13,20 @@ catalog_index(catalog, x, y, r, r2, buffer, roinames)
 
 \item{y}{vector. A set of y plot coordinates}
 
+\item{roinames}{vector. A set of ROI names}
+
 \item{r}{numeric or vector. A radius or a set of radii of the ROI. If only
 r is provided (r2 = NULL) it will extract data falling onto a disc.}
 
 \item{r2}{numeric or vector. A radius or a set of radii of plots. If r2
 is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.}
-
-\item{roinames}{vector. A set of ROI names}
+}
+\value{
+A list of LAScluster object.
 }
 \description{
-It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
-Users do not really need it.
-}
-\seealso{
-\link[lidR:catalog]{LAScatalog}
-\link[lidR:catalog_queries]{catalog_queries}
+\bold{This function is an internal function reserved for lidR developpers.\cr\cr}
+When we have a set of (x, y) coordinates corresponding to a region of interest (ROI) in a catalog
+this function retrive in which file(s) are these ROIs.
 }
 \keyword{internal}
