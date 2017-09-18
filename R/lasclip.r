@@ -32,18 +32,18 @@
 #' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 #'
 #' @param x An object of class \code{LAS} or \code{LAScatalog}
-#' @param geometry an geomtric object. Currently \code{Polygon} from sp is supported.
+#' @param geometry a geomtric object. Currently \code{Polygon} from \code{sp} is supported.
 #' @param xleft	scalar of left x position of rectangle
 #' @param ybottom	scalar of bottom y position of rectangle.
 #' @param xright scalar of right x position of rectangle
 #' @param ytop scalar of top y position of rectangle
-#' @param x	numerical array. x-coordinates of polygon
-#' @param y	numerical array. y-coordinates of polygon
+#' @param xpoly	numerical array. x-coordinates of polygon
+#' @param ypoly	numerical array. y-coordinates of polygon
 #' @param xcenter	scalar x disc center
 #' @param ycenter	scalar y disc center
 #' @param radius scalar disc radius
 #' @param ofile character write the result in a file or load it into R. If \code{ofile = ""}
-#' the result is loaded
+#' the result is loaded in R.
 #' @return An object of class \code{LAS} or NULL if the results is immediatly written in a file.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -63,7 +63,7 @@ lasclip.LAS = function(x, geometry, ofile = "")
 {
   if (is(geometry, "Polygon"))
   {
-     las = lasclipPolygon(x, geomtry@coords[,1], geomtry@coords[,2])
+     las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2])
      return(las)
   }
   else
@@ -77,7 +77,7 @@ lasclip.LAScatalog = function(x, geometry, ofile = "")
 {
   if (is(geometry, "Polygon"))
   {
-    las = lasclipPolygon(x, geomtry@coords[,1], geomtry@coords[,2], ofile = "")
+    las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile = "")
     return(las)
   }
   else
@@ -90,7 +90,7 @@ lasclip.LAScatalog = function(x, geometry, ofile = "")
 # RECTANGLE
 # =========
 
-#' @export lasclipRectangle
+#' @export
 #' @rdname lasclip
 lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "")
 {
