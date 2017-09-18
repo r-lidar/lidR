@@ -18,10 +18,10 @@ lasclipCircle(x, xcenter, ycenter, radius, ofile = "")
 \arguments{
 \item{x}{An object of class \code{LAS} or \code{LAScatalog}}
 
-\item{geometry}{an geomtric object. Currently \code{Polygon} from sp is supported.}
+\item{geometry}{a geomtric object. Currently \code{Polygon} from \code{sp} is supported.}
 
 \item{ofile}{character write the result in a file or load it into R. If \code{ofile = ""}
-the result is loaded}
+the result is loaded in R.}
 
 \item{xleft}{scalar of left x position of rectangle}
 
@@ -31,15 +31,15 @@ the result is loaded}
 
 \item{ytop}{scalar of top y position of rectangle}
 
+\item{xpoly}{numerical array. x-coordinates of polygon}
+
+\item{ypoly}{numerical array. y-coordinates of polygon}
+
 \item{xcenter}{scalar x disc center}
 
 \item{ycenter}{scalar y disc center}
 
 \item{radius}{scalar disc radius}
-
-\item{x}{numerical array. x-coordinates of polygon}
-
-\item{y}{numerical array. y-coordinates of polygon}
 }
 \value{
 An object of class \code{LAS} or NULL if the results is immediatly written in a file.

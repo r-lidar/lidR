@@ -88,6 +88,8 @@ readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 #' @export
 readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 {
+  buffer <- X <- Y <- NULL
+
   filter = paste(files@filter, filter)
   las = readLAS(files@files, select, filter, ...)
 

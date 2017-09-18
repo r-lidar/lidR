@@ -40,7 +40,7 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
   cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
 
   header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, filter = "", ofile = ofile, xpoly = xpoly, ypoly = ypoly)
+  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile, xpoly = xpoly, ypoly = ypoly)
 
   if (nrow(data) == 0)
     return (invisible())
@@ -68,7 +68,7 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
 
 catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
 {
-  cluster  <- catalog_index(catalog, xc, yc, r, 0, 0, "ROI")[[1]]
+  cluster  <- catalog_index(catalog, xcenter, ycenter, 2*radius, NULL, 0, "ROI")[[1]]
 
   header = rlas::readlasheader(cluster@files[1])
   data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile)
