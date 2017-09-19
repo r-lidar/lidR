@@ -39,10 +39,13 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
 
   cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
 
+  if (is.null(cluster))
+    return(invisible())
+
   header = rlas::readlasheader(cluster@files[1])
   data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile, xpoly = xpoly, ypoly = ypoly)
 
-  if (nrow(data) == 0)
+  if (is.null(data))
     return (invisible())
 
   return(LAS(data, header))
