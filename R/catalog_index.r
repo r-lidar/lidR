@@ -95,6 +95,10 @@ catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
   }
 
   keep = !n
+
+  if (!any(keep))
+    return(NULL)
+
   coord.plot = coord.plot[keep]
   roinames = roinames[keep]
 
