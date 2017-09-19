@@ -6,7 +6,7 @@
 
 Point::Point(){}
 Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
-Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id) {}
+Point::Point(const double x, const double y, const long id) : x(x), y(y), id(id) {}
 
 BoundingBox::BoundingBox(){}
 BoundingBox::BoundingBox(const Point center, const Point half_res) : center(center), half_res(half_res) {}
