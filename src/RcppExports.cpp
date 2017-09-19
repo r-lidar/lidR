@@ -5,18 +5,6 @@
 
 using namespace Rcpp;
 
-// itc_treetops
-IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize);
-RcppExport SEXP _lidR_itc_treetops(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
-    Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(itc_treetops(Canopy, searchWinSize));
-    return rcpp_result_gen;
-END_RCPP
-}
 // itc_expandcrowns
 IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, double TRESHSeed, double TRESHCrown, double DIST);
 RcppExport SEXP _lidR_itc_expandcrowns(SEXP CanopySEXP, SEXP MaximaSEXP, SEXP TRESHSeedSEXP, SEXP TRESHCrownSEXP, SEXP DISTSEXP) {
@@ -141,6 +129,33 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     rcpp_result_gen = Rcpp::wrap(knnidw(X, Y, Z, x, y, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LocalMaximaMatrix
+IntegerMatrix LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize);
+RcppExport SEXP _lidR_LocalMaximaMatrix(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
+    Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(LocalMaximaMatrix(Canopy, searchWinSize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LocalMaximaPoints
+LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector Z, double radius, bool displaybar);
+RcppExport SEXP _lidR_LocalMaximaPoints(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP radiusSEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(LocalMaximaPoints(X, Y, Z, radius, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }
