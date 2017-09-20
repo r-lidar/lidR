@@ -123,7 +123,7 @@ QuadTree* QuadTree::create(const std::vector<double> x, const std::vector<double
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
 
-  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range*1.01);
+  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range+0.01);
 
   for(int i = 0 ; i < n ; i++)
   {
@@ -166,7 +166,7 @@ void QuadTree::subdivide()
 {
   double half_res_half = boundary.half_res.x * 0.5;
 
-  Point p(half_res_half, half_res_half);
+  Point p(half_res_half+EPSILONSQ, half_res_half+EPSILONSQ);
   Point pNE(boundary.center.x + half_res_half, boundary.center.y + half_res_half);
   Point pNW(boundary.center.x - half_res_half, boundary.center.y + half_res_half);
   Point pSE(boundary.center.x + half_res_half, boundary.center.y - half_res_half);
@@ -222,15 +222,15 @@ void QuadTree::circle_lookup(const double cx, const double cy, const double rang
 void QuadTree::triangle_lookup(const Point& A, const Point& B, const Point& C, std::vector<Point*>& res)
 {
   // Boundingbox of A B C
-  double rminx = min(A.x, B.x, C.x)-EPSILON;
-  double rmaxx = max(A.x, B.x, C.x)+EPSILON;
-  double rminy = min(A.y, B.y, C.y)-EPSILON;
-  double rmaxy = max(A.y, B.y, C.y)+EPSILON;
+  double rminx = min(A.x, B.x, C.x);
+  double rmaxx = max(A.x, B.x, C.x);
+  double rminy = min(A.y, B.y, C.y);
+  double rmaxy = max(A.y, B.y, C.y);
 
   double xcenter = (rminx + rmaxx)/2;
   double ycenter = (rminy + rmaxy)/2;
-  double half_width = (rmaxx - rminx)/2;
-  double half_height = (rmaxy - rminy )/2;
+  double half_width = (rmaxx - rminx)/2 + EPSILON;
+  double half_height = (rmaxy - rminy )/2 + EPSILON;
 
   // Boundingbox lookup
   std::vector<Point*> points;
@@ -306,12 +306,12 @@ bool QuadTree::in_circle(const Point& p1, const Point& p2, const double r)
 
 bool QuadTree::in_rect(const BoundingBox& bb, const Point& p)
 {
-  double A = bb.center.x - p.x;
-  double B = bb.center.y - p.y;
-  A = A < 0 ? -A : A;
-  B = B < 0 ? -B : B;
+  double dx = bb.center.x - p.x;
+  double dy = bb.center.y - p.y;
+  dx = dx < 0 ? -dx : dx;
+  dy = dy < 0 ? -dy : dy;
 
-  return(A <= bb.half_res.x && B <= bb.half_res.y);
+  return(dx <= bb.half_res.x && dy <= bb.half_res.y);
 }
 
 bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, const Point& p2)
