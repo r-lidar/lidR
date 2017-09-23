@@ -144,6 +144,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// LocalMaximaMatrix
+IntegerMatrix LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize);
+RcppExport SEXP _lidR_LocalMaximaMatrix(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
+    Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(LocalMaximaMatrix(Canopy, searchWinSize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LocalMaximaPoints
+LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector Z, double radius, bool displaybar);
+RcppExport SEXP _lidR_LocalMaximaPoints(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP radiusSEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(LocalMaximaPoints(X, Y, Z, radius, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MorphologicalOpening
 NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
 RcppExport SEXP _lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
