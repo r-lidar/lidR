@@ -131,12 +131,11 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
   # Keep only those in the convex hull of the point
   # Otherwise algorithms are able to extrapolate the terrain
 
-  hull = convex_hull(x@data$X, x@data$Y)
-
+  hull   = convex_hull(x@data$X, x@data$Y)
   sphull = sp::Polygon(hull)
   sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-  hull = rgeos::gBuffer(sphull, width = 0.5*res)
-  hull = hull@polygons[[1]]@Polygons[[1]]@coords
+  hull   = rgeos::gBuffer(sphull, width = res)
+  hull   = hull@polygons[[1]]@Polygons[[1]]@coords
 
   keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
 
