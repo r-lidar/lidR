@@ -2,44 +2,66 @@
 % Please edit documentation in R/lasground.r
 \name{lasground}
 \alias{lasground}
+\alias{lasground_pmf}
 \title{Classify points as ground or not ground}
 \usage{
-lasground(.las, MaxWinSize = 20, Slope = 1, InitDist = 0.5, MaxDist = 3,
-  CellSize = 1, ...)
+lasground(las, algorithm, ...)
+
+lasground_pmf(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3,
+  slope = 1, ...)
 }
 \arguments{
-\item{.las}{a LAS object}
+\item{las}{a LAS object}
 
-\item{MaxWinSize}{numeric. Maximum window size to be used in filtering ground returns (see references)}
+\item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} is supported
+(see related sections)}
 
-\item{Slope}{numeric. Slope value to be used in computing the height thresholds (see references)}
+\item{...}{Parameter for each avaible algorithm}
 
-\item{InitDist}{numeric. Initial height above the parameterized ground surface to be considered a ground return (see references)}
+\item{min_ws}{numeric. Minimum windows size to be used in filtering ground returns.
+This is the parameter \code{b} in Zhang et al. (2003) (see references)}
 
-\item{MaxDist}{numeric. Maximum height above the parameterized ground surface to be considered a ground return (see references)}
+\item{max_ws}{numeric. Maximum window size to be used in filtering ground returns in
+Zhang et al. (2003)}
 
-\item{CellSize}{numeric. Cell size}
+\item{min_th}{numeric. Initial threshold height above the parameterized ground surface
+to be considered a ground return. This is \code{dt0} in Zhang et al. (2003)}
 
-\item{...}{Any additional specific parameters to be passed to the progressive morphological filter.
-These include:\cr
-- \code{exponential} logical. Default is TRUE.\cr
-- \code{base} numeric. Default is 2\cr}
+\item{max_th}{numeric. Maximum threshold height above the parameterized ground surface
+to be considered a ground return. This is \code{dhmax} in Zhang et al. (2003)}
+
+\item{slope}{numeric. Slope value to be used in computing the height thresholds sequence.
+This is the parameter \code{s} in Zhang et al. (2003)}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
 column a value of 2 denotes ground according to LAS specifications.
 }
 \description{
-Implements a Progressive Morphological Filter for segmentation of ground points.
-The function updates the field \code{Classification} of the input LAS object. The points
-classified as 'ground' are assigned a value of 2 according to las specifications (See the ASPRS
-documentation for the
+Implements algorithms for segmentation of ground points. The function updates the field
+\code{Classification} of the input LAS object. The points classified as 'ground' are
+assigned a value of 2 according to las specifications (See the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-This function is an implementation of the Zhang et al. (2003) algorithm (see reference)
 }
+\section{Progressive morphological filter (PMF)}{
+
+
+This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
+This is not a strict implementation of Zhang et al. This algorithm works at the raw point
+cloud level without any rasterization process. Therefore some parameter from the original
+description are no longer useful. The celle size \code{c} is not a requiered parameter.
+Therefore in the original paper the threshold sequence was:\cr\cr
+\eqn{th_k = s*(w_k - w_{k-1})*c +th_0}\cr\cr
+Now it is:\cr\cr
+\eqn{th_k = s*(w_k - w_{k-1}) +th_0}\cr\cr
+This method support an extra logical parameters \code{exponential} to change the method
+used to create the windows size sequence.. Defauult is FALSE
+See reference.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, XYZonly = TRUE)
+las = readLAS(LASfile, select = "xyz")
 
 lasground(las, MaxWinSize = 40, Slope = 1, MaxDist = 5, InitDist = 0.01, CellSize = 7)
 
