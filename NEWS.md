@@ -1,3 +1,9 @@
+### lidR v1.3.2 (In development)
+
+#### BUG FIXES
+
+* Fix missing pixel in DTM leading to the impossibility to normalize.
+
 ### lidR v1.3.1 (Release date: 2017-10-21)
 
 #### BUG FIXES
