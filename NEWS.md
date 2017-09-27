@@ -8,6 +8,7 @@
 ### BUG FIXES
 
 * `lasground` computes the windows size more closely to the orinal Zhang paper.
+* Fix missing pixel in DTM leading to the impossibility to normalize.
 
 #### ENHANCEMENT
 
@@ -17,10 +18,6 @@
 
 * `lasclip` and `lasclip*` can extract from a catalog
 * `lasclip` supports `sp::Polygon` object
-
-#### BUG FIXES
-
-* Fix missing pixel in DTM leading to the impossibility to normalize.
 
 ### lidR v1.3.1 (Release date: 2017-10-21)
 
