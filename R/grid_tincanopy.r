@@ -103,7 +103,7 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   # Create the coordinates of interpolation (pixel coordinates)
   verbose("Generating interpolation coordinates...")
 
-  ex = extent(x)
+  ex = raster::extent(x)
   grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
 
   # Initialize the interpolated values with NAs
@@ -146,8 +146,12 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
       edge = max_edge[2]
 
     cloud = cloud[Z >= th]
-    Ztemp = interpolate_delaunay(cloud, grid, edge)
-    z = pmax(z, Ztemp, na.rm = T)
+
+    if (nrow(cloud) > 0)
+    {
+      Ztemp = interpolate_delaunay(cloud, grid, edge)
+      z = pmax(z, Ztemp, na.rm = T)
+    }
   }
 
   grid[, Z := z][]

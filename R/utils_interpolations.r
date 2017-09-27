@@ -97,7 +97,7 @@ interpolate_delaunay <- function(points, coord, th = 0, k = 0)
 
   dn   <- suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
 
-  # geometry::trimesh(dn, X)
+  # geometry::trimesh(dn, X, asp = 1)
 
   verbose("Searching for the enclosing Delaunay convex hull...")
 
