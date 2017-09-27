@@ -27,7 +27,6 @@
 #### BUG FIXES
 
 * Fix a bug of computer precision leading to non interpolated pixels at the boundaries of the QuadTree.
->>>>>>> master
 
 ### lidR v1.3.0 (Release date: 2017-10-16)
 

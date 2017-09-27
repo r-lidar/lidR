@@ -18,10 +18,11 @@ lasclipCircle(x, xcenter, ycenter, radius, ofile = "")
 \arguments{
 \item{x}{An object of class \code{LAS} or \code{LAScatalog}}
 
-\item{geometry}{a geomtric object. Currently \code{Polygon} from \code{sp} is supported.}
+\item{geometry}{a geometric object. Currently \code{Polygon} from \code{sp} is supported.}
 
-\item{ofile}{character write the result in a file or load it into R. If \code{ofile = ""}
-the result is loaded in R.}
+\item{ofile}{character.  Path to an output file (only with a \code{LAScatalog}).
+If \code{ofile = ""} the result is loaded in R otherwise the result is writen into a
+file while reading. This is much more memory efficient than loading into R then writting.}
 
 \item{xleft}{scalar of left x position of rectangle}
 
