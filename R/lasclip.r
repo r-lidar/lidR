@@ -32,7 +32,7 @@
 #' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
 #'
 #' @param x An object of class \code{LAS} or \code{LAScatalog}
-#' @param geometry a geomtric object. Currently \code{Polygon} from \code{sp} is supported.
+#' @param geometry a geometric object. Currently \code{Polygon} from \code{sp} is supported.
 #' @param xleft	scalar of left x position of rectangle
 #' @param ybottom	scalar of bottom y position of rectangle.
 #' @param xright scalar of right x position of rectangle
@@ -42,8 +42,9 @@
 #' @param xcenter	scalar x disc center
 #' @param ycenter	scalar y disc center
 #' @param radius scalar disc radius
-#' @param ofile character write the result in a file or load it into R. If \code{ofile = ""}
-#' the result is loaded in R.
+#' @param ofile character.  Path to an output file (only with a \code{LAScatalog}).
+#' If \code{ofile = ""} the result is loaded in R otherwise the result is writen into a
+#' file while reading. This is much more memory efficient than loading into R then writting.
 #' @return An object of class \code{LAS} or NULL if the results is immediatly written in a file.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -138,7 +139,6 @@ lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "")
 # CIRCLE
 # ========
 
-
 #' @export lasclipCircle
 #' @rdname lasclip
 lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "")
@@ -159,19 +159,4 @@ lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "")
 {
   return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile))
 }
-
-
-
-# lasclipCuboid = function(x, xleft, ybottom, zbottom, xright, ytop, ztop)
-# {
-#   X <- Y <- Z <- NULL
-#   return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop), between(Z, zbottom, ztop)))
-# }
-#
-#
-# lasclipSphere = function(x, xcenter, ycenter, zcenter, radius)
-# {
-#   X <- Y <- Z <- NULL
-#   return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 + (Z - zcenter)^2 <= radius^2))
-# }
 
