@@ -87,7 +87,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   # Computations done within sequential or parallel loop in .getMetrics
   if (ncores == 1)
   {
-    output = lapply(clusters, reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
+    output = lapply(clusters, reshape_func, path = path, prefix = prefix, ext = ext)
   }
   else
   {
@@ -96,7 +96,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, clusters, fun = reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
+    output = parallel::parLapply(cl, clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
     parallel::stopCluster(cl)
   }
 
@@ -106,18 +106,9 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   return(catalog(path))
 }
 
-reshape_func = function(cluster, ctg, path, prefix, ext)
+reshape_func = function(cluster, path, prefix, ext)
 {
-  path = paste0(path, "/", prefix, cluster@name , ".", ext)
-
-  # Extract the ROI as a LAS object
-  las = readLAS(cluster, select = "*")
-
-  # Skip if the ROI falls in a void area
-  if (is.null(las))
-    return(NULL)
-
-  writeLAS(las, path)
-
+  ofile = paste0(path, "/", prefix, cluster@name , ".", ext)
+  streamLAS(cluster, ofile)
   return(NULL)
 }

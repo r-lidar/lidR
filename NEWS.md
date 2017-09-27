@@ -9,6 +9,10 @@
 
 * `lasground` computes the windows size more closely to the orinal Zhang paper.
 
+#### ENHANCEMENT
+
+* `catalog_reshape` stream the data and use virtually 0 memory to run.
+
 #### NEW FEATURES
 
 * `lasclip` and `lasclip*` can extract from a catalog

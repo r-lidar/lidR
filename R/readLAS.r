@@ -273,3 +273,40 @@ readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
   return(las)
 }
+
+streamLAS = function(x, ofile, filter = "")
+{
+  UseMethod("streamLAS", x)
+}
+
+streamLAS.LAScluster = function(x, ofile, filter = "")
+{
+  filter = paste(x@filter, filter)
+  las = streamLAS(x@files, ofile, filter)
+  return(invisible())
+}
+
+streamLAS.character = function(x, ofile, filter = "")
+{
+  valid <- file.exists(x)
+  islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
+
+  if (sum(valid) == 0 | sum(islas) == 0) {
+    stop(paste0("File(s) not supported"), call. = FALSE)
+  }
+
+  if (sum(!valid) > 0) {
+    warning(paste0("File(s) ", p$files, " not found"), call. = FALSE)
+    files <- files[valid]
+  }
+
+  if (sum(!islas) > 0) {
+    warning(paste0("File(s) ", p$files, " not supported"), call. = FALSE)
+    files <- files[islas]
+  }
+
+  ifiles = normalizePath(x)
+  rlas:::streamlasdata(ifiles, ofile = ofile, filter = filter)
+
+  return(invisible())
+}
