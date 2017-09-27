@@ -107,7 +107,7 @@ lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "")
 #' @export
 lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "")
 {
-  return(catalog_clip_rect(x, xleft, xright, ybottom, ytop, ofile))
+  return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile))
 }
 
 # ========
