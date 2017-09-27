@@ -143,12 +143,12 @@ readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", p$files, " not found"), call. = FALSE)
+    warning(paste0("File(s) ", files[!valid], " not found"), call. = FALSE)
     files <- files[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", p$files, " not supported"), call. = FALSE)
+    warning(paste0("File(s) ", files[!islas], " not supported"), call. = FALSE)
     files <- files[islas]
   }
 
@@ -296,12 +296,12 @@ streamLAS.character = function(x, ofile, filter = "")
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", p$files, " not found"), call. = FALSE)
+    warning(paste0("File(s) ", files[!valid], " not found"), call. = FALSE)
     files <- files[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", p$files, " not supported"), call. = FALSE)
+    warning(paste0("File(s) ", files[!islas], " not supported"), call. = FALSE)
     files <- files[islas]
   }
 
