@@ -35,46 +35,6 @@ using namespace Rcpp;
 NumericVector filter_xx(NumericMatrix x, IntegerMatrix y);
 IntegerMatrix which_equal(IntegerMatrix mtx, double val);
 
-// [[Rcpp::export]]
-IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize)
-{
-  int l = Canopy.nrow();
-  int w = Canopy.ncol();
-
-  int r, k, minR, minC, maxR, maxC;
-  int index = 1;
-
-  double hws  = searchWinSize/2;
-  int    fhws = floor(hws);
-
-  NumericMatrix FIL;
-  IntegerMatrix temp;
-
-  IntegerMatrix Maxima(l, w);
-
-  for (int r = fhws ; r < l-fhws ; r++)
-  {
-    for(int k = fhws ; k <  w-fhws ; k++)
-    {
-      minR = (r - fhws);
-      minC = (k - fhws);
-      maxR = (r + fhws);
-      maxC = (k + fhws);
-
-      FIL  = Canopy(Range(minR,maxR), Range(minC,maxC));
-      temp = Maxima(Range(minR,maxR), Range(minC,maxC));
-
-      if (FIL(fhws,fhws) == max(FIL) && max(temp) == 0 && max(FIL) != 0)
-      {
-        Maxima(r,k) = index;
-        index++;
-      }
-    }
-  }
-
-  return(Maxima);
-}
-
 //[[Rcpp::export]]
 IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, double TRESHSeed, double TRESHCrown, double DIST)
 {

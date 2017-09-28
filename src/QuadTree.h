@@ -10,7 +10,7 @@ struct Point
 
 	Point();
 	Point(const double, const double);
-	Point(const double, const double, const int);
+	Point(const double, const double, const long);
 };
 
 struct BoundingBox
