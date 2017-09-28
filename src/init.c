@@ -18,6 +18,8 @@ extern SEXP _lidR_tinfo(SEXP, SEXP);
 extern SEXP _lidR_itc_expandcrowns(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_itc_treetops(SEXP, SEXP);
 extern SEXP _lidR_MorphologicalOpening(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _lidR_LocalMaximaMatrix(SEXP, SEXP);
+extern SEXP _lidR_LocalMaximaPoints(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_point_in_polygon(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_points_in_polygon(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _lidR_points_in_polygons(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -35,7 +37,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_extract",         (DL_FUNC) &_lidR_fast_extract,         6},
     {"_lidR_tinfo",                (DL_FUNC) &_lidR_tinfo,                2},
     {"_lidR_itc_expandcrowns",     (DL_FUNC) &_lidR_itc_expandcrowns,     5},
-    {"_lidR_itc_treetops",         (DL_FUNC) &_lidR_itc_treetops,         2},
+    {"_lidR_LocalMaximaMatrix",    (DL_FUNC) &_lidR_LocalMaximaMatrix,    2},
+    {"_lidR_LocalMaximaPoints",    (DL_FUNC) &_lidR_LocalMaximaPoints,    5},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon",     (DL_FUNC) &_lidR_point_in_polygon,     4},
     {"_lidR_points_in_polygon",    (DL_FUNC) &_lidR_points_in_polygon,    4},

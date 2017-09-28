@@ -87,7 +87,6 @@ LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector 
 
   Progress p(n, displaybar);
 
-  // erode
   for (long i = 0 ; i < n ; i++)
   {
     if (Progress::check_abort() )

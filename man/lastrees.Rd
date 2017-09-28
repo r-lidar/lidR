@@ -2,30 +2,75 @@
 % Please edit documentation in R/lastrees.r
 \name{lastrees}
 \alias{lastrees}
+\alias{lastrees_watershed}
+\alias{lastrees_dalponte}
+\alias{lastrees_li}
+\alias{lastrees_silva}
 \title{Individual tree segmentation}
 \usage{
-lastrees(.las, algorithm, image = NULL, ..., extra = FALSE)
+lastrees(las, algorithm, ...)
+
+lastrees_watershed(las, img, th_cr = 2, tol = 1, ext = 1)
+
+lastrees_dalponte(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45,
+  th_cr = 0.55, max_cr = 10, th_tree = 2)
+
+lastrees_li(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10)
+
+lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2)
 }
 \arguments{
-\item{.las}{An object of the class \code{LAS}}
+\item{las}{An object of the class \code{LAS}}
 
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
-\code{"watershed"} or \code{"li2012"} (see sections relevant to each algorithm).}
+\code{"watershed"},\code{"li2012"} or \code{"silva2016"} (see sections relevant to each
+algorithm).}
 
-\item{image}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface model.
-But some algorithms work on the raw point cloud (see relevant sections). You can compute
-it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.}
+\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
+about the algorithms)}
 
-\item{...}{parameters for the algorithms. These depend on the algorithm used (see details about the algorithms)}
+\item{img}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface
+model. But some algorithms work on the raw point cloud (see relevant sections). You can
+compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.}
 
-\item{extra}{logical. By default the function works at the point cloud level and returns nothing.
-If \code{extra = TRUE} the function can return a \link[raster:raster]{RasterLayer} or a list of 2 RasterLayers
-with the positions of the local maxima and a map of the crowns, depending on the algorithm used.}
+\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
+should be between 0 and 1. Default 0.55}
+
+\item{tol}{numeric. Tolerance see ?EBImage::watershed}
+
+\item{ext}{numeric. see ?EBImage::watershed}
+
+\item{lm_ws}{numeric. Size of the moving window used to the detect the local maxima. On a
+raster this size is in pixel and  should be an odd number larger than 3. On a raw point cloud
+this size is in the point cloud units (usually meters but sometime feets).}
+
+\item{th_lm}{numeric. Threshold below which a pixel or a point cannot be a local maxima. Default 2.}
+
+\item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
+should be between 0 and 1. Default 0.45}
+
+\item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in meters).
+Default 10.}
+
+\item{th_tree}{numeric. Threshold below which a point cannot be classified a tree. Default is 2.}
+
+\item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5}
+
+\item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2}
+
+\item{seep_up}{numeric. Maximum radius of a crown. Any value greater than a crown is
+good because this parameter does not affect the result. However, it greatly affects the
+computation speed. The lower the value, the faster the method. Default is 10.}
+
+\item{cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
+tree height. Default is 0.6 meaning 60\% of the tree height.}
+
+\item{extra}{logical. By default the function classify the orinal point cloud by reference and returns
+nothing. If \code{extra = TRUE} the function can return extra gift depending on the algorithm used.}
 }
 \value{
-Nothing, the point cloud is updated by reference. If \code{extra = TRUE},
-\code{"dalponte2012"} returns two RasterLayers, \code{"watershed"} returns one RasterLayer
-and \code{"li2012"} does not support the \code{extra} parameter.
+Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some algorithm provide
+extra outputs.
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
@@ -36,75 +81,51 @@ classification. There are currently 3 algorithms implemented. See relevant secti
 }
 \section{Dalponte 2016}{
 
-
-This is the algorithm developed by Dalponte and Coomes (see references). This algorithm exists
-in the package \pkg{itcSegment}. This version is identical to the original but with
-superfluous code removed and rewritten in C++. Consequently it is 6 times faster.
+This is a local maxima + growing region algorithm. It is based on the algorithm developed by
+Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
+This version is identical to the original but with superfluous code removed and rewritten
+in C++. Consequently it is 6 times faster.\cr
 Note that this algorithm strictly performs a segmentation while the original method as implemented
 in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
-these tasks are expected to be done by the user.
-The names of the parameters are the same as those in Dalponte's \code{itcSegment} package.
+these tasks are expected to be done by the user.\cr
 Dalponte's algorithm is a canopy surface model-based method. An image of the canopy is
 expected.
-\describe{
-\item{\code{searchWinSize}}{Size (in pixels) of the moving window used to the detect the
-local maxima. It should be an odd number larger than 3. Default 3}
-\item{\code{TRESHSeed}}{Growing threshold 1. It should be between 0 and 1. Default 0.45}
-\item{\code{TRESHCrown}}{Growing threshold 2. It should be between 0 and 1. Default 0.55}
-\item{\code{DIST}}{Maximum value of the crown diameter of a detected tree (in meters). Default 10}
-\item{\code{th}}{Digital number value below which a pixel cannot be a local maxima. Default 2}
 }
+
+\section{Silva 2016}{
+
+This is an simple but elegant method based on local maxima + voronoi tesselation discribed
+in Silva et al. (2016) (see references). This algorithm is implemented in the package
+\code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
+a version written in C++ and made by lidR developper. Compared to the original, the algorithm
+works at the raw point cloud level without the need of an image of the canopy. The local
+maxima are computed at the raw point cloud level without need of a rasterization step.
+The crown segmentation is done at the raw point cloud level too.
 }
 
 \section{Watershed}{
 
-
-This method relies on the \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
-method. It is based on the bioconductor package \pkg{EBIimage}. You need to install
+This method is a simple (\href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation})
+method. It is based on the bioconductor package \code{EBIimage}. You need to install
 this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
 The Watershed algorithm is a canopy surface model-based method. An image of the canopy is
 expected.
-\describe{
-\item{\code{th}}{Numeric. Number value below which a pixel cannot be a crown. Default 2}
-\item{\code{tolerance}}{Numeric. see ?EBImage::watershed}
-\item{\code{ext}}{Numeric. see ?EBImage::watershed}
-}
 }
 
 \section{Li 2012}{
 
-
-This method is an implementation of the Li et al. (see references) algorithm made by \pkg{lidR}
-author. It may have some differences compared with the original method due to potential  mis-interpretation
-of the Li et al. manuscript. This method works at the point cloud level. An
-image of the canopy is \emph{not} expected.
-\describe{
-\item{\code{dt1}}{Numeric. Threshold number 1. See reference page 79. Default is 1.5}
-\item{\code{dt2}}{Numeric. Threshold number 2. See reference page 79. Default is 2}
-\item{\code{R}}{Numeric. Maximum radius of a crown. Any value greater than a crown is
-good because this parameter does not affect the result. However, it greatly affects the
-computation speed. The lower the value, the faster the method. Default is 10.}
-}
-The current implementation is known to be slow. Improvements are possible in future
-package versions.
+This method is a growthing region method working at the raw point cloud level. It is an
+implementation of the Li et al. (see references) algorithm made by \code{lidR}
+author. This method works at the point cloud level. An image of the canopy is \emph{not}
+expected.
 }
 
 \examples{
 LASfile <- system.file("extdata", "Tree.laz", package="lidR")
-las = readLAS(LASfile, XYZonly = TRUE, filter = "-drop_z_below 0")
-
-# compute a canopy image
-chm = grid_canopy(las, res = 0.5, subcircle = 0.1, na.fill = "knnidw", k = 4)
-chm = as.raster(chm)
-
-# smoothing post-process (e.g. 2x mean)
-kernel = matrix(1,3,3)
-chm = raster::focal(chm, w = kernel, fun = mean)
-chm = raster::focal(chm, w = kernel, fun = mean)
-raster::plot(chm, col = height.colors(50)) # check the image
+las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
 # segmentation
-lastrees(las, "dalponte2016", chm, th = 5)
+lastrees(las, "li2012")
 
 # plot points that actually are trees
 trees = lasfilter(las, !is.na(treeID))
@@ -114,5 +135,9 @@ plot(trees, color = "treeID", colorPalette = random.colors(100))
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575\cr\cr
 Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
-trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
+trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.\cr\cr
+Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
+J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.)
+Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
+https://doi.org/10.1080/07038992.2016.1196582
 }
