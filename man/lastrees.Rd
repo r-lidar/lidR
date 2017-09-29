@@ -8,16 +8,18 @@
 \alias{lastrees_silva}
 \title{Individual tree segmentation}
 \usage{
-lastrees(las, algorithm, ...)
+lastrees(las, algorithm, ..., extra = FALSE)
 
-lastrees_watershed(las, img, th_cr = 2, tol = 1, ext = 1)
+lastrees_watershed(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
 
 lastrees_dalponte(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, th_tree = 2)
+  th_cr = 0.55, max_cr = 10, th_tree = 2, extra = FALSE)
 
-lastrees_li(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10,
+  extra = FALSE)
 
-lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2)
+lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2,
+  extra = FALSE)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}}
@@ -28,6 +30,11 @@ algorithm).}
 
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details
 about the algorithms)}
+
+\item{extra}{logical. The functions return nothing by default. The point cloud is updated
+in place. If \code{extra = TRUE} some extra output can be returned. The type of output
+depends on the algorithm used. It can be 1 or 2 \code{RasterLayer} or a
+\code{SpatialPolygonDataFrame} or something else.}
 
 \item{img}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface
 model. But some algorithms work on the raw point cloud (see relevant sections). You can
@@ -94,7 +101,7 @@ expected.
 
 \section{Silva 2016}{
 
-This is an simple but elegant method based on local maxima + voronoi tesselation discribed
+This is a simple but elegant method based on local maxima + voronoi tesselation described
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
 \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
 a version written in C++ and made by lidR developper. Compared to the original, the algorithm

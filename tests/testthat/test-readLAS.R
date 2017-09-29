@@ -17,10 +17,7 @@ test_that("read XYZ only old syntax works", {
   vrlas = utils::packageVersion("rlas")
   rlas_gt_1.1.4 = vrlas > package_version("1.1.4")
 
-  if (rlas_gt_1.1.4)
-    expect_equal(ncol(las@data), 3)
-  else
-    expect_equal(ncol(las@data), 4)
+  expect_equal(ncol(las@data), 3)
 })
 
 test_that("read XYZ only new syntax works", {
@@ -29,10 +26,7 @@ test_that("read XYZ only new syntax works", {
   vrlas = utils::packageVersion("rlas")
   rlas_gt_1.1.4 = vrlas > package_version("1.1.4")
 
-  if (rlas_gt_1.1.4)
-    expect_equal(ncol(las@data), 3)
-  else
-    expect_equal(ncol(las@data), 4)
+  expect_equal(ncol(las@data), 3)
 })
 
 
