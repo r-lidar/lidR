@@ -39,6 +39,10 @@
 #' algorithm).
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' about the algorithms)
+#' @param extra logical. The functions return nothing by default. The point cloud is updated
+#' in place. If \code{extra = TRUE} some extra output can be returned. The type of output
+#' depends on the algorithm used. It can be 1 or 2 \code{RasterLayer} or a
+#' \code{SpatialPolygonDataFrame} or something else.
 #' @param img RasterLayer. Image of the canopy if the algorithm works on a canopy surface
 #' model. But some algorithms work on the raw point cloud (see relevant sections). You can
 #' compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.
@@ -79,7 +83,7 @@
 #' expected.
 #'
 #' @section Silva 2016:
-#' This is an simple but elegant method based on local maxima + voronoi tesselation discribed
+#' This is a simple but elegant method based on local maxima + voronoi tesselation described
 #' in Silva et al. (2016) (see references). This algorithm is implemented in the package
 #' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
 #' a version written in C++ and made by lidR developper. Compared to the original, the algorithm
@@ -119,7 +123,7 @@
 #' Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
 #' https://doi.org/10.1080/07038992.2016.1196582
 #' @export
-lastrees <- function(las, algorithm, ...)
+lastrees <- function(las, algorithm, ..., extra = FALSE)
 {
   if (algorithm == "dalponte2016" )
     return(lastrees_dalponte(las, ...))
@@ -135,7 +139,7 @@ lastrees <- function(las, algorithm, ...)
 
 #' @export
 #' @rdname lastrees
-lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1)
+lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
 {
   l = dim(image)[1]
   w = dim(image)[2]
@@ -154,7 +158,7 @@ lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1)
 
   lasclassify(.las, Crowns, "treeID")
 
-  if (extra == FALSE)
+  if (!extra)
     return(invisible(NULL))
   else
     return(Crowns)
@@ -163,7 +167,7 @@ lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1)
 
 #' @export
 #' @rdname lastrees
-lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, th_tree = 2)
+lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, th_tree = 2, extra = FALSE)
 {
   if (searchWinSize < 3 | searchWinSize %% 2 == 0)
     stop("searchWinSize not correct", call. = FALSE)
@@ -186,20 +190,19 @@ lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_
   lasclassify(las, Crowns, "treeID")
   las@data[Z < th_tree, treeID := NA][]
 
-  if (extra == FALSE)
+  if (!extra)
     return(invisible(NULL))
   else
   {
     Maxima = raster::raster(apply(Maxima,1,rev))
     raster::extent(Maxima) = raster::extent(image)
-
     return(list(Crown = Crowns, Maxima = Maxima))
   }
 }
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10, extra = FALSE)
 {
   treeID <- NULL
 
@@ -218,10 +221,10 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10)
 
 #' @export
 #' @rdname lastrees
-lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2)
+lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2, extra = FALSE)
 {
   # search local maxima
-  maxima  = las@data %$% LocalMaximaPoints(X, Y, Z, lm_ws/2, LIDROPTIONS("progress"))
+  maxima  = las@data %$% LocalMaximaPoints(X, Y, Z, lm_ws/2)
   filter  = las@data$Z > th_lm
   maxima  = maxima & filter
 
@@ -275,5 +278,9 @@ lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 
 
   lasclassify(las, SPDF, "treeID")
   las@data[!filter, treeID := NA][]
-  return(invisible())
+
+  if (!extra)
+    return(invisible())
+  else
+    return(SPDF)
 }

@@ -129,30 +129,46 @@ readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 #' @export
 readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 {
-  `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
+  ofile = ""
+  return(streamLAS(files, ofile, select, filter, ...))
+}
 
+streamLAS = function(x, ofile, select = "*", filter = "", ...)
+{
+  UseMethod("streamLAS", x)
+}
+
+streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", ...)
+{
+  filter = paste(x@filter, filter)
+  las = streamLAS(x@files, ofile, filter, select)
+  return(invisible())
+}
+
+streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
+{
   # ==================
   # Test the files
   # ==================
 
-  valid <- file.exists(files)
-  islas <- tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
+  valid <- file.exists(x)
+  islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
   if (sum(valid) == 0 | sum(islas) == 0) {
     stop(paste0("File(s) not supported"), call. = FALSE)
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", files[!valid], " not found"), call. = FALSE)
-    files <- files[valid]
+    warning(paste0("File(s) ", x[!valid], " not found"), call. = FALSE)
+    x <- x[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", files[!islas], " not supported"), call. = FALSE)
-    files <- files[islas]
+    warning(paste0("File(s) ", x[!islas], " not supported"), call. = FALSE)
+    x <- x[islas]
   }
 
-  files = normalizePath(files)
+  ifiles = normalizePath(x)
 
   # ==================
   # New syntax parsing
@@ -247,15 +263,17 @@ readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   # Read the files
   # ==================
 
-  header = rlas::readlasheader(files[1])
-  data   = rlas::readlasdata(files, i, r, n, d, e, c, a, u, p, RGB, t, filter)
+  header = rlas::readlasheader(ifiles[1])
+  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t)
 
-  # Can happen if filter is badly used
+  if (is.null(data))
+    return(invisible())
+
   if (nrow(data) == 0 | ncol(data) == 0)
     return(invisible())
 
   # If filter is used, header will not be in accordance with the data. Hard check is useless
-  if (nchar(filter) > 0 | length(files) > 1)
+  if (nchar(filter) > 0 | length(ifiles) > 1)
     lascheck(data, header, hard = F)
   else
     lascheck(data, header, hard = T)
@@ -274,39 +292,4 @@ readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   return(las)
 }
 
-streamLAS = function(x, ofile, filter = "")
-{
-  UseMethod("streamLAS", x)
-}
-
-streamLAS.LAScluster = function(x, ofile, filter = "")
-{
-  filter = paste(x@filter, filter)
-  las = streamLAS(x@files, ofile, filter)
-  return(invisible())
-}
-
-streamLAS.character = function(x, ofile, filter = "")
-{
-  valid <- file.exists(x)
-  islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
-
-  if (sum(valid) == 0 | sum(islas) == 0) {
-    stop(paste0("File(s) not supported"), call. = FALSE)
-  }
-
-  if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", files[!valid], " not found"), call. = FALSE)
-    files <- files[valid]
-  }
-
-  if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", files[!islas], " not supported"), call. = FALSE)
-    files <- files[islas]
-  }
-
-  ifiles = normalizePath(x)
-  rlas:::streamlasdata(ifiles, ofile = ofile, filter = filter)
-
-  return(invisible())
-}
+`%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])

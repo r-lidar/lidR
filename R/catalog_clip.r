@@ -43,7 +43,7 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
     return(invisible())
 
   header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile, xpoly = xpoly, ypoly = ypoly)
+  data   = rlas:::streamlasdata_inpoly(cluster@files, xpoly, ypoly, filter = cluster@filter, ofile = ofile)
 
   if (is.null(data))
     return (invisible())
@@ -64,7 +64,7 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
     return(invisible())
 
   header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile)
+  data   = rlas:::streamlasdata(cluster@files, ofile = ofile, filter = cluster@filter)
 
   if (nrow(data) == 0)
     return (invisible())
@@ -80,7 +80,7 @@ catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
     return(invisible())
 
   header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, filter = cluster@filter, ofile = ofile)
+  data   = rlas:::streamlasdata(cluster@files, ofile = ofile, filter = cluster@filter)
 
   if (nrow(data) == 0)
     return (invisible())
