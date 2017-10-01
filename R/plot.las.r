@@ -77,7 +77,12 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   {
     if(color %in% names(x@data))
     {
-      data = unlist(x@data[,color, with = FALSE])
+      if (color == "Z")
+        data = x@data$Z
+      else if (color == "Intensity")
+        data = x@data$Intensity
+      else
+        data = unlist(x@data[,color, with = FALSE])
 
       if(is.numeric(data))
         inargs$col = set.colors(data, colorPalette, trim)
