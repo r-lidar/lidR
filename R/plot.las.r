@@ -45,6 +45,12 @@
 #' 0.9 means that 10\% of the highest values are not used to define the color palette.
 #' In this case values higher than the 90th percentile are set to the highest color.
 #' They are not removed.
+#' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
+#' the display relies on the \code{rgl} package. If "pcv" is chosen it relies on the
+#' \code{PointCloudViewer} package which is much more efficient and can handle million of point
+#' using few memory. \code{PointCloudViewer} is not avaible on CRAN yet and should
+#' be install from gihub (see. \link{https://github.com/Jean-Romain/PointCloudViewer}).
+#' If "auto" then \code{PointCloudViewer} is chosen if installed.
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -64,13 +70,22 @@
 #' \link[lidR:LAS]{Class LAS}
 #' @method plot LAS
 #' @export
-plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, backend = c("auto", "rgl", "pcv"), ...)
 {
-  inargs <- list(...)
+  backend = match.arg(backend)
+  pcv = requireNamespace("PointCloudViewer", quietly = TRUE)
 
+  if (backend == "auto" && pcv)
+    backend = "pcv"
+  else if (backend == "auto" && !pcv)
+    backend = "rgl"
+  else if (backend == "pcv" && !pcv)
+    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
+
+  inargs <- list(...)
   inargs$col = color
 
-  if(!is.null(inargs$size))
+  if(is.null(inargs$size))
     inargs$size = 1.5
 
   if(length(color) == 1)
@@ -95,7 +110,15 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     }
   }
 
-  rgl::open3d()
-  rgl::rgl.bg(color = bg)
-  do.call(rgl::points3d, c(list(x=x@data$X, y=x@data$Y, z=x@data$Z), inargs))
+  if (backend == "rgl")
+  {
+    rgl::open3d()
+    rgl::rgl.bg(color = bg)
+    do.call(rgl::points3d, c(list(x=x@data$X, y=x@data$Y, z=x@data$Z), inargs))
+  }
+  else
+  {
+    col = t(col2rgb(inargs$col))
+    PointCloudViewer::plot_xyz(x@data$X, y=x@data$Y, z=x@data$Z, col, inargs$size)
+  }
 }

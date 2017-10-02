@@ -6,7 +6,7 @@
 \title{Plot LiDAR data}
 \usage{
 \method{plot}{LAS}(x, y, color = "Z", colorPalette = height.colors(50),
-  bg = "black", trim = 1, ...)
+  bg = "black", trim = 1, backend = c("auto", "rgl", "pcv"), ...)
 }
 \arguments{
 \item{x}{An object of the class \code{LAS}}
@@ -27,6 +27,13 @@ Default is 1, meaning that the whole range of values is used for the color palet
 0.9 means that 10\% of the highest values are not used to define the color palette.
 In this case values higher than the 90th percentile are set to the highest color.
 They are not removed.}
+
+\item{backend}{character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
+the display relies on the \code{rgl} package. If "pcv" is chosen it relies on the
+\code{PointCloudViewer} package which is much more efficient and can handle million of point
+using few memory. \code{PointCloudViewer} is not avaible on CRAN yet and should
+be install from gihub (see. \link{https://github.com/Jean-Romain/PointCloudViewer}).
+If "auto" then \code{PointCloudViewer} is chosen if installed.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d}}
 }
