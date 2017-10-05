@@ -12,6 +12,6 @@ BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
 
 test_that("Wing's method works", {
   lassnags(las, "wing2015")
-  expect_true("sngCls" %in% names(las@data))
-  expect_true(all(!is.na(las@data$sngCls)))
+  expect_true("SnagCls" %in% names(las@data))
+  expect_true(all(!is.na(las@data$SnagCls)))
 })
