@@ -8,7 +8,7 @@ Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
     person("Florian", "De Boissieu", email = "", role = ("ctb"), comment = "Fixed bugs and improved catalog features"),
-    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Helped to review the documentation"))
+    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Reviews the documentation, implemented lassnags"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
@@ -18,7 +18,7 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.1.0),magrittr,methods
+    R (>= 3.1.0),magrittr,methods,RANN
 Imports:
     rlas (>= 1.1.6),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,
     data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
@@ -65,6 +65,7 @@ Collate:
     'lasmetrics.r'
     'lasnormalize.r'
     'lasroi.r'
+    'lassnags.r'
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
