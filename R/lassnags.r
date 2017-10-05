@@ -41,7 +41,7 @@
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' about the algorithm)
 #' 
-#' @return Nothing, the point cloud is updated by reference. A new field is added to the las file (\code{sngCls}),
+#' @return Nothing, the point cloud is updated by reference. A new field is added to the las file (\code{SnagCls}),
 #' for each point with the corresponding classificaiton: 0) live tree, 1) general snag, 2) small snag, 3) live 
 #' crown edge snag, and 4) high canopy cover snag.
 #'
@@ -139,7 +139,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 0 =======
   # initialization
 
-  pcPtDen = las@header@data$`Number of point records`/lasarea(las) # The point cloud point density (per m)
+  pcPtDen = las@header@PHB$`Number of point records`/lasarea(las) # The point cloud point density (per m)
   XYZ = las@data[, .(X,Y,Z)]
   XY  = las@data[, .(X,Y)]
   r1  = neigh_radii[1] # Sphere neighborhood radius
