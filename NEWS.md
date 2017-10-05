@@ -18,6 +18,7 @@
 
 * `lasclip` and `lasclip*` can extract from a catalog
 * `lasclip` supports `sp::Polygon` object
+* new function `lassnags` for classifying points as snag points or segmenting snags in LiDAR datasets
 
 ### lidR v1.3.1 (Release date: 2017-10-21)
 
