@@ -76,7 +76,7 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyzi")
 #' lasnormalize(las, grid_terrain(las, method = "knnidw", k = 10L))
-#' las %<>% lasfilter(Z>1.37, ReturnNumber==1, NumberOfReturns==1)
+#' las %<>% lasfilter(Z>1.37, ReturnNumber==1)
 #' 
 #' # Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al 2015, Table 2, pg. 172)
 #' BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
@@ -86,7 +86,7 @@
 #'                           nrow =3, ncol = 4)
 #' 
 #' # Run snag classificaiton and assign classes to each point    
-#' lassnags(las, algorithm = "wing2015", neigh_radii = c(1.5,1,2), low_int_thrsh = 60, uppr_int_thrsh = 140, pt_den_req = 3, bbpr_thresholds = BBPRthrsh_mat)
+#' lassnags(las, algorithm = "wing2015", neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = BBPRthrsh_mat)
 #'     
 #' # Plot it all, tree and snag points...
 #' plot(las, color="SnagCls", colorPalette = rainbow(5))
