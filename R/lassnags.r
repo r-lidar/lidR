@@ -69,8 +69,9 @@
 #' = branch and bole point ratio; PDR = point density requirement).
 #'
 #' @examples
+#'
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyzi", filter="-drop_z_below 1.37 -first_only -keep_single")
+#' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
 #'
 #' # For the Wing2015 method, Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al
 #' # 2015, Table 2, pg. 172)
@@ -90,7 +91,7 @@
 #' las %<>% lasfilter(SnagCls>0)
 #' plot(las, color="SnagCls", colorPalette = rainbow(5)[-1])
 #'
-#' # To be true to Wing et al (2015), their methods ended with performing tree segmentation on the
+#' # Wing et al's (2015) methods ended with performing tree segmentation on the
 #' # classified and filtered point cloud using the watershed method
 #' chm = grid_canopy(lasnorm, res = 0.5, subcircle = 0.2, na.fill = "knnidw", k = 4)
 #' chm = as.raster(chm)
@@ -218,28 +219,29 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
 
   # ====== STEP 2 =======
   # Point classificaitons based on rough interpretation of Table 2 - pg. 172
-  # Vlaues supplied/specified by user in BranchBolePtRatio.mat
+  # values supplied/specified by user in bbpr_thresholds
 
   verbose("Classifiying points...")
+  las@data[, snagCls :=
   ifelse(sph_PtDen>=pt_den_req  & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,1] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,1] &
          lg_cyl_PtDen>=pt_den_req & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,1],
-         las@data[, SnagCls := 1],        # General snag class
+         1,        # General snag class
 
   ifelse(sph_PtDen>=2 & sph_PtDen<=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,2] &
          sm_cyl_PtDen>=2 & sm_cyl_PtDen<=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,2] &
          lg_cyl_PtDen>=2 & lg_cyl_PtDen<=pt_den_req & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,2],
-         las@data[, SnagCls := 2],        # Small snag class
+         2,        # Small snag class
 
   ifelse(sph_PtDen>=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,3] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,3] &
          lg_cyl_PtDen>=pt_den_req*7 & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,3],
-         las@data[, SnagCls := 3],        # Live crown edge snag class
+         3,        # Live crown edge snag class
 
   ifelse(sph_PtDen>=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,4] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,4] &
          lg_cyl_PtDen>=pt_den_req*15 & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,4],
-         las@data[, SnagCls := 4],        # High canopy cover snag class
+          4,        # High canopy cover snag class
 
-         las@data[, SnagCls := 0]))))     # Remaining points assigned to live tree class
+          0))))]    # Remaining points assigned to live tree class
 }
