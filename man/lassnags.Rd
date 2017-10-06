@@ -73,7 +73,7 @@ classes: \cr
 \examples{
 \\donotrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
+las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first") # Wing also included -keep_single
 
 # For the Wing2015 method, Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al
 # 2015, Table 2, pg. 172)
