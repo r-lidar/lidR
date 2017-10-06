@@ -67,9 +67,14 @@
 #' due to potential mis-interpretation of the Wing et al. manuscript, specifically Table 2 where they present four
 #' groups of conditional assessments with their required neighborhood point density and average BBPR values (BBPR
 #' = branch and bole point ratio; PDR = point density requirement).
+#' This algorithim arrtibutes each point in the point cloud (\code{snagCls} column) into the following five snag
+#' classes: 0) live tree - not a snag ;)
+#'          1) general snag - the broadest range of snag point situations
+#'          2) small snag - isolated snags with lower point densities
+#'          3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or
+#'          4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover ???55%)
 #'
 #' @examples
-#'
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
 #'
@@ -85,11 +90,11 @@
 #' lassnags(las, algorithm = "wing2015", neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = BBPRthrsh_mat)
 #'
 #' # Plot it all, tree and snag points...
-#' plot(las, color="SnagCls", colorPalette = rainbow(5))
+#' plot(las, color="snagCls", colorPalette = rainbow(5))
 #'
 #' # Filter and plot snag points only
-#' las %<>% lasfilter(SnagCls>0)
-#' plot(las, color="SnagCls", colorPalette = rainbow(5)[-1])
+#' las %<>% lasfilter(snagCls>0)
+#' plot(las, color="snagCls", colorPalette = rainbow(5)[-1])
 #'
 #' # Wing et al's (2015) methods ended with performing tree segmentation on the
 #' # classified and filtered point cloud using the watershed method
@@ -138,7 +143,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
 
   # ====== STEP 0 =======
   # initialization
-  verbose("Initializing parameters...")
+  # verbose("Initializing parameters...")
   pcPtDen = las@header@PHB$`Number of point records`/area(las) # The point cloud point density (per m)
   XYZ = las@data[, .(X,Y,Z)]
   XY  = las@data[, .(X,Y)]
@@ -160,10 +165,10 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1a =======
   # sphere neighborhood
   k = ceiling(pcPtDen*pi*r1^2/10)*10 # The maximum number of neighbors to be included
-  verbose("Computing k-nearest neighbors for sphere neighborhood...")
+  # verbose("Computing k-nearest neighbors for sphere neighborhood...")
   nn_idx = RANN::nn2(XYZ, XYZ, k = k, treetype = "kd", searchtype = "radius", radius = r1)$nn.idx
 
-  verbose("Calculating mean neighborhood BBPR...")
+  # verbose("Calculating mean neighborhood BBPR...")
   for(i in row)
   {
     idx = nn_idx[i, ]
@@ -180,10 +185,10 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1b =======
   # small cylinder neighborhood
   k = ceiling(pcPtDen*pi*r2^2/10)*10
-  verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
+  # verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r2)$nn.idx
 
-  verbose("Calculating mean neighborhood BBPR...")
+  # verbose("Calculating mean neighborhood BBPR...")
   for (i in row)
   {
     idx = nn_idx[i, ]
@@ -200,10 +205,10 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1c =======
   # large cylinder neighborhood
   k = ceiling(pcPtDen*pi*r3^2/10)*10
-  verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
+  # verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r3)$nn.idx
 
-  verbose("Calculating mean neighborhood BBPR...")
+  # verbose("Calculating mean neighborhood BBPR...")
   for (i in row)
   {
     idx = nn_idx[i, ]
@@ -221,7 +226,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # Point classificaitons based on rough interpretation of Table 2 - pg. 172
   # values supplied/specified by user in bbpr_thresholds
 
-  verbose("Classifiying points...")
+  # verbose("Classifiying points...")
   las@data[, snagCls :=
   ifelse(sph_PtDen>=pt_den_req  & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,1] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,1] &

@@ -61,6 +61,12 @@ be performed by the user. Also, this implementation may have some differences co
 due to potential mis-interpretation of the Wing et al. manuscript, specifically Table 2 where they present four
 groups of conditional assessments with their required neighborhood point density and average BBPR values (BBPR
 = branch and bole point ratio; PDR = point density requirement).
+This algorithim arrtibutes each point in the point cloud (\code{snagCls} column) into the following five snag
+classes: 0) live tree - not a snag ;)
+         1) general snag - the broadest range of snag point situations
+         2) small snag - isolated snags with lower point densities
+         3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or
+         4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover ???55%)
 }
 
 \examples{
@@ -79,11 +85,11 @@ BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
 lassnags(las, algorithm = "wing2015", neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = BBPRthrsh_mat)
 
 # Plot it all, tree and snag points...
-plot(las, color="SnagCls", colorPalette = rainbow(5))
+plot(las, color="snagCls", colorPalette = rainbow(5))
 
 # Filter and plot snag points only
-las \%<>\% lasfilter(SnagCls>0)
-plot(las, color="SnagCls", colorPalette = rainbow(5)[-1])
+las \%<>\% lasfilter(snagCls>0)
+plot(las, color="snagCls", colorPalette = rainbow(5)[-1])
 
 # Wing et al's (2015) methods ended with performing tree segmentation on the
 # classified and filtered point cloud using the watershed method
