@@ -34,7 +34,7 @@ page 172. Default is 3}
 \item{bbpr_thresholds}{matrix. A 3x4 matrix providing the four average BBPR values for each of the three neighborhood
 (sphere, small cylinder and large cylinder neighborhoods) to be used in for conditional assessments and classification
 into the following four snag classes: 1) general snag, 2) small snag, 3) live crown edge snag, and 4) high canopy
-cover snag. See reference page 172 and Table 2. This matrix must be provided by the user.
+cover snag. See reference page 172 and Table 2. This matrix must be provided by the user.\cr
 The current implementation is known to use a large amount of memory for storing the N x k integer matrix returning the
 near neighbor indices for each point in the point cloud. Improvements are possible in future package versions.}
 }
@@ -53,23 +53,25 @@ and branch from foliage points - see details).
 
 This is an automated filtering algorithm that utilizes three dimensional neighborhood lidar point-based
 intensity and density statistics to remove lidar points associated with live trees and retain lidar points
-associated with snags developed by Wing et al (2015 - see references).
+associated with snags developed by Wing et al (2015 - see references).\cr\cr
 Note that this algorithm strictly performs a classification based on user input while the original publication's
 methods also included a segmentation step and some pre- (filtering for first and single returns only) and post-
 process (filtering for only the snag classified points prior to segmentation) tasks which are now expected to
 be performed by the user. Also, this implementation may have some differences compared with the original method
 due to potential mis-interpretation of the Wing et al. manuscript, specifically Table 2 where they present four
 groups of conditional assessments with their required neighborhood point density and average BBPR values (BBPR
-= branch and bole point ratio; PDR = point density requirement).
+= branch and bole point ratio; PDR = point density requirement).\cr\cr
 This algorithim arrtibutes each point in the point cloud (\code{snagCls} column) into the following five snag
-classes: 0) live tree - not a snag ;)
-         1) general snag - the broadest range of snag point situations
-         2) small snag - isolated snags with lower point densities
-         3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or
-         4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover ???55%)
+classes: \cr
+0) live tree - not a snag ;)\cr
+1) general snag - the broadest range of snag point situations\cr
+2) small snag - isolated snags with lower point densities\cr
+3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or\cr
+4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover >=55%)
 }
 
 \examples{
+\\donotrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
 
@@ -96,6 +98,7 @@ plot(las, color="snagCls", colorPalette = rainbow(5)[-1])
 chm = grid_canopy(lasnorm, res = 0.5, subcircle = 0.2, na.fill = "knnidw", k = 4)
 chm = as.raster(chm)
 lastrees(lasnorm, "watershed", chm, th = 4)
+}
 
 }
 \references{
