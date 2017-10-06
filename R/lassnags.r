@@ -51,7 +51,7 @@
 #' @param bbpr_thresholds matrix. A 3x4 matrix providing the four average BBPR values for each of the three neighborhood
 #' (sphere, small cylinder and large cylinder neighborhoods) to be used in for conditional assessments and classification
 #' into the following four snag classes: 1) general snag, 2) small snag, 3) live crown edge snag, and 4) high canopy
-#' cover snag. See reference page 172 and Table 2. This matrix must be provided by the user.
+#' cover snag. See reference page 172 and Table 2. This matrix must be provided by the user.\cr
 #' The current implementation is known to use a large amount of memory for storing the N x k integer matrix returning the
 #' near neighbor indices for each point in the point cloud. Improvements are possible in future package versions.
 #' @return Nothing, the point cloud is updated by reference.
@@ -59,24 +59,26 @@
 #' @section Wing et al. 2016:
 #' This is an automated filtering algorithm that utilizes three dimensional neighborhood lidar point-based
 #' intensity and density statistics to remove lidar points associated with live trees and retain lidar points
-#' associated with snags developed by Wing et al (2015 - see references).
+#' associated with snags developed by Wing et al (2015 - see references).\cr\cr
 #' Note that this algorithm strictly performs a classification based on user input while the original publication's
 #' methods also included a segmentation step and some pre- (filtering for first and single returns only) and post-
 #' process (filtering for only the snag classified points prior to segmentation) tasks which are now expected to
 #' be performed by the user. Also, this implementation may have some differences compared with the original method
 #' due to potential mis-interpretation of the Wing et al. manuscript, specifically Table 2 where they present four
 #' groups of conditional assessments with their required neighborhood point density and average BBPR values (BBPR
-#' = branch and bole point ratio; PDR = point density requirement).
+#' = branch and bole point ratio; PDR = point density requirement).\cr\cr
 #' This algorithim arrtibutes each point in the point cloud (\code{snagCls} column) into the following five snag
-#' classes: 0) live tree - not a snag ;)
-#'          1) general snag - the broadest range of snag point situations
-#'          2) small snag - isolated snags with lower point densities
-#'          3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or
-#'          4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover ???55%)
+#' classes: \cr
+#' 0) live tree - not a snag ;)\cr
+#' 1) general snag - the broadest range of snag point situations\cr
+#' 2) small snag - isolated snags with lower point densities\cr
+#' 3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, or\cr
+#' 4) high canopy cover snag - snags protruding above live canopy in dense conditions (e.g., canopy cover >=55%)
 #'
 #' @examples
+#' \donotrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
+#' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first") # Wing also included -keep_single
 #'
 #' # For the Wing2015 method, Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al
 #' # 2015, Table 2, pg. 172)
@@ -101,6 +103,7 @@
 #' chm = grid_canopy(lasnorm, res = 0.5, subcircle = 0.2, na.fill = "knnidw", k = 4)
 #' chm = as.raster(chm)
 #' lastrees(lasnorm, "watershed", chm, th = 4)
+#' }
 #'
 #' @author
 #' Andrew Sánchez Meador and Jean-Romain Roussel
@@ -143,7 +146,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
 
   # ====== STEP 0 =======
   # initialization
-  # verbose("Initializing parameters...")
+  verbose("Initializing parameters...")
   pcPtDen = las@header@PHB$`Number of point records`/area(las) # The point cloud point density (per m)
   XYZ = las@data[, .(X,Y,Z)]
   XY  = las@data[, .(X,Y)]
@@ -165,7 +168,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1a =======
   # sphere neighborhood
   k = ceiling(pcPtDen*pi*r1^2/10)*10 # The maximum number of neighbors to be included
-  # verbose("Computing k-nearest neighbors for sphere neighborhood...")
+  verbose("Computing k-nearest neighbors for sphere neighborhood...")
   nn_idx = RANN::nn2(XYZ, XYZ, k = k, treetype = "kd", searchtype = "radius", radius = r1)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -185,7 +188,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1b =======
   # small cylinder neighborhood
   k = ceiling(pcPtDen*pi*r2^2/10)*10
-  # verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
+  verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r2)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -205,7 +208,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1c =======
   # large cylinder neighborhood
   k = ceiling(pcPtDen*pi*r3^2/10)*10
-  # verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
+  verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r3)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -226,7 +229,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # Point classificaitons based on rough interpretation of Table 2 - pg. 172
   # values supplied/specified by user in bbpr_thresholds
 
-  # verbose("Classifiying points...")
+  verbose("Classifiying points...")
   las@data[, snagCls :=
   ifelse(sph_PtDen>=pt_den_req  & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,1] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,1] &
