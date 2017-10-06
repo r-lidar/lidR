@@ -65,7 +65,7 @@ groups of conditional assessments with their required neighborhood point density
 
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzi", filter="-drop_z_below 1.37 -first_only -keep_single")
+las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
 
 # For the Wing2015 method, Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al
 # 2015, Table 2, pg. 172)
@@ -85,7 +85,7 @@ plot(las, color="SnagCls", colorPalette = rainbow(5))
 las \%<>\% lasfilter(SnagCls>0)
 plot(las, color="SnagCls", colorPalette = rainbow(5)[-1])
 
-# To be true to Wing et al (2015), their methods ended with performing tree segmentation on the
+# Wing et al's (2015) methods ended with performing tree segmentation on the
 # classified and filtered point cloud using the watershed method
 chm = grid_canopy(lasnorm, res = 0.5, subcircle = 0.2, na.fill = "knnidw", k = 4)
 chm = as.raster(chm)
