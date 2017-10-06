@@ -1,7 +1,7 @@
 context("lassnags")
 
 # LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-# las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
+# las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first")
 #
 # BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
 #                          0.85, 0.85, 0.60,

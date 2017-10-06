@@ -78,7 +78,7 @@
 #' @examples
 #' \donotrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -keep_single")
+#' las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first") # Wing also included -keep_single
 #'
 #' # For the Wing2015 method, Supply a matrix of snag BranchBolePtRatio conditional assessment thresholds (see Wing et al
 #' # 2015, Table 2, pg. 172)
@@ -146,7 +146,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
 
   # ====== STEP 0 =======
   # initialization
-  # verbose("Initializing parameters...")
+  verbose("Initializing parameters...")
   pcPtDen = las@header@PHB$`Number of point records`/area(las) # The point cloud point density (per m)
   XYZ = las@data[, .(X,Y,Z)]
   XY  = las@data[, .(X,Y)]
@@ -168,7 +168,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1a =======
   # sphere neighborhood
   k = ceiling(pcPtDen*pi*r1^2/10)*10 # The maximum number of neighbors to be included
-  # verbose("Computing k-nearest neighbors for sphere neighborhood...")
+  verbose("Computing k-nearest neighbors for sphere neighborhood...")
   nn_idx = RANN::nn2(XYZ, XYZ, k = k, treetype = "kd", searchtype = "radius", radius = r1)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -188,7 +188,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1b =======
   # small cylinder neighborhood
   k = ceiling(pcPtDen*pi*r2^2/10)*10
-  # verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
+  verbose("Computing k-nearest neighbors for small cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r2)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -208,7 +208,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # ====== STEP 1c =======
   # large cylinder neighborhood
   k = ceiling(pcPtDen*pi*r3^2/10)*10
-  # verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
+  verbose("Computing k-nearest neighbors for large cylinder neighborhood...")
   nn_idx = RANN::nn2(XY, XY, k = k, treetype = "kd", searchtype = "radius", radius = r3)$nn.idx
 
   # verbose("Calculating mean neighborhood BBPR...")
@@ -229,7 +229,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   # Point classificaitons based on rough interpretation of Table 2 - pg. 172
   # values supplied/specified by user in bbpr_thresholds
 
-  # verbose("Classifiying points...")
+  verbose("Classifiying points...")
   las@data[, snagCls :=
   ifelse(sph_PtDen>=pt_den_req  & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,1] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,1] &
