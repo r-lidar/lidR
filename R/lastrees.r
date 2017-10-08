@@ -104,7 +104,7 @@
 #' author. This method works at the point cloud level. An image of the canopy is \emph{not}
 #' expected.
 #' @examples
-#' LASfile <- system.file("extdata", "Tree.laz", package="lidR")
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
 #' # segmentation
