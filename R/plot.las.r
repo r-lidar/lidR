@@ -118,7 +118,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   }
   else
   {
-    col = t(col2rgb(inargs$col))
+    col = t(grDevices::col2rgb(inargs$col))
     PointCloudViewer::plot_xyz(x@data$X, y=x@data$Y, z=x@data$Z, col, inargs$size)
   }
 }

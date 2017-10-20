@@ -155,7 +155,7 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   if(is.null(bbpr_thresholds))
     stop("Branch and bole point ratio threshold matirx not supplied.")
 
-  . <- X <- Y <- snagsCls <- NULL
+  . <- X <- Y <- snagCls <- NULL
 
   # ====== STEP 0 =======
 
