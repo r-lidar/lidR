@@ -1,24 +1,27 @@
 ### lidR v1.4.0 (In development)
 
-#### OTHER CHANGES
-
-* `lasground` with PMF algorithm changed the parameter names for something easier to type and to understand and to prepare the package to get new algorithms.
-* `lasground` documentation is more explicit on the actual algorithm used.
-
-### BUG FIXES
-
-* `lasground` computes the windows size more closely to the orinal Zhang paper.
-* Fix missing pixel in DTM leading to the impossibility to normalize.
-
-#### ENHANCEMENT
-
-* `catalog_reshape` stream the data and use virtually 0 memory to run.
-
 #### NEW FEATURES
 
 * `lasclip` and `lasclip*` can extract from a catalog
 * `lasclip` supports `sp::Polygon` object
 * new function `lassnags` for classifying points as snag points or segmenting snags.
+
+### BUG FIXES
+
+* Fix missing pixel in DTM leading to the impossibility to normalize.
+
+#### ENHANCEMENT
+
+* `catalog_reshape()` stream the data and use virtually 0 memory to run.
+* `grid_canopy()` has been rewritten enterly in C++
+* `grid_canopy()` is 10 to 20 times faster both with the option `subcircle` or not
+* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to be ran while this feature previously requiered the equivement of several copies of the point cloud (several hundreds of MB).
+
+#### OTHER CHANGES
+
+* `lasground` with PMF algorithm changed the parameter names for something easier to type and to understand and to prepare the package to get new algorithms.
+* `lasground` documentation is more explicit on the actual algorithm used.
+* `lasground` computes the windows size more closely to the orinal Zhang paper.
 
 ### lidR v1.3.1 (Release date: 2017-10-21)
 

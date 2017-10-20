@@ -104,23 +104,22 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 {
   . <- X <- Y <- Z <- NULL
 
-  if (subcircle > 0)
-  {
-    verbose("Subcircling points...")
+  if (!is.numeric(res))
+    stop("Argument 'res' should be a number", call. = FALSE)
 
-    ex = extent(x)
+  if (res < 0)
+    stop("Argument 'res' should be greater than 0", call. = FALSE)
 
-    dt = x@data[, .(X,Y,Z)]
-    dt = subcircled(dt, subcircle, 8)
-    dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
-    x = suppressWarnings(LAS(dt))
+  if (!is.numeric(subcircle))
+    stop("Argument 'subcircle' should be a number", call. = FALSE)
 
-    rm(dt)
-  }
+  if (subcircle < 0)
+    stop("Argument 'subcircle' should be greater than 0", call. = FALSE)
 
   verbose("Gridding highest points in each cell...")
 
-  dsm   = grid_metrics(x, list(Z = max(Z)), res)
+  dsm = Cpp_grid_canopy(x, res, subcircle)
+  as.lasmetrics(dsm, res)
 
   if (na.fill != "none")
   {

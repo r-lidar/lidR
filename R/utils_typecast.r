@@ -121,7 +121,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
   if (ncol(x) <= 3 && is.null(inargs$spbackend)) # Use the data.table way which is much master (approx 3 times)
   {
     verbose("Casting into RasterLayer with raster")
-    return(raster::rasterFromXYZ(x))
+    return(raster::rasterFromXYZ(x, res = c(res, res)))
   }
   else # Use the sp way to get and return a raster stack
   {
