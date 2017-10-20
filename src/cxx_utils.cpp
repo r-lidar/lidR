@@ -204,3 +204,18 @@ std::vector<double> sqdistance(std::vector<Point*>& pts, Point u)
   return y;
 }
 
+// [[Rcpp::export]]
+NumericVector roundc(NumericVector x, int digit = 0)
+{
+  NumericVector y(x.length());
+  NumericVector::iterator itx = x.begin();
+  NumericVector::iterator ity = y.begin();
+
+  for(itx = x.begin(), ity = y.begin() ; itx != x.end() ; ++itx, ++ity)
+  {
+    *ity = round(*itx);
+  }
+
+  return y;
+}
+
