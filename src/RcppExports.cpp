@@ -101,6 +101,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// roundc
+NumericVector roundc(NumericVector x, int digit);
+RcppExport SEXP _lidR_roundc(SEXP xSEXP, SEXP digitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
+    rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Cpp_grid_canopy
 List Cpp_grid_canopy(S4 las, double res, double subcircle);
 RcppExport SEXP _lidR_Cpp_grid_canopy(SEXP lasSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
@@ -279,6 +291,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
+    {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
     {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
     {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 6},

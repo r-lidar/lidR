@@ -29,6 +29,10 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
     .Call(`_lidR_fast_extract`, r, x, y, xmin, ymin, res)
 }
 
+roundc <- function(x, digit = 0L) {
+    .Call(`_lidR_roundc`, x, digit)
+}
+
 Cpp_grid_canopy <- function(las, res, subcircle = 0) {
     .Call(`_lidR_Cpp_grid_canopy`, las, res, subcircle)
 }

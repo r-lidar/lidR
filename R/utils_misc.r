@@ -25,9 +25,9 @@
 #
 # ===============================================================================
 
-round_any <- function(x, accuracy, f = round)
+round_any <- function(x, accuracy)
 {
-  f(x / accuracy) * accuracy
+  roundc(x / accuracy) * accuracy
 }
 
 make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
