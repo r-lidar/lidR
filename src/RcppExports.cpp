@@ -101,6 +101,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Cpp_grid_canopy
+List Cpp_grid_canopy(S4 las, double res, double subcircle);
+RcppExport SEXP _lidR_Cpp_grid_canopy(SEXP lasSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
+    rcpp_result_gen = Rcpp::wrap(Cpp_grid_canopy(las, res, subcircle));
+    return rcpp_result_gen;
+END_RCPP
+}
 // knn
 Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
 RcppExport SEXP _lidR_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
@@ -256,4 +269,32 @@ BEGIN_RCPP
     update_list_by_ref(x, name, value);
     return R_NilValue;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_lidR_itc_expandcrowns", (DL_FUNC) &_lidR_itc_expandcrowns, 5},
+    {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 7},
+    {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
+    {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
+    {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
+    {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
+    {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
+    {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
+    {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
+    {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 6},
+    {"_lidR_LocalMaximaMatrix", (DL_FUNC) &_lidR_LocalMaximaMatrix, 2},
+    {"_lidR_LocalMaximaPoints", (DL_FUNC) &_lidR_LocalMaximaPoints, 5},
+    {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
+    {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
+    {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
+    {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
+    {"_lidR_tinfo", (DL_FUNC) &_lidR_tinfo, 2},
+    {"_lidR_tsearch", (DL_FUNC) &_lidR_tsearch, 6},
+    {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_lidR(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
