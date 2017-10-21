@@ -78,8 +78,10 @@ RasterProcessor::~RasterProcessor()
 
 void RasterProcessor::xy2ij(double x, double y)
 {
-  i = (int)(std::abs((m_xmin - x) / m_res) + 1)-1;
-  j = m_nrows - (int)(std::abs((m_ymin - y) / m_res))-1;
+  i = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
+  j = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
+
+  //Rcout << "(" << x << " " << y << ") (" << i << " " << j << ")" << std::endl;
 
   if (i < 0 || i >= m_ncols || j < 0 || j >= m_nrows)
     throw exception("in xy2ij(): index out of bounds");
