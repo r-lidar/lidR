@@ -21,19 +21,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // algo_li2012
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar);
-RcppExport SEXP _lidR_algo_li2012(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP displaybarSEXP) {
+IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progressbar);
+RcppExport SEXP _lidR_algo_li2012(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP RSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type dt1(dt1SEXP);
     Rcpp::traits::input_parameter< double >::type dt2(dt2SEXP);
     Rcpp::traits::input_parameter< double >::type R(RSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_li2012(X, Y, Z, dt1, dt2, R, displaybar));
+    Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
+    rcpp_result_gen = Rcpp::wrap(algo_li2012(las, dt1, dt2, R, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -285,7 +283,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_itc_expandcrowns", (DL_FUNC) &_lidR_itc_expandcrowns, 5},
-    {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 7},
+    {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 5},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

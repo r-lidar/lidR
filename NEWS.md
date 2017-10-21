@@ -12,6 +12,7 @@
 
 #### ENHANCEMENT
 
+* `lastrees` with Li et al. (2012) algorithm is 5-6 times faster and much memory efficient.
 * `catalog_reshape()` stream the data and use virtually 0 memory to run.
 * `grid_canopy()` has been rewritten enterly in C++
 * `grid_canopy()` is 10 to 20 times faster both with the option `subcircle` or not

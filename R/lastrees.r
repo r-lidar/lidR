@@ -61,7 +61,7 @@
 #' tree height. Default is 0.6 meaning 60\% of the tree height.
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2
-#' @param seep_up numeric. Maximum radius of a crown. Any value greater than a crown is
+#' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
 #' @param tol numeric. Tolerance see ?EBImage::watershed
@@ -202,19 +202,18 @@ lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10, extra = FALSE)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, speed_up = 10, extra = FALSE)
 {
   treeID <- NULL
 
   if (dt1 > dt2)     stop("dt1 greater than dt2", call. = FALSE)
-  if (seep_up <= 0)  stop("seep_up <= 0", call. = FALSE)
+  if (speed_up <= 0)  stop("speed_up <= 0", call. = FALSE)
 
   data.table::setorderv(las@data, "Z", order = -1L)
 
-  id = algo_li2012(las@data$X, las@data$Y, las@data$Z, dt1, dt2, R = seep_up, LIDROPTIONS("progress"))
+  id = algo_li2012(las, dt1, dt2, R = speed_up, LIDROPTIONS("progress"))
 
   las@data[, treeID := id]
-  las@data[Z < th_tree, treeID := NA][]
 
   return(invisible())
 }
