@@ -5,8 +5,8 @@ itc_expandcrowns <- function(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST) {
     .Call(`_lidR_itc_expandcrowns`, Canopy, Maxima, TRESHSeed, TRESHCrown, DIST)
 }
 
-algo_li2012 <- function(X, Y, Z, dt1, dt2, R, displaybar = FALSE) {
-    .Call(`_lidR_algo_li2012`, X, Y, Z, dt1, dt2, R, displaybar)
+algo_li2012 <- function(las, dt1, dt2, R, progressbar = FALSE) {
+    .Call(`_lidR_algo_li2012`, las, dt1, dt2, R, progressbar)
 }
 
 fast_table <- function(x, size = 5L) {
