@@ -3,7 +3,7 @@
 #### NEW FEATURES
 
 * `lasclip` and `lasclip*` can extract from a catalog
-* `lasclip` supports `sp::Polygon` object
+* `lasclip` supports `sp::Polygon` objects
 * new function `lassnags` for classifying points as snag points or segmenting snags.
 
 ### BUG FIXES
@@ -16,6 +16,7 @@
 * `grid_canopy()` has been rewritten enterly in C++
 * `grid_canopy()` is 10 to 20 times faster both with the option `subcircle` or not
 * `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to be ran while this feature previously requiered the equivement of several copies of the point cloud (several hundreds of MB).
+* `as.raster()` is three times faster.
 
 #### OTHER CHANGES
 
