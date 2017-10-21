@@ -30,5 +30,7 @@ test_that("read multiple files works", {
 
 test_that("print las works", {
   las  = readLAS(LASfile)
+  sink(tempfile())
   summary(las)
+  sink(NULL)
 })

@@ -82,7 +82,14 @@ interpolate_knnidw = function(points, coord, k)
 interpolate_kriging = function(points, coord, model, k)
 {
   X <- Y <- Z <- NULL
+
+  if (!LIDROPTIONS("verbose"))
+    sink(tempfile())
+
   x  = gstat::krige(Z~X+Y, location = ~X+Y, data = points, newdata = coord, model, nmax = k)
+
+  sink()
+
   return(x$var1.pred)
 }
 

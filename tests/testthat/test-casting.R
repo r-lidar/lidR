@@ -1,9 +1,13 @@
 context("casting")
 
+sink(tempfile())
+
 library(raster)
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las = readLAS(LASfile)
 lasflightline(las)
+
+sink(NULL)
 
 test_that("as.raster return a correct raster layer (simple case)", {
 
