@@ -46,7 +46,7 @@
 #' @param debug logical. When facing a non trivial error, try \code{debug = TRUE}.
 #' @return Returns a \code{data.table} containing the metrics for each segmented tree.
 #' @examples
-#' LASfile <- system.file("extdata", "Tree.laz", package="lidR")
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, filter = "-drop_z_below 0")
 #'
 #' # segment trees (see lastrees)
