@@ -118,15 +118,28 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 
   # Convert to raster
 
-  if (ncol(x) <= 3 && is.null(inargs$spbackend)) # Use the data.table way which is much master (approx 3 times)
+  if (ncol(x) <= 3 && is.null(inargs$spbackend))
   {
-    verbose("Casting into RasterLayer with raster")
+    verbose("Casting into RasterLayer")
+
+    hres = 0.5*res
+
+    xmin = min(x$X)
+    xmax = max(x$X)
+    ncol = (xmax - xmin)/res
+
+    ymin = min(x$Y)
+    ymax = max(x$Y)
+    nrow = (ymax - ymin)/res
+
+    r <- raster(nrow=nrow, ncol=ncol, xmn=xmin-hres, xmx=xmax+hres, ymn=ymin-hres, ymx=ymax+hres, res = c(res,res))
+    cells <- cellFromXY(r, x[, .(X,Y)])
+    r[cells] <- x[[3]]
+
     return(raster::rasterFromXYZ(x, res = c(res, res)))
   }
-  else # Use the sp way to get and return a raster stack
+  else # Use the sp way to get and return a raster stack (slower)
   {
-    # Autocompletion of the grid with NAs
-
     verbose("Filling empty data with NAs...")
 
     rx  = range(x$X)
@@ -146,10 +159,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     sp::coordinates(out) <- ~ X + Y
     sp::gridded(out) <- TRUE   # coerce to SpatialPixelsDataFrame
 
-    if (ncol(out) <= 3)
-      return(raster::raster(out))
-    else
-      return(raster::stack(out))
+    return(raster::stack(out))
   }
 }
 
