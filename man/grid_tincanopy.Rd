@@ -53,8 +53,8 @@ spatial index.
 }
 
 \examples{
-LASfile = system.file("extdata", "Tree.laz", package="lidR")
-las = readLAS(LASfile, Classification = FALSE, Intensity = FALSE, filter = "-drop_z_below 0")
+LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
+las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0")
 
 # Basic triangulation and rasterization
 chm1 = grid_tincanopy(las, thresholds = 0, max_edge = 0)

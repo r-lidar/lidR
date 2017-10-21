@@ -22,7 +22,7 @@ Depends:
 Imports:
     rlas (>= 1.1.6),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,
     data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
-    memoise,mapview,mapedit,RANN
+    memoise,mapview,mapedit,RANN,deldir
 Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true

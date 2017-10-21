@@ -6,7 +6,7 @@
 \title{Plot LiDAR data}
 \usage{
 \method{plot}{LAS}(x, y, color = "Z", colorPalette = height.colors(50),
-  bg = "black", trim = 1, backend = c("auto", "rgl", "pcv"), ...)
+  bg = "black", trim = 1, backend = c("rgl", "pcv"), ...)
 }
 \arguments{
 \item{x}{An object of the class \code{LAS}}
@@ -30,10 +30,9 @@ They are not removed.}
 
 \item{backend}{character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
 the display relies on the \code{rgl} package. If "pcv" is chosen it relies on the
-\code{PointCloudViewer} package which is much more efficient and can handle million of point
+\code{PointCloudViewer} package which is much more efficient and can handle million of points
 using few memory. \code{PointCloudViewer} is not avaible on CRAN yet and should
-be install from gihub (see. \link{https://github.com/Jean-Romain/PointCloudViewer}).
-If "auto" then \code{PointCloudViewer} is chosen if installed.}
+be install from gihub (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).}
 
 \item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d}}
 }
