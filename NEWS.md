@@ -16,7 +16,7 @@
 * `catalog_reshape()` stream the data and use virtually 0 memory to run.
 * `grid_canopy()` has been rewritten enterly in C++
 * `grid_canopy()` is 10 to 20 times faster both with the option `subcircle` or not
-* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to be ran while this feature previously requiered the equivement of several copies of the point cloud (several hundreds of MB).
+* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to be ran while this feature previously requiered the equivalent of several copies of the point cloud (several hundreds of MB).
 * `as.raster()` is three times faster.
 
 #### OTHER CHANGES

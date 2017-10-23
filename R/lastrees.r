@@ -29,9 +29,10 @@
 #'
 #' Individual tree segmentation with several possible algorithms (see details). The function
 #' attributes to each point of the point cloud a number identifying the detected tree
-#' the point comes from (\code{treeID} column). By default the classification is done at the
-#' point cloud level. However, with some algorithms it is possible to return a raster image of the
-#' classification. There are currently 3 algorithms implemented. See relevant sections.
+#' the point comes from (in a new \code{treeID} column). By default the classification is
+#' done at the point cloud level and the functions retun nothing. However, with some algorithms
+#' it is possible to return also a raster image of the classification and/or a
+#' SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relevant sections.
 #'
 #' @param las An object of the class \code{LAS}
 #' @param algorithm character. The name of an algorithm. Can be \code{"dalponte2016"},
@@ -39,10 +40,11 @@
 #' algorithm).
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' about the algorithms)
-#' @param extra logical. The functions return nothing by default. The point cloud is updated
-#' in place. If \code{extra = TRUE} some extra output can be returned. The type of output
-#' depends on the algorithm used. It can be 1 or 2 \code{RasterLayer} or a
-#' \code{SpatialPolygonDataFrame} or something else.
+#' @param extra logical. By default the functions classify the orinal point cloud by reference
+#' and returns nothing (the original object is automatically updated in place). If
+#' \code{extra = TRUE} some extra output can be returned. The type of output depends on the
+#' algorithm used. It can be 1 or 2 \code{RasterLayer} or a \code{SpatialPolygonDataFrame}
+#' or something else.
 #' @param img RasterLayer. Image of the canopy if the algorithm works on a canopy surface
 #' model. But some algorithms work on the raw point cloud (see relevant sections). You can
 #' compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.
@@ -50,7 +52,6 @@
 #' raster this size is in pixel and  should be an odd number larger than 3. On a raw point cloud
 #' this size is in the point cloud units (usually meters but sometime feets).
 #' @param th_lm numeric. Threshold below which a pixel or a point cannot be a local maxima. Default 2.
-#' @param th_tree numeric. Threshold below which a point cannot be classified a tree. Default is 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
 #' should be between 0 and 1. Default 0.45
 #' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
@@ -61,15 +62,19 @@
 #' tree height. Default is 0.6 meaning 60\% of the tree height.
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2
-#' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
+#' @param R numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
 #' @param tol numeric. Tolerance see ?EBImage::watershed
 #' @param ext numeric. see ?EBImage::watershed
-#' @param extra logical. By default the function classify the orinal point cloud by reference and returns
-#' nothing. If \code{extra = TRUE} the function can return extra gift depending on the algorithm used.
 #' @return Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some algorithm provide
 #' extra outputs.
+#'
+#' @section Li 2012:
+#' This method is a growthing region method working at the raw point cloud level. It is an
+#' implementation of the Li et al. (see references) algorithm made by \code{lidR}
+#' author. This method works at the point cloud level. An image of the canopy is \emph{not}
+#' expected.
 #'
 #' @section Dalponte 2016:
 #' This is a local maxima + growing region algorithm. It is based on the algorithm developed by
@@ -97,22 +102,14 @@
 #' this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
 #' The Watershed algorithm is a canopy surface model-based method. An image of the canopy is
 #' expected.
-#'
-#' @section Li 2012:
-#' This method is a growthing region method working at the raw point cloud level. It is an
-#' implementation of the Li et al. (see references) algorithm made by \code{lidR}
-#' author. This method works at the point cloud level. An image of the canopy is \emph{not}
-#' expected.
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
-#' # segmentation
-#' lastrees(las, "li2012")
+#' lastrees(las, "li2012", R = 5)
 #'
-#' # plot points that actually are trees
-#' trees = lasfilter(las, !is.na(treeID))
-#' plot(trees, color = "treeID", colorPalette = random.colors(100))
+#' # Note: with R = 10 the result is the same but is computed 4 times slower.
+#'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575\cr\cr
@@ -141,10 +138,7 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
 #' @rdname lastrees
 lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
 {
-  l = dim(image)[1]
-  w = dim(image)[2]
-
-  Canopy <- raster::as.matrix(image)
+  Canopy <- raster::as.matrix(img)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[Canopy < th_cr] <- NA
 
@@ -154,9 +148,9 @@ lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1, extra = FAL
   Crowns = EBImage::watershed(Canopy, tol, ext)
 
   Crowns = raster::raster(apply(Crowns,1,rev))
-  raster::extent(Crowns) = raster::extent(image)
+  raster::extent(Crowns) = raster::extent(img)
 
-  lasclassify(.las, Crowns, "treeID")
+  lasclassify(las, Crowns, "treeID")
 
   if (!extra)
     return(invisible(NULL))
@@ -167,51 +161,48 @@ lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1, extra = FAL
 
 #' @export
 #' @rdname lastrees
-lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, th_tree = 2, extra = FALSE)
+lastrees_dalponte = function(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE)
 {
-  if (searchWinSize < 3 | searchWinSize %% 2 == 0)
-    stop("searchWinSize not correct", call. = FALSE)
+  if (lm_ws < 3 | lm_ws %% 2 == 0)
+    stop("lm_ws not correct", call. = FALSE)
 
-  l = dim(image)[1]
-  w = dim(image)[2]
-
-  Canopy <- raster::as.matrix(image)
+  Canopy <- raster::as.matrix(img)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[is.na(Canopy) | Canopy < th_lm] <- 0
 
-  Maxima = LocalMaximaMatrix(Canopy, searchWinSize)
+  Maxima = LocalMaximaMatrix(Canopy, lm_ws)
   Crowns = itc_expandcrowns(Canopy, Maxima, th_seed, th_cr, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 
   Crowns = raster::raster(apply(Crowns,1,rev))
-  raster::extent(Crowns) = raster::extent(image)
+  raster::extent(Crowns) = raster::extent(img)
 
   lasclassify(las, Crowns, "treeID")
-  las@data[Z < th_tree, treeID := NA][]
 
   if (!extra)
     return(invisible(NULL))
   else
   {
     Maxima = raster::raster(apply(Maxima,1,rev))
-    raster::extent(Maxima) = raster::extent(image)
+    raster::extent(Maxima) = raster::extent(img)
     return(list(Crown = Crowns, Maxima = Maxima))
   }
 }
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, speed_up = 10, extra = FALSE)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
 {
   treeID <- NULL
 
-  if (dt1 > dt2)     stop("dt1 greater than dt2", call. = FALSE)
-  if (speed_up <= 0)  stop("speed_up <= 0", call. = FALSE)
+  if (dt1 <= 0) stop("dt1 should be positive",  call. = FALSE)
+  if (dt1 <= 0) stop("dt1 should be positive", call. = FALSE)
+  if (R <= 0)   stop("R should be positive", call. = FALSE)
 
   data.table::setorderv(las@data, "Z", order = -1L)
 
-  id = algo_li2012(las, dt1, dt2, R = speed_up, LIDROPTIONS("progress"))
+  id = algo_li2012(las, dt1, dt2, R, LIDROPTIONS("progress"))
 
   las@data[, treeID := id]
 
@@ -220,12 +211,12 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, speed_up = 10, extra = FALSE)
 
 #' @export
 #' @rdname lastrees
-lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2, extra = FALSE)
+lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, extra = FALSE)
 {
+  . <- R <- X <- Y <- Z <- NULL
+
   # search local maxima
-  maxima  = las@data %$% LocalMaximaPoints(X, Y, Z, lm_ws/2)
-  filter  = las@data$Z > th_lm
-  maxima  = maxima & filter
+  maxima = las@data %$% LocalMaximaPoints(X, Y, Z, lm_ws/2)
 
   locmax  = las@data[maxima == TRUE, .(X, Y, Z)]
   locmax[, R := Z * cr_factor]
@@ -269,14 +260,13 @@ lastrees_silva = function(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 
     tree_poly = rgeos::gIntersection(voronoi_poly, disc_poly)@polygons[[1]]
     tree_poly@ID = id
 
-    tree_polys[[i]] = poly
+    tree_polys[[i]] = tree_poly
   }
 
-  SP   = sp::SpatialPolygons(polys)
+  SP   = sp::SpatialPolygons(tree_polys)
   SPDF = sp::SpatialPolygonsDataFrame(SP, data = data.frame(treeID = 1:nrow(locmax)))
 
   lasclassify(las, SPDF, "treeID")
-  las@data[!filter, treeID := NA][]
 
   if (!extra)
     return(invisible())
