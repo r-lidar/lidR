@@ -13,12 +13,11 @@ lastrees(las, algorithm, ..., extra = FALSE)
 lastrees_watershed(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
 
 lastrees_dalponte(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, th_tree = 2, extra = FALSE)
+  th_cr = 0.55, max_cr = 10, extra = FALSE)
 
-lastrees_li(las, dt1 = 1.5, dt2 = 2, th_tree = 2, seep_up = 10,
-  extra = FALSE)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
 
-lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2, th_tree = 2,
+lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2,
   extra = FALSE)
 }
 \arguments{
@@ -31,10 +30,11 @@ algorithm).}
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details
 about the algorithms)}
 
-\item{extra}{logical. The functions return nothing by default. The point cloud is updated
-in place. If \code{extra = TRUE} some extra output can be returned. The type of output
-depends on the algorithm used. It can be 1 or 2 \code{RasterLayer} or a
-\code{SpatialPolygonDataFrame} or something else.}
+\item{extra}{logical. By default the functions classify the orinal point cloud by reference
+and returns nothing (the original object is automatically updated in place). If
+\code{extra = TRUE} some extra output can be returned. The type of output depends on the
+algorithm used. It can be 1 or 2 \code{RasterLayer} or a \code{SpatialPolygonDataFrame}
+or something else.}
 
 \item{img}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface
 model. But some algorithms work on the raw point cloud (see relevant sections). You can
@@ -59,21 +59,16 @@ should be between 0 and 1. Default 0.45}
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in meters).
 Default 10.}
 
-\item{th_tree}{numeric. Threshold below which a point cannot be classified a tree. Default is 2.}
-
 \item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5}
 
 \item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2}
 
-\item{seep_up}{numeric. Maximum radius of a crown. Any value greater than a crown is
+\item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
 
 \item{cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
 tree height. Default is 0.6 meaning 60\% of the tree height.}
-
-\item{extra}{logical. By default the function classify the orinal point cloud by reference and returns
-nothing. If \code{extra = TRUE} the function can return extra gift depending on the algorithm used.}
 }
 \value{
 Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some algorithm provide
@@ -82,10 +77,19 @@ extra outputs.
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
 attributes to each point of the point cloud a number identifying the detected tree
-the point comes from (\code{treeID} column). By default the classification is done at the
-point cloud level. However, with some algorithms it is possible to return a raster image of the
-classification. There are currently 3 algorithms implemented. See relevant sections.
+the point comes from (in a new \code{treeID} column). By default the classification is
+done at the point cloud level and the functions retun nothing. However, with some algorithms
+it is possible to return also a raster image of the classification and/or a
+SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relevant sections.
 }
+\section{Li 2012}{
+
+This method is a growthing region method working at the raw point cloud level. It is an
+implementation of the Li et al. (see references) algorithm made by \code{lidR}
+author. This method works at the point cloud level. An image of the canopy is \emph{not}
+expected.
+}
+
 \section{Dalponte 2016}{
 
 This is a local maxima + growing region algorithm. It is based on the algorithm developed by
@@ -119,24 +123,14 @@ The Watershed algorithm is a canopy surface model-based method. An image of the 
 expected.
 }
 
-\section{Li 2012}{
-
-This method is a growthing region method working at the raw point cloud level. It is an
-implementation of the Li et al. (see references) algorithm made by \code{lidR}
-author. This method works at the point cloud level. An image of the canopy is \emph{not}
-expected.
-}
-
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
-# segmentation
-lastrees(las, "li2012")
+lastrees(las, "li2012", R = 5)
 
-# plot points that actually are trees
-trees = lasfilter(las, !is.na(treeID))
-plot(trees, color = "treeID", colorPalette = random.colors(100))
+# Note: with R = 10 the result is the same but is computed 4 times slower.
+
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from

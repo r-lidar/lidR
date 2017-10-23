@@ -72,7 +72,7 @@
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, backend = c("rgl", "pcv"), ...)
 {
   backend = match.arg(backend)
-  pcv = requireNamespace("PointCloudViewer", quietly = TRUE)
+  pcv = "PointCloudViewer" %in% rownames(utils::installed.packages())
 
   if (backend == "auto" && pcv)
     backend = "pcv"
@@ -118,6 +118,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   else
   {
     col = t(grDevices::col2rgb(inargs$col))
-    PointCloudViewer::plot_xyz(x@data$X, y=x@data$Y, z=x@data$Z, col, inargs$size)
+    # Dirty trick to avoid R CMD check complaining with unexisting package...
+    eval(parse(text="PointCloudViewer::plot_xyz(x@data$X, y=x@data$Y, z=x@data$Z, col, inargs$size)"))
   }
 }

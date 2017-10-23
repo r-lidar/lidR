@@ -14,7 +14,7 @@ test_that("Dalponte's's methods works", {
 })
 
 test_that("Li's method works", {
-  lastrees_li(las, seep_up = 5)
+  lastrees_li(las, R = 5)
   expect_true("treeID" %in% names(las@data))
   expect_true(all(!is.na(las@data$treeID)))
 })

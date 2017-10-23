@@ -71,7 +71,7 @@ as.lasmetrics = function(x, res)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 {
-  X <- .SD <- flightline <- NULL
+  X <- Y <- . <- SD <- flightline <- NULL
 
   inargs = list(...)
 
@@ -132,11 +132,12 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     ymax = max(x$Y)
     nrow = (ymax - ymin)/res
 
-    r <- raster(nrow=nrow, ncol=ncol, xmn=xmin-hres, xmx=xmax+hres, ymn=ymin-hres, ymx=ymax+hres, res = c(res,res))
-    cells <- cellFromXY(r, x[, .(X,Y)])
+    r <- raster::raster(nrow=nrow, ncol=ncol, xmn=xmin-hres, xmx=xmax+hres, ymn=ymin-hres, ymx=ymax+hres, res = c(res,res))
+    cells <- raster::cellFromXY(r, x[, .(X,Y)])
     r[cells] <- x[[3]]
+    names(r) <- names(x)[3]
 
-    return(raster::rasterFromXYZ(x, res = c(res, res)))
+    return(r)
   }
   else # Use the sp way to get and return a raster stack (slower)
   {
@@ -159,7 +160,11 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     sp::coordinates(out) <- ~ X + Y
     sp::gridded(out) <- TRUE   # coerce to SpatialPixelsDataFrame
 
-    return(raster::stack(out))
+
+    if (ncol(out) <= 3)
+      return(raster::raster(out))
+    else
+      return(raster::stack(out))
   }
 }
 
