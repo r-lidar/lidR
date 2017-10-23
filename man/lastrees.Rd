@@ -10,7 +10,8 @@
 \usage{
 lastrees(las, algorithm, ..., extra = FALSE)
 
-lastrees_watershed(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
+lastrees_watershed(las, img, th_tree = 2, tol = 1, ext = 1,
+  extra = FALSE)
 
 lastrees_dalponte(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45,
   th_cr = 0.55, max_cr = 10, extra = FALSE)
@@ -40,21 +41,24 @@ or something else.}
 model. But some algorithms work on the raw point cloud (see relevant sections). You can
 compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.}
 
-\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
-should be between 0 and 1. Default 0.55}
+\item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
 
 \item{tol}{numeric. Tolerance see ?EBImage::watershed}
 
 \item{ext}{numeric. see ?EBImage::watershed}
 
-\item{lm_ws}{numeric. Size of the moving window used to the detect the local maxima. On a
-raster this size is in pixel and  should be an odd number larger than 3. On a raw point cloud
-this size is in the point cloud units (usually meters but sometime feets).}
+\item{lm_ws}{numeric. Size of the moving window used to the detect the local maxima. On
+a raster this size is in pixel and should be an odd number larger than 3. On a raw point
+cloud this size is in the point cloud units (usually meters but sometime feets).}
 
-\item{th_lm}{numeric. Threshold below which a pixel or a point cannot be a local maxima. Default 2.}
+\item{th_lm}{numeric. Threshold below which a pixel or a point cannot be a local maxima.
+Default 2.}
 
 \item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
 should be between 0 and 1. Default 0.45}
+
+\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
+should be between 0 and 1. Default 0.55}
 
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in meters).
 Default 10.}
@@ -128,6 +132,8 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
 lastrees(las, "li2012", R = 5)
+
+plot(las, color = "treeID", colorPalette = pastel.colors(100))
 
 # Note: with R = 10 the result is the same but is computed 4 times slower.
 
