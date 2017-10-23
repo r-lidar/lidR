@@ -48,10 +48,12 @@
 #' @param img RasterLayer. Image of the canopy if the algorithm works on a canopy surface
 #' model. But some algorithms work on the raw point cloud (see relevant sections). You can
 #' compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.
-#' @param lm_ws numeric. Size of the moving window used to the detect the local maxima. On a
-#' raster this size is in pixel and  should be an odd number larger than 3. On a raw point cloud
-#' this size is in the point cloud units (usually meters but sometime feets).
-#' @param th_lm numeric. Threshold below which a pixel or a point cannot be a local maxima. Default 2.
+#' @param lm_ws numeric. Size of the moving window used to the detect the local maxima. On
+#' a raster this size is in pixel and should be an odd number larger than 3. On a raw point
+#' cloud this size is in the point cloud units (usually meters but sometime feets).
+#' @param th_lm numeric. Threshold below which a pixel or a point cannot be a local maxima.
+#' Default 2.
+#' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
 #' should be between 0 and 1. Default 0.45
 #' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
@@ -108,6 +110,8 @@
 #'
 #' lastrees(las, "li2012", R = 5)
 #'
+#' plot(las, color = "treeID", colorPalette = pastel.colors(100))
+#'
 #' # Note: with R = 10 the result is the same but is computed 4 times slower.
 #'
 #' @references
@@ -136,17 +140,18 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
 
 #' @export
 #' @rdname lastrees
-lastrees_watershed = function(las, img, th_cr = 2, tol = 1, ext = 1, extra = FALSE)
+lastrees_watershed = function(las, img, th_tree = 2, tol = 1, ext = 1, extra = FALSE)
 {
   Canopy <- raster::as.matrix(img)
   Canopy <- t(apply(Canopy, 2, rev))
-  Canopy[Canopy < th_cr] <- NA
+  Canopy[Canopy < th_tree] <- NA
 
   if (!requireNamespace("EBImage", quietly = TRUE))
     stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
 
   Crowns = EBImage::watershed(Canopy, tol, ext)
 
+  Crowns[is.na(Canopy)] <- NA
   Crowns = raster::raster(apply(Crowns,1,rev))
   raster::extent(Crowns) = raster::extent(img)
 
