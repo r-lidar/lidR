@@ -9,6 +9,7 @@
 #### BUG FIXES
 
 * Fix a bug of computer precision leading to non interpolated pixels at the boundaries of the QuadTree.
+* [[#84](https://github.com/Jean-Romain/lidR/issue/84)] fix bug in `lasscanline`
 
 ### lidR v1.3.0 (Release date: 2017-10-16)
 
