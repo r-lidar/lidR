@@ -45,12 +45,12 @@ knnidw <- function(X, Y, Z, x, y, k) {
     .Call(`_lidR_knnidw`, X, Y, Z, x, y, k)
 }
 
-LocalMaximaMatrix <- function(Canopy, searchWinSize) {
-    .Call(`_lidR_LocalMaximaMatrix`, Canopy, searchWinSize)
+C_LocalMaximaMatrix <- function(Canopy, searchWinSize) {
+    .Call(`_lidR_C_LocalMaximaMatrix`, Canopy, searchWinSize)
 }
 
-LocalMaximaPoints <- function(X, Y, Z, radius, displaybar = FALSE) {
-    .Call(`_lidR_LocalMaximaPoints`, X, Y, Z, radius, displaybar)
+C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
+    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
 }
 
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {

@@ -155,30 +155,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// LocalMaximaMatrix
-IntegerMatrix LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize);
-RcppExport SEXP _lidR_LocalMaximaMatrix(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
+// C_LocalMaximaMatrix
+IntegerMatrix C_LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize);
+RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
     Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(LocalMaximaMatrix(Canopy, searchWinSize));
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(Canopy, searchWinSize));
     return rcpp_result_gen;
 END_RCPP
 }
-// LocalMaximaPoints
-LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector Z, double radius, bool displaybar);
-RcppExport SEXP _lidR_LocalMaximaPoints(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP radiusSEXP, SEXP displaybarSEXP) {
+// C_LocalMaximaPoints
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar);
+RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP displaybarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
     Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(LocalMaximaPoints(X, Y, Z, radius, displaybar));
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -293,8 +292,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
     {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
     {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 6},
-    {"_lidR_LocalMaximaMatrix", (DL_FUNC) &_lidR_LocalMaximaMatrix, 2},
-    {"_lidR_LocalMaximaPoints", (DL_FUNC) &_lidR_LocalMaximaPoints, 5},
+    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 2},
+    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
     {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},

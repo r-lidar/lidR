@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerMatrix LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize)
+IntegerMatrix C_LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize)
 {
   int l = Canopy.nrow();
   int w = Canopy.ncol();
@@ -76,9 +76,16 @@ IntegerMatrix LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize)
 }
 
 // [[Rcpp::export]]
-LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector Z, double radius, bool displaybar = false)
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar = false)
 {
+  DataFrame data = las.slot("data");
+
+  NumericVector X = data["X"];
+  NumericVector Y = data["Y"];
+  NumericVector Z = data["Z"];
+
   int n = X.length();
+  double hws = ws/2;
 
   LogicalVector is_maxima(n);
   LogicalVector isnot_maxima(n);
@@ -95,7 +102,7 @@ LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector 
       p.update(i);
 
     std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], radius, radius, pts);
+    tree->rect_lookup(X[i], Y[i], hws, hws, pts);
 
     long id_new_max = -1;
     long id_old_max = -1;
@@ -107,7 +114,7 @@ LogicalVector LocalMaximaPoints(NumericVector X, NumericVector Y, NumericVector 
 
       double z = Z[pid];
 
-      if(z > max && !isnot_maxima[pid])
+      if(z >= min_height && z > max && !isnot_maxima[pid])
       {
         max = z;
         id_new_max = pid;
