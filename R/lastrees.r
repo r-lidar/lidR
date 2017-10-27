@@ -153,8 +153,6 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
   treeID   <- NULL
   progress <- LIDROPTIONS("progress")
 
-  data.table::setorderv(las@data, "Z", order = -1L)
-
   id = algo_li2012(las, dt1, dt2, R)
 
   las@data[, treeID := id]

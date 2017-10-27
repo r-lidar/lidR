@@ -37,6 +37,19 @@ using namespace Rcpp;
 // Defined in cxx_utils.cpp
 std::vector<double> sqdistance(std::vector<Point*>& pts, Point& u);
 
+struct SortPoint
+{
+  SortPoint(const NumericVector _Z) : Z(_Z) {}
+
+  bool operator()(const Point* lhs, const Point* rhs) const
+  {
+    return Z(lhs->id) > Z(rhs->id);
+  }
+
+  private:
+    NumericVector Z;
+};
+
 // [[Rcpp::export]]
 IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progressbar = false)
 {
@@ -44,7 +57,6 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progres
    * INITALISATION STUFF *
    ***********************/
 
-  // The data.frame is already sorted (at R level)
   DataFrame data = las.slot("data");
 
   NumericVector X = data["X"];
@@ -86,6 +98,8 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progres
   /* *********************
    * LI ET AL ALGORITHHM *
    ***********************/
+
+  std::sort(points.begin(), points.end(), SortPoint(Z));
 
   while(n > 0)
   {
