@@ -48,43 +48,19 @@ IntegerVector fast_table(IntegerVector x, int size = 5)
 // [[Rcpp::export]]
 int fast_countequal(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it == t)
-      n++;
-  }
-
-  return n;
+  return std::count(x.begin(), x.end(), t);
 }
 
 // [[Rcpp::export]]
 int fast_countbelow(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it < t)
-      n++;
-  }
-
-  return n;
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::less<int>(), t));
 }
 
 // [[Rcpp::export]]
 int fast_countover(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it > t)
-      n++;
-  }
-
-  return n;
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::greater<int>(), t));
 }
 
 // [[Rcpp::export]]
