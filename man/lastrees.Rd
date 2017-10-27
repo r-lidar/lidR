@@ -2,24 +2,24 @@
 % Please edit documentation in R/lastrees.r
 \name{lastrees}
 \alias{lastrees}
+\alias{tree_segmentation}
+\alias{lastrees_li}
 \alias{lastrees_watershed}
 \alias{lastrees_dalponte}
-\alias{lastrees_li}
 \alias{lastrees_silva}
 \title{Individual tree segmentation}
 \usage{
 lastrees(las, algorithm, ..., extra = FALSE)
 
-lastrees_watershed(las, img, th_tree = 2, tol = 1, ext = 1,
-  extra = FALSE)
-
-lastrees_dalponte(las, img, lm_ws = 3, th_lm = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, extra = FALSE)
-
 lastrees_li(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
 
-lastrees_silva(las, lm_ws = 5, cr_factor = 0.6, th_lm = 2,
+lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE)
+
+lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
+  th_cr = 0.55, max_cr = 10, extra = FALSE)
+
+lastrees_silva(las, treetops, max_cr_factor = 0.6, extra = FALSE)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}}
@@ -31,15 +31,24 @@ algorithm).}
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details
 about the algorithms)}
 
-\item{extra}{logical. By default the functions classify the orinal point cloud by reference
+\item{extra}{logical. By default the functions classify the original point cloud by reference
 and returns nothing (the original object is automatically updated in place). If
 \code{extra = TRUE} some extra output can be returned. The type of output depends on the
 algorithm used. It can be 1 or 2 \code{RasterLayer} or a \code{SpatialPolygonDataFrame}
-or something else.}
+or something else depending on intermediate objects used internally.}
 
-\item{img}{RasterLayer. Image of the canopy if the algorithm works on a canopy surface
-model. But some algorithms work on the raw point cloud (see relevant sections). You can
-compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from external file.}
+\item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012).
+Default 1.5}
+
+\item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
+Default 2}
+
+\item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
+good because this parameter does not affect the result. However, it greatly affects the
+computation speed. The lower the value, the faster the method. Default is 10.}
+
+\item{chm}{RasterLayer. Image of the canopy. You can compute it with \link{grid_canopy}
+or \link{grid_tincanopy} or read it from external file.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
 
@@ -47,12 +56,9 @@ compute it with \link{grid_canopy} or \link{grid_tincanopy} or read it from exte
 
 \item{ext}{numeric. see ?EBImage::watershed}
 
-\item{lm_ws}{numeric. Size of the moving window used to the detect the local maxima. On
-a raster this size is in pixel and should be an odd number larger than 3. On a raw point
-cloud this size is in the point cloud units (usually meters but sometime feets).}
-
-\item{th_lm}{numeric. Threshold below which a pixel or a point cannot be a local maxima.
-Default 2.}
+\item{treetops}{RasterLayer or data.frame depending either you are using a raster-based
+or point cloud-based algorithm. You can compute it with \link{tree_detection} or read
+it from an external file.}
 
 \item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
 should be between 0 and 1. Default 0.45}
@@ -63,20 +69,12 @@ should be between 0 and 1. Default 0.55}
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in meters).
 Default 10.}
 
-\item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5}
-
-\item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2}
-
-\item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
-good because this parameter does not affect the result. However, it greatly affects the
-computation speed. The lower the value, the faster the method. Default is 10.}
-
-\item{cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
+\item{max_cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
 tree height. Default is 0.6 meaning 60\% of the tree height.}
 }
 \value{
-Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some algorithm provide
-extra outputs.
+Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some
+algorithm provide extra outputs.
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
@@ -88,10 +86,9 @@ SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relev
 }
 \section{Li 2012}{
 
-This method is a growthing region method working at the raw point cloud level. It is an
-implementation of the Li et al. (see references) algorithm made by \code{lidR}
-author. This method works at the point cloud level. An image of the canopy is \emph{not}
-expected.
+This method is a growthing region method working at the raw point cloud level. It is a
+strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
+author.
 }
 
 \section{Dalponte 2016}{
@@ -100,11 +97,9 @@ This is a local maxima + growing region algorithm. It is based on the algorithm 
 Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 This version is identical to the original but with superfluous code removed and rewritten
 in C++. Consequently it is 6 times faster.\cr
-Note that this algorithm strictly performs a segmentation while the original method as implemented
-in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
-these tasks are expected to be done by the user.\cr
-Dalponte's algorithm is a canopy surface model-based method. An image of the canopy is
-expected.
+Note that this algorithm strictly performs a segmentation while the original method as
+implemented in \code{itcSegment} and described in the manuscript also performs a pre-
+and post-process when these tasks are expected to be done by the user.
 }
 
 \section{Silva 2016}{
@@ -112,30 +107,36 @@ expected.
 This is a simple but elegant method based on local maxima + voronoi tesselation described
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
 \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
-a version written in C++ and made by lidR developper. Compared to the original, the algorithm
-works at the raw point cloud level without the need of an image of the canopy. The local
-maxima are computed at the raw point cloud level without need of a rasterization step.
-The crown segmentation is done at the raw point cloud level too.
+a code written from scratch by lidR author from the original paper. Compared to the original,
+method the algorithm works at the raw point cloud level without the need of an image of
+the canopy. The points are classified based on the polygons contructed by the tesselation.
+The algorithm is also considerably faster.
 }
 
 \section{Watershed}{
 
-This method is a simple (\href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation})
-method. It is based on the bioconductor package \code{EBIimage}. You need to install
-this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
-The Watershed algorithm is a canopy surface model-based method. An image of the canopy is
-expected.
+This method is a simple \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
+method. It is based on the bioconductor package \code{EBIimage}.
+You need to install this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
 }
 
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
+# Li et al. 2012 algorithm (note: with R = 10 the result is the same
+# but is computed 4 times slower)
 lastrees(las, "li2012", R = 5)
-
 plot(las, color = "treeID", colorPalette = pastel.colors(100))
 
-# Note: with R = 10 the result is the same but is computed 4 times slower.
+# Watershed
+chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+chm = as.raster(chm)
+kernel = matrix(1,3,3)
+chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+
+lastrees_watershed(las, chm)
+plot(las, color = "treeID", colorPalette = pastel.colors(100))
 
 }
 \references{

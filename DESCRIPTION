@@ -80,6 +80,7 @@ Collate:
     'plot3d.r'
     'readLAS.r'
     'subcircled.r'
+    'tree_detection.r'
     'tree_metrics.r'
     'utils_colors.r'
     'utils_geometry.r'
