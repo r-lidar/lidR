@@ -30,12 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
 #include <Rcpp.h>
-#include "QuadTree.h"
+#include "Point.h"
 
 using namespace Rcpp;
-
-// Defined in cxx_utils.cpp
-std::vector<double> sqdistance(std::vector<Point*>& pts, Point& u);
 
 struct SortPoint
 {

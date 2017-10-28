@@ -145,23 +145,6 @@ NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
   return(out);
 }
 
-std::vector<double> sqdistance(std::vector<Point*>& pts, Point& u)
-{
-  int n = pts.size();
-  std::vector<double> y(n);
-  std::vector<double>::iterator iy, endy;
-  std::vector<Point*>::iterator ip, endp;
-
-  for(ip = pts.begin(), iy = y.begin(), endp = pts.end(), endy = y.end() ; iy < endy && ip < endp ; ++iy, ++ip)
-  {
-    double dx = (*ip)->x - u.x;
-    double dy = (*ip)->y - u.y;
-    *iy = dx * dx + dy * dy;
-  }
-
-  return y;
-}
-
 // [[Rcpp::export]]
 NumericVector roundc(NumericVector x, int digit = 0)
 {

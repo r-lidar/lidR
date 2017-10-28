@@ -7,6 +7,7 @@
 \alias{lastrees_watershed}
 \alias{lastrees_dalponte}
 \alias{lastrees_silva}
+\alias{lastrees_dalponte2}
 \title{Individual tree segmentation}
 \usage{
 lastrees(las, algorithm, ..., extra = FALSE)
@@ -20,6 +21,9 @@ lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
   th_cr = 0.55, max_cr = 10, extra = FALSE)
 
 lastrees_silva(las, treetops, max_cr_factor = 0.6, extra = FALSE)
+
+lastrees_dalponte2(las, chm, treetops, th_tree = 2, th_seed = 0.45,
+  th_cr = 0.55, max_cr = 10, extra = FALSE)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}}
