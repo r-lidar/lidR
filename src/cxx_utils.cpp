@@ -107,44 +107,6 @@ NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, do
   return(z);
 }
 
-IntegerMatrix which_equal(IntegerMatrix mtx, double val)
-{
-  int l = mtx.nrow();
-  int w = mtx.ncol();
-
-  NumericVector x;
-  NumericVector y;
-
-  for(int i = 0 ; i < l ; i++)
-  {
-    for(int j = 0 ; j < w ; j++)
-    {
-      if(mtx(i,j) == val)
-      {
-        x.push_back(i);
-        y.push_back(j);
-      }
-    }
-  }
-
-  IntegerMatrix m(x.length(), 2);
-  m(_, 0) = x;
-  m(_, 1) = y;
-
-  return(m);
-}
-
-NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
-{
-  int nrow = y.nrow();
-  NumericVector out(nrow);
-
-  for(int i = 0 ; i < nrow ; i++)
-    out(i) = x(y(i,0), y(i,1));
-
-  return(out);
-}
-
 // [[Rcpp::export]]
 NumericVector roundc(NumericVector x, int digit = 0)
 {
