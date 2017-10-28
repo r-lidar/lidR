@@ -5,18 +5,18 @@
 
 using namespace Rcpp;
 
-// itc_expandcrowns
-IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, double TRESHSeed, double TRESHCrown, double DIST);
-RcppExport SEXP _lidR_itc_expandcrowns(SEXP CanopySEXP, SEXP MaximaSEXP, SEXP TRESHSeedSEXP, SEXP TRESHCrownSEXP, SEXP DISTSEXP) {
+// algo_dalponte
+IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRESHSeed, double TRESHCrown, double DIST);
+RcppExport SEXP _lidR_algo_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP TRESHSeedSEXP, SEXP TRESHCrownSEXP, SEXP DISTSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
-    Rcpp::traits::input_parameter< IntegerMatrix >::type Maxima(MaximaSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Image(ImageSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type Seeds(SeedsSEXP);
     Rcpp::traits::input_parameter< double >::type TRESHSeed(TRESHSeedSEXP);
     Rcpp::traits::input_parameter< double >::type TRESHCrown(TRESHCrownSEXP);
     Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
-    rcpp_result_gen = Rcpp::wrap(itc_expandcrowns(Canopy, Maxima, TRESHSeed, TRESHCrown, DIST));
+    rcpp_result_gen = Rcpp::wrap(algo_dalponte(Image, Seeds, TRESHSeed, TRESHCrown, DIST));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -281,7 +281,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lidR_itc_expandcrowns", (DL_FUNC) &_lidR_itc_expandcrowns, 5},
+    {"_lidR_algo_dalponte", (DL_FUNC) &_lidR_algo_dalponte, 5},
     {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 5},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},

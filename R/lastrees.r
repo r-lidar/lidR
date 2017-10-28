@@ -81,10 +81,10 @@
 #' This is a local maxima + growing region algorithm. It is based on the algorithm developed by
 #' Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 #' This version is identical to the original but with superfluous code removed and rewritten
-#' in C++. Consequently it is 6 times faster.\cr
+#' in effciently. Consequently it is hundreds to millions times faster.\cr
 #' Note that this algorithm strictly performs a segmentation while the original method as
 #' implemented in \code{itcSegment} and described in the manuscript also performs a pre-
-#' and post-process when these tasks are expected to be done by the user.
+#' and post-process when these tasks are expected to be done by the user in separated functions.
 #'
 #' @section Silva 2016:
 #' This is a simple but elegant method based on local maxima + voronoi tesselation described
@@ -103,20 +103,27 @@
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col = pastel.colors(200)
 #'
-#' # Li et al. 2012 algorithm (note: with R = 10 the result is the same
+#' # Li et al. 2012 (note: with R = 10 the result is the same
 #' # but is computed 4 times slower)
 #' lastrees(las, "li2012", R = 5)
-#' plot(las, color = "treeID", colorPalette = pastel.colors(100))
+#' plot(las, color = "treeID", colorPalette = col)
 #'
-#' # Watershed
 #' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
 #' chm = as.raster(chm)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'
+#' # Watershed
 #' lastrees_watershed(las, chm)
 #' plot(las, color = "treeID", colorPalette = pastel.colors(100))
+#' plot(las, color = "treeID", colorPalette = col)
+#'
+#' # Dalponte 2016
+#' ttops = tree_detection(chm, 3, 2)
+#' lastrees_dalponte(las, chm, ttops)
+#' plot(las, color = "treeID", colorPalette = col)
 #'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
@@ -207,7 +214,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 
-  Crowns = itc_expandcrowns(Canopy, Maxima, th_seed, th_cr, max_cr)
+  Crowns = algo_dalponte(Canopy, Maxima, th_seed, th_cr, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 

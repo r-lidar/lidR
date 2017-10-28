@@ -8,9 +8,19 @@ struct Point
 	double x, y;
   int id;
 
-	Point();
-	Point(const double, const double);
-	Point(const double, const double, const long);
+  Point(){}
+  Point(const double _x, const double _y) : x(_x), y(_y), id(0) {}
+  Point(const double _x, const double _y, const int _id) : x(_x), y(_y), id(_id) {}
+};
+
+template<class T>
+struct Pixel
+{
+  int i, j;
+  T val;
+
+  Pixel() {}
+  Pixel(const int _i, const int _j, const T _val) : i(_i), j(_j), val(_val) {}
 };
 
 std::vector<double> sqdistance(std::vector<Point*>& pts, Point& u);

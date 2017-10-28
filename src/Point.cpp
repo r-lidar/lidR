@@ -1,9 +1,5 @@
 #include "Point.h"
 
-Point::Point(){}
-Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
-Point::Point(const double x, const double y, const long id) : x(x), y(y), id(id) {}
-
 double dist(const Point& lhs, const Point& rhs)
 {
   double dx = lhs.x - rhs.x;
