@@ -145,43 +145,6 @@ NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
   return(out);
 }
 
-NumericVector sqdistance(NumericVector x1, NumericVector y1, double x2, double y2)
-{
-  int n = x1.length();
-  NumericVector y(n);
-  NumericVector::iterator i1, i2, i3, end1, end2, end3;
-
-  for( i1 = x1.begin(), i2 = y1.begin(), i3 = y.begin(), end1 = x1.end(), end2 = y1.end(), end3 = y.end();
-       i1 < end1 && i2 < end2 && i3 < end3;
-        ++i1, ++i2 , ++i3)
-  {
-    double dx = *i1-x2;
-    double dy = *i2-y2;
-    *i3 = dx * dx + dy * dy;
-  }
-
-  return y;
-}
-
-NumericVector sqdistance(std::vector<double>& x1, std::vector<double>& y1, double x2, double y2)
-{
-  int n = x1.size();
-  NumericVector y(n);
-  std::vector<double>::iterator i1, i2, end1, end2;
-  NumericVector::iterator i3, end3;
-
-  for( i1 = x1.begin(), i2 = y1.begin(), i3 = y.begin(), end1 = x1.end(), end2 = y1.end(), end3 = y.end();
-       i1 < end1 && i2 < end2 && i3 < end3;
-       ++i1, ++i2 , ++i3)
-  {
-    double dx = *i1-x2;
-    double dy = *i2-y2;
-    *i3 = dx * dx + dy * dy;
-  }
-
-  return y;
-}
-
 std::vector<double> sqdistance(std::vector<Point*>& pts, Point& u)
 {
   int n = pts.size();
