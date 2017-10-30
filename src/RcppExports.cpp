@@ -197,15 +197,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // point_in_polygon
-bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy);
+bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy);
 RcppExport SEXP _lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type vertx(vertxSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
-    Rcpp::traits::input_parameter< float >::type pointx(pointxSEXP);
-    Rcpp::traits::input_parameter< float >::type pointy(pointySEXP);
+    Rcpp::traits::input_parameter< double >::type pointx(pointxSEXP);
+    Rcpp::traits::input_parameter< double >::type pointy(pointySEXP);
     rcpp_result_gen = Rcpp::wrap(point_in_polygon(vertx, verty, pointx, pointy));
     return rcpp_result_gen;
 END_RCPP
