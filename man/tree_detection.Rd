@@ -32,15 +32,21 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
 # point-cloud-based method
-ttops = tree_detection(las, 4)
+
+ttops = tree_detection(las, 5)
 
 plot(las)
 ttops \%$\% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
 
 # rasterer-based method
-chm = grid_canopy(las,1)
-ttops = tree_detection(chm, 3)
 
-plot(chm)
-raster::plot(ttops, add = TRUE, col = "red", legend = FALSE)
+chm = grid_canopy(las, 1, subcircle = 0.15)
+chm = as.raster(chm)
+kernel = matrix(1,3,3)
+chm = raster::focal(chm, w = kernel, fun = median, na.rm = T)
+
+ttops = tree_detection(chm, 5)
+
+raster::plot(chm, col = height.colors(30))
+raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
 }
