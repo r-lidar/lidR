@@ -11,7 +11,7 @@
 \usage{
 lastrees(las, algorithm, ..., extra = FALSE)
 
-lastrees_li(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10, extra = FALSE)
 
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE)
@@ -43,6 +43,8 @@ Default 1.5}
 \item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
 Default 2}
 
+\item{hmin}{numeric.  Minimun height of a detected tree. Default 2}
+
 \item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
@@ -65,8 +67,8 @@ is added to a region if its height is greater than the tree height multiplied by
 It should be between 0 and 1. Default 0.45}
 
 \item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016.  A pixel
-is added to a region if its height is greater than the current mean of the region multiplied
-by this value. It should be between 0 and 1. Default 0.55}
+is added to a region if its height is greater than the current mean height of the region
+multiplied by this value. It should be between 0 and 1. Default 0.55}
 
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixel).
 Default 10.}
@@ -90,7 +92,9 @@ SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relev
 
 This method is a growthing region method working at the raw point cloud level. It is a
 strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
-author.
+author but adding a paramter \code{hmin} to stop the segmentation for too low objects.
+In practice this limits the over-segmentation of the method. Otherwise this algo could
+segment a lake like a tree.
 }
 
 \section{Dalponte 2016}{

@@ -151,7 +151,7 @@
 #' # to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
 #' # can be used for the current process.
 #' fargs = list(lake = lake_shp)
-#' output = catalog_apply(project, tree_area, fargs, XYZonly = TRUE)
+#' output = catalog_apply(project, tree_area, fargs, select = "xyz")
 #'
 #' # 5. Post-process the output result (depending on the output computed). Here, each value
 #' # of the list is a data.table, so rbindlist does the job:

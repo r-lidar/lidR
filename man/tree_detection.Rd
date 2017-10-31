@@ -4,7 +4,7 @@
 \alias{tree_detection}
 \title{Tree tops detection based on local maxima filters}
 \usage{
-tree_detection(x, ws, th = 2)
+tree_detection(x, ws, hmin = 2)
 }
 \arguments{
 \item{x}{A object of class \code{LAS} or an object representing a canopy height model
@@ -14,8 +14,8 @@ such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix}.}
 a raster alike object this size is in pixel and should be an odd number larger than 3.
 On a raw point cloud this size is in the point cloud units (usually meters).}
 
-\item{th}{numeric. Threshold below which a pixel or a point cannot be a local maxima.
-Default 2.}
+\item{hmin}{numeric. Minimum hight of a tree. Threshold below which a pixel or a point
+cannot be a local maxima. Default 2.}
 }
 \value{
 A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
@@ -43,7 +43,7 @@ ttops \%$\% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
 chm = grid_canopy(las, 1, subcircle = 0.15)
 chm = as.raster(chm)
 kernel = matrix(1,3,3)
-chm = raster::focal(chm, w = kernel, fun = median, na.rm = T)
+chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 
 ttops = tree_detection(chm, 5)
 

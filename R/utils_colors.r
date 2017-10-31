@@ -72,7 +72,7 @@ NULL
 #' @family lidrpalettes
 height.colors = function(n)
 {
-  colfunc <- grDevices::colorRampPalette(c("blue", "cyan2", "green3", "yellow", "red"))
+  colfunc <- grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
   return(colfunc(n))
 }
 

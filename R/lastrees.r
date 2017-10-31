@@ -56,8 +56,8 @@
 #' is added to a region if its height is greater than the tree height multiplied by this value.
 #' It should be between 0 and 1. Default 0.45
 #' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016.  A pixel
-#' is added to a region if its height is greater than the current mean of the region multiplied
-#' by this value. It should be between 0 and 1. Default 0.55
+#' is added to a region if its height is greater than the current mean height of the region
+#' multiplied by this value. It should be between 0 and 1. Default 0.55
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixel).
 #' Default 10.
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as proportion of the
@@ -66,6 +66,7 @@
 #' Default 1.5
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
 #' Default 2
+#' @param hmin numeric.  Minimun height of a detected tree. Default 2
 #' @param R numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
@@ -77,7 +78,9 @@
 #' @section Li 2012:
 #' This method is a growthing region method working at the raw point cloud level. It is a
 #' strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
-#' author.
+#' author but adding a paramter \code{hmin} to stop the segmentation for too low objects.
+#' In practice this limits the over-segmentation of the method. Otherwise this algo could
+#' segment a lake like a tree.
 #'
 #' @section Dalponte 2016:
 #' This is a local maxima + growing region algorithm. It is based on the constrains proposed by
@@ -155,7 +158,7 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10, extra = FALSE)
 {
   stopifnotlas(las)
 
@@ -166,7 +169,7 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
   treeID   <- NULL
   progress <- LIDROPTIONS("progress")
 
-  id = algo_li2012(las, dt1, dt2, R)
+  id = algo_li2012(las, dt1, dt2, hmin, R, progress)
 
   las@data[, treeID := id]
 
@@ -253,7 +256,7 @@ lastrees_silva = function(las, treetops, max_cr_factor = 0.6, extra = FALSE)
 
   stopifnotlas(las)
 
-  if (is(chm, "RasterLayer"))
+  if (is(treetops, "RasterLayer"))
     stop("treetops is a RasterLayer. A data.frame is expected.", call. = FALSE)
 
   data.table::setDT(treetops)
@@ -309,5 +312,5 @@ lastrees_silva = function(las, treetops, max_cr_factor = 0.6, extra = FALSE)
   if (!extra)
     return(invisible())
   else
-    return(SPDF)
+    return(raster::crop(SPDF, extent(las)))
 }
