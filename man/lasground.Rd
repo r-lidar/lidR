@@ -31,7 +31,7 @@ to be considered a ground return. This is \code{dt0} in Zhang et al. (2003)}
 to be considered a ground return. This is \code{dhmax} in Zhang et al. (2003)}
 
 \item{s}{numeric. Slope value to be used in computing the height thresholds sequence.
-This is the parameter \code{s} in Zhang et al. (2003)}
+This is the parameter \code{s} in Zhang et al. (2003) (equation 7)}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
@@ -48,9 +48,10 @@ assigned a value of 2 according to las specifications (See the ASPRS documentati
 
 This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
 This is not a strict implementation of Zhang et al. This algorithm works at the raw point
-cloud level without any rasterization process. Therefore some parameter from the original
-description are no longer useful. The cell size \code{c} is not a requiered parameter.
-Therefore in the original paper the threshold sequence was:\cr\cr
+cloud level without any rasterization process. The morphological operator is applied on
+the points cloud not on a raster. Therefore some parameters from the original
+description are no longer useful. The cell size \code{c} (equation 7) is not a requiered
+parameter. Therefore in the original paper the threshold sequence was (equation 7):\cr\cr
 \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
 Now it is:\cr\cr
 \eqn{th_k = s*(w_k - w_{k-1}) + th_0}\cr\cr
