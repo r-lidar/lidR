@@ -45,16 +45,17 @@
 #' to be considered a ground return. This is \code{dt0} in Zhang et al. (2003)
 #' @param max_th numeric. Maximum threshold height above the parameterized ground surface
 #' to be considered a ground return. This is \code{dhmax} in Zhang et al. (2003)
-#' @param s  numeric. Slope value to be used in computing the height thresholds sequence.
-#'  This is the parameter \code{s} in Zhang et al. (2003)
+#' @param s numeric. Slope value to be used in computing the height thresholds sequence.
+#'  This is the parameter \code{s} in Zhang et al. (2003) (equation 7)
 #'
 #' @section Progressive morphological filter (PMF):
 #'
 #' This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
 #' This is not a strict implementation of Zhang et al. This algorithm works at the raw point
-#' cloud level without any rasterization process. Therefore some parameter from the original
-#' description are no longer useful. The cell size \code{c} is not a requiered parameter.
-#' Therefore in the original paper the threshold sequence was:\cr\cr
+#' cloud level without any rasterization process. The morphological operator is applied on
+#' the points cloud not on a raster. Therefore some parameters from the original
+#' description are no longer useful. The cell size \code{c} (equation 7) is not a requiered
+#' parameter. Therefore in the original paper the threshold sequence was (equation 7):\cr\cr
 #' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
 #' Now it is:\cr\cr
 #' \eqn{th_k = s*(w_k - w_{k-1}) + th_0}\cr\cr
@@ -94,7 +95,8 @@ lasground_pmf = function(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3.
 
   dots = list(...)
 
-  if (is.null(dots$exponential)) dots$exponential = FALSE
+  if (is.null(dots$exponential))
+    dots$exponential = FALSE
 
   exponential = dots$exponential
 
