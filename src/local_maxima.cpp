@@ -36,43 +36,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerMatrix C_LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize)
+IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
 {
-  int l = Canopy.nrow();
-  int w = Canopy.ncol();
+  int nrow = image.nrow();
+  int ncol = image.ncol();
 
-  int r, k, minR, minC, maxR, maxC;
+  int minR, minC, maxR, maxC;
   int index = 1;
+  int fhws = floor((double)ws/2);
 
-  double hws  = searchWinSize/2;
-  int    fhws = floor(hws);
+  NumericMatrix img_neighbours;
+  IntegerMatrix seed_neighbours;
+  IntegerMatrix seeds(nrow, ncol);
 
-  NumericMatrix FIL;
-  IntegerMatrix temp;
-
-  IntegerMatrix Maxima(l, w);
-
-  for (int r = fhws ; r < l-fhws ; r++)
+  for (int r = 0 ; r < nrow ; r++)
   {
-    for(int k = fhws ; k <  w-fhws ; k++)
+    for(int k = 0 ; k <  ncol ; k++)
     {
       minR = (r - fhws);
       minC = (k - fhws);
       maxR = (r + fhws);
       maxC = (k + fhws);
 
-      FIL  = Canopy(Range(minR,maxR), Range(minC,maxC));
-      temp = Maxima(Range(minR,maxR), Range(minC,maxC));
+      minR = minR >= 0 ? minR : 0;
+      minC = minC >= 0 ? minC : 0;
+      maxR = maxR < nrow ? maxR : nrow-1;
+      maxC = maxC < ncol ? maxC : ncol-1;
 
-      if (FIL(fhws,fhws) == max(FIL) && max(temp) == 0 && max(FIL) != 0)
+      img_neighbours  = image(Range(minR,maxR), Range(minC,maxC));
+      seed_neighbours = seeds(Range(minR,maxR), Range(minC,maxC));
+
+      if (image(r,k) == max(img_neighbours) &&                   // If center pixel is the highest
+          max(seed_neighbours) == 0 &&                           // And there is not orther seed in the neighborhood
+          image(r,k) > th)                                       // And this maximum is not too low
       {
-        Maxima(r,k) = index;
+        seeds(r,k) = index;                                      // Then this pixel is a seed
         index++;
       }
     }
   }
 
-  return(Maxima);
+  return(seeds);
 }
 
 // [[Rcpp::export]]

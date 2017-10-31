@@ -49,17 +49,23 @@
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
 #' # point-cloud-based method
-#' ttops = tree_detection(las, 4)
+#'
+#' ttops = tree_detection(las, 5)
 #'
 #' plot(las)
 #' ttops %$% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
 #'
 #' # rasterer-based method
-#' chm = grid_canopy(las,1)
-#' ttops = tree_detection(chm, 3)
 #'
-#' plot(chm)
-#' raster::plot(ttops, add = TRUE, col = "red", legend = FALSE)
+#' chm = grid_canopy(las, 1, subcircle = 0.15)
+#' chm = as.raster(chm)
+#' kernel = matrix(1,3,3)
+#' chm = raster::focal(chm, w = kernel, fun = median, na.rm = T)
+#'
+#' ttops = tree_detection(chm, 5)
+#'
+#' raster::plot(chm, col = height.colors(30))
+#' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
 tree_detection = function(x, ws, th = 2)
 {
   UseMethod("tree_detection", x)
@@ -73,7 +79,7 @@ tree_detection.LAS = function(x, ws = 3, th = 2)
 
   . <- X <- Y <- Z <- NULL
   bar = LIDROPTIONS("progress")
-  maxima = x@data %$% C_LocalMaximaPoints(x, ws, th, bar)
+  maxima = C_LocalMaximaPoints(x, ws, th, bar)
   return(x@data[maxima, .(X,Y,Z)])
 }
 
@@ -88,6 +94,7 @@ tree_detection.lasmetrics = function(x, ws, th = 2)
 tree_detection.RasterLayer = function(x, ws, th = 2)
 {
   xx <- raster::as.matrix(x)
+  xx <- t(apply(xx, 2, rev))
   LM = tree_detection(xx, ws, th)
   LM = raster::raster(apply(LM,1,rev))
   raster::extent(LM) = raster::extent(x)
@@ -103,10 +110,8 @@ tree_detection.matrix = function(x, ws, th = 2)
   if (ws %% 2 == 0)
     stop("ws should be an odd number", call. = FALSE)
 
-  x <- t(apply(x, 2, rev))
-  x[is.na(x) | x < th] <- NA
-
-  LM = C_LocalMaximaMatrix(x, ws)
+  x[is.na(x)] <- -Inf
+  LM = C_LocalMaximaMatrix(x, ws, th)
   LM[LM == 0] <- NA
   return(LM)
 }
