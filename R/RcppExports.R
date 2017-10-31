@@ -69,6 +69,10 @@ points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE)
     .Call(`_lidR_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
+polygon_intersection <- function(pointsMatrix1, pointsMatrix2) {
+    .Call(`_lidR_polygon_intersection`, pointsMatrix1, pointsMatrix2)
+}
+
 tinfo <- function(M, X) {
     .Call(`_lidR_tinfo`, M, X)
 }
