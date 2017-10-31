@@ -12,6 +12,7 @@
 #### BUG FIXES
 
 * Fix missing pixel in DTM leading to the impossibility to normalize.
+* [[#80](https://github.com/Jean-Romain/lidR/issue/80)] fix segfault
 * [[#84](https://github.com/Jean-Romain/lidR/issue/84)] fix bug in `lasscanline`
 
 #### ENHANCEMENT

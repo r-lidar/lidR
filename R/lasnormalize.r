@@ -53,7 +53,7 @@
 #' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #'
-#' @param .las a LAS object
+#' @param las a LAS object
 #' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 #' \link[lidR:grid_terrain]{grid_terrain}.
 #' @param method character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
@@ -93,15 +93,21 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
+lasnormalize = function(las, dtm = NULL, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
 {
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-  stopifnotlas(.las)
+  stopifnotlas(las)
+
+  if (! "Classification" %in% names(las@data))
+    stop("No field 'Classification' found.", call. = FALSE)
+
+  if (fast_countequal(las@data$Classification, 2) == 0)
+    stop("Not ground point found in the point cloud.", call. = FALSE)
 
   if(is.null(dtm))
   {
-    Zground = interpolate(.las@data[Classification == 2, .(X,Y,Z)], .las@data[, .(X,Y)], method = method, k = k, model = model)
+    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, model = model)
 
     isna = is.na(Zground)
     nnas = sum(isna)
@@ -121,7 +127,7 @@ lasnormalize = function(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(.5
     xmin = dtm@extent@xmin
     ymin = dtm@extent@ymin
     dtm  = raster::as.matrix(dtm)
-    Zground = fast_extract(dtm, .las@data$X, .las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
+    Zground = fast_extract(dtm, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
 
     isna = is.na(Zground)
     nnas = sum(isna)
@@ -132,19 +138,19 @@ lasnormalize = function(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(.5
 
   if (!copy)
   {
-    .las@data[, Zref := Z]
-    .las@data[, Z := round(Z - Zground, 3)]
-    .las@data[]
-    update_list_by_ref(.las@header@PHB, "Min Z", min(.las@data$Z))
-    update_list_by_ref(.las@header@PHB, "Max Z", max(.las@data$Z))
-    lascheck(.las@data, .las@header)
+    las@data[, Zref := Z]
+    las@data[, Z := round(Z - Zground, 3)]
+    las@data[]
+    update_list_by_ref(las@header@PHB, "Min Z", min(las@data$Z))
+    update_list_by_ref(las@header@PHB, "Max Z", max(las@data$Z))
+    lascheck(las@data, las@header)
     return(invisible())
   }
   else
   {
-    norm = data.table::copy(.las@data)
+    norm = data.table::copy(las@data)
     norm[, Z := round(Z - Zground, 3)]
-    return(LAS(norm, .las@header))
+    return(LAS(norm, las@header))
   }
 }
 
