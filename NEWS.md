@@ -5,6 +5,7 @@
 * `lasclip` and `lasclip*` can extract from a catalog
 * `lasclip` supports `sp::Polygon` objects
 * `lastrees` gain a new algorithm from Silva et al. (2016).
+* `lastrees` with Li's algorithm gain a new paramter to prevent over-segmentation.
 * new function `lassnags` for classifying points as snag points or segmenting snags.
 * new function `tree_detection` to detect individual trees. This feature has been extracted from `lastrees`'s algorithms and it is now up to the users to use `lidR`'s algos or other input sources.
 

@@ -48,7 +48,7 @@ struct SortPoint
 };
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progressbar = false)
+IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
 {
   /* *********************
    * INITALISATION STUFF *
@@ -71,6 +71,7 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progres
   int n  = ni;                    // Number of remaining points
   int k  = 1;                     // Current tree ID
   IntegerVector idtree(ni);       // The ID of each point (returned object)
+  std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
   Progress p(ni, progressbar);    // A progress bar and script abort options
   Point* dummy = new Point(xmin-100,ymin-100,-1);
   std::vector<Point*> P,N;        // Store the point in N or P group (see Li et al.)
@@ -100,56 +101,64 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double R, bool progres
 
   while(n > 0)
   {
-    // Initial step no point in P or N
+    Point* u = points[0];
     std::vector<bool> inN(n);
 
-    P.clear();
-    N.clear();
-
-    if (Progress::check_abort() )
-      return  IntegerVector::create(0);
-    else
-      p.update(ni-n);
-
-    Point* u = points[0];
-
-    // element 0 is the current highest points and is in P
-    P.push_back(u);
-    idtree[u->id] = k;
-
-    // Add dummy point in N
-    N.push_back(dummy);
-
-    // Compute the distance between the local max u and all the other point
-    std::vector<double> d = sqdistance(points, *u);
-
-    for (int i = 1 ; i < n ; ++i)
+    // Stop the algo is the highest point u, which is the tree top, is below a threshold
+    // Addition from original algo
+    if (Z[u->id] < th_tree)
     {
-      u = points[i];
+      p.update(ni);
+    }
+    else
+    {
+      // Initial step no point in P or N
+      P.clear();
+      N.clear();
 
-      if(d[i] > R)            // If d > R those points are not the current segmented tree
+      if (Progress::check_abort() )
+        return  IntegerVector::create(0);
+      else
+        p.update(ni-n);
+
+      // element 0 is the current highest points and is in P
+      P.push_back(u);
+      idtree[u->id] = k;
+
+      // Add dummy point in N
+      N.push_back(dummy);
+
+      // Compute the distance between the local max u and all the other point
+      std::vector<double> d = sqdistance(points, *u);
+
+      for (int i = 1 ; i < n ; ++i)
       {
-        inN[i] = true;
-      }
-      else                    // If d <= R classify point base on Li et al. rules
-      {
-        std::vector<double> dP = sqdistance(P, *u);
-        std::vector<double> dN = sqdistance(N, *u);
+        u = points[i];
 
-        double dmin1 = *std::min_element(dP.begin(), dP.end());
-        double dmin2 = *std::min_element(dN.begin(), dN.end());
-
-        double dt    = (Z[u->id] > 15) ? dt2 : dt1;
-
-        if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+        if(d[i] > R)            // If d > R those points are not the current segmented tree
         {
           inN[i] = true;
-          N.push_back(u);
         }
-        else if (dmin1 <= dt & dmin1 <= dmin2)
+        else                    // If d <= R classify point base on Li et al. rules
         {
-          P.push_back(u);
-          idtree[u->id] = k;
+          std::vector<double> dP = sqdistance(P, *u);
+          std::vector<double> dN = sqdistance(N, *u);
+
+          double dmin1 = *std::min_element(dP.begin(), dP.end());
+          double dmin2 = *std::min_element(dN.begin(), dN.end());
+
+          double dt    = (Z[u->id] > 15) ? dt2 : dt1;
+
+          if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+          {
+            inN[i] = true;
+            N.push_back(u);
+          }
+          else if (dmin1 <= dt & dmin1 <= dmin2)
+          {
+            P.push_back(u);
+            idtree[u->id] = k;
+          }
         }
       }
     }
