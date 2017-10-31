@@ -49,8 +49,8 @@
 #' @param chm RasterLayer. Image of the canopy. You can compute it with \link{grid_canopy}
 #' or \link{grid_tincanopy} or read it from external file.
 #' @param treetops RasterLayer or data.frame depending either you are using a raster-based
-#' or point cloud-based algorithm. You can compute it with \link{tree_detection} or read
-#' it from an external file.
+#' or point cloud-based algorithm (see details about methods). You can compute it with
+#' \link{tree_detection} or read it from an external file.
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
@@ -62,6 +62,9 @@
 #' Default 10.
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as proportion of the
 #' tree height. Default is 0.6 meaning 60\% of the tree height.
+#' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
+#' multiplied by the tree height will be remove. Thus, this number belong between 0 and 1.
+#'
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012).
 #' Default 1.5
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
@@ -86,7 +89,8 @@
 #' This is a local maxima + growing region algorithm. It is based on the constrains proposed by
 #' Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 #' This version is identical to the original but with superfluous code removed and rewritten
-#' effciently. Consequently it is hundreds to millions times faster.\cr
+#' effciently. Consequently it is hundreds to millions times faster. \code{treetops} is expected
+#' to be a \code{RasterLayer}\cr
 #' Note that this algorithm strictly performs a segmentation while the original method as
 #' implemented in \code{itcSegment} and described in the manuscript also performs a pre-
 #' and post-process when these tasks are expected to be done by the user in separated functions.
@@ -94,11 +98,10 @@
 #' @section Silva 2016:
 #' This is a simple but elegant method based on local maxima + voronoi tesselation described
 #' in Silva et al. (2016) (see references). This algorithm is implemented in the package
-#' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
-#' a code written from scratch by lidR author from the original paper. Compared to the original,
-#' method the algorithm works at the raw point cloud level without the need of an image of
-#' the canopy. The points are classified based on the polygons contructed by the tesselation.
-#' The algorithm is also considerably faster.
+#' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+#' a code written from scratch by lidR author from the original paper and is considerably
+#' faster. \code{treetops} is expected to be either a \code{RasterLayer} or a
+#' \code{data.frame}.
 #'
 #' @section Watershed:
 #' This method is a simple \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
@@ -110,8 +113,7 @@
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #' col = pastel.colors(200)
 #'
-#' # Li et al. 2012 (note: with R = 10 the result is the same
-#' # but is computed 4 times slower)
+#' # Li 2012
 #' lastrees(las, "li2012", R = 5)
 #' plot(las, color = "treeID", colorPalette = col)
 #'
@@ -250,67 +252,79 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
 #' @export
 #' @rdname lastrees
-lastrees_silva = function(las, treetops, max_cr_factor = 0.6, extra = FALSE)
+lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE)
 {
-  . <- R <- X <- Y <- Z <- NULL
+  . <- R <- X <- Y <- Z <- id <-  NULL
 
   stopifnotlas(las)
 
   if (is(treetops, "RasterLayer"))
-    stop("treetops is a RasterLayer. A data.frame is expected.", call. = FALSE)
+    treetops = raster::as.data.frame(chm, xy = TRUE, na.rm = T)
+  else if (!is.data.frame(treetops))
+    stop("treetops format not recognized.", call. = FALSE)
 
-  data.table::setDT(treetops)
-  treetops[, R := Z * max_cr_factor]
+  if (exclusion < 0 | exclusion > 1)
+    stop("exclusion should be between 0 and 1", call. = FALSE)
+
+  ttops = data.table::copy(treetops)
+  data.table::setDT(ttops)
+  data.table::setnames(ttops, names(ttops), c("X", "Y", "Z"))
+  R = ttops$Z * max_cr_factor
 
   # Compute voronoi tesselation
-  x = deldir::deldir(treetops$X, treetops$Y, suppressMsge = T)
-  tile = deldir::tile.list(x)
+  voronoi  = deldir::deldir(ttops$X, ttops$Y, suppressMsge = T)
+  polygons = deldir::tile.list(voronoi)
 
   # Pre compute some sin and cos
   kcos = cos(seq(0, 2*pi, length.out = 64))
   ksin = sin(seq(0, 2*pi, length.out = 64))
 
-  tree_polys = vector(mode = "list", length = length(tile))
+  chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
+  data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
+  chmdt[, id := NA_integer_]
 
-  for (i in seq(along = tree_polys))
+  for (i in 1:length(polygons))
   {
-    id = as.character(i)
+    polygon = polygons[[i]]
+    r = R[i]
 
     # Voronoi polygon coordinates
-    x = tile[[i]]$x
-    y = tile[[i]]$y
-    x = c(x, x[1])
-    y = c(y, y[1])
-    xy = cbind(x,y)
+    xpoly = polygon$x
+    ypoly = polygon$y
+    xpoly = c(xpoly, xpoly[1])
+    ypoly = c(ypoly, ypoly[1])
 
-    voronoi_poly = list(sp::Polygons(list(sp::Polygon(xy)), ID = id))
-    voronoi_poly = sp::SpatialPolygons(voronoi_poly)
+    ptid = polygon$ptNum
 
-    # Disc buffer polygon coordinates
-    r = treetops$R[i]
-    x = r*kcos + treetops$X[i]
-    y = r*ksin + treetops$Y[i]
-    x = c(x, x[1])
-    y = c(y, y[1])
-    xy = cbind(x, y)
+    xdisc = r*kcos + ttops$X[i]
+    ydisc = r*ksin + ttops$Y[i]
+    xdisc = c(xdisc, xdisc[1])
+    ydisc = c(ydisc, ydisc[1])
 
-    disc_poly <- list(sp::Polygons(list(sp::Polygon(xy)), ID = id))
-    disc_poly = sp::SpatialPolygons(disc_poly)
+    inpoly = points_in_polygon(xpoly, ypoly, chmdt$X, chmdt$Y)
 
-    # Intersection of both disc and voronoi polygon
-    tree_poly = rgeos::gIntersection(voronoi_poly, disc_poly)@polygons[[1]]
-    tree_poly@ID = id
+    diag_bbox_poly = sqrt( (max(xpoly) - min(xpoly))^2 + (max(ypoly) - min(ypoly))^2)
 
-    tree_polys[[i]] = tree_poly
+    if(diag_bbox_poly > 2*r)
+    {
+      indisc = points_in_polygon(xdisc, ydisc, chmdt$X, chmdt$Y)
+    }
+    else
+      indisc = TRUE
+
+    select = chmdt$Z > exclusion*ttops$Z[ptid] & inpoly & indisc
+
+    chmdt[select, id := i]
   }
 
-  SP   = sp::SpatialPolygons(tree_polys)
-  SPDF = sp::SpatialPolygonsDataFrame(SP, data = data.frame(treeID = 1:nrow(treetops)))
+  chmdt[, Z := NULL]
+  as.lasmetrics(chmdt, raster::res(chm)[1])
+  crown = as.raster(chmdt)
 
-  lasclassify(las, SPDF, "treeID")
+  lasclassify(las, crown, "treeID")
 
   if (!extra)
     return(invisible())
   else
-    return(raster::crop(SPDF, extent(las)))
+    return(crown)
 }

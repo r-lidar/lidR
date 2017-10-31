@@ -4,11 +4,11 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
+lasnormalize(las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
   "Sph", 874), copy = FALSE)
 }
 \arguments{
-\item{.las}{a LAS object}
+\item{las}{a LAS object}
 
 \item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 \link[lidR:grid_terrain]{grid_terrain}.}
