@@ -57,6 +57,9 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     xmin = seq(buffered_bbox[1], buffered_bbox[3], width)
     ymin = seq(buffered_bbox[2], buffered_bbox[4], width)
 
+    xmin = xmin[xmin < ctg@data$`Max X`]
+    ymin = ymin[ymin < ctg@data$`Max Y`]
+
     X = expand.grid(xmin = xmin, ymin = ymin)
 
     xmin = X$xmin
