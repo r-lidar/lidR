@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRESHSeed, double TRESHCrown, double DIST)
+IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_three, double DIST)
 {
   bool expend;
   bool finished = false;
@@ -41,7 +41,7 @@ IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRE
   int nrow = Image.nrow();
   int ncol = Image.ncol();
 
-  std::vector< Pixel<double> > neighbour(4);
+  std::vector< Pixel<double> > neighbour(8);
 
   IntegerMatrix OldRegion  = clone(Seeds);
   IntegerMatrix Region     = clone(Seeds);
@@ -78,7 +78,7 @@ IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRE
         {
           int ind = Region(r, k)-1;                                     // ID of the crown for the current pixel
 
-          Pixel<int>seed  = seeds[ind];                              // Coordonnées du maximum local d'indice ind
+          Pixel<int>seed  = seeds[ind];                                 // Coordonnées du maximum local d'indice ind
           double rvSeed   = Image(seed.i, seed.j);                      // Seed height
           double rvCrown  = sum_height[ind]/npixel[ind];                // Mean height of the crown
 
@@ -88,16 +88,21 @@ IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRE
           neighbour[2] = Pixel<double>(r, k+1, Image(r, k+1));
           neighbour[3] = Pixel<double>(r+1, k, Image(r+1, k));
 
-          // Test les 4 coordonnées pour trouver celles qui correspondend au test
-          for(int i = 0 ; i < 4 ; i++)
+          /*neighbour[4] = Pixel<double>(r-1, k-1, Image(r-1, k-1));
+          neighbour[5] = Pixel<double>(r-1, k+1, Image(r-1, k+1));
+          neighbour[6] = Pixel<double>(r+1, k+1, Image(r+1, k+1));
+          neighbour[7] = Pixel<double>(r+1, k-1, Image(r+1, k-1));*/
+
+          // Test les coordonnées pour trouver celles qui correspondend au test
+          for(int i = 0 ; i < neighbour.size() ; i++)
           {
             Pixel<double> px = neighbour[i];
 
-            if (px.val != 0)                                        // La canopée ne vaut pas 0 pour ce pixel
+            if (px.val > th_three)                                  // La canopée ne vaut pas 0 pour ce pixel
             {
               expend =
-                px.val > rvSeed*TRESHSeed &&                        // La canopée est supérieure à un seuil pour ce pixel
-                px.val > rvCrown*TRESHCrown &&                      // La canopée est supérieure à un  autre seuil pour ce pixel
+                px.val > rvSeed*th_seed &&                          // La canopée est supérieure à un seuil pour ce pixel
+                px.val > rvCrown*th_crown &&                        // La canopée est supérieure à un  autre seuil pour ce pixel
                 px.val <= rvSeed+rvSeed*0.05 &&                     // La canopée est inférieure à un seuil pour ce pixel
                 abs(seed.i-px.i) < DIST &&                          // Le pixel n'est pas trop loin du maximum local sur x
                 abs(seed.j-px.j) < DIST &&                          // Le pixel n'est pas trop loin du maximum local sur y

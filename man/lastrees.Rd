@@ -60,13 +60,15 @@ or \link{grid_tincanopy} or read it from external file.}
 or point cloud-based algorithm. You can compute it with \link{tree_detection} or read
 it from an external file.}
 
-\item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
-should be between 0 and 1. Default 0.45}
+\item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
+is added to a region if its height is greater than the tree height multiplied by this value.
+It should be between 0 and 1. Default 0.45}
 
-\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
-should be between 0 and 1. Default 0.55}
+\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016.  A pixel
+is added to a region if its height is greater than the current mean of the region multiplied
+by this value. It should be between 0 and 1. Default 0.55}
 
-\item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in meters).
+\item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixel).
 Default 10.}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
@@ -93,10 +95,10 @@ author.
 
 \section{Dalponte 2016}{
 
-This is a local maxima + growing region algorithm. It is based on the algorithm developed by
+This is a local maxima + growing region algorithm. It is based on the constrains proposed by
 Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 This version is identical to the original but with superfluous code removed and rewritten
-in effciently. Consequently it is hundreds to millions times faster.\cr
+effciently. Consequently it is hundreds to millions times faster.\cr
 Note that this algorithm strictly performs a segmentation while the original method as
 implemented in \code{itcSegment} and described in the manuscript also performs a pre-
 and post-process when these tasks are expected to be done by the user in separated functions.
@@ -141,8 +143,8 @@ plot(las, color = "treeID", colorPalette = pastel.colors(100))
 plot(las, color = "treeID", colorPalette = col)
 
 # Dalponte 2016
-ttops = tree_detection(chm, 3, 2)
-lastrees_dalponte(las, chm, ttops)
+ttops = tree_detection(chm, 5, 2)
+lastrees_dalponte(las, chm, ttops, max_cr = 7)
 plot(las, color = "treeID", colorPalette = col)
 
 }
