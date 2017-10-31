@@ -19,7 +19,8 @@ lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
 lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
   th_cr = 0.55, max_cr = 10, extra = FALSE)
 
-lastrees_silva(las, treetops, max_cr_factor = 0.6, extra = FALSE)
+lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
+  extra = FALSE)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}}
@@ -59,8 +60,8 @@ or \link{grid_tincanopy} or read it from external file.}
 \item{ext}{numeric. see ?EBImage::watershed}
 
 \item{treetops}{RasterLayer or data.frame depending either you are using a raster-based
-or point cloud-based algorithm. You can compute it with \link{tree_detection} or read
-it from an external file.}
+or point cloud-based algorithm (see details about methods). You can compute it with
+\link{tree_detection} or read it from an external file.}
 
 \item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 is added to a region if its height is greater than the tree height multiplied by this value.
@@ -75,6 +76,9 @@ Default 10.}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
 tree height. Default is 0.6 meaning 60\% of the tree height.}
+
+\item{exclusion}{numeric. For each tree, pixels with an elevation lower than \code{exclusion}
+multiplied by the tree height will be remove. Thus, this number belong between 0 and 1.}
 }
 \value{
 Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some
@@ -102,7 +106,8 @@ segment a lake like a tree.
 This is a local maxima + growing region algorithm. It is based on the constrains proposed by
 Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 This version is identical to the original but with superfluous code removed and rewritten
-effciently. Consequently it is hundreds to millions times faster.\cr
+effciently. Consequently it is hundreds to millions times faster. \code{treetops} is expected
+to be a \code{RasterLayer}\cr
 Note that this algorithm strictly performs a segmentation while the original method as
 implemented in \code{itcSegment} and described in the manuscript also performs a pre-
 and post-process when these tasks are expected to be done by the user in separated functions.
@@ -112,11 +117,10 @@ and post-process when these tasks are expected to be done by the user in separat
 
 This is a simple but elegant method based on local maxima + voronoi tesselation described
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
-\code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. This version is
-a code written from scratch by lidR author from the original paper. Compared to the original,
-method the algorithm works at the raw point cloud level without the need of an image of
-the canopy. The points are classified based on the polygons contructed by the tesselation.
-The algorithm is also considerably faster.
+\code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+a code written from scratch by lidR author from the original paper and is considerably
+faster. \code{treetops} is expected to be either a \code{RasterLayer} or a
+\code{data.frame}.
 }
 
 \section{Watershed}{
@@ -131,8 +135,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
-# Li et al. 2012 (note: with R = 10 the result is the same
-# but is computed 4 times slower)
+# Li 2012
 lastrees(las, "li2012", R = 5)
 plot(las, color = "treeID", colorPalette = col)
 

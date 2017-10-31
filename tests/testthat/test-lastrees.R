@@ -26,8 +26,8 @@ test_that("Silvas's methods works", {
   las@data[, treeID := NULL]
 
   ttops = tree_detection(las, 3, 2)
-  SPDF = lastrees_silva(las, ttops, extra = TRUE)
-  expect_true(is(SPDF, "SpatialPolygonsDataFrame"))
+  out = lastrees_silva(las, chm, ttops, extra = TRUE)
+  expect_true(is(out, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
 })
 
