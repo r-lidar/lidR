@@ -96,7 +96,7 @@ SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relev
 
 This method is a growthing region method working at the raw point cloud level. It is a
 strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
-author but adding a paramter \code{hmin} to stop the segmentation for too low objects.
+author but adding a parameter \code{hmin} to stop the segmentation for too low objects.
 In practice this limits the over-segmentation of the method. Otherwise this algo could
 segment a lake like a tree.
 }
@@ -119,8 +119,8 @@ This is a simple but elegant method based on local maxima + voronoi tesselation 
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
 \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 a code written from scratch by lidR author from the original paper and is considerably
-faster. \code{treetops} is expected to be either a \code{RasterLayer} or a
-\code{data.frame}.
+faster (between 50 and 100 times faster). \code{treetops} is expected to be either a
+\code{RasterLayer} or a \code{data.frame}.
 }
 
 \section{Watershed}{

@@ -81,7 +81,7 @@
 #' @section Li 2012:
 #' This method is a growthing region method working at the raw point cloud level. It is a
 #' strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
-#' author but adding a paramter \code{hmin} to stop the segmentation for too low objects.
+#' author but adding a parameter \code{hmin} to stop the segmentation for too low objects.
 #' In practice this limits the over-segmentation of the method. Otherwise this algo could
 #' segment a lake like a tree.
 #'
@@ -100,8 +100,8 @@
 #' in Silva et al. (2016) (see references). This algorithm is implemented in the package
 #' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 #' a code written from scratch by lidR author from the original paper and is considerably
-#' faster. \code{treetops} is expected to be either a \code{RasterLayer} or a
-#' \code{data.frame}.
+#' faster (between 50 and 100 times faster). \code{treetops} is expected to be either a
+#' \code{RasterLayer} or a \code{data.frame}.
 #'
 #' @section Watershed:
 #' This method is a simple \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
@@ -254,7 +254,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 #' @rdname lastrees
 lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE)
 {
-  . <- R <- X <- Y <- Z <- id <-  NULL
+  . <- R <- X <- Y <- Z <- id <-  hmax <- NULL
 
   stopifnotlas(las)
 
@@ -281,7 +281,10 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 
   chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
-  chmdt[, id := NA_integer_]
+  #chmdt[, id := NA_integer_]
+
+  xpolygons = vector(mode = "list", length = length(polygons))
+  ypolygons = vector(mode = "list", length = length(polygons))
 
   for (i in 1:length(polygons))
   {
@@ -294,6 +297,8 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
     xpoly = c(xpoly, xpoly[1])
     ypoly = c(ypoly, ypoly[1])
 
+    poly = cbind(xpoly, ypoly)
+
     ptid = polygon$ptNum
 
     xdisc = r*kcos + ttops$X[i]
@@ -301,23 +306,20 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
     xdisc = c(xdisc, xdisc[1])
     ydisc = c(ydisc, ydisc[1])
 
-    inpoly = points_in_polygon(xpoly, ypoly, chmdt$X, chmdt$Y)
+    disc = cbind(xdisc, ydisc)
 
-    diag_bbox_poly = sqrt( (max(xpoly) - min(xpoly))^2 + (max(ypoly) - min(ypoly))^2)
+    poly = polygon_intersection(poly, disc)
 
-    if(diag_bbox_poly > 2*r)
-    {
-      indisc = points_in_polygon(xdisc, ydisc, chmdt$X, chmdt$Y)
-    }
-    else
-      indisc = TRUE
-
-    select = chmdt$Z > exclusion*ttops$Z[ptid] & inpoly & indisc
-
-    chmdt[select, id := i]
+    xpolygons[[i]] = poly[,1]
+    ypolygons[[i]] = poly[,2]
   }
 
-  chmdt[, Z := NULL]
+  idpoly = points_in_polygons(xpolygons, ypolygons, chmdt$X, chmdt$Y)
+
+  chmdt[, id := idpoly]
+
+  chmdt[, hmax := max(Z), by = id]
+  chmdt = chmdt[Z > exclusion*hmax, .(X,Y, id)]
   as.lasmetrics(chmdt, raster::res(chm)[1])
   crown = as.raster(chmdt)
 
