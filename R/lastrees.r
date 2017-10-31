@@ -52,11 +52,13 @@
 #' or point cloud-based algorithm. You can compute it with \link{tree_detection} or read
 #' it from an external file.
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
-#' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. It
-#' should be between 0 and 1. Default 0.45
-#' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016. It
-#' should be between 0 and 1. Default 0.55
-#' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in meters).
+#' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
+#' is added to a region if its height is greater than the tree height multiplied by this value.
+#' It should be between 0 and 1. Default 0.45
+#' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016.  A pixel
+#' is added to a region if its height is greater than the current mean of the region multiplied
+#' by this value. It should be between 0 and 1. Default 0.55
+#' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixel).
 #' Default 10.
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as proportion of the
 #' tree height. Default is 0.6 meaning 60\% of the tree height.
@@ -78,10 +80,10 @@
 #' author.
 #'
 #' @section Dalponte 2016:
-#' This is a local maxima + growing region algorithm. It is based on the algorithm developed by
+#' This is a local maxima + growing region algorithm. It is based on the constrains proposed by
 #' Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 #' This version is identical to the original but with superfluous code removed and rewritten
-#' in effciently. Consequently it is hundreds to millions times faster.\cr
+#' effciently. Consequently it is hundreds to millions times faster.\cr
 #' Note that this algorithm strictly performs a segmentation while the original method as
 #' implemented in \code{itcSegment} and described in the manuscript also performs a pre-
 #' and post-process when these tasks are expected to be done by the user in separated functions.
@@ -121,8 +123,8 @@
 #' plot(las, color = "treeID", colorPalette = col)
 #'
 #' # Dalponte 2016
-#' ttops = tree_detection(chm, 3, 2)
-#' lastrees_dalponte(las, chm, ttops)
+#' ttops = tree_detection(chm, 5, 2)
+#' lastrees_dalponte(las, chm, ttops, max_cr = 7)
 #' plot(las, color = "treeID", colorPalette = col)
 #'
 #' @references
@@ -137,6 +139,8 @@
 #' @export
 lastrees <- function(las, algorithm, ..., extra = FALSE)
 {
+  stopifnotlas(las)
+
   if (algorithm == "dalponte2016" )
     return(lastrees_dalponte(las, ...))
   else if (algorithm == "watershed")
@@ -153,6 +157,8 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
 #' @rdname lastrees
 lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
 {
+  stopifnotlas(las)
+
   if (dt1 <= 0) stop("dt1 should be positive",  call. = FALSE)
   if (dt1 <= 0) stop("dt1 should be positive", call. = FALSE)
   if (R <= 0)   stop("R should be positive", call. = FALSE)
@@ -171,6 +177,8 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 10, extra = FALSE)
 #' @rdname lastrees
 lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE)
 {
+  stopifnotlas(las)
+
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[Canopy < th_tree] <- NA
@@ -197,6 +205,8 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
 #' @rdname lastrees
 lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE)
 {
+  stopifnotlas(las)
+
   if (!is(chm, "RasterLayer"))
     stop("chm is not a RasterLayer", call. = FALSE)
 
@@ -206,15 +216,21 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   if (raster::extent(chm) != raster::extent(treetops))
     stop("chm and treetops do not match together", call. = FALSE)
 
+  if (th_seed < 0 | th_seed > 1)
+    stop("th_seed should be between 0 and 1", call. = FALSE)
+
+  if (th_cr < 0 | th_cr > 1)
+    stop("th_cr should be between 0 and 1", call. = FALSE)
+
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
-  Canopy[is.na(Canopy) | Canopy < th_tree] <- 0
+  Canopy[is.na(Canopy)] <- -Inf
 
   Maxima <- raster::as.matrix(treetops)
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 
-  Crowns = algo_dalponte(Canopy, Maxima, th_seed, th_cr, max_cr)
+  Crowns = algo_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 
@@ -234,6 +250,11 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 lastrees_silva = function(las, treetops, max_cr_factor = 0.6, extra = FALSE)
 {
   . <- R <- X <- Y <- Z <- NULL
+
+  stopifnotlas(las)
+
+  if (is(chm, "RasterLayer"))
+    stop("treetops is a RasterLayer. A data.frame is expected.", call. = FALSE)
 
   data.table::setDT(treetops)
   treetops[, R := Z * max_cr_factor]

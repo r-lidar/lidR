@@ -6,17 +6,18 @@
 using namespace Rcpp;
 
 // algo_dalponte
-IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double TRESHSeed, double TRESHCrown, double DIST);
-RcppExport SEXP _lidR_algo_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP TRESHSeedSEXP, SEXP TRESHCrownSEXP, SEXP DISTSEXP) {
+IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_three, double DIST);
+RcppExport SEXP _lidR_algo_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_threeSEXP, SEXP DISTSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type Image(ImageSEXP);
     Rcpp::traits::input_parameter< IntegerMatrix >::type Seeds(SeedsSEXP);
-    Rcpp::traits::input_parameter< double >::type TRESHSeed(TRESHSeedSEXP);
-    Rcpp::traits::input_parameter< double >::type TRESHCrown(TRESHCrownSEXP);
+    Rcpp::traits::input_parameter< double >::type th_seed(th_seedSEXP);
+    Rcpp::traits::input_parameter< double >::type th_crown(th_crownSEXP);
+    Rcpp::traits::input_parameter< double >::type th_three(th_threeSEXP);
     Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_dalponte(Image, Seeds, TRESHSeed, TRESHCrown, DIST));
+    rcpp_result_gen = Rcpp::wrap(algo_dalponte(Image, Seeds, th_seed, th_crown, th_three, DIST));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -156,14 +157,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_LocalMaximaMatrix
-IntegerMatrix C_LocalMaximaMatrix(NumericMatrix Canopy, double searchWinSize);
-RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP CanopySEXP, SEXP searchWinSizeSEXP) {
+IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th);
+RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP imageSEXP, SEXP wsSEXP, SEXP thSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Canopy(CanopySEXP);
-    Rcpp::traits::input_parameter< double >::type searchWinSize(searchWinSizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(Canopy, searchWinSize));
+    Rcpp::traits::input_parameter< NumericMatrix >::type image(imageSEXP);
+    Rcpp::traits::input_parameter< int >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< double >::type th(thSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(image, ws, th));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -281,7 +283,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lidR_algo_dalponte", (DL_FUNC) &_lidR_algo_dalponte, 5},
+    {"_lidR_algo_dalponte", (DL_FUNC) &_lidR_algo_dalponte, 6},
     {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 5},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
@@ -292,7 +294,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
     {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
     {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 6},
-    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 2},
+    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
