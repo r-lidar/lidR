@@ -60,6 +60,8 @@ Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector 
     }
   }
 
+  delete tree;
+
   return Rcpp::List::create(Rcpp::Named("nn.idx") = knn_idx,
                             Rcpp::Named("nn.dist") = knn_dist);
 }
@@ -104,6 +106,8 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
 
     iZ(i) = sum_zw/sum_w;
   }
+
+  delete tree;
 
   return iZ;
 }
