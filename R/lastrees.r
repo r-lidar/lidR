@@ -100,7 +100,7 @@
 #' in Silva et al. (2016) (see references). This algorithm is implemented in the package
 #' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 #' a code written from scratch by lidR author from the original paper and is considerably
-#' faster (between 50 and 100 times faster). \code{treetops} is expected to be either a
+#' faster (between 250 and 300 times faster). \code{treetops} is expected to be either a
 #' \code{RasterLayer} or a \code{data.frame}.
 #'
 #' @section Watershed:
@@ -254,12 +254,12 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 #' @rdname lastrees
 lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE)
 {
-  . <- R <- X <- Y <- Z <- id <-  hmax <- NULL
+  . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
   stopifnotlas(las)
 
   if (is(treetops, "RasterLayer"))
-    treetops = raster::as.data.frame(chm, xy = TRUE, na.rm = T)
+    treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
   else if (!is.data.frame(treetops))
     stop("treetops format not recognized.", call. = FALSE)
 
@@ -269,57 +269,17 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   ttops = data.table::copy(treetops)
   data.table::setDT(ttops)
   data.table::setnames(ttops, names(ttops), c("X", "Y", "Z"))
-  R = ttops$Z * max_cr_factor
-
-  # Compute voronoi tesselation
-  voronoi  = deldir::deldir(ttops$X, ttops$Y, suppressMsge = T)
-  polygons = deldir::tile.list(voronoi)
-
-  # Pre compute some sin and cos
-  kcos = cos(seq(0, 2*pi, length.out = 64))
-  ksin = sin(seq(0, 2*pi, length.out = 64))
 
   chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
-  #chmdt[, id := NA_integer_]
 
-  xpolygons = vector(mode = "list", length = length(polygons))
-  ypolygons = vector(mode = "list", length = length(polygons))
-
-  for (i in 1:length(polygons))
-  {
-    polygon = polygons[[i]]
-    r = R[i]
-
-    # Voronoi polygon coordinates
-    xpoly = polygon$x
-    ypoly = polygon$y
-    xpoly = c(xpoly, xpoly[1])
-    ypoly = c(ypoly, ypoly[1])
-
-    poly = cbind(xpoly, ypoly)
-
-    ptid = polygon$ptNum
-
-    xdisc = r*kcos + ttops$X[i]
-    ydisc = r*ksin + ttops$Y[i]
-    xdisc = c(xdisc, xdisc[1])
-    ydisc = c(ydisc, ydisc[1])
-
-    disc = cbind(xdisc, ydisc)
-
-    poly = polygon_intersection(poly, disc)
-
-    xpolygons[[i]] = poly[,1]
-    ypolygons[[i]] = poly[,2]
-  }
-
-  idpoly = points_in_polygons(xpolygons, ypolygons, chmdt$X, chmdt$Y)
-
-  chmdt[, id := idpoly]
+  # Voronoi tesselation is nothing else than the nearest neigbour
+  u = knn(ttops$X, ttops$Y, chmdt$X, chmdt$Y, 1L)
+  chmdt[, id := u$nn.idx[,1]]
+  chmdt[, d := u$nn.dist[,1]]
 
   chmdt[, hmax := max(Z), by = id]
-  chmdt = chmdt[Z > exclusion*hmax, .(X,Y, id)]
+  chmdt = chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
   as.lasmetrics(chmdt, raster::res(chm)[1])
   crown = as.raster(chmdt)
 
