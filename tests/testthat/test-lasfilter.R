@@ -49,3 +49,19 @@ test_that("clip rectangle works with a catalog", {
   rect = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
   expect_true(extent(rect) <= raster::extent(684850, 5017850, 684900, 5017900))
 })
+
+test_that("clip polygon works with a catalog", {
+  tri = lasclipPolygon(ctg, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850))
+  expect_true(extent(tri) <= raster::extent(684850, 5017800, 684975, 5017900))
+})
+
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+shapefile_dir <- system.file("extdata", package = "lidR")
+lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+
+test_that("clip works with a geometry", {
+  poly = lakes@polygons[[1]]@Polygons[[1]]
+
+  roi = lasclip(ctg, poly)
+  expect_equal(nrow(roi@data), 7065)
+})
