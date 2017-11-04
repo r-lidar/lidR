@@ -141,8 +141,8 @@ streamLAS = function(x, ofile, select = "*", filter = "", ...)
 streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", ...)
 {
   filter = paste(x@filter, filter)
-  las = streamLAS(x@files, ofile, filter, select)
-  return(invisible())
+  las = streamLAS(x@files, ofile, select,  filter)
+  return(invisible(las))
 }
 
 streamLAS.character = function(x, ofile, select = "*", filter = "", ...)

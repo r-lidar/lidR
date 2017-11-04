@@ -110,6 +110,7 @@ test_that("catalog reshape works", {
 
   unlink(temp, recursive = T)
 
+  expect_equal(sum(ctg@data$`Number of point records`), sum(ctg2@data$`Number of point records`))
   expect_equal(nrow(ctg2@data), 9)
 })
 
