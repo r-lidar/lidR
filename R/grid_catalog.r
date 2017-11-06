@@ -49,7 +49,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   # Test of memory to prevent memory overflow
   # ========================================
 
-  surface <- sum(with(catalog, (Max.X - Min.X) * (Max.Y - Min.Y)))
+  surface <- sum(with(catalog@data, (`Max X` - `Min X`) * (`Max Y` - `Min Y`)))
   npixel  <- surface / (res*res)
   nmetric <- 3 # Must find a way to access this number
   nbytes  <- npixel * nmetric * 8
