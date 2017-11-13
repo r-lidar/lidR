@@ -119,7 +119,7 @@ This is a simple but elegant method based on local maxima + voronoi tesselation 
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
 \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 a code written from scratch by lidR author from the original paper and is considerably
-faster (between 50 and 100 times faster). \code{treetops} is expected to be either a
+faster (between 250 and 300 times faster). \code{treetops} is expected to be either a
 \code{RasterLayer} or a \code{data.frame}.
 }
 
