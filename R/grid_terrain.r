@@ -63,6 +63,7 @@
 #' @param res numeric. resolution.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
+#' @param p numeric. Power for invert distance weighting. Default 2.
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
 #' is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.
 #' @param keep_lowest logical. This function forces the original lowest ground point of each
@@ -74,7 +75,7 @@
 #' lidar = readLAS(LASfile)
 #' plot(lidar)
 #'
-#' dtm1 = grid_terrain(lidar, method = "knnidw", k = 6)
+#' dtm1 = grid_terrain(lidar, method = "knnidw", k = 6, p = 2)
 #' dtm2 = grid_terrain(lidar, method = "delaunay")
 #' dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
 #'
@@ -93,13 +94,13 @@
 #' \link[gstat:krige]{krige}
 #' \link[lidR:lasnormalize]{lasnormalize}
 #' \link[raster:raster]{RasterLayer}
-grid_terrain = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   UseMethod("grid_terrain", x)
 }
 
 #' @export
-grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   . <- X <- Y <- Z <- Classification <- NULL
 
@@ -147,7 +148,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
 
   verbose("Interpolating ground points...")
 
-  Zg = interpolate(ground, grid, method, k, model)
+  Zg = interpolate(ground, grid, method, k, p, model)
 
   grid[, Z := round(Zg, 3)][]
 
@@ -166,9 +167,9 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59,
 }
 
 #' @export
-grid_terrain.LAScatalog = function(x, res = 1, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain.LAScatalog = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "-keep_class 2", method = method, k = k, model = model, keep_lowest = keep_lowest)
+  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "-keep_class 2", method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
 
   return(terrain)
 }

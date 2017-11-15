@@ -4,8 +4,8 @@
 \alias{lasnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
-  "Sph", 874), copy = FALSE)
+lasnormalize(las, dtm = NULL, method, k = 10L, p = 1,
+  model = gstat::vgm(0.59, "Sph", 874), copy = FALSE)
 }
 \arguments{
 \item{las}{a LAS object}
@@ -18,6 +18,8 @@ lasnormalize(las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
 
 \item{k}{numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
 method is either \code{"knnidw"} or \code{"kriging"}}
+
+\item{p}{numeric. Power for invert distance weighting. Default 2.}
 
 \item{model}{Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
 when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
