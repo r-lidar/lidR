@@ -41,8 +41,8 @@ knn <- function(X, Y, x, y, k) {
     .Call(`_lidR_knn`, X, Y, x, y, k)
 }
 
-knnidw <- function(X, Y, Z, x, y, k) {
-    .Call(`_lidR_knnidw`, X, Y, Z, x, y, k)
+knnidw <- function(X, Y, Z, x, y, k, p) {
+    .Call(`_lidR_knnidw`, X, Y, Z, x, y, k, p)
 }
 
 C_LocalMaximaMatrix <- function(image, ws, th) {
