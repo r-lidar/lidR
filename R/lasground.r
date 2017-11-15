@@ -167,6 +167,9 @@ ProgressiveMorphologicalFilter = function(cloud, InitWinSize, MaxWinSize, InitDi
     iteration = iteration + 1
   }
 
+  if (length(window_sizes) == 0)
+    stop("Input paramters are incompatible and windows sizes cannot be computed.", call = TRUE)
+
   verbose("Windows sizes: ", window_sizes)
   verbose("Height thresholds: ", height_thresholds)
 
