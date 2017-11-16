@@ -179,7 +179,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   options = select
 
   if ("\\*" %is_in% select)
-    options = "xyztirndecaupRGB"
+    options = "xyztirndecaupRGB0123456789"
 
   if ("\\+" %is_in% select)
     options = paste0(options, "PFC")
@@ -197,6 +197,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   if ("R" %is_in% options) RGB <- TRUE
   if ("G" %is_in% options) RGB <- TRUE
   if ("B" %is_in% options) RGB <- TRUE
+  at <- as.numeric(unlist(regmatches(options, gregexpr("[[:digit:]]", options))))
   if ("P" %is_in% options) P <- TRUE
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
@@ -264,7 +265,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   # ==================
 
   header = rlas::readlasheader(ifiles[1])
-  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t)
+  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, at, t)
 
   if (is.null(data))
     return(invisible())
