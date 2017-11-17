@@ -35,7 +35,8 @@
 #' SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relevant sections.
 #'
 #' @aliases tree_segmentation
-#' @param las An object of the class \code{LAS}
+#' @param las An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
+#' automatically.
 #' @param algorithm character. The name of an algorithm. Can be \code{"dalponte2016"},
 #' \code{"watershed"},\code{"li2012"} or \code{"silva2016"} (see sections relevant to each
 #' algorithm).
@@ -182,8 +183,6 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10, extra = FALSE)
 #' @rdname lastrees
 lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE)
 {
-  stopifnotlas(las)
-
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[Canopy < th_tree] <- NA
@@ -197,9 +196,10 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
   Crowns = raster::raster(apply(Crowns,1,rev))
   raster::extent(Crowns) = raster::extent(chm)
 
-  lasclassify(las, Crowns, "treeID")
+  if(!missing(las))
+    lasclassify(las, Crowns, "treeID")
 
-  if (!extra)
+  if (!extra & !missing(las))
     return(invisible(NULL))
   else
     return(Crowns)
@@ -210,8 +210,6 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
 #' @rdname lastrees
 lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE)
 {
-  stopifnotlas(las)
-
   if (!is(chm, "RasterLayer"))
     stop("chm is not a RasterLayer", call. = FALSE)
 
@@ -242,9 +240,10 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Crowns = raster::raster(apply(Crowns,1,rev))
   raster::extent(Crowns) = raster::extent(chm)
 
-  lasclassify(las, Crowns, "treeID")
+  if(!missing(las))
+    lasclassify(las, Crowns, "treeID")
 
-  if (!extra)
+  if (!extra & !missing(las))
     return(invisible(NULL))
   else
     return(Crowns)
@@ -255,8 +254,6 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE)
 {
   . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
-
-  stopifnotlas(las)
 
   if (is(treetops, "RasterLayer"))
     treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
@@ -283,9 +280,10 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   as.lasmetrics(chmdt, raster::res(chm)[1])
   crown = as.raster(chmdt)
 
-  lasclassify(las, crown, "treeID")
+  if(!missing(las))
+    lasclassify(las, crown, "treeID")
 
-  if (!extra)
+  if (!extra & !missing(las))
     return(invisible())
   else
     return(crown)
