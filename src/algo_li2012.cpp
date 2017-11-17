@@ -54,7 +54,8 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double
    * INITALISATION STUFF *
    ***********************/
 
-  DataFrame data = las.slot("data");
+  // DataFrame data = las.slot("data");
+  DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
