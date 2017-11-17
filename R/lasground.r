@@ -36,31 +36,23 @@
 #' @param las a LAS object
 #' @param algorithm character. The name of an algorithm. Currently \code{"pmf"} is supported
 #' (see related sections)
-#' @param ... Parameter for each avaible algorithm
-#' @param min_ws numeric. Minimum windows size to be used in filtering ground returns.
-#' This is the parameter \code{b} in Zhang et al. (2003) (see references)
-#' @param max_ws numeric. Maximum window size to be used in filtering ground returns in
-#' Zhang et al. (2003)
-#' @param min_th numeric. Initial threshold height above the parameterized ground surface
-#' to be considered a ground return. This is \code{dt0} in Zhang et al. (2003)
-#' @param max_th numeric. Maximum threshold height above the parameterized ground surface
-#' to be considered a ground return. This is \code{dhmax} in Zhang et al. (2003)
-#' @param s numeric. Slope value to be used in computing the height thresholds sequence.
-#'  This is the parameter \code{s} in Zhang et al. (2003) (equation 7)
+#' @param ... parameters for the algorithms. These depend on the algorithm used (see details
+#' about the algorithms)
+#' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
+#' The values are in the units of the point cloud (usually meters less likely feets)
+#' @param th numeric. Sequence of thresholds height above the parameterized ground surface
+#' to be considered a ground return. The values are in the units of the point cloud (usually
+#' meters less likely feets)
 #'
 #' @section Progressive morphological filter (PMF):
 #'
 #' This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-#' This is not a strict implementation of Zhang et al. This algorithm works at the raw point
+#' This is not a strict implementation of Zhang et al. This algorithm works at the point
 #' cloud level without any rasterization process. The morphological operator is applied on
-#' the points cloud not on a raster. Therefore some parameters from the original
-#' description are no longer useful. The cell size \code{c} (equation 7) is not a requiered
-#' parameter. Therefore in the original paper the threshold sequence was (equation 7):\cr\cr
-#' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-#' Now it is:\cr\cr
-#' \eqn{th_k = s*(w_k - w_{k-1}) + th_0}\cr\cr
-#' This method support an extra logical parameters \code{exponential} to change the method
-#' used to create the windows size sequence. Default is FALSE. See reference.
+#' the points cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+#' to compute the sequence of windows sizes and thresholds. Here these parameters are free
+#' and up to the user. The function \link{util_makeZhangParam} enable to computethe parameter
+#' according to the original paper.
 #'
 #' @return Nothing. The original LAS object is updated by reference. In the 'Classification'
 #' column a value of 2 denotes ground according to LAS specifications.
@@ -73,7 +65,10 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz")
 #'
-#' lasground(las, "pmf", min_ws = 2, max_ws = 40, min_th = 0.01, max_th = 5, slope = 1)
+#' ws = seq(3,21, 3)
+#' th = seq(0.1, 2, length.out = length(ws))
+#'
+#' lasground(las, "pmf", ws, th)
 #'
 #' plot(las, color = "Classification")
 #' @importFrom data.table :=
@@ -87,18 +82,20 @@ lasground = function(las, algorithm, ...)
 
 #' @rdname lasground
 #' @export
-lasground_pmf = function(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3.0, s = 1.0, ...)
+lasground_pmf = function(las, ws, th)
 {
   . <- X <- Y <- Z <- Classification <- NULL
 
+  if (length(ws) != length(th))
+    stop("ws and th are not the same length.", call. = FALSE)
+
+  if (length(ws) == 0)
+    stop("ws is empty.", call. = FALSE)
+
+  if (length(th) == 0)
+    stop("th is empty.", call. = FALSE)
+
   stopifnotlas(las)
-
-  dots = list(...)
-
-  if (is.null(dots$exponential))
-    dots$exponential = FALSE
-
-  exponential = dots$exponential
 
   cloud = las@data[, .(X,Y,Z)]
   cloud[, idx := 1:dim(cloud)[1]]
@@ -120,7 +117,23 @@ lasground_pmf = function(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3.
 
   verbose("Progressive morphological filter...")
 
-  idx = ProgressiveMorphologicalFilter(cloud, min_ws, max_ws, min_th, max_th, s, exponential)
+  for (i in 1:length(ws))
+  {
+    verbose(paste0("Pass ", i, " of ", length(ws), "..."))
+    verbose(paste0("Windows size = ", ws[i], " ; height_threshold = ", th[i]))
+
+    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
+
+    # Find indices of the points whose difference between the source and
+    # filtered point clouds is less than the current height threshold
+    diff = cloud$Z - Z_f
+    indices = diff < th[i]
+
+    # Limit filtering to those points currently considered ground returns
+    cloud = cloud[indices]
+  }
+
+  idx = cloud$idx
 
   message(paste(length(idx), "ground points found."))
 
@@ -129,66 +142,91 @@ lasground_pmf = function(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3.
   return(invisible())
 }
 
-ProgressiveMorphologicalFilter = function(cloud, InitWinSize, MaxWinSize, InitDist, MaxDist, Slope, exponential)
+#' Paramters for progressive morphological filter
+#'
+#' The function \link{lasground} with the progressive morphological filter allows for any
+#' sequence of paramters. This function enable to compute the sequences using equation (4),
+#'  (5) and (7) from Zhang et al. (see reference and details)
+#' @details
+#' In the original paper the windows size sequence is given by eq. 4 or 5:\cr\cr
+#'
+#' \eqn{w_k = 2kb + 1} \cr\cr
+#' or\cr\cr
+#' \eqn{w_k = 2b^k + 1}\cr\cr
+#'
+#' In the original paper the threshold sequence is given by eq. 7:\cr\cr
+#' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
+#' Because the function \link{lasground} applied the morphological operation at the point
+#' cloud level the paramter \eqn{c} is set to 1 without possibility to modify it.
+#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (equation 4 and 5)
+#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limit
+#' the number of windows created
+#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (equation 7)
+#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (equation 7)
+#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (equation 7)
+#' @param exp logical. The window size can be increased linearly or exponentially (eq 4 or 5)
+#' @return A list with two components, the windows size sequence and the threshold sequence
+#' @references
+#' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
+#' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
+#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
+#' @export
+util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
 {
-  # Compute the series of window sizes and height thresholds
-  height_thresholds = c()
-  window_sizes = c()
-  iteration = 0
-  window_size = 0
-  height_threshold = 0
+  if (exp & b <= 1)
+    stop("b cannot be lower than 1 with an exponentially growing windows", call. = FALSE)
 
-  while (window_size <= MaxWinSize)
+  if (dh0 >= dhmax)
+    stop("dh0 greater than dhmax", call. = FALSE)
+
+  if (max_ws < 3)
+    stop("Minimum windows size is 3. max_ws cannot must be greater than 3", call. = FALSE)
+
+  if (!is.logical(exp))
+    stop("exp should be logical", call. = FALSE)
+
+  if (!exp & b < 1)
+    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increses in contant to bypass this issue.", call. = FALSE)
+
+
+  dhtk = c()
+  wk = c()
+  k = 0
+  ws = 0
+  th = 0
+  c = 1
+
+  while (ws <= max_ws)
   {
     # Determine the initial window size.
-    if (exponential)
-      window_size = ((2.0 * InitWinSize^iteration) + 1)
+    if (exp)
+      ws = (2.0*b^k) + 1
     else
-      window_size = (2.0 * (iteration + 1) * InitWinSize + 1)
+      ws = 2.0*(k + 1)*b + 1
 
-    # Calculate the height threshold to be used in the next iteration.
-    if (iteration == 0)
-      height_threshold = InitDist
+    # Calculate the height threshold to be used in the next k.
+    if (ws <= 3)
+      th = dh0
     else
-      height_threshold = Slope * (window_size - window_sizes[iteration]) + InitDist
+    {
+      if(exp)
+        th = s * (ws - wk[k]) * c + dh0
+      else
+        th = s*2*b*c+dh0
+    }
 
     # Enforce max distance on height threshold
-    if (height_threshold > MaxDist)
+    if (th > dhmax)
+      th = dhmax
+
+    if (ws <= max_ws)
     {
-      height_threshold = MaxDist
+      wk = append(wk, ws)
+      dhtk = append(dhtk, th)
     }
 
-    if (window_size <= MaxWinSize)
-    {
-      window_sizes = append(window_sizes, window_size)
-      height_thresholds = append(height_thresholds, height_threshold)
-    }
-
-    iteration = iteration + 1
+    k = k + 1
   }
 
-  if (length(window_sizes) == 0)
-    stop("Input paramters are incompatible and windows sizes cannot be computed.", call. = FALSE)
-
-  verbose("Windows sizes: ", window_sizes)
-  verbose("Height thresholds: ", height_thresholds)
-
-  # Filter ground returns using a progressive morphological filter
-  for (i in 1:length(window_sizes))
-  {
-    verbose(paste0("Pass ", i, " of ", length(window_sizes), "..."))
-    verbose(paste0("Windows size = ", window_sizes[i], " ; height_threshold = ", height_thresholds[i]))
-
-    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, window_sizes[i], LIDROPTIONS("progress"))
-
-    # Find indices of the points whose difference between the source and
-    # filtered point clouds is less than the current height threshold
-    diff = cloud$Z - Z_f
-    indices = diff < height_thresholds[i]
-
-    # Limit filtering to those points currently considered ground returns
-    cloud = cloud[indices]
-  }
-
-  return(cloud$idx)
+  return(list(ws = wk, th = dhtk))
 }
