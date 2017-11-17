@@ -99,14 +99,15 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, model = gstat::vgm(.59
 
   stopifnotlas(las)
 
-  if (! "Classification" %in% names(las@data))
-    stop("No field 'Classification' found.", call. = FALSE)
-
-  if (fast_countequal(las@data$Classification, 2) == 0)
-    stop("Not ground point found in the point cloud.", call. = FALSE)
 
   if(is.null(dtm))
   {
+    if (! "Classification" %in% names(las@data))
+      stop("No field 'Classification' found.", call. = FALSE)
+
+    if (fast_countequal(las@data$Classification, 2) == 0)
+      stop("No ground point found in the point cloud.", call. = FALSE)
+
     Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, model = model)
 
     isna = is.na(Zground)
