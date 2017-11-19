@@ -29,6 +29,7 @@ LazyData: true
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp,RcppProgress,rlas,BH
 Encoding: UTF-8
+ByteCompile: true
 biocViews: 
 Collate: 
     'RcppExports.R'
