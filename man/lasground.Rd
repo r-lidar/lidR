@@ -19,11 +19,12 @@ lasground_pmf(las, ws, th)
 about the algorithms)}
 
 \item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
-The values are in the units of the point cloud (usually meters less likely feets)}
+The values must be positive and in the units of the point cloud (usually meters less
+likely feets)}
 
 \item{th}{numeric. Sequence of thresholds height above the parameterized ground surface
-to be considered a ground return. The values are in the units of the point cloud (usually
-meters less likely feets)}
+to be considered a ground return. The values must be positive and are in the units of
+the point cloud (usually meters less likely feets)}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
@@ -43,7 +44,7 @@ This is not a strict implementation of Zhang et al. This algorithm works at the 
 cloud level without any rasterization process. The morphological operator is applied on
 the points cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
 to compute the sequence of windows sizes and thresholds. Here these parameters are free
-and up to the user. The function \link{util_makeZhangParam} enable to computethe parameter
+and up to the user. The function \link{util_makeZhangParam} enable to compute the parameter
 according to the original paper.
 }
 

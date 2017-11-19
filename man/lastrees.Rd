@@ -23,7 +23,8 @@ lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
   extra = FALSE)
 }
 \arguments{
-\item{las}{An object of the class \code{LAS}}
+\item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
+automatically.}
 
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
 \code{"watershed"},\code{"li2012"} or \code{"silva2016"} (see sections relevant to each

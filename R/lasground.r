@@ -39,10 +39,11 @@
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' about the algorithms)
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
-#' The values are in the units of the point cloud (usually meters less likely feets)
+#' The values must be positive and in the units of the point cloud (usually meters less
+#' likely feets)
 #' @param th numeric. Sequence of thresholds height above the parameterized ground surface
-#' to be considered a ground return. The values are in the units of the point cloud (usually
-#' meters less likely feets)
+#' to be considered a ground return. The values must be positive and are in the units of
+#' the point cloud (usually meters less likely feets)
 #'
 #' @section Progressive morphological filter (PMF):
 #'
@@ -51,7 +52,7 @@
 #' cloud level without any rasterization process. The morphological operator is applied on
 #' the points cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
 #' to compute the sequence of windows sizes and thresholds. Here these parameters are free
-#' and up to the user. The function \link{util_makeZhangParam} enable to computethe parameter
+#' and up to the user. The function \link{util_makeZhangParam} enable to compute the parameter
 #' according to the original paper.
 #'
 #' @return Nothing. The original LAS object is updated by reference. In the 'Classification'
@@ -86,38 +87,29 @@ lasground_pmf = function(las, ws, th)
 {
   . <- X <- Y <- Z <- Classification <- NULL
 
-  if (length(ws) != length(th))
-    stop("ws and th are not the same length.", call. = FALSE)
+  lws = length(ws)
+  lth = length(th)
 
-  if (length(ws) == 0)
-    stop("ws is empty.", call. = FALSE)
-
-  if (length(th) == 0)
-    stop("th is empty.", call. = FALSE)
+  if (!is.vector(ws)) {stop("'ws' is not a vector.", call. = FALSE)}
+  if (!is.vector(th)) {stop("'th' is not a vector.", call. = FALSE)}
+  if (!is.numeric(ws)){stop("'ws' is not numeric", call. = FALSE)}
+  if (!is.numeric(th)){stop("'th' is not numeric.", call. = FALSE)}
+  if (lws != lth)     {stop("'ws' and 'th' are not the same length.", call. = FALSE)}
+  if (lws == 0)       {stop("'ws' is empty.", call. = FALSE)}
+  if (lth == 0)       {stop("'th' is empty.", call. = FALSE)}
+  if (any(ws <= 0))   {stop("'ws' contains negative or null values.", call. = FALSE)}
+  if (any(th <= 0))   {stop("'th' contains negative or null values.", call. = FALSE)}
+  if (any(is.na(ws))) {stop("'ws' contains NA values.", call. = FALSE)}
+  if (any(is.na(th))) {stop("'th' contains NA values.", call. = FALSE)}
 
   stopifnotlas(las)
 
   cloud = las@data[, .(X,Y,Z)]
   cloud[, idx := 1:dim(cloud)[1]]
 
-  if ("Classification" %in% names(las@data))
-  {
-    nground = fast_countequal(las@data$Classification, 2)
-
-    if (nground > 0)
-    {
-      warning(paste0("Orginal dataset already contains ", nground, " ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
-      las@data[Classification == 2, Classification := 0]
-    }
-  }
-  else
-  {
-    las@data[, Classification := 0]
-  }
-
   verbose("Progressive morphological filter...")
 
-  for (i in 1:length(ws))
+  for (i in 1:lws)
   {
     verbose(paste0("Pass ", i, " of ", length(ws), "..."))
     verbose(paste0("Windows size = ", ws[i], " ; height_threshold = ", th[i]))
@@ -136,6 +128,21 @@ lasground_pmf = function(las, ws, th)
   idx = cloud$idx
 
   message(paste(length(idx), "ground points found."))
+
+  if ("Classification" %in% names(las@data))
+  {
+    nground = fast_countequal(las@data$Classification, 2)
+
+    if (nground > 0)
+    {
+      warning(paste0("Orginal dataset already contains ", nground, " ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
+      las@data[Classification == 2, Classification := 0]
+    }
+  }
+  else
+  {
+    las@data[, Classification := 0]
+  }
 
   las@data[idx, Classification := 2]
 

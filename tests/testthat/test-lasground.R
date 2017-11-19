@@ -7,7 +7,7 @@ test_that("lasground update las object", {
   ws = seq(3,21, 5)
   th = seq(0.1, 2, length.out = length(ws))
 
-  lasground(las, "pmf")
+  lasground(las, "pmf", ws, th)
 
   n = names(las@data)
 
