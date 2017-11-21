@@ -57,10 +57,15 @@
 #' those from \code{LASlib} and can be found by running the following command:
 #' rlas:::lasfilterusage()
 #'
+#' The selection of specific Extra Byte fields can be done either with select argument for extra bytes 1-9,
+#' or with \code{eb} argument for more specific queries, e.g. \code{eb = c(2, 4, 24)} would load
+#' Extra Bytes 2, 4 and 24 if they exist. \code{eb = 0} selects all Extra Bytes available.
+#' Argument \code{eb} overrides extra byte arguments in \code{select}.
+#'
 #' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
-#' @param ... compatibility with former arguments from lidR (<= 1.2.1)
+#' @param ... compatibility with former arguments from lidR (<= 1.2.1) and extra bytes loading (see details).
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -179,7 +184,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   options = select
 
   if ("\\*" %is_in% select)
-    options = "xyztirndecaupRGB0123456789"
+    options = "xyztirndecaupRGB0"
 
   if ("\\+" %is_in% select)
     options = paste0(options, "PFC")
@@ -197,66 +202,73 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   if ("R" %is_in% options) RGB <- TRUE
   if ("G" %is_in% options) RGB <- TRUE
   if ("B" %is_in% options) RGB <- TRUE
-  at <- as.numeric(unlist(regmatches(options, gregexpr("[[:digit:]]", options))))
+  eb <- as.numeric(unlist(regmatches(options, gregexpr("[[:digit:]]", options))))
   if ("P" %is_in% options) P <- TRUE
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
+
+
+  aargsin = list(...) # additionnal arguments
+
+  # Extra Bytes
+  if(!is.null(aargsin$eb))
+    eb = aargsin$eb
+
 
   # ===========================
   # Former syntax compatibility
   # ===========================
 
-  oldparam = list(...)
   oldnames = c("Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "PointSourceID", "RGB", "pulseID", "flightlineID", "color", "XYZonly")
-  pnames   = names(oldparam)
+  pnames   = names(aargsin)
 
   if (any(pnames %in% oldnames))
   {
     message("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
 
-    if (!is.null(oldparam$Intensity))
-      i <- oldparam$Intensity
+    if (!is.null(aargsin$Intensity))
+      i <- aargsin$Intensity
 
-    if (!is.null(oldparam$ReturnNumber))
-      r <- oldparam$ReturnNumber
+    if (!is.null(aargsin$ReturnNumber))
+      r <- aargsin$ReturnNumber
 
-    if (!is.null(oldparam$NumberOfReturns))
-      n <- oldparam$NumberOfReturns
+    if (!is.null(aargsin$NumberOfReturns))
+      n <- aargsin$NumberOfReturns
 
-    if (!is.null(oldparam$ScanDirectionFlag))
-      d <- oldparam$ScanDirectionFlag
+    if (!is.null(aargsin$ScanDirectionFlag))
+      d <- aargsin$ScanDirectionFlag
 
-    if (!is.null(oldparam$EdgeOfFlightline))
-      e <- oldparam$EdgeOfFlightline
+    if (!is.null(aargsin$EdgeOfFlightline))
+      e <- aargsin$EdgeOfFlightline
 
-    if (!is.null(oldparam$Classification))
-      c <- oldparam$Classification
+    if (!is.null(aargsin$Classification))
+      c <- aargsin$Classification
 
-    if (!is.null(oldparam$ScanAngle))
-      a <- oldparam$ScanAngle
+    if (!is.null(aargsin$ScanAngle))
+      a <- aargsin$ScanAngle
 
-    if (!is.null(oldparam$UserData))
-      u <- oldparam$UserData
+    if (!is.null(aargsin$UserData))
+      u <- aargsin$UserData
 
-    if (!is.null(oldparam$PointSourceID))
-      p <- oldparam$PointSourceID
+    if (!is.null(aargsin$PointSourceID))
+      p <- aargsin$PointSourceID
 
-    if (!is.null(oldparam$RGB))
-      RGB <- oldparam$RGB
+    if (!is.null(aargsin$RGB))
+      RGB <- aargsin$RGB
 
-    if (!is.null(oldparam$color))
-      C <- oldparam$color
+    if (!is.null(aargsin$color))
+      C <- aargsin$color
 
-    if (!is.null(oldparam$pulseID))
-      P <- oldparam$pulseID
+    if (!is.null(aargsin$pulseID))
+      P <- aargsin$pulseID
 
-    if (!is.null(oldparam$flightlineID))
-      Fl <- oldparam$flightlineID
+    if (!is.null(aargsin$flightlineID))
+      Fl <- aargsin$flightlineID
 
-    if (!is.null(oldparam$XYZonly))
+    if (!is.null(aargsin$XYZonly))
       i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- FALSE
 
-    if (!is.null(oldparam$all))
+    if (!is.null(aargsin$all))
       i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- TRUE
   }
 
@@ -265,7 +277,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   # ==================
 
   header = rlas::readlasheader(ifiles[1])
-  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, at, t)
+  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t, eb)
 
   if (is.null(data))
     return(invisible())
