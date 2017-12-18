@@ -60,6 +60,7 @@
 #' \code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details)
 #' @param k numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
 #' method is either \code{"knnidw"} or \code{"kriging"}
+#' @param p numeric. Power for invert distance weighting. Default 2.
 #' @param model Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
 #' when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
 #' squares prediction.
@@ -93,7 +94,7 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(las, dtm = NULL, method, k = 10L, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
+lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
 {
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
@@ -108,7 +109,7 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, model = gstat::vgm(.59
     if (fast_countequal(las@data$Classification, 2) == 0)
       stop("No ground point found in the point cloud.", call. = FALSE)
 
-    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, model = model)
+    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, p = p, model = model)
 
     isna = is.na(Zground)
     nnas = sum(isna)

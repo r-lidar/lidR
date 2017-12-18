@@ -4,8 +4,8 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(x, res = 1, method, k = 10L, model = gstat::vgm(0.59, "Sph",
-  874), keep_lowest = FALSE)
+grid_terrain(x, res = 1, method, k = 10L, p = 2,
+  model = gstat::vgm(0.59, "Sph", 874), keep_lowest = FALSE)
 }
 \arguments{
 \item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
@@ -15,6 +15,8 @@ grid_terrain(x, res = 1, method, k = 10L, model = gstat::vgm(0.59, "Sph",
 \item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
 
 \item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
+
+\item{p}{numeric. Power for invert distance weighting. Default 2.}
 
 \item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
 is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.}
@@ -64,7 +66,7 @@ LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)
 plot(lidar)
 
-dtm1 = grid_terrain(lidar, method = "knnidw", k = 6)
+dtm1 = grid_terrain(lidar, method = "knnidw", k = 6, p = 2)
 dtm2 = grid_terrain(lidar, method = "delaunay")
 dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
 
