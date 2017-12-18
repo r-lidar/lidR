@@ -28,9 +28,11 @@
 #### OTHER CHANGES
 
 * `lasground` with PMF algorithm changed of designed. Accept now user defined sequences
+* `lasground` with PMF algorithm changed the parameter names for something easier to type and to understand and to prepare the package to get new algorithms.
 * `lasground` documentation is more explicit on the actual algorithm used.
 * `lasground` computes the windows size more closely to the orinal Zhang paper.
 * `lastrees` when used with raster based methods accepts for a missing las object. In that case `extra` is turned to `true`
+*  functions that enable for spatial interpolation with IDW gained a parameter `p` for power.
 
 ## lidR v1.3.1 (Release date: 2017-09-20)
 
