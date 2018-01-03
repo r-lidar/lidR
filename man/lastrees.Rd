@@ -152,7 +152,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 # Dalponte 2016
 ttops = tree_detection(chm, 5, 2)
-lastrees_dalponte(las, chm, ttops, max_cr = 7)
+lastrees_dalponte(las, chm, ttops)
 plot(las, color = "treeID", colorPalette = col)
 
 }
