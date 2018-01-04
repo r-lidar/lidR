@@ -53,6 +53,10 @@
 #' to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #'
+#' \code{lasunnormalize} enable to restore the original elevation in a memory efficent way
+#' in the case when the original elevation are recorded in the columns \code{Zref} (i.e. if
+#' the point cloud was normalized with the package lidR).
+#'
 #' @param las a LAS object
 #' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 #' \link[lidR:grid_terrain]{grid_terrain}.
@@ -154,6 +158,22 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
     norm[, Z := round(Z - Zground, 3)]
     return(LAS(norm, las@header))
   }
+}
+
+#' @rdname lasnormalize
+#' @export
+lasunnormalize = function(las)
+{
+  Z <- Zref <- NULL
+
+  if (! "Zref" %in% names(las@data))
+    stop("No field 'Zref' found.", call. = FALSE)
+
+  las@data[, Z := Zref]
+  las@data[, Zref := NULL]
+  las@data[]
+
+  return(invisible())
 }
 
 #' Convenient operator to lasnormalize
