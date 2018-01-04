@@ -2,10 +2,13 @@
 % Please edit documentation in R/lasnormalize.r
 \name{lasnormalize}
 \alias{lasnormalize}
+\alias{lasunnormalize}
 \title{Subtract digital terrain model}
 \usage{
 lasnormalize(las, dtm = NULL, method, k = 10L, p = 1,
   model = gstat::vgm(0.59, "Sph", 874), copy = FALSE)
+
+lasunnormalize(las)
 }
 \arguments{
 \item{las}{a LAS object}
@@ -59,6 +62,10 @@ function. This method combines the KNN approach with the kriging approach. For e
 it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
 to manipulate but it is also the most advanced method for interpolating spatial data. }
 }
+
+\code{lasunnormalize} enable to restore the original elevation in a memory efficent way
+in the case when the original elevation are recorded in the columns \code{Zref} (i.e. if
+the point cloud was normalized with the package lidR).
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
