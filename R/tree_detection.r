@@ -72,7 +72,7 @@ tree_detection = function(x, ws, hmin = 2)
 }
 
 #'@export
-tree_detection.LAS = function(x, ws = 3, hmin = 2)
+tree_detection.LAS = function(x, ws, hmin = 2)
 {
   if (ws <= 0) stop("ws should be stricly positive", call. = FALSE)
   if (hmin < 0) stop("hmin should be positive", call. = FALSE)
