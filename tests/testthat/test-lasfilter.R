@@ -57,7 +57,7 @@ test_that("clip polygon works with a catalog", {
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
-lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
 
 test_that("clip works with a geometry", {
   poly = lakes@polygons[[1]]@Polygons[[1]]
