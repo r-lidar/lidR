@@ -45,7 +45,7 @@
 #' In this case values higher than the 90th percentile are set to the highest color.
 #' They are not removed.
 #' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
-#' the display relies on the \code{rgl} package. If "pcv" is chosen it relies on the
+#' the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
 #' \code{PointCloudViewer} package which is much more efficient and can handle million of points
 #' using few memory. \code{PointCloudViewer} is not avaible on CRAN yet and should
 #' be install from gihub (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).
@@ -113,7 +113,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     if(is.numeric(coldata))
       inargs$col = set.colors(coldata, colorPalette, trim)
     else if(is.character(coldata))
-      inargs$col = data
+      inargs$col = coldata
     else if(is.logical(coldata))
       inargs$col = set.colors(as.numeric(coldata), colorPalette)
 
