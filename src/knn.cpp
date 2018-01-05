@@ -74,7 +74,7 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
 
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
-  Progress pbar(n, true);
+  Progress pbar(n, false);
 
   for( int i = 0 ; i < n ; i++)
   {
