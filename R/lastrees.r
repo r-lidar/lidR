@@ -31,8 +31,8 @@
 #' attributes to each point of the point cloud a number identifying the detected tree
 #' the point comes from (in a new \code{treeID} column). By default the classification is
 #' done at the point cloud level and the functions retun nothing. However, with some algorithms
-#' it is possible to return also a raster image of the classification and/or a
-#' SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relevant sections.
+#' it is possible to return also a raster image of the classification. There are currently
+#' 4 algorithms implemented. See relevant sections.
 #'
 #' @aliases tree_segmentation
 #' @param las An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -44,14 +44,11 @@
 #' about the algorithms)
 #' @param extra logical. By default the functions classify the original point cloud by reference
 #' and returns nothing (the original object is automatically updated in place). If
-#' \code{extra = TRUE} some extra output can be returned. The type of output depends on the
-#' algorithm used. It can be 1 or 2 \code{RasterLayer} or a \code{SpatialPolygonDataFrame}
-#' or something else depending on intermediate objects used internally.
-#' @param chm RasterLayer. Image of the canopy. You can compute it with \link{grid_canopy}
-#' or \link{grid_tincanopy} or read it from external file.
-#' @param treetops RasterLayer or data.frame depending either you are using a raster-based
-#' or point cloud-based algorithm (see details about methods). You can compute it with
-#' \link{tree_detection} or read it from an external file.
+#' \code{extra = TRUE} some extra \code{RasterLayer} can be returned.
+#' @param chm RasterLayer. Image of the canopy. You can compute it with \link[lidR:grid_canopy]{grid_canopy}
+#' or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from external file.
+#' @param treetops \code{RasterLayer} or \code{data.frame} containing the position of the
+#' trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
@@ -76,22 +73,23 @@
 #' computation speed. The lower the value, the faster the method. Default is 10.
 #' @param tol numeric. Tolerance see ?EBImage::watershed
 #' @param ext numeric. see ?EBImage::watershed
-#' @return Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some
-#' algorithm provide extra outputs.
+#'
+#' @return Nothing, the point cloud is updated by reference. If \code{extra = TRUE}
+#' algorithms provide extra outputs. Usually intermediate objects used internally such as a
+#' RasterLayer.
 #'
 #' @section Li 2012:
 #' This method is a growthing region method working at the raw point cloud level. It is a
 #' strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
 #' author but adding a parameter \code{hmin} to stop the segmentation for too low objects.
-#' In practice this limits the over-segmentation of the method. Otherwise this algo could
+#' In practice this limits the over-segmentation of the method. Otherwise this algorithm could
 #' segment a lake like a tree.
 #'
 #' @section Dalponte 2016:
 #' This is a local maxima + growing region algorithm. It is based on the constrains proposed by
 #' Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 #' This version is identical to the original but with superfluous code removed and rewritten
-#' effciently. Consequently it is hundreds to millions times faster. \code{treetops} is expected
-#' to be a \code{RasterLayer}\cr
+#' effciently. Consequently it is hundreds to millions times faster.\cr
 #' Note that this algorithm strictly performs a segmentation while the original method as
 #' implemented in \code{itcSegment} and described in the manuscript also performs a pre-
 #' and post-process when these tasks are expected to be done by the user in separated functions.
@@ -101,8 +99,7 @@
 #' in Silva et al. (2016) (see references). This algorithm is implemented in the package
 #' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 #' a code written from scratch by lidR author from the original paper and is considerably
-#' faster (between 250 and 300 times faster). \code{treetops} is expected to be either a
-#' \code{RasterLayer} or a \code{data.frame}.
+#' faster (between 250 and 1000 times faster).
 #'
 #' @section Watershed:
 #' This method is a simple \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
@@ -161,7 +158,7 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10, extra = FALSE)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
 {
   stopifnotlas(las)
 
@@ -213,8 +210,16 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   if (!is(chm, "RasterLayer"))
     stop("chm is not a RasterLayer", call. = FALSE)
 
-  if (!is(treetops, "RasterLayer"))
-    stop("treetops is not a RasterLayer", call. = FALSE)
+  if (is(treetops, "data.frame"))
+  {
+    cells = raster::cellFromXY(chm, treetops[,1:2])
+    treetops = raster::raster(chm)
+    treetops[cells] <- 1:length(cells)
+  }
+  else if(!is(treetops, "RasterLayer"))
+  {
+    stop("'treetops' format not recognized.", call. = FALSE)
+  }
 
   if (raster::extent(chm) != raster::extent(treetops))
     stop("chm and treetops do not match together", call. = FALSE)
@@ -233,7 +238,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 
-  Crowns = algo_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+  Crowns = C_algo_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 
@@ -258,10 +263,13 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   if (is(treetops, "RasterLayer"))
     treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
   else if (!is.data.frame(treetops))
-    stop("treetops format not recognized.", call. = FALSE)
+    stop("'treetops' format not recognized.", call. = FALSE)
+
+  if (max_cr_factor < 0 | max_cr_factor > 1)
+    stop("'max_cr_factor' should be between 0 and 1", call. = FALSE)
 
   if (exclusion < 0 | exclusion > 1)
-    stop("exclusion should be between 0 and 1", call. = FALSE)
+    stop("'exclusion' should be between 0 and 1", call. = FALSE)
 
   ttops = data.table::copy(treetops)
   data.table::setDT(ttops)
