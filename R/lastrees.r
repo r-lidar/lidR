@@ -145,13 +145,13 @@ lastrees <- function(las, algorithm, ..., extra = FALSE)
   stopifnotlas(las)
 
   if (algorithm == "dalponte2016" )
-    return(lastrees_dalponte(las, ...))
+    return(lastrees_dalponte(las, ..., extra))
   else if (algorithm == "watershed")
-    return(lastrees_watershed(las, ...))
+    return(lastrees_watershed(las, ..., extra))
   else if (algorithm == "li2012")
-    return(lastrees_li(las, ...))
+    return(lastrees_li(las, ..., extra))
   else if (algorithm == "silva2016")
-    return(lastrees_silva(las, ...))
+    return(lastrees_silva(las, ..., extra))
   else
     stop("This algorithm does not exist.", call. = FALSE)
 }
