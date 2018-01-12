@@ -9,7 +9,7 @@
 \alias{lastrees_silva}
 \title{Individual tree segmentation}
 \usage{
-lastrees(las, algorithm, ..., extra = FALSE)
+lastrees(las, algorithm, ...)
 
 lastrees_li(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
 
@@ -33,10 +33,6 @@ algorithm).}
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details
 about the algorithms)}
 
-\item{extra}{logical. By default the functions classify the original point cloud by reference
-and returns nothing (the original object is automatically updated in place). If
-\code{extra = TRUE} some extra \code{RasterLayer} can be returned.}
-
 \item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012).
 Default 1.5}
 
@@ -57,6 +53,10 @@ or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from external file.}
 \item{tol}{numeric. Tolerance see ?EBImage::watershed}
 
 \item{ext}{numeric. see ?EBImage::watershed}
+
+\item{extra}{logical. By default the functions classify the original point cloud by reference
+and returns nothing (the original object is automatically updated in place). If
+\code{extra = TRUE} some extra \code{RasterLayer} can be returned.}
 
 \item{treetops}{\code{RasterLayer} or \code{data.frame} containing the position of the
 trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.}
