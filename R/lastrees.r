@@ -140,18 +140,18 @@
 #' Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
 #' https://doi.org/10.1080/07038992.2016.1196582
 #' @export
-lastrees <- function(las, algorithm, ..., extra = FALSE)
+lastrees <- function(las, algorithm, ...)
 {
   stopifnotlas(las)
 
   if (algorithm == "dalponte2016" )
-    return(lastrees_dalponte(las, ..., extra = extra))
+    return(lastrees_dalponte(las, ...))
   else if (algorithm == "watershed")
-    return(lastrees_watershed(las, ..., extra = extra))
+    return(lastrees_watershed(las, ...))
   else if (algorithm == "li2012")
-    return(lastrees_li(las, ..., extra = extra))
+    return(lastrees_li(las, ...))
   else if (algorithm == "silva2016")
-    return(lastrees_silva(las, ..., extra = extra))
+    return(lastrees_silva(las, ...))
   else
     stop("This algorithm does not exist.", call. = FALSE)
 }
