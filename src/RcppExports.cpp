@@ -243,18 +243,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// polygon_intersection
-NumericMatrix polygon_intersection(SEXP pointsMatrix1, SEXP pointsMatrix2);
-RcppExport SEXP _lidR_polygon_intersection(SEXP pointsMatrix1SEXP, SEXP pointsMatrix2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type pointsMatrix1(pointsMatrix1SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pointsMatrix2(pointsMatrix2SEXP);
-    rcpp_result_gen = Rcpp::wrap(polygon_intersection(pointsMatrix1, pointsMatrix2));
-    return rcpp_result_gen;
-END_RCPP
-}
 // tinfo
 NumericMatrix tinfo(IntegerMatrix M, NumericMatrix X);
 RcppExport SEXP _lidR_tinfo(SEXP MSEXP, SEXP XSEXP) {
@@ -314,7 +302,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
     {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
     {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
-    {"_lidR_polygon_intersection", (DL_FUNC) &_lidR_polygon_intersection, 2},
     {"_lidR_tinfo", (DL_FUNC) &_lidR_tinfo, 2},
     {"_lidR_tsearch", (DL_FUNC) &_lidR_tsearch, 6},
     {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},
