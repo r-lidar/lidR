@@ -117,15 +117,27 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   # Computation over the entire catalog
   # ========================================
 
-  future::plan(future::multiprocess, workers = ncores)
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
+  else
+    future::plan(future::sequential)
 
   output = list()
 
   for(i in seq_along(clusters))
   {
-    output[[i]] <- future::future({apply_grid_func(clusters[[i]], grid_func, callparam, savevrt, filter, select) })
-    if(progress) cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+    cluster = clusters[[i]]
+
+    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, savevrt, filter, select) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
   }
+
+  cat("\n")
 
   output <- future::values(output)
 

@@ -174,15 +174,27 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   if (nclust < ncores)
     ncores <- nclust
 
-  future::plan(future::multiprocess, workers = ncores)
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
+  else
+    future::plan(future::sequential)
 
   output = list()
 
   for(i in seq_along(clusters))
   {
-    output[[i]] <- future::future({cluster_apply_func(clusters[[i]], func, ctg, func_args, ...) })
-    if(progress) cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+    cluster = clusters[[i]]
+
+    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
   }
+
+  cat("\n")
 
   return(future::values(output))
 }
