@@ -159,10 +159,7 @@ grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", .
 {
   oldbuffer <- CATALOGOPTIONS("buffer")
 
-  CATALOGOPTIONS(buffer = 0)
-
-  if (subcircle == 0)
-    CATALOGOPTIONS(buffer = subcircle)
+  CATALOGOPTIONS(buffer = res/2 + subcircle)
 
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 
