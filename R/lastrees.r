@@ -214,7 +214,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   {
     cells = raster::cellFromXY(chm, treetops[,1:2])
     treetops = raster::raster(chm)
-    treetops[cells] <- 1:length(cells)
+    suppressWarnings(treetops[cells] <- 1:length(cells))
   }
   else if(!is(treetops, "RasterLayer"))
   {
