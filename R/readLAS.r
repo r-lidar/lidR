@@ -60,7 +60,6 @@
 #' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
-#' @param ... compatibility with former arguments from lidR (<= 1.2.1)
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -74,24 +73,24 @@
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 #' las = readLAS(LASfile, select = "*+")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   UseMethod("readLAS", files)
 }
 
 #' @export
-readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "")
 {
-  return(readLAS(files@data$filename, select, filter, ...))
+  return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
-readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   buffer <- X <- Y <- NULL
 
   filter = paste(files@filter, filter)
-  las = readLAS(files@files, select, filter, ...)
+  las = readLAS(files@files, select, filter)
 
   if (is.null(las))
     return(invisible())
@@ -127,25 +126,25 @@ readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
 
 #' @export
-readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   ofile = ""
-  return(streamLAS(files, ofile, select, filter, ...))
+  return(streamLAS(files, ofile, select, filter))
 }
 
-streamLAS = function(x, ofile, select = "*", filter = "", ...)
+streamLAS = function(x, ofile, select = "*", filter = "")
 {
   UseMethod("streamLAS", x)
 }
 
-streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", ...)
+streamLAS.LAScluster = function(x, ofile, select = "*", filter = "")
 {
   filter = paste(x@filter, filter)
   las = streamLAS(x@files, ofile, select,  filter)
   return(invisible(las))
 }
 
-streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
+streamLAS.character = function(x, ofile, select = "*", filter = "")
 {
   # ==================
   # Test the files
@@ -200,64 +199,6 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   if ("P" %is_in% options) P <- TRUE
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
-
-  # ===========================
-  # Former syntax compatibility
-  # ===========================
-
-  oldparam = list(...)
-  oldnames = c("Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "PointSourceID", "RGB", "pulseID", "flightlineID", "color", "XYZonly")
-  pnames   = names(oldparam)
-
-  if (any(pnames %in% oldnames))
-  {
-    message("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
-
-    if (!is.null(oldparam$Intensity))
-      i <- oldparam$Intensity
-
-    if (!is.null(oldparam$ReturnNumber))
-      r <- oldparam$ReturnNumber
-
-    if (!is.null(oldparam$NumberOfReturns))
-      n <- oldparam$NumberOfReturns
-
-    if (!is.null(oldparam$ScanDirectionFlag))
-      d <- oldparam$ScanDirectionFlag
-
-    if (!is.null(oldparam$EdgeOfFlightline))
-      e <- oldparam$EdgeOfFlightline
-
-    if (!is.null(oldparam$Classification))
-      c <- oldparam$Classification
-
-    if (!is.null(oldparam$ScanAngle))
-      a <- oldparam$ScanAngle
-
-    if (!is.null(oldparam$UserData))
-      u <- oldparam$UserData
-
-    if (!is.null(oldparam$PointSourceID))
-      p <- oldparam$PointSourceID
-
-    if (!is.null(oldparam$RGB))
-      RGB <- oldparam$RGB
-
-    if (!is.null(oldparam$color))
-      C <- oldparam$color
-
-    if (!is.null(oldparam$pulseID))
-      P <- oldparam$pulseID
-
-    if (!is.null(oldparam$flightlineID))
-      Fl <- oldparam$flightlineID
-
-    if (!is.null(oldparam$XYZonly))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- FALSE
-
-    if (!is.null(oldparam$all))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- TRUE
-  }
 
   # ==================
   # Read the files
