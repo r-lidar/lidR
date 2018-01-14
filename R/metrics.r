@@ -278,7 +278,8 @@ entropy = function(z, by = 1, zmax = NULL)
 	bk = seq(0, ceiling(zmax), by)
 
 	# Compute the p for each bin
-	hist = hist(z, breaks = bk, plot=F)$count
+	hist = findInterval(z, bk)
+	hist = fast_table(hist, length(bk)-1)
 	hist = hist/sum(hist)
 
 	# Remove bin where there are no points because of log(0)
@@ -339,8 +340,10 @@ stdmetrics_z = function(z, dz = 1)
   }
   else
   {
-    d = graphics::hist(z, breaks = seq(0, zmax, zmax/10), plot=F)
-    d = d$counts / sum(d$counts)*100
+    breaks = seq(0, zmax, zmax/10)
+    d = findInterval(z, breaks)
+    d = fast_table(d, 10)
+    d = d / sum(d)*100
     d = cumsum(d)[1:9]
     d = as.list(d)
   }
