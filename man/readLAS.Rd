@@ -4,7 +4,7 @@
 \alias{readLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS(files, select = "xyztinrcaRGBP", filter = "")
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{LAScatalog} object}
@@ -12,8 +12,6 @@ readLAS(files, select = "xyztinrcaRGBP", filter = "", ...)
 \item{select}{character. select only columns of interest to save memory (see details)}
 
 \item{filter}{character. streaming filters - filter data while reading the file (see details)}
-
-\item{...}{compatibility with former arguments from lidR (<= 1.2.1)}
 }
 \value{
 A LAS object
