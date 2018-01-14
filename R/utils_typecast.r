@@ -134,7 +134,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 
     r <- raster::raster(nrow=nrow, ncol=ncol, xmn=xmin-hres, xmx=xmax+hres, ymn=ymin-hres, ymx=ymax+hres, res = c(res,res))
     cells <- raster::cellFromXY(r, x[, .(X,Y)])
-    r[cells] <- x[[3]]
+    suppressWarnings(r[cells] <- x[[3]])
     names(r) <- names(x)[3]
 
     return(r)
