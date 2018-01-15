@@ -29,23 +29,23 @@
 
 #' Clip LiDAR points
 #'
-#' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
+#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
 #'
-#' @param x An object of class \code{LAS} or \code{LAScatalog}
+#' @param x An object of class \code{LAS} or \code{LAScatalog}.
 #' @param geometry a geometric object. Currently \code{Polygon} from \code{sp} is supported.
-#' @param xleft	scalar of left x position of rectangle
+#' @param xleft scalar of left x position of rectangle.
 #' @param ybottom	scalar of bottom y position of rectangle.
-#' @param xright scalar of right x position of rectangle
-#' @param ytop scalar of top y position of rectangle
-#' @param xpoly	numerical array. x-coordinates of polygon
-#' @param ypoly	numerical array. y-coordinates of polygon
-#' @param xcenter	scalar x disc center
-#' @param ycenter	scalar y disc center
-#' @param radius scalar disc radius
-#' @param ofile character.  Path to an output file (only with a \code{LAScatalog}).
-#' If \code{ofile = ""} the result is loaded in R otherwise the result is writen into a
-#' file while reading. This is much more memory efficient than loading into R then writting.
-#' @return An object of class \code{LAS} or NULL if the results is immediatly written in a file.
+#' @param xright scalar of right x position of rectangle.
+#' @param ytop scalar of top y position of rectangle.
+#' @param xpoly numerical array. x-coordinates of polygon.
+#' @param ypoly numerical array. y-coordinates of polygon.
+#' @param xcenter scalar of x disc center.
+#' @param ycenter scalar of y disc center.
+#' @param radius scalar of disc radius.
+#' @param ofile character. Path to an output file (only with a \code{LAScatalog}).
+#' If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
+#' file while reading. This is much more memory efficient than loading into R first, then writing.
+#' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
