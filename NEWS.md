@@ -2,6 +2,7 @@
 
 #### NEW FEATURES
 
+* `plot` supports natively the `PointCloudViewer` package avaible on github.
 * `lasclip` and `lasclip*` can extract from a catalog
 * `lasclip` supports `sp::Polygon` objects
 * `lastrees` gain a new algorithm from Silva et al. (2016).
