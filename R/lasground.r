@@ -29,38 +29,36 @@
 #' Classify points as ground or not ground
 #'
 #' Implements algorithms for segmentation of ground points. The function updates the field
-#' \code{Classification} of the input LAS object. The points classified as 'ground' are
+#' \code{Classification} of the LAS input object. The points classified as 'ground' are
 #' assigned a value of 2 according to las specifications (See the ASPRS documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 #'
-#' @param las a LAS object
+#' @param las a LAS object.
 #' @param algorithm character. The name of an algorithm. Currently \code{"pmf"} is supported
-#' (see related sections)
+#' (see related sections).
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
-#' about the algorithms)
+#' of the algorithms).
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
-#' The values must be positive and in the units of the point cloud (usually meters less
-#' likely feets)
-#' @param th numeric. Sequence of thresholds height above the parameterized ground surface
+#' The values must be positive and in the units of the point cloud (usually meters, occasionally feet).
+#' @param th numeric. Sequence of threshold heights above the parameterized ground surface
 #' to be considered a ground return. The values must be positive and are in the units of
-#' the point cloud (usually meters less likely feets)
+#' the point cloud (usually meters, occasionally feet).
 #'
 #' @section Progressive morphological filter (PMF):
 #'
 #' This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
 #' This is not a strict implementation of Zhang et al. This algorithm works at the point
 #' cloud level without any rasterization process. The morphological operator is applied on
-#' the points cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+#' the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
 #' to compute the sequence of windows sizes and thresholds. Here these parameters are free
-#' and up to the user. The function \link{util_makeZhangParam} enable to compute the parameter
-#' according to the original paper.
+#' and specifed by the user. The function \link{util_makeZhangParam} enables computation of the parameters according to the original paper.
 #'
 #' @return Nothing. The original LAS object is updated by reference. In the 'Classification'
-#' column a value of 2 denotes ground according to LAS specifications.
+#' column a value of 2 denotes 'ground' according to LAS specifications.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
-#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
+#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -149,11 +147,11 @@ lasground_pmf = function(las, ws, th)
   return(invisible())
 }
 
-#' Paramters for progressive morphological filter
+#' Parameters for progressive morphological filter
 #'
 #' The function \link{lasground} with the progressive morphological filter allows for any
-#' sequence of paramters. This function enable to compute the sequences using equation (4),
-#'  (5) and (7) from Zhang et al. (see reference and details)
+#' sequence of parameters. This function enables computation of the sequences using equations (4),
+#'  (5) and (7) from Zhang et al. (see reference and details).
 #' @details
 #' In the original paper the windows size sequence is given by eq. 4 or 5:\cr\cr
 #'
@@ -163,20 +161,20 @@ lasground_pmf = function(las, ws, th)
 #'
 #' In the original paper the threshold sequence is given by eq. 7:\cr\cr
 #' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-#' Because the function \link{lasground} applied the morphological operation at the point
-#' cloud level the paramter \eqn{c} is set to 1 without possibility to modify it.
-#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (equation 4 and 5)
-#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limit
-#' the number of windows created
-#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (equation 7)
-#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (equation 7)
-#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (equation 7)
-#' @param exp logical. The window size can be increased linearly or exponentially (eq 4 or 5)
-#' @return A list with two components, the windows size sequence and the threshold sequence
+#' Because the function \link{lasground} applies the morphological operation at the point
+#' cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
+#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).
+#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limits
+#' the number of windows created.
+#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (eq. 7).
+#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
+#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
+#' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
+#' @return A list with two components, the windows size sequence and the threshold sequence.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
-#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
+#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 #' @export
 util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
 {
