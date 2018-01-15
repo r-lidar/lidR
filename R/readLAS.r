@@ -200,6 +200,11 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
 
+  if ((Fl | P) & !t) {
+    t <- TRUE
+    message("'t' has automatically been added in the selection to match other options")
+  }
+
   # ==================
   # Read the files
   # ==================
