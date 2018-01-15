@@ -113,10 +113,10 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
   if (!"Classification" %in% names(x@data))
     stop("LAS object does not contain 'Classification' data")
 
-  ground = x@data[Classification == LASGROUND, .(X,Y,Z)]
-
-  if (nrow(ground) == 0)
+  if (fast_countequal(x@data$Classification, 2L) == 0)
     stop("No ground points found. Impossible to compute a DTM.", call. = F)
+
+  ground = x@data[Classification == LASGROUND, .(X,Y,Z)]
 
   # =================================
   # Find where to interpolate the DTM
@@ -124,22 +124,15 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
 
   verbose("Generating interpolation coordinates...")
 
-  # All the coordinates in the extent
-
-  ext  = extent(x)
+  ext  = extent(x) + 0.1 * res
   grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
 
-  # Keep only those in the convex hull of the point
-  # Otherwise algorithms are able to extrapolate the terrain
-
-  hull   = convex_hull(x@data$X, x@data$Y)
-  sphull = sp::Polygon(hull)
-  sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-  hull   = rgeos::gBuffer(sphull, width = res)
-  hull   = hull@polygons[[1]]@Polygons[[1]]@coords
-
+  hull = convex_hull(x@data$X, x@data$Y)
+  hull = sp::Polygon(hull)
+  hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+  hull = rgeos::gBuffer(hull, width = res)
+  hull = hull@polygons[[1]]@Polygons[[1]]@coords
   keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-
   grid = grid[keep]
 
   # =======================
@@ -149,10 +142,8 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
   verbose("Interpolating ground points...")
 
   Zg = interpolate(ground, grid, method, k, p, model)
-
   grid[, Z := round(Zg, 3)][]
 
-  # force lowest ground point to be dominant
   if (keep_lowest)
   {
     verbose("Forcing the lowest ground points to be retained...")
@@ -169,7 +160,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
 #' @export
 grid_terrain.LAScatalog = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "-keep_class 2", method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
+  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "", method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
 
   return(terrain)
 }
