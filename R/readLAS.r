@@ -57,6 +57,11 @@
 #' those from \code{LASlib} and can be found by running the following command:
 #' rlas:::lasfilterusage()
 #'
+#' The selection of specific Extra Byte fields can be done either with select argument for extra bytes 1-9,
+#' or with \code{eb} argument for more specific queries, e.g. \code{eb = c(2, 4, 24)} would load
+#' Extra Bytes 2, 4 and 24 if they exist. \code{eb = 0} selects all Extra Bytes available.
+#' Argument \code{eb} overrides extra byte arguments in \code{select}.
+#'
 #' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
@@ -178,7 +183,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   options = select
 
   if ("\\*" %is_in% select)
-    options = "xyztirndecaupRGB"
+    options = "xyztirndecaupRGB0"
 
   if ("\\+" %is_in% select)
     options = paste0(options, "PFC")
@@ -196,6 +201,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   if ("R" %is_in% options) RGB <- TRUE
   if ("G" %is_in% options) RGB <- TRUE
   if ("B" %is_in% options) RGB <- TRUE
+  eb <- as.numeric(unlist(regmatches(options, gregexpr("[[:digit:]]", options))))
   if ("P" %is_in% options) P <- TRUE
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
@@ -210,7 +216,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   # ==================
 
   header = rlas::readlasheader(ifiles[1])
-  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t)
+  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t, eb)
 
   if (is.null(data))
     return(invisible())
