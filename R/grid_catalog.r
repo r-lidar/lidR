@@ -137,7 +137,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
     }
   }
 
-  cat("\n")
+  if(progress) cat("\n")
 
   output <- future::values(output)
 

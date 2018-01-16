@@ -55,7 +55,18 @@ interpolate = function(points, coord, method, k, p, model)
   else if (method == "delaunay")
   {
     verbose("[using Delaunay triangulation]\n")
-    return(interpolate_delaunay(points, coord, k = k))
+
+    z = interpolate_delaunay(points, coord)
+
+    isna = is.na(z)
+    nnas = sum(isna)
+
+    if (nnas > 0 & k > 0) {
+      z[isna] <- knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
+      message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
+    }
+
+    return(z)
   }
   else if (method == "kriging")
   {
@@ -93,7 +104,7 @@ interpolate_kriging = function(points, coord, model, k)
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord, th = 0, k = 0, p = 1)
+interpolate_delaunay <- function(points, coord, th = 0)
 {
   pitfree = th > 0  # specific case if using khosravipour algorithm in grid_tincanopy
 
@@ -122,15 +133,6 @@ interpolate_delaunay <- function(points, coord, th = 0, k = 0, p = 1)
   N = N[idx,]
 
   z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]
-
-  isna = is.na(z)
-  nnas = sum(isna)
-
-  if (nnas > 0 & k > 0)
-  {
-    z[isna] <- knnidw(points$X, points$Y, points$Z, coord$X[isna], coord$Y[isna], k, p)
-    warning(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."), call. = F)
-  }
 
   if (pitfree)
   {
