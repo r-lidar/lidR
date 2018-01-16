@@ -27,7 +27,7 @@
 
 grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
 {
-  Min.X <- Min.Y <- Max.X <- Max.Y <- p <- pbar <- NULL
+  Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
   # ========================================
   # Store some stuff in readable variables
@@ -37,9 +37,8 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   funcname  <- lazyeval::expr_text(grid_func)
   exportdir <- tempdir() %+%  "/" %+% funcname %+% "/"
 
-  LIDROPTIONS(progress = FALSE) # Disable functions progress bars
   progress  <- CATALOGOPTIONS("progress")
-  numcores  <- CATALOGOPTIONS("multicore")
+  ncores    <- CATALOGOPTIONS("multicore")
   savevrt   <- CATALOGOPTIONS("return_virtual_raster")
   memlimwar <- CATALOGOPTIONS("memory_limit_warning")
   buffer    <- CATALOGOPTIONS("buffer")
@@ -87,8 +86,10 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
     return(x)
   })
 
-  if (numcores > length(clusters))
-    numcores = length(clusters)
+  nclust = length(clusters)
+
+  if (ncores > nclust)
+    ncores = nclust
 
   # =========================================
   # Some settings
@@ -101,11 +102,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
       callparam$func <- as.expression(callparam$func)
   }
 
-  # Enable progress bar working even with multicore
-  if (progress)
-  {
-    pbar <- txtProgressBarMulticore(0, length(clusters), style = 3)
-  }
+  callparam$res <- res
 
   # Create or clean the temporary directory
   if (savevrt)
@@ -120,35 +117,29 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   # Computation over the entire catalog
   # ========================================
 
-  if (numcores == 1)
-  {
-    verbose("Computing sequentially the metrics for each cluster...")
-
-    output = lapply(clusters, FUN = apply_grid_func,
-                    grid_func = grid_func,
-                    res       = res,
-                    param     = callparam,
-                    save_tiff = savevrt,
-                    pb        = pbar,
-                    filter    = filter,
-                    select    = select)
-  }
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
   else
-  {
-    verbose("Computing in parallel the metrics for each cluster...")
+    future::plan(future::sequential)
 
-    cl = parallel::makeCluster(numcores, outfile = "")
-    parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, clusters, fun = apply_grid_func,
-                                 grid_func = grid_func,
-                                 res       = res,
-                                 param     = callparam,
-                                 save_tiff = savevrt,
-                                 pb        = pbar,
-                                 filter    = filter,
-                                 select    = select)
-    parallel::stopCluster(cl)
+  output = list()
+
+  for(i in seq_along(clusters))
+  {
+    cluster = clusters[[i]]
+
+    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, savevrt, filter, select) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
   }
+
+  if(progress) cat("\n")
+
+  output <- future::values(output)
 
   # Post process of the results (return adequate object)
   if (!savevrt)
@@ -180,7 +171,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res
 # @param p progressbar.
-apply_grid_func = function(cluster, grid_func, res, param, save_tiff, pb, filter, select, ...)
+apply_grid_func = function(cluster, grid_func, param, save_tiff, filter, select)
 {
   X <- Y <- NULL
 
@@ -191,10 +182,7 @@ apply_grid_func = function(cluster, grid_func, res, param, save_tiff, pb, filter
   ytop    <- cluster@bbox$ymax
   name    <- cluster@bbox$name
   path    <- cluster@bbox$save
-
-  # Update progress bar
-  if (!is.null(pb))
-    addTxtProgressBarMulticore(pb, 1)
+  res     <- param$res
 
   # Extract the ROI as a LAS object
   las <- readLAS(cluster, filter = filter, select = select)
@@ -205,7 +193,6 @@ apply_grid_func = function(cluster, grid_func, res, param, save_tiff, pb, filter
 
   # Call the function
   param$x   <- las
-  param$res <- res
   metrics   <- do.call(grid_func, args = param)
 
   # Remove the buffer

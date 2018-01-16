@@ -82,7 +82,8 @@ IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
 // [[Rcpp::export]]
 LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar = false)
 {
-  DataFrame data = las.slot("data");
+  // DataFrame data = las.slot("data");
+  DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
@@ -149,3 +150,4 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
 
   return is_maxima;
 }
+

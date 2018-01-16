@@ -7,39 +7,31 @@
 \usage{
 lasground(las, algorithm, ...)
 
-lasground_pmf(las, min_ws = 2, max_ws = 20, min_th = 0.5, max_th = 3,
-  s = 1, ...)
+lasground_pmf(las, ws, th)
 }
 \arguments{
-\item{las}{a LAS object}
+\item{las}{a LAS object.}
 
 \item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} is supported
-(see related sections)}
+(see related sections).}
 
-\item{...}{Parameter for each avaible algorithm}
+\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
+of the algorithms).}
 
-\item{min_ws}{numeric. Minimum windows size to be used in filtering ground returns.
-This is the parameter \code{b} in Zhang et al. (2003) (see references)}
+\item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
+The values must be positive and in the units of the point cloud (usually meters, occasionally feet).}
 
-\item{max_ws}{numeric. Maximum window size to be used in filtering ground returns in
-Zhang et al. (2003)}
-
-\item{min_th}{numeric. Initial threshold height above the parameterized ground surface
-to be considered a ground return. This is \code{dt0} in Zhang et al. (2003)}
-
-\item{max_th}{numeric. Maximum threshold height above the parameterized ground surface
-to be considered a ground return. This is \code{dhmax} in Zhang et al. (2003)}
-
-\item{s}{numeric. Slope value to be used in computing the height thresholds sequence.
-This is the parameter \code{s} in Zhang et al. (2003) (equation 7)}
+\item{th}{numeric. Sequence of threshold heights above the parameterized ground surface
+to be considered a ground return. The values must be positive and are in the units of
+the point cloud (usually meters, occasionally feet).}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
-column a value of 2 denotes ground according to LAS specifications.
+column a value of 2 denotes 'ground' according to LAS specifications.
 }
 \description{
 Implements algorithms for segmentation of ground points. The function updates the field
-\code{Classification} of the input LAS object. The points classified as 'ground' are
+\code{Classification} of the LAS input object. The points classified as 'ground' are
 assigned a value of 2 according to las specifications (See the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 }
@@ -47,28 +39,26 @@ assigned a value of 2 according to las specifications (See the ASPRS documentati
 
 
 This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-This is not a strict implementation of Zhang et al. This algorithm works at the raw point
+This is not a strict implementation of Zhang et al. This algorithm works at the point
 cloud level without any rasterization process. The morphological operator is applied on
-the points cloud not on a raster. Therefore some parameters from the original
-description are no longer useful. The cell size \code{c} (equation 7) is not a requiered
-parameter. Therefore in the original paper the threshold sequence was (equation 7):\cr\cr
-\eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-Now it is:\cr\cr
-\eqn{th_k = s*(w_k - w_{k-1}) + th_0}\cr\cr
-This method support an extra logical parameters \code{exponential} to change the method
-used to create the windows size sequence. Default is FALSE. See reference.
+the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+to compute the sequence of windows sizes and thresholds. Here these parameters are free
+and specifed by the user. The function \link{util_makeZhangParam} enables computation of the parameters according to the original paper.
 }
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
-lasground(las, "pmf", min_ws = 2, max_ws = 40, min_th = 0.01, max_th = 5, slope = 1)
+ws = seq(3,21, 3)
+th = seq(0.1, 2, length.out = length(ws))
+
+lasground(las, "pmf", ws, th)
 
 plot(las, color = "Classification")
 }
 \references{
 Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
-Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682
+Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 }

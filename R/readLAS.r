@@ -65,7 +65,6 @@
 #' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
-#' @param ... compatibility with former arguments from lidR (<= 1.2.1) and extra bytes loading (see details).
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -79,24 +78,24 @@
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 #' las = readLAS(LASfile, select = "*+")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   UseMethod("readLAS", files)
 }
 
 #' @export
-readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "")
 {
-  return(readLAS(files@data$filename, select, filter, ...))
+  return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
-readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   buffer <- X <- Y <- NULL
 
   filter = paste(files@filter, filter)
-  las = readLAS(files@files, select, filter, ...)
+  las = readLAS(files@files, select, filter)
 
   if (is.null(las))
     return(invisible())
@@ -132,25 +131,25 @@ readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
 
 #' @export
-readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "")
 {
   ofile = ""
-  return(streamLAS(files, ofile, select, filter, ...))
+  return(streamLAS(files, ofile, select, filter))
 }
 
-streamLAS = function(x, ofile, select = "*", filter = "", ...)
+streamLAS = function(x, ofile, select = "*", filter = "")
 {
   UseMethod("streamLAS", x)
 }
 
-streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", ...)
+streamLAS.LAScluster = function(x, ofile, select = "*", filter = "")
 {
   filter = paste(x@filter, filter)
   las = streamLAS(x@files, ofile, select,  filter)
   return(invisible(las))
 }
 
-streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
+streamLAS.character = function(x, ofile, select = "*", filter = "")
 {
   # ==================
   # Test the files
@@ -207,69 +206,9 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", ...)
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
 
-
-  aargsin = list(...) # additionnal arguments
-
-  # Extra Bytes
-  if(!is.null(aargsin$eb))
-    eb = aargsin$eb
-
-
-  # ===========================
-  # Former syntax compatibility
-  # ===========================
-
-  oldnames = c("Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "PointSourceID", "RGB", "pulseID", "flightlineID", "color", "XYZonly")
-  pnames   = names(aargsin)
-
-  if (any(pnames %in% oldnames))
-  {
-    message("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
-
-    if (!is.null(aargsin$Intensity))
-      i <- aargsin$Intensity
-
-    if (!is.null(aargsin$ReturnNumber))
-      r <- aargsin$ReturnNumber
-
-    if (!is.null(aargsin$NumberOfReturns))
-      n <- aargsin$NumberOfReturns
-
-    if (!is.null(aargsin$ScanDirectionFlag))
-      d <- aargsin$ScanDirectionFlag
-
-    if (!is.null(aargsin$EdgeOfFlightline))
-      e <- aargsin$EdgeOfFlightline
-
-    if (!is.null(aargsin$Classification))
-      c <- aargsin$Classification
-
-    if (!is.null(aargsin$ScanAngle))
-      a <- aargsin$ScanAngle
-
-    if (!is.null(aargsin$UserData))
-      u <- aargsin$UserData
-
-    if (!is.null(aargsin$PointSourceID))
-      p <- aargsin$PointSourceID
-
-    if (!is.null(aargsin$RGB))
-      RGB <- aargsin$RGB
-
-    if (!is.null(aargsin$color))
-      C <- aargsin$color
-
-    if (!is.null(aargsin$pulseID))
-      P <- aargsin$pulseID
-
-    if (!is.null(aargsin$flightlineID))
-      Fl <- aargsin$flightlineID
-
-    if (!is.null(aargsin$XYZonly))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- FALSE
-
-    if (!is.null(aargsin$all))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- TRUE
+  if ((Fl | P) & !t) {
+    t <- TRUE
+    message("'t' has automatically been added in the selection to match other options")
   }
 
   # ==================

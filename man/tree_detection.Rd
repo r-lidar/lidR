@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree_detection.r
 \name{tree_detection}
 \alias{tree_detection}
-\title{Tree tops detection based on local maxima filters}
+\title{Tree top detection based on local maxima filters}
 \usage{
 tree_detection(x, ws, hmin = 2)
 }
@@ -11,20 +11,20 @@ tree_detection(x, ws, hmin = 2)
 such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix}.}
 
 \item{ws}{numeric. Size of the moving window used to the detect the local maxima. On
-a raster alike object this size is in pixel and should be an odd number larger than 3.
+a raster-like object this size is in pixels and should be an odd number larger than 3.
 On a raw point cloud this size is in the point cloud units (usually meters).}
 
-\item{hmin}{numeric. Minimum hight of a tree. Threshold below which a pixel or a point
+\item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default 2.}
 }
 \value{
 A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-is a point cloud or a RasterLayer if the input is a raster-alike object.
+is a point cloud, or a RasterLayer if the input is a raster-like object.
 }
 \description{
-Tree tops detection based on local maxima filters. There are two types of filters. The
-first, called for gridded objects, works based on images with a matrix-based algorithm
-and the second one, called for point clouds works at the point cloud level without any
+Tree top detection based on local maxima filters. There are two types of filter. The
+first, called for gridded objects, works on images with a matrix-based algorithm
+and the second one, called for point clouds, works at the point cloud level without any
 rasterization.
 }
 \examples{
@@ -38,7 +38,7 @@ ttops = tree_detection(las, 5)
 plot(las)
 ttops \%$\% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
 
-# rasterer-based method
+# raster-based method
 
 chm = grid_canopy(las, 1, subcircle = 0.15)
 chm = as.raster(chm)

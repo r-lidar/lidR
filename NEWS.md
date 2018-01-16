@@ -2,34 +2,38 @@
 
 #### NEW FEATURES
 
-* `lasclip` and `lasclip*` can extract from a catalog
-* `lasclip` supports `sp::Polygon` objects
-* `lastrees` gain a new algorithm from Silva et al. (2016).
-* `lastrees` with Li's algorithm gain a new paramter to prevent over-segmentation.
-* new function `lassnags` for classifying points as snag points or segmenting snags.
+* `lasclip` and `lasclip*` can extract from a catalog.
+* `lasclip` supports `sp::Polygon` objects.
+* `lastrees` gains a new algorithm from Silva et al. (2016).
+* `lastrees` with the Li et al. (2012) algorithm gains a new parameter to prevent over-segmentation.
+* new function `lassnags` for classifying points as snag points or for segmenting snags.
 * new function `tree_detection` to detect individual trees. This feature has been extracted from `lastrees`'s algorithms and it is now up to the users to use `lidR`'s algos or other input sources.
+* `plot` supports natively the `PointCloudViewer` package avaible on github.
 
 #### BUG FIXES
 
-* Fix missing pixel in DTM leading to the impossibility to normalize.
-* [[#80](https://github.com/Jean-Romain/lidR/issue/80)] fix segfault
-* [[#84](https://github.com/Jean-Romain/lidR/issue/84)] fix bug in `lasscanline`
+* Fix missing pixel in DTM that made normalization impossible.
+* [[#80](https://github.com/Jean-Romain/lidR/issue/80)] fix segfault.
+* [[#84](https://github.com/Jean-Romain/lidR/issue/84)] fix bug in `lasscanline`.
 
-#### ENHANCEMENT
-* `lastrees` with Li et al. (2012) algorithm is 5-6 times faster and much memory efficient.
-* `lastrees` with Li et al. (2012) algorithm does not sort the original point cloud anymore.
-* `lastrees` with Dalponte et al (2016) algorithm is now computed in a linear time and is therefore hundreds to millons times faster
-* `catalog_reshape()` stream the data and use virtually 0 memory to run.
-* `grid_canopy()` has been rewritten enterly in C++ and is 10 to 20 times faster both with the option `subcircle` or not
-* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to be ran while this feature previously requiered the equivalent of several copies of the point cloud (several hundreds of MB).
-* `as.raster()` is three times faster.
-* `lasclassify` use now a QuadTree and is therfore faster. This enable to speed up several algorithm such as `lastrees` with Silva's algo
+#### ENHANCEMENTS
+* `lastrees` with the Li et al. (2012) algorithm is now 5-6 times faster and much more memory efficient.
+* `lastrees` with the Li et al. (2012) algorithm no longer sorts the original point cloud.
+* `lastrees` with the Dalponte et al (2016) algorithm is now computed in linear time and is therefore hundreds to millions times faster.
+* `catalog_reshape()` streams the data and uses virtually zero memory to run.
+* `grid_canopy()` has been rewritten entirely in C++ and is now 10 to 20 times faster both with the option `subcircle` or without it.
+* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to run, while this feature previously required the equivalent of several copies of the point cloud (several hundreds of MB).
+* `as.raster()` is now three times faster.
+* `lasclassify` now uses a QuadTree and is therefore faster. This enables several algorithms to run faster, such as `lastrees` with Silva's algo.
 
 #### OTHER CHANGES
 
-* `lasground` with PMF algorithm changed the parameter names for something easier to type and to understand and to prepare the package to get new algorithms.
-* `lasground` documentation is more explicit on the actual algorithm used.
-* `lasground` computes the windows size more closely to the orinal Zhang paper.
+* `lasground` with the PMF algorithm now accepts user-defined sequences.
+* `lasground` with the PMF algorithm has simplified parameter names to make them easier to type and understand, and to prepare the package for new algorithms.
+* `lasground` documentation is more explicit about the actual algorithm used.
+* `lasground` now computes the windows size more closely in line with the original Zhang paper.
+* `lastrees` when used with raster-based methods now accepts a missing las object. In that case `extra` is turned to `true`.
+*  new parameter `p` (for power) added to functions that enable spatial interpolation with IDW.
 
 ## lidR v1.3.1 (Release date: 2017-09-20)
 
