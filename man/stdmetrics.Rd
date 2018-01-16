@@ -90,7 +90,7 @@ individual tree level.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile, all = TRUE)
+lidar = readLAS(LASfile, select = "*")
 
 # All the predefined functions
 lidar \%>\% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
