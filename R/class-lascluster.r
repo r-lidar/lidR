@@ -67,7 +67,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   if (shape == LIDRCIRCLE)
     .Object@filter = paste("-inside_circle", xc, yc, hw + buffer)
   else if (shape == LIDRRECTANGLE)
-    .Object@filter = paste("-inside", .Object@bbbox$xmin, .Object@bbbox$ymin, .Object@bbbox$xmax, .Object@bbox$ymax)
+    .Object@filter = paste("-inside", .Object@bbbox$xmin, .Object@bbbox$ymin, .Object@bbbox$xmax, .Object@bbbox$ymax)
   else
     stop("Something went wrong internally initializing a cluster. Process aborted.")
 
