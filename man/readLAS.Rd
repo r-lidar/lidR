@@ -45,6 +45,11 @@ more efficient than \link{lasfilter} in many ways. If the desired filters are kn
 reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command:
 rlas:::lasfilterusage()
+
+The selection of specific Extra Byte fields can be done either with select argument for extra bytes 1-9,
+or with \code{eb} argument for more specific queries, e.g. \code{eb = c(2, 4, 24)} would load
+Extra Bytes 2, 4 and 24 if they exist. \code{eb = 0} selects all Extra Bytes available.
+Argument \code{eb} overrides extra byte arguments in \code{select}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
