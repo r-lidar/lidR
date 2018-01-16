@@ -16,37 +16,37 @@ lasclipPolygon(x, xpoly, ypoly, ofile = "")
 lasclipCircle(x, xcenter, ycenter, radius, ofile = "")
 }
 \arguments{
-\item{x}{An object of class \code{LAS} or \code{LAScatalog}}
+\item{x}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{geometry}{a geometric object. Currently \code{Polygon} from \code{sp} is supported.}
 
-\item{ofile}{character.  Path to an output file (only with a \code{LAScatalog}).
-If \code{ofile = ""} the result is loaded in R otherwise the result is writen into a
-file while reading. This is much more memory efficient than loading into R then writting.}
+\item{ofile}{character. Path to an output file (only with a \code{LAScatalog}).
+If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
+file while reading. This is much more memory efficient than loading into R first, then writing.}
 
-\item{xleft}{scalar of left x position of rectangle}
+\item{xleft}{scalar of left x position of rectangle.}
 
 \item{ybottom}{scalar of bottom y position of rectangle.}
 
-\item{xright}{scalar of right x position of rectangle}
+\item{xright}{scalar of right x position of rectangle.}
 
-\item{ytop}{scalar of top y position of rectangle}
+\item{ytop}{scalar of top y position of rectangle.}
 
-\item{xpoly}{numerical array. x-coordinates of polygon}
+\item{xpoly}{numerical array. x-coordinates of polygon.}
 
-\item{ypoly}{numerical array. y-coordinates of polygon}
+\item{ypoly}{numerical array. y-coordinates of polygon.}
 
-\item{xcenter}{scalar x disc center}
+\item{xcenter}{scalar of x disc center.}
 
-\item{ycenter}{scalar y disc center}
+\item{ycenter}{scalar of y disc center.}
 
-\item{radius}{scalar disc radius}
+\item{radius}{scalar of disc radius.}
 }
 \value{
-An object of class \code{LAS} or NULL if the results is immediatly written in a file.
+An object of class \code{LAS} or NULL if the result is immediately written to a file.
 }
 \description{
-Clip LiDAR points within a given geometry and convenient wrappers most common geometries
+Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

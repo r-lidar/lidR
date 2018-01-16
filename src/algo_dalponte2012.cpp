@@ -33,23 +33,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_three, double DIST)
+IntegerMatrix C_algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
 {
+  bool grown = true;
   bool expend;
-  bool finished = false;
+  int nrow  = Image.nrow();
+  int ncol  = Image.ncol();
 
-  int nrow = Image.nrow();
-  int ncol = Image.ncol();
+  std::vector< Pixel<double> > neighbours(4);
 
-  std::vector< Pixel<double> > neighbour(8);
-
-  IntegerMatrix OldRegion  = clone(Seeds);
   IntegerMatrix Region     = clone(Seeds);
   IntegerMatrix Regiontemp = clone(Seeds);
-  IntegerMatrix Check(nrow, ncol);
 
-  std::vector< Pixel<int> > seeds;
-  std::vector<double> sum_height;
+  std::map<int, Pixel<int> > seeds;                                     // Stores all the seed as Pixel object
+  std::map<int, double> sum_height;                                     // Stores the sum of the elevation of each pixel of a tree (to compute mean height)
+  std::map<int, int> npixel;
 
   for (int i = 0 ; i < nrow ; i++)
   {
@@ -57,61 +55,56 @@ IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_
     {
       if (Seeds(i,j) != 0)
       {
-        seeds.push_back(Pixel<int>(i,j, Seeds(i,j)));
-        sum_height.push_back(Image(i,j));
+        seeds[Seeds(i,j)] = Pixel<int>(i,j, Seeds(i,j));
+        sum_height[Seeds(i,j)] = Image(i,j);
+        npixel[Seeds(i,j)] = 1;
       }
     }
   }
 
-  std::vector<int> npixel(seeds.size());
-  std::fill(npixel.begin(), npixel.end(), 1);
-
-  while (!finished)
+  int step = 0;
+  while (grown)
   {
-    finished = true;
+    grown = false;
 
-    for (int r = 1 ; r < nrow-1 ; r++)
+    for (int r = 1 ; r < nrow-1 ; r++)                                 // Loops across the entiere image
     {
       for(int k = 1 ; k < ncol-1 ; k++)
       {
-        if(Check(r, k) == 0 && Region(r, k) != 0)                       // If the pixel is a crown and was not tested yet
+        if(Region(r, k) != 0)                                          // If the pixel is already labeled
         {
-          int ind = Region(r, k)-1;                                     // ID of the crown for the current pixel
+          int id = Region(r, k);                                       // id of the crown for the current pixel
 
-          Pixel<int>seed  = seeds[ind];                                 // Coordonnées du maximum local d'indice ind
-          double rvSeed   = Image(seed.i, seed.j);                      // Seed height
-          double rvCrown  = sum_height[ind]/npixel[ind];                // Mean height of the crown
+          Pixel<int>seed  = seeds[id];                                 // Get the seed with the label id
+          double hSeed    = Image(seed.i, seed.j);                     // Seed height
+          double mhCrown  = sum_height[id]/npixel[id];                 // Mean height of the crown
 
           // Elevation of the 4 neighbours
-          neighbour[0] = Pixel<double>(r-1, k, Image(r-1, k));
-          neighbour[1] = Pixel<double>(r, k-1, Image(r, k-1));
-          neighbour[2] = Pixel<double>(r, k+1, Image(r, k+1));
-          neighbour[3] = Pixel<double>(r+1, k, Image(r+1, k));
+          neighbours[0] = Pixel<double>(r-1, k, Image(r-1, k));
+          neighbours[1] = Pixel<double>(r, k-1, Image(r, k-1));
+          neighbours[2] = Pixel<double>(r, k+1, Image(r, k+1));
+          neighbours[3] = Pixel<double>(r+1, k, Image(r+1, k));
 
-          /*neighbour[4] = Pixel<double>(r-1, k-1, Image(r-1, k-1));
-          neighbour[5] = Pixel<double>(r-1, k+1, Image(r-1, k+1));
-          neighbour[6] = Pixel<double>(r+1, k+1, Image(r+1, k+1));
-          neighbour[7] = Pixel<double>(r+1, k-1, Image(r+1, k-1));*/
-
-          // Test les coordonnées pour trouver celles qui correspondend au test
-          for(int i = 0 ; i < neighbour.size() ; i++)
+          for(int i = 0 ; i < neighbours.size() ; i++)                  // For each neighboring pixel
           {
-            Pixel<double> px = neighbour[i];
+            Pixel<double> px = neighbours[i];
 
-            if (px.val > th_three)                                  // La canopée ne vaut pas 0 pour ce pixel
+            if (px.val > th_tree)                                       // The pixel is higher than the minimum value)
             {
               expend =
-                px.val > rvSeed*th_seed &&                          // La canopée est supérieure à un seuil pour ce pixel
-                px.val > rvCrown*th_crown &&                        // La canopée est supérieure à un  autre seuil pour ce pixel
-                px.val <= rvSeed+rvSeed*0.05 &&                     // La canopée est inférieure à un seuil pour ce pixel
-                abs(seed.i-px.i) < DIST &&                          // Le pixel n'est pas trop loin du maximum local sur x
-                abs(seed.j-px.j) < DIST &&                          // Le pixel n'est pas trop loin du maximum local sur y
+                px.val > hSeed*th_seed &&                               // La canopée est supérieure à un seuil pour ce pixel
+                px.val > mhCrown*th_crown &&                            // La canopée est supérieure à un  autre seuil pour ce pixel
+                px.val <= hSeed+hSeed*0.05 &&                           // La canopée est inférieure à un seuil pour ce pixel
+                abs(seed.i-px.i) < DIST &&                              // Le pixel n'est pas trop loin du maximum local sur x
+                abs(seed.j-px.j) < DIST &&                              // Le pixel n'est pas trop loin du maximum local sur y
                 Region(px.i, px.j) == 0;
 
-              if(expend)                                            // le pixel appartient à la courrone
+              if(expend)                                                // The pixel in part of the region
               {
-                Regiontemp(px.i, px.j) = Region(r, k);              // On ajoute le pixel
-                finished = false;
+                Regiontemp(px.i, px.j) = Region(r,k);                   // Add the pixel to the region
+                npixel[id]++;
+                sum_height[id] += Image(px.i, px.j);                    // Update the sum of the height of the region
+                grown = true;
               }
             }
           }
@@ -119,25 +112,7 @@ IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_
       }
     }
 
-    std::fill(npixel.begin(), npixel.end(), 0);
-    std::fill(sum_height.begin(), sum_height.end(), 0);
-
-    // To compute mean height of the crown
-    for (int i = 0 ; i < nrow ; i++)
-    {
-      for (int j = 0 ; j < ncol ; j++)
-      {
-        if (Regiontemp(i,j) != 0)
-        {
-          npixel[Regiontemp(i,j) -1]++;
-          sum_height[Regiontemp(i,j) -1] += Image(i,j);
-        }
-      }
-    }
-
     std::copy( Regiontemp.begin(), Regiontemp.end(), Region.begin() );
-    std::copy( OldRegion.begin(), OldRegion.end(), Check.begin() );
-    std::copy( Regiontemp.begin(), Regiontemp.end(), OldRegion.begin() );
   }
 
   return(Region);

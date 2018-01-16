@@ -126,7 +126,7 @@ IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVect
     {
       if (point_in_polygon(xpoly, ypoly, (*it)->x, (*it)->y))
       {
-        id[(*it)->id] = i;
+        id[(*it)->id] = i+1;
       }
     }
   }

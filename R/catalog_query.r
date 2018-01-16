@@ -130,15 +130,8 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   else
     h = 2*r2
 
-  output = catalog_queries_internal(obj, x, y, w, h, buffer, roinames, ncores, progress, ...)
-
-  return(output)
-}
-
-catalog_queries_internal = function(obj, x, y, w, h, buffer, roinames, ncores, progress, ...)
-{
   nplots <- length(x)
-  tiles  <- pbar <- NULL
+  tiles  <- NULL
 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
@@ -147,30 +140,38 @@ catalog_queries_internal = function(obj, x, y, w, h, buffer, roinames, ncores, p
 
   # Make an index of the files containing each query
   clusters  = catalog_index(obj, x, y, w, h, buffer, roinames)
-  nclusters = length(clusters)
+  nclust = length(clusters)
 
-  if (progress)
-    pbar  = txtProgressBarMulticore(min = 0, max = nplots, style = 3)
-
-  if (nclusters <= ncores)
-    ncores = nclusters
+  if (nclust <= ncores)
+    ncores = nclust
 
   verbose("Extracting data...")
 
-  # Computation
-  if (ncores == 1)
-  {
-    output = sapply(clusters, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
-  }
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
   else
-  {
-    cl = parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist = NULL, envir = NULL)
-    output = parallel::parSapply(cl, clusters, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
-    parallel::stopCluster(cl)
+    future::plan(future::sequential)
 
-    # This patch solves issue #73 in a dirty way waiting for a better solution for issue
-    # 2333 in data.table
+  output = list()
+
+
+  for(i in seq_along(clusters))
+  {
+    cluster = clusters[[i]]
+    key = roinames[i]
+    output[[key]] <- future::future({get_query(cluster, ...) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+    }
+  }
+
+  output = future::values(output)
+
+  # Ppatch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+  if (ncores > 1)
+  {
     for (i in 1:length(output))
       output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
   }
@@ -178,11 +179,8 @@ catalog_queries_internal = function(obj, x, y, w, h, buffer, roinames, ncores, p
   return(output)
 }
 
-.get_query = function(cluster, pb, ...)
+get_query = function(cluster, ...)
 {
-  if (!is.null(pb))
-    addTxtProgressBarMulticore(pb, 1)
-
   las <- readLAS(cluster, ...)
 
   if (is.null(las))

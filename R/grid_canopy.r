@@ -83,7 +83,7 @@
 #' # Local maximum algorithm with a resolution of 1 meter replacing each
 #' # point by a 10 cm radius circle of 8 points and interpolating the empty
 #' # pixels using the 3-nearest neighbours and an inverse-distance weighting.
-#' grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3) %>% plot
+#' grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2) %>% plot
 #'
 #' \dontrun{
 #' grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) %>% plot
@@ -159,10 +159,7 @@ grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", .
 {
   oldbuffer <- CATALOGOPTIONS("buffer")
 
-  CATALOGOPTIONS(buffer = 0)
-
-  if (subcircle == 0)
-    CATALOGOPTIONS(buffer = subcircle)
+  CATALOGOPTIONS(buffer = res/2 + subcircle)
 
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 

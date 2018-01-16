@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// algo_dalponte
-IntegerMatrix algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_three, double DIST);
-RcppExport SEXP _lidR_algo_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_threeSEXP, SEXP DISTSEXP) {
+// C_algo_dalponte
+IntegerMatrix C_algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
+RcppExport SEXP _lidR_C_algo_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,9 +15,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type Seeds(SeedsSEXP);
     Rcpp::traits::input_parameter< double >::type th_seed(th_seedSEXP);
     Rcpp::traits::input_parameter< double >::type th_crown(th_crownSEXP);
-    Rcpp::traits::input_parameter< double >::type th_three(th_threeSEXP);
+    Rcpp::traits::input_parameter< double >::type th_tree(th_treeSEXP);
     Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
-    rcpp_result_gen = Rcpp::wrap(algo_dalponte(Image, Seeds, th_seed, th_crown, th_three, DIST));
+    rcpp_result_gen = Rcpp::wrap(C_algo_dalponte(Image, Seeds, th_seed, th_crown, th_tree, DIST));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -142,8 +142,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // knnidw
-NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k);
-RcppExport SEXP _lidR_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p);
+RcppExport SEXP _lidR_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -153,7 +153,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(knnidw(X, Y, Z, x, y, k));
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(knnidw(X, Y, Z, x, y, k, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -242,18 +243,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// polygon_intersection
-NumericMatrix polygon_intersection(SEXP pointsMatrix1, SEXP pointsMatrix2);
-RcppExport SEXP _lidR_polygon_intersection(SEXP pointsMatrix1SEXP, SEXP pointsMatrix2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type pointsMatrix1(pointsMatrix1SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pointsMatrix2(pointsMatrix2SEXP);
-    rcpp_result_gen = Rcpp::wrap(polygon_intersection(pointsMatrix1, pointsMatrix2));
-    return rcpp_result_gen;
-END_RCPP
-}
 // tinfo
 NumericMatrix tinfo(IntegerMatrix M, NumericMatrix X);
 RcppExport SEXP _lidR_tinfo(SEXP MSEXP, SEXP XSEXP) {
@@ -296,7 +285,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lidR_algo_dalponte", (DL_FUNC) &_lidR_algo_dalponte, 6},
+    {"_lidR_C_algo_dalponte", (DL_FUNC) &_lidR_C_algo_dalponte, 6},
     {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 6},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
@@ -306,14 +295,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
     {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
-    {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 6},
+    {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 7},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
     {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
     {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
-    {"_lidR_polygon_intersection", (DL_FUNC) &_lidR_polygon_intersection, 2},
     {"_lidR_tinfo", (DL_FUNC) &_lidR_tinfo, 2},
     {"_lidR_tsearch", (DL_FUNC) &_lidR_tsearch, 6},
     {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},

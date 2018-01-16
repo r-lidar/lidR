@@ -9,9 +9,9 @@
 \alias{lastrees_silva}
 \title{Individual tree segmentation}
 \usage{
-lastrees(las, algorithm, ..., extra = FALSE)
+lastrees(las, algorithm, ...)
 
-lastrees_li(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10, extra = FALSE)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
 
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE)
@@ -23,7 +23,8 @@ lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
   extra = FALSE)
 }
 \arguments{
-\item{las}{An object of the class \code{LAS}}
+\item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
+automatically.}
 
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
 \code{"watershed"},\code{"li2012"} or \code{"silva2016"} (see sections relevant to each
@@ -32,85 +33,82 @@ algorithm).}
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details
 about the algorithms)}
 
-\item{extra}{logical. By default the functions classify the original point cloud by reference
-and returns nothing (the original object is automatically updated in place). If
-\code{extra = TRUE} some extra output can be returned. The type of output depends on the
-algorithm used. It can be 1 or 2 \code{RasterLayer} or a \code{SpatialPolygonDataFrame}
-or something else depending on intermediate objects used internally.}
-
 \item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012).
-Default 1.5}
+Default 1.5.}
 
 \item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
-Default 2}
+Default 2.}
 
-\item{hmin}{numeric.  Minimun height of a detected tree. Default 2}
+\item{hmin}{numeric.  Minimum height of a detected tree. Default 2.}
 
 \item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
 
-\item{chm}{RasterLayer. Image of the canopy. You can compute it with \link{grid_canopy}
-or \link{grid_tincanopy} or read it from external file.}
+\item{chm}{RasterLayer. Image of the canopy. You can compute it with \link[lidR:grid_canopy]{grid_canopy}
+or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
 
-\item{tol}{numeric. Tolerance see ?EBImage::watershed}
+\item{tol}{numeric. Tolerance see ?EBImage::watershed.}
 
-\item{ext}{numeric. see ?EBImage::watershed}
+\item{ext}{numeric. see ?EBImage::watershed.}
 
-\item{treetops}{RasterLayer or data.frame depending either you are using a raster-based
-or point cloud-based algorithm (see details about methods). You can compute it with
-\link{tree_detection} or read it from an external file.}
+\item{extra}{logical. By default the functions classify the original point cloud by reference
+and return nothing (the original object is automatically updated in place). If
+\code{extra = TRUE} some additional \code{RasterLayer} can be returned.}
+
+\item{treetops}{\code{RasterLayer} or \code{data.frame} containing the position of the
+trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.}
 
 \item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 is added to a region if its height is greater than the tree height multiplied by this value.
-It should be between 0 and 1. Default 0.45}
+It should be between 0 and 1. Default 0.45.}
 
-\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016.  A pixel
+\item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. A pixel
 is added to a region if its height is greater than the current mean height of the region
-multiplied by this value. It should be between 0 and 1. Default 0.55}
+multiplied by this value. It should be between 0 and 1. Default 0.55.}
 
-\item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixel).
+\item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 Default 10.}
 
-\item{max_cr_factor}{numeric. Maximum value of a crown diameter given as proportion of the
-tree height. Default is 0.6 meaning 60\% of the tree height.}
+\item{max_cr_factor}{numeric. Maximum value of a crown diameter given as a proportion of the
+tree height. Default is 0.6,  meaning 60\% of the tree height.}
 
 \item{exclusion}{numeric. For each tree, pixels with an elevation lower than \code{exclusion}
-multiplied by the tree height will be remove. Thus, this number belong between 0 and 1.}
+multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.}
 }
 \value{
-Nothing, the point cloud is updated by reference. If \code{extra = TRUE} some
-algorithm provide extra outputs.
+Nothing, the point cloud is updated by reference. If \code{extra = TRUE}
+algorithms provide extra outputs. Usually intermediate objects used internally, such as a
+RasterLayer.
 }
 \description{
 Individual tree segmentation with several possible algorithms (see details). The function
-attributes to each point of the point cloud a number identifying the detected tree
+attributes a number to each point of the point cloud identifying the detected tree that
 the point comes from (in a new \code{treeID} column). By default the classification is
 done at the point cloud level and the functions retun nothing. However, with some algorithms
-it is possible to return also a raster image of the classification and/or a
-SpatialPolygonDataFrame. There are currently 4 algorithms implemented. See relevant sections.
+it is possible to also return a raster image of the classification. There are currently
+4 algorithms implemented. See relevant sections.
 }
 \section{Li 2012}{
 
-This method is a growthing region method working at the raw point cloud level. It is a
-strict implementation of the Li et al. (see references) algorithm made by \code{lidR}
-author but adding a parameter \code{hmin} to stop the segmentation for too low objects.
-In practice this limits the over-segmentation of the method. Otherwise this algo could
-segment a lake like a tree.
+This method is a growing region method working at the raw point cloud level. It is a
+strict implementation of the Li et al. (see references) algorithm made by the \code{lidR}
+author but with the addition of a parameter \code{hmin} to stop the segmentation for objects
+that are too low. In practice, this limits over-segmentation when using the method. Otherwise
+the algorithm could, for example, segment a lake as a tree.
 }
 
 \section{Dalponte 2016}{
 
-This is a local maxima + growing region algorithm. It is based on the constrains proposed by
+This is a local maxima + growing region algorithm. It is based on the constraints proposed by
 Dalponte and Coomes (see references). This algorithm exists in the package \code{itcSegment}.
 This version is identical to the original but with superfluous code removed and rewritten
-effciently. Consequently it is hundreds to millions times faster. \code{treetops} is expected
-to be a \code{RasterLayer}\cr
-Note that this algorithm strictly performs a segmentation while the original method as
+efficiently. Consequently it is hundreds to millions times faster.\cr
+Note that this algorithm strictly performs a segmentation, while the original method as
 implemented in \code{itcSegment} and described in the manuscript also performs a pre-
-and post-process when these tasks are expected to be done by the user in separated functions.
+and post-process when these tasks are expected to be done by the user in separate functions.
 }
 
 \section{Silva 2016}{
@@ -118,9 +116,8 @@ and post-process when these tasks are expected to be done by the user in separat
 This is a simple but elegant method based on local maxima + voronoi tesselation described
 in Silva et al. (2016) (see references). This algorithm is implemented in the package
 \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
-a code written from scratch by lidR author from the original paper and is considerably
-faster (between 250 and 300 times faster). \code{treetops} is expected to be either a
-\code{RasterLayer} or a \code{data.frame}.
+code written from scratch by the lidR author from the original paper and is considerably
+(between 250 and 1000 times) faster.
 }
 
 \section{Watershed}{
@@ -151,17 +148,17 @@ plot(las, color = "treeID", colorPalette = col)
 
 # Dalponte 2016
 ttops = tree_detection(chm, 5, 2)
-lastrees_dalponte(las, chm, ttops, max_cr = 7)
+lastrees_dalponte(las, chm, ttops)
 plot(las, color = "treeID", colorPalette = col)
 
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
-airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575\cr\cr
+airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.\cr\cr
 Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
 trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.\cr\cr
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
 J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.)
 Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
-https://doi.org/10.1080/07038992.2016.1196582
+https://doi.org/10.1080/07038992.2016.1196582.
 }
