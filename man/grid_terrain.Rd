@@ -5,8 +5,7 @@
 \title{Digital Terrain Model}
 \usage{
 grid_terrain(x, res = 1, method, k = 10L, p = 2,
-  model = gstat::vgm(0.59, "Sph", 874), in_chull = TRUE,
-  keep_lowest = FALSE)
+  model = gstat::vgm(0.59, "Sph", 874), keep_lowest = FALSE)
 }
 \arguments{
 \item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
