@@ -160,8 +160,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     sp::coordinates(out) <- ~ X + Y
     sp::gridded(out) <- TRUE   # coerce to SpatialPixelsDataFrame
 
-
-    if (ncol(out) <= 3)
+    if (ncol(out) == 1)
       return(raster::raster(out))
     else
       return(raster::stack(out))
