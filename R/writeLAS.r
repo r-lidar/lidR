@@ -51,10 +51,11 @@ writeLAS = function(.las, file)
 
   I = RN = NoR = SDF = EoF = C = SA = UD = PSI = R = G = B = integer(0)
   time = numeric(0)
+  EB <- data.frame()
 
   fields = names(.las@data)
 
-  nolasvalidfield = fields[!fields %in% LASFIELDS]
+  extra_byte_fields = fields[!fields %in% LASFIELDS]
 
   if ("Intensity" %in% fields)
     I = .las@data$Intensity
@@ -83,13 +84,12 @@ writeLAS = function(.las, file)
     B = .las@data$B
   }
 
-  rlas::writelas(file, .las@header@PHB, .las@data$X, .las@data$Y, .las@data$Z, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
-
-  if (length(nolasvalidfield) > 0)
+  if (length(extra_byte_fields))
   {
-    for (i in 1:length(nolasvalidfield))
-      message("Column ", nolasvalidfield[i], " skipped. It does not meet las specifications.")
+    EB <- las@data[,extra_byte_fields, with = FALSE]
   }
+
+  rlas::writelas(file, c(.las@header@PHB, list(`Variable Length Records`=.las@header@VLR)), .las@data$X, .las@data$Y, .las@data$Z, EB, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
 
   return(invisible())
 }
