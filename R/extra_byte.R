@@ -30,6 +30,7 @@
 #' Creates or updates extra byte field description in \code{header@VLR}
 #' Avalaible parameters for \code{...} are \code{data_type}, \code{min}, \code{max}, \code{scale},
 #' \code{offset}.
+#'
 #' \code{data_type}: integer describing following code of LAS v1.4. Default is 10, i.e. \code{double}.
 #' Codes are the following 1=U8, 2=I8, 3=U16, 4=I16, 5=U32, 6=I32, 7=U64, 8=I64, 9=F32, 10=F34.
 #'
@@ -119,6 +120,7 @@ extra_byte_desc <- function(header, name, ...){
 #' Add extra byte field and specify description in \code{header@VLR}
 #' Avalaible parameters for \code{...} are \code{data_type}, \code{min}, \code{max}, \code{scale},
 #' \code{offset}. These should be vectors of length the number of columns of \code{data} argument.
+#'
 #' \code{data_type}: integer describing following code of LAS v1.4. Default is 10, i.e. \code{double}.
 #' Codes are the following 1=U8, 2=I8, 3=U16, 4=I16, 5=U32, 6=I32, 7=U64, 8=I64, 9=F32, 10=F34.
 #'
@@ -139,7 +141,11 @@ add.extra_byte <- function(.las, data, datanames = colnames(data), ...){
 
 
   for(i in 1:length(datanames)){
-    eb_desc <- list(header=.las@header)
+    eb_desc <- list(header=.las@header, name=datanames[i])
+
+    if("data_type" %in% names(argsin))
+      eb_desc$data_type = argsin$data_type[i]
+
     if("no_data" %in% names(argsin))
       eb_desc$no_data = argsin$no_data[i]
 
