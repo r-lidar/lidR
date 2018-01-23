@@ -86,7 +86,7 @@ writeLAS = function(.las, file)
 
   if (length(extra_byte_fields))
   {
-    EB <- las@data[,extra_byte_fields, with = FALSE]
+    EB <- .las@data[,extra_byte_fields, with = FALSE]
   }
 
   rlas::writelas(file, c(.las@header@PHB, list(`Variable Length Records`=.las@header@VLR)), .las@data$X, .las@data$Y, .las@data$Z, EB, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
