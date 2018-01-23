@@ -20,10 +20,11 @@ LASheader object.
 Creates or updates extra byte field description in \code{header@VLR}
 Avalaible parameters for \code{...} are \code{data_type}, \code{min}, \code{max}, \code{scale},
 \code{offset}.
-\code{data_type}: integer describing following code of LAS v1.4. Default is 10, i.e. \code{double}.
-Codes are the following 1=U8, 2=I8, 3=U16, 4=I16, 5=U32, 6=I32, 7=U64, 8=I64, 9=F32, 10=F34.
 }
 \details{
+\code{data_type}: integer describing following code of LAS v1.4. Default is 10, i.e. \code{double}.
+Codes are the following 1=U8, 2=I8, 3=U16, 4=I16, 5=U32, 6=I32, 7=U64, 8=I64, 9=F32, 10=F34.
+
 \code{min, max}: minimum and maximum value (after scaling).
 
 \code{scale, offset}: factor with which data will be scaled before writing to file.
