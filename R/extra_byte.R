@@ -38,7 +38,7 @@
 #'
 #' \code{scale, offset}: factor with which data will be scaled before writing to file.
 #'
-#' @param .las an object of class LAS
+#' @param header an object of class LASheader
 #' @param name character. A character string with field name to update.
 #' @param ... see details.
 #' @return LASheader object.

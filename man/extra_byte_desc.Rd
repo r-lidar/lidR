@@ -7,11 +7,11 @@
 extra_byte_desc(header, name, ...)
 }
 \arguments{
+\item{header}{an object of class LASheader}
+
 \item{name}{character. A character string with field name to update.}
 
 \item{...}{see details.}
-
-\item{.las}{an object of class LAS}
 }
 \value{
 LASheader object.
