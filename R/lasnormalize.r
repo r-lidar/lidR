@@ -50,7 +50,7 @@
 #' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging approach. For each point of #' interest it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #'
-#' \code{lasunnormalize} enables restoration of the original elevation in a memory efficent way
+#' \code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
 #' in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
 #' the point cloud was normalized with the package lidR).
 #'
@@ -68,7 +68,9 @@
 #' @param copy By default the point cloud is updated in place by reference. Users can force
 #' the function to return a new point cloud. Set TRUE for compatibility with versions < 1.3.0
 #' @return The function returns NULL. The LAS object is updated by reference. Z is now the
-#' normalizedelevation, A new column 'Zref' records the former elevation values. This is a way to #' save memory by avoiding making copies of the point cloud. But if \code{copy = TRUE}, a new LAS 3' object is returned and the original one is not modified.
+#' normalized elevation, A new column 'Zref' records the former elevation values. This is a
+#' way to save memory by avoiding making copies of the point cloud. But if \code{copy = TRUE},
+#' a new LAS object is returned and the original one is not modified.
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)

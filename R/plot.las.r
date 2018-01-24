@@ -47,8 +47,8 @@
 #' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
 #' the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
 #' \code{PointCloudViewer} package which is much more efficient and can handle million of points
-#' using few memory. \code{PointCloudViewer} is not avaible on CRAN yet and should
-#' be install from gihub (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).
+#' using few memory. \code{PointCloudViewer} is not available on CRAN yet and should
+#' be install from github (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).
 #' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

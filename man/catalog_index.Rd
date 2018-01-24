@@ -25,8 +25,8 @@ is provided, the selection turns into a rectangular ROI. If r= r2 it is a square
 A list of LAScluster object.
 }
 \description{
-\bold{This function is an internal function reserved for lidR developpers.\cr\cr}
+\bold{This function is an internal function reserved for lidR developers.\cr\cr}
 When we have a set of (x, y) coordinates corresponding to a region of interest (ROI) in a catalog
-this function retrive in which file(s) are these ROIs.
+this function retrieve in which file(s) are these ROIs.
 }
 \keyword{internal}

@@ -29,9 +29,9 @@
 
 #' Retrieve the files containing ROIs
 #'
-#' \bold{This function is an internal function reserved for lidR developpers.\cr\cr}
+#' \bold{This function is an internal function reserved for lidR developers.\cr\cr}
 #' When we have a set of (x, y) coordinates corresponding to a region of interest (ROI) in a catalog
-#' this function retrive in which file(s) are these ROIs.
+#' this function retrieve in which file(s) are these ROIs.
 #'
 #' @param catalog A LAScatalog object
 #' @param x vector. A set of x plot coordinates

@@ -43,7 +43,8 @@ This is not a strict implementation of Zhang et al. This algorithm works at the 
 cloud level without any rasterization process. The morphological operator is applied on
 the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
 to compute the sequence of windows sizes and thresholds. Here these parameters are free
-and specifed by the user. The function \link{util_makeZhangParam} enables computation of the parameters according to the original paper.
+and specified by the user. The function \link{util_makeZhangParam} enables computation
+of the parameters according to the original paper.
 }
 
 \examples{

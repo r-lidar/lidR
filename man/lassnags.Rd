@@ -67,7 +67,7 @@ method due to potential mis-interpretation of the Wing et al. manuscript, specif
 Table 2 where they present four groups of conditional assessments with their required
 neighborhood point density and average BBPR values (BBPR = branch and bole point ratio;
 PDR = point density requirement).\cr\cr
-This algorithim attributes each point in the point cloud (\code{snagCls} column) into the
+This algorithm attributes each point in the point cloud (\code{snagCls} column) into the
 following five snag classes: \cr
 0) live tree - not a snag\cr
 1) general snag - the broadest range of snag point situations\cr
