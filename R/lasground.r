@@ -51,7 +51,8 @@
 #' cloud level without any rasterization process. The morphological operator is applied on
 #' the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
 #' to compute the sequence of windows sizes and thresholds. Here these parameters are free
-#' and specifed by the user. The function \link{util_makeZhangParam} enables computation of the parameters according to the original paper.
+#' and specified by the user. The function \link{util_makeZhangParam} enables computation
+#' of the parameters according to the original paper.
 #'
 #' @return Nothing. The original LAS object is updated by reference. In the 'Classification'
 #' column a value of 2 denotes 'ground' according to LAS specifications.

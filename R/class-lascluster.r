@@ -26,7 +26,7 @@
 # ===============================================================================
 
 
-#' An S4 class to represent an arbirary region in the catalog.
+#' An S4 class to represent an arbitrary region in the catalog.
 #'
 #' @keywords internal
 setClass(

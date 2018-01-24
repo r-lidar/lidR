@@ -3,8 +3,8 @@
 \docType{class}
 \name{LAScluster-class}
 \alias{LAScluster-class}
-\title{An S4 class to represent an arbirary region in the catalog.}
+\title{An S4 class to represent an arbitrary region in the catalog.}
 \description{
-An S4 class to represent an arbirary region in the catalog.
+An S4 class to represent an arbitrary region in the catalog.
 }
 \keyword{internal}
