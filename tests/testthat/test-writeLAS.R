@@ -1,12 +1,12 @@
 context("writeLAS")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-i = readLAS(LASfile)
+i = readLAS(LASfile, select="xyztinrcaRGB") #without pulseID as it is extra byte
 ofile = paste0(tempfile(), ".las")
 
 test_that("Test if I/O are equal", {
   writeLAS(i, ofile)
-  o = readLAS(ofile)
+  o = readLAS(ofile, select="xyztinrcaRGB")
 
   # Because those field are expepected to be different
   i@header@PHB["Generating Software"] <- NULL
@@ -31,8 +31,8 @@ test_that("Add extra bytes with default description",{
   lasw=readLAS(ofile, select = "*+")
   expect_true(all(lasw@data==las@data))
   modified_fileds=c("System Identifier", "Generating Software", "Offset to point data")
-  all(unlist(check_EB_header(lasw@header@PHB[!(names(lasw@header@PHB) %in% modified_fileds)],
-                             las@header@PHB[!(names(lasw@header@PHB) %in% modified_fileds)])))
+  expect_true(all(unlist(check_EB_header(lasw@header@PHB[!(names(lasw@header@PHB) %in% modified_fileds)],
+                             las@header@PHB[!(names(lasw@header@PHB) %in% modified_fileds)]))))
 })
 
 test_that("Add description to existing extra byte",{
@@ -52,20 +52,23 @@ test_that("Add description to existing extra byte",{
   lasw=readLAS(ofile, select = "*+")
 
   expect_true(all(lasw@data[,names(las@data), with=F]==las@data))
-  EB_header_check = check_EB_header(lasw@header@VLR$Extra_Bytes$`Extra Bytes Description`,
-                  las@header@VLR$Extra_Bytes$`Extra Bytes Description`)
+  expect_true(all(unlist(check_EB_header(lasw@header@VLR$Extra_Bytes$`Extra Bytes Description`,
+                  las@header@VLR$Extra_Bytes$`Extra Bytes Description`))))
 })
 
 test_that("Add extra bytes with description",{
-  las2w=add.extra_byte(las, data = data.table::data.table(ID=c(1:nrow(las@data)), reverseID=c(nrow(las@data):1)),
+  las2w=add.extra_byte(las, data = data.table::data.table(ID=c(1:nrow(las@data))*.1+5,
+                                                          reverseID=c(nrow(las@data):1)*.001+2.5),
                        names=c("ID", "reverseID"),
-                       data_type=c(1,9), min=c(1,1),
+                       data_type=c(4,9), min=c(1,1),
+                       scale=c(.1,.001), offset=c(5,2.5),
                        max=c(nrow(las@data), nrow(las@data)),
                        description=c("identifier", "Reverse identifier"))
 
   writeLAS(las2w, ofile)
   lasw=readLAS(ofile)
-  expect(lasw@header@VLR$Extra_Bytes$`Extra Bytes Description`$reverseID$data_type==9)
-  expect(las2w@header@VLR$Extra_Bytes$`Extra Bytes Description`$ID$data_type==1)
+  expect_true(all(unlist(check_EB_header(lasw@header@VLR$Extra_Bytes$`Extra Bytes Description`,
+                              las2w@header@VLR$Extra_Bytes$`Extra Bytes Description`))))
+
 
 })
