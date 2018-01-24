@@ -1,4 +1,4 @@
-## lidR v1.4.0 (In development)
+## lidR v1.4.0 (2018-01-24)
 
 #### NEW FEATURES
 
@@ -13,8 +13,8 @@
 #### BUG FIXES
 
 * Fix missing pixel in DTM that made normalization impossible.
-* [[#80](https://github.com/Jean-Romain/lidR/issue/80)] fix segfault.
-* [[#84](https://github.com/Jean-Romain/lidR/issue/84)] fix bug in `lasscanline`.
+* [[#80](https://github.com/Jean-Romain/lidR/issues/80)] fix segfault.
+* [[#84](https://github.com/Jean-Romain/lidR/issues/84)] fix bug in `lasscanline`.
 
 #### ENHANCEMENTS
 * `lastrees` with the Li et al. (2012) algorithm is now 5-6 times faster and much more memory efficient.
