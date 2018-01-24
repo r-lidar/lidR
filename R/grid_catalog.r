@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
+grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0), ...)
 {
   Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
 
@@ -43,6 +43,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   memlimwar <- CATALOGOPTIONS("memory_limit_warning")
   buffer    <- CATALOGOPTIONS("buffer")
   by_file   <- CATALOGOPTIONS("by_file")
+  tsize     <- CATALOGOPTIONS("tiling_size")
 
   # ========================================
   # Test of memory to prevent memory overflow
@@ -77,7 +78,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
   # sequentially processed
   # ========================================
 
-  clusters <- catalog_makecluster(catalog, res, buffer+0.1, by_file)
+  clusters <- catalog_makecluster(catalog, res, buffer+0.1, by_file, tsize, start)
 
   # Add the path to the saved file (if saved)
   clusters <- lapply(clusters, function(x)
@@ -102,7 +103,10 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, ...)
       callparam$func <- as.expression(callparam$func)
   }
 
-  callparam$res <- res
+  callparam$res   <- res
+
+  if (any(start != 0))
+    callparam$start <- start
 
   # Create or clean the temporary directory
   if (savevrt)

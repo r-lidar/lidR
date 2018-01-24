@@ -1,5 +1,9 @@
 ## lidR v1.5.0 (In developpement)
 
+#### NEW FEATURES
+
+* Parameter `start` has been enabled in `grid_metrics` with `catalogs`.
+
 ## lidR v1.4.0 (2018-01-24)
 
 #### NEW FEATURES

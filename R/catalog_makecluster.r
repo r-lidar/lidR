@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"))
+catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"), start = c(0,0), plot = TRUE)
 {
   xmin <- ymin <- xmax <- ymax <- 0
 
@@ -38,7 +38,10 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
   }
   else
   {
+    start = start %% res
+
     # dimension of the clusters (width = height)
+    # rounded up to a multiple of the resolution
     width = ceiling(size/res) * res
 
     verbose("Computing the bounding box of the catalog...")
@@ -47,13 +50,20 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
 
     # Buffer around the bbox as a multiple of the resolution
+    # This enable to start and end clusters at exact mutilples of the resolution.
     buffered_bbox = bbox + c(-res, -res, +res, +res)
     buffered_bbox = round_any(buffered_bbox, res)
     buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
 
-    verbose("Creating a set of cluster for the catalog...")
+    if (!all((buffered_bbox %% res) == 0))
+      stop("Internal error, please report the error to the maintainer: bounding box incorrect.")
 
-    # Generate coordinates of sub bounding boxes
+    # Shift the bounding box to match with the start parameter (grid_metrics)
+    buffered_bbox = buffered_bbox + c(start[1], start[2], start[1], start[2])
+
+    verbose("Creating a set of cluster coordinates for the catalog...")
+
+    # Generate coordinates of clusters
     xmin = seq(buffered_bbox[1], buffered_bbox[3], width)
     ymin = seq(buffered_bbox[2], buffered_bbox[4], width)
 
@@ -68,6 +78,8 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     ymax = ymin + width
   }
 
+  verbose("Creating a set of cluster for the catalog...")
+
   xcenter = (xmin + xmax)/2
   ycenter = (ymin + ymax)/2
   width   = xmax - xmin
@@ -76,25 +88,21 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
 
   clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
 
-  # Plot the pattern
-  xrange = c(min(xmin), max(xmax))
-  yrange = c(min(ymin), max(ymax))
-  title  = "Pattern of clusters"
-  plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
-
-  #graphics::rect(xmin, ymin, xmax, ymax, border = "red")
-
-  #if (buffer > 0)
-    #graphics::rect(xmin - buffer, ymin - buffer, xmax + buffer, ymax + buffer, border = "darkgreen", lty = "dotted")
-
-  lapply(clusters, function(x)
+  if(plot)
   {
-    graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
+    xrange = c(min(xmin), max(xmax))
+    yrange = c(min(ymin), max(ymax))
+    title  = "Pattern of clusters"
+    plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
 
-    if (x@buffer > 0)
-      graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
-  })
+    lapply(clusters, function(x)
+    {
+      graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
 
+      if (x@buffer > 0)
+        graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
+    })
+  }
 
   return(clusters)
 }
