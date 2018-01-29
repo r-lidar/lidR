@@ -50,12 +50,10 @@ test_that("Silvas's methods works", {
   expect_equal(seg1, seg2)
 })
 
-test_that("Watershed's methods works", {
-  las@data[, treeID := NULL]
-
-  lastrees_watershed(las, chm)
-  expect_true("treeID" %in% names(las@data))
-})
-
-
-#plot(las, color = "treeID", colorPalette = pastel.colors(100))
+# Commented because CRAN doesn't like to call Bioconductor package
+# test_that("Watershed's methods works", {
+#   las@data[, treeID := NULL]
+#
+#   lastrees_watershed(las, chm)
+#   expect_true("treeID" %in% names(las@data))
+# })

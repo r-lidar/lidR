@@ -120,11 +120,6 @@
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'
-#' # Watershed
-#' lastrees_watershed(las, chm)
-#' plot(las, color = "treeID", colorPalette = pastel.colors(100))
-#' plot(las, color = "treeID", colorPalette = col)
-#'
 #' # Dalponte 2016
 #' ttops = tree_detection(chm, 5, 2)
 #' lastrees_dalponte(las, chm, ttops)
