@@ -1,3 +1,9 @@
+## lidR v1.4.2 (In developpment)
+
+#### BUG FIXES
+
+* [[#103](https://github.com/Jean-Romain/lidR/issues/103)] fix user-defined function not exported in clusters on Windows
+
 ## lidR v1.4.1 (2018-02-01)
 
 ####  OTHER CHANGES
