@@ -275,7 +275,7 @@ entropy = function(z, by = 1, zmax = NULL)
     stop("Entropy found negatives values. Returned NA.")
 
 	# Define the x meters bins from 0 to zmax (rounded to the next integer)
-	bk = seq(0, ceiling(zmax), by)
+	bk = seq(0, ceiling(zmax/by)*by, by)
 
 	# Compute the p for each bin
 	hist = findInterval(z, bk)
