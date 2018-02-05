@@ -5,6 +5,8 @@
     v = utils::packageVersion("lidR")
     packageStartupMessage("lidR ", v, ". For help, for the most up-to-date version or to report a bug, visit https://github.com/Jean-Romain/lidR")
   }
+
+  catalog_option_comptibility_global_changed <<- FALSE
 }
 
 .onUnload <- function(libpath) {

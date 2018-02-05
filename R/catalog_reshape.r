@@ -56,11 +56,27 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
   ext <- match.arg(ext)
 
-  ncores  = CATALOGOPTIONS("multicore")
   interact = LIDROPTIONS("interactive")
 
+  buffer(ctg) <- 0
+  by_file(ctg) <- FALSE
+  tiling_size(ctg) <- size
+
+  ncores   <- ctg@cores
+  progress <- ctg@progress
+
+  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
+  {
+    progress  <- CATALOGOPTIONS("progress")
+    ncores    <- CATALOGOPTIONS("multicore")
+  }
+
+  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
+    ncores <- CATALOGOPTIONS("multicore")
+
   # Create a pattern of clusters to be sequentially processed
-  clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
+  clusters <- catalog_makecluster(ctg, 1)
+  nclust   <- length(clusters)
 
   if(interact)
   {
@@ -82,26 +98,25 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
-  ti = Sys.time()
-
-  # Computations done within sequential or parallel loop in .getMetrics
-  if (ncores == 1)
-  {
-    output = lapply(clusters, reshape_func, path = path, prefix = prefix, ext = ext)
-  }
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
   else
+    future::plan(future::sequential)
+
+  output = list()
+
+  for(i in seq_along(clusters))
   {
-    cat("Begin parallel processing... \n")
-    cat("Num. of cores:", ncores, "\n\n")
+    cluster = clusters[[i]]
 
-    cl = parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
-    parallel::stopCluster(cl)
+    output[[i]] <- future::future({ reshape_func(cluster, path, prefix, ext) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
   }
-
-  tf = Sys.time()
-  cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
   return(catalog(path))
 }

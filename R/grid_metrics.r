@@ -137,6 +137,7 @@ grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines
 
   oldbuffer <- CATALOGOPTIONS("buffer")
   CATALOGOPTIONS(buffer = 0)
+  buffer(x) <- 0
 
   stat <- grid_catalog(x, grid_metrics, res, "*+", filter, start, func = call)
 

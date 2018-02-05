@@ -86,6 +86,7 @@ grid_density.LAScatalog = function(x, res = 4, filter = "")
 {
   oldbuffer <- CATALOGOPTIONS("buffer")
   CATALOGOPTIONS(buffer = 0)
+  buffer(x) <- 0
 
   ret <- grid_catalog(x, grid_density, res, "xyztP", filter)
 
