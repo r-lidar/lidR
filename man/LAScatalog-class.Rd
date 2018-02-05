@@ -5,7 +5,10 @@
 \alias{LAScatalog-class}
 \title{An S4 class to represent a set of a .las or .laz files}
 \description{
-A LAScatalog object is a representation of a set of las/laz files
+A LAScatalog object is a representation of a set of las/laz files. A computer cannot load all the
+data at the same time. A catalog is a simple way to manage all the file sequentially reading only
+the headers. A catalog can be built with the function \link{catalog}. Also a catalog contains several
+extra information that enable to control how the catalog will be processed.
 }
 \section{Slots}{
 
@@ -13,10 +16,27 @@ A LAScatalog object is a representation of a set of las/laz files
 \item{\code{data}}{data.table. A table representing the header of each file.}
 
 \item{\code{crs}}{A \link[sp:CRS]{CRS} object.}
+
+\item{\code{cores}}{numeric. Numer of cores used to make parallel computations in compatible functions that
+support a catalog as input. Default is 1.}
+
+\item{\code{buffer}}{numeric. When applying a function to an entire catalog sequentially processing
+sub-areas (clusters) some algorithms (such as \link{grid_terrain}) require a buffer around the area
+to avoid edge effects. Default is 15 m.}
+
+\item{\code{progress}}{logical. Display progress estimation while processing. Default is TRUE.}
+
+\item{\code{by_file}}{logical. This option overwrites the option \code{tiling_size}. Instead  of processing
+the catalog by arbitrary split areas, it forces processing by file. Buffering is still available.
+Default is FALSE.}
+
+\item{\code{tiling_size}}{numeric. To process an entire catalog, the algorithm splits the dataset into
+several square sub-areas (clusters) to process them sequentially. This is the size of each square
+cluster. Default is 1000 (1 km^2).}
+
+\item{\code{opt_changed}}{Internal use only for compatibility with older deprecated code.}
 }}
 
 \seealso{
-\link[lidR:LAS-class]{LAS}
-\link[lidR:LAS]{LAS}
-\link[lidR:readLAS]{readLAS}
+\link[lidR:catalog]{catalog}
 }

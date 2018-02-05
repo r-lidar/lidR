@@ -25,9 +25,12 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"), start = c(0,0), plot = TRUE)
+catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
 {
   xmin <- ymin <- xmax <- ymax <- 0
+  buffer <- ctg@buffer
+  by_file <- ctg@by_file
+  size <- ctg@tiling_size
 
   if (by_file)
   {

@@ -161,15 +161,21 @@
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
-  progress  = CATALOGOPTIONS("progress")
-  ncores   <- CATALOGOPTIONS("multicore")
-  buffer   <- CATALOGOPTIONS("buffer")
-  by_file  <- CATALOGOPTIONS("by_file")
-  res      <- 1
+  res       <- 1
+  progress  <- ctg@progress
+  ncores    <- ctg@cores
 
-  clusters <- catalog_makecluster(ctg, res, buffer, by_file)
+  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
+  {
+    progress  <- CATALOGOPTIONS("progress")
+    ncores    <- CATALOGOPTIONS("multicore")
+    buffer(ctg)  <- CATALOGOPTIONS("buffer")
+    by_file(ctg) <- CATALOGOPTIONS("by_file")
+    tiling_size(ctg) <- CATALOGOPTIONS("tiling_size")
+  }
 
-  nclust = length(clusters)
+  clusters <- catalog_makecluster(ctg, res)
+  nclust   <- length(clusters)
 
   if (nclust < ncores)
     ncores <- nclust

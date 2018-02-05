@@ -37,13 +37,20 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   funcname  <- lazyeval::expr_text(grid_func)
   exportdir <- tempdir() %+%  "/" %+% funcname %+% "/"
 
-  progress  <- CATALOGOPTIONS("progress")
-  ncores    <- CATALOGOPTIONS("multicore")
   savevrt   <- CATALOGOPTIONS("return_virtual_raster")
   memlimwar <- CATALOGOPTIONS("memory_limit_warning")
-  buffer    <- CATALOGOPTIONS("buffer")
-  by_file   <- CATALOGOPTIONS("by_file")
-  tsize     <- CATALOGOPTIONS("tiling_size")
+
+  progress  <- catalog@progress
+  ncores    <- catalog@cores
+
+  if (!catalog@opt_changed & catalog_option_comptibility_global_changed)
+  {
+    progress  <- CATALOGOPTIONS("progress")
+    ncores    <- CATALOGOPTIONS("multicore")
+    buffer(catalog)  <- CATALOGOPTIONS("buffer")
+    by_file(catalog) <- CATALOGOPTIONS("by_file")
+    tiling_size(catalog) <- CATALOGOPTIONS("tiling_size")
+  }
 
   # ========================================
   # Test of memory to prevent memory overflow
@@ -78,7 +85,9 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   # sequentially processed
   # ========================================
 
-  clusters <- catalog_makecluster(catalog, res, buffer+0.1, by_file, tsize, start)
+  catalog@buffer = catalog@buffer + 0.1
+
+  clusters <- catalog_makecluster(catalog, res, start)
 
   # Add the path to the saved file (if saved)
   clusters <- lapply(clusters, function(x)
