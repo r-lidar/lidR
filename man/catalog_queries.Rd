@@ -55,7 +55,7 @@ buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
 \section{Multicore computation}{
 
 The process is done using several cores. To change the settings of how a catalog is processed
-use \link{catalog_options}.
+use \link{cores}.
 }
 
 \examples{
@@ -87,5 +87,4 @@ catalog \%>\% catalog_queries(X, Y, R, XYZonly = TRUE, filter = "-drop_z_below 0
 \seealso{
 \link{readLAS}
 \link{catalog}
-\link{catalog_options}
 }

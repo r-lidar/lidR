@@ -50,7 +50,7 @@
 #'
 #' @section Multicore computation:
 #' The process is done using several cores. To change the settings of how a catalog is processed
-#' use \link{catalog_options}.
+#' use \link{cores}.
 #'
 #' @param obj A LAScatalog object
 #' @param x vector. A set of x coordinates corresponding to the centers of the ROIs
@@ -67,7 +67,6 @@
 #' @seealso
 #' \link{readLAS}
 #' \link{catalog}
-#' \link{catalog_options}
 #' @export
 #' @examples
 #' \dontrun{
