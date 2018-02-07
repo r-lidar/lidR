@@ -35,7 +35,6 @@ LIDROPTIONS <- settings::options_manager(
 #' # Reset default options
 #' lidr_reset()
 #' @export
-#' @seealso \link{catalog_options}
 lidr_options <- function(...)
 {
   settings::stop_if_reserved(...)
