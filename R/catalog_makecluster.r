@@ -25,19 +25,23 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"))
+catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS("tiling_size"), start = c(0,0), plot = TRUE)
 {
-  name <- NULL
+  xmin <- ymin <- xmax <- ymax <- 0
 
   if (by_file)
   {
-    X = ctg@data[, c("Min X", "Max X", "Min Y", "Max Y")]
-    names(X) = c("xleft", "xright", "ybottom", "ytop")
-    X$byfile = TRUE
+    xmin = ctg@data$`Min X`
+    xmax = ctg@data$`Max X`
+    ymin = ctg@data$`Min Y`
+    ymax = ctg@data$`Max Y`
   }
   else
   {
+    start = start %% res
+
     # dimension of the clusters (width = height)
+    # rounded up to a multiple of the resolution
     width = ceiling(size/res) * res
 
     verbose("Computing the bounding box of the catalog...")
@@ -46,49 +50,59 @@ catalog_makecluster = function(ctg, res, buffer, by_file, size = CATALOGOPTIONS(
     bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
 
     # Buffer around the bbox as a multiple of the resolution
+    # This enable to start and end clusters at exact mutilples of the resolution.
     buffered_bbox = bbox + c(-res, -res, +res, +res)
     buffered_bbox = round_any(buffered_bbox, res)
     buffered_bbox = buffered_bbox + c(-res, -res, +res, +res)
 
-    verbose("Creating a set of cluster for the catalog...")
+    if (!all((buffered_bbox %% res) == 0))
+      stop("Internal error, please report the error to the maintainer: bounding box incorrect.")
 
-    # Generate coordinates of sub bounding boxes
-    xleft   = seq(buffered_bbox[1], buffered_bbox[3], width)
-    ybottom = seq(buffered_bbox[2], buffered_bbox[4], width)
+    # Shift the bounding box to match with the start parameter (grid_metrics)
+    buffered_bbox = buffered_bbox + c(start[1], start[2], start[1], start[2])
 
-    X = expand.grid(xleft = xleft, ybottom = ybottom)
-    data.table::setDT(X)
+    verbose("Creating a set of cluster coordinates for the catalog...")
 
-    X$xright = X$xleft + width
-    X$ytop   = X$ybottom + width
+    # Generate coordinates of clusters
+    xmin = seq(buffered_bbox[1], buffered_bbox[3], width)
+    ymin = seq(buffered_bbox[2], buffered_bbox[4], width)
 
-    X$byfile = FALSE
+    xmin = xmin[xmin < max(ctg@data$`Max X`)]
+    ymin = ymin[ymin < max(ctg@data$`Max Y`)]
+
+    X = expand.grid(xmin = xmin, ymin = ymin)
+
+    xmin = X$xmin
+    ymin = X$ymin
+    xmax = xmin + width
+    ymax = ymin + width
   }
 
-  X$xleftbuff   = X$xleft - buffer
-  X$ybottombuff = X$ybottom - buffer
-  X$xrightbuff  = X$xright + buffer
-  X$ytopbuff    = X$ytop + buffer
-  X$xcenter     = (X$xleft + X$xright)/2
-  X$ycenter     = (X$ybottom + X$ytop)/2
-  X$name        = 1:nrow(X)
+  verbose("Creating a set of cluster for the catalog...")
 
-  # Remove cluster outside the catalog
-  if (!by_file)
+  xcenter = (xmin + xmax)/2
+  ycenter = (ymin + ymax)/2
+  width   = xmax - xmin
+  height  = ymax - ymin
+  names   = paste0("ROI", 1:length(xcenter))
+
+  clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+
+  if(plot)
   {
-    queries = suppressWarnings(catalog_index(ctg, X$xcenter, X$ycenter, width/2, width/2, buffer, X$name))
-    X = X[name %in% names(queries)]
+    xrange = c(min(xmin), max(xmax))
+    yrange = c(min(ymin), max(ymax))
+    title  = "Pattern of clusters"
+    plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
+
+    lapply(clusters, function(x)
+    {
+      graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
+
+      if (x@buffer > 0)
+        graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
+    })
   }
 
-  # Plot the pattern
-  xrange = c(min(X$xleft), max(X$xright))
-  yrange = c(min(X$ybottom), max(X$ytop))
-  title  = "Pattern of clusters"
-  plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
-  with(X, graphics::rect(xleft, ybottom, xright, ytop, border = "red"))
-
-  if (buffer > 0)
-    with(X, graphics::rect(xleftbuff, ybottombuff, xrightbuff, ytopbuff, border = "darkgreen", lty = "dotted"))
-
-  return(X)
+  return(clusters)
 }

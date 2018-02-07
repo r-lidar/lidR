@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2017 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -29,137 +29,134 @@
 
 #' Clip LiDAR points
 #'
-#' Clip LiDAR points within a given geometry and convenient wrappers most common geometries
+#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
 #'
-#' @param .las An object of class \code{LAS}
-#' @param geometry characters. name of a geometry. Can be \code{"circle"}, \code{"rectangle"},
-#' \code{"polygon"}, \code{"cuboid"} or \code{"sphere"}
-#' @param coord matrix or data.frame. The coordinates of the minimum points required to fully
-#' describe the geometry. For circle a 1-by-3 matrix, for rectangle a 2-by-2 matrix, for polygon n-by-2
-#' matrix, for cuboid 2-by-3 matrix and for sphere a 1-by-4 matrix
-#' @param xleft	scalar. of left x position.
-#' @param ybottom	scalar. of bottom y position.
-#' @param xright scalar. of right x position.
-#' @param ytop scalar. of top y position.
-#' @param x	numerical array. x-coordinates of polygon
-#' @param y	numerical array. y-coordinates of polygon
-#' @param xcenter	scalar. x disc center
-#' @param ycenter	scalar. y disc center
-#' @param radius scalar. Disc radius
-#' @param inside logical. Keep data inside or outside the shape
-#' @return An object of class \code{LAS}
+#' @param x An object of class \code{LAS} or \code{LAScatalog}.
+#' @param geometry a geometric object. Currently \code{Polygon} from \code{sp} is supported.
+#' @param xleft scalar of left x position of rectangle.
+#' @param ybottom	scalar of bottom y position of rectangle.
+#' @param xright scalar of right x position of rectangle.
+#' @param ytop scalar of top y position of rectangle.
+#' @param xpoly numerical array. x-coordinates of polygon.
+#' @param ypoly numerical array. y-coordinates of polygon.
+#' @param xcenter scalar of x disc center.
+#' @param ycenter scalar of y disc center.
+#' @param radius scalar of disc radius.
+#' @param ofile character. Path to an output file (only with a \code{LAScatalog}).
+#' If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
+#' file while reading. This is much more memory efficient than loading into R first, then writing.
+#' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' subset = lidar %>% lasclipRectangle(xleft  = 684850, ybottom = 5017850,
-#'                                     xright = 684900, ytop    = 5017900)
+#' las = readLAS(LASfile)
+#' subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 #' plot(subset)
-#'
-#' msphere = matrix(c(684850, 5017850, 10, 10), ncol = 4)
-#' subset = lidar %>% lasclip("sphere", msphere)
-#' plot(subset)
-#'
-#' mrect = matrix(c(684850, 684900, 5017850, 5017900), ncol = 2)
-#' subset = lidar %>% lasclip("rectangle", mrect)
 #' @name lasclip
 #' @export
-lasclip = function(.las, geometry, coord, inside = TRUE)
+#' @export
+lasclip = function(x, geometry, ofile = "")
 {
-  if(is.matrix(coord))
-    coord = data.table::as.data.table(coord)
-  else if(is.data.frame(coord))
-    data.table::setDT(coord)
-  else if(!data.table::is.data.table(coord))
-    stop("'coord' must be a matrix, a data.frame or a data.table")
-
-  if(dim(coord)[2] == 2)
-  {
-    data.table::setnames(coord, c("x", "y"))
-    data.table::setorderv(coord, c("x", "y"))
-  }
-  else if(dim(coord)[2] == 3)
-  {
-    data.table::setnames(coord, c("x", "y", "z"))
-    data.table::setorderv(coord, c("x", "y", "z"))
-  }
-  else if(dim(coord)[2] == 4)
-  {
-    data.table::setnames(coord, c("x", "y", "z", "r"))
-  }
-  else
-    stop("Dimension incorrect for 'coord'")
-
-  if(geometry == "circle")
-    return(lasclipCircle(.las, coord$x[1], coord$y[1], coord$z[1], inside))
-  else if(geometry == "rectangle")
-    return(lasclipRectangle(.las, coord$x[1], coord$y[1], coord$x[2], coord$y[2], inside))
-  else if(geometry == "polygon")
-    return(lasclipPolygon(.las, coord$x, coord$y, inside))
-  else if(geometry == "cuboid")
-    return(lasclipCuboid(.las, coord$x[1], coord$y[1], coord$z[1], coord$x[2], coord$y[2], coord$z[2], inside))
-  else if(geometry == "sphere")
-    return(lasclipSphere(.las, coord$x[1], coord$y[1], coord$z[1], coord$r[1], inside))
-  else
-    stop("Geometry no supported.")
+  UseMethod("lasclip", x)
 }
 
+#' @export
+lasclip.LAS = function(x, geometry, ofile = "")
+{
+  if (is(geometry, "Polygon"))
+  {
+     las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2])
+     return(las)
+  }
+  else
+  {
+    stop("Geometry not supported", call. = FALSE)
+  }
+}
 
-#' @export lasclipRectangle
+#' @export
+lasclip.LAScatalog = function(x, geometry, ofile = "")
+{
+  if (is(geometry, "Polygon"))
+  {
+    las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile = "")
+    return(las)
+  }
+  else
+  {
+    stop("Geometry not supported", call. = FALSE)
+  }
+}
+
+# =========
+# RECTANGLE
+# =========
+
+#' @export
 #' @rdname lasclip
-lasclipRectangle = function(.las, xleft, ybottom, xright, ytop, inside = TRUE)
+lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "")
+{
+  UseMethod("lasclipRectangle", x)
+}
+
+#' @export
+lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "")
 {
   X <- Y <- NULL
-
-  if(inside)
-    return(lasfilter(.las, between(X, xleft, xright), between(Y, ybottom, ytop)))
-  else
-    return(lasfilter(.las, !between(X, xleft, xright), !between(Y, ybottom, ytop)))
+  return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop)))
 }
+
+#' @export
+lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "")
+{
+  return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile))
+}
+
+# ========
+# POLYGON
+# ========
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(.las, x, y, inside = TRUE)
+lasclipPolygon = function(x, xpoly, ypoly, ofile = "")
 {
-  X <- Y <- NULL
-
-  if(inside)
-    return(lasfilter(.las, points_in_polygon(x,y,X,Y)))
-  else
-    return(lasfilter(.las, !points_in_polygon(x,y,X,Y)))
+  UseMethod("lasclipPolygon", x)
 }
 
+#' @export
+lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "")
+{
+  X <- Y <- NULL
+  return(lasfilter(x, points_in_polygon(xpoly,ypoly, X, Y)))
+}
+
+#' @export
+lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "")
+{
+  return(catalog_clip_poly(x, xpoly, ypoly, ofile))
+}
+
+# ========
+# CIRCLE
+# ========
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(.las, xcenter, ycenter, radius, inside = TRUE)
+lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "")
+{
+  UseMethod("lasclipCircle", x)
+}
+
+#' @export
+lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "")
 {
   X <- Y <- NULL
-
-  if(inside)
-    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
-  else
-    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+  return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
 }
 
-lasclipCuboid = function(.las, xleft, ybottom, zbottom, xright, ytop, ztop, inside = TRUE)
+#' @export
+#' @export
+lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "")
 {
-  X <- Y <- Z <- NULL
-
-  if(inside)
-    return(lasfilter(.las, between(X, xleft, xright), between(Y, ybottom, ytop), between(Z, zbottom, ztop)))
-  else
-    return(lasfilter(.las, !between(X, xleft, xright), !between(Y, ybottom, ytop), !between(Z, zbottom, ztop)))
-}
-
-
-lasclipSphere = function(.las, xcenter, ycenter, zcenter, radius, inside = TRUE)
-{
-  X <- Y <- Z <- NULL
-
-  if(inside)
-    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 + (Z - zcenter)^2 <= radius^2))
-  else
-    return(lasfilter(.las, (X-xcenter)^2 + (Y-ycenter)^2 + (Z - zcenter)^2 > radius^2))
+  return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile))
 }
 

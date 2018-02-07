@@ -57,10 +57,14 @@
 #' those from \code{LASlib} and can be found by running the following command:
 #' rlas:::lasfilterusage()
 #'
+#' The selection of specific Extra Byte fields can be done either with select argument for extra bytes 1-9,
+#' or with \code{eb} argument for more specific queries, e.g. \code{eb = c(2, 4, 24)} would load
+#' Extra Bytes 2, 4 and 24 if they exist. \code{eb = 0} selects all Extra Bytes available.
+#' Argument \code{eb} overrides extra byte arguments in \code{select}.
+#'
 #' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
 #' @param select character. select only columns of interest to save memory (see details)
 #' @param filter character. streaming filters - filter data while reading the file (see details)
-#' @param ... compatibility with former arguments from lidR (<= 1.2.1)
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -74,43 +78,101 @@
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 #' las = readLAS(LASfile, select = "*+")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
+readLAS = function(files, select = "xyztinrcaRGBP", filter = "")
 {
-  `%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
+  UseMethod("readLAS", files)
+}
 
-  if (is(files, "LAScatalog"))
-    files <- files@data$filename
+#' @export
+readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "")
+{
+  return(readLAS(files@data$filename, select, filter))
+}
 
-  # ===================================
-  # rlas version 1.1.5 has new options
-  # which lead to incompatibilities.
-  # ===================================
+#' @export
+readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
+{
+  buffer <- X <- Y <- NULL
 
-  vrlas = utils::packageVersion("rlas")
-  rlas_gt_1.1.4 = vrlas > package_version("1.1.4")
+  filter = paste(files@filter, filter)
+  las = readLAS(files@files, select, filter)
 
+  if (is.null(las))
+    return(invisible())
+
+  if (files@buffer > 0)
+  {
+    ybottom = files@bbox$ymin
+    ytop    = files@bbox$ymax
+    xleft   = files@bbox$xmin
+    xright  = files@bbox$xmax
+    xc      = files@center$x
+    yc      = files@center$y
+    r       = (files@width - 2*files@buffer)/2
+
+    las@data[, buffer := 0]
+
+    if (files@shape == LIDRCIRCLE)
+    {
+      las@data[(X-xc)^2 + (Y-yc)^2 > r^2, buffer := LIDRBUFFER]
+    }
+    else
+    {
+      las@data[Y < ybottom, buffer := LIDRBOTTOMBUFFER]
+      las@data[X < xleft,   buffer := LIDRLEFTBUFFER]
+      las@data[Y > ytop,    buffer := LIDRTOPBUFFER]
+      las@data[X > xright,  buffer := LIDRRIGHTBUFFER]
+      las@data[(X > xright) & (Y < ybottom), buffer := LIDRBOTTOMBUFFER]
+    }
+  }
+
+  return(las)
+}
+
+
+#' @export
+readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "")
+{
+  ofile = ""
+  return(streamLAS(files, ofile, select, filter))
+}
+
+streamLAS = function(x, ofile, select = "*", filter = "")
+{
+  UseMethod("streamLAS", x)
+}
+
+streamLAS.LAScluster = function(x, ofile, select = "*", filter = "")
+{
+  filter = paste(x@filter, filter)
+  las = streamLAS(x@files, ofile, select,  filter)
+  return(invisible(las))
+}
+
+streamLAS.character = function(x, ofile, select = "*", filter = "")
+{
   # ==================
   # Test the files
   # ==================
 
-  valid <- file.exists(files)
-  islas <- tools::file_ext(files) %in% c("las", "laz", "LAS", "LAZ")
+  valid <- file.exists(x)
+  islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
   if (sum(valid) == 0 | sum(islas) == 0) {
     stop(paste0("File(s) not supported"), call. = FALSE)
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", p$files, " not found"), call. = FALSE)
-    files <- files[valid]
+    warning(paste0("File(s) ", x[!valid], " not found"), call. = FALSE)
+    x <- x[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", p$files, " not supported"), call. = FALSE)
-    files <- files[islas]
+    warning(paste0("File(s) ", x[!islas], " not supported"), call. = FALSE)
+    x <- x[islas]
   }
 
-  files = normalizePath(files)
+  ifiles = normalizePath(x)
 
   # ==================
   # New syntax parsing
@@ -121,7 +183,7 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   options = select
 
   if ("\\*" %is_in% select)
-    options = "xyztirndecaupRGB"
+    options = "xyztirndecaupRGB0"
 
   if ("\\+" %is_in% select)
     options = paste0(options, "PFC")
@@ -139,100 +201,34 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
   if ("R" %is_in% options) RGB <- TRUE
   if ("G" %is_in% options) RGB <- TRUE
   if ("B" %is_in% options) RGB <- TRUE
+  eb <- as.numeric(unlist(regmatches(options, gregexpr("[[:digit:]]", options))))
   if ("P" %is_in% options) P <- TRUE
   if ("F" %is_in% options) Fl <- TRUE
   if ("C" %is_in% options) C <- TRUE
 
-  # ===========================
-  # Former syntax compatibility
-  # ===========================
-
-  oldparam = list(...)
-  oldnames = c("Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "PointSourceID", "RGB", "pulseID", "flightlineID", "color", "XYZonly")
-  pnames   = names(oldparam)
-
-  if (any(pnames %in% oldnames))
-  {
-    message("In 'readLAS', arguments used to select columns are deprecated, please use the new argument 'select' instead.", call. = FALSE)
-
-    if (!is.null(oldparam$Intensity))
-      i <- oldparam$Intensity
-
-    if (!is.null(oldparam$ReturnNumber))
-      r <- oldparam$ReturnNumber
-
-    if (!is.null(oldparam$NumberOfReturns))
-      n <- oldparam$NumberOfReturns
-
-    if (!is.null(oldparam$ScanDirectionFlag))
-      d <- oldparam$ScanDirectionFlag
-
-    if (!is.null(oldparam$EdgeOfFlightline))
-      e <- oldparam$EdgeOfFlightline
-
-    if (!is.null(oldparam$Classification))
-      c <- oldparam$Classification
-
-    if (!is.null(oldparam$ScanAngle))
-      a <- oldparam$ScanAngle
-
-    if (!is.null(oldparam$UserData))
-      u <- oldparam$UserData
-
-    if (!is.null(oldparam$PointSourceID))
-      p <- oldparam$PointSourceID
-
-    if (!is.null(oldparam$RGB))
-      RGB <- oldparam$RGB
-
-    if (!is.null(oldparam$color))
-      C <- oldparam$color
-
-    if (!is.null(oldparam$pulseID))
-      P <- oldparam$pulseID
-
-    if (!is.null(oldparam$flightlineID))
-      Fl <- oldparam$flightlineID
-
-    if (!is.null(oldparam$XYZonly))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- FALSE
-
-    if (!is.null(oldparam$all))
-      i <- r <- n <- d <- e <- c <- a <- u <- p <- RGB <- t <- P <- Fl <- C <- TRUE
+  if ((Fl | P) & !t) {
+    t <- TRUE
+    message("'t' has automatically been added in the selection to match other options")
   }
 
   # ==================
   # Read the files
   # ==================
 
-  data = lapply(files, function(file)
-  {
-    header = rlas::readlasheader(file)
+  header = rlas::readlasheader(ifiles[1])
+  data   = rlas:::streamlasdata(ifiles, ofile, filter, i, r, n, d, e, c, a, u, p, RGB, t, eb)
 
-    if (rlas_gt_1.1.4)
-      data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, t, filter)
-    else
-      data = rlas::readlasdata(file, i, r, n, d, e, c, a, u, p, RGB, filter)
-
-    # Can happen if filter is badly used
-    if (dim(data)[1] == 0)
-      return(NULL)
-
-    # If filter is used, header will not be in accordance with the data. Hard check is useless
-    if (nchar(filter) > 0)
-      lascheck(data, header, hard = F)
-    else
-      lascheck(data, header, hard = T)
-
-    return(data)
-  })
-
-  data = data.table::rbindlist(data)
+  if (is.null(data))
+    return(invisible())
 
   if (nrow(data) == 0 | ncol(data) == 0)
     return(invisible())
 
-  header <- rlas::readlasheader(files[1])
+  # If filter is used, header will not be in accordance with the data. Hard check is useless
+  if (nchar(filter) > 0 | length(ifiles) > 1)
+    lascheck(data, header, hard = F)
+  else
+    lascheck(data, header, hard = T)
 
   las <- LAS(data, header, check = F)
 
@@ -247,3 +243,5 @@ readLAS = function(files, select = "xyztinrcaRGBP", filter = "", ...)
 
   return(las)
 }
+
+`%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])

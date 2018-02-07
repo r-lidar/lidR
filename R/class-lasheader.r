@@ -132,6 +132,14 @@ setMethod("show", "LASheader",  function(object)
     {
       cat("       data:                ", vlr[[6]], "\n")
     }
+    if(vlr$`record ID` == 4)
+    {
+      cat("       Extra Bytes Description:\n")
+      lapply(vlr[[6]], function(xx)
+      {
+        cat("          ", xx$name, ": ", xx$description, "\n")
+      })
+    }
   }
 
   return(invisible())

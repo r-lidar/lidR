@@ -4,7 +4,8 @@ LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 test_that("Each ground point is at 0 with knnidw", {
-  suppressWarnings(lasnormalize(lidar, method = "knnidw", k = 10L))
+  lidr_options(progress = FALSE)
+  suppressWarnings(lasnormalize(lidar, method = "knnidw", k = 10L, p = 1))
   Z0 = lidar@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
 })

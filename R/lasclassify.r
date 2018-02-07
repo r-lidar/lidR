@@ -123,9 +123,13 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
-  verbose("Croping the shapefile...")
-  polys = raster::crop(shapefile, extent(.las) + 20)
-
+  if (raster::extent(shapefile) >  2*extent(.las))
+  {
+    verbose("Croping the shapefile...")
+    polys = raster::crop(shapefile, extent(.las) + 20)
+  }
+  else
+    polys = shapefile
 
   # No polygon? Return NA or false depending on the method used
   if (!is.null(polys))

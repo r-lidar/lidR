@@ -1,5 +1,7 @@
 context("test-catalog")
 
+sink(tempfile())
+
 folder <- system.file("extdata", "", package="lidR")
 
 catalog_options(multicore = 1, progress = FALSE)
@@ -48,9 +50,12 @@ test_that("catalog queries works when no data", {
   n = c("plot1", "pouik2")
   ctg = catalog(folder)
 
-  req = catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer)
+  req = suppressWarnings(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer))
 
   expect_equal(length(req), 1)
+
+  expect_warning(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer),
+                "plot1 is outside the catalog.")
 })
 
 test_that("catalog queries works with the two shapes", {
@@ -105,6 +110,7 @@ test_that("catalog reshape works", {
 
   unlink(temp, recursive = T)
 
+  expect_equal(sum(ctg@data$`Number of point records`), sum(ctg2@data$`Number of point records`))
   expect_equal(nrow(ctg2@data), 9)
 })
 
@@ -134,4 +140,4 @@ test_that("catalog apply works", {
 
 })
 
-
+sink(NULL)

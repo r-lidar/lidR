@@ -31,7 +31,7 @@ dispatch the LiDAR data for each segmented tree in the user-defined function. Fu
 are defined without the need to considering each segmented tree i.e. only the point cloud (see examples).
 }
 \examples{
-LASfile <- system.file("extdata", "Tree.laz", package="lidR")
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
 # segment trees (see lastrees)

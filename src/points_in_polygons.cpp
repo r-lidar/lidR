@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
 #include <Rcpp.h>
+#include "QuadTree.h"
 using namespace Rcpp;
 
 // [[Rcpp::plugins("cpp0x")]]
@@ -46,7 +47,7 @@ using namespace Rcpp;
 // @references Adaptation of the C function written by W. Randolph Franklin
 // @export
 // [[Rcpp::export]]
-bool point_in_polygon(NumericVector vertx, NumericVector verty, float pointx, float pointy)
+bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy)
 {
   bool c = false;
   int nvert = vertx.length();
@@ -96,49 +97,41 @@ LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, Numeri
 // [[Rcpp::export]]
 IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
 {
-  // Since lidR incoporate a QuadTree this algo could be rewritten with a QuadTree.
-
   int npoints = pointx.length();
   int nvert   = vertx.length();
   IntegerVector id(npoints);
 
-  Progress p(npoints, displaybar);
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(pointx),as< std::vector<double> >(pointy));
 
-  // find bouding boxes to fast the agorithm
-  NumericVector bbxmin(nvert), bbxmax(nvert), bbymin(nvert), bbymax(nvert);
   for(int i = 0 ; i < nvert ; i ++)
   {
-    bbxmin[i] = min(as<NumericVector>(vertx[i]));
-    bbxmax[i] = max(as<NumericVector>(vertx[i]));
-    bbymin[i] = min(as<NumericVector>(verty[i]));
-    bbymax[i] = max(as<NumericVector>(verty[i]));
-  }
+    NumericVector xpoly = as<NumericVector>(vertx[i]);
+    NumericVector ypoly = as<NumericVector>(verty[i]);
 
-  for (int i = 0 ; i < npoints ; i++)
-  {
-    bool found = false;
-    int j = 0;
+    double xmin = min(xpoly);
+    double xmax = max(xpoly);
+    double ymin = min(ypoly);
+    double ymax = max(ypoly);
 
-    if (Progress::check_abort() )
-      return  id;
-    else
-      p.update(i);
+    double xc = (xmax + xmin)/2;
+    double yc = (ymax + ymin)/2;
+    double xhw = (xmax - xmin)/2;
+    double yhw = (ymax - ymin)/2;
 
-    while (!found && j < nvert)
+    std::vector<Point*> pts;
+    std::vector<Point*>::iterator it;
+    tree->rect_lookup(xc, yc, xhw, yhw, pts);
+
+    for (it = pts.begin() ; it != pts.end() ; ++it)
     {
-      // if point is inside the bounding box run point_in_polygon else it's useless (slightly faster)
-      if(bbxmin[j] <= pointx[i] || bbxmax[j] >= pointx[i] || bbymin[j] <= pointy[i] || bbymax[j] >= pointy[i])
+      if (point_in_polygon(xpoly, ypoly, (*it)->x, (*it)->y))
       {
-        if(point_in_polygon(vertx[j], verty[j], pointx[i], pointy[i]))
-        {
-          id[i] = j+1;
-          found = true;
-        }
+        id[(*it)->id] = i+1;
       }
-
-      j++;
     }
   }
+
+  delete tree;
 
   return id;
 }

@@ -48,43 +48,19 @@ IntegerVector fast_table(IntegerVector x, int size = 5)
 // [[Rcpp::export]]
 int fast_countequal(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it == t)
-      n++;
-  }
-
-  return n;
+  return std::count(x.begin(), x.end(), t);
 }
 
 // [[Rcpp::export]]
 int fast_countbelow(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it < t)
-      n++;
-  }
-
-  return n;
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::less<int>(), t));
 }
 
 // [[Rcpp::export]]
 int fast_countover(NumericVector x, double t)
 {
-  int n = 0;
-
-  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
-  {
-    if (*it > t)
-      n++;
-  }
-
-  return n;
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::greater<int>(), t));
 }
 
 // [[Rcpp::export]]
@@ -131,74 +107,16 @@ NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, do
   return(z);
 }
 
-IntegerMatrix which_equal(IntegerMatrix mtx, double val)
+// [[Rcpp::export]]
+NumericVector roundc(NumericVector x, int digit = 0)
 {
-  int l = mtx.nrow();
-  int w = mtx.ncol();
+  NumericVector y(x.length());
+  NumericVector::iterator itx = x.begin();
+  NumericVector::iterator ity = y.begin();
 
-  NumericVector x;
-  NumericVector y;
-
-  for(int i = 0 ; i < l ; i++)
+  for(itx = x.begin(), ity = y.begin() ; itx != x.end() ; ++itx, ++ity)
   {
-    for(int j = 0 ; j < w ; j++)
-    {
-      if(mtx(i,j) == val)
-      {
-        x.push_back(i);
-        y.push_back(j);
-      }
-    }
-  }
-
-  IntegerMatrix m(x.length(), 2);
-  m(_, 0) = x;
-  m(_, 1) = y;
-
-  return(m);
-}
-
-NumericVector filter_xx(NumericMatrix x, IntegerMatrix y)
-{
-  int nrow = y.nrow();
-  NumericVector out(nrow);
-
-  for(int i = 0 ; i < nrow ; i++)
-    out(i) = x(y(i,0), y(i,1));
-
-  return(out);
-}
-
-NumericVector sqdistance(NumericVector x1, NumericVector y1, double x2, double y2)
-{
-  int n = x1.length();
-  NumericVector y(n);
-  NumericVector::iterator i1, i2, i3, end1, end2, end3;
-
-  for( i1 = x1.begin(), i2 = y1.begin(), i3 = y.begin(), end1 = x1.end(), end2 = y1.end(), end3 = y.end();
-       i1 < end1 && i2 < end2 && i3 < end3;
-        ++i1, ++i2 , ++i3)
-  {
-    double dx = *i1-x2;
-    double dy = *i2-y2;
-    *i3 = dx * dx + dy * dy;
-  }
-
-  return y;
-}
-
-std::vector<double> sqdistance(std::vector<Point*>& pts, Point u)
-{
-  int n = pts.size();
-  std::vector<double> y(n);
-  std::vector<double>::iterator iy, endy;
-  std::vector<Point*>::iterator ip, endp;
-
-  for(ip = pts.begin(), iy = y.begin(), endp = pts.end(), endy = y.end() ; iy< endy && ip < endp ; ++iy, ++ip)
-  {
-    double dx = (*ip)->x - u.x;
-    double dy = (*ip)->y - u.y;
-    *iy = dx * dx + dy * dy;
+    *ity = round(*itx);
   }
 
   return y;

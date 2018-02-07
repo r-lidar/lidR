@@ -123,15 +123,15 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   ncores   = CATALOGOPTIONS("multicore")
   progress = CATALOGOPTIONS("progress")
 
-  output = catalog_queries_internal(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
+  w = 2*r
 
-  return(output)
-}
+  if(is.null(r2))
+    h = NULL
+  else
+    h = 2*r2
 
-catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, progress, ...)
-{
   nplots <- length(x)
-  tiles  <- pbar <- NULL
+  tiles  <- NULL
 
   if (is.null(roinames))
     roinames <- paste0("ROI", 1:nplots)
@@ -139,31 +139,39 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   verbose("Indexing files...")
 
   # Make an index of the files containing each query
-  queries = catalog_index(obj, x, y, r, r2, buffer, roinames)
-  nplots  = length(queries)
+  clusters  = catalog_index(obj, x, y, w, h, buffer, roinames)
+  nclust = length(clusters)
 
-  if (progress)
-    pbar  = txtProgressBarMulticore(min = 0, max = nplots, style = 3)
-
-  if (nplots <= ncores)
-    ncores = nplots
+  if (nclust <= ncores)
+    ncores = nclust
 
   verbose("Extracting data...")
 
-  # Computation
-  if (ncores == 1)
-  {
-    output = sapply(queries, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
-  }
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
   else
-  {
-    cl = parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist = NULL, envir = NULL)
-    output = parallel::parSapply(cl, queries, .get_query, pb = pbar, ..., simplify = FALSE, USE.NAMES = TRUE)
-    parallel::stopCluster(cl)
+    future::plan(future::sequential)
 
-    # This patch solves issue #73 in a dirty way waiting for a better solution for issue
-    # 2333 in data.table
+  output = list()
+
+
+  for(i in seq_along(clusters))
+  {
+    cluster = clusters[[i]]
+    key = roinames[i]
+    output[[key]] <- future::future({get_query(cluster, ...) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+    }
+  }
+
+  output = future::values(output)
+
+  # Ppatch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+  if (ncores > 1)
+  {
     for (i in 1:length(output))
       output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
   }
@@ -171,66 +179,12 @@ catalog_queries_internal = function(obj, x, y, r, r2, buffer, roinames, ncores, 
   return(output)
 }
 
-.get_query = function(query, pb = NULL, ...)
+get_query = function(cluster, ...)
 {
-  X <- Y <- buffer <- NULL
-
-  # Variables for readability
-  x       <- query$x
-  y       <- query$y
-  r       <- query$r
-  r2      <- query$r2
-  buff    <- query$buffer
-  tiles   <- query$tiles
-  shape   <- query$shape
-
-  xleft   <- x - r
-  xright  <- x + r
-  ybottom <- y - r2
-  ytop    <- y + r2
-
-  select  <- "*"
-  param   <- list(...)
-
-  if (shape == LIDRCIRCLE)
-    filter <- paste("-inside_circle", x, y, r)
-  else if (shape == LIDRRECTANGLE)
-    filter <- paste("-inside", xleft, ybottom, xright, ytop)
-  else
-    stop("Something went wrong internally in .get_query(). Process aborted.")
-
-  if (!is.null(pb))
-    addTxtProgressBarMulticore(pb, 1)
-
-  # Merge spatial filter with user's filters
-  if (!is.null(param$filter))
-    filter <- paste(filter, param$filter)
-
-  if (!is.null(param$select))
-    select <- param$select
-
-  las <- readLAS(tiles, filter = filter, select = select)
+  las <- readLAS(cluster, ...)
 
   if (is.null(las))
     return(NULL)
-
-  if (buff == 0)
-    return(las)
-
-  las@data[, buffer := 0]
-
-  if (shape == LIDRCIRCLE)
-  {
-    las@data[(X-x)^2 + (Y-y)^2 > (r-buff)^2, buffer := LIDRBUFFER]
-  }
-  else
-  {
-    las@data[Y < ybottom + buff, buffer := LIDRBOTTOMBUFFER]
-    las@data[X < xleft   + buff, buffer := LIDRLEFTBUFFER]
-    las@data[Y > ytop    - buff, buffer := LIDRTOPBUFFER]
-    las@data[X > xright  - buff, buffer := LIDRRIGHTBUFFER]
-    las@data[(X > xright - buff) & (Y < ybottom + buff), buffer := LIDRBOTTOMBUFFER]
-  }
 
   return(las)
 }

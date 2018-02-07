@@ -6,7 +6,10 @@ las = readLAS("~/Documents/Haliburton dataset/Landscape LiDAR/CN_683_5016.las")
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 
-l = profvis(lasground(las))
+ws = seq(3,21, 3)
+th = seq(0.1, 2, length.out = length(ws))
+
+l = profvis(lasground(las, "pmf", ws, th))
 l
 
 # v1.2.1

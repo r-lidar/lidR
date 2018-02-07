@@ -60,8 +60,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   interact = LIDROPTIONS("interactive")
 
   # Create a pattern of clusters to be sequentially processed
-  ctg_clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
-  ctg_clusters = apply(ctg_clusters, 1, as.list)
+  clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
 
   if(interact)
   {
@@ -88,7 +87,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   # Computations done within sequential or parallel loop in .getMetrics
   if (ncores == 1)
   {
-    output = lapply(ctg_clusters, reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
+    output = lapply(clusters, reshape_func, path = path, prefix = prefix, ext = ext)
   }
   else
   {
@@ -97,7 +96,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 
     cl = parallel::makeCluster(ncores, outfile = "")
     parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, ctg_clusters, fun = reshape_func, ctg = ctg, path = path, prefix = prefix, ext = ext)
+    output = parallel::parLapply(cl, clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
     parallel::stopCluster(cl)
   }
 
@@ -107,53 +106,9 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   return(catalog(path))
 }
 
-reshape_func = function(cluster, ctg, path, prefix, ext)
+reshape_func = function(cluster, path, prefix, ext)
 {
-  X <- Y <- NULL
-
-  # Variables for readability
-  xcenter = cluster$xcenter
-  ycenter = cluster$ycenter
-  xleft   = cluster$xleft
-  xright  = cluster$xright
-  ybottom = cluster$ybottom
-  ytop    = cluster$ytop
-  name    = cluster$name
-  width   = (xright - xleft)/2
-
-  path = paste0(path, "/", prefix, name , ".", ext)
-
-  # Extract the ROI as a LAS object
-  las = catalog_queries_internal(
-            obj = ctg,
-            x = xcenter,
-            y = ycenter,
-            r = width,
-            r2 = width,
-            buffer = 0,
-            roinames = name,
-            filter = "",
-            ncores = 1,
-            progress = FALSE,
-            select = "xyztianrcupeRGB")[[1]]
-
-  # Skip if the ROI falls in a void area
-  if (is.null(las))
-    return(NULL)
-
-  # # LAScatalog_queries keeps points inside the boundingbox (close interval), but points that
-  # # are exactly on the boundaries are counted twice. Here is a post-process to make an open
-  # # interval on the left and bottom edges of the boundingbox.
-  # n = fast_countequal(las@data$X, xleft) + fast_countequal(las@data$Y, ybottom)
-  #
-  # if (n > 0)
-  #   las = suppressWarnings(lasfilter(las, X > xleft, Y > ybottom))
-  #
-  # # Very unlikely but who knows...
-  # if (is.null(las))
-  #   return(NULL)
-
-  writeLAS(las, path)
-
+  ofile = paste0(path, "/", prefix, cluster@name , ".", ext)
+  streamLAS(cluster, ofile)
   return(NULL)
 }

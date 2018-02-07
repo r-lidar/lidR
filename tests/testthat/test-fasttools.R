@@ -10,7 +10,7 @@ yc = (ymax-ymin)/2
 m = matrix(runif(200), 10, 20)
 r <- raster::raster(m, xmn = xmin, xmx = xmax, ymn = ymin, ymx = ymax)
 
-xres = res(r)[1]
+xres = raster::res(r)[1]
 
 test_that("fast_extract returns the same as raster::extract", {
 

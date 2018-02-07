@@ -2,41 +2,8 @@
 #define QT_H
 
 #include <vector>
-
-struct Point
-{
-	double x, y;
-  int id;
-
-	Point();
-	Point(const double, const double);
-	Point(const double, const double, const int);
-};
-
-struct BoundingBox
-{
-	Point center, half_res;
-
-	BoundingBox();
-	BoundingBox(const Point,const Point);
-	bool contains(const Point&);
-	bool intersects(const BoundingBox&);
-};
-
-double dist(const Point& lhs, const Point& rhs);
-
-struct DistanceFunc
-{
-  DistanceFunc(const Point& _p) : p(_p) {}
-
-  bool operator()(const Point* lhs, const Point* rhs) const
-  {
-    return dist(p, *lhs) < dist(p, *rhs);
-  }
-
-private:
-  Point p;
-};
+#include "Point.h"
+#include "BoundingBox.h"
 
 class QuadTree
 {
@@ -74,7 +41,7 @@ class QuadTree
 		bool in_rect(const BoundingBox&, const Point&);
 		bool in_triangle(const Point&, const Point&, const Point&, const Point&);
 		double distanceSquarePointToSegment(const Point&, const Point&, const Point&);
-
 };
 
 #endif //QT_H
+

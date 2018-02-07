@@ -39,7 +39,7 @@ using namespace Rcpp;
 Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
 {
   int n = x.length();
-  NumericMatrix knn_idx(n, k);
+  IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
@@ -60,20 +60,32 @@ Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector 
     }
   }
 
+  delete tree;
+
   return Rcpp::List::create(Rcpp::Named("nn.idx") = knn_idx,
                             Rcpp::Named("nn.dist") = knn_dist);
 }
 
 // [[Rcpp::export]]
-NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k)
+NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
 {
   int n = x.length();
   NumericVector iZ(n);
 
   QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
+  Progress pbar(n, false);
+
   for( int i = 0 ; i < n ; i++)
   {
+    if (Progress::check_abort() )
+    {
+      delete tree;
+      return iZ;
+    }
+    else
+      pbar.update(i);
+
     std::vector<Point*> pts;
     tree->knn_lookup(x[i], y[i], k, pts);
 
@@ -90,7 +102,7 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
 
       if (d > 0)
       {
-        w = 1/d;
+        w = 1/pow(d,p);
         sum_zw += z*w;
         sum_w  += w;
       }
@@ -104,6 +116,8 @@ NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericV
 
     iZ(i) = sum_zw/sum_w;
   }
+
+  delete tree;
 
   return iZ;
 }

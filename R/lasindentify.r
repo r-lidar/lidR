@@ -117,7 +117,7 @@ lasscanline = function(.las)
 
     if ("ScanDirectionFlag" %in% fields)
     {
-      values = unique(.las$ScanDirectionFlag)
+      values = unique(.las@data$ScanDirectionFlag)
 
       if(length(values) == 2 & 1 %in% values & 2 %in% values)
         .las@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]

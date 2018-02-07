@@ -3,8 +3,12 @@ context("lasclassify")
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
+sink(tempfile())
+
 lidar = readLAS(LASfile, select = "xyz")
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+
+sink(NULL)
 
 test_that("las classifies works with shapefiles", {
   lasclassify(lidar, lakes, "inlakes")

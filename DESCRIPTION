@@ -2,13 +2,13 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.3.2
-Date: 2017-10-30
+Version: 1.4.2
+Date: 2018-02-01
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
     person("Florian", "De Boissieu", email = "", role = ("ctb"), comment = "Fixed bugs and improved catalog features"),
-    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Helped to review the documentation"))
+    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented lassnags"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
@@ -20,19 +20,21 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.0),rgl,stats,utils,grDevices,tools,parallel,raster,rgeos,
+    rlas (>= 1.1.6),rgl,stats,utils,grDevices,tools,raster,rgeos,
     data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
-    memoise,mapview,mapedit
+    memoise,mapview,mapedit,RANN,future
 Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp,RcppProgress
 Encoding: UTF-8
+ByteCompile: true
 biocViews: 
 Collate: 
     'RcppExports.R'
     'catalog_apply.r'
+    'catalog_clip.r'
     'catalog_index.r'
     'catalog_makecluster.r'
     'catalog_query.r'
@@ -41,6 +43,7 @@ Collate:
     'class-lasheader.r'
     'class-las.r'
     'class-lascatalog.r'
+    'class-lascluster.r'
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
@@ -63,6 +66,7 @@ Collate:
     'lasmetrics.r'
     'lasnormalize.r'
     'lasroi.r'
+    'lassnags.r'
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
@@ -77,12 +81,12 @@ Collate:
     'plot3d.r'
     'readLAS.r'
     'subcircled.r'
+    'tree_detection.r'
     'tree_metrics.r'
     'utils_colors.r'
     'utils_geometry.r'
     'utils_interpolations.r'
     'utils_misc.r'
-    'utils_progress.r'
     'utils_projection.r'
     'utils_spatial.r'
     'utils_typecast.r'

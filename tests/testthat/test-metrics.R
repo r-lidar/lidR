@@ -33,10 +33,10 @@ test_that("predefined metric set work", {
   las = lidR:::dummy_las(10000)
   las@data[, ScanAngle := runif(.N)]
 
-  z = grid_metrics(las, .stdmetrics_z)
-  i = grid_metrics(las, .stdmetrics_i)
-  r = grid_metrics(las, .stdmetrics_rn)
-  c = grid_metrics(las, .stdmetrics_ctrl)
+  expect_error(grid_metrics(las, .stdmetrics_z), NA)
+  expect_error(grid_metrics(las, .stdmetrics_i), NA)
+  expect_error(grid_metrics(las, .stdmetrics_rn), NA)
+  expect_error(grid_metrics(las, .stdmetrics_ctrl), NA)
 })
 
 test_that("grid_metric debug mode works", {

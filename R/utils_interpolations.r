@@ -25,24 +25,24 @@
 #
 # ===============================================================================
 
-interpolate = function(points, coord, method, k, model)
+interpolate = function(points, coord, method, k, p, model)
 {
   . <- X <- Y <- Z <- NULL
 
   if (dim(coord)[1] == 0)
     return(numeric(0))
 
-  # test integrity of the data
+  # test integrity of the data and degenerated points
   dup_xyz  = duplicated(points, by = c("X", "Y", "Z"))
   dup_xy   = duplicated(points, by = c("X", "Y"))
   ndup_xyz = sum(dup_xyz)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
   if (ndup_xyz > 0)
-    warning(paste("There were",  ndup_xyz, "ground points with duplicated X Y Z coordinates. They were removed."), call. = FALSE)
+    warning(paste("There were",  ndup_xyz, "degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
 
   if (ndup_xy > 0)
-    warning(paste("There were", ndup_xy, "duplicated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+    warning(paste("There were", ndup_xy, "degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
 
   if (ndup_xy > 0 | ndup_xyz > 0)
     points = points[, .(Z = min(Z)), by = .(X,Y)]
@@ -50,12 +50,23 @@ interpolate = function(points, coord, method, k, model)
   if (method == "knnidw")
   {
     verbose("[using inverse distance weighting]\n")
-    return(interpolate_knnidw(points, coord, k))
+    return(interpolate_knnidw(points, coord, k, p))
   }
   else if (method == "delaunay")
   {
     verbose("[using Delaunay triangulation]\n")
-    return(interpolate_delaunay(points, coord, k = k))
+
+    z = interpolate_delaunay(points, coord)
+
+    isna = is.na(z)
+    nnas = sum(isna)
+
+    if (nnas > 0 & k > 0) {
+      z[isna] <- knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
+      message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
+    }
+
+    return(z)
   }
   else if (method == "kriging")
   {
@@ -65,7 +76,7 @@ interpolate = function(points, coord, method, k, model)
     stop(paste0("Method '", method, "' does not exist."), call. = FALSE)
 }
 
-interpolate_knnidw = function(points, coord, k)
+interpolate_knnidw = function(points, coord, k, p)
 {
   #nn = RANN::nn2(points[, .(X,Y)], coord[, .(X,Y)], k = k)
   #nn = knn(points$X, points$Y, coord$X, coord$Y, k)
@@ -74,7 +85,7 @@ interpolate_knnidw = function(points, coord, k)
   #w = ifelse(is.infinite(w), 1e8, w)
   #z = matrix(points[as.numeric(idx)]$Z, ncol = dim(w)[2])
 
-  z = knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k)
+  z = knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p)
 
   return(z)
 }
@@ -82,11 +93,18 @@ interpolate_knnidw = function(points, coord, k)
 interpolate_kriging = function(points, coord, model, k)
 {
   X <- Y <- Z <- NULL
+
+  if (!LIDROPTIONS("verbose"))
+    sink(tempfile())
+
   x  = gstat::krige(Z~X+Y, location = ~X+Y, data = points, newdata = coord, model, nmax = k)
+
+  sink()
+
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord, th = 0, k = 0)
+interpolate_delaunay <- function(points, coord, th = 0)
 {
   pitfree = th > 0  # specific case if using khosravipour algorithm in grid_tincanopy
 
@@ -115,15 +133,6 @@ interpolate_delaunay <- function(points, coord, th = 0, k = 0)
   N = N[idx,]
 
   z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]
-
-  isna = is.na(z)
-  nnas = sum(isna)
-
-  if (nnas > 0 & k > 0)
-  {
-    z[isna] <- knnidw(points$X, points$Y, points$Z, coord$X[isna], coord$Y[isna], k)
-    warning(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."), call. = F)
-  }
 
   if (pitfree)
   {
