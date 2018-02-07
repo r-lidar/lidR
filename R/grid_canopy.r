@@ -83,7 +83,7 @@
 #' # Local maximum algorithm with a resolution of 1 meter replacing each
 #' # point by a 10 cm radius circle of 8 points and interpolating the empty
 #' # pixels using the 3-nearest neighbours and an inverse-distance weighting.
-#' grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3) %>% plot
+#' grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2) %>% plot
 #'
 #' \dontrun{
 #' grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) %>% plot
@@ -104,23 +104,22 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 {
   . <- X <- Y <- Z <- NULL
 
-  if (subcircle > 0)
-  {
-    verbose("Subcircling points...")
+  if (!is.numeric(res))
+    stop("Argument 'res' should be a number", call. = FALSE)
 
-    ex = extent(x)
+  if (res < 0)
+    stop("Argument 'res' should be greater than 0", call. = FALSE)
 
-    dt = x@data[, .(X,Y,Z)]
-    dt = subcircled(dt, subcircle, 8)
-    dt = dt[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
-    x = suppressWarnings(LAS(dt))
+  if (!is.numeric(subcircle))
+    stop("Argument 'subcircle' should be a number", call. = FALSE)
 
-    rm(dt)
-  }
+  if (subcircle < 0)
+    stop("Argument 'subcircle' should be greater than 0", call. = FALSE)
 
   verbose("Gridding highest points in each cell...")
 
-  dsm   = grid_metrics(x, list(Z = max(Z)), res)
+  dsm = Cpp_grid_canopy(x, res, subcircle)
+  as.lasmetrics(dsm, res)
 
   if (na.fill != "none")
   {
@@ -160,8 +159,7 @@ grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", .
 {
   oldbuffer <- CATALOGOPTIONS("buffer")
 
-  if (subcircle == 0)
-    CATALOGOPTIONS(buffer = res)
+  CATALOGOPTIONS(buffer = res/2 + subcircle)
 
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
 

@@ -25,8 +25,6 @@
 #
 # ===============================================================================
 
-
-
 #' Automatic colorization
 #'
 #' Attribute a color to each element of a vector
@@ -34,22 +32,29 @@
 #' @param x A vector
 #' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR
 #' @param trim numeric.
+#' @keywords internal
 set.colors = function(x, palette, trim = 1)
 {
   ncolors = length(palette)
 
-  if(trim < 1)
+  if (trim < 1)
   {
     n = x %>% stats::quantile(trim)
     x[x > n] = n
   }
 
-  if(diff(range(x, na.rm = T)) == 0)
+  minx = min(x, na.rm = T)
+  maxx = max(x, na.rm = T)
+
+  if (maxx-minx == 0)
     colors = palette[1]
   else
-    colors = palette[as.numeric(cut(x, breaks = ncolors))]
+  {
+    idx = findInterval(x, seq(minx, maxx, length.out = ncolors))
+    colors = palette[idx]
+  }
 
-	return(colors)
+  return(colors)
 }
 
 #' Palettes
@@ -67,7 +72,7 @@ NULL
 #' @family lidrpalettes
 height.colors = function(n)
 {
-  colfunc <- grDevices::colorRampPalette(c("blue", "cyan2", "green3", "yellow", "red"))
+  colfunc <- grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
   return(colfunc(n))
 }
 

@@ -4,7 +4,10 @@ file <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(file, select = "xyz")
 
 test_that("lasground update las object", {
-  lasground(las)
+  ws = seq(3,21, 5)
+  th = seq(0.1, 2, length.out = length(ws))
+
+  lasground(las, "pmf", ws, th)
 
   n = names(las@data)
 

@@ -88,6 +88,6 @@ lidRError = function(code, ..., behaviour = stop)
 
 stopifnotlas = function(x)
 {
-  if (!is(x, "LAS"))
+  if (!inherits(x, "LAS"))
     stop("First argument is not a LAS object", call. = F)
 }

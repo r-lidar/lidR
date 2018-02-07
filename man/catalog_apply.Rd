@@ -26,7 +26,7 @@ with data loading (see example). \cr\cr
 \strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
 but no mechanism to remove the buffer after applying user-defined functions, since this task
 is very specific to each process. See section "Edge artifacts".\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{signifcantly} improved with a
+\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 spatial index.
 }
 \section{Edge artifacts}{
@@ -135,7 +135,7 @@ myMetrics <- function(x, y, z, buff)
 # to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
 # can be used for the current process.
 fargs = list(lake = lake_shp)
-output = catalog_apply(project, tree_area, fargs, XYZonly = TRUE)
+output = catalog_apply(project, tree_area, fargs, select = "xyz")
 
 # 5. Post-process the output result (depending on the output computed). Here, each value
 # of the list is a data.table, so rbindlist does the job:

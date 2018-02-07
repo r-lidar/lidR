@@ -1,19 +1,67 @@
-### lidR v1.3.2 (In development)
+## lidR v1.4.2 (In developpment)
 
 #### BUG FIXES
 
-* Fix missing pixel in DTM leading to the impossibility to normalize.
+* [[#103](https://github.com/Jean-Romain/lidR/issues/103)] fix user-defined function not exported in clusters on Windows
 
-### lidR v1.3.1 (Release date: 2017-10-21)
+## lidR v1.4.1 (2018-02-01)
+
+####  OTHER CHANGES
+
+* Removed examples and unit tests that imply the watershed segmentation to make CRAN check happy with the new rules relative to bioconductor packages.
+
+#### NEW FEATURES
+
+* Parameter `start` has been enabled in `grid_metrics` with `catalogs`.
+
+## lidR v1.4.0 (2018-01-24)
+
+#### NEW FEATURES
+
+* `lasclip` and `lasclip*` can extract from a catalog.
+* `lasclip` supports `sp::Polygon` objects.
+* `lastrees` gains a new algorithm from Silva et al. (2016).
+* `lastrees` with the Li et al. (2012) algorithm gains a new parameter to prevent over-segmentation.
+* new function `lassnags` for classifying points as snag points or for segmenting snags.
+* new function `tree_detection` to detect individual trees. This feature has been extracted from `lastrees`'s algorithms and it is now up to the users to use `lidR`'s algos or other input sources.
+* `plot` supports natively the `PointCloudViewer` package avaible on github.
+
+#### BUG FIXES
+
+* Fix missing pixel in DTM that made normalization impossible.
+* [[#80](https://github.com/Jean-Romain/lidR/issues/80)] fix segfault.
+* [[#84](https://github.com/Jean-Romain/lidR/issues/84)] fix bug in `lasscanline`.
+
+#### ENHANCEMENTS
+* `lastrees` with the Li et al. (2012) algorithm is now 5-6 times faster and much more memory efficient.
+* `lastrees` with the Li et al. (2012) algorithm no longer sorts the original point cloud.
+* `lastrees` with the Dalponte et al (2016) algorithm is now computed in linear time and is therefore hundreds to millions times faster.
+* `catalog_reshape()` streams the data and uses virtually zero memory to run.
+* `grid_canopy()` has been rewritten entirely in C++ and is now 10 to 20 times faster both with the option `subcircle` or without it.
+* `grid_canopy()` with the option `subcircle` uses only 16 bytes of extra memory to run, while this feature previously required the equivalent of several copies of the point cloud (several hundreds of MB).
+* `as.raster()` is now three times faster.
+* `lasclassify` now uses a QuadTree and is therefore faster. This enables several algorithms to run faster, such as `lastrees` with Silva's algo.
+
+#### OTHER CHANGES
+
+* `lasground` with the PMF algorithm now accepts user-defined sequences.
+* `lasground` with the PMF algorithm has simplified parameter names to make them easier to type and understand, and to prepare the package for new algorithms.
+* `lasground` documentation is more explicit about the actual algorithm used.
+* `lasground` now computes the windows size more closely in line with the original Zhang paper.
+* `lastrees` when used with raster-based methods now accepts a missing las object. In that case `extra` is turned to `true`.
+*  new parameter `p` (for power) added to functions that enable spatial interpolation with IDW.
+
+## lidR v1.3.1 (Release date: 2017-09-20)
 
 #### BUG FIXES
 
 * Fix a bug of computer precision leading to non interpolated pixels at the boundaries of the QuadTree.
 
-### lidR v1.3.0 (Release date: 2017-10-16)
+## lidR v1.3.0 (Release date: 2017-09-16)
 
 This version is dedicated to extending functions and processes to entire catalogs in a continuous way.
 Major changes are:
+
 * How `catalog_apply` works. More powerful but no longer compatible with previous releases
 * Former existing functions that now natively support a `Catalog` 
 * Management of buffered areas
@@ -61,7 +109,7 @@ Major changes are:
 * `catalog` enables a `LAScatalog` to be built 8 times faster than previously.
 * removed dependencies to `RANN` package using internal k-nearest neighbor search (2 to 3 times faster)
 
-### lidR v1.2.1 (Release date: 2017-06-12)
+## lidR v1.2.1 (Release date: 2017-06-12)
 
 #### NEW FEATURES
 
@@ -89,7 +137,7 @@ Major changes are:
 * `as.raster` automatically returns a `RasterStack` if no layer is provided.
 * `plot.lasmetrics` inherits `as.raster` changes and can display a `RasterStack`
 
-### lidR v1.2.0 (Release date: 2017-03-26)
+## lidR v1.2.0 (Release date: 2017-03-26)
 
 #### NEW FEATURES
 
@@ -112,7 +160,7 @@ Major changes are:
 * Slightly faster point classification from shapefiles.
 * [[#51](https://github.com/Jean-Romain/lidR/pull/51)] in `grid_terrain`, forcing the lowest point to be retained is now an option `keep_lowest = FALSE`
 
-### lidR v1.1.0 (Release date: 2017-02-05)
+## lidR v1.1.0 (Release date: 2017-02-05)
 
 #### NEW FEATURES
 
@@ -137,18 +185,18 @@ Major changes are:
 * [[#39](https://github.com/Jean-Romain/lidR/issues/39)] interpolation with duplicated ground points
 
 
-### lidR v1.0.2 (Release date: 2016-12-31)
+## lidR v1.0.2 (Release date: 2016-12-31)
 
 Third submission
 
 * Change: explain LiDAR in the Description - requested by Kurt Hornik.
 
-### lidR v1.0.1 (Release date: 2016-12-30)
+## lidR v1.0.1 (Release date: 2016-12-30)
 
 Second submission - rejected
 
 * Change: split the package in two parts. 'lidR' relies on 'rlas' to read binary files.
 
-### lidR v1.0.0 (Release date: 201-12-16)
+## lidR v1.0.0 (Release date: 201-12-16)
 
 First submission - rejected

@@ -4,20 +4,6 @@
 #include <algorithm>
 #include <iostream>
 
-Point::Point(){}
-Point::Point(const double x, const double y) : x(x), y(y), id(0) {}
-Point::Point(const double x, const double y, const int id) : x(x), y(y), id(id) {}
-
-BoundingBox::BoundingBox(){}
-BoundingBox::BoundingBox(const Point center, const Point half_res) : center(center), half_res(half_res) {}
-
-double dist(const Point& lhs, const Point& rhs)
-{
-  double dx = lhs.x - rhs.x;
-  double dy = lhs.y - rhs.y;
-  return dx * dx + dy * dy;
-}
-
 static inline double max (double a, double b, double c)
 {
   if (a < b)
@@ -32,31 +18,6 @@ static inline double min (double a, double b, double c)
     return (b > c ? c : b);
   else
     return (a > c ? c : a);
-}
-
-bool BoundingBox::contains(const Point& p)
-{
-  if(p.x >= center.x - half_res.x &&
-     p.x <= center.x + half_res.x &&
-     p.y >= center.y - half_res.y &&
-     p.y <= center.y + half_res.y)
-    return true;
-  else
-    return false;
-}
-
-bool BoundingBox::intersects(const BoundingBox& b)
-{
-
-  if(center.x - half_res.x <= b.center.x + b.half_res.x &&
-     center.x + half_res.x >= b.center.x - b.half_res.x &&
-     center.y - half_res.y <= b.center.y + b.half_res.y &&
-     center.y + half_res.y >= b.center.y - b.half_res.y)
-  {
-    return true;
-  }
-  else
-    return false;
 }
 
 QuadTree::QuadTree(const double cx, const double cy, const double range)

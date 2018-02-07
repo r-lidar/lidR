@@ -2,44 +2,49 @@
 % Please edit documentation in R/lasnormalize.r
 \name{lasnormalize}
 \alias{lasnormalize}
+\alias{lasunnormalize}
 \title{Subtract digital terrain model}
 \usage{
-lasnormalize(.las, dtm = NULL, method, k = 10L, model = gstat::vgm(0.59,
-  "Sph", 874), copy = FALSE)
+lasnormalize(las, dtm = NULL, method, k = 10L, p = 1,
+  model = gstat::vgm(0.59, "Sph", 874), copy = FALSE)
+
+lasunnormalize(las)
 }
 \arguments{
-\item{.las}{a LAS object}
+\item{las}{a LAS object}
 
 \item{dtm}{a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
 \link[lidR:grid_terrain]{grid_terrain}.}
 
 \item{method}{character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
-\code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details)}
+\code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details).}
 
 \item{k}{numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
-method is either \code{"knnidw"} or \code{"kriging"}}
+method is either \code{"knnidw"} or \code{"kriging"}.}
+
+\item{p}{numeric. Power for inverse distance weighting. Default 2.}
 
 \item{model}{Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
 when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
 squares prediction.}
 
-\item{copy}{By default the point cloud is updated in place by reference. User can force
-the function to return a new point cloud. Set TRUE to get a compatibility with versions < 1.3.0}
+\item{copy}{By default the point cloud is updated in place by reference. Users can force
+the function to return a new point cloud. Set TRUE for compatibility with versions < 1.3.0}
 }
 \value{
-The function returns NULL. The LAS object is updated by reference. Z is now the normalized
-elevation, A new column 'Zref' records the former elevations values. This is a way to save memory
-avoiding copies of the point cloud. But if \code{copy = TRUE}, a new LAS object is returned and the
-original one is not modified.
+The function returns NULL. The LAS object is updated by reference. Z is now the
+normalized elevation, A new column 'Zref' records the former elevation values. This is a
+way to save memory by avoiding making copies of the point cloud. But if \code{copy = TRUE},
+a new LAS object is returned and the original one is not modified.
 }
 \description{
 Subtract digital terrain model (DTM) from LiDAR data to create a dataset normalized with
 the ground at 0. The DTM can originate from several sources e.g. from an external file or
 computed by the user. It can also be computed on the fly. In this case the algorithm does
 not use rasterized data and each point is interpolated. There is no inaccuracy due to the
-discretization of the terrain the resolution of the terrain is virtually infinite (but
+discretization of the terrain and the resolution of the terrain is virtually infinite (but
 it is slower).\cr
-Depending on the interpolation method, the edges of the dataset can be more or less poorly
+Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
 effects.
 }
@@ -48,15 +53,16 @@ effects.
 \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
 an inverse distance weighting (IDW). This is a fast but basic method for spatial
 data interpolation.}
-\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-interpolation within each triangle. There are usually few points outside the convex hull,
-determined by the ground points at the very edge of the dataset which cannot be interpolated
+\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It performs a linear
+interpolation within each triangle. There are usually a few points outside the convex hull,
+determined by the ground points at the very edge of the dataset, which cannot be interpolated
 with a triangulation. Extrapolation is done using knnidw.}
-\item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige}
-function. This method combines the KNN approach with the kriging approach. For each point of interest
-it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult
-to manipulate but it is also the most advanced method for interpolating spatial data. }
+\item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging approach. For each point of #' interest it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also the most advanced method for interpolating spatial data. }
 }
+
+\code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
+in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
+the point cloud was normalized with the package lidR).
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")

@@ -42,8 +42,8 @@ lascheck = function(data, header, hard = F)
   {
     class0 = fast_countequal(data$Classification, 0)
 
-    if(class0 > 0)
-      message(paste0(class0, " unclassified points found."), call. = F)
+    if(class0 > 0 & class0 < nrow(data))
+      message(paste0(class0, " unclassified points found."))
   }
 
   if("ReturnNumber" %in% fields)

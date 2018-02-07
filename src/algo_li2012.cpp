@@ -30,95 +30,158 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
 #include <Rcpp.h>
-#include <algorithm>
-#include "QuadTree.h"
+#include "Point.h"
 
 using namespace Rcpp;
 
-// Defined in cxx_utils.cpp
-NumericVector sqdistance(NumericVector, NumericVector, double, double);
+struct SortPoint
+{
+  SortPoint(const NumericVector _Z) : Z(_Z) {}
+
+  bool operator()(const Point* lhs, const Point* rhs) const
+  {
+    return Z(lhs->id) > Z(rhs->id);
+  }
+
+  private:
+    NumericVector Z;
+};
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(NumericVector X, NumericVector Y, const NumericVector Z, double dt1, double dt2, double R, bool displaybar = false)
+IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
 {
-  bool end = false;
+  /* *********************
+   * INITALISATION STUFF *
+   ***********************/
 
-  int ni = X.length();
-  int n  = ni;
-  int k  = 1;
+  // DataFrame data = las.slot("data");
+  DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
-  Progress p(ni, displaybar);
+  NumericVector X = data["X"];
+  NumericVector Y = data["Y"];
+  NumericVector Z = data["Z"];
 
-  IntegerVector idpoint = seq_len(ni)-1;
-  IntegerVector idtree(ni);
+  S4 header = las.slot("header");
+  List phb  = header.slot("PHB");
+  double xmax = phb["Max X"];
+  double xmin = phb["Min X"];
+  double ymax = phb["Max Y"];
+  double ymin = phb["Min Y"];
 
+  int ni = X.length();            // Number of points
+  int n  = ni;                    // Number of remaining points
+  int k  = 1;                     // Current tree ID
+  IntegerVector idtree(ni);       // The ID of each point (returned object)
+  std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
+  Progress p(ni, progressbar);    // A progress bar and script abort options
+  Point* dummy = new Point(xmin-100,ymin-100,-1);
+  std::vector<Point*> P,N;        // Store the point in N or P group (see Li et al.)
+
+  // Reserve memory for N et P group
+  // (will statistically reduce the number of dynamic reallocation)
+  int alloc = 3*R*10;
+  P.reserve(alloc);
+  N.reserve(alloc);
+
+  // Square distance to speed up computation (dont need sqrt)
   R = R * R;
   dt1 = dt1 * dt1;
   dt2 = dt2 * dt2;
 
-  while(!end)
+  // Convert the R data into STL containers of points
+  std::vector<Point*> points(ni);
+
+  for (int i = 0 ; i < ni ; ++i)
+    points[i] = new Point(X[i], Y[i], i);
+
+  /* *********************
+   * LI ET AL ALGORITHHM *
+   ***********************/
+
+  std::sort(points.begin(), points.end(), SortPoint(Z));
+
+  while(n > 0)
   {
-    // Intial step not point in P or N
-    LogicalVector N(n);
-    NumericVector XP,XN,YP,YN;
+    Point* u = points[0];
+    std::vector<bool> inN(n);
 
-    if (Progress::check_abort() )
-      return  IntegerVector::create(0);
-    else
-      p.update(ni-n);
-
-    // element 0 is the current highest points and is in P
-    XP.push_back(X(0));
-    YP.push_back(Y(0));
-    idtree[idpoint[0]] = k;
-
-    // Add dummy point in N
-    XN.push_back(X(0)+100);
-    YN.push_back(Y(0)+100);
-
-    // Compute the distance between the local max u and all the other point
-    NumericVector d = sqdistance(X, Y, X(0), Y(0));
-
-    for (int i = 1 ; i < n ; ++i)
+    // Stop the algo is the highest point u, which is the tree top, is below a threshold
+    // Addition from original algo
+    if (Z[u->id] < th_tree)
     {
-      if(d[i] > R)            // If d > R those points are not the current segmented tree
-      {
-        N[i] = true;
-      }
-      else                    // If d <= R classify point base on Li et al. rules
-      {
-        double dmin1 = min(sqdistance(XP, YP, X[i], Y[i]));
-        double dmin2 = min(sqdistance(XN, YN, X[i], Y[i]));
-        double dt    = (Z[idpoint[i]] > 15) ? dt2 : dt1;
+      p.update(ni);
+    }
+    else
+    {
+      // Initial step no point in P or N
+      P.clear();
+      N.clear();
 
-        if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+      if (Progress::check_abort() )
+        return  IntegerVector::create(0);
+      else
+        p.update(ni-n);
+
+      // element 0 is the current highest points and is in P
+      P.push_back(u);
+      idtree[u->id] = k;
+
+      // Add dummy point in N
+      N.push_back(dummy);
+
+      // Compute the distance between the local max u and all the other point
+      std::vector<double> d = sqdistance(points, *u);
+
+      for (int i = 1 ; i < n ; ++i)
+      {
+        u = points[i];
+
+        if(d[i] > R)            // If d > R those points are not the current segmented tree
         {
-          N[i] = true;
-          XN.push_back(X(i));
-          YN.push_back(Y(i));
+          inN[i] = true;
         }
-        else if (dmin1 <= dt & dmin1 <= dmin2)
+        else                    // If d <= R classify point base on Li et al. rules
         {
-          XP.push_back(X(i));
-          YP.push_back(Y(i));
-          idtree[idpoint[i]] = k;
+          std::vector<double> dP = sqdistance(P, *u);
+          std::vector<double> dN = sqdistance(N, *u);
+
+          double dmin1 = *std::min_element(dP.begin(), dP.end());
+          double dmin2 = *std::min_element(dN.begin(), dN.end());
+
+          double dt    = (Z[u->id] > 15) ? dt2 : dt1;
+
+          if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+          {
+            inN[i] = true;
+            N.push_back(u);
+          }
+          else if (dmin1 <= dt & dmin1 <= dmin2)
+          {
+            P.push_back(u);
+            idtree[u->id] = k;
+          }
         }
       }
     }
 
-    // Increase current tree id
-    k++;
-
     // Keep the point in N and redo the loop with remining points
-    X = X[N];
-    Y = Y[N];
-    idpoint = idpoint[N];
+    std::vector<Point*> temp;
+    temp.reserve(N.size()-1);
 
-    n = X.length();
+    for(int i = 0 ; i < n ; i++)
+    {
+      if(inN[i])
+        temp.push_back(points[i]);
+      else
+        delete points[i];
+    }
 
-    if(n == 0)
-      end = true;
+    points.swap(temp);
+    n = points.size();
+    k++;                        // Increase current tree id
   }
+
+  delete dummy;
 
   return idtree;
 }

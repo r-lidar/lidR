@@ -39,7 +39,7 @@
 #' \strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
 #' but no mechanism to remove the buffer after applying user-defined functions, since this task
 #' is very specific to each process. See section "Edge artifacts".\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{signifcantly} improved with a
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @section Edge artifacts:
@@ -151,7 +151,7 @@
 #' # to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
 #' # can be used for the current process.
 #' fargs = list(lake = lake_shp)
-#' output = catalog_apply(project, tree_area, fargs, XYZonly = TRUE)
+#' output = catalog_apply(project, tree_area, fargs, select = "xyz")
 #'
 #' # 5. Post-process the output result (depending on the output computed). Here, each value
 #' # of the list is a data.table, so rbindlist does the job:
@@ -161,7 +161,6 @@
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
-  LIDROPTIONS(progress = FALSE) # Disable functions progress bars
   progress  = CATALOGOPTIONS("progress")
   ncores   <- CATALOGOPTIONS("multicore")
   buffer   <- CATALOGOPTIONS("buffer")
@@ -169,103 +168,43 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   res      <- 1
 
   clusters <- catalog_makecluster(ctg, res, buffer, by_file)
-  clusters <- apply(clusters, 1, as.list)
 
-  return(catalog_apply_internal(ctg, clusters, func, func_args, ncores, progress, ...))
+  nclust = length(clusters)
+
+  if (nclust < ncores)
+    ncores <- nclust
+
+  if (ncores > 1)
+    future::plan(future::multiprocess, workers = ncores)
+  else
+    future::plan(future::sequential)
+
+  output = list()
+
+  for(i in seq_along(clusters))
+  {
+    cluster = clusters[[i]]
+
+    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) })
+
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
+  }
+
+  cat("\n")
+
+  return(future::values(output))
 }
 
-catalog_apply_internal <- function(ctg, clusters, func, func_args, ncores, progress, ...)
+cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
 {
-  ti <- Sys.time()
+  las = readLAS(cluster, ...)
 
-  if (length(clusters) < ncores)
-    ncores <- length(clusters)
-
-  # Enable progress bar working even with multicore
-  pbar = NULL
-  if (progress)
-  {
-    pfile = tempfile()
-    write(0, pfile)
-    pbar  = utils::txtProgressBar(max = length(clusters), style = 3)
-    attr(pbar, "file") = pfile
-  }
-
-
-  if (ncores == 1)
-  {
-     output <- lapply(clusters, FUN = cluster_apply_func,
-                      func = func,
-                      ctg = ctg,
-                      func_args = func_args,
-                      p = pbar,
-                      ...)
-  }
-  else
-  {
-    cat("Begin parallel processing... \n")
-    cat("Num. of cores:", ncores, "\n\n")
-
-    varlist <- c(utils::lsf.str(envir = globalenv()), ls(envir = environment()))
-    envir   <- environment()
-
-    cl <- parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist, envir)
-    parallel::clusterEvalQ(cl, library("lidR"))
-
-    output <- parallel::parLapplyLB(cl, clusters, fun = cluster_apply_func,
-                        func = func,
-                        ctg = ctg,
-                        func_args = func_args,
-                        p = pbar,
-                        ...)
-
-    parallel::stopCluster(cl)
-  }
-
-  tf <- Sys.time()
-
-  cat("\nProcess done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
-
-  return(output)
-}
-
-
-cluster_apply_func <- function(cluster, func, ctg, func_args, p, ...)
-{
-  X <- Y <- NULL
-
-  # Variables for readability
-  xleft   <- cluster$xleft
-  xright  <- cluster$xright
-  ybottom <- cluster$ybottom
-  ytop    <- cluster$ytop
-  name    <- "ROI" %+% cluster$name
-  xcenter <- cluster$xcenter
-  ycenter <- cluster$ycenter
-  width   <- (xright - xleft)/2
-  height  <- (ytop - ybottom)/2
-  buffer  <- cluster$xrightbuff - cluster$xright
-
-  # Extract the ROI as a LAS object
-  if (cluster$byfile & buffer == 0)
-    las <- readLAS(ctg@data$filename[cluster$name], ...)
-  else
-    las <- catalog_queries_internal(ctg, xcenter, ycenter, width, height, buffer, name, 1, FALSE, ...)[[1]]
-
-  # Skip if the ROI falls in a void area
   if (is.null(las))
     return(NULL)
 
-  # Update progress bar
-  if (!is.null(p))
-  {
-    pfile = attr(p, "file")
-    i = data.table::fread(pfile)$V1 + 1
-    utils::setTxtProgressBar(p, i)
-    write(i, pfile)
-  }
-
-  # Call the function
   return(do.call(func, c(las, func_args)))
 }

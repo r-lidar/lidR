@@ -29,125 +29,92 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include <Rcpp.h>
 #include <algorithm>
+#include "Point.h"
 using namespace Rcpp;
 
-// Defined in cxx_utils.cpp
-NumericVector filter_xx(NumericMatrix x, IntegerMatrix y);
-IntegerMatrix which_equal(IntegerMatrix mtx, double val);
-
-// [[Rcpp::export]]
-IntegerMatrix itc_treetops(NumericMatrix Canopy, double searchWinSize)
+//[[Rcpp::export]]
+IntegerMatrix C_algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
 {
-  int l = Canopy.nrow();
-  int w = Canopy.ncol();
+  bool grown = true;
+  bool expend;
+  int nrow  = Image.nrow();
+  int ncol  = Image.ncol();
 
-  int r, k, minR, minC, maxR, maxC;
-  int index = 1;
+  std::vector< Pixel<double> > neighbours(4);
 
-  double hws  = searchWinSize/2;
-  int    fhws = floor(hws);
+  IntegerMatrix Region     = clone(Seeds);
+  IntegerMatrix Regiontemp = clone(Seeds);
 
-  NumericMatrix FIL;
-  IntegerMatrix temp;
+  std::map<int, Pixel<int> > seeds;                                     // Stores all the seed as Pixel object
+  std::map<int, double> sum_height;                                     // Stores the sum of the elevation of each pixel of a tree (to compute mean height)
+  std::map<int, int> npixel;
 
-  IntegerMatrix Maxima(l, w);
-
-  for (int r = fhws ; r < l-fhws ; r++)
+  for (int i = 0 ; i < nrow ; i++)
   {
-    for(int k = fhws ; k <  w-fhws ; k++)
+    for (int j = 0 ; j < ncol ; j++)
     {
-      minR = (r - fhws);
-      minC = (k - fhws);
-      maxR = (r + fhws);
-      maxC = (k + fhws);
-
-      FIL  = Canopy(Range(minR,maxR), Range(minC,maxC));
-      temp = Maxima(Range(minR,maxR), Range(minC,maxC));
-
-      if (FIL(fhws,fhws) == max(FIL) && max(temp) == 0 && max(FIL) != 0)
+      if (Seeds(i,j) != 0)
       {
-        Maxima(r,k) = index;
-        index++;
+        seeds[Seeds(i,j)] = Pixel<int>(i,j, Seeds(i,j));
+        sum_height[Seeds(i,j)] = Image(i,j);
+        npixel[Seeds(i,j)] = 1;
       }
     }
   }
 
-  return(Maxima);
-}
-
-//[[Rcpp::export]]
-IntegerMatrix itc_expandcrowns(NumericMatrix Canopy, IntegerMatrix Maxima, double TRESHSeed, double TRESHCrown, double DIST)
-{
-  bool gfil;
-  bool it = true;
-
-  int l = Canopy.nrow();
-  int w = Canopy.ncol();
-  int rr, kk, ind;
-
-  double rvCrown, rvSeed;
-  IntegerMatrix coordSeed, coordCrown;
-
-  NumericMatrix filData(4, 3);
-
-  IntegerMatrix OldCrowns  = clone(Maxima);
-  IntegerMatrix Crowns     = clone(Maxima);
-  IntegerMatrix Crownstemp = clone(Maxima);
-  IntegerMatrix Check(Maxima.nrow(), Maxima.ncol());
-
-  while (it)
+  int step = 0;
+  while (grown)
   {
-    it = false;
+    grown = false;
 
-    for (int r = 1 ; r < l-1 ; r++)
+    for (int r = 1 ; r < nrow-1 ; r++)                                 // Loops across the entiere image
     {
-      for(int k = 1 ; k < w-1 ; k++)
+      for(int k = 1 ; k < ncol-1 ; k++)
       {
-        if(Check(r, k) == 0 && Crowns(r, k) != 0)                       // Si le pixel est une couronne et qu'il n'a pas été testé déjà
+        if(Region(r, k) != 0)                                          // If the pixel is already labeled
         {
-          ind = Crowns(r, k);                                           // On reccupère le numéro de couronne
+          int id = Region(r, k);                                       // id of the crown for the current pixel
 
-          coordSeed  = which_equal(Maxima, ind);                        // Coordonnées du maximum local d'indice ind
-          coordCrown = which_equal(Crowns, ind);                        // Coordonnées des pixels de cette couronne déjà attribués.
+          Pixel<int>seed  = seeds[id];                                 // Get the seed with the label id
+          double hSeed    = Image(seed.i, seed.j);                     // Seed height
+          double mhCrown  = sum_height[id]/npixel[id];                 // Mean height of the crown
 
-          rvSeed  = Canopy(coordSeed(0,0), coordSeed(0,1));             // Hauteur du maximum local
-          rvCrown = mean(filter_xx(Canopy, coordCrown));                // Hauteur moyenne de la couronne
+          // Elevation of the 4 neighbours
+          neighbours[0] = Pixel<double>(r-1, k, Image(r-1, k));
+          neighbours[1] = Pixel<double>(r, k-1, Image(r, k-1));
+          neighbours[2] = Pixel<double>(r, k+1, Image(r, k+1));
+          neighbours[3] = Pixel<double>(r+1, k, Image(r+1, k));
 
-          filData(0, 0) = r - 1;                                        // Création d'une matrice contenant coordonnés des pixels en croix...
-          filData(0, 1) = k;                                            // ... autour du pixel courant + la hauteur
-          filData(0, 2) = Canopy(r - 1, k);
-          filData(1, 0) = r;
-          filData(1, 1) = k - 1;
-          filData(1, 2) = Canopy(r, k - 1);
-          filData(2, 0) = r;
-          filData(2, 1) = k + 1;
-          filData(2, 2) = Canopy(r, k + 1);
-          filData(3, 0) = r + 1;
-          filData(3, 1) = k;
-          filData(3, 2) = Canopy(r + 1, k);
-
-          // Test les 4 coordonnées pour trouver celles qui correspondend au test
-          for(int i = 0 ; i < 4 ; i++)
+          for(int i = 0 ; i < neighbours.size() ; i++)                  // For each neighboring pixel
           {
-            rr   = filData(i, 0);
-            kk   = filData(i, 1);
-            gfil = (filData(i,2) != 0 && filData(i,2) > (rvSeed*TRESHSeed) && (filData(i,2) > (rvCrown*TRESHCrown)) && (filData(i,2) <= (rvSeed+(rvSeed*0.05))) && (fabs(coordSeed(0,0)-filData(i,0)) < DIST) && (fabs(coordSeed(0,1)-filData(i,1)) < DIST));
+            Pixel<double> px = neighbours[i];
 
-            if(gfil && Crowns(rr, kk) == 0 && Canopy(rr, kk) != 0)
+            if (px.val > th_tree)                                       // The pixel is higher than the minimum value)
             {
-              Crownstemp(rr, kk) = Crowns(r, k);
-              it = true;
+              expend =
+                px.val > hSeed*th_seed &&                               // La canopée est supérieure à un seuil pour ce pixel
+                px.val > mhCrown*th_crown &&                            // La canopée est supérieure à un  autre seuil pour ce pixel
+                px.val <= hSeed+hSeed*0.05 &&                           // La canopée est inférieure à un seuil pour ce pixel
+                abs(seed.i-px.i) < DIST &&                              // Le pixel n'est pas trop loin du maximum local sur x
+                abs(seed.j-px.j) < DIST &&                              // Le pixel n'est pas trop loin du maximum local sur y
+                Region(px.i, px.j) == 0;
+
+              if(expend)                                                // The pixel in part of the region
+              {
+                Regiontemp(px.i, px.j) = Region(r,k);                   // Add the pixel to the region
+                npixel[id]++;
+                sum_height[id] += Image(px.i, px.j);                    // Update the sum of the height of the region
+                grown = true;
+              }
             }
           }
         }
       }
     }
 
-    std::copy( Crownstemp.begin(), Crownstemp.end(), Crowns.begin() );
-    std::copy( OldCrowns.begin(), OldCrowns.end(), Check.begin() );
-    std::copy( Crownstemp.begin(), Crownstemp.end(), OldCrowns.begin() );
+    std::copy( Regiontemp.begin(), Regiontemp.end(), Region.begin() );
   }
 
-  return(Crowns);
+  return(Region);
 }
 

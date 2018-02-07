@@ -27,53 +27,51 @@
 
 
 
-# Retrieve the tiles containing ROIs
-#
-# When the user has a set of (x, y) coordinates corresponding to a region of interest (ROI)
-# (a ground inventory, for example), they can automatically find the tiles containing the lidar data associated
-# with the ROIs from a \link[lidR:catalog]{LAScatalog}. The algorithm will do this even for ROIs falling on the edges of one or
-# more tiles.\cr
-# It only works for tiles that are arranged in gridlines. This function is used by \link[lidR:catalog_queries]{catalog_queries}.
-# Users do not really need it.
-#
-# @aliases catalog_index
-# @param catalog A LAScatalog object
-# @param x vector. A set of x plot coordinates
-# @param y vector. A set of y plot coordinates
-# @param r numeric or vector. A radius or a set of radii of the ROI. If only
-# r is provided (r2 = NULL) it will extract data falling onto a disc.
-# @param r2 numeric or vector. A radius or a set of radii of plots. If r2
-# is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.
-# @param roinames vector. A set of ROI names
-# @seealso
-# \link[lidR:catalog]{LAScatalog}
-# \link[lidR:catalog_queries]{catalog_queries}
-catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
+#' Retrieve the files containing ROIs
+#'
+#' \bold{This function is an internal function reserved for lidR developers.\cr\cr}
+#' When we have a set of (x, y) coordinates corresponding to a region of interest (ROI) in a catalog
+#' this function retrieve in which file(s) are these ROIs.
+#'
+#' @param catalog A LAScatalog object
+#' @param x vector. A set of x plot coordinates
+#' @param y vector. A set of y plot coordinates
+#' @param r numeric or vector. A radius or a set of radii of the ROI. If only
+#' r is provided (r2 = NULL) it will extract data falling onto a disc.
+#' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
+#' is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.
+#' @param roinames vector. A set of ROI names
+#' @return A list of LAScluster object.
+#' @keywords internal
+catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
 {
   tile <- minx <- maxx <- miny <- maxy <- NULL
   filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
   . <- NULL
 
-  nplot <- length(x)
-  shape <- LIDRRECTANGLE
+  nplot  <- length(x)
+  shape  <- LIDRRECTANGLE
+  width  <- w
+  height <- h
 
-  if(is.null(r2))
+  if(is.null(h))
   {
-    r2    <- r
+    h  <- w
+    height <- h
     shape <- LIDRCIRCLE
   }
 
   if (buffer > 0)
   {
-    r  <- r + buffer
-    r2 <- r2 + buffer
+    w <- w + buffer
+    h <- h + buffer
   }
 
   coord.tiles <- catalog@data[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
-  coord.plot <- data.table(roinames, x, y, r, r2)
-  coord.plot[,`:=`(maxx = x + r, maxy = y + r2, minx = x - r, miny = y - r2)]
+  coord.plot <- data.table::data.table(roinames, x, y, w, h)
+  coord.plot[,`:=`(maxx = x + w, maxy = y + h, minx = x - w, miny = y - h)]
 
   tiles <- lapply(1:nplot, function(i)
   {
@@ -81,9 +79,7 @@ catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
     coord.tiles[!(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny)]$tile
   })
 
-  coord.plot[, `:=`(buffer = buffer, shape = shape)]
   coord.plot[, tiles := list(tiles)]
-  coord.plot[, c("maxx", "maxy", "minx", "miny") := NULL][]
 
   # Check if some files were outside the catalog
   numfile <- coord.plot$tiles %>% sapply(length)
@@ -99,10 +95,19 @@ catalog_index =	function(catalog, x, y, r, r2, buffer, roinames)
   }
 
   keep = !n
+
+  if (!any(keep))
+    return(NULL)
+
   coord.plot = coord.plot[keep]
   roinames = roinames[keep]
 
-  queries = apply(coord.plot, 1, as.list)
+  queries = apply(coord.plot, 1, function(cl)
+  {
+    center = list(x = cl$x, y = cl$y)
+    Cluster(center, cl$w-buffer, cl$h-buffer, buffer, shape, cl$tiles, cl$roinames)
+  })
+
   names(queries) = roinames
 
   return(queries)

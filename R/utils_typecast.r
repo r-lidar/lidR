@@ -71,7 +71,7 @@ as.lasmetrics = function(x, res)
 #' @family cast
 as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 {
-  X <- .SD <- flightline <- NULL
+  X <- Y <- . <- SD <- flightline <- NULL
 
   inargs = list(...)
 
@@ -118,15 +118,29 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 
   # Convert to raster
 
-  if (ncol(x) <= 3 && is.null(inargs$spbackend)) # Use the data.table way which is much master (approx 3 times)
+  if (ncol(x) <= 3 && is.null(inargs$spbackend))
   {
-    verbose("Casting into RasterLayer with raster")
-    return(raster::rasterFromXYZ(x))
-  }
-  else # Use the sp way to get and return a raster stack
-  {
-    # Autocompletion of the grid with NAs
+    verbose("Casting into RasterLayer")
 
+    hres = 0.5*res
+
+    xmin = min(x$X)
+    xmax = max(x$X)
+    ncol = (xmax - xmin)/res
+
+    ymin = min(x$Y)
+    ymax = max(x$Y)
+    nrow = (ymax - ymin)/res
+
+    r <- raster::raster(nrow=nrow, ncol=ncol, xmn=xmin-hres, xmx=xmax+hres, ymn=ymin-hres, ymx=ymax+hres, res = c(res,res))
+    cells <- raster::cellFromXY(r, x[, .(X,Y)])
+    suppressWarnings(r[cells] <- x[[3]])
+    names(r) <- names(x)[3]
+
+    return(r)
+  }
+  else # Use the sp way to get and return a raster stack (slower)
+  {
     verbose("Filling empty data with NAs...")
 
     rx  = range(x$X)
@@ -146,7 +160,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     sp::coordinates(out) <- ~ X + Y
     sp::gridded(out) <- TRUE   # coerce to SpatialPixelsDataFrame
 
-    if (ncol(out) <= 3)
+    if (ncol(out) == 1)
       return(raster::raster(out))
     else
       return(raster::stack(out))
