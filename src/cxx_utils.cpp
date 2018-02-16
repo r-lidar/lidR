@@ -54,13 +54,13 @@ int fast_countequal(NumericVector x, double t)
 // [[Rcpp::export]]
 int fast_countbelow(NumericVector x, double t)
 {
-  return std::count_if(x.begin(), x.end(), std::bind2nd(std::less<int>(), t));
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::less<double>(), t));
 }
 
 // [[Rcpp::export]]
 int fast_countover(NumericVector x, double t)
 {
-  return std::count_if(x.begin(), x.end(), std::bind2nd(std::greater<int>(), t));
+  return std::count_if(x.begin(), x.end(), std::bind2nd(std::greater<double>(), t));
 }
 
 // [[Rcpp::export]]
