@@ -47,7 +47,9 @@ las = readLAS(LASfile)
 las = readLAS(LASfile, select = "xyz")
 las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
-las = readLAS(LASfile, select = "*+")
+
+# Negation of data is also available (all but intensity and angle)
+las = readLAS(LASfile, select = "* -i -a")
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}
