@@ -1,3 +1,9 @@
+## lidR v1.5.0 (In developpment)
+
+#### NEW FEATURES
+
+* new `lasfiltersurfacepoints` function
+
 ## lidR v1.4.2 (In developpment)
 
 #### BUG FIXES

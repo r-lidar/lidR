@@ -67,6 +67,7 @@ Collate:
     'lasnormalize.r'
     'lasroi.r'
     'lassnags.r'
+    'lassurfacepoints.r'
     'lastrees.r'
     'lidRError.r'
     'metrics.r'
