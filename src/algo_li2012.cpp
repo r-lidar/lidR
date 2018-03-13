@@ -48,7 +48,7 @@ struct SortPoint
 };
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
+IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_tree, double R, bool progressbar = false)
 {
   /* *********************
    * INITALISATION STUFF *
@@ -148,7 +148,7 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double
           double dmin1 = *std::min_element(dP.begin(), dP.end());
           double dmin2 = *std::min_element(dN.begin(), dN.end());
 
-          double dt    = (Z[u->id] > 15) ? dt2 : dt1;
+          double dt    = (Z[u->id] > Zu) ? dt2 : dt1;
 
           if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
           {
