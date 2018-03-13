@@ -5,8 +5,8 @@ C_algo_dalponte <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_algo_dalponte`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
-algo_li2012 <- function(las, dt1, dt2, th_tree, R, progressbar = FALSE) {
-    .Call(`_lidR_algo_li2012`, las, dt1, dt2, th_tree, R, progressbar)
+algo_li2012 <- function(las, dt1, dt2, Zu, th_tree, R, progressbar = FALSE) {
+    .Call(`_lidR_algo_li2012`, las, dt1, dt2, Zu, th_tree, R, progressbar)
 }
 
 fast_table <- function(x, size = 5L) {

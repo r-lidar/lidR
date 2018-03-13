@@ -11,7 +11,7 @@
 \usage{
 lastrees(las, algorithm, ...)
 
-lastrees_li(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
 
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE)
@@ -38,6 +38,9 @@ Default 1.5.}
 
 \item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
 Default 2.}
+
+\item{Zu}{numeric. If point elvation is greater than Zu, \code{dt2} is used otherwise \code{dt1} is used.
+See reference page 79 in Li et al. (2012).}
 
 \item{hmin}{numeric.  Minimum height of a detected tree. Default 2.}
 

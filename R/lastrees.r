@@ -67,6 +67,8 @@
 #' Default 1.5.
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012).
 #' Default 2.
+#' @param Zu numeric. If point elvation is greater than Zu, \code{dt2} is used otherwise \code{dt1} is used.
+#' See reference page 79 in Li et al. (2012).
 #' @param hmin numeric.  Minimum height of a detected tree. Default 2.
 #' @param R numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
@@ -153,18 +155,20 @@ lastrees <- function(las, algorithm, ...)
 
 #' @export
 #' @rdname lastrees
-lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
+lastrees_li = function(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
 {
   stopifnotlas(las)
 
   if (dt1 <= 0) stop("dt1 should be positive",  call. = FALSE)
   if (dt1 <= 0) stop("dt1 should be positive", call. = FALSE)
+  if (Zu <= 0)  stop("Zu should be positive", call. = FALSE)
+  if (hmin <= 0)stop("hmin should be positive", call. = FALSE)
   if (R <= 0)   stop("R should be positive", call. = FALSE)
 
   treeID   <- NULL
   progress <- LIDROPTIONS("progress")
 
-  id = algo_li2012(las, dt1, dt2, hmin, R, progress)
+  id = algo_li2012(las, dt1, dt2, Zu, hmin, R, progress)
 
   las@data[, treeID := id]
 
