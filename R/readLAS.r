@@ -206,4 +206,4 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   return(las)
 }
 
-`%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
+`%is_in%` <- function(char, str) grepl(char, str)
