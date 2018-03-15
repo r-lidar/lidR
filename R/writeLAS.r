@@ -83,7 +83,7 @@ writeLAS = function(.las, file)
     B = .las@data$B
   }
 
-  rlas::writelas(file, .las@header@PHB, .las@data$X, .las@data$Y, .las@data$Z, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
+  rlas::write.las(file, as.list(.las@header), .las@data)
 
   if (length(nolasvalidfield) > 0)
   {
