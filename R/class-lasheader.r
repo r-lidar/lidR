@@ -144,3 +144,18 @@ setMethod("show", "LASheader",  function(object)
 
   return(invisible())
 })
+
+#' Transform to a list
+#'
+#' Functions to construct, coerce and check for both kinds of R lists.
+#'
+#' @param x A LASheader object
+#' @param ... unused
+#' @method as.list LASheader
+#' @export
+as.list.LASheader <- function(x, ...)
+{
+  PHB = x@PHB
+  VLR = x@VLR
+  return(c(PHB, VLR))
+}

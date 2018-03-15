@@ -3,6 +3,7 @@
 S3method(area,LAS)
 S3method(area,LAScatalog)
 S3method(area,numeric)
+S3method(as.list,LASheader)
 S3method(as.raster,lasmetrics)
 S3method(as.spatial,LAS)
 S3method(as.spatial,LAScatalog)
