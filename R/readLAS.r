@@ -193,11 +193,11 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
 
   # If filter is used, header will not be in accordance with the data. Hard check is useless
   if (nchar(filter) > 0 | length(ifiles) > 1)
-    lascheck(data, header, hard = F)
+    rlas::check_data_vs_header(header, data, hard = FALSE)
   else
-    lascheck(data, header, hard = T)
+    rlas::check_data_vs_header(header, data, hard = TRUE)
 
-  las <- LAS(data, header, check = F)
+  las <- LAS(data, header, check = FALSE)
 
   if (P)  laspulse(las)
   if (Fl) lasflightline(las, 30)

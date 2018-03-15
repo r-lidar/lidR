@@ -102,7 +102,13 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
   # Check if the data are valid. Else: warning -------------------------------
 
   if(check)
+  {
     lascheck(data, header, hard = F)
+    #rlas::check_header(lheader)
+    #rlas::chech_data
+    #rlas::check_data_vs_header(header, data, hard = F)
+  }
+
 
   # Update header ------------------------------------------------------------
 
