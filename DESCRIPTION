@@ -21,7 +21,7 @@ Depends:
     R (>= 3.1.0),magrittr,methods
 Imports:
     rlas (>= 1.1.10),rgl,stats,utils,grDevices,tools,raster,rgeos,
-    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
+    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,
     memoise,mapview,mapedit,RANN,future
 Suggests:
     rgdal,testthat,EBImage,hexbin
