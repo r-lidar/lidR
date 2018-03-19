@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-interpolate = function(points, coord, method, k, p, model)
+interpolate = function(points, coord, method, k, p, model, wbuffer = TRUE)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -49,21 +49,24 @@ interpolate = function(points, coord, method, k, p, model)
 
   if (method == "knnidw")
   {
-    verbose("[using inverse distance weighting]\n")
+    verbose("[using inverse distance weighting]")
     return(interpolate_knnidw(points, coord, k, p))
   }
   else if (method == "delaunay")
   {
-    verbose("[using Delaunay triangulation]\n")
+    verbose("[using Delaunay triangulation]")
 
     z = interpolate_delaunay(points, coord)
 
     isna = is.na(z)
     nnas = sum(isna)
 
-    if (nnas > 0 & k > 0) {
+    if (nnas > 0 & k > 0)
+    {
       z[isna] <- knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
-      message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
+
+      if(wbuffer)
+        message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
     }
 
     return(z)
