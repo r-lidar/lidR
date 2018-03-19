@@ -155,9 +155,11 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
   # Interpolate the terrain
   # =======================
 
+  has_buffer = "buffer" %in% names(x@data)
+
   verbose("Interpolating ground points...")
 
-  Zg = interpolate(ground, grid, method, k, p, model)
+  Zg = interpolate(ground, grid, method, k, p, model, wbuffer = !has_buffer)
   grid[, Z := round(Zg, 3)][]
 
   if (keep_lowest)
