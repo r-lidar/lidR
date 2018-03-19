@@ -102,6 +102,7 @@ grid_terrain = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.
 grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   . <- X <- Y <- Z <- Classification <- NULL
+  resolution = res
 
   # ========================
   # Select the ground points
@@ -123,16 +124,32 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
 
   verbose("Generating interpolation coordinates...")
 
-  ext  = extent(x) + 0.1 * res
-  grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
+  if (is(res, "RasterLayer"))
+  {
+    resolution = raster::res(res)
 
-  hull = convex_hull(x@data$X, x@data$Y)
-  hull = sp::Polygon(hull)
-  hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-  hull = rgeos::gBuffer(hull, width = res)
-  hull = hull@polygons[[1]]@Polygons[[1]]@coords
-  keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-  grid = grid[keep]
+    if (resolution[1] !=  resolution[2])
+      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+
+    resolution = resolution[1]
+
+    grid = raster::xyFromCell(res, 1:raster::ncell(res))
+    grid = data.table::as.data.table(grid)
+    data.table::setnames(grid, names(grid), c("X", "Y"))
+  }
+  else
+  {
+    ext  = extent(x) + 0.1 * resolution
+    grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, resolution)
+
+    hull = convex_hull(x@data$X, x@data$Y)
+    hull = sp::Polygon(hull)
+    hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+    hull = rgeos::gBuffer(hull, width = resolution)
+    hull = hull@polygons[[1]]@Polygons[[1]]@coords
+    keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
+    grid = grid[keep]
+  }
 
   # =======================
   # Interpolate the terrain
@@ -147,11 +164,11 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
   {
     verbose("Forcing the lowest ground points to be retained...")
 
-    grid = rbind(grid, grid_metrics(lasfilterground(x), list(Z = min(Z)), res))
+    grid = rbind(grid, grid_metrics(lasfilterground(x), list(Z = min(Z)), resolution))
     grid = grid[, list(Z = min(Z)), by = .(X,Y)]
   }
 
-  as.lasmetrics(grid, res)
+  as.lasmetrics(grid, resolution)
 
   return(grid)
 }
