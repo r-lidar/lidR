@@ -43,6 +43,8 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   progress  <- catalog@progress
   ncores    <- catalog@cores
 
+  resolution <- res
+
   if (!catalog@opt_changed & catalog_option_comptibility_global_changed)
   {
     progress  <- CATALOGOPTIONS("progress")
@@ -53,11 +55,28 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   }
 
   # ========================================
+  # Reduce the catalog with rasters
+  # ========================================
+
+  if (is(res, "RasterLayer"))
+  {
+    ext = raster::extent(res)
+    catalog@data = catalog@data[!(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin)]
+
+    resolution = raster::res(raster)
+
+    if (resolution[1] !=  resolution[2])
+      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+
+    resolution = resolution[1]
+  }
+
+  # ========================================
   # Test of memory to prevent memory overflow
   # ========================================
 
   surface <- sum(with(catalog@data, (`Max X` - `Min X`) * (`Max Y` - `Min Y`)))
-  npixel  <- surface / (res*res)
+  npixel  <- surface / (resolution*resolution)
   nmetric <- 3 # Must find a way to access this number
   nbytes  <- npixel * nmetric * 8
   class(nbytes) <- "object_size"
@@ -87,7 +106,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
 
   catalog@buffer = catalog@buffer + 0.1
 
-  clusters <- catalog_makecluster(catalog, res, start)
+  clusters <- catalog_makecluster(catalog, resolution, start)
 
   # Add the path to the saved file (if saved)
   clusters <- lapply(clusters, function(x)
@@ -112,7 +131,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
       callparam$func <- as.expression(callparam$func)
   }
 
-  callparam$res   <- res
+  callparam$res   <- resolution
 
   if (any(start != 0))
     callparam$start <- start
@@ -161,7 +180,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
     ._class = class(output[[1]])
     output = data.table::rbindlist(output)
     data.table::setattr(output, "class", ._class)
-    data.table::setattr(output, "res", res)
+    data.table::setattr(output, "res", resolution)
   }
   else
   {
