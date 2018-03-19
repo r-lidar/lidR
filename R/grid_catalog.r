@@ -63,7 +63,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
     ext = raster::extent(res)
     catalog@data = catalog@data[!(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin)]
 
-    resolution = raster::res(raster)
+    resolution = raster::res(res)
 
     if (resolution[1] !=  resolution[2])
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
