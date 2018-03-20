@@ -4,7 +4,7 @@
 \alias{lasdecimate}
 \title{Thin LiDAR data}
 \usage{
-lasdecimate(.las, density, homogenize = TRUE, res = 5)
+lasdecimate(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 }
 \arguments{
 \item{.las}{An object of the class \code{LAS}}
@@ -15,12 +15,14 @@ lasdecimate(.las, density, homogenize = TRUE, res = 5)
 dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.}
 
 \item{res}{numeric. Cell size to compute the pulse density.}
+
+\item{use_pulse}{logical. Decimate removing random pulses intead of random points}
 }
 \value{
 It returns a \code{LAS} object.
 }
 \description{
-Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
+Thin LIDAR data randomly removes a given proportion of point to reach specific pulse densities
 }
 \details{
 \code{lasdecimate} is designed to produce output datasets that have uniform pulse densities
@@ -36,7 +38,7 @@ pulse density does not have meaning at this scale.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile, select = "xyztP")
+lidar = readLAS(LASfile, select = "xyz")
 
 # By default the method is homogenize = TRUE
 thinned = lidar \%>\% lasdecimate(1, res = 5)
