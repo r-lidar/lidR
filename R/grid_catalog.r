@@ -27,7 +27,7 @@
 
 grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0), ...)
 {
-  Min.X <- Min.Y <- Max.X <- Max.Y <- p <- NULL
+  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- p <- NULL
 
   # ========================================
   # Store some stuff in readable variables
@@ -45,7 +45,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
 
   resolution <- res
 
-  if (!catalog@opt_changed & catalog_option_comptibility_global_changed)
+  if (!catalog@opt_changed & CATALOGOPTIONS("global_changed"))
   {
     progress  <- CATALOGOPTIONS("progress")
     ncores    <- CATALOGOPTIONS("multicore")

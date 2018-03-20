@@ -24,6 +24,7 @@ CATALOGOPTIONS <- settings::options_manager(
   progress = TRUE,
   memory_limit_warning = 5e8,
   tiling_size = 1000,
+  global_changed = FALSE,
 
   .allowed = list(
     return_virtual_raster  = bool(),
@@ -32,7 +33,8 @@ CATALOGOPTIONS <- settings::options_manager(
     multicore = settings::inrange(1, Inf),
     progress = bool(),
     memory_limit_warning = settings::inrange(0, Inf),
-    tiling_size = settings::inrange(0, Inf)
+    tiling_size = settings::inrange(0, Inf),
+    global_changed = bool()
   )
 )
 
@@ -72,19 +74,21 @@ CATALOGOPTIONS <- settings::options_manager(
 #'  }
 #'
 #' @examples
+#' \dontrun{
 #' catalog_options(multicore = 2)
 #' catalog_options(buffer = 40)
 #' catalog_options()
 #'
 #' # Reset default options
 #' catalog_reset()
+#' }
 #' @export
 catalog_options <- function(...)
 {
   .Deprecated("lasarea", package="lidR", "'catalog_options' is deprecated and will be removed in version 1.7. Use catalog properties instead. See help('catalog') and help('LAScatalog-class')")
-  catalog_option_comptibility_global_changed <<- TRUE
   settings::stop_if_reserved(...)
-  CATALOGOPTIONS(...)
+  CATALOGOPTIONS
+  CATALOGOPTIONS["global_changed"] <- TRUE
 }
 
 #' @export
