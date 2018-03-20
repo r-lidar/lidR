@@ -46,10 +46,12 @@ The following options are supported:
 }
 
 \examples{
+\dontrun{
 catalog_options(multicore = 2)
 catalog_options(buffer = 40)
 catalog_options()
 
 # Reset default options
 catalog_reset()
+}
 }

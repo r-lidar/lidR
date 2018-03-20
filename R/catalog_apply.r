@@ -167,7 +167,7 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   progress  <- ctg@progress
   ncores    <- ctg@cores
 
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
   {
     progress  <- CATALOGOPTIONS("progress")
     ncores    <- CATALOGOPTIONS("multicore")

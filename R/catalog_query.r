@@ -119,8 +119,14 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   if (any(buffer < 0))
     stop("Buffer size must be a positive value", call. = FALSE)
 
-  ncores   = CATALOGOPTIONS("multicore")
-  progress = CATALOGOPTIONS("progress")
+  progress  <- obj@progress
+  ncores    <- obj@cores
+
+  if (!obj@opt_changed & CATALOGOPTIONS("global_changed"))
+  {
+    progress  <- CATALOGOPTIONS("progress")
+    ncores    <- CATALOGOPTIONS("multicore")
+  }
 
   w = 2*r
 

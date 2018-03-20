@@ -65,14 +65,11 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   ncores   <- ctg@cores
   progress <- ctg@progress
 
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
   {
     progress  <- CATALOGOPTIONS("progress")
     ncores    <- CATALOGOPTIONS("multicore")
   }
-
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
-    ncores <- CATALOGOPTIONS("multicore")
 
   # Create a pattern of clusters to be sequentially processed
   clusters <- catalog_makecluster(ctg, 1)
