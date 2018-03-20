@@ -124,13 +124,8 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 
   verbose("Selecting only the highest points within the grid cells...")
 
-  f = function(x,y,z) {
-    i = which.max(z)
-    return(list(X = x[i], Y = y[i], Z = z[i]))
-  }
-
   by = group_grid(cloud$X, cloud$Y, res)
-  cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
+  cloud = cloud[cloud[, .I[which.max(Z)], by = by]$V1]
 
   # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
   i = 1

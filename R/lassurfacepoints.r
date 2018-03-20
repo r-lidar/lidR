@@ -21,17 +21,7 @@
 #' plot(subset)
 lasfiltersurfacepoints = function(las, res)
 {
-  f = function(z, id) {
-    i = which.max(z)
-    return(list(id = id[i]))
-  }
-
-  npoints = nrow(las@data)
-  las@data[, pointID := 1:npoints]
-  by = group_grid(las@data$X, las@data$Y, res)
-  keep = las@data[, f(Z, pointID), by = by][, Xgrid := NULL][, Ygrid := NULL][]
-  cloud = las@data[keep$id]
-  las@data[, pointID := NULL]
-
-  return(LAS(cloud, las@header))
+  by  = group_grid(las@data$X, las@data$Y, res)
+  sub = las@data[las@data[, .I[which.max(Z)], by = by]$V1]
+  return(LAS(sub, las@header))
 }
