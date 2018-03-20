@@ -1,5 +1,7 @@
 lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 {
+  . <- NULL
+
   if (is(call, "name"))
     call = eval(call)
 
