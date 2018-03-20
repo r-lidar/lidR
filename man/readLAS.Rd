@@ -4,7 +4,7 @@
 \alias{readLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, select = "xyztinrcaRGBP", filter = "")
+readLAS(files, select = "*", filter = "")
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{LAScatalog} object}

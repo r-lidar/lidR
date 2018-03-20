@@ -70,19 +70,19 @@
 #'
 #' # Negation of data is also available (all but intensity and angle)
 #' las = readLAS(LASfile, select = "* -i -a")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS = function(files, select = "*", filter = "")
 {
   UseMethod("readLAS", files)
 }
 
 #' @export
-readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
   return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
-readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.LAScluster = function(files, select = "*", filter = "")
 {
   buffer <- X <- Y <- NULL
 
@@ -123,7 +123,7 @@ readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
 
 
 #' @export
-readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.character = function(files, select = "*", filter = "")
 {
   ofile = ""
   return(streamLAS(files, ofile, select, filter))

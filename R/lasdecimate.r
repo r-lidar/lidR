@@ -29,7 +29,7 @@
 
 #' Thin LiDAR data
 #'
-#' Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
+#' Thin LIDAR data randomly removes a given proportion of point to reach specific pulse densities
 #'
 #' \code{lasdecimate} is designed to produce output datasets that have uniform pulse densities
 #' throughout the coverage area. For each cell, the proportion of pulses that will
@@ -46,10 +46,11 @@
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform
 #' dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.
 #' @param res numeric. Cell size to compute the pulse density.
+#' @param use_pulse logical. Decimate removing random pulses intead of random points
 #' @return It returns a \code{LAS} object.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile, select = "xyztP")
+#' lidar = readLAS(LASfile, select = "xyz")
 #'
 #' # By default the method is homogenize = TRUE
 #' thinned = lidar %>% lasdecimate(1, res = 5)
@@ -61,19 +62,28 @@
 #' thinned %>% summary
 #' thinned %>% grid_density %>% plot
 #' @export
-lasdecimate = function(.las, density, homogenize = TRUE, res = 5)
+lasdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
   pulseID <- gpstime <- NULL
 
+  if(use_pulse & !"pulseID" %in% names(.las@data))
+  {
+    warning("No 'pulseID' field found.", call. = FALSE)
+    use_pulse = FALSE
+  }
+
   stopifnotlas(.las)
 
-  if(! "pulseID" %in% names(.las@data))
-    lidRError("THI1")
+  npoints = nrow(.las@data)
 
   if(homogenize == FALSE)
   {
     n = round(density*area(.las))
-    selected = selected_pulses(.las@data$pulseID, n)
+
+    if (use_pulse)
+      selected = selected_pulses(.las@data$pulseID, n)
+    else
+      selected = sample(1:nrow(.las@data), n)
   }
   else
   {
@@ -81,12 +91,10 @@ lasdecimate = function(.las, density, homogenize = TRUE, res = 5)
 
     by = group_grid(.las@data$X, .las@data$Y, res)
 
-    selected = .las@data[, list(delete = selected_pulses(pulseID, n), t = gpstime), by=by]
-
-    setorder(selected, t)
-    setorder(.las@data, gpstime)
-
-    selected = selected$delete
+    if (use_pulse)
+      selected = .las@data[, .I[selected_pulses(pulseID, n)], by = by]$V1
+    else
+      selected = .las@data[, .I[selected_pulses(1:.N, n)], by = by]$V1
   }
 
   LAS(.las@data[selected], .las@header) %>% return()

@@ -21,8 +21,8 @@ Returns a \code{data.table} of class \code{lasmetrics} which enables easier
 plotting and RasterLayer casting.
 }
 \description{
-Creates a pulse density map using a LiDAR point cloud. This function is an alias
-for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
+Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
+density.
 }
 \section{Use with a \code{LAScatalog}}{
 
