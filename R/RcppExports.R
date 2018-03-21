@@ -5,6 +5,14 @@ C_grid_canopy <- function(las, res, subcircle = 0) {
     .Call(`_lidR_C_grid_canopy`, las, res, subcircle)
 }
 
+C_knn <- function(X, Y, x, y, k) {
+    .Call(`_lidR_C_knn`, X, Y, x, y, k)
+}
+
+C_knnidw <- function(X, Y, Z, x, y, k, p) {
+    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p)
+}
+
 C_lassmooth <- function(las, size) {
     .Call(`_lidR_C_lassmooth`, las, size)
 }
@@ -39,14 +47,6 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
 
 roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
-}
-
-knn <- function(X, Y, x, y, k) {
-    .Call(`_lidR_knn`, X, Y, x, y, k)
-}
-
-knnidw <- function(X, Y, Z, x, y, k, p) {
-    .Call(`_lidR_knnidw`, X, Y, Z, x, y, k, p)
 }
 
 C_LocalMaximaMatrix <- function(image, ws, th) {
