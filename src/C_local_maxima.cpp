@@ -95,7 +95,7 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
   LogicalVector is_maxima(n);
   LogicalVector isnot_maxima(n);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
+  QuadTree *tree = QuadTreeCreate(X,Y);
 
   Progress p(n, displaybar);
 

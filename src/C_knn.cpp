@@ -42,7 +42,7 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
   IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
+  QuadTree *tree = QuadTreeCreate(X,Y);
 
   for( int i = 0 ; i < n ; i++)
   {
@@ -72,7 +72,7 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   int n = x.length();
   NumericVector iZ(n);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
+  QuadTree *tree = QuadTreeCreate(X,Y);
 
   Progress pbar(n, false);
 

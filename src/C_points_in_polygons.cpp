@@ -101,7 +101,7 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
   int nvert   = vertx.length();
   IntegerVector id(npoints);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(pointx),as< std::vector<double> >(pointy));
+  QuadTree *tree = QuadTreeCreate(pointx, pointy);
 
   for(int i = 0 ; i < nvert ; i ++)
   {
