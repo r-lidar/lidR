@@ -121,6 +121,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_MorphologicalOpening
+NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
+RcppExport SEXP _lidR_C_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_MorphologicalOpening(X, Y, Z, resolution, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // point_in_polygon
 bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy);
 RcppExport SEXP _lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
@@ -268,21 +283,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// MorphologicalOpening
-NumericVector MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
-RcppExport SEXP _lidR_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(MorphologicalOpening(X, Y, Z, resolution, displaybar));
-    return rcpp_result_gen;
-END_RCPP
-}
 // update_list_by_ref
 void update_list_by_ref(Rcpp::List x, CharacterVector name, double value);
 RcppExport SEXP _lidR_update_list_by_ref(SEXP xSEXP, SEXP nameSEXP, SEXP valueSEXP) {
@@ -305,6 +305,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
+    {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
     {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
     {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
@@ -316,7 +317,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
-    {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},
     {NULL, NULL, 0}
 };

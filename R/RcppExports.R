@@ -33,6 +33,10 @@ C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
     .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
 }
 
+C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
+    .Call(`_lidR_C_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
+}
+
 point_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call(`_lidR_point_in_polygon`, vertx, verty, pointx, pointy)
 }
@@ -75,10 +79,6 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
 
 roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
-}
-
-MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
-    .Call(`_lidR_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
 }
 
 update_list_by_ref <- function(x, name, value) {
