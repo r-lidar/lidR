@@ -173,7 +173,7 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     # Return the id of each polygon
     verbose("Testing whether points fall in a given polygon...")
 
-    ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
+    ids = C_points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
 
     if (method == 1)
     {

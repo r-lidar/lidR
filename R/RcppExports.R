@@ -33,6 +33,18 @@ C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
     .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
 }
 
+point_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call(`_lidR_point_in_polygon`, vertx, verty, pointx, pointy)
+}
+
+points_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call(`_lidR_points_in_polygon`, vertx, verty, pointx, pointy)
+}
+
+points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
+    .Call(`_lidR_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
+}
+
 C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
     .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
 }
@@ -63,18 +75,6 @@ roundc <- function(x, digit = 0L) {
 
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
     .Call(`_lidR_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
-}
-
-point_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call(`_lidR_point_in_polygon`, vertx, verty, pointx, pointy)
-}
-
-points_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call(`_lidR_points_in_polygon`, vertx, verty, pointx, pointy)
-}
-
-points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
-    .Call(`_lidR_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
 tinfo <- function(M, X) {
