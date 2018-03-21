@@ -114,7 +114,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Searching for the enclosing Delaunay convex hull...")
 
-  idx  <- tsearch(points$X, points$Y, dn, coord$X, coord$Y, LIDROPTIONS("progress"))
+  idx  <- C_tsearch(points$X, points$Y, dn, coord$X, coord$Y, LIDROPTIONS("progress"))
 
   #uidx <- unique(idx)
   #uidx <- uidx[!is.na(uidx)]
