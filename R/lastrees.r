@@ -164,7 +164,7 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, hmin = 2, R = 10)
   treeID   <- NULL
   progress <- LIDROPTIONS("progress")
 
-  id = algo_li2012(las, dt1, dt2, hmin, R, progress)
+  id = C_lastrees_li(las, dt1, dt2, hmin, R, progress)
 
   las@data[, treeID := id]
 
@@ -233,7 +233,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 
-  Crowns = C_algo_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+  Crowns = C_latrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 

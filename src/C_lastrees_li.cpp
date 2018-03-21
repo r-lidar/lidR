@@ -48,7 +48,7 @@ struct SortPoint
 };
 
 // [[Rcpp::export]]
-IntegerVector algo_li2012(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
+IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
 {
   /* *********************
    * INITALISATION STUFF *
