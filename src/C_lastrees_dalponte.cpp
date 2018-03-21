@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-IntegerMatrix C_algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
+IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
 {
   bool grown = true;
   bool expend;
@@ -117,4 +117,3 @@ IntegerMatrix C_algo_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double t
 
   return(Region);
 }
-
