@@ -233,7 +233,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 
-  Crowns = C_latrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+  Crowns = C_lastrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 

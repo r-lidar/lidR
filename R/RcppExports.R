@@ -41,16 +41,16 @@ C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
     .Call(`_lidR_C_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
 }
 
-point_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call(`_lidR_point_in_polygon`, vertx, verty, pointx, pointy)
+C_point_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call(`_lidR_C_point_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-points_in_polygon <- function(vertx, verty, pointx, pointy) {
-    .Call(`_lidR_points_in_polygon`, vertx, verty, pointx, pointy)
+C_points_in_polygon <- function(vertx, verty, pointx, pointy) {
+    .Call(`_lidR_C_points_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
-    .Call(`_lidR_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
+C_points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
+    .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
 C_tinfo <- function(M, X) {
