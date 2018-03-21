@@ -36,7 +36,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
+Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
 {
   int n = x.length();
   IntegerMatrix knn_idx(n, k);
@@ -67,7 +67,7 @@ Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector 
 }
 
 // [[Rcpp::export]]
-NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
 {
   int n = x.length();
   NumericVector iZ(n);

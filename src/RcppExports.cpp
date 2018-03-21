@@ -18,6 +18,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_knn
+Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
+RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knn(X, Y, x, y, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_knnidw
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p);
+RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lassmooth
 NumericVector C_lassmooth(S4 las, double size);
 RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP) {
@@ -135,38 +167,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
     rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
-    return rcpp_result_gen;
-END_RCPP
-}
-// knn
-Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
-RcppExport SEXP _lidR_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(knn(X, Y, x, y, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// knnidw
-NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p);
-RcppExport SEXP _lidR_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(knnidw(X, Y, Z, x, y, k, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -298,6 +298,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
+    {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
+    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
@@ -307,8 +309,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
-    {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
-    {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 7},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},

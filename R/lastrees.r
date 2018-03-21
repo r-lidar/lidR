@@ -274,7 +274,7 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
   # Voronoi tesselation is nothing else than the nearest neigbour
-  u = knn(ttops$X, ttops$Y, chmdt$X, chmdt$Y, 1L)
+  u = C_knn(ttops$X, ttops$Y, chmdt$X, chmdt$Y, 1L)
   chmdt[, id := u$nn.idx[,1]]
   chmdt[, d := u$nn.dist[,1]]
 
