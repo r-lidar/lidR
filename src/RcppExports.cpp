@@ -94,6 +94,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_LocalMaximaMatrix
+IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th);
+RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP imageSEXP, SEXP wsSEXP, SEXP thSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type image(imageSEXP);
+    Rcpp::traits::input_parameter< int >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< double >::type th(thSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(image, ws, th));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_LocalMaximaPoints
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar);
+RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -167,33 +194,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
     rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_LocalMaximaMatrix
-IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th);
-RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP imageSEXP, SEXP wsSEXP, SEXP thSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type image(imageSEXP);
-    Rcpp::traits::input_parameter< int >::type ws(wsSEXP);
-    Rcpp::traits::input_parameter< double >::type th(thSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(image, ws, th));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_LocalMaximaPoints
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar);
-RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP displaybarSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< double >::type ws(wsSEXP);
-    Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height, displaybar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -303,14 +303,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
+    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
+    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
-    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
-    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
     {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
     {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
