@@ -25,6 +25,14 @@ C_lastrees_li <- function(las, dt1, dt2, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, th_tree, R, progressbar)
 }
 
+C_LocalMaximaMatrix <- function(image, ws, th) {
+    .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
+}
+
+C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
+    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
@@ -47,14 +55,6 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
 
 roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
-}
-
-C_LocalMaximaMatrix <- function(image, ws, th) {
-    .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
-}
-
-C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
-    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
 }
 
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
