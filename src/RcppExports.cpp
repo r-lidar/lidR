@@ -94,6 +94,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_lasupdateheader
+void C_lasupdateheader(S4 las, S4 new_header);
+RcppExport SEXP _lidR_C_lasupdateheader(SEXP lasSEXP, SEXP new_headerSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< S4 >::type new_header(new_headerSEXP);
+    C_lasupdateheader(las, new_header);
+    return R_NilValue;
+END_RCPP
+}
 // C_LocalMaximaMatrix
 IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th);
 RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP imageSEXP, SEXP wsSEXP, SEXP thSEXP) {
@@ -283,18 +294,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// update_list_by_ref
-void update_list_by_ref(Rcpp::List x, CharacterVector name, double value);
-RcppExport SEXP _lidR_update_list_by_ref(SEXP xSEXP, SEXP nameSEXP, SEXP valueSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type name(nameSEXP);
-    Rcpp::traits::input_parameter< double >::type value(valueSEXP);
-    update_list_by_ref(x, name, value);
-    return R_NilValue;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
@@ -303,6 +302,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
+    {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 5},
@@ -317,7 +317,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
-    {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},
     {NULL, NULL, 0}
 };
 
