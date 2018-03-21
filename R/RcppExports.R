@@ -25,6 +25,10 @@ C_lastrees_li <- function(las, dt1, dt2, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, th_tree, R, progressbar)
 }
 
+C_lasupdateheader <- function(las, new_header) {
+    invisible(.Call(`_lidR_C_lasupdateheader`, las, new_header))
+}
+
 C_LocalMaximaMatrix <- function(image, ws, th) {
     .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
 }
@@ -79,9 +83,5 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
 
 roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
-}
-
-update_list_by_ref <- function(x, name, value) {
-    invisible(.Call(`_lidR_update_list_by_ref`, x, name, value))
 }
 

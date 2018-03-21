@@ -69,6 +69,7 @@ Collate:
     'lassnags.r'
     'lassurfacepoints.r'
     'lastrees.r'
+    'lasupdateheader.r'
     'lidRError.r'
     'metrics.r'
     'metrics_canopy_roughness.r'
