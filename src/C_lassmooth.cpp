@@ -22,7 +22,7 @@ NumericVector C_lassmooth(S4 las, double size)
   NumericVector Z_temp;
   NumericVector Z_out  = clone(Z);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
+  QuadTree *tree = QuadTreeCreate(X,Y);
 
   Progress p(n, false);
 

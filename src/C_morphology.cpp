@@ -44,7 +44,7 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   NumericVector Z_temp = clone(Z);
   NumericVector Z_out  = clone(Z);
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
+  QuadTree *tree = QuadTreeCreate(X,Y);
 
   Progress p(2*n, displaybar);
 
