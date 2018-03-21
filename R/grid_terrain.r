@@ -147,7 +147,7 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
     hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
     hull = rgeos::gBuffer(hull, width = resolution)
     hull = hull@polygons[[1]]@Polygons[[1]]@coords
-    keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
+    keep = C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
     grid = grid[keep]
   }
 

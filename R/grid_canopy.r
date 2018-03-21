@@ -135,7 +135,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
     hull = rgeos::gBuffer(sphull, width = res)
     hull = hull@polygons[[1]]@Polygons[[1]]@coords
 
-    grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
+    grid = grid[C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
 
     data.table::setkeyv(grid, c("X", "Y"))
     data.table::setkeyv(dsm, c("X", "Y"))

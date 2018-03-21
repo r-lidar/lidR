@@ -121,6 +121,49 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// point_in_polygon
+bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy);
+RcppExport SEXP _lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vertx(vertxSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
+    Rcpp::traits::input_parameter< double >::type pointx(pointxSEXP);
+    Rcpp::traits::input_parameter< double >::type pointy(pointySEXP);
+    rcpp_result_gen = Rcpp::wrap(point_in_polygon(vertx, verty, pointx, pointy));
+    return rcpp_result_gen;
+END_RCPP
+}
+// points_in_polygon
+LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy);
+RcppExport SEXP _lidR_points_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vertx(vertxSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
+    rcpp_result_gen = Rcpp::wrap(points_in_polygon(vertx, verty, pointx, pointy));
+    return rcpp_result_gen;
+END_RCPP
+}
+// points_in_polygons
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar);
+RcppExport SEXP _lidR_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP, SEXP displaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type vertx(vertxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type verty(vertySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
+    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy, displaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_tsearch
 IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar);
 RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP diplaybarSEXP) {
@@ -228,49 +271,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// point_in_polygon
-bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy);
-RcppExport SEXP _lidR_point_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vertx(vertxSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
-    Rcpp::traits::input_parameter< double >::type pointx(pointxSEXP);
-    Rcpp::traits::input_parameter< double >::type pointy(pointySEXP);
-    rcpp_result_gen = Rcpp::wrap(point_in_polygon(vertx, verty, pointx, pointy));
-    return rcpp_result_gen;
-END_RCPP
-}
-// points_in_polygon
-LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy);
-RcppExport SEXP _lidR_points_in_polygon(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vertx(vertxSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type verty(vertySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    rcpp_result_gen = Rcpp::wrap(points_in_polygon(vertx, verty, pointx, pointy));
-    return rcpp_result_gen;
-END_RCPP
-}
-// points_in_polygons
-IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar);
-RcppExport SEXP _lidR_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP, SEXP displaybarSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type vertx(vertxSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type verty(vertySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(points_in_polygons(vertx, verty, pointx, pointy, displaybar));
-    return rcpp_result_gen;
-END_RCPP
-}
 // tinfo
 NumericMatrix tinfo(IntegerMatrix M, NumericMatrix X);
 RcppExport SEXP _lidR_tinfo(SEXP MSEXP, SEXP XSEXP) {
@@ -305,6 +305,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
+    {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
+    {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
+    {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
@@ -313,9 +316,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_MorphologicalOpening", (DL_FUNC) &_lidR_MorphologicalOpening, 5},
-    {"_lidR_point_in_polygon", (DL_FUNC) &_lidR_point_in_polygon, 4},
-    {"_lidR_points_in_polygon", (DL_FUNC) &_lidR_points_in_polygon, 4},
-    {"_lidR_points_in_polygons", (DL_FUNC) &_lidR_points_in_polygons, 5},
     {"_lidR_tinfo", (DL_FUNC) &_lidR_tinfo, 2},
     {"_lidR_update_list_by_ref", (DL_FUNC) &_lidR_update_list_by_ref, 3},
     {NULL, NULL, 0}

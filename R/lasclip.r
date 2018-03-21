@@ -126,7 +126,7 @@ lasclipPolygon = function(x, xpoly, ypoly, ofile = "")
 lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "")
 {
   X <- Y <- NULL
-  return(lasfilter(x, points_in_polygon(xpoly,ypoly, X, Y)))
+  return(lasfilter(x, C_points_in_polygon(xpoly,ypoly, X, Y)))
 }
 
 #' @export
