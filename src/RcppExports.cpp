@@ -37,6 +37,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_lassmooth
+NumericVector C_lassmooth(S4 las, double size);
+RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type size(sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -287,6 +299,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_algo_dalponte", (DL_FUNC) &_lidR_C_algo_dalponte, 6},
     {"_lidR_algo_li2012", (DL_FUNC) &_lidR_algo_li2012, 6},
+    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

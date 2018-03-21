@@ -4,12 +4,15 @@
 \alias{lasfiltersurfacepoints}
 \title{Filter the surface points}
 \usage{
-lasfiltersurfacepoints(las, res)
+lasfiltersurfacepoints(las, res, smooth = 0)
 }
 \arguments{
 \item{las}{A LAS object}
 
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
+
+\item{smooth}{numeric. Smooth the output point cloud using a moving average windows at the point
+level. This is the size of the moving windows. Default = 0 i.e. no smothing.}
 }
 \value{
 A LAS object
