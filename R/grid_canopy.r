@@ -117,7 +117,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 
   verbose("Gridding highest points in each cell...")
 
-  dsm = Cpp_grid_canopy(x, res, subcircle)
+  dsm = C_grid_canopy(x, res, subcircle)
   as.lasmetrics(dsm, res)
 
   if (na.fill != "none")

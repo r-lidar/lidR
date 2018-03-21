@@ -5,6 +5,19 @@
 
 using namespace Rcpp;
 
+// C_grid_canopy
+List C_grid_canopy(S4 las, double res, double subcircle);
+RcppExport SEXP _lidR_C_grid_canopy(SEXP lasSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_grid_canopy(las, res, subcircle));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lassmooth
 NumericVector C_lassmooth(S4 las, double size);
 RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP) {
@@ -122,19 +135,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
     rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Cpp_grid_canopy
-List Cpp_grid_canopy(S4 las, double res, double subcircle);
-RcppExport SEXP _lidR_Cpp_grid_canopy(SEXP lasSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< double >::type res(resSEXP);
-    Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
-    rcpp_result_gen = Rcpp::wrap(Cpp_grid_canopy(las, res, subcircle));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -297,6 +297,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 6},
@@ -306,7 +307,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
-    {"_lidR_Cpp_grid_canopy", (DL_FUNC) &_lidR_Cpp_grid_canopy, 3},
     {"_lidR_knn", (DL_FUNC) &_lidR_knn, 5},
     {"_lidR_knnidw", (DL_FUNC) &_lidR_knnidw, 7},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
