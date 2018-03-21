@@ -35,7 +35,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
   // Algorithm
 
