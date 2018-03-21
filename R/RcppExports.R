@@ -45,6 +45,10 @@ points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE)
     .Call(`_lidR_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
+C_tinfo <- function(M, X) {
+    .Call(`_lidR_C_tinfo`, M, X)
+}
+
 C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
     .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
 }
@@ -75,10 +79,6 @@ roundc <- function(x, digit = 0L) {
 
 MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
     .Call(`_lidR_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
-}
-
-tinfo <- function(M, X) {
-    .Call(`_lidR_tinfo`, M, X)
 }
 
 update_list_by_ref <- function(x, name, value) {
