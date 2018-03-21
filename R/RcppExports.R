@@ -9,6 +9,10 @@ algo_li2012 <- function(las, dt1, dt2, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_algo_li2012`, las, dt1, dt2, th_tree, R, progressbar)
 }
 
+C_lassmooth <- function(las, size) {
+    .Call(`_lidR_C_lassmooth`, las, size)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
