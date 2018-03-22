@@ -87,8 +87,8 @@ catalog_options <- function(...)
 {
   .Deprecated("lasarea", package="lidR", "'catalog_options' is deprecated and will be removed in version 1.7. Use catalog properties instead. See help('catalog') and help('LAScatalog-class')")
   settings::stop_if_reserved(...)
-  CATALOGOPTIONS
-  CATALOGOPTIONS["global_changed"] <- TRUE
+  CATALOGOPTIONS(...)
+  CATALOGOPTIONS(global_changed = TRUE)
 }
 
 #' @export
