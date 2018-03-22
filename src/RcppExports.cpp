@@ -190,34 +190,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_tinfo
-NumericMatrix C_tinfo(IntegerMatrix M, NumericMatrix X);
-RcppExport SEXP _lidR_C_tinfo(SEXP MSEXP, SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type M(MSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tinfo(M, X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_tsearch
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar);
-RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP diplaybarSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
-    Rcpp::traits::input_parameter< bool >::type diplaybar(diplaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi, diplaybar));
-    return rcpp_result_gen;
-END_RCPP
-}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -294,6 +266,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_tinfo
+NumericMatrix C_tinfo(IntegerMatrix M, NumericMatrix X);
+RcppExport SEXP _lidR_C_tinfo(SEXP MSEXP, SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type M(MSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tinfo(M, X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_tsearch
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar);
+RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP diplaybarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
+    Rcpp::traits::input_parameter< bool >::type diplaybar(diplaybarSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi, diplaybar));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
@@ -309,14 +309,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
     {"_lidR_C_points_in_polygons", (DL_FUNC) &_lidR_C_points_in_polygons, 5},
-    {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
-    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
+    {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
+    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
     {NULL, NULL, 0}
 };
 
