@@ -78,7 +78,10 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   crown = as.raster(chmdt)
 
   if(!missing(las))
-    lasclassify(las, crown, "treeID")
+  {
+    lasclassify(las, Crowns, "treeID")
+    lasaddextrabyte(las, "treeID", "An ID for each segmented tree")
+  }
 
   if (!extra & !missing(las))
     return(invisible())
