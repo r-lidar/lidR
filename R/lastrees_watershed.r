@@ -38,7 +38,10 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
   raster::extent(Crowns) = raster::extent(chm)
 
   if(!missing(las))
+  {
     lasclassify(las, Crowns, "treeID")
+    lasaddextrabyte(las, "treeID", "An ID for each segmented tree")
+  }
 
   if (!extra & !missing(las))
     return(invisible(NULL))

@@ -8,3 +8,13 @@ lasupdateheader = function(las)
   C_lasupdateheader(las, new_header)
   return(invisible())
 }
+
+lasaddextrabyte = function(las, name, desc)
+{
+  X = las@data[[name]]
+  header = as.list(las@header)
+  header = rlas::header_add_extrabytes(header, X, name, desc)
+  header = LASheader(header)
+  C_lasupdateheader(las, header)
+  return(invisible())
+}
