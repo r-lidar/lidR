@@ -53,14 +53,6 @@ C_points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALS
     .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
-C_tinfo <- function(M, X) {
-    .Call(`_lidR_C_tinfo`, M, X)
-}
-
-C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
-    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
-}
-
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
@@ -83,5 +75,13 @@ fast_extract <- function(r, x, y, xmin, ymin, res) {
 
 roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
+}
+
+C_tinfo <- function(M, X) {
+    .Call(`_lidR_C_tinfo`, M, X)
+}
+
+C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
+    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
 }
 
