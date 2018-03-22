@@ -192,7 +192,7 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
     radius *= 1.5;
   }
 
-  std::sort(pts.begin(), pts.end(), DistanceFunc(p));
+  std::sort(pts.begin(), pts.end(), distance_to<Point>(p));
 
   for (int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);

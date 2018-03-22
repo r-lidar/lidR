@@ -50,31 +50,31 @@ template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
   return y;
 }
 
-template<typename T> double dist(const T& lhs, const T& rhs);
-template<typename T> double dist(const T& lhs, const T& rhs)
-{
-  double dx = lhs.x - rhs.x;
-  double dy = lhs.y - rhs.y;
-  return dx * dx + dy * dy;
-}
-
 struct ZSortPoint
 {
   bool operator()(const PointXYZ* lhs, const PointXYZ* rhs) const { return lhs->z > rhs->z; }
 };
 
-
-struct DistanceFunc
+template<class T>
+struct distance_to
 {
-  DistanceFunc(const Point& _p) : p(_p) {}
+  distance_to(const T& _p) : p(_p) {}
 
-  bool operator()(const Point* lhs, const Point* rhs) const
+  bool operator()(const T* lhs, const T* rhs) const
   {
-    return dist(p, *lhs) < dist(p, *rhs);
+    double dx1 = p.x - rhs->x;
+    double dy1 = p.y - rhs->y;
+    double d1  = dx1 * dx1 + dy1 * dy1;
+
+    double dx2 = p.x - lhs->x;
+    double dy2 = p.y - lhs->y;
+    double d2  = dx2 * dx2 + dy2 * dy2;
+
+    return d2 < d1;
   }
 
 private:
-  Point p;
+  T p;
 };
 
 #endif //POINT_H
