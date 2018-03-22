@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double th_tree, double R, bool progressbar = false)
+IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th_tree, double R, bool progressbar = false)
 {
   /* *********************
    * INITALISATION STUFF *
@@ -135,7 +135,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double th_tree, doub
           double dmin1 = *std::min_element(dP.begin(), dP.end());
           double dmin2 = *std::min_element(dN.begin(), dN.end());
 
-          double dt    = (u->z > 15) ? dt2 : dt1;
+          double dt    = (u->z > Zu) ? dt2 : dt1;
 
           if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
           {

@@ -21,8 +21,8 @@ C_lastrees_dalponte <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) 
     .Call(`_lidR_C_lastrees_dalponte`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
-C_lastrees_li <- function(las, dt1, dt2, th_tree, R, progressbar = FALSE) {
-    .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, th_tree, R, progressbar)
+C_lastrees_li <- function(las, dt1, dt2, Zu, th_tree, R, progressbar = FALSE) {
+    .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, Zu, th_tree, R, progressbar)
 }
 
 C_lasupdateheader <- function(las, new_header) {
