@@ -96,7 +96,7 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   stopifnot(is.character(name), is.character(desc), is.character(type))
 
   allowed = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")
-  type = which(allowed == type) - 1
+  type = which(allowed == type)
 
   if(length(type) == 0)
     stop("Invalide type", call. = FALSE)
@@ -114,13 +114,14 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   return(invisible())
 }
 
-# type = 0 : unsigned char
-# type = 1 : char
-# type = 2 : unsigned short
-# type = 3 : short
-# type = 4 : unsigned int
-# type = 5 : int
-# type = 6 : unsigned int64
-# type = 7 : int64
-# type = 8 : float  (try not to use)
-# type = 9 : double (try not to use)
+# type = 0 : undocumented
+# type = 1 : unsigned char
+# type = 2 : char
+# type = 3 : unsigned short
+# type = 4 : short
+# type = 5 : unsigned int
+# type = 6 : int
+# type = 7 : unsigned int64
+# type = 8 : int64
+# type = 9 : float  (try not to use)
+# type = 10 : double (try not to use)
