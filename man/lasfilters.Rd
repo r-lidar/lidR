@@ -54,8 +54,8 @@ Select only some returns
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-firstReturns  = lidar \%>\% lasfilterfirst
-groundReturns = lidar \%>\% lasfilterground
+firstReturns  = lasfilterfirst(lidar)
+groundReturns = lasfilterground(lidar)
 }
 \seealso{
 Other lasfilters: \code{\link{lasfiltersurfacepoints}},

@@ -53,8 +53,10 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' lidar %>% grid_density(5) %>% plot
-#' lidar %>% grid_density(10) %>% plot
+#' d = grid_density(lidar, 5)
+#' plot(d)
+#' d = grid_density(lidar, 10)
+#' plot(d)
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export

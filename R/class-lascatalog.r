@@ -52,7 +52,6 @@
 #' @seealso
 #' \link[lidR:catalog]{catalog}
 #' @import data.table
-#' @import magrittr
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS

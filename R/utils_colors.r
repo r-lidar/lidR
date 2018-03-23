@@ -39,7 +39,7 @@ set.colors = function(x, palette, trim = 1)
 
   if (trim < 1)
   {
-    n = x %>% stats::quantile(trim)
+    n = stats::quantile(x, trim)
     x[x > n] = n
   }
 

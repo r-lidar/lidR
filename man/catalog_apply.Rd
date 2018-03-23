@@ -80,7 +80,7 @@ tree_area = function(las, lake)
   lasclassify(las, lake, field = "lake")
 
   # filter lakes, and low elevation points
-  las \%<>\% lasfilter(lake == FALSE, Z > 4)
+  las = lasfilter(las, lake == FALSE, Z > 4)
 
   if (is.null(las))
     return(NULL)
@@ -143,5 +143,5 @@ output = catalog_apply(project, tree_area, fargs, select = "xyz")
 # of the list is a data.table, so rbindlist does the job:
 output = data.table::rbindlist(output)
 
-output \%$\% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
+with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
 }

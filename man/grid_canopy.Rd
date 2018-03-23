@@ -62,20 +62,25 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Local maximum algorithm with a resolution of 2 meters
-lidar \%>\% grid_canopy(2) \%>\% plot
+chm = grid_canopy(lidar, 2)
+plot(chm)
 
 # Local maximum algorithm with a resolution of 1 meter replacing each
 # point by a 20 cm radius circle of 8 points
-lidar \%>\% grid_canopy(1, 0.2) \%>\% plot
+chm = grid_canopy(lidar, 1, 0.2)
+plot(chm)
 
 # Local maximum algorithm with a resolution of 1 meter replacing each
 # point by a 10 cm radius circle of 8 points and interpolating the empty
 # pixels using the 3-nearest neighbours and an inverse-distance weighting.
-grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2) \%>\% plot
+chm = grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2)
+plot(chm)
 
 \dontrun{
-grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) \%>\% plot
-grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") \%>\% plot
+chm = grid_canopy(lidar, 1, na.fill = "knnidw", k = 3)
+plot(chm)
+chm = grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay")
+plot(chm)
 }
 }
 \seealso{

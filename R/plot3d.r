@@ -44,9 +44,9 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
   if(!is(x, "RasterLayer"))
     stop("Object not supported")
 
-  mx = raster::as.matrix(x) %>% apply(2, rev) %>% t
-  x_  = raster::xFromCol(x) %>% sort
-  y_  = raster::yFromRow(x) %>% sort
+  mx =  t(apply(raster::as.matrix(x), 2, rev))
+  x_  = sort(raster::xFromCol(x))
+  y_  = sort(raster::yFromRow(x))
 
   if(!add)
     rgl::open3d()

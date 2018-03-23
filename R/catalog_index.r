@@ -82,7 +82,7 @@ catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
   coord.plot[, tiles := list(tiles)]
 
   # Check if some files were outside the catalog
-  numfile <- coord.plot$tiles %>% sapply(length)
+  numfile <- sapply(coord.plot$tiles, length)
   n <- numfile == 0
 
   if(sum(n) > 0)

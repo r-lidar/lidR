@@ -18,7 +18,7 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.1.0),magrittr,methods
+    R (>= 3.1.0),methods
 Imports:
     rlas (>= 1.1.10),rgl,stats,utils,grDevices,tools,raster,rgeos,
     data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,

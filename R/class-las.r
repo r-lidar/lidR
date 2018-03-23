@@ -70,7 +70,6 @@
 #' @name LAS-class
 #' @rdname LAS-class
 #' @import data.table
-#' @import magrittr
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
