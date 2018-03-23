@@ -18,7 +18,7 @@ of each method).}
 }
 \value{
 Usually nothing (NULL). The point cloud is updated by reference (in place without copy).
-But some algorithms may provide extra outputs. Usually it may return intermediate objects used
+But some algorithms may provide extra outputs. Usually it may returns intermediate objects used
 internally, such as a \code{RasterLayer} or a \code{SpatialPolygonDataFrame}.
 }
 \description{
