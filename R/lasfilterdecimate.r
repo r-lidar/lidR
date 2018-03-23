@@ -31,7 +31,7 @@
 #'
 #' Thin LIDAR data randomly removes a given proportion of point to reach specific point/pulse densities.
 #'
-#' \code{lasdecimate} is designed to produce output datasets that have uniform densities
+#' \code{lasfilterdecimate} is designed to produce output datasets that have uniform densities
 #' throughout the coverage area. For each cell, the proportion of points/pulses that will
 #' be retained is computed using the actual density and the desired density. If the required density
 #' is greater than the actual density it returns an unchanged set of points (it cannot increase the
@@ -53,17 +53,17 @@
 #' lidar = readLAS(LASfile, select = "xyz")
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lasdecimate(lidar, 1, res = 5)
+#' thinned = lasfilterdecimate(lidar, 1, res = 5)
 #' plot(grid_density(lidar))
 #' plot(grid_density(thinned))
 #'
 #' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lasdecimate(lidar, 1, homogenize = FALSE)
+#' thinned = lasfilterdecimate(lidar, 1, homogenize = FALSE)
 #' summary(thinned)
 #' d = grid_density(thinned)
 #' plot(d)
 #' @export
-lasdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
+lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
   pulseID <- gpstime <- NULL
 
