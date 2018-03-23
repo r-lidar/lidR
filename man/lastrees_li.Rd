@@ -32,7 +32,8 @@ growing region method working at the raw point cloud level. It is a strict imple
 Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of
 a parameter \code{hmin} to stop the over-segmentation for objects that are too low. The classification
 is done at the point cloud level and the function always returns nothing (NULL). The original
-point cloud is update in place with an ID for each point in a new column \code{treeID}.
+point cloud is updated in place with an ID for each point in a new column \code{treeID}. The user
+is free to post-process this output the way he want.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

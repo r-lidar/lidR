@@ -94,7 +94,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   if(!missing(las))
   {
     lasclassify(las, Crowns, "treeID")
-    lasaddextrabyte(las, "treeID", "An ID for each segmented tree")
+    lasaddextrabytes(las, name = "treeID", desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))
