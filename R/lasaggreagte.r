@@ -6,7 +6,10 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     call = eval(call)
 
   if (LIDROPTIONS("debug"))
-    .las@data %$% eval(call) %>% .debug_metrics(call)
+  {
+    output = with(.las@data, eval(call))
+    .debug_metrics(output, call)
+  }
 
   if (is(res, "RasterLayer"))
     by = "RASTER"
@@ -43,7 +46,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     if (!requireNamespace("hexbin", quietly = TRUE))
       stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
 
-    res = ((2*res*res)/(3*sqrt(3))) %>% sqrt %>% round(2)
+    res = round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
 
     ext = extent(.las)
     xmin = round_any(ext@xmin, res)

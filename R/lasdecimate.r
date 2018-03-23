@@ -53,14 +53,15 @@
 #' lidar = readLAS(LASfile, select = "xyz")
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lidar %>% lasdecimate(1, res = 5)
-#' lidar   %>% grid_density %>% plot
-#' thinned %>% grid_density %>% plot
+#' thinned = lasdecimate(lidar, 1, res = 5)
+#' plot(grid_density(lidar))
+#' plot(grid_density(thinned))
 #'
 #' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lidar %>% lasdecimate(1, homogenize = FALSE)
-#' thinned %>% summary
-#' thinned %>% grid_density %>% plot
+#' thinned = lasdecimate(lidar, 1, homogenize = FALSE)
+#' summary(thinned)
+#' d = grid_density(thinned)
+#' plot(d)
 #' @export
 lasdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
@@ -97,7 +98,7 @@ lasdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FA
       selected = .las@data[, .I[selected_pulses(1:.N, n)], by = by]$V1
   }
 
-  LAS(.las@data[selected], .las@header) %>% return()
+  return(LAS(.las@data[selected], .las@header))
 }
 
 selected_pulses = function(pulseID, n)

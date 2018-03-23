@@ -82,10 +82,12 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
-grid_metrics(lidar, max(Z), 2) \%>\% plot
+metrics = grid_metrics(lidar, max(Z), 2)
+plot(metrics)
 
 # Mean height with 400 m^2 cells
-grid_metrics(lidar, mean(Z), 20) \%>\% plot
+metrics = grid_metrics(lidar, mean(Z), 20)
+plot(metrics)
 
 # Define your own new metrics
 myMetrics = function(z, i)
