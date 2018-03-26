@@ -134,15 +134,14 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
 
           double dmin1 = *std::min_element(dP.begin(), dP.end());
           double dmin2 = *std::min_element(dN.begin(), dN.end());
-
           double dt    = (u->z > Zu) ? dt2 : dt1;
 
-          if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+          if ( (dmin1 > dt) || ((dmin1 <= dt) && (dmin1 > dmin2)) )
           {
             inN[i] = true;
             N.push_back(u);
           }
-          else if (dmin1 <= dt & dmin1 <= dmin2)
+          else if ((dmin1 <= dt) && (dmin1 <= dmin2))
           {
             P.push_back(u);
             idtree[u->id] = k;

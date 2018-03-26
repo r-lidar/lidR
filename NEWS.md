@@ -12,6 +12,10 @@
 * [[#104](https://github.com/Jean-Romain/lidR/pull/104)] fix potential bin exclusion in `entropy` function
 * [[#106](https://github.com/Jean-Romain/lidR/issue/106)] fix wrong count of points below 0
 
+#### NEW FEATURES
+
+* Li et al algorithm has a new parameter Zu (see reference) that is no longer hard coded.
+
 ## lidR v1.4.1 (2018-02-01)
 
 ####  OTHER CHANGES
