@@ -150,12 +150,12 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_t
 
           double dt    = (Z[u->id] > Zu) ? dt2 : dt1;
 
-          if ( (dmin1 > dt) || (dmin1 <= dt & dmin1 > dmin2) )
+          if ( (dmin1 > dt) || ((dmin1 <= dt) && (dmin1 > dmin2)) )
           {
             inN[i] = true;
             N.push_back(u);
           }
-          else if (dmin1 <= dt & dmin1 <= dmin2)
+          else if ((dmin1 <= dt) && (dmin1 <= dmin2))
           {
             P.push_back(u);
             idtree[u->id] = k;
