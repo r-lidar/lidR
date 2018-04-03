@@ -57,6 +57,7 @@ setMethod("extent", "LAScatalog",
   }
 )
 
+
 #' Surface covered by a \code{LAS} object or by a \code{LAScatalog}.
 #'
 #' The area is computed with the convex hull for \code{LAS} objects or x,y coordinates. If
@@ -65,41 +66,48 @@ setMethod("extent", "LAScatalog",
 #'
 #' @param x An object of the class \code{LAS} or \code{LAScatalog} or numeric
 #' @param y If x is numeric, then provide also y.
+#' @param ... unused
 #' @return numeric. The area of the object computed in the same units as the coordinate reference system
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' area(las)
+#' @seealso \code{\link[raster:area]{raster::area} }
 #' @export
-area <- function(x, y)
-{
-  UseMethod("area", x)
-}
+#' @importMethodsFrom raster area
+setGeneric("area", function(x, ...) standardGeneric("area"))
 
+#' @rdname area
 #' @export
-area.numeric <- function(x, y)
-{
-  stopifnot(is.numeric(y))
-  stopifnot(length(x) == length(y))
+#' @importMethodsFrom raster area
+setMethod("area", "LAS",
+  function(x, ...)
+  {
+    return(area(x@data$X, x@data$Y))
+  }
+)
 
-  hull <- convex_hull(x, y)
-  area <- polygon_area(hull$x, hull$y)
-  area <- round(area, 1)
-  return(area)
-}
-
+#' @rdname area
 #' @export
-area.LAS <- function(x, y)
-{
-  return(area(x@data$X, x@data$Y))
-}
+#' @importMethodsFrom raster area
+setMethod("area", "LAScatalog",
+  function(x, ...)
+  {
+    x <- x@data
+    area <- sum((x$`Max X` - x$`Min X`) * (x$`Max X` - x$`Min X`))
+    return(area)
+  }
+)
 
+#' @rdname area
 #' @export
-area.LAScatalog <- function(x, y)
-{
-  x <- x@data
-  area <- sum((x$`Max X` - x$`Min X`) * (x$`Max X` - x$`Min X`))
-  return(area)
-}
-
-
+#' @importMethodsFrom raster area
+setMethod("area", "numeric",
+  function(x, y, ...)
+  {
+    stopifnot(length(x) == length(y))
+    hull <- convex_hull(x, y)
+    area <- polygon_area(hull$x, hull$y)
+    return(area)
+  }
+)
