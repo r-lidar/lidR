@@ -269,10 +269,16 @@ entropy = function(z, by = 1, zmax = NULL)
 
 	# If zmax < 3 it is meaningless to compute entropy
 	if(zmax < 2 * by)
+	{
+	  warning("entropy() was computed with 3 or less bins. The function returned NA.")
 		return(NA_real_)
+  }
 
   if(min(z) < 0)
-    stop("Entropy found negatives values. Returned NA.")
+  {
+    warning("entropy() found negative values. The function returned NA.")
+    return(NA_real_)
+  }
 
 	# Define the x meters bins from 0 to zmax (rounded to the next integer)
 	bk = seq(0, ceiling(zmax/by)*by, by)

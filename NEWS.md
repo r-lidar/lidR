@@ -6,6 +6,7 @@
 * [[#104](https://github.com/Jean-Romain/lidR/pull/104)] fix potential bin exclusion in `entropy` function
 * [[#106](https://github.com/Jean-Romain/lidR/issue/106)] fix wrong count of points below 0
 * Fix wrong type attribution in `lasclassify` when using the shapefile's table of attributes as data.
+* Fix `NA` return in entropy when negative value are found.
 
 #### NEW FEATURES
 
