@@ -111,8 +111,14 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
 
     if (class(shapefile@data[,field]) == "factor")
       values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
-    else
+    else if (class(shapefile@data[,field]) == "integer")
+      values = rep(NA_integer_, npoints)
+    else if (class(shapefile@data[,field]) == "logical")
+      values = rep(NA, npoints)
+    else if (class(shapefile@data[,field]) == "numeric")
       values = rep(NA_real_, npoints)
+    else
+      stop("Type no supported.")
   }
   # The field is not the name of a field in the attribute table:
   # Assign a boolean if the point is in a polygon or not.
