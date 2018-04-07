@@ -29,15 +29,17 @@
 
 #' An S4 class to represent a set of a .las or .laz files
 #'
-#' A LAScatalog object is a representation of a set of las/laz files. A computer cannot load all the
-#' data at the same time. A catalog is a simple way to manage all the file sequentially reading only
-#' the headers. A catalog can be built with the function \link{catalog}. Also a catalog contains several
-#' extra information that enable to control how the catalog will be processed.
+#' A \code{LAScatalog} object is a representation of a set of las/laz files. A computer cannot load all the
+#' data at the same time. A \code{LAScatalog} is a simple way to manage all the file reading only the headers. A
+#' \code{LAScatalog} enable the user to process large area or to selectively clip data from large area
+#' without loading the large area itself. A \code{LAScatalog} can be built with the function \link{catalog}.
+#' Also a \code{LAScatalog} contains several extra information that enable to control how the catalog will be
+#' processed.
 #'
 #' @slot data data.table. A table representing the header of each file.
 #' @slot crs A \link[sp:CRS]{CRS} object.
-#' @slot cores numeric. Numer of cores used to make parallel computations in compatible functions that
-#' support a catalog as input. Default is 1.
+#' @slot cores integer. Numer of cores used to make parallel computations in compatible functions that
+#' support a \code{LAScatalog} as input. Default is 1.
 #' @slot buffer numeric. When applying a function to an entire catalog sequentially processing
 #' sub-areas (clusters) some algorithms (such as \link{grid_terrain}) require a buffer around the area
 #' to avoid edge effects. Default is 15 m.
@@ -62,7 +64,7 @@ setClass(
   representation(
     data = "data.table",
     crs  = "CRS",
-    cores = "numeric",
+    cores = "integer",
     buffer = "numeric",
     by_file = "logical",
     progress = "logical",
@@ -75,7 +77,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 {
   .Object@data  <- data
   .Object@crs   <- crs
-  .Object@cores <- 1
+  .Object@cores <- 1L
   .Object@buffer <- 15
   .Object@by_file <- FALSE
   .Object@progress <- TRUE
@@ -122,7 +124,7 @@ catalog <- function(folder, ...)
 
   headers <- lapply(files, function(x)
   {
-    header <- rlas::readlasheader(x)
+    header <- rlas::read.lasheader(x)
     header$`Variable Length Records` <- NULL
     data.table::setDT(header)
     return(header)
@@ -130,6 +132,10 @@ catalog <- function(folder, ...)
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
+
+  laxfiles <- paste0(tools::file_path_sans_ext(files), ".lax")
+  if (any(!file.exists(laxfiles)))
+    message("las or laz files are not associated with lax files. This is not mandatory but may speed-up a lot some computations. See help('writelax', 'rlas').")
 
   return(new("LAScatalog", headers, crs))
 }
@@ -150,6 +156,7 @@ cores = function(ctg)
 `cores<-` = function(ctg, value)
 {
   sys.cores = future::availableCores()
+  value = as.integer(value)
 
   if(value > sys.cores) {
     message(paste0("Avaible cores: ", sys.cores, ". Number of cores set to ", sys.cores, "."))
@@ -158,7 +165,7 @@ cores = function(ctg)
 
   if(value < 1) {
     message("Number of cores must be positive. Number of cores set to 1.")
-    value = 1
+    value = 1L
   }
 
   ctg@cores <- value
