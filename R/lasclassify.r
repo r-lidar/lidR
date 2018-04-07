@@ -85,6 +85,9 @@ lasclassify = function(.las, source, field = NULL)
   else
     stop("No method for this source format.", call. = F)
 
+  if (is.null(field))
+    field = "id"
+
   .las@data[,(field) := values][]
 
   return(invisible())
@@ -100,7 +103,6 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   # Assign the number of the polygon
   if (is.null(field))
   {
-    field = "id"
     method = 0
   }
   # The field is the name of a field in the attribute table:
@@ -201,7 +203,7 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     }
     else
     {
-      values = ifelse(ids == 0, NA_real_, ids)
+      values = ifelse(ids == 0L, NA_integer_, ids)
       verbose("Assigned a number to each individual polygon")
     }
   }
