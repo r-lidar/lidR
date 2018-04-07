@@ -227,14 +227,13 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 
 #' Normalized Shannon diversity index
 #'
-#' A normalized Shannon vertical complexity index
-#'
-#' The Shannon diversity index is a measure for quantifying diversity and is
-#' based on the number and frequency of species present. This index, developed by
-#' Shannon and Weaver for use in information theory, was successfully transferred
-#' to the description of species diversity in biological systems (Shannon 1948).
-#' Here it is applied to quantify the diversity and the evenness of an elevational distribution
-#' of LiDAR points. It makes bins between 0 and the maximum elevation.
+#' A normalized Shannon vertical complexity index. The Shannon diversity index is a measure for
+#' quantifying diversity and is based on the number and frequency of species present. This index,
+#' developed by Shannon and Weaver for use in information theory, was successfully transferred
+#' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
+#' to quantify the diversity and the evenness of an elevational distribution of LiDAR points. It
+#' makes bins between 0 and the maximum elevation. If there are negative value the function
+#' returns NA.
 #'
 #' @param z vector of positive z coordinates
 #' @param by numeric. The thickness of the layers used (height bin)
@@ -269,16 +268,10 @@ entropy = function(z, by = 1, zmax = NULL)
 
 	# If zmax < 3 it is meaningless to compute entropy
 	if(zmax < 2 * by)
-	{
-	  warning("entropy() was computed with 3 or less bins. The function returned NA.")
 		return(NA_real_)
-  }
 
   if(min(z) < 0)
-  {
-    warning("entropy() found negative values. The function returned NA.")
     return(NA_real_)
-  }
 
 	# Define the x meters bins from 0 to zmax (rounded to the next integer)
 	bk = seq(0, ceiling(zmax/by)*by, by)
