@@ -62,14 +62,8 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   by_file(ctg) <- FALSE
   tiling_size(ctg) <- size
 
-  ncores   <- ctg@cores
-  progress <- ctg@progress
-
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-  }
+  ncores   <- cores(ctg)
+  progress <- progress(ctg)
 
   # Create a pattern of clusters to be sequentially processed
   clusters <- catalog_makecluster(ctg, 1)

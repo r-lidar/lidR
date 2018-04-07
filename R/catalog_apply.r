@@ -164,17 +164,8 @@
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
   res       <- 1
-  progress  <- ctg@progress
-  ncores    <- ctg@cores
-
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-    buffer(ctg)  <- CATALOGOPTIONS("buffer")
-    by_file(ctg) <- CATALOGOPTIONS("by_file")
-    tiling_size(ctg) <- CATALOGOPTIONS("tiling_size")
-  }
+  progress  <- progress(ctg)
+  ncores    <- cores(ctg)
 
   clusters <- catalog_makecluster(ctg, res)
   nclust   <- length(clusters)

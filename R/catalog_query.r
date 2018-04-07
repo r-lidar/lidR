@@ -119,14 +119,8 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   if (any(buffer < 0))
     stop("Buffer size must be a positive value", call. = FALSE)
 
-  progress  <- obj@progress
-  ncores    <- obj@cores
-
-  if (!obj@opt_changed & CATALOGOPTIONS("global_changed"))
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-  }
+  progress  <- progress(obj)
+  ncores    <- cores(obj)
 
   w = 2*r
 
@@ -174,7 +168,7 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
 
   output = future::values(output)
 
-  # Ppatch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+  # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
   if (ncores > 1)
   {
     for (i in 1:length(output))

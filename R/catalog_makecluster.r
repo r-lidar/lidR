@@ -28,9 +28,9 @@
 catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
 {
   xmin <- ymin <- xmax <- ymax <- 0
-  buffer <- ctg@buffer
-  by_file <- ctg@by_file
-  size <- ctg@tiling_size
+  buffer <- buffer(ctg)
+  by_file <- by_file(ctg)
+  size <- tiling_size(ctg)
 
   if (by_file)
   {

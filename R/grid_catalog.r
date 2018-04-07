@@ -40,19 +40,10 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   savevrt   <- CATALOGOPTIONS("return_virtual_raster")
   memlimwar <- CATALOGOPTIONS("memory_limit_warning")
 
-  progress  <- catalog@progress
-  ncores    <- catalog@cores
+  progress  <- progress(catalog)
+  ncores    <- cores(catalog)
 
   resolution <- res
-
-  if (!catalog@opt_changed & CATALOGOPTIONS("global_changed"))
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-    buffer(catalog)  <- CATALOGOPTIONS("buffer")
-    by_file(catalog) <- CATALOGOPTIONS("by_file")
-    tiling_size(catalog) <- CATALOGOPTIONS("tiling_size")
-  }
 
   # ========================================
   # Reduce the catalog with rasters
