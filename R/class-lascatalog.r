@@ -136,7 +136,13 @@ catalog <- function(folder, ...)
 
 #' @rdname catalog
 #' @export
-cores = function(ctg) { return(ctg@cores) }
+cores = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("multicore"))
+  else
+    return(ctg@cores)
+}
 
 
 #' @rdname catalog
@@ -162,7 +168,13 @@ cores = function(ctg) { return(ctg@cores) }
 
 #' @rdname catalog
 #' @export
-by_file = function(ctg) { return(ctg@by_file) }
+by_file = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("by_file"))
+  else
+    return(ctg@by_file)
+}
 
 #' @rdname catalog
 #' @export
@@ -176,7 +188,13 @@ by_file = function(ctg) { return(ctg@by_file) }
 
 #' @rdname catalog
 #' @export
-buffer = function(ctg) { return(ctg@buffer) }
+buffer = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("buffer"))
+  else
+    return(ctg@buffer)
+}
 
 #' @rdname catalog
 #' @export
@@ -190,7 +208,13 @@ buffer = function(ctg) { return(ctg@buffer) }
 
 #' @rdname catalog
 #' @export
-progress = function(ctg) { return(ctg@progress) }
+progress = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("progress"))
+  else
+    return(ctg@progress)
+}
 
 #' @rdname catalog
 #' @export
@@ -204,7 +228,13 @@ progress = function(ctg) { return(ctg@progress) }
 
 #' @rdname catalog
 #' @export
-tiling_size = function(ctg) { return(ctg@tiling_size) }
+tiling_size = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("tiling_size"))
+  else
+    return(ctg@tiling_size)
+}
 
 #' @rdname catalog
 #' @export
@@ -224,7 +254,6 @@ setMethod("show", "LAScatalog", function(object)
   ext     <- extent(object)
 
   cat("class       : LAScatalog\n")
-  cat("memory      :", memsize, "\n")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("area        :", surface, "m\u00B2\n")
   cat("points      :", npoints, "points\n")
