@@ -5,10 +5,12 @@
 \alias{LAScatalog-class}
 \title{An S4 class to represent a set of a .las or .laz files}
 \description{
-A LAScatalog object is a representation of a set of las/laz files. A computer cannot load all the
-data at the same time. A catalog is a simple way to manage all the file sequentially reading only
-the headers. A catalog can be built with the function \link{catalog}. Also a catalog contains several
-extra information that enable to control how the catalog will be processed.
+A \code{LAScatalog} object is a representation of a set of las/laz files. A computer cannot load all the
+data at the same time. A \code{LAScatalog} is a simple way to manage all the file reading only the headers. A
+\code{LAScatalog} enable the user to process large area or to selectively clip data from large area
+without loading the large area itself. A \code{LAScatalog} can be built with the function \link{catalog}.
+Also a \code{LAScatalog} contains several extra information that enable to control how the catalog will be
+processed.
 }
 \section{Slots}{
 
@@ -17,8 +19,8 @@ extra information that enable to control how the catalog will be processed.
 
 \item{\code{crs}}{A \link[sp:CRS]{CRS} object.}
 
-\item{\code{cores}}{numeric. Numer of cores used to make parallel computations in compatible functions that
-support a catalog as input. Default is 1.}
+\item{\code{cores}}{integer. Numer of cores used to make parallel computations in compatible functions that
+support a \code{LAScatalog} as input. Default is 1.}
 
 \item{\code{buffer}}{numeric. When applying a function to an entire catalog sequentially processing
 sub-areas (clusters) some algorithms (such as \link{grid_terrain}) require a buffer around the area
