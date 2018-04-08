@@ -18,7 +18,8 @@ lasclipCircle(x, xcenter, ycenter, radius, ofile = "", inside = TRUE)
 \arguments{
 \item{x}{An object of class \code{LAS} or \code{LAScatalog}.}
 
-\item{geometry}{a geometric object. Currently \code{Polygon} from \code{sp} is supported.}
+\item{geometry}{a geometric object. Currently \code{Polygon} and \code{SpatialPolygonsDataFrame}
+from \code{sp} are supported.}
 
 \item{ofile}{character. Path to an output file (only with a \code{LAScatalog} object).
 If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
@@ -49,9 +50,10 @@ the shape.}
 An object of class \code{LAS} or NULL if the result is immediately written to a file.
 }
 \description{
-Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
+Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
 }
 \examples{
+# Load the file and clip
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
