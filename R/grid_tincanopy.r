@@ -154,6 +154,9 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
     }
   }
 
+  if(all(is.na(z)))
+    stop("Interpolation failed. Input parameters might be wrong.")
+
   grid[, Z := z][]
   grid = grid[!is.na(Z)]
   as.lasmetrics(grid,res)
