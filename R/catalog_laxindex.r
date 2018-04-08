@@ -9,6 +9,6 @@ catalog_laxindex = function(ctg)
   for(file in ctg@data$filename)
   {
     future::future({rlas::writelax(file) })
-    cat(files, "\n")
+    cat(file, "\n")
   }
 }

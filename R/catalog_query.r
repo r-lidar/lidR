@@ -146,14 +146,9 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
 
   verbose("Extracting data...")
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+ future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]
