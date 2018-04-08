@@ -89,13 +89,9 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+  future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]

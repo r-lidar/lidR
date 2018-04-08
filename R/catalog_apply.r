@@ -173,13 +173,9 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   if (nclust < ncores)
     ncores <- nclust
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+  future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]

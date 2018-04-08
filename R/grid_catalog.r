@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,9 +25,57 @@
 #
 # ===============================================================================
 
+
+#' Apply a grid function over a catalog
+#'
+#' This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}.
+#' It used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
+#' \code{grid_*} functions when the input is a catalog. It ensures to process continuouly the dataset
+#' and perform pre- and post- processes. This function can be seen as a  strainforward 'grid-specific'
+#' version of \link{catalog_apply} which is even more generic.
+#'
+#' Like \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} the user-defined function must
+#' have a parameter called \code{x} that will received a \code{LAS} object and a parameter \code{res}
+#' that will receive the resolution of the grid. The parameter \code{start is optionnal}.
+#'
+#' @param catalog A \link[lidR:LAScatalog-class]{LAScatalog}
+#' @param grid_func A function that returns a \code{lasmetrics} object. This function must follow a
+#' specific template (see details and examples)
+#' @param res numeric. Resolution of the grid
+#' @param select character. The 'select' parameter from \link{readLAS}.
+#' @param filter character. The 'filter' parameter from \link{readLAS}.
+#' @param start numeric. The 'start' parameter from \link{grid_metrics}
+#' @param ... Any other parameter requiered by \code{grid_func}
+#'
+#' @return Returns a \code{data.table} containing the metrics for each cell. The table
+#' has the class "lasmetrics" enabling easy plotting.
+#' @export
+#'
+#' @examples
+#' # This exemple computes the mean elevation of the point over 5 m over an entiere
+#' # catalog, after removing all points in the lakes found into a shapefile.
+#'
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' shapefile_dir <- system.file("extdata", package = "lidR")
+#'
+#' ctg = catalog(LASfile)
+#' tiling_size(ctg) <- 160
+#'
+#' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+#'
+#' my_grid_metrics = function(x, res, spdf)
+#' {
+#'   lasclassify(x, spdf, "inpoly")
+#'   x = lasfilter(x, !inpoly)
+#'   grid_metrics(x, mean(Z), res)
+#' }
+#'
+#' mean = grid_catalog(ctg, my_grid_metrics, 20,
+#'                     select = "xyz", filter = "-drop_z_below 5",
+#'                     spdf = lakes)
 grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0), ...)
 {
-  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- p <- NULL
+  stopifnot(is(catalog, "LAScatalog"), is.function(grid_func))
 
   # ========================================
   # Store some stuff in readable variables
@@ -48,9 +96,13 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   # ========================================
   # Reduce the catalog with rasters
   # ========================================
+  # 'res' may be a RasterLayer. This is a currenlty undocumented feature. In that case
+  # the grid_function is applied only in non empty cells of the RasterLayer
 
   if (is(res, "RasterLayer"))
   {
+    `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- p <- NULL
+
     ext = raster::extent(res)
     catalog@data = catalog@data[!(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin)]
 
@@ -66,7 +118,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   # Test of memory to prevent memory overflow
   # ========================================
 
-  surface <- sum(with(catalog@data, (`Max X` - `Min X`) * (`Max Y` - `Min Y`)))
+  surface <- area(catalog)
   npixel  <- surface / (resolution*resolution)
   nmetric <- 3 # Must find a way to access this number
   nbytes  <- npixel * nmetric * 8
@@ -95,8 +147,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   # sequentially processed
   # ========================================
 
-  catalog@buffer = catalog@buffer + 0.1
-
+  buffer(catalog) <- buffer(catalog) + 0.1
   clusters <- catalog_makecluster(catalog, resolution, start)
 
   # Add the path to the saved file (if saved)
@@ -140,13 +191,9 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   # Computation over the entire catalog
   # ========================================
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+  future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]
