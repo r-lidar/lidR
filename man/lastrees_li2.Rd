@@ -44,7 +44,7 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
 # Li 2012
-lastrees(las, "li2012", R = 5)
+lastrees_li2(las)
 plot(las, color = "treeID", colorPalette = col)
 
 }
