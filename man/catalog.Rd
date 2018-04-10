@@ -12,6 +12,8 @@
 \alias{progress<-}
 \alias{tiling_size}
 \alias{tiling_size<-}
+\alias{vrt}
+\alias{vrt<-}
 \title{Build a catalog of las tiles/files}
 \usage{
 catalog(folder, ...)
@@ -35,6 +37,10 @@ progress(ctg) <- value
 tiling_size(ctg)
 
 tiling_size(ctg) <- value
+
+vrt(ctg)
+
+vrt(ctg) <- value
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}

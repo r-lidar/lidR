@@ -91,6 +91,17 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
 
   clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
 
+
+  if (save_vrt(ctg))
+  {
+    clusters <- lapply(clusters, function(x)
+    {
+      x@save <- paste0(vrt(ctg), "/tile-", x@bbox$xmin, "-", x@bbox$ymin, ".tiff")
+      return(x)
+    })
+  }
+
+
   if(plot)
   {
     xrange = c(min(xmin), max(xmax))
