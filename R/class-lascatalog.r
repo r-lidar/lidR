@@ -50,6 +50,8 @@
 #' @slot tiling_size numeric. To process an entire catalog, the algorithm splits the dataset into
 #' several square sub-areas (clusters) to process them sequentially. This is the size of each square
 #' cluster. Default is 1000 (1 km^2).
+#' @slot vrt character. Path to an folder. In \code{grid_*} function, for big output, the functions can
+#' return a lightweigth virtual raster mosaic (VRT).
 #' @slot opt_changed Internal use only for compatibility with older deprecated code.
 #' @seealso
 #' \link[lidR:catalog]{catalog}
@@ -69,6 +71,7 @@ setClass(
     by_file = "logical",
     progress = "logical",
     tiling_size = "numeric",
+    vrt = "character",
     opt_changed = "logical"
   )
 )
@@ -82,6 +85,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
   .Object@by_file <- FALSE
   .Object@progress <- TRUE
   .Object@tiling_size <- 1000
+  .Object@vrt <- ""
   .Object@opt_changed <- FALSE
   return(.Object)
 })
@@ -252,6 +256,32 @@ tiling_size = function(ctg)
   ctg@opt_changed <- TRUE
   return(ctg)
 }
+
+#' @rdname catalog
+#' @export
+vrt = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(tempdir())
+  else
+    return(ctg@vrt)
+}
+
+#' @rdname catalog
+#' @export
+`vrt<-` = function(ctg, value)
+{
+  stopifnot(is.character(value), length(value) == 1)
+  ctg@vrt <- value
+  ctg@opt_changed <- TRUE
+  return(ctg)
+}
+
+save_vrt = function(ctg)
+{
+  vrt(ctg) != ""
+}
+
 
 setMethod("show", "LAScatalog", function(object)
 {

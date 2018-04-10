@@ -77,23 +77,12 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
 {
   stopifnot(is(catalog, "LAScatalog"), is.function(grid_func))
 
-  # ========================================
-  # Store some stuff in readable variables
-  # ========================================
-
-  callparam <- list(...)
-  funcname  <- lazyeval::expr_text(grid_func)
-  exportdir <- tempdir() %+%  "/" %+% funcname %+% "/"
-
-  savevrt   <- CATALOGOPTIONS("return_virtual_raster")
-  memlimwar <- CATALOGOPTIONS("memory_limit_warning")
-
-  progress  <- progress(catalog)
-  ncores    <- cores(catalog)
-
+  callparam  <- list(...)
+  progress   <- progress(catalog)
+  ncores     <- cores(catalog)
   resolution <- res
+  funcname   <- lazyeval::expr_text(grid_func)
 
-  # ========================================
   # Reduce the catalog with rasters
   # ========================================
   # 'res' may be a RasterLayer. This is a currenlty undocumented feature. In that case
@@ -114,56 +103,27 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
     resolution = resolution[1]
   }
 
-  # ========================================
   # Test of memory to prevent memory overflow
   # ========================================
+  # If the test judge that the output will be to large is can ask the user
+  # to make a choice on the processing method
 
-  surface <- area(catalog)
-  npixel  <- surface / (resolution*resolution)
-  nmetric <- 3 # Must find a way to access this number
-  nbytes  <- npixel * nmetric * 8
-  class(nbytes) <- "object_size"
+  choice = memory_test(catalog, resolution)
 
-  if (nbytes > memlimwar & !savevrt)
-  {
-    size = format(nbytes, "auto")
-    text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
-    choices = c(
-      "Proceed anyway",
-      "Store the results on my disk an return a virtual raster mosaic",
-      "Abort, let me configure myself with 'catalog_options()'")
+  if (choice == 2)
+    vrt(catalog) <- paste0(tempdir(),"/", funcname,"/")
+  else if (choice == 3)
+    return(invisible())
 
-    cat(text)
-    choice = utils::menu(choices)
-
-    if (choice == 2)
-      savevrt = TRUE
-    else if (choice == 3)
-      return(invisible())
-  }
-
-  # ========================================
-  # Create a pattern of clusters to be
-  # sequentially processed
+  # Create a pattern of clusters to be sequentially processed
   # ========================================
 
   buffer(catalog) <- buffer(catalog) + 0.1
   clusters <- catalog_makecluster(catalog, resolution, start)
+  nclust <- length(clusters)
+  if (ncores > nclust) ncores = nclust
 
-  # Add the path to the saved file (if saved)
-  clusters <- lapply(clusters, function(x)
-  {
-    x@save <- exportdir %+% funcname %+% "_ROI" %+% x@name %+% ".tiff"
-    return(x)
-  })
-
-  nclust = length(clusters)
-
-  if (ncores > nclust)
-    ncores = nclust
-
-  # =========================================
-  # Some settings
+  # Set up the paramter that will be use for the call
   # =========================================
 
   # Tweak to enable non-standard evaluation
@@ -173,32 +133,32 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
       callparam$func <- as.expression(callparam$func)
   }
 
-  callparam$res   <- resolution
+  callparam$res <- resolution
 
   if (any(start != 0))
     callparam$start <- start
 
   # Create or clean the temporary directory
-  if (savevrt)
+  if (save_vrt(catalog))
   {
-    if (!dir.exists(exportdir))
-      dir.create(exportdir)
+    if (!dir.exists(vrt(catalog)))
+      dir.create(vrt(catalog))
     else
-      unlink(exportdir, recursive = TRUE) ; dir.create(exportdir)
+      unlink(vrt(catalog), recursive = TRUE) ; dir.create(vrt(catalog))
   }
 
-  # ========================================
   # Computation over the entire catalog
   # ========================================
+  # Done in parallel. If a single cluster returns an error the process is stopped
 
   future::plan(future::multiprocess, workers = ncores)
 
-  output = list()
+  output = vector("list", nclust)
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]
 
-    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, savevrt, filter, select) }, substitute = FALSE)
+    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, filter, select) }, substitute = FALSE)
 
     if(progress)
     {
@@ -207,12 +167,17 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
     }
   }
 
-  if(progress) cat("\n")
+  if(progress)
+    cat("\n")
 
   output <- future::values(output)
 
-  # Post process of the results (return adequate object)
-  if (!savevrt)
+  # Post process the output
+  # ========================================
+  # If RasterLayer were written on the disk, build a VRT.
+  # Otherwise build the data.table.
+
+  if (!save_vrt(catalog))
   {
     # Return a data.table
     ._class = class(output[[1]])
@@ -223,8 +188,8 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   else
   {
     # Build virtual raster mosaic and return it
-    ras_lst = list.files(exportdir, full.names = TRUE, pattern = ".tif$")
-    save_in = exportdir %+% "/" %+% funcname %+% ".vrt"
+    ras_lst = list.files(vrt(catalog), full.names = TRUE, pattern = ".tif$")
+    save_in = paste0(vrt(catalog), "/", funcname, ".vrt")
     gdalUtils::gdalbuildvrt(ras_lst, save_in)
     output = raster::stack(save_in)
   }
@@ -241,7 +206,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res
 # @param p progressbar.
-apply_grid_func = function(cluster, grid_func, param, save_tiff, filter, select)
+apply_grid_func = function(cluster, grid_func, param, filter, select)
 {
   X <- Y <- NULL
 
@@ -251,7 +216,7 @@ apply_grid_func = function(cluster, grid_func, param, save_tiff, filter, select)
   ybottom <- cluster@bbox$ymin
   ytop    <- cluster@bbox$ymax
   name    <- cluster@bbox$name
-  path    <- cluster@bbox$save
+  path    <- cluster@save
   res     <- param$res
 
   # Extract the ROI as a LAS object
@@ -270,7 +235,7 @@ apply_grid_func = function(cluster, grid_func, param, save_tiff, filter, select)
   as.lasmetrics(metrics, res)
 
   # Return results or write file
-  if (!save_tiff)
+  if (cluster@save == "")
   {
     return(metrics)
   }
@@ -280,7 +245,32 @@ apply_grid_func = function(cluster, grid_func, param, save_tiff, filter, select)
       return(NULL)
 
     metrics <- as.raster(metrics)
-    raster::writeRaster(metrics, path, format = "GTiff")
+    raster::writeRaster(metrics, path, format = "GTiff", NAflag = -Inf)
     return(NULL)
   }
+}
+
+memory_test = function(catalog, resolution)
+{
+  surface <- area(catalog)
+  npixel  <- surface / (resolution*resolution)
+  nmetric <- 3 # Must find a way to access this number
+  nbytes  <- npixel * nmetric * 8
+  class(nbytes) <- "object_size"
+
+  if (nbytes > LIDROPTIONS("memlimit") & save_vrt(catalog))
+  {
+    size = format(nbytes, "auto")
+    text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
+    choices = c(
+      "Proceed anyway",
+      "Store the results on my disk an return a virtual raster mosaic",
+      "Abort, let me configure myself with catalog options (see ?catalog)'")
+
+    cat(text)
+    choice = utils::menu(choices)
+    return(choice)
+  }
+
+  return(0)
 }

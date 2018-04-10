@@ -3,6 +3,7 @@ LIDROPTIONS <- settings::options_manager(
   progress = FALSE,
   debug = FALSE,
   interactive = TRUE,
+  memlimit = 5e8,
 
   .allowed = list(
     verbose  = bool(),
