@@ -158,7 +158,7 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
   {
     cluster = clusters[[i]]
 
-    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, filter, select) }, substitute = FALSE)
+    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, filter, select) }, substitute = FALSE, earlySignal = TRUE)
 
     if(progress)
     {
