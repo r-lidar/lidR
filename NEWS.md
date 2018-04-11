@@ -22,6 +22,7 @@ This is an internal function now exported to the users.
 * `grid_density` now return both the point and the pulse density if possible
 * The option `P` is no longer set by default in `readLAS`
 * The documentation of `lastrees` has been split in several pages
+* When a catalog is processed using several cores, if an error is raise the process trigger an early signal to stop the loop. In previous releases the entiere process was run and the error was raised at the end when the futures were evaluated.
 
 #### BUG FIXES
 
