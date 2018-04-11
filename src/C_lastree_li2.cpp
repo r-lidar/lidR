@@ -75,6 +75,9 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // Trees from the Lidar Point Cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75–84.
   // https://doi.org/10.14358/PERS.78.1.75
 
+  // Find if a point is a local maxima within an R windows
+  LogicalVector is_lm = C_LocalMaximaPoints(las, R, 0);
+
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);
   for (int i = 0 ; i < ni ; ++i)
@@ -90,9 +93,6 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
 
   // Z-sort the point cloud U
   std::sort(U.begin(), U.end(), ZSortPoint());
-
-  // Find id a tree is a local maxima within an R m windows
-  LogicalVector is_lm = C_LocalMaximaPoints(las, R, 0);
 
   while(n > 0)
   {
@@ -133,7 +133,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
       {
         u = U[i];
 
-        // If d > radius this point u is far and thus it is not the in current segmented tree
+        // If d > radius this point u is far and thus it is not in the current segmented tree
         // We don't need to apply the li et al. rules. This speed up a lot the computations
         if(d[i] > radius)
         {
@@ -149,23 +149,10 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
           double dmin2 = *std::min_element(dN.begin(), dN.end());
           double dt    = (u->z > Zu) ? dt2 : dt1;
 
-          if(is_lm[u->id]) // if u is a local maximum
+          if(is_lm[u->id] && dmin1 > dt) // if u is a local maximum
           {
-            if (dmin1 > dt)
-            {
               inN[i] = true;
               N.push_back(u);
-            }
-            else if (dmin1 <= dmin2)
-            {
-              P.push_back(u);
-              idtree[u->id] = k;
-            }
-            else
-            {
-              inN[i] = true;
-              N.push_back(u);
-            }
           }
           else // if u is not a local maximum
           {
