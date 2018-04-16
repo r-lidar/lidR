@@ -165,10 +165,17 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
   if (hmin <= 0)stop("hmin should be positive", call. = FALSE)
   if (R <= 0)   stop("R should be positive", call. = FALSE)
 
-  treeID   <- NULL
-  progress <- LIDROPTIONS("progress")
-
-  id = algo_li2012(las, dt1, dt2, Zu, hmin, R, progress)
+  if (las@header@PHB$`Max Z` < hmin)
+  {
+    id = rep(NA_integer_, nrow(las@data))
+    warning("'hmin' is higher than the highest point. No tree segmented.")
+  }
+  else
+  {
+    treeID   <- NULL
+    progress <- LIDROPTIONS("progress")
+    id = algo_li2012(las, dt1, dt2, Zu, hmin, R, progress)
+  }
 
   las@data[, treeID := id]
 
