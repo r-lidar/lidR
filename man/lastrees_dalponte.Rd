@@ -70,6 +70,6 @@ airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–124
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_li2}},
-  \code{\link{lastrees_li}}, \code{\link{lastrees_silva}},
+  \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }
