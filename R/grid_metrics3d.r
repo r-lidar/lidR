@@ -59,10 +59,10 @@
 #' grid_metrics3d(lidar, mean(ScanAngle))
 #'
 #' # Define your own metric function
-#' myMetrics = function(i, angle)
+#' myMetrics = function(i, angle, pulseID)
 #' {
 #'   ret = list(
-#'      npoints = length(i),
+#'      npulse  = length(unique(pulseID)),
 #'      angle   = mean(angle),
 #'      imean   = mean(i)
 #'    )
@@ -70,7 +70,7 @@
 #'    return(ret)
 #' }
 #'
-#' voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle))
+#' voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
 #'
 #' plot(voxels, "angle")
 #' plot(voxels, "imean")

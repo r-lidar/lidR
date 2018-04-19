@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.5.0.9000
+Version: 1.4.2
 Date: 2018-02-01
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
@@ -18,10 +18,10 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.1.0),methods
+    R (>= 3.1.0),magrittr,methods
 Imports:
-    rlas (>= 1.1.10),rgl,stats,utils,grDevices,tools,raster,rgeos,
-    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,
+    rlas (>= 1.1.6),rgl,stats,utils,grDevices,tools,raster,rgeos,
+    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
     memoise,mapview,mapedit,RANN,future
 Suggests:
     rgdal,testthat,EBImage,hexbin
@@ -36,7 +36,6 @@ Collate:
     'catalog_apply.r'
     'catalog_clip.r'
     'catalog_index.r'
-    'catalog_laxindex.r'
     'catalog_makecluster.r'
     'catalog_query.r'
     'catalog_reshape.r'
@@ -60,9 +59,8 @@ Collate:
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'
+    'lasdecimate.r'
     'lasfilter.r'
-    'lasfilterdecimate.r'
-    'lasfiltersurfacepoints.r'
     'lasground.r'
     'lasindentify.r'
     'lasmetrics.r'
@@ -70,12 +68,6 @@ Collate:
     'lasroi.r'
     'lassnags.r'
     'lastrees.r'
-    'lastrees_dalponte.r'
-    'lastrees_li.r'
-    'lastrees_li2.r'
-    'lastrees_silva.r'
-    'lastrees_watershed.r'
-    'lasupdateheader.r'
     'lidRError.r'
     'metrics.r'
     'metrics_canopy_roughness.r'

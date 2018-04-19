@@ -36,13 +36,13 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
+Rcpp::List knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
 {
   int n = x.length();
   IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
   for( int i = 0 ; i < n ; i++)
   {
@@ -67,12 +67,12 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
 }
 
 // [[Rcpp::export]]
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
+NumericVector knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
 {
   int n = x.length();
   NumericVector iZ(n);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(X),as< std::vector<double> >(Y));
 
   Progress pbar(n, false);
 

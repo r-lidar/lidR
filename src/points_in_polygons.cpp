@@ -47,7 +47,7 @@ using namespace Rcpp;
 // @references Adaptation of the C function written by W. Randolph Franklin
 // @export
 // [[Rcpp::export]]
-bool C_point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy)
+bool point_in_polygon(NumericVector vertx, NumericVector verty, double pointx, double pointy)
 {
   bool c = false;
   int nvert = vertx.length();
@@ -72,14 +72,14 @@ bool C_point_in_polygon(NumericVector vertx, NumericVector verty, double pointx,
 // @return Logical array. FALSE, points are outside the polygon, TRUE, points are outside the polygon
 // @export
 // [[Rcpp::export]]
-LogicalVector C_points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy)
+LogicalVector points_in_polygon(NumericVector vertx, NumericVector verty, NumericVector pointx, NumericVector pointy)
 {
   int i;
   int npoints = pointx.length();
   LogicalVector c(npoints);
 
   for (i = 0 ; i < npoints ; i++)
-    c[i] = C_point_in_polygon(vertx, verty, pointx[i], pointy[i]);
+    c[i] = point_in_polygon(vertx, verty, pointx[i], pointy[i]);
 
   return c;
 }
@@ -95,13 +95,13 @@ LogicalVector C_points_in_polygon(NumericVector vertx, NumericVector verty, Nume
 // @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a given polygon
 // @export
 // [[Rcpp::export]]
-IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
+IntegerVector points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
 {
   int npoints = pointx.length();
   int nvert   = vertx.length();
   IntegerVector id(npoints);
 
-  QuadTree *tree = QuadTreeCreate(pointx, pointy);
+  QuadTree *tree = QuadTree::create(as< std::vector<double> >(pointx),as< std::vector<double> >(pointy));
 
   for(int i = 0 ; i < nvert ; i ++)
   {
@@ -124,7 +124,7 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
 
     for (it = pts.begin() ; it != pts.end() ; ++it)
     {
-      if (C_point_in_polygon(xpoly, ypoly, (*it)->x, (*it)->y))
+      if (point_in_polygon(xpoly, ypoly, (*it)->x, (*it)->y))
       {
         id[(*it)->id] = i+1;
       }

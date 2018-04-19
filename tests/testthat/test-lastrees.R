@@ -30,7 +30,7 @@ test_that("Dalponte's methods works", {
 test_that("Li's method works", {
   las@data[, treeID := NULL]
 
-  lastrees_li2(las, speed_up = 5)
+  lastrees_li(las, R = 5)
   expect_true("treeID" %in% names(las@data))
 })
 
