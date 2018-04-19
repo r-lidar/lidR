@@ -91,12 +91,9 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 
   future::plan(future::multiprocess, workers = ncores)
 
-  output = list()
   for(i in seq_along(clusters))
   {
-    cluster = clusters[[i]]
-
-    output[[i]] <- future::future({ reshape_func(cluster, path, prefix, ext) })
+    future::future({ reshape_func(clusters[[i]], path, prefix, ext) }, earlySignal = TRUE)
 
     if(progress)
     {

@@ -48,6 +48,8 @@
 #' file while reading. This is much more memory efficient than loading into R first, then writing.
 #' @param inside logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
 #' the shape.
+#' @param ... Additionnal argument for readLAS to reduce the number of data loaded (only with a
+#' \code{LAScatalog} object)
 #' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
 #' # Load the file and clip
@@ -58,13 +60,13 @@
 #' @name lasclip
 #' @export
 #' @export
-lasclip = function(x, geometry, ofile = "", inside = TRUE)
+lasclip = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclip", x)
 }
 
 #' @export
-lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE)
+lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   if (is(geometry, "Polygon"))
   {
@@ -85,7 +87,7 @@ lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE)
 }
 
 #' @export
-lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE)
+lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   if (is(geometry, "Polygon"))
   {
@@ -104,13 +106,13 @@ lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE)
 
 #' @export
 #' @rdname lasclip
-lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE)
+lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipRectangle", x)
 }
 
 #' @export
-lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE)
+lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
 
@@ -147,7 +149,7 @@ lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", ins
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE)
+lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
   if (!inside)
     stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
@@ -164,7 +166,7 @@ lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = 
 
   if (l1 == 1)
   {
-    return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile))
+    return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile, ...))
   }
   else
   {
@@ -172,7 +174,7 @@ lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = 
     ycenter = (ybottom + ytop)/2
     width   = (xright - xleft)/2
     height  = (ytop - ybottom)/2
-    return(catalog_queries(x, xcenter, ycenter, width, height))
+    return(catalog_queries(x, xcenter, ycenter, width, height, ...))
   }
 }
 
@@ -182,13 +184,13 @@ lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = 
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(x, xpoly, ypoly, ofile = "", inside = TRUE)
+lasclipPolygon = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipPolygon", x)
 }
 
 #' @export
-lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE)
+lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
 
@@ -207,12 +209,12 @@ lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE)
 }
 
 #' @export
-lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "", inside = TRUE)
+lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
   if (!inside)
     stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
 
-  return(catalog_clip_poly(x, xpoly, ypoly, ofile))
+  return(catalog_clip_poly(x, xpoly, ypoly, ofile, ...))
 }
 
 # ========
@@ -221,13 +223,13 @@ lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "", inside = TRUE)
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE)
+lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipCircle", x)
 }
 
 #' @export
-lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE)
+lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
 
@@ -264,7 +266,7 @@ lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = T
 
 #' @export
 #' @export
-lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE)
+lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
   if (!inside)
     stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
@@ -279,8 +281,8 @@ lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", ins
     stop("Different input lenghts.")
 
   if (l1 == 1)
-    return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile))
+    return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile, ...))
   else
-    return(catalog_queries(x, xcenter, ycenter, radius))
+    return(catalog_queries(x, xcenter, ycenter, radius, ...))
 }
 

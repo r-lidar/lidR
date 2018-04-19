@@ -56,3 +56,17 @@ test_that("grid_terrain returns the same both with catalog and las", {
   diffZ = abs(diff$Z - diff$i.Z)
   expect_lt(mean(diffZ, na.rm = TRUE), 0.01)
 })
+
+test_that("grid_canopy returns a VRT", {
+  vrt(ctg) <- tempdir()
+  buffer(ctg) <- 0
+  tiling_size(ctg) <- 180
+
+  chm1 = grid_canopy(ctg)
+  chm2 = as.raster(grid_canopy(las))
+
+  expect_true(is(chm1, "RasterStack"))
+  expect_true(object.size(chm1) < object.size(chm2))
+})
+
+

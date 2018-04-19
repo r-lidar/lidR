@@ -180,7 +180,7 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   {
     cluster = clusters[[i]]
 
-    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) })
+    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) }, earlySignal = TRUE)
 
     if(progress)
     {

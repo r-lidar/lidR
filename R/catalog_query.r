@@ -153,7 +153,7 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   {
     cluster = clusters[[i]]
     key = roinames[i]
-    output[[key]] <- future::future({get_query(cluster, ...) })
+    output[[key]] <- future::future({get_query(cluster, ...) }, earlySignal = TRUE)
 
     if(progress)
     {
