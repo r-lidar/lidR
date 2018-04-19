@@ -1,7 +1,9 @@
-#' Individual tree segmentation
+#' Individual tree segmentation (deprecated)
 #'
-#' Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method is a
-#' growing region method working at the raw point cloud level. It is a strict implementation of the
+#' Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method is deprecated.
+#' Use \link{lastree_li2} instead which is a slighly closer implementation of the original paper.
+#'
+#' This is a growing region method working at the point cloud level. It is an implementation of the
 #' Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of
 #' a parameter \code{hmin} to stop the over-segmentation for objects that are too low. The classification
 #' is done at the point cloud level and the function always returns nothing (NULL). The original
@@ -37,6 +39,7 @@
 #' @family tree_segmentation
 lastrees_li = function(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
 {
+  .Deprecated("lastree_li2")
   stopifnotlas(las)
 
   if (dt1 <= 0) stop("dt1 should be positive",  call. = FALSE)
