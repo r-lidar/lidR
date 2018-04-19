@@ -103,7 +103,7 @@
 #'
 #'   # segment trees (in this example the low point density does not enable
 #'   # accurate segmentation of trees. This is just a proof-of-concept)
-#'   lastrees(las, algorithm = "li2012")
+#'   lastrees(las, algorithm = "li2012-2")
 #'
 #'   # Here we used the function tree_metric to compute some metrics for each tree. This
 #'   # function is defined later in the global environment.
