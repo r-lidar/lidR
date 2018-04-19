@@ -17,6 +17,10 @@ C_lassmooth <- function(las, size) {
     .Call(`_lidR_C_lassmooth`, las, size)
 }
 
+C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius, progressbar = FALSE) {
+    .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius, progressbar)
+}
+
 C_lastrees_dalponte <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_lastrees_dalponte`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }

@@ -97,14 +97,15 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
 
   QuadTree *tree = QuadTreeCreate(X,Y);
 
-  Progress p(n, displaybar);
+  // Remove because lastree_li use this function a Process is a singleton
+  //Progress p(n, displaybar);
 
   for (long i = 0 ; i < n ; i++)
   {
     if (Progress::check_abort() )
       return is_maxima;
-    else
-      p.update(i);
+    //else
+      //p.update(i);
 
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], hws, hws, pts);

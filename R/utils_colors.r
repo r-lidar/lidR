@@ -35,6 +35,9 @@
 #' @keywords internal
 set.colors = function(x, palette, trim = 1)
 {
+  if (all(is.na(x)))
+    return(rep("lightgrey", length(x)))
+
   ncolors = length(palette)
 
   if (trim < 1)
