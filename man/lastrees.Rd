@@ -11,7 +11,7 @@ lastrees(las, algorithm, ...)
 automatically.}
 
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
-\code{"watershed"},\code{"li2012"} or \code{"silva2016"}.}
+\code{"watershed"},\code{"li2012"} (deprecated), \code{"li2012-2"} or \code{"silva2016"}.}
 
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see documentation
 of each method).}
@@ -37,6 +37,6 @@ plot(las, color = "treeID", colorPalette = col)
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
-  \code{\link{lastrees_li}}, \code{\link{lastrees_silva}},
+  \code{\link{lastrees_li2}}, \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}
 }

@@ -7,13 +7,14 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(x, geometry, ofile = "", inside = TRUE)
+lasclip(x, geometry, ofile = "", inside = TRUE, ...)
 
-lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE)
+lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE,
+  ...)
 
-lasclipPolygon(x, xpoly, ypoly, ofile = "", inside = TRUE)
+lasclipPolygon(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 
-lasclipCircle(x, xcenter, ycenter, radius, ofile = "", inside = TRUE)
+lasclipCircle(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{LAS} or \code{LAScatalog}.}
@@ -27,6 +28,9 @@ file while reading. This is much more memory efficient than loading into R first
 
 \item{inside}{logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
 the shape.}
+
+\item{...}{Additionnal argument for readLAS to reduce the number of data loaded (only with a
+\code{LAScatalog} object)}
 
 \item{xleft}{scalar of left x position of rectangle.}
 
