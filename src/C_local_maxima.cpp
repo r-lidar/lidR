@@ -102,11 +102,6 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
 
   for (long i = 0 ; i < n ; i++)
   {
-    if (Progress::check_abort() )
-      return is_maxima;
-    //else
-      //p.update(i);
-
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], hws, hws, pts);
 
