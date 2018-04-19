@@ -1,10 +1,10 @@
-## lidR v1.4.2 (In developpment)
+## lidR v1.4.2 (2018-04-19)
 
 #### BUG FIXES
 
 * [[#103](https://github.com/Jean-Romain/lidR/issues/103)] fix user-defined function not exported in clusters on Windows
 * [[#104](https://github.com/Jean-Romain/lidR/pull/104)] fix potential bin exclusion in `entropy` function
-* [[#106](https://github.com/Jean-Romain/lidR/issue/106)] fix wrong count of points below 0
+* [[#106](https://github.com/Jean-Romain/lidR/issues/106)] fix wrong count of points below 0
 * Fix wrong type attribution in `lasclassify` when using the shapefile's table of attributes as data.
 * Fix column addition when `field = NULL` in `lasclassify`.
 * Fix `NA` return in entropy when negative value are found.
