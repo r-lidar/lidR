@@ -4,26 +4,23 @@
 \alias{lasfiltersurfacepoints}
 \title{Filter the surface points}
 \usage{
-lasfiltersurfacepoints(las, res, smooth = 0)
+lasfiltersurfacepoints(las, res)
 }
 \arguments{
 \item{las}{A LAS object}
 
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
-
-\item{smooth}{numeric. Smooth the output point cloud using a moving average windows at the point
-level. This is the size of the moving windows. Default = 0 i.e. no smothing.}
 }
 \value{
 A LAS object
 }
 \description{
 This routine creates a grid with a given resolution and filters the point cloud by selecting the
-highest elevation point within each cell.
+highest point within each cell.
 }
 \details{
 This function is different from \link{grid_canopy} even if the overall concept is exactly the same.
-\code{grid_canopy} attributes to each cell the elevation of the highest points and he point cloud is
+\code{grid_canopy} attributes to each cell the elevation of the highest points and the point cloud is
 rasterized. Here, there is no rasterization, the function have a point cloud as input and a point
 cloud as output. Coordinates and attributes are preserved.
 }
