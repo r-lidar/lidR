@@ -39,13 +39,13 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Select the first returns classified as ground
-#' firstground = lidar %>% lasfilter(Classification == 1 & ReturnNumber == 1)
+#' firstground = lasfilter(lidar, Classification == 1 & ReturnNumber == 1)
 #'
 #' # Multiple arguments are equivalent to &
-#' firstground = lidar %>% lasfilter(Classification == 1, ReturnNumber == 1)
+#' firstground = lasfilter(lidar, Classification == 1, ReturnNumber == 1)
 #'
 #' # Multiple criteria
-#' first_or_ground = lidar %>% lasfilter(Classification == 1 | ReturnNumber == 1)
+#' first_or_ground = lasfilter(lidar, Classification == 1 | ReturnNumber == 1)
 #' @export
 #' @family lasfilters
 lasfilter = function(.las, ...)
@@ -71,7 +71,7 @@ lasfilter_ <- function(.las, conditions)
 
   if(sum(combined_bools) == 0)
   {
-    err = paste(conditions) %>% paste(collapse=" & ")
+    err = paste(paste(conditions), collapse=" & ")
     lidRError("GET1", expression = err, behaviour = warning)
     return(NULL)
   }
@@ -99,8 +99,8 @@ lasfilter_ <- function(.las, conditions)
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' firstReturns  = lidar %>% lasfilterfirst
-#' groundReturns = lidar %>% lasfilterground
+#' firstReturns  = lasfilterfirst(lidar)
+#' groundReturns = lasfilterground(lidar)
 #' @family lasfilters
 #' @name lasfilters
 NULL

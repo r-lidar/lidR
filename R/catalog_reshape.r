@@ -56,11 +56,18 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
   ext <- match.arg(ext)
 
-  ncores  = CATALOGOPTIONS("multicore")
   interact = LIDROPTIONS("interactive")
 
+  buffer(ctg) <- 0
+  by_file(ctg) <- FALSE
+  tiling_size(ctg) <- size
+
+  ncores   <- cores(ctg)
+  progress <- progress(ctg)
+
   # Create a pattern of clusters to be sequentially processed
-  clusters = catalog_makecluster(ctg, 1, 0, FALSE, size)
+  clusters <- catalog_makecluster(ctg, 1)
+  nclust   <- length(clusters)
 
   if(interact)
   {
@@ -82,26 +89,18 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
-  ti = Sys.time()
+  future::plan(future::multiprocess, workers = ncores)
 
-  # Computations done within sequential or parallel loop in .getMetrics
-  if (ncores == 1)
+  for(i in seq_along(clusters))
   {
-    output = lapply(clusters, reshape_func, path = path, prefix = prefix, ext = ext)
-  }
-  else
-  {
-    cat("Begin parallel processing... \n")
-    cat("Num. of cores:", ncores, "\n\n")
+    future::future({ reshape_func(clusters[[i]], path, prefix, ext) }, earlySignal = TRUE)
 
-    cl = parallel::makeCluster(ncores, outfile = "")
-    parallel::clusterExport(cl, varlist = c(utils::lsf.str(envir = globalenv()), ls(envir = environment())), envir = environment())
-    output = parallel::parLapply(cl, clusters, fun = reshape_func, path = path, prefix = prefix, ext = ext)
-    parallel::stopCluster(cl)
+    if(progress)
+    {
+      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
+      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+    }
   }
-
-  tf = Sys.time()
-  cat("Process done in", round(difftime(tf, ti, units="min"), 1), "min\n\n")
 
   return(catalog(path))
 }

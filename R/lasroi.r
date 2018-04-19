@@ -41,7 +41,6 @@
 #'\dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
-#'
 #' subset = lasroi(lidar)
 #' }
 #' @export
@@ -55,10 +54,10 @@ lasroi = function(.las, ...)
   rgl::view3d(0,0)
 
   f = rgl::select3d()
-  keep = .las@data %$% f(X,Y,0)
+  keep = f(.las@data$X, .las@data$Y,0)
   rgl::rgl.close()
 
-  out = .las %>% lasfilter(keep)
+  out = lasfilter(.las, keep)
   plot.LAS(out, ...)
 
   return(out)

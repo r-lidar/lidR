@@ -113,7 +113,7 @@ lasground_pmf = function(las, ws, th)
     verbose(paste0("Pass ", i, " of ", length(ws), "..."))
     verbose(paste0("Windows size = ", ws[i], " ; height_threshold = ", th[i]))
 
-    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
+    Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold

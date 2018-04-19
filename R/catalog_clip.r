@@ -26,7 +26,7 @@
 # ===============================================================================
 
 
-catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
+catalog_clip_poly = function(catalog, xpoly, ypoly, ofile, ...)
 {
   xmin <- min(xpoly)
   xmax <- max(xpoly)
@@ -42,8 +42,22 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
   if (is.null(cluster))
     return(invisible())
 
-  header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata_inpoly(cluster@files, xpoly, ypoly, filter = cluster@filter, ofile = ofile)
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las_inpoly(cluster@files, xpoly, ypoly, select = select, filter = filter, ofile = ofile)
 
   if (is.null(data))
     return (invisible())
@@ -51,7 +65,7 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile)
   return(LAS(data, header))
 }
 
-catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
+catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile, ...)
 {
   xc <- (xmax + xmin)/2
   yc <- (ymax + ymin)/2
@@ -63,8 +77,19 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
   if (is.null(cluster))
     return(invisible())
 
-  header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, ofile = ofile, filter = cluster@filter)
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
 
   if (nrow(data) == 0)
     return (invisible())
@@ -72,15 +97,26 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile)
   return(LAS(data, header))
 }
 
-catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile)
+catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile, ...)
 {
   cluster  <- catalog_index(catalog, xcenter, ycenter, 2*radius, NULL, 0, "ROI")[[1]]
 
   if (is.null(cluster))
     return(invisible())
 
-  header = rlas::readlasheader(cluster@files[1])
-  data   = rlas:::streamlasdata(cluster@files, ofile = ofile, filter = cluster@filter)
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
 
   if (nrow(data) == 0)
     return (invisible())

@@ -7,22 +7,30 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(x, geometry, ofile = "")
+lasclip(x, geometry, ofile = "", inside = TRUE, ...)
 
-lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "")
+lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE,
+  ...)
 
-lasclipPolygon(x, xpoly, ypoly, ofile = "")
+lasclipPolygon(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 
-lasclipCircle(x, xcenter, ycenter, radius, ofile = "")
+lasclipCircle(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{LAS} or \code{LAScatalog}.}
 
-\item{geometry}{a geometric object. Currently \code{Polygon} from \code{sp} is supported.}
+\item{geometry}{a geometric object. Currently \code{Polygon} and \code{SpatialPolygonsDataFrame}
+from \code{sp} are supported.}
 
-\item{ofile}{character. Path to an output file (only with a \code{LAScatalog}).
+\item{ofile}{character. Path to an output file (only with a \code{LAScatalog} object).
 If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
 file while reading. This is much more memory efficient than loading into R first, then writing.}
+
+\item{inside}{logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
+the shape.}
+
+\item{...}{Additionnal argument for readLAS to reduce the number of data loaded (only with a
+\code{LAScatalog} object)}
 
 \item{xleft}{scalar of left x position of rectangle.}
 
@@ -46,9 +54,10 @@ file while reading. This is much more memory efficient than loading into R first
 An object of class \code{LAS} or NULL if the result is immediately written to a file.
 }
 \description{
-Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
+Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
 }
 \examples{
+# Load the file and clip
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)

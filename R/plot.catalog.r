@@ -32,7 +32,7 @@
 #' This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects
 #'
 #' @param x A LAScatalog object
-#' @param y logical. Disable interactive display
+#' @param y Unused. Inherited from R base
 #' @param \dots inherited from base plot
 #' @method plot LAScatalog
 #' @export

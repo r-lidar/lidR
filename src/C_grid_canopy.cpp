@@ -30,11 +30,10 @@
 #include "RasterProcessors.h"
 
 // [[Rcpp::export]]
-List Cpp_grid_canopy(S4 las, double res, double subcircle = 0)
+List C_grid_canopy(S4 las, double res, double subcircle = 0)
 {
   S4 header = las.slot("header");
   List phb  = header.slot("PHB");
-  // DataFrame data = las.slot("data");
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
   double xmax = phb["Max X"];

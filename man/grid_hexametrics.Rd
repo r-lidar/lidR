@@ -33,10 +33,12 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Maximum elevation with a resolution of 4 m
-grid_hexametrics(lidar, max(Z), 4) \%>\% plot
+hm = grid_hexametrics(lidar, max(Z), 4)
+plot(hm)
 
 # Mean height with a resolution of 20 m
-grid_hexametrics(lidar, mean(Z)) \%>\% plot
+hm = grid_hexametrics(lidar, mean(Z))
+plot(hm)
 
 # Define your own new metrics
 myMetrics = function(z, i)

@@ -54,9 +54,8 @@ interpolating spatial data. }
 \section{Use with a \code{LAScatalog}}{
 
 When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. Parallel computing is set
-by default to the number of core available in the computer. A buffer is required to avoid
-edge artifacts. The user can modify the global options using the function \link{catalog_options}.\cr\cr
+the entire dataset in a continuous way using a multicore process. The user can modify the processing
+options using the \link[lidR:catalog]{available options}.\cr\cr
 \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
 spatial index.
 }

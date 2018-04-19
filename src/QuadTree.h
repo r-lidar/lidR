@@ -10,7 +10,6 @@ class QuadTree
 	public:
 		QuadTree(const double, const double, const double);
 	  ~QuadTree();
-		static QuadTree* create(const std::vector<double>, const std::vector<double>);
 		bool insert(const Point&);
 		void rect_lookup(const double, const double, const double, const double, std::vector<Point*>&);
 		void triangle_lookup(const Point&, const Point&, const Point&, std::vector<Point*>&);
@@ -42,6 +41,43 @@ class QuadTree
 		bool in_triangle(const Point&, const Point&, const Point&, const Point&);
 		double distanceSquarePointToSegment(const Point&, const Point&, const Point&);
 };
+
+template<typename T> static QuadTree* QuadTreeCreate(const T x, const T y);
+template<typename T> static QuadTree* QuadTreeCreate(const T x, const T y)
+{
+  int n = x.size();
+
+  double xmin = x[0];
+  double ymin = y[0];
+  double xmax = x[0];
+  double ymax = y[0];
+
+  for(int i = 0 ; i < n ; i++)
+  {
+    if(x[i] < xmin)
+      xmin = x[i];
+    else if(x[i] > xmax)
+      xmax = x[i];
+    if(y[i] < ymin)
+      ymin = y[i];
+    else if(y[i] > ymax)
+      ymax = y[i];
+  }
+
+  double xrange = xmax - xmin;
+  double yrange = ymax - ymin;
+  double range = xrange > yrange ? xrange/2 : yrange/2;
+
+  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range+0.01);
+
+  for(int i = 0 ; i < n ; i++)
+  {
+    Point p(x[i], y[i], i);
+    tree->insert(p);
+  }
+
+  return tree;
+}
 
 #endif //QT_H
 

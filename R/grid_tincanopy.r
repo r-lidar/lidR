@@ -35,9 +35,8 @@
 #'
 #' @section Use with a \code{LAScatalog}:
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
-#' by default to the number of core available in the computer. A buffer is required. The user
-#' can modify the global options using the function \link{catalog_options}.\cr\cr
+#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
+#' options using the \link[lidR:catalog]{available options}.\cr\cr
 #' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
@@ -125,13 +124,8 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 
   verbose("Selecting only the highest points within the grid cells...")
 
-  f = function(x,y,z) {
-    i = which.max(z)
-    return(list(X = x[i], Y = y[i], Z = z[i]))
-  }
-
   by = group_grid(cloud$X, cloud$Y, res)
-  cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
+  cloud = cloud[cloud[, .I[which.max(Z)], by = by]$V1]
 
   # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
   i = 1
@@ -170,7 +164,15 @@ grid_tincanopy.LAScatalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15),
   oldbuffer <- CATALOGOPTIONS("buffer")
 
   if (subcircle == 0)
+  {
     CATALOGOPTIONS(buffer = res)
+    buffer(x) <- res
+  }
+  else
+  {
+    CATALOGOPTIONS(buffer = 0)
+    buffer(x) <- 0
+  }
 
   canopy = grid_catalog(x, grid_tincanopy, res, "xyzr", filter, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
 
