@@ -86,15 +86,15 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
   {
     verbose("Retrieving the resolution of the raster...")
 
-    dx = x$X %>% unique %>% sort %>% diff
-    dy = x$Y %>% unique %>% sort %>% diff
+    dx = diff(sort(unique(x$X)))
+    dy =  diff(sort(unique(x$Y)))
     ts = table(c(dx, dy))
 
     if (length(ts) == 1)
       res = dx[1]
     else
     {
-      res = stats::median(c(dx,dy)) %>% round(2)
+      res = round(stats::median(c(dx,dy)), 2)
       message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
     }
 

@@ -34,21 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-struct SortPoint
-{
-  SortPoint(const NumericVector _Z) : Z(_Z) {}
-
-  bool operator()(const Point* lhs, const Point* rhs) const
-  {
-    return Z(lhs->id) > Z(rhs->id);
-  }
-
-  private:
-    NumericVector Z;
-};
-
 // [[Rcpp::export]]
-IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_tree, double R, bool progressbar = false)
+IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th_tree, double R, bool progressbar = false)
 {
   /* *********************
    * INITALISATION STUFF *
@@ -74,8 +61,8 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_t
   IntegerVector idtree(ni);       // The ID of each point (returned object)
   std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
   Progress p(ni, progressbar);    // A progress bar and script abort options
-  Point* dummy = new Point(xmin-100,ymin-100,-1);
-  std::vector<Point*> P,N;        // Store the point in N or P group (see Li et al.)
+  PointXYZ* dummy = new PointXYZ(xmin-100,ymin-100,0,-1);
+  std::vector<PointXYZ*> P,N;        // Store the point in N or P group (see Li et al.)
 
   // Reserve memory for N et P group
   // (will statistically reduce the number of dynamic reallocation)
@@ -89,25 +76,25 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_t
   dt2 = dt2 * dt2;
 
   // Convert the R data into STL containers of points
-  std::vector<Point*> points(ni);
+  std::vector<PointXYZ*> points(ni);
 
   for (int i = 0 ; i < ni ; ++i)
-    points[i] = new Point(X[i], Y[i], i);
+    points[i] = new PointXYZ(X[i], Y[i], Z[i], i);
 
   /* *********************
    * LI ET AL ALGORITHHM *
    ***********************/
 
-  std::sort(points.begin(), points.end(), SortPoint(Z));
+  std::sort(points.begin(), points.end(), ZSortPoint());
 
   while(n > 0)
   {
-    Point* u = points[0];
+    PointXYZ* u = points[0];
     std::vector<bool> inN(n);
 
     // Stop the algo is the highest point u, which is the tree top, is below a threshold
     // Addition from original algo
-    if (Z[u->id] < th_tree)
+    if (u->z < th_tree)
     {
       p.update(ni);
     }
@@ -147,8 +134,7 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_t
 
           double dmin1 = *std::min_element(dP.begin(), dP.end());
           double dmin2 = *std::min_element(dN.begin(), dN.end());
-
-          double dt    = (Z[u->id] > Zu) ? dt2 : dt1;
+          double dt    = (u->z > Zu) ? dt2 : dt1;
 
           if ( (dmin1 > dt) || ((dmin1 <= dt) && (dmin1 > dmin2)) )
           {
@@ -165,7 +151,7 @@ IntegerVector algo_li2012(S4 las, double dt1, double dt2, double Zu, double th_t
     }
 
     // Keep the point in N and redo the loop with remining points
-    std::vector<Point*> temp;
+    std::vector<PointXYZ*> temp;
     temp.reserve(N.size()-1);
 
     for(int i = 0 ; i < n ; i++)

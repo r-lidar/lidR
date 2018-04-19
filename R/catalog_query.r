@@ -50,7 +50,7 @@
 #'
 #' @section Multicore computation:
 #' The process is done using several cores. To change the settings of how a catalog is processed
-#' use \link{catalog_options}.
+#' use \link{cores}.
 #'
 #' @param obj A LAScatalog object
 #' @param x vector. A set of x coordinates corresponding to the centers of the ROIs
@@ -67,7 +67,6 @@
 #' @seealso
 #' \link{readLAS}
 #' \link{catalog}
-#' \link{catalog_options}
 #' @export
 #' @examples
 #' \dontrun{
@@ -80,19 +79,19 @@
 #' R = 25
 #'
 #' # Return a List of 30 circular LAS objects of 25 m radius
-#' catalog %>% catalog_queries(X, Y, R)
+#' catalog_queries(catalog, X, Y, R)
 #'
 #' # Return a List of 30 square LAS objects of 50x50 m
-#' catalog %>% catalog_queries(X, Y, R, R)
+#' catalog_queries(catalog, X, Y, R, R)
 #'
 #' # Return a List of 30 circular LAS objects of 30 m radius. 25 m being the ROI and 5 m
 #' # being a buffered area. The LAS objects have an extra column called 'buffer' to
 #' # differentiate the points.
-#' catalog %>% catalog_queries(X, Y, R, buffer = 5)
+#' catalog_queries(catalog, X, Y, R, buffer = 5)
 #'
 #' # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
 #' # Z have been loaded and Z values < 0 were removed.
-#' catalog %>% catalog_queries(X, Y, R, XYZonly = TRUE, filter = "-drop_z_below 0")
+#' catalog_queries(catalog, X, Y, R, select = "xyz", filter = "-drop_z_below 0")
 #' }
 catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
@@ -120,8 +119,8 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
   if (any(buffer < 0))
     stop("Buffer size must be a positive value", call. = FALSE)
 
-  ncores   = CATALOGOPTIONS("multicore")
-  progress = CATALOGOPTIONS("progress")
+  progress  <- progress(obj)
+  ncores    <- cores(obj)
 
   w = 2*r
 
@@ -147,19 +146,14 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
 
   verbose("Extracting data...")
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+ future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]
     key = roinames[i]
-    output[[key]] <- future::future({get_query(cluster, ...) })
+    output[[key]] <- future::future({get_query(cluster, ...) }, earlySignal = TRUE)
 
     if(progress)
     {
@@ -169,7 +163,7 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
 
   output = future::values(output)
 
-  # Ppatch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+  # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
   if (ncores > 1)
   {
     for (i in 1:length(output))

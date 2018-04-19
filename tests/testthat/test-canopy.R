@@ -50,8 +50,8 @@ test_that("grid_canopy create the same pixels independently of the starting poin
   las2 = las
   las3 = las
 
-  las2@data = rbind(las@data, list(-11.5,-30.25,20,1,1,1,1))
-  las3@data = rbind(las@data, list(-21.10,-18.75,20,1,1,1,1))
+  las2@data = rbind(las@data, list(-11.5,-30.25,20L,1L,1L,1L,1L))
+  las3@data = rbind(las@data, list(-21.10,-18.75,20L,1L,1L,1L,1L))
 
   las2 = LAS(las2@data, las@header)
   las3 = LAS(las3@data, las@header)

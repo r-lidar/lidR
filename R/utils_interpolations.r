@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-interpolate = function(points, coord, method, k, p, model)
+interpolate = function(points, coord, method, k, p, model, wbuffer = TRUE)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -49,21 +49,24 @@ interpolate = function(points, coord, method, k, p, model)
 
   if (method == "knnidw")
   {
-    verbose("[using inverse distance weighting]\n")
+    verbose("[using inverse distance weighting]")
     return(interpolate_knnidw(points, coord, k, p))
   }
   else if (method == "delaunay")
   {
-    verbose("[using Delaunay triangulation]\n")
+    verbose("[using Delaunay triangulation]")
 
     z = interpolate_delaunay(points, coord)
 
     isna = is.na(z)
     nnas = sum(isna)
 
-    if (nnas > 0 & k > 0) {
-      z[isna] <- knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
-      message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
+    if (nnas > 0 & k > 0)
+    {
+      z[isna] <- C_knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
+
+      if(wbuffer)
+        message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
     }
 
     return(z)
@@ -78,15 +81,7 @@ interpolate = function(points, coord, method, k, p, model)
 
 interpolate_knnidw = function(points, coord, k, p)
 {
-  #nn = RANN::nn2(points[, .(X,Y)], coord[, .(X,Y)], k = k)
-  #nn = knn(points$X, points$Y, coord$X, coord$Y, k)
-  #dx = nn$nn.idx
-  #w = 1/nn$nn.dist
-  #w = ifelse(is.infinite(w), 1e8, w)
-  #z = matrix(points[as.numeric(idx)]$Z, ncol = dim(w)[2])
-
-  z = knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p)
-
+  z = C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p)
   return(z)
 }
 
@@ -119,7 +114,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Searching for the enclosing Delaunay convex hull...")
 
-  idx  <- tsearch(points$X, points$Y, dn, coord$X, coord$Y, LIDROPTIONS("progress"))
+  idx  <- C_tsearch(points$X, points$Y, dn, coord$X, coord$Y, LIDROPTIONS("progress"))
 
   #uidx <- unique(idx)
   #uidx <- uidx[!is.na(uidx)]
@@ -129,7 +124,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Rasterizing the triangulation...")
 
-  N = tinfo(dn, X)
+  N = C_tinfo(dn, X)
   N = N[idx,]
 
   z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]

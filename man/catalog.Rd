@@ -2,22 +2,63 @@
 % Please edit documentation in R/class-lascatalog.r
 \name{catalog}
 \alias{catalog}
+\alias{cores}
+\alias{cores<-}
+\alias{by_file}
+\alias{by_file<-}
+\alias{buffer}
+\alias{buffer<-}
+\alias{progress}
+\alias{progress<-}
+\alias{tiling_size}
+\alias{tiling_size<-}
+\alias{vrt}
+\alias{vrt<-}
 \title{Build a catalog of las tiles/files}
 \usage{
 catalog(folder, ...)
+
+cores(ctg)
+
+cores(ctg) <- value
+
+by_file(ctg)
+
+by_file(ctg) <- value
+
+buffer(ctg)
+
+buffer(ctg) <- value
+
+progress(ctg)
+
+progress(ctg) <- value
+
+tiling_size(ctg)
+
+tiling_size(ctg) <- value
+
+vrt(ctg)
+
+vrt(ctg) <- value
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}
 
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
+
+\item{ctg}{A LAScatalog object.}
+
+\item{value}{An appropriated value for catalog settings. See \link[lidR:LAScatalog-class]{LAScatalog}}
 }
 \value{
 A \code{LAScatalog} object
 }
 \description{
-Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the representation of a set
-of las files. A computer cannot load all the data at the same time. A catalog is a simple
-way to manage all the file sequentially reading only the headers.
+Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
+representation of a set of las files. A computer cannot load all the data at the same time. A
+catalog is a simple way to manage all the file sequentially reading only the headers. Also a catalog
+self contains metadata to configure how it should be processed.
 }
 \seealso{
 \link{LAScatalog-class}

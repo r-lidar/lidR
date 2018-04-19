@@ -37,8 +37,7 @@
 #' @export
 writeLAS = function(.las, file)
 {
-  files <- NULL
-
+  file  = path.expand(file)
   islas = tools::file_ext(file) %in% c("las", "laz")
 
   if (length(file) > 1)
@@ -47,49 +46,6 @@ writeLAS = function(.las, file)
   if (!islas)
     lidRError("LAS2", files = file, behaviour = stop)
 
-  file = path.expand(file)
-
-  I = RN = NoR = SDF = EoF = C = SA = UD = PSI = R = G = B = integer(0)
-  time = numeric(0)
-
-  fields = names(.las@data)
-
-  nolasvalidfield = fields[!fields %in% LASFIELDS]
-
-  if ("Intensity" %in% fields)
-    I = .las@data$Intensity
-  if ("ReturnNumber" %in% fields)
-    RN = .las@data$ReturnNumber
-  if ("NumberOfReturns" %in% fields)
-    NoR = .las@data$NumberOfReturns
-  if ("ScanDirectionFlag" %in% fields)
-    SDF = .las@data$ScanDirectionFlag
-  if ("EdgeOfFlightline" %in% fields)
-    EoF = .las@data$EdgeOfFlightline
-  if ("Classification" %in% fields)
-    C = .las@data$Classification
-  if ("ScanAngle" %in% fields)
-    SA = .las@data$ScanAngle
-  if ("UserData" %in% fields)
-    UD = .las@data$UserData
-  if ("gpstime" %in% fields)
-    time = .las@data$gpstime
-  if ("PointSourceID" %in% fields)
-    PSI = .las@data$PointSourceID
-  if ("R" %in% fields & "G" %in% fields & "B" %in% fields )
-  {
-    R = .las@data$R
-    G = .las@data$G
-    B = .las@data$B
-  }
-
-  rlas::writelas(file, .las@header@PHB, .las@data$X, .las@data$Y, .las@data$Z, time, I, RN, NoR, SDF, EoF, C, SA, UD, PSI, R, G, B)
-
-  if (length(nolasvalidfield) > 0)
-  {
-    for (i in 1:length(nolasvalidfield))
-      message("Column ", nolasvalidfield[i], " skipped. It does not meet las specifications.")
-  }
-
+  rlas::write.las(file, as.list(.las@header), .las@data)
   return(invisible())
 }

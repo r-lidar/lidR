@@ -110,11 +110,11 @@ setMethod("show", "LASheader",  function(object)
     vlr = object@VLR[[i]]
 
     cat("   Variable length record", i, "of", n, "\n")
-    cat("       Reserve:            ", vlr$reserved, "\n")
-    cat("       User ID:             ", vlr$`user ID`, "\n")
-    cat("       record ID:           ", vlr$`record ID`, "\n")
-    cat("       Length after header: ", vlr$`length after header`, "\n")
-    cat("       Description:         ", vlr$description, "\n")
+    #cat("       Reserve:            ",  vlr$reserved, "\n")
+    #cat("       User ID:             ", vlr$`user ID`, "\n")
+    #cat("       record ID:           ", vlr$`record ID`, "\n")
+    #cat("       Length after header: ", vlr$`length after header`, "\n")
+    cat("       Description: ", vlr$description, "\n")
 
     if(vlr$`record ID` == 34735)
     {
@@ -135,12 +135,27 @@ setMethod("show", "LASheader",  function(object)
     if(vlr$`record ID` == 4)
     {
       cat("       Extra Bytes Description:\n")
-      lapply(vlr[[6]], function(xx)
+      lapply(vlr$`Extra Bytes Description`, function(xx)
       {
-        cat("          ", xx$name, ": ", xx$description, "\n")
+        cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
       })
     }
   }
 
   return(invisible())
 })
+
+#' Transform to a list
+#'
+#' Functions to construct, coerce and check for both kinds of R lists.
+#'
+#' @param x A LASheader object
+#' @param ... unused
+#' @method as.list LASheader
+#' @export
+as.list.LASheader <- function(x, ...)
+{
+  PHB = x@PHB
+  VLR = list(`Variable Length Records` = x@VLR)
+  return(c(PHB, VLR))
+}
