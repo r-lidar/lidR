@@ -36,6 +36,9 @@ Default is FALSE.}
 several square sub-areas (clusters) to process them sequentially. This is the size of each square
 cluster. Default is 1000 (1 km^2).}
 
+\item{\code{vrt}}{character. Path to an folder. In \code{grid_*} function, for big output, the functions can
+return a lightweigth virtual raster mosaic (VRT).}
+
 \item{\code{opt_changed}}{Internal use only for compatibility with older deprecated code.}
 }}
 
