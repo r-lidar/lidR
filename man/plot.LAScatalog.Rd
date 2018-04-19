@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A LAScatalog object}
 
-\item{y}{Unused. Inherited from R base}
+\item{y}{logical. Disable interactive display}
 
 \item{\dots}{inherited from base plot}
 }

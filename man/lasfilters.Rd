@@ -54,34 +54,25 @@ Select only some returns
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-firstReturns  = lasfilterfirst(lidar)
-groundReturns = lasfilterground(lidar)
+firstReturns  = lidar \%>\% lasfilterfirst
+groundReturns = lidar \%>\% lasfilterground
 }
 \seealso{
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilter}}
 }

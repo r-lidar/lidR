@@ -143,7 +143,9 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
   {
     las@data[, Zref := Z]
     las@data[, Z := round(Z - Zground, 3)]
-    lasupdateheader(las)
+    las@data[]
+    update_list_by_ref(las@header@PHB, "Min Z", min(las@data$Z))
+    update_list_by_ref(las@header@PHB, "Max Z", max(las@data$Z))
     lascheck(las@data, las@header)
     return(invisible())
   }

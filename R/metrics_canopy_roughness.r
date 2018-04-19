@@ -64,7 +64,7 @@
 #' # Use with a canopy height model
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' chm = grid_canopy(las)
+#' chm = las %>% grid_canopy
 #' rumple_index(chm)
 #' @references
 #' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829–839.
@@ -77,7 +77,7 @@ rumple_index = function(x, y = NULL, z = NULL, ...)
 rumple_index.lasmetrics <- function(x, y = NULL, z = NULL, ...)
 {
   res = attr(x, "res")
-  x = raster::as.matrix(as.raster(x))
+  x = x %>% as.raster %>% raster::as.matrix()
   return(rumple_index.matrix(x, res, res))
 }
 
@@ -117,7 +117,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 
   X = cbind(x,y,z)
   dn = suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
-  N = C_tinfo(dn, X)
+  N = tinfo(dn, X)
 
   area  = sum(N[,5])
   parea = sum(N[,6])

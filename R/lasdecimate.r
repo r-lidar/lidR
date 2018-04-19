@@ -29,62 +29,51 @@
 
 #' Thin LiDAR data
 #'
-#' Thin LIDAR data randomly removes a given proportion of point to reach specific point/pulse densities.
+#' Thin LIDAR data randomly removes a given proportion of pulses to reach specific pulse densities
 #'
-#' \code{lasfilterdecimate} is designed to produce output datasets that have uniform densities
-#' throughout the coverage area. For each cell, the proportion of points/pulses that will
-#' be retained is computed using the actual density and the desired density. If the required density
-#' is greater than the actual density it returns an unchanged set of points (it cannot increase the
-#' density). If \code{homogenize = FALSE} is selected, it
-#' randomly removes points/pulses to reach the required density over the whole area
+#' \code{lasdecimate} is designed to produce output datasets that have uniform pulse densities
+#' throughout the coverage area. For each cell, the proportion of pulses that will
+#' be retained is computed using the actual pulse density and the desired pulse
+#' density. If the required pulse density is greater than the actual pulse density it returns
+#' an unchanged set of points (it cannot increase the pulse density). If \code{homogenize = FALSE} is selected, it
+#' randomly removes pulses to reach the required pulse density over the whole area
 #' (see \code{\link[lidR:area]{area}}). The cell size must be large enough
-#' to compute a coherent local pulse density i.e., in a 2 points/m^2 dataset, 25 square meters would be
+#' to compute a coherent local pulse density i.e., in a 2 pulse/m^2 dataset, 25 square meters would be
 #' feasible; however, an extent too small to thin (e.g. <1 square meter) would not be feasible because
-#' density does not have meaning at this scale.
+#' pulse density does not have meaning at this scale.
 #' @param .las An object of the class \code{LAS}
 #' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to provide a uniform
 #' dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole area.
 #' @param res numeric. Cell size to compute the pulse density.
-#' @param use_pulse logical. Decimate removing random pulses instead of random points
 #' @return It returns a \code{LAS} object.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile, select = "xyz")
+#' lidar = readLAS(LASfile, select = "xyztP")
 #'
 #' # By default the method is homogenize = TRUE
-#' thinned = lasfilterdecimate(lidar, 1, res = 5)
-#' plot(grid_density(lidar))
-#' plot(grid_density(thinned))
+#' thinned = lidar %>% lasdecimate(1, res = 5)
+#' lidar   %>% grid_density %>% plot
+#' thinned %>% grid_density %>% plot
 #'
 #' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lasfilterdecimate(lidar, 1, homogenize = FALSE)
-#' summary(thinned)
-#' d = grid_density(thinned)
-#' plot(d)
+#' thinned = lidar %>% lasdecimate(1, homogenize = FALSE)
+#' thinned %>% summary
+#' thinned %>% grid_density %>% plot
 #' @export
-lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
+lasdecimate = function(.las, density, homogenize = TRUE, res = 5)
 {
   pulseID <- gpstime <- NULL
 
-  if(use_pulse & !"pulseID" %in% names(.las@data))
-  {
-    warning("No 'pulseID' field found.", call. = FALSE)
-    use_pulse = FALSE
-  }
-
   stopifnotlas(.las)
 
-  npoints = nrow(.las@data)
+  if(! "pulseID" %in% names(.las@data))
+    lidRError("THI1")
 
   if(homogenize == FALSE)
   {
     n = round(density*area(.las))
-
-    if (use_pulse)
-      selected = selected_pulses(.las@data$pulseID, n)
-    else
-      selected = sample(1:nrow(.las@data), n)
+    selected = selected_pulses(.las@data$pulseID, n)
   }
   else
   {
@@ -92,13 +81,15 @@ lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_puls
 
     by = group_grid(.las@data$X, .las@data$Y, res)
 
-    if (use_pulse)
-      selected = .las@data[, .I[selected_pulses(pulseID, n)], by = by]$V1
-    else
-      selected = .las@data[, .I[selected_pulses(1:.N, n)], by = by]$V1
+    selected = .las@data[, list(delete = selected_pulses(pulseID, n), t = gpstime), by=by]
+
+    setorder(selected, t)
+    setorder(.las@data, gpstime)
+
+    selected = selected$delete
   }
 
-  return(LAS(.las@data[selected], .las@header))
+  LAS(.las@data[selected], .las@header) %>% return()
 }
 
 selected_pulses = function(pulseID, n)

@@ -26,8 +26,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Max Z within
-hm = grid_hexametrics(lidar, max(Z), 5)
-plot(hm)
+grid_hexametrics(lidar, max(Z), 5) \%>\% plot
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
