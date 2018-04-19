@@ -35,7 +35,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
 # segment trees (see lastrees)
-lastrees(las, algorithm = "li2012")
+lastrees(las, algorithm = "li2012-2")
 
 # Max height for each tree
 tree_metrics(las, mean(Z))

@@ -98,7 +98,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
     if(progress)
     {
       cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
-      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
+      graphics::rect(clusters[[i]]@bbox$xmin, clusters[[i]]@bbox$ymin, clusters[[i]]@bbox$xmax, clusters[[i]]@bbox$ymax, border = "black", col = "forestgreen")
     }
   }
 
