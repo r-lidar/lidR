@@ -27,7 +27,6 @@
 #' Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
 #' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 #' @export
-#' @family tree_segmentation
 lastrees_li = function(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
 {
   .Deprecated("lastree_li2")
@@ -47,7 +46,7 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
   else
   {
     progress <- LIDROPTIONS("progress")
-    id = algo_li2012(las, dt1, dt2, Zu, hmin, R, progress)
+    id = C_lastrees_li(las, dt1, dt2, Zu, hmin, R, progress)
   }
 
   lasaddextrabytes(las, id, "treeID", "An ID for each segmented tree")

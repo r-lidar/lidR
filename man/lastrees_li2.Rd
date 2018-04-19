@@ -30,9 +30,10 @@ Nothing (NULL), the point cloud is updated by reference. The original point clou
 has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
 }
 \description{
-Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method is a
-growing region method working at the raw point cloud level. It is a strict implementation of the
-Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of
+Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method replace
+the former algorithm being a slignly closer implementation of the original paper. This method is a
+growing region method working at the point cloud level. It is an implementation (as strict as possible)
+of the Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of
 a parameter \code{hmin} to stop the over-segmentation for objects that are too low. The classification
 is done at the point cloud level and the function always returns nothing (NULL). The original
 point cloud is updated in place with an ID for each point in a new column \code{treeID}. The user
@@ -54,6 +55,6 @@ trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
-  \code{\link{lastrees_li}}, \code{\link{lastrees_silva}},
+  \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }
