@@ -7,7 +7,7 @@
 #' @param las An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 #' automatically.
 #' @param algorithm character. The name of an algorithm. Can be \code{"dalponte2016"},
-#' \code{"watershed"},\code{"li2012"} or \code{"silva2016"}.
+#' \code{"watershed"},\code{"li2012"} (deprecated), \code{"li2012-2"} or \code{"silva2016"}.
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see documentation
 #' of each method).
 #'
@@ -35,6 +35,8 @@ lastrees <- function(las, algorithm, ...)
     return(lastrees_watershed(las, ...))
   else if (algorithm == "li2012")
     return(lastrees_li(las, ...))
+  else if (algorithm == "li2012-2")
+    return(lastrees_li2(las, ...))
   else if (algorithm == "silva2016")
     return(lastrees_silva(las, ...))
   else
