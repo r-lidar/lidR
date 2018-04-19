@@ -96,7 +96,7 @@
 #'   lasclassify(las, lake, field = "lake")
 #'
 #'   # filter lakes, and low elevation points
-#'   las %<>% lasfilter(lake == FALSE, Z > 4)
+#'   las = lasfilter(las, lake == FALSE, Z > 4)
 #'
 #'   if (is.null(las))
 #'     return(NULL)
@@ -159,22 +159,13 @@
 #' # of the list is a data.table, so rbindlist does the job:
 #' output = data.table::rbindlist(output)
 #'
-#' output %$% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
+#' with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
   res       <- 1
-  progress  <- ctg@progress
-  ncores    <- ctg@cores
-
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-    buffer(ctg)  <- CATALOGOPTIONS("buffer")
-    by_file(ctg) <- CATALOGOPTIONS("by_file")
-    tiling_size(ctg) <- CATALOGOPTIONS("tiling_size")
-  }
+  progress  <- progress(ctg)
+  ncores    <- cores(ctg)
 
   clusters <- catalog_makecluster(ctg, res)
   nclust   <- length(clusters)
@@ -182,18 +173,14 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   if (nclust < ncores)
     ncores <- nclust
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
+  future::plan(future::multiprocess, workers = ncores)
 
   output = list()
-
   for(i in seq_along(clusters))
   {
     cluster = clusters[[i]]
 
-    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) })
+    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) }, earlySignal = TRUE)
 
     if(progress)
     {

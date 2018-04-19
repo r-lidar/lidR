@@ -35,11 +35,11 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector tsearch(NumericVector x,  NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
 {
   // Algorithm
 
-  QuadTree *tree = QuadTree::create(as< std::vector<double> >(xi), as< std::vector<double> >(yi));
+  QuadTree *tree = QuadTreeCreate(xi,yi);
 
   int nelem = elem.nrow();
   int np = xi.size();

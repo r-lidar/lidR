@@ -29,15 +29,17 @@
 
 #' An S4 class to represent a set of a .las or .laz files
 #'
-#' A LAScatalog object is a representation of a set of las/laz files. A computer cannot load all the
-#' data at the same time. A catalog is a simple way to manage all the file sequentially reading only
-#' the headers. A catalog can be built with the function \link{catalog}. Also a catalog contains several
-#' extra information that enable to control how the catalog will be processed.
+#' A \code{LAScatalog} object is a representation of a set of las/laz files. A computer cannot load all the
+#' data at the same time. A \code{LAScatalog} is a simple way to manage all the file reading only the headers. A
+#' \code{LAScatalog} enable the user to process large area or to selectively clip data from large area
+#' without loading the large area itself. A \code{LAScatalog} can be built with the function \link{catalog}.
+#' Also a \code{LAScatalog} contains several extra information that enable to control how the catalog will be
+#' processed.
 #'
 #' @slot data data.table. A table representing the header of each file.
 #' @slot crs A \link[sp:CRS]{CRS} object.
-#' @slot cores numeric. Numer of cores used to make parallel computations in compatible functions that
-#' support a catalog as input. Default is 1.
+#' @slot cores integer. Numer of cores used to make parallel computations in compatible functions that
+#' support a \code{LAScatalog} as input. Default is 1.
 #' @slot buffer numeric. When applying a function to an entire catalog sequentially processing
 #' sub-areas (clusters) some algorithms (such as \link{grid_terrain}) require a buffer around the area
 #' to avoid edge effects. Default is 15 m.
@@ -48,11 +50,12 @@
 #' @slot tiling_size numeric. To process an entire catalog, the algorithm splits the dataset into
 #' several square sub-areas (clusters) to process them sequentially. This is the size of each square
 #' cluster. Default is 1000 (1 km^2).
+#' @slot vrt character. Path to an folder. In \code{grid_*} function, for big output, the functions can
+#' return a lightweigth virtual raster mosaic (VRT).
 #' @slot opt_changed Internal use only for compatibility with older deprecated code.
 #' @seealso
 #' \link[lidR:catalog]{catalog}
 #' @import data.table
-#' @import magrittr
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
@@ -63,11 +66,12 @@ setClass(
   representation(
     data = "data.table",
     crs  = "CRS",
-    cores = "numeric",
+    cores = "integer",
     buffer = "numeric",
     by_file = "logical",
     progress = "logical",
     tiling_size = "numeric",
+    vrt = "character",
     opt_changed = "logical"
   )
 )
@@ -76,11 +80,12 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 {
   .Object@data  <- data
   .Object@crs   <- crs
-  .Object@cores <- 1
+  .Object@cores <- 1L
   .Object@buffer <- 15
   .Object@by_file <- FALSE
   .Object@progress <- TRUE
   .Object@tiling_size <- 1000
+  .Object@vrt <- ""
   .Object@opt_changed <- FALSE
   return(.Object)
 })
@@ -123,7 +128,7 @@ catalog <- function(folder, ...)
 
   headers <- lapply(files, function(x)
   {
-    header <- rlas::readlasheader(x)
+    header <- rlas::read.lasheader(x)
     header$`Variable Length Records` <- NULL
     data.table::setDT(header)
     return(header)
@@ -132,12 +137,22 @@ catalog <- function(folder, ...)
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
 
+  laxfiles <- paste0(tools::file_path_sans_ext(files), ".lax")
+  if (any(!file.exists(laxfiles)))
+    message("las or laz files are not associated with lax files. This is not mandatory but may speed-up a lot some computations. See help('writelax', 'rlas').")
+
   return(new("LAScatalog", headers, crs))
 }
 
 #' @rdname catalog
 #' @export
-cores = function(ctg) { return(ctg@cores) }
+cores = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("multicore"))
+  else
+    return(ctg@cores)
+}
 
 
 #' @rdname catalog
@@ -145,6 +160,7 @@ cores = function(ctg) { return(ctg@cores) }
 `cores<-` = function(ctg, value)
 {
   sys.cores = future::availableCores()
+  value = as.integer(value)
 
   if(value > sys.cores) {
     message(paste0("Avaible cores: ", sys.cores, ". Number of cores set to ", sys.cores, "."))
@@ -153,7 +169,7 @@ cores = function(ctg) { return(ctg@cores) }
 
   if(value < 1) {
     message("Number of cores must be positive. Number of cores set to 1.")
-    value = 1
+    value = 1L
   }
 
   ctg@cores <- value
@@ -163,7 +179,13 @@ cores = function(ctg) { return(ctg@cores) }
 
 #' @rdname catalog
 #' @export
-by_file = function(ctg) { return(ctg@by_file) }
+by_file = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("by_file"))
+  else
+    return(ctg@by_file)
+}
 
 #' @rdname catalog
 #' @export
@@ -177,7 +199,13 @@ by_file = function(ctg) { return(ctg@by_file) }
 
 #' @rdname catalog
 #' @export
-buffer = function(ctg) { return(ctg@buffer) }
+buffer = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("buffer"))
+  else
+    return(ctg@buffer)
+}
 
 #' @rdname catalog
 #' @export
@@ -191,7 +219,13 @@ buffer = function(ctg) { return(ctg@buffer) }
 
 #' @rdname catalog
 #' @export
-progress = function(ctg) { return(ctg@progress) }
+progress = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("progress"))
+  else
+    return(ctg@progress)
+}
 
 #' @rdname catalog
 #' @export
@@ -205,7 +239,13 @@ progress = function(ctg) { return(ctg@progress) }
 
 #' @rdname catalog
 #' @export
-tiling_size = function(ctg) { return(ctg@tiling_size) }
+tiling_size = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(CATALOGOPTIONS("tiling_size"))
+  else
+    return(ctg@tiling_size)
+}
 
 #' @rdname catalog
 #' @export
@@ -217,6 +257,32 @@ tiling_size = function(ctg) { return(ctg@tiling_size) }
   return(ctg)
 }
 
+#' @rdname catalog
+#' @export
+vrt = function(ctg)
+{
+  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
+    return(tempdir())
+  else
+    return(ctg@vrt)
+}
+
+#' @rdname catalog
+#' @export
+`vrt<-` = function(ctg, value)
+{
+  stopifnot(is.character(value), length(value) == 1)
+  ctg@vrt <- value
+  ctg@opt_changed <- TRUE
+  return(ctg)
+}
+
+save_vrt = function(ctg)
+{
+  vrt(ctg) != ""
+}
+
+
 setMethod("show", "LAScatalog", function(object)
 {
   memsize <- format(utils::object.size(object), units = "auto")
@@ -225,11 +291,16 @@ setMethod("show", "LAScatalog", function(object)
   ext     <- extent(object)
 
   cat("class       : LAScatalog\n")
-  cat("memory      :", memsize, "\n")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("area        :", surface, "m\u00B2\n")
   cat("points      :", npoints, "points\n")
   cat("density     :", round(npoints/surface, 1), "points/m\u00B2\n")
   cat("num. files  :", dim(object@data)[1], "\n")
   cat("coord. ref. :", object@crs@projargs, "\n")
+  cat("Processing options: \n")
+  if (by_file(object)) cat(" - split the dataset using the original files as tiles\n")
+  else cat(" - split the dataset into", tiling_size(object), "x", tiling_size(object), "m tiles\n")
+  if (buffer(object) > 0) cat(" - each tile has a", buffer(object), "m buffer\n")
+  cat(" - processing done using", cores(object), "core(s) if possible.")
+
 })

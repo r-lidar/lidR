@@ -28,9 +28,9 @@
 catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
 {
   xmin <- ymin <- xmax <- ymax <- 0
-  buffer <- ctg@buffer
-  by_file <- ctg@by_file
-  size <- ctg@tiling_size
+  buffer <- buffer(ctg)
+  by_file <- by_file(ctg)
+  size <- tiling_size(ctg)
 
   if (by_file)
   {
@@ -90,6 +90,17 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   names   = paste0("ROI", 1:length(xcenter))
 
   clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+
+
+  if (save_vrt(ctg))
+  {
+    clusters <- lapply(clusters, function(x)
+    {
+      x@save <- paste0(vrt(ctg), "/tile-", x@bbox$xmin, "-", x@bbox$ymin, ".tiff")
+      return(x)
+    })
+  }
+
 
   if(plot)
   {

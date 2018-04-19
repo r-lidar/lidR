@@ -33,10 +33,10 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
-grid_canopy(las) \%>\% plot
+plot(grid_canopy(las))
 
 # Mean height with 400 m^2 cells
-grid_metrics(las, mean(Z)) \%>\% plot
+plot(grid_metrics(las, mean(Z)))
 
 # With multiple metrics
 metrics = grid_metrics(las, .stdmetrics_z)

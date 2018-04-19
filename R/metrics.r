@@ -66,31 +66,31 @@
 #' lidar = readLAS(LASfile, select = "*")
 #'
 #' # All the predefined functions
-#' lidar %>% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
-#'                                   ReturnNumber, Classification,
-#'                                   dz = 1))
+#' grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
 #'
 #' # Convenient shortcut
-#' lidar %>% grid_metrics(.stdmetrics)
+#' grid_metrics(lidar, .stdmetrics)
 #'
 #' # Basic metrics from intensities
-#' lidar %>% grid_metrics(stdmetrics_i(Intensity))
+#' grid_metrics(lidar, stdmetrics_i(Intensity))
 #'
 #' # All the metrics from intensities
-#' lidar %>% grid_metrics(stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+#' grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 #'
 #' # Convenient shortcut for the previous example
-#' lidar %>% grid_metrics(.stdmetrics_i)
+#' grid_metrics(lidar, .stdmetrics_i)
 #'
 #' # Compute the metrics only on first return
-#' lidar %>% lasfilterfirst %>% grid_metrics(.stdmetrics_z)
+#' first = lasfilterfirst(lidar)
+#' grid_metrics(first, .stdmetrics_z)
 #'
 #' # Compute the metrics with a threshold at 2 meters
-#' lidar %>% lasfilter(Z > 2) %>% grid_metrics(.stdmetrics_z)
+#' over2 = lasfilter(lidar, Z > 2)
+#' grid_metrics(over2, .stdmetrics_z)
 #'
 #' # Works also with lasmetrics and grid_hexametrics
-#' lidar %>% lasmetrics(.stdmetrics)
-#' lidar %>% grid_hexametrics(.stdmetrics)
+#' lasmetrics(lidar, .stdmetrics)
+#' grid_hexametrics(lidar, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -105,12 +105,12 @@
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' lidar %>% grid_metrics(myMetrics(Z, Intensity))
+#' grid_metrics(lidar, myMetrics(Z, Intensity))
 #'
-#' # You can write your own convenient shorcuts like this:
+#' # User can write your own convenient shorcuts like this:
 #' .myMetrics = expression(myMetrics(Z,Intensity))
 #'
-#' lidar %>% grid_metrics(.myMetrics)
+#' grid_metrics(lidar, .myMetrics)
 #' @seealso
 #' \link{grid_metrics}
 #' \link{lasmetrics}
@@ -227,14 +227,13 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 
 #' Normalized Shannon diversity index
 #'
-#' A normalized Shannon vertical complexity index
-#'
-#' The Shannon diversity index is a measure for quantifying diversity and is
-#' based on the number and frequency of species present. This index, developed by
-#' Shannon and Weaver for use in information theory, was successfully transferred
-#' to the description of species diversity in biological systems (Shannon 1948).
-#' Here it is applied to quantify the diversity and the evenness of an elevational distribution
-#' of LiDAR points. It makes bins between 0 and the maximum elevation.
+#' A normalized Shannon vertical complexity index. The Shannon diversity index is a measure for
+#' quantifying diversity and is based on the number and frequency of species present. This index,
+#' developed by Shannon and Weaver for use in information theory, was successfully transferred
+#' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
+#' to quantify the diversity and the evenness of an elevational distribution of LiDAR points. It
+#' makes bins between 0 and the maximum elevation. If there are negative value the function
+#' returns NA.
 #'
 #' @param z vector of positive z coordinates
 #' @param by numeric. The thickness of the layers used (height bin)
@@ -272,7 +271,7 @@ entropy = function(z, by = 1, zmax = NULL)
 		return(NA_real_)
 
   if(min(z) < 0)
-    stop("Entropy found negatives values. Returned NA.")
+    return(NA_real_)
 
 	# Define the x meters bins from 0 to zmax (rounded to the next integer)
 	bk = seq(0, ceiling(zmax/by)*by, by)

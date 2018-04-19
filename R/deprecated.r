@@ -1,18 +1,16 @@
-# Deprecated function(s) in the lidR package
-#
-# These functions are provided for compatibility with older version of
-# the lidR package.  They may eventually be completely
-# removed.
-# @rdname lidR-deprecated
-# @name lidR-deprecated
-# @param ... Parameters to be passed to the modern version of the function
-# @docType package
-# @section Details:
-# \itemize{
-# \item{\code{\link{lasmetrics}} replace old \code{cloud_metrics}}
-# \item{\code{\link{area}} replace old \code{lasarea}}
-# }
-#
+#' Deprecated function(s) in the lidR package
+#'
+#' These functions are provided for compatibility with older version of
+#' the lidR package.  They may eventually be completely
+#' removed.
+#' @rdname lidR-deprecated
+#' @name lidR-deprecated
+#' @param ... Parameters to be passed to the modern version of the function
+#' @docType package
+lasdecimate <- function(...) {
+  .Deprecated("lasfilterdecimate")
+  lasfilterdecimate(...)
+}
 
 bool = function() { settings::inlist(TRUE, FALSE) }
 
@@ -24,6 +22,7 @@ CATALOGOPTIONS <- settings::options_manager(
   progress = TRUE,
   memory_limit_warning = 5e8,
   tiling_size = 1000,
+  global_changed = FALSE,
 
   .allowed = list(
     return_virtual_raster  = bool(),
@@ -32,7 +31,8 @@ CATALOGOPTIONS <- settings::options_manager(
     multicore = settings::inrange(1, Inf),
     progress = bool(),
     memory_limit_warning = settings::inrange(0, Inf),
-    tiling_size = settings::inrange(0, Inf)
+    tiling_size = settings::inrange(0, Inf),
+    global_changed = bool()
   )
 )
 
@@ -72,19 +72,21 @@ CATALOGOPTIONS <- settings::options_manager(
 #'  }
 #'
 #' @examples
+#' \dontrun{
 #' catalog_options(multicore = 2)
 #' catalog_options(buffer = 40)
 #' catalog_options()
 #'
 #' # Reset default options
 #' catalog_reset()
+#' }
 #' @export
 catalog_options <- function(...)
 {
   .Deprecated("lasarea", package="lidR", "'catalog_options' is deprecated and will be removed in version 1.7. Use catalog properties instead. See help('catalog') and help('LAScatalog-class')")
-  catalog_option_comptibility_global_changed <<- TRUE
   settings::stop_if_reserved(...)
   CATALOGOPTIONS(...)
+  CATALOGOPTIONS(global_changed = TRUE)
 }
 
 #' @export

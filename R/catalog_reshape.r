@@ -62,17 +62,8 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   by_file(ctg) <- FALSE
   tiling_size(ctg) <- size
 
-  ncores   <- ctg@cores
-  progress <- ctg@progress
-
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
-  {
-    progress  <- CATALOGOPTIONS("progress")
-    ncores    <- CATALOGOPTIONS("multicore")
-  }
-
-  if (!ctg@opt_changed & catalog_option_comptibility_global_changed)
-    ncores <- CATALOGOPTIONS("multicore")
+  ncores   <- cores(ctg)
+  progress <- progress(ctg)
 
   # Create a pattern of clusters to be sequentially processed
   clusters <- catalog_makecluster(ctg, 1)
@@ -98,18 +89,11 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
-
-  output = list()
+  future::plan(future::multiprocess, workers = ncores)
 
   for(i in seq_along(clusters))
   {
-    cluster = clusters[[i]]
-
-    output[[i]] <- future::future({ reshape_func(cluster, path, prefix, ext) })
+    future::future({ reshape_func(clusters[[i]], path, prefix, ext) }, earlySignal = TRUE)
 
     if(progress)
     {

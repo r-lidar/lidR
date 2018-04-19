@@ -36,7 +36,7 @@ using namespace Rcpp;
 // @param size the number of triangle in original dataset
 // @return n x 6 matrix with 3 coord of normal vector, intercept, area, projected area, max edge size
 // [[Rcpp::export]]
-NumericMatrix tinfo(IntegerMatrix M, NumericMatrix X)
+NumericMatrix C_tinfo(IntegerMatrix M, NumericMatrix X)
 {
   NumericMatrix N(M.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);

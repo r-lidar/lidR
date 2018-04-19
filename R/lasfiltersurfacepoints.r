@@ -10,7 +10,8 @@
 #'
 #' @param las A LAS object
 #' @param res numeric. The resolution of the grid used to filter the point cloud
-#'
+#' @param smooth numeric. Smooth the output point cloud using a moving average windows at the point
+#' level. This is the size of the moving windows. Default = 0 i.e. no smothing.
 #' @return A LAS object
 #' @export
 #' @family lasfilters
@@ -19,19 +20,14 @@
 #' las = readLAS(LASfile)
 #' subset = lasfiltersurfacepoints(las, 2)
 #' plot(subset)
-lasfiltersurfacepoints = function(las, res)
+lasfiltersurfacepoints = function(las, res, smooth = 0)
 {
-  f = function(z, id) {
-    i = which.max(z)
-    return(list(id = id[i]))
-  }
+  Z <- NULL
+  by  = group_grid(las@data$X, las@data$Y, res)
+  sub = las@data[las@data[, .I[which.max(Z)], by = by]$V1]
 
-  npoints = nrow(las@data)
-  las@data[, pointID := 1:npoints]
-  by = group_grid(las@data$X, las@data$Y, res)
-  keep = las@data[, f(Z, pointID), by = by][, Xgrid := NULL][, Ygrid := NULL][]
-  cloud = las@data[keep$id]
-  las@data[, pointID := NULL]
-
-  return(LAS(cloud, las@header))
+  las = LAS(sub, las@header)
+  Zsmoothed = C_lassmooth(las, smooth)
+  las@data[, Z := Zsmoothed]
+  return(las)
 }

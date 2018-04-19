@@ -25,7 +25,6 @@ a rectangle with the mouse
 \dontrun{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
-
 subset = lasroi(lidar)
 }
 }

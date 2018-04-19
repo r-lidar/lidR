@@ -70,19 +70,19 @@
 #'
 #' # Negation of data is also available (all but intensity and angle)
 #' las = readLAS(LASfile, select = "* -i -a")
-readLAS = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS = function(files, select = "*", filter = "")
 {
   UseMethod("readLAS", files)
 }
 
 #' @export
-readLAS.LAScatalog = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
   return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
-readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.LAScluster = function(files, select = "*", filter = "")
 {
   buffer <- X <- Y <- NULL
 
@@ -123,7 +123,7 @@ readLAS.LAScluster = function(files, select = "xyztinrcaRGBP", filter = "")
 
 
 #' @export
-readLAS.character = function(files, select = "xyztinrcaRGBP", filter = "")
+readLAS.character = function(files, select = "*", filter = "")
 {
   ofile = ""
   return(streamLAS(files, ofile, select, filter))
@@ -193,11 +193,11 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
 
   # If filter is used, header will not be in accordance with the data. Hard check is useless
   if (nchar(filter) > 0 | length(ifiles) > 1)
-    lascheck(data, header, hard = F)
+    rlas::check_data_vs_header(header, data, hard = FALSE)
   else
-    lascheck(data, header, hard = T)
+    rlas::check_data_vs_header(header, data, hard = TRUE)
 
-  las <- LAS(data, header, check = F)
+  las <- LAS(data, header, check = FALSE)
 
   if (P)  laspulse(las)
   if (Fl) lasflightline(las, 30)
@@ -206,4 +206,4 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   return(las)
 }
 
-`%is_in%` <- function(char, str) !is.na(stringr::str_match(str, char)[1,1])
+`%is_in%` <- function(char, str) grepl(char, str)

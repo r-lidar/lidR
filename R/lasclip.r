@@ -29,10 +29,11 @@
 
 #' Clip LiDAR points
 #'
-#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries
+#' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
 #'
 #' @param x An object of class \code{LAS} or \code{LAScatalog}.
-#' @param geometry a geometric object. Currently \code{Polygon} from \code{sp} is supported.
+#' @param geometry a geometric object. Currently \code{Polygon} and \code{SpatialPolygonsDataFrame}
+#' from \code{sp} are supported.
 #' @param xleft scalar of left x position of rectangle.
 #' @param ybottom	scalar of bottom y position of rectangle.
 #' @param xright scalar of right x position of rectangle.
@@ -42,11 +43,16 @@
 #' @param xcenter scalar of x disc center.
 #' @param ycenter scalar of y disc center.
 #' @param radius scalar of disc radius.
-#' @param ofile character. Path to an output file (only with a \code{LAScatalog}).
+#' @param ofile character. Path to an output file (only with a \code{LAScatalog} object).
 #' If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
 #' file while reading. This is much more memory efficient than loading into R first, then writing.
+#' @param inside logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
+#' the shape.
+#' @param ... Additionnal argument for readLAS to reduce the number of data loaded (only with a
+#' \code{LAScatalog} object)
 #' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
+#' # Load the file and clip
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
@@ -54,18 +60,25 @@
 #' @name lasclip
 #' @export
 #' @export
-lasclip = function(x, geometry, ofile = "")
+lasclip = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclip", x)
 }
 
 #' @export
-lasclip.LAS = function(x, geometry, ofile = "")
+lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   if (is(geometry, "Polygon"))
   {
-     las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2])
+     las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], inside = inside)
      return(las)
+  }
+  else if (is(geometry, "SpatialPolygonsDataFrame"))
+  {
+    id = classify_from_shapefile(x, geometry)
+    X = split(x@data, id)
+    X = lapply(X, LAS, header = las@header)
+    return(X)
   }
   else
   {
@@ -74,11 +87,11 @@ lasclip.LAS = function(x, geometry, ofile = "")
 }
 
 #' @export
-lasclip.LAScatalog = function(x, geometry, ofile = "")
+lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
   if (is(geometry, "Polygon"))
   {
-    las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile = "")
+    las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile, inside)
     return(las)
   }
   else
@@ -93,22 +106,76 @@ lasclip.LAScatalog = function(x, geometry, ofile = "")
 
 #' @export
 #' @rdname lasclip
-lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "")
+lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipRectangle", x)
 }
 
 #' @export
-lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "")
+lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
-  return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop)))
+
+  l1 = length(xleft)
+  l2 = length(ybottom)
+  l3 = length(xright)
+  l4 = length(ytop)
+
+  stopifnot(is.character(ofile), is.logical(inside))
+
+  if (l1 != l2 | l1 != l3 | l1 != l4)
+    stop("Different input lenghts.")
+
+  if (l1 == 1)
+  {
+    if (inside)
+      return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop)))
+    else
+      return(lasfilter(x, !(between(X, xleft, xright) & between(Y, ybottom, ytop))))
+  }
+  else
+  {
+    output = vector(mode = "list", l1)
+    for (i in 1:l1)
+    {
+      if (inside)
+        output[[i]] = lasfilter(x, between(X, xleft[i], xright[i]), between(Y, ybottom[i], ytop[i]))
+      else
+        output[[i]] = lasfilter(x, !(between(X, xleft[i], xright[i]) & between(Y, ybottom[i], ytop[i])))
+    }
+
+    return(output)
+  }
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "")
+lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
-  return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile))
+  if (!inside)
+    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+
+  l1 = length(xleft)
+  l2 = length(ybottom)
+  l3 = length(xright)
+  l4 = length(ytop)
+
+  stopifnot(is.character(ofile))
+
+  if (l1 != l2 | l1 != l3 | l1 != l4)
+    stop("Different input lenghts.")
+
+  if (l1 == 1)
+  {
+    return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile, ...))
+  }
+  else
+  {
+    xcenter = (xleft + xright)/2
+    ycenter = (ybottom + ytop)/2
+    width   = (xright - xleft)/2
+    height  = (ytop - ybottom)/2
+    return(catalog_queries(x, xcenter, ycenter, width, height, ...))
+  }
 }
 
 # ========
@@ -117,22 +184,37 @@ lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = 
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(x, xpoly, ypoly, ofile = "")
+lasclipPolygon = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipPolygon", x)
 }
 
 #' @export
-lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "")
+lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
-  return(lasfilter(x, points_in_polygon(xpoly,ypoly, X, Y)))
+
+  l1 = length(xpoly)
+  l2 = length(ypoly)
+
+  stopifnot(is.logical(inside))
+
+  if (l1 != l2)
+    stop("Different input lenghts.")
+
+  if( inside)
+    return(lasfilter(x, C_points_in_polygon(xpoly,ypoly, X, Y)))
+  else
+    return(lasfilter(x, !C_points_in_polygon(xpoly,ypoly, X, Y)))
 }
 
 #' @export
-lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "")
+lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
-  return(catalog_clip_poly(x, xpoly, ypoly, ofile))
+  if (!inside)
+    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+
+  return(catalog_clip_poly(x, xpoly, ypoly, ofile, ...))
 }
 
 # ========
@@ -141,22 +223,66 @@ lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "")
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "")
+lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
   UseMethod("lasclipCircle", x)
 }
 
 #' @export
-lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "")
+lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
   X <- Y <- NULL
-  return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+
+  l1 = length(xcenter)
+  l2 = length(ycenter)
+  l3 = length(radius)
+
+  stopifnot(is.logical(inside))
+
+  if (l1 != l2 | l1 != l3)
+    stop("Different input lenghts.")
+
+  if (l1 == 1)
+  {
+    if (inside)
+      return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
+    else
+      return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 > radius^2))
+  }
+  else
+  {
+    output = vector(mode = "list", l1)
+    for (i in 1:l1)
+    {
+      if (inside)
+        output[[i]] = lasfilter(x, (X-xcenter[i])^2 + (Y-ycenter[i])^2 <= radius[i]^2)
+      else
+        output[[i]] = lasfilter(x, (X-xcenter[i])^2 + (Y-ycenter[i])^2 > radius[i]^2)
+    }
+
+    return(output)
+  }
 }
 
 #' @export
 #' @export
-lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "")
+lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
-  return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile))
+  if (!inside)
+    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+
+  l1 = length(xcenter)
+  l2 = length(ycenter)
+  l3 = length(radius)
+
+  stopifnot(is.character(ofile))
+
+  if (l1 != l2 | l1 != l3)
+    stop("Different input lenghts.")
+
+  if (l1 == 1)
+    return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile, ...))
+  else
+    return(catalog_queries(x, xcenter, ycenter, radius, ...))
 }
 
