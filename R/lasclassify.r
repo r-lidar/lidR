@@ -168,20 +168,20 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
     # for multi-part polygon. Here we need to retrieve the real IDs of each polygon
     # before reducing to 1 level of depth
     i = 0
-    lengths = unlist(lapply(xcoords, length))
-    idpolys = unlist(lapply(lengths, function(x){i <<- i + 1 ; rep.int(i,x)}))
+    lengths = lapply(xcoords, length)  %>%  unlist
+    idpolys = lapply(lengths, function(x){i <<- i + 1 ; rep.int(i,x)}) %>% unlist
 
     # Make the lists 1 level depth
-    xcoords = unlist(xcoords, recursive = FALSE)
-    ycoords = unlist(ycoords, recursive = FALSE)
+    xcoords %<>% unlist(recursive = FALSE)
+    ycoords %<>% unlist(recursive = FALSE)
 
-    is_hole = unlist(is_hole)
+    is_hole %<>% unlist()
     is_hole = c(FALSE, is_hole)
 
     # Return the id of each polygon
     verbose("Testing whether points fall in a given polygon...")
 
-    ids = C_points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
+    ids = points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
 
     if (method == 1)
     {

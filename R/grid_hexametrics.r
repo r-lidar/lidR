@@ -47,12 +47,10 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Maximum elevation with a resolution of 4 m
-#' hm = grid_hexametrics(lidar, max(Z), 4)
-#' plot(hm)
+#' grid_hexametrics(lidar, max(Z), 4) %>% plot
 #'
 #' # Mean height with a resolution of 20 m
-#' hm = grid_hexametrics(lidar, mean(Z))
-#' plot(hm)
+#' grid_hexametrics(lidar, mean(Z)) %>% plot
 #'
 #' # Define your own new metrics
 #' myMetrics = function(z, i)

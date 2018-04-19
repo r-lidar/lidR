@@ -1,18 +1,10 @@
 lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 {
-  . <- NULL
-
   if (is(call, "name"))
     call = eval(call)
 
   if (LIDROPTIONS("debug"))
-  {
-    output = with(.las@data, eval(call))
-    .debug_metrics(output, call)
-  }
-
-  if (is(res, "RasterLayer"))
-    by = "RASTER"
+    .las@data %$% eval(call) %>% .debug_metrics(call)
 
   if(by %in% c("XY", "XYZ", "HEXA"))
   {
@@ -46,7 +38,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     if (!requireNamespace("hexbin", quietly = TRUE))
       stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
 
-    res = round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
+    res = ((2*res*res)/(3*sqrt(3))) %>% sqrt %>% round(2)
 
     ext = extent(.las)
     xmin = round_any(ext@xmin, res)
@@ -62,6 +54,8 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     dx = (xmax - xmin)
     dy = (ymax - ymin)
 
+
+
     xbins = (xmax - xmin)/(2*res)
 
     hbin_data  = hexbin::hexbin(.las@data$X, .las@data$Y, shape = dy/dx,  xbins = xbins, xbnds = c(xmin, xmax), IDs = TRUE)
@@ -74,7 +68,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 
     by = list(Xr = hbin_coord$x[hbin_pos_ids], Yr = hbin_coord$y[hbin_pos_ids])
   }
-  # Aggregation by trees (tree_metrics)
+  # Aggregation on hexagonal cells (grid_hexametrics)
   else if (by == "TREE")
   {
     if(! "treeID" %in% names(.las@data))
@@ -84,25 +78,6 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
 
     by = .las@data$treeID
   }
-  else if (by == "RASTER")
-  {
-    raster = res
-    res = raster::res(raster)
-
-    if (res[1] !=  res[2])
-      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
-
-    res = res[1]
-
-    cells = raster::cellFromXY(raster, .las@data[, .(X,Y), with = TRUE])
-    values = suppressWarnings(raster[cells])
-    X = raster::xFromCell(raster, cells)
-    Y = raster::yFromCell(raster, cells)
-    X[is.na(values)] = NA
-    Y[is.na(values)] = NA
-    by = list(Xgrid = X, Ygrid = Y)
-    ._class = "lasmetrics"
-  }
 
   # split flightlines option is alway possible but wrapper functions (the exported one) can
   # restrain possibilities
@@ -111,7 +86,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
   else if(splitlines & !"flightlineID" %in% names(.las@data))
     lidRError("LDR7")
 
-  stat <- .las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
+  stat <- .las@data[, c(eval(call)), by = by]
 
   n = names(stat)
   n[1:length(colnames)] = colnames

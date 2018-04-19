@@ -34,3 +34,6 @@ lidr_options()
 # Reset default options
 lidr_reset()
 }
+\seealso{
+\link{catalog_options}
+}

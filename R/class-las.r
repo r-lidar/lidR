@@ -70,6 +70,7 @@
 #' @name LAS-class
 #' @rdname LAS-class
 #' @import data.table
+#' @import magrittr
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
@@ -90,35 +91,148 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
     data.table::setDT(data)
 
   if(!is.data.table(data))
-    stop("Invalid parameter data in constructor.", call. = FALSE)
+    lidRError("LDR1")
 
   if(nrow(data) == 0)
-    stop("'data' is empty. No point found.", call. = FALSE)
+    lidRError("LDR9")
 
-  if (is(header, "LASheader"))
-    header = as.list(header)
+  if(!is(header, "LASheader"))
+    header = LASheader(header)
 
-  if(is.list(header))
-  {
-    if (length(header) == 0)
-    {
-      header = rlas::header_create(data)
-      check = FALSE
-    }
-  }
-  else
-    stop("Wrong header object provided.", call. = FALSE)
+  # Check if the data are valid. Else: warning -------------------------------
 
   if(check)
+    lascheck(data, header, hard = F)
+
+  # Update header ------------------------------------------------------------
+
+  if("ReturnNumber" %in% names(data))
   {
-    #lascheck(data, header, hard = F)
-    rlas::check_header(header)
-    rlas::check_data(data)
-    rlas::check_data_vs_header(header, data, hard = F)
+    number_of <- fast_table(data$ReturnNumber, 5L)
+
+    header@PHB["Number of 1st return"] <- number_of[1]
+    header@PHB["Number of 2nd return"] <- number_of[2]
+    header@PHB["Number of 3rd return"] <- number_of[3]
+    header@PHB["Number of 4th return"] <- number_of[4]
+    header@PHB["Number of 5th return"] <- number_of[5]
   }
 
-  header = rlas::header_update(header, data)
-  header = LASheader(header)
+  header@PHB["Number of point records"] <- dim(data)[1]
+  header@PHB["Min X"] <- min(data$X)
+  header@PHB["Min Y"] <- min(data$Y)
+  header@PHB["Min Z"] <- min(data$Z)
+  header@PHB["Max X"] <- max(data$X)
+  header@PHB["Max Y"] <- max(data$Y)
+  header@PHB["Max Z"] <- max(data$Z)
+
+  header@PHB["File Signature"] = "LASF"
+  header@PHB["File Creation Day of Year"] <- strftime(Sys.time(), format = "%j") %>% as.numeric
+  header@PHB["File Creation Year"] <- strftime(Sys.time(), format = "%Y") %>% as.numeric
+
+  if("gpstime" %in% names(data)) # format 1 or 3
+  {
+    if(any(c("R", "G", "B") %in% names(data)))
+    {
+      header@PHB["Point Data Format ID"] = 3
+      header@PHB["Point Data Record Length"] = 34
+    }
+    else
+    {
+      header@PHB["Point Data Format ID"] = 1
+      header@PHB["Point Data Record Length"] = 28
+    }
+  }
+  else # format 0 or 2
+  {
+    if(any(c("R", "G", "B") %in% names(data)))
+    {
+      header@PHB["Point Data Format ID"] = 2
+      header@PHB["Point Data Record Length"] = 26
+    }
+    else
+    {
+      header@PHB["Point Data Format ID"] = 0
+      header@PHB["Point Data Record Length"] = 20
+    }
+  }
+
+  if(is.null(header@PHB[["Version Major"]]))
+    header@PHB["Version Major"] = 1
+
+  if(is.null(header@PHB[["Version Minor"]]))
+    header@PHB["Version Minor"] = 2
+
+  if(is.null(header@PHB[["X offset"]]) & is.null(header@PHB[["Y offset"]]) & is.null(header@PHB[["Z offset"]]))
+  {
+    header@PHB["X offset"] = header@PHB[["Min X"]]
+    header@PHB["Y offset"] = header@PHB[["Min Y"]]
+    header@PHB["Z offset"] = header@PHB[["Min Z"]]
+    num = c(header@PHB[["Min X"]], header@PHB[["Min Y"]], header@PHB[["Min Z"]])
+    lidRError("LDR12", what = "X Y and Z offsets", num = round(num,2), behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["X scale factor"]]) & is.null(header@PHB[["Y scale factor"]]) & is.null(header@PHB[["Z scale factor"]]))
+  {
+    header@PHB["X scale factor"] = 0.01
+    header@PHB["Y scale factor"] = 0.01
+    header@PHB["Z scale factor"] = 0.01
+    lidRError("LDR12", what = "X Y and Z scale factors", num = rep(0.01,3), behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["X offset"]])) {
+    header@PHB["X offset"] = header@PHB[["Min X"]]
+    lidRError("LDR11", what = "X offset", num = round(header@PHB[["Min X"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["Y offset"]])) {
+    header@PHB["Y offset"] = header@PHB[["Min Y"]]
+    lidRError("LDR11", what = "Y offset", num = round(header@PHB[["Min Y"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["Z offset"]])) {
+    header@PHB["Z offset"] = header@PHB[["Min Z"]]
+    lidRError("LDR11", what = "Z offset", num = round(header@PHB[["Min Z"]],2), behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["X scale factor"]])) {
+    header@PHB["X scale factor"] = 0.01
+    lidRError("LDR11", what = "X scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["Y scale factor"]])) {
+    header@PHB["Y scale factor"] = 0.01
+    lidRError("LDR11", what = "Y scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["Z scale factor"]])) {
+    header@PHB["Z scale factor"] = 0.01
+    lidRError("LDR11", what = "Z scale factor", num = 0.01, behaviour = warning)
+  }
+
+  if(is.null(header@PHB[["File Source ID"]]))
+    header@PHB["File Source ID"] = 0
+
+  if(is.null(header@PHB[["System Identifier"]]))
+    header@PHB["System Identifier"] = "lidR"
+
+  if(is.null(header@PHB[["Generating Software"]]))
+    header@PHB["Generating Software"] = paste("lidR", utils::packageVersion("lidR"))
+
+  if(is.null(header@PHB[["Header Size"]]))
+    header@PHB["Header Size"] = 227
+
+  if(is.null(header@PHB[["Offset to point data"]]))
+    header@PHB["Offset to point data"] = 227
+
+  if(is.null(header@PHB[["Project ID - GUID"]]))
+    header@PHB["Project ID - GUID"] = 0
+
+  if(is.null(header@PHB[["Global Encoding"]]))
+    header@PHB["Global Encoding"] = 0
+
+  header@PHB["Number of variable length records"] = length(header@PHB[["Variable Length Records"]])
+
+  # Build returned object  ---------------------------------------------------
 
   .Object@data   <- data
   .Object@header <- header

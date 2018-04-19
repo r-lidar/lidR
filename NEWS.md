@@ -1,33 +1,3 @@
-## lidR v1.5.0 (In developpment)
-
-#### SIGNIFICANT CHANGES
-
-* `catalog_options()` is formally deprecated. Use `LAScatalog` properties instead (see `?catalog`)
-* The package `magrittr` is no longer loaded with `lidR`. Thus piping operators are no longer usable by default. To use piping operators use `library(magrittr)`
-
-#### NEW FEATURES
-
-* New `lasfiltersurfacepoints` function to filter surface points.
-* New function `grid_catalog` is a simplified and more powerful function like `catalog_apply` but specifically dedicated to raster-alike outputs.
-This is an internal function now exported to the users.
-* New functions `lasadddata`, `lasaddextrabyte` and `lasaddextrabyte_manual` to add new data in a `LAS` object
-* `lasclip` can clip `SpatialPolygonsDataFrame`
-* `lasclipRectangle` and `lasclipCircle` can clip multiple selection (non documented beta feature)
-* The `treeID` computed with `lastrees_*` functions can know be written in a `las/laz` file by default
-
-#### OTHER CHANGES
-
-* `LAScatalog` are processed with a single core by default.
-* `lasdecimate` is formally deprecated. Use `lasfilterdecimate`
-* `grid_density` now return both the point and the pulse density if possible
-* The option `P` is no longer set by default in `readLAS`
-* The documentation of `lastrees` has been split in several pages
-* When a catalog is processed using several cores, if an error is raise the process trigger an early signal to stop the loop. In previous releases the entiere process was run and the error was raised at the end when the futures were evaluated.
-
-#### BUG FIXES
-
-* Fix clash between function `area` from `lidR` and from `raster`
-
 ## lidR v1.4.2 (In developpment)
 
 #### BUG FIXES

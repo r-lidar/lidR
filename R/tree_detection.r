@@ -53,7 +53,7 @@
 #' ttops = tree_detection(las, 5)
 #'
 #' plot(las)
-#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' ttops %$% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
 #'
 #' # raster-based method
 #'

@@ -32,9 +32,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-void C_lasupdateheader(S4 las, S4 new_header)
+void update_list_by_ref(Rcpp::List x, CharacterVector name, double value)
 {
-  S4 header = las.slot("header");
-  header.slot("PHB") = new_header.slot("PHB");
-  header.slot("VLR") = new_header.slot("VLR");
+  x[name] = value;
 }
