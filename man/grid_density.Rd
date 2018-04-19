@@ -21,15 +21,16 @@ Returns a \code{data.table} of class \code{lasmetrics} which enables easier
 plotting and RasterLayer casting.
 }
 \description{
-Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
-density.
+Creates a pulse density map using a LiDAR point cloud. This function is an alias
+for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
 }
 \section{Use with a \code{LAScatalog}}{
 
 When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+the entire dataset in a continuous way using a multicore process. Parallel computing is set
+by default to the number of core available in the computer. The user can modify the global
+options using the function \link{catalog_options}.\cr\cr
+\code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
 spatial index.
 }
 
@@ -37,10 +38,8 @@ spatial index.
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-d = grid_density(lidar, 5)
-plot(d)
-d = grid_density(lidar, 10)
-plot(d)
+lidar \%>\% grid_density(5) \%>\% plot
+lidar \%>\% grid_density(10) \%>\% plot
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}

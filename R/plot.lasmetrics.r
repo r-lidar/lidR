@@ -47,10 +47,10 @@
 #' las = readLAS(LASfile)
 #'
 #' # Canopy surface model with 4 m^2 cells
-#' plot(grid_canopy(las))
+#' grid_canopy(las) %>% plot
 #'
 #' # Mean height with 400 m^2 cells
-#' plot(grid_metrics(las, mean(Z)))
+#' grid_metrics(las, mean(Z)) %>% plot
 #'
 #' # With multiple metrics
 #' metrics = grid_metrics(las, .stdmetrics_z)

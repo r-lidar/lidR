@@ -55,7 +55,7 @@ buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
 \section{Multicore computation}{
 
 The process is done using several cores. To change the settings of how a catalog is processed
-use \link{cores}.
+use \link{catalog_options}.
 }
 
 \examples{
@@ -69,22 +69,23 @@ Y = runif(30, 5010000, 5020000)
 R = 25
 
 # Return a List of 30 circular LAS objects of 25 m radius
-catalog_queries(catalog, X, Y, R)
+catalog \%>\% catalog_queries(X, Y, R)
 
 # Return a List of 30 square LAS objects of 50x50 m
-catalog_queries(catalog, X, Y, R, R)
+catalog \%>\% catalog_queries(X, Y, R, R)
 
 # Return a List of 30 circular LAS objects of 30 m radius. 25 m being the ROI and 5 m
 # being a buffered area. The LAS objects have an extra column called 'buffer' to
 # differentiate the points.
-catalog_queries(catalog, X, Y, R, buffer = 5)
+catalog \%>\% catalog_queries(X, Y, R, buffer = 5)
 
 # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
 # Z have been loaded and Z values < 0 were removed.
-catalog_queries(catalog, X, Y, R, select = "xyz", filter = "-drop_z_below 0")
+catalog \%>\% catalog_queries(X, Y, R, XYZonly = TRUE, filter = "-drop_z_below 0")
 }
 }
 \seealso{
 \link{readLAS}
 \link{catalog}
+\link{catalog_options}
 }

@@ -2,17 +2,21 @@ context("lasdecimate")
 
 las = lidR:::dummy_las(100)
 
+test_that("lasdecimate returns an error if pulseID not found", {
+  expect_error(lasdecimate(las, density = 0.5, res = 5))
+})
+
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 
 test_that("lasdecimate homogenize works", {
-  lasdec = lasfilterdecimate(las, density = 0.5, res = 5)
+  lasdec = lasdecimate(las, density = 0.5, res = 5)
   xdec = grid_density(lasdec, res = 5)
 
-  expect_true(data.table::between(median(xdec$point_density), 0.5-sd(xdec$point_density), 0.5+sd(xdec$point_density) ))
+  expect_true(between(median(xdec$density), 0.5-sd(xdec$density), 0.5+sd(xdec$density) ))
 
-  lasdec = lasfilterdecimate(las, density = 0.8, res = 4)
+  lasdec = lasdecimate(las, density = 0.8, res = 4)
   xdec = grid_density(lasdec, res = 5)
 
-  expect_true(data.table::between(median(xdec$point_density), 0.8-sd(xdec$point_density), 0.8+sd(xdec$point_density) ))
+  expect_true(between(median(xdec$density), 0.8-sd(xdec$density), 0.8+sd(xdec$density) ))
 })
