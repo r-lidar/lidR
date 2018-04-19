@@ -1,13 +1,13 @@
 #' Individual tree segmentation
 #'
 #' Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method replace
-#' the former algorithm being a slignly closer implementation of the original paper. This method is a
-#' growing region method working at the point cloud level. It is an implementation (as strict as possible)
-#' of the Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of
-#' a parameter \code{hmin} to stop the over-segmentation for objects that are too low. The classification
-#' is done at the point cloud level and the function always returns nothing (NULL). The original
-#' point cloud is updated in place with an ID for each point in a new column \code{treeID}. The user
-#' is free to post-process this output the way he want.
+#' the \link[lidR:lastrees_li]{former algorithm} being a slignly closer implementation of the original paper.
+#' This method is a growing region method working at the point cloud level. It is an implementation
+#' (as strict as possible) of the Li et al. 2012 (see references) algorithm made by the \code{lidR}
+#' author but with the addition of a parameter \code{hmin} to stop the over-segmentation for objects
+#' that are too low. The classification is done at the point cloud level and the function always
+#' returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
+#' a new column \code{treeID}. The user is free to post-process this output the way he want.
 #'
 #' @param las An object of the class \code{LAS}.
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.
