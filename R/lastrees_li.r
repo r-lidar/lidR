@@ -1,7 +1,7 @@
 #' Individual tree segmentation (deprecated)
 #'
 #' Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method is deprecated.
-#' Use \link{lastree_li2} instead which is a slighly closer implementation of the original paper.
+#' Use \link{lastrees_li2} instead which is a slighly closer implementation of the original paper.
 #'
 #' This is a growing region method working at the point cloud level. It is an implementation of the
 #' Li et al. 2012 (see references) algorithm made by the \code{lidR} author but with the addition of

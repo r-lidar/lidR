@@ -32,7 +32,7 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
 # Li 2012
-lastrees(las, "li2012", R = 5)
+lastrees(las, "li2012-2", R = 3, speed_up = 5)
 plot(las, color = "treeID", colorPalette = col)
 }
 \seealso{

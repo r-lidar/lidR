@@ -28,7 +28,7 @@ has a new column named \code{treeID} containing an ID for each point that refer 
 }
 \description{
 Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method is deprecated.
-Use \link{lastree_li2} instead which is a slighly closer implementation of the original paper.
+Use \link{lastrees_li2} instead which is a slighly closer implementation of the original paper.
 }
 \details{
 This is a growing region method working at the point cloud level. It is an implementation of the
