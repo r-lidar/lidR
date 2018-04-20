@@ -123,7 +123,7 @@ catalog <- function(folder, ...)
 
   verbose("Reading files...")
 
-  header <- LASheader(rlas::readlasheader(files[1]))
+  header <- LASheader(rlas::read.lasheader(files[1]))
   crs <- epsg2proj(get_epsg(header))
 
   headers <- lapply(files, function(x)
