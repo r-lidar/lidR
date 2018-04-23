@@ -1,17 +1,40 @@
-library(Rcpp)
-library(lidR)
-
-#Loading .laz file
-las=readLAS("/home/jasmin/Documents/StageCanada/Docs/MixedConifer.laz", select = "xyz")
-
-Rcpp::sourceCpp("src/C_lastree_hamraz.cpp")
-
-lastrees_hamraz = function( las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6, MDCW = 1.5,
+#' Individual tree segmentation
+#'
+#'
+#' @param las A LAS object
+#' @param nps nominal point spacing (page 533 in "2.Tree segmentation approach")
+#' @param th minimal tree height to take into account (page 534)
+#' @param R maximum horizontal distance of vertical profiles (page 535)
+#' @param SENSITIVITY for inter tree gap identification ( multiplied by interquartile range from the third quartile) (p535)
+#' @param MDCW minimum detectable crown width (page 534)
+#' @param epsilon small deviation from vertical (page 535)
+#' @param CLc crown ratio of a narrow cone-shaped crown (page 535)
+#' @param Oc crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand(page 535)
+#' @param CLs crown ratio of a sphere-shaped crown (page 535)
+#' @param Os crown radius reduction due to the overlap within a dense stand for the sphere- shaped tree (page 535)
+#' @param angleRefCone (page 536 - first sentence)
+#' @param angleRefSphere (page 536 - first sentence)
+#'
+#' @return
+#' A LAS object
+#' @export
+#'
+#' @examples
+#'LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#'las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#'col = pastel.colors(200)
+#'
+#'tree = lastrees_hamraz(las)
+#'
+#'plot(tree, color = "treeID", colorPalette = pastel.colors(200))
+lastrees_hamraz = function(las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6, MDCW = 1.5,
                             epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3,
                             angleRefCone = 90, angleRefSphere = 32.7 )
   {
   #TODO: find limit value + addition into argument list
   minimalNumberOfPointsForTree = 100
+
+  las@data$pointID = 1:nrow(las@data)
 
   #1 - Extraction of points with maximum Z for each grid cell
   LSP = lasfiltersurfacepoints(las, nps)
@@ -75,14 +98,14 @@ lastrees_hamraz = function( las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6,
 
 
 #----------------------------------------------------------------------------------------#
-#' Search for maximal Z-value
-#' This function returns the maximal point of a given point cloud regarding its Z-value.
-#' @param cloud Data from LAS object
-#'
-#' @return A line of this data corresponding to a point
-#' @export
-#'
-#' @examples
+# Search for maximal Z-value
+# This function returns the maximal point of a given point cloud regarding its Z-value.
+# @param cloud Data from LAS object
+#
+# @return A line of this data corresponding to a point
+# @export
+#
+# @examples
 find_global_maxima = function( cloud )
 {
   i = which.max(cloud$Z)
@@ -94,16 +117,16 @@ find_global_maxima = function( cloud )
 
 
 #----------------------------------------------------------------------------------------#
-#' Extraction around specific point
-#' This function extracts all points of a given point cloud located at a specific distance from a considered point
-#' @param points Data from LAS object
-#' @param center Point of this data
-#' @param radius Distance for extraction limit
-#'
-#' @return
-#' @export
-#'
-#' @examples
+# Extraction around specific point
+# This function extracts all points of a given point cloud located at a specific distance from a considered point
+# @param points Data from LAS object
+# @param center Point of this data
+# @param radius Distance for extraction limit
+#
+# @return
+# @export
+#
+# @examples
 get_points_in_disc = function( points, center, radius )
 {
   points[, distToMax := abs( sqrt( (points$X-center$X)^2 + (points$Y-center$Y)^2))]
@@ -111,11 +134,5 @@ get_points_in_disc = function( points, center, radius )
   points[, distToMax := NULL]
   return(LAS(surroundingPoints, las@header))
 }
-
-
-
-
-#----------------------------------------------------------------------------------------#
-tree = lastrees_hamraz(las)
 
 
