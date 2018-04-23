@@ -62,6 +62,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// find_tree_polygon_vec
+std::vector<double> find_tree_polygon_vec(S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon, double CLc, double CLs, double Oc, double Os, double angleRefCone, double angleRefSphere, std::vector<double> centerRef, double radius);
+RcppExport SEXP _lidR_find_tree_polygon_vec(SEXP discSEXP, SEXP nbPointsSEXP, SEXP npsSEXP, SEXP SENSITIVITYSEXP, SEXP MDCWSEXP, SEXP epsilonSEXP, SEXP CLcSEXP, SEXP CLsSEXP, SEXP OcSEXP, SEXP OsSEXP, SEXP angleRefConeSEXP, SEXP angleRefSphereSEXP, SEXP centerRefSEXP, SEXP radiusSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type disc(discSEXP);
+    Rcpp::traits::input_parameter< double >::type nbPoints(nbPointsSEXP);
+    Rcpp::traits::input_parameter< double >::type nps(npsSEXP);
+    Rcpp::traits::input_parameter< int >::type SENSITIVITY(SENSITIVITYSEXP);
+    Rcpp::traits::input_parameter< double >::type MDCW(MDCWSEXP);
+    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
+    Rcpp::traits::input_parameter< double >::type CLc(CLcSEXP);
+    Rcpp::traits::input_parameter< double >::type CLs(CLsSEXP);
+    Rcpp::traits::input_parameter< double >::type Oc(OcSEXP);
+    Rcpp::traits::input_parameter< double >::type Os(OsSEXP);
+    Rcpp::traits::input_parameter< double >::type angleRefCone(angleRefConeSEXP);
+    Rcpp::traits::input_parameter< double >::type angleRefSphere(angleRefSphereSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type centerRef(centerRefSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    rcpp_result_gen = Rcpp::wrap(find_tree_polygon_vec(disc, nbPoints, nps, SENSITIVITY, MDCW, epsilon, CLc, CLs, Oc, Os, angleRefCone, angleRefSphere, centerRef, radius));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lastrees_li2
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar);
 RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP, SEXP progressbarSEXP) {
@@ -319,6 +343,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
+    {"_lidR_find_tree_polygon_vec", (DL_FUNC) &_lidR_find_tree_polygon_vec, 14},
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
