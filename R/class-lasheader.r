@@ -135,7 +135,7 @@ setMethod("show", "LASheader",  function(object)
     if(vlr$`record ID` == 4)
     {
       cat("       Extra Bytes Description:\n")
-      lapply(vlr[[6]], function(xx)
+      lapply(vlr$`Extra Bytes Description`, function(xx)
       {
         cat("          ", xx$name, ": ", xx$description, "\n")
       })

@@ -46,6 +46,7 @@ Collate:
     'class-lascluster.r'
     'constant.R'
     'deprecated.r'
+    'extra_byte.R'
     'grid_canopy.r'
     'grid_catalog.r'
     'grid_density.r'
