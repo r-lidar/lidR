@@ -2,6 +2,7 @@
 #define POINT_H
 
 #include <vector>
+#include <math.h>
 
 struct Point
 {
@@ -73,14 +74,18 @@ template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
   return y;
 }
 
-template <class T> struct EuclidianDistance : std::binary_function <T,T,T> {
+template <class T>
+struct EuclidianDistance {
   double operator() (const T a, const T b) const
   {
-    return std::sqrt(pow(b->x - a->x, 2) + pow(b->y - a->y, 2));
+    double dx = b->x - a->x;
+    double dy = b->y - a->y;
+    return sqrt(dx*dx + dy*dy);
   }
 };
 
-template <class T> struct SlopeInCylindricalReferenceSystem : std::binary_function <T,T,T> {
+template<class T>
+struct SlopeInCylindricalReferenceSystem {
   double operator() (const T a, const T b) const
   {
     return (b->z - a->z) / (b->r - a->r);
@@ -139,7 +144,7 @@ void cart2pol_vec( const std::vector<T1*> &points, const T2* &center, std::vecto
   {
     x = points[i]->x - center->x;
     y = points[i]->y - center->y;
-    r = sqrt(pow(x,2) + pow(y,2));
+    r = sqrt(x*x + y*y);
     t = atan(y/x);
     z = points[i]->z;
     ind = points[i]->id;
