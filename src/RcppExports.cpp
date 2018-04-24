@@ -63,7 +63,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // find_tree_polygon_vec
-std::vector<double> find_tree_polygon_vec(S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon, double CLc, double CLs, double Oc, double Os, double angleRefCone, double angleRefSphere, std::vector<double> centerRef, double radius);
+List find_tree_polygon_vec(S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon, double CLc, double CLs, double Oc, double Os, double angleRefCone, double angleRefSphere, std::vector<double> centerRef, double radius);
 RcppExport SEXP _lidR_find_tree_polygon_vec(SEXP discSEXP, SEXP nbPointsSEXP, SEXP npsSEXP, SEXP SENSITIVITYSEXP, SEXP MDCWSEXP, SEXP epsilonSEXP, SEXP CLcSEXP, SEXP CLsSEXP, SEXP OcSEXP, SEXP OsSEXP, SEXP angleRefConeSEXP, SEXP angleRefSphereSEXP, SEXP centerRefSEXP, SEXP radiusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
