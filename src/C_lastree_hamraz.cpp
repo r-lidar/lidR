@@ -29,101 +29,165 @@ void createPolygonFromExtremities( const std::vector<PointXYZR*> &points, std::v
 //TODO: find better function than findMaxTo...
 
 
+NumericMatrix convertToNumericMatrix( std::vector<PointXYZR*> &vector )
+{
+  NumericMatrix output( vector.size(), 5 );
+  for ( int i = 0; i < vector.size(); i++ )
+  {
+    output(i, 0) = vector[i]->x;
+    output(i, 1) = vector[i]->y;
+    output(i, 2) = vector[i]->z;
+    output(i, 3) = vector[i]->id;
+    output(i, 4) = vector[i]->r;
+  }
+  return (output);
+}
 
 //----------------------------------------------------------------------------------------//
 // [[Rcpp::export]]
-std::vector<double> find_tree_polygon_vec ( S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon,
+List find_tree_polygon_vec ( S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon,
                                       double CLc, double CLs, double Oc, double Os, double angleRefCone,
                                       double angleRefSphere, std::vector<double> centerRef, double radius )
 {
-  //Data import into vector of PointXYZR
+  List profileStorage;
+  List gapStorage;
+  List extremityStorage;
+  List boundariesStorage;
+  List idTreeStorage;
+
+  // Data import into vector of PointXYZR
   double widthProfile = 2 * nps;
-  std::vector<PointXYZR*> points( nbPoints );
-  extractDataToVec2D( disc, points );
+  std::vector<PointXYZR*> points(nbPoints);
+  extractDataToVec2D(disc, points); // Convert the S4 class into std::vector
 
-  //Creation of profile reference corners for later angle rotation
-  const PointXYZ* center = new PointXYZ( centerRef[0], centerRef[1], centerRef[2] );
-  std::vector<PointXYZ*> coordRef( 6 );
+  // Creation of profile reference corners for later angle rotation
+  const PointXYZ* center = new PointXYZ(centerRef[0], centerRef[1], centerRef[2]);
+  std::vector<PointXYZ*> coordRef(6);
   createCornerCoordinates( center, radius, widthProfile, coordRef );
-  //Change into cylindrical coordinates
-  std::vector<PointRTZ*> coordCylindRef( 6 );
-  cart2pol_vec( coordRef, center, coordCylindRef );
 
+  // Change into cylindrical coordinates
+  std::vector<PointRTZ*> coordCylindRef(6);
+  cart2pol_vec(coordRef, center, coordCylindRef );
 
-  double chord = 1000;      //--> TODO: chercher à quelle valeur la fixer initialement??
-  //mettre chord en argument de la fonction
-  int nbProfiles = 2, generatedAngleValues = 0, angleProfile = 0;
-  double alpha = 90, rmax = 0;
-  std::vector<double> angle, rmaxSelection, pointsInsidePolygon;
+  // Todo: chercher à quelle valeur la fixer initialement??
+  // JR: si alpha inital = 90 et que le rayon du disque est R alors chord = R*sqrt(2). Sinon  std::numeric_limits<double>::max()
+  double chord = 1000;
+  double alpha = 90;
+  double rmax = 0;
+  int nbProfiles = 2;   // JR: Un profile est un diamètre pas un rayon.
+  int generatedAngleValues = 0;
+  int angleProfile = 0;
+
+  // JR: Ici je crois vraiment qu'une classe Profile serait pertinente pour cacher plein plein de
+  // variables dans une plus grosse structure qui gère tout ca.
+  // Une classe Profile avec plusieurs methodes:
+  // - find_gap
+  // - find_minima
+  // - find_boundary
+  // - etc.
+  // Et en plus avec des attributs membres nos fonctions auraient bien moins de paramètre
+
+  std::vector<double> angle, rmaxSelection, pointsInsidePolygon, seqAngle;
   std::vector<PointXYZR*> subProfileRight, subProfileLeft;
   std::vector<PointXYZR*> subProfileRight_withoutGap, subProfileLeft_withoutGap;
   std::vector<PointXYZR*> subProfileRight_withoutBoundaries, subProfileLeft_withoutBoundaries;
   std::vector<PointXYZR*> profileExtremityStorage;
   PointXYZR *maxVectorRight, *maxVectorLeft;
 
-  while ( chord > nps )
+  while (chord > nps)
   {
     alpha /= 2;
     nbProfiles *= 2;
     angle.clear();
 
-    if (nbProfiles == 4 )
+
+    if (nbProfiles == 4) // JR: Ce cas aurait peut être dû être géré avant la boucle ??
     {
-    initialAngleValuesForProfileEvaluation( nbProfiles, alpha, angle );
-    generatedAngleValues = angle.size();
+      initialAngleValuesForProfileEvaluation(nbProfiles, alpha, angle);
+      generatedAngleValues = angle.size();
     }
     else
     {
-    nextAngleValuesForProfileEvaluation( generatedAngleValues, nbProfiles, alpha, angle );
-    generatedAngleValues += angle.size();
+      nextAngleValuesForProfileEvaluation(generatedAngleValues, nbProfiles, alpha, angle);
+      generatedAngleValues += angle.size();
     }
 
+    // JR: Dans l'ensemble il y a une lourdeur ici qui consiste à prendre le diamètre de le splitter en
+    // deux et de tout appeler right et left. Alors que finalement si on travaillait avec des rayons
+    // on aurait pas ce problème
     rmaxSelection.clear();
-    for ( int a = 0; a < angle.size(); a++ )
+    for (int a = 0 ; a < angle.size() ; a++)
     {
-      //Storage of points in each profile
+      seqAngle.push_back( angle[a] );
+      // Rcout << "processing angle: " << a << std::endl;
+
+      // Storage of points in each profile
       subProfileRight.clear();
       subProfileLeft.clear();
       angleProfile = angle[a];
       //angleProfile = angle[0];
-      generateProfile_vec( points, coordCylindRef, angleProfile, center, subProfileRight, subProfileLeft );
 
-      //1 - Gap identification by statistical analysis --> horiz. square dist calculation
+      // JR: c'est quoi coordCylindRef ? J'ai perdu le fil des noms de variables
+      generateProfile_vec(points, coordCylindRef, angleProfile, center, subProfileRight, subProfileLeft);
+      profileStorage.push_back( List::create(Named("Right") = convertToNumericMatrix(subProfileRight),
+                                             Named("Left") = convertToNumericMatrix(subProfileLeft) ));
+
+      // 1 - Gap identification by statistical analysis --> horiz. square dist calculation
       subProfileRight_withoutGap.clear();
       subProfileLeft_withoutGap.clear();
-      findGap_vec( subProfileRight, subProfileRight_withoutGap, SENSITIVITY );
-      findGap_vec( subProfileLeft, subProfileLeft_withoutGap, SENSITIVITY );
 
-      //2 - Boundaries identification
+      // JR: l'update par passage d'adresse c'est bien mais c'est aussi plus difficile à lire. Donc pour
+      // m'aider je vois deux options:
+      // 1. const correctness. Ce qui ne change pas prend un const
+      // 2. ce qui n'est pas const va à la fin de la fonction.
+      // Comme ca juste avec le prototype de la fonction on a const subProfile, const sensitivity, et PAS const subProfile_withoutgap
+      // et c'est plus facile à lire
+
+      // JR: pourquoi un subProfileRight_withoutgap sous forme de vecteur. Est ce que retourner
+      // le pointXYZR du gap ne serait pas plus simple ?
+      findGap_vec(subProfileRight, subProfileRight_withoutGap, SENSITIVITY);
+      findGap_vec(subProfileLeft, subProfileLeft_withoutGap, SENSITIVITY);
+      gapStorage.push_back( List::create(Named("Right") = convertToNumericMatrix(subProfileRight_withoutGap),
+                                             Named("Left") = convertToNumericMatrix(subProfileLeft_withoutGap) ));
+
+
+      // 2 - Boundaries identification
       subProfileRight_withoutBoundaries.clear();
       subProfileLeft_withoutBoundaries.clear();
       findBoundaries_vec( subProfileRight_withoutGap, center, CLc, CLs, Oc, Os, epsilon, angleRefCone, angleRefSphere, MDCW, subProfileRight_withoutBoundaries );
       findBoundaries_vec( subProfileLeft_withoutGap, center, CLc, CLs, Oc, Os, epsilon, angleRefCone, angleRefSphere, MDCW, subProfileLeft_withoutBoundaries );
+      boundariesStorage.push_back( List::create(Named("Right") = convertToNumericMatrix(subProfileRight_withoutBoundaries),
+                                         Named("Left") = convertToNumericMatrix(subProfileLeft_withoutBoundaries) ));
 
-      //If only apex point remains, set maximal radius at 0
+
+      // If only apex point remains, set maximal radius at 0
       if (subProfileRight_withoutBoundaries.size() <= 1 && subProfileLeft_withoutBoundaries.size() <= 1 )
       {
-        rmaxSelection.push_back( 0 );
+        rmaxSelection.push_back(0);
       }
       else
       {
-        //Storage of maximal radius in selection of profiles
-        //search for extremities of each profile
+        // Storage of maximal radius in selection of profiles ; search for extremities of each profile
         findMaxDistToMax( subProfileRight_withoutBoundaries, maxVectorRight );
         findMaxDistToMax( subProfileLeft_withoutBoundaries, maxVectorLeft );
         double maxValueRight = maxVectorRight->r, maxValueLeft = maxVectorLeft->r;
         rmaxSelection.push_back( maxValueRight > maxValueLeft ? maxValueRight : maxValueLeft );
 
-        //Storage of extremities --> if only apex point in profile part, set to INT16_MIN
-        if( maxValueRight != INT16_MIN )
+        // Storage of extremities -> if only apex point in profile part, set to INT16_MIN
+
+        // JR : pourquoi INT16 ??
+        if(maxValueRight != INT16_MIN)
         {
           profileExtremityStorage.push_back( maxVectorRight );
         }
-        if( maxValueLeft != INT16_MIN )
+
+        if(maxValueLeft != INT16_MIN)
         {
           profileExtremityStorage.push_back( maxVectorLeft );
         }
       }
+
+      extremityStorage.push_back( convertToNumericMatrix(profileExtremityStorage));
     }
 
     //Selection of maximal radius
@@ -143,7 +207,24 @@ std::vector<double> find_tree_polygon_vec ( S4 disc, double nbPoints, double nps
   {
     pointsInsidePolygon.push_back(centerRef[3]);
   }
-  return ( pointsInsidePolygon );
+
+  idTreeStorage.push_back( pointsInsidePolygon );
+  // JR: j'aurai aimé qu'on retourne un polygone.
+  // Est ce que ici on ne pourrait pas retourner tout ce qui est utile au débuggage
+  // i.e. polygon + pointInsidePolygon + tous les profiles + ... dans une list.
+
+
+  List summaryProfiles;
+  List profile;
+  summaryProfiles["numberOfProfiles"] = nbProfiles;
+  summaryProfiles["scannedAngle"] = seqAngle;
+  summaryProfiles["listOfProfiles"] = profileStorage;
+  summaryProfiles["polygonExtremities"] = extremityStorage;
+  summaryProfiles["AfterGapSearch"] = gapStorage;
+  summaryProfiles["AfterBoundariesResearch"] = boundariesStorage;
+  summaryProfiles["obtainedIdTrees"] = idTreeStorage;
+
+  return (summaryProfiles);
 }
 
 
@@ -172,8 +253,9 @@ void extractDataToVec2D( const S4 disc, std::vector<PointXYZR*> &points )
 //radius = profile length
 //widthProfile = profile width
 //coordRef = vector of PointXYZ containing profile extremity coordinates
-void createCornerCoordinates( const PointXYZ* &center, const double &radius,
-                              const double &widthProfile, std::vector<PointXYZ*> &coordRef )
+
+// JR : passer des doubles par adresse c'est overkilled à mon avis. Mais bon chacun son style
+void createCornerCoordinates(const PointXYZ* &center, const double &radius, const double &widthProfile, std::vector<PointXYZ*> &coordRef)
 {
   //Coordinates of limits in following order: RightUp, RightDown, LeftUp, LeftDown, MiddleUp, MiddleDown
   coordRef[0] = new PointXYZ(center->x + radius, center->y + (widthProfile/2));  //RU
@@ -187,6 +269,7 @@ void createCornerCoordinates( const PointXYZ* &center, const double &radius,
 
 //----------------------------------------------------------------------------------------//
 //Increment structure to create list of increasing values starting with m_value
+
 struct Increment {
   Increment() : m_value( 0 ) { }
   int operator()() { return m_value++; }
@@ -229,35 +312,40 @@ void nextAngleValuesForProfileEvaluation( const int &generatedAngleValues, const
 //center = point coordinates for center of profile
 //subProfileRight = vector of points located in right part of profile
 //subProfileLeft = vector of points located in left part of profile
+
+// JR: là définitivement je dis qu'il faut une classe Profile avec des méthodes. Cette partie est trop
+// dure à suivre
+
 void generateProfile_vec( const std::vector<PointXYZR*> &points,
                           const std::vector<PointRTZ*> &coordCylindRef,
-                          const double &angleProfile, const PointXYZ* &center,
+                          const double &angleProfile,
+                          const PointXYZ* &center,
                           std::vector<PointXYZR*> &subProfileRight,
                           std::vector<PointXYZR*> &subProfileLeft )
 {
   if ( points.size() > 1 )
   {
-    //Addition of angle rotation to reference rectangle of profile
+    // Addition of angle rotation to reference rectangle of profile
     std::vector<PointRTZ*> coordCylindLimit( coordCylindRef.size() );
     for ( int i = 0; i < coordCylindRef.size(); i++ )
     {
-      coordCylindLimit[i] = new PointRTZ(coordCylindRef[i]->r,
-                                         coordCylindRef[i]->t + (angleProfile * PI / 180));
+      coordCylindLimit[i] = new PointRTZ(coordCylindRef[i]->r, coordCylindRef[i]->t + (angleProfile * PI / 180));
     }
-    std::vector<PointXYZ*> coordLimit( 6 );
+    std::vector<PointXYZ*> coordLimit(6);
     pol2cart_vec( coordCylindLimit, center, coordLimit );
 
-    //Addition of angle value for trigonometric ordered points in following polygon definition
-    for (int i = 0; i < coordLimit.size(); i++ )
+    // Addition of angle value for trigonometric ordered points in following polygon definition
+    for (int i = 0 ; i < coordLimit.size() ; i++ )
     {
       //In this case Z in PointXYZ stores the angle value and not the height!!
       coordLimit[i]->z = atan2(coordLimit[i]->y - center->y, coordLimit[i]->x - center->x);
     }
 
-    //Subdivision of profile coordinates into right and left profile (separation at center point)
+    // Subdivision of profile coordinates into right and left profile (separation at center point)
     std::vector<PointXYZ*> coord_right( 4 ), coord_left( 4 );
-    int indR = 0, indL = 0;
-    for ( int i = 0; i < coordLimit.size(); i++ )
+    int indR = 0;
+    int indL = 0;
+    for ( int i = 0 ; i < coordLimit.size() ; i++ )
     {
       if( i < 4 )
       {
@@ -292,6 +380,7 @@ void generateProfile_vec( const std::vector<PointXYZR*> &points,
       pointsR[i] = polygonExtremityPoint(coord_right[i]->x, coord_right[i]->y);
       pointsL[i] = polygonExtremityPoint(coord_left[i]->x, coord_left[i]->y);
     }
+
     //First point is added again at the end to close polygon
     pointsR.at(coord_right.size()) = polygonExtremityPoint(coord_right[0]->x, coord_right[0]->y);
     pointsL.at(coord_left.size()) = polygonExtremityPoint(coord_left[0]->x, coord_left[0]->y);
@@ -330,18 +419,12 @@ void generateProfile_vec( const std::vector<PointXYZR*> &points,
 double calculateMedian(std::vector<double> array)
 {
   std::sort( array.begin(), array.end(), std::less<double>());
-  double median;
   int middle = array.size() / 2;
 
   if (array.size() % 2 == 0)
-  {
-    median = (array[middle-1] + array[middle]) / 2.0;
-  }
+    return (array[middle-1] + array[middle]) / 2.0;
   else
-  {
-    median = array[middle];
-  }
-  return median;
+    return array[middle];
 }
 
 
@@ -350,6 +433,9 @@ double calculateMedian(std::vector<double> array)
 //1.Search for median value and subdivision in two parts (above and beyond median)
 //2.Search of median value in both parts (--> Q1 and Q3)
 //3. IQR = Q3-Q1
+
+// JR: Pas sur mais je suppose que on calcul la median et l'IQR sur le même vecteur. Doit on trier
+// deux fois ?
 double  calculateIQR( std::vector<double> values )
 {
   std::sort( values.begin(), values.end(), std::less<double>());
@@ -363,11 +449,12 @@ double  calculateIQR( std::vector<double> values )
   double Q1 = calculateMedian( split_lo );
   double Q3 = calculateMedian( split_hi );
   double IQR = Q3 - Q1;
+
   return (IQR);
 }
 
 
-//----------------------------------------------------------------------------------------//
+//------------------------------------------------------------0----------------------------//
 //Function that cut profile if gap is identified
 //1.Horizontal distance calculation between each points
 //2.Elimination of points with distance greater than sensitivity * IQR value
@@ -382,14 +469,14 @@ void findGap_vec( std::vector<PointXYZR*> &subProfile, std::vector<PointXYZR*> &
     std::vector<double> distance( subProfile.size() - 1, 0 );
     std::transform( subProfile.begin(), subProfile.end() - 1, subProfile.begin()+1, distance.begin(), EuclidianDistance<PointXYZR*>() );
 
-
     //Gap identification if dist > (sensitivity * interquantile range from Q3)
     double IQR = calculateIQR( distance );
     int a = 0;
     while( distance[a] <= sensitivity * IQR )
     {
       a++;
-      if ( a==distance.size() ){break;}
+      if (a == distance.size())
+        break;
     }
     output.assign( subProfile.begin(), subProfile.begin() + a+1 );
   }
@@ -454,7 +541,7 @@ void keepDataUnderDistanceValue( std::vector<PointRTZ*> &subProfile, double limi
 
 
 //----------------------------------------------------------------------------------------//
-//Steepness calculation
+// Steepness calculation
 void calculateSteepness( std::vector<PointRTZ*> &subProfile, double &steepnessValue)
 {
   std::vector<double> slope(subProfile.size(), 0 );
@@ -575,9 +662,13 @@ void findMaxDistToMax( const std::vector<PointXYZR*> &subProfile, PointXYZR* &ma
 
 
 //----------------------------------------------------------------------------------------//
+
+// Il me faut définitement des commentaires ici
+
 void createPolygonFromExtremities( const std::vector<PointXYZR*> &points, std::vector<PointXYZR*> &extremityPoints, const PointXYZ* &center, std::vector<double> &pointsInsidePolygon )
 {
   //pour éviter les doublons dans les extrémités
+  // JR comment le tri se fait ? Il n'y a pas de d'opérateur < ou > pour des Points ?
   sort( extremityPoints.begin(), extremityPoints.end() );
   extremityPoints.erase( unique( extremityPoints.begin(), extremityPoints.end() ), extremityPoints.end() );
   std::vector<PointXYZR*> filteredExtremityPoints;
