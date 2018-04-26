@@ -1,3 +1,9 @@
+## lidR v1.4.2 (2018-04-26)
+
+#### BUG FIXES
+
+* [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions
+
 ## lidR v1.4.2 (2018-04-19)
 
 #### BUG FIXES

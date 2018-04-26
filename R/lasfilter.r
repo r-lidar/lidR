@@ -76,7 +76,7 @@ lasfilter_ <- function(.las, conditions)
     return(NULL)
   }
 
-  return(LAS(.las@data[combined_bools], .las@header))
+  return(LAS(.las@data[combined_bools], .las@header, .las@crs))
 }
 
 #' Predefined filters
