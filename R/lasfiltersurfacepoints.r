@@ -23,6 +23,6 @@ lasfiltersurfacepoints = function(las, res)
   Z <- NULL
   by  = group_grid(las@data$X, las@data$Y, res)
   sub = las@data[las@data[, .I[which.max(Z)], by = by]$V1]
-  las = LAS(sub, las@header)
+  las = LAS(sub, las@header, las@crs)
   return(las)
 }

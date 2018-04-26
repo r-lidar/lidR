@@ -84,7 +84,7 @@ setClass(
   )
 )
 
-setMethod("initialize", "LAS", function(.Object, data, header, check)
+setMethod("initialize", "LAS", function(.Object, data, header, crs, check)
 {
   if(is.data.frame(data))
     data.table::setDT(data)
@@ -122,7 +122,11 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
 
   .Object@data   <- data
   .Object@header <- header
-  .Object@crs    <- epsg2proj(get_epsg(header))
+
+  if(is.na(crs@projargs))
+    .Object@crs <- epsg2proj(get_epsg(header))
+  else
+    .Object@crs <- crs
 
   return(.Object)
 })
@@ -131,12 +135,13 @@ setMethod("initialize", "LAS", function(.Object, data, header, check)
 #'
 #' @param data a data.table containing the LiDAR data.
 #' @param header a list containing the data from the header of a las file.
+#' @param crs A \link[sp:CRS]{CRS} object.
 #' @param check logical. consistency tests while building the object.
 #' @return An object of class \code{LAS}
 #' @seealso
 #' \link[lidR:LAS]{Class LAS}
 #' @export LAS
-LAS <- function(data, header = list(), check = TRUE) {return(new("LAS", data, header, check))}
+LAS <- function(data, header = list(), crs = sp::CRS(), check = TRUE) {return(new("LAS", data, header, crs, check))}
 
 setMethod("show", "LAS", function(object)
 {
