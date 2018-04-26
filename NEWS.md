@@ -26,7 +26,8 @@ This is an internal function now exported to the users.
 
 #### BUG FIXES
 
-* Fix clash between function `area` from `lidR` and from `raster`
+* [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions
+* [[#116](https://github.com/Jean-Romain/lidR/issues/116)] Fix clash between function `area` from `lidR` and from `raster`
 
 ## lidR v1.4.2 (In developpment)
 

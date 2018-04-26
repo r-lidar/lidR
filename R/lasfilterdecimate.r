@@ -98,7 +98,7 @@ lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_puls
       selected = .las@data[, .I[selected_pulses(1:.N, n)], by = by]$V1
   }
 
-  return(LAS(.las@data[selected], .las@header))
+  return(LAS(.las@data[selected], .las@header, .las@crs))
 }
 
 selected_pulses = function(pulseID, n)
