@@ -237,7 +237,7 @@ setMethod("initialize", "LAS", function(.Object, data, header, crs, check)
   .Object@data   <- data
   .Object@header <- header
 
-  if(is.null(crs))
+  if(is.na(crs@projargs))
     .Object@crs <- epsg2proj(get_epsg(header))
   else
     .Object@crs <- crs
