@@ -161,22 +161,9 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 #' @export
 grid_tincanopy.LAScatalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
-  oldbuffer <- CATALOGOPTIONS("buffer")
+  x = catalog_old_compatibility(x)
 
-  if (subcircle == 0)
-  {
-    CATALOGOPTIONS(buffer = res)
-    buffer(x) <- res
-  }
-  else
-  {
-    CATALOGOPTIONS(buffer = 0)
-    buffer(x) <- 0
-  }
-
+  buffer(x) <- res/2 + subcircle
   canopy = grid_catalog(x, grid_tincanopy, res, "xyzr", filter, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
   return(canopy)
 }

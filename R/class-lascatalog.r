@@ -304,3 +304,24 @@ setMethod("show", "LAScatalog", function(object)
   cat(" - processing done using", cores(object), "core(s) if possible.")
 
 })
+
+catalog_old_compatibility = function(ctg)
+{
+  ctg2 = ctg
+
+  c = cores(ctg)
+  b = buffer(ctg)
+  f = by_file(ctg)
+  p = progress(ctg)
+  t = tiling_size(ctg)
+  v = vrt(ctg)
+
+  cores(ctg2) <- c
+  buffer(ctg2) <- b
+  by_file(ctg2) <- f
+  progress(ctg2) <- p
+  tiling_size(ctg2) <- t
+  vrt(ctg2) <- v
+
+  return(ctg2)
+}

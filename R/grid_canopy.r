@@ -161,15 +161,10 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
-  oldbuffer <- CATALOGOPTIONS("buffer")
+  x = catalog_old_compatibility(x)
 
-  CATALOGOPTIONS(buffer = res/2 + subcircle)
   buffer(x) <- res/2 + subcircle
-
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
   return(canopy)
 }
 
