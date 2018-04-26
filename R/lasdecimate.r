@@ -89,7 +89,7 @@ lasdecimate = function(.las, density, homogenize = TRUE, res = 5)
     selected = selected$delete
   }
 
-  LAS(.las@data[selected], .las@header) %>% return()
+  LAS(.las@data[selected], .las@header, .las@crs) %>% return()
 }
 
 selected_pulses = function(pulseID, n)
