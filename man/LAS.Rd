@@ -4,12 +4,14 @@
 \alias{LAS}
 \title{Create a \code{LAS} object}
 \usage{
-LAS(data, header = list(), check = TRUE)
+LAS(data, header = list(), crs = sp::CRS(), check = TRUE)
 }
 \arguments{
 \item{data}{a data.table containing the LiDAR data.}
 
 \item{header}{a list containing the data from the header of a las file.}
+
+\item{crs}{A \link[sp:CRS]{CRS} object.}
 
 \item{check}{logical. consistency tests while building the object.}
 }
