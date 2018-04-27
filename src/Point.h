@@ -88,7 +88,7 @@ template<class T>
 struct SlopeInCylindricalReferenceSystem {
   double operator() (const T a, const T b) const
   {
-    return (b->z - a->z) / (b->r - a->r);
+    return (b.z - a.z) / (b.r - a.r);
   }
 };
 
@@ -136,19 +136,19 @@ private:
 
 
 template<typename T1, typename T2>
-void cart2pol_vec( const std::vector<T1*> &points, const T2* &center, std::vector<PointRTZ*> &result )
+void cart2pol_vec( const std::vector<T1*> &points, const T2 &center, std::vector<PointRTZ> &result )
 {
   double x = 0, y = 0, z = 0, r = 0, t = 0;
   int ind = 0;
   for ( int i = 0; i < points.size(); i++ )
   {
-    x = points[i]->x - center->x;
-    y = points[i]->y - center->y;
+    x = points[i]->x - center.x;
+    y = points[i]->y - center.y;
     r = sqrt(x*x + y*y);
     t = atan(y/x);
     z = points[i]->z;
     ind = points[i]->id;
-    result[i] = new PointRTZ( r, t, z, ind );
+    result[i] = PointRTZ( r, t, z, ind );
   }
 }
 
