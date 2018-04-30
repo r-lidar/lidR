@@ -3,9 +3,50 @@
 #include <boost/geometry/geometries/polygon.hpp>
 #include <Rcpp.h>
 #include "Point.h"
+#include "HamrazProfiles.h"
 
 
 using namespace Rcpp;
+
+// [[Rcpp::export]]
+List find_tree_polygon_vec2(S4 disc, double nps, int SENSITIVITY, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double AngleRefCone, double AngleRefSphere, std::vector<double> centerRef, double radius)
+{
+  DataFrame data = as<Rcpp::DataFrame>(disc.slot("data"));
+  NumericVector X = data["X"];
+  NumericVector Y = data["Y"];
+  NumericVector Z = data["Z"];
+  IntegerVector ID = data["pointID"];
+  NumericVector Dist = data["distToMax"];
+
+  std::vector<PointXYZR*> points(X.size());
+
+  for (int i = 0 ; i < X.size() ; i++)
+    points[i] = new PointXYZR(X[i], Y[i], Z[i], ID[i], Dist[i]);
+
+  PointXYZ center = PointXYZ(centerRef[0], centerRef[1], centerRef[2]);
+
+  // Create the 4 first profiles
+  HZProfiles HZtree(points, center, radius, nps, SENSITIVITY,
+                    MDCW, Epsilon, CLc, CLs, Oc, Os, AngleRefCone, AngleRefSphere);
+
+
+  // Sequentially add new profiles
+  while(HZtree.chord > nps)
+  {
+    HZtree.add_next_profiles(points);
+  }
+
+
+  Rcpp::List L = HZtree.to_R();
+
+  for (int i = 0 ; i < X.size() ; i++)
+    delete points[i];
+
+  return (L);
+}
+
+/*
+
 
 typedef boost::geometry::model::d2::point_xy<double> polygonExtremityPoint, profileExtremities;
 typedef boost::geometry::model::polygon<polygonExtremityPoint, false, true> polygonCCW;
@@ -26,8 +67,6 @@ void findBoundaries_vec( std::vector<PointXYZR*> &subProfile, const PointXYZ* &c
 void findMaxDistToMax( const std::vector<PointXYZR*> &subProfile, PointXYZR* &maxVector );
 void createPolygonFromExtremities( const std::vector<PointXYZR*> &points, std::vector<PointXYZR*> &extremityPoints, const PointXYZ* &center, std::vector<double> &pointsInsidePolygon );
 
-//TODO: find better function than findMaxTo...
-
 
 NumericMatrix convertToNumericMatrix( std::vector<PointXYZR*> &vector )
 {
@@ -46,8 +85,8 @@ NumericMatrix convertToNumericMatrix( std::vector<PointXYZR*> &vector )
 //----------------------------------------------------------------------------------------//
 // [[Rcpp::export]]
 List find_tree_polygon_vec ( S4 disc, double nbPoints, double nps, int SENSITIVITY, double MDCW, double epsilon,
-                                      double CLc, double CLs, double Oc, double Os, double angleRefCone,
-                                      double angleRefSphere, std::vector<double> centerRef, double radius )
+                             double CLc, double CLs, double Oc, double Os, double angleRefCone,
+                             double angleRefSphere, std::vector<double> centerRef, double radius )
 {
   List profileStorage;
   List gapStorage;
@@ -148,7 +187,7 @@ List find_tree_polygon_vec ( S4 disc, double nbPoints, double nps, int SENSITIVI
       findGap_vec(subProfileRight, subProfileRight_withoutGap, SENSITIVITY);
       findGap_vec(subProfileLeft, subProfileLeft_withoutGap, SENSITIVITY);
       gapStorage.push_back( List::create(Named("Right") = convertToNumericMatrix(subProfileRight_withoutGap),
-                                             Named("Left") = convertToNumericMatrix(subProfileLeft_withoutGap) ));
+                                         Named("Left") = convertToNumericMatrix(subProfileLeft_withoutGap) ));
 
 
       // 2 - Boundaries identification
@@ -157,7 +196,7 @@ List find_tree_polygon_vec ( S4 disc, double nbPoints, double nps, int SENSITIVI
       findBoundaries_vec( subProfileRight_withoutGap, center, CLc, CLs, Oc, Os, epsilon, angleRefCone, angleRefSphere, MDCW, subProfileRight_withoutBoundaries );
       findBoundaries_vec( subProfileLeft_withoutGap, center, CLc, CLs, Oc, Os, epsilon, angleRefCone, angleRefSphere, MDCW, subProfileLeft_withoutBoundaries );
       boundariesStorage.push_back( List::create(Named("Right") = convertToNumericMatrix(subProfileRight_withoutBoundaries),
-                                         Named("Left") = convertToNumericMatrix(subProfileLeft_withoutBoundaries) ));
+                                                Named("Left") = convertToNumericMatrix(subProfileLeft_withoutBoundaries) ));
 
 
       // If only apex point remains, set maximal radius at 0
@@ -720,4 +759,4 @@ void createPolygonFromExtremities( const std::vector<PointXYZR*> &points, std::v
       pointsInsidePolygon.push_back( filteredExtremityPoints[i]->id );
     }
   }
-}
+}*/

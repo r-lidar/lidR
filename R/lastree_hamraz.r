@@ -87,7 +87,8 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6, 
     # JR: On a pas besoin de passer le nombre de points en paramètre. Ce nombre de points est nécéssairement
     # connu puisqu'on passe les données à la fonction
     n = disc@header@PHB$`Number of point records`
-    id_tree_points = find_tree_polygon_vec(disc, n, nps, SENSITIVITY, MDCW, epsilon, CLc, CLs, Oc, Os, angleRefCone, angleRefSphere, center, R)
+    list_id_tree_points = find_tree_polygon_vec2(disc, nps, SENSITIVITY, MDCW, epsilon, CLc, CLs, Oc, Os, angleRefCone, angleRefSphere, center, R)
+
 
     # Storage of extracted subset from disc
     extractPoints <- disc@data[pointID %in% id_tree_points]
