@@ -93,8 +93,8 @@ NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, do
     double sx = xk - xmin;
     double sy = yk - ymin;
 
-    int j = (int)(std::abs((xmin - xk) / res) + 1)-1;
-    int i = r.nrow() - (int)(std::abs((ymin - yk) / res))-1;
+    int j = (int)(std::abs((sx) / res) + 1)-1;
+    int i = r.nrow() - (int)(std::abs((sy) / res))-1;
 
     if (j == w)
       j--;
