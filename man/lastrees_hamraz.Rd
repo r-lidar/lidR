@@ -4,49 +4,47 @@
 \alias{lastrees_hamraz}
 \title{Individual tree segmentation}
 \usage{
-lastrees_hamraz(las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6,
-  MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3,
-  angleRefCone = 90, angleRefSphere = 32.7)
+lastrees_hamraz(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
+  CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, R = 15.24)
 }
 \arguments{
 \item{las}{A LAS object}
 
-\item{nps}{nominal point spacing (page 533 in "2.Tree segmentation approach")}
+\item{nps}{numeric. Nominal point spacing (see reference page 533  section 2)}
 
-\item{th}{minimal tree height to take into account (page 534)}
+\item{th}{numeric. Minimal height. Point below this threshold are removed for the segmentation (see reference page 534  section 2)}
 
-\item{R}{maximum horizontal distance of vertical profiles (page 535)}
+\item{MDCW}{numeric. Minimum detectable crown width (page 534 section 2)}
 
-\item{SENSITIVITY}{for inter tree gap identification ( multiplied by interquartile range from the third quartile) (p535)}
+\item{epsilon}{numeric. Small deviation from vertical (page 535 section 2.2.2)}
 
-\item{MDCW}{minimum detectable crown width (page 534)}
+\item{CLc}{numeric. Crown ratio of a narrow cone-shaped crown (page 535 equation 3)}
 
-\item{epsilon}{small deviation from vertical (page 535)}
+\item{Oc}{numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand(page 535 equation 3)}
 
-\item{CLc}{crown ratio of a narrow cone-shaped crown (page 535)}
+\item{CLs}{numeric. Crown ratio of a sphere-shaped crown (page 535 equation 4)}
 
-\item{Oc}{crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand(page 535)}
+\item{Os}{numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped tree (page 535 equation 4)}
 
-\item{CLs}{crown ratio of a sphere-shaped crown (page 535)}
-
-\item{Os}{crown radius reduction due to the overlap within a dense stand for the sphere- shaped tree (page 535)}
-
-\item{angleRefCone}{(page 536 - first sentence)}
-
-\item{angleRefSphere}{(page 536 - first sentence)}
+\item{R}{numeric Maximum horizontal distance of vertical profiles (page 535). Any value greater
+than a crown is good because this parameter does not affect the result. However, it greatly affects the
+computation speed. The lower the value, the faster the method.}
 }
 \value{
-A LAS object
+Nothing (NULL)
 }
 \description{
-Individual tree segmentation
+It is an strict implementation of the Hamraz et al. 2012 (see references) algorithm made by the \code{lidR}
+author from the original paper. The classification is done at the point cloud level and the function
+returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
+a new column \code{treeID}. The user is free to post-process this output the way he want.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
-tree = lastrees_hamraz(las)
+tree = lastrees_hamraz(las, 0.25)
 
 plot(tree, color = "treeID", colorPalette = pastel.colors(200))
 }

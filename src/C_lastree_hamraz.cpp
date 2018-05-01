@@ -9,29 +9,27 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List find_tree_polygon_vec2(S4 disc, double nps, int SENSITIVITY, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double AngleRefCone, double AngleRefSphere, std::vector<double> centerRef, double radius)
+List find_tree_polygon_vec2(S4 disc, double nps, int SENSITIVITY, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, std::vector<double> centerRef, double radius)
 {
   DataFrame data = as<Rcpp::DataFrame>(disc.slot("data"));
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
-  IntegerVector ID = data["pointID"];
   NumericVector Dist = data["distToMax"];
 
   std::vector<PointXYZR*> points(X.size());
 
   for (int i = 0 ; i < X.size() ; i++)
-    points[i] = new PointXYZR(X[i], Y[i], Z[i], ID[i], Dist[i]);
+    points[i] = new PointXYZR(X[i], Y[i], Z[i], i, Dist[i]);
 
   PointXYZ center = PointXYZ(centerRef[0], centerRef[1], centerRef[2]);
 
   // Create the 4 first profiles
-  HZProfiles HZtree(points, center, radius, nps, SENSITIVITY,
-                    MDCW, Epsilon, CLc, CLs, Oc, Os, AngleRefCone, AngleRefSphere);
+  HZProfiles HZtree(points, center, radius, 2*nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os);
 
 
   // Sequentially add new profiles
-  while(HZtree.chord > nps)
+  while(HZtree.chord > 2*nps)
   {
     HZtree.add_next_profiles(points);
   }

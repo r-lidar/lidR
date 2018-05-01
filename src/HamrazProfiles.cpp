@@ -2,9 +2,7 @@
 #include <memory>
 #include "HamrazProfiles.h"
 
-HZProfile::HZProfile(std::vector<PointXYZR*>& disc, PointXYZ Center, double Angle, double Radius, double Width, int Sensitivity,
-                     double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double AngleRefCone,
-                     double AngleRefSphere)
+HZProfile::HZProfile(std::vector<PointXYZR*>& disc, PointXYZ Center, double Angle, double Radius, double Width, int Sensitivity, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os)
 {
   angle = Angle * PI / 180;
   center = Center;
@@ -16,15 +14,12 @@ HZProfile::HZProfile(std::vector<PointXYZR*>& disc, PointXYZ Center, double Angl
   cls = CLs;
   oc = Oc;
   os = Os;
-  angleRefCone = AngleRefCone;
-  angleRefSphere = AngleRefSphere;
   extremityPoint = PointXYZR( 0, 0, 0, 0, 0);
 
   extract_profile(disc);
   find_gap();
   find_local_minima();
   find_boundary();
-  find_extremities();
 }
 
 HZProfile::~HZProfile()
@@ -35,13 +30,14 @@ void HZProfile::extract_profile(std::vector<PointXYZR*>& disc)
 {
   double cosAngle = std::cos(angle);
   double sinAngle = std::sin(angle);
+  double hwidth = width/2;
   for(int i = 0 ; i < disc.size() ; i++)
   {
     PointXYZR* p = disc[i];
     double rot_x = (p->x -center.x) * cosAngle - (center.y - p->y) * sinAngle;
     double rot_y = (center.y - p->y) * cosAngle + (p->x -center.x)  * sinAngle;
 
-    if(rot_x >= 0 && rot_y >= - width && rot_y <= width)
+    if(rot_x >= 0 && rot_y >= -hwidth && rot_y <= hwidth)
       points.push_back(p);
   }
 
@@ -50,29 +46,156 @@ void HZProfile::extract_profile(std::vector<PointXYZR*>& disc)
 
 void HZProfile::find_gap()
 {
-  if (points.size() > 1)
+  // If there are less than 4 points in the profile IQR is meaningless. Return the whole profile
+  if (points.size() <= 4)
   {
-    //Euclidian distance calculation between center and other profile points (horiz. square dist)
-    std::vector<double> distance( points.size() - 1, 0 );
-    std::transform( points.begin(), points.end() - 1, points.begin() + 1, distance.begin(), EuclidianDistance<PointXYZR*>() );
+    points_no_gaps.assign(points.begin(), points.end());
+    return;
+  }
 
-    //Gap identification if dist > (sensitivity * interquantile range from Q3)
-    double iqr = IQR(distance);
+  std::vector<double> distance(points.size()-1, 0);
+  for (int i = 0 ; i < points.size()-1 ; i++)
+    distance[i] = std::sqrt(points[i+1]->r - points[i]->r);
 
-    int a = 0;
-    while( distance[a] <= sensitivity * iqr )
-    {
-      a++;
-      if (a == distance.size())
-        break;
-    }
+  // Gap identification if dist > (sensitivity * interquantile range from Q3)
+  double iqr = IQR(distance);
 
-    points_no_gaps.assign(points.begin(), points.begin() + a + 1);
+  int a = 0;
+  while( distance[a] <= sensitivity * iqr )
+  {
+    a++;
+    if (a == distance.size())
+      break;
+  }
+
+  points_no_gaps.assign(points.begin(), points.begin() + a + 1);
+}
+
+
+// Function that detects local min by taking two consecutive points P1 and P2 (cylindrical coordinates)
+// calculating their slope (P1(Z) - P2(Z)) / (P1(R) - P2(R)) and detecting index where slope becomes positive
+// Section 2.2.2 page 535
+void HZProfile::find_local_minima()
+{
+  // If there are less than 3 points in LM search is meaningless.
+  if (points_no_gaps.size() <= 3)
+  {
+    localMinimaIndex.push_back(INT16_MIN);
+    return;
+  }
+
+  double slope = 0;
+  double previous_slope = 0;
+
+  for (int i = 0; i < points_no_gaps.size() - 1 ; i++ )
+  {
+    slope = (points[i+1]->z - points[i]->z) / (points[i+1]->r - points[i]->r);
+
+    if( slope > 0 && previous_slope < 0)
+      localMinimaIndex.push_back(i);
+
+    previous_slope = slope;
+  }
+
+  if(localMinimaIndex.empty())
+    localMinimaIndex.push_back( INT16_MIN );
+}
+
+// Section 2.2.2 page 535
+void HZProfile::find_boundary()
+{
+  if (*localMinimaIndex.begin() == INT16_MIN)
+  {
+    points_no_boundaries.assign(points_no_gaps.begin(), points_no_gaps.end());
+    return;
+  }
+
+  // Initialisation
+  int p = 0;
+  double S_left = 0;
+  double S_right = 0;
+
+  //std::vector<PointXYZR*> subProfile_cylind(points_no_gaps.size());
+  std::vector<PointXYZR*> left_windows;
+  std::vector<PointXYZR*> right_windows;
+  std::vector<PointXYZR*> right_windows_prior_mdcw;
+  std::vector<PointXYZR*> right_windows_prior_wrd;
+
+  do
+  {
+    // Storage of profile values prior and after local minimum p (section 2.2.2 page 535)
+    // (the current LM is added in both subsets)
+    left_windows.assign(points_no_gaps.begin(), points_no_gaps.begin() + localMinimaIndex[p] + 1);
+    right_windows.assign(points_no_gaps.begin() + localMinimaIndex[p], points_no_gaps.end());
+
+    p++;
+
+    // No points in the right section. The LM is the only one possibility. Skip other steps.
+    if (right_windows.size() <= 1)
+      break;
+
+    // Suppression of points at a distance greater than MDCW from the LM (page 535 before eq. 2)
+    extract_points_prior(right_windows, mdcw, right_windows_prior_mdcw);
+
+    // If a single points remains, breaks;
+    if (right_windows_prior_mdcw.size() == 1)
+      break;
+
+    // Stepness of LSP on the right (eq 2 page 535)
+    S_right = steepness(right_windows_prior_mdcw);
+
+    double theta = 90 - epsilon;
+
+    // cone-shaped crown radius (eq 3)
+    double h_ad = (points_no_gaps[0]->z + right_windows_prior_mdcw[0]->z) / 2;      //mean value between center - and considered LM height
+    double crc = ((h_ad * clc) / (std::tan(theta * PI / 180.0))) * oc;
+
+    //sphere-shaped crown radius (eq 4)
+    double crs = ( (h_ad * cls) / 2 ) * os;
+
+    //size of the right window --> interpolation (eq 5)
+    double m1 = crc * (1 - ((theta - std::abs(S_right)) / (theta - 32.7)));
+    double m2 = crs * ((theta - std::abs(S_right)) / (theta - 32.7));
+    double wRD = m1 + m2;
+
+    extract_points_prior(right_windows, wRD, right_windows_prior_wrd);
+
+    // If only LM remains after filtering --> break
+    if (right_windows_prior_wrd.size() == 1)
+      break;
+
+    S_right = steepness(right_windows_prior_wrd);
+    S_left = steepness(left_windows);
+
+    if (angle > 255.9*PI/180 && angle < 256*PI/180)
+      Rcpp::Rcout << "LocalMax: " << p << " Sright = " << S_right << " Sleft = " << S_left << std::endl;
+
+    // page 536 after eq. 5
+    if (S_right > 0 && S_left < 0)
+      break;
+
+  } while ( p < localMinimaIndex.size() && (S_right <= 0 || S_left >= 0) );
+
+
+  if (S_right > 0 && S_left < 0)
+  {
+    // The current LM is the LM
+    points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.begin() + localMinimaIndex[p - 1] + 1 );
+  }
+  else if (right_windows_prior_mdcw.size() == 1 || right_windows_prior_wrd.size() == 1)
+  {
+    // We exit the loop because there was not enought points on the right
+    points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.begin() + localMinimaIndex[p - 1] + 1 );
   }
   else
   {
-    points_no_gaps.assign(points.begin(), points.end());
+    // No limit found -> The whole profile is the tree.
+    points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.end() );
   }
+
+
+
+  extremityPoint = *points_no_boundaries.back();
 }
 
 double HZProfile::IQR( std::vector<double> values)
@@ -103,152 +226,26 @@ double HZProfile::median(std::vector<double> array)
     return array[middle];
 }
 
-//Function that detects local min by taking two consecutive points P1 and P2 (cylindrical coordinates)
-//calculating their slope (P1(Z) - P2(Z)) / (P1(R) - P2(R)) and detecting index where slope becomes positive
-void HZProfile::find_local_minima()
-{
-  if ( points_no_gaps.size() > 1 )
-  {
-    std::vector<PointRTZ> subProfile_cylind( points_no_gaps.size() );
-    cart2pol_vec( points_no_gaps, center, subProfile_cylind );
-
-    //Slope calculation
-    std::vector<double> slope( subProfile_cylind.size() - 1, 0 );
-    std::transform( subProfile_cylind.begin(), subProfile_cylind.end() - 1, subProfile_cylind.begin()+1, slope.begin(), SlopeInCylindricalReferenceSystem<PointRTZ>() );
-
-    for (int i = 0; i < slope.size(); i++ )
-    {
-      if( slope[i] > 0 )
-      {
-        if( i >= 1 && slope[i-1] < 0 )
-        {
-          localMinimaIndex.push_back( i );
-        }
-        else if (i == 0)
-        {
-          localMinimaIndex.push_back( i );
-        }
-      }
-    }
-
-    if( localMinimaIndex.empty() == TRUE )
-    {
-      localMinimaIndex.push_back( INT16_MIN );
-    }
-  }
-  else
-  {
-    localMinimaIndex.push_back(INT16_MIN);
-  }
-}
-
 //search for all RTZpoints that have a R value under 'limit' value and storage into 'subProfileSubset'
-void keepDataUnderDistanceValue( std::vector<PointRTZ> &subProfile, double limit, std::vector<PointRTZ> &subProfileSubset )
+void HZProfile::extract_points_prior( std::vector<PointXYZR*> &subProfile, double limit, std::vector<PointXYZR*> &subProfileSubset )
 {
   int i = 1, keep = 0;
-  while ( (i < subProfile.size()) && ((subProfile[i].r - subProfile[0].r) <= limit) )
+  while ( (i < subProfile.size()) && ((subProfile[i]->r - subProfile[0]->r) <= limit) )
   {
     keep = i++;
   }
   subProfileSubset.assign(subProfile.begin(), subProfile.begin() + keep + 1 );
 }
 
-void HZProfile::calculateSteepness( std::vector<PointRTZ> &subProfile, double &steepnessValue)
+double HZProfile::steepness(std::vector<PointXYZR*> &subProfile)
 {
-  std::vector<double> slope(subProfile.size(), 0 );
-  std::transform( subProfile.begin(), subProfile.end() - 1, subProfile.begin()+1, slope.begin(), SlopeInCylindricalReferenceSystem<PointRTZ>() );
-  steepnessValue = atan(median( slope )) * (180/PI);
+  std::vector<double> slope(subProfile.size()-1, 0);
+
+  for(int i = 0 ; i < subProfile.size() -1 ; i++)
+    slope[i] = (subProfile[i+1]->z - subProfile[i]->z) / (subProfile[i+1]->r - subProfile[i]->r);
+
+  return std::atan(median(slope)) * (180/PI);
 }
-
-
-void HZProfile::find_boundary()
-{
-  if ( points_no_gaps.size() > 1 )
-  {
-    //Initialisation
-    std::vector<PointRTZ> subProfile_cylind( points_no_gaps.size() );
-    double S_right_final, S_left_final, S_right;
-    std::vector<PointRTZ> split_right_LocalMin, split_left_LocalMin, right_LocalMin_at_MDCW, right_LocalMin_at_wRD;
-    if ( *localMinimaIndex.begin() != INT16_MIN)
-    {
-      //Conversion into cylindrical coordinates
-      cart2pol_vec( points_no_gaps, center, subProfile_cylind );
-      int p = 0;
-      S_right_final = 0, S_left_final = 0, S_right = 0;
-      do
-      {
-        //Storage of profile values from center (apex) to local minimum n°p
-        split_left_LocalMin.assign(subProfile_cylind.begin(), subProfile_cylind.begin() + localMinimaIndex[p] + 1 );
-        //Storage of profile values after local minimum n°p
-        split_right_LocalMin.assign(subProfile_cylind.begin() + localMinimaIndex[p], subProfile_cylind.end());
-
-        p++;
-
-        //Suppression in this last vector of points at a distance greater than MDCW
-        if ( split_right_LocalMin.size() > 1 )
-        {
-          keepDataUnderDistanceValue( split_right_LocalMin, mdcw, right_LocalMin_at_MDCW );
-        }
-        else { break; }
-
-        //If only LM remains after filtering --> break
-        if ( right_LocalMin_at_MDCW.size() == 1 ) { break; }
-
-        //cone-shaped crown radius (crc)
-        double h_ad = (subProfile_cylind[0].z + right_LocalMin_at_MDCW[0].z) / 2;      //mean value between center- and considered LM height
-        double crc = ( (h_ad * clc) / (tan((angleRefCone-epsilon) * PI / 180.0)) ) * oc;
-        //sphere-shaped crown radius
-        double crs = ( (h_ad * cls) / 2 ) * os;
-
-        //2 - Slope calculation --> steepness (S)
-        calculateSteepness( right_LocalMin_at_MDCW, S_right);
-
-        //size of the right window --> interpolation
-        double wRD = crc * (1 - ( ((angleRefCone-epsilon)-S_right) / ((angleRefCone-epsilon)-angleRefSphere) ) ) + crs *  (((angleRefCone-epsilon)-S_right) / ((angleRefCone-epsilon)-angleRefSphere) );
-        keepDataUnderDistanceValue( right_LocalMin_at_MDCW, wRD, right_LocalMin_at_wRD );
-
-        //If only LM remains after filtering --> break
-        if ( right_LocalMin_at_wRD.size() == 1 ) { break; }
-
-        calculateSteepness( right_LocalMin_at_wRD, S_right_final);
-        calculateSteepness( split_left_LocalMin, S_left_final);
-
-        if (S_right_final > 0 && S_left_final < 0) { break; }
-
-      } while ( p < localMinimaIndex.size() && (S_right_final <= 0 || S_left_final >= 0) );
-
-      if ( (S_right_final > 0 && S_left_final < 0) )
-      {
-        points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.begin() + localMinimaIndex[p - 1] + 1 );
-      }
-      //TODO: VERIFIER CETTE CONDITION!!!
-      else if ( right_LocalMin_at_MDCW.size() == 1 || right_LocalMin_at_wRD.size() == 1 )
-      {
-        points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.begin() + localMinimaIndex[p - 1]  );
-      }
-      else
-      {
-        points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.end() );
-      }
-    }
-    else
-    {
-      points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.end() );
-    }
-  }
-  else
-  {
-    points_no_boundaries.assign( points_no_gaps.begin(), points_no_gaps.end() );
-  }
-}
-
-
-
-void HZProfile::find_extremities()
-{
-  extremityPoint =  *points_no_boundaries.back();
-}
-
 
 Rcpp::List HZProfile::to_R()
 {
@@ -302,9 +299,7 @@ bool operator<(HZProfile const &a, HZProfile const& b)
 // ================================================================================================
 
 //JS : Rq -> pour que l'algo concorde avec l'article, il faudrait mettre 8 profiles au lieu de 4 (alpha = 45)
-HZProfiles::HZProfiles(std::vector<PointXYZR*>& data, PointXYZ Center, double Radius, double Width, int Sensitivity,
-                       double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double AngleRefCone,
-                       double AngleRefSphere)
+HZProfiles::HZProfiles(std::vector<PointXYZR*>& data, PointXYZ Center, double Radius, double Width, int Sensitivity, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os)
 {
   chord = Radius*1.414;
   alpha = 90;
@@ -319,14 +314,10 @@ HZProfiles::HZProfiles(std::vector<PointXYZR*>& data, PointXYZ Center, double Ra
   cls = CLs;
   oc = Oc;
   os = Os;
-  angleRefCone = AngleRefCone;
-  angleRefSphere = AngleRefSphere;
 
   for( double a = 0; a < 360; a+=alpha )
   {
-    profiles.push_back(HZProfile(data, center, a, radius, width, sensitivity,
-                                 mdcw, epsilon, clc, cls, oc, os, angleRefCone,
-                                 angleRefSphere));
+    profiles.push_back(HZProfile(data, center, a, radius, width, sensitivity, mdcw, epsilon, clc, cls, oc, os));
 
     if ( profiles.back().extremityPoint.r > rmax )
       rmax = profiles.back().extremityPoint.r;
@@ -355,28 +346,56 @@ void HZProfiles::add_next_profiles(std::vector<PointXYZR*>& data)
 
       double a = (a2 - a1)/2 + a1;
 
-      profiles.push_back(HZProfile(data, center, a, radius, width, sensitivity, mdcw, epsilon,
-                                   clc, cls, oc, os, angleRefCone, angleRefSphere));
+      profiles.push_back(HZProfile(data, center, a, radius, width, sensitivity, mdcw, epsilon, clc, cls, oc, os));
 
       if ((profiles.back()).extremityPoint.r > rmax )
-             rmax = (profiles.back()).extremityPoint.r;
+        rmax = (profiles.back()).extremityPoint.r;
   }
 
   std::sort(profiles.begin(), profiles.end());
 
   //JS : J'ai mis des parentheses et rajouté '/2' dans le calcul du chord
-  double alpha = profiles[1].angle * (PI / 180);
+  double alpha = profiles[1].angle;
   chord = 2 * rmax * std::sin(alpha/2);
+}
+
+std::vector<PointXYZ> HZProfiles::get_polygon()
+{
+  std::vector<PointXYZ> out(profiles.size());
+
+  for (int i = 0 ; i < profiles.size() ; i++)
+  {
+    out[i].x = center.x + profiles[i].extremityPoint.r * std::cos(profiles[i].angle);
+    out[i].y = center.y + profiles[i].extremityPoint.r * std::sin(profiles[i].angle);
+    out[i].z = profiles[i].extremityPoint.z;
+  }
+
+  return out;
 }
 
 Rcpp::List HZProfiles::to_R()
 {
   Rcpp::List L;
+  Rcpp::List l;
+
+  Rcpp::NumericMatrix out(profiles.size(), 4);
+
+  for (int i = 0 ; i < profiles.size() ; i++)
+  {
+    out(i, 0) = center.x + (profiles[i].extremityPoint.r + 0.5*width/2) * std::cos(profiles[i].angle);
+    out(i, 1) = center.y + (profiles[i].extremityPoint.r + 0.5*width/2) * std::sin(profiles[i].angle);
+    out(i, 2) = profiles[i].extremityPoint.z;
+    out(i, 3) = profiles[i].extremityPoint.r;
+  }
+
+  L["polygon"] = out;
 
   for(int i = 0 ; i < profiles.size() ; i++)
   {
-    L.push_back(profiles[i].to_R());
+    l.push_back(profiles[i].to_R());
   }
+
+  L["profile"] = l;
 
   return L;
 }

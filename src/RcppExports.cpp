@@ -63,8 +63,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // find_tree_polygon_vec2
-List find_tree_polygon_vec2(S4 disc, double nps, int SENSITIVITY, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double AngleRefCone, double AngleRefSphere, std::vector<double> centerRef, double radius);
-RcppExport SEXP _lidR_find_tree_polygon_vec2(SEXP discSEXP, SEXP npsSEXP, SEXP SENSITIVITYSEXP, SEXP MDCWSEXP, SEXP EpsilonSEXP, SEXP CLcSEXP, SEXP CLsSEXP, SEXP OcSEXP, SEXP OsSEXP, SEXP AngleRefConeSEXP, SEXP AngleRefSphereSEXP, SEXP centerRefSEXP, SEXP radiusSEXP) {
+List find_tree_polygon_vec2(S4 disc, double nps, int SENSITIVITY, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, std::vector<double> centerRef, double radius);
+RcppExport SEXP _lidR_find_tree_polygon_vec2(SEXP discSEXP, SEXP npsSEXP, SEXP SENSITIVITYSEXP, SEXP MDCWSEXP, SEXP EpsilonSEXP, SEXP CLcSEXP, SEXP CLsSEXP, SEXP OcSEXP, SEXP OsSEXP, SEXP centerRefSEXP, SEXP radiusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,11 +77,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type CLs(CLsSEXP);
     Rcpp::traits::input_parameter< double >::type Oc(OcSEXP);
     Rcpp::traits::input_parameter< double >::type Os(OsSEXP);
-    Rcpp::traits::input_parameter< double >::type AngleRefCone(AngleRefConeSEXP);
-    Rcpp::traits::input_parameter< double >::type AngleRefSphere(AngleRefSphereSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type centerRef(centerRefSEXP);
     Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    rcpp_result_gen = Rcpp::wrap(find_tree_polygon_vec2(disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, AngleRefCone, AngleRefSphere, centerRef, radius));
+    rcpp_result_gen = Rcpp::wrap(find_tree_polygon_vec2(disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, centerRef, radius));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -342,7 +340,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
-    {"_lidR_find_tree_polygon_vec2", (DL_FUNC) &_lidR_find_tree_polygon_vec2, 13},
+    {"_lidR_find_tree_polygon_vec2", (DL_FUNC) &_lidR_find_tree_polygon_vec2, 11},
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},

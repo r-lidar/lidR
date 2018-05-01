@@ -25,17 +25,6 @@ struct PointXYZ
   PointXYZ(double _x, double _y, double _z, int _id) : x(_x), y(_y), z(_z), id(_id) {}
 };
 
-struct PointRTZ
-{
-  double r, t, z;
-  int id;
-
-  PointRTZ() {}
-  PointRTZ(double _r, double _t) : r(_r), t(_t), z(0), id(0) {}
-  PointRTZ(double _r, double _t, double _z) : r(_r), t(_t), z(_z), id(0) {}
-  PointRTZ(double _r, double _t, double _z, int _id) : r(_r), t(_t), z(_z), id(_id) {}
-};
-
 struct PointXYZR
 {
   double x, y, z, r;
@@ -73,24 +62,6 @@ template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
 
   return y;
 }
-
-template <class T>
-struct EuclidianDistance {
-  double operator() (const T a, const T b) const
-  {
-    double dx = b->x - a->x;
-    double dy = b->y - a->y;
-    return sqrt(dx*dx + dy*dy);
-  }
-};
-
-template<class T>
-struct SlopeInCylindricalReferenceSystem {
-  double operator() (const T a, const T b) const
-  {
-    return (b.z - a.z) / (b.r - a.r);
-  }
-};
 
 struct ZSortPoint
 {
@@ -133,41 +104,6 @@ struct distance_to
 private:
   T p;
 };
-
-
-template<typename T1, typename T2>
-void cart2pol_vec( const std::vector<T1*> &points, const T2 &center, std::vector<PointRTZ> &result )
-{
-  double x = 0, y = 0, z = 0, r = 0, t = 0;
-  int ind = 0;
-  for ( int i = 0; i < points.size(); i++ )
-  {
-    x = points[i]->x - center.x;
-    y = points[i]->y - center.y;
-    r = sqrt(x*x + y*y);
-    t = atan(y/x);
-    z = points[i]->z;
-    ind = points[i]->id;
-    result[i] = PointRTZ( r, t, z, ind );
-  }
-}
-
-//----------------------------------------------------------------------------------------//
-template<typename T1, typename T2>
-void pol2cart_vec( const std::vector<T1*> &points, const T2* &center, std::vector<PointXYZ*> &result )
-{
-  int Xsign[6] = {1, 1, -1, -1, 1, 1};
-  double x = 0, y = 0, z = 0;
-  int ind = 0;
-  for ( int i = 0; i < points.size(); i++ )
-  {
-    x = Xsign[i] * points[i]->r * cos( points[i]->t ) + center->x;
-    y = Xsign[i] * points[i]->r * sin( points[i]->t ) + center->y;
-    z = points[i]->z;
-    ind = points[i]->id;
-    result[i] = new PointXYZ( x, y, z, ind );
-  }
-}
 
 
 #endif //POINT_H

@@ -1,24 +1,26 @@
 #' Individual tree segmentation
 #'
+#' It is an strict implementation of the Hamraz et al. 2012 (see references) algorithm made by the \code{lidR}
+#' author from the original paper. The classification is done at the point cloud level and the function
+#' returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
+#' a new column \code{treeID}. The user is free to post-process this output the way he want.
 #'
 #' @param las A LAS object
-#' @param nps nominal point spacing (page 533 in "2.Tree segmentation approach")
-#' @param th minimal tree height to take into account (page 534)
-#' @param R maximum horizontal distance of vertical profiles (page 535)
-#' @param SENSITIVITY for inter tree gap identification ( multiplied by interquartile range from the third quartile) (p535)
-#' @param MDCW minimum detectable crown width (page 534)
-#' @param epsilon small deviation from vertical (page 535)
-#' @param CLc crown ratio of a narrow cone-shaped crown (page 535)
-#' @param Oc crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand(page 535)
-#' @param CLs crown ratio of a sphere-shaped crown (page 535)
-#' @param Os crown radius reduction due to the overlap within a dense stand for the sphere- shaped tree (page 535)
-#' @param angleRefCone (page 536 - first sentence)
-#' @param angleRefSphere (page 536 - first sentence)
+#' @param nps numeric. Nominal point spacing (see reference page 533  section 2)
+#' @param th numeric. Minimal height. Point below this threshold are removed for the segmentation (see reference page 534  section 2)
+#' @param MDCW numeric. Minimum detectable crown width (page 534 section 2)
+#' @param epsilon numeric. Small deviation from vertical (page 535 section 2.2.2)
+#' @param CLc numeric. Crown ratio of a narrow cone-shaped crown (page 535 equation 3)
+#' @param Oc numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand(page 535 equation 3)
+#' @param CLs numeric. Crown ratio of a sphere-shaped crown (page 535 equation 4)
+#' @param Os numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped tree (page 535 equation 4)
+#' @param R numeric Maximum horizontal distance of vertical profiles (page 535). Any value greater
+#' than a crown is good because this parameter does not affect the result. However, it greatly affects the
+#' computation speed. The lower the value, the faster the method.
 #'
 #' @return
-#' A LAS object
+#' Nothing (NULL)
 #' @export
-#'
 #' @examples
 #'LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #'las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
@@ -27,96 +29,104 @@
 #'tree = lastrees_hamraz(las, 0.25)
 #'
 #'plot(tree, color = "treeID", colorPalette = pastel.colors(200))
-lastrees_hamraz = function(las, nps = 0.25, th = 5, R = 15.24, SENSITIVITY = 6, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, angleRefCone = 90, angleRefSphere = 32.7 )
+lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6, R = 15.24)
 {
-  # Todo: find limit value + addition into argument list
-  minimalNumberOfPointsForTree = 100
-
-  las@data$pointID = 1:nrow(las@data)
-
-  # 1 - Extraction of points with maximum Z for each grid cell
-  LSP = lasfiltersurfacepoints(las, nps)
+  # Preprocess : LSP + remove low point + smooth
+  LSP = LAS(las@data[, .(X,Y,Z)])
+  LSP = lasfiltersurfacepoints(LSP, nps)
+  LSP = lasfilter(LSP, Z > 5)
   LSP@data[, Z := C_lassmooth(LSP, 0.6)]
 
-  # 2 - Suppression of points under th
-  cloud = LSP@data[Z > th, .(X, Y, Z, pointID)]
-  cloudRef = LSP@data[Z > th, .(X, Y, Z, pointID)]     #data copy for final return output
+  idTree = 0L
+  treeID = rep(NA_integer_, nrow(las@data))
 
-  # 3 - Application of a gaussian filter to remove low variations in vegetation
-  # Todo
-
-  idTree = 0L                   # current tree ID
-  npts = nrow(cloud)
-  treeID = rep(NA, npts)        # tree ID of each point
-  cloud[, number := (1:npts)]   # Addition of point numbering for idTree attribution
-
-  #Settings for progressBar (1/2)
-  npoints = nrow(cloud)
+  npts = nrow(LSP@data)
+  npoints = nrow(LSP@data)
   pbar =  utils::txtProgressBar(0, npoints)
 
   while (npts != 0)
   {
     utils::setTxtProgressBar(pbar, npoints - npts)      # Setting for progressBar (2/2)
 
-    idTree <- idTree + 1
+    Pmax   = find_global_maxima(LSP@data)
+    disc   = get_points_in_disc(LSP@data, Pmax, R)
+    center = c(Pmax$X, Pmax$Y, Pmax$Z)
 
-    # Treatment - segmentation of LSP into trees aeras
-    # 1 - Research of Z max - highest apex of tree in data
+    l = find_tree_polygon_vec2(disc, nps, gap_sensitivity, MDCW, epsilon, CLc, CLs, Oc, Os, center, R)
+    p = l$polygon
+    p = data.frame(l$polygon)
+    p = p[p$X4 > 1.5,]
+    q = quantile(p$X4, probs = c(0.1, 0.9))
+    p = p[p$X4 < q[2] & p$X4 > q[1],]
+    p = as.matrix(p)
+    p = rbind(p, center)
+    p = convex_hull(p[,1], p[,2])
 
-    # JR: Si le nuage de point avait été trié sur Z dès le départ on aurait pas eu besoin de ca. Le
-    # point 1 aurait été le maximum comme dans Li et al. On aurait sauté une étable O(n) de recherche
-    # sequentielle.
-    Pmax = find_global_maxima(cloud)
+    plot(disc@data$X, disc@data$Y, col = lidR:::set.colors(disc@data$Z, height.colors(50)), asp = 1)
 
-    # 2 - Extraction of circular aera around
+    x = numeric(64)
+    y = numeric(64)
+    a = numeric(64)
 
-    # JR: cette fonction prend un tableau en entrée et sort un objet LAS. Pourquoi?
-    # Un LAS en entrée un LAS en sortie ou un tableau en entrée un tableau en sortie.
-    # Ici comme la fonction n'est pas logique il y a une erreur: la variable 'las' n'est pas
-    # définie dans cette fonction (voir fonction)
+    for(i in 1:64)
+    {
+      x[i] = Pmax$X + l$profile[[i]]$extremityPoint[5] * cos(l$profile[[i]]$angle*pi/180)
+      y[i] = Pmax$Y + l$profile[[i]]$extremityPoint[5] * sin(l$profile[[i]]$angle*pi/180)
+      a[i] = l$profile[[i]]$angle
+      points(l$profile[[i]]$extremityPoint[1], l$profile[[i]]$extremityPoint[2], col = "red", pch = 19)
+    }
 
-    disc = get_points_in_disc(cloud, Pmax, R)
+    lines(l$polygon[,1 ], l$polygon[,2], col = "red")
+    lines(p$x, p$y)
 
-    # 3 - Definition of profiles and delimitation of gaps/boundaries
+    if(nrow(p) <= 2)
+    {
+      in_p = logical(nrow(LSP@data))
+      in_p[Pmax$i] = TRUE
+    } else {
+      in_p = C_points_in_polygon(p$x, p$y, LSP@data$X, LSP@data$Y)
 
-    # JR: Je n'aime pas ca. pointID est un int. Les autres des double. En mettant tout dans un uniqe vecteur
-    # on transtype l'entier en decimal. Si ca n'impacte pas forcément le résultat ca reste pas élégant
-    # et est symptomatique d'une design à améliorer
-    center = c(Pmax$X, Pmax$Y, Pmax$Z, Pmax$pointID)
-
-    # JR: On a pas besoin de passer le nombre de points en paramètre. Ce nombre de points est nécéssairement
-    # connu puisqu'on passe les données à la fonction
-    n = disc@header@PHB$`Number of point records`
-    list_id_tree_points = find_tree_polygon_vec2(disc, nps, SENSITIVITY, MDCW, epsilon, CLc, CLs, Oc, Os, angleRefCone, angleRefSphere, center, R)
+      if (sum(in_p) == 0)
+      {
+        in_p[Pmax$i] = TRUE
+      }
+    }
 
 
-    # Storage of extracted subset from disc
-    extractPoints <- disc@data[pointID %in% id_tree_points]
+    tree = LSP@data[in_p]
+    LSP = lasfilter(LSP, !in_p)
 
-    # JR: Avec ce plot je visualise le résulat, visiblement améliorable.
-    # plot(disc@data$X, disc@data$Y, asp = 1)
-    # points(extractPoints$X, extractPoints$Y, col = "red")
+    #plot(LSP@data$X, LSP@data$Y, col = lidR:::set.colors(LSP@data$Z, height.colors(50)), asp = 1)
 
-    # Subset verification: sufficient number of points? diameter above MDCW?
-    limMDCW <-max(sqrt( (extractPoints$X - Pmax$X)^2 + (extractPoints$Y - Pmax$Y)^2))
+    if (!is.null(LSP))
+    {
+      npts = nrow(LSP@data)
+    } else {
+      npts = 0
+    }
 
-    # JR: L'approche par %in% qui est une serie de recherche sequentielle est très très inneficace.
-    # On a des nombres on doit trouver un moyen de les utiliser tel quel.
-    # Ok j'ai compris, en supprimant le pointID on doit pouvoir faire ca plus simple
+    p2 = convex_hull(tree$X, tree$Y)
 
-    if ( length(id_tree_points) > minimalNumberOfPointsForTree & limMDCW > MDCW )
-      treeID[cloud$number[cloud$pointID %in% id_tree_points]] = idTree
+    if (nrow(p2) > 4)
+    {
+      sp_p = sp::Polygon(p2)
 
-    # Delete polygon points of intial data
-    cloud = cloud[ cloud$pointID %in% id_tree_points == FALSE ]
-    npts = nrow(cloud)
+      if (sp_p@area > pi*MDCW^2 | sum (in_p) < 25)
+      {
+        idTree <- idTree + 1
+
+        las_in_p = C_points_in_polygon(p$x, p$y, las@data$X, las@data$Y)
+        update = las_in_p & is.na(treeID)
+        treeID[update] = idTree
+      }
+    }
+
+    plot(las@data$X, las@data$Y, col = treeID, asp = 1)
   }
 
-  # JR: J'aurais voulu que 'find_tree_polygon_vec' nous sorte un polygon idéalement. Une fois la
-  # boucle while terminée on aurait eu une liste de polygon et on aurait non pas updaté les LSP (cloud ref)
-  # mais les données d'origine (las) et on aurait sorti en plus un shapefile des couronnes.
+  lasadddata(las, treeID, "treeID")
 
-  return(LAS(cloudRef[, treeID := treeID], las@header))
+  return(invisible())
 }
 
 # Search for maximal Z-value
@@ -130,6 +140,7 @@ find_global_maxima = function( cloud )
 {
   i = which.max(cloud$Z)
   center = cloud[i]
+  center$i = i
   return(center)
 }
 
@@ -147,7 +158,7 @@ get_points_in_disc = function(points, center, radius)
   points[, distToMax := abs( sqrt( (points$X-center$X)^2 + (points$Y-center$Y)^2))]
   surroundingPoints = points[ points$distToMax<=radius ]
   points[, distToMax := NULL]
-  return(LAS(surroundingPoints, las@header))
+  return(LAS(surroundingPoints))
 }
 
 

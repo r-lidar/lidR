@@ -17,8 +17,8 @@ C_lassmooth <- function(las, size) {
     .Call(`_lidR_C_lassmooth`, las, size)
 }
 
-find_tree_polygon_vec2 <- function(disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, AngleRefCone, AngleRefSphere, centerRef, radius) {
-    .Call(`_lidR_find_tree_polygon_vec2`, disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, AngleRefCone, AngleRefSphere, centerRef, radius)
+find_tree_polygon_vec2 <- function(disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, centerRef, radius) {
+    .Call(`_lidR_find_tree_polygon_vec2`, disc, nps, SENSITIVITY, MDCW, Epsilon, CLc, CLs, Oc, Os, centerRef, radius)
 }
 
 C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius, progressbar = FALSE) {
