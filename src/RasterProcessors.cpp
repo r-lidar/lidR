@@ -48,7 +48,7 @@ RasterProcessor::RasterProcessor(NumericMatrix raster, double startx, double sta
 RasterProcessor::RasterProcessor(double minx, double miny, double maxx, double maxy, double res)
 {
   if (maxx < minx || maxy < miny)
-    throw exception("in Rasterrocessor(): bounding box.");
+    throw exception("in RasterProcessor(): bounding box.");
 
   i = 0;
   j = 0;
@@ -59,8 +59,8 @@ RasterProcessor::RasterProcessor(double minx, double miny, double maxx, double m
   m_xmin   = minx;
   m_ymin   = miny;
 
-  double endx = roundany(maxx);
-  double endy = roundany(maxy);
+  double endx = roundany(maxx) + res;
+  double endy = roundany(maxy) + res;
 
   m_ncols  = (endx - m_startx) / m_res + 1;
   m_nrows  = (endy - m_starty) / m_res + 1;
@@ -80,8 +80,6 @@ void RasterProcessor::xy2ij(double x, double y)
 {
   i = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
   j = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
-
-  //Rcout << "(" << x << " " << y << ") (" << i << " " << j << ")" << std::endl;
 
   if (i < 0 || i >= m_ncols || j < 0 || j >= m_nrows)
     throw exception("in xy2ij(): index out of bounds");

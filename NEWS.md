@@ -8,7 +8,7 @@
 #### NEW FEATURES
 
 * New `lasfiltersurfacepoints` function to filter surface points.
-* New function `grid_catalog` is a simplified and more powerful function like `catalog_apply` but specifically dedicated to raster-alike outputs.
+* New function `grid_catalog` is a simplified and more powerful function like `catalog_apply` but specifically dedicated to `grid_*` outputs.
 This is an internal function now exported to the users.
 * New functions `lasadddata`, `lasaddextrabyte` and `lasaddextrabyte_manual` to add new data in a `LAS` object
 * `lasclip` can clip `SpatialPolygonsDataFrame`
@@ -26,8 +26,10 @@ This is an internal function now exported to the users.
 
 #### BUG FIXES
 
+* [[#128](https://github.com/Jean-Romain/lidR/issues/128)] Fix raster data extraction using slower and memory greedy but safer `raster::extract`
 * [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions
 * [[#116](https://github.com/Jean-Romain/lidR/issues/116)] Fix clash between function `area` from `lidR` and from `raster`
+* [[#110](https://github.com/Jean-Romain/lidR/issues/110)] Fix out of bounds rasterization.
 
 ## lidR v1.4.2 (In developpment)
 
