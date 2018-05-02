@@ -13,8 +13,8 @@ C_knnidw <- function(X, Y, Z, x, y, k, p) {
     .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p)
 }
 
-C_lassmooth <- function(las, size) {
-    .Call(`_lidR_C_lassmooth`, las, size)
+C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
+    .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
 }
 
 C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius, progressbar = FALSE) {
