@@ -1,4 +1,4 @@
-context("test-catalog")
+context("catalog")
 
 sink(tempfile())
 
