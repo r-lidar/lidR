@@ -51,14 +51,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lassmooth
-NumericVector C_lassmooth(S4 las, double size);
-RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP) {
+NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma);
+RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP, SEXP methodSEXP, SEXP shapeSEXP, SEXP sigmaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type size(sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size));
+    Rcpp::traits::input_parameter< int >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< int >::type shape(shapeSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size, method, shape, sigma));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -318,7 +321,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
-    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 2},
+    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
