@@ -20,6 +20,9 @@
 #' plot(subset)
 lasfiltersurfacepoints = function(las, res)
 {
+  stopifnotlas(las)
+  stopifnot(res > 0, length(res) == 1, is.numeric(res))
+
   Z <- NULL
   by  = group_grid(las@data$X, las@data$Y, res)
   sub = las@data[las@data[, .I[which.max(Z)], by = by]$V1]

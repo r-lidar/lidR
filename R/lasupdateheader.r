@@ -74,6 +74,7 @@ lasadddata = function(las, x, name)
 #' @rdname lasadddata
 lasaddextrabytes = function(las, x, name, desc)
 {
+  stopifnotlas(las)
   stopifnot(is.character(name), is.character(desc))
 
   if (missing(x))
@@ -93,6 +94,7 @@ lasaddextrabytes = function(las, x, name, desc)
 #' @rdname lasadddata
 lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL)
 {
+  stopifnotlas(las)
   stopifnot(is.character(name), is.character(desc), is.character(type))
 
   allowed = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")

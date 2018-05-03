@@ -46,7 +46,7 @@ enable the user to add new data (see details)
 object is not strictly valid. These data will be usable at the R level but will not be written in a
 las file with \link{writeLAS}.\cr\cr
 \code{lasaddextrabyte} do the same than \code{lasadddata} but updates automatically the header of the
-LAS object. Thus, the LAS obejct is valid and the new data is considered as "extra bytes". This new
+LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
 data will be written in a las file with \link{writeLAS}\cr\cr
 \code{lasaddextrabyte_manual} allows the user to manually write all the extra bytes information.
 This fonction is reserved for experienced user with a good knowledge of the LAS specifications.

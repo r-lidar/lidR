@@ -142,7 +142,9 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
 
   if (!copy)
   {
-    las@data[, Zref := Z]
+    if (!"Zref" %in% names(las@data))
+      las@data[, Zref := Z]
+
     las@data[, Z := round(Z - Zground, 3)]
     lasupdateheader(las)
     lascheck(las@data, las@header)
@@ -162,12 +164,14 @@ lasunnormalize = function(las)
 {
   Z <- Zref <- NULL
 
-  if (! "Zref" %in% names(las@data))
-    stop("No field 'Zref' found.", call. = FALSE)
-
-  las@data[, Z := Zref]
-  las@data[, Zref := NULL]
-  las@data[]
+  if ("Zref" %in% names(las@data))
+  {
+    las@data[, Z := Zref]
+    las@data[, Zref := NULL]
+    las@data[]
+  }
+  else
+    message("No field 'Zref' found. Unormalizisation is impossible", call. = FALSE)
 
   return(invisible())
 }

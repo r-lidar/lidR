@@ -34,7 +34,7 @@ retore the point cloud with \code{lasunsmooth}.
 \details{
 This method does not use raster-based method to smooth the point cloud. This is a true point cloud
 smoothing. It is not really useful by itself but may be interesting in combination with filters such
-as \link{lasfiltersurfacepoint} for example.
+as \link{lasfiltersurfacepoints} for example.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
