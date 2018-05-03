@@ -313,6 +313,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_PTrees2
+NumericMatrix test_PTrees2(S4 las, int k);
+RcppExport SEXP _lidR_test_PTrees2(SEXP lasSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_PTrees2(las, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_PTrees
+void test_PTrees(S4 las, int k);
+RcppExport SEXP _lidR_test_PTrees(SEXP lasSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    test_PTrees(las, k);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
@@ -337,6 +360,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
+    {"_lidR_test_PTrees2", (DL_FUNC) &_lidR_test_PTrees2, 2},
+    {"_lidR_test_PTrees", (DL_FUNC) &_lidR_test_PTrees, 2},
     {NULL, NULL, 0}
 };
 
