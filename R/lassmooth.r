@@ -7,7 +7,7 @@
 #'
 #' This method does not use raster-based method to smooth the point cloud. This is a true point cloud
 #' smoothing. It is not really useful by itself but may be interesting in combination with filters such
-#' as \link{lasfiltersurfacepoint} for example.
+#' as \link{lasfiltersurfacepoints} for example.
 #'
 #' @param las An object of the class \code{LAS}
 #' @param size numeric. The size of the windows used to smooth
@@ -36,7 +36,8 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
   stopifnotlas(las)
   method = match.arg(method)
   shape = match.arg(shape)
-  stopifnot(sigma > 0, size > 0)
+  stopifnot(sigma > 0, size > 0, is.numeric(sigma), is.numeric(size), length(size) == 1, length(sigma) == 1)
+  Z <- Zraw <- NULL
 
   if (method == "average") method = 1  else method = 2
   if (method == "circle") shape = 1 else shape = 2
@@ -54,11 +55,13 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
 lasunsmooth = function(las)
 {
   stopifnotlas(las)
+  Z <- Zraw <- NULL
 
   if ("Zraw" %in% names(las@data))
   {
     las@data[, Z := Zraw]
     las@data[, Zraw := NULL]
+    las@data[]
   }
   else
     message("No column named 'Zraw' found. Unsmoothing is not possible.")

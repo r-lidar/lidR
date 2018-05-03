@@ -1,5 +1,5 @@
 ## Test environments
-* Linux Mint 19 (Ubuntu 16.04), R 3.4.3
+* Linux Mint 19 (Ubuntu 16.04), R 3.4.4
 * win-builder (release and devel)
 
 ## R CMD check results
