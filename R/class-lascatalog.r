@@ -262,7 +262,12 @@ tiling_size = function(ctg)
 vrt = function(ctg)
 {
   if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(tempdir())
+  {
+    if (CATALOGOPTIONS("return_virtual_raster"))
+      return(tempdir())
+    else
+      return("")
+  }
   else
     return(ctg@vrt)
 }
