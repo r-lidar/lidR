@@ -66,6 +66,7 @@ lasadddata = function(las, x, name)
 {
   stopifnotlas(las)
   stopifnot(is.character(name), is.vector(x))
+  stopif_forbidden_name(name)
   las@data[, (name) := x]
   return(invisible())
 }
@@ -76,7 +77,7 @@ lasaddextrabytes = function(las, x, name, desc)
 {
   stopifnotlas(las)
   stopifnot(is.character(name), is.character(desc))
-
+  stopif_forbidden_name(name)
   if (missing(x))
     x = las@data[[name]]
   else
@@ -96,7 +97,7 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
 {
   stopifnotlas(las)
   stopifnot(is.character(name), is.character(desc), is.character(type))
-
+  stopif_forbidden_name(name)
   allowed = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")
   type = which(allowed == type)
 
@@ -115,6 +116,13 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
 
   return(invisible())
 }
+
+stopif_forbidden_name = function(name)
+{
+  if (name %in% LASFIELDS)
+    stop(paste0(name, " is a forbidden name."), call. = FALSE)
+}
+
 
 # type = 0 : undocumented
 # type = 1 : unsigned char

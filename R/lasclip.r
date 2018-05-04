@@ -85,6 +85,10 @@ lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE, ...)
     las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile, inside)
     return(las)
   }
+  else if (is(geometry, "SpatialPolygonsDataFrame"))
+  {
+    stop("'SpatialPolygonsDataFrame' is not supported for 'LAScatalog' objects", call. = FALSE)
+  }
   else
   {
     stop("Geometry not supported", call. = FALSE)
