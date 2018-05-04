@@ -1,32 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2017 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-
-
 #' Clip LiDAR points
 #'
 #' Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
@@ -52,11 +23,31 @@
 #' \code{LAScatalog} object)
 #' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
-#' # Load the file and clip
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#'
+#' # Load the file and clip the region of interest
 #' las = readLAS(LASfile)
-#' subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
-#' plot(subset)
+#' subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
+#'
+#' # Do not load the file, extract only the region of interest
+#' ctg = catalog(LASfile)
+#' subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
+#'
+#' # Extract a polygon from a shapefile
+#' shapefile_dir <- system.file("extdata", package = "lidR")
+#' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+#' lake = lakes@polygons[[1]]@Polygons[[1]]
+#' subset3 = lasclip(ctg, lake)
+#'
+#' # Extract a polygon, write it in a file, do not load anything in R
+#' file = paste0(tempfile(), ".las")
+#' lasclip(ctg, lake, ofile = file)
+#'
+#' \dontrun{
+#' plot(subset1)
+#' plot(subset2)
+#' plot(subset3)
+#' }
 #' @name lasclip
 #' @export
 #' @export

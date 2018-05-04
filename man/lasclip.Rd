@@ -57,9 +57,29 @@ An object of class \code{LAS} or NULL if the result is immediately written to a 
 Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
 }
 \examples{
-# Load the file and clip
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+
+# Load the file and clip the region of interest
 las = readLAS(LASfile)
-subset = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
-plot(subset)
+subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
+
+# Do not load the file, extract only the region of interest
+ctg = catalog(LASfile)
+subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
+
+# Extract a polygon from a shapefile
+shapefile_dir <- system.file("extdata", package = "lidR")
+lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+lake = lakes@polygons[[1]]@Polygons[[1]]
+subset3 = lasclip(ctg, lake)
+
+# Extract a polygon, write it in a file, do not load anything in R
+file = paste0(tempfile(), ".las")
+lasclip(ctg, lake, ofile = file)
+
+\dontrun{
+plot(subset1)
+plot(subset2)
+plot(subset3)
+}
 }
