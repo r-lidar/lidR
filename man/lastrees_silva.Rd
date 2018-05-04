@@ -5,7 +5,7 @@
 \title{Individual tree segmentation}
 \usage{
 lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
-  extra = FALSE)
+  extra = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -26,6 +26,9 @@ multiplied by the tree height will be removed. Thus, this number belongs between
 \item{extra}{logical. By default the function classifies the original point cloud by reference
 and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.}
+
+\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
+the new column.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud

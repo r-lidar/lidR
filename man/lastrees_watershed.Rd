@@ -5,7 +5,7 @@
 \title{Individual tree segmentation}
 \usage{
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
-  extra = FALSE)
+  extra = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -23,10 +23,14 @@ or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
 \item{extra}{logical. By default the function classifies the original point cloud by reference
 and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.}
+
+\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
+the new column.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud
-has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
+has a new column named \code{'treeID'} (or something else if the \code{field} option has been changed)
+containing an ID for each point that refer to a segmented tree.
 If \code{extra = TRUE} the function returns a \code{RasterLayer} used internally.
 }
 \description{

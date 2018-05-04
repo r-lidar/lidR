@@ -15,21 +15,31 @@
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param tol numeric. Tolerance see ?EBImage::watershed.
 #' @param ext numeric. see ?EBImage::watershed.
+#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
+#' the new column.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
-#' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
+#' has a new column named \code{'treeID'} (or something else if the \code{field} option has been changed)
+#' containing an ID for each point that refer to a segmented tree.
 #' If \code{extra = TRUE} the function returns a \code{RasterLayer} used internally.
 #'
 #' @export
 #' @family  tree_segmentation
-lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE)
+lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE, ...)
 {
-  Canopy <- raster::as.matrix(chm)
-  Canopy <- t(apply(Canopy, 2, rev))
-  Canopy[Canopy < th_tree] <- NA
+  field = "treeID"
+  p = list(...)
+  if(!is.null(p$field))
+    field = p$field
+
+  stopif_forbidden_name(field)
 
   if (!requireNamespace("EBImage", quietly = TRUE))
     stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
+
+  Canopy <- raster::as.matrix(chm)
+  Canopy <- t(apply(Canopy, 2, rev))
+  Canopy[Canopy < th_tree] <- NA
 
   Crowns = EBImage::watershed(Canopy, tol, ext)
 
@@ -39,8 +49,8 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
 
   if(!missing(las))
   {
-    lasclassify(las, Crowns, "treeID")
-    lasaddextrabytes(las, name = "treeID", desc = "An ID for each segmented tree")
+    lasclassify(las, Crowns, field)
+    lasaddextrabytes(las, name = field, desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))
