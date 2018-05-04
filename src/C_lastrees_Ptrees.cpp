@@ -7,40 +7,13 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-typedef boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> polygonPoint;
 
 template<typename T> void apply2DFilter( std::vector<T> &subProfile, std::vector<T> &subProfileSubset );
+template<typename T> void searchID_usingArea( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &areaValue );
+template<typename T> void searchID_usingDist( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &distValue );
 
-
-template<typename T> void searchID_usingArea( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &areaValue )
-{
-  double areaValueBis = 0;
-  areaValue = trees->treeStorage[knnTreeID[0]-1].testArea( pointToSort );
-  for ( int i = 1; i < knnTreeID.size(); i++ )
-  {
-    areaValueBis = trees->treeStorage[knnTreeID[i]-1].testArea( pointToSort );
-    if (areaValue > areaValueBis)
-    {
-      areaValue = areaValueBis;
-      resultID = knnTreeID[i];
-    }
-  }
-}
-
-template<typename T> void searchID_usingDist( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &distValue )
-{
-  double distValueBis = 0;
-  distValue = trees->treeStorage[knnTreeID[0]-1].testDist( pointToSort );
-  for ( int i = 1; i < knnTreeID.size(); i++ )
-  {
-    distValueBis = trees->treeStorage[knnTreeID[i]-1].testDist( pointToSort );
-    if (distValue > distValueBis)
-    {
-      distValue = distValueBis;
-      resultID = knnTreeID[i];
-    }
-  }
-}
+//TODO : creer fonction lastrees_Ptrees avec boucle sur les k et les criteres
+//TODO:mettre progress bar dans fonction
 
 // [[Rcpp::export]]
 std::vector<int> test_PTrees( S4 las, int k )
@@ -83,7 +56,6 @@ std::vector<int> test_PTrees( S4 las, int k )
   int limit = points.size();
   for (int i = 1; i < limit; i ++ )
   {
-    Rcpp::Rcout << "i = " << i << std::endl;
     //Initialisation of point to assign in trees
     pointToSort = points[i];
 
@@ -99,7 +71,7 @@ std::vector<int> test_PTrees( S4 las, int k )
     //Searching if these k points were already classified in idTree using ID number in result
     knnTreeID.clear();
     knnTreeID.assign( filteredResult.size(), 0 );
-    for (int n = 0; n < k; n++ )
+    for (int n = 0; n < filteredResult.size(); n++ )
     {
       knnTreeID[n] = idTree[filteredResult[n].id];
     }
@@ -114,7 +86,6 @@ std::vector<int> test_PTrees( S4 las, int k )
     //1) If no classified points in the neighbourhood
     if ( knnTreeID.empty() == TRUE )
     {
-      Rcpp::Rcout << "knnTreeID = " << 1 << std::endl;
       Tree<PointXYZ> newTree( pointToSort );
       trees.addTree( newTree );
       idTree[pointToSort.id] = trees.nbTree;
@@ -122,14 +93,12 @@ std::vector<int> test_PTrees( S4 las, int k )
     //2) If only one identified tree in the neighbourhood
     else if ( knnTreeID.size() == 1)
     {
-      Rcpp::Rcout << "knnTreeID = " << 2 << std::endl;
       trees.updateTree( knnTreeID[0], pointToSort );
       idTree[pointToSort.id] = knnTreeID[0];
     }
     //3) If several identified trees in the neighbourhood
     else
     {
-      Rcpp::Rcout << "knnTreeID = " << 3 << std::endl;
       //To know which search Method is required for this tree subset (distance or area evaluation)
       //scan of tree numbers to identify if there is at least one with less than 2 points
       int searchMethod = 1;
@@ -142,155 +111,55 @@ std::vector<int> test_PTrees( S4 las, int k )
       //Depending on previous result, selection of adapted searchMethod
       int resultID = knnTreeID[0];
       double areaValue = 0, distValue = 0;
+      double diffHeight = 0;
+      double thresholdZ = 5;                  //page 100 last paragraph
       switch(searchMethod)
       {
-      case 1: Rcpp::Rcout << "knnTreeID = " << 4 << std::endl;
-        searchID_usingArea( &trees, knnTreeID, pointToSort, resultID, areaValue );
-        //Association of pointToSort to best tree result
-        trees.treeStorage[resultID-1].addPoint( pointToSort, areaValue );
-        idTree[pointToSort.id] = resultID;
-        break;
+      case 1: { searchID_usingArea( &trees, knnTreeID, pointToSort, resultID, areaValue );
 
-      case 2: Rcpp::Rcout << "knnTreeID = " << 5 << std::endl;
-        searchID_usingDist( &trees, knnTreeID, pointToSort, resultID, distValue );
-        //Association of pointToSort to best tree result
-        trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
-        idTree[pointToSort.id] = resultID;
+        //Before association of pointToSort to best tree result,
+        //testing if Z difference between pointToSort and lowest point in tree is under
+        //a height difference threshold fixed at 5m --> page 100 last paragraph
+        diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+        if ( diffHeight <= thresholdZ )
+        {
+          trees.treeStorage[resultID-1].addPoint( pointToSort, areaValue );
+          idTree[pointToSort.id] = resultID;
+        }
+        else
+        {
+          Tree<PointXYZ> newTree( pointToSort );
+          trees.addTree( newTree );
+          idTree[pointToSort.id] = trees.nbTree;
+        }
         break;
       }
 
-      //attention fixer un seuil à 5m!!
+      case 2: { searchID_usingDist( &trees, knnTreeID, pointToSort, resultID, distValue );
+
+        //Before association of pointToSort to best tree result,
+        //testing if Z difference between pointToSort and lowest point in tree is under
+        //a height difference threshold fixed at 5m --> page 100 last paragraph
+        diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+        if ( diffHeight <= thresholdZ )
+        {
+          trees.treeStorage[resultID-1].addPoint( pointToSort, distValue );
+          idTree[pointToSort.id] = resultID;
+        }
+        else
+        {
+          Tree<PointXYZ> newTree( pointToSort );
+          trees.addTree( newTree );
+          idTree[pointToSort.id] = trees.nbTree;
+        }
+        break;
+      }
+      }
+
     }
 
   }
-/*
-//========================================================================================
-  int j = limit;
-  Rcpp::Rcout << "i = " << j << std::endl;
-  //Initialisation of point to assign in trees
-  pointToSort = points[j];
-
-  //Searching for k-nearest neighbours and storage of corresponding points into result
-  bbox = BoundingBox3D<PointXYZ> (pointToSort, reso);
-  result.clear();
-  filteredResult.clear();
-  treeOI->knn_lookup3D( pointToSort, k, result );
-
-  //Removal of points having a planimetric distance from pointToSort above threshold T
-  apply2DFilter(result, filteredResult);
-
-  //Searching if these k points were already classified in idTree using ID number in result
-  knnTreeID.clear();
-  knnTreeID.assign( filteredResult.size(), 0 );
-  for (int n = 0; n < k; n++ )
-  {
-  knnTreeID[n] = idTree[filteredResult[n].id];
-  }
-
-  //Removal of duplicates tree IDs and index value 0
-  sort( knnTreeID.begin(), knnTreeID.end() );
-  knnTreeID.erase( unique( knnTreeID.begin(), knnTreeID.end() ), knnTreeID.end() );
-  knnTreeID.erase(knnTreeID.begin());
-
-  double areaValue = 0;
-  //Three possibilities for next classification:
-  //1) If no classified points in the neighbourhood
-  if ( knnTreeID.empty() == TRUE )
-  {
-  Rcpp::Rcout << "knnTreeID = " << 1 << std::endl;
-  Tree<PointXYZ> newTree( pointToSort );
-  trees.addTree( newTree );
-  idTree[pointToSort.id] = trees.nbTree;
-  }
-  //2) If only one identified tree in the neighbourhood
-  else if ( knnTreeID.size() == 1)
-  {
-  Rcpp::Rcout << "knnTreeID = " << 2 << std::endl;
-  trees.updateTree( knnTreeID[0], pointToSort );
-  idTree[pointToSort.id] = knnTreeID[0];
-  }
-  //3) If several identified trees in the neighbourhood
-  else
-  {
-    Rcpp::Rcout << "knnTreeID = " << 3 << std::endl;
-    //To know which search Method is required for this tree subset (distance or area evaluation)
-    //scan of tree numbers to identify if there is at least one with less than 2 points
-    int searchMethod = 1;
-    for ( int i = 0; i < knnTreeID.size(); i++ )
-    {
-      if ( trees.treeStorage[knnTreeID[i]-1].nbPoints < 2 )
-        searchMethod = 2;
-    }
-
-    //Depending on previous result, selection of adapted searchMethod
-    int resultID = knnTreeID[0];
-    //double areaValue = 0;
-    double distValue = 0;
-
-    switch(searchMethod)
-    {
-    case 1: Rcpp::Rcout << "knnTreeID = " << 4 << std::endl;
-      //searchID_usingArea( trees, knnTreeID, pointToSort, resultID, areaValue );
-      searchID_usingArea( &trees, knnTreeID, pointToSort, resultID, areaValue );
-      //Association of pointToSort to best tree result
-      trees.treeStorage[resultID-1].addPoint( pointToSort, areaValue );
-      idTree[pointToSort.id] = resultID;
-      break;
-
-    case 2: Rcpp::Rcout << "knnTreeID = " << 5 << std::endl;
-      //searchID_usingDist( trees, knnTreeID, pointToSort, resultID, distValue );
-      //Association of pointToSort to best tree result
-      //trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
-      idTree[pointToSort.id] = resultID;
-      break;
-    }
-  }*/
-
-//========================================================================================
-
-/*
-NumericMatrix output(1, 5);
-for (int i = 0; i < 1; i++ )
-{
-  output(i, 0) = pointToSort.x;
-  output(i, 1) = pointToSort.y;
-  output(i, 2) = pointToSort.z;
-  output(i, 3) = pointToSort.id;
-}*/
-
-/*
- NumericMatrix output(pointsForPoly.size(), 3);
- for (int i = 0; i < pointsForPoly.size(); i++ )
- {
- output(i, 0) = pointsForPoly[i].get<0>();
- output(i, 1) = pointsForPoly[i].get<1>();
- output(i, 2) = pointsForPoly[i].get<2>();
- }
-*/
-
-/*
-  int ind1 = 0, ind2 = 0;
-NumericMatrix output(100, 5);
-  for (int j = 0; j <trees.treeStorage.size(); j++ )
-  {
-    for (int i = 0; i < trees.treeStorage[j].points.size(); i++ )
-    {
-      output(ind2 +i, 0) = trees.treeStorage[j].points[i].x;
-      output(ind2 +i, 1) = trees.treeStorage[j].points[i].y;
-      output(ind2 +i, 2) = trees.treeStorage[j].points[i].z;
-      output(ind2 +i, 3) = trees.treeStorage[j].points[i].id;
-      output(ind2 +i, 4) = j+1;
-      ind1++;
-    }
-    ind2 += ind1;
-    ind1 = 0;
-  }
-*/
-
-
-
 return(idTree);
-
 }
 
 
@@ -335,4 +204,48 @@ template<typename T> void apply2DFilter( std::vector<T> &subProfile, std::vector
     i++;
   }
 
+}
+
+//========================================================================================
+//                              SEARCH ID - USING AREA
+//========================================================================================
+//Function that calculates convex hull areas for each selected tree in 'knnTreeID'
+template<typename T> void searchID_usingArea( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &areaValue )
+{
+  //Calcul de la premiere aire de la selection d'arbres
+  double areaValueBis = 0;
+  areaValue = trees->treeStorage[knnTreeID[0]-1].testArea( pointToSort );   //page 100 Eq3
+
+  //Comparaison avec les suivantes --> on garde la plus petite
+  //Attention -> pourquoi 0 quand calcul du convex hull avec trois points?
+  for ( int i = 1; i < knnTreeID.size(); i++ )
+  {
+    areaValueBis = trees->treeStorage[knnTreeID[i]-1].testArea( pointToSort );   //page 100 Eq3
+    if (areaValue > areaValueBis)
+    {
+      areaValue = areaValueBis;
+      resultID = knnTreeID[i];
+    }
+  }
+}
+
+//========================================================================================
+//                              SEARCH ID - USING DISTANCE
+//========================================================================================
+//Function that calculates euclidian distance if at least one tree of selection contains less than 2 points
+template<typename T> void searchID_usingDist( TreeCollection<T> *trees, std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &distValue )
+{
+  //Calcul de la premiere distance
+  double distValueBis = 0;
+  distValue = trees->treeStorage[knnTreeID[0]-1].testDist( pointToSort );
+  //Comparaison avec les suivantes --> on attribue le point à l'arbre avec la distance la plus petite
+  for ( int i = 1; i < knnTreeID.size(); i++ )
+  {
+    distValueBis = trees->treeStorage[knnTreeID[i]-1].testDist( pointToSort );
+    if (distValue > distValueBis)
+    {
+      distValue = distValueBis;
+      resultID = knnTreeID[i];
+    }
+  }
 }
