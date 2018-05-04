@@ -127,6 +127,11 @@ template<typename T> struct ZSortPointBis
   bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
 };
 
+template<typename T> struct ZSortPointBis_increasing
+{
+  bool operator()(const T lhs, const T rhs) const { return lhs.z < rhs.z; }
+};
+
 struct ZSortPoint_increasing
 {
   bool operator()(const PointXYZ* lhs, const PointXYZ* rhs) const { return lhs->z < rhs->z; }
