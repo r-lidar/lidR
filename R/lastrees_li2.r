@@ -19,6 +19,8 @@
 #' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
+#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
+#' the new column.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
 #' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
@@ -37,7 +39,7 @@
 #' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 #' @export
 #' @family tree_segmentation
-lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
+lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10, ...)
 {
   stopifnotlas(las)
 
@@ -46,6 +48,13 @@ lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed
   if (Zu <= 0)  stop("Zu should be positive", call. = FALSE)
   if (hmin <= 0)stop("hmin should be positive", call. = FALSE)
   if (R <= 0)   stop("R should be positive", call. = FALSE)
+
+  field = "treeID"
+  p = list(...)
+  if(!is.null(p$field))
+    field = p$field
+
+  stopif_forbidden_name(field)
 
   if (las@header@PHB$`Max Z` < hmin)
   {
@@ -58,7 +67,7 @@ lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed
     id = C_lastrees_li2(las, dt1, dt2, Zu, R, hmin, speed_up, progress)
   }
 
-  lasaddextrabytes(las, id, "treeID", "An ID for each segmented tree")
+  lasaddextrabytes(las, id, field, "An ID for each segmented tree")
 
   return(invisible())
 }

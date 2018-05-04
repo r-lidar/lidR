@@ -44,6 +44,7 @@
 #' @param .las An object of class \code{LAS}.
 #' @param func The function to be applied to each tree.
 #' @param debug logical. When facing a non trivial error, try \code{debug = TRUE}.
+#' @param field character. The column name of the field containing tree IDs. Defaul is \code{"treeID"}
 #' @return Returns a \code{data.table} containing the metrics for each segmented tree.
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -72,17 +73,15 @@
 #' # predefined metrics (see ?stdmetrics)
 #' metrics = tree_metrics(las, .stdtreemetrics)
 #' @export
-tree_metrics = function(.las, func, debug = FALSE)
+tree_metrics = function(.las, func, debug = FALSE, field = "treeID")
 {
   UseMethod("tree_metrics", .las)
 }
 
 #' @export
-tree_metrics.LAS = function(.las, func, debug = FALSE)
+tree_metrics.LAS = function(.las, func, debug = FALSE, field = "treeID")
 {
-  call = substitute(func)
-
-  stat <- lasaggregate(.las, by = "TREE", call, NA, NA, c("tree"), FALSE, debug)
-
+  call <- substitute(func)
+  stat <- lasaggregate(.las, by = "TREE", call, NA, NA, c("tree"), FALSE, debug, field)
   return(stat)
 }

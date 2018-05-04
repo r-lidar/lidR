@@ -1,4 +1,4 @@
-lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
+lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug, name = "")
 {
   . <- NULL
 
@@ -27,7 +27,6 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     if(2 != length(start)) stop("Parameter 'start' should have a length of 2", call. = FALSE)
 
     ._class = "lasmetrics"
-
     by = group_grid(.las@data$X, .las@data$Y, res, start)
   }
   # Aggregation on XYZ (grid_metrics3d)
@@ -37,7 +36,6 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     if(3 != length(start)) stop("Parameter 'start' should have a length of 3", call. = FALSE)
 
     ._class = "lasmetrics3d"
-
     by = group_grid_3d(.las@data$X, .las@data$Y, .las@data$Z, res, start)
   }
   # Aggregation on hexagonal cells (grid_hexametrics)
@@ -71,18 +69,16 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
     hbin_pos_ids = hbin_pos[hbin_ids]
 
     ._class = "lashexametrics"
-
     by = list(Xr = hbin_coord$x[hbin_pos_ids], Yr = hbin_coord$y[hbin_pos_ids])
   }
   # Aggregation by trees (tree_metrics)
   else if (by == "TREE")
   {
-    if(! "treeID" %in% names(.las@data))
+    if(! name %in% names(.las@data))
       stop("The trees are not segmented yet. Please see function 'lastrees'.", call. = FALSE)
 
-    ._class = "lastreemetrics"
-
-    by = .las@data$treeID
+    ._class = NULL
+    by = .las@data[, get(name)]
   }
   else if (by == "RASTER")
   {
@@ -93,13 +89,13 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug)
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
 
     res = res[1]
-
     cells = raster::cellFromXY(raster, .las@data[, .(X,Y), with = TRUE])
     values = suppressWarnings(raster[cells])
     X = raster::xFromCell(raster, cells)
     Y = raster::yFromCell(raster, cells)
     X[is.na(values)] = NA
     Y[is.na(values)] = NA
+
     by = list(Xgrid = X, Ygrid = Y)
     ._class = "lasmetrics"
   }

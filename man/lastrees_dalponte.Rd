@@ -5,7 +5,7 @@
 \title{Individual tree segmentation}
 \usage{
 lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, extra = FALSE)
+  th_cr = 0.55, max_cr = 10, extra = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -33,6 +33,9 @@ Default 10.}
 \item{extra}{logical. By default the function classifies the original point cloud by reference
 and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.}
+
+\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
+the new column.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud

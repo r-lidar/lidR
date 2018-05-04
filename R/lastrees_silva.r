@@ -19,6 +19,8 @@
 #' tree height. Default is 0.6,  meaning 60\% of the tree height.
 #' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 #' multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.
+#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
+#' the new column.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
 #' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
@@ -45,9 +47,16 @@
 #' https://doi.org/10.1080/07038992.2016.1196582.
 #' @export
 #' @family  tree_segmentation
-lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE)
+lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE, ...)
 {
   . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
+
+  field = "treeID"
+  p = list(...)
+  if(!is.null(p$field))
+    field = p$field
+
+  stopif_forbidden_name(field)
 
   if (is(treetops, "RasterLayer"))
     treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
@@ -79,8 +88,8 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 
   if(!missing(las))
   {
-    lasclassify(las, crown, "treeID")
-    lasaddextrabytes(las, name = "treeID", desc = "An ID for each segmented tree")
+    lasclassify(las, crown, field)
+    lasaddextrabytes(las, name = field, desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))
