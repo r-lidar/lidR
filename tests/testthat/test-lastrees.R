@@ -50,6 +50,20 @@ test_that("Silvas's methods works", {
   expect_equal(seg1, seg2)
 })
 
+test_that("lastrees can store in a user defined column", {
+  lastrees_li2(las, speed_up = 5, field = "plop")
+  expect_true("plop" %in% names(las@data))
+})
+
+
+test_that("tree_metrics works", {
+  X = tree_metrics(las, max(Z))
+  Y = tree_metrics(las, max(Z), field = "plop")
+  expect_error(tree_metrics(las, max(Z), field = "abc"), "trees are not segmented")
+})
+
+
+
 # Commented because CRAN doesn't like to call Bioconductor package
 # test_that("Watershed's methods works", {
 #   las@data[, treeID := NULL]

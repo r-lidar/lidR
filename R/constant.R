@@ -17,4 +17,4 @@ LASBUILDING = 6
 LASLOWPOINT = 7
 LASKEYPOINT = 8
 LASWATER = 9
-LASFIELDS = c("X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "ScanAngle", "UserData", "gpstime", "PointSourceID", "R", "G", "B")
+LASFIELDS = c("X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "Synthetic_flag", "Keypoint_flag", "Withheld_flag", "ScanAngle", "UserData", "gpstime", "PointSourceID", "R", "G", "B")

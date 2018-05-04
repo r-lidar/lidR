@@ -4,7 +4,7 @@
 \alias{lastrees_li}
 \title{Individual tree segmentation (deprecated)}
 \usage{
-lastrees_li(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10)
+lastrees_li(las, dt1 = 1.5, dt2 = 2, Zu = 15, hmin = 2, R = 10, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}.}
@@ -21,6 +21,9 @@ See reference page 79 in Li et al. (2012). Default 15.}
 \item{R}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
+
+\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
+the new column.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud

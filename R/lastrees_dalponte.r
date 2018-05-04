@@ -27,6 +27,8 @@
 #' multiplied by this value. It should be between 0 and 1. Default 0.55.
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 #' Default 10.
+#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
+#' the new column.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
 #' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
@@ -51,7 +53,7 @@
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 #' @export
 #' @family  tree_segmentation
-lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE)
+lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE, ...)
 {
   if (!is(chm, "RasterLayer"))
     stop("chm is not a RasterLayer", call. = FALSE)
@@ -76,6 +78,13 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   if (th_cr < 0 | th_cr > 1)
     stop("th_cr should be between 0 and 1", call. = FALSE)
 
+  field = "treeID"
+  p = list(...)
+  if(!is.null(p$field))
+    field = p$field
+
+  stopif_forbidden_name(field)
+
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[is.na(Canopy)] <- -Inf
@@ -93,8 +102,8 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
   if(!missing(las))
   {
-    lasclassify(las, Crowns, "treeID")
-    lasaddextrabytes(las, name = "treeID", desc = "An ID for each segmented tree")
+    lasclassify(las, Crowns, field)
+    lasaddextrabytes(las, name =  field, desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))
