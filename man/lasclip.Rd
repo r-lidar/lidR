@@ -54,7 +54,19 @@ the shape.}
 An object of class \code{LAS} or NULL if the result is immediately written to a file.
 }
 \description{
-Clip LiDAR points within a given geometry and convenient wrappers for most common geometries.
+Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
+(\code{LAScatalog} object)
+}
+\details{
+\code{lasclip} functions work both on \code{LAS} and \code{LAScatalog} objects. With a \code{LAS}
+object, the user firt read and load a point-cloud and then clip it to get a subset whithin a region
+of interest (ROI). With a \code{LAScatalog} object, the user extract the ROI whihout
+loading the whole point-cloud. This is faster and much memory efficient for extracting ROIs.
+\cr\cr
+Minor difference exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
+For example the user can clip a \code{SpatialPolygonsDataFrame} from a \code{LAS} object but not
+from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disable for \code{LAScatalog}
+object. These difference are generally justified by memory safety concerns.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
