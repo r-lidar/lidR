@@ -54,8 +54,20 @@ bool C_point_in_polygon(NumericVector vertx, NumericVector verty, double pointx,
 
   for (int i = 0, j = nvert-1 ; i < nvert ; j = i++)
   {
-    if( ((verty[i] > pointy) != (verty[j] > pointy)) && (pointx < (vertx[j]-vertx[i]) * (pointy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+    if( ((verty[i] >= pointy) != (verty[j] >= pointy)) && (pointx <= (vertx[j]-vertx[i]) * (pointy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
       c = !c;
+  }
+
+  if (!c)
+  {
+    for (int i = 0 ; i < nvert ; i++)
+    {
+      if ((verty[i] == pointy) && (vertx[i] == pointx))
+      {
+        c = true;
+        break;
+      }
+    }
   }
 
   return c;
