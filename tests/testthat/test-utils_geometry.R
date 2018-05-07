@@ -18,7 +18,7 @@ test_that("area works", {
 test_that("points in polygon works", {
   ch = lidR:::convex_hull(x,y)
 
-  expect_equal(lidR:::C_points_in_polygon(vertx, verty, x, y), c(T, F, F, F, T, T, F, T, T, F, F))
+  expect_equal(lidR:::C_points_in_polygon(vertx, verty, x, y), c(T, T, F, T, T, T, F, T, T, F, F))
   expect_true(lidR:::C_point_in_polygon(ch$x, ch$y, 0.5,0.5))
   expect_true(!lidR:::C_point_in_polygon(ch$x, ch$y, -0.5,0.5))
 })
