@@ -7,3 +7,4 @@
 ^\.travis\.yml$
 ^cran-comments\.md$
 ^profiling$
+^readme.img$
