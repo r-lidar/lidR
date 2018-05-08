@@ -38,9 +38,7 @@ Development of the lidR package between 2015 and 2018 was made possible thanks t
 In the R-fashion style the function `plot` based on `rgl` enable the user to display, rotate and zoom on a point cloud. Because `rgl` have limited capabilities regarding large datasets we also made a package [PointCloudViewer](https://github.com/Jean-Romain/PointCloudViewer) with greater display capabilites.
 
 ```r
-# Read a file
 las = readLAS("<file.las>")
-# Display it
 plot(las)
 ```
 
@@ -61,9 +59,6 @@ chm = grid_tincanopy(las, thresholds = th, max_edge = edge)
 plot(chm)
 ```
 
-`grid_*`functions return a `data.frame` that can be casted to a `RasterLayer`using `as.raster`
-
-
 ### Read and display a catalog of las files
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/catalog-demo.gif">
@@ -78,14 +73,7 @@ ctg@crs = sp::CRS("+proj=utm +zone=17")
 plot(ctg)
 ```
 
-From a `LAScatalog` the user can (for example) extract some regions of interest (ROI) with `lasclip` or `catalog_queries`. Using a catalog for the extraction of the ROI guarantes fast and memory efficient clip.
-
-```r
-# x y being the coordinates of the center of the ROI
-las = lasclipCircle(ctg, x, y, radius)
-```
-
-`LAScatalog` object allows many other manipulations that are usually done with multicore if possible.
+From a `LAScatalog` the user can (for example) extract some regions of interest (ROI) with `lasclip` or `catalog_queries`. Using a catalog for the extraction of the ROI guarantes fast and memory efficient clip. `LAScatalog` object allows many other manipulations that are usually done with multicore if possible.
 
 ### Individual tree segmentation
 
@@ -96,11 +84,10 @@ las = lasclipCircle(ctg, x, y, radius)
 ```r
 las = readLAS("<file.las>")
 
-# Tree segmentation using Li et al. 2012 algorithm
 lastrees(las, algorithm = "li2012")
 
 col = random.colors(200)
-plot(las, bg = "white", color = "treeID", colorPalette = col)
+plot(las, color = "treeID", colorPalette = col)
 ```
 
 ### Other tools
