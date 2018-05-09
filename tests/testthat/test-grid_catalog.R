@@ -69,4 +69,37 @@ test_that("grid_canopy returns a VRT", {
   expect_true(object.size(chm1) < object.size(chm2))
 })
 
+test_that("grid_catalog generic function works", {
+
+  f = function(x, res){ grid_metrics(x, mean(Z), res) }
+
+  X = grid_catalog(ctg, f, res = 20, select = "xyz")
+  Y = grid_metrics(las, mean(Z), 20)
+
+  expect_equal(dim(X), dim(Y))
+
+  f = function(x, res){ 2 }
+
+  expect_error(grid_catalog(ctg, f, res = 20, select = "xyz"), "data type")
+})
+
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' shapefile_dir <- system.file("extdata", package = "lidR")
+#'
+#' ctg = catalog(LASfile)
+#' tiling_size(ctg) <- 160
+#'
+#' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+#'
+#' my_grid_metrics = function(x, res, spdf)
+#' {
+#'   lasclassify(x, spdf, "inpoly")
+#'   x = lasfilter(x, !inpoly)
+#'   grid_metrics(x, mean(Z), res)
+#' }
+#'
+#' mean = grid_catalog(ctg, my_grid_metrics, 20,
+#'                     select = "xyz", filter = "-drop_z_below 5",
+#'                     spdf = lakes)
+
 

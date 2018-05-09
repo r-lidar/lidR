@@ -28,15 +28,16 @@
 
 #' Apply a grid function over a catalog
 #'
-#' This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}.
-#' It used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
-#' \code{grid_*} functions when the input is a catalog. It ensures to process continuouly the dataset
-#' and perform pre- and post- processes. This function can be seen as a  strainforward 'grid-specific'
-#' version of \link{catalog_apply} which is even more generic.
+#' This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}
+#' object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
+#' \code{grid_*} functions when the input is a \code{LAScatalog} it ensures to rasterize continuouly
+#' the dataset and perform pre- and post- processes. This function can be seen as a straitforward
+#' 'grid-specific' version of \link{catalog_apply} which is even more generic.
 #'
-#' Like \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} the user-defined function must
-#' have a parameter called \code{x} that will received a \code{LAS} object and a parameter \code{res}
-#' that will receive the resolution of the grid. The parameter \code{start is optionnal}.
+#' The user-defined function \code{grid_func} must respect a template. Like in \link{grid_metrics},
+#' \link{grid_terrain} or \link{grid_canopy} the user-defined function must have a parameter called
+#' \code{x} that will received a \code{LAS} object and a parameter \code{res} that will receive the
+#' resolution of the grid. The parameter \code{start} is optionnal.
 #'
 #' @param catalog A \link[lidR:LAScatalog-class]{LAScatalog}
 #' @param grid_func A function that returns a \code{lasmetrics} object. This function must follow a
@@ -73,7 +74,8 @@
 #' mean = grid_catalog(ctg, my_grid_metrics, 20,
 #'                     select = "xyz", filter = "-drop_z_below 5",
 #'                     spdf = lakes)
-grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0), ...)
+#'
+grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", start = c(0,0), ...)
 {
   stopifnot(is(catalog, "LAScatalog"), is.function(grid_func))
 
@@ -205,7 +207,6 @@ grid_catalog <- function(catalog, grid_func, res, select, filter, start = c(0,0)
 # @param res numric. the resolution to apply the grid_* function
 # @param filter character. the streaming filter to be applied
 # @param param list. the parameter of the function grid_function but res
-# @param p progressbar.
 apply_grid_func = function(cluster, grid_func, param, filter, select)
 {
   X <- Y <- NULL
@@ -229,6 +230,9 @@ apply_grid_func = function(cluster, grid_func, param, filter, select)
   # Call the function
   param$x   <- las
   metrics   <- do.call(grid_func, args = param)
+
+  if (!is(metrics, "lasmetrics"))
+    stop("User-defined function does not return proper data type", call. = FALSE)
 
   # Remove the buffer
   metrics <- metrics[X >= xleft+0.5*res & X <= xright-0.5*res & Y >= ybottom+0.5*res & Y <= ytop-0.5*res]
