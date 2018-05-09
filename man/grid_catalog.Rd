@@ -4,7 +4,8 @@
 \alias{grid_catalog}
 \title{Apply a grid function over a catalog}
 \usage{
-grid_catalog(catalog, grid_func, res, select, filter, start = c(0, 0), ...)
+grid_catalog(catalog, grid_func, res, select = "*", filter = "",
+  start = c(0, 0), ...)
 }
 \arguments{
 \item{catalog}{A \link[lidR:LAScatalog-class]{LAScatalog}}
@@ -27,16 +28,17 @@ Returns a \code{data.table} containing the metrics for each cell. The table
 has the class "lasmetrics" enabling easy plotting.
 }
 \description{
-This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}.
-It used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
-\code{grid_*} functions when the input is a catalog. It ensures to process continuouly the dataset
-and perform pre- and post- processes. This function can be seen as a  strainforward 'grid-specific'
-version of \link{catalog_apply} which is even more generic.
+This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}
+object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
+\code{grid_*} functions when the input is a \code{LAScatalog} it ensures to rasterize continuouly
+the dataset and perform pre- and post- processes. This function can be seen as a straitforward
+'grid-specific' version of \link{catalog_apply} which is even more generic.
 }
 \details{
-Like \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} the user-defined function must
-have a parameter called \code{x} that will received a \code{LAS} object and a parameter \code{res}
-that will receive the resolution of the grid. The parameter \code{start is optionnal}.
+The user-defined function \code{grid_func} must respect a template. Like in \link{grid_metrics},
+\link{grid_terrain} or \link{grid_canopy} the user-defined function must have a parameter called
+\code{x} that will received a \code{LAS} object and a parameter \code{res} that will receive the
+resolution of the grid. The parameter \code{start} is optionnal.
 }
 \examples{
 # This exemple computes the mean elevation of the point over 5 m over an entiere
@@ -60,4 +62,5 @@ my_grid_metrics = function(x, res, spdf)
 mean = grid_catalog(ctg, my_grid_metrics, 20,
                     select = "xyz", filter = "-drop_z_below 5",
                     spdf = lakes)
+
 }
