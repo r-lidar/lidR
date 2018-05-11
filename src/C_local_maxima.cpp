@@ -87,7 +87,7 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
-  int n = X.length();
+  unsigned int n = X.length();
   double hws = ws/2;
 
   LogicalVector is_maxima(n);
@@ -95,7 +95,7 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
 
   QuadTree *tree = QuadTreeCreate(X,Y);
 
-  for (long i = 0 ; i < n ; i++)
+  for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], hws, hws, pts);
@@ -104,7 +104,7 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
     long id_old_max = -1;
     double max(std::numeric_limits<double>::min());
 
-    for(int j = 0 ; j < pts.size() ; j++)
+    for(unsigned int j = 0 ; j < pts.size() ; j++)
     {
       long pid = pts[j]->id;
 
@@ -122,7 +122,7 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
       }
     }
 
-    for(int j = 0 ; j < pts.size() ; j++)
+    for(unsigned int j = 0 ; j < pts.size() ; j++)
     {
       long pid = pts[j]->id;
 

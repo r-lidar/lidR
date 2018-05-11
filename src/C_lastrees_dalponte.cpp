@@ -62,7 +62,6 @@ IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, doub
     }
   }
 
-  int step = 0;
   while (grown)
   {
     grown = false;
@@ -85,7 +84,7 @@ IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, doub
           neighbours[2] = Pixel<double>(r, k+1, Image(r, k+1));
           neighbours[3] = Pixel<double>(r+1, k, Image(r+1, k));
 
-          for(int i = 0 ; i < neighbours.size() ; i++)                  // For each neighboring pixel
+          for(unsigned int i = 0 ; i < neighbours.size() ; i++)                  // For each neighboring pixel
           {
             Pixel<double> px = neighbours[i];
 

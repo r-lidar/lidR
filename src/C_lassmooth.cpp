@@ -45,7 +45,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
-  long n = X.length();
+  unsigned int n = X.length();
   double half_res = size / 2;
   double twosquaresigma = 2*sigma*sigma;
   double twosquaresigmapi = twosquaresigma * PI;
@@ -57,7 +57,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
 
   Progress p(n, false);
 
-  for (long i = 0 ; i < n ; i++)
+  for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
 
@@ -70,7 +70,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
     double ztot = 0;
     double wtot = 0;
 
-    for(long j = 0 ; j < pts.size() ; j++)
+    for(unsigned int j = 0 ; j < pts.size() ; j++)
     {
       if (method == 1)
       {

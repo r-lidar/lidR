@@ -49,14 +49,12 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
 
   S4 header = las.slot("header");
   List phb  = header.slot("PHB");
-  double xmax = phb["Max X"];
   double xmin = phb["Min X"];
-  double ymax = phb["Max Y"];
   double ymin = phb["Min Y"];
 
-  int ni = X.length();            // Number of points
-  int n  = ni;                    // Number of remaining points
-  int k  = 1;                     // Current tree ID
+  unsigned int ni = X.length();            // Number of points
+  unsigned int n  = ni;                    // Number of remaining points
+  unsigned int k  = 1;                     // Current tree ID
   IntegerVector idtree(ni);       // The ID of each point (returned object)
   std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
   Progress p(ni, progressbar);    // A progress bar and script abort options
@@ -77,7 +75,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
   // Convert the R data into STL containers of points
   std::vector<PointXYZ*> points(ni);
 
-  for (int i = 0 ; i < ni ; ++i)
+  for (unsigned int i = 0 ; i < ni ; ++i)
     points[i] = new PointXYZ(X[i], Y[i], Z[i], i);
 
   /* *********************
@@ -105,7 +103,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
 
       if (p.check_abort())
       {
-        for (int i = 0 ; i < points.size() ; i++) delete points[i];
+        for (unsigned int i = 0 ; i < points.size() ; i++) delete points[i];
         delete dummy;
         p.exit();
       }
@@ -122,7 +120,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
       // Compute the distance between the local max u and all the other point
       std::vector<double> d = sqdistance(points, *u);
 
-      for (int i = 1 ; i < n ; ++i)
+      for (unsigned int i = 1 ; i < n ; ++i)
       {
         u = points[i];
 
@@ -157,7 +155,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
     std::vector<PointXYZ*> temp;
     temp.reserve(N.size()-1);
 
-    for(int i = 0 ; i < n ; i++)
+    for(unsigned int i = 0 ; i < n ; i++)
     {
       if(inN[i])
         temp.push_back(points[i]);

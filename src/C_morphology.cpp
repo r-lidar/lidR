@@ -37,7 +37,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar = false)
 {
-  long n = X.length();
+  unsigned int n = X.length();
   double half_res = resolution / 2;
 
   NumericVector Z_temp = clone(Z);
@@ -48,14 +48,14 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   Progress p(2*n, displaybar);
 
   // Dilate
-  for (long i = 0 ; i < n ; i++)
+  for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
     double min_pt(std::numeric_limits<double>::max());
 
-    for(long j = 0 ; j < pts.size() ; j++)
+    for(unsigned  int j = 0 ; j < pts.size() ; j++)
     {
       double z = Z_temp[pts[j]->id];
 
@@ -77,14 +77,14 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   Z_temp = clone(Z_out);
 
   // erode
-  for (long i = 0 ; i < n ; i++)
+  for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
     double max_pt(std::numeric_limits<double>::min());
 
-    for(long j = 0 ; j < pts.size() ; j++)
+    for(unsigned int j = 0 ; j < pts.size() ; j++)
     {
       double z = Z_temp[pts[j]->id];
 
