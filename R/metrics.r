@@ -66,31 +66,31 @@
 #' lidar = readLAS(LASfile, select = "*")
 #'
 #' # All the predefined functions
-#' x1 = grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
+#' m1 = grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
 #'
 #' # Convenient shortcut
-#' x2 = grid_metrics(lidar, .stdmetrics)
+#' m2 = grid_metrics(lidar, .stdmetrics)
 #'
 #' # Basic metrics from intensities
-#' x3 = grid_metrics(lidar, stdmetrics_i(Intensity))
+#' m3 = grid_metrics(lidar, stdmetrics_i(Intensity))
 #'
 #' # All the metrics from intensities
-#' x4 = grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+#' m4 = grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 #'
 #' # Convenient shortcut for the previous example
-#' x5 = grid_metrics(lidar, .stdmetrics_i)
+#' m5 = grid_metrics(lidar, .stdmetrics_i)
 #'
 #' # Compute the metrics only on first return
 #' first = lasfilterfirst(lidar)
-#' x6 = grid_metrics(first, .stdmetrics_z)
+#' m6 = grid_metrics(first, .stdmetrics_z)
 #'
 #' # Compute the metrics with a threshold at 2 meters
 #' over2 = lasfilter(lidar, Z > 2)
-#' x7 = rid_metrics(over2, .stdmetrics_z)
+#' m7 = grid_metrics(over2, .stdmetrics_z)
 #'
 #' # Works also with lasmetrics and grid_hexametrics
-#' x8 = lasmetrics(lidar, .stdmetrics)
-#' x9 = grid_hexametrics(lidar, .stdmetrics)
+#' m8 = lasmetrics(lidar, .stdmetrics)
+#' m9 = grid_hexametrics(lidar, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -105,12 +105,12 @@
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' x10 = grid_metrics(lidar, myMetrics(Z, Intensity))
+#' m10 = grid_metrics(lidar, myMetrics(Z, Intensity))
 #'
 #' # User can write your own convenient shorcuts like this:
 #' .myMetrics = expression(myMetrics(Z,Intensity))
 #'
-#' x12 = grid_metrics(lidar, .myMetrics)
+#' m11 = grid_metrics(lidar, .myMetrics)
 #' @seealso
 #' \link{grid_metrics}
 #' \link{lasmetrics}
