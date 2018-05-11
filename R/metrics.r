@@ -66,31 +66,31 @@
 #' lidar = readLAS(LASfile, select = "*")
 #'
 #' # All the predefined functions
-#' grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
+#' x1 = grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
 #'
 #' # Convenient shortcut
-#' grid_metrics(lidar, .stdmetrics)
+#' x2 = grid_metrics(lidar, .stdmetrics)
 #'
 #' # Basic metrics from intensities
-#' grid_metrics(lidar, stdmetrics_i(Intensity))
+#' x3 = grid_metrics(lidar, stdmetrics_i(Intensity))
 #'
 #' # All the metrics from intensities
-#' grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+#' x4 = grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 #'
 #' # Convenient shortcut for the previous example
-#' grid_metrics(lidar, .stdmetrics_i)
+#' x5 = grid_metrics(lidar, .stdmetrics_i)
 #'
 #' # Compute the metrics only on first return
 #' first = lasfilterfirst(lidar)
-#' grid_metrics(first, .stdmetrics_z)
+#' x6 = grid_metrics(first, .stdmetrics_z)
 #'
 #' # Compute the metrics with a threshold at 2 meters
 #' over2 = lasfilter(lidar, Z > 2)
-#' grid_metrics(over2, .stdmetrics_z)
+#' x7 = rid_metrics(over2, .stdmetrics_z)
 #'
 #' # Works also with lasmetrics and grid_hexametrics
-#' lasmetrics(lidar, .stdmetrics)
-#' grid_hexametrics(lidar, .stdmetrics)
+#' x8 = lasmetrics(lidar, .stdmetrics)
+#' x9 = grid_hexametrics(lidar, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -105,12 +105,12 @@
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' grid_metrics(lidar, myMetrics(Z, Intensity))
+#' x10 = grid_metrics(lidar, myMetrics(Z, Intensity))
 #'
 #' # User can write your own convenient shorcuts like this:
 #' .myMetrics = expression(myMetrics(Z,Intensity))
 #'
-#' grid_metrics(lidar, .myMetrics)
+#' x12 = grid_metrics(lidar, .myMetrics)
 #' @seealso
 #' \link{grid_metrics}
 #' \link{lasmetrics}
@@ -410,6 +410,8 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 
     metrics = c(metrics, ipcum)
   }
+
+  metrics
 }
 
 #' @rdname stdmetrics
