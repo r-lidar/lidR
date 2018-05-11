@@ -45,14 +45,12 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
 
   S4 header = las.slot("header");
   List phb  = header.slot("PHB");
-  double xmax = phb["Max X"];
   double xmin = phb["Min X"];
-  double ymax = phb["Max Y"];
   double ymin = phb["Min Y"];
 
-  int ni = X.length();            // Number of points
-  int n  = ni;                    // Number of remaining points
-  int k  = 1;                     // Current tree ID
+  unsigned int ni = X.length();            // Number of points
+  unsigned int n  = ni;                    // Number of remaining points
+  unsigned int k  = 1;                     // Current tree ID
 
   // The ID of each point (returned object)
   IntegerVector idtree(ni);
@@ -79,7 +77,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
 
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);
-  for (int i = 0 ; i < ni ; ++i)
+  for (unsigned int i = 0 ; i < ni ; ++i)
     U[i] = new PointXYZ(X[i], Y[i], Z[i], i);
 
   // N and P groups (see Li et al. page 78)
@@ -108,7 +106,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
     {
       if (p.check_abort())
       {
-        for (int i = 0 ; i < U.size() ; i++) delete U[i];
+        for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i];
         delete dummy;
         p.exit();
       }
@@ -132,7 +130,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
       std::vector<double> d = sqdistance(U, *u);
 
       // Loop over each point of U (but the global maximum that is alredy in P)
-      for (int i = 1 ; i < n ; ++i)
+      for (unsigned int i = 1 ; i < n ; ++i)
       {
         u = U[i];
 
@@ -178,7 +176,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
     std::vector<PointXYZ*> temp;
     temp.reserve(N.size()-1);
 
-    for(int i = 0 ; i < n ; i++)
+    for(unsigned int i = 0 ; i < n ; i++)
     {
       if(inN[i])
         temp.push_back(U[i]);

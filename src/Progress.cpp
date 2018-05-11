@@ -2,9 +2,14 @@
 
 bool Progress::exist = false;
 
-Progress::Progress(int _iter_max, bool _display) : iter_max(_iter_max), display(_display), j(0), percentage(-1)
+Progress::Progress(int _iter_max, bool _display)
 {
   if (exist) { Rf_error("Error: there is already an interruptable instance defined"); }
+
+  iter_max = _iter_max;
+  display = _display;
+  j = 0;
+  percentage = -1;
   exist = true;
 }
 
