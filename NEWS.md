@@ -26,6 +26,7 @@
 
 #### BUG FIXES
 
+* `grid_metrics(lidar, stdmetrics_i(Intensity))` returned and empty `data.table`
 * [[#128](https://github.com/Jean-Romain/lidR/issues/128)] Fix raster data extraction using the slower and memory greedy but safer `raster::extract` function.
 * [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions.
 * [[#116](https://github.com/Jean-Romain/lidR/issues/116)] Fix clash between function `area` from `lidR` and from `raster`.
