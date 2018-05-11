@@ -20,14 +20,35 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),methods
 Imports:
-    rlas (>= 1.1.10),rgl,stats,utils,grDevices,tools,raster,rgeos,
-    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,
-    memoise,mapview,mapedit,RANN,future
+    data.table,
+    future,
+    gdalUtils,
+    geometry,
+    grDevices,
+    gstat,
+    lazyeval,
+    mapview,
+    mapedit,
+    memoise,
+    RANN,
+    raster,
+    Rcpp,
+    rgeos,
+    rgl,
+    rlas (>= 1.1.10),
+    settings,
+    sp,
+    stats,
+    tools,
+    utils
 Suggests:
-    rgdal,testthat,EBImage,hexbin
+    rgdal,
+    testthat,
+    EBImage,
+    hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp,RcppProgress
+LinkingTo: Rcpp
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 

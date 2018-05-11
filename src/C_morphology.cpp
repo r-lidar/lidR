@@ -27,11 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include <limits>
 #include "QuadTree.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
@@ -51,11 +50,6 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   // Dilate
   for (long i = 0 ; i < n ; i++)
   {
-    if (Progress::check_abort() )
-      return Z_out;
-    else
-      p.update(i);
-
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
@@ -70,6 +64,14 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
     }
 
     Z_out[i] = min_pt;
+
+    if (p.check_abort())
+    {
+      delete tree;
+      p.exit();
+    }
+
+    p.update(i);
   }
 
   Z_temp = clone(Z_out);
@@ -77,11 +79,6 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   // erode
   for (long i = 0 ; i < n ; i++)
   {
-    if (Progress::check_abort() )
-      return Z_out;
-    else
-      p.update(i+n);
-
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
 
@@ -96,9 +93,16 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
     }
 
     Z_out[i] = max_pt;
+
+    if (p.check_abort())
+    {
+      delete tree;
+      p.exit();
+    }
+
+    p.update(i+n);
   }
 
   delete tree;
-
   return Z_out;
 }

@@ -37,8 +37,8 @@ C_LocalMaximaMatrix <- function(image, ws, th) {
     .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
 }
 
-C_LocalMaximaPoints <- function(las, ws, min_height, displaybar = FALSE) {
-    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height, displaybar)
+C_LocalMaximaPoints <- function(las, ws, min_height) {
+    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height)
 }
 
 C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {

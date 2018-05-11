@@ -27,14 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include "Point.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar = false);
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height);
 
 // [[Rcpp::export]]
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar = false)
@@ -107,14 +106,18 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
     }
     else
     {
+      if (p.check_abort())
+      {
+        for (int i = 0 ; i < U.size() ; i++) delete U[i];
+        delete dummy;
+        p.exit();
+      }
+
+      p.update(ni-n);
+
       // Initial step no point in P or N
       P.clear();
       N.clear();
-
-      if (Progress::check_abort() )
-        return  IntegerVector::create(0);
-      else
-        p.update(ni-n);
 
       // element 0 is the current highest point and is in P (target tree)
       P.push_back(u);

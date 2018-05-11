@@ -27,8 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include <limits>
 #include "QuadTree.h"
@@ -80,7 +78,7 @@ IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
 }
 
 // [[Rcpp::export]]
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar = false)
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
 {
   // DataFrame data = las.slot("data");
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
@@ -96,9 +94,6 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
   LogicalVector isnot_maxima(n);
 
   QuadTree *tree = QuadTreeCreate(X,Y);
-
-  // Remove because lastree_li use this function a Process is a singleton
-  //Progress p(n, displaybar);
 
   for (long i = 0 ; i < n ; i++)
   {
@@ -143,7 +138,6 @@ LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool dis
   }
 
   delete tree;
-
   return is_maxima;
 }
 

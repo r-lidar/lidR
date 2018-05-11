@@ -27,10 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include "QuadTree.h"
+#include "Progress.h"
+
 using namespace Rcpp;
 
 // [[Rcpp::plugins("cpp0x")]]
@@ -115,6 +115,8 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
 
   QuadTree *tree = QuadTreeCreate(pointx, pointy);
 
+  Progress p(nvert, displaybar);
+
   for(int i = 0 ; i < nvert ; i ++)
   {
     NumericVector xpoly = as<NumericVector>(vertx[i]);
@@ -141,9 +143,16 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
         id[(*it)->id] = i+1;
       }
     }
+
+    if (p.check_abort())
+    {
+      delete tree;
+      p.exit();
+    }
+
+    p.update(i);
   }
 
   delete tree;
-
   return id;
 }
