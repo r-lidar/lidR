@@ -38,7 +38,7 @@
 #'
 #' \describe{
 #' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
+#' an inverse-distance weighting (IDW). This is a fast but basic method for spatial
 #' data interpolation.}
 #' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
 #' interpolation within each triangle. There are usually few cells outside the convex hull,
@@ -55,14 +55,14 @@
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
 #' the entire dataset in a continuous way using a multicore process. The user can modify the processing
 #' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param res numeric. resolution.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
-#' @param p numeric. Power for invert distance weighting. Default 2.
+#' @param p numeric. Power for inverse-distance weighting. Default 2.
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
 #' is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.
 #' @param keep_lowest logical. This function forces the original lowest ground point of each

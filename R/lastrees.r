@@ -1,10 +1,10 @@
 #' Individual tree segmentation
 #'
 #' Individual tree segmentation with several possible algorithms. The function is a wrapper around
-#' all the existing methods. Considering the increasing number of tree segmentation methods avaible,
-#' each method is now documented in its own page (see section "See Also")
+#' all the existing methods. Considering the increasing number of tree segmentation methods available,
+#' each method is now documented on its own page (see section "See Also")
 #'
-#' @param las An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
+#' @param las An object of the class \code{LAS}. If missing, \code{extra} is turned to \code{TRUE}
 #' automatically.
 #' @param algorithm character. The name of an algorithm. Can be \code{"dalponte2016"},
 #' \code{"watershed"},\code{"li2012"} (deprecated), \code{"li2012-2"} or \code{"silva2016"}.
@@ -12,7 +12,7 @@
 #' of each method).
 #'
 #' @return Usually nothing (NULL). The point cloud is updated by reference (in place without copy).
-#' But some algorithms may provide extra outputs. Usually it may returns intermediate objects used
+#' But some algorithms may provide extra outputs. Usually it returns intermediate objects used
 #' internally, such as a \code{RasterLayer} or a \code{SpatialPolygonDataFrame}.
 #'
 #' @examples

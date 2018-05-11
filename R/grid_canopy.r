@@ -31,7 +31,7 @@
 #'
 #' Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
 #' returns the highest point found (point-to-raster). This basic method could be improved
-#' by replacing each LiDAR return with a small disk. An interpolation for empty pixels is
+#' by replacing each LiDAR return with a small disc. An interpolation for empty pixels is
 #' also available.
 #'
 #' The algorithm relies on a point-to-raster approach. For each pixel the elevation of the
@@ -50,7 +50,7 @@
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
 #' the entire dataset in a continuous way using a multicore process. The user can modify the processing
 #' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @aliases  grid_canopy
