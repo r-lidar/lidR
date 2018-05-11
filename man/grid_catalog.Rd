@@ -21,28 +21,27 @@ specific template (see details and examples)}
 
 \item{start}{numeric. The 'start' parameter from \link{grid_metrics}}
 
-\item{...}{Any other parameter requiered by \code{grid_func}}
+\item{...}{Any other parameter required by \code{grid_func}}
 }
 \value{
 Returns a \code{data.table} containing the metrics for each cell. The table
 has the class "lasmetrics" enabling easy plotting.
 }
 \description{
-This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}
-object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
-\code{grid_*} functions when the input is a \code{LAScatalog} it ensures to rasterize continuouly
-the dataset and perform pre- and post- processes. This function can be seen as a straitforward
-'grid-specific' version of \link{catalog_apply} which is even more generic.
+This function applies over an entire catalog any user-defined function that returns a \code{lasmetrics} object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
+\code{grid_*} functions when the input is a \code{LAScatalog}, it ensures continuous rasterization of
+the dataset and performs pre- and post-processes. This function can be seen as a straightforward
+'grid-specific' version of \link{catalog_apply}, which is even more generic.
 }
 \details{
 The user-defined function \code{grid_func} must respect a template. Like in \link{grid_metrics},
-\link{grid_terrain} or \link{grid_canopy} the user-defined function must have a parameter called
-\code{x} that will received a \code{LAS} object and a parameter \code{res} that will receive the
-resolution of the grid. The parameter \code{start} is optionnal.
+\link{grid_terrain} or \link{grid_canopy}, the user-defined function must have a parameter called
+\code{x} that will receive a \code{LAS} object and a parameter \code{res} that will receive the
+resolution of the grid. The parameter \code{start} is optional.
 }
 \examples{
-# This exemple computes the mean elevation of the point over 5 m over an entiere
-# catalog, after removing all points in the lakes found into a shapefile.
+# This example computes the mean elevation of points above 5 m over an entire
+# catalog, after removing all points in lakes into a shapefile.
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
