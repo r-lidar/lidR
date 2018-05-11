@@ -7,7 +7,7 @@
 
  COPYRIGHT:
 
- Copyright 2016 Jean-Romain Roussel
+ Copyright 2016-2018 Jean-Romain Roussel
 
  This file is part of lidR R package.
 
@@ -27,11 +27,9 @@
  ===============================================================================
  */
 
-
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include "QuadTree.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
@@ -62,8 +60,7 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
 
   delete tree;
 
-  return Rcpp::List::create(Rcpp::Named("nn.idx") = knn_idx,
-                            Rcpp::Named("nn.dist") = knn_dist);
+  return Rcpp::List::create(Rcpp::Named("nn.idx") = knn_idx, Rcpp::Named("nn.dist") = knn_dist);
 }
 
 // [[Rcpp::export]]
@@ -78,14 +75,6 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
   for( int i = 0 ; i < n ; i++)
   {
-    if (Progress::check_abort() )
-    {
-      delete tree;
-      return iZ;
-    }
-    else
-      pbar.update(i);
-
     std::vector<Point*> pts;
     tree->knn_lookup(x[i], y[i], k, pts);
 
@@ -115,9 +104,16 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
     }
 
     iZ(i) = sum_zw/sum_w;
+
+    if (pbar.check_abort())
+    {
+      delete tree;
+      pbar.exit();
+    }
+
+    pbar.update(i);
   }
 
   delete tree;
-
   return iZ;
 }

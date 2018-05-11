@@ -78,8 +78,7 @@ tree_detection.LAS = function(x, ws, hmin = 2)
   if (hmin < 0) stop("hmin should be positive", call. = FALSE)
 
   . <- X <- Y <- Z <- NULL
-  bar = LIDROPTIONS("progress")
-  maxima = C_LocalMaximaPoints(x, ws, hmin, bar)
+  maxima = C_LocalMaximaPoints(x, ws, hmin)
   return(x@data[maxima, .(X,Y,Z)])
 }
 

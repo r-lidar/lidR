@@ -141,16 +141,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_LocalMaximaPoints
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height, bool displaybar);
-RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP displaybarSEXP) {
+LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height);
+RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type ws(wsSEXP);
     Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height, displaybar));
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -327,7 +326,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
     {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
-    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 4},
+    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 3},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 5},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},

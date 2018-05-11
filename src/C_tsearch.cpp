@@ -27,10 +27,9 @@
  ===============================================================================
  */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include "QuadTree.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
@@ -52,11 +51,6 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
   // Loop over each triangle
   for (int k = 0; k < nelem; k++)
   {
-    if (Progress::check_abort() )
-      return output;
-    else
-      p.update(k);
-
     // Retrieve triangle A B C coordinates
 
     int iA = elem(k, 0) - 1;
@@ -77,9 +71,16 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
         int id = (*it)->id;
         output(id) = k + 1;
     }
+
+    if (p.check_abort())
+    {
+      delete tree;
+      p.exit();
+    }
+
+    p.update(k);
   }
 
   delete tree;
-
   return(output);
 }

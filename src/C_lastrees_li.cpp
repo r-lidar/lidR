@@ -27,10 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include <Rcpp.h>
 #include "Point.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
@@ -62,7 +61,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
   std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
   Progress p(ni, progressbar);    // A progress bar and script abort options
   PointXYZ* dummy = new PointXYZ(xmin-100,ymin-100,0,-1);
-  std::vector<PointXYZ*> P,N;        // Store the point in N or P group (see Li et al.)
+  std::vector<PointXYZ*> P,N;     // Store the point in N or P group (see Li et al.)
 
   // Reserve memory for N et P group
   // (will statistically reduce the number of dynamic reallocation)
@@ -104,8 +103,12 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
       P.clear();
       N.clear();
 
-      if (Progress::check_abort() )
-        return  IntegerVector::create(0);
+      if (p.check_abort())
+      {
+        for (int i = 0 ; i < points.size() ; i++) delete points[i];
+        delete dummy;
+        p.exit();
+      }
       else
         p.update(ni-n);
 
