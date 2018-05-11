@@ -94,19 +94,19 @@ test_that("catalog queries support readLAS options", {
   expect_true(any(cn %in% c("Intensity", "ScanAngle", "ReturnNumber")))
 })
 
-test_that("catalog reshape works", {
-  ctg = catalog(folder)
-  progress(ctg) <- FALSE
-  ctg@data = ctg@data[1]
-  temp = tempfile()
-
-  ctg2 = catalog_reshape(ctg, 80, temp, prefix = "test_")
-
-  unlink(temp, recursive = T)
-
-  expect_equal(sum(ctg@data$`Number of point records`), sum(ctg2@data$`Number of point records`))
-  expect_equal(nrow(ctg2@data), 9)
-})
+# test_that("catalog reshape works", {
+#   ctg = catalog(folder)
+#   progress(ctg) <- FALSE
+#   ctg@data = ctg@data[1]
+#   temp = tempfile()
+#
+#   ctg2 = catalog_reshape(ctg, 80, temp, prefix = "test_")
+#
+#   unlink(temp, recursive = T)
+#
+#   expect_equal(sum(ctg@data$`Number of point records`), sum(ctg2@data$`Number of point records`))
+#   expect_equal(nrow(ctg2@data), 9)
+# })
 
 test_that("catalog apply works", {
   ctg@data = ctg@data[1]
