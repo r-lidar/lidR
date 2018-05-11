@@ -56,9 +56,9 @@ A \code{LAScatalog} object
 }
 \description{
 Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
-representation of a set of las files. A computer cannot load all the data at the same time. A
-catalog is a simple way to manage all the file sequentially reading only the headers. Also a catalog
-self contains metadata to configure how it should be processed.
+representation of a set of las files, since a computer cannot load all the data at once. A
+catalog is a simple way to manage all the file sequentially by reading only the headers. Also a
+catalog contains metadata tso users can configure how it should be processed.
 }
 \seealso{
 \link{LAScatalog-class}

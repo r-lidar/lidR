@@ -7,7 +7,7 @@
 lastrees(las, algorithm, ...)
 }
 \arguments{
-\item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
+\item{las}{An object of the class \code{LAS}. If missing, \code{extra} is turned to \code{TRUE}
 automatically.}
 
 \item{algorithm}{character. The name of an algorithm. Can be \code{"dalponte2016"},
@@ -18,13 +18,13 @@ of each method).}
 }
 \value{
 Usually nothing (NULL). The point cloud is updated by reference (in place without copy).
-But some algorithms may provide extra outputs. Usually it may returns intermediate objects used
+But some algorithms may provide extra outputs. Usually it returns intermediate objects used
 internally, such as a \code{RasterLayer} or a \code{SpatialPolygonDataFrame}.
 }
 \description{
 Individual tree segmentation with several possible algorithms. The function is a wrapper around
-all the existing methods. Considering the increasing number of tree segmentation methods avaible,
-each method is now documented in its own page (see section "See Also")
+all the existing methods. Considering the increasing number of tree segmentation methods available,
+each method is now documented on its own page (see section "See Also")
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

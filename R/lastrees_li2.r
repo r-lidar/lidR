@@ -1,21 +1,21 @@
 #' Individual tree segmentation
 #'
-#' Individual tree segmentation using Li et al. (2012) algorithm (see reference). This method replace
-#' the \link[lidR:lastrees_li]{former algorithm} being a slignly closer implementation of the original paper.
-#' This method is a growing region method working at the point cloud level. It is an implementation
+#' Individual tree segmentation using the Li et al. (2012) algorithm (see reference). This method replaces
+#' the \link[lidR:lastrees_li]{former algorithm} being a slightly closer implementation of the original
+#' paper. This method is a growing region method working at the point cloud level. It is an implementation
 #' (as strict as possible) of the Li et al. 2012 (see references) algorithm made by the \code{lidR}
-#' author but with the addition of a parameter \code{hmin} to stop the over-segmentation for objects
+#' author but with the addition of a parameter \code{hmin} to stop over-segmentation for objects
 #' that are too low. The classification is done at the point cloud level and the function always
 #' returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
-#' a new column \code{treeID}. The user is free to post-process this output the way he want.
+#' a new column \code{treeID}. Users are free to post-process this output the way they want.
 #'
 #' @param las An object of the class \code{LAS}.
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.
 #' @param R numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2.
 #' @param hmin numeric.  Minimum height of a detected tree. Default 2.
-#' @param Zu numeric. If point elvation is greater than Zu, \code{dt2} is used otherwise \code{dt1} is used.
-#' See reference page 79 in Li et al. (2012). Default 15.
+#' @param Zu numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
+#' used. See reference page 79 in Li et al. (2012). Default 15.
 #' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
@@ -23,7 +23,7 @@
 #' the new column.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
-#' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
+#' has a new column named \code{treeID} containing an ID for each point that refers to a segmented tree.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

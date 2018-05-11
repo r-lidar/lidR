@@ -21,7 +21,7 @@ highest point within each cell.
 \details{
 This function is different from \link{grid_canopy} even if the overall concept is exactly the same.
 \code{grid_canopy} attributes to each cell the elevation of the highest points and the point cloud is
-rasterized. Here, there is no rasterization, the function have a point cloud as input and a point
+rasterized. Here, there is no rasterization, the function takes a point cloud as input and a point
 cloud as output. Coordinates and attributes are preserved.
 }
 \examples{

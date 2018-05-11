@@ -24,12 +24,12 @@ from \code{sp} are supported.}
 
 \item{ofile}{character. Path to an output file (only with a \code{LAScatalog} object).
 If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
-file while reading. This is much more memory efficient than loading into R first, then writing.}
+file while reading. This is much more memory-efficient than loading into R first, then writing.}
 
-\item{inside}{logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
+\item{inside}{logical. Inverts the selection (only with a \code{LAS} object). Select inside or outside
 the shape.}
 
-\item{...}{Additionnal argument for readLAS to reduce the number of data loaded (only with a
+\item{...}{Additional argument for readLAS to reduce the amount of data loaded (only with a
 \code{LAScatalog} object)}
 
 \item{xleft}{scalar of left x position of rectangle.}
@@ -59,14 +59,14 @@ Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object)
 }
 \details{
 \code{lasclip} functions work both on \code{LAS} and \code{LAScatalog} objects. With a \code{LAS}
-object, the user firt read and load a point-cloud and then clip it to get a subset whithin a region
-of interest (ROI). With a \code{LAScatalog} object, the user extract the ROI whihout
-loading the whole point-cloud. This is faster and much memory efficient for extracting ROIs.
+object, the user first reads and loads a point-cloud and then clip it to get a subset within a region
+of interest (ROI). With a \code{LAScatalog} object, the user extracts the ROI without
+loading the whole point-cloud. This is faster and much more memory-efficient for extracting ROIs.
 \cr\cr
-Minor difference exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
+Minor differences exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
 For example the user can clip a \code{SpatialPolygonsDataFrame} from a \code{LAS} object but not
-from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disable for \code{LAScatalog}
-object. These difference are generally justified by memory safety concerns.
+from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disabled for \code{LAScatalog}
+objects. These differences are generally justified by memory safety concerns.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
