@@ -1,4 +1,4 @@
-## lidR v1.5.0 (In developpment)
+## lidR v1.5.0 (In development)
 
 #### SIGNIFICANT CHANGES
 
@@ -7,29 +7,29 @@
 
 #### NEW FEATURES
 
-* New `lassmooth` function. A point cloud based smoothing function.
+* New `lassmooth` function. A point cloud-based smoothing function.
 * New `lasfiltersurfacepoints` function to filter surface points.
 * New `grid_catalog` function is a simplified and more powerful function like `catalog_apply` but specifically dedicated to `grid_*` outputs.
 * New functions `lasadddata`, `lasaddextrabyte` and `lasaddextrabyte_manual` to add new data in a `LAS` object.
 * `lasclip` can clip a `SpatialPolygonsDataFrame`
-* `lasclipRectangle` and `lasclipCircle` can clip multiple selection (non documented feature).
-* The `treeID` computed with `lastrees_*` functions can know be written in a `las/laz` file by default.
+* `lasclipRectangle` and `lasclipCircle` can clip multiple selections (non-documented feature).
+* The `treeID` computed with `lastrees_*` functions can now be written in a `las/laz` file by default.
 
 #### OTHER CHANGES
 
-* `LAScatalog` are processed with a single core by default.
+* `LAScatalog` objects are processed with a single core by default.
 * `lasdecimate` is formally deprecated. Use `lasfilterdecimate`
-* `grid_density` now return both the point and the pulse density if possible.
+* `grid_density` now returns both the point and the pulse density, where possible.
 * The option `P` is no longer set by default in `readLAS`.
-* The documentation of `lastrees` has been split in several pages.
-* When a catalog is processed using several cores, if an error is raise the process trigger an early signal to stop the loop. In previous releases the entiere process was run and the error was raised at the end when the futures were evaluated.
+* The documentation of `lastrees` has been split into several pages.
+* When a catalog is processed using several cores, if an error is raised the process triggers an early signal to stop the loop. In previous releases the entiere process was run and the error was raised at the end when the futures were evaluated.
 
 #### BUG FIXES
 
-* [[#128](https://github.com/Jean-Romain/lidR/issues/128)] Fix raster data extraction using the slower and memory greedy but safer `raster::extract` function.
+* [[#128](https://github.com/Jean-Romain/lidR/issues/128)] Fix raster data extraction using the slower and memory-greedy, but safer `raster::extract` function.
 * [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions.
 * [[#116](https://github.com/Jean-Romain/lidR/issues/116)] Fix clash between function `area` from `lidR` and from `raster`.
-* [[#110](https://github.com/Jean-Romain/lidR/issues/110)] Fix out of bounds rasterization.
+* [[#110](https://github.com/Jean-Romain/lidR/issues/110)] Fix out-of-bounds rasterization.
 
 ## lidR v1.4.2 (In developpment)
 

@@ -28,16 +28,15 @@
 
 #' Apply a grid function over a catalog
 #'
-#' This function applies over an entiere catalog any user-defined function that returns a \code{lasmetrics}
-#' object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
-#' \code{grid_*} functions when the input is a \code{LAScatalog} it ensures to rasterize continuouly
-#' the dataset and perform pre- and post- processes. This function can be seen as a straitforward
-#' 'grid-specific' version of \link{catalog_apply} which is even more generic.
+#' This function applies over an entire catalog any user-defined function that returns a \code{lasmetrics} object. Used internaly by \link{grid_metrics}, \link{grid_terrain}, \link{grid_canopy} and other
+#' \code{grid_*} functions when the input is a \code{LAScatalog}, it ensures continuous rasterization of
+#' the dataset and performs pre- and post-processes. This function can be seen as a straightforward
+#' 'grid-specific' version of \link{catalog_apply}, which is even more generic.
 #'
 #' The user-defined function \code{grid_func} must respect a template. Like in \link{grid_metrics},
-#' \link{grid_terrain} or \link{grid_canopy} the user-defined function must have a parameter called
-#' \code{x} that will received a \code{LAS} object and a parameter \code{res} that will receive the
-#' resolution of the grid. The parameter \code{start} is optionnal.
+#' \link{grid_terrain} or \link{grid_canopy}, the user-defined function must have a parameter called
+#' \code{x} that will receive a \code{LAS} object and a parameter \code{res} that will receive the
+#' resolution of the grid. The parameter \code{start} is optional.
 #'
 #' @param catalog A \link[lidR:LAScatalog-class]{LAScatalog}
 #' @param grid_func A function that returns a \code{lasmetrics} object. This function must follow a
@@ -46,15 +45,15 @@
 #' @param select character. The 'select' parameter from \link{readLAS}.
 #' @param filter character. The 'filter' parameter from \link{readLAS}.
 #' @param start numeric. The 'start' parameter from \link{grid_metrics}
-#' @param ... Any other parameter requiered by \code{grid_func}
+#' @param ... Any other parameter required by \code{grid_func}
 #'
 #' @return Returns a \code{data.table} containing the metrics for each cell. The table
 #' has the class "lasmetrics" enabling easy plotting.
 #' @export
 #'
 #' @examples
-#' # This exemple computes the mean elevation of the point over 5 m over an entiere
-#' # catalog, after removing all points in the lakes found into a shapefile.
+#' # This example computes the mean elevation of points above 5 m over an entire
+#' # catalog, after removing all points in lakes into a shapefile.
 #'
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
@@ -87,8 +86,8 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   # Reduce the catalog with rasters
   # ========================================
-  # 'res' may be a RasterLayer. This is a currenlty undocumented feature. In that case
-  # the grid_function is applied only in non empty cells of the RasterLayer
+  # 'res' may be a RasterLayer. This is a currently undocumented feature. In this case
+  # the grid_function is applied only in non-empty cells of the RasterLayer
 
   if (is(res, "RasterLayer"))
   {
@@ -107,8 +106,8 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   # Test of memory to prevent memory overflow
   # ========================================
-  # If the test judge that the output will be to large is can ask the user
-  # to make a choice on the processing method
+  # If the test judges that the output will be too large it can ask the user
+  # to make a choice about the processing method
 
   choice = memory_test(catalog, resolution)
 
@@ -125,7 +124,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   nclust <- length(clusters)
   if (ncores > nclust) ncores = nclust
 
-  # Set up the paramter that will be use for the call
+  # Set up the parameter that will be used for the call
   # =========================================
 
   # Tweak to enable non-standard evaluation
@@ -174,7 +173,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   output <- future::values(output)
 
-  # Post process the output
+  # Post-process the output
   # ========================================
   # If RasterLayer were written on the disk, build a VRT.
   # Otherwise build the data.table.
@@ -199,14 +198,14 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   return(output)
 }
 
-# Apply for a given ROI of a catlog a grid_* function
+# Apply a grid_* function for a given ROI of a catlog 
 #
 # @param X list. the coordinates of the region of interest (rectangular)
 # @param grid_func function. the grid_* function to be applied
 # @param ctg  LAScatalog.
 # @param res numric. the resolution to apply the grid_* function
 # @param filter character. the streaming filter to be applied
-# @param param list. the parameter of the function grid_function but res
+# @param param list. the parameters of the grid_function except res
 apply_grid_func = function(cluster, grid_func, param, filter, select)
 {
   X <- Y <- NULL
@@ -223,7 +222,7 @@ apply_grid_func = function(cluster, grid_func, param, filter, select)
   # Extract the ROI as a LAS object
   las <- readLAS(cluster, filter = filter, select = select)
 
-  # Skip if the ROI fall in a void area
+  # Skip if the ROI falls in a void area
   if (is.null(las))
     return(NULL)
 
@@ -265,10 +264,10 @@ memory_test = function(catalog, resolution)
   if (nbytes > LIDROPTIONS("memlimit") & save_vrt(catalog))
   {
     size = format(nbytes, "auto")
-    text = paste0("The process is expected to return an approximatly ", size, " object. It might be too much.\n")
+    text = paste0("The process is expected to return an approximately ", size, " object. It might be too much.\n")
     choices = c(
       "Proceed anyway",
-      "Store the results on my disk an return a virtual raster mosaic",
+      "Store the results on my disk and return a virtual raster mosaic",
       "Abort, let me configure myself with catalog options (see ?catalog)'")
 
     cat(text)

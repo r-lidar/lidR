@@ -4,7 +4,7 @@
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
-The lidR package provides functions to read and write `.las` and `.laz` files, plot a point cloud, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles in multicore, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
+The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
 Development of the lidR package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
 
@@ -19,7 +19,7 @@ Development of the lidR package between 2015 and 2018 was made possible thanks t
 
 - [Read and write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki/readLAS)
 - [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki/lasplot)
-- [Area based approach using any set of metrics](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
+- [Area-based approach using any set of metrics](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
 - [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki/Tree-segmentation-from-A-to-Z)
 - [Classify and clip data from geographic shapefiles](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
 - [Manage a catalog of tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
@@ -27,7 +27,7 @@ Development of the lidR package between 2015 and 2018 was made possible thanks t
 - [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog_apply)
 - [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/Rasterizing-perfect-canopy-height-models)
 - [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
-- [Normalize a point cloud substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
+- [Normalize a point cloud by substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
     
 # Some examples
 
@@ -35,7 +35,7 @@ Development of the lidR package between 2015 and 2018 was made possible thanks t
 
 ### Read and display a las file
 
-In the R-fashion style the function `plot` based on `rgl` enable the user to display, rotate and zoom on a point cloud. Because `rgl` have limited capabilities regarding large datasets we also made a package [PointCloudViewer](https://github.com/Jean-Romain/PointCloudViewer) with greater display capabilites.
+In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [PointCloudViewer](https://github.com/Jean-Romain/PointCloudViewer) with greater display capabilites.
 
 ```r
 las = readLAS("<file.las>")
@@ -46,7 +46,7 @@ plot(las)
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/chm.png">
 
-`lidR` have several algorithms from the litterature to compute canopy height models either point-to-raster based (`grid_canopy`) or triangulation based (`grid_tincanopy`). This allows to test and compare some methods relying on a CHM such as individual tree segmentation or the computation of a canopy roughtness index.
+`lidR` has several algorithms from the literature to compute canopy height models either point-to-raster based (`grid_canopy`) or triangulation based (`grid_tincanopy`). This allows testing and comparison of some methods that rely on a CHM, such as individual tree segmentation or the computation of a canopy roughness index.
 
 ```r
 las = readLAS("<file.las>")
@@ -63,23 +63,23 @@ plot(chm)
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/catalog-demo.gif">
 
-`lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` build a `LAScatalog` object from a folder. A function `plot` displays this catalog on an interactive map using the `mapview` package.
+`lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` builds a `LAScatalog` object from a folder. The function `plot` displays this catalog on an interactive map using the `mapview` package.
 
 ```r
 ctg = catalog("<folder/>")
 ctg@crs = sp::CRS("+proj=utm +zone=17")
 
-# CRS set: will be display on an interactive map
+# CRS set: will be displayed on an interactive map
 plot(ctg)
 ```
 
-From a `LAScatalog` the user can (for example) extract some regions of interest (ROI) with `lasclip` or `catalog_queries`. Using a catalog for the extraction of the ROI guarantes fast and memory efficient clip. `LAScatalog` object allows many other manipulations that are usually done with multicore if possible.
+From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `lasclip` or `catalog_queries`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that are usually done with multicore processing, where possible.
 
 ### Individual tree segmentation
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/rotating-treeseg.gif" margin-right="5px">
 
-`lastrees` function have several algorithms from the litterature for individual tree segmentation either based on the digital model of canopy or on the point-cloud. Each algorithm has been coded from the original article being as close as possible to what was written in the peer-reviwed papers. Our goal is to make usable/testable/comparable what has been published.
+The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviwed papers. Our goal is to make published algorithms usable, testable and comparable.
 
 ```r
 las = readLAS("<file.las>")
@@ -92,7 +92,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 ### Other tools
 
-`lidR` have plenty of other tools and is a continuouly improved package. If it does not exist in `lidR` ask us for a new feature and depending on the feasability we will be glad to implement such feature.
+`lidR` has many other tools and is a continuouly improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasability we will be glad to implement your requested feature.
 
 # Install `lidR`
 

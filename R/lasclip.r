@@ -32,14 +32,14 @@
 #' (\code{LAScatalog} object)
 #'
 #' \code{lasclip} functions work both on \code{LAS} and \code{LAScatalog} objects. With a \code{LAS}
-#' object, the user firt read and load a point-cloud and then clip it to get a subset whithin a region
-#' of interest (ROI). With a \code{LAScatalog} object, the user extract the ROI whihout
-#' loading the whole point-cloud. This is faster and much memory efficient for extracting ROIs.
+#' object, the user first reads and loads a point-cloud and then clip it to get a subset within a region
+#' of interest (ROI). With a \code{LAScatalog} object, the user extracts the ROI without
+#' loading the whole point-cloud. This is faster and much more memory-efficient for extracting ROIs.
 #' \cr\cr
-#' Minor difference exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
+#' Minor differences exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
 #' For example the user can clip a \code{SpatialPolygonsDataFrame} from a \code{LAS} object but not
-#' from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disable for \code{LAScatalog}
-#' object. These difference are generally justified by memory safety concerns.
+#' from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disabled for \code{LAScatalog}
+#' objects. These differences are generally justified by memory safety concerns.
 #'
 #' @param x An object of class \code{LAS} or \code{LAScatalog}.
 #' @param geometry a geometric object. Currently \code{Polygon} and \code{SpatialPolygonsDataFrame}
@@ -55,10 +55,10 @@
 #' @param radius scalar of disc radius.
 #' @param ofile character. Path to an output file (only with a \code{LAScatalog} object).
 #' If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
-#' file while reading. This is much more memory efficient than loading into R first, then writing.
-#' @param inside logical. Invert the selection (only with a \code{LAS} object). Select inside or outside
+#' file while reading. This is much more memory-efficient than loading into R first, then writing.
+#' @param inside logical. Inverts the selection (only with a \code{LAS} object). Select inside or outside
 #' the shape.
-#' @param ... Additionnal argument for readLAS to reduce the number of data loaded (only with a
+#' @param ... Additional argument for readLAS to reduce the amount of data loaded (only with a
 #' \code{LAScatalog} object)
 #' @return An object of class \code{LAS} or NULL if the result is immediately written to a file.
 #' @examples
@@ -158,7 +158,7 @@ lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", ins
   stopifnot(is.character(ofile), is.logical(inside))
 
   if (l1 != l2 | l1 != l3 | l1 != l4)
-    stop("Different input lenghts.")
+    stop("Different input lengths.")
 
   if (l1 == 1)
   {
@@ -196,7 +196,7 @@ lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = 
   stopifnot(is.character(ofile))
 
   if (l1 != l2 | l1 != l3 | l1 != l4)
-    stop("Different input lenghts.")
+    stop("Different input lengths.")
 
   if (l1 == 1)
   {
@@ -234,7 +234,7 @@ lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
   stopifnot(is.logical(inside))
 
   if (l1 != l2)
-    stop("Different input lenghts.")
+    stop("Different input lengths.")
 
   if( inside)
     return(lasfilter(x, C_points_in_polygon(xpoly,ypoly, X, Y)))
@@ -274,7 +274,7 @@ lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = T
   stopifnot(is.logical(inside))
 
   if (l1 != l2 | l1 != l3)
-    stop("Different input lenghts.")
+    stop("Different input lengths.")
 
   if (l1 == 1)
   {
@@ -312,7 +312,7 @@ lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", ins
   stopifnot(is.character(ofile))
 
   if (l1 != l2 | l1 != l3)
-    stop("Different input lenghts.")
+    stop("Different input lengths.")
 
   if (l1 == 1)
     return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile, ...))
