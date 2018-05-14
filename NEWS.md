@@ -1,3 +1,9 @@
+## lidR v1.6.0 (in development)
+
+### NEW FEATURE
+
+* New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
+
 ## lidR v1.5.0 (2018-05-13)
 
 #### SIGNIFICANT CHANGES
