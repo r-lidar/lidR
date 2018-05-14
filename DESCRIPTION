@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.5.0
+Version: 1.6.0
 Date: 2018-05-12
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
@@ -20,6 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),methods
 Imports:
+    concaveman,
     data.table,
     future,
     gdalUtils,
@@ -112,6 +113,7 @@ Collate:
     'readLAS.r'
     'subcircled.r'
     'tree_detection.r'
+    'tree_hulls.r'
     'tree_metrics.r'
     'utils_colors.r'
     'utils_geometry.r'
