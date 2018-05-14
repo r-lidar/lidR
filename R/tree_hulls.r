@@ -68,10 +68,11 @@ tree_hulls = function(las, type = c("convex", "concave"), concavity = 3, length_
   type = match.arg(type)
 
   if (type == "convex")
-    dt = tree_metrics(las, stdtreehullconvex(X,Y, .GRP), field)
+    dt = las@data[, stdtreehullconvex(X,Y, .GRP), by = field]
   else
-    dt = tree_metrics(las, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), field)
+    dt = las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = field]
 
+  data.table::setnames(dt, names(dt), c("tree", "poly"))
   dt = dt[!is.na(tree)]
 
   spoly = sp::SpatialPolygons(dt$poly)
