@@ -4,6 +4,10 @@
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
 
+## BUG FIXES
+
+* `area` used with a `LAScatalog` returned a wrong mesure because of a bad copy/paste in the code. 
+
 ## lidR v1.5.0 (2018-05-13)
 
 #### SIGNIFICANT CHANGES
