@@ -1,10 +1,14 @@
 ## lidR v1.6.0 (in development)
 
-### NEW FEATURE
+#### NEW FEATURE
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
 
-## BUG FIXES
+#### OTHER CHANGE
+
+* `catalog()` displays a message when finding overlaps between files.
+
+#### BUG FIXES
 
 * `area` used with a `LAScatalog` returned a wrong mesure because of a bad copy/paste in the code. 
 
