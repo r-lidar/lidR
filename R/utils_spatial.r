@@ -94,7 +94,7 @@ setMethod("area", "LAScatalog",
   function(x, ...)
   {
     x <- x@data
-    area <- sum((x$`Max X` - x$`Min X`) * (x$`Max X` - x$`Min X`))
+    area <- sum((x$`Max X` - x$`Min X`) * (x$`Max Y` - x$`Min Y`))
     return(area)
   }
 )
