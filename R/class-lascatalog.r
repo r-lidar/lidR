@@ -141,7 +141,20 @@ catalog <- function(folder, ...)
   if (any(!file.exists(laxfiles)))
     message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
-  return(new("LAScatalog", headers, crs))
+  ctg = new("LAScatalog", headers, crs = sp::CRS())
+
+  # Test for overlaps
+
+  spdf = as.spatial(ctg)
+  contour = rgeos::gUnaryUnion(spdf)
+
+  actual_area = contour@polygons[[1]]@area
+  measured_area = area(ctg)
+
+  if (actual_area < measured_area)
+    message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
+
+  return(ctg)
 }
 
 #' @rdname catalog
