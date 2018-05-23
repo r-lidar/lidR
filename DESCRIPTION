@@ -27,7 +27,7 @@ Suggests:
     rgdal,testthat,EBImage,hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp,RcppProgress
+LinkingTo: Rcpp,RcppProgress,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
