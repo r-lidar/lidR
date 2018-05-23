@@ -25,7 +25,7 @@ struct Increment {
 //========================================================================================
 
 // [[Rcpp::export]]
-std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
+std::vector<int> lastrees_PTrees(S4 las, NumericVector k_values)
 {
   std::vector<std::vector<double> > M;
   //sorting k values in decreasing order
@@ -268,9 +268,10 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
 //========================================================================================
 //                               PTREES_SEGMENTATION
 //========================================================================================
-TreeCollection<PointXYZ> PTrees_segmentation( S4 &las, int k )
+
+TreeCollection<PointXYZ> PTrees_segmentation(S4 las, int k)
 {
-  //Data conversion from las object to vector of PointXYZ
+  // Data conversion from las object to vector of PointXYZ
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
@@ -280,146 +281,153 @@ TreeCollection<PointXYZ> PTrees_segmentation( S4 &las, int k )
   for (int i = 0 ; i < X.size() ; i++)
     points[i] = PointXYZ(X[i], Y[i], Z[i], i);
 
-  //Vector sorting by Z (from max to min)
+  // Vector sorting by Z (from max to min)
   std::sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
 
-  //First Zmax defines first tree in trees
+  // First Zmax defines first tree in trees
   PointXYZ pointToSort = points[0];
-  Tree<PointXYZ> treeInit( pointToSort );
-  TreeCollection<PointXYZ> trees ( treeInit );
+  Tree<PointXYZ> treeInit(pointToSort);
+  TreeCollection<PointXYZ> trees(treeInit);
 
-  //Creation of vector that stores relation between tree number and TreeCollection
-  //Update for first point assignation
-  std::vector<int> idTree( X.size(), 0 );
+  // Creation of vector that stores relation between tree number and TreeCollection
+  // Update for first point assignation
+  std::vector<int> idTree(X.size(), 0);
   idTree[pointToSort.id] = trees.nbTree;
-  Rcpp::Rcout << "NumeroArbre="<< trees.nbTree <<" ";
+  Rcpp::Rcout << "Numero Arbre = " << trees.nbTree << " ";
 
-  //Creation of a QuadTree
+  // Creation of a QuadTree
   QuadTree3D<PointXYZ> *treeOI;
   treeOI = QuadTreeCreate(points);
 
-  //Setting of resolution for QuadTree--> put as argument? resolution to use?
-  PointXYZ reso = PointXYZ(0.01,0.01,0.01);
+  /* Setting of resolution for QuadTree --> put as argument? resolution to use?
+  PointXYZ reso = PointXYZ(0.01,0.01,0.01);*/
 
   std::vector<int> knnTreeID;
-  std::vector<PointXYZ> result, filteredResult;
+  std::vector<PointXYZ> result;
+  std::vector<PointXYZ> filteredResult;
   BoundingBox3D<PointXYZ> bbox;
 
   //Each point is attributed to an existing or new tree
-  int limit = points.size();
-  for (int i = 1; i < limit; i ++ )
+  unsigned int limit = points.size();
+
+  for (unsigned int i = 1 ; i < limit ; i ++)
   {
     //Initialisation of point to assign in trees
     pointToSort = points[i];
 
     //Searching for k-nearest neighbours and storage of corresponding points into result
-    bbox = BoundingBox3D<PointXYZ> (pointToSort, reso);
+    // bbox = BoundingBox3D<PointXYZ> (pointToSort, reso);
     result.clear();
     filteredResult.clear();
-    treeOI->knn_lookup3D( pointToSort, k, result );  //result contains founded neighbours + point of interest
+    treeOI->knn_lookup3D(pointToSort, k, result);  //result contains founded neighbours + point of interest
 
-    //Removal of points having a planimetric distance from pointToSort above threshold T (page 100 Eq. 1/2)
+    // Removal of points having a planimetric distance from pointToSort above threshold T (page 100 Eq. 1/2)
     apply2DFilter(result, filteredResult);
 
-    //Searching if these k points were already classified in idTree using ID number in result
+    // Searching if these k points were already classified in idTree using ID number in result
     knnTreeID.clear();
-    knnTreeID.assign( filteredResult.size(), 0 );
-    for (int n = 0; n < filteredResult.size(); n++ )
+    knnTreeID.assign(filteredResult.size(), 0);
+    for (unsigned int n = 0 ; n < filteredResult.size() ; n++ )
     {
       knnTreeID[n] = idTree[filteredResult[n].id];
     }
 
-    //Removal of duplicates tree IDs and index value 0
-    sort( knnTreeID.begin(), knnTreeID.end() );
-    knnTreeID.erase( unique( knnTreeID.begin(), knnTreeID.end() ), knnTreeID.end() );
+    // Removal of duplicates tree IDs and index value 0
+    sort(knnTreeID.begin(), knnTreeID.end());
+    knnTreeID.erase(unique(knnTreeID.begin(), knnTreeID.end()), knnTreeID.end());
     knnTreeID.erase(knnTreeID.begin());
 
-    //Three possibilities for next classification:
-    //1) If no classified points are found in the neighbourhood (page 101 Fig4.B situation 1)
+    // Three possibilities for next classification:
+    // 1. If no classified points are found in the neighbourhood (page 101 fig. 4B situation 1)
     if ( knnTreeID.empty() == TRUE )
     {
-      Tree<PointXYZ> newTree( pointToSort );
-      trees.addTree( newTree );
+      Tree<PointXYZ> newTree(pointToSort);
+      trees.addTree(newTree);
       idTree[pointToSort.id] = trees.nbTree;
     }
-    //2) If only one identified tree in the neighbourhood (page 101 Fig4.B situation 2)
-    else if ( knnTreeID.size() == 1)
+    // 2. If only one identified tree in the neighbourhood (page 101 fig.4B situation 2)
+    else if (knnTreeID.size() == 1)
     {
-      trees.updateTree( knnTreeID[0], pointToSort );
+      trees.updateTree(knnTreeID[0], pointToSort);
       idTree[pointToSort.id] = knnTreeID[0];
     }
-    //3) If several identified trees in the neighbourhood (page 101 Fig4.B situation 3)
+    // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
     else
     {
-      //To know which search Method is required for this tree subset (distance or area evaluation)
-      //scan of tree numbers to identify if there is at least one with less than 2 points
+      // To know which search method is required for this tree subset (distance or area evaluation)
+      // scan of tree numbers to identify if there is at least one with less than 2 points
+      // ??
       int searchMethod = 1;
-      for ( int i = 0; i < knnTreeID.size(); i++ )
+      for (unsigned int j = 0 ; j < knnTreeID.size() ; j++)
       {
-        if ( trees.treeStorage[knnTreeID[i]-1].nbPoints < 2 )
+        if (trees.treeStorage[knnTreeID[j]-1].nbPoints < 2)
           searchMethod = 2;
       }
 
-      //Depending on previous result, selection of adapted searchMethod
+      // Depending on previous result, selection of adapted searchMethod
       int resultID = knnTreeID[0];
       double areaValue = 0, distValue = 0;
       double diffHeight = 0;
       double thresholdZ = 5;                  //page 100 last paragraph
+
       switch(searchMethod)
       {
-      case 1: { boost::geometry::model::ring<point_t> hull;
-        trees.searchID_usingArea( knnTreeID, pointToSort, resultID, areaValue, hull );
+        case 1:
+        {
+          boost::geometry::model::ring<point_t> hull;
+          trees.searchID_usingArea( knnTreeID, pointToSort, resultID, areaValue, hull );
 
-        //Before association of pointToSort to best tree result,
-        //testing if Z difference between pointToSort and lowest point in tree is under
-        //a height difference threshold fixed at 5m --> page 100 last paragraph
-        diffHeight = fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
-        if ( diffHeight <= thresholdZ )
-        {
-          trees.treeStorage[resultID-1].addPoint( pointToSort, areaValue, hull );
-          trees.individualTreeSize[resultID-1]++;
-          idTree[pointToSort.id] = resultID;
+          // Before association of pointToSort to best tree result,
+          // testing if Z difference between pointToSort and lowest point in tree is under
+          // a height difference threshold fixed at 5m --> page 100 last paragraph
+          diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+          if (diffHeight <= thresholdZ)
+          {
+            trees.treeStorage[resultID-1].addPoint( pointToSort, areaValue, hull );
+            trees.individualTreeSize[resultID-1]++;
+            idTree[pointToSort.id] = resultID;
+          }
+          else
+          {
+            Tree<PointXYZ> newTree( pointToSort );
+            trees.addTree( newTree );
+            idTree[pointToSort.id] = trees.nbTree;
+          }
+          break;
         }
-        else
-        {
-          Tree<PointXYZ> newTree( pointToSort );
-          trees.addTree( newTree );
-          idTree[pointToSort.id] = trees.nbTree;
-        }
-        break;
-      }
 
-      case 2: { trees.searchID_usingDist( knnTreeID, pointToSort, resultID, distValue );
+        case 2:
+        {
+          trees.searchID_usingDist( knnTreeID, pointToSort, resultID, distValue );
 
-        //Before association of pointToSort to best tree result,
-        //testing if Z difference between pointToSort and lowest point in tree is under
-        //a height difference threshold fixed at 5m --> page 100 last paragraph
-        diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
-        if ( diffHeight <= thresholdZ )
-        {
-          trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
-          idTree[pointToSort.id] = resultID;
-          trees.individualTreeSize[resultID-1]++;
+          // Before association of pointToSort to best tree result,
+          // testing if Z difference between pointToSort and lowest point in tree is under
+          // a height difference threshold fixed at 5m --> page 100 last paragraph
+          diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+          if ( diffHeight <= thresholdZ )
+          {
+            trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
+            idTree[pointToSort.id] = resultID;
+            trees.individualTreeSize[resultID-1]++;
+          }
+          else
+          {
+            Tree<PointXYZ> newTree( pointToSort );
+            trees.addTree( newTree );
+            idTree[pointToSort.id] = trees.nbTree;
+          }
+          break;
         }
-        else
-        {
-          Tree<PointXYZ> newTree( pointToSort );
-          trees.addTree( newTree );
-          idTree[pointToSort.id] = trees.nbTree;
-        }
-        break;
-      }
       }
 
     }
-
   }
+
   trees.idTreeStorage = idTree;
   trees.calculateTreeScores(k);
 
   delete treeOI;
-
-return(trees);
+  return(trees);
 }
 
 
@@ -499,18 +507,18 @@ IntegerMatrix createCombination(int N)
   int ind = 0, ind2 = 0;
   //for (int j = 1; j< N; j++)
   //{
-    //ind = 0;
-    std::string bitmask(2, 1); // K leading 1's
-    bitmask.resize(N, 0); // N-K trailing 0's
-    // print integers and permute bitmask
-    do {
-      for (int i = 0; i < N+1; i++) // [0..N-1] integers
-      {
-        if (bitmask[i]) res(ind,ind2++) = i+1;
-      }
-      ind++;
-      ind2 = 0;
-    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+  //ind = 0;
+  std::string bitmask(2, 1); // K leading 1's
+  bitmask.resize(N, 0); // N-K trailing 0's
+  // print integers and permute bitmask
+  do {
+    for (int i = 0; i < N+1; i++) // [0..N-1] integers
+    {
+      if (bitmask[i]) res(ind,ind2++) = i+1;
+    }
+    ind++;
+    ind2 = 0;
+  } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
   //}
   return(res);
 }

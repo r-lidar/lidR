@@ -18,57 +18,57 @@ using boost::assign::tuple_list_of;
 
 Rcpp::NumericVector findEllipseParameters(boost::geometry::model::ring<point_t> &points);
 
-
 template<typename T> class Tree
 {
-public:
-  Tree();
-  Tree( T &pt );
-  Tree(const Tree<T> &t);
-  ~Tree();
+  public:
+    Tree();
+    Tree( T &pt );
+    Tree(const Tree<T> &t);
+    ~Tree();
 
-  void calculateNewArea( T &pt );
-  double testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out );
-  double testDist( T &pt );
-  void addPoint( T &pt );
-  void addPoint( T &pt, double &newArea, boost::geometry::model::ring<point_t> &hull );
-  void addPoint_dist( T &pt, double &newDist );
-  void updateArea();
+    void calculateNewArea( T &pt );
+    double testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out );
+    double testDist( T &pt );
+    void addPoint( T &pt );
+    void addPoint( T &pt, double &newArea, boost::geometry::model::ring<point_t> &hull );
+    void addPoint_dist( T &pt, double &newDist );
+    void updateArea();
 
-  double findZMax();
-  double findZMin();
-  void getZMax();
-  void getZMax( T &pt);
+    double findZMax();
+    double findZMin();
+    void getZMax();
+    void getZMax( T &pt);
 
-  void editIdResult (std::vector<int> &idResult, int &index);
+    void editIdResult (std::vector<int> &idResult, int &index);
 
 
-  //Functions for tree score calculation
-  void getSize(int k);
-  void getOrientation();
-  void getRegularity();
-  void getCircularity();
-  double getScore( int k );
+    //Functions for tree score calculation
+    void getSize(int k);
+    void getOrientation();
+    void getRegularity();
+    void getCircularity();
+    double getScore( int k );
 
-  //Attributes
-//private:
-  int nbPoints;
-  double area;
-  double diff_area;
-  double dist;
-  std::vector<T> points;
-  T Zmax;
-  boost::geometry::model::ring<point_t> pointsCH;
-  double scoreS;
-  double scoreO;
-  double scoreR;
-  double scoreC;
-  double scoreGlobal;
+    //Attributes
+  //private:
+    int nbPoints;
+    double area;
+    double diff_area;
+    double dist;
+    std::vector<T> points;
+    T Zmax;
+    boost::geometry::model::ring<point_t> pointsCH;
+    double scoreS;
+    double scoreO;
+    double scoreR;
+    double scoreC;
+    double scoreGlobal;
 };
 
 //========================================================================================
 //                              CONSTRUCTORS
 //========================================================================================
+
 template<typename T> Tree<T>::Tree()
 {
   nbPoints = 0;
@@ -190,7 +190,7 @@ template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::ge
   {
     //Conversion from PointXYZ to point_t from boost library use
     mpoint_t pointsForPoly;
-    for ( int i = 0 ; i < points.size() ; i++ )
+    for (unsigned int i = 0 ; i < points.size() ; i++ )
       boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
 
     //Add of new Point + calculation of associated area
@@ -250,8 +250,9 @@ template<typename T> double Tree<T>::testDist( T &pt )
 //========================================================================================
 //                              ADD POINT FUNCTIONS
 //========================================================================================
-//Functions that insert a new point pt into intial tree and update all its parameters (dist, area, convex hull...)
-//The two last functions avoid recalculation of previously calculated area, convex hull or dist during "testArea" function
+
+// Functions that insert a new point pt into intial tree and update all its parameters (dist, area, convex hull...)
+// The two last functions avoid recalculation of previously calculated area, convex hull or dist during "testArea" function
 // (always called before)
 template<typename T> void Tree<T>::addPoint( T &pt )
 {
@@ -280,13 +281,14 @@ template<typename T> void Tree<T>::addPoint_dist( T &pt, double &newDist )
 //========================================================================================
 //                              UPDATE AREA
 //========================================================================================
+
 template<typename T> void Tree<T>::updateArea()
 {
   if ( nbPoints > 3)
   {
     //Conversion from PointXYZ to point_t from boost library use
     mpoint_t pointsForPoly;
-    for ( int i = 0 ; i < points.size() ; i++ )
+    for (unsigned int i = 0 ; i < points.size() ; i++ )
       boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
 
     //Assign boost points to polygon
@@ -321,8 +323,9 @@ template<typename T> void Tree<T>::updateArea()
 }
 
 //========================================================================================
-//                              Z-MIN ANS -MAX FUNCTIONS
+//                              Z-MIN AND -MAX FUNCTIONS
 //========================================================================================
+
 //Function that returns highest Z value in points of tree
 template<typename T> double Tree<T>::findZMax()
 {
