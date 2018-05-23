@@ -29,6 +29,10 @@ C_lastrees_li <- function(las, dt1, dt2, Zu, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, Zu, th_tree, R, progressbar)
 }
 
+lastrees_PTrees <- function(las, k_values) {
+    .Call(`_lidR_lastrees_PTrees`, las, k_values)
+}
+
 C_lasupdateheader <- function(las, new_header) {
     invisible(.Call(`_lidR_C_lasupdateheader`, las, new_header))
 }
@@ -87,13 +91,5 @@ C_tinfo <- function(M, X) {
 
 C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
     .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
-}
-
-test_PTrees2 <- function(las, k) {
-    .Call(`_lidR_test_PTrees2`, las, k)
-}
-
-test_PTrees <- function(las, k) {
-    invisible(.Call(`_lidR_test_PTrees`, las, k))
 }
 
