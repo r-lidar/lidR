@@ -168,7 +168,7 @@ template<typename T> void Tree<T>::calculateNewArea( T &pt )
 //   (--> becomes difference because without pt area = 0)
 // - difference between old and new area (including pt) using boost::polygon function
 //   if the initial tree contains more than two points (update of associated convex hull)
-template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out )
+template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out)
 {
   if ( nbPoints == 2 )    //calculate aera of triangle
   {

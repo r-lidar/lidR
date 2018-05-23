@@ -15,31 +15,28 @@ Rcpp::NumericVector findEllipseParameters(boost::geometry::model::ring<point_t> 
 //========================================================================================
 template<typename T> class TreeCollection
 {
-public:
-  TreeCollection();
-  TreeCollection( Tree<T> &t );
-  ~TreeCollection();
+  public:
+    TreeCollection();
+    TreeCollection(Tree<T> &t);
+    ~TreeCollection();
 
-  std::vector<double> individualTreeSize;
-  std::vector<Tree<T> >treeStorage;
-  std::vector<int> idTreeStorage;
+    std::vector<double> individualTreeSize;
+    std::vector<Tree<T> >treeStorage;
+    std::vector<int> idTreeStorage;
 
-  void addTree( Tree<T> t );
-  void updateTree( int &treeID, T &pt );
+    void addTree(Tree<T> t);
+    void updateTree(int &treeID, T &pt);
 
-  void searchID_usingArea( std::vector<int> &knnTreeID, T &pointToSort, int &resultID,
-                           double &areaValue, boost::geometry::model::ring<point_t> &hull );
-  void searchID_usingDist( std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &distValue );
+    void searchID_usingArea(std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &areaValue, boost::geometry::model::ring<point_t> &hull);
+    void searchID_usingDist(std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &distValue);
 
-  void getSizeCriteria(int k);
-  void getOrientationCriteria();
-  void getRegularityCriteria();
-  void getCircularityCriteria();
-  double calculateTreeScores( int k );
+    void getSizeCriteria(int k);
+    void getOrientationCriteria();
+    void getRegularityCriteria();
+    void getCircularityCriteria();
+    double calculateTreeScores(int k);
 
-
-  unsigned int nbTree;
-
+    unsigned int nbTree;
 };
 
 //========================================================================================
@@ -52,11 +49,11 @@ template<typename T> TreeCollection<T>::TreeCollection()
   individualTreeSize.clear();
 }
 
-template<typename T> TreeCollection<T>::TreeCollection( Tree<T> &t )
+template<typename T> TreeCollection<T>::TreeCollection(Tree<T> &t)
 {
   nbTree = 0;
   individualTreeSize.clear();
-  addTree( t );
+  addTree(t);
 }
 
 template<typename T> TreeCollection<T>::~TreeCollection(){}
@@ -65,9 +62,9 @@ template<typename T> TreeCollection<T>::~TreeCollection(){}
 //                              ADD TREE
 //========================================================================================
 
-template<typename T> void TreeCollection<T>::addTree( Tree<T> t )
+template<typename T> void TreeCollection<T>::addTree(Tree<T> t)
 {
-  treeStorage.push_back( t );
+  treeStorage.push_back(t);
   nbTree++;
   individualTreeSize.push_back(1);
 }
@@ -76,7 +73,7 @@ template<typename T> void TreeCollection<T>::addTree( Tree<T> t )
 //                              UPDATE TREE
 //========================================================================================
 
-template<typename T> void TreeCollection<T>::updateTree( int &treeID, T &pt )
+template<typename T> void TreeCollection<T>::updateTree(int &treeID, T &pt)
 {
   treeStorage[treeID-1].addPoint( pt );
   individualTreeSize[treeID-1]++;
@@ -85,6 +82,7 @@ template<typename T> void TreeCollection<T>::updateTree( int &treeID, T &pt )
 //========================================================================================
 //                     FUNCTIONS RELATED TO CRITERIA CALCULATION
 //========================================================================================
+
 template<typename T> void TreeCollection<T>::getSizeCriteria(int k)
 {
   for (unsigned int i = 0; i < nbTree; i++)
@@ -123,20 +121,21 @@ template<typename T> double TreeCollection<T>::calculateTreeScores( int k )
 //========================================================================================
 
 // Function that calculates convex hull areas for each selected tree in 'knnTreeID'
-template<typename T> void TreeCollection<T>::searchID_usingArea( std::vector<int> &knnTreeID, T &pointToSort,
-                                             int &resultID, double &areaValue, boost::geometry::model::ring<point_t> &hull )
+
+template<typename T> void TreeCollection<T>::searchID_usingArea(std::vector<int> &knnTreeID, T &pointToSort, int &resultID, double &areaValue, boost::geometry::model::ring<point_t> &hull )
 {
   // Calcul de la premiere aire de la selection d'arbres
   double areaValue_diff = 0;
-  areaValue_diff = treeStorage[knnTreeID[0]-1].testArea( pointToSort, areaValue, hull );   //page 100 Eq3
+  areaValue_diff = treeStorage[knnTreeID[0]-1].testArea(pointToSort, areaValue, hull);   // page 100 eq. 3
 
   // Comparaison avec les suivantes --> on garde la plus petite
   // Attention -> pourquoi 0 quand calcul du convex hull avec trois points?
   double areaValueBis = 0;
   double areaValueBis_diff = 0;
+
   for (unsigned int i = 1; i < knnTreeID.size(); i++ )
   {
-    areaValueBis_diff = treeStorage[knnTreeID[i]-1].testArea( pointToSort, areaValueBis, hull );   //page 100 Eq3
+    areaValueBis_diff = treeStorage[knnTreeID[i]-1].testArea( pointToSort, areaValueBis, hull );   // page 100 eq. 3
     if (areaValue_diff > areaValueBis_diff)
     {
       areaValue = areaValueBis;

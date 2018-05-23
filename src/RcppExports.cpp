@@ -117,15 +117,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// lastrees_PTrees
-std::vector<int> lastrees_PTrees(S4 las, NumericVector k_values);
-RcppExport SEXP _lidR_lastrees_PTrees(SEXP lasSEXP, SEXP k_valuesSEXP) {
+// C_lastrees_ptrees
+std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values);
+RcppExport SEXP _lidR_C_lastrees_ptrees(SEXP lasSEXP, SEXP k_valuesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type k_values(k_valuesSEXP);
-    rcpp_result_gen = Rcpp::wrap(lastrees_PTrees(las, k_values));
+    Rcpp::traits::input_parameter< IntegerVector >::type k_values(k_valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lastrees_ptrees(las, k_values));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -337,7 +337,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
-    {"_lidR_lastrees_PTrees", (DL_FUNC) &_lidR_lastrees_PTrees, 2},
+    {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 2},
     {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 3},
