@@ -1,8 +1,12 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <vector>
+#include <boost/geometry.hpp>
 #include <math.h>
+#include <vector>
+
+//#include <Rcpp.h>
+
 
 struct Point
 {
@@ -219,5 +223,16 @@ template <class T> double euclidianDistance2D_inZ( T &refPoint, T &point )
   return sqrt(dx*dx + dy*dy);
 }
 
+//========================================================================================
+//                              2D TRIANGLE AREA CALCULATION
+//========================================================================================
+template<typename T> double calculateTriangleArea ( T &A, T &B, T &C )
+{
+  double dAB = A.x * B.y - B.x * A.y;
+  double dPB = B.x * C.y - C.x * B.y;
+  double dPA = C.x * A.y - A.x * C.y;
+  double area = 0.5 * sqrt( dAB*dAB + dPB*dPB + dPA*dPA );
+  return (area);
+}
 #endif //POINT_H
 
