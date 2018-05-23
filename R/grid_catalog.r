@@ -180,8 +180,15 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   if (!save_vrt(catalog))
   {
-    # Return a data.table
     ._class = class(output[[1]])
+
+    if (is.null(._class))
+    {
+      i = 2
+      while (is.null(class(output[[i]]))) { i = i + 1 }
+      ._class = class(output[[i]])
+    }
+
     output = data.table::rbindlist(output)
     data.table::setattr(output, "class", ._class)
     data.table::setattr(output, "res", resolution)
@@ -198,7 +205,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   return(output)
 }
 
-# Apply a grid_* function for a given ROI of a catlog 
+# Apply a grid_* function for a given ROI of a catlog
 #
 # @param X list. the coordinates of the region of interest (rectangular)
 # @param grid_func function. the grid_* function to be applied
