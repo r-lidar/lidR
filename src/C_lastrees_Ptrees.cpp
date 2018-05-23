@@ -33,7 +33,7 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
   Rcpp::Rcout << "k = "<< k_values[0] << std::endl;
   TreeCollection<PointXYZ> trees_kRef = PTrees_segmentation( las, k_values[0]);
 
-  Rcpp::Rcout << "===== END SEGMENTATION 1 =====" << std::endl;
+  //Rcpp::Rcout << "===== END SEGMENTATION 1 =====" << std::endl;
 
   double total = 0;
   for (int i = 0; i < trees_kRef.nbTree; i++)
@@ -67,7 +67,7 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
       //On ajoute ce(s) point(s) comme un arbre isolé (-->?)
       if (trees_kRef.treeStorage[t].pointsCH.size() < 3)
       {
-        Rcpp::Rcout << "No pointsCH" << std::endl;
+        //Rcpp::Rcout << "No pointsCH" << std::endl;
         trees_kResult.addTree( trees_kRef.treeStorage[t] );
         //Attribuer à tous les ID des points de cet arbre une meme valeur
         trees_kRef.treeStorage[t].editIdResult (idResult, index);
@@ -103,33 +103,33 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
             M.push_back(tmp);
           }
         }
-        Rcpp::Rcout << "numberTree=" << nbApex<< std::endl;
-        Rcpp::Rcout << "treeIDs = ";
-        for (int i = 0; i < treeIDs.size(); i++)
+        //Rcpp::Rcout << "numberTree=" << nbApex<< std::endl;
+        //Rcpp::Rcout << "treeIDs = ";
+        /*for (int i = 0; i < treeIDs.size(); i++)
           Rcpp::Rcout << treeIDs[i]<<" /";
-        Rcpp::Rcout << std::endl;
+        Rcpp::Rcout << std::endl;*/
 
 
         double scoreRef = trees_kRef.treeStorage[t].scoreGlobal;
-        Rcpp::Rcout << "scoreRef= " << scoreRef << std::endl;
+        //Rcpp::Rcout << "scoreRef= " << scoreRef << std::endl;
         //If one apex of tree n is found inside convex hull of tree t (page 103 Fig5 PartA-1)
         if(treeIDs.size() == 1)
         {
-          Rcpp::Rcout << "Only one apex" << std::endl;
+          //Rcpp::Rcout << "Only one apex" << std::endl;
           int keep_id = treeIDs[0];
           double scoreToCompare = trees_kToCompare.treeStorage[keep_id].scoreGlobal;
-          Rcpp::Rcout << "scoreToCompare= " << scoreToCompare<<" "<<treeScores[0]<<std::endl;
+          //Rcpp::Rcout << "scoreToCompare= " << scoreToCompare<<" "<<treeScores[0]<<std::endl;
           //Comparison of score A and score D
           if (scoreRef > scoreToCompare)
           {
-            Rcpp::Rcout << "Cas1 " << std::endl;
+            //Rcpp::Rcout << "Cas1 " << std::endl;
             trees_kResult.addTree( trees_kRef.treeStorage[t] );
             //Attribuer à tous les ID des points de cet arbre une meme valeur
             trees_kRef.treeStorage[t].editIdResult (idResult, index);
           }
           else
           {
-            Rcpp::Rcout << "Cas2 " << std::endl;
+            //Rcpp::Rcout << "Cas2 " << std::endl;
             trees_kResult.addTree( trees_kToCompare.treeStorage[keep_id] );
             //Attribuer à tous les ID des points de cet arbre une meme valeur
             trees_kToCompare.treeStorage[keep_id].editIdResult (idResult, index);
@@ -138,11 +138,11 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
         //If two apices of tree n were found inside convex hull of tree t (page 103 Fig5 PartA-2)
         else if (treeIDs.size() == 2)
         {
-          Rcpp::Rcout << "Only two apex" << std::endl;
+          //Rcpp::Rcout << "Only two apex" << std::endl;
           //Comparison of score B and score E+J
           if ( (treeScores[0] + treeScores[1])/2.0 > scoreRef)
           {
-            Rcpp::Rcout << "treeScores[0] + treeScores[1])/2 =" << (treeScores[0] + treeScores[1])/2.0 << std::endl;
+            //Rcpp::Rcout << "treeScores[0] + treeScores[1])/2 =" << (treeScores[0] + treeScores[1])/2.0 << std::endl;
             trees_kResult.addTree( trees_kToCompare.treeStorage[treeIDs[0]] );
             trees_kResult.addTree( trees_kToCompare.treeStorage[treeIDs[1]] );
             //Attribuer à tous les ID des points de cet arbre une meme valeur
@@ -160,34 +160,33 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
         //--> test of each combination
         else if (treeIDs.size() > 2)
         {
-          Rcpp::Rcout << "More than two apex" << std::endl;
+          //Rcpp::Rcout << "More than two apex" << std::endl;
           Rcpp::IntegerMatrix combination = createCombination( treeIDs.size() );
 
           //Moyenne totale des scores de l'arbre à comparer
           double sumAllTrees = std::accumulate(treeScores.begin(), treeScores.end(), 0.0);
           double maxScore = sumAllTrees / treeScores.size();
-          Rcpp::Rcout << "maxScore=" <<maxScore <<std::endl;
+          //Rcpp::Rcout << "maxScore=" <<maxScore <<std::endl;
 
           std::vector<int> includedTreeForScore (2, INT16_MIN);
           std::vector<int> remainingTreeIDs(treeIDs.size(), 0);
-          Rcpp::Rcout << "===1===" << std::endl;
+          //Rcpp::Rcout << "===1===" << std::endl;
 
           //Recherche de toutes les combinaisons d'arbres possibles et calcul de leurs scores
           //le meilleur score est conservé dans "maxScore" et sa combinaison associée est stockée dans "includedTreeForScore"
           for (int i = 0; i < combination.nrow(); i++)
           {
-            Rcpp::Rcout << i <<" ";
+            //Rcpp::Rcout << i <<" ";
             if (combination(i,0) != 0)
             {
               int nbTreeConsidered = 0;
               double calculatedScoreForCombination = 0;
               int tree1 = treeIDs[combination(i,0)-1];
               int tree2 = treeIDs[combination(i,1)-1];
-              Rcpp::Rcout << "tree1 =" << tree1 << "tree2="<<tree2 <<std::endl;
-              //getScoreCombination( trees_kToCompare.treeStorage[tree1], trees_kToCompare.treeStorage[tree2], nb_k );
+              //Rcpp::Rcout << "tree1 =" << tree1 << "tree2="<<tree2 <<std::endl;
               double scoreTreeCombination = getScoreCombination( trees_kToCompare.treeStorage[tree1], trees_kToCompare.treeStorage[tree2], nb_k );
 
-              Rcpp::Rcout << scoreTreeCombination <<" "<<std::endl;
+              //Rcpp::Rcout << scoreTreeCombination <<" "<<std::endl;
               //ajouter à scoreTreeCombination la moyenne des restants --> finalCombinationScore
               remainingTreeIDs.clear();
               remainingTreeIDs.assign(treeIDs.size(), 0);
@@ -200,7 +199,7 @@ std::vector<int> lastrees_PTrees( S4 las, NumericVector k_values  )
                 otherTreeScore += treeScores[remainingTreeIDs[j]-1];
 
               double finalCombinationScore = ((otherTreeScore / remainingTreeIDs.size()) + scoreTreeCombination) / 2.0;
-              Rcpp::Rcout << "finalCombinationScore=" << finalCombinationScore  << std::endl;
+              //Rcpp::Rcout << "finalCombinationScore=" << finalCombinationScore  << std::endl;
 
               if (maxScore < finalCombinationScore )
               {
