@@ -1,3 +1,9 @@
+## lidR v1.5.1 (2018-05-23)
+
+#### BUG FIXES
+
+* [[#135](https://github.com/Jean-Romain/lidR/issues/135)] Fix `NULL` class objects returned by `grid_*` functions when processing a `LAScatalog` if the first cluster is empty.
+
 ## lidR v1.5.0 (2018-05-13)
 
 #### SIGNIFICANT CHANGES
