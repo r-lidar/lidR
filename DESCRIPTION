@@ -20,6 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),methods
 Imports:
+    BH,
     concaveman,
     data.table,
     future,
@@ -49,7 +50,7 @@ Suggests:
     hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp
+LinkingTo: Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
