@@ -67,6 +67,7 @@ Collate:
     'class-las.r'
     'class-lascatalog.r'
     'class-lascluster.r'
+    'clusters_apply.r'
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'

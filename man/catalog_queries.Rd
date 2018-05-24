@@ -4,10 +4,10 @@
 \alias{catalog_queries}
 \title{Extract LiDAR data based on a set of coordinates}
 \usage{
-catalog_queries(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 }
 \arguments{
-\item{obj}{A LAScatalog object}
+\item{ctg}{A LAScatalog object}
 
 \item{x}{vector. A set of x coordinates corresponding to the centers of the ROIs}
 

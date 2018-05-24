@@ -95,7 +95,8 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 #' Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
 #' representation of a set of las files, since a computer cannot load all the data at once. A
 #' catalog is a simple way to manage all the file sequentially by reading only the headers. Also a
-#' catalog contains metadata tso users can configure how it should be processed.
+#' catalog contains metadata so users can configure how it will be processed.
+#'
 #' @param folder string. The path of a folder containing a set of .las files
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @param ctg A LAScatalog object.
