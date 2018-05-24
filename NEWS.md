@@ -8,16 +8,12 @@
 
 * `catalog()` displays a message when finding overlaps between files.
 
-#### BUG FIXES
-
-* `area` used with a `LAScatalog` returned a wrong mesure because of a bad copy/paste in the code. 
-
-## lidR v1.5.1 (2018-05-23)
+## lidR v1.5.1 (In development)
 
 #### BUG FIXES
 
+* The area of a `LAScatalog` was wrongly computed for non square tiles because of a bad copy/paste in the code.
 * [[#135](https://github.com/Jean-Romain/lidR/issues/135)] Fix `NULL` class objects returned by `grid_*` functions when processing a `LAScatalog` if the first cluster is empty.
-
 
 ## lidR v1.5.0 (2018-05-13)
 
