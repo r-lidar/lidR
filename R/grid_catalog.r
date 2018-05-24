@@ -81,6 +81,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   callparam  <- list(...)
   progress   <- progress(catalog)
   ncores     <- cores(catalog)
+  stopearly  <- stop_early(catalog)
   resolution <- res
   funcname   <- lazyeval::expr_text(grid_func)
 
@@ -150,7 +151,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   # Computation over the entire catalog
   # ========================================
 
-  output <- cluster_apply(clusters, apply_grid_func, ncores, progress, grid_func = grid_func, param = callparam, filter = filter, select = select)
+  output <- cluster_apply(clusters, apply_grid_func, ncores, progress, stopearly, grid_func = grid_func, param = callparam, filter = filter, select = select)
 
   # Post-process the output
   # ========================================

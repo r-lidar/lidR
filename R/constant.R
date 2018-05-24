@@ -18,3 +18,10 @@ LASLOWPOINT = 7
 LASKEYPOINT = 8
 LASWATER = 9
 LASFIELDS = c("X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "Synthetic_flag", "Keypoint_flag", "Withheld_flag", "ScanAngle", "UserData", "gpstime", "PointSourceID", "R", "G", "B")
+
+ASYNC_RUN = -1L
+ASYNC_DONE = 0L
+ASYNC_OK = 1L
+ASYNC_NULL = 2L
+ASYNC_ERROR = 3L
+ASYNC_WARNING = 4L

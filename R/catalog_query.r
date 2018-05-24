@@ -109,12 +109,16 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
 
   progress  <- progress(ctg)
   ncores    <- cores(ctg)
+  stopearly <- stop_early(ctg)
 
   w <- 2*r
   h <- if(is.null(r2)) NULL else 2*r2
 
+  if (progress)
+    plot.LAScatalog(ctg, FALSE)
+
   clusters <- catalog_index(ctg, x, y, w, h, buffer, roinames)
-  output   <- cluster_apply(clusters, readLAS, ncores, progress, ...)
+  output   <- cluster_apply(clusters, readLAS, ncores, progress, stopearly, ...)
   names(output) <- names(clusters)
 
   # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
