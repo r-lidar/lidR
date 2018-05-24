@@ -52,6 +52,9 @@
 #' cluster. Default is 1000 (1 km^2).
 #' @slot vrt character. Path to a folder. In \code{grid_*} functions, for large outputs, the functions
 #' can return a lightweight virtual raster mosaic (VRT).
+#' @slot stop_early logical. If \code{TRUE} the catalog processing stops if an error occurs during the
+#' computation. If \code{FALSE}, the catalog will be process unlil the end anyway and clusters with errors
+#' are skipped.
 #' @slot opt_changed Internal use only for compatibility with older deprecated code.
 #' @seealso
 #' \link[lidR:catalog]{catalog}
@@ -72,6 +75,7 @@ setClass(
     progress = "logical",
     tiling_size = "numeric",
     vrt = "character",
+    stop_early = "logical",
     opt_changed = "logical"
   )
 )
@@ -86,6 +90,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
   .Object@progress <- TRUE
   .Object@tiling_size <- 1000
   .Object@vrt <- ""
+  .Object@stop_early <- TRUE
   .Object@opt_changed <- FALSE
   return(.Object)
 })
@@ -292,6 +297,23 @@ vrt = function(ctg)
 {
   stopifnot(is.character(value), length(value) == 1)
   ctg@vrt <- value
+  ctg@opt_changed <- TRUE
+  return(ctg)
+}
+
+#' @rdname catalog
+#' @export
+stop_early = function(ctg)
+{
+  return(ctg@stop_early)
+}
+
+#' @rdname catalog
+#' @export
+`stop_early<-` = function(ctg, value)
+{
+  stopifnot(is.logical(value), length(value) == 1)
+  ctg@stop_early <- value
   ctg@opt_changed <- TRUE
   return(ctg)
 }

@@ -3,6 +3,12 @@
 #### NEW FEATURE
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
+* New option `stop_early` to process a catalog until the end anyway or stop before the end if an error is raised.
+
+#### ENHANCEMENTS
+
+* When processing a `LAScatalog`, error handling has been seriouly improved. A process can now run until the end even with errors. In this that case clusters with errors are skipped.
+* When processing  a `LAScatalog`, the graphical progress now use 3 colors. green: ok, red: error, gray: null.
 
 #### OTHER CHANGE
 

@@ -59,6 +59,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   tiling_size(ctg) <- size
   ncores           <- cores(ctg)
   progress         <- progress(ctg)
+  stopearly        <- stop_early(ctg)
 
   if(interact)
   {
@@ -81,7 +82,7 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
   clusters <- catalog_makecluster(ctg, 1)
-  cluster_apply(cluster, reshape_func, ncores, progress, path = path, prefix = prefix, ext = format)
+  cluster_apply(clusters, reshape_func, ncores, progress, stopearly, path = path, prefix = prefix, ext = format)
 
   return(catalog(path))
 }

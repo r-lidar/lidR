@@ -14,6 +14,8 @@
 \alias{tiling_size<-}
 \alias{vrt}
 \alias{vrt<-}
+\alias{stop_early}
+\alias{stop_early<-}
 \title{Build a catalog of las tiles/files}
 \usage{
 catalog(folder, ...)
@@ -41,6 +43,10 @@ tiling_size(ctg) <- value
 vrt(ctg)
 
 vrt(ctg) <- value
+
+stop_early(ctg)
+
+stop_early(ctg) <- value
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}
