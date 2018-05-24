@@ -108,6 +108,7 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
   # ========================================
   # If the test judges that the output will be too large it can ask the user
   # to make a choice about the processing method
+  # Choices are 1. keep going, 2. save vrt in temp dir, 3. stop and configure
 
   choice = memory_test(catalog, resolution)
 
@@ -121,8 +122,6 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   buffer(catalog) <- buffer(catalog) + 0.1
   clusters <- catalog_makecluster(catalog, resolution, start)
-  nclust <- length(clusters)
-  if (ncores > nclust) ncores = nclust
 
   # Set up the parameter that will be used for the call
   # =========================================
@@ -150,32 +149,12 @@ grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", sta
 
   # Computation over the entire catalog
   # ========================================
-  # Done in parallel. If a single cluster returns an error the process is stopped
 
-  future::plan(future::multiprocess, workers = ncores)
-
-  output = vector("list", nclust)
-  for(i in seq_along(clusters))
-  {
-    cluster = clusters[[i]]
-
-    output[[i]] <- future::future({apply_grid_func(cluster, grid_func, callparam, filter, select) }, substitute = FALSE, earlySignal = TRUE)
-
-    if(progress)
-    {
-      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
-      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
-    }
-  }
-
-  if(progress)
-    cat("\n")
-
-  output <- future::values(output)
+  output <- cluster_apply(clusters, apply_grid_func, ncores, progress, grid_func = grid_func, param = callparam, filter = filter, select = select)
 
   # Post-process the output
   # ========================================
-  # If RasterLayer were written on the disk, build a VRT.
+  # If RasterLayers were written on the disk, build a VRT.
   # Otherwise build the data.table.
 
   if (!save_vrt(catalog))

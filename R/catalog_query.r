@@ -52,7 +52,7 @@
 #' The process is done using several cores. To change the settings of how a catalog is processed
 #' use \link{cores}.
 #'
-#' @param obj A LAScatalog object
+#' @param ctg A LAScatalog object
 #' @param x vector. A set of x coordinates corresponding to the centers of the ROIs
 #' @param y vector. A set of y coordinates corresponding to the centers of the ROIs
 #' @param r numeric or vector. A radius or a set of radii of the ROIs. If only
@@ -93,75 +93,29 @@
 #' # Z have been loaded and Z values < 0 were removed.
 #' catalog_queries(catalog, X, Y, R, select = "xyz", filter = "-drop_z_below 0")
 #' }
-catalog_queries = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
-  UseMethod("catalog_queries", obj)
+  UseMethod("catalog_queries", ctg)
 }
 
 #' @export
-catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
-  objtxt = lazyeval::expr_text(obj)
-  xtxt   = lazyeval::expr_text(x)
-  ytxt   = lazyeval::expr_text(y)
-  rtxt   = lazyeval::expr_text(r)
-  btxt   = lazyeval::expr_text(buffer)
+  stopifnot(length(x) == length(y))
+  stopifnot(all(buffer >= 0))
+  if (length(r) > 1) stopifnot(length(x) == length(r))
+  if (length(buffer) > 1) stopifnot(length(x) == length(buffer))
+  if (is.null(roinames)) roinames <- paste0("ROI", 1:length(x))
 
-  if (length(x) != length(y))
-    stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
+  progress  <- progress(ctg)
+  ncores    <- cores(ctg)
 
-  if (length(r) > 1 & (length(x) != length(r)))
-    stop(paste0(xtxt, " is not same length as ", rtxt), call. = FALSE)
+  w <- 2*r
+  h <- if(is.null(r2)) NULL else 2*r2
 
-  if (length(buffer) > 1 & (length(x) != length(buffer)))
-    stop(paste0(xtxt, " is not same length as ", btxt), call. = FALSE)
-
-  if (any(buffer < 0))
-    stop("Buffer size must be a positive value", call. = FALSE)
-
-  progress  <- progress(obj)
-  ncores    <- cores(obj)
-
-  w = 2*r
-
-  if(is.null(r2))
-    h = NULL
-  else
-    h = 2*r2
-
-  nplots <- length(x)
-  tiles  <- NULL
-
-  if (is.null(roinames))
-    roinames <- paste0("ROI", 1:nplots)
-
-  verbose("Indexing files...")
-
-  # Make an index of the files containing each query
-  clusters  = catalog_index(obj, x, y, w, h, buffer, roinames)
-  nclust = length(clusters)
-
-  if (nclust <= ncores)
-    ncores = nclust
-
-  verbose("Extracting data...")
-
- future::plan(future::multiprocess, workers = ncores)
-
-  output = list()
-  for(i in seq_along(clusters))
-  {
-    cluster = clusters[[i]]
-    key = roinames[i]
-    output[[key]] <- future::future({get_query(cluster, ...) }, earlySignal = TRUE)
-
-    if(progress)
-    {
-      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
-    }
-  }
-
-  output = future::values(output)
+  clusters <- catalog_index(ctg, x, y, w, h, buffer, roinames)
+  output   <- cluster_apply(clusters, readLAS, ncores, progress, ...)
+  names(output) <- names(clusters)
 
   # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
   if (ncores > 1)
@@ -172,14 +126,3 @@ catalog_queries.LAScatalog = function(obj, x, y, r, r2 = NULL, buffer = 0, roina
 
   return(output)
 }
-
-get_query = function(cluster, ...)
-{
-  las <- readLAS(cluster, ...)
-
-  if (is.null(las))
-    return(NULL)
-
-  return(las)
-}
-
