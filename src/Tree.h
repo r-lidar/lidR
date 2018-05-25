@@ -109,7 +109,6 @@ template<typename T> Tree<T>::~Tree() {}
 //========================================================================================
 //Given a new point pt, this function calculates:
 // - new distance between points if there was no point or only one point in the initial tree
-// - new triangular area if the initial tree contains two points
 // - new area using boost::polygon function if the initial tree contains more than two points (update of associated convex hull)
 template<typename T> void Tree<T>::calculateNewArea( T &pt )
 {
@@ -137,26 +136,15 @@ template<typename T> void Tree<T>::calculateNewArea( T &pt )
     double area_noPt = area;
     //Aera value including new point Pt + update of 'aera', 'diff_aera' and 'pointCH' attributes
     double area_Pt = boost::geometry::area( hull );
-    //Rcpp::Rcout<< "area_boost=" << area_Pt <<  std::endl;
     diff_area = fabs(area_Pt - area_noPt);
     area = area_Pt;
-    pointsCH = hull;
+    pointsCH.clear();
+    pointsCH.assign(hull.begin(), hull.end());
     dist = 0;
   }
-  else if ( nbPoints == 1 )   //calculate distance
+  else if ( nbPoints == 2 )   //calculate distance
   {
     dist = sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
-  }
-  else if ( nbPoints == 2 )    //calculate aera of triangle
-  {
-    area = calculateTriangleArea( points[0], points[1], pt );
-    //these three points define the new convex hull
-    boost::geometry::model::ring<point_t> hull;
-    boost::geometry::append( hull, point_t(points[0].x, points[0].y) );
-    boost::geometry::append( hull, point_t(points[1].x, points[1].y) );
-    boost::geometry::append( hull, point_t(pt.x, pt.y) );
-    pointsCH = hull;
-    dist = 0;
   }
 }
 
@@ -164,30 +152,10 @@ template<typename T> void Tree<T>::calculateNewArea( T &pt )
 //                              TEST AREA
 //========================================================================================
 //Given a new point pt, this function calculates:
-// - area of new triangular area including pt if the initial tree contains two points
-//   (--> becomes difference because without pt area = 0)
 // - difference between old and new area (including pt) using boost::polygon function
 //   if the initial tree contains more than two points (update of associated convex hull)
 template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out)
 {
-  if ( nbPoints == 2 )    //calculate aera of triangle
-  {
-    area_Pt = calculateTriangleArea( points[0], points[1], pt );
-    double area_noPt = area;
-
-    //these three points define the new convex hull
-    boost::geometry::model::ring<point_t> hull;
-    boost::geometry::append( hull, point_t(points[0].x, points[0].y) );
-    boost::geometry::append( hull, point_t(points[1].x, points[1].y) );
-    boost::geometry::append( hull, point_t(pt.x, pt.y) );
-    pointsCH = hull;
-    hull_out = hull;
-
-    double calculatedDiffArea = fabs(area_Pt - area_noPt);
-    return calculatedDiffArea;
-  }
-  else
-  {
     //Conversion from PointXYZ to point_t from boost library use
     mpoint_t pointsForPoly;
     for (unsigned int i = 0 ; i < points.size() ; i++ )
@@ -205,13 +173,14 @@ template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::ge
     //Search for convex hull using previous polygon definition
     boost::geometry::model::ring<point_t> hull;
     boost::geometry::convex_hull(poly2D, hull);
+
     area_Pt = boost::geometry::area( hull );
-    hull_out = hull;
+    hull_out.clear();
+    hull_out.assign(hull.begin(), hull.end());
 
     double area_noPt = area;
     double calculatedDiffArea = fabs(area_Pt - area_noPt);
     return calculatedDiffArea;
-  }
 }
 
 //========================================================================================
@@ -266,7 +235,8 @@ template<typename T> void Tree<T>::addPoint( T &pt, double &newArea, boost::geom
   nbPoints++;
   points.push_back(pt);
   area = newArea;
-  pointsCH = hull;
+  pointsCH.clear();
+  pointsCH.assign(hull.begin(), hull.end());
   dist = 0;
 }
 
@@ -284,7 +254,7 @@ template<typename T> void Tree<T>::addPoint_dist( T &pt, double &newDist )
 
 template<typename T> void Tree<T>::updateArea()
 {
-  if ( nbPoints > 3)
+  if ( nbPoints >= 3)
   {
     //Conversion from PointXYZ to point_t from boost library use
     mpoint_t pointsForPoly;
@@ -301,24 +271,14 @@ template<typename T> void Tree<T>::updateArea()
     boost::geometry::convex_hull(poly2D, hull);
 
     double area_Pt = boost::geometry::area( hull );
-    //diff_area = fabs(area_Pt - area_noPt);
     area = area_Pt;
-    pointsCH = hull;
+    pointsCH.clear();
+    pointsCH.assign(hull.begin(), hull.end());
     dist = 0;
   }
   else if ( nbPoints == 2 )   //calculate distance
   {
     dist = sqrt( (points[0].x - points[1].x)*(points[0].x - points[1].x) + (points[0].y - points[1].y)*(points[0].y - points[1].y) );
-  }
-  else if ( nbPoints == 3 )    //calculate aera of triangle
-  {
-    area = calculateTriangleArea( points[0], points[1], points[2] );
-    boost::geometry::model::ring<point_t> hull;
-    boost::geometry::append( hull, point_t(points[0].x, points[0].y) );
-    boost::geometry::append( hull, point_t(points[1].x, points[1].y) );
-    boost::geometry::append( hull, point_t(points[2].x, points[2].y) );
-    pointsCH = hull;
-    dist = 0;
   }
 }
 
