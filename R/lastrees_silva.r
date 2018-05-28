@@ -49,7 +49,18 @@
 #' @family  tree_segmentation
 lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE, ...)
 {
-  . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
+  stopifnotlas(las)
+  assertive::assert_is_all_of(chm, "RasterLayer")
+  assertive::assert_is_a_number(max_cr_factor)
+  assertive::assert_is_a_number(exclusion)
+  assertive::assert_is_a_bool(extra)
+  assertive::assert_all_are_in_open_range(max_cr_factor, 0, 1)
+  assertive::assert_all_are_in_open_range(exclusion, 0, 1)
+
+  if (is(treetops, "RasterLayer"))
+    treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
+  else if (!is.data.frame(treetops))
+    stop("'treetops' format not recognized.", call. = FALSE)
 
   field = "treeID"
   p = list(...)
@@ -58,16 +69,7 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 
   stopif_forbidden_name(field)
 
-  if (is(treetops, "RasterLayer"))
-    treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
-  else if (!is.data.frame(treetops))
-    stop("'treetops' format not recognized.", call. = FALSE)
-
-  if (max_cr_factor < 0 | max_cr_factor > 1)
-    stop("'max_cr_factor' should be between 0 and 1", call. = FALSE)
-
-  if (exclusion < 0 | exclusion > 1)
-    stop("'exclusion' should be between 0 and 1", call. = FALSE)
+  . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
   ttops = data.table::copy(treetops)
   data.table::setDT(ttops)

@@ -9,10 +9,16 @@
 
 * When processing a `LAScatalog`, error handling has been seriouly improved. A process can now run until the end even with errors. In this that case clusters with errors are skipped.
 * When processing  a `LAScatalog`, the graphical progress now use 3 colors. green: ok, red: error, gray: null.
+* `as.spatial()` for `LAS` object preserves the CRS.
+* All the functions have now strong assertions to check user inputs.
 
 #### OTHER CHANGE
 
 * `catalog()` displays a message when finding overlaps between files.
+
+#### BUG FIXES
+
+* `lasscanline()` did not computed the scanline because the conditionnal statement that checked if the field was properly populated was incorrect.
 
 ## lidR v1.5.1 (In development)
 

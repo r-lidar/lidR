@@ -34,9 +34,13 @@
 lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
 {
   stopifnotlas(las)
-  method = match.arg(method)
-  shape = match.arg(shape)
-  stopifnot(sigma > 0, size > 0, is.numeric(sigma), is.numeric(size), length(size) == 1, length(sigma) == 1)
+  assertive::assert_is_a_number(size)
+  assertive::assert_all_are_positive(size)
+  assertive::assert_is_a_number(sigma)
+  assertive::assert_all_are_positive(sigma)
+  method <- match.arg(method)
+  shape  <- match.arg(shape)
+
   Z <- Zraw <- NULL
 
   if (method == "average") method = 1  else method = 2

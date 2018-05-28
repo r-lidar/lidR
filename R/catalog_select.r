@@ -45,6 +45,8 @@
 #' \link[lidR:catalog]{LAScatalog}
 catalog_select = function(x)
 {
+  assertive::assert_is_all_of(x, "LAScatalog")
+
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
   if (!is.na(x@crs@projargs))

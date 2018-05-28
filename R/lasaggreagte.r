@@ -105,7 +105,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
   if(splitlines & "flightlineID" %in% names(.las@data))
     by = c(by, list(flightline = .las@data$flightlineID))
   else if(splitlines & !"flightlineID" %in% names(.las@data))
-    lidRError("LDR7")
+    stop("'flightlineID': no such field in the dataset. Check function 'lasflightline'.")
 
   stat <- .las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
 
@@ -134,9 +134,9 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
     c = classes[!test]
 
     if(sum(!test) == 1)
-      lidRError("TFS1", expression = funcstring, metric = n, class = c)
+      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single numeric or logical value. The field '", n, "' is a '", c, "'"))
     else if(sum(!test) > 1)
-      lidRError("TFS2", expression = funcstring, metric = n, class = c)
+      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single numeric or logical value. The field ", utils::capture.output(cat(n, sep = " and ")), " are respectively ", utils::capture.output(cat(c, sep= " and "))))
 
     size = sapply(metrics, length)
     test = size == 1
@@ -145,14 +145,14 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
     c = size[!test]
 
     if(sum(!test) == 1)
-      lidRError("TFS3", expression = funcstring, metric = n, number = c)
+      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single value. The field '", n, "' has a length of ", c))
     else if(sum(!test) > 1)
-      lidRError("TFS4", expression = funcstring, metric = n, number = c)
+      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(n, sep = " and ")), " have respectively a length of: ", utils::capture.output(cat(c, sep=" and "))))
   }
   else if(is.data.frame(metrics))
-    lidRError("TFS5", expression = funcstring)
+    stop(paste0("The expression '", funcstring, "' returned a data.frame. A single number or a list of single number is expected."))
   else if(is.vector(metrics) & length(metrics) > 1)
-    lidRError("TFS6", expression = funcstring, number = length(metrics))
+    stop(paste0("The expression '", funcstring, "' returned a vector of length ", length(metrics),  ". A single number or a list of single number is expected."))
   else
     return(0)
 }

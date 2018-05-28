@@ -40,15 +40,17 @@
 #' @export
 lascolor = function(.las, nbits = 16)
 {
+  stopifnotlas(.las)
+  assertive::assert_is_a_number(nbits)
+  assertive::assert_all_are_in_closed_range(nbits, 0, 16)
+
   color <-R <- G <- B <- NULL
   maxcol = 2^nbits-1
 
-  stopifnotlas(.las)
+  if(!all(c("R", "G", "B") %in% names(.las@data)))
+    warning("No 'RGB' fields found. 'color' cannot be computed from this file.", call. = FALSE)
 
-  if(sum(c("R", "G", "B") %in% names(.las@data)) == 3)
-    .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
-  else
-    lidRError("LDR4", infield = "RGB", outfield = "color", behaviour = warning)
+  .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
 
   return(invisible())
 }

@@ -20,6 +20,7 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),methods
 Imports:
+    assertive,
     concaveman,
     data.table,
     future,
@@ -100,10 +101,8 @@ Collate:
     'lastrees_silva.r'
     'lastrees_watershed.r'
     'lasupdateheader.r'
-    'lidRError.r'
     'metrics.r'
     'metrics_canopy_roughness.r'
-    'mutatebyref.r'
     'options.r'
     'plot.catalog.r'
     'plot.las.r'
@@ -112,6 +111,7 @@ Collate:
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
+    'stopif.r'
     'subcircled.r'
     'tree_detection.r'
     'tree_hulls.r'

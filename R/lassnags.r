@@ -137,21 +137,15 @@ lassnags = function (las, algorithm, ...)
 lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
   stopifnotlas(las)
-
-  if(any(neigh_radii <= 0 | neigh_radii > 3) == TRUE)
-    stop("Incorrect neighborhood radii vector supplied or values are too large.")
-
-  if(low_int_thrsh < 0 | low_int_thrsh > 300)
-    stop("Lower intensity threshold incorrect.")
-
-  if(uppr_int_thrsh < 0 | uppr_int_thrsh > 300)
-    stop("Upper intensity threshold incorrect.")
-
-  if(low_int_thrsh > uppr_int_thrsh)
-    stop("Intensity thresholds incorrectly specified.")
-
-  if(pt_den_req <= 0 | pt_den_req > 100)
-    stop("Point density ratio incorrectly specified.")
+  assertive::assert_is_numeric(neigh_radii)
+  assertive::assert_all_are_in_closed_range(neigh_radii, 0, 3)
+  assertive::assert_is_a_number(low_int_thrsh)
+  assertive::assert_all_are_in_closed_range(low_int_thrsh, 0, 300)
+  assertive::assert_is_a_number(uppr_int_thrsh)
+  assertive::assert_all_are_in_closed_range(uppr_int_thrsh, 0, 300)
+  assertive::assert_all_are_true(low_int_thrsh > uppr_int_thrsh)
+  assertive::assert_is_a_number(pt_den_req)
+  assertive::assert_all_are_in_open_range(pt_den_req, 0, 100)
 
   if(is.null(bbpr_thresholds))
     stop("Branch and bole point ratio threshold matirx not supplied.")

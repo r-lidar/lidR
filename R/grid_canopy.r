@@ -108,8 +108,10 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 {
   . <- X <- Y <- Z <- NULL
 
-  if (!is.numeric(res))
-    stop("Argument 'res' should be a number", call. = FALSE)
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+  assertive::assert_is_a_number(subcircle)
+  assertive::assert_all_are_non_negative(subcircle)
 
   if (res < 0)
     stop("Argument 'res' should be greater than 0", call. = FALSE)
@@ -161,6 +163,11 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+  assertive::assert_is_a_number(subcircle)
+  assertive::assert_all_are_non_negative(subcircle)
+
   x = catalog_old_compatibility(x)
 
   buffer(x) <- res/2 + subcircle

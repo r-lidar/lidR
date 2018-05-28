@@ -52,6 +52,12 @@
 #' }
 catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_a_number(size)
+  assertive::assert_all_are_positive(size)
+  assertive::is_character(path)
+  assertive::is_character(prefix)
+
   format           <- match.arg(ext)
   interact         <- LIDROPTIONS("interactive")
   buffer(ctg)      <- 0

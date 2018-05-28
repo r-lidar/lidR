@@ -76,7 +76,9 @@
 #'
 grid_catalog <- function(catalog, grid_func, res, select = "*", filter = "", start = c(0,0), ...)
 {
-  stopifnot(is(catalog, "LAScatalog"), is.function(grid_func))
+  assertive::assert_is_all_of(catalog, "LAScatalog")
+  assertive::assert_is_function(grid_func)
+  assertive::assert_is_numeric(start)
 
   callparam  <- list(...)
   progress   <- progress(catalog)
