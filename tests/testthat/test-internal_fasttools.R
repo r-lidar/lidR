@@ -1,4 +1,4 @@
-context("fasttools")
+context("internal_fasttools")
 
 xmin = 0
 ymin = 0

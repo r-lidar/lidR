@@ -1,17 +1,9 @@
-context("catalog")
+context("catalog_query")
 
-sink(tempfile())
-
-lidr_options(interactive = FALSE)
 folder <- system.file("extdata", "", package="lidR")
 ctg = catalog(folder)
 cores(ctg) <- 1
 progress(ctg) <- FALSE
-
-test_that("build catalog works", {
-  expect_equal(dim(ctg@data)[1], 3)
-  expect_equal(dim(ctg@data)[2], 34)
-})
 
 test_that("catalog queries works", {
   x = c(684850, 684880)
@@ -53,7 +45,7 @@ test_that("catalog queries works when no data", {
   expect_equal(length(req), 1)
 
   expect_warning(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer),
-                "plot1 is outside the catalog.")
+                 "plot1 is outside the catalog.")
 })
 
 test_that("catalog queries works with the two shapes", {
@@ -93,44 +85,3 @@ test_that("catalog queries support readLAS options", {
 
   expect_true(any(cn %in% c("Intensity", "ScanAngle", "ReturnNumber")))
 })
-
-# test_that("catalog reshape works", {
-#   ctg = catalog(folder)
-#   progress(ctg) <- FALSE
-#   ctg@data = ctg@data[1]
-#   temp = tempfile()
-#
-#   ctg2 = catalog_reshape(ctg, 80, temp, prefix = "test_")
-#
-#   unlink(temp, recursive = T)
-#
-#   expect_equal(sum(ctg@data$`Number of point records`), sum(ctg2@data$`Number of point records`))
-#   expect_equal(nrow(ctg2@data), 9)
-# })
-
-test_that("catalog apply works", {
-  ctg@data = ctg@data[1]
-  progress(ctg) <- FALSE
-  tiling_size(ctg) <- 100
-  buffer(ctg) <- 0
-
-  test = function(las){ return(nrow(las@data)) }
-
-  req = catalog_apply(ctg, test)
-
-  s1 = do.call(sum, req)
-  s2 = sum(ctg@data$`Number of point records`)
-
-  expect_equal(s1,s2)
-
-  test = function(las){ return(sum(las@data$ReturnNumber == 1)) }
-
-  req = catalog_apply(ctg, test)
-
-  s1 = do.call(sum, req)
-  s2 = sum(ctg@data$`Number of 1st return`)
-
-  expect_equal(s1,s2)
-})
-
-sink(NULL)

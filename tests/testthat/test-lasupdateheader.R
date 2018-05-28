@@ -1,4 +1,4 @@
-context("header update")
+context("lasupdateheader")
 
 test_that("header is updated by reference", {
   las = lidR:::dummy_las(100)

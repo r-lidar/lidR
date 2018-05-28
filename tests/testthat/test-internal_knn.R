@@ -1,4 +1,4 @@
-context("knn")
+context("internal_knn")
 
 X = c(0, 1, 1, 0, 0.5)
 Y = c(0, 0, 1, 1, 0.5)
