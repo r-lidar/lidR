@@ -79,7 +79,6 @@ Collate:
     'grid_terrain.r'
     'grid_tincanopy.r'
     'lasaggreagte.r'
-    'lascheck.r'
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'
