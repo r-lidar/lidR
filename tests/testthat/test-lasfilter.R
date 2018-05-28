@@ -33,8 +33,7 @@ test_that("clip circle works", {
 })
 
 test_that("filter on non matching data return null", {
-  expect_warning(lasfilter(las, X > 200))
-  expect_equal(suppressWarnings(lasfilter(las, X > 200)), NULL)
+  expect_equal(lasfilter(las, X > 200), NULL)
 })
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

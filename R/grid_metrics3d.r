@@ -83,10 +83,10 @@
 grid_metrics3d = function(.las, func, res = 1, debug = FALSE)
 {
   stopifnotlas(.las)
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_non_negative(res)
 
-  call = substitute(func)
-
+  call <- substitute(func)
   stat <- lasaggregate(.las, by = "XYZ", call, res, c(0,0,0), c("X", "Y", "Z"), FALSE, debug)
-
   return(stat)
 }

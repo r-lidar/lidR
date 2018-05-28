@@ -42,12 +42,18 @@
 lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10, ...)
 {
   stopifnotlas(las)
-
-  if (dt1 <= 0) stop("dt1 should be positive",  call. = FALSE)
-  if (dt1 <= 0) stop("dt1 should be positive", call. = FALSE)
-  if (Zu <= 0)  stop("Zu should be positive", call. = FALSE)
-  if (hmin <= 0)stop("hmin should be positive", call. = FALSE)
-  if (R <= 0)   stop("R should be positive", call. = FALSE)
+  assertive::assert_is_a_number(dt1)
+  assertive::assert_is_a_number(dt2)
+  assertive::assert_is_a_number(R)
+  assertive::assert_is_a_number(Zu)
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_is_a_number(speed_up)
+  assertive::assert_all_are_positive(dt1)
+  assertive::assert_all_are_positive(dt2)
+  assertive::assert_all_are_positive(R)
+  assertive::assert_all_are_positive(Zu)
+  assertive::assert_all_are_positive(hmin)
+  assertive::assert_all_are_positive(speed_up)
 
   field = "treeID"
   p = list(...)

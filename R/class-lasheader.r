@@ -47,8 +47,7 @@ setClass(
 
 setMethod("initialize", "LASheader", function(.Object, data = list())
 {
-  if(!is.list(data))
-    lidRError("LDR1")
+  assertive::assert_is_list(data)
 
   vlr <- list()
   if (!is.null(data$`Variable Length Records`))

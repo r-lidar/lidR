@@ -40,7 +40,7 @@
 #' enough to compute a coherent local pulse density i.e., in a 2 points/m^2 dataset, 25 square meters
 #' would be feasible; however, an extent too small to thin (e.g. <1 square meter) would not be feasible
 #' because density does not have meaning at this scale.
-#' 
+#'
 #' @param .las An object of the class \code{LAS}
 #' @param density numeric. The expected density
 #' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to
@@ -66,6 +66,14 @@
 #' @export
 lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
+  stopifnotlas(.las)
+  assertive::assert_is_a_number(density)
+  assertive::assert_all_are_positive(density)
+  assertive::assert_is_a_bool(homogenize)
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+  assertive::assert_is_a_bool(use_pulse)
+
   pulseID <- gpstime <- NULL
 
   if(use_pulse & !"pulseID" %in% names(.las@data))
@@ -73,8 +81,6 @@ lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_puls
     warning("No 'pulseID' field found.", call. = FALSE)
     use_pulse = FALSE
   }
-
-  stopifnotlas(.las)
 
   npoints = nrow(.las@data)
 

@@ -84,6 +84,12 @@ lasground = function(las, algorithm, ...)
 #' @export
 lasground_pmf = function(las, ws, th)
 {
+  stopifnotlas(las)
+  assertive::assert_is_numeric(ws)
+  assertive::assert_is_numeric(th)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_all_are_positive(th)
+
   . <- X <- Y <- Z <- Classification <- NULL
 
   lws = length(ws)

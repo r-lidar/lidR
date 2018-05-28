@@ -21,7 +21,8 @@
 lasfiltersurfacepoints = function(las, res)
 {
   stopifnotlas(las)
-  stopifnot(res > 0, length(res) == 1, is.numeric(res))
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
 
   Z <- NULL
   by  = group_grid(las@data$X, las@data$Y, res)

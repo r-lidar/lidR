@@ -163,11 +163,13 @@
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
-  res       <- 1
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_function(func)
+
   progress  <- progress(ctg)
   ncores    <- cores(ctg)
   stopearly <- stop_early(ctg)
-  clusters  <- catalog_makecluster(ctg, res)
+  clusters  <- catalog_makecluster(ctg, 1)
   output    <- cluster_apply(clusters, cluster_apply_func, ncores, progress, stopearly, func = func, ctg = ctg, func_args = func_args, ...)
   return(output)
 }
@@ -175,9 +177,6 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
 cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
 {
   las = readLAS(cluster, ...)
-
-  if (is.null(las))
-    return(NULL)
-
+  if (is.null(las)) return(NULL)
   return(do.call(func, c(las, func_args)))
 }

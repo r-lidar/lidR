@@ -101,10 +101,10 @@ catalog_queries = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL,
 #' @export
 catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
 {
-  stopifnot(length(x) == length(y))
-  stopifnot(all(buffer >= 0))
-  if (length(r) > 1) stopifnot(length(x) == length(r))
-  if (length(buffer) > 1) stopifnot(length(x) == length(buffer))
+  assertive::assert_are_same_length(x, y)
+  assertive::assert_all_are_non_negative(buffer)
+  if (length(r) > 1) assertive::assert_are_same_length(x, r)
+  if (length(buffer) > 1) assertive::assert_are_same_length(x, buffer)
   if (is.null(roinames)) roinames <- paste0("ROI", 1:length(x))
 
   progress  <- progress(ctg)
