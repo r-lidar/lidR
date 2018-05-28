@@ -1,4 +1,4 @@
-context("canopy")
+context("grid_canopy")
 
 
 test_that("grid_canopy works", {

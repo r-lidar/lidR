@@ -1,4 +1,4 @@
-context("terrain")
+context("grid_terrain")
 
 las = lidR:::dummy_las(5000)
 las@data[, Z := Z + 0.1*X+0.1*Y+sin(0.01*X)-sin(0.1*Y)+sin(0.003*X*Y)]

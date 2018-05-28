@@ -1,4 +1,4 @@
-context("makecluster")
+context("catalog_makecluster")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project = catalog(LASfile)
