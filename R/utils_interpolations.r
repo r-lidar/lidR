@@ -39,10 +39,10 @@ interpolate = function(points, coord, method, k, p, model, wbuffer = TRUE)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
   if (ndup_xyz > 0)
-    warning(paste("There were",  ndup_xyz, "degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
+    warning(glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
 
   if (ndup_xy > 0)
-    warning(paste("There were", ndup_xy, "degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+    warning(glue("There were {ndup_xy} degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
 
   if (ndup_xy > 0 | ndup_xyz > 0)
     points = points[, .(Z = min(Z)), by = .(X,Y)]
@@ -66,7 +66,7 @@ interpolate = function(points, coord, method, k, p, model, wbuffer = TRUE)
       z[isna] <- C_knnidw(coord$X[!isna], coord$Y[!isna], z[!isna], coord$X[isna], coord$Y[isna], 1, 1)
 
       if(wbuffer)
-        message(paste0(nnas, " points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
+        message(glue("{nnas} points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
     }
 
     return(z)
@@ -76,7 +76,7 @@ interpolate = function(points, coord, method, k, p, model, wbuffer = TRUE)
     return(interpolate_kriging(points, coord, model, k))
   }
   else
-    stop(paste0("Method '", method, "' does not exist."), call. = FALSE)
+    stop(glue("Method '{method}' does not exist."), call. = FALSE)
 }
 
 interpolate_knnidw = function(points, coord, k, p)

@@ -159,16 +159,16 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
   if (sum(valid) == 0 | sum(islas) == 0) {
-    stop(paste0("File(s) not supported"), call. = FALSE)
+    stop("File(s) not supported", call. = FALSE)
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", x[!valid], " not found"), call. = FALSE)
+    warning(glue("File(s) {x[!valid]} not found"), call. = FALSE)
     x <- x[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", x[!islas], " not supported"), call. = FALSE)
+    warning(glue("File(s) {x[!islas]} not supported"), call. = FALSE)
     x <- x[islas]
   }
 

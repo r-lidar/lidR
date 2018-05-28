@@ -123,7 +123,7 @@ catalog <- function(folder, ...)
   if (all(!finfo$isdir))
     files <- folder
   else if (!dir.exists(folder))
-    stop(paste(folder, " does not exist"))
+    stop(glue("{folder} does not exist"))
   else
     files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
@@ -182,7 +182,7 @@ cores = function(ctg)
   value = as.integer(value)
 
   if(value > sys.cores) {
-    message(paste0("Available cores: ", sys.cores, ". Number of cores set to ", sys.cores, "."))
+    message(glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
     value = sys.cores
   }
 

@@ -104,16 +104,16 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   ztxt   = lazyeval::expr_text(z)
 
   if (!is.numeric(y) | !is.numeric(z))
-    stop("y or z is missing.", call. = FALSE)
+    stop("y or z is missing.")
 
   if (length(x) != length(y))
-    stop(paste0(xtxt, " is not same length as ", ytxt), call. = FALSE)
+    stop("x is not same length as y")
 
   if (length(x) != length(z))
-    stop(paste0(xtxt, " is not same length as ", ztxt), call. = FALSE)
+    stop("x is not same length as z")
 
   if (length(x) != length(y) | length(x) != length(z))
-    stop("Different lengths for x,y,z", call. = FALSE)
+    stop("Different lengths for x,y,z")
 
   X = cbind(x,y,z)
   dn = suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))

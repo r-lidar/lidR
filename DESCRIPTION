@@ -26,6 +26,7 @@ Imports:
     future,
     gdalUtils,
     geometry,
+    glue,
     grDevices,
     gstat,
     lazyeval,

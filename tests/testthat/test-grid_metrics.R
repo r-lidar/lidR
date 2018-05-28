@@ -8,7 +8,8 @@ test_that("grid_metrics works", {
 })
 
 test_that("grid_metrics debug mode works", {
-  expect_error(grid_metrics(las, LAD(Z), debug = TRUE))
+  lidr_options(debug = TRUE)
+  expect_error(grid_metrics(las, LAD(Z)), "A single number")
 })
 
 test_that("grid_metrics return an error if splitline and no flightlineID", {
