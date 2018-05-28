@@ -182,7 +182,7 @@ util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws =
     stop("exp should be logical", call. = FALSE)
 
   if (!exp & b < 1)
-    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increses in contant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increment is constant to bypass this issue.", call. = FALSE)
 
 
   dhtk = c()
