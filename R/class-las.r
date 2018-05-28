@@ -111,7 +111,6 @@ setMethod("initialize", "LAS", function(.Object, data, header, crs, check)
 
   if(check)
   {
-    #lascheck(data, header, hard = F)
     rlas::check_header(header)
     rlas::check_data(data)
     rlas::check_data_vs_header(header, data, hard = F)

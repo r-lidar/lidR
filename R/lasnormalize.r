@@ -147,7 +147,6 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
 
     las@data[, Z := round(Z - Zground, 3)]
     lasupdateheader(las)
-    lascheck(las@data, las@header)
     return(invisible())
   }
   else
