@@ -43,7 +43,7 @@ writeLAS = function(.las, file)
   file  = path.expand(file)
   islas = tools::file_ext(file) %in% c("las", "laz")
 
-  if (!islas) stop(paste0("File(s) ", file, " not supported"), call. = FALSE)
+  if (!islas) stop(glue("File(s) {file} not supported"), call. = FALSE)
 
   rlas::write.las(file, as.list(.las@header), .las@data)
   return(invisible())

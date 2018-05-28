@@ -97,7 +97,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     else
     {
       res = round(stats::median(c(dx,dy)), 2)
-      message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+      message(glue("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: {res}"))
     }
 
     data.table::setattr(x, "res", res)

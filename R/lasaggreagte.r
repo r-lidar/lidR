@@ -119,6 +119,7 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
   return(stat)
 }
 
+#' @importFrom glue glue
 .debug_metrics = function(metrics, func)
 {
   funcstring = deparse(func)
@@ -133,10 +134,8 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
     n = names(metrics[!test])
     c = classes[!test]
 
-    if(sum(!test) == 1)
-      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single numeric or logical value. The field '", n, "' is a '", c, "'"))
-    else if(sum(!test) > 1)
-      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single numeric or logical value. The field ", utils::capture.output(cat(n, sep = " and ")), " are respectively ", utils::capture.output(cat(c, sep= " and "))))
+    if(any(!test))
+      stop(glue("The expression '{funcstring}' returned a list in which all elements are not a single numeric or logical value. The field '{n}' is a '{c}'"), call. = FALSE)
 
     size = sapply(metrics, length)
     test = size == 1
@@ -144,15 +143,13 @@ lasaggregate = function(.las, by, call, res, start, colnames, splitlines, debug,
     n = names(metrics[!test])
     c = size[!test]
 
-    if(sum(!test) == 1)
-      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single value. The field '", n, "' has a length of ", c))
-    else if(sum(!test) > 1)
-      stop(paste0("The expression '", funcstring, "' returned a list in which all elements are not a single value. The fields: ", utils::capture.output(cat(n, sep = " and ")), " have respectively a length of: ", utils::capture.output(cat(c, sep=" and "))))
+    if(any(!test))
+      stop(glue("The expression '{funcstring}' returned a list in which all elements are not a single value. The field '{n}' has a length of {c}"), call. = FALSE)
   }
   else if(is.data.frame(metrics))
-    stop(paste0("The expression '", funcstring, "' returned a data.frame. A single number or a list of single number is expected."))
+    stop(glue("The expression '{funcstring}' returned a data.frame. A single number or a list of single number is expected."), call. = FALSE)
   else if(is.vector(metrics) & length(metrics) > 1)
-    stop(paste0("The expression '", funcstring, "' returned a vector of length ", length(metrics),  ". A single number or a list of single number is expected."))
+    stop(glue("The expression '{funcstring}' returned a vector of length {length(metrics)}. A single number or a list of single number is expected."), call. = FALSE)
   else
     return(0)
 }

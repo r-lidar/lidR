@@ -138,7 +138,7 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   i = 1
   for (th in thresholds)
   {
-    verbose(paste0("Triangulation pass ", i, " of ", length(thresholds), "..."))
+    verbose(glue("Triangulation pass {i} of {length(thresholds)}..."))
     i =  i+ 1
 
     if (th == 0)
