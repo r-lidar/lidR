@@ -55,8 +55,15 @@
 #' @family  tree_segmentation
 lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE, ...)
 {
-  if (!is(chm, "RasterLayer"))
-    stop("chm is not a RasterLayer", call. = FALSE)
+  stopifnotlas(las)
+  assertive::assert_is_all_of(chm, "RasterLayer")
+  assertive::assert_is_a_number(th_tree)
+  assertive::assert_is_a_number(th_seed)
+  assertive::assert_is_a_number(th_cr)
+  assertive::assert_is_a_number(max_cr)
+  assertive::assert_is_a_bool(extra)
+  assertive::assert_all_are_in_open_range(th_seed, 0, 1)
+  assertive::assert_all_are_in_open_range(th_cr, 0, 1)
 
   if (is(treetops, "data.frame"))
   {
@@ -71,12 +78,6 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
   if (raster::extent(chm) != raster::extent(treetops))
     stop("chm and treetops do not match together", call. = FALSE)
-
-  if (th_seed < 0 | th_seed > 1)
-    stop("th_seed should be between 0 and 1", call. = FALSE)
-
-  if (th_cr < 0 | th_cr > 1)
-    stop("th_cr should be between 0 and 1", call. = FALSE)
 
   field = "treeID"
   p = list(...)

@@ -194,7 +194,7 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
       id = idpolys[ids[inpoly.nothole]]
       values[inpoly.nothole] = polys@data[, field][id]
 
-      verbose(paste0("Assigned the value of field ", field , " from the table of attibutes to the points"))
+      verbose(glue("Assigned the value of field {field} from the table of attibutes to the points"))
     }
     else if (method == 2)
     {

@@ -52,6 +52,9 @@
 #' cluster. Default is 1000 (1 km^2).
 #' @slot vrt character. Path to a folder. In \code{grid_*} functions, for large outputs, the functions
 #' can return a lightweight virtual raster mosaic (VRT).
+#' @slot stop_early logical. If \code{TRUE} the catalog processing stops if an error occurs during the
+#' computation. If \code{FALSE}, the catalog will be process unlil the end anyway and clusters with errors
+#' are skipped.
 #' @slot opt_changed Internal use only for compatibility with older deprecated code.
 #' @seealso
 #' \link[lidR:catalog]{catalog}
@@ -72,6 +75,7 @@ setClass(
     progress = "logical",
     tiling_size = "numeric",
     vrt = "character",
+    stop_early = "logical",
     opt_changed = "logical"
   )
 )
@@ -86,6 +90,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
   .Object@progress <- TRUE
   .Object@tiling_size <- 1000
   .Object@vrt <- ""
+  .Object@stop_early <- TRUE
   .Object@opt_changed <- FALSE
   return(.Object)
 })
@@ -95,7 +100,8 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 #' Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
 #' representation of a set of las files, since a computer cannot load all the data at once. A
 #' catalog is a simple way to manage all the file sequentially by reading only the headers. Also a
-#' catalog contains metadata tso users can configure how it should be processed.
+#' catalog contains metadata so users can configure how it will be processed.
+#'
 #' @param folder string. The path of a folder containing a set of .las files
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @param ctg A LAScatalog object.
@@ -117,7 +123,7 @@ catalog <- function(folder, ...)
   if (all(!finfo$isdir))
     files <- folder
   else if (!dir.exists(folder))
-    stop(paste(folder, " does not exist"))
+    stop(glue("{folder} does not exist"))
   else
     files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
@@ -176,7 +182,7 @@ cores = function(ctg)
   value = as.integer(value)
 
   if(value > sys.cores) {
-    message(paste0("Available cores: ", sys.cores, ". Number of cores set to ", sys.cores, "."))
+    message(glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
     value = sys.cores
   }
 
@@ -291,6 +297,23 @@ vrt = function(ctg)
 {
   stopifnot(is.character(value), length(value) == 1)
   ctg@vrt <- value
+  ctg@opt_changed <- TRUE
+  return(ctg)
+}
+
+#' @rdname catalog
+#' @export
+stop_early = function(ctg)
+{
+  return(ctg@stop_early)
+}
+
+#' @rdname catalog
+#' @export
+`stop_early<-` = function(ctg, value)
+{
+  stopifnot(is.logical(value), length(value) == 1)
+  ctg@stop_early <- value
   ctg@opt_changed <- TRUE
   return(ctg)
 }

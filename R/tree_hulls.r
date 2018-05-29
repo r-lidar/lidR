@@ -63,9 +63,15 @@
 #' }
 tree_hulls = function(las, type = c("convex", "concave"), concavity = 3, length_threshold = 0, field = "treeID")
 {
-  X <- Y <- tree <- NULL
+  stopifnotlas(las)
+  type <- match.arg(type)
+  assertive::assert_is_a_number(concavity)
+  assertive::assert_all_are_non_negative(concavity)
+  assertive::assert_is_a_number(length_threshold)
+  assertive::assert_all_are_non_negative(length_threshold)
+  assertive::assert_is_a_string(field)
 
-  type = match.arg(type)
+  X <- Y <- tree <- NULL
 
   if (type == "convex")
     dt = las@data[, stdtreehullconvex(X,Y, .GRP), by = field]

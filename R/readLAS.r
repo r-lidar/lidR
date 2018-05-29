@@ -77,12 +77,17 @@ readLAS = function(files, select = "*", filter = "")
 #' @export
 readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
+  assertive::assert_is_a_string(select)
+  assertive::assert_is_a_string(filter)
   return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
 readLAS.LAScluster = function(files, select = "*", filter = "")
 {
+  assertive::assert_is_a_string(select)
+  assertive::assert_is_a_string(filter)
+
   buffer <- X <- Y <- NULL
 
   filter = paste(files@filter, filter)
@@ -124,6 +129,9 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
 #' @export
 readLAS.character = function(files, select = "*", filter = "")
 {
+  assertive::assert_is_a_string(select)
+  assertive::assert_is_a_string(filter)
+
   ofile = ""
   return(streamLAS(files, ofile, select, filter))
 }
@@ -151,16 +159,16 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
   if (sum(valid) == 0 | sum(islas) == 0) {
-    stop(paste0("File(s) not supported"), call. = FALSE)
+    stop("File(s) not supported", call. = FALSE)
   }
 
   if (sum(!valid) > 0) {
-    warning(paste0("File(s) ", x[!valid], " not found"), call. = FALSE)
+    warning(glue("File(s) {x[!valid]} not found"), call. = FALSE)
     x <- x[valid]
   }
 
   if (sum(!islas) > 0) {
-    warning(paste0("File(s) ", x[!islas], " not supported"), call. = FALSE)
+    warning(glue("File(s) {x[!islas]} not supported"), call. = FALSE)
     x <- x[islas]
   }
 

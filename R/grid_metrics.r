@@ -122,27 +122,25 @@ grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, f
 #' @export
 grid_metrics.LAS = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
-  call = substitute(func)
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_non_negative(res)
+  assertive::assert_is_numeric(start)
+  assertive::assert_is_logical(splitlines)
 
+  call <- substitute(func)
   stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
-
   return(stat)
 }
 
 #' @export
 grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
-  call = substitute(func)
+  if (splitlines) warning("Parameter splitlines is currently disabled for LAScatalogs")
 
-  if (splitlines)       warning("Parameter splitlines is currently disabled for LAScatalogs")
-
-  oldbuffer <- CATALOGOPTIONS("buffer")
-  CATALOGOPTIONS(buffer = 0)
+  x = catalog_old_compatibility(x)
   buffer(x) <- 0
 
+  call <- substitute(func)
   stat <- grid_catalog(x, grid_metrics, res, "*+", filter, start, func = call)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
   return(stat)
 }

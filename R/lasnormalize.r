@@ -116,7 +116,7 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
     nnas = sum(isna)
 
     if(nnas > 0)
-      stop(paste0(nnas, " points were not normalizable. Process aborded."), call. = F)
+      stop(glue("{nnas} points were not normalizable. Process aborded."), call. = F)
   }
   else
   {
@@ -137,7 +137,7 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
     nnas = sum(isna)
 
     if(nnas > 0)
-      stop(paste0(nnas, " points were not normalizable because the DTM contained NA values. Process aborded"), call. = F)
+      stop(glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
   }
 
   if (!copy)
@@ -147,7 +147,6 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
 
     las@data[, Z := round(Z - Zground, 3)]
     lasupdateheader(las)
-    lascheck(las@data, las@header)
     return(invisible())
   }
   else

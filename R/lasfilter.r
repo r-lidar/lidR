@@ -72,7 +72,6 @@ lasfilter_ <- function(.las, conditions)
   if(sum(combined_bools) == 0)
   {
     err = paste(paste(conditions), collapse=" & ")
-    lidRError("GET1", expression = err, behaviour = warning)
     return(NULL)
   }
 

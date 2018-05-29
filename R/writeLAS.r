@@ -37,14 +37,13 @@
 #' @export
 writeLAS = function(.las, file)
 {
+  stopifnotlas(.las)
+  assertive::assert_is_a_string(file)
+
   file  = path.expand(file)
   islas = tools::file_ext(file) %in% c("las", "laz")
 
-  if (length(file) > 1)
-    lidRError("LAS5", behaviour = stop)
-
-  if (!islas)
-    lidRError("LAS2", files = file, behaviour = stop)
+  if (!islas) stop(glue("File(s) {file} not supported"), call. = FALSE)
 
   rlas::write.las(file, as.list(.las@header), .las@data)
   return(invisible())

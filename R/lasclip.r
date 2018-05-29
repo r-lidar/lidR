@@ -98,6 +98,9 @@ lasclip = function(x, geometry, ofile = "", inside = TRUE, ...)
 #' @export
 lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
   if (is(geometry, "Polygon"))
   {
      las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], inside = inside)
@@ -119,19 +122,15 @@ lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE, ...)
 #' @export
 lasclip.LAScatalog = function(x, geometry, ofile = "", inside = TRUE, ...)
 {
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
   if (is(geometry, "Polygon"))
-  {
-    las = lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile, inside)
-    return(las)
-  }
+    return(lasclipPolygon(x, geometry@coords[,1], geometry@coords[,2], ofile, inside))
   else if (is(geometry, "SpatialPolygonsDataFrame"))
-  {
     stop("'SpatialPolygonsDataFrame' is not supported for 'LAScatalog' objects", call. = FALSE)
-  }
   else
-  {
     stop("Geometry not supported", call. = FALSE)
-  }
 }
 
 # =========
@@ -148,19 +147,19 @@ lasclipRectangle = function(x, xleft, ybottom, xright, ytop, ofile = "", inside 
 #' @export
 lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
+  assertive::assert_is_numeric(xleft)
+  assertive::assert_is_numeric(ybottom)
+  assertive::assert_is_numeric(xright)
+  assertive::assert_is_numeric(ytop)
+  assertive::assert_are_same_length(xleft, ybottom)
+  assertive::assert_are_same_length(xleft, xright)
+  assertive::assert_are_same_length(xleft, ytop)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
   X <- Y <- NULL
 
-  l1 = length(xleft)
-  l2 = length(ybottom)
-  l3 = length(xright)
-  l4 = length(ytop)
-
-  stopifnot(is.character(ofile), is.logical(inside))
-
-  if (l1 != l2 | l1 != l3 | l1 != l4)
-    stop("Different input lengths.")
-
-  if (l1 == 1)
+  if (length(xleft) == 1)
   {
     if (inside)
       return(lasfilter(x, between(X, xleft, xright), between(Y, ybottom, ytop)))
@@ -169,8 +168,8 @@ lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", ins
   }
   else
   {
-    output = vector(mode = "list", l1)
-    for (i in 1:l1)
+    output = vector(mode = "list", length(xleft))
+    for (i in 1:length(xleft))
     {
       if (inside)
         output[[i]] = lasfilter(x, between(X, xleft[i], xright[i]), between(Y, ybottom[i], ytop[i]))
@@ -185,20 +184,19 @@ lasclipRectangle.LAS = function(x, xleft, ybottom, xright, ytop, ofile = "", ins
 #' @export
 lasclipRectangle.LAScatalog = function(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE, ...)
 {
-  if (!inside)
-    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+  assertive::assert_is_numeric(xleft)
+  assertive::assert_is_numeric(ybottom)
+  assertive::assert_is_numeric(xright)
+  assertive::assert_is_numeric(ytop)
+  assertive::assert_are_same_length(xleft, ybottom)
+  assertive::assert_are_same_length(xleft, xright)
+  assertive::assert_are_same_length(xleft, ytop)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
 
-  l1 = length(xleft)
-  l2 = length(ybottom)
-  l3 = length(xright)
-  l4 = length(ytop)
+  if (!inside) stop("'inside = FALSE' is not supported for 'LAScatalog' objects.")
 
-  stopifnot(is.character(ofile))
-
-  if (l1 != l2 | l1 != l3 | l1 != l4)
-    stop("Different input lengths.")
-
-  if (l1 == 1)
+  if (length(xleft) == 1)
   {
     return(catalog_clip_rect(x, xleft, ybottom, xright, ytop, ofile, ...))
   }
@@ -226,15 +224,13 @@ lasclipPolygon = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 #' @export
 lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
+  assertive::assert_is_numeric(xpoly)
+  assertive::assert_is_numeric(ypoly)
+  assertive::assert_are_same_length(xpoly, ypoly)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
   X <- Y <- NULL
-
-  l1 = length(xpoly)
-  l2 = length(ypoly)
-
-  stopifnot(is.logical(inside))
-
-  if (l1 != l2)
-    stop("Different input lengths.")
 
   if( inside)
     return(lasfilter(x, C_points_in_polygon(xpoly,ypoly, X, Y)))
@@ -245,8 +241,13 @@ lasclipPolygon.LAS = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 #' @export
 lasclipPolygon.LAScatalog = function(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
 {
-  if (!inside)
-    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+  assertive::assert_is_numeric(xpoly)
+  assertive::assert_is_numeric(ypoly)
+  assertive::assert_are_same_length(xpoly, ypoly)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
+  if (!inside) stop("'inside = FALSE' is not supported for 'LAScatalog' objects.")
 
   return(catalog_clip_poly(x, xpoly, ypoly, ofile, ...))
 }
@@ -265,18 +266,17 @@ lasclipCircle = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE,
 #' @export
 lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
+  assertive::assert_is_numeric(xcenter)
+  assertive::assert_is_numeric(ycenter)
+  assertive::assert_is_numeric(radius)
+  assertive::assert_are_same_length(xcenter, ycenter)
+  if (length(radius) > 1) assertive::assert_are_same_length(xcenter, radius)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
+
   X <- Y <- NULL
 
-  l1 = length(xcenter)
-  l2 = length(ycenter)
-  l3 = length(radius)
-
-  stopifnot(is.logical(inside))
-
-  if (l1 != l2 | l1 != l3)
-    stop("Different input lengths.")
-
-  if (l1 == 1)
+  if (length(xcenter) == 1)
   {
     if (inside)
       return(lasfilter(x, (X-xcenter)^2 + (Y-ycenter)^2 <= radius^2))
@@ -285,8 +285,8 @@ lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = T
   }
   else
   {
-    output = vector(mode = "list", l1)
-    for (i in 1:l1)
+    output = vector(mode = "list", length(xcenter))
+    for (i in 1:length(xcenter))
     {
       if (inside)
         output[[i]] = lasfilter(x, (X-xcenter[i])^2 + (Y-ycenter[i])^2 <= radius[i]^2)
@@ -302,21 +302,118 @@ lasclipCircle.LAS = function(x, xcenter, ycenter, radius, ofile = "", inside = T
 #' @export
 lasclipCircle.LAScatalog = function(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
 {
-  if (!inside)
-    stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
+  assertive::assert_is_numeric(xcenter)
+  assertive::assert_is_numeric(ycenter)
+  assertive::assert_is_numeric(radius)
+  assertive::assert_are_same_length(xcenter, ycenter)
+  if (length(radius) > 1) assertive::assert_are_same_length(xcenter, radius)
+  assertive::assert_is_a_string(ofile)
+  assertive::assert_is_a_bool(inside)
 
-  l1 = length(xcenter)
-  l2 = length(ycenter)
-  l3 = length(radius)
+  if (!inside) stop("'inside = FALSE' is not available for 'LAScatalog' objects.")
 
-  stopifnot(is.character(ofile))
-
-  if (l1 != l2 | l1 != l3)
-    stop("Different input lengths.")
-
-  if (l1 == 1)
+  if (length(xcenter) == 1)
     return(catalog_clip_circ(x, xcenter, ycenter, radius, ofile, ...))
   else
     return(catalog_queries(x, xcenter, ycenter, radius, ...))
+}
+
+
+catalog_clip_poly = function(catalog, xpoly, ypoly, ofile, ...)
+{
+  xmin <- min(xpoly)
+  xmax <- max(xpoly)
+  ymin <- min(ypoly)
+  ymax <- max(ypoly)
+  xc   <- (xmax + xmin)/2
+  yc   <- (ymax + ymin)/2
+  w    <- xmax - xmin + 1
+  h    <- ymax - ymin + 1
+
+  cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
+
+  if (is.null(cluster))
+    return(invisible())
+
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las_inpoly(cluster@files, xpoly, ypoly, select = select, filter = filter, ofile = ofile)
+
+  if (is.null(data))
+    return (invisible())
+
+  return(LAS(data, header))
+}
+
+catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile, ...)
+{
+  xc <- (xmax + xmin)/2
+  yc <- (ymax + ymin)/2
+  w  <- xmax - xmin
+  h  <- ymax - ymin
+
+  cluster  <- catalog_index(catalog, xc, yc, w, h, 0, "ROI")[[1]]
+
+  if (is.null(cluster))
+    return(invisible())
+
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
+
+  if (nrow(data) == 0)
+    return (invisible())
+
+  return(LAS(data, header))
+}
+
+catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile, ...)
+{
+  cluster  <- catalog_index(catalog, xcenter, ycenter, 2*radius, NULL, 0, "ROI")[[1]]
+
+  if (is.null(cluster))
+    return(invisible())
+
+  p = list(...)
+
+  filter = cluster@filter
+  select = "*"
+
+  if(!is.null(p$filter))
+    filter = paste(filter, p$filter)
+
+  if(!is.null(p$select))
+    select = p$select
+
+  header = rlas::read.lasheader(cluster@files[1])
+  data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
+
+  if (nrow(data) == 0)
+    return (invisible())
+
+  return(LAS(data, header))
 }
 

@@ -76,10 +76,7 @@
 grid_hexametrics = function(.las, func, res = 20, splitlines = FALSE, debug = FALSE)
 {
   stopifnotlas(.las)
-
-  call = substitute(func)
-
+  call <- substitute(func)
   stat <- lasaggregate(.las, by = "HEXA", call, res, NA, c("X", "Y"), splitlines, debug)
-
   return(stat)
 }

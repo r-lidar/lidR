@@ -84,34 +84,24 @@ lasground = function(las, algorithm, ...)
 #' @export
 lasground_pmf = function(las, ws, th)
 {
-  . <- X <- Y <- Z <- Classification <- NULL
-
-  lws = length(ws)
-  lth = length(th)
-
-  if (!is.vector(ws)) {stop("'ws' is not a vector.", call. = FALSE)}
-  if (!is.vector(th)) {stop("'th' is not a vector.", call. = FALSE)}
-  if (!is.numeric(ws)){stop("'ws' is not numeric", call. = FALSE)}
-  if (!is.numeric(th)){stop("'th' is not numeric.", call. = FALSE)}
-  if (lws != lth)     {stop("'ws' and 'th' are not the same length.", call. = FALSE)}
-  if (lws == 0)       {stop("'ws' is empty.", call. = FALSE)}
-  if (lth == 0)       {stop("'th' is empty.", call. = FALSE)}
-  if (any(ws <= 0))   {stop("'ws' contains negative or null values.", call. = FALSE)}
-  if (any(th <= 0))   {stop("'th' contains negative or null values.", call. = FALSE)}
-  if (any(is.na(ws))) {stop("'ws' contains NA values.", call. = FALSE)}
-  if (any(is.na(th))) {stop("'th' contains NA values.", call. = FALSE)}
-
   stopifnotlas(las)
+  assertive::assert_is_numeric(ws)
+  assertive::assert_is_numeric(th)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_all_are_positive(th)
+  assertive::assert_are_same_length(ws, th)
+
+  . <- X <- Y <- Z <- Classification <- NULL
 
   cloud = las@data[, .(X,Y,Z)]
   cloud[, idx := 1:dim(cloud)[1]]
 
   verbose("Progressive morphological filter...")
 
-  for (i in 1:lws)
+  for (i in 1:length(ws))
   {
-    verbose(paste0("Pass ", i, " of ", length(ws), "..."))
-    verbose(paste0("Windows size = ", ws[i], " ; height_threshold = ", th[i]))
+    verbose(glue("Pass {i} of {length(ws)}..."))
+    verbose(glue("Windows size = {ws[i]} ; height_threshold = {th[i]}"))
 
     Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
 
@@ -126,7 +116,7 @@ lasground_pmf = function(las, ws, th)
 
   idx = cloud$idx
 
-  message(paste(length(idx), "ground points found."))
+  message(glue("{length(idx)} ground points found."))
 
   if ("Classification" %in% names(las@data))
   {
@@ -134,7 +124,7 @@ lasground_pmf = function(las, ws, th)
 
     if (nground > 0)
     {
-      warning(paste0("Orginal dataset already contains ", nground, " ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
+      warning(glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
       las@data[Classification == 2, Classification := 0]
     }
   }
@@ -192,7 +182,7 @@ util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws =
     stop("exp should be logical", call. = FALSE)
 
   if (!exp & b < 1)
-    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increses in contant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increment is constant to bypass this issue.", call. = FALSE)
 
 
   dhtk = c()

@@ -1,4 +1,4 @@
-context("lasdecimate")
+context("lasfilterdecimate")
 
 las = lidR:::dummy_las(100)
 

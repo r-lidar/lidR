@@ -1,15 +1,3 @@
-lasupdateheader = function(las)
-{
-  stopifnotlas(las)
-
-  header = as.list(las@header)
-  new_header = rlas::header_update(header, las@data)
-  new_header = LASheader(new_header)
-  C_lasupdateheader(las, new_header)
-  return(invisible())
-}
-
-
 #' Add data into a las object
 #'
 #' A LAS object represents a .las file in R. According to the
@@ -64,8 +52,10 @@ lasupdateheader = function(las)
 lasadddata = function(las, x, name)
 {
   stopifnotlas(las)
-  stopifnot(is.character(name), is.vector(x))
+  assertive::assert_is_numeric(x)
+  assertive::assert_is_a_string(name)
   stopif_forbidden_name(name)
+
   las@data[, (name) := x]
   return(invisible())
 }
@@ -75,7 +65,8 @@ lasadddata = function(las, x, name)
 lasaddextrabytes = function(las, x, name, desc)
 {
   stopifnotlas(las)
-  stopifnot(is.character(name), is.character(desc))
+  assertive::assert_is_a_string(name)
+  assertive::assert_is_a_string(desc)
   stopif_forbidden_name(name)
   if (missing(x))
     x = las@data[[name]]
@@ -86,7 +77,6 @@ lasaddextrabytes = function(las, x, name, desc)
   header = rlas::header_add_extrabytes(header, x, name, desc)
   header = LASheader(header)
   C_lasupdateheader(las, header)
-
   return(invisible())
 }
 
@@ -95,13 +85,11 @@ lasaddextrabytes = function(las, x, name, desc)
 lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL)
 {
   stopifnotlas(las)
-  stopifnot(is.character(name), is.character(desc), is.character(type))
+  assertive::assert_is_a_string(name)
+  assertive::assert_is_a_string(desc)
+  assertive::assert_is_a_string(type)
   stopif_forbidden_name(name)
-  allowed = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")
-  type = which(allowed == type)
-
-  if(length(type) == 0)
-    stop("Invalid type", call. = FALSE)
+  type = match.arg(type, c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"))
 
   if (missing(x))
     x = las@data[[name]]
@@ -116,12 +104,22 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   return(invisible())
 }
 
+lasupdateheader = function(las)
+{
+  stopifnotlas(las)
+
+  header = as.list(las@header)
+  new_header = rlas::header_update(header, las@data)
+  new_header = LASheader(new_header)
+  C_lasupdateheader(las, new_header)
+  return(invisible())
+}
+
 stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
-    stop(paste0(name, " is a forbidden name."), call. = FALSE)
+    stop(glue("{name} is a forbidden name."), call. = FALSE)
 }
-
 
 # type = 0 : undocumented
 # type = 1 : unsigned char

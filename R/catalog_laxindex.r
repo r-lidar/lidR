@@ -1,14 +1,22 @@
 catalog_laxindex = function(ctg)
 {
   stopifnot(is(ctg, "LAScatalog"))
-  ncores = cores(ctg)
-  progress = progress(ctg)
 
-  future::plan(future::multiprocess, workers = ncores)
+  by_file(ctg) <- TRUE
+  buffer(ctg)  <- 0
 
-  for(file in ctg@data$filename)
-  {
-    future::future({rlas::writelax(file) }, earlySignal = TRUE)
-    cat(file, "\n")
-  }
+  clusters  <- catalog_makecluster(ctg, 1)
+
+  ncores    <- cores(ctg)
+  progress  <- progress(ctg)
+  stopearly <- stop_early(ctg)
+
+  cluster_apply(clusters, create_lax_file, ncores, progress, stopearly)
+
+  return(invisible())
+}
+
+create_lax_file = function(cluster)
+{
+  rlas::writelax(cluster@file)
 }

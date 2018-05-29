@@ -39,6 +39,10 @@ cluster. Default is 1000 (1 km^2).}
 \item{\code{vrt}}{character. Path to a folder. In \code{grid_*} functions, for large outputs, the functions
 can return a lightweight virtual raster mosaic (VRT).}
 
+\item{\code{stop_early}}{logical. If \code{TRUE} the catalog processing stops if an error occurs during the
+computation. If \code{FALSE}, the catalog will be process unlil the end anyway and clusters with errors
+are skipped.}
+
 \item{\code{opt_changed}}{Internal use only for compatibility with older deprecated code.}
 }}
 

@@ -81,6 +81,9 @@ tree_metrics = function(.las, func, debug = FALSE, field = "treeID")
 #' @export
 tree_metrics.LAS = function(.las, func, debug = FALSE, field = "treeID")
 {
+  assertive::assert_is_a_bool(debug)
+  assertive::assert_is_a_string(field)
+
   call <- substitute(func)
   stat <- lasaggregate(.las, by = "TREE", call, NA, NA, c("tree"), FALSE, debug, field)
   return(stat)

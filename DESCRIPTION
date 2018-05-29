@@ -21,11 +21,14 @@ Depends:
     R (>= 3.1.0),methods
 Imports:
     BH,
+    assertive,
+    BH,
     concaveman,
     data.table,
     future,
     gdalUtils,
     geometry,
+    glue,
     grDevices,
     gstat,
     lazyeval,
@@ -57,7 +60,6 @@ biocViews:
 Collate: 
     'RcppExports.R'
     'catalog_apply.r'
-    'catalog_clip.r'
     'catalog_index.r'
     'catalog_laxindex.r'
     'catalog_makecluster.r'
@@ -68,6 +70,7 @@ Collate:
     'class-las.r'
     'class-lascatalog.r'
     'class-lascluster.r'
+    'clusters_apply.r'
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
@@ -79,7 +82,6 @@ Collate:
     'grid_terrain.r'
     'grid_tincanopy.r'
     'lasaggreagte.r'
-    'lascheck.r'
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'
@@ -101,10 +103,8 @@ Collate:
     'lastrees_silva.r'
     'lastrees_watershed.r'
     'lasupdateheader.r'
-    'lidRError.r'
     'metrics.r'
     'metrics_canopy_roughness.r'
-    'mutatebyref.r'
     'options.r'
     'plot.catalog.r'
     'plot.las.r'
@@ -113,6 +113,7 @@ Collate:
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
+    'stopif.r'
     'subcircled.r'
     'tree_detection.r'
     'tree_hulls.r'

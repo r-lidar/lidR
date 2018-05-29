@@ -14,6 +14,8 @@
 \alias{tiling_size<-}
 \alias{vrt}
 \alias{vrt<-}
+\alias{stop_early}
+\alias{stop_early<-}
 \title{Build a catalog of las tiles/files}
 \usage{
 catalog(folder, ...)
@@ -41,6 +43,10 @@ tiling_size(ctg) <- value
 vrt(ctg)
 
 vrt(ctg) <- value
+
+stop_early(ctg)
+
+stop_early(ctg) <- value
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}
@@ -58,7 +64,7 @@ A \code{LAScatalog} object
 Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
 representation of a set of las files, since a computer cannot load all the data at once. A
 catalog is a simple way to manage all the file sequentially by reading only the headers. Also a
-catalog contains metadata tso users can configure how it should be processed.
+catalog contains metadata so users can configure how it will be processed.
 }
 \seealso{
 \link{LAScatalog-class}

@@ -3,6 +3,14 @@
 #### NEW FEATURE
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
+* New option `stop_early` to process a catalog until the end anyway or stop before the end if an error is raised.
+
+#### ENHANCEMENTS
+
+* When processing a `LAScatalog`, error handling has been seriouly improved. A process can now run until the end even with errors. In this that case clusters with errors are skipped.
+* When processing  a `LAScatalog`, the graphical progress now use 3 colors. green: ok, red: error, gray: null.
+* `as.spatial()` for `LAS` object preserves the CRS.
+* All the functions have now strong assertions to check user inputs.
 
 #### OTHER CHANGE
 
@@ -10,7 +18,14 @@
 
 #### BUG FIXES
 
-* `area` used with a `LAScatalog` returned a wrong mesure because of a bad copy/paste in the code. 
+* `lasscanline()` did not computed the scanline because the conditionnal statement that checked if the field was properly populated was incorrect.
+
+## lidR v1.5.1 (In development)
+
+#### BUG FIXES
+
+* The area of a `LAScatalog` was wrongly computed for non square tiles because of a bad copy/paste in the code.
+* [[#135](https://github.com/Jean-Romain/lidR/issues/135)] Fix `NULL` class objects returned by `grid_*` functions when processing a `LAScatalog` if the first cluster is empty.
 
 ## lidR v1.5.0 (2018-05-13)
 

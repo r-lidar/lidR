@@ -26,8 +26,6 @@
 # ===============================================================================
 
 
-
-
 #' Reshape (retile) a catalog
 #'
 #' This function splits or merges files to reshape the original catalog files (.las or .laz)
@@ -54,24 +52,24 @@
 #' }
 catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
 {
-  ext <- match.arg(ext)
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_a_number(size)
+  assertive::assert_all_are_positive(size)
+  assertive::is_character(path)
+  assertive::is_character(prefix)
 
-  interact = LIDROPTIONS("interactive")
-
-  buffer(ctg) <- 0
-  by_file(ctg) <- FALSE
+  format           <- match.arg(ext)
+  interact         <- LIDROPTIONS("interactive")
+  buffer(ctg)      <- 0
+  by_file(ctg)     <- FALSE
   tiling_size(ctg) <- size
-
-  ncores   <- cores(ctg)
-  progress <- progress(ctg)
-
-  # Create a pattern of clusters to be sequentially processed
-  clusters <- catalog_makecluster(ctg, 1)
-  nclust   <- length(clusters)
+  ncores           <- cores(ctg)
+  progress         <- progress(ctg)
+  stopearly        <- stop_early(ctg)
 
   if(interact)
   {
-    text = paste0("This is how the catalog will be reshaped. Do you want to continue?")
+    text = "This is how the catalog will be reshaped. Do you want to continue?"
     choices = c("yes","no")
 
     cat(text)
@@ -89,18 +87,8 @@ catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.")
 
-  future::plan(future::multiprocess, workers = ncores)
-
-  for(i in seq_along(clusters))
-  {
-    future::future({ reshape_func(clusters[[i]], path, prefix, ext) }, earlySignal = TRUE)
-
-    if(progress)
-    {
-      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
-      graphics::rect(clusters[[i]]@bbox$xmin, clusters[[i]]@bbox$ymin, clusters[[i]]@bbox$xmax, clusters[[i]]@bbox$ymax, border = "black", col = "forestgreen")
-    }
-  }
+  clusters <- catalog_makecluster(ctg, 1)
+  cluster_apply(clusters, reshape_func, ncores, progress, stopearly, path = path, prefix = prefix, ext = format)
 
   return(catalog(path))
 }
