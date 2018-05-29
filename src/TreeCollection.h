@@ -18,11 +18,8 @@ template<typename T> class TreeCollection
   public:
     TreeCollection();
     TreeCollection(Tree<T> &t);
+    TreeCollection(const TreeCollection< Tree<T> > &t);
     ~TreeCollection();
-
-    std::vector<double> individualTreeSize;
-    std::vector<Tree<T> >treeStorage;
-    std::vector<int> idTreeStorage;
 
     void addTree(Tree<T> t);
     void updateTree(int &treeID, T &pt);
@@ -36,7 +33,12 @@ template<typename T> class TreeCollection
     void getCircularityCriteria();
     double calculateTreeScores(int k);
 
+    void remove_tree_with_less_than_3_points();
+
     unsigned int nbTree;
+    std::vector<double> individualTreeSize;
+    std::vector<Tree<T> >treeStorage;
+    std::vector<int> idTreeStorage;
 };
 
 //========================================================================================
@@ -54,6 +56,20 @@ template<typename T> TreeCollection<T>::TreeCollection(Tree<T> &t)
   nbTree = 0;
   individualTreeSize.clear();
   addTree(t);
+}
+
+template<typename T> TreeCollection<T>::TreeCollection(const TreeCollection< Tree<T> > &t)
+{
+  nbTree = t.nbTree;
+
+  individualTreeSize.reserve(t.individualTreeSize.size());
+  individualTreeSize.assign(t.individualTreeSize.begin(), t.individualTreeSize.end());
+
+  treeStorage.reserve(t.treeStorage.size());
+  treeStorage.assign(t.treeStorage.begin(), t.treeStorage.end());
+
+  idTreeStorage.reserve(t.idTreeStorage.size());
+  idTreeStorage.assign(t.idTreeStorage.begin(), t.idTreeStorage.end());
 }
 
 template<typename T> TreeCollection<T>::~TreeCollection(){}
@@ -167,6 +183,20 @@ template<typename T> void TreeCollection<T>::searchID_usingDist( std::vector<int
     {
       distValue = distValueBis;
       resultID = knnTreeID[i];
+    }
+  }
+}
+
+template<typename T> void TreeCollection<T>::remove_tree_with_less_than_3_points()
+{
+  unsigned int n = treeStorage.size();
+
+  for (unsigned int i = (n-1) ; i > 0 ; i--)
+  {
+    if (treeStorage[i].pointsCH.size() < 3)
+    {
+      treeStorage.erase(treeStorage.begin() + i);
+      nbTree--;
     }
   }
 }
