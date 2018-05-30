@@ -16,6 +16,7 @@ class TreeCollection
     void addTree(TreeSegment t);
     void updateTree(int &treeID, PointXYZ &pt);
 
+    int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
 

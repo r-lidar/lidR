@@ -82,6 +82,31 @@ double TreeCollection::calculateTreeScores(int k)
 
 // Function that calculates convex hull areas for each selected tree in 'knnTreeID'
 
+int TreeCollection::searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort)
+{
+  // Here we found 2 or more potential trees for the current point. Some of these trees
+  // may have less than 3 points. We have to adapt the search method because the rules on the
+  // convex hull can't always be applied
+
+  // To know which search method is required for this tree subset (distance or area evaluation)
+  // scan the trees to identify if there is at least one of them with less than 2 points
+
+  int searchMethod = 1;
+  for (unsigned int j = 0 ; j < knnTreeID.size() ; j++)
+  {
+    if (treeStorage[knnTreeID[j]-1].nbPoints < 2)
+    {
+      searchMethod = 2;
+      break;
+    }
+  }
+
+  if(searchMethod == 1)
+    return searchID_usingArea(knnTreeID, pointToSort);
+  else
+    return searchID_usingDist(knnTreeID, pointToSort);
+}
+
 int TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort)
 {
   int resultID = knnTreeID[0];

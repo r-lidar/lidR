@@ -341,7 +341,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // Three possibilities for the classification
 
     // 1. If no classified points are found in the k neighbourhood this is a new tree (page 101 fig. 4B situation 1)
-    if (knnTreeID.empty() == true)
+    if (knnTreeID.empty())
     {
       TreeSegment newTree(pointToSort);
       trees.addTree(newTree);
@@ -350,89 +350,31 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 2. If only one identified tree in the neighbourhood (page 101 fig. 4B situation 2)
     else if (knnTreeID.size() == 1)
     {
-      // JR: En fait on ajoute les k voisins (filtered results)
       trees.updateTree(knnTreeID[0], pointToSort);
       idTree[pointToSort.id] = knnTreeID[0];
     }
     // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
     else
     {
-      // Here we found 2 or more potential trees for the current point. Some of these trees
-      // may have less than 3 points. We have to adapt the search method becase the rules on the
-      // convex hull can't always be applied
+      double thresholdZ = 5;
+      double resultID = trees.searchID_usingArea(knnTreeID, pointToSort);
 
-      // To know which search method is required for this tree subset (distance or area evaluation)
-      // scan the trees to identify if there is at least one of them with less than 2 points
+      // Before association of pointToSort to best tree result,
+      // testing if Z difference between pointToSort and lowest point in tree is under
+      // a height difference threshold fixed at 5m --> page 100 last paragraph
 
-      // JR: Donc il n'y a qu'un cas je crois
-      int searchMethod = 1;
-      for (unsigned int j = 0 ; j < knnTreeID.size() ; j++)
+      double diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+
+      if (diffHeight <= thresholdZ)
       {
-        if (trees.treeStorage[knnTreeID[j]-1].nbPoints < 2)
-        {
-          searchMethod = 2;
-          break;
-        }
+        trees.treeStorage[resultID-1].addPoint(pointToSort);
+        idTree[pointToSort.id] = resultID;
       }
-      // Depending on previous result, selection of adapted searchMethod
-      int resultID = knnTreeID[0];
-      double areaValue = 0;
-      double distValue = 0;
-      double diffHeight = 0;
-      double thresholdZ = 5;  // page 100 last paragraph (should be a param)
-
-      switch(searchMethod)
+      else
       {
-        // Regular search based on Vega's rules
-        case 1:
-        {
-          double resultID = trees.searchID_usingArea(knnTreeID, pointToSort);
-
-          // Before association of pointToSort to best tree result,
-          // testing if Z difference between pointToSort and lowest point in tree is under
-          // a height difference threshold fixed at 5m --> page 100 last paragraph
-
-          diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
-
-          if (diffHeight <= thresholdZ)
-          {
-            trees.treeStorage[resultID-1].addPoint(pointToSort);
-            idTree[pointToSort.id] = resultID;
-          }
-          else
-          {
-            TreeSegment newTree(pointToSort);
-            trees.addTree(newTree);
-            idTree[pointToSort.id] = trees.nbTree;
-          }
-
-          break;
-        }
-
-        // Adapted search base on distance rules (not in Vega but mandatory to work)
-        case 2:
-        {
-          int resultID = trees.searchID_usingDist(knnTreeID, pointToSort);
-
-          // Before association of pointToSort to best tree result,
-          // testing if Z difference between pointToSort and lowest point in tree is under
-          // a height difference threshold fixed at 5m --> page 100 last paragraph
-          diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
-
-          if (diffHeight <= thresholdZ)
-          {
-            trees.treeStorage[resultID-1].addPoint(pointToSort);
-            idTree[pointToSort.id] = resultID;
-          }
-          else
-          {
-            TreeSegment newTree(pointToSort);
-            trees.addTree(newTree);
-            idTree[pointToSort.id] = trees.nbTree;
-          }
-
-          break;
-        }
+        TreeSegment newTree(pointToSort);
+        trees.addTree(newTree);
+        idTree[pointToSort.id] = trees.nbTree;
       }
     }
   }
