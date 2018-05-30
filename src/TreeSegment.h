@@ -28,8 +28,6 @@ class TreeSegment
     void getZMax(PointXYZ &pt);
     void calculateArea();
     void addPoint( PointXYZ &pt );
-    void addPoint( PointXYZ &pt, double &newArea, boost::geometry::model::ring<point_t> &hull );
-    void addPoint_dist( PointXYZ &pt, double &newDist );
     void updateArea();
 
     double testArea(PointXYZ &pt);

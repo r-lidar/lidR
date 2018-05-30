@@ -190,11 +190,6 @@ double TreeSegment::testDist(PointXYZ &pt)
   }
 }
 
-/*
-* Functions that insert a new point pt into intial tree and update all its parameters (dist, area, convex hull...)
-* The two last functions avoid recalculation of previously calculated area, convex hull or dist during "testArea" function
-* (always called before)
-*/
 void TreeSegment::addPoint(PointXYZ &pt)
 {
   nbPoints++;
@@ -209,41 +204,6 @@ void TreeSegment::addPoint(PointXYZ &pt)
   boost::geometry::convex_hull(convex_hull, convex_hull);
 
   calculateArea();
-}
-
-void TreeSegment::addPoint(PointXYZ &pt, double &newArea, boost::geometry::model::ring<point_t> &hull)
-{
-  nbPoints++;
-  points.push_back(pt);
-
-  point_t p(pt.x, pt.y);
-
-  if(boost::geometry::covered_by(p, convex_hull))
-    return;
-
-  boost::geometry::append(convex_hull, p);
-  boost::geometry::convex_hull(convex_hull, convex_hull);
-
-  area = newArea;
-  pointsCH.clear();
-  pointsCH.assign(hull.begin(), hull.end());
-  dist = 0;
-}
-
-void TreeSegment::addPoint_dist(PointXYZ &pt, double &newDist )
-{
-  nbPoints++;
-  points.push_back(pt);
-
-  point_t p(pt.x, pt.y);
-
-  if(boost::geometry::covered_by(p, convex_hull))
-    return;
-
-  boost::geometry::append(convex_hull, p);
-  boost::geometry::convex_hull(convex_hull, convex_hull);
-
-  dist = newDist;
 }
 
 //  JR: sert uniquement dans tree merge A supprimer plus stard.
