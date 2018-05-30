@@ -73,6 +73,7 @@ int TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &po
     double area_increment2 = treeStorage[knnTreeID[i]-1].testArea(pointToSort);   // page 100 eq. 3
     if (area_increment > area_increment2)
     {
+      area_increment = area_increment2;
       resultID = knnTreeID[i];
     }
   }
@@ -125,7 +126,12 @@ Rcpp::List TreeCollection::to_R()
   {
     double x = treeStorage[i].apex.get<0>();
     double y = treeStorage[i].apex.get<1>();
+
+    point_t bary;
+    boost::geometry::centroid(treeStorage[i].convex_hull, bary);
+
     Rcpp::NumericVector Apex = Rcpp::NumericVector::create(x,y);
+    Rcpp::NumericVector Bary = Rcpp::NumericVector::create(bary.get<0>(),bary.get<1>());
 
     std::vector<point_t>& phull = treeStorage[i].convex_hull.outer();
     Rcpp::NumericMatrix rmat(phull.size(), 2);
@@ -136,7 +142,7 @@ Rcpp::List TreeCollection::to_R()
        rmat(j,1) = p.get<1>();
     }
 
-    TreeSegment.push_back(Rcpp::List::create(Apex, rmat));
+    TreeSegment.push_back(Rcpp::List::create(Apex, Bary, rmat));
   }
 
   Rcpp::List output;

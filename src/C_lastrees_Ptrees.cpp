@@ -354,13 +354,12 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
     else
     {
-      double thresholdZ = 5;
       double resultID = trees.searchID(knnTreeID, pointToSort);
 
       // If point is to low it is a new tree (page 100 last paragraph)
       double diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
 
-      if (diffHeight <= thresholdZ)
+      if (diffHeight <= 5)
       {
         trees.treeStorage[resultID-1].addPoint(pointToSort);
         idTree[pointToSort.id] = resultID;

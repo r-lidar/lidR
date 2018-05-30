@@ -166,6 +166,8 @@ void TreeSegment::updateArea()
 // Function that returns highest Z value in points of tree
 double TreeSegment::findZMax()
 {
+  /*sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
+  double ZmaxValue = points[0].z;*/
   return (Zmax.z);
 }
 
