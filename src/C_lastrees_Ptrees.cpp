@@ -399,7 +399,6 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
           if (diffHeight <= thresholdZ)
           {
             trees.treeStorage[resultID-1].addPoint(pointToSort);
-            //trees.individualTreeSize[resultID-1]++;
             idTree[pointToSort.id] = resultID;
           }
           else
@@ -415,23 +414,22 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
         // Adapted search base on distance rules (not in Vega but mandatory to work)
         case 2:
         {
-          trees.searchID_usingDist( knnTreeID, pointToSort, resultID, distValue );
+          int resultID = trees.searchID_usingDist(knnTreeID, pointToSort);
 
           // Before association of pointToSort to best tree result,
           // testing if Z difference between pointToSort and lowest point in tree is under
           // a height difference threshold fixed at 5m --> page 100 last paragraph
           diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
 
-          if ( diffHeight <= thresholdZ )
+          if (diffHeight <= thresholdZ)
           {
-            trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
+            trees.treeStorage[resultID-1].addPoint(pointToSort);
             idTree[pointToSort.id] = resultID;
-            //trees.individualTreeSize[resultID-1]++;
           }
           else
           {
-            TreeSegment newTree( pointToSort );
-            trees.addTree( newTree );
+            TreeSegment newTree(pointToSort);
+            trees.addTree(newTree);
             idTree[pointToSort.id] = trees.nbTree;
           }
 

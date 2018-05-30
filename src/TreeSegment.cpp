@@ -163,7 +163,7 @@ double TreeSegment::testArea(PointXYZ &pt)
 * - distance if only one point in initial tree
 * - minimum distance between pt and all points of initial tree if there is more than one point
 */
-double TreeSegment::testDist(PointXYZ &pt )
+double TreeSegment::testDist(PointXYZ &pt)
 {
   if ( nbPoints == 1 )
   {

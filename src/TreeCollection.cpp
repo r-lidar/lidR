@@ -105,14 +105,15 @@ int TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &po
 //========================================================================================
 
 // Function that calculates euclidian distance if at least one tree of selection contains less than 2 points
-void TreeCollection::searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort, int &resultID, double &distValue)
+int TreeCollection::searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort)
 {
   //Calcul de la premiere distance
   double distValueBis = 0;
-  distValue = treeStorage[knnTreeID[0]-1].testDist( pointToSort );
-  resultID = knnTreeID[0];
-  //Comparaison avec les suivantes --> on attribue le point à l'arbre avec la distance la plus petite
-  for (unsigned int i = 1; i < knnTreeID.size(); i++ )
+  double distValue = treeStorage[knnTreeID[0]-1].testDist(pointToSort);
+  int resultID = knnTreeID[0];
+
+  // Comparaison avec les suivantes --> on attribue le point à l'arbre avec la distance la plus petite
+  for (unsigned int i = 1 ; i < knnTreeID.size() ; i++ )
   {
     distValueBis = treeStorage[knnTreeID[i]-1].testDist( pointToSort );
     if (distValue > distValueBis)
@@ -121,6 +122,8 @@ void TreeCollection::searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &p
       resultID = knnTreeID[i];
     }
   }
+
+  return resultID;
 }
 
 void TreeCollection::remove_tree_with_less_than_3_points()

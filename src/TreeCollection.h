@@ -17,7 +17,7 @@ class TreeCollection
     void updateTree(int &treeID, PointXYZ &pt);
 
     int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
-    void searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort, int &resultID, double &distValue);
+    int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
 
     void getSizeCriteria(int k);
     void getOrientationCriteria();
