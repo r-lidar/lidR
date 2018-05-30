@@ -1,72 +1,8 @@
-#ifndef TREE
-#define TREE
-
-#include <boost/assign.hpp>
-#include <boost/geometry.hpp>
-#include <cmath>
-#include "Point.h"
-
-// [[Rcpp::depends(RcppArmadillo)]]
-#include <RcppArmadillo.h>
-
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> point_t;
-typedef boost::geometry::model::multi_point<point_t> mpoint_t;
-typedef boost::geometry::model::polygon<point_t> polygon;
-
-using namespace arma;
-using boost::assign::tuple_list_of;
+#include "TreeSegment.h"
 
 Rcpp::NumericVector findEllipseParameters(boost::geometry::model::ring<point_t> &points);
 
-template<typename T> class Tree
-{
-  public:
-    Tree();
-    Tree( T &pt );
-    Tree(const Tree<T> &t);
-    ~Tree();
-
-    void getZMax();
-    void getZMax(T &pt);
-    void calculateNewArea(T &pt );
-    void addPoint( T &pt );
-    void addPoint( T &pt, double &newArea, boost::geometry::model::ring<point_t> &hull );
-    void addPoint_dist( T &pt, double &newDist );
-    void updateArea();
-
-    double testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out );
-    double testDist( T &pt );
-    double findZMax();
-    double findZMin();
-
-    polygon get_convex_hull();
-    point_t get_apex();
-
-    void editIdResult (std::vector<int> &idResult, int &index);
-
-    // Functions for tree score calculation
-    void getSize(int k);
-    void getOrientation();
-    void getRegularity();
-    void getCircularity();
-    double getScore( int k );
-
-  //private:
-    int nbPoints;
-    double area;
-    double diff_area;
-    double dist;
-    double scoreS;
-    double scoreO;
-    double scoreR;
-    double scoreC;
-    double scoreGlobal;
-    std::vector<T> points;
-    T Zmax;
-    boost::geometry::model::ring<point_t> pointsCH;
-};
-
-template<typename T> Tree<T>::Tree()
+TreeSegment::TreeSegment()
 {
   nbPoints = 0;
   area = 0;
@@ -79,7 +15,7 @@ template<typename T> Tree<T>::Tree()
   scoreGlobal = 0;
 }
 
-template<typename T> Tree<T>::Tree( T &pt )
+TreeSegment::TreeSegment(PointXYZ &pt)
 {
   nbPoints = 1;
   area = 0;
@@ -93,7 +29,7 @@ template<typename T> Tree<T>::Tree( T &pt )
   scoreGlobal = 0;
 }
 
-template<typename T> Tree<T>::Tree(const Tree<T> &t)
+TreeSegment::TreeSegment(const TreeSegment &t)
 {
   nbPoints = t.nbPoints;
   points.reserve(t.points.size());
@@ -108,14 +44,14 @@ template<typename T> Tree<T>::Tree(const Tree<T> &t)
   scoreGlobal = t.scoreGlobal;
 }
 
-template<typename T> Tree<T>::~Tree() {}
+TreeSegment::~TreeSegment() {}
 
 /*
- * Given a new point pt, this function calculates:
- * - new distance between points if there was no point or only one point in the initial tree
- * - new area using boost::polygon function if the initial tree contains more than two points (update of associated convex hull)
- */
-template<typename T> void Tree<T>::calculateNewArea(T &pt)
+* Given a new point pt, this function calculates:
+* - new distance between points if there was no point or only one point in the initial tree
+* - new area using boost::polygon function if the initial tree contains more than two points (update of associated convex hull)
+*/
+void TreeSegment::calculateNewArea(PointXYZ &pt)
 {
   if (nbPoints > 2)
   {
@@ -144,7 +80,7 @@ template<typename T> void Tree<T>::calculateNewArea(T &pt)
 
     // Aera value including new point Pt + update of 'aera', 'diff_aera' and 'pointCH' attributes
     double area_Pt = boost::geometry::area( hull );
-    diff_area = fabs(area_Pt - area_noPt);
+    diff_area = std::fabs(area_Pt - area_noPt);
     area = area_Pt;
     pointsCH.clear();
     pointsCH.assign(hull.begin(), hull.end());
@@ -152,55 +88,55 @@ template<typename T> void Tree<T>::calculateNewArea(T &pt)
   }
   else if ( nbPoints == 2 )   // calculate distance
   {
-    dist = sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
+    dist = std::sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
   }
 }
 
 
 /*
- * Given a new point pt, this function calculates:
- * - difference between old and new area (including pt) using boost::polygon function
- * - if the initial tree contains more than two points (update of associated convex hull)
- */
-template<typename T> double Tree<T>::testArea( T &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out)
+* Given a new point pt, this function calculates:
+* - difference between old and new area (including pt) using boost::polygon function
+* - if the initial tree contains more than two points (update of associated convex hull)
+*/
+double TreeSegment::testArea(PointXYZ &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out)
 {
-    // Conversion from PointXYZ to point_t from boost library use
-    mpoint_t pointsForPoly;
-    for (unsigned int i = 0 ; i < points.size() ; i++ )
-      boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
+  // Conversion from PointXYZ to point_t from boost library use
+  mpoint_t pointsForPoly;
+  for (unsigned int i = 0 ; i < points.size() ; i++ )
+    boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
 
-    // Add of new Point + calculation of associated area
-    point_t newPt (pt.x, pt.y);
-    boost::geometry::append( pointsForPoly, newPt );
+  // Add of new Point + calculation of associated area
+  point_t newPt (pt.x, pt.y);
+  boost::geometry::append( pointsForPoly, newPt );
 
-    // Assign boost points to polygon
-    polygon poly2D;
-    boost::geometry::assign_points(poly2D, pointsForPoly);
-    boost::geometry::correct(poly2D);
+  // Assign boost points to polygon
+  polygon poly2D;
+  boost::geometry::assign_points(poly2D, pointsForPoly);
+  boost::geometry::correct(poly2D);
 
-    // Search for convex hull using previous polygon definition
-    boost::geometry::model::ring<point_t> hull;
-    boost::geometry::convex_hull(poly2D, hull);
+  // Search for convex hull using previous polygon definition
+  boost::geometry::model::ring<point_t> hull;
+  boost::geometry::convex_hull(poly2D, hull);
 
-    area_Pt = boost::geometry::area( hull );
-    hull_out.clear();
-    hull_out.assign(hull.begin(), hull.end());
+  area_Pt = boost::geometry::area( hull );
+  hull_out.clear();
+  hull_out.assign(hull.begin(), hull.end());
 
-    double area_noPt = area;
-    double calculatedDiffArea = fabs(area_Pt - area_noPt);
-    return calculatedDiffArea;
+  double area_noPt = area;
+  double calculatedDiffArea = std::fabs(area_Pt - area_noPt);
+  return calculatedDiffArea;
 }
 
 /*
- * Given a new point pt, this function calculates:
- * - distance if only one point in initial tree
- * - minimum distance between pt and all points of initial tree if there is more than one point
- */
-template<typename T> double Tree<T>::testDist( T &pt )
+* Given a new point pt, this function calculates:
+* - distance if only one point in initial tree
+* - minimum distance between pt and all points of initial tree if there is more than one point
+*/
+double TreeSegment::testDist(PointXYZ &pt )
 {
   if ( nbPoints == 1 )
   {
-    double calculatedDist = sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
+    double calculatedDist = std::sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
     return calculatedDist;
   }
   else
@@ -218,24 +154,24 @@ template<typename T> double Tree<T>::testDist( T &pt )
         keep = i;
       }
     }
-    double calculatedDist = sqrt( (points[keep].x - pt.x)*(points[keep].x - pt.x) + (points[keep].y - pt.y)*(points[keep].y - pt.y) );
+    double calculatedDist = std::sqrt( (points[keep].x - pt.x)*(points[keep].x - pt.x) + (points[keep].y - pt.y)*(points[keep].y - pt.y) );
     return calculatedDist;
   }
 }
 
 /*
- * Functions that insert a new point pt into intial tree and update all its parameters (dist, area, convex hull...)
- * The two last functions avoid recalculation of previously calculated area, convex hull or dist during "testArea" function
- * (always called before)
- */
-template<typename T> void Tree<T>::addPoint(T &pt)
+* Functions that insert a new point pt into intial tree and update all its parameters (dist, area, convex hull...)
+* The two last functions avoid recalculation of previously calculated area, convex hull or dist during "testArea" function
+* (always called before)
+*/
+void TreeSegment::addPoint(PointXYZ &pt)
 {
   nbPoints++;
   points.push_back(pt);
   calculateNewArea(pt);
 }
 
-template<typename T> void Tree<T>::addPoint(T &pt, double &newArea, boost::geometry::model::ring<point_t> &hull)
+void TreeSegment::addPoint(PointXYZ &pt, double &newArea, boost::geometry::model::ring<point_t> &hull)
 {
   nbPoints++;
   points.push_back(pt);
@@ -245,14 +181,14 @@ template<typename T> void Tree<T>::addPoint(T &pt, double &newArea, boost::geome
   dist = 0;
 }
 
-template<typename T> void Tree<T>::addPoint_dist( T &pt, double &newDist )
+void TreeSegment::addPoint_dist(PointXYZ &pt, double &newDist )
 {
   nbPoints++;
   points.push_back(pt);
   dist = newDist;
 }
 
-template<typename T> void Tree<T>::updateArea()
+void TreeSegment::updateArea()
 {
   if ( nbPoints >= 3)
   {
@@ -278,53 +214,53 @@ template<typename T> void Tree<T>::updateArea()
   }
   else if ( nbPoints == 2 )   //calculate distance
   {
-    dist = sqrt( (points[0].x - points[1].x)*(points[0].x - points[1].x) + (points[0].y - points[1].y)*(points[0].y - points[1].y) );
+    dist = std::sqrt( (points[0].x - points[1].x)*(points[0].x - points[1].x) + (points[0].y - points[1].y)*(points[0].y - points[1].y) );
   }
 }
 
 // Function that returns highest Z value in points of tree
-template<typename T> double Tree<T>::findZMax()
+double TreeSegment::findZMax()
 {
-  sort( points.begin(), points.end(), ZSortPointBis<T>() );
+  sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
   double ZmaxValue = points[0].z;
   return (ZmaxValue);
 }
 
 // Function that return lowest Z value in points of tree
-template<typename T> double Tree<T>::findZMin()
+double TreeSegment::findZMin()
 {
-  sort( points.begin(), points.end(), ZSortPointBis_increasing<T>() );
+  sort( points.begin(), points.end(), ZSortPointBis_increasing<PointXYZ>() );
   double Zmin = points[0].z;
   return (Zmin);
 }
 
 // Function that stores point coordinates of highest Z value in tree definition
-template<typename T> void Tree<T>::getZMax()
+void TreeSegment::getZMax()
 {
-  sort( points.begin(), points.end(), ZSortPointBis<T>() );
+  sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
   Zmax = points[0];
 }
 
 // Function that returns point coordinates of highest Z value in points of tree
-template<typename T> void Tree<T>::getZMax( T &pt )
+void TreeSegment::getZMax(PointXYZ &pt)
 {
-  sort( points.begin(), points.end(), ZSortPointBis<T>() );
+  sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
   pt = points[0];
 }
 
-template<typename T> polygon Tree<T>::get_convex_hull()
+polygon TreeSegment::get_convex_hull()
 {
   polygon convex_hull;
   boost::geometry::assign_points(convex_hull, pointsCH);
   return convex_hull;
 }
 
-template<typename T> point_t Tree<T>::get_apex()
+point_t TreeSegment::get_apex()
 {
   // JR no need to sort here.
-  sort(points.begin(), points.end(), ZSortPointBis<T>() );
+  sort(points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
 
-  T apex = points[0];
+  PointXYZ apex = points[0];
 
   point_t p;
   boost::geometry::set<0>(p, apex.x);
@@ -333,25 +269,25 @@ template<typename T> point_t Tree<T>::get_apex()
 }
 
 // Function that stores ID of tree in a reference vector of int --> idResult
-template<typename T> void Tree<T>::editIdResult (std::vector<int> &idResult, int &index)
+void TreeSegment::editIdResult (std::vector<int> &idResult, int &index)
 {
   for (int i = 0; i < nbPoints ; i++)
   {
     if ( idResult[points[i].id] == 0)
       idResult[points[i].id] = index;
     /*else
-      idResult[points[i].id] = INT16_MAX;      //pour tester si on remplace des IDs d'arbres précédemment trouvés*/
+    idResult[points[i].id] = INT16_MAX;      //pour tester si on remplace des IDs d'arbres précédemment trouvés*/
   }
   index++;
 }
 
 /*
- * Function to improve detection and removal of small false positive depending on minimal number of point per tree segment
- * trees: number of detected trees
- * k: number of nearest neighbours
- * D: local density of the 3D points in the horizontal plane within the tree segment (page 101 after Eq.5)
- */
-template<typename T> void Tree<T>::getSize(int k)
+* Function to improve detection and removal of small false positive depending on minimal number of point per tree segment
+* trees: number of detected trees
+* k: number of nearest neighbours
+* D: local density of the 3D points in the horizontal plane within the tree segment (page 101 after Eq.5)
+*/
+void TreeSegment::getSize(int k)
 {
   //Search for Zmax point in tree segment  --> H
   double H = findZMax();     //page 101 after Eq.5
@@ -362,7 +298,7 @@ template<typename T> void Tree<T>::getSize(int k)
   else
     D = nbPoints / dist;     //TODO:que faire pour la distance????
   //Treshold calculation (page 101 Eq.5)
-  double threshold = k * D * log(H);
+  double threshold = k * D * std::log(H);
 
   //Comparison N and threshold (page 101 Eq.4)
   if (nbPoints > threshold)
@@ -372,10 +308,10 @@ template<typename T> void Tree<T>::getSize(int k)
 }
 
 /*
- * Function that evaluates the eccentrictity of M (highest point of tree segment) to the gravity center G
- * of the point cloud associated with the tree segment -->page 101
- */
-template<typename T> void Tree<T>::getOrientation()
+* Function that evaluates the eccentrictity of M (highest point of tree segment) to the gravity center G
+* of the point cloud associated with the tree segment -->page 101
+*/
+void TreeSegment::getOrientation()
 {
   scoreO = 0;
 
@@ -383,7 +319,7 @@ template<typename T> void Tree<T>::getOrientation()
   {
     //searching for highest point of tree segment
     getZMax();
-    T M = Zmax;
+    PointXYZ M = Zmax;
 
     //searching for gravity center G of the point cloud
     double dx = 0, dy = 0;
@@ -394,14 +330,14 @@ template<typename T> void Tree<T>::getOrientation()
     }
     double xG = dx/nbPoints;
     double yG = dy/nbPoints;
-    T G = M;
+    PointXYZ G = M;
     G.x = xG; G.y = yG; //--> TODO:faire la moyenne des coordonees de tous les points ou seulement ceux du convex hull??
 
     //Calculation of planimetric distance between M and G
     double dist_MG = euclidianDistance2D_inZ( M, G );
 
     //Calculation of average distance of G to the borders of the convex hull
-    T pt (boost::geometry::get<0>(pointsCH[0]), boost::geometry::get<1>(pointsCH[0]));
+    PointXYZ pt (boost::geometry::get<0>(pointsCH[0]), boost::geometry::get<1>(pointsCH[0]));
     double dist_GCH = euclidianDistance2D_inZ( M, pt );
     int ind = 0;
     for (int j = 1; j < pointsCH.size(); j++ )
@@ -421,7 +357,7 @@ template<typename T> void Tree<T>::getOrientation()
   }
 }
 
-template<typename T> void Tree<T>::getRegularity()
+void TreeSegment::getRegularity()
 {
   std::vector<double> planimetricDist_MCH;
 
@@ -434,8 +370,8 @@ template<typename T> void Tree<T>::getRegularity()
     planimetricDist_MCH.clear();
     //searching for highest point of tree segment
     getZMax();
-    T M = Zmax;
-    T pt (boost::geometry::get<0>(pointsCH[0]), boost::geometry::get<1>(pointsCH[0]));
+    PointXYZ M = Zmax;
+    PointXYZ pt (boost::geometry::get<0>(pointsCH[0]), boost::geometry::get<1>(pointsCH[0]));
     planimetricDist_MCH.push_back( euclidianDistance2D_inZ( M, pt ) );
     for (int j = 1; j < pointsCH.size(); j++ )
     {
@@ -450,8 +386,6 @@ template<typename T> void Tree<T>::getRegularity()
 
     scoreR = (area_CH / (PI*radius*radius )); //page 101 Eq. 8
   }
-
-
 }
 
 //http://nicky.vanforeest.com/misc/fitEllipse/fitEllipse.html
@@ -503,7 +437,7 @@ Rcpp::NumericVector findEllipseParameters(boost::geometry::model::ring<point_t> 
  * Hypothesis --> each tree segment should be an approximate circle
  * This function evaluates each tree circularity (ratio between major and minor axes of the smallest 2D projection ellipse) (page 101)
  */
-template<typename T> void Tree<T>::getCircularity()
+void TreeSegment::getCircularity()
 {
   scoreC = 0;
 
@@ -520,7 +454,7 @@ template<typename T> void Tree<T>::getCircularity()
 
 }
 
-template<typename T> double Tree<T>::getScore( int k )
+double TreeSegment::getScore( int k )
 {
   //enlever plus tard les 4 scores individuels et ne conserver que le score moyen
   getSize(k);
@@ -528,6 +462,3 @@ template<typename T> double Tree<T>::getScore( int k )
   getRegularity();
   getCircularity();   //scoreGlobal calculé ici --> bof
 }
-
-
-#endif //TREE_H

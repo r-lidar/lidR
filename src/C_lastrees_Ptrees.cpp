@@ -2,19 +2,17 @@
 #include "Point.h"
 #include "QuadTree3D.h"
 #include "TreeCollection.h"
-#include "Tree.h"
+#include "TreeSegment.h"
 #include "Progress.h"
 
 using namespace Rcpp;
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> point_t;
-
 //========================================================================================
-template<typename T> void apply2DFilter( std::vector<T> &subProfile, std::vector<T> &subProfileSubset);
-TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI);
+void apply2DFilter( std::vector<PointXYZ> &subProfile, std::vector<PointXYZ> &subProfileSubset);
+TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI);
 IntegerMatrix createCombination(int N);
-template<typename T> double getScoreCombination( Tree<T> &t1, Tree<T> &t2, int k );
-template<typename T> Tree<T> mergeTree( Tree<T> &t1, Tree<T> &t2, int k );
+double getScoreCombination(TreeSegment &t1, TreeSegment &t2, int k);
+TreeSegment mergeTree(TreeSegment &t1, TreeSegment &t2, int k);
 //========================================================================================
 
 
@@ -59,10 +57,12 @@ std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values)
 
   // Initialize a first segmentation
   Rcpp::Rcout << "k = "<< k_values[0] << std::endl;
-  TreeCollection<PointXYZ> trees_kRef = PTrees_segmentation(points, k_values[0], treeOI);
+  TreeCollection trees_kRef = PTrees_segmentation(points, k_values[0], treeOI);
+
+  return trees_kRef.idTreeStorage;
 
   // If a single k is given we can't apply Vega's selection rules. Return the unique segmentation
-  if (k_values.size() == 1)
+  /*if (k_values.size() == 1)
   {
     delete treeOI;
     return trees_kRef.idTreeStorage;
@@ -274,25 +274,14 @@ std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values)
     //std::swap(trees_kRef, trees_kResult);
   }
 
-  /*std::vector<int> output(X.size());
-  std::fill(output.begin(), output.end(), IntegerVector::get_na());
-
-  for (unsigned int i = 0 ; i < trees_kRef.idTreeStorage.size() ; i++)
-  {
-    for (unsigned int j = 0 ; j < trees_kRef.treeStorage[i].points.size() ; j++)
-    {
-      output[trees_kRef.treeStorage[i].points[j].id] = i;
-    }
-  }*/
-
   delete treeOI;
-  return(idResult);
+  return(idResult);*/
 }
 
 //========================================================================================
 //                               PTREES_SEGMENTATION
 //========================================================================================
-TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI)
+TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI)
 {
   // ======================
   //   INITIALISATIONS
@@ -300,8 +289,8 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
 
   // First Zmax defines first tree in trees
   PointXYZ pointToSort = points[0];
-  Tree<PointXYZ> treeInit(pointToSort);
-  TreeCollection<PointXYZ> trees(treeInit);
+  TreeSegment treeInit(pointToSort);
+  TreeCollection trees(treeInit);
 
   // Creation of vector that stores relation between tree number and TreeCollection
   // Update for first point assignation
@@ -330,6 +319,7 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
     treeOI->knn_lookup3D(pointToSort, k, result); // 'result' contains the k neighbours + the current point
 
     // Removal of points having a planimetric distance from pointToSort above threshold T (page 100 eq. 1/2)
+    // JR: cette fonction me semble d'une complixité formidable
     apply2DFilter(result, filteredResult);
 
     // Searching if some of these k points were already classified
@@ -352,17 +342,17 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
 
     // Three possibilities for the classification
 
-    // 1. If no classified points are found in the k neighbourhood this is a new tree
-    // (page 101 fig. 4B situation 1)
+    // 1. If no classified points are found in the k neighbourhood this is a new tree (page 101 fig. 4B situation 1)
     if (knnTreeID.empty() == true)
     {
-      Tree<PointXYZ> newTree(pointToSort);
+      TreeSegment newTree(pointToSort);
       trees.addTree(newTree);
       idTree[pointToSort.id] = trees.nbTree;
     }
     // 2. If only one identified tree in the neighbourhood (page 101 fig. 4B situation 2)
     else if (knnTreeID.size() == 1)
     {
+      // JR: En fait on ajoute les k voisins (filtered results)
       trees.updateTree(knnTreeID[0], pointToSort);
       idTree[pointToSort.id] = knnTreeID[0];
     }
@@ -376,6 +366,7 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
       // To know which search method is required for this tree subset (distance or area evaluation)
       // scan the trees to identify if there is at least one of them with less than 2 points
 
+      // JR: Donc il n'y a qu'un cas
       int searchMethod = 1;
       for (unsigned int j = 0 ; j < knnTreeID.size() ; j++)
       {
@@ -385,7 +376,6 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
           break;
         }
       }
-
       // Depending on previous result, selection of adapted searchMethod
       int resultID = knnTreeID[0];
       double areaValue = 0;
@@ -410,13 +400,13 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
           if (diffHeight <= thresholdZ)
           {
             trees.treeStorage[resultID-1].addPoint(pointToSort, areaValue, hull);
-            trees.individualTreeSize[resultID-1]++;
+            //trees.individualTreeSize[resultID-1]++;
             idTree[pointToSort.id] = resultID;
           }
           else
           {
-            Tree<PointXYZ> newTree( pointToSort );
-            trees.addTree( newTree );
+            TreeSegment newTree(pointToSort);
+            trees.addTree(newTree);
             idTree[pointToSort.id] = trees.nbTree;
           }
 
@@ -432,15 +422,16 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
           // testing if Z difference between pointToSort and lowest point in tree is under
           // a height difference threshold fixed at 5m --> page 100 last paragraph
           diffHeight = std::abs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+
           if ( diffHeight <= thresholdZ )
           {
             trees.treeStorage[resultID-1].addPoint_dist( pointToSort, distValue );
             idTree[pointToSort.id] = resultID;
-            trees.individualTreeSize[resultID-1]++;
+            //trees.individualTreeSize[resultID-1]++;
           }
           else
           {
-            Tree<PointXYZ> newTree( pointToSort );
+            TreeSegment newTree( pointToSort );
             trees.addTree( newTree );
             idTree[pointToSort.id] = trees.nbTree;
           }
@@ -455,7 +446,7 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
   trees.idTreeStorage = idTree;
   trees.calculateTreeScores(k);
 
-  return(trees); // A améliorer
+  return trees;
 }
 
 
@@ -465,7 +456,7 @@ TreeCollection<PointXYZ> PTrees_segmentation(std::vector<PointXYZ> &points, int 
 
 // Function that calculates 2D distance between one point (first one in subProfile) and its nearest neighbours
 // returns only thoose under a calculated threshold
-template<typename T> void apply2DFilter( std::vector<T> &subProfile, std::vector<T> &subProfileSubset )
+void apply2DFilter( std::vector<PointXYZ> &subProfile, std::vector<PointXYZ> &subProfileSubset )
 {
   double meanValueForThreshold = 0;
   std::vector<double> dist;
@@ -499,12 +490,11 @@ template<typename T> void apply2DFilter( std::vector<T> &subProfile, std::vector
     subProfileSubset.push_back( subProfile[i+1] );
     i++;
   }
-
 }
 
-template<typename T> Tree<T> mergeTree( Tree<T> &t1, Tree<T> &t2, int k )
+TreeSegment mergeTree(TreeSegment &t1, TreeSegment &t2, int k)
 {
-  Tree<T> newTree(t1);
+  TreeSegment newTree(t1);
   for (int i = 0; i < t2.nbPoints; i++)
     newTree.points.push_back(t2.points[i]);
 
@@ -515,14 +505,12 @@ template<typename T> Tree<T> mergeTree( Tree<T> &t1, Tree<T> &t2, int k )
 }
 
 //========================================================================================
-template<typename T> double getScoreCombination( Tree<T> &t1, Tree<T> &t2, int k )
+double getScoreCombination(TreeSegment &t1, TreeSegment &t2, int k)
 {
-  Tree<T> combinedTrees;
+  TreeSegment combinedTrees;
   combinedTrees = mergeTree( t1, t2, k );
   return (combinedTrees.scoreGlobal);
 }
-
-//========================================================================================
 
 //========================================================================================
 //                              CREATE COMBINATION
