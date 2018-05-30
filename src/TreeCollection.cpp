@@ -17,21 +17,10 @@ TreeCollection::TreeCollection(TreeSegment &t)
   addTree(t);
 }
 
-TreeCollection::TreeCollection(const TreeCollection &t)
-{
-  nbTree = t.nbTree;
-
-  treeStorage.reserve(t.treeStorage.size());
-  treeStorage.assign(t.treeStorage.begin(), t.treeStorage.end());
-
-  idTreeStorage.reserve(t.idTreeStorage.size());
-  idTreeStorage.assign(t.idTreeStorage.begin(), t.idTreeStorage.end());
-}
-
 TreeCollection::~TreeCollection(){}
 
 
-void TreeCollection::addTree(TreeSegment t)
+void TreeCollection::addTree(TreeSegment &t)
 {
   treeStorage.push_back(t);
   nbTree++;
@@ -134,8 +123,8 @@ Rcpp::List TreeCollection::to_R()
 
   for (unsigned int i = 0 ; i < treeStorage.size() ; i++ )
   {
-    double x = boost::geometry::get<0>(treeStorage[i].apex);
-    double y = boost::geometry::get<1>(treeStorage[i].apex);
+    double x = treeStorage[i].apex.get<0>();
+    double y = treeStorage[i].apex.get<1>();
     Rcpp::NumericVector Apex = Rcpp::NumericVector::create(x,y);
 
     std::vector<point_t>& phull = treeStorage[i].convex_hull.outer();

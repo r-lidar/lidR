@@ -28,26 +28,13 @@ TreeSegment::TreeSegment(PointXYZ &pt)
   boost::geometry::set<1>(apex, pt.y);
   boost::geometry::append(convex_hull, apex);
 
+  Zmax = pt;
+
   scoreS = 0;
   scoreO = 0;
   scoreC = 0;
   scoreR = 0;
   scoreGlobal = 0;
-}
-
-TreeSegment::TreeSegment(const TreeSegment &t)
-{
-  nbPoints = t.nbPoints;
-  points.reserve(t.points.size());
-  points.assign(t.points.begin(), t.points.end());
-  area = t.area;
-  diff_area = t.diff_area;
-  dist = t.dist;
-  scoreS = t.scoreS;
-  scoreO = t.scoreO;
-  scoreC = t.scoreC;
-  scoreR = t.scoreR;
-  scoreGlobal = t.scoreGlobal;
 }
 
 TreeSegment::~TreeSegment() {}
@@ -179,9 +166,7 @@ void TreeSegment::updateArea()
 // Function that returns highest Z value in points of tree
 double TreeSegment::findZMax()
 {
-  sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
-  double ZmaxValue = points[0].z;
-  return (ZmaxValue);
+  return (Zmax.z);
 }
 
 // Function that return lowest Z value in points of tree

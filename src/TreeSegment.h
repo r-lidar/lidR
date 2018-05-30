@@ -20,8 +20,7 @@ class TreeSegment
 {
   public:
     TreeSegment();
-    TreeSegment( PointXYZ &pt );
-    TreeSegment(const TreeSegment &t);
+    TreeSegment(PointXYZ &pt);
     ~TreeSegment();
 
     void getZMax();

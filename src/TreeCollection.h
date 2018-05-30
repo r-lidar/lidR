@@ -10,10 +10,9 @@ class TreeCollection
   public:
     TreeCollection();
     TreeCollection(TreeSegment &t);
-    TreeCollection(const TreeCollection &t);
     ~TreeCollection();
 
-    void addTree(TreeSegment t);
+    void addTree(TreeSegment &t);
     void calculateTreeScores(int k);
     void remove_tree_with_less_than_3_points();
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
