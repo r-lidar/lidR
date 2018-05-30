@@ -21,7 +21,16 @@ TreeSegment::TreeSegment(PointXYZ &pt)
   area = 0;
   diff_area = 0;
   dist = 0;
+
   points.push_back(pt);
+
+  point_t p;
+  boost::geometry::set<0>(p, pt.x);
+  boost::geometry::set<1>(p, pt.y);
+  apex = p;
+
+  boost::geometry::append(convex_hull, point_t(pt.x, pt.y));
+
   scoreS = 0;
   scoreO = 0;
   scoreC = 0;
@@ -55,15 +64,32 @@ void TreeSegment::calculateNewArea(PointXYZ &pt)
 {
   if (nbPoints > 2)
   {
+    point_t p(pt.x, pt.y);
+
+    if(boost::geometry::covered_by(p, convex_hull))
+      return;
+
+    boost::geometry::append(convex_hull, p);
+    boost::geometry::convex_hull(convex_hull, convex_hull);
+
     // Conversion from PointXYZ to point_t from boost library use
-    mpoint_t pointsForPoly;
+    /*mpoint_t pointsForPoly;
     for ( int i = 0 ; i < points.size() ; i++ )
     {
       boost::geometry::append(pointsForPoly, point_t(points[i].x, points[i].y) );
-    }
+    }*/
+
+    // Aera value without new point (previously stored)
+    double area_noPt = area;
+    double area_Pt = boost::geometry::area(convex_hull);
+    diff_area = std::fabs(area_Pt - area_noPt);
+    area = area_Pt;
+    pointsCH.clear();
+    pointsCH.assign(convex_hull.outer().begin(), convex_hull.outer().end());
+    dist = 0;
 
     // Add of new Point + calculation of associated area
-    point_t newPt (pt.x, pt.y);
+    /*point_t newPt (pt.x, pt.y);
     boost::geometry::append(pointsForPoly, newPt);
 
     // Assign boost points to polygon
@@ -79,14 +105,14 @@ void TreeSegment::calculateNewArea(PointXYZ &pt)
     double area_noPt = area;
 
     // Aera value including new point Pt + update of 'aera', 'diff_aera' and 'pointCH' attributes
-    double area_Pt = boost::geometry::area( hull );
+    double area_Pt = boost::geometry::area(hull);
     diff_area = std::fabs(area_Pt - area_noPt);
     area = area_Pt;
     pointsCH.clear();
     pointsCH.assign(hull.begin(), hull.end());
-    dist = 0;
+    dist = 0; */
   }
-  else if ( nbPoints == 2 )   // calculate distance
+  else if (nbPoints == 2)   // calculate distance
   {
     dist = std::sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
   }
@@ -250,22 +276,12 @@ void TreeSegment::getZMax(PointXYZ &pt)
 
 polygon TreeSegment::get_convex_hull()
 {
-  polygon convex_hull;
-  boost::geometry::assign_points(convex_hull, pointsCH);
   return convex_hull;
 }
 
 point_t TreeSegment::get_apex()
 {
-  // JR no need to sort here.
-  sort(points.begin(), points.end(), ZSortPointBis<PointXYZ>() );
-
-  PointXYZ apex = points[0];
-
-  point_t p;
-  boost::geometry::set<0>(p, apex.x);
-  boost::geometry::set<1>(p, apex.y);
-  return p;
+  return apex;
 }
 
 // Function that stores ID of tree in a reference vector of int --> idResult

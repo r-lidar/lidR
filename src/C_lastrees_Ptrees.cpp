@@ -366,7 +366,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
       // To know which search method is required for this tree subset (distance or area evaluation)
       // scan the trees to identify if there is at least one of them with less than 2 points
 
-      // JR: Donc il n'y a qu'un cas
+      // JR: Donc il n'y a qu'un cas je crois
       int searchMethod = 1;
       for (unsigned int j = 0 ; j < knnTreeID.size() ; j++)
       {

@@ -49,7 +49,7 @@ class TreeSegment
     void getCircularity();
     double getScore( int k );
 
-  //private:
+  public:
     int nbPoints;
     double area;
     double diff_area;
@@ -63,6 +63,8 @@ class TreeSegment
     double zmin;
     std::vector<PointXYZ> points;
     PointXYZ Zmax;
+    point_t apex;
+    polygon convex_hull;
     boost::geometry::model::ring<point_t> pointsCH;
 };
 
