@@ -60,18 +60,10 @@ TreeSegment::~TreeSegment() {}
 * - new distance between points if there was no point or only one point in the initial tree
 * - new area using boost::polygon function if the initial tree contains more than two points (update of associated convex hull)
 */
-void TreeSegment::calculateNewArea(PointXYZ &pt)
+void TreeSegment::calculateArea()
 {
   if (nbPoints > 2)
   {
-    point_t p(pt.x, pt.y);
-
-    if(boost::geometry::covered_by(p, convex_hull))
-      return;
-
-    boost::geometry::append(convex_hull, p);
-    boost::geometry::convex_hull(convex_hull, convex_hull);
-
     // Conversion from PointXYZ to point_t from boost library use
     /*mpoint_t pointsForPoly;
     for ( int i = 0 ; i < points.size() ; i++ )
@@ -112,10 +104,10 @@ void TreeSegment::calculateNewArea(PointXYZ &pt)
     pointsCH.assign(hull.begin(), hull.end());
     dist = 0; */
   }
-  else if (nbPoints == 2)   // calculate distance
+  /*else if (nbPoints == 2)   // calculate distance
   {
     dist = std::sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
-  }
+  }*/
 }
 
 
@@ -194,13 +186,31 @@ void TreeSegment::addPoint(PointXYZ &pt)
 {
   nbPoints++;
   points.push_back(pt);
-  calculateNewArea(pt);
+
+  point_t p(pt.x, pt.y);
+
+  if(boost::geometry::covered_by(p, convex_hull))
+    return;
+
+  boost::geometry::append(convex_hull, p);
+  boost::geometry::convex_hull(convex_hull, convex_hull);
+
+  calculateArea();
 }
 
 void TreeSegment::addPoint(PointXYZ &pt, double &newArea, boost::geometry::model::ring<point_t> &hull)
 {
   nbPoints++;
   points.push_back(pt);
+
+  point_t p(pt.x, pt.y);
+
+  if(boost::geometry::covered_by(p, convex_hull))
+    return;
+
+  boost::geometry::append(convex_hull, p);
+  boost::geometry::convex_hull(convex_hull, convex_hull);
+
   area = newArea;
   pointsCH.clear();
   pointsCH.assign(hull.begin(), hull.end());
@@ -211,6 +221,15 @@ void TreeSegment::addPoint_dist(PointXYZ &pt, double &newDist )
 {
   nbPoints++;
   points.push_back(pt);
+  
+  point_t p(pt.x, pt.y);
+  
+  if(boost::geometry::covered_by(p, convex_hull))
+    return;
+  
+  boost::geometry::append(convex_hull, p);
+  boost::geometry::convex_hull(convex_hull, convex_hull);
+  
   dist = newDist;
 }
 
