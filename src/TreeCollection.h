@@ -14,7 +14,6 @@ class TreeCollection
     ~TreeCollection();
 
     void addTree(TreeSegment t);
-    void updateTree(int &treeID, PointXYZ &pt);
 
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
@@ -28,10 +27,7 @@ class TreeCollection
 
     void remove_tree_with_less_than_3_points();
 
-    Rcpp::List to_R();
-
     unsigned int nbTree;
-    //std::vector<double> individualTreeSize;
     std::vector<TreeSegment>treeStorage;
     std::vector<int> idTreeStorage;
 };

@@ -297,8 +297,8 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
   idTree[pointToSort.id] = trees.nbTree;
 
   std::vector<int> knnTreeID;
-  std::vector<PointXYZ> result;
-  std::vector<PointXYZ> filteredResult;
+  std::vector<PointXYZ> knn_points;
+  std::vector<PointXYZ> filtered_knn_points;
 
   // ======================
   //   ALGORITHM
@@ -313,21 +313,21 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // ==================================
 
     // storage  corresponding points into result
-    result.clear();
-    filteredResult.clear();
-    treeOI->knn_lookup3D(pointToSort, k, result); // 'result' contains the k neighbours + the current point
+    knn_points.clear();
+    filtered_knn_points.clear();
+    treeOI->knn_lookup3D(pointToSort, k, knn_points); // 'knn_points' contains the k neighbours + the current point
 
     // Removal of points having a planimetric distance from pointToSort above threshold T (page 100 eq. 1/2)
-    TreeSegment::apply2DFilter(result, filteredResult);
+    TreeSegment::apply2DFilter(knn_points, filtered_knn_points);
 
     // Searching if some of these k points were already classified
     // ===========================================================
 
     knnTreeID.clear();
-    knnTreeID.assign(filteredResult.size(), 0);
-    for (unsigned int n = 0 ; n < filteredResult.size() ; n++)
+    knnTreeID.assign(filtered_knn_points.size(), 0);
+    for (unsigned int n = 0 ; n < filtered_knn_points.size() ; n++)
     {
-      knnTreeID[n] = idTree[filteredResult[n].id];
+      knnTreeID[n] = idTree[filtered_knn_points[n].id];
     }
 
     // Removal of duplicates tree IDs and index value 0
@@ -337,8 +337,6 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
     // Classify the current point
     // ==========================
-
-    // Three possibilities for the classification
 
     // 1. If no classified points are found in the k neighbourhood this is a new tree (page 101 fig. 4B situation 1)
     if (knnTreeID.empty())
@@ -350,19 +348,16 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 2. If only one identified tree in the neighbourhood (page 101 fig. 4B situation 2)
     else if (knnTreeID.size() == 1)
     {
-      trees.updateTree(knnTreeID[0], pointToSort);
+      trees.treeStorage[knnTreeID[0]-1].addPoint(pointToSort);
       idTree[pointToSort.id] = knnTreeID[0];
     }
     // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
     else
     {
       double thresholdZ = 5;
-      double resultID = trees.searchID_usingArea(knnTreeID, pointToSort);
+      double resultID = trees.searchID(knnTreeID, pointToSort);
 
-      // Before association of pointToSort to best tree result,
-      // testing if Z difference between pointToSort and lowest point in tree is under
-      // a height difference threshold fixed at 5m --> page 100 last paragraph
-
+      // If point is to low it is a new tree (page 100 last paragraph)
       double diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
 
       if (diffHeight <= thresholdZ)

@@ -41,12 +41,6 @@ void TreeCollection::addTree(TreeSegment t)
   //individualTreeSize.push_back(1);
 }
 
-void TreeCollection::updateTree(int &treeID, PointXYZ &pt)
-{
-  treeStorage[treeID-1].addPoint(pt);
-  //individualTreeSize[treeID-1]++;
-}
-
 void TreeCollection::getSizeCriteria(int k)
 {
   for (unsigned int i = 0; i < nbTree; i++)
