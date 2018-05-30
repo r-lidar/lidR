@@ -8,7 +8,6 @@
 using namespace Rcpp;
 
 //========================================================================================
-void apply2DFilter( std::vector<PointXYZ> &subProfile, std::vector<PointXYZ> &subProfileSubset);
 TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI);
 IntegerMatrix createCombination(int N);
 double getScoreCombination(TreeSegment &t1, TreeSegment &t2, int k);
@@ -319,8 +318,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     treeOI->knn_lookup3D(pointToSort, k, result); // 'result' contains the k neighbours + the current point
 
     // Removal of points having a planimetric distance from pointToSort above threshold T (page 100 eq. 1/2)
-    // JR: cette fonction me semble d'une complixité formidable
-    apply2DFilter(result, filteredResult);
+    TreeSegment::apply2DFilter(result, filteredResult);
 
     // Searching if some of these k points were already classified
     // ===========================================================
@@ -453,41 +451,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
 // Function that calculates 2D distance between one point (first one in subProfile) and its nearest neighbours
 // returns only thoose under a calculated threshold
-void apply2DFilter( std::vector<PointXYZ> &subProfile, std::vector<PointXYZ> &subProfileSubset )
-{
-  double meanValueForThreshold = 0;
-  std::vector<double> dist;
-  double stdValueForThreshold = 0;
-  double val = 0;
-  // Euclidian Distance calculation in 2D for all neighbours regarding the reference point (storage in Z value)
-  for (unsigned int i = 1; i < subProfile.size(); i++ )
-  {
-    val = euclidianDistance2D_inZ( subProfile[0], subProfile[i] );
-    meanValueForThreshold += val;
-    dist.push_back( val );
-  }
 
-  //--------------------------------------------------------------------------------------
-  // Threshold definition (page 100 'segmentation principles')
-  // defined as the mean plus twice the std of the planimetric distances of a subset of points
-  meanValueForThreshold /= (double)(subProfile.size() - 1);
-  double sum = 0;
-  for(unsigned int i = 0; i < dist.size(); i++)
-    sum += (dist[i]-meanValueForThreshold) * (dist[i]-meanValueForThreshold);
-
-  stdValueForThreshold = std::sqrt( sum / (double) dist.size() );
-
-  double threshold = meanValueForThreshold + 2*stdValueForThreshold;
-  //--------------------------------------------------------------------------------------
-  // Keeping all points below threshold and storage of their IDs
-  int i = 0, keep = 0;
-  subProfileSubset.push_back(subProfile[0]);
-  while ( (i < subProfile.size()-1) && (dist[i] <= threshold) )
-  {
-    subProfileSubset.push_back( subProfile[i+1] );
-    i++;
-  }
-}
 
 TreeSegment mergeTree(TreeSegment &t1, TreeSegment &t2, int k)
 {

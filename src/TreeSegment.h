@@ -47,6 +47,8 @@ class TreeSegment
     void getCircularity();
     double getScore( int k );
 
+    static void apply2DFilter(std::vector<PointXYZ> &, std::vector<PointXYZ> &);
+
   public:
     int nbPoints;
     double area;
