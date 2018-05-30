@@ -14,18 +14,11 @@ class TreeCollection
     ~TreeCollection();
 
     void addTree(TreeSegment t);
-
+    void calculateTreeScores(int k);
+    void remove_tree_with_less_than_3_points();
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
-
-    void getSizeCriteria(int k);
-    void getOrientationCriteria();
-    void getRegularityCriteria();
-    void getCircularityCriteria();
-    double calculateTreeScores(int k);
-
-    void remove_tree_with_less_than_3_points();
 
     unsigned int nbTree;
     std::vector<TreeSegment>treeStorage;
