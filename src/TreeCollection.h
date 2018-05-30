@@ -19,6 +19,7 @@ class TreeCollection
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
+    Rcpp::List to_R();
 
     unsigned int nbTree;
     std::vector<TreeSegment>treeStorage;

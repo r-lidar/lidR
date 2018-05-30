@@ -24,12 +24,9 @@ TreeSegment::TreeSegment(PointXYZ &pt)
 
   points.push_back(pt);
 
-  point_t p;
-  boost::geometry::set<0>(p, pt.x);
-  boost::geometry::set<1>(p, pt.y);
-  apex = p;
-
-  boost::geometry::append(convex_hull, point_t(pt.x, pt.y));
+  boost::geometry::set<0>(apex, pt.x);
+  boost::geometry::set<1>(apex, pt.y);
+  boost::geometry::append(convex_hull, apex);
 
   scoreS = 0;
   scoreO = 0;
@@ -62,52 +59,17 @@ TreeSegment::~TreeSegment() {}
 */
 void TreeSegment::calculateArea()
 {
-  if (nbPoints > 2)
-  {
-    // Conversion from PointXYZ to point_t from boost library use
-    /*mpoint_t pointsForPoly;
-    for ( int i = 0 ; i < points.size() ; i++ )
-    {
-      boost::geometry::append(pointsForPoly, point_t(points[i].x, points[i].y) );
-    }*/
+  if (nbPoints <=  2)
+    return;
 
-    // Aera value without new point (previously stored)
-    double area_noPt = area;
-    double area_Pt = boost::geometry::area(convex_hull);
-    diff_area = std::fabs(area_Pt - area_noPt);
-    area = area_Pt;
-    pointsCH.clear();
-    pointsCH.assign(convex_hull.outer().begin(), convex_hull.outer().end());
-    dist = 0;
-
-    // Add of new Point + calculation of associated area
-    /*point_t newPt (pt.x, pt.y);
-    boost::geometry::append(pointsForPoly, newPt);
-
-    // Assign boost points to polygon
-    polygon poly2D;
-    boost::geometry::assign_points(poly2D, pointsForPoly);
-    boost::geometry::correct(poly2D);
-
-    // Search for convex hull using previous polygon definition
-    boost::geometry::model::ring<point_t> hull;
-    boost::geometry::convex_hull(poly2D, hull);
-
-    // Aera value without new point (previously stored)
-    double area_noPt = area;
-
-    // Aera value including new point Pt + update of 'aera', 'diff_aera' and 'pointCH' attributes
-    double area_Pt = boost::geometry::area(hull);
-    diff_area = std::fabs(area_Pt - area_noPt);
-    area = area_Pt;
-    pointsCH.clear();
-    pointsCH.assign(hull.begin(), hull.end());
-    dist = 0; */
-  }
-  /*else if (nbPoints == 2)   // calculate distance
-  {
-    dist = std::sqrt( (points[0].x - pt.x)*(points[0].x - pt.x) + (points[0].y - pt.y)*(points[0].y - pt.y) );
-  }*/
+  // Aera value without new point (previously stored)
+  double area_noPt = area;
+  double area_Pt = boost::geometry::area(convex_hull);
+  diff_area = std::fabs(area_Pt - area_noPt);
+  area = area_Pt;
+  pointsCH.clear();
+  pointsCH.assign(convex_hull.outer().begin(), convex_hull.outer().end());
+  dist = 0;
 }
 
 
@@ -123,39 +85,13 @@ double TreeSegment::testArea(PointXYZ &pt)
   if(boost::geometry::covered_by(p, convex_hull))
     return 0;
 
-  polygon poly(convex_hull);
-  boost::geometry::append(poly, p);
-  boost::geometry::convex_hull(poly, poly);
+  polygon old_hull(convex_hull);
+  polygon new_hull;
+  boost::geometry::append(old_hull, p);
+  boost::geometry::convex_hull(old_hull, new_hull);
 
-  double area_Pt = boost::geometry::area(poly);
+  double area_Pt = boost::geometry::area(new_hull);
   return(std::fabs(area_Pt - area));
-
-
-  // Conversion from PointXYZ to point_t from boost library use
-  /*mpoint_t pointsForPoly;
-  for (unsigned int i = 0 ; i < points.size() ; i++ )
-    boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
-
-  // Add of new Point + calculation of associated area
-  point_t newPt (pt.x, pt.y);
-  boost::geometry::append( pointsForPoly, newPt );
-
-  // Assign boost points to polygon
-  polygon poly2D;
-  boost::geometry::assign_points(poly2D, pointsForPoly);
-  boost::geometry::correct(poly2D);
-
-  // Search for convex hull using previous polygon definition
-  boost::geometry::model::ring<point_t> hull;
-  boost::geometry::convex_hull(poly2D, hull);
-
-  area_Pt = boost::geometry::area( hull );
-  hull_out.clear();
-  hull_out.assign(hull.begin(), hull.end());
-
-  double area_noPt = area;
-  double calculatedDiffArea = std::fabs(area_Pt - area_noPt);
-  return calculatedDiffArea;*/
 }
 
 /*
@@ -200,8 +136,11 @@ void TreeSegment::addPoint(PointXYZ &pt)
   if(boost::geometry::covered_by(p, convex_hull))
     return;
 
-  boost::geometry::append(convex_hull, p);
-  boost::geometry::convex_hull(convex_hull, convex_hull);
+  polygon old_hull(convex_hull);
+  polygon new_hull;
+  boost::geometry::append(old_hull, p);
+  boost::geometry::convex_hull(old_hull, new_hull);
+  convex_hull = new_hull;
 
   calculateArea();
 }

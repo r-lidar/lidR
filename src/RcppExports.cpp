@@ -118,7 +118,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lastrees_ptrees
-std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values);
+List C_lastrees_ptrees(S4 las, IntegerVector k_values);
 RcppExport SEXP _lidR_C_lastrees_ptrees(SEXP lasSEXP, SEXP k_valuesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

@@ -26,6 +26,9 @@ lastrees_ptrees = function(las, k, ...)
     field = p$field
 
   id = C_lastrees_ptrees(las, k)
+
+  return(id)
+
   lasaddextrabytes(las, id, field, "An ID for each segmented tree")
 
   return(invisible())

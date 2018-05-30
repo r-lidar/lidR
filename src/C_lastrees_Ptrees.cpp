@@ -24,7 +24,7 @@ struct Increment {
 //========================================================================================
 
 // [[Rcpp::export]]
-std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values)
+List C_lastrees_ptrees(S4 las, IntegerVector k_values)
 {
   // Initialization
   // ==============
@@ -58,7 +58,7 @@ std::vector<int> C_lastrees_ptrees(S4 las, IntegerVector k_values)
   Rcpp::Rcout << "k = "<< k_values[0] << std::endl;
   TreeCollection trees_kRef = PTrees_segmentation(points, k_values[0], treeOI);
 
-  return trees_kRef.idTreeStorage;
+  return trees_kRef.to_R();
 
   // If a single k is given we can't apply Vega's selection rules. Return the unique segmentation
   /*if (k_values.size() == 1)

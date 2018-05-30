@@ -1,3 +1,5 @@
+
+
 #include "TreeCollection.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
@@ -122,4 +124,35 @@ void TreeCollection::remove_tree_with_less_than_3_points()
       nbTree--;
     }
   }
+}
+
+Rcpp::List TreeCollection::to_R()
+{
+  int n = treeStorage.size();
+
+  Rcpp::List TreeSegment;
+
+  for (unsigned int i = 0 ; i < treeStorage.size() ; i++ )
+  {
+    double x = boost::geometry::get<0>(treeStorage[i].apex);
+    double y = boost::geometry::get<1>(treeStorage[i].apex);
+    Rcpp::NumericVector Apex = Rcpp::NumericVector::create(x,y);
+
+    std::vector<point_t>& phull = treeStorage[i].convex_hull.outer();
+    Rcpp::NumericMatrix rmat(phull.size(), 2);
+    for (unsigned int j = 0; j < phull.size(); ++j)
+    {
+       const point_t& p = phull[j];
+       rmat(j,0) = p.get<0>();
+       rmat(j,1) = p.get<1>();
+    }
+
+    TreeSegment.push_back(Rcpp::List::create(Apex, rmat));
+  }
+
+  Rcpp::List output;
+  output.push_back(TreeSegment);
+  output.push_back(idTreeStorage);
+
+  return(output);
 }
