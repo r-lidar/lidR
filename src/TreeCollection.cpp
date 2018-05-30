@@ -82,30 +82,22 @@ double TreeCollection::calculateTreeScores(int k)
 
 // Function that calculates convex hull areas for each selected tree in 'knnTreeID'
 
-void TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort, int &resultID, double &areaValue, boost::geometry::model::ring<point_t> &hull_out )
+int TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort)
 {
-  // Calcul de la premiere aire de la selection d'arbres
-  double areaValue_diff = 0;
-  resultID = knnTreeID[0];
-  boost::geometry::model::ring<point_t> hull;
-  areaValue_diff = treeStorage[knnTreeID[0]-1].testArea(pointToSort, areaValue, hull);   // page 100 eq. 3
-  hull_out.assign(hull.begin(), hull.end());
+  int resultID = knnTreeID[0];
 
-  // Comparaison avec les suivantes --> on garde la plus petite
-  double areaValueBis = 0;
-  double areaValueBis_diff = 0;
+  double area_increment = treeStorage[knnTreeID[0]-1].testArea(pointToSort);   // page 100 eq. 3
 
   for (unsigned int i = 1; i < knnTreeID.size(); i++ )
   {
-    hull.clear();
-    areaValueBis_diff = treeStorage[knnTreeID[i]-1].testArea( pointToSort, areaValueBis, hull );   // page 100 eq. 3
-    if (areaValue_diff > areaValueBis_diff)
+    double area_increment2 = treeStorage[knnTreeID[i]-1].testArea(pointToSort);   // page 100 eq. 3
+    if (area_increment > area_increment2)
     {
-      areaValue = areaValueBis;
       resultID = knnTreeID[i];
-      hull_out.assign(hull.begin(), hull.end());
     }
   }
+
+  return resultID;
 }
 
 //========================================================================================

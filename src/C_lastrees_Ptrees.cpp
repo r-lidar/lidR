@@ -388,8 +388,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
         // Regular search based on Vega's rules
         case 1:
         {
-          boost::geometry::model::ring<point_t> hull;
-          trees.searchID_usingArea(knnTreeID, pointToSort, resultID, areaValue, hull);
+          double resultID = trees.searchID_usingArea(knnTreeID, pointToSort);
 
           // Before association of pointToSort to best tree result,
           // testing if Z difference between pointToSort and lowest point in tree is under
@@ -399,7 +398,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
           if (diffHeight <= thresholdZ)
           {
-            trees.treeStorage[resultID-1].addPoint(pointToSort, areaValue, hull);
+            trees.treeStorage[resultID-1].addPoint(pointToSort);
             //trees.individualTreeSize[resultID-1]++;
             idTree[pointToSort.id] = resultID;
           }

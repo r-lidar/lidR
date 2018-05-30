@@ -16,7 +16,7 @@ class TreeCollection
     void addTree(TreeSegment t);
     void updateTree(int &treeID, PointXYZ &pt);
 
-    void searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort, int &resultID, double &areaValue, boost::geometry::model::ring<point_t> &hull);
+    int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     void searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort, int &resultID, double &distValue);
 
     void getSizeCriteria(int k);

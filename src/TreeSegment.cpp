@@ -116,10 +116,23 @@ void TreeSegment::calculateArea()
 * - difference between old and new area (including pt) using boost::polygon function
 * - if the initial tree contains more than two points (update of associated convex hull)
 */
-double TreeSegment::testArea(PointXYZ &pt, double &area_Pt, boost::geometry::model::ring<point_t> &hull_out)
+double TreeSegment::testArea(PointXYZ &pt)
 {
+  point_t p(pt.x, pt.y);
+
+  if(boost::geometry::covered_by(p, convex_hull))
+    return 0;
+
+  polygon poly(convex_hull);
+  boost::geometry::append(poly, p);
+  boost::geometry::convex_hull(poly, poly);
+
+  double area_Pt = boost::geometry::area(poly);
+  return(std::fabs(area_Pt - area));
+
+
   // Conversion from PointXYZ to point_t from boost library use
-  mpoint_t pointsForPoly;
+  /*mpoint_t pointsForPoly;
   for (unsigned int i = 0 ; i < points.size() ; i++ )
     boost::geometry::append( pointsForPoly, point_t(points[i].x, points[i].y) );
 
@@ -142,7 +155,7 @@ double TreeSegment::testArea(PointXYZ &pt, double &area_Pt, boost::geometry::mod
 
   double area_noPt = area;
   double calculatedDiffArea = std::fabs(area_Pt - area_noPt);
-  return calculatedDiffArea;
+  return calculatedDiffArea;*/
 }
 
 /*
@@ -221,18 +234,19 @@ void TreeSegment::addPoint_dist(PointXYZ &pt, double &newDist )
 {
   nbPoints++;
   points.push_back(pt);
-  
+
   point_t p(pt.x, pt.y);
-  
+
   if(boost::geometry::covered_by(p, convex_hull))
     return;
-  
+
   boost::geometry::append(convex_hull, p);
   boost::geometry::convex_hull(convex_hull, convex_hull);
-  
+
   dist = newDist;
 }
 
+//  JR: sert uniquement dans tree merge A supprimer plus stard.
 void TreeSegment::updateArea()
 {
   if ( nbPoints >= 3)
