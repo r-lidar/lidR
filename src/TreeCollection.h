@@ -16,10 +16,16 @@ class TreeCollection
     void calculateTreeScores(int k);
     void remove_tree_with_less_than_3_points();
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
-    int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
-    int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
+    std::vector<TreeSegment> search_trees_in_polygon(polygon);
+    static Rcpp::IntegerMatrix createCombination(int);
     Rcpp::List to_R();
 
+  private:
+    int searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
+    int searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
+
+
+  public:
     unsigned int nbTree;
     std::vector<TreeSegment>treeStorage;
     std::vector<int> idTreeStorage;

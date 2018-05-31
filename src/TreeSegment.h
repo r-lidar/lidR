@@ -23,48 +23,36 @@ class TreeSegment
     TreeSegment(PointXYZ &pt);
     ~TreeSegment();
 
-    void getZMax();
-    void getZMax(PointXYZ &pt);
+    void addPoint(PointXYZ &pt);
     void calculateArea();
-    void addPoint( PointXYZ &pt );
-    void updateArea();
+    void compute_all_score(int);
+
+    static void apply2DFilter(std::vector<PointXYZ> &, std::vector<PointXYZ> &);
 
     double testArea(PointXYZ &pt);
     double testDist(PointXYZ &pt);
-    double findZMax();
-    double findZMin();
 
-    polygon get_convex_hull();
     point_t get_apex();
 
-    void editIdResult (std::vector<int> &idResult, int &index);
+    TreeSegment merge(TreeSegment&, int);
 
-    // Functions for tree score calculation
-    void getSize(int k);
-    void getOrientation();
-    void getRegularity();
-    void getCircularity();
-    double getScore( int k );
-
-    static void apply2DFilter(std::vector<PointXYZ> &, std::vector<PointXYZ> &);
+  private:
+    void compute_size_score(int);
+    void compute_orientation_score();
+    void compute_circularity_score();
+    void compute_regularity_score();
 
   public:
     int nbPoints;
     double area;
-    double diff_area;
-    double dist;
     double scoreS;
     double scoreO;
     double scoreR;
     double scoreC;
     double scoreGlobal;
-    double zmax;
-    double zmin;
-    std::vector<PointXYZ> points;
     PointXYZ Zmax;
-    point_t apex;
+    PointXYZ Zmin;
     polygon convex_hull;
-    boost::geometry::model::ring<point_t> pointsCH;
 };
 
 #endif //TREE_H

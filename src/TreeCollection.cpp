@@ -30,11 +30,21 @@ void TreeCollection::calculateTreeScores(int k)
 {
   for (unsigned int i = 0 ; i < nbTree ; i++)
   {
-    treeStorage[i].getSize(k);
-    treeStorage[i].getOrientation();
-    treeStorage[i].getRegularity();
-    treeStorage[i].getCircularity();
+    treeStorage[i].compute_all_score(k);
   }
+}
+
+std::vector<TreeSegment> TreeCollection::search_trees_in_polygon(polygon poly)
+{
+  std::vector<TreeSegment> output;
+
+  for (unsigned int n = 0 ; n < nbTree ; n++)
+  {
+    if (boost::geometry::covered_by(treeStorage[n].get_apex(), poly))
+      output.push_back(treeStorage[n]);
+  }
+
+  return output;
 }
 
 int TreeCollection::searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort)
@@ -102,18 +112,44 @@ int TreeCollection::searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &po
   return resultID;
 }
 
+// JR incomplet.
 void TreeCollection::remove_tree_with_less_than_3_points()
 {
   unsigned int n = treeStorage.size();
 
   for (unsigned int i = (n-1) ; i > 0 ; i--)
   {
-    if (treeStorage[i].pointsCH.size() < 3)
+    if (treeStorage[i].convex_hull.outer().size() < 3)
     {
       treeStorage.erase(treeStorage.begin() + i);
       nbTree--;
     }
   }
+}
+
+// https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c
+// derived from Rosetta Code
+Rcpp::IntegerMatrix TreeCollection::createCombination(int N)
+{
+  Rcpp::IntegerMatrix res(std::pow(N-1,2)-(N-2), 2);   // pas optimal, taille matrice supérieure au besoin
+  int ind = 0, ind2 = 0;
+
+  std::string bitmask(2, 1); // K leading 1's
+  bitmask.resize(N, 0); // N-K trailing 0's
+
+  // print integers and permute bitmask
+  do
+  {
+    for (int i = 0; i < N+1; i++) // [0..N-1] integers
+    {
+      if (bitmask[i]) res(ind,ind2++) = i+1;
+    }
+
+    ind++;
+    ind2 = 0;
+  } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+  return(res);
 }
 
 Rcpp::List TreeCollection::to_R()
@@ -124,8 +160,8 @@ Rcpp::List TreeCollection::to_R()
 
   for (unsigned int i = 0 ; i < treeStorage.size() ; i++ )
   {
-    double x = treeStorage[i].apex.get<0>();
-    double y = treeStorage[i].apex.get<1>();
+    double x = treeStorage[i].Zmax.x;
+    double y = treeStorage[i].Zmax.y;
 
     point_t bary;
     boost::geometry::centroid(treeStorage[i].convex_hull, bary);

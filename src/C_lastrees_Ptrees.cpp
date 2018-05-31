@@ -7,21 +7,7 @@
 
 using namespace Rcpp;
 
-//========================================================================================
 TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI);
-IntegerMatrix createCombination(int N);
-double getScoreCombination(TreeSegment &t1, TreeSegment &t2, int k);
-TreeSegment mergeTree(TreeSegment &t1, TreeSegment &t2, int k);
-//========================================================================================
-
-
-struct Increment {
-  Increment() : m_value( 1 ) { }
-  int operator()() { return m_value++; }
-  int m_value;
-};
-
-//========================================================================================
 
 // [[Rcpp::export]]
 List C_lastrees_ptrees(S4 las, IntegerVector k_values)
@@ -39,7 +25,7 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
   for (unsigned int i = 0 ; i < X.size() ; i++)
     points[i] = PointXYZ(X[i], Y[i], Z[i], i);
 
-  std::sort( points.begin(), points.end(), ZSortPointBis<PointXYZ>());   // Vector sorting by Z (from max to min)
+  std::sort(points.begin(), points.end(), ZSortPointBis<PointXYZ>());   // Vector sorting by Z (from max to min)
   std::sort(k_values.begin(), k_values.end(), std::greater<int>());
 
   // Creation of a QuadTree
@@ -48,23 +34,18 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
 
   Progress p(100, false);
 
-  // Output
-  std::vector<int> idResult;
-
   // Applying PTrees for the first k values
   // ============================================
 
   // Initialize a first segmentation
   Rcpp::Rcout << "k = "<< k_values[0] << std::endl;
-  TreeCollection trees_kRef = PTrees_segmentation(points, k_values[0], treeOI);
-
-  return trees_kRef.to_R();
+  TreeCollection its_reference = PTrees_segmentation(points, k_values[0], treeOI);
 
   // If a single k is given we can't apply Vega's selection rules. Return the unique segmentation
-  /*if (k_values.size() == 1)
+  if (k_values.size() == 1)
   {
     delete treeOI;
-    return trees_kRef.idTreeStorage;
+    return its_reference.to_R();
   }
 
   // Applying PTrees for the next k values
@@ -72,6 +53,8 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
 
   for (unsigned int nb_k = 1 ; nb_k < k_values.size() ; nb_k++)
   {
+    Rcpp::Rcout << "k = "<< k_values[nb_k] << std::endl;
+
     if (p.check_abort())
     {
       delete treeOI;
@@ -81,138 +64,100 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
     // New segmentation for the current k
     // ----------------------------------
 
-    Rcpp::Rcout << "k = "<< k_values[nb_k] << std::endl;
-    TreeCollection<PointXYZ> trees_kToCompare = PTrees_segmentation(points, k_values[nb_k], treeOI);
+    TreeCollection its_new = PTrees_segmentation(points, k_values[nb_k], treeOI);
+    TreeCollection its_temp; // To store the merging of the two segmentation.
 
-    // Compare this segmentation to the previous one
-    // ---------------------------------------------
+    // Compare this new segmentation to the previous one applying PTrees rules on each tree
+    // -----------------------------------
 
-    idResult.clear();
-    idResult.assign(X.size(), 0);
-    int index = 1; // Tree wil get this new ID
-
-    std::vector<double> treeScores;
-    std::vector<int> treeIDs;
-    std::vector<PointXYZ> treeZmax;
-    TreeCollection<PointXYZ> trees_kResult; // To store the merging of the two its.
-
-    // Applying PTrees rules on each tree
-    // ..................................
-
-    for (unsigned int t = 0 ; t < trees_kRef.nbTree ; t++)
+    for (unsigned int t = 0 ; t < its_reference.nbTree ; t++)
     {
-      Tree<PointXYZ> &current_tree_ref = trees_kRef.treeStorage[t];
+      TreeSegment &tree_ref = its_reference.treeStorage[t];
 
-      treeScores.clear();
-      treeIDs.clear();
-      treeZmax.clear();
-
-      // Get the convex hull of the tree
-      polygon poly2D = current_tree_ref.get_convex_hull();
-
-      // Search the apices that are in the convex hull of the current tree
-      // JR: this should belong in its own method
-      for (unsigned int n = 0 ; n < trees_kToCompare.nbTree ; n++)
-      {
-        // Apex search for each tree
-        point_t p = trees_kToCompare.treeStorage[n].get_apex();
-
-        // Apex included in polygon?
-        if (boost::geometry::covered_by(p, poly2D) == true)
-        {
-          treeScores.push_back(trees_kToCompare.treeStorage[n].scoreGlobal);  // stockage du score global de l'arbre
-          treeIDs.push_back(n);                                               // stockage de l'ID correspondant
-          treeZmax.push_back(trees_kToCompare.treeStorage[n].Zmax);           // stockage de la hauteur max
-        }
-      }
-
-      double scoreRef = current_tree_ref.scoreGlobal;
+      // Get the trees that belong into the reference tree
+      polygon &poly = tree_ref.convex_hull;
+      std::vector<TreeSegment> tree_in_tree_ref = its_new.search_trees_in_polygon(poly);
+      int ntrees = tree_in_tree_ref.size();
 
       // If only one apex was found (page 103 Fig5 PartA-1)
-      if(treeIDs.size() == 1)
+      if(ntrees == 1)
       {
-        int keep_id = treeIDs[0];
-        double scoreToCompare = trees_kToCompare.treeStorage[keep_id].scoreGlobal;
-
         // Comparison of score A and score D
+        double scoreRef = tree_ref.scoreGlobal;
+        double scoreToCompare = tree_in_tree_ref[0].scoreGlobal;
+
         if (scoreRef > scoreToCompare)
-        {
-          trees_kResult.addTree(current_tree_ref);
-          current_tree_ref.editIdResult(idResult, index);
-        }
+          its_temp.addTree(tree_ref);
         else
-        {
-          trees_kResult.addTree( trees_kToCompare.treeStorage[keep_id] );
-          trees_kToCompare.treeStorage[keep_id].editIdResult (idResult, index);
-        }
+          its_temp.addTree(tree_in_tree_ref[0]);
       }
       // If two apices were found (page 103 Fig5 PartA-2)
-      else if (treeIDs.size() == 2)
+      else if (ntrees == 2)
       {
         // Comparison of score B and score E+J
-        if ( (treeScores[0] + treeScores[1])/2.0 > scoreRef)
-        {
-          trees_kResult.addTree(trees_kToCompare.treeStorage[treeIDs[0]]);
-          trees_kResult.addTree(trees_kToCompare.treeStorage[treeIDs[1]]);
+        double scoreRef = tree_ref.scoreGlobal;
+        double scoreToCompare = (tree_in_tree_ref[0].scoreGlobal + tree_in_tree_ref[0].scoreGlobal) / 2;
 
-          trees_kToCompare.treeStorage[treeIDs[0]].editIdResult(idResult, index);
-          trees_kToCompare.treeStorage[treeIDs[1]].editIdResult(idResult, index);
+        if (scoreRef > scoreToCompare)
+        {
+          its_temp.addTree(tree_ref);
         }
         else
         {
-          trees_kResult.addTree(current_tree_ref);
-          current_tree_ref.editIdResult(idResult, index);
+          its_temp.addTree(tree_in_tree_ref[0]);
+          its_temp.addTree(tree_in_tree_ref[1]);
         }
       }
       // If more than two apices --> test of each combination
-      else if (treeIDs.size() > 2)
+      else if (ntrees > 2)
       {
+        double scoreRef = tree_ref.scoreGlobal;
+
         // Find the best combination
-        // -------------------------
+        // --------------------------
 
-        Rcpp::IntegerMatrix combination = createCombination(treeIDs.size());
+        // Set the different combinations
+        Rcpp::IntegerMatrix combination = TreeCollection::createCombination(ntrees);
 
-        // Moyenne des scores des arbres à comparer
-        double sumAllTrees = std::accumulate(treeScores.begin(), treeScores.end(), 0.0);
-        double maxScore = sumAllTrees / treeScores.size();
+        // The maximum score currently the average score of all the trees
+        double maxScoreToCompare = 0;
+        for (unsigned int ii = 0 ; ii < ntrees ; ii++)
+          maxScoreToCompare += tree_in_tree_ref[ii].scoreGlobal;
+        maxScoreToCompare /= ntrees;
 
-        // !!! A commenter !!!
-        std::vector<int> includedTreeForScore (2, INT16_MIN);
-        std::vector<int> remainingTreeIDs(treeIDs.size(), 0);
+        // Not a very elegant way
+        std::pair<int, int> best_combination(2, INT16_MIN);
 
-        // Recherche de toutes les combinaisons d'arbres possibles et calcul de leurs scores
-        // le meilleur score est conservé dans "maxScore" et sa combinaison associée est stockée dans "includedTreeForScore"
+        // Loop throught all the possible combination and record the best score
+        // The best score is sored in "maxScoreToCompare" and the best combination in "best_combination"
         for (int i = 0 ; i < combination.nrow() ; i++)
         {
-          if (combination(i,0) != 0)
+          // JR: Utile parce que createCombination est imparfait
+          if (combination(i, 0) == 0)
+            break;
+
+          // Score of the combinated trees i.e. score of the new combined convex hull
+          int id1 = combination(i,0)-1;
+          int id2 = combination(i,1)-1;
+          TreeSegment &tree1 = tree_in_tree_ref[id1];
+          TreeSegment &tree2 = tree_in_tree_ref[id2];
+          double scoreTreeCombination = tree1.merge(tree2, nb_k).scoreGlobal;
+
+          // Average score of non combined trees. (all the trees minus the combinated ones)
+          double otherTreeScore = 0;
+          for (unsigned int j = 0 ; j < ntrees ; j++)
           {
-            int nbTreeConsidered = 0;
-            double calculatedScoreForCombination = 0;
-            int tree1 = treeIDs[combination(i,0)-1];
-            int tree2 = treeIDs[combination(i,1)-1];
+            if (j != id1 && j != id2)
+              otherTreeScore += tree_in_tree_ref[j].scoreGlobal;
+          }
 
-            // Score of the combinated trees i.e. score of the new combined convex hull
-            double scoreTreeCombination = getScoreCombination( trees_kToCompare.treeStorage[tree1], trees_kToCompare.treeStorage[tree2], nb_k );
+          double finalCombinationScore = ((otherTreeScore / (ntrees-2)) + scoreTreeCombination) / 2.0;
 
-            // Average score of non combined trees. (all the trees minus the combinated ones)
-            remainingTreeIDs.clear();
-            remainingTreeIDs.assign(treeIDs.size(), 0);
-            std::generate(remainingTreeIDs.begin(), remainingTreeIDs.end(), Increment());
-            remainingTreeIDs.erase(std::remove(remainingTreeIDs.begin(), remainingTreeIDs.end(), combination(i,0)), remainingTreeIDs.end());
-            remainingTreeIDs.erase(std::remove(remainingTreeIDs.begin(), remainingTreeIDs.end(), combination(i,1)), remainingTreeIDs.end());
-
-            double otherTreeScore = 0;
-            for (int j = 0; j < remainingTreeIDs.size(); j++)
-              otherTreeScore += treeScores[remainingTreeIDs[j]-1];
-
-            double finalCombinationScore = ((otherTreeScore / remainingTreeIDs.size()) + scoreTreeCombination) / 2.0;
-
-            if (maxScore < finalCombinationScore )
-            {
-              maxScore = finalCombinationScore;
-              for (int k = 0; k < includedTreeForScore.size(); k++)
-                includedTreeForScore[k] = combination(i,k);
-            }
+          if (maxScoreToCompare < finalCombinationScore)
+          {
+            maxScoreToCompare = finalCombinationScore;
+            best_combination.first = combination(i,0);
+            best_combination.second = combination(i,1);
           }
         }
 
@@ -220,66 +165,50 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
         // ----------------------------------------------------------
 
         // Comparison between max score of possible combination (including mean score of all individual trees) and reference score
-        if (maxScore <= scoreRef) //storage of tree coming from reference tree collection (the one which creates polygon for apex search)
+        if (maxScoreToCompare <= scoreRef) //storage of tree coming from reference tree collection (the one which creates polygon for apex search)
         {
-          trees_kResult.addTree( current_tree_ref );
-          current_tree_ref.editIdResult (idResult, index);
+          its_temp.addTree(tree_ref);
         }
         else  // storage of best combination or all tree coming from tree collection to compare
         {
-          // Si le maxScore est le même que celui de la moyenne de tous les scores des arbres à comparer
+          // Si le maxScoreToCompare est le même que celui de la moyenne de tous les scores des arbres à comparer
           // et qu'aucune combinaison n'a été stockée --> on stocke tous les arbres isolés
-          if (maxScore == (sumAllTrees / treeScores.size()) && includedTreeForScore[0] == INT16_MIN )
+          if (best_combination.second == INT16_MIN)
           {
-            for (unsigned int i = 0; i < treeIDs.size(); i++)
-            {
-              trees_kResult.addTree( trees_kToCompare.treeStorage[treeIDs[i]] );
-              trees_kToCompare.treeStorage[treeIDs[i]].editIdResult(idResult, index);
-            }
+            for (unsigned int i = 0; i < ntrees; i++)
+              its_temp.addTree(tree_in_tree_ref[i]);
           }
           else  //sinon on stocke la combinaison (deux arbres fusionnés) et tous les autres arbres isolés
           {
-            //Ajout de l'arbre fusionné (une des combinaisons de deux arbres isolés)
-            int tree1 = treeIDs[includedTreeForScore[0]-1];
-            int tree2 = treeIDs[includedTreeForScore[1]-1];
-            Tree<PointXYZ> combinedTree;
-            combinedTree = mergeTree(trees_kToCompare.treeStorage[tree1], trees_kToCompare.treeStorage[tree2], nb_k);
+            // Ajout de l'arbre fusionné (une des combinaisons de deux arbres isolés)
+            int id1 = best_combination.first-1;
+            int id2 = best_combination.second-1;
 
-            trees_kResult.addTree( combinedTree );
-            combinedTree.editIdResult (idResult, index);
+            TreeSegment &tree1 = tree_in_tree_ref[id1];
+            TreeSegment &tree2 = tree_in_tree_ref[id2];
+
+            TreeSegment combinedTree = tree1.merge(tree2, nb_k);
+
+            its_temp.addTree(combinedTree);
 
             //ajout des arbres restants isolés
-            std::vector<int> remainingTreeIDs(treeIDs.size());
-            std::generate(remainingTreeIDs.begin(), remainingTreeIDs.end(), Increment());
-            remainingTreeIDs.erase(std::remove(remainingTreeIDs.begin(), remainingTreeIDs.end(), includedTreeForScore[0]), remainingTreeIDs.end());
-            remainingTreeIDs.erase(std::remove(remainingTreeIDs.begin(), remainingTreeIDs.end(), includedTreeForScore[1]), remainingTreeIDs.end());
-
-            for (unsigned int i = 0; i < remainingTreeIDs.size(); i++)
+             for (unsigned int i = 0 ; i < ntrees; i++)
             {
-              int ID = remainingTreeIDs[i] - 1;
-              trees_kResult.addTree( trees_kToCompare.treeStorage[treeIDs[ID]] );
-              trees_kToCompare.treeStorage[treeIDs[ID]].editIdResult (idResult, index);
+              if (i != id1 & i != id2)
+                its_temp.addTree( tree_in_tree_ref[i]);
             }
           }
         }
       }
-
-      for (unsigned int i = 0 ; i < trees_kResult.idTreeStorage.size() ; i++)
-      {
-        idResult.push_back(trees_kResult.idTreeStorage[i]);
-      }
     }
 
-    //std::swap(trees_kRef, trees_kResult);
+    std::swap(its_reference, its_temp);
   }
 
   delete treeOI;
-  return(idResult);*/
+  return(its_reference.to_R());
 }
 
-//========================================================================================
-//                               PTREES_SEGMENTATION
-//========================================================================================
 TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTree3D<PointXYZ> *treeOI)
 {
   // ======================
@@ -357,7 +286,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
       double resultID = trees.searchID(knnTreeID, pointToSort);
 
       // If point is to low it is a new tree (page 100 last paragraph)
-      double diffHeight = std::fabs(trees.treeStorage[resultID-1].findZMin() - pointToSort.z);
+      double diffHeight = std::fabs(trees.treeStorage[resultID-1].Zmin.z - pointToSort.z);
 
       if (diffHeight <= 5)
       {
@@ -378,65 +307,6 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
   trees.calculateTreeScores(k);
 
   return trees;
-}
-
-
-//========================================================================================
-//                              APPLY 2D FILTER FUNCTION
-//========================================================================================
-
-// Function that calculates 2D distance between one point (first one in subProfile) and its nearest neighbours
-// returns only thoose under a calculated threshold
-
-
-TreeSegment mergeTree(TreeSegment &t1, TreeSegment &t2, int k)
-{
-  TreeSegment newTree(t1);
-  for (int i = 0; i < t2.nbPoints; i++)
-    newTree.points.push_back(t2.points[i]);
-
-  newTree.updateArea();
-  newTree.getScore(k);
-  newTree.nbPoints += t2.nbPoints;
-  return(newTree);
-}
-
-//========================================================================================
-double getScoreCombination(TreeSegment &t1, TreeSegment &t2, int k)
-{
-  TreeSegment combinedTrees;
-  combinedTrees = mergeTree( t1, t2, k );
-  return (combinedTrees.scoreGlobal);
-}
-
-//========================================================================================
-//                              CREATE COMBINATION
-//========================================================================================
-
-// https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c
-// derived from Rosetta Code
-IntegerMatrix createCombination(int N)
-{
-  IntegerMatrix res(std::pow(N-1,2)-(N-2), 2);   //pas optimal
-  int ind = 0, ind2 = 0;
-  //for (int j = 1; j< N; j++)
-  //{
-  //ind = 0;
-  std::string bitmask(2, 1); // K leading 1's
-  bitmask.resize(N, 0); // N-K trailing 0's
-  // print integers and permute bitmask
-  do
-  {
-    for (int i = 0; i < N+1; i++) // [0..N-1] integers
-    {
-      if (bitmask[i]) res(ind,ind2++) = i+1;
-    }
-
-    ind++;
-    ind2 = 0;
-  } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
-  //}
-  return(res);
 }
 
 
