@@ -26,12 +26,10 @@ void TreeCollection::addTree(TreeSegment &t)
   nbTree++;
 }
 
-void TreeCollection::calculateTreeScores(int k)
+void TreeCollection::calculateTreeScores()
 {
   for (unsigned int i = 0 ; i < nbTree ; i++)
-  {
-    treeStorage[i].compute_all_score(k);
-  }
+    treeStorage[i].compute_all_score();
 }
 
 std::vector<TreeSegment> TreeCollection::search_trees_in_polygon(polygon poly)
@@ -129,25 +127,18 @@ void TreeCollection::remove_tree_with_less_than_3_points()
 
 // https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c
 // derived from Rosetta Code
-Rcpp::IntegerMatrix TreeCollection::createCombination(int N)
+std::vector< std::pair<int, int> > TreeCollection::createCombination(int n)
 {
-  Rcpp::IntegerMatrix res(std::pow(N-1,2)-(N-2), 2);   // pas optimal, taille matrice supérieure au besoin
-  int ind = 0, ind2 = 0;
+  std::vector< std::pair<int, int> > res;
 
-  std::string bitmask(2, 1); // K leading 1's
-  bitmask.resize(N, 0); // N-K trailing 0's
-
-  // print integers and permute bitmask
-  do
+  for (int i = 1 ; i <= n ; i++)
   {
-    for (int i = 0; i < N+1; i++) // [0..N-1] integers
+    for (int j = i+1 ; j <= n ; j++)
     {
-      if (bitmask[i]) res(ind,ind2++) = i+1;
+      std::pair<int,int> p(i,j);
+      res.push_back(p);
     }
-
-    ind++;
-    ind2 = 0;
-  } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+  }
 
   return(res);
 }

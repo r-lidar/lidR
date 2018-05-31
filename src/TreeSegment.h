@@ -19,13 +19,13 @@ using boost::assign::tuple_list_of;
 class TreeSegment
 {
   public:
-    TreeSegment();
-    TreeSegment(PointXYZ &pt);
+    TreeSegment(int);
+    TreeSegment(PointXYZ &pt, int);
     ~TreeSegment();
 
     void addPoint(PointXYZ &pt);
     void calculateArea();
-    void compute_all_score(int);
+    void compute_all_score();
 
     static void apply2DFilter(std::vector<PointXYZ> &, std::vector<PointXYZ> &);
 
@@ -34,16 +34,17 @@ class TreeSegment
 
     point_t get_apex();
 
-    TreeSegment merge(TreeSegment&, int);
+    TreeSegment merge(TreeSegment&);
 
   private:
-    void compute_size_score(int);
+    void compute_size_score();
     void compute_orientation_score();
     void compute_circularity_score();
     void compute_regularity_score();
 
   public:
     int nbPoints;
+    int k;
     double area;
     double scoreS;
     double scoreO;

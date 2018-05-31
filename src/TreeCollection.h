@@ -13,11 +13,11 @@ class TreeCollection
     ~TreeCollection();
 
     void addTree(TreeSegment &t);
-    void calculateTreeScores(int k);
+    void calculateTreeScores();
     void remove_tree_with_less_than_3_points();
     int searchID(std::vector<int> &knnTreeID, PointXYZ &pointToSort);
     std::vector<TreeSegment> search_trees_in_polygon(polygon);
-    static Rcpp::IntegerMatrix createCombination(int);
+    static std::vector< std::pair<int, int> > createCombination(int);
     Rcpp::List to_R();
 
   private:

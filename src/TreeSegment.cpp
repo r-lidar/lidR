@@ -2,10 +2,11 @@
 
 Rcpp::NumericVector findEllipseParameters(polygon &);
 
-TreeSegment::TreeSegment()
+TreeSegment::TreeSegment(int k_)
 {
   nbPoints = 0;
   area = 0;
+  k = k_;
   scoreS = 0;
   scoreO = 0;
   scoreC = 0;
@@ -13,10 +14,11 @@ TreeSegment::TreeSegment()
   scoreGlobal = 0;
 }
 
-TreeSegment::TreeSegment(PointXYZ &pt)
+TreeSegment::TreeSegment(PointXYZ &pt, int k_)
 {
   nbPoints = 1;
   area = 0;
+  k = k_;
 
   //points.push_back(pt);
 
@@ -120,7 +122,7 @@ point_t TreeSegment::get_apex()
   return p;
 }
 
-void TreeSegment::compute_size_score(int k)
+void TreeSegment::compute_size_score()
 {
   if (area == 0)
   {
@@ -221,9 +223,9 @@ void TreeSegment::compute_circularity_score()
   scoreC = (A/B);
 }
 
-void TreeSegment::compute_all_score(int k)
+void TreeSegment::compute_all_score()
 {
-  compute_size_score(k);
+  compute_size_score();
   compute_orientation_score();
   compute_circularity_score();
   compute_regularity_score();
@@ -231,9 +233,9 @@ void TreeSegment::compute_all_score(int k)
   scoreGlobal = (scoreS + scoreO + scoreR + scoreC) / 4.0;
 }
 
-TreeSegment TreeSegment::merge(TreeSegment &t, int k)
+TreeSegment TreeSegment::merge(TreeSegment &t)
 {
-  TreeSegment newTree;
+  TreeSegment newTree(this->k);
 
   polygon new_convex_hull;
   polygon union_of_convex_hulls(this->convex_hull);
@@ -248,7 +250,7 @@ TreeSegment TreeSegment::merge(TreeSegment &t, int k)
   newTree.nbPoints = this->nbPoints +  t.nbPoints;
 
   newTree.calculateArea();
-  newTree.compute_all_score(k);
+  newTree.compute_all_score();
   return(newTree);
 }
 

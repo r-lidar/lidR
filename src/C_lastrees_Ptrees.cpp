@@ -76,27 +76,27 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
 
       // Get the trees that belong into the reference tree
       polygon &poly = tree_ref.convex_hull;
-      std::vector<TreeSegment> tree_in_tree_ref = its_new.search_trees_in_polygon(poly);
-      int ntrees = tree_in_tree_ref.size();
+      std::vector<TreeSegment> trees_in_tree_ref = its_new.search_trees_in_polygon(poly);
+      int ntrees = trees_in_tree_ref.size();
 
       // If only one apex was found (page 103 Fig5 PartA-1)
       if(ntrees == 1)
       {
         // Comparison of score A and score D
         double scoreRef = tree_ref.scoreGlobal;
-        double scoreToCompare = tree_in_tree_ref[0].scoreGlobal;
+        double scoreToCompare = trees_in_tree_ref[0].scoreGlobal;
 
         if (scoreRef > scoreToCompare)
           its_temp.addTree(tree_ref);
         else
-          its_temp.addTree(tree_in_tree_ref[0]);
+          its_temp.addTree(trees_in_tree_ref[0]);
       }
       // If two apices were found (page 103 Fig5 PartA-2)
       else if (ntrees == 2)
       {
         // Comparison of score B and score E+J
         double scoreRef = tree_ref.scoreGlobal;
-        double scoreToCompare = (tree_in_tree_ref[0].scoreGlobal + tree_in_tree_ref[0].scoreGlobal) / 2;
+        double scoreToCompare = (trees_in_tree_ref[0].scoreGlobal + trees_in_tree_ref[0].scoreGlobal) / 2;
 
         if (scoreRef > scoreToCompare)
         {
@@ -104,51 +104,45 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
         }
         else
         {
-          its_temp.addTree(tree_in_tree_ref[0]);
-          its_temp.addTree(tree_in_tree_ref[1]);
+          its_temp.addTree(trees_in_tree_ref[0]);
+          its_temp.addTree(trees_in_tree_ref[1]);
         }
       }
       // If more than two apices --> test of each combination
       else if (ntrees > 2)
       {
-        double scoreRef = tree_ref.scoreGlobal;
-
         // Find the best combination
         // --------------------------
 
         // Set the different combinations
-        Rcpp::IntegerMatrix combination = TreeCollection::createCombination(ntrees);
+        std::vector< std::pair<int,int> > combination = TreeCollection::createCombination(ntrees);
 
         // The maximum score currently the average score of all the trees
         double maxScoreToCompare = 0;
         for (unsigned int ii = 0 ; ii < ntrees ; ii++)
-          maxScoreToCompare += tree_in_tree_ref[ii].scoreGlobal;
+          maxScoreToCompare += trees_in_tree_ref[ii].scoreGlobal;
         maxScoreToCompare /= ntrees;
 
         // Not a very elegant way
-        std::pair<int, int> best_combination(2, INT16_MIN);
+        std::pair<int, int> best_combination(INT16_MIN, INT16_MIN);
 
         // Loop throught all the possible combination and record the best score
-        // The best score is sored in "maxScoreToCompare" and the best combination in "best_combination"
-        for (int i = 0 ; i < combination.nrow() ; i++)
+        // The best score is stored in "maxScoreToCompare" and the best combination in "best_combination"
+        for (unsigned int i = 0 ; i < combination.size(); i++)
         {
-          // JR: Utile parce que createCombination est imparfait
-          if (combination(i, 0) == 0)
-            break;
-
           // Score of the combinated trees i.e. score of the new combined convex hull
-          int id1 = combination(i,0)-1;
-          int id2 = combination(i,1)-1;
-          TreeSegment &tree1 = tree_in_tree_ref[id1];
-          TreeSegment &tree2 = tree_in_tree_ref[id2];
-          double scoreTreeCombination = tree1.merge(tree2, nb_k).scoreGlobal;
+          int id1 = combination[i].first-1;
+          int id2 = combination[i].second-1;
+          TreeSegment &tree1 = trees_in_tree_ref[id1];
+          TreeSegment &tree2 = trees_in_tree_ref[id2];
+          double scoreTreeCombination = tree1.merge(tree2).scoreGlobal;
 
-          // Average score of non combined trees. (all the trees minus the combinated ones)
+          // Average score of non combined trees (all the trees minus the combinated ones)
           double otherTreeScore = 0;
           for (unsigned int j = 0 ; j < ntrees ; j++)
           {
             if (j != id1 && j != id2)
-              otherTreeScore += tree_in_tree_ref[j].scoreGlobal;
+              otherTreeScore += trees_in_tree_ref[j].scoreGlobal;
           }
 
           double finalCombinationScore = ((otherTreeScore / (ntrees-2)) + scoreTreeCombination) / 2.0;
@@ -156,46 +150,49 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
           if (maxScoreToCompare < finalCombinationScore)
           {
             maxScoreToCompare = finalCombinationScore;
-            best_combination.first = combination(i,0);
-            best_combination.second = combination(i,1);
+            best_combination.first = combination[i].first;
+            best_combination.second = combination[i].second;
           }
         }
 
         // Compare the best combination to the reference tree (score)
         // ----------------------------------------------------------
 
-        // Comparison between max score of possible combination (including mean score of all individual trees) and reference score
-        if (maxScoreToCompare <= scoreRef) //storage of tree coming from reference tree collection (the one which creates polygon for apex search)
+        double scoreRef = tree_ref.scoreGlobal;
+
+        // Keep the reference tree
+        if (maxScoreToCompare <= scoreRef)
         {
           its_temp.addTree(tree_ref);
         }
-        else  // storage of best combination or all tree coming from tree collection to compare
+        // Keep the combination or/and all tree coming from the new tree collection
+        else
         {
-          // Si le maxScoreToCompare est le même que celui de la moyenne de tous les scores des arbres à comparer
-          // et qu'aucune combinaison n'a été stockée --> on stocke tous les arbres isolés
-          if (best_combination.second == INT16_MIN)
+          // No good combination, keep all the new trees
+          if (best_combination.first == INT16_MIN)
           {
             for (unsigned int i = 0; i < ntrees; i++)
-              its_temp.addTree(tree_in_tree_ref[i]);
+              its_temp.addTree(trees_in_tree_ref[i]);
           }
-          else  //sinon on stocke la combinaison (deux arbres fusionnés) et tous les autres arbres isolés
+          // Keep the combinaison (two merged trees) and the other trees
+          else
           {
-            // Ajout de l'arbre fusionné (une des combinaisons de deux arbres isolés)
+            // Add the merged trees
             int id1 = best_combination.first-1;
             int id2 = best_combination.second-1;
 
-            TreeSegment &tree1 = tree_in_tree_ref[id1];
-            TreeSegment &tree2 = tree_in_tree_ref[id2];
+            TreeSegment &tree1 = trees_in_tree_ref[id1];
+            TreeSegment &tree2 = trees_in_tree_ref[id2];
 
-            TreeSegment combinedTree = tree1.merge(tree2, nb_k);
+            TreeSegment combinedTree = tree1.merge(tree2);
 
             its_temp.addTree(combinedTree);
 
-            //ajout des arbres restants isolés
-             for (unsigned int i = 0 ; i < ntrees; i++)
+            // Add the other trees
+            for (unsigned int i = 0 ; i < ntrees; i++)
             {
               if (i != id1 & i != id2)
-                its_temp.addTree( tree_in_tree_ref[i]);
+                its_temp.addTree( trees_in_tree_ref[i]);
             }
           }
         }
@@ -217,7 +214,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
   // First Zmax defines first tree in trees
   PointXYZ pointToSort = points[0];
-  TreeSegment treeInit(pointToSort);
+  TreeSegment treeInit(pointToSort, k);
   TreeCollection trees(treeInit);
 
   // Creation of vector that stores relation between tree number and TreeCollection
@@ -270,7 +267,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 1. If no classified points are found in the k neighbourhood this is a new tree (page 101 fig. 4B situation 1)
     if (knnTreeID.empty())
     {
-      TreeSegment newTree(pointToSort);
+      TreeSegment newTree(pointToSort, k);
       trees.addTree(newTree);
       idTree[pointToSort.id] = trees.nbTree;
     }
@@ -295,7 +292,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
       }
       else
       {
-        TreeSegment newTree(pointToSort);
+        TreeSegment newTree(pointToSort, k);
         trees.addTree(newTree);
         idTree[pointToSort.id] = trees.nbTree;
       }
@@ -304,11 +301,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
   trees.remove_tree_with_less_than_3_points();
   trees.idTreeStorage = idTree;
-  trees.calculateTreeScores(k);
+  trees.calculateTreeScores();
 
   return trees;
 }
-
-
-
-
