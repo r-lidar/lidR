@@ -216,8 +216,8 @@ void TreeSegment::compute_circularity_score()
 
   //calculate major and minor axes (A and B)
   Rcpp::NumericVector E = findEllipseParameters(convex_hull);
-  double A = E(0) > E(1)? E(0): E(1);
-  double B = E(0) < E(1)? E(0): E(1);
+  double B = E(0) > E(1)? E(0): E(1);
+  double A = E(0) < E(1)? E(0): E(1);
 
   // page 101 Eq.6
   scoreC = (A/B);
