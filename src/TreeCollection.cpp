@@ -202,7 +202,10 @@ Rcpp::List TreeCollection::to_R()
     boost::geometry::centroid(tr.convex_hull, bary);
 
     Rcpp::NumericVector Apex = Rcpp::NumericVector::create(x,y);
-    Rcpp::NumericVector Scores = Rcpp::NumericVector::create(tr.scoreC, tr.scoreO, tr.scoreR, tr.scoreS);
+    Rcpp::List Scores = Rcpp::List::create(Rcpp::Named("C") = tr.scoreC,
+                                           Rcpp::Named("O") = tr.scoreO,
+                                           Rcpp::Named("R") = tr.scoreR,
+                                           Rcpp::Named("S") = tr.scoreS);
     Rcpp::NumericVector Bary = Rcpp::NumericVector::create(bary.get<0>(),bary.get<1>());
 
     std::vector<point_t>& phull = treeStorage[i].convex_hull.outer();
@@ -220,9 +223,8 @@ Rcpp::List TreeCollection::to_R()
                                              Rcpp::Named("Hull") = rmat));
   }
 
-  Rcpp::List output;
-  output.push_back(TreeSegment);
-  output.push_back(idTreeStorage);
+  Rcpp::List output = Rcpp::List::create(Rcpp::Named("TreeSegment") = TreeSegment,
+                                         Rcpp::Named("treeID") = idTreeStorage);
 
   return(output);
 }
