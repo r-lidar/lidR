@@ -125,22 +125,65 @@ void TreeCollection::remove_tree_with_less_than_3_points()
   }
 }
 
-// https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c
-// derived from Rosetta Code
-std::vector< std::pair<int, int> > TreeCollection::createCombination(int n)
+TreeSegment TreeCollection::build_combination(std::vector<TreeSegment> &trees, std::vector<int> &combination)
 {
-  std::vector< std::pair<int, int> > res;
+  TreeSegment tree = trees[combination[0]];
 
-  for (int i = 1 ; i <= n ; i++)
+  for (int i = 1 ; i < combination.size() ; i++)
   {
-    for (int j = i+1 ; j <= n ; j++)
-    {
-      std::pair<int,int> p(i,j);
-      res.push_back(p);
-    }
+    int id = combination[i];
+    TreeSegment tree2 = trees[id];
+    tree = tree.merge(tree2);
   }
 
-  return(res);
+  return tree;
+}
+
+std::vector<TreeSegment> TreeCollection::get_non_combined_tree(std::vector<TreeSegment> &trees, std::vector<int> &combination)
+{
+  std::vector<TreeSegment> out_trees;
+
+  for (int i = 0 ; i < trees.size() ; i++)
+  {
+    if(std::find(combination.begin(), combination.end(), i) == combination.end())
+      out_trees.push_back(trees[i]);
+  }
+
+  return out_trees;
+}
+
+double TreeCollection::average_score(std::vector<TreeSegment>& trees)
+{
+  double score = 0;
+  for (unsigned int i = 0 ; i < trees.size() ; i++)  score += trees[i].scoreGlobal;
+  return score /= trees.size();
+}
+
+
+// https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c
+// derived from Rosetta Code
+std::vector< std::vector<int> > TreeCollection::createCombination(int N)
+{
+  std::vector< std::vector<int> > out;
+
+  for (int j = 2; j < N+1; j++)
+  {
+    std::string bitmask(j, 1); // K leading 1's
+    bitmask.resize(N, 0);      // N-K trailing 0's
+
+    do
+    {
+      std::vector<int> v;
+
+      for (int i = 0 ; i < N+1 ; i++)
+        if (bitmask[i]) v.push_back(i);
+
+        out.push_back(v);
+
+    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+  }
+
+  return(out);
 }
 
 Rcpp::List TreeCollection::to_R()
@@ -151,13 +194,15 @@ Rcpp::List TreeCollection::to_R()
 
   for (unsigned int i = 0 ; i < treeStorage.size() ; i++ )
   {
-    double x = treeStorage[i].Zmax.x;
-    double y = treeStorage[i].Zmax.y;
+    class TreeSegment tr = treeStorage[i];
+    double x = tr.Zmax.x;
+    double y = tr.Zmax.y;
 
     point_t bary;
-    boost::geometry::centroid(treeStorage[i].convex_hull, bary);
+    boost::geometry::centroid(tr.convex_hull, bary);
 
     Rcpp::NumericVector Apex = Rcpp::NumericVector::create(x,y);
+    Rcpp::NumericVector Scores = Rcpp::NumericVector::create(tr.scoreC, tr.scoreO, tr.scoreR, tr.scoreS);
     Rcpp::NumericVector Bary = Rcpp::NumericVector::create(bary.get<0>(),bary.get<1>());
 
     std::vector<point_t>& phull = treeStorage[i].convex_hull.outer();
@@ -169,7 +214,10 @@ Rcpp::List TreeCollection::to_R()
        rmat(j,1) = p.get<1>();
     }
 
-    TreeSegment.push_back(Rcpp::List::create(Apex, Bary, rmat));
+    TreeSegment.push_back(Rcpp::List::create(Rcpp::Named("Apex") = Apex,
+                                             Rcpp::Named("Score") = Scores,
+                                             Rcpp::Named("G") = Bary,
+                                             Rcpp::Named("Hull") = rmat));
   }
 
   Rcpp::List output;

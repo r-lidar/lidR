@@ -32,8 +32,6 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
   QuadTree3D<PointXYZ> *treeOI;
   treeOI = QuadTreeCreate(points);
 
-  Progress p(100, false);
-
   // Applying PTrees for the first k values
   // ============================================
 
@@ -54,12 +52,6 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
   for (unsigned int nb_k = 1 ; nb_k < k_values.size() ; nb_k++)
   {
     Rcpp::Rcout << "k = "<< k_values[nb_k] << std::endl;
-
-    if (p.check_abort())
-    {
-      delete treeOI;
-      p.exit();
-    }
 
     // New segmentation for the current k
     // ----------------------------------
@@ -114,44 +106,29 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
         // Find the best combination
         // --------------------------
 
-        // Set the different combinations
-        std::vector< std::pair<int,int> > combination = TreeCollection::createCombination(ntrees);
+        // The current best score is initialized to the average score of all the trees (no combination)
+        std::vector<TreeSegment> best_combination = trees_in_tree_ref;
+        double scoreToCompare = TreeCollection::average_score(best_combination);
 
-        // The maximum score currently the average score of all the trees
-        double maxScoreToCompare = 0;
-        for (unsigned int ii = 0 ; ii < ntrees ; ii++)
-          maxScoreToCompare += trees_in_tree_ref[ii].scoreGlobal;
-        maxScoreToCompare /= ntrees;
-
-        // Not a very elegant way
-        std::pair<int, int> best_combination(INT16_MIN, INT16_MIN);
+        // Create the different combinations
+        std::vector< std::vector<int> > combinations = TreeCollection::createCombination(ntrees);
 
         // Loop throught all the possible combination and record the best score
-        // The best score is stored in "maxScoreToCompare" and the best combination in "best_combination"
-        for (unsigned int i = 0 ; i < combination.size(); i++)
+        for (unsigned int i = 0 ; i < combinations.size(); i++)
         {
-          // Score of the combinated trees i.e. score of the new combined convex hull
-          int id1 = combination[i].first-1;
-          int id2 = combination[i].second-1;
-          TreeSegment &tree1 = trees_in_tree_ref[id1];
-          TreeSegment &tree2 = trees_in_tree_ref[id2];
-          double scoreTreeCombination = tree1.merge(tree2).scoreGlobal;
+          TreeSegment combined_tree = TreeCollection::build_combination(trees_in_tree_ref, combinations[i]);
+          std::vector<TreeSegment> other_trees = TreeCollection::get_non_combined_tree(trees_in_tree_ref, combinations[i]);
 
-          // Average score of non combined trees (all the trees minus the combinated ones)
-          double otherTreeScore = 0;
-          for (unsigned int j = 0 ; j < ntrees ; j++)
+          double combined_tree_score = combined_tree.scoreGlobal;
+          double other_tree_score = TreeCollection::average_score(other_trees);
+          double final_score = ((other_tree_score / other_trees.size()) + combined_tree_score) / 2.0;
+
+          if (scoreToCompare < final_score)
           {
-            if (j != id1 && j != id2)
-              otherTreeScore += trees_in_tree_ref[j].scoreGlobal;
-          }
-
-          double finalCombinationScore = ((otherTreeScore / (ntrees-2)) + scoreTreeCombination) / 2.0;
-
-          if (maxScoreToCompare < finalCombinationScore)
-          {
-            maxScoreToCompare = finalCombinationScore;
-            best_combination.first = combination[i].first;
-            best_combination.second = combination[i].second;
+            scoreToCompare = final_score;
+            best_combination.clear();
+            best_combination = other_trees;
+            best_combination.push_back(combined_tree);
           }
         }
 
@@ -161,40 +138,15 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
         double scoreRef = tree_ref.scoreGlobal;
 
         // Keep the reference tree
-        if (maxScoreToCompare <= scoreRef)
+        if (scoreToCompare <= scoreRef)
         {
           its_temp.addTree(tree_ref);
         }
         // Keep the combination or/and all tree coming from the new tree collection
         else
         {
-          // No good combination, keep all the new trees
-          if (best_combination.first == INT16_MIN)
-          {
-            for (unsigned int i = 0; i < ntrees; i++)
-              its_temp.addTree(trees_in_tree_ref[i]);
-          }
-          // Keep the combinaison (two merged trees) and the other trees
-          else
-          {
-            // Add the merged trees
-            int id1 = best_combination.first-1;
-            int id2 = best_combination.second-1;
-
-            TreeSegment &tree1 = trees_in_tree_ref[id1];
-            TreeSegment &tree2 = trees_in_tree_ref[id2];
-
-            TreeSegment combinedTree = tree1.merge(tree2);
-
-            its_temp.addTree(combinedTree);
-
-            // Add the other trees
-            for (unsigned int i = 0 ; i < ntrees; i++)
-            {
-              if (i != id1 & i != id2)
-                its_temp.addTree( trees_in_tree_ref[i]);
-            }
-          }
+          for (unsigned int i = 0 ; i < best_combination.size(); i++)
+            its_temp.addTree(best_combination[i]);
         }
       }
     }
@@ -226,12 +178,22 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
   std::vector<PointXYZ> knn_points;
   std::vector<PointXYZ> filtered_knn_points;
 
+  Progress p(points.size(), true);
+
   // ======================
   //   ALGORITHM
   // ======================
 
   for (unsigned int i = 1 ; i <  points.size() ; i++)
   {
+    if (p.check_abort())
+    {
+      delete treeOI;
+      p.exit();
+    }
+
+    p.update(i);
+
     // current point
     pointToSort = points[i];
 

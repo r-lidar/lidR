@@ -7,6 +7,7 @@ TreeSegment::TreeSegment(int k_)
   nbPoints = 0;
   area = 0;
   k = k_;
+
   scoreS = 0;
   scoreO = 0;
   scoreC = 0;
@@ -19,8 +20,6 @@ TreeSegment::TreeSegment(PointXYZ &pt, int k_)
   nbPoints = 1;
   area = 0;
   k = k_;
-
-  //points.push_back(pt);
 
   point_t apex(pt.x, pt.y);
   boost::geometry::append(convex_hull, apex);
