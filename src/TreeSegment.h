@@ -19,6 +19,8 @@ using boost::assign::tuple_list_of;
 class TreeSegment
 {
   public:
+public:
+    TreeSegment();
     TreeSegment(int);
     TreeSegment(PointXYZ &pt, int);
     ~TreeSegment();

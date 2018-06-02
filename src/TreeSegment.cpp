@@ -2,6 +2,18 @@
 
 Rcpp::NumericVector findEllipseParameters(polygon &);
 
+TreeSegment::TreeSegment()
+{
+  nbPoints = 0;
+  area = 0;
+  k = 0;
+  scoreS = 0;
+  scoreO = 0;
+  scoreC = 0;
+  scoreR = 0;
+  scoreGlobal = 0;
+}
+
 TreeSegment::TreeSegment(int k_)
 {
   nbPoints = 0;

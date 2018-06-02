@@ -164,6 +164,11 @@ double TreeCollection::average_score(std::vector<TreeSegment>& trees)
 // derived from Rosetta Code
 std::vector< std::vector<int> > TreeCollection::createCombination(int N)
 {
+  if (N > 6)
+  {
+    Rcpp::Rcerr << "Warning: " << N << " trees found lead to " << std::pow(2,N)-N-1 << " possible combinations." << std::endl;
+  }
+
   std::vector< std::vector<int> > out;
 
   for (int j = 2; j < N+1; j++)

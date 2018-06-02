@@ -1,4 +1,3 @@
-#include "BoundingBox3D.h"
 #include "Point.h"
 #include "QuadTree3D.h"
 #include "TreeCollection.h"
@@ -31,6 +30,8 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
   // Creation of a QuadTree
   QuadTree3D<PointXYZ> *treeOI;
   treeOI = QuadTreeCreate(points);
+
+  Progress p(0, false);
 
   // Applying PTrees for the first k values
   // ============================================
@@ -111,9 +112,22 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
         double scoreToCompare = TreeCollection::average_score(best_combination);
 
         // Create the different combinations
-        std::vector< std::vector<int> > combinations = TreeCollection::createCombination(ntrees);
 
-        // Loop throught all the possible combination and record the best score
+        std::vector< std::vector<int> > combinations;
+
+        // If the number of trees to test is not too big
+        if (ntrees < 7)
+        {
+          combinations = TreeCollection::createCombination(ntrees);
+        }
+        // Otherwise it is just not computable we force to retain the reference tree.
+        else
+        {
+          std::vector<TreeSegment> ts(1);
+          best_combination = ts;
+        }
+
+        // Loop throught all the possible combination (if any) and record the best score
         for (unsigned int i = 0 ; i < combinations.size(); i++)
         {
           TreeSegment combined_tree = TreeCollection::build_combination(trees_in_tree_ref, combinations[i]);
@@ -129,6 +143,12 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
             best_combination.clear();
             best_combination = other_trees;
             best_combination.push_back(combined_tree);
+          }
+
+          if (p.check_abort())
+          {
+            delete treeOI;
+            p.exit();
           }
         }
 
@@ -151,6 +171,12 @@ List C_lastrees_ptrees(S4 las, IntegerVector k_values)
       }
     }
 
+    if (p.check_abort())
+    {
+      delete treeOI;
+      p.exit();
+    }
+
     std::swap(its_reference, its_temp);
   }
 
@@ -165,20 +191,18 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
   // ======================
 
   // First Zmax defines first tree in trees
-  PointXYZ pointToSort = points[0];
-  TreeSegment treeInit(pointToSort, k);
+  PointXYZ u = points[0];
+  TreeSegment treeInit(u, k);
   TreeCollection trees(treeInit);
 
   // Creation of vector that stores relation between tree number and TreeCollection
   // Update for first point assignation
   std::vector<int> idTree(points.size(), 0);
-  idTree[pointToSort.id] = trees.nbTree;
+  idTree[u.id] = trees.nbTree;
 
   std::vector<int> knnTreeID;
   std::vector<PointXYZ> knn_points;
   std::vector<PointXYZ> filtered_knn_points;
-
-  Progress p(points.size(), true);
 
   // ======================
   //   ALGORITHM
@@ -186,16 +210,11 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
   for (unsigned int i = 1 ; i <  points.size() ; i++)
   {
-    if (p.check_abort())
-    {
-      delete treeOI;
-      p.exit();
-    }
-
-    p.update(i);
-
     // current point
-    pointToSort = points[i];
+    u = points[i];
+
+    if (u.z <= 2)
+      break;
 
     // Searching for k-nearest neighbours
     // ==================================
@@ -203,9 +222,9 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // storage  corresponding points into result
     knn_points.clear();
     filtered_knn_points.clear();
-    treeOI->knn_lookup3D(pointToSort, k, knn_points); // 'knn_points' contains the k neighbours + the current point
+    treeOI->knn_lookup3D(u, k, knn_points); // 'knn_points' contains the k neighbours + the current point
 
-    // Removal of points having a planimetric distance from pointToSort above threshold T (page 100 eq. 1/2)
+    // Removal of points having a planimetric distance from u above threshold T (page 100 eq. 1/2)
     TreeSegment::apply2DFilter(knn_points, filtered_knn_points);
 
     // Searching if some of these k points were already classified
@@ -229,34 +248,34 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 1. If no classified points are found in the k neighbourhood this is a new tree (page 101 fig. 4B situation 1)
     if (knnTreeID.empty())
     {
-      TreeSegment newTree(pointToSort, k);
+      TreeSegment newTree(u, k);
       trees.addTree(newTree);
-      idTree[pointToSort.id] = trees.nbTree;
+      idTree[u.id] = trees.nbTree;
     }
     // 2. If only one identified tree in the neighbourhood (page 101 fig. 4B situation 2)
     else if (knnTreeID.size() == 1)
     {
-      trees.treeStorage[knnTreeID[0]-1].addPoint(pointToSort);
-      idTree[pointToSort.id] = knnTreeID[0];
+      trees.treeStorage[knnTreeID[0]-1].addPoint(u);
+      idTree[u.id] = knnTreeID[0];
     }
     // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
     else
     {
-      double resultID = trees.searchID(knnTreeID, pointToSort);
+      double resultID = trees.searchID(knnTreeID, u);
 
       // If point is to low it is a new tree (page 100 last paragraph)
-      double diffHeight = std::fabs(trees.treeStorage[resultID-1].Zmin.z - pointToSort.z);
+      double diffHeight = std::fabs(trees.treeStorage[resultID-1].Zmin.z - u.z);
 
       if (diffHeight <= 5)
       {
-        trees.treeStorage[resultID-1].addPoint(pointToSort);
-        idTree[pointToSort.id] = resultID;
+        trees.treeStorage[resultID-1].addPoint(u);
+        idTree[u.id] = resultID;
       }
       else
       {
-        TreeSegment newTree(pointToSort, k);
+        TreeSegment newTree(u, k);
         trees.addTree(newTree);
-        idTree[pointToSort.id] = trees.nbTree;
+        idTree[u.id] = trees.nbTree;
       }
     }
   }
