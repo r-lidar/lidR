@@ -1,19 +1,16 @@
 #ifndef TREE
 #define TREE
 
-#include <boost/assign.hpp>
+// [[Rcpp::depends(BH)]]
+// [[Rcpp::depends(RcppArmadillo)]]
+
 #include <boost/geometry.hpp>
 #include <cmath>
 #include "Point.h"
-
-// [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> point_t;
-typedef boost::geometry::model::multi_point<point_t> mpoint_t;
 typedef boost::geometry::model::polygon<point_t> polygon;
-
-using boost::assign::tuple_list_of;
 
 class TreeSegment
 {
