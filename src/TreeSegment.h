@@ -13,7 +13,6 @@ typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>
 typedef boost::geometry::model::multi_point<point_t> mpoint_t;
 typedef boost::geometry::model::polygon<point_t> polygon;
 
-using namespace arma;
 using boost::assign::tuple_list_of;
 
 class TreeSegment
@@ -25,14 +24,14 @@ public:
     TreeSegment(PointXYZ &pt, int);
     ~TreeSegment();
 
-    void addPoint(PointXYZ &pt);
-    void calculateArea();
+    void add_point(PointXYZ &pt);
+    void compute_area();
     void compute_all_score();
 
     static void apply2DFilter(std::vector<PointXYZ> &, std::vector<PointXYZ> &);
 
-    double testArea(PointXYZ &pt);
-    double testDist(PointXYZ &pt);
+    double compute_area_increment(PointXYZ &pt);
+    double compute_distance_to(PointXYZ &pt);
 
     point_t get_apex();
 
@@ -43,6 +42,7 @@ public:
     void compute_orientation_score();
     void compute_circularity_score();
     void compute_regularity_score();
+    std::pair<double, double> findEllipseParameters(polygon &);
 
   public:
     int nbPoints;

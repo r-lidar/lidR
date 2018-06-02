@@ -1,7 +1,5 @@
 #include "TreeSegment.h"
 
-Rcpp::NumericVector findEllipseParameters(polygon &);
-
 TreeSegment::TreeSegment()
 {
   nbPoints = 0;
@@ -19,6 +17,11 @@ TreeSegment::TreeSegment(int k_)
   nbPoints = 0;
   area = 0;
   k = k_;
+
+  PointXYZ pmax(DOUBLE_XMIN,DOUBLE_XMIN,DOUBLE_XMIN, 0);
+  Zmax = pmax;
+  PointXYZ pmin(DOUBLE_XMAX,DOUBLE_XMAX,DOUBLE_XMAX, 0);
+  Zmin = pmin;
 
   scoreS = 0;
   scoreO = 0;
@@ -48,12 +51,7 @@ TreeSegment::TreeSegment(PointXYZ &pt, int k_)
 
 TreeSegment::~TreeSegment() {}
 
-/*
-* Given a new point pt, this function calculates:
-* - new distance between points if there was no point or only one point in the initial tree
-* - new area using boost::polygon function if the initial tree contains more than two points (update of associated convex hull)
-*/
-void TreeSegment::calculateArea()
+void TreeSegment::compute_area()
 {
   if (nbPoints <=  2)
     return;
@@ -61,13 +59,7 @@ void TreeSegment::calculateArea()
   area = boost::geometry::area(convex_hull);
 }
 
-
-/*
-* Given a new point pt, this function calculates:
-* - difference between old and new area (including pt) using boost::polygon function
-* - if the initial tree contains more than two points (update of associated convex hull)
-*/
-double TreeSegment::testArea(PointXYZ &pt)
+double TreeSegment::compute_area_increment(PointXYZ &pt)
 {
   point_t p(pt.x, pt.y);
 
@@ -83,31 +75,13 @@ double TreeSegment::testArea(PointXYZ &pt)
   return(std::fabs(area_Pt - area));
 }
 
-/*
-* Given a new point pt, this function calculates:
-* - distance if only one point in initial tree
-* - minimum distance between pt and all points of initial tree if there is more than one point
-*/
-double TreeSegment::testDist(PointXYZ &pt)
+double TreeSegment::compute_distance_to(PointXYZ &pt)
 {
   point_t p(pt.x, pt.y);
-
-  //If more than one point in points --> Before distance calculation, search for closest point to pt
-  double valRef = boost::geometry::distance(p, convex_hull.outer().at(0));
-  double val = 0;
-
-  for (int i = 1 ; i < convex_hull.outer().size() ; i++ )
-  {
-    val = boost::geometry::distance(p, convex_hull.outer().at(i));
-
-    if (valRef > val)
-      valRef = val;
-  }
-
-  return valRef;
+  return boost::geometry::distance(p, convex_hull);
 }
 
-void TreeSegment::addPoint(PointXYZ &pt)
+void TreeSegment::add_point(PointXYZ &pt)
 {
   nbPoints++;
 
@@ -124,7 +98,7 @@ void TreeSegment::addPoint(PointXYZ &pt)
   boost::geometry::convex_hull(old_hull, new_hull);
   convex_hull = new_hull;
 
-  calculateArea();
+  compute_area();
 }
 
 point_t TreeSegment::get_apex()
@@ -135,14 +109,12 @@ point_t TreeSegment::get_apex()
 
 void TreeSegment::compute_size_score()
 {
+  scoreS = 0;
+
   if (area == 0)
-  {
-    scoreS = 0;
     return;
-  }
 
-  // page 101 size creterion
-
+  // page 101 size criterion
   double H = Zmax.z;
   double D = nbPoints / area;
   double Th = k * D * std::log(H);
@@ -160,27 +132,27 @@ void TreeSegment::compute_orientation_score()
   if (area == 0)
     return;
 
-  if (convex_hull.outer().size() <= 2)
-    return;
+  size_t n = convex_hull.outer().size();
 
-  point_t M = get_apex();
-
+  point_t M;
   point_t G;
+  point_t p;
+
+  M = get_apex();
   boost::geometry::centroid(convex_hull, G);
+
   double D_MG = boost::geometry::distance(M, G);
+  double D = 0;
 
-  point_t pt(convex_hull.outer().at(0));
-  double D = boost::geometry::distance(M, pt);
-
-  for (unsigned int j = 1 ; j < convex_hull.outer().size() ; j++ )
+  for (size_t j = 0 ; j < n ; j++)
   {
-    pt = convex_hull.outer().at(j);
-    D += boost::geometry::distance(M, pt);
+    p = convex_hull.outer().at(j);
+    D += boost::geometry::distance(M, p);
   }
 
-  D /= convex_hull.outer().size();
+  D /= n;
 
-  // Comparison D_MG and D (page 101 Eq. 7)
+  // page 101 Eq. 7 orientation criterion
   if (D_MG <= D/2.0)
     scoreO = 1.0 - 2.0*(D_MG/D);
 }
@@ -192,26 +164,23 @@ void TreeSegment::compute_regularity_score()
   if (area == 0)
     return;
 
-  if (convex_hull.outer().size() <= 2)
-    return;
-
   std::vector<double> planimetricDist_MCH;
 
   point_t pt;
   point_t M = get_apex();
 
-  for (unsigned int j = 0 ; j < convex_hull.outer().size() ; j++ )
+  for (size_t j = 0 ; j < convex_hull.outer().size() ; j++ )
   {
     pt = convex_hull.outer().at(j);
     planimetricDist_MCH.push_back(boost::geometry::distance(M, pt));
   }
 
-  sort(planimetricDist_MCH.begin(), planimetricDist_MCH.end());
+  std::sort(planimetricDist_MCH.begin(), planimetricDist_MCH.end());
   int index_percentile95 = (int)(planimetricDist_MCH.size() * 0.95);
 
   double radius = planimetricDist_MCH[index_percentile95-1];
 
-  //page 101 Eq. 8
+  //page 101 Eq. 8 regularity criterion
   scoreR = (area/(PI*radius*radius));
 }
 
@@ -222,15 +191,12 @@ void TreeSegment::compute_circularity_score()
   if (area == 0)
     return;
 
-  if (convex_hull.outer().size() <= 2)
-    return;
+  // calculate major and minor axes (A and B)
+  std::pair<double, double> E = findEllipseParameters(convex_hull);
+  double B = E.first > E.second ? E.first : E.second;
+  double A = E.first < E.second ? E.first : E.second;
 
-  //calculate major and minor axes (A and B)
-  Rcpp::NumericVector E = findEllipseParameters(convex_hull);
-  double B = E(0) > E(1)? E(0): E(1);
-  double A = E(0) < E(1)? E(0): E(1);
-
-  // page 101 Eq.6
+  // page 101 Eq.6 circularity criterion
   scoreC = (A/B);
 }
 
@@ -240,7 +206,6 @@ void TreeSegment::compute_all_score()
   compute_orientation_score();
   compute_circularity_score();
   compute_regularity_score();
-
   scoreGlobal = (scoreS + scoreO + scoreR + scoreC) / 4.0;
 }
 
@@ -260,7 +225,7 @@ TreeSegment TreeSegment::merge(TreeSegment &t)
   newTree.Zmax = new_Zmax;
   newTree.nbPoints = this->nbPoints +  t.nbPoints;
 
-  newTree.calculateArea();
+  newTree.compute_area();
   newTree.compute_all_score();
   return(newTree);
 }
@@ -301,35 +266,34 @@ void TreeSegment::apply2DFilter(std::vector<PointXYZ> &subProfile, std::vector<P
   }
 }
 
-//http://nicky.vanforeest.com/misc/fitEllipse/fitEllipse.html
-Rcpp::NumericVector findEllipseParameters(polygon &poly)
+std::pair<double, double> TreeSegment::findEllipseParameters(polygon &poly)
 {
-  int nbPoint = poly.outer().size();
-  dmat data(2,nbPoint);
+  size_t n = poly.outer().size();
+  arma::dmat data(2, n);
 
-  dmat center = zeros(1,2);
-  for (int i = 0; i < nbPoint ; i++ )
+  arma::dmat center = arma::zeros(1,2);
+  for (size_t i = 0 ; i < n ; i++)
   {
-    data(0,i) = poly.outer().at(i).get<0>();
-    data(1,i) = poly.outer().at(i).get<1>();
+    data(0, i) = poly.outer().at(i).get<0>();
+    data(1, i) = poly.outer().at(i).get<1>();
   }
 
   unique(data);
 
-  //means of eachcoordinates --> ellipse center
-  for (int i = 0; i < data.n_rows ; i++ )
+  // means of each coordinates --> ellipse center
+  for (size_t i = 0 ; i < n ; i++)
   {
     center(0,0) += data(0,i);
     center(0,1) += data(1,i);
   }
-  center(0,0) /= data.n_rows;
-  center(0,1) /= data.n_rows;
+  center(0, 0) /= data.n_rows;
+  center(0, 1) /= data.n_rows;
 
-  //Covariance C of
-  dmat C = (data*data.t()) - center.t()*center;
+  // Covariance C of
+  arma::dmat C = (data*data.t()) - center.t()*center;
 
-  mat PC = princomp(C);
-  mat data_PCA_2d = data.t() * PC;
+  arma::mat PC = princomp(C);
+  arma::mat data_PCA_2d = data.t() * PC;
 
   double max_x = max(data_PCA_2d.col(0));
   double max_y = max(data_PCA_2d.col(1));
@@ -337,10 +301,10 @@ Rcpp::NumericVector findEllipseParameters(polygon &poly)
   double min_x = min(data_PCA_2d.col(0));
   double min_y = min(data_PCA_2d.col(1));
 
-  double half_axis_length1 = fabs(max_x - min_x);
-  double half_axis_length2 = fabs(max_y - min_y);
+  double half_axis_length1 = std::fabs(max_x - min_x);
+  double half_axis_length2 = std::fabs(max_y - min_y);
 
-  Rcpp::NumericVector L = Rcpp::NumericVector::create(half_axis_length1,half_axis_length2);
+  std::pair<double, double> L(half_axis_length1, half_axis_length2);
 
   return (L);
 }

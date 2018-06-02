@@ -74,11 +74,11 @@ int TreeCollection::searchID_usingArea(std::vector<int> &knnTreeID, PointXYZ &po
 {
   int resultID = knnTreeID[0];
 
-  double area_increment = treeStorage[knnTreeID[0]-1].testArea(pointToSort);   // page 100 eq. 3
+  double area_increment = treeStorage[knnTreeID[0]-1].compute_area_increment(pointToSort);   // page 100 eq. 3
 
   for (unsigned int i = 1; i < knnTreeID.size(); i++ )
   {
-    double area_increment2 = treeStorage[knnTreeID[i]-1].testArea(pointToSort);   // page 100 eq. 3
+    double area_increment2 = treeStorage[knnTreeID[i]-1].compute_area_increment(pointToSort);   // page 100 eq. 3
     if (area_increment > area_increment2)
     {
       area_increment = area_increment2;
@@ -93,13 +93,13 @@ int TreeCollection::searchID_usingDist(std::vector<int> &knnTreeID, PointXYZ &po
 {
   //Calcul de la premiere distance
   double distValueBis = 0;
-  double distValue = treeStorage[knnTreeID[0]-1].testDist(pointToSort);
+  double distValue = treeStorage[knnTreeID[0]-1].compute_distance_to(pointToSort);
   int resultID = knnTreeID[0];
 
   // Comparaison avec les suivantes --> on attribue le point à l'arbre avec la distance la plus petite
   for (unsigned int i = 1 ; i < knnTreeID.size() ; i++ )
   {
-    distValueBis = treeStorage[knnTreeID[i]-1].testDist( pointToSort );
+    distValueBis = treeStorage[knnTreeID[i]-1].compute_distance_to(pointToSort);
     if (distValue > distValueBis)
     {
       distValue = distValueBis;

@@ -255,7 +255,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
     // 2. If only one identified tree in the neighbourhood (page 101 fig. 4B situation 2)
     else if (knnTreeID.size() == 1)
     {
-      trees.treeStorage[knnTreeID[0]-1].addPoint(u);
+      trees.treeStorage[knnTreeID[0]-1].add_point(u);
       idTree[u.id] = knnTreeID[0];
     }
     // 3. If several identified trees in the neighbourhood (page 101 fig. 4B situation 3)
@@ -268,7 +268,7 @@ TreeCollection PTrees_segmentation(std::vector<PointXYZ> &points, int k, QuadTre
 
       if (diffHeight <= 5)
       {
-        trees.treeStorage[resultID-1].addPoint(u);
+        trees.treeStorage[resultID-1].add_point(u);
         idTree[u.id] = resultID;
       }
       else
