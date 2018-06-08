@@ -18,5 +18,6 @@ catalog_laxindex = function(ctg)
 
 create_lax_file = function(cluster)
 {
-  rlas::writelax(cluster@file)
+  rlas::writelax(cluster@files)
+  return(0)
 }
