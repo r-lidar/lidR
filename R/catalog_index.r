@@ -61,17 +61,14 @@ catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
     shape <- LIDRCIRCLE
   }
 
-  if (buffer > 0)
-  {
-    w <- w + buffer
-    h <- h + buffer
-  }
+  w <- w + 2*buffer
+  h <- h + 2*buffer
 
   coord.tiles <- catalog@data[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
   data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
 
   coord.plot <- data.table::data.table(roinames, x, y, w, h)
-  coord.plot[,`:=`(maxx = x + w, maxy = y + h, minx = x - w, miny = y - h)]
+  coord.plot[,`:=`(maxx = x + w/2, maxy = y + h/2, minx = x - w/2, miny = y - h/2)]
 
   tiles <- lapply(1:nplot, function(i)
   {
@@ -105,7 +102,7 @@ catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
   queries = apply(coord.plot, 1, function(cl)
   {
     center = list(x = cl$x, y = cl$y)
-    Cluster(center, cl$w-buffer, cl$h-buffer, buffer, shape, cl$tiles, cl$roinames)
+    Cluster(center, cl$w-2*buffer, cl$h-2*buffer, buffer, shape, cl$tiles, cl$roinames)
   })
 
   names(queries) = roinames
