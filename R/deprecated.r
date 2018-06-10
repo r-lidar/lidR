@@ -92,3 +92,71 @@ catalog_options <- function(...)
 #' @export
 #' @rdname catalog_options
 catalog_reset = function() { settings::reset(CATALOGOPTIONS) }
+
+# ================= OLD ===================== #
+
+#' Reshape (retile) a catalog
+#'
+#' This function is supersed by \link{catalog_retile} that can do the same and much more.
+#'
+#' @param ctg  A \link[lidR:catalog]{LAScatalog} object
+#' @param size scalar. The size of the new tiles.
+#' @param path string. The folder where the new files should be saved.
+#' @param prefix character. The initial part of the name of the written files.
+#' @param ext character. The format of the written files. Can be ".las" or ".laz".
+#'
+#' @return A new catalog object
+#' @seealso \link{catalog}
+#' @export
+#' @examples
+#' \dontrun{
+#' ctg = catalog("path/to/catalog")
+#'
+#' # Create a new set of .las files 500 by 500 wide in the folder
+#' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
+#' # Forest_3.las, and so on.
+#' newctg = catalog_reshape(ctg, 500, "path/to/new/catalog", "Forest_")
+#' }
+catalog_reshape = function(ctg, size, path, prefix, ext = c("las", "laz"))
+{
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_a_number(size)
+  assertive::assert_all_are_positive(size)
+  assertive::is_character(path)
+  assertive::is_character(prefix)
+
+  format           <- match.arg(ext)
+  interact         <- LIDROPTIONS("interactive")
+  buffer(ctg)      <- 0
+  by_file(ctg)     <- FALSE
+  tiling_size(ctg) <- size
+  ncores           <- cores(ctg)
+  progress         <- progress(ctg)
+  stopearly        <- stop_early(ctg)
+
+  clusters <- catalog_makecluster(ctg, 1)
+
+  if(interact)
+  {
+    text = "This is how the catalog will be reshaped. Do you want to continue?"
+    choices = c("yes","no")
+
+    cat(text)
+    choice = utils::menu(choices)
+
+    if (choice == 2)
+      return(invisible(NULL))
+  }
+
+  if(!dir.exists(path))
+    dir.create(path, recursive = TRUE)
+
+  files <- list.files(path, pattern = "(?i)\\.la(s|z)$")
+
+  if(length(files) > 0)
+    stop("The output folder already contains .las or .laz files. Operation aborted.", call. = FALSE)
+
+  cluster_apply(clusters, reshape_func, ncores, progress, stopearly, path = path, prefix = prefix, ext = format)
+
+  return(catalog(path))
+}

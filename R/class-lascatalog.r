@@ -30,11 +30,43 @@
 #' An S4 class to represent a set of .las or .laz files
 #'
 #' A \code{LAScatalog} object is a representation of a set of las/laz files, since a computer cannot load
-#' all the data at once. A \code{LAScatalog} is a simple way to manage the entire file by reading only
-#' the headers. A \code{LAScatalog} enables the user to process a large area or to selectively clip data
-#' from a large area without loading the large area itself. A \code{LAScatalog} can be built with the
-#' function \link{catalog}. Also a \code{LAScatalog} contains extra information that enables users to
-#' control how the catalog is processed.
+#' all the data at once. A \code{LAScatalog} is a simple way to manage the entire dataset by reading only
+#' the headers of the files. A \code{LAScatalog} enables the user to process a large area or to
+#' selectively clip data from a large area without loading the large area itself. A \code{LAScatalog}
+#' can be built with the function \link{catalog}. Also a \code{LAScatalog} contains extra information
+#' that enables users to control how the catalog is processed (see details).
+#'
+#' A \code{LAScatalog} contains a slot @data that contains the useful information about the point cloud
+#' that are used internally and several other slots that contain \bold{processing options}. Each \code{lidR} function that support
+#' a \code{LAScatalog} as input will respect this processing option when it is relevant. When it is not
+#' relevant these options are not considered. For example, some non relevant situations:
+#' \itemize{
+#' \item \code{@vrt} options is not relevant in functions that do not rasterize the point cloud.
+#' \item \code{@tiling_size} is always repected but can slighly be modified to align the clusters
+#' with the grid in \code{grid_*} functions.
+#' \item \code{@buffer} is not relevant in \link{grid_metrics} because \code{lidR} align the
+#' clusters with the resolution to get a continuous output. However it is relevant in \link{grid_terrain}
+#' to avoid egde artifact for example.
+#' \item \code{@cores} may not be respected if it is known internally that a single core is better
+#' than four (no current case at the time being)
+#' }
+#' Internally, processing a catalog is almost always the same and rely on few steps:
+#' \itemize{
+#' \item Create a set of clusters. A cluster is the representation of a region of interest that can
+#' be buffered or not.
+#' \item Loop over each cluster (in parallel or not)
+#' \item For each cluster, load the point inside the region of interest in R, run some R functions,
+#' return the expected output.
+#' \item Merge the outputs of the different clusters once they are all processed.
+#' }
+#' So basically a \code{LAScatalog} is a built in batch process with the specificity that \code{lidR}
+#' do not loops throught files but loops seamlessly through clusters that do not not necessarily match
+#' with the files. This is why point cloud indexation with lax files may significantly speed-up the
+#' processing.\cr\cr
+#' It is important no notice that buffered datasets (i.e. files that overlap each other) are not natively
+#' supported by \code{lidR}. When encoutering such dataset the user should always filter the
+#' overlap if possible. That is possible if the overlapping points are flagged for example in the
+#' 'withheld' field. Otherwise \code{lidR} will not be able to process the dataset correctly.
 #'
 #' @slot data data.table. A table representing the header of each file.
 #' @slot crs A \link[sp:CRS]{CRS} object.
@@ -42,19 +74,21 @@
 #' support a \code{LAScatalog} as input. Default is 1.
 #' @slot buffer numeric. When applying a function to an entire catalog by sequentially processing
 #' sub-areas (clusters) some algorithms (such as \link{grid_terrain}) require a buffer around the area
-#' to avoid edge effects. Default is 15 m.
+#' to avoid edge effects. Default is 15 units.
 #' @slot progress logical. Display an estimation of progress while processing. Default is TRUE.
 #' @slot by_file logical. This option overwrites the option \code{tiling_size}. Instead of processing
-#' the catalog by arbitrary split areas, it forces processing by file. Buffering is still available.
-#' Default is FALSE.
+#' the catalog by arbitrary split areas, it forces processing by file. Buffering around each file is
+#' still available. Default is FALSE.
 #' @slot tiling_size numeric. To process an entire catalog, the algorithm splits the dataset into
-#' several square sub-areas (clusters) to process them sequentially. This is the size of each square
-#' cluster. Default is 1000 (1 km^2).
-#' @slot vrt character. Path to a folder. In \code{grid_*} functions, for large outputs, the functions
-#' can return a lightweight virtual raster mosaic (VRT).
+#' several square sub-areas (called clusters) to process them sequentially. This is the size of each square
+#' cluster. Default is 1000 unit^2).
+#' @slot vrt character. Path to a folder. In \code{grid_*} functions such as \link{grid_metrics},
+#' \link{grid_terrain} and others, the functions can write \code{RasterLayers} in this folder and
+#' return a lightweight virtual raster mosaic (VRT). In other function where it is not relevant,
+#' it is not used.
 #' @slot stop_early logical. If \code{TRUE} the catalog processing stops if an error occurs during the
 #' computation. If \code{FALSE}, the catalog will be process unlil the end anyway and clusters with errors
-#' are skipped.
+#' will be skipped.
 #' @slot opt_changed Internal use only for compatibility with older deprecated code.
 #' @seealso
 #' \link[lidR:catalog]{catalog}
@@ -340,9 +374,9 @@ setMethod("show", "LAScatalog", function(object)
 
   cat("class       : LAScatalog\n")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("area        :", surface, "m\u00B2\n")
+  cat("area        :", surface, "u\u00B2\n")
   cat("points      :", npoints, "points\n")
-  cat("density     :", round(npoints/surface, 1), "points/m\u00B2\n")
+  cat("density     :", round(npoints/surface, 1), "points/u\u00B2\n")
   cat("num. files  :", dim(object@data)[1], "\n")
   cat("coord. ref. :", object@crs@projargs, "\n")
   cat("Processing options: \n")
