@@ -115,8 +115,7 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 #' @export
 catalog <- function(folder, ...)
 {
-  if (!is.character(folder))
-    stop("'folder' must be a character string")
+  assertive::assert_is_a_string(folder)
 
   finfo <- file.info(folder)
 
@@ -154,8 +153,8 @@ catalog <- function(folder, ...)
   spdf = as.spatial(ctg)
   contour = rgeos::gUnaryUnion(spdf)
 
-  actual_area = contour@polygons[[1]]@area
-  measured_area = area(ctg)
+  actual_area = round(contour@polygons[[1]]@area, 4)
+  measured_area = round(area(ctg), 4)
 
   if (actual_area < measured_area)
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
@@ -230,7 +229,10 @@ buffer = function(ctg)
 #' @export
 `buffer<-` = function(ctg, value)
 {
-  stopifnot(is.numeric(value), value >= 0)
+  assertive::assert_is_a_number(value)
+
+  if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
+
   ctg@buffer <- value
   ctg@opt_changed <- TRUE
   return(ctg)
@@ -250,7 +252,8 @@ progress = function(ctg)
 #' @export
 `progress<-` = function(ctg, value)
 {
-  stopifnot(is.logical(value), length(value) == 1)
+  assertive::assert_is_a_bool(value)
+
   ctg@progress <- value
   ctg@opt_changed <- TRUE
   return(ctg)
@@ -270,7 +273,9 @@ tiling_size = function(ctg)
 #' @export
 `tiling_size<-` = function(ctg, value)
 {
-  stopifnot(is.numeric(value), length(value) == 1)
+  assertive::assert_is_a_number(value)
+  assertive::assert_all_are_non_negative(value)
+
   ctg@tiling_size <- value
   ctg@opt_changed <- TRUE
   return(ctg)
@@ -295,7 +300,8 @@ vrt = function(ctg)
 #' @export
 `vrt<-` = function(ctg, value)
 {
-  stopifnot(is.character(value), length(value) == 1)
+  assertive::assert_is_a_string(value)
+
   ctg@vrt <- value
   ctg@opt_changed <- TRUE
   return(ctg)
@@ -312,7 +318,8 @@ stop_early = function(ctg)
 #' @export
 `stop_early<-` = function(ctg, value)
 {
-  stopifnot(is.logical(value), length(value) == 1)
+  assertive::assert_is_a_bool(value)
+
   ctg@stop_early <- value
   ctg@opt_changed <- TRUE
   return(ctg)
@@ -341,7 +348,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("Processing options: \n")
   if (by_file(object)) cat(" - split the dataset using the original files as tiles\n")
   else cat(" - split the dataset into", tiling_size(object), "x", tiling_size(object), "m tiles\n")
-  if (buffer(object) > 0) cat(" - each tile has a", buffer(object), "m buffer\n")
+  if (buffer(object) != 0) cat(" - each tile has a", buffer(object), "m buffer\n")
   cat(" - processing done using", cores(object), "core(s) if possible.")
 
 })
