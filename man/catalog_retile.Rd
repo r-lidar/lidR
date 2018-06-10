@@ -4,30 +4,38 @@
 \alias{catalog_retile}
 \title{Retile a catalog}
 \usage{
-catalog_retile(ctg, path, prefix, ext = c("las", "laz"))
+catalog_retile(ctg, path, prefix, ext = c("las", "laz"), ...)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
 
 \item{path}{string. The folder where the new files should be saved.}
 
-\item{prefix}{character. The initial part of the name of the written files. It can be missing and if
-the catalog is processed by files the original name of the file will be retained.}
+\item{prefix}{character. The initial part of the name of the written files. It can be missing and,
+in this case, if the catalog is processed by files, the original name of the file will be retained.}
 
-\item{ext}{character. The format of the written files. Can be ".las" or ".laz".}
+\item{ext}{character. The format of the written files. Can be "las" or "laz".}
+
+\item{...}{extra parameter 'filter' to pass to \link{readLAS} (readLAs is not actually called but
+the parameter can be passed anyway).}
 }
 \value{
 A new \code{LAScatalog} object
 }
 \description{
-This function splits or merges files to reshape the original catalog files (.las or .laz)
-into smaller or larger files. It also enables to add or remove buffer around the tiles.
-The new files are written in a dedicated folder. The function first displays the pattern of the new
-tiling pattern and then asks the user to validate the command.
+Splits or merges files to reshape the original catalog files (.las or .laz) into smaller or larger
+files. It also enables to add or remove a buffer around the tiles. The new files are written in a
+dedicated folder. The function first displays the pattern of the new tiling pattern and then asks
+the user to validate the command.
 }
 \details{
-The internal processing options of a \code{LAScatalog} drive the way the catalog is retiled. See
-\link{catalog}
+Internally the function read and write the clusters defined by the internal processing options of a
+\link{LAScatalog-class} (see also \link{catalog}). Thus the function is flexible and enables the
+user to retile, bufferize, un-bufferize (negative buffers are allowed), retile and bufferize in the
+same time or even compress.\cr\cr
+Notice that this function is not actually very useful since \code{lidR} manage everythink
+(clip, processing, buffer, ...) internally using the proper options. Thus, retiling may be useful
+to work in other software for exemple but not in \code{lidR}.
 }
 \examples{
 \dontrun{
@@ -40,15 +48,23 @@ ctg = catalog("path/to/catalog")
 buffer(ctg) = 0
 by_file(ctg) = FALSE
 tiling_size(ctg) = 500
-newctg = catalog_reshape(ctg, "path/to/new/catalog", "Forest_")
+newctg = catalog_retile(ctg, "path/to/new/catalog", "Forest_")
 
-# Create a new set of .las files equivalent to the original one but extended with
-# a 50 m buffer in the folder path/to/new/catalog/ and iteratively named Forest_001.las, Forest_002.las
-# Forest_003.las, and so on.
+# Create a new set of .las files equivalent to the original one
+# but extended with a 50 m buffer in the folder path/to/new/catalog/
+# and iteratively named named after the original files.
 
 buffer(ctg) = 50
 by_file(ctg) = TRUE
-newctg = catalog_reshape(ctg, "path/to/new/catalog", "Forest_")
+newctg = catalog_retile(ctg, "path/to/new/catalog")
+
+# Being flexible this function can also compress a catalog but this is
+# not really useful since laszip from LAStools is a free an open source
+# program.
+
+buffer(ctg) = 0
+by_file(ctg) = TRUE
+newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
 }
 }
 \seealso{
