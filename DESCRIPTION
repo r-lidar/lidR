@@ -62,7 +62,7 @@ Collate:
     'catalog_laxindex.r'
     'catalog_makecluster.r'
     'catalog_query.r'
-    'catalog_reshape.r'
+    'catalog_retile.r'
     'catalog_select.r'
     'class-lasheader.r'
     'class-las.r'

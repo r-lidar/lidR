@@ -91,7 +91,18 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   # Creation of a set of cluster from the rectangles
   # ================================================
 
-  clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+  if (by_file && buffer <= 0)
+  {
+    clusters = lapply(1:length(xcenter), function(i)
+    {
+      center = list(x = xcenter[i], y = ycenter[i])
+      Cluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], names[i])
+    })
+  }
+  else
+  {
+    clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+  }
 
   # Post process the clusters
   # =========================
@@ -134,7 +145,7 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
     {
       graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
 
-      if (x@buffer > 0)
+      if (x@buffer != 0)
         graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
     })
   }
