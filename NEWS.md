@@ -29,6 +29,7 @@
 
 * The area of a `LAScatalog` was wrongly computed for non square tiles because of a bad copy/paste in the code.
 * [[#135](https://github.com/Jean-Romain/lidR/issues/135)] Fix `NULL` class objects returned by `grid_*` functions when processing a `LAScatalog` if the first cluster is empty.
+* [[#143](https://github.com/Jean-Romain/lidR/issues/143)] `rumple_index` returns `NA` if not computable.
 
 ## lidR v1.5.0 (2018-05-13)
 
