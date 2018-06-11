@@ -12,10 +12,12 @@
 * When processing  a `LAScatalog`, the graphical progress now use 3 colors. green: ok, red: error, gray: null.
 * `as.spatial()` for `LAS` object preserves the CRS.
 * All the functions have now strong assertions to check user inputs.
+* `plot.LAScatalog` always displays the catalog with `mapview` by default even if the CRS is empty.
 
 #### OTHER CHANGE
 
 * `catalog()` displays a message when finding overlaps between files.
+* The LAScatalog class is much better documented.
 
 #### BUG FIXES
 

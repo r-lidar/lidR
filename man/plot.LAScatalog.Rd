@@ -9,23 +9,20 @@
 \arguments{
 \item{x}{A LAScatalog object}
 
-\item{y}{Unused. Inherited from R base}
+\item{y}{logical. If FALSE the catalog is displayed in a regular plot from R base.}
 
-\item{\dots}{inherited from base plot}
+\item{\dots}{Will be passed to base plotsed if \code{y = FALSE} or to \link[mapview:mapView]{mapview}
+if \code{y = TRUE}.}
 }
 \description{
-This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects
+This functions implements a \link[graphics:plot]{plot} method for LAScatalog objects. The catalog
+is displayed in an interactive map with pan, zoom capabilities. If the coordinate
+reference system (CRS) of the catalog is set, the plot can be display on top of base maps
+(satellite data, elevation, street, and so on).
 }
 \examples{
 \dontrun{
 ctg = catalog("<Path to a folder containing a set of .las files>")
 plot(catalog)
-
-# Exemple with a single file
-proj4   <- "+proj=utm +zone=17"
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-
-ctg = catalog(LASfile)
-plot(ctg, proj4)
 }
 }

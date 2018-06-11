@@ -4,10 +4,12 @@
 \alias{catalog_select}
 \title{Select LAS files interactively}
 \usage{
-catalog_select(x)
+catalog_select(x, Rbase = FALSE)
 }
 \arguments{
 \item{x}{A LAScatalog object}
+
+\item{Rbase}{logical. If TRUE, will use R base plot (no pan, no zoom and not convenient).}
 }
 \value{
 A LAScatalog object
