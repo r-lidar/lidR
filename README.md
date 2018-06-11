@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/lidr-ban.png)<br/>
+![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/lidr-ban.png)<br/>
 
 ![CRAN](https://img.shields.io/badge/CRAN-1.5.0-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.6.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
@@ -31,7 +31,7 @@ Development of the lidR package between 2015 and 2018 was made possible thanks t
     
 # Some examples
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/rotating-pointcloud.gif">
+<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/point-cloud-rotating.gif">
 
 ### Read and display a las file
 
@@ -44,7 +44,7 @@ plot(las)
 
 ### Compute a canopy height model
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/chm.png">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/chm-Khosravipour.png">
 
 `lidR` has several algorithms from the literature to compute canopy height models either point-to-raster based (`grid_canopy`) or triangulation based (`grid_tincanopy`). This allows testing and comparison of some methods that rely on a CHM, such as individual tree segmentation or the computation of a canopy roughness index.
 
@@ -61,7 +61,7 @@ plot(chm)
 
 ### Read and display a catalog of las files
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/catalog-demo.gif">
+<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/catalog-plot_interactive.gif">
 
 `lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` builds a `LAScatalog` object from a folder. The function `plot` displays this catalog on an interactive map using the `mapview` package.
 
@@ -77,7 +77,7 @@ From a `LAScatalog` object the user can (for example) extract some regions of in
 
 ### Individual tree segmentation
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/readme.img/rotating-treeseg.gif" margin-right="5px">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/its-rotating-tree-segmented" margin-right="5px">
 
 The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviwed papers. Our goal is to make published algorithms usable, testable and comparable.
 
