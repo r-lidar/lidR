@@ -108,22 +108,23 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   if (length(x) <= 3)
     return (NA_real_)
 
-  tryCatch(
+  rumple = tryCatch(
   {
     X = cbind(x,y,z)
     dn = suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
     N = C_tinfo(dn, X)
     area  = sum(N[,5])
     parea = sum(N[,6])
-    rumple = area/parea
-    return(rumple)
+    return(area/parea)
   },
   error = function(e)
   {
-    warning(paste0(e, "\n rumple_index returned NA."))
-    if (LIDROPTIONS("debug")) print(dput(X[,1:2]))
+    message(paste0(e, "\n'rumple_index' returned NA."))
+    if (LIDROPTIONS("debug")) dput(X[,1:2])
     return(NA_real_)
   })
+
+  return(rumple)
 }
 
 # fractal_dimension
