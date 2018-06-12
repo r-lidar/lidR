@@ -77,7 +77,7 @@ From a `LAScatalog` object the user can (for example) extract some regions of in
 
 ### Individual tree segmentation
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/its-rotating-tree-segmented" margin-right="5px">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/its-rotating-tree-segmented.gif" margin-right="5px">
 
 The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviwed papers. Our goal is to make published algorithms usable, testable and comparable.
 
@@ -102,11 +102,18 @@ plot(las, color = "treeID", colorPalette = col)
 install.packages("lidR")
 ```
 
-* The latest development version from github with
+* The latest stable development version from github with
 
 ```r
 devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
 devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
+```
+
+* The latest unstable development version from github with
+
+```r
+devtools::install_github("Jean-Romain/rlas", dependencies=TRUE, ref="devel")
+devtools::install_github("Jean-Romain/lidR", dependencies=TRUE, ref="devel")
 ```
 
 To install the package from github make sure you have a working development environment.
