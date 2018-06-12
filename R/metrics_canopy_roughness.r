@@ -99,30 +99,24 @@ rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 #' @export
 rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 {
-  xtxt   = lazyeval::expr_text(x)
-  ytxt   = lazyeval::expr_text(y)
-  ztxt   = lazyeval::expr_text(z)
-
-  if (!is.numeric(y) | !is.numeric(z))
-    stop("y or z is missing.")
-
-  if (length(x) != length(y))
-    stop("x is not same length as y")
-
-  if (length(x) != length(z))
-    stop("x is not same length as z")
-
-  if (length(x) != length(y) | length(x) != length(z))
-    stop("Different lengths for x,y,z")
+  assertive::assert_is_numeric(x)
+  assertive::assert_is_numeric(y)
+  assertive::assert_is_numeric(z)
+  assertive::assert_are_same_length(x,y)
+  assertive::assert_are_same_length(x,z)
 
   if (length(x) <= 3)
     return (NA_real_)
 
-  X = cbind(x,y,z)
-
   tryCatch(
   {
+    X = cbind(x,y,z)
     dn = suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
+    N = C_tinfo(dn, X)
+    area  = sum(N[,5])
+    parea = sum(N[,6])
+    rumple = area/parea
+    return(rumple)
   },
   error = function(e)
   {
@@ -130,13 +124,6 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
     if (LIDROPTIONS("debug")) print(dput(X[,1:2]))
     return(NA_real_)
   })
-
-  N = C_tinfo(dn, X)
-
-  area  = sum(N[,5])
-  parea = sum(N[,6])
-  rumple = area/parea
-  return(rumple)
 }
 
 # fractal_dimension
