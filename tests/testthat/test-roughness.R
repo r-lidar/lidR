@@ -33,3 +33,17 @@ test_that("Rought surfaces have the good rumple index. Delaunay", {
 
   expect_equal(rumple_index(x, y, z), sqrt(3))
 })
+
+test_that("Error handling. Delaunay", {
+  x = runif(3, 0, 100)
+  y = runif(3, 0, 100)
+  z = x
+
+  expect_equal(rumple_index(x, y, z), NA_real_)
+
+  x = runif(4, 0, 100)
+  y = x
+  z = x
+
+  expect_equal(rumple_index(x, y, z), NA_real_)
+})
