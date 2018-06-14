@@ -1,5 +1,8 @@
 #include "TreeSegment.h"
 
+namespace ptrees
+{
+
 TreeSegment::TreeSegment()
 {
   nbPoints = 0;
@@ -12,11 +15,11 @@ TreeSegment::TreeSegment()
   scoreGlobal = 0;
 }
 
-TreeSegment::TreeSegment(int k_)
+TreeSegment::TreeSegment(int k)
 {
   nbPoints = 0;
   area = 0;
-  k = k_;
+  this->k = k;
 
   PointXYZ pmax(DOUBLE_XMIN,DOUBLE_XMIN,DOUBLE_XMIN, 0);
   Zmax = pmax;
@@ -30,11 +33,11 @@ TreeSegment::TreeSegment(int k_)
   scoreGlobal = 0;
 }
 
-TreeSegment::TreeSegment(PointXYZ &pt, int k_)
+TreeSegment::TreeSegment(PointXYZ &pt, int k)
 {
   nbPoints = 1;
   area = 0;
-  k = k_;
+  this->k = k;
 
   point_t apex(pt.x, pt.y);
   boost::geometry::append(convex_hull, apex);
@@ -81,17 +84,22 @@ double TreeSegment::compute_distance_to(PointXYZ &pt)
   return boost::geometry::distance(p, convex_hull);
 }
 
-void TreeSegment::add_point(PointXYZ &pt)
+bool TreeSegment::add_point(PointXYZ &pt, double hmin)
 {
-  nbPoints++;
-
-  if (pt.z < Zmin.z) Zmin = pt;
-
   point_t p(pt.x, pt.y);
 
   if(boost::geometry::covered_by(p, convex_hull))
-    return;
+  {
+    nbPoints++;
+    if (pt.z < Zmin.z) Zmin = pt;
+    return true;
+  }
 
+  if (pt.z < hmin)
+    return false;
+
+  nbPoints++;
+  if (pt.z < Zmin.z) Zmin = pt;
   polygon old_hull(convex_hull);
   polygon new_hull;
   boost::geometry::append(old_hull, p);
@@ -99,6 +107,7 @@ void TreeSegment::add_point(PointXYZ &pt)
   convex_hull = new_hull;
 
   compute_area();
+  return true;
 }
 
 point_t TreeSegment::get_apex()
@@ -209,6 +218,10 @@ void TreeSegment::compute_all_score()
   scoreGlobal = (scoreS + scoreO + scoreR + scoreC) / 4.0;
 }
 
+double TreeSegment::get_zmin() { return Zmin.z; }
+double TreeSegment::get_zmax() { return Zmax.z; }
+double TreeSegment::get_score() { return scoreGlobal; }
+
 TreeSegment TreeSegment::merge(TreeSegment &t)
 {
   TreeSegment newTree(this->k);
@@ -228,42 +241,6 @@ TreeSegment TreeSegment::merge(TreeSegment &t)
   newTree.compute_area();
   newTree.compute_all_score();
   return(newTree);
-}
-
-void TreeSegment::apply2DFilter(std::vector<PointXYZ> &subProfile, std::vector<PointXYZ> &subProfileSubset )
-{
-  double meanValueForThreshold = 0;
-  std::vector<double> dist;
-  double stdValueForThreshold = 0;
-  double val = 0;
-  // Euclidian Distance calculation in 2D for all neighbours regarding the reference point (storage in Z value)
-  for (unsigned int i = 1; i < subProfile.size(); i++ )
-  {
-    val = euclidianDistance2D_inZ( subProfile[0], subProfile[i] );
-    meanValueForThreshold += val;
-    dist.push_back( val );
-  }
-
-  //--------------------------------------------------------------------------------------
-  // Threshold definition (page 100 'segmentation principles')
-  // defined as the mean plus twice the std of the planimetric distances of a subset of points
-  meanValueForThreshold /= (double)(subProfile.size() - 1);
-  double sum = 0;
-  for(unsigned int i = 0; i < dist.size(); i++)
-    sum += (dist[i]-meanValueForThreshold) * (dist[i]-meanValueForThreshold);
-
-  stdValueForThreshold = std::sqrt( sum / (double) dist.size() );
-
-  double threshold = meanValueForThreshold + 2*stdValueForThreshold;
-  //--------------------------------------------------------------------------------------
-  // Keeping all points below threshold and storage of their IDs
-  int i = 0, keep = 0;
-  subProfileSubset.push_back(subProfile[0]);
-  while ( (i < subProfile.size()-1) && (dist[i] <= threshold) )
-  {
-    subProfileSubset.push_back( subProfile[i+1] );
-    i++;
-  }
 }
 
 std::pair<double, double> TreeSegment::findEllipseParameters(polygon &poly)
@@ -308,3 +285,5 @@ std::pair<double, double> TreeSegment::findEllipseParameters(polygon &poly)
 
   return (L);
 }
+
+} //end Vega

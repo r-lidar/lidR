@@ -2,14 +2,15 @@
 
 bool Progress::exist = false;
 
-Progress::Progress(int _iter_max, bool _display)
+Progress::Progress(unsigned int _iter_max, bool _display)
 {
   if (exist) { Rf_error("Error: there is already an interruptable instance defined"); }
 
+  iter = 0;
   iter_max = _iter_max;
   display = _display;
   j = 0;
-  percentage = -1;
+  percentage = 0;
   exist = true;
 }
 
@@ -34,10 +35,12 @@ bool Progress::check_abort()
   return false;
 }
 
-void Progress::update(int iter)
+void Progress::update(unsigned int iter)
 {
   if (!display)
     return;
+
+  this->iter = iter;
 
   int p = (float)iter/(float)iter_max*100;
 
@@ -49,6 +52,30 @@ void Progress::update(int iter)
   Rcpp::Rcout.flush();
 
   return;
+}
+
+void Progress::increment()
+{
+  if (!display)
+    return;
+
+  iter++;
+
+  int p = (float)iter/(float)iter_max*100;
+
+  if (p == percentage)
+    return;
+
+  percentage = p;
+  Rcpp::Rcout << percentage << "%\r";
+  Rcpp::Rcout.flush();
+
+  return;
+}
+
+unsigned int Progress::get_iter()
+{
+  return iter;
 }
 
 void Progress::exit()

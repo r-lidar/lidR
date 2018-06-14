@@ -66,5 +66,6 @@ https://doi.org/10.1080/07038992.2016.1196582.
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
   \code{\link{lastrees_li2}},
+  \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }

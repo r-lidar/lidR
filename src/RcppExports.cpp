@@ -118,14 +118,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lastrees_ptrees
-List C_lastrees_ptrees(S4 las, IntegerVector k_values);
-RcppExport SEXP _lidR_C_lastrees_ptrees(SEXP lasSEXP, SEXP k_valuesSEXP) {
+Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmin, int nmax, bool segmentation);
+RcppExport SEXP _lidR_C_lastrees_ptrees(SEXP lasSEXP, SEXP k_valuesSEXP, SEXP hminSEXP, SEXP nmaxSEXP, SEXP segmentationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type k_values(k_valuesSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lastrees_ptrees(las, k_values));
+    Rcpp::traits::input_parameter< Rcpp::S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type k_values(k_valuesSEXP);
+    Rcpp::traits::input_parameter< double >::type hmin(hminSEXP);
+    Rcpp::traits::input_parameter< int >::type nmax(nmaxSEXP);
+    Rcpp::traits::input_parameter< bool >::type segmentation(segmentationSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lastrees_ptrees(las, k_values, hmin, nmax, segmentation));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -337,7 +340,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
-    {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 2},
+    {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 5},
     {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
     {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 3},

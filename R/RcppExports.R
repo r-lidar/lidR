@@ -29,8 +29,8 @@ C_lastrees_li <- function(las, dt1, dt2, Zu, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, Zu, th_tree, R, progressbar)
 }
 
-C_lastrees_ptrees <- function(las, k_values) {
-    .Call(`_lidR_C_lastrees_ptrees`, las, k_values)
+C_lastrees_ptrees <- function(las, k_values, hmin, nmax, segmentation = TRUE) {
+    .Call(`_lidR_C_lastrees_ptrees`, las, k_values, hmin, nmax, segmentation)
 }
 
 C_lasupdateheader <- function(las, new_header) {
