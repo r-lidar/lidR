@@ -6,16 +6,19 @@
 class Progress
 {
   public:
-    Progress(int, bool);
+    Progress(unsigned int, bool);
     ~Progress();
     bool check_abort();
-    void update(int);
+    void update(unsigned int);
+    void increment();
     void exit();
+    unsigned int get_iter();
 
   private:
-    int iter_max;
-    int percentage;
-    int j;
+    unsigned int iter;
+    unsigned int iter_max;
+    unsigned int percentage;
+    unsigned int j;
     bool display;
     static bool exist;
 };

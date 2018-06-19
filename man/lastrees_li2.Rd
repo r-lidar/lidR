@@ -58,6 +58,7 @@ trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
+  \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }

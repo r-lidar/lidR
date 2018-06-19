@@ -25,10 +25,44 @@
 #
 # ===============================================================================
 
-#' Tree top detection based on local maxima filters
+#' Tree top detection
 #'
-#' Tree top detection based on local maxima filters. There are two types of filter. The
-#' first, called for gridded objects, works on images with a matrix-based algorithm
+#' This function is a wrapper for all the implemented tree detection methods. Tree dectection function
+#' find the position of the trees before the segmentation process. Several methods may be used
+#' (see documentation of each method)
+#'
+#' @param x A object of class \code{LAS} or an object representing a canopy height model
+#' such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix} depending on the algorithm
+#' used (see respective documentation)
+#' @param algorithm character. Can be either \code{"lmf"} or \code{"ptree"}.
+#' @param ... Other parameters for each respective algorithm (see section "see also".
+#'
+#' @return The output of each algorithm as documented in each method.
+#' @export
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#'
+#' ttops = tree_detection(las, "lmf", ws = 5)
+#'
+#' plot(las)
+#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' @seealso \link{tree_detection_lmf} \link{tree_detection_ptree}
+tree_detection = function(x, algorithm, ...)
+{
+  if (algorithm == "lmf")
+    tree_detection_lm(x, ...)
+  else if (algorithm == "ptree")
+    tree_detection_ptree(x, ...)
+  else
+    stop("This algorithm does not exist.", call. = FALSE)
+}
+
+#' Tree top detection based local maxima filters
+#'
+#' Tree top detection based on fixed windows size local maxima filters. There are two types of filters.
+#' The first one, called for gridded objects, works on images with a matrix-based algorithm
 #' and the second one, called for point clouds, works at the point cloud level without any
 #' rasterization.
 #'
@@ -66,13 +100,13 @@
 #'
 #' raster::plot(chm, col = height.colors(30))
 #' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
-tree_detection = function(x, ws, hmin = 2)
+tree_detection_lmf = function(x, ws, hmin = 2)
 {
   UseMethod("tree_detection", x)
 }
 
 #'@export
-tree_detection.LAS = function(x, ws, hmin = 2)
+tree_detection_lmf.LAS = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
   assertive::assert_all_are_positive(ws)
@@ -85,7 +119,7 @@ tree_detection.LAS = function(x, ws, hmin = 2)
 }
 
 #'@export
-tree_detection.lasmetrics = function(x, ws, hmin = 2)
+tree_detection_lmf.lasmetrics = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
   assertive::assert_all_are_positive(ws)
@@ -97,7 +131,7 @@ tree_detection.lasmetrics = function(x, ws, hmin = 2)
 }
 
 #'@export
-tree_detection.RasterLayer = function(x, ws, hmin = 2)
+tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
   assertive::assert_all_are_positive(ws)
@@ -113,7 +147,7 @@ tree_detection.RasterLayer = function(x, ws, hmin = 2)
 }
 
 #'@export
-tree_detection.matrix = function(x, ws, hmin = 2)
+tree_detection_lmf.matrix = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
   assertive::assert_all_are_greater_than_or_equal_to(ws, 3)
@@ -124,3 +158,22 @@ tree_detection.matrix = function(x, ws, hmin = 2)
   LM[LM == 0] <- NA
   return(LM)
 }
+
+#' @rdname lastrees_ptrees
+#' @aliases tree_detection_ptree
+tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
+{
+  stopifnotlas(las)
+  assertive::assert_is_numeric(k)
+  assertive::assert_all_are_positive(k)
+  assertive::assert_all_are_whole_numbers(k)
+  assertive::assert_is_a_number(nmax)
+  assertive::assert_all_are_whole_numbers(nmax)
+
+  TreeSegments = C_lastrees_ptrees(las, k, hmin, nmax, FALSE)
+  apices = TreeSegments$Apices
+  apices = data.table::as.data.table(apices)
+  data.table::setnames(apices, names(apices), c("X", "Y", "Z"))
+  return(apices)
+}
+

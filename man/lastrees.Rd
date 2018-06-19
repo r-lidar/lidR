@@ -37,6 +37,8 @@ plot(las, color = "treeID", colorPalette = col)
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
-  \code{\link{lastrees_li2}}, \code{\link{lastrees_silva}},
+  \code{\link{lastrees_li2}},
+  \code{\link{lastrees_ptrees}},
+  \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}
 }
