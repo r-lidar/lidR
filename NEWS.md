@@ -23,7 +23,7 @@
 
 * `lasscanline()` did not computed the scanline because the conditionnal statement that checked if the field was properly populated was incorrect.
 
-## lidR v1.5.1 (In development)
+## lidR v1.5.1 (2018-06-14)
 
 #### BUG FIXES
 
