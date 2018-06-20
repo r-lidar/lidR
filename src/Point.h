@@ -5,8 +5,6 @@
 #include <math.h>
 #include <vector>
 
-//#include <Rcpp.h>
-
 
 struct Point
 {
@@ -113,14 +111,6 @@ private:
   T p;
 };
 
-template<class T>
-struct SlopeInCylindricalReferenceSystem {
-  double operator() (const T a, const T b) const
-  {
-    return (b.z - a.z) / (b.r - a.r);
-  }
-};
-
 struct ZSortPoint
 {
   bool operator()(const PointXYZ* lhs, const PointXYZ* rhs) const { return lhs->z > rhs->z; }
@@ -131,27 +121,12 @@ template<typename T> struct ZSortPointBis
   bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
 };
 
-template<typename T> struct ZSortPointBis_increasing
-{
-  bool operator()(const T lhs, const T rhs) const { return lhs.z < rhs.z; }
-};
-
-struct ZSortPoint_increasing
-{
-  bool operator()(const PointXYZ* lhs, const PointXYZ* rhs) const { return lhs->z < rhs->z; }
-};
-
-struct ZRSortPoint_increasing
-{
-  bool operator()(const PointXYZR* lhs, const PointXYZR* rhs) const { return lhs->z < rhs->z; }
-};
-
 struct RSortPoint
 {
   bool operator()(const PointXYZR* lhs, const PointXYZR* rhs) const { return lhs->r < rhs->r; }
 };
 
-struct RSortPoint_wp
+struct RSortPointBis
 {
   bool operator()(const PointXYZR lhs, const PointXYZR rhs) const { return lhs.r < rhs.r; }
 };
@@ -193,23 +168,6 @@ void cart2pol_vec( const std::vector<T1*> &points, const T2 &center, std::vector
     z = points[i]->z;
     ind = points[i]->id;
     result[i] = PointRTZ( r, t, z, ind );
-  }
-}
-
-//----------------------------------------------------------------------------------------//
-template<typename T1, typename T2>
-void pol2cart_vec( const std::vector<T1*> &points, const T2* &center, std::vector<PointXYZ*> &result )
-{
-  int Xsign[6] = {1, 1, -1, -1, 1, 1};
-  double x = 0, y = 0, z = 0;
-  int ind = 0;
-  for ( int i = 0; i < points.size(); i++ )
-  {
-    x = Xsign[i] * points[i]->r * cos( points[i]->t ) + center->x;
-    y = Xsign[i] * points[i]->r * sin( points[i]->t ) + center->y;
-    z = points[i]->z;
-    ind = points[i]->id;
-    result[i] = new PointXYZ( x, y, z, ind );
   }
 }
 

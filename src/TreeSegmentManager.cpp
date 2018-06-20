@@ -1,5 +1,3 @@
-
-
 #include "TreeSegmentManager.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>

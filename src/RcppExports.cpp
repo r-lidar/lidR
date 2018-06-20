@@ -66,6 +66,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_hamraz_segmentation
+List C_hamraz_segmentation(S4 disc, double nps, int sensitivity, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os, double radius);
+RcppExport SEXP _lidR_C_hamraz_segmentation(SEXP discSEXP, SEXP npsSEXP, SEXP sensitivitySEXP, SEXP MDCWSEXP, SEXP EpsilonSEXP, SEXP CLcSEXP, SEXP CLsSEXP, SEXP OcSEXP, SEXP OsSEXP, SEXP radiusSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type disc(discSEXP);
+    Rcpp::traits::input_parameter< double >::type nps(npsSEXP);
+    Rcpp::traits::input_parameter< int >::type sensitivity(sensitivitySEXP);
+    Rcpp::traits::input_parameter< double >::type MDCW(MDCWSEXP);
+    Rcpp::traits::input_parameter< double >::type Epsilon(EpsilonSEXP);
+    Rcpp::traits::input_parameter< double >::type CLc(CLcSEXP);
+    Rcpp::traits::input_parameter< double >::type CLs(CLsSEXP);
+    Rcpp::traits::input_parameter< double >::type Oc(OcSEXP);
+    Rcpp::traits::input_parameter< double >::type Os(OsSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_hamraz_segmentation(disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lastrees_li2
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar);
 RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP, SEXP progressbarSEXP) {
@@ -337,6 +357,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
+    {"_lidR_C_hamraz_segmentation", (DL_FUNC) &_lidR_C_hamraz_segmentation, 10},
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
