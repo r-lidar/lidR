@@ -33,7 +33,7 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
 # point-cloud-based method
 
-ttops = tree_detection(las, 5)
+ttops = tree_detection_lmf(las, 5)
 
 plot(las)
 with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
@@ -45,7 +45,7 @@ chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 
-ttops = tree_detection(chm, 5)
+ttops = tree_detection_lmf(chm, 5)
 
 raster::plot(chm, col = height.colors(30))
 raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)

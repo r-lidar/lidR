@@ -34,10 +34,10 @@
 #' @param x A object of class \code{LAS} or an object representing a canopy height model
 #' such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix} depending on the algorithm
 #' used (see respective documentation)
-#' @param algorithm character. Can be either \code{"lmf"} or \code{"ptree"}.
+#' @param algorithm character. Can be either \code{"lmf"} or \code{"ptrees"}.
 #' @param ... Other parameters for each respective algorithm (see section "see also".
 #'
-#' @return The output of each algorithm as documented in each method.
+#' @return The output of each algorithm as documedevtools::chented in each method.
 #' @export
 #'
 #' @examples
@@ -53,8 +53,8 @@ tree_detection = function(x, algorithm, ...)
 {
   if (algorithm == "lmf")
     tree_detection_lmf(x, ...)
-  else if (algorithm == "ptree")
-    tree_detection_ptree(x, ...)
+  else if (algorithm == "ptrees")
+    tree_detection_ptrees(x, ...)
   else
     stop("This algorithm does not exist.", call. = FALSE)
 }
@@ -84,7 +84,7 @@ tree_detection = function(x, algorithm, ...)
 #'
 #' # point-cloud-based method
 #'
-#' ttops = tree_detection(las, 5)
+#' ttops = tree_detection_lmf(las, 5)
 #'
 #' plot(las)
 #' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
@@ -96,7 +96,7 @@ tree_detection = function(x, algorithm, ...)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 #'
-#' ttops = tree_detection(chm, 5)
+#' ttops = tree_detection_lmf(chm, 5)
 #'
 #' raster::plot(chm, col = height.colors(30))
 #' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
@@ -160,7 +160,8 @@ tree_detection_lmf.matrix = function(x, ws, hmin = 2)
 }
 
 #' @rdname lastrees_ptrees
-#' @aliases tree_detection_ptree
+#' @aliases tree_detection_ptrees
+#' @export
 tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
 {
   stopifnotlas(las)

@@ -20,6 +20,8 @@
 #' @param gap_sensitivity integer. In the original article, page 535 section 2.2.1, gaps are detected
 #' using six times the interquartile range of square root distance between consecutive points. This
 #' paramter control this value. Default is 6.
+#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
+#' the new column.
 #'
 #' @return
 #' Nothing (NULL). The original point cloud is updated by reference.
@@ -59,6 +61,8 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
   assertive::assert_is_a_number(R)
   assertive::assert_all_are_positive(R)
 
+  . <- X <- Y <- Z <- NULL
+
   # Preprocess : LSP + remove low point + smooth
   LSP = LAS(las@data[, .(X,Y,Z)], las@header)
   LSP = lasfiltersurfacepoints(LSP, nps)    # page 533
@@ -97,7 +101,7 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
     if (TRUE)
     {
       p = p[p$R > 1.5]                       # Keep the profile over 1.5 m
-      q = quantile(p$R, probs = c(0.1, 0.9)) # Keep the profile within the 10 and 90th percentile of lenghts
+      q = stats::quantile(p$R, probs = c(0.1, 0.9)) # Keep the profile within the 10 and 90th percentile of lenghts
       p = p[R < q[2] & R > q[1]]
     }
 
@@ -173,7 +177,12 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
     #plot(las@data$X, las@data$Y, col = treeID, asp = 1)
   }
 
-  lasaddextrabytes(las, treeID, "treeID", "A unique ID for each tree")
+  field = "treeID"
+  p = list(...)
+  if(!is.null(p$field))
+    field = p$field
+
+  lasaddextrabytes(las, treeID, field, "A unique ID for each tree")
 
   return(invisible())
 }

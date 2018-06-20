@@ -11,12 +11,12 @@ tree_detection(x, algorithm, ...)
 such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix} depending on the algorithm
 used (see respective documentation)}
 
-\item{algorithm}{character. Can be either \code{"lmf"} or \code{"ptree"}.}
+\item{algorithm}{character. Can be either \code{"lmf"} or \code{"ptrees"}.}
 
 \item{...}{Other parameters for each respective algorithm (see section "see also".}
 }
 \value{
-The output of each algorithm as documented in each method.
+The output of each algorithm as documedevtools::chented in each method.
 }
 \description{
 This function is a wrapper for all the implemented tree detection methods. Tree dectection function

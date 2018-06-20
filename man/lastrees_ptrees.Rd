@@ -3,7 +3,6 @@
 \name{lastrees_ptrees}
 \alias{lastrees_ptrees}
 \alias{tree_detection_ptrees}
-\alias{tree_detection_ptree}
 \title{Individual tree segmentation}
 \usage{
 lastrees_ptrees(las, k, hmin = 3, nmax = 7L, ...)

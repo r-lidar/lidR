@@ -34,6 +34,9 @@ paramter control this value. Default is 6.}
 \item{R}{numeric Maximum horizontal distance of vertical profiles (page 535 sectioh 2.1). Any value greater
 than a crown is good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method.}
+
+\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
+the new column.}
 }
 \value{
 Nothing (NULL). The original point cloud is updated by reference.
