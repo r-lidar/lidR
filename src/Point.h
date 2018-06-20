@@ -5,60 +5,72 @@
 #include <math.h>
 #include <vector>
 
-
-struct Point
+template<typename T1, typename T2, typename T3> struct Point2D
 {
-	double x, y;
-  int id;
+  T1 x;
+  T2 y;
+  T3 id;
 
-  Point() {}
-  Point(const double _x, const double _y) : x(_x), y(_y), id(0) {}
-  Point(double _x, double _y, int _id) : x(_x), y(_y), id(_id) {}
+  Point2D() {}
+  Point2D(const T1 _x, const T2 _y) : x(_x), y(_y), id(0) {}
+  Point2D(const T1 _x, const T2 _y, const T3 _id) : x(_x), y(_y), id(_id) {}
 };
 
-struct PointXYZ
+template<typename T1, typename T2, typename T3, typename T4> struct Point3D
 {
-  double x, y, z;
-  int id;
+  T1 x;
+  T2 y;
+  T3 z;
+  T4 id;
 
-  PointXYZ() {}
-  PointXYZ(double _x, double _y) : x(_x), y(_y), z(0), id(0) {}
-  PointXYZ(double _x, double _y, double _z) : x(_x), y(_y), z(_z), id(0) {}
-  PointXYZ(double _x, double _y, double _z, int _id) : x(_x), y(_y), z(_z), id(_id) {}
+  Point3D() {}
+  Point3D(const T1 _x, const T2 _y) : x(_x), y(_y), z(0), id(0) {}
+  Point3D(const T1 _x, const T2 _y, const T3 _z) : x(_x), y(_y), z(_z), id(0) {}
+  Point3D(const T1 _x, const T2 _y, const T3 _z, const T4 _id) : x(_x), y(_y), z(_z), id(_id) {}
 };
 
-struct PointRTZ
-{
-  double r, t, z;
-  int id;
 
-  PointRTZ() {}
-  PointRTZ(double _r, double _t) : r(_r), t(_t), z(0), id(0) {}
-  PointRTZ(double _r, double _t, double _z) : r(_r), t(_t), z(_z), id(0) {}
-  PointRTZ(double _r, double _t, double _z, int _id) : r(_r), t(_t), z(_z), id(_id) {}
+template<typename T1, typename T2, typename T3, typename T4, typename T5>struct Point4D
+{
+  T1 x;
+  T2 y;
+  T3 z;
+  T4 r;
+  T5 id;
+
+  Point4D() {}
+  Point4D(const T1 _x, const T2 _y) : x(_x), y(_y), z(0), id(0), r(0) {}
+  Point4D(const T1 _x, const T2 _y, const T3 _z) : x(_x), y(_y), z(_z), id(0), r(0) {}
+  Point4D(const T1 _x, const T2 _y, const T3 _z, const T5 _id) : x(_x), y(_y), z(_z), id(_id), r(0) {}
+  Point4D(const T1 _x, const T2 _y, const T3 _z, const T5 _id, const T4 _r) : x(_x), y(_y), z(_z), id(_id), r(_r) {}
 };
 
-struct PointXYZR
-{
-  double x, y, z, r;
-  int id;
-
-  PointXYZR() {}
-  PointXYZR(double _x, double _y) : x(_x), y(_y), z(0), id(0), r(0) {}
-  PointXYZR(double _x, double _y, double _z) : x(_x), y(_y), z(_z), id(0), r(0) {}
-  PointXYZR(double _x, double _y, double _z, int _id) : x(_x), y(_y), z(_z), id(_id), r(0) {}
-  PointXYZR(double _x, double _y, double _z, int _id, double _r) : x(_x), y(_y), z(_z), id(_id), r(_r) {}
-};
-
-template<class T>
-struct Pixel
+template<class T> struct Pixel
 {
   int i, j;
   T val;
-
   Pixel() {}
   Pixel(const int _i, const int _j, const T _val) : i(_i), j(_j), val(_val) {}
 };
+
+typedef Point2D<double, double, int> Point;
+typedef Point3D<double, double, double, int> PointXYZ;
+typedef Point4D<double, double, double, double, int> PointXYZR;
+
+// Used to sort points std::sort
+
+template<typename T> struct ZSortPoint
+{
+  bool operator()(const T* lhs, const T* rhs) const { return lhs->z > rhs->z; }
+  bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
+};
+
+template<typename T> struct RSortPoint
+{
+  bool operator()(const T* lhs, const T* rhs) const { return lhs->r < rhs->r; }
+  bool operator()(const T lhs, const T rhs) const { return lhs.r < rhs.r ; }
+};
+
 
 template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u);
 template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
@@ -88,6 +100,7 @@ struct EuclidianDistance {
   }
 };
 
+// Used in QuadTree3D
 template<class T> struct EuclidianDistance3DSort
 {
   EuclidianDistance3DSort(const T& _p) : p(_p) {}
@@ -111,26 +124,7 @@ private:
   T p;
 };
 
-struct ZSortPoint
-{
-  bool operator()(const PointXYZ* lhs, const PointXYZ* rhs) const { return lhs->z > rhs->z; }
-};
-
-template<typename T> struct ZSortPointBis
-{
-  bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
-};
-
-struct RSortPoint
-{
-  bool operator()(const PointXYZR* lhs, const PointXYZR* rhs) const { return lhs->r < rhs->r; }
-};
-
-struct RSortPointBis
-{
-  bool operator()(const PointXYZR lhs, const PointXYZR rhs) const { return lhs.r < rhs.r; }
-};
-
+// Used in QuadTree
 template<class T>
 struct distance_to
 {
@@ -154,26 +148,7 @@ private:
 };
 
 
-template<typename T1, typename T2>
-void cart2pol_vec( const std::vector<T1*> &points, const T2 &center, std::vector<PointRTZ> &result )
-{
-  double x = 0, y = 0, z = 0, r = 0, t = 0;
-  int ind = 0;
-  for ( int i = 0; i < points.size(); i++ )
-  {
-    x = points[i]->x - center.x;
-    y = points[i]->y - center.y;
-    r = sqrt(x*x + y*y);
-    t = atan(y/x);
-    z = points[i]->z;
-    ind = points[i]->id;
-    result[i] = PointRTZ( r, t, z, ind );
-  }
-}
-
-//========================================================================================
-//                              2D EUCLIDIAN DISTANCE CALCULATION
-//========================================================================================
+// used in TreeSegmentManager
 template <class T> double euclidianDistance2D_inZ( T &refPoint, T &point )
 {
   double dx = refPoint.x - point.x;
@@ -181,16 +156,5 @@ template <class T> double euclidianDistance2D_inZ( T &refPoint, T &point )
   return sqrt(dx*dx + dy*dy);
 }
 
-//========================================================================================
-//                              2D TRIANGLE AREA CALCULATION
-//========================================================================================
-template<typename T> double calculateTriangleArea ( T &A, T &B, T &C )
-{
-  double dAB = A.x * B.y - B.x * A.y;
-  double dPB = B.x * C.y - C.x * B.y;
-  double dPA = C.x * A.y - A.x * C.y;
-  double area = 0.5 * sqrt( dAB*dAB + dPB*dPB + dPA*dPA );
-  return (area);
-}
 #endif //POINT_H
 

@@ -29,7 +29,7 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
   for (size_t i = 0 ; i < n ; i++)
     points[i] = PointXYZ(X[i], Y[i], Z[i], i);
 
-  std::sort(points.begin(), points.end(), ZSortPointBis<PointXYZ>());
+  std::sort(points.begin(), points.end(), ZSortPoint<PointXYZ>());
   std::sort(k_values.begin(), k_values.end(), std::greater<int>());
 
   // Creation of a QuadTree

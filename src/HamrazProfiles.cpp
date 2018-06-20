@@ -44,7 +44,7 @@ namespace Hamraz
         points.push_back(p);
     }
 
-    std::sort(points.begin(), points.end(), RSortPoint());
+    std::sort(points.begin(), points.end(), RSortPoint<PointXYZR>());
   }
 
   // Section 2.2.1 page 535

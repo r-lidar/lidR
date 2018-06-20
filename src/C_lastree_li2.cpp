@@ -89,7 +89,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   PointXYZ* dummy = new PointXYZ(xmin-100,ymin-100,0,-1);
 
   // Z-sort the point cloud U
-  std::sort(U.begin(), U.end(), ZSortPoint());
+  std::sort(U.begin(), U.end(), ZSortPoint<PointXYZ>());
 
   while(n > 0)
   {
@@ -124,7 +124,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
       // Add the dummy point in N
       N.push_back(dummy);
 
-      // Compute the distance between the current point u and all the other points of U
+      // Compute the distance between the current point u and all the &other points of U
       // This is not in the original algo. This is an optimisation to reduce the computation
       // time (see line 136).
       std::vector<double> d = sqdistance(U, *u);
