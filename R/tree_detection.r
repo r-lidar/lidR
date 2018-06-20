@@ -52,7 +52,7 @@
 tree_detection = function(x, algorithm, ...)
 {
   if (algorithm == "lmf")
-    tree_detection_lm(x, ...)
+    tree_detection_lmf(x, ...)
   else if (algorithm == "ptree")
     tree_detection_ptree(x, ...)
   else
@@ -102,10 +102,10 @@ tree_detection = function(x, algorithm, ...)
 #' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
 tree_detection_lmf = function(x, ws, hmin = 2)
 {
-  UseMethod("tree_detection", x)
+  UseMethod("tree_detection_lmf", x)
 }
 
-#'@export
+#' @export
 tree_detection_lmf.LAS = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
@@ -118,7 +118,7 @@ tree_detection_lmf.LAS = function(x, ws, hmin = 2)
   return(x@data[maxima, .(X,Y,Z)])
 }
 
-#'@export
+#' @export
 tree_detection_lmf.lasmetrics = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
@@ -127,10 +127,10 @@ tree_detection_lmf.lasmetrics = function(x, ws, hmin = 2)
   assertive::assert_all_are_positive(hmin)
 
   x = as.raster(x)
-  return(tree_detection(x, ws, hmin))
+  return(tree_detection_lmf.RasterLayer(x, ws, hmin))
 }
 
-#'@export
+#' @export
 tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2)
 {
   assertive::assert_is_a_number(ws)
@@ -140,7 +140,7 @@ tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2)
 
   xx <- raster::as.matrix(x)
   xx <- t(apply(xx, 2, rev))
-  LM = tree_detection(xx, ws, hmin)
+  LM = tree_detection_lmf.matrix(xx, ws, hmin)
   LM = raster::raster(apply(LM,1,rev))
   raster::extent(LM) = raster::extent(x)
   return(LM)

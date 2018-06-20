@@ -10,7 +10,7 @@ chm = raster::focal(chm, w = kernel, fun = mean)
 
 
 test_that("Dalponte's methods works", {
-  ttops = tree_detection(chm, 3, 2)
+  ttops = tree_detection_lmf(chm, 3, 2)
   seg1 = lastrees_dalponte(las, chm, ttops, extra = T)
 
   expect_true(is(seg1, "RasterLayer"))
@@ -20,7 +20,7 @@ test_that("Dalponte's methods works", {
   ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
   seg2 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
 
-  # Tree are nor ordered the same. Just ckeck if pixels are filled the same.
+  # Tree are not ordered the same. Just ckeck if pixels are filled the same.
   seg1[!is.na(seg1)] <- 1
   seg2[!is.na(seg2)] <- 1
 
@@ -37,7 +37,7 @@ test_that("Li's method works", {
 test_that("Silvas's methods works", {
   las@data[, treeID := NULL]
 
-  ttops = tree_detection(chm, 3, 2)
+  ttops = tree_detection_lmf(chm, 3, 2)
   seg1 = lastrees_silva(las, chm, ttops, extra = TRUE)
 
   expect_true(is(seg1, "RasterLayer"))
