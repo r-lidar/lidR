@@ -63,7 +63,7 @@ be set to \code{-Inf} for example.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 5")
+las = readLAS(LASfile, select = "xyz")
 
 k = c(30,20,15,10)
 lastrees_ptrees(las, k)
