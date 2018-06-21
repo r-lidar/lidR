@@ -72,7 +72,8 @@ Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon den
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other tree_segmentation: \code{\link{lastrees_li2}},
+Other tree_segmentation: \code{\link{lastrees_hamraz}},
+  \code{\link{lastrees_li2}},
   \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}

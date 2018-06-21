@@ -6,6 +6,7 @@
 * New option `stop_early` to process a catalog until the end anyway or stop before the end if an error is raised.
 * New function `catalog_retile` supersede the function `catalog_reshape` being able to do the same and much more.
 * New function `lastrees_ptree` with Vega et al. (2014) algorithm.
+* New function `lastrees_hamraz` with Hamraz et al. (2016) algorithm.
 
 #### ENHANCEMENTS
 

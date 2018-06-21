@@ -41,6 +41,7 @@ to run this method (see its \href{https://github.com/aoles/EBImage}{github page}
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
+  \code{\link{lastrees_hamraz}},
   \code{\link{lastrees_li2}},
   \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_silva}}, \code{\link{lastrees}}

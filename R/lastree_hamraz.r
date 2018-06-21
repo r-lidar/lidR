@@ -1,9 +1,28 @@
 #' Individual tree segmentation
 #'
-#' It is an strict implementation of the Hamraz et al. 2012 (see references) algorithm made by the \code{lidR}
-#' author from the original paper. The classification is done at the point cloud level and the function
-#' returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
-#' a new column \code{treeID}. The user is free to post-process this output the way he want.
+#' The segmentation algorithm proposed by Hamraz et al. 2012 (see reference). The classification is
+#' done at the point cloud level and the function returns nothing (NULL). The original point cloud
+#' is updated in place with an ID for each point in a new column \code{treeID}. The user is free to
+#' post-process this output the way he want.
+#'
+#' This function has been written by the \code{lidR} authors from the original article. We made our
+#' best to implement as far as possible exactly what is written in the original paper but we
+#' cannot affirm that it is this exact original algorithm.\cr\cr
+#' Also it is important to notice that we have never been able to segment a single tree properly with
+#' this method. The important sensitivity to minor deviation as well as the great number of difficultly
+#' parametrizable imputs lead us to a method that we are not able to use ourselves.\cr\cr
+#' Also, minor variations were introduced to fix some issues that were not adressed in the original paper.
+#' Because the methods described in section 2.2 of the original article appear extremely sensitive to
+#' many minor deviations, we introduced an optionnal additionnal step to clean the profiles used to build
+#' the convex hull. When \code{filter_profiles = TRUE}, profiles that discribe a crown radius smaller than
+#' \code{2*nps} (basically radius that are close to 0) are removed and the convex hull is build considering
+#' the profiles that describe a crown radius comprise between the 10th and the 90th of the radiuses found.
+#' This enable to remove outliers and reduce dummy segmentation but anyway we were not able to segment
+#' the tree with this method.\cr\cr
+#' As a conclusion this algorithm might be considered as a free and open source code provided to be
+#' improved by the community. One can check and study the sources to ensure that it correspond to the
+#' original paper and find potential improvement.\cr\cr
+#' Also the current implementation is known to be slow.
 #'
 #' @param las A LAS object
 #' @param nps numeric. Nominal point spacing (see reference page 533  section 2)
@@ -20,25 +39,32 @@
 #' @param gap_sensitivity integer. In the original article, page 535 section 2.2.1, gaps are detected
 #' using six times the interquartile range of square root distance between consecutive points. This
 #' paramter control this value. Default is 6.
+#' @param filter_profiles logical. This is an addition to the original method to filter dummy profiles
+#' (see details)
 #' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
 #' the new column.
 #'
 #' @return
-#' Nothing (NULL). The original point cloud is updated by reference.
+#' Nothing (NULL). The original point cloud is updated by reference. The original point cloud has a
+#' new column named 'treeID' containing an ID for each point that refer to a segmented tree.
+#'
 #' @export
 #' @references
 #' Hamraz, H., Contreras, M. A., & Zhang, J. (2016). A robust approach for tree segmentation in deciduous
 #' forests using small-footprint airborne LiDAR data. International Journal of Applied Earth Observation
 #' and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
 #' @examples
-#'LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#'las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#'col = pastel.colors(200)
+#' \dontrun{
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col =  pastel.colors(200)
 #'
-#'lastrees_hamraz(las, 0.25)
+#' lastrees_hamraz(las)
 #'
-#'plot(las, color = "treeID", colorPalette = pastel.colors(200))
-lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24, ...)
+#' plot(las, color = "treeID", colorPalette = pastel.colors(200))
+#'}
+#' @family tree_segmentation
+lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24, filter_profiles = TRUE, ...)
 {
   assertive::assert_is_a_number(nps)
   assertive::assert_all_are_positive(nps)
@@ -60,6 +86,7 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
   assertive::assert_all_are_positive(gap_sensitivity)
   assertive::assert_is_a_number(R)
   assertive::assert_all_are_positive(R)
+  assertive::assert_is_a_bool(filter_profiles)
 
   . <- X <- Y <- Z <- NULL
 
@@ -67,7 +94,7 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
   LSP = LAS(las@data[, .(X,Y,Z)], las@header)
   LSP = lasfiltersurfacepoints(LSP, nps)    # page 533
   LSP = lasfilter(LSP, Z > th)              # page 534
-  LSP@data[, Z := C_lassmooth(LSP, 0.6)]    # page 534 (correct to 3*nps, nps)
+  lassmooth(LSP, 3*nps, "gaussian", "square", sigma = nps)
 
   # ID initalization
   idTree = 0L
@@ -97,10 +124,9 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
     data.table::setDT(p)
 
     #  Filter the convex hull and rebuild a new clean one
-    #  (this is an addition to the original, should be skipable)
-    if (TRUE)
+    if (filter_profiles)
     {
-      p = p[p$R > 1.5]                       # Keep the profile over 1.5 m
+      p = p[p$R > 2 * nps]                          # Keep the profile over 1.5 m
       q = stats::quantile(p$R, probs = c(0.1, 0.9)) # Keep the profile within the 10 and 90th percentile of lenghts
       p = p[R < q[2] & R > q[1]]
     }
@@ -161,9 +187,9 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
     else
       npts = 0
 
-    # Finally attribute an ID to each point of the original dataset (Hamaraz considers only the LSP
+    # Finally attribute an ID to each point of the original dataset (Hamraz considers only the LSP
     # but we classify the whole point cloud)
-    if (area > 0)
+    if (area > pi*(MDCW/2)^2)
     {
         idTree <- idTree + 1
 

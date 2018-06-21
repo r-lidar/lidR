@@ -6,7 +6,7 @@
 \usage{
 lastrees_hamraz(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
   CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L,
-  R = 15.24, ...)
+  R = 15.24, filter_profiles = TRUE, ...)
 }
 \arguments{
 \item{las}{A LAS object}
@@ -35,29 +35,62 @@ paramter control this value. Default is 6.}
 than a crown is good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method.}
 
+\item{filter_profiles}{logical. This is an addition to the original method to filter dummy profiles
+(see details)}
+
 \item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
 the new column.}
 }
 \value{
-Nothing (NULL). The original point cloud is updated by reference.
+Nothing (NULL). The original point cloud is updated by reference. The original point cloud has a
+new column named 'treeID' containing an ID for each point that refer to a segmented tree.
 }
 \description{
-It is an strict implementation of the Hamraz et al. 2012 (see references) algorithm made by the \code{lidR}
-author from the original paper. The classification is done at the point cloud level and the function
-returns nothing (NULL). The original point cloud is updated in place with an ID for each point in
-a new column \code{treeID}. The user is free to post-process this output the way he want.
+The segmentation algorithm proposed by Hamraz et al. 2012 (see reference). The classification is
+done at the point cloud level and the function returns nothing (NULL). The original point cloud
+is updated in place with an ID for each point in a new column \code{treeID}. The user is free to
+post-process this output the way he want.
+}
+\details{
+This function has been written by the \code{lidR} authors from the original article. We made our
+best to implement as far as possible exactly what is written in the original paper but we
+cannot affirm that it is this exact original algorithm.\cr\cr
+Also it is important to notice that we have never been able to segment a single tree properly with
+this method. The important sensitivity to minor deviation as well as the great number of difficultly
+parametrizable imputs lead us to a method that we are not able to use ourselves.\cr\cr
+Also, minor variations were introduced to fix some issues that were not adressed in the original paper.
+Because the methods described in section 2.2 of the original article appear extremely sensitive to
+many minor deviations, we introduced an optionnal additionnal step to clean the profiles used to build
+the convex hull. When \code{filter_profiles = TRUE}, profiles that discribe a crown radius smaller than
+\code{2*nps} (basically radius that are close to 0) are removed and the convex hull is build considering
+the profiles that describe a crown radius comprise between the 10th and the 90th of the radiuses found.
+This enable to remove outliers and reduce dummy segmentation but anyway we were not able to segment
+the tree with this method.\cr\cr
+As a conclusion this algorithm might be considered as a free and open source code provided to be
+improved by the community. One can check and study the sources to ensure that it correspond to the
+original paper and find potential improvement.\cr\cr
+Also the current implementation is known to be slow.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-col = pastel.colors(200)
+col =  pastel.colors(200)
 
-lastrees_hamraz(las, 0.25)
+lastrees_hamraz(las)
 
 plot(las, color = "treeID", colorPalette = pastel.colors(200))
+}
 }
 \references{
 Hamraz, H., Contreras, M. A., & Zhang, J. (2016). A robust approach for tree segmentation in deciduous
 forests using small-footprint airborne LiDAR data. International Journal of Applied Earth Observation
 and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
+}
+\seealso{
+Other tree_segmentation: \code{\link{lastrees_dalponte}},
+  \code{\link{lastrees_li2}},
+  \code{\link{lastrees_ptrees}},
+  \code{\link{lastrees_silva}},
+  \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }
