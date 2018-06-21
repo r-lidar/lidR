@@ -44,7 +44,7 @@ namespace Hamraz
         points.push_back(p);
     }
 
-    std::sort(points.begin(), points.end(), RSortPoint<PointXYZR>());
+    std::sort(points.begin(), points.end(), RSort<PointXYZR>());
   }
 
   // Section 2.2.1 page 535
@@ -225,7 +225,6 @@ namespace Hamraz
       return array[middle];
   }
 
-  //search for all RTZpoints that have a R value under 'limit' value and storage into 'subProfileSubset'
   void Profile::extract_points_prior( std::vector<PointXYZR*> &subProfile, double limit, std::vector<PointXYZR*> &subProfileSubset )
   {
     int i = 1, keep = 0;

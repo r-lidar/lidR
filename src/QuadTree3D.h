@@ -178,7 +178,7 @@ template<typename T> void QuadTree3D<T>::knn_lookup3D(const T &point, const int 
     radius *= 1.5;
   }
 
-  sort(pts.begin(), pts.end(), EuclidianDistance3DSort<T>(point) );
+  sort(pts.begin(), pts.end(), DSort3D<T>(point));
 
   res.clear();
   for (int i = 0 ; i < k ; i++)

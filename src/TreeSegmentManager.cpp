@@ -231,7 +231,9 @@ void TreeSegmentManager::planimetric_filter(std::vector<PointXYZ> &subProfile, s
   // Euclidian Distance calculation in 2D for all neighbours regarding the reference point (storage in Z value)
   for (unsigned int i = 1; i < subProfile.size(); i++ )
   {
-    val = euclidianDistance2D_inZ( subProfile[0], subProfile[i] );
+    double dx = subProfile[0].x - subProfile[i].x;
+    double dy = subProfile[0].y - subProfile[i].y;
+    val = std::sqrt(dx*dx + dy*dy);
     meanValueForThreshold += val;
     dist.push_back( val );
   }

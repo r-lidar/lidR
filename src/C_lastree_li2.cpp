@@ -89,7 +89,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   PointXYZ* dummy = new PointXYZ(xmin-100,ymin-100,0,-1);
 
   // Z-sort the point cloud U
-  std::sort(U.begin(), U.end(), ZSortPoint<PointXYZ>());
+  std::sort(U.begin(), U.end(), ZSort<PointXYZ>());
 
   while(n > 0)
   {
