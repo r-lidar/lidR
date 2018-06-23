@@ -1,3 +1,7 @@
+## lidR v1.5.2 (In development)
+
+* [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops raster and canopy raster.
+
 ## lidR v1.5.1 (2018-06-14)
 
 #### BUG FIXES
