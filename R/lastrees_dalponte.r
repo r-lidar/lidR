@@ -69,8 +69,11 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
     stop("'treetops' format not recognized.", call. = FALSE)
   }
 
-  if (raster::extent(chm) != raster::extent(treetops))
-    stop("chm and treetops do not match together", call. = FALSE)
+  if (!raster::extent(chm) == raster::extent(treetops))
+    stop("chm and treetops do not match together (different bounding boxes)", call. = FALSE)
+
+  if (!all.equal(raster::res(chm), raster::res(ttops)))
+    stop("chm and treetops do not match together (different resolutions)", call. = FALSE)
 
   if (th_seed < 0 | th_seed > 1)
     stop("th_seed should be between 0 and 1", call. = FALSE)
@@ -97,13 +100,15 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima[Maxima == 0] <- NA
   Crowns[Crowns == 0] <- NA
 
+
+
   Crowns = raster::raster(apply(Crowns,1,rev))
   raster::extent(Crowns) = raster::extent(chm)
 
   if(!missing(las))
   {
     lasclassify(las, Crowns, field)
-    lasaddextrabytes(las, name =  field, desc = "An ID for each segmented tree")
+    lasaddextrabytes(las, name = field, desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))
