@@ -120,6 +120,11 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
   clusters <- catalog_index(ctg, x, y, w, h, buffer, roinames)
   output   <- cluster_apply(clusters, readLAS, ncores, progress, stopearly, ...)
   names(output) <- names(clusters)
+  
+  # Transfer CRS
+  for (i in 1:length(output)){
+    output[[i]]@crs <- ctg@crs
+  }
 
   # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
   if (ncores > 1)
