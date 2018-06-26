@@ -40,6 +40,9 @@ IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, doub
   int nrow  = Image.nrow();
   int ncol  = Image.ncol();
 
+  if (Seeds.nrow() != nrow || Seeds.ncol() != ncol)
+    throw std::runtime_error(std::string("Error: unexpected internal error: different matrix sizes."));
+
   std::vector< Pixel<double> > neighbours(4);
 
   IntegerMatrix Region     = clone(Seeds);
