@@ -4,13 +4,13 @@
 \alias{tree_hulls}
 \title{Compute the hull of each tree.}
 \usage{
-tree_hulls(las, type = c("convex", "concave"), concavity = 3,
+tree_hulls(las, type = c("convex", "concave", "bbox"), concavity = 3,
   length_threshold = 0, field = "treeID")
 }
 \arguments{
 \item{las}{An object of class \code{LAS}.}
 
-\item{type}{character. Hull type. Can be 'convex' or 'concave'.}
+\item{type}{character. Hull type. Can be 'convex',  'concave' or 'bbox'.}
 
 \item{concavity}{numeric. If \code{type = "concave"}, a relative measure of concavity. 1 results
 in a relatively detailed shape, Infinity results in a convex hull.}
@@ -24,8 +24,8 @@ threshold, it stops being considered for further detalization. Higher values res
 A \code{SpatialPolygonsDataFrame}. If a trees have less than 4 points it is not considered.
 }
 \description{
-Compute the hull of each segmented tree. The hull can be a convex hull or a concave hull (see details and
-reference).
+Compute the hull of each segmented tree. The hull can be a convex hull or a concave hull or
+a bounding box (see details and references).
 }
 \details{
 The concave hull method under the hood is described in Park & Oh (2012). The function relies on
@@ -40,6 +40,9 @@ lastrees_li2(las, speed_up = 7)
 
 convex_hulls = tree_hulls(las)
 sp::plot(convex_hulls)
+
+bbox_hulls = tree_hulls(las, "bbox")
+sp::plot(bbox_hulls)
 
 \dontrun{
 concave_hulls = tree_hulls(las, "concave")

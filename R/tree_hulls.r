@@ -28,15 +28,15 @@
 
 #' Compute the hull of each tree.
 #'
-#' Compute the hull of each segmented tree. The hull can be a convex hull or a concave hull (see details and
-#' reference).
+#' Compute the hull of each segmented tree. The hull can be a convex hull or a concave hull or
+#' a bounding box (see details and references).
 #'
 #' The concave hull method under the hood is described in Park & Oh (2012). The function relies on
 #' the \link[concaveman:concaveman]{concaveman} function which itself is a wrapper around the
 #' \href{https://github.com/mapbox/concaveman}{Vladimir Agafonking's implementation}.
 #'
 #' @param las An object of class \code{LAS}.
-#' @param type character. Hull type. Can be 'convex' or 'concave'.
+#' @param type character. Hull type. Can be 'convex',  'concave' or 'bbox'.
 #' @param concavity numeric. If \code{type = "concave"}, a relative measure of concavity. 1 results
 #' in a relatively detailed shape, Infinity results in a convex hull.
 #' @param length_threshold numeric. If \code{type = "concave"}, when a segment length is under this
@@ -57,11 +57,14 @@
 #' convex_hulls = tree_hulls(las)
 #' sp::plot(convex_hulls)
 #'
+#' bbox_hulls = tree_hulls(las, "bbox")
+#' sp::plot(bbox_hulls)
+#'
 #' \dontrun{
 #' concave_hulls = tree_hulls(las, "concave")
 #' sp::plot(concave_hulls)
 #' }
-tree_hulls = function(las, type = c("convex", "concave"), concavity = 3, length_threshold = 0, field = "treeID")
+tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, field = "treeID")
 {
   stopifnotlas(las)
   type <- match.arg(type)
@@ -75,8 +78,10 @@ tree_hulls = function(las, type = c("convex", "concave"), concavity = 3, length_
 
   if (type == "convex")
     dt = las@data[, stdtreehullconvex(X,Y, .GRP), by = field]
-  else
+  else if (type == "concave")
     dt = las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = field]
+  else
+    dt = las@data[, stdtreehullbbox(X,Y, .GRP), by = field]
 
   data.table::setnames(dt, names(dt), c("tree", "poly"))
   dt = dt[!is.na(tree)]
@@ -112,6 +117,25 @@ stdtreehullconcave = function(x,y, grp, concavity, length_threshold)
     return(NULL)
 
   P = concaveman::concaveman(cbind(x,y), concavity, length_threshold)
+  poly = sp::Polygon(P)
+  poly = sp::Polygons(list(poly), ID = grp)
+
+  list(poly = list(poly))
+}
+
+stdtreehullbbox = function(x,y, grp)
+{
+  if (length(x) < 4)
+    return(NULL)
+
+  xmin = min(x)
+  ymin = min(y)
+  xmax = max(x)
+  ymax = max(y)
+
+  x = c(xmin, xmax, xmax, xmin, xmin)
+  y = c(ymin, ymin, ymax, ymax, ymin)
+  P = cbind(x, y)
   poly = sp::Polygon(P)
   poly = sp::Polygons(list(poly), ID = grp)
 
