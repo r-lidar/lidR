@@ -4,7 +4,8 @@
 \alias{catalog_retile}
 \title{Retile a catalog}
 \usage{
-catalog_retile(ctg, path, prefix, ext = c("las", "laz"), ...)
+catalog_retile(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,
+  0), ...)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
@@ -16,7 +17,12 @@ in this case, if the catalog is processed by files, the original name of the fil
 
 \item{ext}{character. The format of the written files. Can be "las" or "laz".}
 
-\item{...}{extra parameter 'filter' to pass to \link{readLAS} (readLAs is not actually called but
+\item{alignment}{numeric vector. A vector of size 2 (x and y coordinates respectively) to align the
+pattern. By default the alignment is made along (0,0) as in all LAScatalog process, meaning the edge
+of a virtual tile will belong on x = 0 and y = 0 and all the the other ones will be multiple of the
+tiling size.}
+
+\item{...}{extra parameter 'filter' to pass to \link{readLAS} (readLAS is not actually called but
 the parameter can be passed anyway).}
 }
 \value{
@@ -30,7 +36,7 @@ the user to validate the command.
 }
 \details{
 Internally the function read and write the clusters defined by the internal processing options of a
-\link{LAScatalog-class} (see also \link{catalog}). Thus the function is flexible and enables the
+\link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and enables the
 user to retile, bufferize, un-bufferize (negative buffers are allowed), retile and bufferize in the
 same time or even compress.\cr\cr
 Notice that this function is not actually very useful since \code{lidR} manage everythink

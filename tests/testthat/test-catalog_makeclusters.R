@@ -70,7 +70,7 @@ test_that("makecluster, tiling", {
   xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
   ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
 
-  expect_equal(length(cl), 193)
+  expect_equal(length(cl), 194)
   expect_true(all(width == 800))
   expect_true(all(xwidth == 800))
   expect_true(all(ywidth == 800))
@@ -99,7 +99,7 @@ test_that("makecluster, tiling + buffer", {
   xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
   ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
 
-  expect_equal(length(cl), 198)
+  expect_equal(length(cl), 197)
   expect_true(all(width == 900))
   expect_true(all(xwidth == 800))
   expect_true(all(ywidth == 800))
@@ -128,7 +128,7 @@ test_that("makecluster, tiling + negative buffer", {
   xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
   ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
 
-  expect_equal(length(cl), 190)
+  expect_equal(length(cl), 189)
   expect_true(all(width == 600))
   expect_true(all(xwidth == 800))
   expect_true(all(ywidth == 800))
@@ -244,8 +244,8 @@ test_that("Clusters do not overlap", {
   x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
   y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))
 
-  expect_equal(length(unique(x)), 3)
-  expect_equal(length(unique(y)), 3)
+  expect_equal(length(unique(x)), 4)
+  expect_equal(length(unique(y)), 4)
 })
 
 test_that("No extra cluster are generated", {
@@ -257,6 +257,6 @@ test_that("No extra cluster are generated", {
   x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
   y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))
 
-  expect_equal(length(unique(x)), 3)
+  expect_equal(length(unique(x)), 4)
   expect_equal(length(unique(y)), 3)
 })
