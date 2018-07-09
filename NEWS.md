@@ -4,7 +4,7 @@
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
 * New option `stop_early` to process a catalog until the end anyway or stop before the end if an error is raised.
-* New function `catalog_retile` supersede the function `catalog_reshape` being able to do the same and much more.
+* New function `catalog_retile` supersedes the function `catalog_reshape` being able to do the same and much more.
 
 #### ENHANCEMENTS
 
@@ -19,6 +19,7 @@
 
 * `catalog()` displays a message when finding overlaps between files.
 * The LAScatalog class is much better documented.
+* The clusters now align on (0,0) by default when processing a `LAScatalog` by clusters
 
 #### BUG FIXES
 

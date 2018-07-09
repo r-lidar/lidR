@@ -34,7 +34,7 @@
 #' the user to validate the command.
 #'
 #' Internally the function read and write the clusters defined by the internal processing options of a
-#' \link{LAScatalog-class} (see also \link{catalog}). Thus the function is flexible and enables the
+#' \link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and enables the
 #' user to retile, bufferize, un-bufferize (negative buffers are allowed), retile and bufferize in the
 #' same time or even compress.\cr\cr
 #' Notice that this function is not actually very useful since \code{lidR} manage everythink
@@ -46,7 +46,11 @@
 #' @param prefix character. The initial part of the name of the written files. It can be missing and,
 #' in this case, if the catalog is processed by files, the original name of the file will be retained.
 #' @param ext character. The format of the written files. Can be "las" or "laz".
-#' @param ... extra parameter 'filter' to pass to \link{readLAS} (readLAs is not actually called but
+#' @param alignment numeric vector. A vector of size 2 (x and y coordinates respectively) to align the
+#' pattern. By default the alignment is made along (0,0) as in all LAScatalog process, meaning the edge
+#' of a virtual tile will belong on x = 0 and y = 0 and all the the other ones will be multiple of the
+#' tiling size.
+#' @param ... extra parameter 'filter' to pass to \link{readLAS} (readLAS is not actually called but
 #' the parameter can be passed anyway).
 #'
 #' @return A new \code{LAScatalog} object
@@ -81,10 +85,12 @@
 #' by_file(ctg) = TRUE
 #' newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
 #' }
-catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), ...)
+catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,0), ...)
 {
   assertive::assert_is_all_of(ctg, "LAScatalog")
-  assertive::is_character(path)
+  assertive::assert_is_character(path)
+  assertive::assert_is_numeric(alignment)
+  assertive::assert_is_of_length(alignment, 2)
 
   if(!missing(prefix))
     assertive::is_character(prefix)
@@ -97,7 +103,7 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), ...)
   progress         <- progress(ctg)
   stopearly        <- stop_early(ctg)
 
-  clusters <- catalog_makecluster(ctg, 1)
+  clusters <- catalog_makecluster(ctg, 1, alignment)
 
   for (i in 1:length(clusters))
   {
