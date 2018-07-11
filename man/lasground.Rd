@@ -7,7 +7,7 @@
 \usage{
 lasground(las, algorithm, ...)
 
-lasground_pmf(las, ws, th)
+lasground_pmf(las, ws, th, last_returns = TRUE)
 }
 \arguments{
 \item{las}{a LAS object.}
@@ -24,6 +24,11 @@ The values must be positive and in the units of the point cloud (usually meters,
 \item{th}{numeric. Sequence of threshold heights above the parameterized ground surface
 to be considered a ground return. The values must be positive and are in the units of
 the point cloud (usually meters, occasionally feet).}
+
+\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
+in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} is not loaded \code{'last_returns'} is turned
+to \code{FALSE} automatically.}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
@@ -54,7 +59,9 @@ las = readLAS(LASfile, select = "xyz")
 ws = seq(3,21, 3)
 th = seq(0.1, 2, length.out = length(ws))
 
-lasground(las, "pmf", ws, th)
+# Here we used last_return = FALSE because in this dataset
+# the field NumberOfReturn is wrongly populated
+lasground(las, "pmf", ws, th, last_returns = FALSE)
 
 plot(las, color = "Classification")
 }

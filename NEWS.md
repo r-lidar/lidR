@@ -14,6 +14,7 @@
 * All the functions have now strong assertions to check user inputs.
 * `plot.LAScatalog` always displays the catalog with `mapview` by default even if the CRS is empty.
 * In `lastrees_dalponte` the matching between the seeds and the canopy is more tolerant. Raster can have different resolution and/or extent.
+* `lasground` uses (as an option) only the last and single returns to perform the segmentation.
 
 #### OTHER CHANGE
 

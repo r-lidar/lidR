@@ -43,6 +43,10 @@
 #' @param th numeric. Sequence of threshold heights above the parameterized ground surface
 #' to be considered a ground return. The values must be positive and are in the units of
 #' the point cloud (usually meters, occasionally feet).
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} is not loaded \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
 #'
 #' @section Progressive morphological filter (PMF):
 #'
@@ -68,11 +72,13 @@
 #' ws = seq(3,21, 3)
 #' th = seq(0.1, 2, length.out = length(ws))
 #'
-#' lasground(las, "pmf", ws, th)
+#' # Here we used last_return = FALSE because in this dataset
+#' # the field NumberOfReturn is wrongly populated
+#' lasground(las, "pmf", ws, th, last_returns = FALSE)
 #'
 #' plot(las, color = "Classification")
 #' @importFrom data.table :=
-lasground = function(las, algorithm, ...)
+lasground = function(las, algorithm,  ...)
 {
   if (algorithm == "pmf")
     lasground_pmf(las, ...)
@@ -82,7 +88,7 @@ lasground = function(las, algorithm, ...)
 
 #' @rdname lasground
 #' @export
-lasground_pmf = function(las, ws, th)
+lasground_pmf = function(las, ws, th, last_returns = TRUE)
 {
   stopifnotlas(las)
   assertive::assert_is_numeric(ws)
@@ -93,8 +99,25 @@ lasground_pmf = function(las, ws, th)
 
   . <- X <- Y <- Z <- Classification <- NULL
 
-  cloud = las@data[, .(X,Y,Z)]
-  cloud[, idx := 1:dim(cloud)[1]]
+  npoints = nrow(las@data)
+  filter  = !logical(npoints)
+  pointID = 1:npoints
+
+  if (last_returns)
+  {
+    n = names(las@data)
+
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
+      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last', all the points will be used", call. = FALSE)
+    else
+      filter = las@data$ReturnNumber == las@data$NumberOfReturns
+
+    if(sum(filter) == 0)
+      stop("0 last return found. Process aborted.", call. = FALSE)
+  }
+
+  cloud = las@data[filter, .(X,Y,Z)]
+  cloud[, idx := pointID[filter]]
 
   verbose("Progressive morphological filter...")
 
