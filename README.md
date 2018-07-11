@@ -123,24 +123,6 @@ To install the package from github make sure you have a working development envi
 * **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
 * The latest stable development version from github with
 
-```r
-devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
-devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
-```
-
-* The latest unstable development version from github with
-
-```r
-devtools::install_github("Jean-Romain/rlas", dependencies=TRUE, ref="devel")
-devtools::install_github("Jean-Romain/lidR", dependencies=TRUE, ref="devel")
-```
-
-To install the package from github make sure you have a working development environment.
-
-* **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
-* **Mac**: Install `Xcode` from the Mac App Store.
-* **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
-
 # Changelog
 
 [See changelogs on NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
