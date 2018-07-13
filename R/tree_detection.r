@@ -48,13 +48,15 @@
 #'
 #' plot(las)
 #' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
-#' @seealso \link{tree_detection_lmf} \link{tree_detection_ptrees}
+#' @seealso \link{tree_detection_lmf} \link{tree_detection_ptrees} \link{tree_detection_manual}
 tree_detection = function(x, algorithm, ...)
 {
   if (algorithm == "lmf")
     tree_detection_lmf(x, ...)
   else if (algorithm == "ptrees")
     tree_detection_ptrees(x, ...)
+  else if(algorithm == "manual")
+    tree_detection_manual(x, ...)
   else
     stop("This algorithm does not exist.", call. = FALSE)
 }
@@ -176,5 +178,85 @@ tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
   apices = data.table::as.data.table(apices)
   data.table::setnames(apices, names(apices), c("X", "Y", "Z"))
   return(apices)
+}
+
+#' Tree top detection based on manual selection
+#'
+#' Find the tree top positions manually and interactively using the mouse. This is only suitable for
+#' small to medium size plots. First the point cloud is displayed, then the user is invited to select
+#' a rectangular region of interest in the scene using the right button of the mouse. Within the selected
+#' points the highest will be flaged as 'tree top' in the scene. Once all the tree are labelled the user can
+#' exit the tools by selecting an empty region. Points can also be unflagged.
+#'
+#' @param las An object of the class LAS
+#' @param detected \code{data.table} or \code{data.frame} or \code{matrix} containing X,Y,Z coordinates
+#' of already found tree tops that need manual corrections.
+#' @param ... supplementary parameters to be pass to \link{plot.LAS}.
+#'
+#' @return A data.table with the X, Y, Z coordinates of the tree tops.
+#' @export
+#' @examples
+#' \dontrun{
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las = readLAS(LASfile)
+#'
+#' # Full manual tree finding
+#' ttops = tree_detection_manual(las)
+#'
+#' # Automatic finding with manual correction
+#' ttops = tree_detection_lmf(las, 5)
+#' ttops = tree_detection_manual(las, ttops)
+#' }
+tree_detection_manual = function(las, detected = NULL, ...)
+{
+  X <- Y <-Z <- NULL
+
+  stopifnotlas(las)
+
+  if (!interactive())
+    stop("R is not being used interactively", call. = FALSE)
+
+  if (is.null(detected))
+    apice <- data.table::data.table(X = numeric(0), Y = numeric(0), Z = numeric(0))
+  else
+  {
+    apice <- data.table::as.data.table(detected[,1:3])
+    names(apice) <- c("X","Y","Z")
+  }
+
+  plot(las)
+
+  id = numeric(nrow(apice))
+  for (i in 1:nrow(apice))
+    id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = 1, color = "red")
+  apice$id = id
+
+  repeat
+  {
+    f <- rgl::select3d(button = c("right"))
+    pts <- las@data[f(las@data)]
+
+    if (length(pts$X) == 0)
+      break;
+
+    apex <- unique(pts[pts$Z == max(pts$Z)])
+
+    ii = which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
+
+    if (length(ii) > 0)
+    {
+      rgl::rgl.pop(id = apice[ii]$id)
+      apice = apice[-ii]
+    }
+    else
+    {
+      apex$id = as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = 1, color = "red"))
+      apice = rbind(apice, apex)
+    }
+  }
+
+  rgl::rgl.close()
+
+  return(apice[, .(X,Y,Z)])
 }
 

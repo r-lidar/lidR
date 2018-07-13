@@ -33,5 +33,5 @@ plot(las)
 with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
 }
 \seealso{
-\link{tree_detection_lmf} \link{tree_detection_ptrees}
+\link{tree_detection_lmf} \link{tree_detection_ptrees} \link{tree_detection_manual}
 }
