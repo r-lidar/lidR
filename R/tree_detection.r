@@ -224,7 +224,7 @@ tree_detection_manual = function(las, detected = NULL, ...)
     names(apice) <- c("X","Y","Z")
   }
 
-  plot(las)
+  plot(las, ...)
 
   id = numeric(nrow(apice))
   for (i in 1:nrow(apice))
