@@ -25,8 +25,16 @@ test_that("grid_density returns the same both with catalog and las", {
 })
 
 test_that("grid_metric return the same both with catalog and las", {
-  m1 = grid_metrics(ctg, .stdmetrics, 20)
-  m2 = grid_metrics(las, .stdmetrics, 20)
+  m1 = grid_metrics(ctg, .stdmetrics_z, 20)
+  m2 = grid_metrics(las, .stdmetrics_z, 20)
+  data.table::setorder(m1, X, Y )
+  data.table::setorder(m2, X, Y )
+  expect_equal(m1, m2)
+})
+
+test_that("grid_metric return the same both with catalog and las + grid alignment", {
+  m1 = grid_metrics(ctg, .stdmetrics_z, 20, start = c(10,10))
+  m2 = grid_metrics(las, .stdmetrics_z, 20, start = c(10,10))
   data.table::setorder(m1, X, Y )
   data.table::setorder(m2, X, Y )
   expect_equal(m1, m2)
@@ -38,7 +46,7 @@ ctg = catalog(file)
 las = readLAS(file)
 cores(ctg) <- 1
 tiling_size(ctg) <- 180
-buffer(ctg) <- 30
+buffer(ctg) <- 35
 progress(ctg) <- FALSE
 
 test_that("grid_terrain returns the same both with catalog and las", {
@@ -50,11 +58,15 @@ test_that("grid_terrain returns the same both with catalog and las", {
 
   t1 = suppressMessages(grid_terrain(ctg, 2, "delaunay"))
   t2 = suppressMessages(grid_terrain(las, 2, "delaunay"))
-  data.table::setkey(t1, X, Y)
-  data.table::setkey(t2, X, Y)
-  diff = t1[t2]
-  diffZ = abs(diff$Z - diff$i.Z)
-  expect_lt(mean(diffZ, na.rm = TRUE), 0.01)
+
+  tr1 = as.raster(t1)
+  tr2 = as.raster(t2)
+
+  tr1 = raster::crop(tr1, raster::extent(tr1)-2)
+  tr2 = raster::crop(tr2, tr1)
+
+  diff = abs(raster::values(tr1-tr2))
+  expect_lt(mean(diff, na.rm = TRUE), 0.01)
 })
 
 test_that("grid_canopy returns a VRT", {

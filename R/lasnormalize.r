@@ -153,7 +153,7 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
   {
     norm = data.table::copy(las@data)
     norm[, Z := round(Z - Zground, 3)]
-    return(LAS(norm, las@header))
+    return(LAS(norm, las@header, las@crs))
   }
 }
 

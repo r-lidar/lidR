@@ -62,29 +62,39 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_is_a_number(th_cr)
   assertive::assert_is_a_number(max_cr)
   assertive::assert_is_a_bool(extra)
-  assertive::assert_all_are_in_open_range(th_seed, 0, 1)
-  assertive::assert_all_are_in_open_range(th_cr, 0, 1)
+  assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
+  assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
   if (is(treetops, "data.frame"))
   {
-    cells = raster::cellFromXY(chm, treetops[,1:2])
-    treetops = raster::raster(chm)
-    suppressWarnings(treetops[cells] <- 1:length(cells))
+    treetops_df = treetops
+
+    if (ncol(treetops_df) < 3)
+      treetops_df$id = 1:nrow(treetops_df)
   }
-  else if(!is(treetops, "RasterLayer"))
-  {
+  else if(is(treetops, "RasterLayer"))
+    treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
+  else
     stop("'treetops' format not recognized.", call. = FALSE)
+
+  if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
+    stop("Duplicated seed IDs.", call. = FALSE)
+
+  cells = raster::cellFromXY(chm, treetops_df[,1:2])
+
+  if (anyNA(cells))
+  {
+    if (all(is.na(cells)))
+      stop("No seed found", call. = FALSE)
+    else
+      stop("Some seeds are outside the canopy height model.", call. = FALSE)
+
+    treetops_df = treetops_df[!is.na(cells),]
+    cells = cells[!is.na(cells)]
   }
 
-  if (raster::extent(chm) != raster::extent(treetops))
-    stop("chm and treetops do not match together", call. = FALSE)
-
-  field = "treeID"
-  p = list(...)
-  if(!is.null(p$field))
-    field = p$field
-
-  stopif_forbidden_name(field)
+  treetops = raster::raster(chm)
+  suppressWarnings(treetops[cells] <- treetops_df[, 3])
 
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
@@ -103,8 +113,14 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
   if(!missing(las))
   {
+    field = "treeID"
+    p = list(...)
+    if(!is.null(p$field))
+      field = p$field
+
+    stopif_forbidden_name(field)
     lasclassify(las, Crowns, field)
-    lasaddextrabytes(las, name =  field, desc = "An ID for each segmented tree")
+    lasaddextrabytes(las, name = field, desc = "An ID for each segmented tree")
   }
 
   if (!extra & !missing(las))

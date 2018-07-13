@@ -8,6 +8,7 @@
 * New function `lastrees_ptree` with Vega et al. (2014) algorithm.
 * New function `lastrees_hamraz` with Hamraz et al. (2016) algorithm.
 * New function `tree_detection_manual`for manual correction of tree detection.
+* New function `catalog_retile` supersedes the function `catalog_reshape` being able to do the same and much more.
 
 #### ENHANCEMENTS
 
@@ -16,15 +17,19 @@
 * `as.spatial()` for `LAS` object preserves the CRS.
 * All the functions have now strong assertions to check user inputs.
 * `plot.LAScatalog` always displays the catalog with `mapview` by default even if the CRS is empty.
+* In `lastrees_dalponte` the matching between the seeds and the canopy is more tolerant. Raster can have different resolution and/or extent.
+* `lasground` uses (as an option) only the last and single returns to perform the segmentation.
 
 #### OTHER CHANGE
 
 * `catalog()` displays a message when finding overlaps between files.
 * The LAScatalog class is much better documented.
+* The clusters now align on (0,0) by default when processing a `LAScatalog` by clusters
 
 #### BUG FIXES
 
 * `lasscanline()` did not computed the scanline because the conditionnal statement that checked if the field was properly populated was incorrect.
+* [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops raster and canopy raster.
 
 ## lidR v1.5.1 (2018-06-14)
 
