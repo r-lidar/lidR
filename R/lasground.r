@@ -153,10 +153,10 @@ lasground_pmf = function(las, ws, th, last_returns = TRUE)
   }
   else
   {
-    las@data[, Classification := 0]
+    las@data[, Classification := 0L]
   }
 
-  las@data[idx, Classification := 2]
+  las@data[idx, Classification := 2L]
 
   return(invisible())
 }
