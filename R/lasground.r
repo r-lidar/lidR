@@ -39,22 +39,22 @@
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' of the algorithms).
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
-#' The values must be positive and in the units of the point cloud (usually meters, occasionally feet).
-#' @param th numeric. Sequence of threshold heights above the parameterized ground surface
-#' to be considered a ground return. The values must be positive and are in the units of
-#' the point cloud (usually meters, occasionally feet).
+#' The values must be positive and in the same units as the point cloud (usually meters, occasionally
+#' feet).
+#' @param th numeric. Sequence of threshold heights above the parameterized ground surface to be
+#' considered a ground return. The values must be positive and in the same units as the point cloud.
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
 #' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
-#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} is not loaded \code{'last_returns'} is turned
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
 #' @section Progressive morphological filter (PMF):
 #'
 #' This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-#' This is not a strict implementation of Zhang et al. This algorithm works at the point
+#' Note that this is not a strict implementation of Zhang et al. This algorithm works at the point
 #' cloud level without any rasterization process. The morphological operator is applied on
-#' the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
-#' to compute the sequence of windows sizes and thresholds. Here these parameters are free
+#' the point cloud, not on a raster. Also, Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+#' to compute the sequence of windows sizes and thresholds. Here, these parameters are free
 #' and specified by the user. The function \link{util_makeZhangParam} enables computation
 #' of the parameters according to the original paper.
 #'
@@ -147,7 +147,7 @@ lasground_pmf = function(las, ws, th, last_returns = TRUE)
 
     if (nground > 0)
     {
-      warning(glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
+      warning(glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."), call. = FALSE)
       las@data[Classification == 2, Classification := 0]
     }
   }
@@ -184,7 +184,7 @@ lasground_pmf = function(las, ws, th, last_returns = TRUE)
 #' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
 #' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
 #' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
-#' @return A list with two components, the windows size sequence and the threshold sequence.
+#' @return A list with two components: the windows size sequence and the threshold sequence.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
@@ -205,7 +205,7 @@ util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws =
     stop("exp should be logical", call. = FALSE)
 
   if (!exp & b < 1)
-    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increment is constant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherence in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
 
 
   dhtk = c()
