@@ -21,7 +21,7 @@ If a triangle has an edge greater than this value it will be removed. It is used
 the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
 The first number is the value for the classical triangulation (threshold = 0), the second number
 is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
-will be done.}
+is done.}
 
 \item{subcircle}{numeric. Radius of the circles. To obtain fewer pits the algorithm
 can replace each return with a circle consisting of 8 points before computing the triangulation

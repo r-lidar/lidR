@@ -12,14 +12,14 @@ catalog_retile(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,
 
 \item{path}{string. The folder where the new files should be saved.}
 
-\item{prefix}{character. The initial part of the name of the written files. It can be missing and,
-in this case, if the catalog is processed by files, the original name of the file will be retained.}
+\item{prefix}{character. The prefix of the written file name. It can be missing, in which case if the
+catalog is processed by file, the original name of the file will be retained.}
 
-\item{ext}{character. The format of the written files. Can be "las" or "laz".}
+\item{ext}{character. The format of the written files. Can be ".las" or ".laz".}
 
-\item{alignment}{numeric vector. A vector of size 2 (x and y coordinates respectively) to align the
-pattern. By default the alignment is made along (0,0) as in all LAScatalog process, meaning the edge
-of a virtual tile will belong on x = 0 and y = 0 and all the the other ones will be multiple of the
+\item{alignment}{numeric vector. A vector of size 2 (x and y coordinates, respectively) to align the
+pattern. By default the alignment is made along (0,0) as in all LAScatalog processes, meaning the edge
+of a virtual tile will belong on x = 0 and y = 0 and all the the others will be multiples of the
 tiling size.}
 
 \item{...}{extra parameter 'filter' to pass to \link{readLAS} (readLAS is not actually called but
@@ -30,18 +30,20 @@ A new \code{LAScatalog} object
 }
 \description{
 Splits or merges files to reshape the original catalog files (.las or .laz) into smaller or larger
-files. It also enables to add or remove a buffer around the tiles. The new files are written in a
-dedicated folder. The function first displays the pattern of the new tiling pattern and then asks
+files. It also enables the addition or removal of a buffer around the tiles. The new files are written
+in a dedicated folder. The function first displays the layout of the new tiling pattern and then asks
 the user to validate the command.
 }
 \details{
-Internally the function read and write the clusters defined by the internal processing options of a
-\link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and enables the
-user to retile, bufferize, un-bufferize (negative buffers are allowed), retile and bufferize in the
-same time or even compress.\cr\cr
-Notice that this function is not actually very useful since \code{lidR} manage everythink
-(clip, processing, buffer, ...) internally using the proper options. Thus, retiling may be useful
-to work in other software for exemple but not in \code{lidR}.
+Internally the function reads and writes the clusters defined by the internal processing options of a
+\link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and
+enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
+allowed), or optionally to compress the data by retiling without changing the pattern but by changing
+the format (las/laz).\cr\cr
+
+Note that this function is not actually very useful since \code{lidR} manages everything
+(clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
+for working in other software for example, but not in \code{lidR}.
 }
 \examples{
 \dontrun{
@@ -65,7 +67,7 @@ by_file(ctg) = TRUE
 newctg = catalog_retile(ctg, "path/to/new/catalog")
 
 # Being flexible this function can also compress a catalog but this is
-# not really useful since laszip from LAStools is a free an open source
+# not really useful since laszip from LAStools is a free and open source
 # program.
 
 buffer(ctg) = 0
