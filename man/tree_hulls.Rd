@@ -10,26 +10,27 @@ tree_hulls(las, type = c("convex", "concave", "bbox"), concavity = 3,
 \arguments{
 \item{las}{An object of class \code{LAS}.}
 
-\item{type}{character. Hull type. Can be 'convex',  'concave' or 'bbox'.}
+\item{type}{character. Hull type. Can be 'convex', 'concave' or 'bbox'.}
 
 \item{concavity}{numeric. If \code{type = "concave"}, a relative measure of concavity. 1 results
 in a relatively detailed shape, Infinity results in a convex hull.}
 
-\item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is under this
-threshold, it stops being considered for further detalization. Higher values result in simpler shapes.}
+\item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is below this
+threshold, no further detail is added. Higher values result in simpler shapes.}
 
-\item{field}{character. In which field the ID of each tree is stored. In lidR, default is "treeID".}
+\item{field}{character. The field where the ID of each tree is stored. In lidR, default is
+"treeID".}
 }
 \value{
-A \code{SpatialPolygonsDataFrame}. If a trees have less than 4 points it is not considered.
+A \code{SpatialPolygonsDataFrame}. If a tree has less than 4 points it is not considered.
 }
 \description{
-Compute the hull of each segmented tree. The hull can be a convex hull or a concave hull or
-a bounding box (see details and references).
+Compute the hull of each segmented tree. The hull can be convex, concave or a bounding box (see
+details and references).
 }
 \details{
 The concave hull method under the hood is described in Park & Oh (2012). The function relies on
-the \link[concaveman:concaveman]{concaveman} function which itself is a wrapper around the
+the \link[concaveman:concaveman]{concaveman} function which itself is a wrapper around
 \href{https://github.com/mapbox/concaveman}{Vladimir Agafonking's implementation}.
 }
 \examples{
