@@ -50,7 +50,7 @@
 #' the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
 #' The first number is the value for the classical triangulation (threshold = 0), the second number
 #' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
-#' will be done.
+#' is done.
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle consisting of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
@@ -134,7 +134,7 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   by = group_grid(cloud$X, cloud$Y, res)
   cloud = cloud[cloud[, .I[which.max(Z)], by = by]$V1]
 
-  # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
+  # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
   i = 1
   for (th in thresholds)
   {

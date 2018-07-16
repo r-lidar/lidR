@@ -22,7 +22,7 @@ the number of windows created.}
 \item{exp}{logical. The window size can be increased linearly or exponentially (eq. 4 or 5).}
 }
 \value{
-A list with two components, the windows size sequence and the threshold sequence.
+A list with two components: the windows size sequence and the threshold sequence.
 }
 \description{
 The function \link{lasground} with the progressive morphological filter allows for any
