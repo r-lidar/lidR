@@ -4,48 +4,70 @@
 \alias{tree_detection_lmf}
 \title{Tree top detection based local maxima filters}
 \usage{
-tree_detection_lmf(x, ws, hmin = 2)
+tree_detection_lmf(x, ws, hmin = 2, shape = c("circular", "square"))
 }
 \arguments{
 \item{x}{A object of class \code{LAS} or an object representing a canopy height model
-such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix}.}
+such as a \code{RasterLayer} or a \code{lasmetrics}.}
 
-\item{ws}{numeric. Size of the moving window used to the detect the local maxima. On
-a raster-like object this size is in pixels and should be an odd number larger than 3.
-On a raw point cloud this size is in the point cloud units (usually meters).}
+\item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
+maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
+If it is a function, the function determines the size of the window at any given location on the canopy.
+It should take the height of a given pixel or points as its onlyargument and return the desired size
+of the search window when centered on that pixel/point.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default 2.}
+
+\item{shape}{character. Shape of the moving windows used to find the local maxima. Can be "square"
+or "circular".}
 }
 \value{
 A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-is a point cloud, or a RasterLayer if the input is a raster-like object.
+is a point cloud, or a RasterLayer if the input is a RasterLayer object.
 }
 \description{
-Tree top detection based on fixed windows size local maxima filters. There are two types of filters.
-The first one, called for gridded objects, works on images with a matrix-based algorithm
-and the second one, called for point clouds, works at the point cloud level without any
-rasterization.
+Tree top detection based on local maxima filters. The windows size can be fix or variable and the
+windows shape can be square or circular. The internal algorithm works either with a raster or a point
+cloud
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
-# point-cloud-based method
+# point-cloud-based
+# =================
 
+# 5x5 m fixed windows size
 ttops = tree_detection_lmf(las, 5)
 
 plot(las)
 with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
 
-# raster-based method
+# variable windows size
+f = function(x) { x * 0.07 + 3}
+ttops = tree_detection_lmf(las, f)
 
+plot(las)
+with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+
+# raster-based
+# ============
+
+# 5x5 m fixed windows size
 chm = grid_canopy(las, 1, subcircle = 0.15)
 chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 
 ttops = tree_detection_lmf(chm, 5)
+
+raster::plot(chm, col = height.colors(30))
+raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+
+# variable windows size
+f = function(x) { x * 0.07 + 3 }
+ttops = tree_detection_lmf(chm, f)
 
 raster::plot(chm, col = height.colors(30))
 raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)

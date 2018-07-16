@@ -163,29 +163,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// C_LocalMaximaMatrix
-IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th);
-RcppExport SEXP _lidR_C_LocalMaximaMatrix(SEXP imageSEXP, SEXP wsSEXP, SEXP thSEXP) {
+// C_LocalMaximumFilter
+LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_height, bool circular);
+RcppExport SEXP _lidR_C_LocalMaximumFilter(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type image(imageSEXP);
-    Rcpp::traits::input_parameter< int >::type ws(wsSEXP);
-    Rcpp::traits::input_parameter< double >::type th(thSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaMatrix(image, ws, th));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_LocalMaximaPoints
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height);
-RcppExport SEXP _lidR_C_LocalMaximaPoints(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< double >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
     Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximaPoints(las, ws, min_height));
+    Rcpp::traits::input_parameter< bool >::type circular(circularSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_LocalMaximumFilter(data, ws, min_height, circular));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -363,8 +351,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li", (DL_FUNC) &_lidR_C_lastrees_li, 7},
     {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 5},
     {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
-    {"_lidR_C_LocalMaximaMatrix", (DL_FUNC) &_lidR_C_LocalMaximaMatrix, 3},
-    {"_lidR_C_LocalMaximaPoints", (DL_FUNC) &_lidR_C_LocalMaximaPoints, 3},
+    {"_lidR_C_LocalMaximumFilter", (DL_FUNC) &_lidR_C_LocalMaximumFilter, 4},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 5},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},

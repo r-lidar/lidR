@@ -41,12 +41,8 @@ C_lasupdateheader <- function(las, new_header) {
     invisible(.Call(`_lidR_C_lasupdateheader`, las, new_header))
 }
 
-C_LocalMaximaMatrix <- function(image, ws, th) {
-    .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
-}
-
-C_LocalMaximaPoints <- function(las, ws, min_height) {
-    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height)
+C_LocalMaximumFilter <- function(data, ws, min_height, circular) {
+    .Call(`_lidR_C_LocalMaximumFilter`, data, ws, min_height, circular)
 }
 
 C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {

@@ -1,7 +1,7 @@
 /*
  ===============================================================================
 
- PROGRAMMERS:
+PROGRAMMERS:
 
 jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
 
@@ -33,6 +33,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
+// [[Rcpp::export]]
+LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_height, bool circular)
+{
+  NumericVector X = data["X"];
+  NumericVector Y = data["Y"];
+  NumericVector Z = data["Z"];
+
+  int vws = ws.length() > 1;
+  int n = X.length();
+  double hws = ws[0]/2;
+  LogicalVector seeds(n);
+  //std::vector<bool> not_seeds(n);
+  QuadTree *tree = QuadTreeCreate(X,Y);
+
+  // Loop through all the point cloud
+  for (int i = 0 ; i < n ; i++)
+  {
+    if (vws)
+      hws = ws[i]/2;
+
+    if (Z[i] <= min_height)
+      continue;
+
+    // Get the points within a windows centered on the current point
+    std::vector<Point*> pts;
+    if(!circular)
+      tree->rect_lookup(X[i], Y[i], hws, hws, pts);
+    else
+      tree->circle_lookup(X[i], Y[i], hws, pts);
+
+    // Get the highest Z in the windows
+    double Zmax = std::numeric_limits<double>::min();
+    Point *p;
+    for(size_t j = 0 ; j < pts.size() ; j++)
+    {
+      if(Z[pts[j]->id] > Zmax)
+      {
+        p = pts[j];
+        Zmax = Z[p->id];
+      }
+    }
+
+    // The central pixel is the highest, it is a LM
+    // and the other one are NOT a LM
+    if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
+      seeds[i] = true;
+  }
+
+  delete tree;
+  return seeds;
+}
+
+
+/*
 // [[Rcpp::export]]
 IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
 {
@@ -75,49 +129,4 @@ IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
   }
 
   return(seeds);
-}
-
-// [[Rcpp::export]]
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
-{
-  DataFrame data  = as<Rcpp::DataFrame>(las.slot("data"));
-  NumericVector X = data["X"];
-  NumericVector Y = data["Y"];
-  NumericVector Z = data["Z"];
-
-  int n = X.length();
-  double hws = ws/2;
-
-  LogicalVector seeds(n);
-  QuadTree *tree = QuadTreeCreate(X,Y);
-
-  // Loop through all the point cloud
-  for (int i = 0 ; i < n ; i++)
-  {
-    if (Z[i] <= min_height)
-      continue;
-
-    // Get the points within a windows centered on the current point
-    std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], hws, hws, pts);
-
-    // Get the highest Z in the windows
-    double Zmax = std::numeric_limits<double>::min();
-    Point *p;
-    for(size_t j = 0 ; j < pts.size() ; j++)
-    {
-      if(Z[pts[j]->id] > Zmax)
-      {
-        p = pts[j];
-        Zmax = Z[p->id];
-      }
-    }
-
-    // The central pixel is the highest, it is a LM
-    if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
-      seeds[i] = true;
-  }
-
-  delete tree;
-  return seeds;
-}
+}*/

@@ -63,36 +63,50 @@ tree_detection = function(x, algorithm, ...)
 
 #' Tree top detection based local maxima filters
 #'
-#' Tree top detection based on fixed windows size local maxima filters. There are two types of filters.
-#' The first one, called for gridded objects, works on images with a matrix-based algorithm
-#' and the second one, called for point clouds, works at the point cloud level without any
-#' rasterization.
+#' Tree top detection based on local maxima filters. The windows size can be fix or variable and the
+#' windows shape can be square or circular. The internal algorithm works either with a raster or a point
+#' cloud
 #'
 #' @param x A object of class \code{LAS} or an object representing a canopy height model
-#' such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix}.
-#' @param ws numeric. Size of the moving window used to the detect the local maxima. On
-#' a raster-like object this size is in pixels and should be an odd number larger than 3.
-#' On a raw point cloud this size is in the point cloud units (usually meters).
+#' such as a \code{RasterLayer} or a \code{lasmetrics}.
+#' @param ws numeric or function. Length or diameter of the moving window used to the detect the local
+#' maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
+#' If it is a function, the function determines the size of the window at any given location on the canopy.
+#' It should take the height of a given pixel or points as its onlyargument and return the desired size
+#' of the search window when centered on that pixel/point.
 #' @param hmin numeric. Minimum height of a tree. Threshold below which a pixel or a point
 #' cannot be a local maxima. Default 2.
+#' @param shape character. Shape of the moving windows used to find the local maxima. Can be "square"
+#' or "circular".
 #'
 #' @return A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-#' is a point cloud, or a RasterLayer if the input is a raster-like object.
+#' is a point cloud, or a RasterLayer if the input is a RasterLayer object.
 #' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
-#' # point-cloud-based method
+#' # point-cloud-based
+#' # =================
 #'
+#' # 5x5 m fixed windows size
 #' ttops = tree_detection_lmf(las, 5)
 #'
 #' plot(las)
 #' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
 #'
-#' # raster-based method
+#' # variable windows size
+#' f = function(x) { x * 0.07 + 3}
+#' ttops = tree_detection_lmf(las, f)
 #'
+#' plot(las)
+#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#'
+#' # raster-based
+#' # ============
+#'
+#' # 5x5 m fixed windows size
 #' chm = grid_canopy(las, 1, subcircle = 0.15)
 #' chm = as.raster(chm)
 #' kernel = matrix(1,3,3)
@@ -102,63 +116,74 @@ tree_detection = function(x, algorithm, ...)
 #'
 #' raster::plot(chm, col = height.colors(30))
 #' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
-tree_detection_lmf = function(x, ws, hmin = 2)
+#'
+#' # variable windows size
+#' f = function(x) { x * 0.07 + 3 }
+#' ttops = tree_detection_lmf(chm, f)
+#'
+#' raster::plot(chm, col = height.colors(30))
+#' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"))
 {
-  UseMethod("tree_detection_lmf", x)
-}
-
-#' @export
-tree_detection_lmf.LAS = function(x, ws, hmin = 2)
-{
-  assertive::assert_is_a_number(ws)
-  assertive::assert_all_are_positive(ws)
   assertive::assert_is_a_number(hmin)
   assertive::assert_all_are_positive(hmin)
+  shape = match.arg(shape)
+  circular = shape == "circular"
+
+  output_format = "data.table"
+
+  if (is(x, "lasmetrics"))
+    x = as.raster(x)
+
+  if (is(x, "RasterLayer"))
+  {
+    output_format = "RasterLayer"
+    output = suppressWarnings(raster::raster(x))
+    output[] = NA
+    x = raster::as.data.frame(x, xy = T, na.rm = T)
+    data.table::setDT(x)
+    data.table::setnames(x, names(x), c("X", "Y", "Z"))
+  }
+  else if (is(x, "LAS"))
+  {
+    x = x@data
+  }
+  else
+    stop("Input not supported.", call. = FALSE)
+
+  n = nrow(x)
+
+  if (assertive::is_a_number(ws))
+  {
+    # nothing to do
+  }
+  else if (assertive::is_function(ws))
+  {
+    ws = ws(x$Z)
+
+    if (!is.numeric(ws)) stop("The function 'ws' did not return correct output.", call. = FALSE)
+    if (any(ws <= 0))    stop("The function 'ws' returned negative or nul values.", call. = FALSE)
+    if (anyNA(ws))       stop("The function 'ws' returned NA values.", call. = FALSE)
+    if (length(ws) != n) stop("The function 'ws' did not return correct output.", call. = FALSE)
+  }
+  else
+    stop("'ws' must be a number or a function", call. = FALSE)
 
   . <- X <- Y <- Z <- NULL
-  maxima = C_LocalMaximaPoints(x, ws, hmin)
-  return(x@data[maxima, .(X,Y,Z)])
-}
+  is_maxima = C_LocalMaximumFilter(x, ws, hmin, circular)
+  maxima = x[is_maxima, .(X,Y,Z)]
 
-#' @export
-tree_detection_lmf.lasmetrics = function(x, ws, hmin = 2)
-{
-  assertive::assert_is_a_number(ws)
-  assertive::assert_all_are_positive(ws)
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_positive(hmin)
+  if (output_format == "RasterLayer")
+  {
+    cells = raster::cellFromXY(output, maxima[,1:2])
+    output[cells] = 1:length(cells)
+  }
+  else
+  {
+    output = maxima
+  }
 
-  x = as.raster(x)
-  return(tree_detection_lmf.RasterLayer(x, ws, hmin))
-}
-
-#' @export
-tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2)
-{
-  assertive::assert_is_a_number(ws)
-  assertive::assert_all_are_positive(ws)
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_positive(hmin)
-
-  xx <- raster::as.matrix(x)
-  xx <- t(apply(xx, 2, rev))
-  LM = tree_detection_lmf.matrix(xx, ws, hmin)
-  LM = raster::raster(apply(LM,1,rev))
-  raster::extent(LM) = raster::extent(x)
-  return(LM)
-}
-
-#'@export
-tree_detection_lmf.matrix = function(x, ws, hmin = 2)
-{
-  assertive::assert_is_a_number(ws)
-  assertive::assert_all_are_greater_than_or_equal_to(ws, 3)
-  assertive::assert_all_are_odd(ws)
-
-  x[is.na(x)] <- -Inf
-  LM = C_LocalMaximaMatrix(x, ws, hmin)
-  LM[LM == 0] <- NA
-  return(LM)
+  return(output)
 }
 
 #' @rdname lastrees_ptrees
@@ -209,7 +234,7 @@ tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
 #' }
 tree_detection_manual = function(las, detected = NULL, ...)
 {
-  X <- Y <-Z <- NULL
+  . <- X <- Y <-Z <- NULL
 
   stopifnotlas(las)
 
@@ -224,7 +249,7 @@ tree_detection_manual = function(las, detected = NULL, ...)
     names(apice) <- c("X","Y","Z")
   }
 
-  plot(las, ...)
+  plot.LAS(las, ...)
 
   id = numeric(nrow(apice))
   for (i in 1:nrow(apice))

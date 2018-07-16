@@ -5,6 +5,12 @@
 * New function `lastrees_ptree` with Vega et al. (2014) algorithm.
 * New function `lastrees_hamraz` with Hamraz et al. (2016) algorithm.
 * New function `tree_detection_manual` for manual correction of tree detection.
+* `tree_detection_lmf` have a user-defined variable size search windows.
+* `tree_detection_lmf` have custumizable shape (square of disc) search windows.
+
+#### OTHER CHANGES
+
+* `tree_detection_lmf` when used with a `RasterLayer` as input expect paramter given in the units of the map and not in pixels
 
 ## lidR v1.6.0 (in development)
 

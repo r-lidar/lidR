@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height);
+LogicalVector C_LocalMaximumFilter(DataFrame las, NumericVector ws, double min_height, bool circular);
 
 // [[Rcpp::export]]
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar = false)
@@ -73,7 +73,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // https://doi.org/10.14358/PERS.78.1.75
 
   // Find if a point is a local maxima within an R windows
-  LogicalVector is_lm = C_LocalMaximaPoints(las, R, 0);
+  LogicalVector is_lm = C_LocalMaximumFilter(data, R, 0, true);
 
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);
