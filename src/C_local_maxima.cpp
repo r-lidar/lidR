@@ -65,7 +65,7 @@ IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
       seed_neighbours = seeds(Range(minR,maxR), Range(minC,maxC));
 
       if (image(r,k) == max(img_neighbours) &&                   // If center pixel is the highest
-          max(seed_neighbours) == 0 &&                           // And there is not orther seed in the neighborhood
+          max(seed_neighbours) == 0 &&                           // And there is no other seed in the neighborhood
           image(r,k) > th)                                       // And this maximum is not too low
       {
         seeds(r,k) = index;                                      // Then this pixel is a seed
@@ -80,64 +80,44 @@ IntegerMatrix C_LocalMaximaMatrix(NumericMatrix image, int ws, double th)
 // [[Rcpp::export]]
 LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height)
 {
-  // DataFrame data = las.slot("data");
-  DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
-
+  DataFrame data  = as<Rcpp::DataFrame>(las.slot("data"));
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
-  unsigned int n = X.length();
+  int n = X.length();
   double hws = ws/2;
 
-  LogicalVector is_maxima(n);
-  LogicalVector isnot_maxima(n);
-
+  LogicalVector seeds(n);
   QuadTree *tree = QuadTreeCreate(X,Y);
 
-  for (unsigned int i = 0 ; i < n ; i++)
+  // Loop through all the point cloud
+  for (int i = 0 ; i < n ; i++)
   {
+    if (Z[i] <= min_height)
+      continue;
+
+    // Get the points within a windows centered on the current point
     std::vector<Point*> pts;
     tree->rect_lookup(X[i], Y[i], hws, hws, pts);
 
-    long id_new_max = -1;
-    long id_old_max = -1;
-    double max(std::numeric_limits<double>::min());
-
-    for(unsigned int j = 0 ; j < pts.size() ; j++)
+    // Get the highest Z in the windows
+    double Zmax = std::numeric_limits<double>::min();
+    Point *p;
+    for(size_t j = 0 ; j < pts.size() ; j++)
     {
-      long pid = pts[j]->id;
-
-      double z = Z[pid];
-
-      if(z >= min_height && z > max && !isnot_maxima[pid])
+      if(Z[pts[j]->id] > Zmax)
       {
-        max = z;
-        id_new_max = pid;
-      }
-
-      if (is_maxima[pid])
-      {
-        id_old_max = pid;
+        p = pts[j];
+        Zmax = Z[p->id];
       }
     }
 
-    for(unsigned int j = 0 ; j < pts.size() ; j++)
-    {
-      long pid = pts[j]->id;
-
-      if (pid != id_new_max)
-        isnot_maxima[pid] = true;
-    }
-
-    if(id_old_max != -1)
-      is_maxima[id_old_max] = false;
-
-    if(id_new_max != -1)
-      is_maxima[id_new_max] = true;
+    // The central pixel is the highest, it is a LM
+    if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
+      seeds[i] = true;
   }
 
   delete tree;
-  return is_maxima;
+  return seeds;
 }
-
