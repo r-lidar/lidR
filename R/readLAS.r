@@ -204,6 +204,8 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   else
     rlas::check_data_vs_header(header, data, hard = TRUE)
 
+  rlas::check_data(data)
+
   las <- LAS(data, header, check = FALSE)
 
   if (P)  laspulse(las)

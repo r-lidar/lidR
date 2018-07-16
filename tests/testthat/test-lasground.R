@@ -1,7 +1,7 @@
 context("lasground")
 
 file <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(file, select = "xyz")
+las = readLAS(file, select = "xyzrn")
 
 test_that("lasground update las object", {
   ws = seq(3,21, 5)
