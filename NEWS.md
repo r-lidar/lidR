@@ -1,4 +1,4 @@
-## lidR v1.6.0 (in development)
+## lidR v1.6.0 (2018-07-20)
 
 #### NEW FEATURE
 
@@ -27,6 +27,7 @@
 * `lasscanline()` did not compute the scanline because the conditional statement that checked if the field was properly populated was incorrect.
 * [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops, raster and canopy raster.
 * `tree_detection` when used with a point cloud was not properly coded and tended to miss some trees.
+* In `lasclip*` if `ofile` was non empty, the function wrote properly the file but returned a non-expected error.
 
 ## lidR v1.5.1 (2018-06-14)
 

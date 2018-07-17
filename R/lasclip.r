@@ -355,6 +355,9 @@ catalog_clip_poly = function(catalog, xpoly, ypoly, ofile, ...)
   if (is.null(data))
     return (invisible())
 
+  if (nrow(data) == 0)
+    return (invisible())
+
   return(LAS(data, header))
 }
 
@@ -384,6 +387,9 @@ catalog_clip_rect = function(catalog, xmin, ymin, xmax, ymax, ofile, ...)
   header = rlas::read.lasheader(cluster@files[1])
   data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
 
+  if (is.null(data))
+    return (invisible())
+
   if (nrow(data) == 0)
     return (invisible())
 
@@ -410,6 +416,9 @@ catalog_clip_circ = function(catalog, xcenter, ycenter, radius, ofile, ...)
 
   header = rlas::read.lasheader(cluster@files[1])
   data   = rlas:::stream.las(cluster@files, ofile = ofile, select = select, filter = filter)
+
+  if (is.null(data))
+    return (invisible())
 
   if (nrow(data) == 0)
     return (invisible())

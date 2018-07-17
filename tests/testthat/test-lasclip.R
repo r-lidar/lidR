@@ -43,5 +43,5 @@ test_that("clip works with a geometry", {
   poly = lakes@polygons[[1]]@Polygons[[1]]
 
   roi = lasclip(ctg, poly)
-  expect_equal(nrow(roi@data), 7065)
+  expect_equal(nrow(roi@data), 7038)
 })
