@@ -259,7 +259,7 @@ tree_detection_manual = function(las, detected = NULL, ...)
   repeat
   {
     f <- rgl::select3d(button = c("right"))
-    pts <- las@data[f(las@data)]
+    pts <- las@data[f(las@data), .(X,Y,Z)]
 
     if (length(pts$X) == 0)
       break;
