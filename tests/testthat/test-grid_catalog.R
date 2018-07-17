@@ -69,16 +69,21 @@ test_that("grid_terrain returns the same both with catalog and las", {
   expect_lt(mean(diff, na.rm = TRUE), 0.01)
 })
 
+
 test_that("grid_canopy returns a VRT", {
-  vrt(ctg) <- tempdir()
-  buffer(ctg) <- 0
-  tiling_size(ctg) <- 180
+    # Run only on a local machine, CRAN does not like it
+    if (file.exists(".Rbuildignore"))
+    {
+      vrt(ctg) <- tempdir()
+      buffer(ctg) <- 0
+      tiling_size(ctg) <- 180
 
-  chm1 = grid_canopy(ctg)
-  chm2 = as.raster(grid_canopy(las))
+      chm1 = grid_canopy(ctg)
+      chm2 = as.raster(grid_canopy(las))
 
-  expect_true(is(chm1, "RasterStack"))
-  expect_true(object.size(chm1) < object.size(chm2))
+      expect_true(is(chm1, "RasterStack"))
+      expect_true(object.size(chm1) < object.size(chm2))
+    }
 })
 
 test_that("grid_catalog generic function works", {
