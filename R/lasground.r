@@ -67,14 +67,12 @@
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz")
+#' las = readLAS(LASfile, select = "xyzRN")
 #'
-#' ws = seq(3,21, 3)
-#' th = seq(0.1, 2, length.out = length(ws))
+#' ws = seq(3,12, 3)
+#' th = seq(0.1, 1.5, length.out = length(ws))
 #'
-#' # Here we used last_return = FALSE because in this dataset
-#' # the field NumberOfReturn is wrongly populated
-#' lasground(las, "pmf", ws, th, last_returns = FALSE)
+#' lasground(las, "pmf", ws, th)
 #'
 #' plot(las, color = "Classification")
 #' @importFrom data.table :=
