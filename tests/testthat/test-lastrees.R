@@ -15,7 +15,7 @@ test_that("Dalponte's methods works", {
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-  expect_equal(sort(unique(seg1[])), 1:64)
+  expect_equal(sort(unique(seg1[])), 1:59)
 
   # Test if it works with a data.frame as input
   ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
@@ -34,11 +34,10 @@ test_that("Dalponte's methods works", {
 
   # Test if seed IDs are propagated
   ttopsdf[1,1] <- old
-  ttopsdf$layer = 1:64*2
+  ttopsdf$layer = 1:59*2
 
   seg3 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
-  expect_equal(sort(unique(seg3[])), 1:64*2)
-
+  expect_equal(sort(unique(seg3[])), 1:59*2)
 })
 
 test_that("Li's method works", {
