@@ -1,8 +1,90 @@
-## lidR v1.4.2 (In developpment)
+## lidR v1.6.0 (2018-07-20)
+
+#### NEW FEATURE
+
+* New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
+* New option `stop_early` that enables processing of an entire catolog or stops if an error occurs.
+* New function `catalog_retile` supersedes the function `catalog_reshape` and performs the same task while adding much more functionality.
+
+#### ENHANCEMENTS
+
+* When processing a `LAScatalog`, error handling has been seriouly improved. A process can now run until the end even with errors. In this case clusters with errors are skipped.
+* When processing  a `LAScatalog`, the graphical progress now uses 3 colors. green: ok, red: error, gray: null.
+* `as.spatial()` for `LAS` object preserves the CRS.
+* All the functions now have strong assertions to check user inputs.
+* `plot.LAScatalog` always displays the catalog with `mapview` by default even if the CRS is empty.
+* In `lastrees_dalponte` the matching between the seeds and the canopy is more tolerant. Rasters can have different resolution and/or extent.
+* `lasground` uses (as an option) only the last and single returns to perform the segmentation.
+
+#### OTHER CHANGES
+
+* `catalog()` displays a message when finding overlaps between files.
+* The LAScatalog class is more thoroughly documented.
+* Clusters now align on (0,0) by default when processing a `LAScatalog` by cluster.
+
+#### BUG FIXES
+
+* `lasscanline()` did not compute the scanline because the conditional statement that checked if the field was properly populated was incorrect.
+* [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops, raster and canopy raster.
+* `tree_detection` when used with a point cloud was not properly coded and tended to miss some trees.
+* In `lasclip*` if `ofile` was non empty, the function wrote properly the file but returned a non-expected error.
+
+## lidR v1.5.1 (2018-06-14)
+
+#### BUG FIXES
+
+* The area of a `LAScatalog` was wrongly computed for non square tiles because of a bad copy/paste in the code.
+* [[#135](https://github.com/Jean-Romain/lidR/issues/135)] Fix `NULL` class objects returned by `grid_*` functions when processing a `LAScatalog` if the first cluster is empty.
+* [[#143](https://github.com/Jean-Romain/lidR/issues/143)] `rumple_index` returns `NA` if not computable.
+
+## lidR v1.5.0 (2018-05-13)
+
+#### SIGNIFICANT CHANGES
+
+* `catalog_options()` is formally deprecated. Use `LAScatalog` properties instead (see `?catalog`).
+* The package `magrittr` is no longer loaded with `lidR`. Thus, piping operators are no longer usable by default. To use piping operators use `library(magrittr)`.
+
+#### NEW FEATURES
+
+* New `lassmooth` function. A point cloud-based smoothing function.
+* New `lasfiltersurfacepoints` function to filter surface points.
+* New `grid_catalog` function is a simplified and more powerful function like `catalog_apply` but specifically dedicated to `grid_*` outputs.
+* New functions `lasadddata`, `lasaddextrabyte` and `lasaddextrabyte_manual` to add new data in a `LAS` object.
+* `lasclip` can clip a `SpatialPolygonsDataFrame`
+* `lasclipRectangle` and `lasclipCircle` can clip multiple selections (non-documented feature).
+* The `treeID` computed with `lastrees_*` functions can now be written in a `las/laz` file by default.
+
+#### OTHER CHANGES
+
+* `LAScatalog` objects are processed with a single core by default.
+* `lasdecimate` is formally deprecated. Use `lasfilterdecimate`
+* `grid_density` now returns both the point and the pulse density, where possible.
+* The option `P` is no longer set by default in `readLAS`.
+* The documentation of `lastrees` has been split into several pages.
+* When a catalog is processed using several cores, if an error is raised the process triggers an early signal to stop the loop. In previous releases the entire process was run and the error was raised at the end when the futures were evaluated.
+
+#### BUG FIXES
+
+* `grid_metrics(lidar, stdmetrics_i(Intensity))` returned and empty `data.table`
+* [[#128](https://github.com/Jean-Romain/lidR/issues/128)] Fix raster data extraction using the slower and memory-greedy, but safer `raster::extract` function.
+* [[#126](https://github.com/Jean-Romain/lidR/issues/126)] propagate the CRS in filter functions.
+* [[#116](https://github.com/Jean-Romain/lidR/issues/116)] Fix clash between function `area` from `lidR` and from `raster`.
+* [[#110](https://github.com/Jean-Romain/lidR/issues/110)] Fix out-of-bounds rasterization.
+
+## lidR v1.4.2 (2018-04-19)
 
 #### BUG FIXES
 
 * [[#103](https://github.com/Jean-Romain/lidR/issues/103)] fix user-defined function not exported in clusters on Windows
+* [[#104](https://github.com/Jean-Romain/lidR/pull/104)] fix potential bin exclusion in `entropy` function
+* [[#106](https://github.com/Jean-Romain/lidR/issues/106)] fix wrong count of points below 0
+* Fix wrong type attribution in `lasclassify` when using the shapefile's table of attributes as data.
+* Fix column addition when `field = NULL` in `lasclassify`.
+* Fix `NA` return in entropy when negative value are found.
+
+#### NEW FEATURES
+
+* Li et al algorithm has a new parameter Zu (see reference) that is no longer hard coded.
 
 ## lidR v1.4.1 (2018-02-01)
 
@@ -24,7 +106,7 @@
 * `lastrees` with the Li et al. (2012) algorithm gains a new parameter to prevent over-segmentation.
 * new function `lassnags` for classifying points as snag points or for segmenting snags.
 * new function `tree_detection` to detect individual trees. This feature has been extracted from `lastrees`'s algorithms and it is now up to the users to use `lidR`'s algos or other input sources.
-* `plot` supports natively the `PointCloudViewer` package avaible on github.
+* `plot` supports natively the `PointCloudViewer` package available on github.
 
 #### BUG FIXES
 
@@ -93,7 +175,7 @@ Major changes are:
 * S3 `Catalog` class is now a S4 `LAScatalog` class
 * `LAS` and `LAScatalog` class gain a slot `crs` automatically filled with a proj4 string
 * `plot.LAScatalog` display a google map background if the catalog has a CRS.
-* `plot.LAScatalog` gains an argument `y` to display a either a terrain, raod, satellite map.
+* `plot.LAScatalog` gains an argument `y` to display a either a terrain, road, satellite map.
 * `lasarea` is deprecated. Use the more generic function `area`
 
 #### BUG FIXES
@@ -125,7 +207,7 @@ Major changes are:
 * Memory leak in QuadTree algorithm. Memory is now free after QuadTree deletion.
 * Dalponte's algorithm had a bug due to the use of std::abs which works with integers. Replaced by std::fabs which works with doubles.
 * In `grid_tincanopy` `x > 0` was replaced by `x >= 0` to avoid errors in the canopy height models
-* Triangle boudaries are now taken into account in the rasterization of the Delaunay triangulation
+* Triangle boundaries are now taken into account in the rasterization of the Delaunay triangulation
 
 #### OTHER CHANGES
 
@@ -153,7 +235,7 @@ Major changes are:
 * [[#49](https://github.com/Jean-Romain/lidR/pull/49)] typo error leading to the wrong metric in `stdmetric_i` 
 * [[#50](https://github.com/Jean-Romain/lidR/pull/50)] typo error leading to the wrong metric in `stdmetric` 
 * Fix bug in `stdmetric_z` when `max(Z) = 0`
-* [[#54](https://github.com/Jean-Romain/lidR/pull/54)] better recomputation of the header of LAS objects.
+* [[#54](https://github.com/Jean-Romain/lidR/pull/54)] better re-computation of the header of LAS objects.
 
 #### OTHER CHANGES
 

@@ -7,7 +7,7 @@
 \usage{
 lasground(las, algorithm, ...)
 
-lasground_pmf(las, ws, th)
+lasground_pmf(las, ws, th, last_returns = TRUE)
 }
 \arguments{
 \item{las}{a LAS object.}
@@ -19,11 +19,16 @@ lasground_pmf(las, ws, th)
 of the algorithms).}
 
 \item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
-The values must be positive and in the units of the point cloud (usually meters, occasionally feet).}
+The values must be positive and in the same units as the point cloud (usually meters, occasionally
+feet).}
 
-\item{th}{numeric. Sequence of threshold heights above the parameterized ground surface
-to be considered a ground return. The values must be positive and are in the units of
-the point cloud (usually meters, occasionally feet).}
+\item{th}{numeric. Sequence of threshold heights above the parameterized ground surface to be
+considered a ground return. The values must be positive and in the same units as the point cloud.}
+
+\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
+in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+to \code{FALSE} automatically.}
 }
 \value{
 Nothing. The original LAS object is updated by reference. In the 'Classification'
@@ -39,20 +44,20 @@ assigned a value of 2 according to las specifications (See the ASPRS documentati
 
 
 This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-This is not a strict implementation of Zhang et al. This algorithm works at the point
+Note that this is not a strict implementation of Zhang et al. This algorithm works at the point
 cloud level without any rasterization process. The morphological operator is applied on
-the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
-to compute the sequence of windows sizes and thresholds. Here these parameters are free
+the point cloud, not on a raster. Also, Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+to compute the sequence of windows sizes and thresholds. Here, these parameters are free
 and specified by the user. The function \link{util_makeZhangParam} enables computation
 of the parameters according to the original paper.
 }
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
+las = readLAS(LASfile, select = "xyzRN")
 
-ws = seq(3,21, 3)
-th = seq(0.1, 2, length.out = length(ws))
+ws = seq(3,12, 3)
+th = seq(0.1, 1.5, length.out = length(ws))
 
 lasground(las, "pmf", ws, th)
 

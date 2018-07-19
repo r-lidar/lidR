@@ -31,7 +31,7 @@
 #'
 #' Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
 #' returns the highest point found (point-to-raster). This basic method could be improved
-#' by replacing each LiDAR return with a small disk. An interpolation for empty pixels is
+#' by replacing each LiDAR return with a small disc. An interpolation for empty pixels is
 #' also available.
 #'
 #' The algorithm relies on a point-to-raster approach. For each pixel the elevation of the
@@ -48,10 +48,9 @@
 #'
 #' @section Use with a \code{LAScatalog}:
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
-#' by default to the number of core available in the computer. The user can modify the global
-#' options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax file. Computation speed will be \emph{significantly} improved with a
+#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
+#' options using the \link[lidR:catalog]{available options}.\cr\cr
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @aliases  grid_canopy
@@ -74,20 +73,25 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Local maximum algorithm with a resolution of 2 meters
-#' lidar %>% grid_canopy(2) %>% plot
+#' chm = grid_canopy(lidar, 2)
+#' plot(chm)
 #'
 #' # Local maximum algorithm with a resolution of 1 meter replacing each
 #' # point by a 20 cm radius circle of 8 points
-#' lidar %>% grid_canopy(1, 0.2) %>% plot
+#' chm = grid_canopy(lidar, 1, 0.2)
+#' plot(chm)
 #'
 #' # Local maximum algorithm with a resolution of 1 meter replacing each
 #' # point by a 10 cm radius circle of 8 points and interpolating the empty
 #' # pixels using the 3-nearest neighbours and an inverse-distance weighting.
-#' grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2) %>% plot
+#' chm = grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2)
+#' plot(chm)
 #'
 #' \dontrun{
-#' grid_canopy(lidar, 1, na.fill = "knnidw", k = 3) %>% plot
-#' grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay") %>% plot
+#' chm = grid_canopy(lidar, 1, na.fill = "knnidw", k = 3)
+#' plot(chm)
+#' chm = grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay")
+#' plot(chm)
 #' }
 #' @family grid_alias
 #' @seealso
@@ -104,8 +108,10 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 {
   . <- X <- Y <- Z <- NULL
 
-  if (!is.numeric(res))
-    stop("Argument 'res' should be a number", call. = FALSE)
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+  assertive::assert_is_a_number(subcircle)
+  assertive::assert_all_are_non_negative(subcircle)
 
   if (res < 0)
     stop("Argument 'res' should be greater than 0", call. = FALSE)
@@ -118,7 +124,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 
   verbose("Gridding highest points in each cell...")
 
-  dsm = Cpp_grid_canopy(x, res, subcircle)
+  dsm = C_grid_canopy(x, res, subcircle)
   as.lasmetrics(dsm, res)
 
   if (na.fill != "none")
@@ -136,7 +142,7 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
     hull = rgeos::gBuffer(sphull, width = res)
     hull = hull@polygons[[1]]@Polygons[[1]]@coords
 
-    grid = grid[points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
+    grid = grid[C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
 
     data.table::setkeyv(grid, c("X", "Y"))
     data.table::setkeyv(dsm, c("X", "Y"))
@@ -157,14 +163,15 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
 #' @export
 grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
 {
-  oldbuffer <- CATALOGOPTIONS("buffer")
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+  assertive::assert_is_a_number(subcircle)
+  assertive::assert_all_are_non_negative(subcircle)
 
-  CATALOGOPTIONS(buffer = res/2 + subcircle)
+  x = catalog_old_compatibility(x)
 
+  buffer(x) <- res/2 + subcircle
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
   return(canopy)
 }
 

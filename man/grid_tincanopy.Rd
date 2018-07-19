@@ -20,11 +20,11 @@ passed to the function it becomes the Khosravipour et al. pit-free algorithm.}
 If a triangle has an edge greater than this value it will be removed. It is used to drive
 the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
 The first number is the value for the classical triangulation (threshold = 0), the second number
-is the value for the pit-free algorithm for (thresholds > 0). If \code{max_edge = 0} no trimming
-will be done.}
+is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
+is done.}
 
 \item{subcircle}{numeric. Radius of the circles. To obtain fewer pits the algorithm
-can replace each return with a circle composed of 8 points before computing the triangulation
+can replace each return with a circle consisting of 8 points before computing the triangulation
 (see also \link{grid_canopy}).}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
@@ -45,10 +45,9 @@ triangulations at different heights (see reference).
 \section{Use with a \code{LAScatalog}}{
 
 When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. Parallel computing is set
-by default to the number of core available in the computer. A buffer is required. The user
-can modify the global options using the function \link{catalog_options}.\cr\cr
-\code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+the entire dataset in a continuous way using a multicore process. The user can modify the processing
+options using the \link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 spatial index.
 }
 

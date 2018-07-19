@@ -18,9 +18,9 @@ test_that("area works", {
 test_that("points in polygon works", {
   ch = lidR:::convex_hull(x,y)
 
-  expect_equal(lidR:::points_in_polygon(vertx, verty, x, y), c(T, F, F, F, T, T, F, T, T, F, F))
-  expect_true(lidR:::point_in_polygon(ch$x, ch$y, 0.5,0.5))
-  expect_true(!lidR:::point_in_polygon(ch$x, ch$y, -0.5,0.5))
+  expect_equal(lidR:::C_points_in_polygon(vertx, verty, x, y), c(T, T, F, T, T, T, F, T, T, F, F))
+  expect_true(lidR:::C_point_in_polygon(ch$x, ch$y, 0.5,0.5))
+  expect_true(!lidR:::C_point_in_polygon(ch$x, ch$y, -0.5,0.5))
 })
 
 test_that("tsearch works", {
@@ -29,23 +29,23 @@ test_that("tsearch works", {
   tri <- matrix(c(1, 2, 3), 1, 3)
 
   ## Should be in triangle #1
-  ts <- lidR:::tsearch(x, y, tri, -1, -1)
+  ts <- lidR:::C_tsearch(x, y, tri, -1, -1)
   expect_equal(ts, 1)
 
   ## Should be in triangle #1
-  ts <- lidR:::tsearch(x, y, tri, 1, -1)
+  ts <- lidR:::C_tsearch(x, y, tri, 1, -1)
   expect_equal(ts, 1)
 
   ## Should be in triangle #1
-  ts <- lidR:::tsearch(x, y, tri, -1, 1)
+  ts <- lidR:::C_tsearch(x, y, tri, -1, 1)
   expect_equal(ts, 1)
 
   ## Centroid
-  ts <- lidR:::tsearch(x, y, tri, -1/3, -1/3)
+  ts <- lidR:::C_tsearch(x, y, tri, -1/3, -1/3)
   expect_equal(ts, 1)
 
   ## Should be outside triangle #1, so should return NA
-  ts <- lidR:::tsearch(x, y, tri, 1, 1)
+  ts <- lidR:::C_tsearch(x, y, tri, 1, 1)
   expect_true(is.na(ts))
 })
 
@@ -54,34 +54,34 @@ test_that("tsearch pass computer precision tests", {
   y <- c(7.76, 7.75, 8.35)
   tri <- matrix(c(1, 2, 3), 1, 3)
 
-  ts <- lidR:::tsearch(x, y, tri, 7.125, 7.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 7.125, 7.875)
   expect_equal(ts, 1)
 
   x <- c(278287.03, 278286.89, 278287.15)
   y <- c(602248.35, 602247.76, 602247.75)
 
   tri = matrix(c(1,2,3), 1,3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 
   tri = matrix(c(3,2,1), 1,3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 
   tri = matrix(c(2,3,1), 1,3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 
   tri = matrix(c(2,1,3), 1,3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 
   tri = matrix(c(3,1,2), 1,3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 
   tri <- matrix(c(1, 2, 3), 1, 3)
-  ts <- lidR:::tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
   expect_equal(ts, 1)
 })
 
@@ -92,7 +92,7 @@ test_that("tinfo works", {
   X <- cbind(x, y, z)
   D <- matrix(c(1, 2, 3, 1), 1, 4)
 
-  info = lidR:::tinfo(D, X)
+  info = lidR:::C_tinfo(D, X)
 
   # normal vector is (1,1,1)
   n = c(info[,1], info[,2], info[,3]) %>% as.numeric
@@ -117,7 +117,7 @@ test_that("tinfo works", {
   z = c(0,0,1)
   X = cbind(x,y,z)
 
-  I = as.numeric(lidR:::tinfo(D, X))
+  I = as.numeric(lidR:::C_tinfo(D, X))
 
   expect_equal(I[5], sqrt(2)/2)
   expect_equal(I[6], 1/2)
@@ -127,7 +127,7 @@ test_that("tinfo works", {
   z = c(0,1,1)
   X = cbind(x,y,z)
 
-  I = as.numeric(lidR:::tinfo(D, X))
+  I = as.numeric(lidR:::C_tinfo(D, X))
 
   expect_equal(I[5], sqrt(3)/2)
   expect_equal(I[6], 1/2)
@@ -137,7 +137,7 @@ test_that("tinfo works", {
   z = c(0,0,2)
   X = cbind(x,y,z)
 
-  I = as.numeric(lidR:::tinfo(D, X))
+  I = as.numeric(lidR:::C_tinfo(D, X))
 
   expect_equal(I[5], sqrt(5)/2)
   expect_equal(I[6], 1/2)

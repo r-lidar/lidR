@@ -42,7 +42,8 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Max Z within
-#' grid_hexametrics(lidar, max(Z), 5) %>% plot
+#' hm = grid_hexametrics(lidar, max(Z), 5)
+#' plot(hm)
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' \link[grDevices:heat.colors]{heat.colors}
@@ -53,7 +54,7 @@ plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ..
   if (is.null(z))
   {
     if (length(names(x)) > 3)
-      lidRError("GDM1")
+      stop("More than 3 columns in the variable: please input the metric name to plot it.")
     else
       z = names(x)[3]
   }
@@ -62,7 +63,7 @@ plot.lashexametrics = function(x, z = NULL, colorPalette = height.colors(50), ..
 
   x_ = x$X
   y_ = x$Y
-  z_ = x[,z, with = FALSE] %>% unlist %>% as.numeric
+  z_ = as.numeric(unlist(x[, z, with = FALSE]))
 
   col = set.colors(z_, colorPalette)
 

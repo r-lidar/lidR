@@ -39,18 +39,22 @@
 #' @param ... parameters for the algorithms. These depend on the algorithm used (see details
 #' of the algorithms).
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
-#' The values must be positive and in the units of the point cloud (usually meters, occasionally feet).
-#' @param th numeric. Sequence of threshold heights above the parameterized ground surface
-#' to be considered a ground return. The values must be positive and are in the units of
-#' the point cloud (usually meters, occasionally feet).
+#' The values must be positive and in the same units as the point cloud (usually meters, occasionally
+#' feet).
+#' @param th numeric. Sequence of threshold heights above the parameterized ground surface to be
+#' considered a ground return. The values must be positive and in the same units as the point cloud.
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
 #'
 #' @section Progressive morphological filter (PMF):
 #'
 #' This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-#' This is not a strict implementation of Zhang et al. This algorithm works at the point
+#' Note that this is not a strict implementation of Zhang et al. This algorithm works at the point
 #' cloud level without any rasterization process. The morphological operator is applied on
-#' the point cloud not on a raster. Also Zhang et al. proposed some formulas (eq. 4, 5 and 7)
-#' to compute the sequence of windows sizes and thresholds. Here these parameters are free
+#' the point cloud, not on a raster. Also, Zhang et al. proposed some formulas (eq. 4, 5 and 7)
+#' to compute the sequence of windows sizes and thresholds. Here, these parameters are free
 #' and specified by the user. The function \link{util_makeZhangParam} enables computation
 #' of the parameters according to the original paper.
 #'
@@ -63,16 +67,16 @@
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz")
+#' las = readLAS(LASfile, select = "xyzRN")
 #'
-#' ws = seq(3,21, 3)
-#' th = seq(0.1, 2, length.out = length(ws))
+#' ws = seq(3,12, 3)
+#' th = seq(0.1, 1.5, length.out = length(ws))
 #'
 #' lasground(las, "pmf", ws, th)
 #'
 #' plot(las, color = "Classification")
 #' @importFrom data.table :=
-lasground = function(las, algorithm, ...)
+lasground = function(las, algorithm,  ...)
 {
   if (algorithm == "pmf")
     lasground_pmf(las, ...)
@@ -82,38 +86,45 @@ lasground = function(las, algorithm, ...)
 
 #' @rdname lasground
 #' @export
-lasground_pmf = function(las, ws, th)
+lasground_pmf = function(las, ws, th, last_returns = TRUE)
 {
+  stopifnotlas(las)
+  assertive::assert_is_numeric(ws)
+  assertive::assert_is_numeric(th)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_all_are_positive(th)
+  assertive::assert_are_same_length(ws, th)
+
   . <- X <- Y <- Z <- Classification <- NULL
 
-  lws = length(ws)
-  lth = length(th)
+  npoints = nrow(las@data)
+  filter  = !logical(npoints)
+  pointID = 1:npoints
 
-  if (!is.vector(ws)) {stop("'ws' is not a vector.", call. = FALSE)}
-  if (!is.vector(th)) {stop("'th' is not a vector.", call. = FALSE)}
-  if (!is.numeric(ws)){stop("'ws' is not numeric", call. = FALSE)}
-  if (!is.numeric(th)){stop("'th' is not numeric.", call. = FALSE)}
-  if (lws != lth)     {stop("'ws' and 'th' are not the same length.", call. = FALSE)}
-  if (lws == 0)       {stop("'ws' is empty.", call. = FALSE)}
-  if (lth == 0)       {stop("'th' is empty.", call. = FALSE)}
-  if (any(ws <= 0))   {stop("'ws' contains negative or null values.", call. = FALSE)}
-  if (any(th <= 0))   {stop("'th' contains negative or null values.", call. = FALSE)}
-  if (any(is.na(ws))) {stop("'ws' contains NA values.", call. = FALSE)}
-  if (any(is.na(th))) {stop("'th' contains NA values.", call. = FALSE)}
+  if (last_returns)
+  {
+    n = names(las@data)
 
-  stopifnotlas(las)
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
+      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last', all the points will be used", call. = FALSE)
+    else
+      filter = las@data$ReturnNumber == las@data$NumberOfReturns
 
-  cloud = las@data[, .(X,Y,Z)]
-  cloud[, idx := 1:dim(cloud)[1]]
+    if(sum(filter) == 0)
+      stop("0 last return found. Process aborted.", call. = FALSE)
+  }
+
+  cloud = las@data[filter, .(X,Y,Z)]
+  cloud[, idx := pointID[filter]]
 
   verbose("Progressive morphological filter...")
 
-  for (i in 1:lws)
+  for (i in 1:length(ws))
   {
-    verbose(paste0("Pass ", i, " of ", length(ws), "..."))
-    verbose(paste0("Windows size = ", ws[i], " ; height_threshold = ", th[i]))
+    verbose(glue("Pass {i} of {length(ws)}..."))
+    verbose(glue("Windows size = {ws[i]} ; height_threshold = {th[i]}"))
 
-    Z_f = MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
+    Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
 
     # Find indices of the points whose difference between the source and
     # filtered point clouds is less than the current height threshold
@@ -126,7 +137,7 @@ lasground_pmf = function(las, ws, th)
 
   idx = cloud$idx
 
-  message(paste(length(idx), "ground points found."))
+  message(glue("{length(idx)} ground points found."))
 
   if ("Classification" %in% names(las@data))
   {
@@ -134,16 +145,16 @@ lasground_pmf = function(las, ws, th)
 
     if (nground > 0)
     {
-      warning(paste0("Orginal dataset already contains ", nground, " ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
+      warning(glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."), call. = FALSE)
       las@data[Classification == 2, Classification := 0]
     }
   }
   else
   {
-    las@data[, Classification := 0]
+    las@data[, Classification := 0L]
   }
 
-  las@data[idx, Classification := 2]
+  las@data[idx, Classification := 2L]
 
   return(invisible())
 }
@@ -171,7 +182,7 @@ lasground_pmf = function(las, ws, th)
 #' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
 #' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
 #' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
-#' @return A list with two components, the windows size sequence and the threshold sequence.
+#' @return A list with two components: the windows size sequence and the threshold sequence.
 #' @references
 #' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
 #' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
@@ -192,7 +203,7 @@ util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws =
     stop("exp should be logical", call. = FALSE)
 
   if (!exp & b < 1)
-    warning("Due to an incoherance in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increasing. The internal routine use the fact that the increses in contant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherence in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
 
 
   dhtk = c()

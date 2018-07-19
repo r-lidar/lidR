@@ -17,15 +17,13 @@ entropy(z, by = 1, zmax = NULL)
 A number between 0 and 1
 }
 \description{
-A normalized Shannon vertical complexity index
-}
-\details{
-The Shannon diversity index is a measure for quantifying diversity and is
-based on the number and frequency of species present. This index, developed by
-Shannon and Weaver for use in information theory, was successfully transferred
-to the description of species diversity in biological systems (Shannon 1948).
-Here it is applied to quantify the diversity and the evenness of an elevational distribution
-of LiDAR points. It makes bins between 0 and the maximum elevation.
+A normalized Shannon vertical complexity index. The Shannon diversity index is a measure for
+quantifying diversity and is based on the number and frequency of species present. This index,
+developed by Shannon and Weaver for use in information theory, was successfully transferred
+to the description of species diversity in biological systems (Shannon 1948). Here it is applied
+to quantify the diversity and the evenness of an elevational distribution of LiDAR points. It
+makes bins between 0 and the maximum elevation. If there are negative value the function
+returns NA.
 }
 \examples{
 z = runif(10000, 0, 10)

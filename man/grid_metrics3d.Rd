@@ -36,19 +36,20 @@ function without considering voxels, only a cloud of points (see example).
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-# Cloud of points is voxelized with a 1-meter resolution and in each voxel
+# Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the number of points is computed.
-grid_metrics3d(lidar, length(Z))
+grid_metrics3d(lidar, length(Z), 3)
 
-# Cloud of points is voxelized with a 1-meter resolution and in each voxel
+# Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the mean scan angle of points is computed.
-grid_metrics3d(lidar, mean(ScanAngle))
+grid_metrics3d(lidar, mean(ScanAngle), 3)
 
+\dontrun{
 # Define your own metric function
-myMetrics = function(i, angle, pulseID)
+myMetrics = function(i, angle)
 {
   ret = list(
-     npulse  = length(unique(pulseID)),
+     npoints = length(i),
      angle   = mean(angle),
      imean   = mean(i)
    )
@@ -56,11 +57,12 @@ myMetrics = function(i, angle, pulseID)
    return(ret)
 }
 
-voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle, pulseID))
+voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle), 3)
 
-plot(voxels, "angle")
-plot(voxels, "imean")
+plot(voxels, color = "angle")
+plot(voxels, color = "imean")
 #etc.
+}
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}

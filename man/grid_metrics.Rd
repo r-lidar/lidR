@@ -42,12 +42,12 @@ pre-determined for a given resolution, so the algorithm will always provide the 
 independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
 following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
 grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec
-(Canada) the reference is (-831600,  117980) in the NAD83 coordinate system.
+(Canada) the reference is (-831600, 117980) in the NAD83 coordinate system.
 }
 \section{Parameter \code{func}}{
 
 The function to be applied to each cell is a classical function (see examples) that
-returns a labelled list of metrics. The following existing functions allows the user to
+returns a labelled list of metrics. The following existing functions allow the user to
 compute some metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics}}
@@ -71,10 +71,9 @@ reference is (-831600,  117980) in the NAD83 coordinate system.
 \section{Use with a \code{LAScatalog}}{
 
 When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. Parallel computing is set
-by default to the number of core available in the computer. The user can modify the global
-options using the function \link{catalog_options}.\cr\cr
-\code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+the entire dataset in a continuous way using a multicore process. The user can modify the processing
+options using the \link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 spatial index.
 }
 
@@ -83,10 +82,12 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Canopy surface model with 4 m^2 cells
-grid_metrics(lidar, max(Z), 2) \%>\% plot
+metrics = grid_metrics(lidar, max(Z), 2)
+plot(metrics)
 
 # Mean height with 400 m^2 cells
-grid_metrics(lidar, mean(Z), 20) \%>\% plot
+metrics = grid_metrics(lidar, mean(Z), 20)
+plot(metrics)
 
 # Define your own new metrics
 myMetrics = function(z, i)

@@ -53,11 +53,3 @@ polygon_area = function(x, y)
 
 	return(area)
 }
-
-area = function(x, y)
-{
-  hull = convex_hull(x, y)
-  area = polygon_area(hull$x, hull$y)
-  area = round(area,1)
-  return(area)
-}

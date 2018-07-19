@@ -75,10 +75,10 @@ dummy_las = function(n)
     X = stats::runif(n, 0, 100),
     Y = stats::runif(n, 0, 100),
     Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n)),
-    Classification = c(rep(1, 0.8*n), rep(2, 0.2*n)),
-    Intensity = stats::rnorm(n, 50, 10),
-    ReturnNumber    = rep(c(1,1,1,2,3,1,2,1,2,1), n/10),
-    NumberOfReturns = rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
+    Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n))),
+    Intensity = sample(10:50, n, TRUE),
+    ReturnNumber    = as.integer(rep(c(1,1,1,2,3,1,2,1,2,1), n/10)),
+    NumberOfReturns = as.integer(rep(c(1,1,3,3,3,2,2,2,2,1), n/10 )))
 
   las = suppressWarnings(LAS(dt))
 

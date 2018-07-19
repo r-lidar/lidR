@@ -47,10 +47,12 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Maximum elevation with a resolution of 4 m
-#' grid_hexametrics(lidar, max(Z), 4) %>% plot
+#' hm = grid_hexametrics(lidar, max(Z), 4)
+#' plot(hm)
 #'
 #' # Mean height with a resolution of 20 m
-#' grid_hexametrics(lidar, mean(Z)) %>% plot
+#' hm = grid_hexametrics(lidar, mean(Z))
+#' plot(hm)
 #'
 #' # Define your own new metrics
 #' myMetrics = function(z, i)
@@ -74,10 +76,7 @@
 grid_hexametrics = function(.las, func, res = 20, splitlines = FALSE, debug = FALSE)
 {
   stopifnotlas(.las)
-
-  call = substitute(func)
-
+  call <- substitute(func)
   stat <- lasaggregate(.las, by = "HEXA", call, res, NA, c("X", "Y"), splitlines, debug)
-
   return(stat)
 }

@@ -2,8 +2,8 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.4.2
-Date: 2018-02-01
+Version: 1.6.0
+Date: 2018-06-14
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -18,32 +18,58 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.1.0),magrittr,methods
+    R (>= 3.1.0),methods
 Imports:
-    rlas (>= 1.1.6),rgl,stats,utils,grDevices,tools,raster,rgeos,
-    data.table,Rcpp,lazyeval,geometry,gstat,sp,settings,gdalUtils,stringr,
-    memoise,mapview,mapedit,RANN,future
+    assertive,
+    concaveman,
+    data.table,
+    future,
+    gdalUtils,
+    geometry,
+    glue,
+    grDevices,
+    gstat,
+    lazyeval,
+    mapview,
+    mapedit,
+    memoise,
+    RANN,
+    raster,
+    Rcpp,
+    rgeos,
+    rgl,
+    rlas (>= 1.1.10),
+    settings,
+    sp,
+    stats,
+    tools,
+    utils
 Suggests:
-    rgdal,testthat,EBImage,hexbin
+    rgdal,
+    testthat,
+    EBImage,
+    hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp,RcppProgress
+LinkingTo: Rcpp
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
     'RcppExports.R'
     'catalog_apply.r'
-    'catalog_clip.r'
+    'catalog_fakerun.r'
     'catalog_index.r'
+    'catalog_laxindex.r'
     'catalog_makecluster.r'
     'catalog_query.r'
-    'catalog_reshape.r'
+    'catalog_retile.r'
     'catalog_select.r'
     'class-lasheader.r'
     'class-las.r'
     'class-lascatalog.r'
     'class-lascluster.r'
+    'clusters_apply.r'
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
@@ -55,23 +81,28 @@ Collate:
     'grid_terrain.r'
     'grid_tincanopy.r'
     'lasaggreagte.r'
-    'lascheck.r'
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'
-    'lasdecimate.r'
     'lasfilter.r'
+    'lasfilterdecimate.r'
+    'lasfiltersurfacepoints.r'
     'lasground.r'
     'lasindentify.r'
     'lasmetrics.r'
     'lasnormalize.r'
     'lasroi.r'
+    'lassmooth.r'
     'lassnags.r'
     'lastrees.r'
-    'lidRError.r'
+    'lastrees_dalponte.r'
+    'lastrees_li.r'
+    'lastrees_li2.r'
+    'lastrees_silva.r'
+    'lastrees_watershed.r'
+    'lasupdateheader.r'
     'metrics.r'
     'metrics_canopy_roughness.r'
-    'mutatebyref.r'
     'options.r'
     'plot.catalog.r'
     'plot.las.r'
@@ -80,8 +111,10 @@ Collate:
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
+    'stopif.r'
     'subcircled.r'
     'tree_detection.r'
+    'tree_hulls.r'
     'tree_metrics.r'
     'utils_colors.r'
     'utils_geometry.r'

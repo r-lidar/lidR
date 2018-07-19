@@ -63,6 +63,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   .Object@shape  <- shape
   .Object@name   <- name
   .Object@files  <- files
+  .Object@save   <- ""
 
   if (shape == LIDRCIRCLE)
     .Object@filter = paste("-inside_circle", xc, yc, hw + buffer)

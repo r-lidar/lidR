@@ -38,7 +38,7 @@
 #'
 #' \describe{
 #' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
+#' an inverse-distance weighting (IDW). This is a fast but basic method for spatial
 #' data interpolation.}
 #' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
 #' interpolation within each triangle. There are usually few cells outside the convex hull,
@@ -53,17 +53,16 @@
 #'
 #' @section Use with a \code{LAScatalog}:
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
-#' by default to the number of core available in the computer. A buffer is required to avoid
-#' edge artifacts. The user can modify the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
+#' options using the \link[lidR:catalog]{available options}.\cr\cr
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
 #' @param res numeric. resolution.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
 #' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
-#' @param p numeric. Power for invert distance weighting. Default 2.
+#' @param p numeric. Power for inverse-distance weighting. Default 2.
 #' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
 #' is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.
 #' @param keep_lowest logical. This function forces the original lowest ground point of each
@@ -103,6 +102,7 @@ grid_terrain = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.
 grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   . <- X <- Y <- Z <- Classification <- NULL
+  resolution = res
 
   # ========================
   # Select the ground points
@@ -124,35 +124,53 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
 
   verbose("Generating interpolation coordinates...")
 
-  ext  = extent(x) + 0.1 * res
-  grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, res)
+  if (is(res, "RasterLayer"))
+  {
+    resolution = raster::res(res)
 
-  hull = convex_hull(x@data$X, x@data$Y)
-  hull = sp::Polygon(hull)
-  hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-  hull = rgeos::gBuffer(hull, width = res)
-  hull = hull@polygons[[1]]@Polygons[[1]]@coords
-  keep = points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-  grid = grid[keep]
+    if (resolution[1] !=  resolution[2])
+      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+
+    resolution = resolution[1]
+
+    grid = raster::xyFromCell(res, 1:raster::ncell(res))
+    grid = data.table::as.data.table(grid)
+    data.table::setnames(grid, names(grid), c("X", "Y"))
+  }
+  else
+  {
+    ext  = extent(x) + 0.1 * resolution
+    grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, resolution)
+
+    hull = convex_hull(x@data$X, x@data$Y)
+    hull = sp::Polygon(hull)
+    hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+    hull = rgeos::gBuffer(hull, width = resolution)
+    hull = hull@polygons[[1]]@Polygons[[1]]@coords
+    keep = C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
+    grid = grid[keep]
+  }
 
   # =======================
   # Interpolate the terrain
   # =======================
 
+  has_buffer = "buffer" %in% names(x@data)
+
   verbose("Interpolating ground points...")
 
-  Zg = interpolate(ground, grid, method, k, p, model)
+  Zg = interpolate(ground, grid, method, k, p, model, wbuffer = !has_buffer)
   grid[, Z := round(Zg, 3)][]
 
   if (keep_lowest)
   {
     verbose("Forcing the lowest ground points to be retained...")
 
-    grid = rbind(grid, grid_metrics(lasfilterground(x), list(Z = min(Z)), res))
+    grid = rbind(grid, grid_metrics(lasfilterground(x), list(Z = min(Z)), resolution))
     grid = grid[, list(Z = min(Z)), by = .(X,Y)]
   }
 
-  as.lasmetrics(grid, res)
+  as.lasmetrics(grid, resolution)
 
   return(grid)
 }
