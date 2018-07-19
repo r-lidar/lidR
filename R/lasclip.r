@@ -110,7 +110,7 @@ lasclip.LAS = function(x, geometry, ofile = "", inside = TRUE, ...)
   {
     id = classify_from_shapefile(x, geometry)
     X = split(x@data, id)
-    X = lapply(X, LAS, header = las@header)
+    X = lapply(X, LAS, header = x@header)
     return(X)
   }
   else
