@@ -45,3 +45,9 @@ test_that("clip works with a geometry", {
   roi = lasclip(ctg, poly)
   expect_equal(nrow(roi@data), 7038)
 })
+
+test_that("clip works with a SpatialPolygonDataFrame", {
+  las = readLAS(LASfile)
+  l = lasclip(lidar, lakes)
+  expect_true(is(l, "list"))
+})
