@@ -170,13 +170,13 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   ncores    <- cores(ctg)
   stopearly <- stop_early(ctg)
   clusters  <- catalog_makecluster(ctg, 1)
-  
+
   cluster_apply_func <- function(cluster) {
       las = readLAS(cluster, ...)
       if (is.null(las)) return(NULL)
       return(do.call(func, c(las, func_args)))
   }
-  
-  output <- cluster_apply(clusters, cluster_apply_func, ncores, progress, stopearly, func = func, ctg = ctg, func_args = func_args, ...)
+
+  output <- cluster_apply(clusters, cluster_apply_func, ncores, progress, stopearly)
   return(output)
 }
