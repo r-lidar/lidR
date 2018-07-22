@@ -5,26 +5,40 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   nclust <- length(clusters)
   output <- vector("list", nclust)
   ncores <- if (nclust <= ncores) nclust else ncores
-  codes  <- rep(-1, nclust)
-
-  # shuffle the processing order
-  # clusters = clusters[sample(1:nclust)]
+  codes  <- rep(ASYNC_RUN, nclust)
 
   future::plan(future::multiprocess, workers = ncores)
 
-  if (progress)
+  # User supplied function not being analysed for globals/packages by the future we have to do it manually.
+  if (ncores > 1)
   {
-    graphics::legend("topright",
-                     title = "Colors",
-                     legend = c("No data","Ok","Errors (skipped)"),
-                     fill = c("gray","forestgreen", "red"),
-                     cex = 0.8)
+    dots <- list(...)
+    is.fun <- vapply(dots, is.function, logical(1))
+    required.pkgs <- "lidR"
+
+    if(any(is.fun))
+    {
+      dots <- dots[is.fun]
+      for(fun in dots)
+      {
+        globals <- future::getGlobalsAndPackages(fun)
+        where   <- attr(globals$globals, "where")
+        pkgs    <- vapply(where, attr, character(1), "name", USE.NAMES = FALSE)
+        pkgs    <- gsub("package\\:", "", pkgs)
+        required.pkgs <- c(required.pkgs, pkgs)
+      }
+    }
   }
 
+  # Display the color legend over the LAScatalog that should have already been plotted.
+  if (progress)
+    graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
+
+  # Parallel loop using promises
   for (i in seq_along(clusters))
   {
     # Asynchronous computation
-    output[[i]] <- future::future({ f(clusters[[i]], ...) }, substitute = TRUE)
+    output[[i]] <- future::future({ f(clusters[[i]], ...) }, substitute = TRUE, packages = required.pkgs)
 
     # Error handling and progress report
     for (j in 1:i)
@@ -38,7 +52,6 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
 
   # Because of asynchronous computation, the loop may be ended
   # but the computations not. Wait & check until the end.
-
   not_finished = which(codes == ASYNC_RUN)
   while(length(not_finished) > 0)
   {
@@ -49,7 +62,7 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
       if (progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
     }
 
-    not_finished = which(codes == -1)
+    not_finished = which(codes == ASYNC_RUN)
     Sys.sleep(0.1)
   }
 
