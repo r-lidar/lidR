@@ -48,6 +48,6 @@ test_that("clip works with a geometry", {
 
 test_that("clip works with a SpatialPolygonDataFrame", {
   las = readLAS(LASfile)
-  l = lasclip(lidar, lakes)
+  l = lasclip(las, lakes)
   expect_true(is(l, "list"))
 })
