@@ -28,7 +28,8 @@
 * [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops, raster and canopy raster.
 * `tree_detection` when used with a point cloud was not properly coded and tended to miss some trees.
 * In `lasclip*` if `ofile` was non empty, the function wrote properly the file but returned a non-expected error.
-* [[#146](https://github.com/Jean-Romain/lidR/pull/156)] Fix error when `lasclip` was used with a `SpatialPolygonDataFrame`.
+* [[#155](https://github.com/Jean-Romain/lidR/issues/155)] user supplied function was being analysed by `future` and some function were missing. User supplied function is now manually analysed.
+* [[#156](https://github.com/Jean-Romain/lidR/pull/156)] Fix error when `lasclip` was used with a `SpatialPolygonDataFrame`.
 
 ## lidR v1.5.1 (2018-06-14)
 
