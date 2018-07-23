@@ -10,7 +10,7 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   future::plan(future::multiprocess, workers = ncores)
 
   # User supplied function not being analysed for globals/packages by the future we have to do it manually.
-  if (ncores > 1)
+  if (ncores > 1 && !future::supportsMulticore())
   {
     dots <- list(...)
     is.fun <- vapply(dots, is.function, logical(1))
@@ -22,10 +22,13 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
       for(fun in dots)
       {
         globals <- future::getGlobalsAndPackages(fun)
+        required.pkgs <- c(required.pkgs, setdiff(globals$packages, required.pkgs))
+
         where   <- attr(globals$globals, "where")
-        pkgs    <- vapply(where, attr, character(1), "name", USE.NAMES = FALSE)
-        pkgs    <- gsub("package\\:", "", pkgs)
-        required.pkgs <- c(required.pkgs, pkgs)
+        pkgs    <- unlist(lapply(where, attr, "name"), use.names = FALSE)
+        pkgs    <- unique(grep("package\\:", pkgs, value = TRUE))
+        pkgs    <- gsub("package\\:", "", unique(pkgs))
+        required.pkgs <- c(required.pkgs, setdiff(pkgs, required.pkgs))
       }
     }
   }
