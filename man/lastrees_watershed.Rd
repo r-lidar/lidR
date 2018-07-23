@@ -2,10 +2,13 @@
 % Please edit documentation in R/lastrees_watershed.r
 \name{lastrees_watershed}
 \alias{lastrees_watershed}
+\alias{lastrees_mcwatershed}
 \title{Individual tree segmentation}
 \usage{
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE, ...)
+
+lastrees_mcwatershed(las, chm, ttops, th_tree = 2, extra = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -34,10 +37,28 @@ containing an ID for each point that refer to a segmented tree.
 If \code{extra = TRUE} the function returns a \code{RasterLayer} used internally.
 }
 \description{
-Individual tree segmentation using a simple watershed. This method is a
-\href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
-method. It is based on the bioconductor package \code{EBIimage}. You need to install this package
-to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
+Individual tree segmentation using watersheds and marker controled watershed.
+}
+\details{
+\strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install this package
+to run this method (see its \href{https://github.com/aoles/EBImage}{github page}). Internally the
+function EBImage::watershed is called.\cr\cr
+\strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
+function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+}
+\examples{
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+col = pastel.colors(200)
+
+chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+chm = as.raster(chm)
+kernel = matrix(1,3,3)
+chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+
+ttops = tree_detection(chm, "lmf", 4, 2)
+lastrees_mcwatershed(las, chm, ttops)
+plot(las, color = "treeID", colorPalette = col)
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},

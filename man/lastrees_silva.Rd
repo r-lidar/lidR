@@ -52,7 +52,7 @@ chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 
-ttops = tree_detection(chm, "lmf", 5, 2)
+ttops = tree_detection(chm, "lmf", 4, 2)
 lastrees_silva(las, chm, ttops)
 plot(las, color = "treeID", colorPalette = col)
 

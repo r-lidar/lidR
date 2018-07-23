@@ -4,6 +4,7 @@
 
 * New function `lastrees_ptree` with Vega et al. (2014) algorithm.
 * New function `lastrees_hamraz` with Hamraz et al. (2016) algorithm.
+* New function `lastrees_mcwatershed` with a marker-controlled watershed.
 * New function `tree_detection_manual` for manual correction of tree detection.
 * `tree_detection_lmf` have a user-defined variable size search windows.
 * `tree_detection_lmf` have custumizable shape (square of disc) search windows.
