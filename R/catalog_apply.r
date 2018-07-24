@@ -103,7 +103,11 @@
 #'
 #'   # segment trees (in this example the low point density does not enable
 #'   # accurate segmentation of trees. This is just a proof-of-concept)
-#'   lastrees(las, algorithm = "li2012-2")
+#'   chm = grid_canopy(las, 1, subcircle = 0.3)
+#'   chm = as.raster(chm)
+#'   kernel = matrix(1,3,3)
+#'   chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#'   lastrees(las, algorithm = "watershed", chm = chm)
 #'
 #'   # Here we used the function tree_metric to compute some metrics for each tree. This
 #'   # function is defined later in the global environment.
