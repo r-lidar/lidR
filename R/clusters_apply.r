@@ -22,10 +22,13 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
       for(fun in dots)
       {
         globals <- future::getGlobalsAndPackages(fun)
+        required.pkgs <- c(required.pkgs, setdiff(globals$packages, required.pkgs))
+
         where   <- attr(globals$globals, "where")
-        pkgs    <- vapply(where, attr, character(1), "name", USE.NAMES = FALSE)
-        pkgs    <- gsub("package\\:", "", pkgs)
-        required.pkgs <- c(required.pkgs, pkgs)
+        pkgs    <- unlist(lapply(where, attr, "name"), use.names = FALSE)
+        pkgs    <- unique(grep("package\\:", pkgs, value = TRUE))
+        pkgs    <- gsub("package\\:", "", unique(pkgs))
+        required.pkgs <- c(required.pkgs, setdiff(pkgs, required.pkgs))
       }
     }
   }
