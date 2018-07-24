@@ -37,7 +37,7 @@ RasterProcessor::RasterProcessor(NumericMatrix raster, double startx, double sta
 {
   i = 0;
   j = 0;
-  raster = raster;
+  m_raster = raster;
   m_nrows  = raster.nrow();
   m_ncols  = raster.nrow();
   m_startx = startx;
