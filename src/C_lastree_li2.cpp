@@ -73,7 +73,14 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // https://doi.org/10.14358/PERS.78.1.75
 
   // Find if a point is a local maxima within an R windows
-  LogicalVector is_lm = C_LocalMaximaPoints(las, R, 0);
+  LogicalVector is_lm;
+  if (radius > 0)
+    is_lm = C_LocalMaximaPoints(las, R, th_tree);
+  else
+  {
+    is_lm = LogicalVector(ni);
+    std::fill(is_lm.begin(), is_lm.end(), true);
+  }
 
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);
@@ -150,10 +157,18 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
           double dmin2 = *std::min_element(dN.begin(), dN.end());
           double dt    = (u->z > Zu) ? dt2 : dt1;
 
-          if(is_lm[u->id] && dmin1 > dt) // if u is a local maximum
+          if(is_lm[u->id]) // if u is a local maximum
           {
+            if (dmin1 > dt || (dmin1 < dt && dmin1 > dmin2))
+            {
               inN[i] = true;
               N.push_back(u);
+            }
+            else
+            {
+              P.push_back(u);
+              idtree[u->id] = k;
+            }
           }
           else // if u is not a local maximum
           {

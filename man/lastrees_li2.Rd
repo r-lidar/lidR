@@ -14,7 +14,9 @@ lastrees_li2(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2,
 
 \item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.}
 
-\item{R}{numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2.}
+\item{R}{numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2. If \code{R = 0}
+all the points are automatically considered as local maxima and the search step is skipped (much
+faster).}
 
 \item{Zu}{numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
 used. See reference page 79 in Li et al. (2012). Default 15.}

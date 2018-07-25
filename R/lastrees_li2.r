@@ -12,7 +12,9 @@
 #' @param las An object of the class \code{LAS}.
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.
-#' @param R numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2.
+#' @param R numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2. If \code{R = 0}
+#' all the points are automatically considered as local maxima and the search step is skipped (much
+#' faster).
 #' @param hmin numeric.  Minimum height of a detected tree. Default 2.
 #' @param Zu numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
 #' used. See reference page 79 in Li et al. (2012). Default 15.
@@ -50,7 +52,7 @@ lastrees_li2 = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed
   assertive::assert_is_a_number(speed_up)
   assertive::assert_all_are_positive(dt1)
   assertive::assert_all_are_positive(dt2)
-  assertive::assert_all_are_positive(R)
+  assertive::assert_all_are_non_negative(R)
   assertive::assert_all_are_positive(Zu)
   assertive::assert_all_are_positive(hmin)
   assertive::assert_all_are_positive(speed_up)
