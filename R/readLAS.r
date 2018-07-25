@@ -198,13 +198,14 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   if (nrow(data) == 0 | ncol(data) == 0)
     return(invisible())
 
+  rlas::check_header(header)
+  rlas::check_data(data)
+
   # If filter is used, header will not be in accordance with the data. Hard check is useless
   if (nchar(filter) > 0 | length(ifiles) > 1)
     rlas::check_data_vs_header(header, data, hard = FALSE)
   else
     rlas::check_data_vs_header(header, data, hard = TRUE)
-
-  rlas::check_data(data)
 
   las <- LAS(data, header, check = FALSE)
 
