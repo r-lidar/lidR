@@ -47,6 +47,7 @@ left, top and right buffers, respectively (see example).
 }
 
 \examples{
+\dontrun{
 # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 # version of this example.
 # This is a dummy example. It is more efficient to load the entire file than
@@ -148,4 +149,5 @@ output = catalog_apply(project, tree_area, fargs, select = "xyz")
 output = data.table::rbindlist(output)
 
 with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
+}
 }
