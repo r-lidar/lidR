@@ -63,6 +63,7 @@
 #' @param func_args A list of extra arguments to pass in the function 'func'.
 #' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.
 #' @examples
+#' \dontrun{
 #' # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 #' # version of this example.
 #' # This is a dummy example. It is more efficient to load the entire file than
@@ -164,6 +165,7 @@
 #' output = data.table::rbindlist(output)
 #'
 #' with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
+#' }
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
