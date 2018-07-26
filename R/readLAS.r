@@ -32,7 +32,8 @@
 #' Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
 #' object of class LAS. If several files are given the returned LAS object is considered
 #' as one LAS file. The optional parameters enable the user to save a substantial amount of memory by
-#' choosing to load only the fields or points required. These internal options are much more memory-efficient than any other R code.
+#' choosing to load only the fields or points required. These internal options are much more memory-efficient
+#' than any other R code.
 #'
 #' \strong{Select:} the 'select' argument specifies which data will actually be loaded. For example,
 #' 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
@@ -40,20 +41,18 @@
 #' r - return number, c - classification, u - user data, p - point source ID, e - edge of
 #' flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
 #' channel of RGB color, B - blue channel of RGB color, N - near infrared channel. Also numbers from
-#' 1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*' is
-#' the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit and
-#' always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
-#' Three extra data attributes can be computed on the fly with the following flags: P - pulse id, F -
-#' flightline id and C - color string. The symbol + is a shortcut for 'PFC'.\cr\cr
+#' 1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*'
+#' is the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit
+#' and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
 #' \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
 #' This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
 #' before reading the file, the internal filters should always be preferred. The available filters are
 #' those from \code{LASlib} and can be found by running the following command: rlas:::lasfilterusage().
 #' (see also \link[rlas:read.las]{rlas::read.las})
 #'
-#' @param files array of characters or a \link[lidR:catalog]{LAScatalog} object
-#' @param select character. select only columns of interest to save memory (see details)
-#' @param filter character. streaming filters - filter data while reading the file (see details)
+#' @param files characters. Path to a file. Can also be a \link[lidR:catalog]{LAScatalog} object.
+#' @param select character. select only attibutes of interest to save memory (see details)
+#' @param filter character. select only points of interest to save memory (see details)
 #'
 #' @return A LAS object
 #' @export readLAS
@@ -67,7 +66,7 @@
 #' las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 #' las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 #'
-#' # Negation of data is also available (all except intensity and angle)
+#' # Negation of attribute is also possible (all except intensity and angle)
 #' las = readLAS(LASfile, select = "* -i -a")
 readLAS = function(files, select = "*", filter = "")
 {
@@ -125,15 +124,12 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
   return(las)
 }
 
-
 #' @export
 readLAS.character = function(files, select = "*", filter = "")
 {
   assertive::assert_is_a_string(select)
   assertive::assert_is_a_string(filter)
-
-  ofile = ""
-  return(streamLAS(files, ofile, select, filter))
+  return(streamLAS(files, ofile = "", select, filter))
 }
 
 streamLAS = function(x, ofile, select = "*", filter = "")
@@ -150,47 +146,15 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "")
 
 streamLAS.character = function(x, ofile, select = "*", filter = "")
 {
-  rlas = utils::packageVersion("rlas")
+  assertive::assert_all_are_existing_files(x)
 
-  if (rlas < "1.1.10")
-    stop("Package rlas v1.1.10 or higher is required.", call. = FALSE)
-
-  valid <- file.exists(x)
   islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
-  if (sum(valid) == 0 | sum(islas) == 0) {
-    stop("File(s) not supported", call. = FALSE)
-  }
+  if (any(!islas)) stop("File(s) are not las or laz", call. = FALSE)
 
-  if (sum(!valid) > 0) {
-    warning(glue("File(s) {x[!valid]} not found"), call. = FALSE)
-    x <- x[valid]
-  }
-
-  if (sum(!islas) > 0) {
-    warning(glue("File(s) {x[!islas]} not supported"), call. = FALSE)
-    x <- x[islas]
-  }
-
-  ifiles = normalizePath(x)
-
-  t <- P <- Fl <- C <- FALSE
-  options <- select
-
-  if ("\\*" %is_in% options) t <- TRUE
-  if ("\\+" %is_in% select) options = "PFC"
-  if ("P" %is_in% options) P <- TRUE
-  if ("F" %is_in% options) Fl <- TRUE
-  if ("C" %is_in% options) C <- TRUE
-  if ("t" %is_in% options) t <- TRUE
-
-  if ((Fl | P) & !t) {
-    select = paste0(select, "t")
-    message("'t' has automatically been added in the selection to match other options")
-  }
-
-  header = rlas::read.lasheader(ifiles[1])
-  data   = rlas:::stream.las(ifiles, ofile, select, filter)
+  ifiles <- normalizePath(x)
+  header <- rlas::read.lasheader(ifiles[1])
+  data   <- rlas:::stream.las(ifiles, ofile, select, filter)
 
   if (is.null(data))
     return(invisible())
@@ -201,19 +165,11 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
   rlas::check_header(header)
   rlas::check_data(data)
 
-  # If filter is used, header will not be in accordance with the data. Hard check is useless
-  if (nchar(filter) > 0 | length(ifiles) > 1)
-    rlas::check_data_vs_header(header, data, hard = FALSE)
-  else
-    rlas::check_data_vs_header(header, data, hard = TRUE)
+  # If filter is used, header will not be in accordance with the data. Hard check will necessarily return a false positive error
+  hard <- if (nchar(filter) > 0 | length(ifiles) > 1) FALSE else TRUE
+  rlas::check_data_vs_header(header, data, hard = hard)
 
   las <- LAS(data, header, check = FALSE)
 
-  if (P)  laspulse(las)
-  if (Fl) lasflightline(las, 30)
-  if (C)  suppressWarnings(lascolor(las))
-
   return(las)
 }
-
-`%is_in%` <- function(char, str) grepl(char, str)

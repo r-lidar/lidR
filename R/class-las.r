@@ -95,6 +95,9 @@ setMethod("initialize", "LAS", function(.Object, data, header, crs, check)
   if(nrow(data) == 0)
     stop("'data' is empty. No point found.", call. = FALSE)
 
+  if (check)
+    rlas::check_data(data)
+
   if (is(header, "LASheader"))
     header = as.list(header)
 
@@ -114,7 +117,6 @@ setMethod("initialize", "LAS", function(.Object, data, header, crs, check)
   if(check)
   {
     rlas::check_header(header)
-    rlas::check_data(data)
     rlas::check_data_vs_header(header, data, hard = F)
   }
 

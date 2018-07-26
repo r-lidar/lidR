@@ -1,3 +1,9 @@
+## lidR v2.0.0 (in developpment)
+
+#### OTHER CHANGES
+
+`readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines` and `lascolors`.
+
 ## lidR v1.6.0 (2018-07-20)
 
 #### NEW FEATURE
