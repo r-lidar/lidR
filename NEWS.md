@@ -1,8 +1,21 @@
 ## lidR v2.0.0 (in developpment)
 
+#### NEW FEATURE
+
+**`lasclip`**
+
+* `lasclip` works now both with a `LAS` object and a `LAScatalog`  in a seamless fashion. But with a `LAScatalog` more options are avaible thank to internal `LAScatalog` processing options (see below).
+* `lasclip` support many geometries including multipart polygons and polygons with holes both with a `LAS` object and a `LAScatalog`.
+* The option `inside` has been removed for consitency  because it cannot be safely supported both on `LAS` and `LAScatalog`. One may use manually `lasfilter` to extract donuts of points.
+* The option `ofile` has been removed for consitency and this option in know manage by `LAScatalog` internal processing routine.
+
 #### OTHER CHANGES
 
 `readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines` and `lascolors`.
+
+#### BUG FIXES
+
+`lasclipRectangle` returns the same output both with a `LAS` and a `LAScatalog`. With a `LAS` the rectangle range is now close on the bottom and the left and open on the right and the top.
 
 ## lidR v1.6.0 (2018-07-20)
 
@@ -11,6 +24,7 @@
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
 * New option `stop_early` that enables processing of an entire catolog or stops if an error occurs.
 * New function `catalog_retile` supersedes the function `catalog_reshape` and performs the same task while adding much more functionality.
+
 
 #### ENHANCEMENTS
 

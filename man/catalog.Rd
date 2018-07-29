@@ -66,9 +66,3 @@ representation of a set of las files, since a computer cannot load all the data 
 catalog is a simple way to manage all the files sequentially by reading only the headers. Also a
 catalog contains metadata so users can configure how it will be processed.
 }
-\seealso{
-\link{LAScatalog-class}
-\link[lidR:plot.LAScatalog]{plot}
-\link{catalog_apply}
-\link{catalog_queries}
-}

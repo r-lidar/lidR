@@ -1,4 +1,4 @@
-cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
+cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = TRUE, ...)
 {
   stopifnot(is.list(clusters), is.function(f), is.integer(ncores), is.logical(progress), is.logical(stop_early))
 
@@ -72,7 +72,9 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   if (progress) cat("\n")
   if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
 
-  output = output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
+  if (drop_null)
+    output = output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
+
   output = future::values(output)
   return(output)
 }

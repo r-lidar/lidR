@@ -39,14 +39,16 @@ setClass(
     height = "numeric",
     buffer = "numeric",
     shape  = "numeric",
+    select = "character",
     filter = "character",
+    wkt    = "character",
     files  = "character",
     name   = "character",
     save   = "character"
   )
 )
 
-setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name)
+setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name, wkt)
 {
   hw = width/2
   hh = height/2
@@ -64,6 +66,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   .Object@name   <- name
   .Object@files  <- files
   .Object@save   <- ""
+  .Object@wkt    <- ""
 
   if (shape == LIDRCIRCLE)
     .Object@filter = paste("-inside_circle", xc, yc, hw + buffer)
@@ -77,8 +80,14 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
 
 Cluster <- function(center, width, height, buffer, shape, files, name)
 {
-  return(new("LAScluster", center, width, height, buffer, shape, files, name))
+  return(new("LAScluster", center, width, height, buffer, shape, files, name, ""))
 }
+
+LAScluster <- function(center, width, height, buffer, shape, files, name)
+{
+  return(new("LAScluster", center, width, height, buffer, shape, files, name, ""))
+}
+
 
 setMethod("show", "LAScluster", function(object)
 {

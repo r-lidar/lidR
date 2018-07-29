@@ -132,19 +132,19 @@ readLAS.character = function(files, select = "*", filter = "")
   return(streamLAS(files, ofile = "", select, filter))
 }
 
-streamLAS = function(x, ofile, select = "*", filter = "")
+streamLAS = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
   UseMethod("streamLAS", x)
 }
 
-streamLAS.LAScluster = function(x, ofile, select = "*", filter = "")
+streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
   filter = paste(x@filter, filter)
-  las = streamLAS(x@files, ofile, select,  filter)
+  las = streamLAS(x@files, ofile, select,  filter, filter_wkt)
   return(invisible(las))
 }
 
-streamLAS.character = function(x, ofile, select = "*", filter = "")
+streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
   assertive::assert_all_are_existing_files(x)
 
@@ -154,7 +154,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "")
 
   ifiles <- normalizePath(x)
   header <- rlas::read.lasheader(ifiles[1])
-  data   <- rlas:::stream.las(ifiles, ofile, select, filter)
+  data   <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
 
   if (is.null(data))
     return(invisible())

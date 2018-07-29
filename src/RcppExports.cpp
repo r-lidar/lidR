@@ -211,6 +211,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_points_in_polygon_wkt
+LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt);
+RcppExport SEXP _lidR_C_points_in_polygon_wkt(SEXP xSEXP, SEXP ySEXP, SEXP wktSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_points_in_polygon_wkt(x, y, wkt));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -331,6 +344,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
     {"_lidR_C_points_in_polygons", (DL_FUNC) &_lidR_C_points_in_polygons, 5},
+    {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 3},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

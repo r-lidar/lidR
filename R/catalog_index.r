@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -24,8 +24,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 # ===============================================================================
-
-
 
 #' Retrieve the files containing ROIs
 #'
@@ -106,6 +104,29 @@ catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
   })
 
   names(queries) = roinames
+
+  return(queries)
+}
+
+catalog_index2 =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
+{
+  . <- filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
+
+  stopifnot(is.list(bboxes))
+
+  queries <- lapply(bboxes, function(bbox)
+  {
+    files = catalog@data[!( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin)]$filename
+
+    if (length(files) == 0)
+      return(NULL)
+
+    center = list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
+    width  = (bbox@xmax-bbox@xmin)
+    height = (bbox@ymax-bbox@ymin)
+
+    return(LAScluster(center, width, height, buffer, shape, files, "noname"))
+  })
 
   return(queries)
 }

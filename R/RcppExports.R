@@ -57,6 +57,10 @@ C_points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALS
     .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
 }
 
+C_points_in_polygon_wkt <- function(x, y, wkt) {
+    .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }

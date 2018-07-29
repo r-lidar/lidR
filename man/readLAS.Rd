@@ -7,11 +7,11 @@
 readLAS(files, select = "*", filter = "")
 }
 \arguments{
-\item{files}{array of characters or a \link[lidR:catalog]{LAScatalog} object}
+\item{files}{characters. Path to a file. Can also be a \link[lidR:catalog]{LAScatalog} object.}
 
-\item{select}{character. select only columns of interest to save memory (see details)}
+\item{select}{character. select only attibutes of interest to save memory (see details)}
 
-\item{filter}{character. streaming filters - filter data while reading the file (see details)}
+\item{filter}{character. select only points of interest to save memory (see details)}
 }
 \value{
 A LAS object
@@ -20,7 +20,8 @@ A LAS object
 Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
 object of class LAS. If several files are given the returned LAS object is considered
 as one LAS file. The optional parameters enable the user to save a substantial amount of memory by
-choosing to load only the fields or points required. These internal options are much more memory-efficient than any other R code.
+choosing to load only the fields or points required. These internal options are much more memory-efficient
+than any other R code.
 }
 \details{
 \strong{Select:} the 'select' argument specifies which data will actually be loaded. For example,
@@ -29,11 +30,9 @@ The supported entries are t - gpstime, a - scan angle, i - intensity, n - number
 r - return number, c - classification, u - user data, p - point source ID, e - edge of
 flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
 channel of RGB color, B - blue channel of RGB color, N - near infrared channel. Also numbers from
-1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*' is
-the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit and
-always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
-Three extra data attributes can be computed on the fly with the following flags: P - pulse id, F -
-flightline id and C - color string. The symbol + is a shortcut for 'PFC'.\cr\cr
+1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*'
+is the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit
+and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
 \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
 This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
 before reading the file, the internal filters should always be preferred. The available filters are
@@ -47,7 +46,7 @@ las = readLAS(LASfile, select = "xyz")
 las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 
-# Negation of data is also available (all except intensity and angle)
+# Negation of attribute is also possible (all except intensity and angle)
 las = readLAS(LASfile, select = "* -i -a")
 }
 \seealso{

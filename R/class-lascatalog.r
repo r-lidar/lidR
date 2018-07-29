@@ -43,7 +43,7 @@
 #' relevant situations:
 #' \itemize{
 #' \item \code{@vrt} options is not relevant in functions that do not rasterize the point cloud.
-#' \item \code{@tiling_size} is always respected but can be slighly modified to align the clusters with 
+#' \item \code{@tiling_size} is always respected but can be slighly modified to align the clusters with
 #' the grid in \code{grid_*} functions.
 #' \item \code{@buffer} is not relevant in \link{grid_metrics} because \code{lidR} aligns the
 #' clusters with the resolution to get a continuous output. However it is relevant in \link{grid_terrain}
@@ -53,7 +53,7 @@
 #' }
 #' Internally, processing a catalog is almost always the same and relies on few steps:
 #' \itemize{
-#' \item Create a set of clusters. A cluster is the representation of a region of interest that can be 
+#' \item Create a set of clusters. A cluster is the representation of a region of interest that can be
 #' buffered or not.
 #' \item Loop over each cluster (in parallel or not)
 #' \item For each cluster, load the points inside the region of interest in R, run some R functions,
@@ -81,7 +81,7 @@
 #' the catalog by arbitrary split areas, it forces processing by file. Buffering around each file is
 #' still available. Default is FALSE.
 #' @slot tiling_size numeric. To process an entire catalog, the algorithm splits the dataset into
-#' several square sub-areas (called clusters) to process them sequentially. This is the size of each 
+#' several square sub-areas (called clusters) to process them sequentially. This is the size of each
 #' square cluster. Default is 1000 unit^2.
 #' @slot vrt character. Path to a folder. In \code{grid_*} functions such as \link{grid_metrics},
 #' \link{grid_terrain} and others, the functions can write \code{RasterLayers} in this folder and
@@ -141,11 +141,6 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @param ctg A LAScatalog object.
 #' @param value An appropriated value for catalog settings. See \link[lidR:LAScatalog-class]{LAScatalog}
-#' @seealso
-#' \link{LAScatalog-class}
-#' \link[lidR:plot.LAScatalog]{plot}
-#' \link{catalog_apply}
-#' \link{catalog_queries}
 #' @return A \code{LAScatalog} object
 #' @export
 catalog <- function(folder, ...)
