@@ -7,7 +7,7 @@
 * `lasclip` works now both with a `LAS` object and a `LAScatalog`  in a seamless fashion. But with a `LAScatalog` more options are avaible thank to internal `LAScatalog` processing options (see below).
 * `lasclip` support many geometries including multipart polygons and polygons with holes both with a `LAS` object and a `LAScatalog`.
 * The option `inside` has been removed for consitency  because it cannot be safely supported both on `LAS` and `LAScatalog`. One may use manually `lasfilter` to extract donuts of points.
-* The option `ofile` has been removed for consitency and this option in know manage by `LAScatalog` internal processing routine.
+* The option `ofile` has been removed for consitency and this option in now managed by `LAScatalog` internal processing routine.
 
 #### OTHER CHANGES
 
