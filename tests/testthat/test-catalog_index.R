@@ -57,7 +57,7 @@ test_that("catalog index works", {
   bboxes = list(raster::extent(890000, 890800, 630000, 630800))
   bboxes[[2]] = raster::extent(890000-400, 890800-400, 630000+400, 630800+400)
 
-  clusters = catalog_index2(ctg, bboxes)
+  clusters = catalog_index(ctg, bboxes)
 
   expect_is(clusters, "list")
 
@@ -69,7 +69,7 @@ test_that("catalog index works", {
   expect_equal(clusters[[2]]@files, c("abc18"))
   expect_equal(clusters[[2]]@filter, "-inside 889600 630400 890400 631200")
 
-  clusters = catalog_index2(ctg, bboxes, LIDRCIRCLE)
+  clusters = catalog_index(ctg, bboxes, LIDRCIRCLE)
 
   expect_is(clusters, "list")
 
@@ -87,7 +87,7 @@ test_that("catalog index returns NULL if there is no match", {
   bboxes = list(raster::extent(890000, 890800, 630000, 630800))
   bboxes[[2]] = raster::extent(890000-400, 890800-400, 630000-2000, 630800 -2000)
 
-  clusters = catalog_index2(ctg, bboxes)
+  clusters = catalog_index(ctg, bboxes)
 
   expect_true(is.null(clusters[[2]]))
 })

@@ -112,18 +112,30 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
   stopearly <- stop_early(ctg)
 
   w <- 2*r
-  h <- if(is.null(r2)) NULL else 2*r2
+  h <- if(is.null(r2)) w else 2*r2
+  shape <- if(is.null(r2)) LIDRCIRCLE else LIDRRECTANGLE
 
-  if (progress)
-    plot.LAScatalog(ctg, FALSE)
+  bboxes   <- mapply(raster::extent, x-w/2, x+w/2, y-h/2, y+h/2)
+  clusters <- catalog_index(ctg, bboxes, shape, buffer)
 
-  clusters <- catalog_index(ctg, x, y, w, h, buffer, roinames)
-  output   <- cluster_apply(clusters, readLAS, ncores, progress, stopearly, ...)
-  names(output) <- names(clusters)
-  
+  extract_function = function(cluster, ...)
+  {
+    if (is.null(cluster))
+      return(NULL)
+    else
+      return(readLAS(cluster, ...))
+  }
+
+  output   <- cluster_apply(clusters, extract_function, ncores, progress, stopearly, drop_null = FALSE, ...)
+  names(output) <- roinames
+
   # Transfer CRS
-  for (i in 1:length(output)){
-    output[[i]]@crs <- ctg@crs
+  for (i in 1:length(output))
+  {
+    if (!is.null(output[[i]]))
+      output[[i]]@crs <- ctg@crs
+    else
+      warning(glue::glue("{roinames[i]} does not contain any point. NULL returned."))
   }
 
   # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table

@@ -71,7 +71,6 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   ycenter = (ymin + ymax)/2
   width   = xmax - xmin
   height  = ymax - ymin
-  names   = paste0("ROI", 1:length(xcenter))
 
   # Creation of a set of cluster from the rectangles
   # ================================================
@@ -81,12 +80,14 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
     clusters = lapply(1:length(xcenter), function(i)
     {
       center = list(x = xcenter[i], y = ycenter[i])
-      Cluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], names[i])
+      LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname")
     })
   }
   else
   {
-    clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+    bboxes = mapply(raster::extent, xcenter-width/2, xcenter+width/2, ycenter-height/2, ycenter+height/2)
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer))
+    clusters = clusters[!sapply(clusters, is.null)]
   }
 
   # Post process the clusters

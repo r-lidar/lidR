@@ -25,90 +25,7 @@
 #
 # ===============================================================================
 
-#' Retrieve the files containing ROIs
-#'
-#' \bold{This function is an internal function reserved for lidR developers.\cr\cr}
-#' When we have a set of (x, y) coordinates corresponding to a region of interest (ROI) in a catalog
-#' this function retrieve in which file(s) are these ROIs.
-#'
-#' @param catalog A LAScatalog object
-#' @param x vector. A set of x plot coordinates
-#' @param y vector. A set of y plot coordinates
-#' @param r numeric or vector. A radius or a set of radii of the ROI. If only
-#' r is provided (r2 = NULL) it will extract data falling onto a disc.
-#' @param r2 numeric or vector. A radius or a set of radii of plots. If r2
-#' is provided, the selection turns into a rectangular ROI. If r= r2 it is a square.
-#' @param roinames vector. A set of ROI names
-#' @return A list of LAScluster object.
-#' @keywords internal
-catalog_index =	function(catalog, x, y, w, h, buffer, roinames)
-{
-  tile <- minx <- maxx <- miny <- maxy <- NULL
-  filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
-  . <- NULL
-
-  nplot  <- length(x)
-  shape  <- LIDRRECTANGLE
-  width  <- w
-  height <- h
-
-  if(is.null(h))
-  {
-    h  <- w
-    height <- h
-    shape <- LIDRCIRCLE
-  }
-
-  w <- w + 2*buffer
-  h <- h + 2*buffer
-
-  coord.tiles <- catalog@data[, .(filename, `Min X`, `Max X`, `Min Y`, `Max Y`)]
-  data.table::setnames(coord.tiles, c("tile", "minx", "maxx", "miny", "maxy"))
-
-  coord.plot <- data.table::data.table(roinames, x, y, w, h)
-  coord.plot[,`:=`(maxx = x + w/2, maxy = y + h/2, minx = x - w/2, miny = y - h/2)]
-
-  tiles <- lapply(1:nplot, function(i)
-  {
-    coord <- coord.plot[i]
-    coord.tiles[!(minx >= coord$maxx | maxx <= coord$minx | miny >= coord$maxy | maxy <= coord$miny)]$tile
-  })
-
-  coord.plot[, tiles := list(tiles)]
-
-  # Check if some files were outside the catalog
-  numfile <- sapply(coord.plot$tiles, length)
-  n <- numfile == 0
-
-  if(sum(n) > 0)
-  {
-    for (roi in coord.plot$roinames[n])
-    {
-      msg = paste(roi, "is outside the catalog.")
-      warning(msg, call. = FALSE)
-    }
-  }
-
-  keep = !n
-
-  if (!any(keep))
-    return(NULL)
-
-  coord.plot = coord.plot[keep]
-  roinames = roinames[keep]
-
-  queries = apply(coord.plot, 1, function(cl)
-  {
-    center = list(x = cl$x, y = cl$y)
-    Cluster(center, cl$w-2*buffer, cl$h-2*buffer, buffer, shape, cl$tiles, cl$roinames)
-  })
-
-  names(queries) = roinames
-
-  return(queries)
-}
-
-catalog_index2 =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
+catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
 {
   . <- filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
 
@@ -116,11 +33,13 @@ catalog_index2 =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
 
   queries <- lapply(bboxes, function(bbox)
   {
+    bbox = bbox + 2*buffer
     files = catalog@data[!( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin)]$filename
 
     if (length(files) == 0)
       return(NULL)
 
+    bbox   = bbox - 2*buffer
     center = list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
     width  = (bbox@xmax-bbox@xmin)
     height = (bbox@ymax-bbox@ymin)

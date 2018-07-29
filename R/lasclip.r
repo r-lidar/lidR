@@ -389,7 +389,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, wkt = NULL, ...)
   }
 
   # Find the ROIs in the catalog and return LASclusters
-  clusters <- catalog_index2(ctg, bboxes, shape, 0)
+  clusters <- catalog_index(ctg, bboxes, shape, 0)
 
   # Add some useful information in the clusters
   for (i in 1:length(clusters))

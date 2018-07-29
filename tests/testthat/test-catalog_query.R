@@ -42,10 +42,8 @@ test_that("catalog queries works when no data", {
 
   req = suppressWarnings(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer))
 
-  expect_equal(length(req), 1)
-
-  expect_warning(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer),
-                 "plot1 is outside the catalog.")
+  expect_equal(length(req), 2L)
+  expect_warning(catalog_queries(ctg, x, y, r, roinames = n, buffer = buffer), "plot1 does not contain any point.")
 })
 
 test_that("catalog queries works with the two shapes", {
