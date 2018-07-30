@@ -168,8 +168,6 @@ grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", .
   assertive::assert_is_a_number(subcircle)
   assertive::assert_all_are_non_negative(subcircle)
 
-  x = catalog_old_compatibility(x)
-
   buffer(x) <- res/2 + subcircle
   canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
   return(canopy)

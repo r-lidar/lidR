@@ -86,8 +86,6 @@ grid_density.LAS = function(x, res = 4, filter = "")
 #' @export
 grid_density.LAScatalog = function(x, res = 4, filter = "")
 {
-  x = catalog_old_compatibility(x)
-
   buffer(x) <- res/2
   ret <- grid_catalog(x, grid_density, res, "xyzt", filter)
   return(ret)

@@ -110,8 +110,7 @@ setClass(
     progress = "logical",
     tiling_size = "numeric",
     vrt = "character",
-    stop_early = "logical",
-    opt_changed = "logical"
+    stop_early = "logical"
   )
 )
 
@@ -126,7 +125,6 @@ setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = lis
   .Object@tiling_size <- 1000
   .Object@vrt <- ""
   .Object@stop_early <- TRUE
-  .Object@opt_changed <- FALSE
   return(.Object)
 })
 
@@ -196,10 +194,7 @@ catalog <- function(folder, ...)
 #' @export
 cores = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(CATALOGOPTIONS("multicore"))
-  else
-    return(ctg@cores)
+  return(ctg@cores)
 }
 
 
@@ -221,7 +216,6 @@ cores = function(ctg)
   }
 
   ctg@cores <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -229,10 +223,7 @@ cores = function(ctg)
 #' @export
 by_file = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(CATALOGOPTIONS("by_file"))
-  else
-    return(ctg@by_file)
+  return(ctg@by_file)
 }
 
 #' @rdname catalog
@@ -241,7 +232,6 @@ by_file = function(ctg)
 {
   stopifnot(is.logical(value), length(value) == 1)
   ctg@by_file <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -249,10 +239,7 @@ by_file = function(ctg)
 #' @export
 buffer = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(CATALOGOPTIONS("buffer"))
-  else
-    return(ctg@buffer)
+  return(ctg@buffer)
 }
 
 #' @rdname catalog
@@ -260,11 +247,8 @@ buffer = function(ctg)
 `buffer<-` = function(ctg, value)
 {
   assertive::assert_is_a_number(value)
-
   if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
-
   ctg@buffer <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -272,10 +256,7 @@ buffer = function(ctg)
 #' @export
 progress = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(CATALOGOPTIONS("progress"))
-  else
-    return(ctg@progress)
+  return(ctg@progress)
 }
 
 #' @rdname catalog
@@ -283,9 +264,7 @@ progress = function(ctg)
 `progress<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-
   ctg@progress <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -293,10 +272,7 @@ progress = function(ctg)
 #' @export
 tiling_size = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-    return(CATALOGOPTIONS("tiling_size"))
-  else
-    return(ctg@tiling_size)
+  return(ctg@tiling_size)
 }
 
 #' @rdname catalog
@@ -305,9 +281,7 @@ tiling_size = function(ctg)
 {
   assertive::assert_is_a_number(value)
   assertive::assert_all_are_non_negative(value)
-
   ctg@tiling_size <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -315,15 +289,7 @@ tiling_size = function(ctg)
 #' @export
 vrt = function(ctg)
 {
-  if (!ctg@opt_changed & CATALOGOPTIONS("global_changed"))
-  {
-    if (CATALOGOPTIONS("return_virtual_raster"))
-      return(tempdir())
-    else
-      return("")
-  }
-  else
-    return(ctg@vrt)
+  return(ctg@vrt)
 }
 
 #' @rdname catalog
@@ -331,9 +297,7 @@ vrt = function(ctg)
 `vrt<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
-
   ctg@vrt <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -349,9 +313,7 @@ stop_early = function(ctg)
 `stop_early<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-
   ctg@stop_early <- value
-  ctg@opt_changed <- TRUE
   return(ctg)
 }
 
@@ -382,24 +344,3 @@ setMethod("show", "LAScatalog", function(object)
   cat(" - processing done using", cores(object), "core(s) if possible.")
 
 })
-
-catalog_old_compatibility = function(ctg)
-{
-  ctg2 = ctg
-
-  c = cores(ctg)
-  b = buffer(ctg)
-  f = by_file(ctg)
-  p = progress(ctg)
-  t = tiling_size(ctg)
-  v = vrt(ctg)
-
-  cores(ctg2) <- c
-  buffer(ctg2) <- b
-  by_file(ctg2) <- f
-  progress(ctg2) <- p
-  tiling_size(ctg2) <- t
-  vrt(ctg2) <- v
-
-  return(ctg2)
-}

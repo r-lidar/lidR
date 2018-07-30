@@ -1,3 +1,5 @@
+bool = function() { settings::inlist(TRUE, FALSE) }
+
 LIDROPTIONS <- settings::options_manager(
   verbose = FALSE,
   progress = FALSE,

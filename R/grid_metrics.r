@@ -136,10 +136,7 @@ grid_metrics.LAS = function(x, func, res = 20, start = c(0,0), splitlines = FALS
 grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
 {
   if (splitlines) warning("Parameter splitlines is currently disabled for LAScatalogs")
-
-  x = catalog_old_compatibility(x)
   buffer(x) <- 0
-
   call <- substitute(func)
   stat <- grid_catalog(x, grid_metrics, res, "*+", filter, start, func = call)
   return(stat)
