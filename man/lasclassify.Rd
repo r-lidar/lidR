@@ -4,10 +4,10 @@
 \alias{lasclassify}
 \title{Classify LiDAR points from source data}
 \usage{
-lasclassify(.las, source, field = NULL)
+lasclassify(las, source, field = NULL)
 }
 \arguments{
-\item{.las}{An object of the class \code{LAS}}
+\item{las}{An object of the class \code{LAS}}
 
 \item{source}{An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}}
 

@@ -58,6 +58,10 @@ Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
+    'class-lasheader.r'
+    'LAS.r'
+    'LAScatalog.r'
+    'LAScluster.r'
     'RcppExports.R'
     'catalog_apply.r'
     'catalog_fakerun.r'
@@ -67,10 +71,6 @@ Collate:
     'catalog_query.r'
     'catalog_retile.r'
     'catalog_select.r'
-    'class-lasheader.r'
-    'class-las.r'
-    'class-lascatalog.r'
-    'class-lascluster.r'
     'clusters_apply.r'
     'constant.R'
     'deprecated.r'
