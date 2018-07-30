@@ -38,7 +38,7 @@
 #' enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
 #' allowed), or optionally to compress the data by retiling without changing the pattern but by changing
 #' the format (las/laz).\cr\cr
-#' 
+#'
 #' Note that this function is not actually very useful since \code{lidR} manages everything
 #' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
 #' for working in other software for example, but not in \code{lidR}.
@@ -135,23 +135,14 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = 
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.", call. = FALSE)
 
+  reshape_func = function(cluster, path, prefix, ext, ...)
+  {
+    ofile = paste0(path, "/", prefix, cluster@name , ".", ext)
+    streamLAS(cluster, ofile, ...)
+    return(0)
+  }
+
   cluster_apply(clusters, reshape_func, ncores, progress, stopearly, path = path, prefix = prefix, ext = format, ...)
 
   return(catalog(path))
-}
-
-reshape_func = function(cluster, path, prefix, ext, ...)
-{
-  ofile = paste0(path, "/", prefix, cluster@name , ".", ext)
-  streamLAS(cluster, ofile, ...)
-
-  header = rlas::read.lasheader(ofile)
-
-  if (header$`Number of point records` == 0)
-  {
-    file.remove(ofile)
-    return(NULL)
-  }
-
-  return(0)
 }

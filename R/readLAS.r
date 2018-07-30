@@ -141,7 +141,20 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt 
 {
   filter = paste(x@filter, filter)
   las = streamLAS(x@files, ofile, select,  filter, filter_wkt)
-  return(invisible(las))
+
+  # Automatically remove files that are empty
+  if (ofile != "")
+  {
+    header = rlas::read.lasheader(ofile)
+
+    if (header$`Number of point records` == 0)
+    {
+      file.remove(ofile)
+      return(NULL)
+    }
+  }
+
+  return(las)
 }
 
 streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt = "")
