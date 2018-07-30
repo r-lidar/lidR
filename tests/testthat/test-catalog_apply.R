@@ -2,7 +2,7 @@ context("catalog_apply")
 
 LASfile          <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg              <- catalog(LASfile)
-ctg@data         <- ctg@data[1]
+ctg@data         <- ctg@data[1,]
 cores(ctg)       <- 1
 buffer(ctg)      <- 0
 tiling_size(ctg) <- 150

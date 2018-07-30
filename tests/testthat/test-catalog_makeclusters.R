@@ -50,7 +50,9 @@ data = data.table::data.table(
   filename = paste0("abc", 1:62)
 )
 
-ctg = new("LAScatalog", data = data, crs = sp::CRS())
+ctg = new("LAScatalog")
+ctg@data = data
+ctg@proj4string = sp::CRS("+init=epsg:26917")
 
 test_that("makecluster, tiling", {
 

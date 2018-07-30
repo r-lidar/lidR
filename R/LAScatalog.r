@@ -25,106 +25,118 @@
 #
 # ===============================================================================
 
-
-
 #' An S4 class to represent a set of .las or .laz files
 #'
 #' A \code{LAScatalog} object is a representation of a set of las/laz files, since a computer cannot load
 #' all the data at once. A \code{LAScatalog} is a simple way to manage the entire dataset by reading only
-#' the file headers. A \code{LAScatalog} enables the user to process a large area or to
-#' selectively clip data from a large area without loading the large area itself. A \code{LAScatalog}
-#' can be built with the function \link{catalog}. Also a \code{LAScatalog} contains extra information
-#' that enables users to control how the catalog is processed (see details).
+#' the file headers. It enables the user to process a large area or to selectively clip data from a
+#' large area without loading the large area itself. A \code{LAScatalog} can be built with the function
+#' \link{catalog} and is formally an extension of \code{SpatialPolygonsDataFrame}. Thus, \strong{it is}
+#' a \code{SpatialPolygonsDataFrame} that contains extra information that enables users to control
+#'  how the catalog is processed (see details).
 #'
-#' A \code{LAScatalog} contains a slot @data that contains the useful information about the point cloud
-#' that is used internally, as well as several other slots that contain \bold{processing options}. Each
-#' \code{lidR} function that supports a \code{LAScatalog} as input will respect this processing option
-#' when it is relevant. When it is not relevant these options are not considered. Examples of some non-
-#' relevant situations:
-#' \itemize{
-#' \item \code{@vrt} options is not relevant in functions that do not rasterize the point cloud.
-#' \item \code{@tiling_size} is always respected but can be slighly modified to align the clusters with
-#' the grid in \code{grid_*} functions.
-#' \item \code{@buffer} is not relevant in \link{grid_metrics} because \code{lidR} aligns the
-#' clusters with the resolution to get a continuous output. However it is relevant in \link{grid_terrain}
-#' to avoid edge artifacts, for example.
-#' \item \code{@cores} may not be respected if it is known internally that a single core is better
-#' than four (no current case currently exists)
-#' }
-#' Internally, processing a catalog is almost always the same and relies on few steps:
-#' \itemize{
-#' \item Create a set of clusters. A cluster is the representation of a region of interest that can be
-#' buffered or not.
+#' A \code{LAScatalog} is formally a  \code{SpatialPolygonsDataFrame} extended with 3 new slots that
+#' contain processing options. Each \code{lidR} function that supports a \code{LAScatalog} as
+#' input will respect these processing options when it is relevant (see documentation of each repective
+#' function). Internally, processing a catalog is almost always the same and relies on few steps:
+#' \enumerate{
+#' \item Create a set of clusters. A cluster is the representation of a region of interest.
 #' \item Loop over each cluster (in parallel or not)
 #' \item For each cluster, load the points inside the region of interest in R, run some R functions,
 #' return the expected output.
-#' \item Merge the outputs of the different clusters once they are all processed.
+#' \item Merge the outputs of the different clusters once they are all processed to build a continuous
+#' output.
 #' }
-#' So basically, a \code{LAScatalog} is a built in batch process with the specificity that \code{lidR}
+#' So basically, a \code{LAScatalog} is a built-in batch process with the specificity that \code{lidR}
 #' does not loop through files but loops seamlessly through clusters that do not not necessarily match
-#' with the files. This is why point cloud indexation with lax files may significantly speed-up the
-#' processing.\cr\cr
+#' with the files pattern. This way \code{lidR} can process sequentially tiny regions of interest even
+#' if each file may be individually too big to fit in memory. This is also why point cloud indexation
+#' ith lax files may significantly speed-up the processing.\cr\cr
 #' It is important to note that buffered datasets (i.e. files that overlap each other) are not natively
 #' supported by \code{lidR}. When encountering such datasets the user should always filter the
 #' overlap if possible. This is possible if the overlapping points are flagged, for example in the
 #' 'withheld' field. Otherwise \code{lidR} will not be able to process the dataset correctly.
 #'
-#' @slot data data.table. A table representing the header of each file.
-#' @slot crs A \link[sp:CRS]{CRS} object.
-#' @slot cores integer. Numer of cores used to make parallel computations in compatible functions that
-#' support a \code{LAScatalog} as input. Default is 1.
-#' @slot buffer numeric. When applying a function to an entire catalog by sequentially processing
-#' sub-areas (clusters), some algorithms (such as \link{grid_terrain}) require a buffer around the area
-#' to avoid edge effects. Default is 15 units.
-#' @slot progress logical. Display an estimation of progress while processing. Default is TRUE.
-#' @slot by_file logical. This option overwrites the option \code{tiling_size}. Instead of processing
-#' the catalog by arbitrary split areas, it forces processing by file. Buffering around each file is
-#' still available. Default is FALSE.
-#' @slot tiling_size numeric. To process an entire catalog, the algorithm splits the dataset into
-#' several square sub-areas (called clusters) to process them sequentially. This is the size of each
-#' square cluster. Default is 1000 unit^2.
-#' @slot vrt character. Path to a folder. In \code{grid_*} functions such as \link{grid_metrics},
-#' \link{grid_terrain} and others, the functions can write \code{RasterLayers} in this folder and
-#' return a lightweight virtual raster mosaic (VRT). In other functions where it is not relevant,
-#' it is not used.
-#' @slot stop_early logical. If \code{TRUE} the catalog processing stops if an error occurs during the
-#' computation. If \code{FALSE}, the catalog will be processed until the end anyway and clusters with
-#' errors will be skipped.
-#' @slot opt_changed Internal use only for compatibility with older deprecated code.
+#' @section Processing options:
+#' The slot \code{@processing_options} contains a \code{list} of options that drives how a the cluster
+#' (the sub-areas that are sequentially processed) are processed.
+#' \itemize{
+#' \item \strong{core}: interger. How many cores are used. Default is 1.
+#' \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
+#' \item \strong{stop_early}: boolean. Stop the processsing before the end if an error occur in one of the clusters.
+#' Default is TRUE.
+#' }
+#'
+#' @section Clustering options:
+#' The slot \code{@clustering_options} contains a \code{list} of options that drives how a the cluster
+#' (the sub-areas that are sequentially processed) are made.
+#' \itemize{
+#' \item \strong{by_file}: boolean. The catalog is process sequentially by file. A clsuter is a file. Default is FALSE.
+#' \item \strong{tiling_size}: numeric. The size of the cluster that will be sequentially processeed. A small size
+#' allows for loading few data at a time saving computer memory. A large size allows for loading large
+#' region at a time, the computation is thus ussualy faster but uses much more computer memory. Not relevent
+#' if \code{by_file = TRUE}
+#' \item \strong{buffer}: numeric. Each cluster can be read with an extra buffer around it to ensure there is
+#' no side effect between to independent cluster and that the output is correct and continuous. This
+#' is mandatory for some algorithms. Default is 0.
+#' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
+#' clustering pattern. By default the alignment is made along (0,0) meaning the edgeof a virtual tile
+#' will belong on x = 0 and y = 0 and all the the others will be multiples of the tiling size. Not relevent
+#' if \code{by_file = TRUE}
+#' }
+#' @section Output options:
+#' The slot \code{@output_options} contains a \code{list} of options that drives how a the cluster
+#' (the sub-areas that are sequentially processed) are written (and by written we mean written in files
+#' or written in R memory).
+#'
+#' @slot processing_options list. A list that contains some settings describing how the catalog will be
+#' processed (see dedicated section).
+#' @slot clustering_options list. A list that contains some settings describing how the catalog will be
+#' sub-divided into small cluster to be processed (see dedicated section).
+#' @slot output_options list. A list that contains some settings describing how the catalog will return
+#' the outputs (see dedicated section).
 #' @seealso
 #' \link[lidR:catalog]{catalog}
 #' @import data.table
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
+#' @importClassesFrom sp SpatialPolygonsDataFrame
 #' @exportClass LAS
 #' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAScatalog",
+  contains = "SpatialPolygonsDataFrame",
   representation(
-    data = "data.table",
-    crs  = "CRS",
-    cores = "integer",
-    buffer = "numeric",
-    by_file = "logical",
-    progress = "logical",
-    tiling_size = "numeric",
-    vrt = "character",
-    stop_early = "logical"
+    clustering_options = "list",
+    processing_options = "list",
+    output_options = "list"
   )
 )
 
-setMethod("initialize", "LAScatalog", function(.Object, data, crs, process = list())
+setMethod("initialize", "LAScatalog", function(.Object)
 {
-  .Object@data  <- data
-  .Object@crs   <- crs
-  .Object@cores <- 1L
-  .Object@buffer <- 15
-  .Object@by_file <- FALSE
-  .Object@progress <- TRUE
-  .Object@tiling_size <- 1000
-  .Object@vrt <- ""
-  .Object@stop_early <- TRUE
+  callNextMethod()
+
+  .Object@clustering_options <- list(
+    by_file = FALSE,
+    tiling_size = 500,
+    buffer = 0,
+    alignment = c(0,0)
+  )
+  .Object@processing_options <- list(
+    cores = 1L,
+    progress = TRUE,
+    stop_early = TRUE
+  )
+  .Object@output_options <- list(
+    output_dir = "",
+    output_file = "",
+    save_with_buffer = FALSE,
+    merge_files = FALSE,
+    laz_compression = TRUE
+  )
+
   return(.Object)
 })
 
@@ -150,7 +162,7 @@ catalog <- function(folder, ...)
   if (all(!finfo$isdir))
     files <- folder
   else if (!dir.exists(folder))
-    stop(glue("{folder} does not exist"))
+    stop(glue::glue("{folder} does not exist."))
   else
     files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
 
@@ -170,31 +182,50 @@ catalog <- function(folder, ...)
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
 
-  laxfiles <- paste0(tools::file_path_sans_ext(files), ".lax")
-  if (any(!file.exists(laxfiles)))
-    message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
+  xmin <- headers$`Min X`
+  xmax <- headers$`Max X`
+  ymin <- headers$`Min Y`
+  ymax <- headers$`Max Y`
+  ids  <- as.character(seq_along(files))
 
-  ctg = new("LAScatalog", headers, crs = sp::CRS())
+  pgeom <- lapply(seq_along(ids), function(xi)
+  {
+    mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
+    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
+  })
 
-  # Test for overlaps
+  Sr = sp::SpatialPolygons(pgeom, proj4string = crs)
 
-  spdf = as.spatial(ctg)
-  contour = rgeos::gUnaryUnion(spdf)
+  data.table::setDF(headers)
 
-  actual_area = round(contour@polygons[[1]]@area, 4)
-  measured_area = round(area(ctg), 4)
+  res <- new("LAScatalog")
+  res@bbox <- Sr@bbox
+  res@proj4string <- Sr@proj4string
+  res@plotOrder <- Sr@plotOrder
+  res@data <- headers
+  res@polygons <- Sr@polygons
 
-  if (actual_area < measured_area)
-    message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
+  # # Test for overlaps
+  # contour = rgeos::gUnaryUnion(res)
+  #
+  # actual_area = round(contour@polygons[[1]]@area, 4)
+  # measured_area = round(area(res), 4)
+  #
+  # if (actual_area < measured_area)
+  #   message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
+  #
+  # laxfiles <- paste0(tools::file_path_sans_ext(files), ".lax")
+  # if (any(!file.exists(laxfiles)))
+  #   message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
-  return(ctg)
+  return(res)
 }
 
 #' @rdname catalog
 #' @export
 cores = function(ctg)
 {
-  return(ctg@cores)
+  return(ctg@processing_options$cores)
 }
 
 
@@ -215,7 +246,7 @@ cores = function(ctg)
     value = 1L
   }
 
-  ctg@cores <- value
+  ctg@processing_options$cores <- value
   return(ctg)
 }
 
@@ -223,7 +254,7 @@ cores = function(ctg)
 #' @export
 by_file = function(ctg)
 {
-  return(ctg@by_file)
+  return(ctg@clustering_options$by_file)
 }
 
 #' @rdname catalog
@@ -231,7 +262,7 @@ by_file = function(ctg)
 `by_file<-` = function(ctg, value)
 {
   stopifnot(is.logical(value), length(value) == 1)
-  ctg@by_file <- value
+  ctg@clustering_options$by_file <- value
   return(ctg)
 }
 
@@ -239,7 +270,7 @@ by_file = function(ctg)
 #' @export
 buffer = function(ctg)
 {
-  return(ctg@buffer)
+  return(ctg@clustering_options$buffer)
 }
 
 #' @rdname catalog
@@ -248,7 +279,7 @@ buffer = function(ctg)
 {
   assertive::assert_is_a_number(value)
   if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
-  ctg@buffer <- value
+  ctg@clustering_options$buffer <- value
   return(ctg)
 }
 
@@ -256,7 +287,7 @@ buffer = function(ctg)
 #' @export
 progress = function(ctg)
 {
-  return(ctg@progress)
+  return(ctg@processing_options$progress)
 }
 
 #' @rdname catalog
@@ -264,7 +295,7 @@ progress = function(ctg)
 `progress<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-  ctg@progress <- value
+  ctg@processing_options$progress <- value
   return(ctg)
 }
 
@@ -272,7 +303,7 @@ progress = function(ctg)
 #' @export
 tiling_size = function(ctg)
 {
-  return(ctg@tiling_size)
+  return(ctg@clustering_options$tiling_size)
 }
 
 #' @rdname catalog
@@ -281,7 +312,7 @@ tiling_size = function(ctg)
 {
   assertive::assert_is_a_number(value)
   assertive::assert_all_are_non_negative(value)
-  ctg@tiling_size <- value
+  ctg@clustering_options$tiling_size <- value
   return(ctg)
 }
 
@@ -289,7 +320,7 @@ tiling_size = function(ctg)
 #' @export
 vrt = function(ctg)
 {
-  return(ctg@vrt)
+  return(ctg@output_options$output_dir)
 }
 
 #' @rdname catalog
@@ -297,7 +328,7 @@ vrt = function(ctg)
 `vrt<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
-  ctg@vrt <- value
+  ctg@output_options$output_dir <- value
   return(ctg)
 }
 
@@ -305,7 +336,7 @@ vrt = function(ctg)
 #' @export
 stop_early = function(ctg)
 {
-  return(ctg@stop_early)
+  return(ctg@processing_options$stop_early)
 }
 
 #' @rdname catalog
@@ -313,7 +344,7 @@ stop_early = function(ctg)
 `stop_early<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-  ctg@stop_early <- value
+  ctg@processing_options$stop_early <- value
   return(ctg)
 }
 
@@ -325,22 +356,19 @@ save_vrt = function(ctg)
 
 setMethod("show", "LAScatalog", function(object)
 {
+  callNextMethod(object)
   memsize <- format(utils::object.size(object), units = "auto")
-  surface <- area(object)
+  surface <- raster::area(object)
   npoints <- sum(object@data$`Number of point records`)
-  ext     <- extent(object)
 
-  cat("class       : LAScatalog\n")
-  cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("area        :", surface, "u\u00B2\n")
+  cat("area        :", surface, "units\u00B2\n")
   cat("points      :", npoints, "points\n")
-  cat("density     :", round(npoints/surface, 1), "points/u\u00B2\n")
+  cat("density     :", round(npoints/surface, 1), "points/unit\u00B2\n")
   cat("num. files  :", dim(object@data)[1], "\n")
-  cat("coord. ref. :", object@crs@projargs, "\n")
-  cat("Processing options: \n")
-  if (by_file(object)) cat(" - split the dataset using the original files as tiles\n")
-  else cat(" - split the dataset into", tiling_size(object), "x", tiling_size(object), "m tiles\n")
-  if (buffer(object) != 0) cat(" - each tile has a", buffer(object), "m buffer\n")
-  cat(" - processing done using", cores(object), "core(s) if possible.")
 
+  # cat("Processing options: \n")
+  # if (by_file(object)) cat(" - split the dataset using the original files as tiles\n")
+  # else cat(" - split the dataset into", tiling_size(object), "x", tiling_size(object), "m tiles\n")
+  # if (buffer(object) != 0) cat(" - each tile has a", buffer(object), "m buffer\n")
+  # cat(" - processing done using", cores(object), "core(s) if possible.")
 })

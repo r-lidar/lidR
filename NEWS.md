@@ -1,5 +1,12 @@
 ## lidR v2.0.0 (in development)
 
+**LAScatalog**
+
+* Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more thecnically it inherits a `SpatialPolygonsDataFrame`.
+* Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` do not have any slot `@crs`. It is now `@proj4string`.
+* Change: there are no longeur any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options` and `@clustering_options` that are list of options classified by their main role.
+* Change: documentation has been reviewed
+
 **readLAS**
 
 * Change: `readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines` and `lascolors`.
@@ -10,6 +17,7 @@
 * New: `lasclip` support many geometries including multipart polygons and polygons with holes both with a `LAS` object and a `LAScatalog`.
 * Change: The option `inside` has been removed for consitency  because it cannot be safely supported both on `LAS` and `LAScatalog`. One may use manually `lasfilter` to extract donuts of points.
 * Change: The option `ofile` has been removed for consitency and this option in now managed by `LAScatalog` internal processing routine.
+* Change: documentation has been reviewed and extented
 * Fix: `lasclipRectangle` returns the same output both with a `LAS` and a `LAScatalog`. With a `LAS` the rectangle range is now close on the bottom and the left and open on the right and the top.
 
 **`lasclassify`**

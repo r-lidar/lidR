@@ -5,7 +5,7 @@ LASfolder <- system.file("extdata", "", package="lidR")
 las = readLAS(LASfile, select = "xyx", filter = "-keep_first")
 las@crs = sp::CRS("+init=epsg:26917")
 ctg = catalog(LASfolder)
-ctg@crs = sp::CRS("+init=epsg:26917")
+ctg@proj4string = sp::CRS("+init=epsg:26917")
 cores(ctg) <- 1
 progress(ctg) <- FALSE
 
@@ -17,7 +17,7 @@ test_that("clip rectangle works on a LAS and a LAScatalog", {
 
   rect2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900,  select = "xyx", filter = "-keep_first")
   expect_true(extent(rect2) <= raster::extent(684850, 5017850, 684900, 5017900))
-  expect_equal(rect2@crs, ctg@crs)
+  expect_equal(rect2@crs, ctg@proj4string)
 
   expect_equal(rect1, rect2)
 })
@@ -30,7 +30,7 @@ test_that("clip circle works on a LAS and a LAScatalog", {
 
   circ2 = lasclipCircle(ctg, 684850, 5017850, 10, select = "xyx", filter = "-keep_first")
   expect_true(extent(circ2) <= raster::extent(684850-10,5017850-10,684850+10,5017850+10))
-  expect_equal(circ2@crs, ctg@crs)
+  expect_equal(circ2@crs, ctg@proj4string)
 
   expect_equal(circ1, circ2)
 })
@@ -43,7 +43,7 @@ test_that("clip polygon works on a LAS and a LAScatalog", {
 
   tri2 = lasclipPolygon(ctg, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850), select = "xyx", filter = "-keep_first")
   expect_true(extent(tri2) <= raster::extent(684850, 5017800, 684975, 5017900))
-  expect_equal(tri2@crs, ctg@crs)
+  expect_equal(tri2@crs, ctg@proj4string)
 
   expect_equal(tri1, tri2)
 })
@@ -65,7 +65,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_equal(mpoly1, mpoly2)
   expect_equal(poly1, poly2)
   expect_equal(mpoly1@crs, las@crs)
-  expect_equal(mpoly2@crs, ctg@crs)
+  expect_equal(mpoly2@crs, ctg@proj4string)
 
   # Polygon
   spatialpolygons1 = rgeos::readWKT(wkt1)
@@ -79,7 +79,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 2117L)
   expect_equal(poly1@crs, las@crs)
-  expect_equal(poly2@crs, ctg@crs)
+  expect_equal(poly2@crs, ctg@proj4string)
 
   expect_equal(poly1, poly2)
 
@@ -92,7 +92,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 22520L)
   expect_equal(poly1@crs, las@crs)
-  expect_equal(poly2@crs, ctg@crs)
+  expect_equal(poly2@crs, ctg@proj4string)
 
   expect_equal(poly1, poly2)
 

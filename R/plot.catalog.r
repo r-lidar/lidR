@@ -49,7 +49,7 @@ plot.LAScatalog = function(x, y = TRUE, ...)
 {
   if (y)
   {
-    LAScatalog = as.spatial(x)
+    LAScatalog = x
     mapview::mapview(LAScatalog, ...)
   }
   else

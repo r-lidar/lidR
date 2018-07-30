@@ -204,17 +204,11 @@ as.spatial.lasmetrics = function(x)
 #' @export
 as.spatial.LAScatalog = function(x)
 {
-  xmin <- x@data$`Min X`
-  xmax <- x@data$`Max X`
-  ymin <- x@data$`Min Y`
-  ymax <- x@data$`Max Y`
-  ids  <- as.character(seq_along(xmin))
-
-  pgeom <- lapply(seq_along(ids), function(xi)
-  {
-    mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
-  })
-  data <- data.frame(x@data)
-  sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), data)
+  res <- new("SpatialPolygonsDataFrame")
+  res@bbox <- x@bbox
+  res@proj4string <- x@proj4string
+  res@plotOrder <- x@plotOrder
+  res@data <- x@data
+  res@polygons <- x@polygons
+  return(res)
 }

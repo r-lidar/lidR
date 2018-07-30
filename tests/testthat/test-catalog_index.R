@@ -50,7 +50,9 @@ data = data.table::data.table(
   filename = paste0("abc", 1:62)
 )
 
-ctg = new("LAScatalog", data = data, crs = sp::CRS("+init=epsg:26917"))
+ctg = new("LAScatalog")
+ctg@data = data
+ctg@proj4string = sp::CRS("+init=epsg:26917")
 
 test_that("catalog index works", {
 
@@ -91,3 +93,4 @@ test_that("catalog index returns NULL if there is no match", {
 
   expect_true(is.null(clusters[[2]]))
 })
+

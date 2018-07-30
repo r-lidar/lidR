@@ -133,7 +133,7 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
   for (i in 1:length(output))
   {
     if (!is.null(output[[i]]))
-      output[[i]]@crs <- ctg@crs
+      output[[i]]@crs <- ctg@proj4string
     else
       warning(glue::glue("{roinames[i]} does not contain any point. NULL returned."))
   }

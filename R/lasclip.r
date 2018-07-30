@@ -424,7 +424,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, wkt = NULL, ...)
   {
     if (!is.null(output[[i]]))
     {
-      output[[i]]@crs <- ctg@crs
+      output[[i]]@crs <- ctg@proj4string
 
       # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
       if (ncores > 1)
