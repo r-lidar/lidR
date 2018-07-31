@@ -44,7 +44,8 @@ lasclipCircle(las, xcenter, ycenter, radius, ...)
 \value{
 An object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
 several regions of interest or \code{NULL} if the query is outside the dataset or within a region that does
-not contains any point.
+not contains any point or a \code{LAScatalog} if the query is immediatly written into file without
+loading anything in R..
 }
 \description{
 Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
@@ -57,20 +58,21 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 
 \itemize{
  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POLYGON or
- a MULTIPOLYGON. A single \code{LAS} object is extracted.
+ a MULTIPOLYGON.
  \item \link[sp:Polygon-class]{Polygon}
  \item \link[sp:Polygons-class]{Polygons}
  \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
  \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
- \item \link[raster:Extent-class]{Extent}: represent a bouding box. A rectangle is extracted.
+ \item \link[sf:sf]{SimpleFeature}
+ \item \link[raster:Extent-class]{Extent}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
  \preformatted{
   min     max
 x 684816  684943
 y 5017823 5017957}
  \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
- \link[raster:RasterLayer-class]{RasterLayer} are supported. A rectangle is extracted.
-}
+ \link[raster:RasterLayer-class]{RasterLayer} or a \code{SpatialPoints*}. A rectangle is extracted.
+ }
 }
 
 \section{Working with a \code{LAScatalog}}{
@@ -86,11 +88,16 @@ not mandatory.
 \section{Supported processing options for a LAScatalog}{
 
 \itemize{
-\item \code{cores}: If several ROIs are requested, they can be extracted in parallel.
-\item \code{progress}: See \link{LAScatalog-class}.
-\item \code{stop_early}: See \link{LAScatalog-class}.
-\item \code{save}: If save is set in the catalog, the ROIs will no be returns in R. They will be written
-in on or several files. See \link{LAScatalog-class} and example.
+\item \strong{cores}: If several ROIs are requested, they can be extracted in parallel. See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
+They will be written in one or several files. See \link{LAScatalog-class} and examples. The allowed
+templates in \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+{YCENTER}} or any names from the table of attributes of geospatial objects given as input such as
+\code{{LAKENAME}} or \code{{YEAR}} for example if these fields exist. If empty everything is returned
+into R.
+\item \strong{laz_compression}: The ouptut files are las or laz. See also \link{LAScatalog-class}.
 }
 }
 
@@ -101,18 +108,17 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 
-# Do not load the file, extract only the region of interest
+# Do not load the file(s), extract only the region of interest from a bigger dataset
 ctg = catalog(LASfile)
 subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
-# Extract a polygon from a shapefile
+# Extract all the polygons from a shapefile
 shapefile_dir <- system.file("extdata", package = "lidR")
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
-lake = lakes@polygons[[1]]@Polygons[[1]]
-subset3 = lasclip(ctg, lake)
+subset3 = lasclip(ctg, lakes)
 
-# Extract a polygon, write it in a file, do not load anything in R
-file = paste0(tempfile(), ".las")
+# Extract the polygons, write them in files name after the lake names, do not load anything in R
+output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 lasclip(ctg, lake)
 
 \dontrun{

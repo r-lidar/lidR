@@ -16,6 +16,9 @@
 \alias{vrt<-}
 \alias{stop_early}
 \alias{stop_early<-}
+\alias{output_files<-}
+\alias{laz_compression}
+\alias{laz_compression<-}
 \title{Build a catalog of las tiles/files}
 \usage{
 catalog(folder, ...)
@@ -47,6 +50,12 @@ vrt(ctg) <- value
 stop_early(ctg)
 
 stop_early(ctg) <- value
+
+output_files(ctg) <- value
+
+laz_compression(ctg)
+
+laz_compression(ctg) <- value
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of .las files}

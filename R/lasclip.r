@@ -37,30 +37,36 @@
 #' @section Supported geometries:
 #' \itemize{
 #'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POLYGON or
-#'  a MULTIPOLYGON. A single \code{LAS} object is extracted.
+#'  a MULTIPOLYGON.
 #'  \item \link[sp:Polygon-class]{Polygon}
 #'  \item \link[sp:Polygons-class]{Polygons}
 #'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
 #'  \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
-#'  \item \link[raster:Extent-class]{Extent}: represent a bouding box. A rectangle is extracted.
+#'  \item \link[sf:sf]{SimpleFeature}
+#'  \item \link[raster:Extent-class]{Extent}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
 #'  \preformatted{
 #'   min     max
 #' x 684816  684943
 #' y 5017823 5017957}
 #'  \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
-#'  \link[raster:RasterLayer-class]{RasterLayer} are supported. A rectangle is extracted.
-#' }
+#'  \link[raster:RasterLayer-class]{RasterLayer} or a \code{SpatialPoints*}. A rectangle is extracted.
+#'  }
 #'
 #' @template LAScatalog
 #'
 #' @section Supported processing options for a LAScatalog:
 #' \itemize{
-#' \item \code{cores}: If several ROIs are requested, they can be extracted in parallel.
-#' \item \code{progress}: See \link{LAScatalog-class}.
-#' \item \code{stop_early}: See \link{LAScatalog-class}.
-#' \item \code{save}: If save is set in the catalog, the ROIs will no be returns in R. They will be written
-#' in on or several files. See \link{LAScatalog-class} and example.
+#' \item \strong{cores}: If several ROIs are requested, they can be extracted in parallel. See \link{LAScatalog-class}.
+#' \item \strong{progress}: See \link{LAScatalog-class}.
+#' \item \strong{stop_early}: See \link{LAScatalog-class}.
+#' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
+#' They will be written in one or several files. See \link{LAScatalog-class} and examples. The allowed
+#' templates in \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+#' {YCENTER}} or any names from the table of attributes of geospatial objects given as input such as
+#' \code{{LAKENAME}} or \code{{YEAR}} for example if these fields exist. If empty everything is returned
+#' into R.
+#' \item \strong{laz_compression}: The ouptut files are las or laz. See also \link{LAScatalog-class}.
 #' }
 #'
 #' @template param-las
@@ -78,7 +84,8 @@
 #' \code{LAScatalog} object)
 #' @return An object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
 #' several regions of interest or \code{NULL} if the query is outside the dataset or within a region that does
-#' not contains any point.
+#' not contains any point or a \code{LAScatalog} if the query is immediatly written into file without
+#' loading anything in R..
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -86,18 +93,17 @@
 #' las = readLAS(LASfile)
 #' subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 #'
-#' # Do not load the file, extract only the region of interest
+#' # Do not load the file(s), extract only the region of interest from a bigger dataset
 #' ctg = catalog(LASfile)
 #' subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 #'
-#' # Extract a polygon from a shapefile
+#' # Extract all the polygons from a shapefile
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
-#' lake = lakes@polygons[[1]]@Polygons[[1]]
-#' subset3 = lasclip(ctg, lake)
+#' subset3 = lasclip(ctg, lakes)
 #'
-#' # Extract a polygon, write it in a file, do not load anything in R
-#' file = paste0(tempfile(), ".las")
+#' # Extract the polygons, write them in files name after the lake names, do not load anything in R
+#' output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 #' lasclip(ctg, lake)
 #'
 #' \dontrun{
@@ -110,7 +116,7 @@
 lasclip = function(las, geometry, ...)
 {
   if (is.character(geometry))
-    return(lasclipWKT(las, geometry, ...))
+    geometry = rgeos::readWKT(geometry)
 
   if (is(geometry, "Polygon"))
     geometry <- sp::Polygons(list(geometry), ID = 1)
@@ -126,8 +132,7 @@ lasclip = function(las, geometry, ...)
     if (!all(sf::st_is(geometry, "POLYGON") |sf::st_is(geometry, "MULTIPOLYGON")))
       stop("Incorrect geometry type. POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
 
-    geometry <- sf::st_as_text(geometry$geometry)
-    return(lasclipWKT(las, geometry, ...))
+    return(lasclipSimpleFeature(las, geometry, ...))
   }
   else if (is(geometry, "Extent"))
   {
@@ -321,13 +326,15 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 # WKT
 # ========
 
-lasclipWKT = function(las, wkt, ...)
+lasclipSimpleFeature = function(las, sf, ...)
 {
-  UseMethod("lasclipWKT", las)
+  UseMethod("lasclipSimpleFeature", las)
 }
 
-lasclipWKT.LAS = function(las, wkt, ...)
+lasclipSimpleFeature.LAS = function(las, sf, ...)
 {
+  wkt <- sf::st_as_text(sf$geometry)
+
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
   {
@@ -349,15 +356,17 @@ lasclipWKT.LAS = function(las, wkt, ...)
     return(output)
 }
 
-lasclipWKT.LAScatalog = function(las, wkt, ...)
+lasclipSimpleFeature.LAScatalog = function(las, sf, ...)
 {
+  wkt  <- sf::st_as_text(sf$geometry)
+
   bboxes = lapply(wkt, function(string)
   {
     spgeom = rgeos::readWKT(string)
     return(raster::extent(spgeom))
   })
 
-  output = catalog_extract(las, bboxes, LIDRRECTANGLE, wkt, ...)
+  output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf, ...)
 
   if(length(output) == 0)
     return(NULL)
@@ -371,7 +380,7 @@ lasclipWKT.LAScatalog = function(las, wkt, ...)
 # GENERIC QUERY
 # =============
 
-catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, wkt = NULL, ...)
+catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
 {
   progress  <- progress(ctg)
   ncores    <- cores(ctg)
@@ -396,21 +405,22 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, wkt = NULL, ...)
   {
     if(!is.null(clusters[[i]]))
     {
-      if (!is.null(wkt))
-        clusters[[i]]@wkt = wkt[i]
+      if (!is.null(sf))
+        clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
 
-      # if (!is.null(ctg@save))
-      # {
-      #   ID <- i
-      #   XCENTER <- clusters[[i]]@center$x
-      #   XCENTER <- clusters[[i]]@center$y
-      #   XLEFT   <- clusters[[i]]@bbox$xmin
-      #   XRIGHT  <- clusters[[i]]@bbox$xmax
-      #   YBOTTOM <- clusters[[i]]@bbox$ymin
-      #   YTOP    <- clusters[[i]]@bbox$ymax
-      #   format  <- if (ctg@output_options$laz_compression) ".las" else ".las"
-      #   clusters[[i]]@save = paste0(glue::glue(ctg@output_options$output_files), format)
-      # }
+      if (output_files(ctg) != "")
+      {
+        X         <-  if (!is.null(sf)) sf[1,] else list()
+        X$ID      <- i
+        X$XCENTER <- clusters[[i]]@center$x
+        X$XCENTER <- clusters[[i]]@center$y
+        X$XLEFT   <- clusters[[i]]@bbox$xmin
+        X$XRIGHT  <- clusters[[i]]@bbox$xmax
+        X$YBOTTOM <- clusters[[i]]@bbox$ymin
+        X$YTOP    <- clusters[[i]]@bbox$ymax
+        format    <- if (laz_compression(ctg)) ".laz" else ".las"
+        clusters[[i]]@save <- paste0(glue::glue_data(X, output_files(ctg)), format)
+      }
     }
   }
 
@@ -430,6 +440,14 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, wkt = NULL, ...)
       if (ncores > 1)
         output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
     }
+  }
+
+  if (ctg@output_options$output_files != "")
+  {
+    folder = dirname(ctg@output_options$output_files)
+    new_ctg = catalog(folder)
+    new_ctg@proj4string = ctg@proj4string
+    return(list(new_ctg))
   }
 
   return(output)

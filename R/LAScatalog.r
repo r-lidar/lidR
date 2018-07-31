@@ -51,7 +51,7 @@
 #' does not loop through files but loops seamlessly through clusters that do not not necessarily match
 #' with the files pattern. This way \code{lidR} can process sequentially tiny regions of interest even
 #' if each file may be individually too big to fit in memory. This is also why point cloud indexation
-#' ith lax files may significantly speed-up the processing.\cr\cr
+#' with lax files may significantly speed-up the processing.\cr\cr
 #' It is important to note that buffered datasets (i.e. files that overlap each other) are not natively
 #' supported by \code{lidR}. When encountering such datasets the user should always filter the
 #' overlap if possible. This is possible if the overlapping points are flagged, for example in the
@@ -84,10 +84,26 @@
 #' will belong on x = 0 and y = 0 and all the the others will be multiples of the tiling size. Not relevent
 #' if \code{by_file = TRUE}
 #' }
+#'
 #' @section Output options:
 #' The slot \code{@output_options} contains a \code{list} of options that drives how a the cluster
 #' (the sub-areas that are sequentially processed) are written (and by written we mean written in files
 #' or written in R memory).
+#'
+#' \itemize{
+#' \item \strong{output_files}: string. A complete path to a templated filename without extension (the
+#' algorithm guess it for you). When several files are going to be written a single string is provided
+#' with a template that is automatically fullfiled. For example this names are possible:
+#' \preformatted{
+#' "/home/user/als/normalized/file_{ID}_segmented"
+#' "C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
+#' "C:/user/document/als/{ORIGINALFILNAME}_normalized"
+#' }
+#' And will generate as many files as needed with custom names for each file. The list of allowed
+#' templates is described in the documentation of each function.
+#' \item \strong{laz_compression}: boolean. For function that write las files, the extension is .las
+#' or compressed .laz if it is set to \code{TRUE}. Default is FALSE.
+#' }
 #'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
 #' processed (see dedicated section).
@@ -131,7 +147,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
   )
   .Object@output_options <- list(
     output_dir = "",
-    output_file = "",
+    output_files = "",
     save_with_buffer = FALSE,
     merge_files = FALSE,
     laz_compression = TRUE
@@ -352,6 +368,39 @@ save_vrt = function(ctg)
 {
   vrt(ctg) != ""
 }
+
+#' @rdname catalog
+#' @export
+`output_files<-` = function(ctg, value)
+{
+  assertive::assert_is_a_string(value)
+  ctg@output_options$output_files <- value
+  return(ctg)
+}
+
+#' @export
+output_files = function(ctg)
+{
+  return(ctg@output_options$output_files)
+}
+
+#' @rdname catalog
+#' @export
+laz_compression = function(ctg)
+{
+  return(ctg@output_options$laz_compression)
+}
+
+#' @rdname catalog
+#' @export
+`laz_compression<-` = function(ctg, value)
+{
+  assertive::assert_is_a_bool(value)
+  ctg@output_options$laz_compression <- value
+  return(ctg)
+}
+
+
 
 
 setMethod("show", "LAScatalog", function(object)

@@ -8,6 +8,9 @@ ctg = catalog(LASfolder)
 ctg@proj4string = sp::CRS("+init=epsg:26917")
 cores(ctg) <- 1
 progress(ctg) <- FALSE
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+shapefile_dir <- system.file("extdata", package = "lidR")
+lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
 
 test_that("clip rectangle works on a LAS and a LAScatalog", {
   rect1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
@@ -97,10 +100,6 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_equal(poly1, poly2)
 
   # SpatialPolygonsDataFrame
-  LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-  shapefile_dir <- system.file("extdata", package = "lidR")
-  lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
-
   poly1 = lasclip(las, lakes)
   poly2 = lasclip(ctg, lakes, select = "xyx", filter = "-keep_first")
 
@@ -246,13 +245,11 @@ test_that("clip throws errors with invalid queries", {
 
   # Invalid WKT
   wkt = "POLGON ((684975.7 5017899, 685007.3 5017873, 684994.3 5017816, 684936.1 5017812, 684918.8 5017845, 684975.7 5017899))"
-  expect_error(lasclip(las, wkt), "WKT is not")
+  expect_error(lasclip(las, wkt), "Unable to parse")
   expect_error(lasclip(ctg, wkt), "Unable to parse")
 
-  # Non supported WKT
+  # Non supported WKT are actally supported via extent
   wkt = "MULTIPOINT (684975.7 5017899, 685007.3 5017873, 684994.3 5017816, 684936.1 5017812, 684918.8 5017845, 684975.7 5017899)"
-  expect_error(lasclip(las, wkt), "WKT is not")
-  expect_error(lasclip(ctg, wkt), "WKT not supported")
 
   # Different number of coordinates
   xc = c(684800)
@@ -277,4 +274,27 @@ test_that("clip throws errors with invalid queries", {
   geom = 1
   class(geom) <- c("A",  "B")
   expect_error(lasclip(las, geom), "Geometry type A B not supported")
+})
+
+test_that("clip writes file following LAScatalog options", {
+  tmp = tempdir()
+  ctg2 = ctg
+  file = paste0(tmp, "/file_{XLEFT}")
+  output_files(ctg2) = file
+  laz_compression (ctg2) = TRUE
+  ctg3 = lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900)
+
+  expect_true(is(ctg3, "LAScatalog"))
+  expect_equal(ctg3@data$filename, paste0(tmp, "/file_684850.laz"))
+
+  file.remove(paste0(tmp, "/file_684850.laz"))
+
+  file = paste0(tmp, "/file_{LAKENAME_1}")
+  output_files(ctg2) = file
+  laz_compression (ctg2) = FALSE
+  ctg3 = lasclip(ctg2, lakes)
+
+  expect_equal(ctg3@data$filename, paste0(tmp, "/file_Havelock Lake.las"))
+
+  file.remove(paste0(tmp, "/file_Havelock Lake.las"))
 })

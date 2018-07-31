@@ -30,7 +30,7 @@ So basically, a \code{LAScatalog} is a built-in batch process with the specifici
 does not loop through files but loops seamlessly through clusters that do not not necessarily match
 with the files pattern. This way \code{lidR} can process sequentially tiny regions of interest even
 if each file may be individually too big to fit in memory. This is also why point cloud indexation
-ith lax files may significantly speed-up the processing.\cr\cr
+with lax files may significantly speed-up the processing.\cr\cr
 It is important to note that buffered datasets (i.e. files that overlap each other) are not natively
 supported by \code{lidR}. When encountering such datasets the user should always filter the
 overlap if possible. This is possible if the overlapping points are flagged, for example in the
@@ -86,6 +86,21 @@ if \code{by_file = TRUE}
 The slot \code{@output_options} contains a \code{list} of options that drives how a the cluster
 (the sub-areas that are sequentially processed) are written (and by written we mean written in files
 or written in R memory).
+
+\itemize{
+\item \strong{output_files}: string. A complete path to a templated filename without extension (the
+algorithm guess it for you). When several files are going to be written a single string is provided
+with a template that is automatically fullfiled. For example this names are possible:
+\preformatted{
+"/home/user/als/normalized/file_{ID}_segmented"
+"C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
+"C:/user/document/als/{ORIGINALFILNAME}_normalized"
+}
+And will generate as many files as needed with custom names for each file. The list of allowed
+templates is described in the documentation of each function.
+\item \strong{laz_compression}: boolean. For function that write las files, the extension is .las
+or compressed .laz if it is set to \code{TRUE}. Default is FALSE.
+}
 }
 
 \seealso{

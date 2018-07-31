@@ -11,23 +11,26 @@
 
 * Change: `readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines` and `lascolors`.
 
-**`lasclip`**
+**lasclip**
 
 * New: `lasclip` works now both with a `LAS` object and a `LAScatalog`  in a seamless fashion. But with a `LAScatalog` more options are avaible thank to internal `LAScatalog` processing options (see below).
 * New: `lasclip` support many geometries including multipart polygons and polygons with holes both with a `LAS` object and a `LAScatalog`.
 * Change: The option `inside` has been removed for consitency  because it cannot be safely supported both on `LAS` and `LAScatalog`. One may use manually `lasfilter` to extract donuts of points.
-* Change: The option `ofile` has been removed for consitency and this option in now managed by `LAScatalog` internal processing routine.
+* Change: The option `ofile` has been removed for consitency and this option in now managed by `LAScatalog` internal processing routine. For example one can extract ground inventories and write them in laz files automatically name after their center coordinates like that:
+
+```r
+ctg = catalog(folder)
+output_files(ctg) <- "path/to/a/file_{XCENTER}_{YCENTER}"
+laz_compression(ctg) <- TRUE
+new_ctg = lasclipCircle(ctg, xc,yc, r)
+```
+
 * Change: documentation has been reviewed and extented
 * Fix: `lasclipRectangle` returns the same output both with a `LAS` and a `LAScatalog`. With a `LAS` the rectangle range is now close on the bottom and the left and open on the right and the top.
 
-**`lasclassify`**
+**lasclassify**
 
-#### OTHER CHANGES
-
-
-
-#### BUG FIXES
-
+* Change: the code that drives the PIP algorithm relies on `boost` and drastically simplyfies the former code
 
 
 ## lidR v1.6.0 (2018-07-20)
