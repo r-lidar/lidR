@@ -4,15 +4,16 @@
 \alias{tree_detection_lmf}
 \title{Tree top detection based local maxima filters}
 \usage{
-tree_detection_lmf(x, ws, hmin = 2, shape = c("circular", "square"))
+tree_detection_lmf(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 }
 \arguments{
-\item{x}{A object of class \code{LAS} or a \code{RasterLayer} representing a canopy height model.}
+\item{x}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
+canopy height model.}
 
 \item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
 maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
 If it is a function, the function determines the size of the window at any given location on the canopy.
-It should take the height of a given pixel or points as its onlyargument and return the desired size
+It should take the height of a given pixel or points as its only argument and return the desired size
 of the search window when centered on that pixel/point.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
@@ -20,6 +21,10 @@ cannot be a local maxima. Default 2.}
 
 \item{shape}{character. Shape of the moving windows used to find the local maxima. Can be "square"
 or "circular".}
+
+\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+\code{LAScatalog} object).  Actually \code{filter} is the sole authorized argument since \code{select = "xyz"}
+is imposed internally.}
 }
 \value{
 A \code{SpatialPointsDataFrame} with the 2D coordinates of the tree tops (X, Y) and the elevation of
@@ -30,6 +35,29 @@ Tree top detection based on local maxima filters. The windows size can be fix or
 windows shape can be square or circular. The internal algorithm works either with a raster or a point
 cloud
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{buffer*}: Requiered to find the tree without edge effet. Something twice bigger than
+any possible tree might be a good value. See \link{LAScatalog-class}
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")

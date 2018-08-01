@@ -36,6 +36,7 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 
 * New: `tree_detection_lmf` function have a user-defined variable size search windows.
 * New: `tree_detection_lmf` function have custumizable shape (square of disc) search windows.
+* New: `tree_detection_lmf` is applicable seamlessly on a `LAScatalog`.
 * New: `tree_detection_manual` function for manual correction of tree detections.
 * New: `tree_detection_multichm` for individual of tree detection using a multi chm as published in a paper (see reference).
 * Change: `tree_detection` is no longer a function for tree detection but a wrapper around other functions that each contain an algorithm.

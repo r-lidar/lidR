@@ -31,8 +31,11 @@
 #' find the position of the trees before the segmentation process. Several methods may be used
 #' (see documentation of each method)
 #'
-#' @param x A object of class \code{LAS} or an object representing a canopy height model
-#' such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix} depending on the algorithm
+#' @template LAScatalog
+#' @template section-supported-option-tree_detection
+#'
+#' @param x An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
+#' canopy height model. depending on the algorithm
 #' used (see respective documentation)
 #' @param algorithm character. Can be either \code{"lmf"} or \code{"ptrees"}.
 #' @param ... Other parameters for each respective algorithm (see section "see also".
@@ -67,16 +70,23 @@ tree_detection = function(x, algorithm, ...)
 #' windows shape can be square or circular. The internal algorithm works either with a raster or a point
 #' cloud
 #'
-#' @param x A object of class \code{LAS} or a \code{RasterLayer} representing a canopy height model.
+#' @template LAScatalog
+#' @template section-supported-option-tree_detection
+#'
+#' @param x An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
+#' canopy height model.
 #' @param ws numeric or function. Length or diameter of the moving window used to the detect the local
 #' maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
 #' If it is a function, the function determines the size of the window at any given location on the canopy.
-#' It should take the height of a given pixel or points as its onlyargument and return the desired size
+#' It should take the height of a given pixel or points as its only argument and return the desired size
 #' of the search window when centered on that pixel/point.
 #' @param hmin numeric. Minimum height of a tree. Threshold below which a pixel or a point
 #' cannot be a local maxima. Default 2.
 #' @param shape character. Shape of the moving windows used to find the local maxima. Can be "square"
 #' or "circular".
+#' @param ... Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+#' \code{LAScatalog} object).  Actually \code{filter} is the sole authorized argument since \code{select = "xyz"}
+#' is imposed internally.
 #'
 #' @template return-tree_detection
 #' @export
@@ -121,29 +131,48 @@ tree_detection = function(x, algorithm, ...)
 #'
 #' raster::plot(chm, col = height.colors(30))
 #' sp::plot(ttops, add = TRUE)
-tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"))
+tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
+{
+  UseMethod("tree_detection_lmf", x)
+}
+
+#' @export
+tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
+{
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_non_negative(hmin)
+
+  y = raster::as.data.frame(x, xy = T, na.rm = T)
+  data.table::setDT(y)
+  data.table::setnames(y, names(y), c("X", "Y", "Z"))
+
+  output = tree_detection_lmf.data.frame(y , ws, hmin, shape)
+  output@proj4string = x@crs
+  output@bbox = raster::as.matrix(raster::extent(x))
+  return(output)
+}
+
+#' @export
+tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
+{
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_non_negative(hmin)
+
+  y = x@data
+
+  output = tree_detection_lmf.data.frame(y , ws, hmin, shape)
+  output@proj4string = x@crs
+  output@bbox = raster::as.matrix(extent(x))
+  return(output)
+}
+
+#' @export
+tree_detection_lmf.data.frame = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
   assertive::assert_is_a_number(hmin)
   assertive::assert_all_are_non_negative(hmin)
   shape = match.arg(shape)
   circular = shape == "circular"
-  crs = sp::CRS()
-  bbox = raster::as.matrix(extent(x))
-
-  if (is(x, "RasterLayer"))
-  {
-    crs = x@crs
-    x = raster::as.data.frame(x, xy = T, na.rm = T)
-    data.table::setDT(x)
-    data.table::setnames(x, names(x), c("X", "Y", "Z"))
-  }
-  else if (is(x, "LAS"))
-  {
-    crs = x@crs
-    x = x@data
-  }
-  else
-    stop("Input not supported.", call. = FALSE)
 
   n = nrow(x)
 
@@ -168,7 +197,38 @@ tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"))
   maxima = x[is_maxima, .(X,Y,Z)]
   maxima[, treeID := 1:.N]
 
-  output = sp::SpatialPointsDataFrame(maxima[, .(X,Y)], maxima[, .(treeID, Z)], bbox = bbox, proj4string = crs)
+  output = sp::SpatialPointsDataFrame(maxima[, .(X,Y)], maxima[, .(treeID, Z)])
+  return(output)
+}
+
+#' @export
+tree_detection_lmf.LAScluster = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
+{
+  las = readLAS(x, select = "xyz", ...)
+  if (is.null(las)) return(NULL)
+  ttops = tree_detection_lmf(las, ws, hmin, shape)
+  bbox = raster::extent(x@bbox$xmin, x@bbox$xmax, x@bbox$ymin, x@bbox$ymax)
+  ttops = raster::crop(ttops, bbox)
+  return(ttops)
+}
+
+#' @export
+tree_detection_lmf.LAScatalog = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
+{
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_non_negative(hmin)
+
+  progress  <- progress(x)
+  ncores    <- cores(x)
+  stopearly <- stop_early(x)
+
+  if (buffer(x) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  clusters = catalog_makecluster(x, 1)
+  output = cluster_apply(clusters, tree_detection_lmf, ncores, progress, stopearly, ws = ws, hmin = hmin, shape = shape)
+  output = do.call(rbind, output)
+  output@proj4string = x@proj4string
   return(output)
 }
 

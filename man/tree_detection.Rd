@@ -7,8 +7,8 @@
 tree_detection(x, algorithm, ...)
 }
 \arguments{
-\item{x}{A object of class \code{LAS} or an object representing a canopy height model
-such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix} depending on the algorithm
+\item{x}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
+canopy height model. depending on the algorithm
 used (see respective documentation)}
 
 \item{algorithm}{character. Can be either \code{"lmf"} or \code{"ptrees"}.}
@@ -23,6 +23,29 @@ This function is a wrapper for all the implemented tree detection methods. Tree 
 find the position of the trees before the segmentation process. Several methods may be used
 (see documentation of each method)
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{buffer*}: Requiered to find the tree without edge effet. Something twice bigger than
+any possible tree might be a good value. See \link{LAScatalog-class}
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
