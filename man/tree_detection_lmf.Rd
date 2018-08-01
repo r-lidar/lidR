@@ -7,8 +7,7 @@
 tree_detection_lmf(x, ws, hmin = 2, shape = c("circular", "square"))
 }
 \arguments{
-\item{x}{A object of class \code{LAS} or an object representing a canopy height model
-such as a \code{RasterLayer} or a \code{lasmetrics}.}
+\item{x}{A object of class \code{LAS} or a \code{RasterLayer} representing a canopy height model.}
 
 \item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
 maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
@@ -23,8 +22,8 @@ cannot be a local maxima. Default 2.}
 or "circular".}
 }
 \value{
-A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-is a point cloud, or a RasterLayer if the input is a RasterLayer object.
+A \code{SpatialPointsDataFrame} with the 2D coordinates of the tree tops (X, Y) and the elevation of
+the apex and the id of each tree in the table of attributes (attributes \code{Z} and \code{treeID} respectively)
 }
 \description{
 Tree top detection based on local maxima filters. The windows size can be fix or variable and the
@@ -42,14 +41,14 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 ttops = tree_detection_lmf(las, 5)
 
 plot(las)
-with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 
 # variable windows size
 f = function(x) { x * 0.07 + 3}
 ttops = tree_detection_lmf(las, f)
 
 plot(las)
-with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 
 # raster-based
 # ============
@@ -63,12 +62,12 @@ chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 ttops = tree_detection_lmf(chm, 5)
 
 raster::plot(chm, col = height.colors(30))
-raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+sp::plot(ttops, add = TRUE)
 
 # variable windows size
 f = function(x) { x * 0.07 + 3 }
 ttops = tree_detection_lmf(chm, f)
 
 raster::plot(chm, col = height.colors(30))
-raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+sp::plot(ttops, add = TRUE)
 }

@@ -19,7 +19,7 @@ used (see respective documentation)}
 The output of each algorithm as documedevtools::chented in each method.
 }
 \description{
-This function is a wrapper for all the implemented tree detection methods. Tree dectection function
+This function is a wrapper for all the implemented tree detection methods. Tree detection functions
 find the position of the trees before the segmentation process. Several methods may be used
 (see documentation of each method)
 }
@@ -30,7 +30,7 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 ttops = tree_detection(las, "lmf", ws = 5)
 
 plot(las)
-with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 }
 \seealso{
 \link{tree_detection_lmf} \link{tree_detection_ptrees} \link{tree_detection_manual} \link{tree_detection_multichm}

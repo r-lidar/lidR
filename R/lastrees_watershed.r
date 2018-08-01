@@ -18,6 +18,7 @@
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param tol numeric. Tolerance see ?EBImage::watershed.
 #' @param ext numeric. see ?EBImage::watershed.
+#' @template param-treetops
 #' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
 #' the new column.
 #'
@@ -39,8 +40,12 @@
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'
 #' ttops = tree_detection(chm, "lmf", 4, 2)
-#' lastrees_mcwatershed(las, chm, ttops)
+#' crowns = lastrees_mcwatershed(las, chm, ttops, extra = TRUE)
+#'
 #' plot(las, color = "treeID", colorPalette = col)
+#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+#' raster::plot(crowns, col = pastel.colors(50))
+#' sp::plot(ttops, add = TRUE)
 lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE, ...)
 {
   lastrees_ws_generic(las, chm, th_tree = th_tree, tol = tol, ext = ext, extra = extra)
@@ -48,12 +53,12 @@ lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = F
 
 #' @rdname lastrees_watershed
 #' @export
-lastrees_mcwatershed = function(las, chm, ttops, th_tree = 2, extra = FALSE, ...)
+lastrees_mcwatershed = function(las, chm, treetops, th_tree = 2, extra = FALSE, ...)
 {
-  lastrees_ws_generic(las, chm, th_tree = th_tree, ttops = ttops, extra = extra)
+  lastrees_ws_generic(las, chm, th_tree = th_tree, treetops = treetops, extra = extra)
 }
 
-lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, ttops = NULL, extra = FALSE, ...)
+lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, extra = FALSE, ...)
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
   assertive::assert_is_a_number(th_tree)
@@ -62,7 +67,7 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, ttops = 
   assertive::assert_is_a_bool(extra)
 
   # Test if requiered packages are installed
-  if (is.null(ttops))
+  if (is.null(treetops))
   {
     if (!requireNamespace("EBImage", quietly = TRUE))
       stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
@@ -85,35 +90,34 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, ttops = 
   Canopy[mask] <- 0
 
   # Watershed
-  if (is.null(ttops))
+  if (is.null(treetops))
   {
     Crowns = EBImage::watershed(Canopy, tol, ext)
   }
   # Marker controlled watershed
   else
   {
-    if (is.data.frame(ttops))
+    if (is(treetops, "SpatialPointsDataFrame"))
     {
       seeds = chm
-      seed[] = 0
-      cells = raster::cellFromXY(chm, treetops[,1:2])
+      seeds[] = 0
+      cells = raster::cellFromXY(chm, treetops)
       seeds[cells] = 1:length(cells)
-      ttops = seeds
+      treetops = seeds
     }
 
-    if (is(ttops, "RasterLayer"))
+    if (is(treetops, "RasterLayer"))
     {
-      ttops <- raster::as.matrix(ttops)
-      ttops[is.na(ttops)] = 0
+      treetops <- raster::as.matrix(treetops)
+      treetops[is.na(treetops)] = 0
     }
     else
-      stop("'ttops is of wrong type.", call. = FALSE)
+      stop("'treetops is of wrong type.", call. = FALSE)
 
     Canopy <- imager::as.cimg(Canopy)
-    ttops  <- imager::as.cimg(ttops)
-    Crowns <- imager::watershed(ttops, Canopy)
+    treetops  <- imager::as.cimg(treetops)
+    Crowns <- imager::watershed(treetops, Canopy)
     Crowns <- Crowns[,,1,1]
-
   }
 
   Crowns[mask] <- NA

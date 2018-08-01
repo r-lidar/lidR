@@ -8,7 +8,7 @@
 lastrees_watershed(las, chm, th_tree = 2, tol = 1, ext = 1,
   extra = FALSE, ...)
 
-lastrees_mcwatershed(las, chm, ttops, th_tree = 2, extra = FALSE, ...)
+lastrees_mcwatershed(las, chm, treetops, th_tree = 2, extra = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -29,6 +29,9 @@ and return nothing (NULL) i.e. the original point cloud is automatically updated
 
 \item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
 the new column.}
+
+\item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
+\link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud
@@ -57,8 +60,12 @@ kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 
 ttops = tree_detection(chm, "lmf", 4, 2)
-lastrees_mcwatershed(las, chm, ttops)
+crowns = lastrees_mcwatershed(las, chm, ttops, extra = TRUE)
+
 plot(las, color = "treeID", colorPalette = col)
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+raster::plot(crowns, col = pastel.colors(50))
+sp::plot(ttops, add = TRUE)
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},

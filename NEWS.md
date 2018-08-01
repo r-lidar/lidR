@@ -40,12 +40,15 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 * New: `tree_detection_multichm` for individual of tree detection using a multi chm as published in a paper (see reference).
 * Change: `tree_detection` is no longer a function for tree detection but a wrapper around other functions that each contain an algorithm.
 * Change: `tree_detection_lmf` when used with a `RasterLayer` as input expect parameters given in the units of the map and not in pixels
+* Change: `tree_detection` functions return constistently a `SpatialPointsDataFrame`.
+* Change: `tree_detection` functions based on a CHM no longer support a `lasmetric` object as input. Anyway this class no longer exists.
 
 **lastrees**
 
 * New: `lastrees_ptree` function with Vega et al. (2014) algorithm.
 * New: `lastrees_hamraz` function with Hamraz et al. (2016) algorithm.
 * New: `lastrees_mcwatershed` function with a marker-controlled watershed.
+* Change: following new `tree_detection` outputs type `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
 
 
 ## lidR v1.6.0 (2018-07-20)

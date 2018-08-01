@@ -13,8 +13,7 @@
 #' \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.
 #' @param chm RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
 #' or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.
-#' @param treetops \code{RasterLayer} or \code{data.frame} containing the position of the
-#' trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.
+#' @template param-treetops
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as a proportion of the
 #' tree height. Default is 0.6,  meaning 60\% of the tree height.
 #' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
@@ -51,16 +50,12 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 {
   stopifnotlas(las)
   assertive::assert_is_all_of(chm, "RasterLayer")
+  assertive::assert_is_all_of(treetops, "SpatialPointsDataFrame")
   assertive::assert_is_a_number(max_cr_factor)
   assertive::assert_is_a_number(exclusion)
   assertive::assert_is_a_bool(extra)
   assertive::assert_all_are_in_open_range(max_cr_factor, 0, 1)
   assertive::assert_all_are_in_open_range(exclusion, 0, 1)
-
-  if (is(treetops, "RasterLayer"))
-    treetops = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
-  else if (!is.data.frame(treetops))
-    stop("'treetops' format not recognized.", call. = FALSE)
 
   field = "treeID"
   p = list(...)
@@ -71,15 +66,11 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 
   . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
-  ttops = data.table::copy(treetops)
-  data.table::setDT(ttops)
-  data.table::setnames(ttops, names(ttops), c("X", "Y", "Z"))
-
   chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
   # Voronoi tesselation is nothing else than the nearest neigbour
-  u = C_knn(ttops$X, ttops$Y, chmdt$X, chmdt$Y, 1L)
+  u = C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
   chmdt[, id := u$nn.idx[,1]]
   chmdt[, d := u$nn.dist[,1]]
 

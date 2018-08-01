@@ -16,8 +16,7 @@
 #' \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.
 #' @param chm RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
 #' or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.
-#' @param treetops \code{RasterLayer} or \code{data.frame} containing the position of the
-#' trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.
+#' @template param-treetops
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
@@ -57,6 +56,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 {
   stopifnotlas(las)
   assertive::assert_is_all_of(chm, "RasterLayer")
+  assertive::assert_is_all_of(treetops, "SpatialPointsDataFrame")
   assertive::assert_is_a_number(th_tree)
   assertive::assert_is_a_number(th_seed)
   assertive::assert_is_a_number(th_cr)
@@ -65,22 +65,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
-  if (is(treetops, "data.frame"))
-  {
-    treetops_df = treetops
-
-    if (ncol(treetops_df) < 3)
-      treetops_df$id = 1:nrow(treetops_df)
-  }
-  else if(is(treetops, "RasterLayer"))
-    treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
-  else
-    stop("'treetops' format not recognized.", call. = FALSE)
-
-  if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
-    stop("Duplicated seed IDs.", call. = FALSE)
-
-  cells = raster::cellFromXY(chm, treetops_df[,1:2])
+  cells = raster::cellFromXY(chm, treetops)
 
   if (anyNA(cells))
   {
@@ -89,18 +74,19 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
     else
       stop("Some seeds are outside the canopy height model.", call. = FALSE)
 
-    treetops_df = treetops_df[!is.na(cells),]
-    cells = cells[!is.na(cells)]
+    no_na = !is.na(cells)
+    treetops = treetops[no_na,]
+    cells = cells[no_na]
   }
 
-  treetops = raster::raster(chm)
-  suppressWarnings(treetops[cells] <- treetops_df[, 3])
+  rtreetops = raster::raster(chm)
+  suppressWarnings(rtreetops[cells] <- treetops@data[, "treeID"])
 
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
   Canopy[is.na(Canopy)] <- -Inf
 
-  Maxima <- raster::as.matrix(treetops)
+  Maxima <- raster::as.matrix(rtreetops)
   Maxima <- t(apply(Maxima, 2, rev))
   Maxima[is.na(Maxima)] <- 0
 

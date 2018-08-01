@@ -9,13 +9,14 @@ tree_detection_manual(las, detected = NULL, ...)
 \arguments{
 \item{las}{An object of the class LAS}
 
-\item{detected}{\code{data.table} or \code{data.frame} or \code{matrix} containing X,Y,Z coordinates
-of already found tree tops that need manual corrections.}
+\item{detected}{\code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
+containing X,Y,Z coordinates of already found tree tops that need manual corrections.}
 
 \item{...}{supplementary parameters to be pass to \link{plot.LAS}.}
 }
 \value{
-A data.table with the X, Y, Z coordinates of the tree tops.
+A \code{SpatialPointsDataFrame} with the 2D coordinates of the tree tops (X, Y) and the elevation of
+the apex and the id of each tree in the table of attributes (attributes \code{Z} and \code{treeID} respectively)
 }
 \description{
 Find the tree top positions manually and interactively using the mouse. This is only suitable for

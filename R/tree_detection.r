@@ -27,7 +27,7 @@
 
 #' Tree top detection
 #'
-#' This function is a wrapper for all the implemented tree detection methods. Tree dectection function
+#' This function is a wrapper for all the implemented tree detection methods. Tree detection functions
 #' find the position of the trees before the segmentation process. Several methods may be used
 #' (see documentation of each method)
 #'
@@ -47,7 +47,7 @@
 #' ttops = tree_detection(las, "lmf", ws = 5)
 #'
 #' plot(las)
-#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #' @seealso \link{tree_detection_lmf} \link{tree_detection_ptrees} \link{tree_detection_manual} \link{tree_detection_multichm}
 tree_detection = function(x, algorithm, ...)
 {
@@ -67,8 +67,7 @@ tree_detection = function(x, algorithm, ...)
 #' windows shape can be square or circular. The internal algorithm works either with a raster or a point
 #' cloud
 #'
-#' @param x A object of class \code{LAS} or an object representing a canopy height model
-#' such as a \code{RasterLayer} or a \code{lasmetrics}.
+#' @param x A object of class \code{LAS} or a \code{RasterLayer} representing a canopy height model.
 #' @param ws numeric or function. Length or diameter of the moving window used to the detect the local
 #' maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
 #' If it is a function, the function determines the size of the window at any given location on the canopy.
@@ -79,8 +78,7 @@ tree_detection = function(x, algorithm, ...)
 #' @param shape character. Shape of the moving windows used to find the local maxima. Can be "square"
 #' or "circular".
 #'
-#' @return A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-#' is a point cloud, or a RasterLayer if the input is a RasterLayer object.
+#' @template return-tree_detection
 #' @export
 #'
 #' @examples
@@ -94,14 +92,14 @@ tree_detection = function(x, algorithm, ...)
 #' ttops = tree_detection_lmf(las, 5)
 #'
 #' plot(las)
-#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #'
 #' # variable windows size
 #' f = function(x) { x * 0.07 + 3}
 #' ttops = tree_detection_lmf(las, f)
 #'
 #' plot(las)
-#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #'
 #' # raster-based
 #' # ============
@@ -115,37 +113,33 @@ tree_detection = function(x, algorithm, ...)
 #' ttops = tree_detection_lmf(chm, 5)
 #'
 #' raster::plot(chm, col = height.colors(30))
-#' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+#' sp::plot(ttops, add = TRUE)
 #'
 #' # variable windows size
 #' f = function(x) { x * 0.07 + 3 }
 #' ttops = tree_detection_lmf(chm, f)
 #'
 #' raster::plot(chm, col = height.colors(30))
-#' raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+#' sp::plot(ttops, add = TRUE)
 tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"))
 {
   assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_positive(hmin)
+  assertive::assert_all_are_non_negative(hmin)
   shape = match.arg(shape)
   circular = shape == "circular"
-
-  output_format = "data.table"
-
-  if (is(x, "lasmetrics"))
-    x = as.raster(x)
+  crs = sp::CRS()
+  bbox = raster::as.matrix(extent(x))
 
   if (is(x, "RasterLayer"))
   {
-    output_format = "RasterLayer"
-    output = suppressWarnings(raster::raster(x))
-    output[] = NA
+    crs = x@crs
     x = raster::as.data.frame(x, xy = T, na.rm = T)
     data.table::setDT(x)
     data.table::setnames(x, names(x), c("X", "Y", "Z"))
   }
   else if (is(x, "LAS"))
   {
+    crs = x@crs
     x = x@data
   }
   else
@@ -169,20 +163,12 @@ tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"))
   else
     stop("'ws' must be a number or a function", call. = FALSE)
 
-  . <- X <- Y <- Z <- NULL
+  . <- X <- Y <- Z <- treeID <- NULL
   is_maxima = C_LocalMaximumFilter(x, ws, hmin, circular)
   maxima = x[is_maxima, .(X,Y,Z)]
+  maxima[, treeID := 1:.N]
 
-  if (output_format == "RasterLayer")
-  {
-    cells = raster::cellFromXY(output, maxima[,1:2])
-    output[cells] = 1:length(cells)
-  }
-  else
-  {
-    output = maxima
-  }
-
+  output = sp::SpatialPointsDataFrame(maxima[, .(X,Y)], maxima[, .(treeID, Z)], bbox = bbox, proj4string = crs)
   return(output)
 }
 
@@ -214,11 +200,11 @@ tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
 #' exit the tools by selecting an empty region. Points can also be unflagged.
 #'
 #' @param las An object of the class LAS
-#' @param detected \code{data.table} or \code{data.frame} or \code{matrix} containing X,Y,Z coordinates
-#' of already found tree tops that need manual corrections.
+#' @param detected \code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
+#' containing X,Y,Z coordinates of already found tree tops that need manual corrections.
 #' @param ... supplementary parameters to be pass to \link{plot.LAS}.
 #'
-#' @return A data.table with the X, Y, Z coordinates of the tree tops.
+#' @template return-tree_detection
 #' @export
 #' @examples
 #' \dontrun{
@@ -234,15 +220,23 @@ tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
 #' }
 tree_detection_manual = function(las, detected = NULL, ...)
 {
-  . <- X <- Y <-Z <- NULL
+  . <- X <- Y <-Z <- treeID <- NULL
 
   stopifnotlas(las)
+  crs = sp::CRS()
 
   if (!interactive())
     stop("R is not being used interactively", call. = FALSE)
 
   if (is.null(detected))
     apice <- data.table::data.table(X = numeric(0), Y = numeric(0), Z = numeric(0))
+  else if (is(detected, "SpatialPointsDataFrame"))
+  {
+    crs = detected@proj4string
+    apice <- data.table::data.table(detected@coords)
+    apice$Z = detected@data$Z
+    names(apice) <- c("X","Y","Z")
+  }
   else
   {
     apice <- data.table::as.data.table(detected[,1:3])
@@ -282,7 +276,9 @@ tree_detection_manual = function(las, detected = NULL, ...)
 
   rgl::rgl.close()
 
-  return(apice[, .(X,Y,Z)])
+  apice[, treeID := 1:.N]
+  output = sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
+  return(output)
 }
 
 
@@ -290,7 +286,10 @@ tree_detection_manual = function(las, detected = NULL, ...)
 #'
 #' Find the tree tops positions based on a method described in Eysn et al (2015) (see references) and
 #' propably proposed originaly by Milan Kobal (we did not find original publication). This is a local
-#' maximum filter applied on a multi-canopy height model (see details)
+#' maximum filter applied on a multi-canopy height model (see details). The tree tops returned are the
+#' true highest points within a given pixel whenever the CHMs where computed with the 95th percentile
+#' of height. Otherwise these maxima are not true maxima and cannot be used in subsequent segmentation
+#' algorithms.
 #'
 #' Describtion adapted from Eysn et al (2015), page 1728, section 3.1.3 Method #3\cr\cr
 #' The method is based on iterative canopy height model generation (CHM) and local maximum filter (LMF)
@@ -319,10 +318,7 @@ tree_detection_manual = function(las, detected = NULL, ...)
 #' @param ... supplementary parameters to be pass to \link{tree_detection_lmf} that is used internally
 #' to find the local maxima.
 #'
-#' @return A data.table with the X, Y, Z coordinates of the tree tops. The tree tops returned are the
-#' true highest points within a given pixel whenever the CHMs where computed with the 95th percentile
-#' of height. Otherwise these maxima are not true maxima and cannot be used in subsequent segmentation
-#' algorithms.
+#' @template return-tree_detection
 #' @export
 #' @examples
 #' \dontrun{
@@ -332,7 +328,7 @@ tree_detection_manual = function(las, detected = NULL, ...)
 #' ttops = tree_detection_multichm(las, 1, ws = 5)
 #'
 #' plot(las)
-#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #' }
 #' @references
 #' Eysn, L., Hollaus, M., Lindberg, E., Berger, F., Monnet, J. M., Dalponte, M., … Pfeifer, N. (2015).
@@ -349,7 +345,7 @@ tree_detection_multichm = function(las, res, layer_thickness = 0.5, dist_2d = 3,
   assertive::assert_all_are_positive(dist_2d)
   assertive::assert_all_are_positive(dist_3d)
 
-  . <- X <- Y <- Z <- NULL
+  . <- X <- Y <- Z <- treeID <- NULL
 
   dist_2d = dist_2d^2
   dist_3d = dist_3d^2
@@ -359,48 +355,46 @@ tree_detection_multichm = function(las, res, layer_thickness = 0.5, dist_2d = 3,
   chm = as.raster(grid_metrics(las, max(Z), res))
   i = 1
 
+  p = list(...)
+  hmin = if(is.null(p$hmin)) formals(tree_detection_lmf)$hmin else p$hmin
+
+
   while(!is.null(las_copy))
   {
-    chm95 = grid_metrics(las_copy, quantile(Z, probs = 0.95), res)
-    chm95 = as.raster(chm95)
-    lm  = tree_detection_lmf(chm95, 4)
-    z = chm95[lm]
-    lm  = raster::as.data.frame(lm, xy = TRUE, na.rm = TRUE)
-    data.table::setDT(lm)
-    lm[, z := z]
-    LM[[i]] = lm
-    lasclassify(las_copy, chm95, "chm95")
-    las_copy = lasfilter(las_copy, Z < chm95 - layer_thickness)
-    i = i+1
+    chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
+
+    if (max(chm95$V1) > hmin)
+    {
+      chm95 = as.raster(chm95)
+      lm  = tree_detection_lmf(chm95, 4, ...)
+      lm  = raster::as.data.frame(lm)
+      data.table::setDT(lm)
+      LM[[i]] = lm
+      lasclassify(las_copy, chm95, "chm95")
+      las_copy = lasfilter(las_copy, Z < chm95 - layer_thickness)
+      i = i+1
+    }
+    else
+      las_copy = NULL
   }
 
   LM = data.table::rbindlist(LM)
-  data.table::setorder(LM, -z)
+  data.table::setorder(LM, -Z)
 
   detected = LM[1]
   for(i in 2:nrow(LM))
   {
     lm = LM[i]
-    distance2D = (lm$x - detected$x)^2 + (lm$y - detected$y)^2
-    distance3D = distance2D + (lm$z - detected$z)^2
+    distance2D = (lm$X - detected$X)^2 + (lm$Y - detected$Y)^2
+    distance3D = distance2D + (lm$Z - detected$Z)^2
 
     if (!any(distance2D < dist_2d) & !any(distance3D < dist_3d))
-    {
       detected = rbind(detected, lm)
-      points(detected)
-    }
   }
 
-  detected[, layer := NULL]
-  data.table::setnames(detected, names(detected), c("X","Y", "Z"))
+  detected[, treeID := 1:.N]
 
-  cells = raster::cellFromXY(chm, detected[,1:2])
-  LM = chm
-  LM[] = NA
-  LM[cells] = 1:length(cells)
-  lasclassify(las, LM, "LM")
-  detected = las@data[las@data[, if (!anyNA(.BY)) .I[which.max(Z)], by = LM]$V1]
-  las@data[, LM := NULL]
-  return(detected)
+  output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@crs)
+  return(output)
 }
 

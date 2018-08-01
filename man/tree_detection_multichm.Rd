@@ -25,15 +25,16 @@ if there is no detected tree within this 3D distance (see details).}
 to find the local maxima.}
 }
 \value{
-A data.table with the X, Y, Z coordinates of the tree tops. The tree tops returned are the
-true highest points within a given pixel whenever the CHMs where computed with the 95th percentile
-of height. Otherwise these maxima are not true maxima and cannot be used in subsequent segmentation
-algorithms.
+A \code{SpatialPointsDataFrame} with the 2D coordinates of the tree tops (X, Y) and the elevation of
+the apex and the id of each tree in the table of attributes (attributes \code{Z} and \code{treeID} respectively)
 }
 \description{
 Find the tree tops positions based on a method described in Eysn et al (2015) (see references) and
 propably proposed originaly by Milan Kobal (we did not find original publication). This is a local
-maximum filter applied on a multi-canopy height model (see details)
+maximum filter applied on a multi-canopy height model (see details). The tree tops returned are the
+true highest points within a given pixel whenever the CHMs where computed with the 95th percentile
+of height. Otherwise these maxima are not true maxima and cannot be used in subsequent segmentation
+algorithms.
 }
 \details{
 Describtion adapted from Eysn et al (2015), page 1728, section 3.1.3 Method #3\cr\cr
@@ -61,7 +62,7 @@ las = readLAS(LASfile)
 ttops = tree_detection_multichm(las, 1, ws = 5)
 
 plot(las)
-with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 }
 }
 \references{

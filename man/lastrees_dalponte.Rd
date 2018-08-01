@@ -14,8 +14,8 @@ automatically.}
 \item{chm}{RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
 or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
 
-\item{treetops}{\code{RasterLayer} or \code{data.frame} containing the position of the
-trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.}
+\item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
+\link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
 

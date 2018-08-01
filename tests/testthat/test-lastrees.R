@@ -17,26 +17,16 @@ test_that("Dalponte's methods works", {
   expect_true("treeID" %in% names(las@data))
   expect_equal(sort(unique(seg1[])), 1:39)
 
-  # Test if it works with a data.frame as input
-  ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
-  seg2 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
-
-  # Tree are not ordered the same. Just ckeck if pixels are filled the same.
-  seg1[!is.na(seg1)] <- 1
-  seg2[!is.na(seg2)] <- 1
-
-  expect_equal(seg1, seg2)
-
   # Test if a seed is not in the chm
-  old = ttopsdf[1,1]
-  ttopsdf[1,1] <- 0
-  expect_error(lastrees_dalponte(las, chm, ttopsdf, extra = T), "outside")
+  old = ttops@coords
+  ttops@coords[1,1] <- 0
+  expect_error(lastrees_dalponte(las, chm, ttops, extra = T), "outside")
 
   # Test if seed IDs are propagated
-  ttopsdf[1,1] <- old
-  ttopsdf$layer = 1:39*2
+  ttops@coords <- old
+  ttops@data$treeID = 1:39*2
 
-  seg3 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
+  seg3 = lastrees_dalponte(las, chm, ttops, extra = T)
   expect_equal(sort(unique(seg3[])), 1:39*2)
 })
 
@@ -55,12 +45,6 @@ test_that("Silvas's methods works", {
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-
-  ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
-
-  seg2 = lastrees_silva(las, chm, ttopsdf, extra = TRUE)
-
-  expect_equal(seg1, seg2)
 })
 
 test_that("lastrees can store in a user defined column", {
