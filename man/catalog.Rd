@@ -17,6 +17,7 @@
 \alias{stop_early}
 \alias{stop_early<-}
 \alias{output_files<-}
+\alias{output_files}
 \alias{laz_compression}
 \alias{laz_compression<-}
 \title{Build a catalog of las tiles/files}
@@ -52,6 +53,8 @@ stop_early(ctg)
 stop_early(ctg) <- value
 
 output_files(ctg) <- value
+
+output_files(ctg)
 
 laz_compression(ctg)
 

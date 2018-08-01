@@ -378,6 +378,7 @@ save_vrt = function(ctg)
   return(ctg)
 }
 
+#' @rdname catalog
 #' @export
 output_files = function(ctg)
 {
