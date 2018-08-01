@@ -17,6 +17,10 @@ C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
     .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
 }
 
+C_hamraz_segmentation <- function(disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius) {
+    .Call(`_lidR_C_hamraz_segmentation`, disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius)
+}
+
 C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius, progressbar)
 }
@@ -29,16 +33,16 @@ C_lastrees_li <- function(las, dt1, dt2, Zu, th_tree, R, progressbar = FALSE) {
     .Call(`_lidR_C_lastrees_li`, las, dt1, dt2, Zu, th_tree, R, progressbar)
 }
 
+C_lastrees_ptrees <- function(las, k_values, hmin, nmax, segmentation = TRUE) {
+    .Call(`_lidR_C_lastrees_ptrees`, las, k_values, hmin, nmax, segmentation)
+}
+
 C_lasupdateheader <- function(las, new_header) {
     invisible(.Call(`_lidR_C_lasupdateheader`, las, new_header))
 }
 
-C_LocalMaximaMatrix <- function(image, ws, th) {
-    .Call(`_lidR_C_LocalMaximaMatrix`, image, ws, th)
-}
-
-C_LocalMaximaPoints <- function(las, ws, min_height) {
-    .Call(`_lidR_C_LocalMaximaPoints`, las, ws, min_height)
+C_LocalMaximumFilter <- function(data, ws, min_height, circular) {
+    .Call(`_lidR_C_LocalMaximumFilter`, data, ws, min_height, circular)
 }
 
 C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {

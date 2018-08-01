@@ -34,6 +34,7 @@ Imports:
     mapview,
     mapedit,
     memoise,
+    imager,
     RANN,
     raster,
     Rcpp,
@@ -53,7 +54,7 @@ Suggests:
     hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp
+LinkingTo: BH,Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
@@ -96,10 +97,12 @@ Collate:
     'lasroi.r'
     'lassmooth.r'
     'lassnags.r'
+    'lastree_hamraz.r'
     'lastrees.r'
     'lastrees_dalponte.r'
     'lastrees_li.r'
     'lastrees_li2.r'
+    'lastrees_ptrees.r'
     'lastrees_silva.r'
     'lastrees_watershed.r'
     'lasupdateheader.r'

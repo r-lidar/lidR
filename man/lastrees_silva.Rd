@@ -52,7 +52,7 @@ chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 
-ttops = tree_detection(chm, 5, 2)
+ttops = tree_detection(chm, "lmf", 4, 2)
 lastrees_silva(las, chm, ttops)
 plot(las, color = "treeID", colorPalette = col)
 
@@ -65,6 +65,8 @@ https://doi.org/10.1080/07038992.2016.1196582.
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
+  \code{\link{lastrees_hamraz}},
   \code{\link{lastrees_li2}},
+  \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }

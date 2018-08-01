@@ -1,9 +1,12 @@
 #' Individual tree segmentation
 #'
-#' Individual tree segmentation using a simple watershed. This method is a
-#' \href{https://en.wikipedia.org/wiki/Watershed_(image_processing)}{watershed segmentation}
-#' method. It is based on the bioconductor package \code{EBIimage}. You need to install this package
-#' to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
+#' Individual tree segmentation using watersheds and marker controled watershed.
+#'
+#' \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install this package
+#' to run this method (see its \href{https://github.com/aoles/EBImage}{github page}). Internally the
+#' function EBImage::watershed is called.\cr\cr
+#' \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
+#' function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
 #'
 #' @param las An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 #' automatically.
@@ -25,26 +28,96 @@
 #'
 #' @export
 #' @family  tree_segmentation
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col = pastel.colors(200)
+#'
+#' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+#' chm = as.raster(chm)
+#' kernel = matrix(1,3,3)
+#' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#'
+#' ttops = tree_detection(chm, "lmf", 4, 2)
+#' lastrees_mcwatershed(las, chm, ttops)
+#' plot(las, color = "treeID", colorPalette = col)
 lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE, ...)
 {
+  lastrees_ws_generic(las, chm, th_tree = th_tree, tol = tol, ext = ext, extra = extra)
+}
+
+#' @rdname lastrees_watershed
+#' @export
+lastrees_mcwatershed = function(las, chm, ttops, th_tree = 2, extra = FALSE, ...)
+{
+  lastrees_ws_generic(las, chm, th_tree = th_tree, ttops = ttops, extra = extra)
+}
+
+lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, ttops = NULL, extra = FALSE, ...)
+{
+  assertive::assert_is_all_of(chm, "RasterLayer")
+  assertive::assert_is_a_number(th_tree)
+  assertive::assert_is_a_number(tol)
+  assertive::assert_is_a_number(ext)
+  assertive::assert_is_a_bool(extra)
+
+  # Test if requiered packages are installed
+  if (is.null(ttops))
+  {
+    if (!requireNamespace("EBImage", quietly = TRUE))
+      stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
+  }
+  else
+  {
+    if (!requireNamespace("imager", quietly = TRUE))
+      stop("'imager' package is needed for this function to work.", call. = F)
+  }
+
+  # Change the default column for storing tree IDs
   field = "treeID"
   p = list(...)
-  if(!is.null(p$field))
-    field = p$field
-
+  if(!is.null(p$field)) field = p$field
   stopif_forbidden_name(field)
 
-  if (!requireNamespace("EBImage", quietly = TRUE))
-    stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
-
+  # Convert the CHM to a matrix
   Canopy <- raster::as.matrix(chm)
-  Canopy <- t(apply(Canopy, 2, rev))
-  Canopy[Canopy < th_tree] <- NA
+  mask   <- Canopy < th_tree | is.na(Canopy)
+  Canopy[mask] <- 0
 
-  Crowns = EBImage::watershed(Canopy, tol, ext)
+  # Watershed
+  if (is.null(ttops))
+  {
+    Crowns = EBImage::watershed(Canopy, tol, ext)
+  }
+  # Marker controlled watershed
+  else
+  {
+    if (is.data.frame(ttops))
+    {
+      seeds = chm
+      seed[] = 0
+      cells = raster::cellFromXY(chm, treetops[,1:2])
+      seeds[cells] = 1:length(cells)
+      ttops = seeds
+    }
 
-  Crowns[is.na(Canopy)] <- NA
-  Crowns = raster::raster(apply(Crowns,1,rev))
+    if (is(ttops, "RasterLayer"))
+    {
+      ttops <- raster::as.matrix(ttops)
+      ttops[is.na(ttops)] = 0
+    }
+    else
+      stop("'ttops is of wrong type.", call. = FALSE)
+
+    Canopy <- imager::as.cimg(Canopy)
+    ttops  <- imager::as.cimg(ttops)
+    Crowns <- imager::watershed(ttops, Canopy)
+    Crowns <- Crowns[,,1,1]
+
+  }
+
+  Crowns[mask] <- NA
+  Crowns = raster::raster(Crowns)
   raster::extent(Crowns) = raster::extent(chm)
 
   if(!missing(las))

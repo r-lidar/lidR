@@ -10,18 +10,18 @@ chm = raster::focal(chm, w = kernel, fun = mean)
 
 
 test_that("Dalponte's methods works", {
-  ttops = tree_detection(chm, 3, 2)
+  ttops = suppressWarnings(tree_detection_lmf(chm, 3, 2))
   seg1 = lastrees_dalponte(las, chm, ttops, extra = T)
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-  expect_equal(sort(unique(seg1[])), 1:59)
+  expect_equal(sort(unique(seg1[])), 1:39)
 
   # Test if it works with a data.frame as input
   ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
   seg2 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
 
-  # Tree are nor ordered the same. Just ckeck if pixels are filled the same.
+  # Tree are not ordered the same. Just ckeck if pixels are filled the same.
   seg1[!is.na(seg1)] <- 1
   seg2[!is.na(seg2)] <- 1
 
@@ -34,11 +34,10 @@ test_that("Dalponte's methods works", {
 
   # Test if seed IDs are propagated
   ttopsdf[1,1] <- old
-  ttopsdf$layer = 1:59*2
+  ttopsdf$layer = 1:39*2
 
   seg3 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
-  expect_equal(sort(unique(seg3[])), 1:59*2)
-
+  expect_equal(sort(unique(seg3[])), 1:39*2)
 })
 
 test_that("Li's method works", {
@@ -51,7 +50,7 @@ test_that("Li's method works", {
 test_that("Silvas's methods works", {
   las@data[, treeID := NULL]
 
-  ttops = tree_detection(chm, 3, 2)
+  ttops = suppressWarnings(tree_detection_lmf(chm, 3, 2))
   seg1 = lastrees_silva(las, chm, ttops, extra = TRUE)
 
   expect_true(is(seg1, "RasterLayer"))

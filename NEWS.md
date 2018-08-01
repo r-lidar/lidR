@@ -4,7 +4,7 @@
 
 * Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more thecnically it inherits a `SpatialPolygonsDataFrame`.
 * Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` do not have any slot `@crs`. It is now `@proj4string`.
-* Change: there are no longeur any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options` and `@clustering_options` that are list of options classified by their main role.
+* Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options` and `@clustering_options` that are list of options classified by their main role.
 * Change: documentation has been reviewed
 
 **readLAS**
@@ -31,6 +31,21 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 **lasclassify**
 
 * Change: the code that drives the PIP algorithm relies on `boost` and drastically simplyfies the former code
+
+**tree_detection**
+
+* New: `tree_detection_lmf` function have a user-defined variable size search windows.
+* New: `tree_detection_lmf` function have custumizable shape (square of disc) search windows.
+* New: `tree_detection_manual` function for manual correction of tree detections.
+* New: `tree_detection_multichm` for individual of tree detection using a multi chm as published in a paper (see reference).
+* Change: `tree_detection` is no longer a function for tree detection but a wrapper around other functions that each contain an algorithm.
+* Change: `tree_detection_lmf` when used with a `RasterLayer` as input expect parameters given in the units of the map and not in pixels
+
+**lastrees**
+
+* New: `lastrees_ptree` function with Vega et al. (2014) algorithm.
+* New: `lastrees_hamraz` function with Hamraz et al. (2016) algorithm.
+* New: `lastrees_mcwatershed` function with a marker-controlled watershed.
 
 
 ## lidR v1.6.0 (2018-07-20)

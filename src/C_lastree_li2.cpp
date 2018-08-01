@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-LogicalVector C_LocalMaximaPoints(S4 las, double ws, double min_height);
+LogicalVector C_LocalMaximumFilter(DataFrame las, NumericVector ws, double min_height, bool circular);
 
 // [[Rcpp::export]]
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar = false)
@@ -75,7 +75,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // Find if a point is a local maxima within an R windows
   LogicalVector is_lm;
   if (radius > 0)
-    is_lm = C_LocalMaximaPoints(las, R, th_tree);
+    is_lm = C_LocalMaximumFilter(data, R, 0, true);
   else
   {
     is_lm = LogicalVector(ni);
@@ -96,7 +96,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   PointXYZ* dummy = new PointXYZ(xmin-100,ymin-100,0,-1);
 
   // Z-sort the point cloud U
-  std::sort(U.begin(), U.end(), ZSortPoint());
+  std::sort(U.begin(), U.end(), ZSort<PointXYZ>());
 
   while(n > 0)
   {
@@ -131,7 +131,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
       // Add the dummy point in N
       N.push_back(dummy);
 
-      // Compute the distance between the current point u and all the other points of U
+      // Compute the distance between the current point u and all the &other points of U
       // This is not in the original algo. This is an optimisation to reduce the computation
       // time (see line 136).
       std::vector<double> d = sqdistance(U, *u);

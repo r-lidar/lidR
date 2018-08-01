@@ -62,7 +62,7 @@ chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 
-ttops = tree_detection(chm, 5, 2)
+ttops = tree_detection(chm, "lmf", 4, 2)
 lastrees_dalponte(las, chm, ttops)
 plot(las, color = "treeID", colorPalette = col)
 
@@ -72,7 +72,9 @@ Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon den
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other tree_segmentation: \code{\link{lastrees_li2}},
+Other tree_segmentation: \code{\link{lastrees_hamraz}},
+  \code{\link{lastrees_li2}},
+  \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_silva}},
   \code{\link{lastrees_watershed}}, \code{\link{lastrees}}
 }

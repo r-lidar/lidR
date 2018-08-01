@@ -82,7 +82,7 @@ IntegerVector C_lastrees_li(S4 las, double dt1, double dt2, double Zu, double th
    * LI ET AL ALGORITHHM *
    ***********************/
 
-  std::sort(points.begin(), points.end(), ZSortPoint());
+  std::sort(points.begin(), points.end(), ZSort<PointXYZ>());
 
   while(n > 0)
   {
