@@ -7,7 +7,7 @@
 \usage{
 lastrees_ptrees(las, k, hmin = 3, nmax = 7L, ...)
 
-tree_detection_ptrees(las, k, hmin = 3, nmax = 7L)
+tree_detection_ptrees(las, k, hmin = 3, nmax = 7L, ...)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}.}

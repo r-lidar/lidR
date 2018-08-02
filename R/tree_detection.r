@@ -38,7 +38,7 @@
 #' canopy height model. depending on the algorithm
 #' used (see respective documentation)
 #' @param algorithm character. Can be either \code{"lmf"} or \code{"ptrees"}.
-#' @param ... Other parameters for each respective algorithm (see section "see also".
+#' @param ... Other parameters for each respective algorithm (see section "see also").
 #'
 #' @return The output of each algorithm as documedevtools::chented in each method.
 #' @export
@@ -133,15 +133,15 @@ tree_detection = function(x, algorithm, ...)
 #' sp::plot(ttops, add = TRUE)
 tree_detection_lmf = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_non_negative(hmin)
+
   UseMethod("tree_detection_lmf", x)
 }
 
 #' @export
 tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_non_negative(hmin)
-
   y = raster::as.data.frame(x, xy = T, na.rm = T)
   data.table::setDT(y)
   data.table::setnames(y, names(y), c("X", "Y", "Z"))
@@ -155,12 +155,9 @@ tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2, shape = c("circular",
 #' @export
 tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_non_negative(hmin)
-
   y = x@data
 
-  output = tree_detection_lmf.data.frame(y , ws, hmin, shape)
+  output = tree_detection_lmf(y , ws, hmin, shape)
   output@proj4string = x@crs
   output@bbox = raster::as.matrix(extent(x))
   return(output)
@@ -169,11 +166,8 @@ tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square
 #' @export
 tree_detection_lmf.data.frame = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_non_negative(hmin)
   shape = match.arg(shape)
   circular = shape == "circular"
-
   n = nrow(x)
 
   if (assertive::is_a_number(ws))
@@ -215,9 +209,6 @@ tree_detection_lmf.LAScluster = function(x, ws, hmin = 2, shape = c("circular", 
 #' @export
 tree_detection_lmf.LAScatalog = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  assertive::assert_is_a_number(hmin)
-  assertive::assert_all_are_non_negative(hmin)
-
   progress  <- progress(x)
   ncores    <- cores(x)
   stopearly <- stop_early(x)
@@ -226,29 +217,68 @@ tree_detection_lmf.LAScatalog = function(x, ws, hmin = 2, shape = c("circular", 
     stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   clusters = catalog_makecluster(x, 1)
-  output = cluster_apply(clusters, tree_detection_lmf, ncores, progress, stopearly, ws = ws, hmin = hmin, shape = shape)
+  output = cluster_apply(clusters, tree_detection_lmf, ncores, progress, stopearly, ws = ws, hmin = hmin, shape = shape, ...)
   output = do.call(rbind, output)
   output@proj4string = x@proj4string
+  output@data$treeID = 1:length(output@data$treeID)
   return(output)
 }
 
 #' @rdname lastrees_ptrees
 #' @aliases tree_detection_ptrees
 #' @export
-tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L)
+tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L, ...)
 {
-  stopifnotlas(las)
   assertive::assert_is_numeric(k)
   assertive::assert_all_are_positive(k)
   assertive::assert_all_are_whole_numbers(k)
   assertive::assert_is_a_number(nmax)
   assertive::assert_all_are_whole_numbers(nmax)
 
+  UseMethod("tree_detection_ptrees", las)
+}
+
+#' @export
+tree_detection_ptrees.LAS = function(las, k, hmin = 3, nmax = 7L, ...)
+{
   TreeSegments = C_lastrees_ptrees(las, k, hmin, nmax, FALSE)
   apices = TreeSegments$Apices
   apices = data.table::as.data.table(apices)
   data.table::setnames(apices, names(apices), c("X", "Y", "Z"))
-  return(apices)
+  apices[, treeID := 1:.N]
+
+  output = sp::SpatialPointsDataFrame(apices[, .(X,Y)], apices[, .(treeID, Z)])
+  output@proj4string = las@crs
+  return(output)
+}
+
+#' @export
+tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
+{
+  x = readLAS(las, select = "xyz", ...)
+  if (is.null(x)) return(NULL)
+  ttops = tree_detection_ptrees(x, k, hmin, nmax)
+  bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  ttops = raster::crop(ttops, bbox)
+  return(ttops)
+}
+
+#' @export
+tree_detection_ptrees.LAScatalog = function(las, k, hmin = 3, nmax = 7L, ...)
+{
+  progress  <- progress(las)
+  ncores    <- cores(las)
+  stopearly <- stop_early(las)
+
+  if (buffer(las) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  clusters = catalog_makecluster(las, 1)
+  output = cluster_apply(clusters, tree_detection_ptrees, ncores, progress, stopearly, k = k, hmin = hmin, nmax = nmax, ...)
+  output = do.call(rbind, output)
+  output@proj4string = las@proj4string
+  output@data$treeID = 1:length(output@data$treeID)
+  return(output)
 }
 
 #' Tree top detection based on manual selection
@@ -405,6 +435,12 @@ tree_detection_multichm = function(las, res, layer_thickness = 0.5, dist_2d = 3,
   assertive::assert_all_are_positive(dist_2d)
   assertive::assert_all_are_positive(dist_3d)
 
+  UseMethod("tree_detection_multichm", las)
+}
+
+#' @export
+tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
+{
   . <- X <- Y <- Z <- treeID <- NULL
 
   dist_2d = dist_2d^2
@@ -455,6 +491,35 @@ tree_detection_multichm = function(las, res, layer_thickness = 0.5, dist_2d = 3,
   detected[, treeID := 1:.N]
 
   output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@crs)
+  return(output)
+}
+
+#' @export
+tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
+{
+  x = readLAS(las, select = "xyz", ...)
+  if (is.null(x)) return(NULL)
+  ttops = tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
+  bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  ttops = raster::crop(ttops, bbox)
+  return(ttops)
+}
+
+#' @export
+tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
+{
+  progress  <- progress(las)
+  ncores    <- cores(las)
+  stopearly <- stop_early(las)
+
+  if (buffer(x) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  clusters = catalog_makecluster(las, 1)
+  output = cluster_apply(clusters, tree_detection_multichm, ncores, progress, stopearly, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, ...)
+  output = do.call(rbind, output)
+  output@proj4string = x@proj4string
+  output@data$treeID = 1:length(output@data$treeID)
   return(output)
 }
 

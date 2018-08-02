@@ -13,7 +13,7 @@ used (see respective documentation)}
 
 \item{algorithm}{character. Can be either \code{"lmf"} or \code{"ptrees"}.}
 
-\item{...}{Other parameters for each respective algorithm (see section "see also".}
+\item{...}{Other parameters for each respective algorithm (see section "see also").}
 }
 \value{
 The output of each algorithm as documedevtools::chented in each method.

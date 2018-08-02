@@ -176,12 +176,6 @@ lasclip = function(las, geometry, ...)
 #' @rdname lasclip
 lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
 {
-  UseMethod("lasclipRectangle", las)
-}
-
-#' @export
-lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
-{
   assertive::assert_is_numeric(xleft)
   assertive::assert_is_numeric(ybottom)
   assertive::assert_is_numeric(xright)
@@ -190,6 +184,12 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
   assertive::assert_are_same_length(xleft, xright)
   assertive::assert_are_same_length(xleft, ytop)
 
+  UseMethod("lasclipRectangle", las)
+}
+
+#' @export
+lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
+{
   X <- Y <- NULL
 
   output = vector(mode = "list", length(xleft))
@@ -217,14 +217,6 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
 #' @export
 lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
 {
-  assertive::assert_is_numeric(xleft)
-  assertive::assert_is_numeric(ybottom)
-  assertive::assert_is_numeric(xright)
-  assertive::assert_is_numeric(ytop)
-  assertive::assert_are_same_length(xleft, ybottom)
-  assertive::assert_are_same_length(xleft, xright)
-  assertive::assert_are_same_length(xleft, ytop)
-
   bboxes  = mapply(raster::extent, xleft, xright, ybottom, ytop)
   output  = catalog_extract(las, bboxes, LIDRRECTANGLE, ...)
 
@@ -260,17 +252,17 @@ lasclipPolygon = function(las, xpoly, ypoly, ...)
 #' @rdname lasclip
 lasclipCircle = function(las, xcenter, ycenter, radius, ...)
 {
+  assertive::assert_is_numeric(xcenter)
+  assertive::assert_is_numeric(ycenter)
+  assertive::assert_is_numeric(radius)
+  assertive::assert_are_same_length(xcenter, ycenter)
+
   UseMethod("lasclipCircle", las)
 }
 
 #' @export
 lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
 {
-  assertive::assert_is_numeric(xcenter)
-  assertive::assert_is_numeric(ycenter)
-  assertive::assert_is_numeric(radius)
-  assertive::assert_are_same_length(xcenter, ycenter)
-
   if (length(radius) > 1)
     assertive::assert_are_same_length(xcenter, radius)
   else
@@ -303,11 +295,10 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
 #' @export
 lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 {
-  assertive::assert_is_numeric(xcenter)
-  assertive::assert_is_numeric(ycenter)
-  assertive::assert_is_numeric(radius)
-  assertive::assert_are_same_length(xcenter, ycenter)
-  if (length(radius) > 1) assertive::assert_are_same_length(xcenter, radius)
+  if (length(radius) > 1)
+    assertive::assert_are_same_length(xcenter, radius)
+  else
+    radius = rep(radius, length(xcenter))
 
   xmin   = xcenter - radius
   xmax   = xcenter + radius
