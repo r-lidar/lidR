@@ -1,11 +1,8 @@
 context("lasclip")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-LASfolder <- system.file("extdata", "", package="lidR")
 las = readLAS(LASfile, select = "xyx", filter = "-keep_first")
-las@crs = sp::CRS("+init=epsg:26917")
-ctg = catalog(LASfolder)
-ctg@proj4string = sp::CRS("+init=epsg:26917")
+ctg = catalog(LASfile)
 cores(ctg) <- 1
 progress(ctg) <- FALSE
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
