@@ -518,7 +518,7 @@ tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, d
   clusters = catalog_makecluster(las, 1)
   output = cluster_apply(clusters, tree_detection_multichm, ncores, progress, stopearly, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, ...)
   output = do.call(rbind, output)
-  output@proj4string = x@proj4string
+  output@proj4string = las@proj4string
   output@data$treeID = 1:length(output@data$treeID)
   return(output)
 }
