@@ -115,7 +115,7 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
         double score_compared = 0;
 
         // The current best combination is initialized to all non merged trees
-        vtreesegment &best_combination = trees_in_tree_ref;
+        vtreesegment best_combination = trees_in_tree_ref;
 
         // If the number of trees to test is not too big, apply the rule
         // otherwise score_compared = 0 and the reference tree will be retained anyway.

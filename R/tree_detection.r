@@ -512,7 +512,7 @@ tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, d
   ncores    <- cores(las)
   stopearly <- stop_early(las)
 
-  if (buffer(x) <= 0)
+  if (buffer(las) <= 0)
     stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   clusters = catalog_makecluster(las, 1)

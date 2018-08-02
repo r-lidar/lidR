@@ -163,7 +163,7 @@ TreeSegment TreeSegmentManager::build_combination(std::vector<TreeSegment> &tree
   for (int i = 1 ; i < combination.size() ; i++)
   {
     int id = combination[i];
-    TreeSegment tree2 = trees[id];
+    TreeSegment& tree2 = trees[id];
     tree = tree.merge(tree2);
   }
 

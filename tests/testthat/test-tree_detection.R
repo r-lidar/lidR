@@ -86,15 +86,15 @@ test_that("tree_detection ptree works with a LAS", {
   ttops = tree_detection_ptrees(las, k = c(30,20,15,10))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(256,2))
+  expect_equal(dim(ttops@data), c(271,2))
   expect_equal(ttops@proj4string, las@crs)
 })
 
 test_that("tree_detection ptree works with a LAScatalog", {
-
+  buffer(ctg) <- 30
   ttops = tree_detection_ptrees(ctg, k = c(30,20,15,10))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(256,2))
+  expect_equal(dim(ttops@data), c(271,2))
   expect_equal(ttops@proj4string, ctg@proj4string)
 })
