@@ -65,6 +65,14 @@ C_points_in_polygon_wkt <- function(x, y, wkt) {
     .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt)
 }
 
+C_circle_lookup <- function(X, Y, x, y, r) {
+    .Call(`_lidR_C_circle_lookup`, X, Y, x, y, r)
+}
+
+C_knn3d_lookup <- function(X, Y, Z, x, y, z, k) {
+    .Call(`_lidR_C_knn3d_lookup`, X, Y, Z, x, y, z, k)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }

@@ -1,4 +1,4 @@
-context("internal_knn")
+context("QuadTree")
 
 X = c(0, 1, 1, 0, 0.5)
 Y = c(0, 0, 1, 1, 0.5)
@@ -39,3 +39,39 @@ test_that("knnidw works", {
 
   lidR:::C_knnidw(X,Y, Z, 0.25, 0.25, 2, 1)
 })
+
+X = c(1, 2, 3, 10, 11, 12, 1, 2, 3)
+Y = c(3, 2, 1, 5, 7, 6, 8, 9, 7)
+Z = c(20, 1, 1, 5, 7, 6, 1, 1, 4)
+
+test_that("QuandTree circle lookup works", {
+
+  id = lidR:::C_circle_lookup(X,Y, 2,2,1)
+  expect_equal(id, 2)
+
+  id = lidR:::C_circle_lookup(X,Y, 1.9,3,1)
+  expect_equal(id, 1)
+
+  id = lidR:::C_circle_lookup(X,Y, 2,2,2)
+  id = sort(id)
+  expect_equal(id, 1:3)
+
+  id = lidR:::C_circle_lookup(X,Y, 6,6,2)
+  expect_equal(length(id), 0)
+})
+
+
+test_that("QuandTree knn 3d lookup works", {
+
+  id = lidR:::C_knn3d_lookup(X,Y, Z,2,2,0,1)
+  expect_equal(id, 2)
+
+  id = lidR:::C_knn3d_lookup(X,Y,Z,2,2,2,4)
+  id = sort(id)
+  expect_equal(id, c(2,3,7,9))
+
+  id = lidR:::C_knn3d_lookup(X,Y,Z,6,6,50,2)
+  id = sort(id)
+  expect_equal(id, c(1, 5))
+})
+
