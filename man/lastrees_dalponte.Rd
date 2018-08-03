@@ -15,7 +15,7 @@ automatically.}
 or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
 
 \item{treetops}{\code{RasterLayer} or \code{data.frame} containing the position of the
-trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.}
+tree tops, with X and Y as first and the second column respectively. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
 
