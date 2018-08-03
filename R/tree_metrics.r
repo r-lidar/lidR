@@ -29,34 +29,39 @@
 
 #' Compute metrics for each tree
 #'
-#' Once the trees are segmented with \link{lastrees}, computes a series of descriptive statistics
-#' defined by the user for each individual tree. The output is a table in which each line is a tree,
-#' and each column is a metric. \code{tree_metrics} is similar to \link{lasmetrics} or \link{grid_metrics}
-#' or \link{grid_metrics3d} or \link{grid_hexametrics}, except it computes metrics for each segmented tree.
+#' Once the trees are segmented, i.e. it exists an attributes in the point cloud that reference each
+#' tree, computes a set of user-defined descriptive statistics for each individual tree. This is the
+#' "tree version" of \link{grid_metrics}.
 #'
+#' By default the function computes the xyz-coordinates of the highest point of each tree and use
+#' xy as tree coordinates in \code{SpatialPoinsDataFrame}. z is stored in the table of attributes
+#' along with the id of each tree. All the other attributes are user-defined attributes:\cr\cr
 #' The following existing functions contain a small set of pre-defined metrics:
 #' \itemize{
 #' \item{\link[lidR:stdmetrics]{stdmetrics_tree}}
 #' } Users must write their own functions to create their own metrics. \code{tree_metrics} will
 #' dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
-#' are defined without the need to considering each segmented tree i.e. only the point cloud (see examples).
+#' are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).
 #'
-#' @param .las An object of class \code{LAS}.
+#' @template LAScatalog
+#' @template section-supported-option-tree_detection
+#'
+#' @template param-las
 #' @param func The function to be applied to each tree.
-#' @param debug logical. When facing a non trivial error, try \code{debug = TRUE}.
-#' @param field character. The column name of the field containing tree IDs. Defaul is \code{"treeID"}
-#' @return Returns a \code{data.table} containing the metrics for each segmented tree.
+#' @param field character. The column name of the field containing tree IDs. Default is \code{"treeID"}
+#' @template param-ellipsis-select-filter
+#'
+#' @return A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that
+#' associates the z-elevation (highest points) of the trees and the id of the tree plus the metrics
+#' defined by the user.
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, filter = "-drop_z_below 0")
 #'
-#' # segment trees (see lastrees)
-#' lastrees(las, algorithm = "li2012-2")
+#' # Mean height and mean intensity for each tree
+#' metrics = tree_metrics(las, list(`Mean Z` = mean(Z), `Mean I` = mean(Intensity)))
 #'
-#' # Max height for each tree
-#' tree_metrics(las, mean(Z))
-#'
-#' # Define your own new metrics
+#' # Define your own new metrics function
 #' myMetrics = function(z, i)
 #' {
 #'   metrics = list(
@@ -73,18 +78,61 @@
 #' # predefined metrics (see ?stdmetrics)
 #' metrics = tree_metrics(las, .stdtreemetrics)
 #' @export
-tree_metrics = function(.las, func, debug = FALSE, field = "treeID")
+tree_metrics = function(las, func, field = "treeID", ...)
 {
-  UseMethod("tree_metrics", .las)
+  UseMethod("tree_metrics", las)
 }
 
 #' @export
-tree_metrics.LAS = function(.las, func, debug = FALSE, field = "treeID")
+tree_metrics.LAS = function(las, func, field = "treeID", ...)
 {
-  assertive::assert_is_a_bool(debug)
   assertive::assert_is_a_string(field)
 
-  call <- substitute(func)
-  stat <- lasaggregate(.las, by = "TREE", call, NA, NA, c("tree"), FALSE, debug, field)
-  return(stat)
+  if(! field %in% names(las@data))
+    stop("The trees are not segmented yet. Please see function 'lastrees'.", call. = FALSE)
+
+  call = substitute(func)
+  if (call == "func") call = func
+  if (is.name(call)) call = parse(text = eval(call))
+
+  find_apex = function(x,y,z)
+  {
+    j = which.max(z)
+    return(list(x.pos.t = x[j], y.pos.t = y[j], Z = z[j]))
+  }
+
+  stats <- las@data[, if (!anyNA(.BY)) c(find_apex(X,Y,Z), eval(call)), by = field]
+  coords = stats[, .(x.pos.t, y.pos.t)]
+  stats[, c("x.pos.t", "y.pos.t") := NULL]
+
+  output = sp::SpatialPointsDataFrame(coords, stats, proj4string = las@crs)
+  return(output)
+}
+
+#' @export
+tree_metrics.LAScluster = function(las, func, field = "treeID", ...)
+{
+  x = readLAS(las, ...)
+  if (is.null(x)) return(NULL)
+  metrics = tree_metrics(x, func, field)
+  bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
+}
+
+#' @export
+tree_metrics.LAScatalog = function(las, func, field = "treeID", ...)
+{
+  progress  <- progress(las)
+  ncores    <- cores(las)
+  stopearly <- stop_early(las)
+
+  if (buffer(las) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  clusters = catalog_makecluster(las, 1, plot = progress)
+  output = cluster_apply(clusters, tree_metrics, ncores, progress, stopearly, func = substitute(func), field = field, ...)
+  output = do.call(rbind, output)
+  output@proj4string = las@proj4string
+  return(output)
 }

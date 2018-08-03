@@ -4,9 +4,7 @@ lidr_options(progress = FALSE)
 
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-las@crs = sp::CRS("+init=epsg:26748")
 ctg = catalog(LASfile)
-ctg@proj4string = sp::CRS("+init=epsg:26748")
 cores(ctg) <- 1
 progress(ctg) <- FALSE
 tiling_size(ctg) <- 60

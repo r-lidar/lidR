@@ -51,9 +51,7 @@
 #' for n-dimensional datasets. Journal of Information science and engineering, 28(3), 587-600.
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#'
-#' lastrees_li2(las, speed_up = 7)
+#' las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 #'
 #' convex_hulls = tree_hulls(las)
 #' sp::plot(convex_hulls)

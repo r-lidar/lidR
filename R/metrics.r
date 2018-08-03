@@ -498,21 +498,11 @@ stdmetrics_ctrl = function(x, y, z, a)
 stdtreemetrics = function(x, y, z)
 {
   npoints = length(x)
-
-  j = which.max(z)
-
-  zmax = z[j]
-  xmax = x[j]
-  ymax = y[j]
-
   convhull.area = area(x,y)
 
   metrics = list(
     npoints = npoints,
-    convhull_area = convhull.area,
-    zmax.z = zmax,
-    zmax.x = xmax,
-    zmax.y = ymax
+    convhull_area = convhull.area
   )
 
   return(metrics)

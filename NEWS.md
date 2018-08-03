@@ -1,5 +1,10 @@
 ## lidR v2.0.0 (in development)
 
+**Exemple files**
+
+* New: the three exemple files are now géoreference with an EPSG code that is read and converted to a `proj4string`.
+* New: the exemple file `MixedConifers.laz` contains the segmented trees in extra bytes 0.
+
 **LAScatalog**
 
 * Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more thecnically it inherits a `SpatialPolygonsDataFrame`.
@@ -50,12 +55,22 @@ ttop = tree_detection(ctg, "lmf")
 * Change: `tree_detection` functions return constistently a `SpatialPointsDataFrame`.
 * Change: `tree_detection` functions based on a CHM no longer support a `lasmetric` object as input. Anyway this class no longer exists.
 
+**tree_metrics**
+
+* Change: `tree_metrics` returns a `SpatialPointsDataFrame`.
+* Change: `tree_metrics` is seamlessly useable with a `LAScatalog`. Thus, this just works if the las file have and extra bytes attributes that stores the tree ids:
+
+```r
+ctg = catalog(folder)
+metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
+```
+
 **lastrees**
 
 * New: `lastrees_ptree` function with Vega et al. (2014) algorithm.
 * New: `lastrees_hamraz` function with Hamraz et al. (2016) algorithm.
 * New: `lastrees_mcwatershed` function with a marker-controlled watershed.
-* Change: following new `tree_detection` outputs type `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
+* Change: following new `tree_detection` outputs type, `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
 
 
 ## lidR v1.6.0 (2018-07-20)

@@ -4,45 +4,70 @@
 \alias{tree_metrics}
 \title{Compute metrics for each tree}
 \usage{
-tree_metrics(.las, func, debug = FALSE, field = "treeID")
+tree_metrics(las, func, field = "treeID", ...)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}.}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{func}{The function to be applied to each tree.}
 
-\item{debug}{logical. When facing a non trivial error, try \code{debug = TRUE}.}
+\item{field}{character. The column name of the field containing tree IDs. Default is \code{"treeID"}}
 
-\item{field}{character. The column name of the field containing tree IDs. Defaul is \code{"treeID"}}
+\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+\code{LAScatalog} object)}
 }
 \value{
-Returns a \code{data.table} containing the metrics for each segmented tree.
+A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that
+associates the z-elevation (highest points) of the trees and the id of the tree plus the metrics
+defined by the user.
 }
 \description{
-Once the trees are segmented with \link{lastrees}, computes a series of descriptive statistics
-defined by the user for each individual tree. The output is a table in which each line is a tree,
-and each column is a metric. \code{tree_metrics} is similar to \link{lasmetrics} or \link{grid_metrics}
-or \link{grid_metrics3d} or \link{grid_hexametrics}, except it computes metrics for each segmented tree.
+Once the trees are segmented, i.e. it exists an attributes in the point cloud that reference each
+tree, computes a set of user-defined descriptive statistics for each individual tree. This is the
+"tree version" of \link{grid_metrics}.
 }
 \details{
+By default the function computes the xyz-coordinates of the highest point of each tree and use
+xy as tree coordinates in \code{SpatialPoinsDataFrame}. z is stored in the table of attributes
+along with the id of each tree. All the other attributes are user-defined attributes:\cr\cr
 The following existing functions contain a small set of pre-defined metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics_tree}}
 } Users must write their own functions to create their own metrics. \code{tree_metrics} will
 dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
-are defined without the need to considering each segmented tree i.e. only the point cloud (see examples).
+are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{buffer*}: Requiered to find the tree without edge effet. Something twice bigger than
+any possible tree might be a good value. See \link{LAScatalog-class}
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
-# segment trees (see lastrees)
-lastrees(las, algorithm = "li2012-2")
+# Mean height and mean intensity for each tree
+metrics = tree_metrics(las, list(`Mean Z` = mean(Z), `Mean I` = mean(Intensity)))
 
-# Max height for each tree
-tree_metrics(las, mean(Z))
-
-# Define your own new metrics
+# Define your own new metrics function
 myMetrics = function(z, i)
 {
   metrics = list(
