@@ -9,12 +9,13 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
 
   future::plan(future::multiprocess, workers = ncores)
 
+  required.pkgs <- "lidR"
+
   # User supplied function not being analysed for globals/packages by the future we have to do it manually.
   if (ncores > 1 & !future::supportsMulticore())
   {
     dots <- list(...)
     is.fun <- vapply(dots, is.function, logical(1))
-    required.pkgs <- "lidR"
 
     if(any(is.fun))
     {
