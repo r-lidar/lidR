@@ -17,7 +17,7 @@
 #' @param chm RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
 #' or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.
 #' @param treetops \code{RasterLayer} or \code{data.frame} containing the position of the
-#' trees. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.
+#' tree tops, with X and Y as first and the second column respectively. Can be computed with \link[lidR:tree_detection]{tree_detection} or read from an external file.
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
@@ -66,20 +66,15 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
   if (is(treetops, "data.frame"))
-  {
-    treetops_df = treetops
-
-    if (ncol(treetops_df) < 3)
-      treetops_df$id = 1:nrow(treetops_df)
-  }
+    treetops_df = treetops[,1:2] # keep only XY coordinates
   else if(is(treetops, "RasterLayer"))
-    treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
+    treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)[,1:2]
   else
     stop("'treetops' format not recognized.", call. = FALSE)
-
-  if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
-    stop("Duplicated seed IDs.", call. = FALSE)
-
+  
+  # set tree top ID
+  treetops_df[[3]] = 1:nrow(treetops_df)
+  
   cells = raster::cellFromXY(chm, treetops_df[,1:2])
 
   if (anyNA(cells))
@@ -94,7 +89,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   }
 
   treetops = raster::raster(chm)
-  suppressWarnings(treetops[cells] <- treetops_df[, 3])
+  suppressWarnings(treetops[cells] <- treetops_df[[3]])
 
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
