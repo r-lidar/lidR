@@ -1,3 +1,10 @@
+## lidR v1.6.1
+
+#### BUG FIXES
+
+* [[#161](https://github.com/Jean-Romain/lidR/pull/161)] Fix tree ID matching.
+
+
 ## lidR v1.6.0 (2018-07-20)
 
 #### NEW FEATURE
