@@ -69,16 +69,24 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   {
     treetops_df = treetops
 
-    if (ncol(treetops_df) < 3)
-      treetops_df$id = 1:nrow(treetops_df)
+    if (ncol(treetops_df) > 3)
+      treetops_df[[3]] = treetops_df[[4]]
+    else if (ncol(treetops_df) == 3)
+    {
+      if (names(treetops_df)[3] == "Z")
+        treetops_df[[3]] = 1:nrow(treetops_df)
+    }
   }
   else if(is(treetops, "RasterLayer"))
+  {
     treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
+
+    if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
+      stop("Duplicated seed IDs.", call. = FALSE)
+  }
   else
     stop("'treetops' format not recognized.", call. = FALSE)
 
-  if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
-    stop("Duplicated seed IDs.", call. = FALSE)
 
   cells = raster::cellFromXY(chm, treetops_df[,1:2])
 
@@ -87,14 +95,14 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
     if (all(is.na(cells)))
       stop("No seed found", call. = FALSE)
     else
-      stop("Some seeds are outside the canopy height model.", call. = FALSE)
+      warning("Some seeds are outside the canopy height model. They were removed.", call. = FALSE)
 
     treetops_df = treetops_df[!is.na(cells),]
     cells = cells[!is.na(cells)]
   }
 
   treetops = raster::raster(chm)
-  suppressWarnings(treetops[cells] <- treetops_df[, 3])
+  suppressWarnings(treetops[cells] <- treetops_df[[3]])
 
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
