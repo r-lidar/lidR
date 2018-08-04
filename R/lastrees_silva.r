@@ -18,8 +18,9 @@
 #' tree height. Default is 0.6,  meaning 60\% of the tree height.
 #' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 #' multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.
-#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
-#' the new column.
+#' @param field character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
+#' each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
+#' trees will be numbered sequentially.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
 #' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
@@ -46,7 +47,7 @@
 #' https://doi.org/10.1080/07038992.2016.1196582.
 #' @export
 #' @family  tree_segmentation
-lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE, ...)
+lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE, field = "treeID")
 {
   stopifnotlas(las)
   assertive::assert_is_all_of(chm, "RasterLayer")
@@ -57,11 +58,6 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   assertive::assert_all_are_in_open_range(max_cr_factor, 0, 1)
   assertive::assert_all_are_in_open_range(exclusion, 0, 1)
 
-  field = "treeID"
-  p = list(...)
-  if(!is.null(p$field))
-    field = p$field
-
   stopif_forbidden_name(field)
 
   . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
@@ -69,9 +65,15 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
+  if (field %in% names(treetops@data))
+    ids = treetops@data[[field]]
+  else
+    ids = 1:nrow(treetops@data)
+
   # Voronoi tesselation is nothing else than the nearest neigbour
   u = C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
   chmdt[, id := u$nn.idx[,1]]
+  chmdt[, id := ids[id]]
   chmdt[, d := u$nn.dist[,1]]
 
   chmdt[, hmax := max(Z), by = id]

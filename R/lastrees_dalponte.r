@@ -26,12 +26,14 @@
 #' multiplied by this value. It should be between 0 and 1. Default 0.55.
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 #' Default 10.
-#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
-#' the new column.
+#' @param field character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
+#' each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
+#' trees will be numbered sequentially.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
-#' has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
-#' If \code{extra = TRUE} algorithms return a \code{RasterLayer} used internally.
+#' has a new column named after the string provided in \code{field} containing an ID for each point
+#' that refer to a segmented tree. If \code{extra = TRUE} algorithms return a \code{RasterLayer} used
+#' internally.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -52,7 +54,7 @@
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 #' @export
 #' @family  tree_segmentation
-lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE, ...)
+lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE, field = "treeID")
 {
   stopifnotlas(las)
   assertive::assert_is_all_of(chm, "RasterLayer")
@@ -64,6 +66,8 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_is_a_bool(extra)
   assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
+
+  stopif_forbidden_name(field)
 
   cells = raster::cellFromXY(chm, treetops)
 
@@ -79,8 +83,15 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
     cells = cells[no_na]
   }
 
+  if (field %in% names(treetops@data))
+    ids = treetops@data[[field]]
+  else
+    ids = 1:nrow(treetops@data)
+
+
   rtreetops = raster::raster(chm)
-  suppressWarnings(rtreetops[cells] <- treetops@data[, "treeID"])
+  rtreetops[] = 0L
+  suppressWarnings(rtreetops[cells] <- ids)
 
   Canopy <- raster::as.matrix(chm)
   Canopy <- t(apply(Canopy, 2, rev))
@@ -88,7 +99,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
   Maxima <- raster::as.matrix(rtreetops)
   Maxima <- t(apply(Maxima, 2, rev))
-  Maxima[is.na(Maxima)] <- 0
+
 
   Crowns = C_lastrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
   Maxima[Maxima == 0] <- NA
@@ -99,12 +110,6 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
 
   if(!missing(las))
   {
-    field = "treeID"
-    p = list(...)
-    if(!is.null(p$field))
-      field = p$field
-
-    stopif_forbidden_name(field)
     lasclassify(las, Crowns, field)
     lasaddextrabytes(las, name = field, desc = "An ID for each segmented tree")
   }

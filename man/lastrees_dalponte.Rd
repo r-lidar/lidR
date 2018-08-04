@@ -5,7 +5,7 @@
 \title{Individual tree segmentation}
 \usage{
 lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, extra = FALSE, ...)
+  th_cr = 0.55, max_cr = 10, extra = FALSE, field = "treeID")
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
@@ -34,13 +34,15 @@ Default 10.}
 and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.}
 
-\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
-the new column.}
+\item{field}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
+each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
+trees will be numbered sequentially.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud
-has a new column named \code{treeID} containing an ID for each point that refer to a segmented tree.
-If \code{extra = TRUE} algorithms return a \code{RasterLayer} used internally.
+has a new column named after the string provided in \code{field} containing an ID for each point
+that refer to a segmented tree. If \code{extra = TRUE} algorithms return a \code{RasterLayer} used
+internally.
 }
 \description{
 Individual tree segmentation using Dalponte et al. (2016) algorithm (see reference).
