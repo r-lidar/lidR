@@ -72,7 +72,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
     if (all(is.na(cells)))
       stop("No seed found", call. = FALSE)
     else
-      stop("Some seeds are outside the canopy height model.", call. = FALSE)
+      warning("Some seeds are outside the canopy height model. They were removed.", call. = FALSE)
 
     no_na = !is.na(cells)
     treetops = treetops[no_na,]

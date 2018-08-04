@@ -73,6 +73,14 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * Change: following new `tree_detection` outputs type, `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
 
 
+## lidR v1.6.1
+
+#### BUG FIXES
+
+* [[#161](https://github.com/Jean-Romain/lidR/pull/161)] Fix tree ID matching.
+* Fix undefined variable in cluster_apply on max and linux if multicore processing is used.
+
+
 ## lidR v1.6.0 (2018-07-20)
 
 #### NEW FEATURE

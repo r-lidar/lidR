@@ -20,7 +20,7 @@ test_that("Dalponte's methods works", {
   # Test if a seed is not in the chm
   old = ttops@coords
   ttops@coords[1,1] <- 0
-  expect_error(lastrees_dalponte(las, chm, ttops, extra = T), "outside")
+  expect_warning(lastrees_dalponte(las, chm, ttops, extra = T), "outside")
 
   # Test if seed IDs are propagated
   ttops@coords <- old
