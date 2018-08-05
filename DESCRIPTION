@@ -124,6 +124,7 @@ Collate:
     'utils_colors.r'
     'utils_geometry.r'
     'utils_interpolations.r'
+    'utils_match_chm_and seeds.r'
     'utils_misc.r'
     'utils_projection.r'
     'utils_spatial.r'

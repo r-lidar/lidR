@@ -67,27 +67,9 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
-  stopif_forbidden_name(field)
-
-  cells = raster::cellFromXY(chm, treetops)
-
-  if (anyNA(cells))
-  {
-    if (all(is.na(cells)))
-      stop("No seed found", call. = FALSE)
-    else
-      warning("Some seeds are outside the canopy height model. They were removed.", call. = FALSE)
-
-    no_na = !is.na(cells)
-    treetops = treetops[no_na,]
-    cells = cells[no_na]
-  }
-
-  if (field %in% names(treetops@data))
-    ids = treetops@data[[field]]
-  else
-    ids = 1:nrow(treetops@data)
-
+  X = match_chm_and_seeds(chm, treetops, field)
+  cells = X$cells
+  ids = X$ids
 
   rtreetops = raster::raster(chm)
   rtreetops[] = 0L

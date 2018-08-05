@@ -62,13 +62,12 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
 
   . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
+  X = match_chm_and_seeds(chm, treetops, field)
+  cells = X$cells
+  ids = X$ids
+
   chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
   data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
-
-  if (field %in% names(treetops@data))
-    ids = treetops@data[[field]]
-  else
-    ids = 1:nrow(treetops@data)
 
   # Voronoi tesselation is nothing else than the nearest neigbour
   u = C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)

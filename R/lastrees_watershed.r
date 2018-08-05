@@ -32,7 +32,7 @@
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(200)
+#' col = pastel.colors(250)
 #'
 #' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
 #' chm = as.raster(chm)
@@ -42,23 +42,26 @@
 #' ttops = tree_detection(chm, "lmf", 4, 2)
 #' crowns = lastrees_mcwatershed(las, chm, ttops, extra = TRUE)
 #'
+#' \dontrun{
 #' plot(las, color = "treeID", colorPalette = col)
 #' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
-#' raster::plot(crowns, col = pastel.colors(50))
+#'
+#' raster::plot(crowns, col = pastel.colors(250))
 #' sp::plot(ttops, add = TRUE)
-lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE, ...)
+#' }
+lastrees_watershed = function(las, chm, th_tree = 2, tol = 1, ext = 1, extra = FALSE, field = "treeID")
 {
-  lastrees_ws_generic(las, chm, th_tree = th_tree, tol = tol, ext = ext, extra = extra)
+  lastrees_ws_generic(las, chm, th_tree = th_tree, tol = tol, ext = ext, extra = extra, field = field)
 }
 
 #' @rdname lastrees_watershed
 #' @export
-lastrees_mcwatershed = function(las, chm, treetops, th_tree = 2, extra = FALSE, ...)
+lastrees_mcwatershed = function(las, chm, treetops, th_tree = 2, extra = FALSE, field = "treeID")
 {
-  lastrees_ws_generic(las, chm, th_tree = th_tree, treetops = treetops, extra = extra)
+  lastrees_ws_generic(las, chm, th_tree = th_tree, treetops = treetops, extra = extra, field = field)
 }
 
-lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, extra = FALSE, ...)
+lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, extra = FALSE, field = "treeID")
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
   assertive::assert_is_a_number(th_tree)
@@ -78,12 +81,6 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops
       stop("'imager' package is needed for this function to work.", call. = F)
   }
 
-  # Change the default column for storing tree IDs
-  field = "treeID"
-  p = list(...)
-  if(!is.null(p$field)) field = p$field
-  stopif_forbidden_name(field)
-
   # Convert the CHM to a matrix
   Canopy <- raster::as.matrix(chm)
   mask   <- Canopy < th_tree | is.na(Canopy)
@@ -97,22 +94,14 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops
   # Marker controlled watershed
   else
   {
-    if (is(treetops, "SpatialPointsDataFrame"))
-    {
-      seeds = chm
-      seeds[] = 0
-      cells = raster::cellFromXY(chm, treetops)
-      seeds[cells] = 1:length(cells)
-      treetops = seeds
-    }
+    X = match_chm_and_seeds(chm, treetops, field)
+    cells = X$cells
+    ids = X$ids
 
-    if (is(treetops, "RasterLayer"))
-    {
-      treetops <- raster::as.matrix(treetops)
-      treetops[is.na(treetops)] = 0
-    }
-    else
-      stop("'treetops is of wrong type.", call. = FALSE)
+    seeds = chm
+    seeds[] = 0
+    seeds[cells] = ids
+    treetops = raster::as.matrix(seeds)
 
     Canopy <- imager::as.cimg(Canopy)
     treetops  <- imager::as.cimg(treetops)
