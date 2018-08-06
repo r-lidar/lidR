@@ -75,7 +75,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // Find if a point is a local maxima within an R windows
   LogicalVector is_lm;
   if (radius > 0)
-    is_lm = C_LocalMaximumFilter(data, R, 0, true);
+    is_lm = C_LocalMaximumFilter(data, wrap(R), 0, true);
   else
   {
     is_lm = LogicalVector(ni);

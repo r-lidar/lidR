@@ -36,7 +36,7 @@ test_that("Li's method works", {
   lastrees_li2(las, speed_up = 5, field = "TID")
 
   expect_true("TID" %in% names(las@data))
-  expect_equal(sort(unique(las@data$TID)), 1:51L)
+  expect_equal(sort(unique(las@data$TID)), 1:48L)
   expect_true(is.integer(las@data$TID))
 })
 
