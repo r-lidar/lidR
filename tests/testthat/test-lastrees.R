@@ -15,7 +15,8 @@ test_that("Dalponte's methods works", {
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-  expect_equal(sort(unique(seg1[])), 1:39)
+  expect_equal(sort(unique(seg1[])), 1:39L)
+  expect_true(is.integer(las@data$treeID))
 
   # Test if a seed is not in the chm
   old = ttops@coords
@@ -24,7 +25,7 @@ test_that("Dalponte's methods works", {
 
   # Test if seed IDs are propagated
   ttops@coords <- old
-  ttops@data$treeID = 1:39*2
+  ttops@data$treeID = 1:39*2L
 
   seg3 = lastrees_dalponte(las, chm, ttops, extra = T)
   expect_equal(sort(unique(seg3[])), 1:39*2)
@@ -32,19 +33,33 @@ test_that("Dalponte's methods works", {
 
 test_that("Li's method works", {
   las@data[, treeID := NULL]
+  lastrees_li2(las, speed_up = 5, field = "TID")
 
-  lastrees_li2(las, speed_up = 5)
-  expect_true("treeID" %in% names(las@data))
+  expect_true("TID" %in% names(las@data))
+  expect_equal(sort(unique(las@data$TID)), 1:51L)
+  expect_true(is.integer(las@data$TID))
 })
 
 test_that("Silvas's methods works", {
-  las@data[, treeID := NULL]
+  las@data[, TID := NULL]
 
   ttops = suppressWarnings(tree_detection_lmf(chm, 3, 2))
   seg1 = lastrees_silva(las, chm, ttops, extra = TRUE)
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
+  expect_true(is.integer(las@data$treeID))
+})
+
+test_that("MC watershed methods works", {
+  las@data[, treeID := NULL]
+
+  ttops = suppressWarnings(tree_detection_lmf(chm, 3, 2))
+  seg1 = lastrees_mcwatershed(las, chm, ttops, extra = TRUE)
+
+  expect_true(is(seg1, "RasterLayer"))
+  expect_true("treeID" %in% names(las@data))
+  expect_true(is.integer(las@data$treeID))
 })
 
 test_that("lastrees can store in a user defined column", {

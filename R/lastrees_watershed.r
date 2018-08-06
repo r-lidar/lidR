@@ -99,7 +99,7 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops
     ids = X$ids
 
     seeds = chm
-    seeds[] = 0
+    seeds[] = 0L
     seeds[cells] = ids
     treetops = raster::as.matrix(seeds)
 
@@ -107,9 +107,10 @@ lastrees_ws_generic = function(las, chm, th_tree = 2, tol = 1, ext = 1, treetops
     treetops  <- imager::as.cimg(treetops)
     Crowns <- imager::watershed(treetops, Canopy)
     Crowns <- Crowns[,,1,1]
+    storage.mode(Crowns) = "integer"
   }
 
-  Crowns[mask] <- NA
+  Crowns[mask] <- NA_integer_
   Crowns = raster::raster(Crowns)
   raster::extent(Crowns) = raster::extent(chm)
 

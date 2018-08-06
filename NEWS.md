@@ -36,6 +36,7 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 **lasclassify**
 
 * Change: the code that drives the PIP algorithm relies on `boost` and drastically simplyfies the former code
+* Fix: the classification, when made with a `RasterLayer` preserve the data type of the `RasterLayer`. This also fix the fact that `lastrees` classified the tree with `double` instead of `int`.
 
 **tree_detection**
 

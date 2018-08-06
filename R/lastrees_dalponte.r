@@ -67,12 +67,12 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
-  X = match_chm_and_seeds(chm, treetops, field)
-  cells = X$cells
-  ids = X$ids
+  X     <- match_chm_and_seeds(chm, treetops, field)
+  cells <- X$cells
+  ids   <- X$ids
 
-  rtreetops = raster::raster(chm)
-  rtreetops[] = 0L
+  rtreetops   <- raster::raster(chm)
+  rtreetops[] <- 0L
   suppressWarnings(rtreetops[cells] <- ids)
 
   Canopy <- raster::as.matrix(chm)
@@ -82,13 +82,12 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   Maxima <- raster::as.matrix(rtreetops)
   Maxima <- t(apply(Maxima, 2, rev))
 
+  Crowns <- C_lastrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+  Maxima[Maxima == 0L] <- NA_integer_
+  Crowns[Crowns == 0L] <- NA_integer_
 
-  Crowns = C_lastrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
-  Maxima[Maxima == 0] <- NA
-  Crowns[Crowns == 0] <- NA
-
-  Crowns = raster::raster(apply(Crowns,1,rev))
-  raster::extent(Crowns) = raster::extent(chm)
+  Crowns <- raster::raster(apply(Crowns,1,rev))
+  raster::extent(Crowns) <- raster::extent(chm)
 
   if(!missing(las))
   {
