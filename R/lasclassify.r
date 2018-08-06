@@ -190,7 +190,7 @@ classify_from_rasterlayer = function(las, raster, field = NULL)
   #ymin = raster@extent@ymin
   #m  = raster::as.matrix(raster)
   #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
-  values = raster::extract(raster, las@data[,.(X,Y)])
-  return(values)
+  cells = raster::cellFromXY(raster, las@data[,.(X,Y)])
+  return(raster@data@values[cells])
 }
 
