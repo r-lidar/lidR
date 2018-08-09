@@ -41,6 +41,17 @@ make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
   return(grid)
 }
 
+make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
+{
+  bbox      <- extent(las) + 2 * subcircle
+  bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
+  bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
+  bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
+  bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
+  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@crs))
+  return(layout)
+}
+
 group_grid = function(x, y, res, start = c(0,0))
 {
   xgrid = f_grid(x, res, start[1])

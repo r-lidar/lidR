@@ -73,6 +73,36 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * New: `lastrees_mcwatershed` function with a marker-controlled watershed.
 * Change: following new `tree_detection` outputs type, `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
 
+**grid_metrics**
+
+* Change: `grid_metrics` functions returns a `RasterLayer` or a `RasterBrick` instead of a `data.table`.
+* Change: option `splitlines` have been removed. `grid_metrics` used to return a `data.table` because of the `splitlines` option and all `lidR` was built on top of that feature from the very begining. Now `lidR` uses consistantly `sp` and `raster` and this option is no longer supported.
+
+**grid_terrain**
+
+* Change: `grid_terrain` is no longer a function for spatial interpolation but a wrapper around new functions `grid_terrain_delaunay`, `grid_terrain_kriging`, `grid_terrain_knnidw`
+* Change: `grid_terrain` functions returns a `RasterLayer` instead of a `data.table`.
+
+**grid_canopy**
+
+* Change: `grid_canopy` function returns a `RasterLayer` instead of a `data.table`.
+* Change: `grid_canopy` no longer fills NAs with the parameters `na.fill`. Indded the ellipis `...` is now consistently a way to pass `select` and `filter` parameters to `readLAS` when used with a `LAScatalog`. It used to be a way to choose an interpolation methods but for constitency it is not use like that anymore. Interpolation must be done by the user.
+
+**grid_hexametrics**
+
+* Change: as for `grid_metrics` parameter `splitlines` have been removed as well as parameter `debug`.
+* Change: the function returns an `hexbin` object or a list of `hexbin` objects and no longer any `data.table`.
+
+**grid_tincanopy**
+
+* Change: `grid_tincanopy` function returns a `RasterLayer` instead of a `data.table`.
+
+**class lasmetrics**
+
+* `data.table` with a class `lasmetrics` no longer exists. It have been replaced by `RasterLayer` and `RasterBrick` everywhere
+* `as.raster` no longer exists because it used to convert `lasmetrics` to `RasterLayer` and `RasterStack`.
+* `as.spatial` no longer convert `lasmetrics` to `SpatialPixelsDataFrame` but still converts `LAS` to `SpatialPointsDataFrame`. 
+* `plot.lasmetrics` have been removed obviously.
 
 ## lidR v1.6.1
 

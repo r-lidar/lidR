@@ -33,7 +33,7 @@
 #' is a point cloud the function uses a Delaunay triangulation of the points and computes
 #' the area of each triangle.
 #'
-#' @param x A 'RasterLayer' or a 'lasmetrics' object, or a vector of x point coordinates.
+#' @param x A 'RasterLayer' or a vector of x point coordinates.
 #' @param y numeric. If \code{x} is a vector of coordinates: the associated y coordinates.
 #' @param z numeric. If \code{x} is a vector of coordinates: the associated z coordinates.
 #' @param ... unused
@@ -71,14 +71,6 @@
 rumple_index = function(x, y = NULL, z = NULL, ...)
 {
   UseMethod("rumple_index", x)
-}
-
-#' @export
-rumple_index.lasmetrics <- function(x, y = NULL, z = NULL, ...)
-{
-  res = attr(x, "res")
-  x = raster::as.matrix(as.raster(x))
-  return(rumple_index.matrix(x, res, res))
 }
 
 #' @export

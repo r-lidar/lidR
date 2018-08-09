@@ -7,7 +7,7 @@
 rumple_index(x, y = NULL, z = NULL, ...)
 }
 \arguments{
-\item{x}{A 'RasterLayer' or a 'lasmetrics' object, or a vector of x point coordinates.}
+\item{x}{A 'RasterLayer' or a vector of x point coordinates.}
 
 \item{y}{numeric. If \code{x} is a vector of coordinates: the associated y coordinates.}
 

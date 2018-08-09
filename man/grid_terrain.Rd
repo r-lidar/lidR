@@ -2,30 +2,41 @@
 % Please edit documentation in R/grid_terrain.r
 \name{grid_terrain}
 \alias{grid_terrain}
+\alias{grid_terrain_delaunay}
+\alias{grid_terrain_knnidw}
+\alias{grid_terrain_kriging}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(x, res = 1, method, k = 10L, p = 2,
-  model = gstat::vgm(0.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain(las, method, ...)
+
+grid_terrain_delaunay(las, res = 1, keep_lowest = FALSE)
+
+grid_terrain_knnidw(las, res = 1, k = 10L, p = 2, keep_lowest = FALSE)
+
+grid_terrain_kriging(las, res = 1, k = 10L, model = gstat::vgm(0.59,
+  "Sph", 874), keep_lowest = FALSE)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
-
-\item{res}{numeric. resolution.}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
 
-\item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
+\item{...}{}
+
+\item{res}{numeric. resolution of the \code{RasterLayer}. Default 1.}
+
+\item{keep_lowest}{logical. This option forces the original lowest ground point of each
+cell (if it exists) to be chosen instead of the interpolated values.}
+
+\item{k}{numeric. number of k-nearest neighbours. Default 10.}
 
 \item{p}{numeric. Power for inverse-distance weighting. Default 2.}
 
-\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
-is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.}
-
-\item{keep_lowest}{logical. This function forces the original lowest ground point of each
-pixel (if it exists) to be chosen instead of the interpolated values.}
+\item{model}{a variogram model computed with \link[gstat:vgm]{vgm}. If null, it performs an ordinary
+or weighted least squares prediction.}
 }
 \value{
-A \code{lasmetrics} data.table.
+A \code{RasterLayer} containing the metric for each cell.
 }
 \description{
 Interpolates ground points and creates a rasterized digital terrain model. The interpolation
@@ -51,23 +62,34 @@ points. This method is more difficult to manipulate but it is also the most adva
 interpolating spatial data. }
 }
 }
-\section{Use with a \code{LAScatalog}}{
+\section{Working with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+}
 }
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-lidar = readLAS(LASfile)
-plot(lidar)
+las = readLAS(LASfile)
+plot(las)
 
-dtm1 = grid_terrain(lidar, method = "knnidw", k = 6, p = 2)
-dtm2 = grid_terrain(lidar, method = "delaunay")
-dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
+dtm1 = grid_terrain(las, method = "knnidw", k = 6L, p = 2)
+dtm2 = grid_terrain(las, method = "delaunay")
+dtm3 = grid_terrain(las, method = "kriging", k = 10L)
 
 \dontrun{
 plot(dtm1)
@@ -79,10 +101,5 @@ plot3d(dtm3)
 }
 }
 \seealso{
-\link[lidR:grid_terrain]{grid_terrain}
-\link[lidR:lasnormalize]{lasnormalize}
-\link[gstat:vgm]{vgm}
-\link[gstat:krige]{krige}
-\link[lidR:lasnormalize]{lasnormalize}
-\link[raster:raster]{RasterLayer}
+\link{lasnormalize}
 }

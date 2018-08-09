@@ -21,17 +21,3 @@ test_that("Each ground point is at 0 with kriging", {
   Z0 = lidar@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
 })
-
-test_that("lasnormalize support lasmetrics and raster objects", {
-  dtm = grid_terrain(lidar, method = "kriging", k = 10L)
-
-  suppressWarnings(lasnormalize(lidar, dtm))
-  Z0 = lidar@data[Classification == 2]$Z
-  expect_equal(mean(Z0), 0, tolerance = 0.01)
-
-  dtm = as.raster(dtm)
-
-  suppressWarnings(lasnormalize(lidar, dtm))
-  Z0 = lidar@data[Classification == 2]$Z
-  expect_equal(mean(Z0), 0, tolerance = 0.01)
-})

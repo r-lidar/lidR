@@ -1,44 +1,110 @@
 context("grid_metrics")
 
 las = lidR:::dummy_las(2000)
+las@crs = sp::CRS("+init=epsg:4326")
 
-test_that("grid_metrics works", {
-  x = grid_metrics(las, mean(Z))
-  expect_equal(dim(x), c(25,3))
+test_that("grid_metrics returns a RasterLayer", {
+  x = grid_metrics(las, list(`mean Z` = mean(Z)))
+
+  expect_true(is(x, "RasterLayer"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(5,5,1))
+  expect_equal(raster::extent(x), raster::extent(0,100,0,100))
+  expect_equal(x@crs, las@crs)
+  expect_equal(names(x), "mean.Z")
 })
 
-test_that("grid_metrics debug mode works", {
-  lidr_options(debug = TRUE)
-  expect_error(grid_metrics(las, LAD(Z)), "A single number")
+test_that("grid_metrics returns a RasterLayer aligned with the start option", {
+  x = grid_metrics(las, length(Z), start = c(10,10))
+
+  expect_true(is(x, "RasterLayer"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(6,6,1))
+  expect_equal(raster::extent(x), raster::extent(-10,110,-10,110))
+  expect_equal(x@crs, las@crs)
+  expect_equal(names(x), "V1")
 })
 
-test_that("grid_metrics return an error if splitline and no flightlineID", {
-  expect_error(grid_metrics(las, mean(Z), splitlines = T))
+test_that("grid_metrics returns a RasterBrick with a LAS", {
+  x = grid_metrics(las, list(`mean Z` = mean(Z), `max Z` = max(Z)))
+
+  expect_true(is(x, "RasterBrick"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(5,5,2))
+  expect_equal(raster::extent(x), raster::extent(0,100,0,100))
+  expect_equal(x@crs, las@crs)
+  expect_equal(names(x), c("mean.Z", "max.Z"))
 })
 
-las@data[, flightlineID := c(rep(1,500), rep(2,500))]
+test_that("grid_metrics returns a RasterBrick aligned with the start option", {
+  x = grid_metrics(las, list(`mean Z` = mean(Z), `max Z` = max(Z)), start = c(10,10))
 
-test_that("grid_metrics splitline work", {
-  x = grid_metrics(las, mean(Z), splitlines = T)
-  expect_equal(dim(x), c(50,4))
+  expect_true(is(x, "RasterBrick"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(6,6,2))
+  expect_equal(raster::extent(x), raster::extent(-10,110,-10,110))
+  expect_equal(x@crs, las@crs)
+  expect_equal(names(x), c("mean.Z", "max.Z"))
 })
 
-test_that("predefined metric set work", {
-  las = lidR:::dummy_las(10000)
+test_that("grid_metrics returns a correct raster layer (tricky case)", {
+
+  las2 = lasfilter(las, X < 20 | X > 70)
+  out = grid_metrics(las2, max(Z))
+
+  expect_equal(dim(out), c(5, 5, 1))
+  expect_equal(raster::res(out), c(20, 20))
+
+  las2 = lasfilter(las, (X < 20 | X > 70) & (Y < 20 | Y > 70))
+  out = grid_metrics(las2, max(Z), 10)
+
+  expect_equal(dim(out), c(10, 10, 1))
+  expect_equal(raster::res(out), c(10, 10))
+})
+
+test_that("grid_metrics return a correct raster brick (tricky case)", {
+
+  las2 = lasfilter(las, (X < 20 | X > 80) & (Y < 20 | Y > 80))
+  out = suppressWarnings(grid_metrics(las2, list(mean(Z), max(Z)), 10))
+
+  expect_true(is(out, "RasterBrick"))
+  expect_equal(dim(out), c(10, 10, 2))
+  expect_equal(raster::res(out), c(10, 10))
+})
+
+
+file <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg = catalog(file)
+las = readLAS(file)
+cores(ctg) <- 1
+tiling_size(ctg) <- 160
+buffer(ctg) <- 0
+progress(ctg) <- FALSE
+
+test_that("grid_metric return the same both with LAScatalog and LAS", {
+  m1 = grid_metrics(ctg, length(Z), 20)
+  m2 = grid_metrics(las, length(Z), 20)
+  expect_equal(m1, m2)
+
+  m1 = grid_metrics(ctg, list(length(Z), mean(Z)), 20)
+  m2 = grid_metrics(las, list(length(Z), mean(Z)), 20)
+  m1@data@isfactor = m2@data@isfactor
+  expect_equal(m1, m2)
+})
+
+test_that("grid_metric return the same both with catalog and las + grid alignment", {
+  m1 = grid_metrics(ctg, length(Z), 20, start = c(10,10))
+  m2 = grid_metrics(las, length(Z), 20, start = c(10,10))
+  expect_equal(m1, m2)
+})
+
+test_that("predefined metric set work both with a LAS and LAScatalog", {
   las@data[, ScanAngle := runif(.N)]
 
   expect_error(grid_metrics(las, .stdmetrics_z), NA)
   expect_error(grid_metrics(las, .stdmetrics_i), NA)
   expect_error(grid_metrics(las, .stdmetrics_rn), NA)
   expect_error(grid_metrics(las, .stdmetrics_ctrl), NA)
-})
 
-test_that("grid_metric debug mode works", {
-  las = lidR:::dummy_las(10000)
-  las@data[, ScanAngle := runif(.N)]
-
-  lidr_options(debug = TRUE)
-
-  expect_error(grid_metrics(las, LAD(Z)), "A single number or a list of single number is expected")
-  expect_error(grid_metrics(las, quantile(Z)), "A single number or a list of single number is expected")
+  expect_error(grid_metrics(ctg, .stdmetrics_z), NA)
 })

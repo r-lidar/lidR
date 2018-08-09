@@ -51,32 +51,32 @@
 #' interpolating spatial data. }
 #' }
 #'
-#' @section Use with a \code{LAScatalog}:
-#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
-#' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-#' spatial index.
+#' @template LAScatalog
 #'
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
-#' @param res numeric. resolution.
+#' @template section-supported-option-grid_functions
+#'
+#' @template param-las
+#' @param res numeric. resolution of the \code{RasterLayer}. Default 1.
 #' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
-#' @param k numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}
+#' @param k numeric. number of k-nearest neighbours. Default 10.
 #' @param p numeric. Power for inverse-distance weighting. Default 2.
-#' @param model a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
-#' is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.
-#' @param keep_lowest logical. This function forces the original lowest ground point of each
-#' pixel (if it exists) to be chosen instead of the interpolated values.
-#' @return A \code{lasmetrics} data.table.
+#' @param model a variogram model computed with \link[gstat:vgm]{vgm}. If null, it performs an ordinary
+#' or weighted least squares prediction.
+#' @param keep_lowest logical. This option forces the original lowest ground point of each
+#' cell (if it exists) to be chosen instead of the interpolated values.
+#' @param ...
+#'
+#' @template return-grid-Layer
+#'
 #' @export
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#' plot(lidar)
+#' las = readLAS(LASfile)
+#' plot(las)
 #'
-#' dtm1 = grid_terrain(lidar, method = "knnidw", k = 6, p = 2)
-#' dtm2 = grid_terrain(lidar, method = "delaunay")
-#' dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
+#' dtm1 = grid_terrain(las, method = "knnidw", k = 6L, p = 2)
+#' dtm2 = grid_terrain(las, method = "delaunay")
+#' dtm3 = grid_terrain(las, method = "kriging", k = 10L)
 #'
 #' \dontrun{
 #' plot(dtm1)
@@ -87,38 +87,71 @@
 #' plot3d(dtm3)
 #' }
 #' @seealso
-#' \link[lidR:grid_terrain]{grid_terrain}
-#' \link[lidR:lasnormalize]{lasnormalize}
-#' \link[gstat:vgm]{vgm}
-#' \link[gstat:krige]{krige}
-#' \link[lidR:lasnormalize]{lasnormalize}
-#' \link[raster:raster]{RasterLayer}
-grid_terrain = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+#' \link{lasnormalize}
+grid_terrain = function(las, method, ...)
 {
-  UseMethod("grid_terrain", x)
+  if (method == "delaunay")
+    return(grid_terrain_delaunay(las, ...))
+  else if (method == "knnidw")
+    return(grid_terrain_knnidw(las, ...))
+  else if (method == "kriging")
+    return(grid_terrain_kriging(las, ...))
+  else
+    stop(glue::glue("Method '{method}' not supported"), call. = FALSE)
 }
 
 #' @export
-grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+#' @rdname grid_terrain
+grid_terrain_delaunay = function(las, res = 1,  keep_lowest = FALSE)
 {
+  grid_terrain_generic(las, res = 1, method = "delaunay", keep_lowest = keep_lowest)
+}
+
+#' @export
+#' @rdname grid_terrain
+grid_terrain_knnidw = function(las, res = 1, k = 10L, p = 2, keep_lowest = FALSE)
+{
+  grid_terrain_generic(las, method = "knnidw", res = res,  k = k, p = p, keep_lowest = keep_lowest)
+}
+
+#' @export
+#' @rdname grid_terrain
+grid_terrain_kriging = function(las, res = 1, k = 10L,  model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
+  grid_terrain_generic(las, method = "kriging", res = res, k = k, model = model, keep_lowest = keep_lowest)
+}
+
+
+grid_terrain_generic = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
+  assertive::assert_is_a_number(k)
+  assertive::assert_is_a_number(p)
+  assertive::assert_all_are_whole_numbers(k)
+  assertive::assert_all_are_positive(k)
+  assertive::assert_all_are_positive(p)
+  assertive::assert_is_a_bool(keep_lowest)
+
+  UseMethod("grid_terrain_generic", las)
+}
+
+grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
+
+
   . <- X <- Y <- Z <- Classification <- NULL
   resolution = res
 
-  # ========================
   # Select the ground points
   # ========================
 
-  verbose("Selecting ground points...")
+  if (!"Classification" %in% names(las@data))
+    stop("LAS object does not contain 'Classification' data", call. = FALSE)
 
-  if (!"Classification" %in% names(x@data))
-    stop("LAS object does not contain 'Classification' data")
+  if (fast_countequal(las@data$Classification, 2L) == 0)
+    stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
 
-  if (fast_countequal(x@data$Classification, 2L) == 0)
-    stop("No ground points found. Impossible to compute a DTM.", call. = F)
+  ground = las@data[Classification == LASGROUND, .(X,Y,Z)]
 
-  ground = x@data[Classification == LASGROUND, .(X,Y,Z)]
-
-  # =================================
   # Find where to interpolate the DTM
   # =================================
 
@@ -139,46 +172,88 @@ grid_terrain.LAS = function(x, res = 1, method, k = 10L, p = 2, model = gstat::v
   }
   else
   {
-    ext  = extent(x) + 0.1 * resolution
-    grid = make_grid(ext@xmin, ext@xmax, ext@ymin, ext@ymax, resolution)
+    layout = make_overlay_raster(las, resolution)
+    layout@crs = las@crs
+    names(layout) = "Z"
+    grid = raster::as.data.frame(layout, xy = TRUE)
+    data.table::setDT(grid)
+    grid[, Z := NULL]
+    data.table::setnames(grid, names(grid), c("X", "Y"))
 
-    hull = convex_hull(x@data$X, x@data$Y)
+    hull = convex_hull(las@data$X, las@data$Y)
     hull = sp::Polygon(hull)
     hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
     hull = rgeos::gBuffer(hull, width = resolution)
     hull = hull@polygons[[1]]@Polygons[[1]]@coords
     keep = C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-    grid = grid[keep]
+    if (!all(keep)) grid = grid[keep]
   }
 
-  # =======================
   # Interpolate the terrain
   # =======================
 
-  has_buffer = "buffer" %in% names(x@data)
+  has_buffer = "buffer" %in% names(las@data)
 
   verbose("Interpolating ground points...")
 
   Zg = interpolate(ground, grid, method, k, p, model, wbuffer = !has_buffer)
   grid[, Z := round(Zg, 3)][]
 
+  cells = raster::cellFromXY(layout, grid[, .(X,Y)])
+  suppressWarnings(layout[cells] <- Zg)
+
   if (keep_lowest)
   {
     verbose("Forcing the lowest ground points to be retained...")
-
-    grid = rbind(grid, grid_metrics(lasfilterground(x), list(Z = min(Z)), resolution))
-    grid = grid[, list(Z = min(Z)), by = .(X,Y)]
+    rmin = grid_metrics(lasfilterground(las), list(Z = min(Z)), resolution)
+    layout[] = pmin(layout[], rmin[])
   }
 
-  as.lasmetrics(grid, resolution)
-
-  return(grid)
+  return(layout)
 }
 
-#' @export
-grid_terrain.LAScatalog = function(x, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-  terrain = grid_catalog(x, grid_terrain, res, "xyzc", "", method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
+  x = readLAS(las, select = "xyzc")
+  if (is.null(x)) return(NULL)
+  bbox <- raster::extent(as.numeric(las@bbox))
+  dtm  <-  grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
+  dtm  <- raster::crop(dtm, bbox)
+  return(dtm)
+}
 
-  return(terrain)
+grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+{
+  if (buffer(las) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  # If the clustering option do not match with the clustering size
+  t_size     <- tiling_size(las)
+  new_t_size <- round_any(t_size, res)
+  if (new_t_size != t_size)
+  {
+    tiling_size(las) <- new_t_size
+    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
+  }
+
+  # If the alignement of the clusters do not match with the start point of the raster
+  alignment     <- las@clustering_options$alignment
+  new_alignment <- round_any(alignment, res/2)
+  if (any(new_alignment != alignment))
+  {
+    las@clustering_options$alignment <- new_alignment
+    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
+  }
+
+  progress   <- progress(las)
+  ncores     <- cores(las)
+  stopearly  <- stop_early(las)
+  clusters   <- catalog_makecluster(las, 1, plot = progress)
+  output     <- cluster_apply(clusters, grid_terrain_generic, ncores, progress = progress, stopearly, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
+  names      <- names(output[[1]])
+  factor     <- output[[1]]@data@isfactor
+  output     <- do.call(raster::merge, output)
+  output@crs <- las@proj4string
+  names(output) <- names
+  return(output)
 }

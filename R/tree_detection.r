@@ -116,7 +116,6 @@ tree_detection = function(x, algorithm, ...)
 #'
 #' # 5x5 m fixed windows size
 #' chm = grid_canopy(las, 1, subcircle = 0.15)
-#' chm = as.raster(chm)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 #'
@@ -448,7 +447,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
 
   las_copy = LAS(las@data[, .(X,Y,Z)], las@header)
   LM = list()
-  chm = as.raster(grid_metrics(las, max(Z), res))
+  chm = grid_metrics(las, max(Z), res)
   i = 1
 
   p = list(...)
@@ -459,9 +458,8 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
   {
     chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
 
-    if (max(chm95$V1) > hmin)
+    if (max(chm95[], na.rm = TRUE) > hmin)
     {
-      chm95 = as.raster(chm95)
       lm  = tree_detection_lmf(chm95, 4, ...)
       lm  = raster::as.data.frame(lm)
       data.table::setDT(lm)

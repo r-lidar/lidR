@@ -46,15 +46,9 @@
 #' realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
 #' smoother and contains fewer 'pits' and empty pixels.
 #'
-#' @section Use with a \code{LAScatalog}:
-#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
-#' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-#' spatial index.
+#' @template LAScatalog
 #'
-#' @aliases  grid_canopy
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
+#' @template param-las
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 #' 2 meters i.e. 4 square meters.
 #' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
@@ -93,18 +87,16 @@
 #' chm = grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay")
 #' plot(chm)
 #' }
-#' @family grid_alias
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:as.raster.lasmetrics]{as.raster}
-#' @export grid_canopy
-grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+#' @export
+grid_canopy = function(las, res = 2, subcircle = 0, ...)
 {
-  UseMethod("grid_canopy", x)
+  UseMethod("grid_canopy", las)
 }
 
 #' @export
-grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+grid_canopy.LAS = function(las, res = 2, subcircle = 0, ...)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -113,63 +105,94 @@ grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., fil
   assertive::assert_is_a_number(subcircle)
   assertive::assert_all_are_non_negative(subcircle)
 
-  if (res < 0)
-    stop("Argument 'res' should be greater than 0", call. = FALSE)
-
-  if (!is.numeric(subcircle))
-    stop("Argument 'subcircle' should be a number", call. = FALSE)
-
-  if (subcircle < 0)
-    stop("Argument 'subcircle' should be greater than 0", call. = FALSE)
-
   verbose("Gridding highest points in each cell...")
 
-  dsm = C_grid_canopy(x, res, subcircle)
-  as.lasmetrics(dsm, res)
+  layout <- make_overlay_raster(las, res, subcircle = subcircle)
+  names(layout) <- "Z"
+  bbox <- raster::extent(layout)
 
-  if (na.fill != "none")
-  {
-    verbose("Interpolating empty cells...")
+  dsm <- C_grid_canopy(las, raster::as.matrix(bbox), res, subcircle)
+  dsm <- t(dsm)
 
-    ex = extent(x)
-    grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
+  if (!all(dim(layout)[1:2] == dim(dsm)))
+    stop("Internal error: matrix returned at the C++ level don't match with the layout. Please report this bug.", call. = FALSE)
 
-    hull = convex_hull(x@data$X, x@data$Y)
+  suppressWarnings(layout[] <- dsm)
+  return(layout)
 
-    # buffer around convex hull
-    sphull = sp::Polygon(hull)
-    sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-    hull = rgeos::gBuffer(sphull, width = res)
-    hull = hull@polygons[[1]]@Polygons[[1]]@coords
-
-    grid = grid[C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
-
-    data.table::setkeyv(grid, c("X", "Y"))
-    data.table::setkeyv(dsm, c("X", "Y"))
-    data.table::setattr(dsm, "class", class(grid))
-
-    dsm = dsm[grid]
-
-    z = interpolate(dsm[!is.na(Z)], dsm[is.na(Z)], method = na.fill, ...)
-
-    dsm[is.na(Z), Z := z]
-
-    as.lasmetrics(dsm, res)
-  }
-
-  return(dsm)
+  # if (na.fill != "none")
+  # {
+  #   verbose("Interpolating empty cells...")
+  #
+  #   hull = convex_hull(las@data$X, las@data$Y)
+  #
+  #   # buffer around convex hull
+  #   sphull = sp::Polygon(hull)
+  #   sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
+  #   bhull  = rgeos::gBuffer(sphull, width = res)
+  #
+  #   # mask
+  #   mask = raster::mask(layout, bhull)
+  #
+  #
+  #   z = interpolate(dsm[!is.na(Z)], dsm[is.na(Z)], method = na.fill, ...)
+  #
+  #   dsm[is.na(Z), Z := z]
+  #
+  #   as.lasmetrics(dsm, res)
+  # }
 }
 
 #' @export
-grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+grid_canopy.LAScluster = function(las, res = 2, subcircle = 0, ...)
 {
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
-  assertive::assert_is_a_number(subcircle)
-  assertive::assert_all_are_non_negative(subcircle)
-
-  buffer(x) <- res/2 + subcircle
-  canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
-  return(canopy)
+  x = readLAS(las, ...)
+  if (is.null(x)) return(NULL)
+  bbox = raster::extent(as.numeric(las@bbox))
+  metrics = grid_canopy(x, res, subcircle)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
 }
 
+#' @export
+grid_canopy.LAScatalog = function(las, res = 2, subcircle = 0, ...)
+{
+  # Buffer is not useful in grid_* function. Continuous output is guaranteed by the alignement
+  if (buffer(las) > 0)
+    message(glue::glue("Buffer is set to {buffer(x)} but it has been set to 0 internally. Buffer is not useful here."))
+
+  buffer(las) <- subcircle + 0.1*res
+
+  # If the clustering option do not match with the clustering size
+  t_size <- tiling_size(las)
+  new_t_size <- round_any(t_size, res)
+  if (new_t_size != t_size)
+  {
+    tiling_size(las) <- new_t_size
+    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
+  }
+
+
+  # If the alignement of the clusters do not match with the start point of the raster
+  alignment <- las@clustering_options$alignment
+  new_alignment <- round_any(alignment - start %% res, res/2)
+  if (any(new_alignment != alignment))
+  {
+    las@clustering_options$alignment <- new_alignment
+    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
+  }
+
+  progress   <- progress(las)
+  ncores     <- cores(las)
+  stopearly  <- stop_early(las)
+
+  clusters   <- catalog_makecluster(las, 1, new_alignment, progress)
+  output     <- cluster_apply(clusters, grid_canopy, ncores, progress, stopearly, func = substitute(func), res = res, start = start, ...)
+  names      <- names(output[[1]])
+  factor     <- output[[1]]@data@isfactor
+  output     <- do.call(raster::merge, output)
+  output@crs <- las@proj4string
+  names(output) <- names
+  if (is(output, "RasterBrick")) colnames(output@data@values) <- names
+  return(output)
+}

@@ -4,33 +4,42 @@
 \alias{grid_density}
 \title{Map the pulse or point density}
 \usage{
-grid_density(x, res = 4, filter = "")
+grid_density(las, res = 4, ...)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 square meters.}
 
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data directly but can use streaming filters instead.}
+\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+\code{LAScatalog} object)}
 }
 \value{
-Returns a \code{data.table} of class \code{lasmetrics} which enables easier
-plotting and RasterLayer casting.
+A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.
 }
 \description{
 Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
 density.
 }
-\section{Use with a \code{LAScatalog}}{
+\section{Working with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+}
 }
 
 \examples{

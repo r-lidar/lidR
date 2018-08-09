@@ -2,60 +2,59 @@
 % Please edit documentation in R/grid_hexametrics.r
 \name{grid_hexametrics}
 \alias{grid_hexametrics}
-\title{Compute metrics for hexagonal cells}
+\title{Area Based Approach in hexagonal cells.}
 \usage{
-grid_hexametrics(.las, func, res = 20, splitlines = FALSE, debug = FALSE)
+grid_hexametrics(las, func, res = 20)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{las}{An object of class \code{LAS}}
 
 \item{func}{the function to be applied to each hexagonal cell}
 
-\item{res}{numeric. The inscribed circle radius of a hexagon. Default = 20.}
-
-\item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
-flightline individually. It returns the same cells several times in overlaps.}
-
-\item{debug}{logical. If you encounter a non trivial error try \code{debug = TRUE}.}
+\item{res}{numeric. To be consistent with \link{grid_metrics} the square of \code{res} give the area
+of the hexagonal cells like in \code{grid_metrics}. The difference being the fact that for square pixels this
+is obvious. So \code{res = 20} give 400 square meters cells.}
 }
 \value{
-It returns a \code{data.table} containing the metrics for each hexagonal cell. The table
-has the class "lashexametrics" enabling easy plotting.
+An \link[hexbin:hexbin-class]{hexbin} object from package \code{hexbin} or a \code{list} of
+\code{hexbin} objects if several metrics are returned.
 }
 \description{
 Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
-from a hexagonal grid pattern. This function is identical to \link{grid_metrics} or
-\link{grid_metrics3d} or \link{tree_metrics} but with hexagonal cells instead of classical
-square pixels. Please refer to \link{grid_metrics} for more information.
+This function is identical to \link{grid_metrics} but with hexagonal cells instead of classical
+square pixels. After all we make circular plot inventories and we map models on pixel-based maps.
+\code{grid_hexametrics} provide the opportunity to test somthing else. Please refer to \link{grid_metrics}
+for more information.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-# Maximum elevation with a resolution of 4 m
-hm = grid_hexametrics(lidar, max(Z), 4)
-plot(hm)
+col = grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
+
+# Maximum elevation with a resolution of 8 m
+hm = grid_hexametrics(lidar, max(Z), 8)
+hexbin::plot(hm, colramp = col, main = "Max Z")
 
 # Mean height with a resolution of 20 m
-hm = grid_hexametrics(lidar, mean(Z))
-plot(hm)
+hm = grid_hexametrics(lidar, mean(Z), 20)
+hexbin::plot(hm, colramp = col, main = "Mean Z")
 
 # Define your own new metrics
 myMetrics = function(z, i)
 {
   metrics = list(
-     zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
-     zimean  = mean(z*i),       # Mean products of z by intensity
-     zsqmean = sqrt(mean(z^2))  # Quadratic mean
-   )
+    zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+    zimean  = mean(z*i),       # Mean products of z by intensity
+  zsqmean = sqrt(mean(z^2))  # Quadratic mean
+  )
 
-   return(metrics)
+  return(metrics)
 }
 
 metrics = grid_hexametrics(lidar, myMetrics(Z, Intensity), 10)
 
-plot(metrics, "zwimean")
-plot(metrics, "zimean")
-plot(metrics, "zsqmean")
-#etc.
+hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
+hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
+hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
 }

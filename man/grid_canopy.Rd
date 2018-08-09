@@ -4,11 +4,10 @@
 \alias{grid_canopy}
 \title{Canopy surface model}
 \usage{
-grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
-  filter = "")
+grid_canopy(las, res = 2, subcircle = 0, ...)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
 2 meters i.e. 4 square meters.}
@@ -16,10 +15,10 @@ grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
 \item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 can replace each return with a circle composed of 8 points (see details).}
 
+\item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
+
 \item{na.fill}{character. name of the algorithm used to interpolate the data and fill the empty pixels.
 Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
-
-\item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
 
 \item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
 If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
@@ -48,13 +47,14 @@ for virtual 'emulation' of the fact that a lidar point is not a point as such, b
 realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
 smoother and contains fewer 'pits' and empty pixels.
 }
-\section{Use with a \code{LAScatalog}}{
+\section{Working with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
 }
 
 \examples{
@@ -85,5 +85,4 @@ plot(chm)
 }
 \seealso{
 \link[lidR:grid_metrics]{grid_metrics}
-\link[lidR:as.raster.lasmetrics]{as.raster}
 }

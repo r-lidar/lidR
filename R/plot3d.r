@@ -38,9 +38,6 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
 {
   inargs <- list(...)
 
-  if(is(x, "lasmetrics"))
-    x = as.raster(x)
-
   if(!is(x, "RasterLayer"))
     stop("Object not supported")
 

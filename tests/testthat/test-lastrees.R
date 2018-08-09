@@ -4,7 +4,6 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
 las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
 
 chm = grid_tincanopy(las, res = 0.5)
-chm = as.raster(chm)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean)
 
@@ -15,7 +14,7 @@ test_that("Dalponte's methods works", {
 
   expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-  expect_equal(sort(unique(seg1[])), 1:39L)
+  expect_equal(sort(unique(seg1[])), 1:40L)
   expect_true(is.integer(las@data$treeID))
 
   # Test if a seed is not in the chm
@@ -25,10 +24,10 @@ test_that("Dalponte's methods works", {
 
   # Test if seed IDs are propagated
   ttops@coords <- old
-  ttops@data$treeID = 1:39*2L
+  ttops@data$treeID = 1:40*2L
 
   seg3 = lastrees_dalponte(las, chm, ttops, extra = T)
-  expect_equal(sort(unique(seg3[])), 1:39*2)
+  expect_equal(sort(unique(seg3[])), 1:40*2)
 })
 
 test_that("Li's method works", {

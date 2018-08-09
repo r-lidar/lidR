@@ -28,7 +28,7 @@ test_that("las classifies works with shapefiles", {
 
 
 test_that("las classifies works with raster", {
-  r = as.raster(grid_metrics(lidar, mean(Z)))
+  r = grid_metrics(lidar, mean(Z))
 
   lasclassify(lidar, r, "Zmean")
 

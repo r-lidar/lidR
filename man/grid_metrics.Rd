@@ -2,79 +2,78 @@
 % Please edit documentation in R/grid_metrics.r
 \name{grid_metrics}
 \alias{grid_metrics}
-\title{Rasterize the space and compute metrics for each cell}
+\title{Area Based Approach}
 \usage{
-grid_metrics(x, func, res = 20, start = c(0, 0), splitlines = FALSE,
-  filter = "")
+grid_metrics(las, func, res = 20, start = c(0, 0), ...)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{func}{the function to be applied to each cell (see section "Parameter func")}
 
 \item{res}{numeric. The size of the cells. Default 20.}
 
-\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").}
+\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+grid aligns on (0,0).}
 
-\item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
-flightline individually. It returns the same cells several times in overlap.}
-
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data directly but can use streaming filters instead.}
+\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+\code{LAScatalog} object)}
 }
 \value{
-Returns a \code{data.table} containing the metrics for each cell. The table
-has the class "lasmetrics" enabling easy plotting.
+A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset within
-each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
-and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-computes metrics within each cell in a predefined grid. The grid cell coordinates are
-pre-determined for a given resolution.
-}
-\details{
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-computes metrics within each cell in a predefined grid. The grid cell coordinates are
-pre-determined for a given resolution, so the algorithm will always provide the same coordinates
-independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
-following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
-grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec
-(Canada) the reference is (-831600, 117980) in the NAD83 coordinate system.
+each pixel of a raster (area-based approach). The grid cell coordinates are pre-determined for a
+given resolution, so the algorithm will always provide the same coordinates independently of the
+dataset. When start = (0,0) and res = 20 grid_metrics will produce the following cell centers:
+(10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
+res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
+the corner of a cell on (-10, -10).
 }
 \section{Parameter \code{func}}{
 
 The function to be applied to each cell is a classical function (see examples) that
-returns a labelled list of metrics. The following existing functions allow the user to
-compute some metrics:
+returns a labelled list of metrics. For exemple the following function \code{f} is correctly formed.
+\preformatted{
+f = function(x) {list(mean = mean(x), max = max(x))}
+}
+And could be applied either on the \code{Z} coordinates or the Intensities for exemples. These two
+statements are valid:
+\preformatted{
+grid_metrics(las, f(Z), res = 20)
+grid_metrics(las, f(Intensity), res = 20)
+}
+The following existing functions allow the user to
+compute some predefined metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics}}
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-} Users must write their own functions to create metrics. \code{grid_metrics} will
-dispatch the LiDAR data for each cell in the user's function. The user writes their
-function without considering grid cells, only a point cloud (see example).
+}
+But usually the users must write their own functions to create metrics. \code{grid_metrics} will
+dispatch the point cloud in the user's function.
 }
 
-\section{Parameter \code{start}}{
+\section{Working with a \code{LAScatalog}}{
 
-The algorithm will always provide the same coordinates independently of the dataset.
-When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-(10,10), (10,30), (30,10) etc..  When start = (-10, -10) and res = 20 grid_metrics will
-produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
-reference is (-831600,  117980) in the NAD83 coordinate system.
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
 }
 
-\section{Use with a \code{LAScatalog}}{
+\section{Supported processing options for a LAScatalog}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+}
 }
 
 \examples{
@@ -107,5 +106,4 @@ plot(metrics)
 plot(metrics, "zwimean")
 plot(metrics, "zimean")
 plot(metrics, "zsqmean")
-#etc.
 }

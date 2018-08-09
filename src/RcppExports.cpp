@@ -7,15 +7,16 @@
 using namespace Rcpp;
 
 // C_grid_canopy
-List C_grid_canopy(S4 las, double res, double subcircle);
-RcppExport SEXP _lidR_C_grid_canopy(SEXP lasSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
+NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subcircle);
+RcppExport SEXP _lidR_C_grid_canopy(SEXP lasSEXP, SEXP bboxSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type bbox(bboxSEXP);
     Rcpp::traits::input_parameter< double >::type res(resSEXP);
     Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_grid_canopy(las, res, subcircle));
+    rcpp_result_gen = Rcpp::wrap(C_grid_canopy(las, bbox, res, subcircle));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -386,7 +387,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 3},
+    {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 4},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},

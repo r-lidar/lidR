@@ -33,14 +33,9 @@
 #' developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 #' triangulations at different heights (see reference).
 #'
-#' @section Use with a \code{LAScatalog}:
-#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
-#' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-#' spatial index.
+#' @template LAScatalog
 #'
-#' @param x A LAS object
+#' @template param-las
 #' @param res numeric. Resolution of the canopy height model.
 #' @param thresholds numeric. Set of height thresholds. If \code{thresholds = 0} the algorithm
 #' is a strict rasterization of the triangulation of the first returns. However, if an array is
@@ -54,11 +49,9 @@
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
 #' can replace each return with a circle consisting of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
-#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-#' user cannot manipulate the lidar data directly but can use streaming filters instead.
-#' @return Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
-#' plotting and RasterLayer casting.
+#'
+#' @template return-grid-Layer
+#'
 #' @export
 #' @examples
 #' LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -75,13 +68,13 @@
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
 #' Remote Sensing, 80(9), 863-872.
-grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+grid_tincanopy = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
-  UseMethod("grid_tincanopy", x)
+  UseMethod("grid_tincanopy", las)
 }
 
 #' @export
-grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+grid_tincanopy.LAS = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   assertive::assert_is_numeric(thresholds)
   assertive::assert_all_are_non_negative(thresholds)
@@ -95,10 +88,10 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   if (length(thresholds) > 1 & length(max_edge) < 2)
     stop("'max_edge' should contain 2 numbers", call. = FALSE)
 
-  if (!"ReturnNumber" %in% names(x@data))
+  if (!"ReturnNumber" %in% names(las@data))
      stop("No column 'ReturnNumber' found. This field is needed to extract first returns", call. = FALSE)
 
-  if (fast_countequal(x@data$ReturnNumber, 1) == 0)
+  if (fast_countequal(las@data$ReturnNumber, 1) == 0)
     stop("No first returns found. Aborted.", call. = FALSE)
 
   if (length(thresholds) == 1 & thresholds[1] == 0)
@@ -109,30 +102,35 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   # Create the coordinates of interpolation (pixel coordinates)
   verbose("Generating interpolation coordinates...")
 
-  ex = raster::extent(x)
-  grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
+  layout = make_overlay_raster(las, res, subcircle = subcircle)
 
   # Initialize the interpolated values with NAs
-  z = rep(NA, (dim(grid)[1]))
+  z = rep(NA_real_, raster::ncell(layout))
 
   # Get only first returns and coordinates (nothing else needed)
   verbose("Selecting first returns...")
-  cloud = x@data[ReturnNumber == 1, .(X,Y,Z)]
+
+  cloud = las@data
+  if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data))
+    cloud = las@data[ReturnNumber == 1, .(X,Y,Z)]
 
   # subcircle the data
   if (subcircle > 0)
   {
     verbose("Subcircling points...")
 
-    ex = extent(x)
+    ex = extent(las)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }
 
   verbose("Selecting only the highest points within the grid cells...")
 
-  by = group_grid(cloud$X, cloud$Y, res)
-  cloud = cloud[cloud[, .I[which.max(Z)], by = by]$V1]
+  cells = raster::cellFromXY(layout, cloud[, .(X,Y)])
+  grid  = raster::xyFromCell(layout, 1:raster::ncell(layout))
+  grid = data.table::as.data.table(grid)
+  data.table::setnames(grid, c("x", "y"), c("X", "Y"))
+  cloud = cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
   # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
   i = 1
@@ -156,19 +154,59 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
   }
 
   if(all(is.na(z)))
-    stop("Interpolation failed. Input parameters might be wrong.")
+    stop("Interpolation failed. Input parameters might be wrong.", call. = FALSE)
 
-  grid[, Z := z][]
-  grid = grid[!is.na(Z)]
-  as.lasmetrics(grid,res)
-
-  return(grid)
+  layout[] = z
+  names(layout) =  "Z"
+  return(layout)
 }
 
 #' @export
-grid_tincanopy.LAScatalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
+grid_tincanopy.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
-  buffer(x) <- buffer(x) + subcircle
-  canopy = grid_catalog(x, grid_tincanopy, res, "xyzr", filter, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
-  return(canopy)
+  x = readLAS(las, filter = "-keep_first", select = "xyzr")
+  if (is.null(x)) return(NULL)
+  bbox = raster::extent(as.numeric(las@bbox))
+  metrics = grid_tincanopy(x, res, thresholds, max_edge, subcircle)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
+}
+
+#' @export
+grid_tincanopy.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
+{
+  if (buffer(las) <= subcircle)
+    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  # If the clustering option do not match with the clustering size
+  t_size <- tiling_size(las)
+  new_t_size <- round_any(t_size, res)
+  if (new_t_size != t_size)
+  {
+    tiling_size(las) <- new_t_size
+    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
+  }
+
+
+  # If the alignement of the clusters do not match with the start point of the raster
+  alignment <- las@clustering_options$alignment
+  new_alignment <- round_any(alignment, res/2)
+  if (any(new_alignment != alignment))
+  {
+    las@clustering_options$alignment <- new_alignment
+    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
+  }
+
+  progress   <- progress(las)
+  ncores     <- cores(las)
+  stopearly  <- stop_early(las)
+
+  clusters   <- catalog_makecluster(las, 1, new_alignment, progress)
+  output     <- cluster_apply(clusters, grid_tincanopy, ncores, progress, stopearly, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
+  names      <- names(output[[1]])
+  factor     <- output[[1]]@data@isfactor
+  output     <- do.call(raster::merge, output)
+  output@crs <- las@proj4string
+  names(output) <- names
+  return(output)
 }

@@ -20,8 +20,9 @@ test_that("stdmetric_i return the same result than .stdmetric_i", {
 test_that("stdmetric_i return the same result than stdmetric", {
   y = grid_metrics(las, .stdmetrics_i, 20)
   cols = names(y)
-  x = xall[, (cols), with = F]
-  as.lasmetrics(x, 20)
+  x = raster::subset(xall,cols)
+
+  x@data@isfactor <- y@data@isfactor <- FALSE
 
   expect_identical(x,y)
 })
@@ -29,8 +30,9 @@ test_that("stdmetric_i return the same result than stdmetric", {
 test_that("stdmetric_z return the same result than stdmetric", {
   y = grid_metrics(las, .stdmetrics_z, 20)
   cols = names(y)
-  x = xall[, (cols), with = F]
-  as.lasmetrics(x, 20)
+  x = raster::subset(xall,cols)
+
+  x@data@isfactor <- y@data@isfactor <- FALSE
 
   expect_identical(x,y)
 })
@@ -38,8 +40,9 @@ test_that("stdmetric_z return the same result than stdmetric", {
 test_that("stdmetric_rn return the same result than stdmetric", {
   y = grid_metrics(las, .stdmetrics_rn, 20)
   cols = names(y)
-  x = xall[, (cols), with = F]
-  as.lasmetrics(x, 20)
+  x = raster::subset(xall,cols)
+
+  x@data@isfactor <- y@data@isfactor <- FALSE
 
   expect_identical(x,y)
 })

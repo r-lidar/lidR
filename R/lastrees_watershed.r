@@ -35,7 +35,6 @@
 #' col = pastel.colors(250)
 #'
 #' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
-#' chm = as.raster(chm)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'

@@ -27,61 +27,52 @@
 
 
 
-#' Rasterize the space and compute metrics for each cell
+#' Area Based Approach
 #'
 #' Computes a series of user-defined descriptive statistics for a LiDAR dataset within
-#' each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
-#' and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
-#' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-#' computes metrics within each cell in a predefined grid. The grid cell coordinates are
-#' pre-determined for a given resolution.
-#'
-#' \code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-#' computes metrics within each cell in a predefined grid. The grid cell coordinates are
-#' pre-determined for a given resolution, so the algorithm will always provide the same coordinates
-#' independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
-#' following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
-#' grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec
-#' (Canada) the reference is (-831600, 117980) in the NAD83 coordinate system.
+#' each pixel of a raster (area-based approach). The grid cell coordinates are pre-determined for a
+#' given resolution, so the algorithm will always provide the same coordinates independently of the
+#' dataset. When start = (0,0) and res = 20 grid_metrics will produce the following cell centers:
+#' (10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
+#' res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
+#' the corner of a cell on (-10, -10).
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
-#' returns a labelled list of metrics. The following existing functions allow the user to
-#' compute some metrics:
+#' returns a labelled list of metrics. For exemple the following function \code{f} is correctly formed.
+#' \preformatted{
+#' f = function(x) {list(mean = mean(x), max = max(x))}
+#' }
+#' And could be applied either on the \code{Z} coordinates or the Intensities for exemples. These two
+#' statements are valid:
+#' \preformatted{
+#' grid_metrics(las, f(Z), res = 20)
+#' grid_metrics(las, f(Intensity), res = 20)
+#' }
+#' The following existing functions allow the user to
+#' compute some predefined metrics:
 #' \itemize{
 #' \item{\link[lidR:stdmetrics]{stdmetrics}}
 #' \item{\link[lidR:entropy]{entropy}}
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
-#' } Users must write their own functions to create metrics. \code{grid_metrics} will
-#' dispatch the LiDAR data for each cell in the user's function. The user writes their
-#' function without considering grid cells, only a point cloud (see example).
+#' }
+#' But usually the users must write their own functions to create metrics. \code{grid_metrics} will
+#' dispatch the point cloud in the user's function.
 #'
-#' @section Parameter \code{start}:
-#' The algorithm will always provide the same coordinates independently of the dataset.
-#' When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-#' (10,10), (10,30), (30,10) etc..  When start = (-10, -10) and res = 20 grid_metrics will
-#' produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
-#' reference is (-831600,  117980) in the NAD83 coordinate system.
+#' @template LAScatalog
 #'
-#' @section Use with a \code{LAScatalog}:
-#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
-#' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-#' spatial index.
+#' @template section-supported-option-grid_functions
 #'
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
+#' @template param-las
 #' @param func the function to be applied to each cell (see section "Parameter func")
 #' @param res numeric. The size of the cells. Default 20.
-#' @param start vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").
-#' @param splitlines logical. If TRUE the algorithm will compute the metrics for each
-#' flightline individually. It returns the same cells several times in overlap.
-#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-#' user cannot manipulate the lidar data directly but can use streaming filters instead.
-#' @return Returns a \code{data.table} containing the metrics for each cell. The table
-#' has the class "lasmetrics" enabling easy plotting.
+#' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+#' grid aligns on (0,0).
+#' @template param-ellipsis-select-filter
+#'
+#' @template return-grid-LayerBrick
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -112,32 +103,93 @@
 #' plot(metrics, "zwimean")
 #' plot(metrics, "zimean")
 #' plot(metrics, "zsqmean")
-#' #etc.
 #' @export
-grid_metrics = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
-{
-  UseMethod("grid_metrics", x)
-}
-
-#' @export
-grid_metrics.LAS = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
+grid_metrics = function(las, func, res = 20, start = c(0,0), ...)
 {
   assertive::assert_is_a_number(res)
   assertive::assert_all_are_non_negative(res)
   assertive::assert_is_numeric(start)
-  assertive::assert_is_logical(splitlines)
 
-  call <- substitute(func)
-  stat <- lasaggregate(x, by = "XY", call, res, start, c("X", "Y"), splitlines)
-  return(stat)
+  UseMethod("grid_metrics", las)
 }
 
 #' @export
-grid_metrics.LAScatalog = function(x, func, res = 20, start = c(0,0), splitlines = FALSE, filter = "")
+grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), ...)
 {
-  if (splitlines) warning("Parameter splitlines is currently disabled for LAScatalogs")
-  buffer(x) <- 0
-  call <- substitute(func)
-  stat <- grid_catalog(x, grid_metrics, res, "*+", filter, start, func = call)
-  return(stat)
+  call = substitute(func)
+  if (call == "func") call = func
+  if (is.name(call)) call = parse(text = eval(call))
+
+  layout    <- make_overlay_raster(las, res, start)
+  cells     <- raster::cellFromXY(layout, las@data[, .(X,Y)])
+  metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
+
+  if (ncol(metrics) == 2L)
+  {
+    suppressWarnings(layout[metrics[[1]]] <- metrics[[2]])
+    names(layout) <- names(metrics)[2]
+    return(layout)
+  }
+  else
+  {
+    xy_coords <- raster::xyFromCell(layout, metrics[[1]])
+    metrics[, cells := NULL]
+    output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@crs)
+    return(raster::brick(output))
+  }
 }
+
+#' @export
+grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
+{
+  x = readLAS(las, ...)
+  if (is.null(x)) return(NULL)
+  bbox = raster::extent(as.numeric(las@bbox))
+  metrics = grid_metrics(x, func, res, start)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
+}
+
+#' @export
+grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
+{
+  # Buffer is not useful in grid_* function. Continuous output is guaranteed by the alignement
+  if (buffer(las) > 0)
+    message(glue::glue("Buffer is set to {buffer(x)} but it has been set to 0 internally. Buffer is not useful here."))
+
+  buffer(las) <- 0.1*res
+
+  # If the clustering option do not match with the clustering size
+  t_size <- tiling_size(las)
+  new_t_size <- round_any(t_size, res)
+  if (new_t_size != t_size)
+  {
+    tiling_size(las) <- new_t_size
+    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
+  }
+
+
+  # If the alignement of the clusters do not match with the start point of the raster
+  alignment <- las@clustering_options$alignment
+  new_alignment <- round_any(alignment - start %% res, res/2)
+  if (any(new_alignment != alignment))
+  {
+    las@clustering_options$alignment <- new_alignment
+    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
+  }
+
+  progress   <- progress(las)
+  ncores     <- cores(las)
+  stopearly  <- stop_early(las)
+
+  clusters   <- catalog_makecluster(las, 1, new_alignment, progress)
+  output     <- cluster_apply(clusters, grid_metrics, ncores, progress, stopearly, func = substitute(func), res = res, start = start, ...)
+  names      <- names(output[[1]])
+  factor     <- output[[1]]@data@isfactor
+  output     <- do.call(raster::merge, output)
+  output@crs <- las@proj4string
+  names(output) <- names
+  if (is(output, "RasterBrick")) colnames(output@data@values) <- names
+  return(output)
+}
+
