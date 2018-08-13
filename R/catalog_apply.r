@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -185,4 +185,64 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   las = readLAS(cluster, ...)
   if (is.null(las)) return(NULL)
   return(do.call(func, c(las, func_args)))
+}
+
+catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = TRUE)
+{
+  assertive::assert_is_function(FUN)
+  assertive::assert_is_a_string(select)
+  assertive::assert_is_a_string(filter)
+  assertive::assert_is_a_bool(need_buffer)
+  assertive::assert_is_a_bool(check_alignement)
+  assertive::assert_is_a_bool(drop_null)
+
+  p = list(...)
+  res   <- if (is.null(p$res)) 0 else p$res
+  start <- if (is.null(p$start)) c(0,0) else p$start
+
+  if (need_buffer)
+  {
+    if (buffer(ctg) <= 0)
+      stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+  }
+  else
+  {
+    if (buffer(ctg) > 0)
+      message(glue::glue("Buffer is set to {buffer(x)} but it has been set to 0 internally. Buffer is not useful here."))
+
+    buffer(ctg) <- 0.1*res
+  }
+
+  if (check_alignement)
+  {
+    # If the clustering option do not match with the resolution
+    t_size     <- tiling_size(ctg)
+    new_t_size <- round_any(t_size, res)
+    if (new_t_size != t_size)
+    {
+      tiling_size(ctg) <- new_t_size
+      message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
+    }
+
+    # If the alignement of the clusters do not match with the start point of the raster
+    alignment     <- ctg@clustering_options$alignment
+    new_alignment <- (alignment - start) %% res + alignment
+    if (any(new_alignment != alignment))
+    {
+      ctg@clustering_options$alignment <- new_alignment
+      message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
+    }
+  }
+
+  progress   <- progress(ctg)
+  ncores     <- cores(ctg)
+  stopearly  <- stop_early(ctg)
+  clusters   <- catalog_makecluster(ctg, 1, ctg@clustering_options$alignment, progress)
+
+  if (propagate_read_option)
+    output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ..., select = select, filter = filter)
+  else
+    output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ...)
+
+  return(output)
 }

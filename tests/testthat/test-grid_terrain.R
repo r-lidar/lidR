@@ -79,24 +79,29 @@ test_that("grid_terrain returns a circular dtm ", {
   expect_true(!anyNA(z))
 })
 
-
 file <- system.file("extdata", "Topography.laz", package="lidR")
 ctg = catalog(file)
 las = readLAS(file)
 cores(ctg) <- 1
 tiling_size(ctg) <- 180
 buffer(ctg) <- 30
+ctg@clustering_options$alignment = c(332400, 5238400)
 progress(ctg) <- FALSE
 
 test_that("grid_terrain return the same both with LAScatalog and LAS", {
   dtm1 = grid_terrain(las, 1, method = "delaunay")
   dtm2 = grid_terrain(ctg, 1, method = "delaunay")
 
-  error = abs(dtm1 - dtm2)
+  bbox = raster::extent(dtm1)-2*3
+
+  cdtm1 = raster::crop(dtm1, bbox)
+  cdtm2 = raster::crop(dtm2, bbox)
+
+  error = abs(cdtm1 - cdtm2)
   error = error[error > 0.01]
 
-  expect_lt(length(error), raster::ncell(dtm1)*0.005)
-  expect_lt(mean(error), 0.1)
+  expect_lt(length(error), raster::ncell(cdtm1)*0.002)
+  expect_lt(mean(error), 0.05)
 
   z = raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))

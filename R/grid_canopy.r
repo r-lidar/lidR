@@ -157,41 +157,11 @@ grid_canopy.LAScluster = function(las, res = 2, subcircle = 0, ...)
 #' @export
 grid_canopy.LAScatalog = function(las, res = 2, subcircle = 0, ...)
 {
-  # Buffer is not useful in grid_* function. Continuous output is guaranteed by the alignement
-  if (buffer(las) > 0)
-    message(glue::glue("Buffer is set to {buffer(x)} but it has been set to 0 internally. Buffer is not useful here."))
-
-  buffer(las) <- subcircle + 0.1*res
-
-  # If the clustering option do not match with the clustering size
-  t_size <- tiling_size(las)
-  new_t_size <- round_any(t_size, res)
-  if (new_t_size != t_size)
-  {
-    tiling_size(las) <- new_t_size
-    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
-  }
-
-
-  # If the alignement of the clusters do not match with the start point of the raster
-  alignment <- las@clustering_options$alignment
-  new_alignment <- round_any(alignment - start %% res, res/2)
-  if (any(new_alignment != alignment))
-  {
-    las@clustering_options$alignment <- new_alignment
-    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
-  }
-
-  progress   <- progress(las)
-  ncores     <- cores(las)
-  stopearly  <- stop_early(las)
-
-  clusters   <- catalog_makecluster(las, 1, new_alignment, progress)
-  output     <- cluster_apply(clusters, grid_canopy, ncores, progress, stopearly, func = substitute(func), res = res, start = start, ...)
-  names      <- names(output[[1]])
-  factor     <- output[[1]]@data@isfactor
-  output     <- do.call(raster::merge, output)
-  output@crs <- las@proj4string
+  output        <- catalog_apply2(las, grid_canopy, res = res, subcircle = subcircle, ..., need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  names         <- names(output[[1]])
+  factor        <- output[[1]]@data@isfactor
+  output        <- do.call(raster::merge, output)
+  output@crs    <- las@proj4string
   names(output) <- names
   if (is(output, "RasterBrick")) colnames(output@data@values) <- names
   return(output)

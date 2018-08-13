@@ -136,8 +136,6 @@ grid_terrain_generic = function(las, res = 1, method, k = 10L, p = 2, model = gs
 
 grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
-
-
   . <- X <- Y <- Z <- Classification <- NULL
   resolution = res
 
@@ -217,43 +215,18 @@ grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, 
   x = readLAS(las, select = "xyzc")
   if (is.null(x)) return(NULL)
   bbox <- raster::extent(as.numeric(las@bbox))
-  dtm  <-  grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
+  dtm  <- grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
-grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE, ...)
 {
-  if (buffer(las) <= 0)
-    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
-  # If the clustering option do not match with the clustering size
-  t_size     <- tiling_size(las)
-  new_t_size <- round_any(t_size, res)
-  if (new_t_size != t_size)
-  {
-    tiling_size(las) <- new_t_size
-    message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size}."))
-  }
-
-  # If the alignement of the clusters do not match with the start point of the raster
-  alignment     <- las@clustering_options$alignment
-  new_alignment <- round_any(alignment, res/2)
-  if (any(new_alignment != alignment))
-  {
-    las@clustering_options$alignment <- new_alignment
-    message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]})."))
-  }
-
-  progress   <- progress(las)
-  ncores     <- cores(las)
-  stopearly  <- stop_early(las)
-  clusters   <- catalog_makecluster(las, 1, plot = progress)
-  output     <- cluster_apply(clusters, grid_terrain_generic, ncores, progress = progress, stopearly, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest)
-  names      <- names(output[[1]])
-  factor     <- output[[1]]@data@isfactor
-  output     <- do.call(raster::merge, output)
-  output@crs <- las@proj4string
+  output        <- catalog_apply2(las, grid_terrain_generic, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE)
+  names         <- names(output[[1]])
+  factor        <- output[[1]]@data@isfactor
+  output        <- do.call(raster::merge, output)
+  output@crs    <- las@proj4string
   names(output) <- names
   return(output)
 }

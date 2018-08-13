@@ -78,6 +78,7 @@ ctg = catalog(file)
 las = readLAS(file)
 cores(ctg) <- 1
 tiling_size(ctg) <- 160
+ctg@clustering_options$alignment = c(684750, 5017760)
 buffer(ctg) <- 0
 progress(ctg) <- FALSE
 

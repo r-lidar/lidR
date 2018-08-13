@@ -8,7 +8,7 @@ tiling_size(ctg) <- 160
 buffer(ctg) <- 5
 progress(ctg) <- FALSE
 
-test_that("grid_tincanopy ", {
+test_that("grid_tincanopy regular works both with LAS and LAScatalog", {
   x = grid_tincanopy(las, res = 1, thresholds = 0, max_edge = 0)
   y = grid_tincanopy(ctg, res = 1, thresholds = 0, max_edge = 0)
 
@@ -21,7 +21,7 @@ test_that("grid_tincanopy ", {
   expect_equal(x, y, tolerance = 0.0002)
 })
 
-test_that("grid_metrics returns a RasterLayer", {
+test_that("grid_metrics pit-free works both with LAS and LAScatalog", {
   x = grid_tincanopy(las, res = 1, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
   y = grid_tincanopy(ctg, res = 1, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
 
