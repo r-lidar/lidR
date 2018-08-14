@@ -197,29 +197,21 @@ tree_detection_lmf.data.frame = function(x, ws, hmin = 2, shape = c("circular", 
 #' @export
 tree_detection_lmf.LAScluster = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  las = readLAS(x, select = "xyz", ...)
+  las <- readLAS(x, ...)
   if (is.null(las)) return(NULL)
-  ttops = tree_detection_lmf(las, ws, hmin, shape)
-  bbox = raster::extent(x@bbox$xmin, x@bbox$xmax, x@bbox$ymin, x@bbox$ymax)
-  ttops = raster::crop(ttops, bbox)
+  ttops <- tree_detection_lmf(las, ws, hmin, shape)
+  bbox  <- raster::extent(x@bbox$xmin, x@bbox$xmax, x@bbox$ymin, x@bbox$ymax)
+  ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
 
 #' @export
 tree_detection_lmf.LAScatalog = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  progress  <- progress(x)
-  ncores    <- cores(x)
-  stopearly <- stop_early(x)
-
-  if (buffer(x) <= 0)
-    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
-  clusters = catalog_makecluster(x, 1)
-  output = cluster_apply(clusters, tree_detection_lmf, ncores, progress, stopearly, ws = ws, hmin = hmin, shape = shape, ...)
-  output = do.call(rbind, output)
-  output@proj4string = x@proj4string
-  output@data$treeID = 1:length(output@data$treeID)
+  output <- catalog_apply2(x, tree_detection_lmf, ws = ws, hmin = hmin, shape = shape, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  output <- do.call(rbind, output)
+  output@proj4string <- x@proj4string
+  output@data$treeID <- 1:length(output@data$treeID)
   return(output)
 }
 
@@ -254,29 +246,21 @@ tree_detection_ptrees.LAS = function(las, k, hmin = 3, nmax = 7L, ...)
 #' @export
 tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
 {
-  x = readLAS(las, select = "xyz", ...)
+  x <- readLAS(las, ...)
   if (is.null(x)) return(NULL)
-  ttops = tree_detection_ptrees(x, k, hmin, nmax)
-  bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
-  ttops = raster::crop(ttops, bbox)
+  ttops <- tree_detection_ptrees(x, k, hmin, nmax)
+  bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
 
 #' @export
 tree_detection_ptrees.LAScatalog = function(las, k, hmin = 3, nmax = 7L, ...)
 {
-  progress  <- progress(las)
-  ncores    <- cores(las)
-  stopearly <- stop_early(las)
-
-  if (buffer(las) <= 0)
-    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
-  clusters = catalog_makecluster(las, 1)
-  output = cluster_apply(clusters, tree_detection_ptrees, ncores, progress, stopearly, k = k, hmin = hmin, nmax = nmax, ...)
-  output = do.call(rbind, output)
-  output@proj4string = las@proj4string
-  output@data$treeID = 1:length(output@data$treeID)
+  output <- catalog_apply2(las, tree_detection_ptrees, k = k, hmin = hmin, nmax = nmax, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  output <- do.call(rbind, output)
+  output@proj4string <- las@proj4string
+  output@data$treeID <- 1:length(output@data$treeID)
   return(output)
 }
 
@@ -495,29 +479,21 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
 #' @export
 tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
-  x = readLAS(las, select = "xyz", ...)
+  x <- readLAS(las, ...)
   if (is.null(x)) return(NULL)
-  ttops = tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
-  bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
-  ttops = raster::crop(ttops, bbox)
+  ttops <- tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
+  bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
 
 #' @export
 tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
-  progress  <- progress(las)
-  ncores    <- cores(las)
-  stopearly <- stop_early(las)
-
-  if (buffer(las) <= 0)
-    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
-  clusters = catalog_makecluster(las, 1)
-  output = cluster_apply(clusters, tree_detection_multichm, ncores, progress, stopearly, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, ...)
-  output = do.call(rbind, output)
-  output@proj4string = las@proj4string
-  output@data$treeID = 1:length(output@data$treeID)
+  output <- catalog_apply2(las, tree_detection_multichm, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  output <- do.call(rbind, output)
+  output@proj4string <- las@proj4string
+  output@data$treeID <- 1:length(output@data$treeID)
   return(output)
 }
 

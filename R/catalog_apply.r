@@ -205,13 +205,6 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
     if (buffer(ctg) <= 0)
       stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
   }
-  else
-  {
-    if (buffer(ctg) > 0)
-      message(glue::glue("Buffer is set to {buffer(x)} but it has been set to 0 internally. Buffer is not useful here."))
-
-    buffer(ctg) <- 0.1*res
-  }
 
   if (check_alignement)
   {

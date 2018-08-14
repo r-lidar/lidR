@@ -153,6 +153,7 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
 {
+  buffer(las)   <- 0.1*res
   output        <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, ..., need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
   names         <- names(output[[1]])
   factor        <- output[[1]]@data@isfactor

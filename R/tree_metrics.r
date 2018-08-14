@@ -123,15 +123,7 @@ tree_metrics.LAScluster = function(las, func, field = "treeID", ...)
 #' @export
 tree_metrics.LAScatalog = function(las, func, field = "treeID", ...)
 {
-  progress  <- progress(las)
-  ncores    <- cores(las)
-  stopearly <- stop_early(las)
-
-  if (buffer(las) <= 0)
-    stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
-  clusters = catalog_makecluster(las, 1, plot = progress)
-  output = cluster_apply(clusters, tree_metrics, ncores, progress, stopearly, func = substitute(func), field = field, ...)
+  output = catalog_apply2(las, tree_metrics, func = substitute(func), field = field, ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
   output = do.call(rbind, output)
   output@proj4string = las@proj4string
   return(output)

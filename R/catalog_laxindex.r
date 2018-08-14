@@ -5,19 +5,12 @@ catalog_laxindex = function(ctg)
   by_file(ctg) <- TRUE
   buffer(ctg)  <- 0
 
-  clusters  <- catalog_makecluster(ctg, 1)
+  create_lax_file = function(cluster)
+  {
+    rlas::writelax(cluster@files)
+    return(0)
+  }
 
-  ncores    <- cores(ctg)
-  progress  <- progress(ctg)
-  stopearly <- stop_early(ctg)
-
-  cluster_apply(clusters, create_lax_file, ncores, progress, stopearly)
-
+  catalog_apply2(ctg, create_lax_file, need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = FALSE)
   return(invisible())
-}
-
-create_lax_file = function(cluster)
-{
-  rlas::writelax(cluster@files)
-  return(0)
 }
