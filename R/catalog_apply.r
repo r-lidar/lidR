@@ -176,7 +176,7 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   ncores    <- cores(ctg)
   stopearly <- stop_early(ctg)
   clusters  <- catalog_makecluster(ctg)
-  output    <- cluster_apply(clusters, cluster_apply_func, ncores, progress, stopearly, func = func, ctg = ctg, func_args = func_args, ...)
+  output    <- cluster_apply(clusters, cluster_apply_func, ctg@processing_options, ctg@output_options, func = func, ctg = ctg, func_args = func_args, ...)
   return(output)
 }
 
@@ -227,15 +227,12 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
     }
   }
 
-  progress   <- progress(ctg)
-  ncores     <- cores(ctg)
-  stopearly  <- stop_early(ctg)
   clusters   <- catalog_makecluster(ctg)
 
   if (propagate_read_option)
-    output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ..., select = select, filter = filter)
+    output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ..., select = select, filter = filter)
   else
-    output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ...)
+    output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
 
   return(output)
 }

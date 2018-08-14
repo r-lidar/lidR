@@ -1,16 +1,12 @@
-cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = TRUE, ...)
+cluster_apply = function(clusters, f, processing_options, output_options, drop_null = TRUE, ...)
 {
   stopifnot(is.list(clusters))
   assertive::assert_is_function(f)
-  assertive::assert_is_a_number(ncores)
-  assertive::assert_all_are_whole_numbers(ncores)
-  assertive::assert_is_a_bool(progress)
-  assertive::assert_is_a_bool(stop_early)
   assertive::assert_is_a_bool(drop_null)
 
   nclust <- length(clusters)
   output <- vector("list", nclust)
-  ncores <- if (nclust <= ncores) nclust else ncores
+  ncores <- if (nclust <= processing_options$core) nclust else processing_options$core
   codes  <- rep(ASYNC_RUN, nclust)
 
   future::plan(future::multiprocess, workers = ncores)
@@ -42,7 +38,7 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
   }
 
   # Display the color legend over the LAScatalog that should have already been plotted.
-  if (progress)
+  if (processing_options$progress)
     graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
 
   # Parallel loop using promises
@@ -62,9 +58,9 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
     for (j in 1:i)
     {
       if (codes[j] != ASYNC_RUN) next
-      codes[j] = early_eval(output[[j]], stop_early)
+      codes[j] = early_eval(output[[j]], processing_options$stop_early)
       if (codes[j] == ASYNC_RUN) next
-      if (progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
+      if (processing_options$progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
     }
   }
 
@@ -77,14 +73,14 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
     {
       codes[j] = early_eval(output[[j]], stop_early)
       if (codes[j] == ASYNC_RUN) next
-      if (progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
+      if (processing_options$progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
     }
 
     not_finished = which(codes == ASYNC_RUN)
     Sys.sleep(0.1)
   }
 
-  if (progress) cat("\n")
+  if (processing_options$progress) cat("\n")
   if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
 
   if (drop_null)

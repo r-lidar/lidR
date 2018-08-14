@@ -415,7 +415,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
     }
   }
 
-  output <- cluster_apply(clusters, extract_query, ncores, progress, stopearly, drop_null = FALSE, ...)
+  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE, ...)
 
   if(length(output) == 0)
     return(list(NULL))

@@ -142,7 +142,7 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = 
     return(0)
   }
 
-  cluster_apply(clusters, reshape_func, ncores, progress, stopearly, path = path, prefix = prefix, ext = format, ...)
+  cluster_apply(clusters, reshape_func, ctg@processing_options, ctg@output_options, path = path, prefix = prefix, ext = format, ...)
 
   return(catalog(path))
 }

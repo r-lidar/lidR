@@ -126,7 +126,7 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
       return(readLAS(cluster, ...))
   }
 
-  output   <- cluster_apply(clusters, extract_function, ncores, progress, stopearly, drop_null = FALSE, ...)
+  output   <- cluster_apply(clusters, extract_function, ctg@processing_options, ctg@output_options, drop_null = FALSE, ...)
   names(output) <- roinames
 
   # Transfer CRS
