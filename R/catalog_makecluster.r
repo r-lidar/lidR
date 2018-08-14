@@ -25,11 +25,12 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, start = c(0,0), plot = TRUE)
+catalog_makecluster = function(ctg)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
   buffer  <- buffer(ctg)
   by_file <- by_file(ctg)
+  start   <- ctg@clustering_options$alignment
   width   <- tiling_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
@@ -105,19 +106,26 @@ catalog_makecluster = function(ctg, start = c(0,0), plot = TRUE)
   # Record the path to write the raster if requested
   # ------------------------------------------------
 
-  if (save_vrt(ctg))
+  if (output_files(ctg) != "")
   {
-    clusters <- lapply(clusters, function(x)
+    clusters <- lapply(clusters, function(cl)
     {
-      x@save <- paste0(vrt(ctg), "/tile-", x@bbox$xmin, "-", x@bbox$ymin, ".tiff")
-      return(x)
+      #X$ID      <- i
+      X$XCENTER <- clusters[[i]]@center$x
+      X$XCENTER <- clusters[[i]]@center$y
+      X$XLEFT   <- clusters[[i]]@bbox$xmin
+      X$XRIGHT  <- clusters[[i]]@bbox$xmax
+      X$YBOTTOM <- clusters[[i]]@bbox$ymin
+      X$YTOP    <- clusters[[i]]@bbox$ymax
+      cl@save   <- glue::glue_data(X, output_files(ctg))
+      return(cl)
     })
   }
 
   # Plot the catalog and the clusters
   # =================================
 
-  if(plot)
+  if(progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))

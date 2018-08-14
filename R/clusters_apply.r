@@ -1,6 +1,12 @@
 cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = TRUE, ...)
 {
-  stopifnot(is.list(clusters), is.function(f), is.integer(ncores), is.logical(progress), is.logical(stop_early))
+  stopifnot(is.list(clusters))
+  assertive::assert_is_function(f)
+  assertive::assert_is_a_number(ncores)
+  assertive::assert_all_are_whole_numbers(ncores)
+  assertive::assert_is_a_bool(progress)
+  assertive::assert_is_a_bool(stop_early)
+  assertive::assert_is_a_bool(drop_null)
 
   nclust <- length(clusters)
   output <- vector("list", nclust)
@@ -12,6 +18,7 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
   required.pkgs <- "lidR"
 
   # User supplied function not being analysed for globals/packages by the future we have to do it manually.
+  # Not sure it will be requiered in v2.0
   if (ncores > 1 & !future::supportsMulticore())
   {
     dots <- list(...)
@@ -42,7 +49,14 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, drop_null = 
   for (i in seq_along(clusters))
   {
     # Asynchronous computation
-    output[[i]] <- future::future({ f(clusters[[i]], ...) }, substitute = TRUE, packages = required.pkgs)
+    output[[i]] <- future::future(
+    {
+      x = f(clusters[[i]], ...)
+      if (is.null(x)) return(x)
+      if (clusters[[i]]@save == "") return(x)
+      automatic_write(x, clusters[[i]]@save)
+      return(0)
+    }, substitute = TRUE, packages = required.pkgs)
 
     # Error handling and progress report
     for (j in 1:i)

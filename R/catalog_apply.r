@@ -230,7 +230,7 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
   progress   <- progress(ctg)
   ncores     <- cores(ctg)
   stopearly  <- stop_early(ctg)
-  clusters   <- catalog_makecluster(ctg, ctg@clustering_options$alignment, progress)
+  clusters   <- catalog_makecluster(ctg)
 
   if (propagate_read_option)
     output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ..., select = select, filter = filter)

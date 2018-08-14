@@ -105,7 +105,7 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = 
   progress         <- progress(ctg)
   stopearly        <- stop_early(ctg)
 
-  clusters <- catalog_makecluster(ctg, alignment)
+  clusters <- catalog_makecluster(ctg)
 
   for (i in 1:length(clusters))
   {
