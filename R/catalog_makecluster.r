@@ -25,12 +25,12 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
+catalog_makecluster = function(ctg, start = c(0,0), plot = TRUE)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
   buffer  <- buffer(ctg)
   by_file <- by_file(ctg)
-  size    <- tiling_size(ctg)
+  width   <- tiling_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
   # =======================================================
@@ -44,9 +44,6 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   }
   else
   {
-    # Dimension of the clusters (width = height) rounded up to a multiple of the resolution
-    width = ceiling(size/res) * res
-
     # Bounding box of the catalog
     bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
 
@@ -75,7 +72,7 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   # Creation of a set of cluster from the rectangles
   # ================================================
 
-  if (by_file && buffer <= 0)
+  if (by_file & buffer <= 0)
   {
     clusters = lapply(1:length(xcenter), function(i)
     {

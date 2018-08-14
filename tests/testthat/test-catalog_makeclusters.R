@@ -61,7 +61,7 @@ test_that("makecluster, tiling", {
   buffer(ctg) = 0
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -90,7 +90,7 @@ test_that("makecluster, tiling + buffer", {
   buffer(ctg) = 50
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -119,7 +119,7 @@ test_that("makecluster, tiling + negative buffer", {
   buffer(ctg) = -100
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -148,7 +148,7 @@ test_that("makecluster, by file", {
   buffer(ctg) = 0
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -179,7 +179,7 @@ test_that("makecluster, by file + buffer", {
   buffer(ctg) = 30
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -210,7 +210,7 @@ test_that("makecluster, by file + negative buffer", {
   buffer(ctg) = -30
   cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
@@ -241,7 +241,7 @@ test_that("Clusters do not overlap", {
   buffer(project) <- 15
   tiling_size(project) <- 120
 
-  cluster = lidR:::catalog_makecluster(project, 1)
+  cluster = lidR:::catalog_makecluster(project)
 
   x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
   y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))
@@ -254,7 +254,7 @@ test_that("No extra cluster are generated", {
   buffer(project) <- 0
   tiling_size(project) <- 160
 
-  cluster = lidR:::catalog_makecluster(project, 20)
+  cluster = lidR:::catalog_makecluster(project)
 
   x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
   y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))

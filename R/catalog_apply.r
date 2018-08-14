@@ -175,7 +175,7 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   progress  <- progress(ctg)
   ncores    <- cores(ctg)
   stopearly <- stop_early(ctg)
-  clusters  <- catalog_makecluster(ctg, 1)
+  clusters  <- catalog_makecluster(ctg)
   output    <- cluster_apply(clusters, cluster_apply_func, ncores, progress, stopearly, func = func, ctg = ctg, func_args = func_args, ...)
   return(output)
 }
@@ -230,7 +230,7 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
   progress   <- progress(ctg)
   ncores     <- cores(ctg)
   stopearly  <- stop_early(ctg)
-  clusters   <- catalog_makecluster(ctg, 1, ctg@clustering_options$alignment, progress)
+  clusters   <- catalog_makecluster(ctg, ctg@clustering_options$alignment, progress)
 
   if (propagate_read_option)
     output <- cluster_apply(clusters, FUN, ncores = ncores, progress = progress, stop_early = stopearly, drop_null, ..., select = select, filter = filter)
