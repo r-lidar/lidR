@@ -76,7 +76,6 @@ Collate:
     'constant.R'
     'deprecated.r'
     'grid_canopy.r'
-    'grid_catalog.r'
     'grid_density.r'
     'grid_hexametrics.r'
     'grid_metrics.r'

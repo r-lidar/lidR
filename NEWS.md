@@ -97,6 +97,10 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * Change: `grid_tincanopy` function returns a `RasterLayer` instead of a `data.table`.
 
+**grid_catalog**
+
+* Change: `grid_catalog` have been remove. New catalog capabilities implies that this function is no longuer useful.
+
 **class lasmetrics**
 
 * `data.table` with a class `lasmetrics` no longer exists. It have been replaced by `RasterLayer` and `RasterBrick` everywhere
