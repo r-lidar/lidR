@@ -82,7 +82,6 @@ Collate:
     'grid_metrics3d.r'
     'grid_terrain.r'
     'grid_tincanopy.r'
-    'lasaggreagte.r'
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'

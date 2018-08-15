@@ -4,10 +4,10 @@
 \alias{grid_metrics3d}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
-grid_metrics3d(.las, func, res = 1, debug = FALSE)
+grid_metrics3d(las, func, res = 1, debug = FALSE)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{las}{An object of class \code{LAS}}
 
 \item{func}{the function to be apply to each voxel.}
 

@@ -40,10 +40,9 @@
 #' Voxelize will dispatch the LiDAR data for each voxel in the user's function. The user writes their
 #' function without considering voxels, only a cloud of points (see example).
 #'
-#' @param .las An object of class \code{LAS}
+#' @param las An object of class \code{LAS}
 #' @param func the function to be apply to each voxel.
 #' @param res numeric. The size of the voxels
-#' @param debug logical. If you encounter a non trivial error try \code{debug = TRUE}.
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting.
 #' @examples
@@ -80,13 +79,17 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
-grid_metrics3d = function(.las, func, res = 1, debug = FALSE)
+grid_metrics3d = function(las, func, res = 1)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
   assertive::assert_is_a_number(res)
   assertive::assert_all_are_non_negative(res)
 
   call <- substitute(func)
-  stat <- lasaggregate(.las, by = "XYZ", call, res, c(0,0,0), c("X", "Y", "Z"), FALSE, debug)
+  by   <- group_grid_3d(las@data$X, las@data$Y, las@data$Z, res, c(0,0,0))
+  stat <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
+  data.table::setnames(stat, c("Xgrid", "Ygrid", "Zgrid"), c("X", "Y", "Z"))
+  data.table::setattr(stat, "class", c("lasmetrics3d", attr(stat, "class")))
+  data.table::setattr(stat, "res", res)
   return(stat)
 }
