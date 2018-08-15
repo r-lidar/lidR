@@ -41,17 +41,15 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   if (processing_options$progress)
     graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
 
-  # Parallel loop using promises
+  # Parallel loop using asynchronous computation
   for (i in seq_along(clusters))
   {
-    # Asynchronous computation
     output[[i]] <- future::future(
     {
       x = f(clusters[[i]], ...)
-      if (is.null(x)) return(x)
+      if (is.null(x)) return(NULL)
       if (clusters[[i]]@save == "") return(x)
-      automatic_write(x, clusters[[i]]@save)
-      return(0)
+      return(cluster_write(x, clusters[[i]]@save, output_options))
     }, substitute = TRUE, packages = required.pkgs)
 
     # Error handling and progress report
@@ -127,4 +125,35 @@ display_progress = function(bbox, p, code)
     col = "red"
 
   graphics::rect(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, border = "black", col = col)
+}
+
+cluster_write = function(x, path, output_options)
+{
+  type = class(x)
+
+  if (type == "LAS")
+  {
+    driver <- output_options$drivers$LAS
+    ext    <- if (driver$laz_compression) ".laz" else ".las"
+    path   <- paste0(path, ext)
+    driver$write(x, path)
+    return(path)
+  }
+  else if (type %in% c("RasterLayer", "RasterBrick", "RasterStack"))
+  {
+    driver <- output_options$drivers$Raster
+    path   <- paste0(path, ".tif")
+    driver$write(x, path, driver$format)
+    return(path)
+  }
+  else if (type %in% c("SpatialPoints", "SpatialPointsDataFrame", "SpatialPolygons", "SpatialPolygonsDataFrame", "SpatialLines", "SpatialLinesDataFrame"))
+  {
+
+  }
+  else if (type == "SimpleFeature")
+  {
+
+  }
+  else
+    stop(glue::glue("Trying to write an object of class {type} but this type is not supported."))
 }

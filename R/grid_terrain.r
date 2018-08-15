@@ -223,6 +223,11 @@ grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, 
 grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE, ...)
 {
   output        <- catalog_apply2(las, grid_terrain_generic, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE)
+
+  # Outputs have been written in files. Return the path to written files
+  if (output_files(las) != "")  return(unlist(output))
+
+  # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])
   factor        <- output[[1]]@data@isfactor
   output        <- do.call(raster::merge, output)

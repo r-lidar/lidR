@@ -145,12 +145,27 @@ setMethod("initialize", "LAScatalog", function(.Object)
     progress = TRUE,
     stop_early = TRUE
   )
+
+  drivers = list(
+    Raster = list(
+      write = raster::writeRaster,
+      format = "GTiff"
+    ),
+    LAS = list(
+      write = lidR::writeLAS,
+      laz_compression = TRUE
+    ),
+    Spatial = list(
+      write = rgdal::writeOGR
+    )
+  )
+
   .Object@output_options <- list(
     output_dir = "",
     output_files = "",
     save_with_buffer = FALSE,
     merge_files = FALSE,
-    laz_compression = TRUE
+    drivers = drivers
   )
 
   return(.Object)

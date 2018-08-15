@@ -159,6 +159,11 @@ grid_canopy.LAScatalog = function(las, res = 2, subcircle = 0, ...)
 {
   buffer(las)   <- 0.1*res
   output        <- catalog_apply2(las, grid_canopy, res = res, subcircle = subcircle, ..., need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+
+  # Outputs have been written in files. Return the path to written files
+  if (output_files(las) != "")  return(unlist(output))
+
+  # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])
   factor        <- output[[1]]@data@isfactor
   output        <- do.call(raster::merge, output)

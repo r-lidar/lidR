@@ -111,12 +111,13 @@ catalog_makecluster = function(ctg)
     clusters <- lapply(clusters, function(cl)
     {
       #X$ID      <- i
-      X$XCENTER <- clusters[[i]]@center$x
-      X$XCENTER <- clusters[[i]]@center$y
-      X$XLEFT   <- clusters[[i]]@bbox$xmin
-      X$XRIGHT  <- clusters[[i]]@bbox$xmax
-      X$YBOTTOM <- clusters[[i]]@bbox$ymin
-      X$YTOP    <- clusters[[i]]@bbox$ymax
+      X         <- list()
+      X$XCENTER <- cl@center$x
+      X$XCENTER <- cl@center$y
+      X$XLEFT   <- cl@bbox$xmin
+      X$XRIGHT  <- cl@bbox$xmax
+      X$YBOTTOM <- cl@bbox$ymin
+      X$YTOP    <- cl@bbox$ymax
       cl@save   <- glue::glue_data(X, output_files(ctg))
       return(cl)
     })

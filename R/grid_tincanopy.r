@@ -176,6 +176,11 @@ grid_tincanopy.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,10,15
 grid_tincanopy.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   output        <- catalog_apply2(las, grid_tincanopy, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE)
+
+  # Outputs have been written in files. Return the path to written files
+  if (output_files(las) != "")  return(unlist(output))
+
+  # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])
   factor        <- output[[1]]@data@isfactor
   output        <- do.call(raster::merge, output)
