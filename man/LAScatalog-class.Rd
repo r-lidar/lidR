@@ -98,8 +98,8 @@ with a template that is automatically fullfiled. For example this names are poss
 }
 And will generate as many files as needed with custom names for each file. The list of allowed
 templates is described in the documentation of each function.
-\item \strong{laz_compression}: boolean. For function that write las files, the extension is .las
-or compressed .laz if it is set to \code{TRUE}. Default is FALSE.
+\item \strong{drivers}: list. This contains all the drivers requieres to write seamlessly Raster*,
+Spatial*, LAS objects. This don't need to be changed if the user is not an advanced user.
 }
 }
 

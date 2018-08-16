@@ -187,7 +187,7 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   return(do.call(func, c(las, func_args)))
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = TRUE)
+catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = TRUE, need_output_file = FALSE)
 {
   assertive::assert_is_function(FUN)
   assertive::assert_is_a_string(select)
@@ -225,6 +225,12 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
       ctg@clustering_options$alignment <- new_alignment
       message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
     }
+  }
+
+  if (need_output_file)
+  {
+    if (output_files(ctg) == "")
+      stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
   }
 
   clusters   <- catalog_makecluster(ctg)

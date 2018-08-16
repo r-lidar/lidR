@@ -7,23 +7,45 @@
 lasfiltersurfacepoints(las, res)
 }
 \arguments{
-\item{las}{A LAS object}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 }
 \value{
-A LAS object
+If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a
+\code{LAScatalog} returns a \code{LAScatalog}
 }
 \description{
 This routine creates a grid with a given resolution and filters the point cloud by selecting the
-highest point within each cell.
+highest point within each cell. This function is different from \link{grid_canopy} even if the overall
+concept is exactly the same. \code{grid_canopy} attributes to each cell of a raster the elevation
+of the highest points and the point cloud is rasterized. Here, there is no rasterization, the function
+takes a point cloud as input and returns a point cloud as output. Coordinates and attributes are preserved.
 }
-\details{
-This function is different from \link{grid_canopy} even if the overall concept is exactly the same.
-\code{grid_canopy} attributes to each cell the elevation of the highest points and the point cloud is
-rasterized. Here, there is no rasterization, the function takes a point cloud as input and a point
-cloud as output. Coordinates and attributes are preserved.
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{alignment}: See \link{LAScatalog-class}.
+\item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
+ in R and needs to be written in las/laz files.
 }
+}
+
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
@@ -31,6 +53,6 @@ subset = lasfiltersurfacepoints(las, 2)
 plot(subset)
 }
 \seealso{
-Other lasfilters: \code{\link{lasfilters}},
-  \code{\link{lasfilter}}
+Other lasfilters: \code{\link{lasfilterdecimate}},
+  \code{\link{lasfilters}}, \code{\link{lasfilter}}
 }

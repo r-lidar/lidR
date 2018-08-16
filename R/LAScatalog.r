@@ -101,8 +101,8 @@
 #' }
 #' And will generate as many files as needed with custom names for each file. The list of allowed
 #' templates is described in the documentation of each function.
-#' \item \strong{laz_compression}: boolean. For function that write las files, the extension is .las
-#' or compressed .laz if it is set to \code{TRUE}. Default is FALSE.
+#' \item \strong{drivers}: list. This contains all the drivers requieres to write seamlessly Raster*,
+#' Spatial*, LAS objects. This don't need to be changed if the user is not an advanced user.
 #' }
 #'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
@@ -134,6 +134,20 @@ setMethod("initialize", "LAScatalog", function(.Object)
 {
   callNextMethod()
 
+  drivers = list(
+    Raster = list(
+      write = raster::writeRaster,
+      format = "GTiff"
+    ),
+    LAS = list(
+      write = lidR::writeLAS,
+      laz_compression = FALSE
+    ),
+    Spatial = list(
+      write = rgdal::writeOGR
+    )
+  )
+
   .Object@clustering_options <- list(
     by_file = FALSE,
     tiling_size = 500,
@@ -144,20 +158,6 @@ setMethod("initialize", "LAScatalog", function(.Object)
     cores = 1L,
     progress = TRUE,
     stop_early = TRUE
-  )
-
-  drivers = list(
-    Raster = list(
-      write = raster::writeRaster,
-      format = "GTiff"
-    ),
-    LAS = list(
-      write = lidR::writeLAS,
-      laz_compression = TRUE
-    ),
-    Spatial = list(
-      write = rgdal::writeOGR
-    )
   )
 
   .Object@output_options <- list(
@@ -186,7 +186,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
 #' @export
 catalog <- function(folder, ...)
 {
-  assertive::assert_is_a_string(folder)
+  assertive::assert_is_character(folder)
 
   finfo <- file.info(folder)
 
