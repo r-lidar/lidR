@@ -89,6 +89,8 @@ Collate:
     'lasfilterdecimate.r'
     'lasfiltersurfacepoints.r'
     'lasground.r'
+    'lasground_csf.r'
+    'lasground_pmf.r'
     'lasindentify.r'
     'lasmetrics.r'
     'lasnormalize.r'
