@@ -137,7 +137,7 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
     nnas = sum(isna)
 
     if(nnas > 0)
-      stop(glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
   }
 
   if (!copy)
