@@ -7,5 +7,5 @@ stopifnotlas = function(x)
 stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
-    stop(glue("{name} is a forbidden name."), call. = FALSE)
+    stop(glue::glue("{name} is a forbidden name."), call. = FALSE)
 }

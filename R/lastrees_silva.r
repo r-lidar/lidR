@@ -77,7 +77,7 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   chmdt[, hmax := max(Z), by = id]
   chmdt = chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
   as.lasmetrics(chmdt, raster::res(chm)[1])
-  crown = as.raster(chmdt)
+  crown = as.raster.lasmetrics(chmdt)
 
   if(!missing(las))
   {

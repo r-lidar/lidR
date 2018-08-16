@@ -19,8 +19,9 @@
 #' @param tol numeric. Tolerance see ?EBImage::watershed.
 #' @param ext numeric. see ?EBImage::watershed.
 #' @template param-treetops
-#' @param ... Supplementary options. Currently \code{field} is supported to change the default name of
-#' the new column.
+#' @param field character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
+#' each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
+#' trees will be numbered sequentially.
 #'
 #' @return Nothing (NULL), the point cloud is updated by reference. The original point cloud
 #' has a new column named \code{'treeID'} (or something else if the \code{field} option has been changed)

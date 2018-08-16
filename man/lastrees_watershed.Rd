@@ -28,11 +28,12 @@ or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
 and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.}
 
+\item{field}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
+each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
+trees will be numbered sequentially.}
+
 \item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
-
-\item{...}{Supplementary options. Currently \code{field} is supported to change the default name of
-the new column.}
 }
 \value{
 Nothing (NULL), the point cloud is updated by reference. The original point cloud

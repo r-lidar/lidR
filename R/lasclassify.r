@@ -162,7 +162,7 @@ classify_from_shapefile = function(las, shapefile, field = NULL)
   if (method == 1)
   {
     values[ids] = polys@data[, field][ids]
-    verbose(glue("Assigned the value of field {field} from the table of attibutes to the points"))
+    verbose(glue::glue("Assigned the value of field {field} from the table of attibutes to the points"))
   }
   else if (method == 2)
   {

@@ -48,6 +48,10 @@
 #' users do not need to change this.
 #' @param time_step scalar. Time step when simulating the cloth under the gravity. The default value
 #' is 0.65. Usually, do not change this value. It is suitable for most cases.
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
 #'
 #' @template return-lasground
 #'
@@ -66,15 +70,15 @@
 #' lasground(las, "csf")
 #'
 #' plot(las, color = "Classification")
-lasground_csf = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, interations = 500L, time_step = 0.65, last_returns = TRUE)
+lasground_csf = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
 {
   assertive::assert_is_a_bool(sloop_smooth)
   assertive::assert_is_a_number(class_threshold)
   assertive::assert_is_a_number(cloth_resolution)
   assertive::assert_is_a_number(rigidness)
   assertive::assert_all_are_whole_numbers(rigidness)
-  assertive::assert_is_a_number(interations)
-  assertive::assert_all_are_whole_numbers(interations)
+  assertive::assert_is_a_number(iterations)
+  assertive::assert_all_are_whole_numbers(iterations)
   assertive::assert_is_a_number(time_step)
 
   . <- X <- Y <- Z <- Classification <- NULL
@@ -99,14 +103,14 @@ lasground_csf = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth
   cloud <- las@data[filter, .(X,Y,Z)]
   cloud[, idx := pointID[filter]]
 
-  gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, interations, time_step)
+  gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
   idx <- cloud$idx[gnd]
 
   message(glue::glue("{length(idx)} ground points found."))
 
   if ("Classification" %in% names(las@data))
   {
-    nground = lidR:::fast_countequal(las@data$Classification, 2)
+    nground = fast_countequal(las@data$Classification, 2)
 
     if (nground > 0)
     {

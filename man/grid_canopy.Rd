@@ -15,18 +15,8 @@ grid_canopy(las, res = 2, subcircle = 0, ...)
 \item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 can replace each return with a circle composed of 8 points (see details).}
 
-\item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
-
-\item{na.fill}{character. name of the algorithm used to interpolate the data and fill the empty pixels.
-Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
-
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data directly but can use streaming filters instead.}
-}
-\value{
-Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
-plotting and RasterLayer casting.
+\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
+\code{LAScatalog} object)}
 }
 \description{
 Creates a canopy surface model using a LiDAR point cloud. For each pixel the function

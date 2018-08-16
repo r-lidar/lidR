@@ -232,6 +232,8 @@ tree_detection_ptrees = function(las, k, hmin = 3, nmax = 7L, ...)
 #' @export
 tree_detection_ptrees.LAS = function(las, k, hmin = 3, nmax = 7L, ...)
 {
+  . <- X <- Y <- Z <- treeID <- NULL
+
   TreeSegments = C_lastrees_ptrees(las, k, hmin, nmax, FALSE)
   apices = TreeSegments$Apices
   apices = data.table::as.data.table(apices)

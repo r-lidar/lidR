@@ -136,7 +136,7 @@ grid_tincanopy.LAS = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_
   i = 1
   for (th in thresholds)
   {
-    verbose(glue("Triangulation pass {i} of {length(thresholds)}..."))
+    verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
     i =  i+ 1
 
     if (th == 0)

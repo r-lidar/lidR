@@ -21,7 +21,8 @@ grid_terrain_kriging(las, res = 1, k = 10L, model = gstat::vgm(0.59,
 
 \item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
 
-\item{...}{}
+\item{...}{parameters for the algorithms. These depend on the algorithm used (see documentation
+of each method).}
 
 \item{res}{numeric. resolution of the \code{RasterLayer}. Default 1.}
 

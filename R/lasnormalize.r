@@ -116,13 +116,10 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
     nnas = sum(isna)
 
     if(nnas > 0)
-      stop(glue("{nnas} points were not normalizable. Process aborded."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborded."), call. = F)
   }
   else
   {
-    if(is(dtm, "lasmetrics"))
-      dtm = as.raster(dtm)
-
     if(!is(dtm, "RasterLayer"))
       stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
 

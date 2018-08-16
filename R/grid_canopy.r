@@ -53,15 +53,8 @@
 #' 2 meters i.e. 4 square meters.
 #' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 #' can replace each return with a circle composed of 8 points (see details).
-#' @param na.fill character. name of the algorithm used to interpolate the data and fill the empty pixels.
-#' Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).
-#' @param ... extra parameters for the algorithm used to interpolate the empty pixels (see details)
-#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-#' user cannot manipulate the lidar data directly but can use streaming filters instead.
-#' @return Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
-#' plotting and RasterLayer casting.
-#'
+#' @template param-ellipsis-select-filter
+
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)

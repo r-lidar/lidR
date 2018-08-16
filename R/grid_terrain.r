@@ -64,7 +64,8 @@
 #' or weighted least squares prediction.
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
-#' @param ...
+#' @param ... parameters for the algorithms. These depend on the algorithm used (see documentation
+#' of each method).
 #'
 #' @template return-grid-Layer
 #'

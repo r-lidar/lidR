@@ -77,16 +77,18 @@ not mandatory.
 }
 
 \examples{
+
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
+colors = height.colors(50)
 
 # Canopy surface model with 4 m^2 cells
-metrics = grid_metrics(lidar, max(Z), 2)
-plot(metrics)
+metrics = grid_metrics(las, max(Z), 2)
+plot(metrics, col = colors)
 
 # Mean height with 400 m^2 cells
-metrics = grid_metrics(lidar, mean(Z), 20)
-plot(metrics)
+metrics = grid_metrics(las, mean(Z), 20)
+plot(metrics, col = colors)
 
 # Define your own new metrics
 myMetrics = function(z, i)
@@ -100,10 +102,10 @@ myMetrics = function(z, i)
    return(metrics)
 }
 
-metrics = grid_metrics(lidar, myMetrics(Z, Intensity))
+metrics = grid_metrics(las, myMetrics(Z, Intensity))
 
-plot(metrics)
-plot(metrics, "zwimean")
-plot(metrics, "zimean")
-plot(metrics, "zsqmean")
+plot(metrics, col = colors)
+plot(metrics, "zwimean", col = colors)
+plot(metrics, "zimean", col = colors)
+plot(metrics, "zsqmean", col = colors)
 }

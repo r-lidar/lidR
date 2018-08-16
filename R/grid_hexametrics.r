@@ -77,7 +77,10 @@
 grid_hexametrics = function(las, func, res = 20)
 {
   stopifnotlas(las)
-  call <- substitute(func)
+
+  call = substitute(func)
+  if (call == "func") call = func
+  if (is.name(call)) call = parse(text = eval(call))
 
   if (!requireNamespace("hexbin", quietly = TRUE))
     stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)

@@ -115,12 +115,6 @@ lasupdateheader = function(las)
   return(invisible())
 }
 
-stopif_forbidden_name = function(name)
-{
-  if (name %in% LASFIELDS)
-    stop(glue("{name} is a forbidden name."), call. = FALSE)
-}
-
 # type = 0 : undocumented
 # type = 1 : unsigned char
 # type = 2 : char

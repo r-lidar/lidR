@@ -268,7 +268,7 @@ cores = function(ctg)
   value = as.integer(value)
 
   if(value > sys.cores) {
-    message(glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
+    message(glue::glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
     value = sys.cores
   }
 
@@ -404,7 +404,7 @@ output_files = function(ctg)
 #' @export
 laz_compression = function(ctg)
 {
-  return(ctg@output_options$laz_compression)
+  return(ctg@output_options$drivers$LAS$laz_compression)
 }
 
 #' @rdname catalog

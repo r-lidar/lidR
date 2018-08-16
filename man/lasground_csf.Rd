@@ -5,7 +5,7 @@
 \title{Classify points as ground based on Cloth Simulation}
 \usage{
 lasground_csf(las, sloop_smooth = FALSE, class_threshold = 0.5,
-  cloth_resolution = 0.5, rigidness = 1L, interations = 500L,
+  cloth_resolution = 0.5, rigidness = 1L, iterations = 500L,
   time_step = 0.65, last_returns = TRUE)
 }
 \arguments{
@@ -23,11 +23,16 @@ average distance of the points in the point cloud. The default value is 0.5.}
 \item{rigidness}{integer. The rididness of the cloth. 1 stands for very soft cloth (to fit rugged
 terrain), 2 stands for medium cloth and 3 stands for hard cloth (for flat terrain). The default is 1.}
 
+\item{iterations}{integer. Maximum iteration for simulating cloth. The default value is 500. Usually,
+users do not need to change this.}
+
 \item{time_step}{scalar. Time step when simulating the cloth under the gravity. The default value
 is 0.65. Usually, do not change this value. It is suitable for most cases.}
 
-\item{iterations}{integer. Maximum iteration for simulating cloth. The default value is 500. Usually,
-users do not need to change this.}
+\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
+in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+to \code{FALSE} automatically.}
 }
 \value{
 Nothing, this function is used for its side effect. The original LAS object is updated by
