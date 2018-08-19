@@ -73,8 +73,7 @@ sp::plot(ttops, add = TRUE)
 }
 \seealso{
 Other tree_segmentation: \code{\link{lastrees_dalponte}},
-  \code{\link{lastrees_hamraz}},
-  \code{\link{lastrees_li2}},
+  \code{\link{lastrees_hamraz}}, \code{\link{lastrees_li}},
   \code{\link{lastrees_ptrees}},
   \code{\link{lastrees_silva}}, \code{\link{lastrees}}
 }

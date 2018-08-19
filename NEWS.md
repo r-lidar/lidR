@@ -72,6 +72,7 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * New: `lastrees_hamraz` function with Hamraz et al. (2016) algorithm.
 * New: `lastrees_mcwatershed` function with a marker-controlled watershed.
 * Change: following new `tree_detection` outputs type, `lastrees` algorithms that expect tree tops (seeds) now expect the seed as a `SpatialPointsDataFrame`.
+* Change: `lastrees_li2` have been renamed `lastrees_li` and former `lastrees_li` that was an innacurate implementation have been removes
 
 **grid_metrics**
 
