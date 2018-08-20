@@ -412,7 +412,7 @@ laz_compression = function(ctg)
 `laz_compression<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-  ctg@output_options$laz_compression <- value
+  ctg@output_options$drivers$LAS$laz_compression <- value
   return(ctg)
 }
 

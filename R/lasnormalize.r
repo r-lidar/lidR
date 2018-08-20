@@ -148,7 +148,7 @@ lasnormalize_tin = function(las)
 #' @export
 lasnormalize_knnidw = function(las, k = 10L, p = 1)
 {
-  rlasnormalize_generic(las, method = "knnidw", k = k, p = p)
+  lasnormalize_generic(las, method = "knnidw", k = k, p = p)
 }
 
 #' @rdname lasnormalize

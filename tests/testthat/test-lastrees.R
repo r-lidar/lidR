@@ -32,7 +32,7 @@ test_that("Dalponte's methods works", {
 
 test_that("Li's method works", {
   las@data[, treeID := NULL]
-  lastrees_li2(las, speed_up = 5, field = "TID")
+  lastrees_li(las, speed_up = 5, field = "TID")
 
   expect_true("TID" %in% names(las@data))
   expect_equal(sort(unique(las@data$TID)), 1:48L)
@@ -62,7 +62,7 @@ test_that("MC watershed methods works", {
 })
 
 test_that("lastrees can store in a user defined column", {
-  lastrees_li2(las, speed_up = 5, field = "plop")
+  lastrees_li(las, speed_up = 5, field = "plop")
   expect_true("plop" %in% names(las@data))
 })
 

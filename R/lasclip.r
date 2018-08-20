@@ -374,8 +374,6 @@ lasclipSimpleFeature.LAScatalog = function(las, sf, ...)
 catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
 {
   progress  <- progress(ctg)
-  ncores    <- cores(ctg)
-  stopearly <- stop_early(ctg)
 
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
@@ -417,31 +415,34 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
 
   output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE, ...)
 
-  if(length(output) == 0)
-    return(list(NULL))
-
-  # Transfer CRS
-  for (i in 1:length(output))
+  if (ctg@output_options$output_files != "")   # output should contains nothing because everything have been streamed into files
   {
-    if (!is.null(output[[i]]))
+    written_path = c()
+    for (cluster in clusters)
     {
-      output[[i]]@crs <- ctg@proj4string
-
-      # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
-      if (ncores > 1)
-        output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
+      if (file.exists(cluster@save))
+        written_path = append(written_path, cluster@save)
     }
+
+    return(list(catalog(written_path)))
   }
 
-  if (ctg@output_options$output_files != "")
+  else                                          # output should contains LAS objects returned at the R level
   {
-    folder = dirname(ctg@output_options$output_files)
-    new_ctg = catalog(folder)
-    new_ctg@proj4string = ctg@proj4string
-    return(list(new_ctg))
-  }
+    # Transfer CRS
+    for (i in 1:length(output))
+    {
+      if (!is.null(output[[i]]))
+      {
+        output[[i]]@crs <- ctg@proj4string
 
-  return(output)
+        # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+        if (cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
+      }
+    }
+
+    return(output)
+  }
 }
 
 # @param ofile character. Path to an output file (only with a \code{LAScatalog} object).

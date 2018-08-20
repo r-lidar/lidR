@@ -180,6 +180,18 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 
   # If filter is used, header will not be in accordance with the data. Hard check will necessarily return a false positive error
   hard <- if (nchar(filter) > 0 | length(ifiles) > 1) FALSE else TRUE
+
+  # If the number of file read is > 1 header bbox will not be in accordance with the data. Update the header.
+  if (length(ifiles) > 1)
+  {
+    header$`Min X` = min(data$X)
+    header$`Max X` = max(data$X)
+    header$`Min Y` = min(data$Y)
+    header$`Max Y` = max(data$Y)
+    header$`Min Z` = min(data$Z)
+    header$`Max Z` = max(data$Z)
+  }
+
   rlas::check_data_vs_header(header, data, hard = hard)
 
   las <- LAS(data, header, check = FALSE)

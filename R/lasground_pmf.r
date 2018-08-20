@@ -129,7 +129,7 @@ lasground_pmf = function(las, ws, th, last_returns = TRUE)
 
     if (nground > 0)
     {
-      warning(glue::glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."), call. = FALSE)
+      warning(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."), call. = FALSE)
       las@data[Classification == 2, Classification := 0]
     }
   }

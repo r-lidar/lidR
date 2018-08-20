@@ -9,3 +9,4 @@
 #' \item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
 #'  in R and needs to be written in las/laz files.
 #' }
+
