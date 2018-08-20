@@ -115,9 +115,9 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
     {
       las@data[Y < ybottom, buffer := LIDRBOTTOMBUFFER]
       las@data[X < xleft,   buffer := LIDRLEFTBUFFER]
-      las@data[Y > ytop,    buffer := LIDRTOPBUFFER]
-      las@data[X > xright,  buffer := LIDRRIGHTBUFFER]
-      las@data[(X > xright) & (Y < ybottom), buffer := LIDRBOTTOMBUFFER]
+      las@data[Y >= ytop,    buffer := LIDRTOPBUFFER]
+      las@data[X >= xright,  buffer := LIDRRIGHTBUFFER]
+      las@data[(X >= xright) & (Y < ybottom), buffer := LIDRBOTTOMBUFFER]
     }
   }
 
