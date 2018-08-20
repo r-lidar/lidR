@@ -33,6 +33,12 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 * Change: documentation has been reviewed and extented
 * Fix: `lasclipRectangle` returns the same output both with a `LAS` and a `LAScatalog`. With a `LAS` the rectangle range is now close on the bottom and the left and open on the right and the top.
 
+**lasnormalize**
+
+* Change: remove the old option `copy = TRUE`.
+* Change: `lasnormalize` is a wrapper around the new functions `lasnormalize_dtm`, `lasnormalize_tin`, `lasnormalize_knnidw`, `lasnormalize_kriging`.
+* New: `lasnormalize` can be applied on a `LAScatalog` to write a new catalog.
+
 **lasclassify**
 
 * Change: the code that drives the PIP algorithm relies on `boost` and drastically simplyfies the former code

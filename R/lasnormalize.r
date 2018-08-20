@@ -27,67 +27,87 @@
 
 
 
-#' Subtract digital terrain model
+#' Remove the topography from a point cloud
 #'
-#' Subtract digital terrain model (DTM) from LiDAR data to create a dataset normalized with
-#' the ground at 0. The DTM can originate from several sources e.g. from an external file or
-#' computed by the user. It can also be computed on the fly. In this case the algorithm does
-#' not use rasterized data and each point is interpolated. There is no inaccuracy due to the
-#' discretization of the terrain and the resolution of the terrain is virtually infinite (but
-#' it is slower).\cr
+#' Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
+#' the ground at 0. The DTM can originate from an external file or be computed by the user. It can
+#' also be computed on the fly. In this case the algorithm does not use rasterized data and each point
+#' is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
+#' of the terrain is virtually infinite (but it is slower).\cr
 #' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 #' interpolated. A buffer around the region of interest is always recommended to avoid edge
 #' effects.
 #'
 #' \describe{
-#' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
-#' data interpolation.}
-#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It performs a linear
+#' \item{\code{dtm}}{Normalization is done by substracting the digital terrain model to the point cloud.
+#' The \code{RasterLayer} must encompass the whole point cloud. If a single point fall within a NA pixel
+#' the methods will stop and throw an error.}
+#' \item{\code{knnidw}}{Normalization is done by without rasterizationby interpolating each point.
+#' Spatial interpolation is done using a k-nearest neighbour (KNN) approach with an inverse distance
+#' weighting (IDW). This is a fast but basic method for spatial data interpolation.}
+#' \item{\code{tin}}{Normalization is done by without rasterization by interpolating each point.
+#' Spatial interpolation is based on a Delaunay triangulation. It performs a linear
 #' interpolation within each triangle. There are usually a few points outside the convex hull,
 #' determined by the ground points at the very edge of the dataset, which cannot be interpolated
 #' with a triangulation. Extrapolation is done using knnidw.}
-#' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging approach. For each point of #' interest it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also the most advanced method for interpolating spatial data. }
+#' \item{\code{kriging}}{Normalization is done by without rasterizationby interpolating each point.
+#' Spatial interpolation is done by universal kriging using the \link[gstat:krige]{krige} function.
+#' This method combines the KNN approach with the kriging approach. For each point of interest it
+#' kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to
+#' manipulate but it is also the most advanced method for interpolating spatial data. }
 #' }
 #'
 #' \code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
 #' in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
 #' the point cloud was normalized with the package lidR).
 #'
-#' @param las a LAS object
-#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
-#' \link[lidR:grid_terrain]{grid_terrain}.
-#' @param method character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
-#' \code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details).
-#' @param k numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
-#' method is either \code{"knnidw"} or \code{"kriging"}.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasupdater
+#'
+#' @template param-las
+#' @param dtm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}).
+#' @param method character. Can be \code{"dtm"}, \code{"knnidw"}, \code{"tin"} or \code{"kriging"}
+#' (see details)
+#' @param k numeric. Number of k-nearest neighbours. Default 10.
 #' @param p numeric. Power for inverse distance weighting. Default 2.
-#' @param model Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
-#' when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
-#' squares prediction.
-#' @param copy By default the point cloud is updated in place by reference. Users can force
-#' the function to return a new point cloud. Set TRUE for compatibility with versions < 1.3.0
-#' @return The function returns NULL. The LAS object is updated by reference. Z is now the
-#' normalized elevation, A new column 'Zref' records the former elevation values. This is a
-#' way to save memory by avoiding making copies of the point cloud. But if \code{copy = TRUE},
-#' a new LAS object is returned and the original one is not modified.
+#' @param model A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary
+#' or weighted least squares prediction.
+#'
+#' @return If the input is a \code{LAS} object the function returns NULL. The LAS object is updated
+#' by reference. Z is now the normalized elevation, A new column 'Zref' records the former elevation
+#' values which enable to use \code{lasunormalize} to restore original point elevations.\cr
+#' If the input is a \code{LAScatalog} object, a new \code{LAScatalog}.
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
 #'
 #' plot(las)
 #'
-#' # --- First option: compute a raster DTM with grid_terrain ---
-#' # (or read it from a file)
+#' # First option: compute a raster DTM with grid_terrain (or read it from a file)
+#' # ============================================================================
 #'
 #' dtm = grid_terrain(las, method = "kriging", k = 10L)
-#' lasnormalize(las, dtm)
+#' lasnormalize(las, method = "dtm", dtm = dtm)
 #'
 #' plot(dtm)
 #' plot(las)
 #'
-#' # --- Second option: interpolate each point (no discretization) ---
-#' las = readLAS(LASfile)
+#' # restore original elevations
+#' lasunnormalize(las)
+#' plot(las)
+#'
+#' # operator - can be used. This is equivalent to the previous line
+#' las - dtm
+#' plot(las)
+#'
+#' # restore original elevations
+#' lasunnormalize(las)
+#'
+#' # Second option: interpolate each point (no discretization)
+#' # =========================================================
 #'
 #' lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
 #' plot(las)
@@ -95,34 +115,80 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
+lasnormalize = function(las, method, ...)
+{
+  if (method == "dtm" )
+    return(lasnormalize_dtm(las, ...))
+  else if (method == "knnidw")
+    return(lasnormalize_knnidw(las, ...))
+  else if (method == "tin")
+    return(lasnormalize_tin(las, ...))
+  else if (method == "kriging")
+    return(lasnormalize_kriging(las, ...))
+  else
+    stop("This algorithm does not exist.", call. = FALSE)
+}
+
+#' @rdname lasnormalize
+#' @export
+lasnormalize_dtm = function(las, dtm)
+{
+  stopifnot(is(dtm, "RasterLayer"))
+  lasnormalize_generic(las, dtm = dtm)
+}
+
+#' @rdname lasnormalize
+#' @export
+lasnormalize_tin = function(las)
+{
+  lasnormalize_generic(las, method = "delaunay")
+}
+
+#' @rdname lasnormalize
+#' @export
+lasnormalize_knnidw = function(las, k = 10L, p = 1)
+{
+  rlasnormalize_generic(las, method = "knnidw", k = k, p = p)
+}
+
+#' @rdname lasnormalize
+#' @export
+lasnormalize_kriging = function(las, k = 10L, model = gstat::vgm(.59, "Sph", 874))
+{
+  lasnormalize_generic(las, method = "kriging", k = k, model = model)
+}
+
+
+lasnormalize_generic = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
+{
+  UseMethod("lasnormalize_generic", las)
+}
+
+lasnormalize_generic.LAS = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
 {
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-  stopifnotlas(las)
-
-
+  # Point based normalization
   if(is.null(dtm))
   {
     if (! "Classification" %in% names(las@data))
-      stop("No field 'Classification' found.", call. = FALSE)
+      stop("No field 'Classification' found. This attribute is requiered to interpolate ground points.", call. = FALSE)
 
-    if (fast_countequal(las@data$Classification, 2) == 0)
+    if (fast_countequal(las@data$Classification, 2L) == 0)
       stop("No ground point found in the point cloud.", call. = FALSE)
 
-    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, p = p, model = model)
+    wbuffer = !"buffer" %in% names(las@data)
+    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, p = p, model = model, wbuffer = wbuffer)
 
     isna = is.na(Zground)
     nnas = sum(isna)
 
     if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborded."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborded."), call. = FALSE)
   }
+  # Raster based normalization
   else
   {
-    if(!is(dtm, "RasterLayer"))
-      stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
-
     #xres = raster::res(dtm)[1]
     #xmin = dtm@extent@xmin
     #ymin = dtm@extent@ymin
@@ -137,21 +203,30 @@ lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::
       stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
   }
 
-  if (!copy)
-  {
-    if (!"Zref" %in% names(las@data))
-      las@data[, Zref := Z]
+  if (!"Zref" %in% names(las@data))
+    las@data[, Zref := Z]
 
-    las@data[, Z := round(Z - Zground, 3)]
-    lasupdateheader(las)
-    return(invisible())
-  }
-  else
-  {
-    norm = data.table::copy(las@data)
-    norm[, Z := round(Z - Zground, 3)]
-    return(LAS(norm, las@header, las@crs))
-  }
+  las@data[, Z := round(Z - Zground, 3)]
+  lasupdateheader(las)
+  return(invisible(las))
+}
+
+lasnormalize_generic.LAScluster = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
+{
+  x <- readLAS(las)
+  if (is.null(x)) return(NULL)
+  x <- lasnormalize_generic(x, dtm, method, k, p, model)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+lasnormalize_generic.LAScatalog = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
+{
+  output      <- catalog_apply2(las, lasnormalize_generic, dtm = dtm, method = method, k = k, p = p, model = model, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  ctg@proj4string <- las@proj4string
+  return(ctg)
 }
 
 #' @rdname lasnormalize
@@ -167,7 +242,7 @@ lasunnormalize = function(las)
     las@data[]
   }
   else
-    message("No field 'Zref' found. Unormalizisation is impossible", call. = FALSE)
+    message("No field 'Zref' found. Unormalizisation is impossible.")
 
   return(invisible())
 }
@@ -177,7 +252,9 @@ lasunnormalize = function(las)
 #' @param e1 a LAS object
 #' @param e2 a RasterLayer
 #' @export
+#' @rdname lasnormalize
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
 {
-  return(lasnormalize(e1,e2))
+  lasnormalize_dtm(e1,e2)
+  return(invisible())
 })
