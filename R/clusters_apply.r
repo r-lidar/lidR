@@ -6,6 +6,13 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   output <- vector("list", nclust)
   ncores <- if (nclust <= ncores) nclust else ncores
   codes  <- rep(ASYNC_RUN, nclust)
+  dots   <- list(...)
+
+  # The following is bad and have been introduced in v1.6.1 to fix a bug in a dirty way
+  # In v2.0 this will not be relevant anymore. Consider this code as fonctionnal but poor.
+  select   <- if(is.null(dots$select)) "*" else dots$select
+  filter   <- if(is.null(dots$filter)) "" else dots$filter
+  autoread <- if(is.null(dots$autoread)) FALSE else TRUE
 
   future::plan(future::multiprocess, workers = ncores)
 
@@ -14,7 +21,6 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   # User supplied function not being analysed for globals/packages by the future we have to do it manually.
   if (ncores > 1 & !future::supportsMulticore())
   {
-    dots <- list(...)
     is.fun <- vapply(dots, is.function, logical(1))
 
     if(any(is.fun))
@@ -42,7 +48,21 @@ cluster_apply = function(clusters, f, ncores, progress, stop_early, ...)
   for (i in seq_along(clusters))
   {
     # Asynchronous computation
-    output[[i]] <- future::future({ f(clusters[[i]], ...) }, substitute = TRUE, packages = required.pkgs)
+    output[[i]] <- future::future(
+    {
+      # The following is bad and have been introduced in v1.6.1 to fix a bug in a dirty way
+      # In v2.0 this will not be relevant anymore. Consider this code as fonctionnal but poor.
+      if (autoread)
+      {
+        las = readLAS(clusters[[i]], select, filter)
+        if (is.null(las)) return(NULL)
+        do.call(f, c(las, dots$func_args))
+      }
+      else
+      {
+        f(clusters[[i]], ...)
+      }
+    }, substitute = TRUE, packages = required.pkgs)
 
     # Error handling and progress report
     for (j in 1:i)
