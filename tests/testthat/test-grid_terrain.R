@@ -21,7 +21,7 @@ test_that("grid_terrain works with knnidw", {
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
-  expect_lt(mean(error[], na.rm = TRUE), 0.21)
+  expect_equal(mean(error[], na.rm = TRUE), 0.155768, tolerance = 0.00001)
 
   z = raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -38,7 +38,7 @@ test_that("grid_terrain works with delaunay", {
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
-  expect_lt(mean(error[], na.rm = TRUE), 0.095)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0739201, tolerance = 0.00001)
 
   z = raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -55,7 +55,7 @@ test_that("gridterrain works with kriging", {
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
-  expect_lt(mean(error[], na.rm = TRUE), 0.07)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0603822, tolerance = 0.00001)
 
   z = raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -73,7 +73,7 @@ test_that("grid_terrain returns a circular dtm ", {
   expect_equal(names(dtm), "Z")
 
   error = suppressWarnings(abs(dtm-truedtm))
-  expect_lt(mean(error[], na.rm = TRUE), 0.095)
+  expect_equal(mean(error[], na.rm = TRUE), 0.06584327, tolerance = 0.00001)
 
   z = raster::extract(dtm, las2@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -106,4 +106,3 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   z = raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
 })
-

@@ -34,7 +34,7 @@ test_that("tree_detection LMF works with a RasterLayer", {
   ttops = tree_detection_lmf(chm, 5)
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(156,2))
+  expect_equal(dim(ttops@data), c(157,2))
   expect_equal(ttops@proj4string, chm@crs)
 
   # variable windows size
