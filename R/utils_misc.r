@@ -69,17 +69,20 @@ verbose = function(...)
     cat(..., "\n")
 }
 
-dummy_las = function(n)
+dummy_las = function(n, seeds = c)
 {
-  dt = data.table::data.table(
-    X = stats::runif(n, 0, 100),
-    Y = stats::runif(n, 0, 100),
-    Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n)),
-    Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n))),
-    Intensity = sample(10:50, n, TRUE),
-    ReturnNumber    = as.integer(rep(c(1,1,1,2,3,1,2,1,2,1), n/10)),
-    NumberOfReturns = as.integer(rep(c(1,1,3,3,3,2,2,2,2,1), n/10 )))
+  set.seed(1)
+  X = stats::runif(n, 0, 100)
+  set.seed(2)
+  Y = stats::runif(n, 0, 100)
+  set.seed(3)
+  Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n))
+  Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n)))
+  Intensity = sample(10:50, n, TRUE)
+  ReturnNumber    = as.integer(rep(c(1,1,1,2,3,1,2,1,2,1), n/10))
+  NumberOfReturns = as.integer(rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
 
+  dt = data.table::data.table(X, Y, Z, Classification, Intensity, ReturnNumber, NumberOfReturns)
   las = suppressWarnings(LAS(dt))
 
   return(las)
