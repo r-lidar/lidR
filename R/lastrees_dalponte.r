@@ -81,7 +81,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   {
     treetops_df = raster::as.data.frame(treetops, xy = TRUE, na.rm = TRUE)
 
-    if (length(unique(treetops_df[, 3])) != nrow(treetops_df))
+    if (length(unique(treetops_df[[3]])) != nrow(treetops_df))
       stop("Duplicated seed IDs.", call. = FALSE)
   }
   else
