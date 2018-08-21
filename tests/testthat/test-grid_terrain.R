@@ -13,14 +13,14 @@ test_that("terrain works with knnidw", {
   data.table::setkey(dtm, X, Y)
   diff = truedtm[dtm]
   diffZ = abs(diff$Z - diff$i.Z)
-  expect_lt(mean(diffZ, na.rm = TRUE), 0.21)
+  expect_equal(mean(diffZ, na.rm = TRUE), 0.1574152)
 })
 
 test_that("terrain works with delaunay", {
   dtm = suppressWarnings(grid_terrain(las, 1, method = "delaunay"))
   data.table::setkey(dtm, X, Y)
   diff = truedtm[dtm][!is.na(i.Z)][, Z := Z - i.Z]
-  expect_lt(mean(abs(diff$Z), na.rm = TRUE), 0.095)
+  expect_equal(mean(abs(diff$Z), na.rm = TRUE), 0.07895608)
 })
 
 test_that("terrain works with kriging", {
@@ -28,5 +28,5 @@ test_that("terrain works with kriging", {
   data.table::setkey(dtm, X, Y)
   diff = truedtm[dtm]
   diffZ = abs(diff$Z - diff$i.Z)
-  expect_lt(mean(diffZ, na.rm = T), 0.071)
+  expect_equal(mean(diffZ, na.rm = T), 0.06199064)
 })

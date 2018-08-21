@@ -66,7 +66,7 @@ test_that("grid_terrain returns the same both with catalog and las", {
   tr2 = raster::crop(tr2, tr1)
 
   diff = abs(raster::values(tr1-tr2))
-  expect_lt(mean(diff, na.rm = TRUE), 0.01)
+  expect_lt(mean(diff, na.rm = TRUE), 0.0001)
 })
 
 
