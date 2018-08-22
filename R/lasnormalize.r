@@ -215,7 +215,7 @@ lasnormalize_generic.LAScluster = function(las, dtm = NULL, method, k = 10L, p =
 {
   x <- readLAS(las)
   if (is.null(x)) return(NULL)
-  x <- lasnormalize_generic(x, dtm, method, k, p, model)
+  lasnormalize_generic(x, dtm, method, k, p, model)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }

@@ -39,7 +39,11 @@
 #' and specified by the user. The function \link{util_makeZhangParam} enables computation
 #' of the parameters according to the original paper.
 #'
-#' @param las a LAS object.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasupdater
+#'
+#' @template param-las
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
 #' The values must be positive and in the same units as the point cloud (usually meters, occasionally
 #' feet).
@@ -72,73 +76,37 @@
 #' plot(las, color = "Classification")
 lasground_pmf = function(las, ws, th, last_returns = TRUE)
 {
-  stopifnotlas(las)
+  UseMethod("lasground_pmf", las)
+}
+
+#' @export
+lasground_pmf.LAS = function(las, ws, th, last_returns = TRUE)
+{
   assertive::assert_is_numeric(ws)
   assertive::assert_is_numeric(th)
   assertive::assert_all_are_positive(ws)
   assertive::assert_all_are_positive(th)
   assertive::assert_are_same_length(ws, th)
 
-  . <- X <- Y <- Z <- Classification <- NULL
+  return(lasground_generic(las, method = "pmf", last_returns, ws = ws, th = th))
+}
 
-  npoints = nrow(las@data)
-  filter  = !logical(npoints)
-  pointID = 1:npoints
+#' @export
+lasground_pmf.LAScluster = function(las, ws, th, last_returns = TRUE)
+{
+  x <- readLAS(las)
+  if (is.null(x)) return(NULL)
+  lasground_pmf(x, ws, th, last_returns)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
 
-  if (last_returns)
-  {
-    n = names(las@data)
-
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
-      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last', all the points will be used", call. = FALSE)
-    else
-      filter = las@data$ReturnNumber == las@data$NumberOfReturns
-
-    if(sum(filter) == 0)
-      stop("0 last return found. Process aborted.", call. = FALSE)
-  }
-
-  cloud = las@data[filter, .(X,Y,Z)]
-  cloud[, idx := pointID[filter]]
-
-  verbose("Progressive morphological filter...")
-
-  for (i in 1:length(ws))
-  {
-    verbose(glue::glue("Pass {i} of {length(ws)}..."))
-    verbose(glue::glue("Windows size = {ws[i]} ; height_threshold = {th[i]}"))
-
-    Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i], LIDROPTIONS("progress"))
-
-    # Find indices of the points whose difference between the source and
-    # filtered point clouds is less than the current height threshold
-    diff = cloud$Z - Z_f
-    indices = diff < th[i]
-
-    # Limit filtering to those points currently considered ground returns
-    cloud = cloud[indices]
-  }
-
-  idx = cloud$idx
-
-  message(glue::glue("{length(idx)} ground points found."))
-
-  if ("Classification" %in% names(las@data))
-  {
-    nground = fast_countequal(las@data$Classification, 2)
-
-    if (nground > 0)
-    {
-      warning(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."), call. = FALSE)
-      las@data[Classification == 2, Classification := 0]
-    }
-  }
-  else
-  {
-    las@data[, Classification := 0L]
-  }
-
-  las@data[idx, Classification := 2L]
-
-  return(invisible())
+#' @export
+lasground_pmf.LAScatalog = function(las, ws, th, last_returns = TRUE)
+{
+  output      <- catalog_apply2(las, lasground_pmf, ws = ws, th = th, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  ctg@proj4string <- las@proj4string
+  return(ctg)
 }

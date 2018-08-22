@@ -35,7 +35,11 @@
 #' references) that relies on the orginal source code written by the original author and exposed to
 #' R via the the \code{RCSF} package.
 #'
-#' @param las a LAS object.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasupdater
+#'
+#' @template param-las
 #' @param sloop_smooth logical. When sharp slopes exist, set this parameter to TRUE to perform a
 #' post-processing which will reduced errors.
 #' @param class_threshold scalar. The distance to the simulated cloth to classify point cloud into ground
@@ -81,49 +85,31 @@ lasground_csf = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth
   assertive::assert_all_are_whole_numbers(iterations)
   assertive::assert_is_a_number(time_step)
 
-  . <- X <- Y <- Z <- Classification <- NULL
+  UseMethod("lasground_csf", las)
+}
 
-  npoints <- nrow(las@data)
-  filter  <- !logical(npoints)
-  pointID <- 1:npoints
+#' @export
+lasground_csf.LAS = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
+{
+  return(lasground_generic(las, method = "csf", last_returns, sloop_smooth = sloop_smooth, class_threshold = class_threshold, cloth_resolution = cloth_resolution, rigidness = rigidness, iterations = iterations, time_step = time_step))
+}
 
-  if (last_returns)
-  {
-    n <- names(las@data)
+#' @export
+lasground_csf.LAScluster = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
+{
+  x <- readLAS(las)
+  if (is.null(x)) return(NULL)
+  lasground_csf(x, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step, last_returns)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
 
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
-      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points were used", call. = FALSE)
-    else
-      filter = las@data$ReturnNumber == las@data$NumberOfReturns
-
-    if(sum(filter) == 0)
-      stop("0 last return found. Process aborted.", call. = FALSE)
-  }
-
-  cloud <- las@data[filter, .(X,Y,Z)]
-  cloud[, idx := pointID[filter]]
-
-  gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
-  idx <- cloud$idx[gnd]
-
-  message(glue::glue("{length(idx)} ground points found."))
-
-  if ("Classification" %in% names(las@data))
-  {
-    nground = fast_countequal(las@data$Classification, 2)
-
-    if (nground > 0)
-    {
-      warning(glue::glue("Orginal dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
-      las@data[Classification == 2, Classification := 0]
-    }
-  }
-  else
-  {
-    las@data[, Classification := 0L]
-  }
-
-  las@data[idx, Classification := 2L]
-
-  return(invisible())
+#' @export
+lasground_csf.LAScatalog = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
+{
+  output      <- catalog_apply2(las, lasground_csf, sloop_smooth = sloop_smooth, class_threshold = class_threshold, cloth_resolution = cloth_resolution, rigidness = rigidness, iterations = iterations, time_step = time_step, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  ctg@proj4string <- las@proj4string
+  return(ctg)
 }

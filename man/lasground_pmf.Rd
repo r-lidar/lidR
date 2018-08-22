@@ -7,7 +7,7 @@
 lasground_pmf(las, ws, th, last_returns = TRUE)
 }
 \arguments{
-\item{las}{a LAS object.}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
 The values must be positive and in the same units as the point cloud (usually meters, occasionally
@@ -38,6 +38,30 @@ to compute the sequence of windows sizes and thresholds. Here, these parameters 
 and specified by the user. The function \link{util_makeZhangParam} enables computation
 of the parameters according to the original paper.
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{alignment}: See \link{LAScatalog-class}.
+\item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
+ in R and needs to be written in las/laz files.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzRN")

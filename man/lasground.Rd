@@ -7,7 +7,7 @@
 lasground(las, algorithm, ...)
 }
 \arguments{
-\item{las}{a LAS object.}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} and \code{csf} are
 supported (see related sections).}
@@ -26,6 +26,30 @@ input object. The points classified as 'ground' are assigned a value of 2 accord
 specifications (See the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
+\section{Supported processing options for a LAScatalog}{
+
+\itemize{
+\item \strong{cores}: See \link{LAScatalog-class}.
+\item \strong{progress}: See \link{LAScatalog-class}.
+\item \strong{stop_early}: See \link{LAScatalog-class}.
+\item \strong{by_file}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{alignment}: See \link{LAScatalog-class}.
+\item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
+ in R and needs to be written in las/laz files.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzrn")
