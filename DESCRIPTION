@@ -25,7 +25,6 @@ Imports:
     concaveman,
     data.table,
     future,
-    gdalUtils,
     geometry,
     glue,
     grDevices,

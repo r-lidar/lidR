@@ -70,6 +70,8 @@
 #' computed with \link{grid_terrain}).
 #' @param method character. Can be \code{"dtm"}, \code{"knnidw"}, \code{"tin"} or \code{"kriging"}
 #' (see details)
+#' @param ... parameters for the algorithms. These depend on the algorithm used (see details
+#' of the algorithms).
 #' @param k numeric. Number of k-nearest neighbours. Default 10.
 #' @param p numeric. Power for inverse distance weighting. Default 2.
 #' @param model A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary

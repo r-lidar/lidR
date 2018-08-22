@@ -9,7 +9,7 @@ lasground(las, algorithm, ...)
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
-\item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} and \code{csf} are
+\item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} and \code{"csf"} are
 supported (see related sections).}
 
 \item{...}{parameters for the algorithms. These depend on the algorithm used (see details

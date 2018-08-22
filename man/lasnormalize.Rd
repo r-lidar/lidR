@@ -31,6 +31,9 @@ lasunnormalize(las)
 \item{method}{character. Can be \code{"dtm"}, \code{"knnidw"}, \code{"tin"} or \code{"kriging"}
 (see details)}
 
+\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
+of the algorithms).}
+
 \item{dtm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
 computed with \link{grid_terrain}).}
 
