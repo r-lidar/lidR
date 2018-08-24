@@ -1,12 +1,14 @@
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/lidr-ban.png)<br/>
 
-![CRAN](https://img.shields.io/badge/CRAN-1.6.0-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-1.6.1-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+![CRAN](https://img.shields.io/badge/CRAN-1.6.1-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-Development of the lidR package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
+Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
+
+Development of the `lidR` package between 2018 and 2019 was made possible thanks to the financial support of the Ministère des Forêts, de la Faune et des Parcs of Québec.
 
 # Content
 

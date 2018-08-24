@@ -55,7 +55,9 @@ lasfiltersurfacepoints.LAScluster = function(las, res)
 lasfiltersurfacepoints.LAScatalog = function(las, res)
 {
   buffer(las) <- 0.1*res
-  output      <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

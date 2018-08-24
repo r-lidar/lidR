@@ -97,7 +97,7 @@ grid_canopy_p2r.LAScatalog = function(las, res = 2, subcircle = 0)
   buffer(las)   <- 0.1*res
   las@input_options$select <- "xyz"
 
-  output        <- catalog_apply2(las, grid_canopy, res = res, subcircle = subcircle, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  output        <- catalog_apply2(las, grid_canopy_p2r, res = res, subcircle = subcircle, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (output_files(las) != "")  return(unlist(output))

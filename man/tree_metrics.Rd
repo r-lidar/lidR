@@ -4,7 +4,7 @@
 \alias{tree_metrics}
 \title{Compute metrics for each tree}
 \usage{
-tree_metrics(las, func, field = "treeID", ...)
+tree_metrics(las, func, field = "treeID")
 }
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
@@ -12,9 +12,6 @@ tree_metrics(las, func, field = "treeID", ...)
 \item{func}{The function to be applied to each tree.}
 
 \item{field}{character. The column name of the field containing tree IDs. Default is \code{"treeID"}}
-
-\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
-\code{LAScatalog} object)}
 }
 \value{
 A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that

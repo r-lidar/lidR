@@ -14,8 +14,7 @@
 #' @param extra logical. By default the function classifies the original point cloud by reference
 #' and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 #' \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.
-#' @param chm RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy}
-#' or \link{grid_tincanopy} or read it from an external file.
+#' @template param-chm-lastrees
 #' @template param-treetops
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
@@ -40,7 +39,7 @@
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #' col = pastel.colors(200)
 #'
-#' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+#' chm = grid_canopy(las, "p2r", res = 0.5, subcircle = 0.3)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'

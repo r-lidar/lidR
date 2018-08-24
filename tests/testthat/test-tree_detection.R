@@ -29,7 +29,7 @@ test_that("tree_detection LMF works with a LAS", {
 
 test_that("tree_detection LMF works with a RasterLayer", {
 
-  chm = grid_canopy(las, 1, subcircle = 0.15)
+  chm = grid_canopy(las, "p2r", 1, subcircle = 0.15)
 
   ttops = tree_detection_lmf(chm, 5)
 

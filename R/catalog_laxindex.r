@@ -11,6 +11,6 @@ catalog_laxindex = function(ctg)
     return(0)
   }
 
-  catalog_apply2(ctg, create_lax_file, need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = FALSE)
+  catalog_apply2(ctg, create_lax_file, need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE)
   return(invisible())
 }

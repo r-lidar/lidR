@@ -318,7 +318,9 @@ lassnags_wing.LAScluster = function (las, neigh_radii = c(1.5,1,2), low_int_thrs
 #' @export
 lassnags_wing.LAScatalog = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
-  output      <- catalog_apply2(las, lassnags_wing,  neigh_radii = neigh_radii, low_int_thrsh = low_int_thrsh, uppr_int_thrsh = uppr_int_thrsh, pt_den_req = pt_den_req, bbpr_thresholds = bbpr_thresholds, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lassnags_wing,  neigh_radii = neigh_radii, low_int_thrsh = low_int_thrsh, uppr_int_thrsh = uppr_int_thrsh, pt_den_req = pt_den_req, bbpr_thresholds = bbpr_thresholds, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

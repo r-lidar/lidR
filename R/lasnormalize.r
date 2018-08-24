@@ -224,7 +224,9 @@ lasnormalize_generic.LAScluster = function(las, dtm = NULL, method, k = 10L, p =
 
 lasnormalize_generic.LAScatalog = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
 {
-  output      <- catalog_apply2(las, lasnormalize_generic, dtm = dtm, method = method, k = k, p = p, model = model, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lasnormalize_generic, dtm = dtm, method = method, k = k, p = p, model = model, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

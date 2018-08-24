@@ -75,12 +75,14 @@ test_that("grid_metrics return a correct raster brick (tricky case)", {
 
 file <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(file)
-las = readLAS(file)
+las = readLAS(file, select = "xyz", filter = "-keep_first")
 cores(ctg) <- 1
 tiling_size(ctg) <- 160
 ctg@clustering_options$alignment = c(684750, 5017760)
 buffer(ctg) <- 0
 progress(ctg) <- FALSE
+ctg@input_options$select = "xyz"
+ctg@input_options$filter = "-keep_first"
 
 test_that("grid_metric return the same both with LAScatalog and LAS", {
   m1 = grid_metrics(ctg, length(Z), 20)
@@ -91,6 +93,9 @@ test_that("grid_metric return the same both with LAScatalog and LAS", {
   m2 = grid_metrics(las, list(length(Z), mean(Z)), 20)
   m1@data@isfactor = m2@data@isfactor
   expect_equal(m1, m2)
+
+  expect_error(grid_metrics(ctg, mean(Intensity), 20), "Intensity")
+  expect_error(grid_metrics(las, mean(Intensity), 20), "Intensity")
 })
 
 test_that("grid_metric return the same both with catalog and las + grid alignment", {
@@ -98,6 +103,8 @@ test_that("grid_metric return the same both with catalog and las + grid alignmen
   m2 = grid_metrics(las, length(Z), 20, start = c(10,10))
   expect_equal(m1, m2)
 })
+
+las = readLAS(file)
 
 test_that("predefined metric set work both with a LAS and LAScatalog", {
   las@data[, ScanAngle := runif(.N)]
@@ -109,3 +116,4 @@ test_that("predefined metric set work both with a LAS and LAScatalog", {
 
   expect_error(grid_metrics(ctg, .stdmetrics_z), NA)
 })
+

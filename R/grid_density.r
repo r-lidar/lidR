@@ -39,7 +39,6 @@
 #' @template param-las
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 #' square meters.
-#' @template param-ellipsis-select-filter
 #'
 #' @template return-grid-LayerBrick
 #'
@@ -54,12 +53,12 @@
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
-grid_density = function(las, res = 4, ...)
+grid_density = function(las, res = 4)
 {
   pulseID <- density <- X <- NULL
 
   if(! "pulseID" %in% names(las@data))
-    return(grid_metrics(las, list(point_density = .N/res^2), res, ...))
+    return(grid_metrics(las, list(point_density = .N/res^2), res))
   else
-    return(grid_metrics(las, list(point_density = .N/res^2, pulse_density = length(unique(pulseID))/res^2), res, ...))
+    return(grid_metrics(las, list(point_density = .N/res^2, pulse_density = length(unique(pulseID))/res^2), res))
 }

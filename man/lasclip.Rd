@@ -7,21 +7,18 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(las, geometry, ...)
+lasclip(las, geometry)
 
-lasclipRectangle(las, xleft, ybottom, xright, ytop, ...)
+lasclipRectangle(las, xleft, ybottom, xright, ytop)
 
-lasclipPolygon(las, xpoly, ypoly, ...)
+lasclipPolygon(las, xpoly, ypoly)
 
-lasclipCircle(las, xcenter, ycenter, radius, ...)
+lasclipCircle(las, xcenter, ycenter, radius)
 }
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
-
-\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
-\code{LAScatalog} object)}
 
 \item{xleft}{numeric. left x coordinates of rectangles.}
 
@@ -71,7 +68,7 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 x 684816  684943
 y 5017823 5017957}
  \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
- \link[raster:RasterLayer-class]{RasterLayer} or a \code{SpatialPoints*}. A rectangle is extracted.
+ \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
  }
 }
 

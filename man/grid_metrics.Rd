@@ -4,7 +4,7 @@
 \alias{grid_metrics}
 \title{Area Based Approach}
 \usage{
-grid_metrics(las, func, res = 20, start = c(0, 0), ...)
+grid_metrics(las, func, res = 20, start = c(0, 0))
 }
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
@@ -15,9 +15,6 @@ grid_metrics(las, func, res = 20, start = c(0, 0), ...)
 
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0).}
-
-\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
-\code{LAScatalog} object)}
 }
 \value{
 A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.

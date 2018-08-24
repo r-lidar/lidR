@@ -104,7 +104,9 @@ lasground_pmf.LAScluster = function(las, ws, th, last_returns = TRUE)
 #' @export
 lasground_pmf.LAScatalog = function(las, ws, th, last_returns = TRUE)
 {
-  output      <- catalog_apply2(las, lasground_pmf, ws = ws, th = th, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lasground_pmf, ws = ws, th = th, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

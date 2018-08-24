@@ -3,7 +3,7 @@ context("lastrees")
 LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
 las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
 
-chm = grid_tincanopy(las, res = 0.5)
+chm = grid_canopy(las, "pitfree", res = 0.5)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean)
 

@@ -11,8 +11,8 @@ lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 automatically.}
 
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
-or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.}
+\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read  from
+an external file.}
 
 \item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
@@ -48,7 +48,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
-chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+chm = grid_canopy(las, "p2r", res = 0.5, subcircle = 0.3)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 

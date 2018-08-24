@@ -69,7 +69,6 @@
 #' @param res numeric. The size of the cells. Default 20.
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0).
-#' @template param-ellipsis-select-filter
 #'
 #' @template return-grid-LayerBrick
 #'
@@ -106,7 +105,7 @@
 #' plot(metrics, "zimean", col = colors)
 #' plot(metrics, "zsqmean", col = colors)
 #' @export
-grid_metrics = function(las, func, res = 20, start = c(0,0), ...)
+grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
   assertive::assert_is_a_number(res)
   assertive::assert_all_are_non_negative(res)
@@ -116,7 +115,7 @@ grid_metrics = function(las, func, res = 20, start = c(0,0), ...)
 }
 
 #' @export
-grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), ...)
+grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
 {
   . <- X <- Y <- NULL
 
@@ -144,9 +143,9 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), ...)
 }
 
 #' @export
-grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
+grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 {
-  x = readLAS(las, ...)
+  x = readLAS(las)
   if (is.null(x)) return(NULL)
   bbox = raster::extent(as.numeric(las@bbox))
   metrics = grid_metrics(x, func, res, start)
@@ -155,10 +154,10 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
 }
 
 #' @export
-grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
+grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
   buffer(las)   <- 0.1*res
-  output        <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, ..., need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  output        <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (output_files(las) != "") return(unlist(output))

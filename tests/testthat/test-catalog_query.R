@@ -71,13 +71,17 @@ test_that("catalog queries support readLAS options", {
   r = 20
   n = c("plot1")
 
-  req = catalog_queries(ctg, x, y, r, r, roinames = n, select = "xyz")
+  ctg@input_options$select = "xyz"
+
+  req = catalog_queries(ctg, x, y, r, r, roinames = n)
 
   cn = names(req$plot1@data)
 
   expect_true(!any(cn %in% c("Intensity", "ScanAngle", "ReturnNumber")))
 
-  req = catalog_queries(ctg, x, y, r, r, roinames = n, select = "xyzia")
+  ctg@input_options$select = "xyzia"
+
+  req = catalog_queries(ctg, x, y, r, r, roinames = n)
 
   cn = names(req$plot1@data)
 

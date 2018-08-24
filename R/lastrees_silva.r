@@ -11,8 +11,7 @@
 #' @param extra logical. By default the function classifies the original point cloud by reference
 #' and return nothing (NULL) i.e. the original point cloud is automatically updated in place. If
 #' \code{extra = TRUE} an additional \code{RasterLayer} used internally can be returned.
-#' @param chm RasterLayer. Image of the canopy. Can be computed with \link[lidR:grid_canopy]{grid_canopy}
-#' or \link[lidR:grid_tincanopy]{grid_tincanopy} or read it from an external file.
+#' @template param-chm-lastrees
 #' @template param-treetops
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as a proportion of the
 #' tree height. Default is 0.6,  meaning 60\% of the tree height.
@@ -31,7 +30,7 @@
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #' col = pastel.colors(200)
 #'
-#' chm = grid_canopy(las, res = 0.5, subcircle = 0.3)
+#' chm = grid_canopy(las, "p2r", res = 0.5, subcircle = 0.3)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 #'

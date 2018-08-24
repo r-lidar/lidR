@@ -62,7 +62,6 @@
 #' @param buffer numeric. Adds a buffer area around the ROI. See relevant sections.
 #' @param roinames vector. A set of ROI names (the plot IDs, for example) to label the
 #' returned list.
-#' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.
 #' @return A list of LAS objects
 #' @seealso
 #' \link{readLAS}
@@ -91,15 +90,17 @@
 #'
 #' # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
 #' # Z have been loaded and Z values < 0 were removed.
-#' catalog_queries(catalog, X, Y, R, select = "xyz", filter = "-drop_z_below 0")
+#' catalog@input_option$select = "xyz"
+#' catalog@input_option$filter = "-drop_z_below 0"
+#' catalog_queries(catalog, X, Y, R)
 #' }
-catalog_queries = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL)
 {
   UseMethod("catalog_queries", ctg)
 }
 
 #' @export
-catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL)
 {
   assertive::assert_are_same_length(x, y)
   assertive::assert_all_are_non_negative(buffer)
@@ -118,15 +119,15 @@ catalog_queries.LAScatalog = function(ctg, x, y, r, r2 = NULL, buffer = 0, roina
   bboxes   <- mapply(raster::extent, x-w/2, x+w/2, y-h/2, y+h/2)
   clusters <- catalog_index(ctg, bboxes, shape, buffer)
 
-  extract_function = function(cluster, ...)
+  extract_function = function(cluster)
   {
     if (is.null(cluster))
       return(NULL)
     else
-      return(readLAS(cluster, ...))
+      return(readLAS(cluster))
   }
 
-  output   <- cluster_apply(clusters, extract_function, ctg@processing_options, ctg@output_options, drop_null = FALSE, ...)
+  output   <- cluster_apply(clusters, extract_function, ctg@processing_options, ctg@output_options, drop_null = FALSE)
   names(output) <- roinames
 
   # Transfer CRS

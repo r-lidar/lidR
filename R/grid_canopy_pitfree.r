@@ -126,7 +126,7 @@ grid_canopy_pitfree.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,
   x = readLAS(las, filter = "-keep_first", select = "xyzr")
   if (is.null(x)) return(NULL)
   bbox = raster::extent(as.numeric(las@bbox))
-  metrics = grid_tincanopy(x, res, thresholds, max_edge, subcircle)
+  metrics = grid_canopy_pitfree(x, res, thresholds, max_edge, subcircle)
   metrics = raster::crop(metrics, bbox)
   return(metrics)
 }
@@ -136,7 +136,7 @@ grid_canopy_pitfree.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,
 {
   las@input_options$select <- "xyzr"
 
-  output        <- catalog_apply2(las, grid_tincanopy, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE)
+  output        <- catalog_apply2(las, grid_canopy_pitfree, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (output_files(las) != "")  return(unlist(output))

@@ -107,7 +107,9 @@ lasground_csf.LAScluster = function(las, sloop_smooth = FALSE, class_threshold =
 #' @export
 lasground_csf.LAScatalog = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
 {
-  output      <- catalog_apply2(las, lasground_csf, sloop_smooth = sloop_smooth, class_threshold = class_threshold, cloth_resolution = cloth_resolution, rigidness = rigidness, iterations = iterations, time_step = time_step, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lasground_csf, sloop_smooth = sloop_smooth, class_threshold = class_threshold, cloth_resolution = cloth_resolution, rigidness = rigidness, iterations = iterations, time_step = time_step, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

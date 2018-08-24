@@ -77,8 +77,13 @@ catalog_makecluster = function(ctg)
   {
     clusters = lapply(1:length(xcenter), function(i)
     {
-      center = list(x = xcenter[i], y = ycenter[i])
-      LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname")
+      center  <- list(x = xcenter[i], y = ycenter[i])
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname")
+
+      cluster@select <- ctg@input_options$select
+      cluster@filter <- paste(cluster@filter, ctg@input_options$filter)
+
+      return(cluster)
     })
   }
   else
@@ -98,7 +103,7 @@ catalog_makecluster = function(ctg)
   {
     clusters <- lapply(clusters, function(x)
     {
-      x@filter <- ""
+      x@filter <- ctg@input_options$filter
       return(x)
     })
   }

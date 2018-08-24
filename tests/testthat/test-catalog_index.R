@@ -65,11 +65,11 @@ test_that("catalog index works", {
 
   expect_equal(length(clusters[[1]]@files), 4L)
   expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))
-  expect_equal(clusters[[1]]@filter, "-inside 890000 630000 890800 630800")
+  expect_equal(clusters[[1]]@filter, "-inside 890000 630000 890800 630800 ")
   expect_equal(length(clusters), 2L)
   expect_equal(length(clusters[[2]]@files), 1L)
   expect_equal(clusters[[2]]@files, c("abc18"))
-  expect_equal(clusters[[2]]@filter, "-inside 889600 630400 890400 631200")
+  expect_equal(clusters[[2]]@filter, "-inside 889600 630400 890400 631200 ")
 
   clusters = catalog_index(ctg, bboxes, LIDRCIRCLE)
 
@@ -77,11 +77,11 @@ test_that("catalog index works", {
 
   expect_equal(length(clusters[[1]]@files), 4L)
   expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))
-  expect_equal(clusters[[1]]@filter, "-inside_circle 890400 630400 400")
+  expect_equal(clusters[[1]]@filter, "-inside_circle 890400 630400 400 ")
   expect_equal(length(clusters), 2L)
   expect_equal(length(clusters[[2]]@files), 1L)
   expect_equal(clusters[[2]]@files, c("abc18"))
-  expect_equal(clusters[[2]]@filter, "-inside_circle 890000 630800 400")
+  expect_equal(clusters[[2]]@filter, "-inside_circle 890000 630800 400 ")
 })
 
 test_that("catalog index returns NULL if there is no match", {

@@ -49,7 +49,6 @@
 #' @template param-las
 #' @param func The function to be applied to each tree.
 #' @param field character. The column name of the field containing tree IDs. Default is \code{"treeID"}
-#' @template param-ellipsis-select-filter
 #'
 #' @return A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that
 #' associates the z-elevation (highest points) of the trees and the id of the tree plus the metrics
@@ -78,7 +77,7 @@
 #' # predefined metrics (see ?stdmetrics)
 #' metrics = tree_metrics(las, .stdtreemetrics)
 #' @export
-tree_metrics = function(las, func, field = "treeID", ...)
+tree_metrics = function(las, func, field = "treeID")
 {
   assertive::assert_is_a_string(field)
 
@@ -86,7 +85,7 @@ tree_metrics = function(las, func, field = "treeID", ...)
 }
 
 #' @export
-tree_metrics.LAS = function(las, func, field = "treeID", ...)
+tree_metrics.LAS = function(las, func, field = "treeID")
 {
   . <- X <- Y <- Z <- x.pos.t <- y.pos.t <- NULL
 
@@ -112,9 +111,9 @@ tree_metrics.LAS = function(las, func, field = "treeID", ...)
 }
 
 #' @export
-tree_metrics.LAScluster = function(las, func, field = "treeID", ...)
+tree_metrics.LAScluster = function(las, func, field = "treeID")
 {
-  x = readLAS(las, ...)
+  x = readLAS(las)
   if (is.null(x)) return(NULL)
   metrics = tree_metrics(x, func, field)
   bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
@@ -123,9 +122,9 @@ tree_metrics.LAScluster = function(las, func, field = "treeID", ...)
 }
 
 #' @export
-tree_metrics.LAScatalog = function(las, func, field = "treeID", ...)
+tree_metrics.LAScatalog = function(las, func, field = "treeID")
 {
-  output = catalog_apply2(las, tree_metrics, func = substitute(func), field = field, ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  output = catalog_apply2(las, tree_metrics, func = substitute(func), field = field, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output = do.call(rbind, output)
   output@proj4string = las@proj4string
   return(output)

@@ -50,7 +50,7 @@
 #' x 684816  684943
 #' y 5017823 5017957}
 #'  \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
-#'  \link[raster:RasterLayer-class]{RasterLayer} or a \code{SpatialPoints*}. A rectangle is extracted.
+#'  \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
 #'  }
 #'
 #' @template LAScatalog
@@ -80,8 +80,7 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radiuses.
-#' @param ... Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
-#' \code{LAScatalog} object)
+#'
 #' @return An object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
 #' several regions of interest or \code{NULL} if the query is outside the dataset or within a region that does
 #' not contains any point or a \code{LAScatalog} if the query is immediatly written into file without
@@ -113,7 +112,7 @@
 #' }
 #' @name lasclip
 #' @export
-lasclip = function(las, geometry, ...)
+lasclip = function(las, geometry)
 {
   if (is.character(geometry))
     geometry = rgeos::readWKT(geometry)
@@ -132,7 +131,7 @@ lasclip = function(las, geometry, ...)
     if (!all(sf::st_is(geometry, "POLYGON") |sf::st_is(geometry, "MULTIPOLYGON")))
       stop("Incorrect geometry type. POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
 
-    return(lasclipSimpleFeature(las, geometry, ...))
+    return(lasclipSimpleFeature(las, geometry))
   }
   else if (is(geometry, "Extent"))
   {
@@ -140,7 +139,7 @@ lasclip = function(las, geometry, ...)
     xmax = geometry@xmax
     ymin = geometry@ymin
     ymax = geometry@ymax
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax, ...))
+    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
   }
   else if (is.matrix(geometry))
   {
@@ -151,7 +150,7 @@ lasclip = function(las, geometry, ...)
     xmax = geometry[3]
     ymin = geometry[2]
     ymax = geometry[4]
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax, ...))
+    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
   }
   else if (tryCatch(is(raster::extent(geometry), "Extent"), error = function(e) return(FALSE)))
   {
@@ -160,7 +159,7 @@ lasclip = function(las, geometry, ...)
     xmax = geometry@xmax
     ymin = geometry@ymin
     ymax = geometry@ymax
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax, ...))
+    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
   }
   else
   {
@@ -174,7 +173,7 @@ lasclip = function(las, geometry, ...)
 
 #' @export
 #' @rdname lasclip
-lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
+lasclipRectangle = function(las, xleft, ybottom, xright, ytop)
 {
   assertive::assert_is_numeric(xleft)
   assertive::assert_is_numeric(ybottom)
@@ -188,7 +187,7 @@ lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
 }
 
 #' @export
-lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
+lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
 {
   X <- Y <- NULL
 
@@ -215,10 +214,10 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
+lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
 {
   bboxes  = mapply(raster::extent, xleft, xright, ybottom, ytop)
-  output  = catalog_extract(las, bboxes, LIDRRECTANGLE, ...)
+  output  = catalog_extract(las, bboxes, LIDRRECTANGLE)
 
   if(length(output) == 0)
     return(NULL)
@@ -234,14 +233,14 @@ lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(las, xpoly, ypoly, ...)
+lasclipPolygon = function(las, xpoly, ypoly)
 {
   assertive::assert_is_numeric(xpoly)
   assertive::assert_is_numeric(ypoly)
   assertive::assert_are_same_length(xpoly, ypoly)
 
   poly = sp::Polygon(cbind(xpoly, ypoly))
-  return(lasclip(las, poly, ...))
+  return(lasclip(las, poly))
 }
 
 # ========
@@ -250,7 +249,7 @@ lasclipPolygon = function(las, xpoly, ypoly, ...)
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(las, xcenter, ycenter, radius, ...)
+lasclipCircle = function(las, xcenter, ycenter, radius)
 {
   assertive::assert_is_numeric(xcenter)
   assertive::assert_is_numeric(ycenter)
@@ -261,7 +260,7 @@ lasclipCircle = function(las, xcenter, ycenter, radius, ...)
 }
 
 #' @export
-lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
+lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
 {
   if (length(radius) > 1)
     assertive::assert_are_same_length(xcenter, radius)
@@ -293,7 +292,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
 
 #' @export
 #' @export
-lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
+lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
 {
   if (length(radius) > 1)
     assertive::assert_are_same_length(xcenter, radius)
@@ -305,7 +304,7 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
   ymin   = ycenter - radius
   ymax   = ycenter + radius
   bboxes = mapply(raster::extent, xmin, xmax, ymin, ymax)
-  output = catalog_extract(las, bboxes, LIDRCIRCLE, ...)
+  output = catalog_extract(las, bboxes, LIDRCIRCLE)
 
   if (length(output) == 1)
     return(output[[1]])
@@ -317,12 +316,12 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 # WKT
 # ========
 
-lasclipSimpleFeature = function(las, sf, ...)
+lasclipSimpleFeature = function(las, sf)
 {
   UseMethod("lasclipSimpleFeature", las)
 }
 
-lasclipSimpleFeature.LAS = function(las, sf, ...)
+lasclipSimpleFeature.LAS = function(las, sf)
 {
   wkt <- sf::st_as_text(sf$geometry)
 
@@ -347,7 +346,7 @@ lasclipSimpleFeature.LAS = function(las, sf, ...)
     return(output)
 }
 
-lasclipSimpleFeature.LAScatalog = function(las, sf, ...)
+lasclipSimpleFeature.LAScatalog = function(las, sf)
 {
   wkt  <- sf::st_as_text(sf$geometry)
 
@@ -357,7 +356,7 @@ lasclipSimpleFeature.LAScatalog = function(las, sf, ...)
     return(raster::extent(spgeom))
   })
 
-  output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf, ...)
+  output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf)
 
   if(length(output) == 0)
     return(NULL)
@@ -371,7 +370,7 @@ lasclipSimpleFeature.LAScatalog = function(las, sf, ...)
 # GENERIC QUERY
 # =============
 
-catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
+catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
 {
   progress  <- progress(ctg)
 
@@ -380,10 +379,10 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
   if (progress) plot.LAScatalog(ctg, FALSE)
 
   # Define a function to be passed in cluster_apply
-  extract_query = function(cluster, ...)
+  extract_query = function(cluster)
   {
     if (is.null(cluster)) return(NULL)
-    streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt, ...)
+    streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)
   }
 
   # Find the ROIs in the catalog and return LASclusters
@@ -413,7 +412,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
     }
   }
 
-  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE, ...)
+  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE)
 
   if (ctg@output_options$output_files != "")   # output should contains nothing because everything have been streamed into files
   {
@@ -426,7 +425,6 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
 
     return(list(catalog(written_path)))
   }
-
   else                                          # output should contains LAS objects returned at the R level
   {
     # Transfer CRS
@@ -444,8 +442,3 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, ...)
     return(output)
   }
 }
-
-# @param ofile character. Path to an output file (only with a \code{LAScatalog} object).
-# If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
-# file while reading. This is much faster and memory-efficient than loading into R memory first,
-# then writing.

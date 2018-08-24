@@ -115,7 +115,7 @@ tree_detection = function(x, algorithm, ...)
 #' # ============
 #'
 #' # 5x5 m fixed windows size
-#' chm = grid_canopy(las, 1, subcircle = 0.15)
+#' chm = grid_canopy(las, "p2r", 1, subcircle = 0.15)
 #' kernel = matrix(1,3,3)
 #' chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 #'
@@ -154,9 +154,7 @@ tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2, shape = c("circular",
 #' @export
 tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  y = x@data
-
-  output = tree_detection_lmf(y , ws, hmin, shape)
+  output = tree_detection_lmf(x@data , ws, hmin, shape)
   output@proj4string = x@crs
   output@bbox = raster::as.matrix(extent(x))
   return(output)
@@ -177,7 +175,7 @@ tree_detection_lmf.data.frame = function(x, ws, hmin = 2, shape = c("circular", 
   {
     ws = ws(x$Z)
 
-    if (!is.numeric(ws)) stop("The function 'ws' did not return correct output.", call. = FALSE)
+    if (!is.numeric(ws)) stop("The function 'ws' did not return correct output. ", call. = FALSE)
     if (any(ws <= 0))    stop("The function 'ws' returned negative or nul values.", call. = FALSE)
     if (anyNA(ws))       stop("The function 'ws' returned NA values.", call. = FALSE)
     if (length(ws) != n) stop("The function 'ws' did not return correct output.", call. = FALSE)
@@ -208,7 +206,9 @@ tree_detection_lmf.LAScluster = function(x, ws, hmin = 2, shape = c("circular", 
 #' @export
 tree_detection_lmf.LAScatalog = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
-  output <- catalog_apply2(x, tree_detection_lmf, ws = ws, hmin = hmin, shape = shape, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  x@input_options$select <- "xyz"
+
+  output <- catalog_apply2(x, tree_detection_lmf, ws = ws, hmin = hmin, shape = shape, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)
   output@proj4string <- x@proj4string
   output@data$treeID <- 1:length(output@data$treeID)
@@ -259,7 +259,9 @@ tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
 #' @export
 tree_detection_ptrees.LAScatalog = function(las, k, hmin = 3, nmax = 7L, ...)
 {
-  output <- catalog_apply2(las, tree_detection_ptrees, k = k, hmin = hmin, nmax = nmax, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  las@input_options$select <- "xyz"
+
+  output <- catalog_apply2(las, tree_detection_ptrees, k = k, hmin = hmin, nmax = nmax, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)
   output@proj4string <- las@proj4string
   output@data$treeID <- 1:length(output@data$treeID)
@@ -481,7 +483,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
 #' @export
 tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
-  x <- readLAS(las, ...)
+  x <- readLAS(las)
   if (is.null(x)) return(NULL)
   ttops <- tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
   bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
@@ -492,7 +494,9 @@ tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, d
 #' @export
 tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
-  output <- catalog_apply2(las, tree_detection_multichm, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, select = "xyz", ..., need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = TRUE)
+  las@input_options$select <- "xyz"
+
+  output <- catalog_apply2(las, tree_detection_multichm, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)
   output@proj4string <- las@proj4string
   output@data$treeID <- 1:length(output@data$treeID)

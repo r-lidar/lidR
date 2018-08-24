@@ -1,11 +1,13 @@
 context("lasclip")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyx", filter = "-keep_first")
+las = readLAS(LASfile, select = "xyz", filter = "-keep_first")
 ctg = catalog(LASfile)
 cores(ctg) <- 1
 progress(ctg) <- FALSE
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg@input_options$select = "xyz"
+ctg@input_options$filter = "-keep_first"
+
 shapefile_dir <- system.file("extdata", package = "lidR")
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
 
@@ -15,7 +17,7 @@ test_that("clip rectangle works on a LAS and a LAScatalog", {
   expect_equal(rect1@crs, las@crs)
   expect_equal(nrow(rect1@data), 2789)
 
-  rect2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900,  select = "xyx", filter = "-keep_first")
+  rect2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
   expect_true(extent(rect2) <= raster::extent(684850, 5017850, 684900, 5017900))
   expect_equal(rect2@crs, ctg@proj4string)
 
@@ -28,7 +30,7 @@ test_that("clip circle works on a LAS and a LAScatalog", {
   expect_equal(circ1@crs, las@crs)
   expect_equal(nrow(circ1@data), 361L)
 
-  circ2 = lasclipCircle(ctg, 684850, 5017850, 10, select = "xyx", filter = "-keep_first")
+  circ2 = lasclipCircle(ctg, 684850, 5017850, 10)
   expect_true(extent(circ2) <= raster::extent(684850-10,5017850-10,684850+10,5017850+10))
   expect_equal(circ2@crs, ctg@proj4string)
 
@@ -41,7 +43,7 @@ test_that("clip polygon works on a LAS and a LAScatalog", {
   expect_equal(tri1@crs, las@crs)
   expect_equal(nrow(tri1@data), 4784L)
 
-  tri2 = lasclipPolygon(ctg, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850), select = "xyx", filter = "-keep_first")
+  tri2 = lasclipPolygon(ctg, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850))
   expect_true(extent(tri2) <= raster::extent(684850, 5017800, 684975, 5017900))
   expect_equal(tri2@crs, ctg@proj4string)
 
@@ -56,8 +58,8 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
 
   mpoly1  = lasclip(las, wkt1)
   poly1   = lasclip(las, wkt2)
-  mpoly2  = lasclip(ctg, wkt1, select = "xyx", filter = "-keep_first")
-  poly2   = lasclip(ctg, wkt2, select = "xyx", filter = "-keep_first")
+  mpoly2  = lasclip(ctg, wkt1)
+  poly2   = lasclip(ctg, wkt2)
 
   expect_is(mpoly1, "LAS")
   expect_equal(nrow(mpoly1@data), 22520L)
@@ -74,7 +76,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   polygon1 = spatialpolygons1@polygons[[1]]@Polygons[[1]]
 
   poly1  = lasclip(las, polygon1)
-  poly2  = lasclip(ctg, polygon1, select = "xyx", filter = "-keep_first")
+  poly2  = lasclip(ctg, polygon1)
 
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 2117L)
@@ -87,7 +89,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   polygons1 = spatialpolygons1@polygons[[1]]
 
   poly1  = lasclip(las, polygons1)
-  poly2  = lasclip(ctg, polygons1, select = "xyx", filter = "-keep_first")
+  poly2  = lasclip(ctg, polygons1)
 
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 22520L)
@@ -98,7 +100,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
 
   # SpatialPolygonsDataFrame
   poly1 = lasclip(las, lakes)
-  poly2 = lasclip(ctg, lakes, select = "xyx", filter = "-keep_first")
+  poly2 = lasclip(ctg, lakes)
 
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 6898L)
@@ -109,7 +111,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   bbox = bbox - 100
 
   rect1 = lasclip(las, bbox)
-  rect2 = lasclip(ctg, bbox, select = "xyx", filter = "-keep_first")
+  rect2 = lasclip(ctg, bbox)
 
   expect_true(extent(rect1) <= bbox)
   expect_equal(rect1, rect2)
@@ -118,7 +120,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   r = raster::raster(bbox, res = 1)
 
   rect1 = lasclip(las, r)
-  rect2 = lasclip(ctg, r, select = "xyx", filter = "-keep_first")
+  rect2 = lasclip(ctg, r)
 
   expect_true(extent(rect1) <= raster::extent(r))
   expect_equal(rect1, rect2)
@@ -127,7 +129,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   m = raster::as.matrix(bbox)
 
   rect1 = lasclip(las, m)
-  rect2 = lasclip(ctg, m, select = "xyx", filter = "-keep_first")
+  rect2 = lasclip(ctg, m)
 
   expect_true(extent(rect1) <= bbox)
   expect_equal(rect1, rect2)
@@ -155,7 +157,7 @@ test_that("clip supports multiple queries", {
   r  = 10
 
   circ1 = lasclipCircle(las, xc, yc, r)
-  circ2 = lasclipCircle(ctg, xc, yc, r, select = "xyx", filter = "-keep_first")
+  circ2 = lasclipCircle(ctg, xc, yc, r)
 
   expect_is(circ1, "list")
   expect_equal(length(circ1), 2L)
@@ -168,7 +170,7 @@ test_that("clip supports multiple queries", {
   xmax = 684900 + c(0,1)
   ymax = 5017900 + c(0,1)
   rect1 = lasclipRectangle(las, xmin, ymin, xmax, ymax)
-  rect2 = lasclipRectangle(ctg, xmin, ymin, xmax, ymax, select = "xyx", filter = "-keep_first")
+  rect2 = lasclipRectangle(ctg, xmin, ymin, xmax, ymax)
 
   expect_is(rect1, "list")
   expect_equal(length(circ1), 2L)
@@ -182,7 +184,7 @@ test_that("clip supports multiple queries", {
   spatialpolygons = rgeos::readWKT(wkt)
 
   polys1 = lasclip(las, spatialpolygons)
-  polys2 = lasclip(ctg, spatialpolygons, select = "xyx", filter = "-keep_first")
+  polys2 = lasclip(ctg, spatialpolygons)
 
   expect_is(polys1, "list")
   expect_equal(length(polys1), 2L)
@@ -200,7 +202,7 @@ test_that("clip returns NULL for empty multiple queries", {
   r  = 10
 
   circ1 = suppressWarnings(lasclipCircle(las, xc, yc, r))
-  circ2 = suppressWarnings(lasclipCircle(ctg, xc, yc, r, select = "xyx", filter = "-keep_first"))
+  circ2 = suppressWarnings(lasclipCircle(ctg, xc, yc, r))
 
   expect_is(circ1, "list")
   expect_equal(length(circ1), 2L)
@@ -214,7 +216,7 @@ test_that("clip returns NULL for empty multiple queries", {
   xmax = 684900 + c(0,-2000)
   ymax = 5017900 + c(0,-2000)
   rect1 = suppressWarnings(lasclipRectangle(las, xmin, ymin, xmax, ymax))
-  rect2 = suppressWarnings(lasclipRectangle(ctg, xmin, ymin, xmax, ymax, select = "xyx", filter = "-keep_first"))
+  rect2 = suppressWarnings(lasclipRectangle(ctg, xmin, ymin, xmax, ymax))
 
   expect_is(rect1, "list")
   expect_equal(length(rect1), 2L)
@@ -229,7 +231,7 @@ test_that("clip returns NULL for empty multiple queries", {
   spatialpolygons = rgeos::readWKT(wkt)
 
   polys1 = suppressWarnings(lasclip(las, spatialpolygons))
-  polys2 = suppressWarnings(lasclip(ctg, spatialpolygons, select = "xyx", filter = "-keep_first"))
+  polys2 = suppressWarnings(lasclip(ctg, spatialpolygons))
 
   expect_is(polys1, "list")
   expect_equal(length(polys1), 2L)

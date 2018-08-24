@@ -82,7 +82,7 @@ rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", si
 # ============
 
 # 5x5 m fixed windows size
-chm = grid_canopy(las, 1, subcircle = 0.15)
+chm = grid_canopy(las, "p2r", 1, subcircle = 0.15)
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 

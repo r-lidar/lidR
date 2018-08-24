@@ -14,27 +14,28 @@ a \code{SpatialPolygonsDataFrame} that contains extra information that enables u
  how the catalog is processed (see details).
 }
 \details{
-A \code{LAScatalog} is formally a  \code{SpatialPolygonsDataFrame} extended with 3 new slots that
+A \code{LAScatalog} is formally a  \code{SpatialPolygonsDataFrame} extended with new slots that
 contain processing options. Each \code{lidR} function that supports a \code{LAScatalog} as
-input will respect these processing options when it is relevant (see documentation of each repective
-function). Internally, processing a catalog is almost always the same and relies on few steps:
+input will respect these processing options. Internally, processing a catalog is almost always the
+same and relies on few steps:
 \enumerate{
-\item Create a set of clusters. A cluster is the representation of a region of interest.
+\item Create a set of clusters. A cluster is an arbitrary defined region of interest (ROI) of the catalog.
+All together the clusters make a wall-to-wall set of ROIs that encompass the whole dataset.
 \item Loop over each cluster (in parallel or not)
 \item For each cluster, load the points inside the region of interest in R, run some R functions,
 return the expected output.
 \item Merge the outputs of the different clusters once they are all processed to build a continuous
 output.
 }
-So basically, a \code{LAScatalog} is a built-in batch process with the specificity that \code{lidR}
-does not loop through files but loops seamlessly through clusters that do not not necessarily match
-with the files pattern. This way \code{lidR} can process sequentially tiny regions of interest even
-if each file may be individually too big to fit in memory. This is also why point cloud indexation
-with lax files may significantly speed-up the processing.\cr\cr
+So basically, a \code{LAScatalog} is an object that allows for built-in batch process with the specificity
+that \code{lidR} does not loop through files but loops seamlessly through clusters that do not not
+necessarily match with the files pattern. This way \code{lidR} can process sequentially tiny regions
+of interest even if each file may be individually too big to fit in memory. This is also why point
+cloud indexation with \code{lax} files may significantly speed-up the processing.\cr\cr
 It is important to note that buffered datasets (i.e. files that overlap each other) are not natively
 supported by \code{lidR}. When encountering such datasets the user should always filter the
 overlap if possible. This is possible if the overlapping points are flagged, for example in the
-'withheld' field. Otherwise \code{lidR} will not be able to process the dataset correctly.
+'withheld' attribute Otherwise \code{lidR} will not be able to process the dataset correctly.
 }
 \section{Slots}{
 
@@ -47,6 +48,8 @@ sub-divided into small cluster to be processed (see dedicated section).}
 
 \item{\code{output_options}}{list. A list that contains some settings describing how the catalog will return
 the outputs (see dedicated section).}
+
+\item{\code{input_options}}{list. A list that contains parameter to pass to \link{readLAS} (see dedicated section).}
 }}
 
 \section{Processing options}{
@@ -54,10 +57,11 @@ the outputs (see dedicated section).}
 The slot \code{@processing_options} contains a \code{list} of options that drives how a the cluster
 (the sub-areas that are sequentially processed) are processed.
 \itemize{
-\item \strong{core}: interger. How many cores are used. Default is 1.
+\item \strong{core}: integer. How many cores are used. Default is 1.
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
-\item \strong{stop_early}: boolean. Stop the processsing before the end if an error occur in one of the clusters.
-Default is TRUE.
+\item \strong{stop_early}: boolean. Stop the processsing if an error occur in a clusters. If \code{FALSE}
+the process can run until the end removing cluster that failed. Default is TRUE and the user should
+not change that.
 }
 }
 
@@ -66,18 +70,18 @@ Default is TRUE.
 The slot \code{@clustering_options} contains a \code{list} of options that drives how a the cluster
 (the sub-areas that are sequentially processed) are made.
 \itemize{
-\item \strong{by_file}: boolean. The catalog is process sequentially by file. A clsuter is a file. Default is FALSE.
+\item \strong{by_file}: boolean. The catalog is process sequentially by file. A cluster is a file. Default is FALSE.
 \item \strong{tiling_size}: numeric. The size of the cluster that will be sequentially processeed. A small size
 allows for loading few data at a time saving computer memory. A large size allows for loading large
-region at a time, the computation is thus ussualy faster but uses much more computer memory. Not relevent
-if \code{by_file = TRUE}
+region at a time, the computation is thus usually faster but uses much more computer memory. Not relevent
+if \code{by_file = TRUE}.
 \item \strong{buffer}: numeric. Each cluster can be read with an extra buffer around it to ensure there is
 no side effect between to independent cluster and that the output is correct and continuous. This
 is mandatory for some algorithms. Default is 0.
 \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
-clustering pattern. By default the alignment is made along (0,0) meaning the edgeof a virtual tile
+clustering pattern. By default the alignment is made along (0,0) meaning the edge of a virtual cluster
 will belong on x = 0 and y = 0 and all the the others will be multiples of the tiling size. Not relevent
-if \code{by_file = TRUE}
+if \code{by_file = TRUE}.
 }
 }
 
@@ -88,9 +92,12 @@ The slot \code{@output_options} contains a \code{list} of options that drives ho
 or written in R memory).
 
 \itemize{
-\item \strong{output_files}: string. A complete path to a templated filename without extension (the
-algorithm guess it for you). When several files are going to be written a single string is provided
-with a template that is automatically fullfiled. For example this names are possible:
+\item \strong{output_files}: string. If \code{output_files = ""} outputs are returned to R. However
+if \code{output_files} is a string the output will not be returned to R but it will be written in files.
+This is useful if the output is too big to be returned in R. A complete path to a templated filename
+without extension (the algorithm guess it for you) is expected. When several files are going to be
+written a single string is provided with a template that is automatically fullfilled. For example
+this names are possible:
 \preformatted{
 "/home/user/als/normalized/file_{ID}_segmented"
 "C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
@@ -98,8 +105,21 @@ with a template that is automatically fullfiled. For example this names are poss
 }
 And will generate as many files as needed with custom names for each file. The list of allowed
 templates is described in the documentation of each function.
-\item \strong{drivers}: list. This contains all the drivers requieres to write seamlessly Raster*,
+\item \strong{drivers}: list. This contains all the drivers requiered to write seamlessly Raster*,
 Spatial*, LAS objects. This don't need to be changed if the user is not an advanced user.
+}
+}
+
+\section{Input options}{
+
+The slot \code{@input_options} contains a \code{list} of options that are passed to the function
+\link{readLAS}. Indeed this function is not called directly by the user but by the internal routines.
+User can propagate this options throught the catalog settings.
+
+\itemize{
+\item \strong{select}: string. The \code{select} option. Usually this option is not respected because
+each functions knows which data must be loaded or not. This is documented in each function.
+\item \strong{filter}: string. The \code{filter} option
 }
 }
 

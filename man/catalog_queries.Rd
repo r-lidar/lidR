@@ -4,7 +4,7 @@
 \alias{catalog_queries}
 \title{Extract LiDAR data based on a set of coordinates}
 \usage{
-catalog_queries(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL, ...)
+catalog_queries(ctg, x, y, r, r2 = NULL, buffer = 0, roinames = NULL)
 }
 \arguments{
 \item{ctg}{A LAScatalog object}
@@ -23,8 +23,6 @@ is provided, the selection turns into a rectangular ROI (if r = r2 it is a squar
 
 \item{roinames}{vector. A set of ROI names (the plot IDs, for example) to label the
 returned list.}
-
-\item{...}{Any argument available in \link{readLAS} to reduce the amount of data loaded.}
 }
 \value{
 A list of LAS objects
@@ -81,7 +79,9 @@ catalog_queries(catalog, X, Y, R, buffer = 5)
 
 # Return a List of 30 circular LAS objects of 25 m radius for which only the fields X, Y and
 # Z have been loaded and Z values < 0 were removed.
-catalog_queries(catalog, X, Y, R, select = "xyz", filter = "-drop_z_below 0")
+catalog@input_option$select = "xyz"
+catalog@input_option$filter = "-drop_z_below 0"
+catalog_queries(catalog, X, Y, R)
 }
 }
 \seealso{

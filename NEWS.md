@@ -92,17 +92,19 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 **grid_canopy**
 
-* Change: `grid_canopy` function returns a `RasterLayer` instead of a `data.table`.
-* Change: `grid_canopy` no longer fills NAs with the parameters `na.fill`. Indded the ellipis `...` is now consistently a way to pass `select` and `filter` parameters to `readLAS` when used with a `LAScatalog`. It used to be a way to choose an interpolation methods but for constitency it is not use like that anymore. Interpolation must be done by the user.
+* Change: `grid_canopy` is now a wrapper around other other methods. This make the function consistant with other `lidR` functions and the doc clearer.
+* Change: `grid_canopy_*` functions return a `RasterLayer` instead of a `data.table`.
+* Change: `grid_canopy` no longer fills NAs with the parameters `na.fill`.
+
+**grid_tincanopy**
+
+* Change: `grid_tincanopy` have been replaced by `grid_canopy_tin` and `grid_canopy_pitfree` unified by the function `grid_canopy`.
 
 **grid_hexametrics**
 
 * Change: as for `grid_metrics` parameter `splitlines` have been removed as well as parameter `debug`.
 * Change: the function returns an `hexbin` object or a list of `hexbin` objects and no longer any `data.table`.
 
-**grid_tincanopy**
-
-* Change: `grid_tincanopy` function returns a `RasterLayer` instead of a `data.table`.
 
 **grid_catalog**
 

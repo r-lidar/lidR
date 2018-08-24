@@ -4,16 +4,13 @@
 \alias{grid_density}
 \title{Map the pulse or point density}
 \usage{
-grid_density(las, res = 4, ...)
+grid_density(las, res = 4)
 }
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 square meters.}
-
-\item{...}{Additional argument for \link{readLAS} to reduce the amount of data loaded (only with a
-\code{LAScatalog} object)}
 }
 \value{
 A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.

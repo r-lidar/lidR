@@ -33,19 +33,23 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
 
   queries <- lapply(bboxes, function(bbox)
   {
-    bbox  = bbox + 2*buffer
-    is_in = with(catalog@data, !( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
-    files = catalog@data$filename[is_in]
+    bbox  <- bbox + 2*buffer
+    is_in <- with(catalog@data, !( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
+    files <- catalog@data$filename[is_in]
 
     if (length(files) == 0)
       return(NULL)
 
-    bbox   = bbox - 2*buffer
-    center = list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
-    width  = (bbox@xmax-bbox@xmin)
-    height = (bbox@ymax-bbox@ymin)
+    bbox    <- bbox - 2*buffer
+    center  <- list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
+    width   <- (bbox@xmax-bbox@xmin)
+    height  <- (bbox@ymax-bbox@ymin)
+    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname")
 
-    return(LAScluster(center, width, height, buffer, shape, files, "noname"))
+    cluster@select <- catalog@input_options$select
+    cluster@filter <- paste(cluster@filter, catalog@input_options$filter)
+
+    return(cluster)
   })
 
   return(queries)

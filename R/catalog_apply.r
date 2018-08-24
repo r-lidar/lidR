@@ -187,7 +187,7 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   return(do.call(func, c(las, func_args)))
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, propagate_read_option = TRUE, need_output_file = FALSE)
+catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE)
 {
   assertive::assert_is_function(FUN)
   assertive::assert_is_a_string(select)
@@ -233,12 +233,8 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
       stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
   }
 
-  clusters   <- catalog_makecluster(ctg)
-
-  if (propagate_read_option)
-    output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ..., select = select, filter = filter)
-  else
-    output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+  clusters <- catalog_makecluster(ctg)
+  output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
 
   return(output)
 }

@@ -146,7 +146,9 @@ lasfilterdecimate.LAScluster = function(las, density, homogenize = TRUE, res = 5
 lasfilterdecimate.LAScatalog = function(las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
   buffer(las) <- 0.1*res
-  output      <- catalog_apply2(las, lasfilterdecimate, density = density, homogenize = homogenize, res = res, use_pulse = use_pulse, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  las@input_options$select <- "*"
+
+  output      <- catalog_apply2(las, lasfilterdecimate, density = density, homogenize = homogenize, res = res, use_pulse = use_pulse, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string

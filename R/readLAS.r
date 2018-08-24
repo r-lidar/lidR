@@ -89,21 +89,20 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
 
   buffer <- X <- Y <- NULL
 
-  filter = paste(files@filter, filter)
-  las = readLAS(files@files, select, filter)
+  las <- readLAS(files@files, files@select,files@filter)
 
   if (is.null(las))
     return(invisible())
 
   if (files@buffer > 0)
   {
-    ybottom = files@bbox$ymin
-    ytop    = files@bbox$ymax
-    xleft   = files@bbox$xmin
-    xright  = files@bbox$xmax
-    xc      = files@center$x
-    yc      = files@center$y
-    r       = (files@width - 2*files@buffer)/2
+    ybottom <- files@bbox$ymin
+    ytop    <- files@bbox$ymax
+    xleft   <- files@bbox$xmin
+    xright  <- files@bbox$xmax
+    xc      <- files@center$x
+    yc      <- files@center$y
+    r       <- (files@width - 2*files@buffer)/2
 
     las@data[, buffer := 0]
 
@@ -139,8 +138,7 @@ streamLAS = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 
 streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
-  filter = paste(x@filter, filter)
-  las = streamLAS(x@files, ofile, select,  filter, filter_wkt)
+  las = streamLAS(x@files, ofile, x@select, x@filter, filter_wkt)
 
   # Automatically remove files that are empty
   if (ofile != "")
