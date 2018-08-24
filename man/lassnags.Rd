@@ -11,7 +11,7 @@ lassnags_wing(las, neigh_radii = c(1.5, 1, 2), low_int_thrsh = 50,
   uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 }
 \arguments{
-\item{las}{An object of the class \code{LAS}}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
 
 \item{algorithm}{character. The name of an algorithm. At present, can only be \code{"wing2015"}.
 (see sections relevant to each algorithm).}
@@ -36,13 +36,11 @@ point ratio) values for each of the three neighborhoods (sphere, small cylinder 
 cylinder) to be used for conditional assessments and classification into the following four snag
 classes: 1) general snag 2) small snag 3) live crown edge snag 4) high canopy
 cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be provided by
-the user.\cr\cr
-The current implementation is known to use a large amount of memory for storing the N x k
-integer matrix returning the near neighbor indices for each point in the point cloud.
-Improvements are possible in future package versions.}
+the user.}
 }
 \value{
-Nothing, the point cloud is updated by reference.
+If the input is a \code{LAS} object, return nothing. If the input is a
+\code{LAScatalog} returns a \code{LAScatalog}
 }
 \description{
 Snag classification/segmentation using several possible algorithms (see details).
@@ -52,6 +50,16 @@ cloud level and there is currently only one algorithm implemented (which uses Li
 thresholds and specified neighborhoods to differentiate bole and branch from foliage points
 (see details).
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
+the catalog processing options. The user can modify the processing options using the
+\link[lidR:catalog]{available options}.\cr\cr
+\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
+spatial queries using a spatial index. Users should really take advange a .lax files but this is
+not mandatory.
+}
+
 \section{Wing et al. 2015}{
 
 This is an automated filtering algorithm that utilizes three dimensional neighborhood
@@ -68,13 +76,18 @@ Table 2 where they present four groups of conditional assessments with their req
 neighborhood point density and average BBPR values (BBPR = branch and bole point ratio;
 PDR = point density requirement).\cr\cr
 This algorithm attributes each point in the point cloud (\code{snagCls} column) into the
-following five snag classes: \cr
-0) live tree - not a snag\cr
-1) general snag - the broadest range of snag point situations\cr
-2) small snag - isolated snags with lower point densities\cr
-3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, #' or\cr
-4) high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
+following five snag classes:
+\itemize{
+\item 0: live tree - not a snag\cr
+\item 1: general snag - the broadest range of snag point situations\cr
+\item 2: small snag - isolated snags with lower point densities\cr
+\item 3: live crown edge snag - snags located directly adjacent or intermixing with live trees crowns \cr
+\item 4: high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
 canopy cover >= 55\%).
+}
+The current implementation is known to use a large amount of memory for storing the N x k
+integer matrix returning the near neighbor indices for each point in the point cloud.
+Improvements are possible in future package versions.
 }
 
 \examples{
@@ -111,5 +124,5 @@ Individual snag detection using neighborhood attribute filtered airborne lidar d
 Sensing of Environment. 163: 165-179 https://doi.org/10.1016/j.rse.2015.03.013\cr\cr
 }
 \author{
-Andrew Sánchez Meador and Jean-Romain Roussel
+Implementation by Andrew Sánchez Meador, optimisations by Jean-Romain Roussel
 }

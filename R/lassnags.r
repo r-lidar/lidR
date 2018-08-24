@@ -35,7 +35,9 @@
 #' thresholds and specified neighborhoods to differentiate bole and branch from foliage points
 #' (see details).
 #'
-#' @param las An object of the class \code{LAS}
+#' @template LAScatalog
+#'
+#' @template param-las
 #' @param algorithm character. The name of an algorithm. At present, can only be \code{"wing2015"}.
 #' (see sections relevant to each algorithm).
 #' @param ... parameters for the algorithms. These depend on the algorithm used.
@@ -58,12 +60,9 @@
 #' cylinder) to be used for conditional assessments and classification into the following four snag
 #' classes: 1) general snag 2) small snag 3) live crown edge snag 4) high canopy
 #' cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be provided by
-#' the user.\cr\cr
-#' The current implementation is known to use a large amount of memory for storing the N x k
-#' integer matrix returning the near neighbor indices for each point in the point cloud.
-#' Improvements are possible in future package versions.
+#' the user.
 #'
-#' @return Nothing, the point cloud is updated by reference.
+#' @template return-lasupdater-las-lascatalog
 #'
 #' @section Wing et al. 2015:
 #' This is an automated filtering algorithm that utilizes three dimensional neighborhood
@@ -80,13 +79,18 @@
 #' neighborhood point density and average BBPR values (BBPR = branch and bole point ratio;
 #' PDR = point density requirement).\cr\cr
 #' This algorithm attributes each point in the point cloud (\code{snagCls} column) into the
-#' following five snag classes: \cr
-#' 0) live tree - not a snag\cr
-#' 1) general snag - the broadest range of snag point situations\cr
-#' 2) small snag - isolated snags with lower point densities\cr
-#' 3) live crown edge snag - snags located directly adjacent or intermixing with live trees crowns, #' or\cr
-#' 4) high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
+#' following five snag classes:
+#' \itemize{
+#' \item 0: live tree - not a snag\cr
+#' \item 1: general snag - the broadest range of snag point situations\cr
+#' \item 2: small snag - isolated snags with lower point densities\cr
+#' \item 3: live crown edge snag - snags located directly adjacent or intermixing with live trees crowns \cr
+#' \item 4: high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
 #' canopy cover >= 55\%).
+#' }
+#' The current implementation is known to use a large amount of memory for storing the N x k
+#' integer matrix returning the near neighbor indices for each point in the point cloud.
+#' Improvements are possible in future package versions.
 #'
 #' @examples
 #' \dontrun{
@@ -116,7 +120,7 @@
 #' }
 #'
 #' @author
-#' Andrew Sánchez Meador and Jean-Romain Roussel
+#' Implementation by Andrew Sánchez Meador, optimisations by Jean-Romain Roussel
 #'
 #' @references
 #' Wing, Brian M.; Ritchie, Martin W.; Boston, Kevin; Cohen, Warren B.; Olsen, Michael J. 2015.
@@ -136,6 +140,13 @@ lassnags = function (las, algorithm, ...)
 #' @rdname lassnags
 lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
+  UseMethod("lassnags_wing", las)
+}
+
+
+#' @export
+lassnags_wing.LAS = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
+{
   stopifnotlas(las)
   assertive::assert_is_numeric(neigh_radii)
   assertive::assert_all_are_in_closed_range(neigh_radii, 0, 3)
@@ -143,14 +154,23 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
   assertive::assert_all_are_in_closed_range(low_int_thrsh, 0, 300)
   assertive::assert_is_a_number(uppr_int_thrsh)
   assertive::assert_all_are_in_closed_range(uppr_int_thrsh, 0, 300)
-  assertive::assert_all_are_true(low_int_thrsh > uppr_int_thrsh)
+  assertive::assert_all_are_true(low_int_thrsh < uppr_int_thrsh)
   assertive::assert_is_a_number(pt_den_req)
   assertive::assert_all_are_in_open_range(pt_den_req, 0, 100)
 
   if(is.null(bbpr_thresholds))
-    stop("Branch and bole point ratio threshold matirx not supplied.")
+    stop("Branch and bole point ratio threshold matrix not supplied.")
 
   . <- X <- Y <- snagCls <- NULL
+
+  # Wing's branch and bole point ratio (BBPR) function, independent of neighborhood
+  # type (see pg. 172 of Wing et al 2015)
+  branchBolePtRatio = function(intensity, low_int_thrsh, uppr_int_thrsh)
+  {
+    num = sum(intensity <= low_int_thrsh | intensity >= uppr_int_thrsh)
+    n = length(intensity)
+    return(num/n)
+  }
 
   # ====== STEP 0 =======
 
@@ -257,35 +277,50 @@ lassnags_wing = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, upp
 
   verbose("Classifiying points...")
 
-  las@data[, snagCls :=
+  snagCls =
   ifelse(sph_PtDen>=pt_den_req  & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,1] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,1] &
          lg_cyl_PtDen>=pt_den_req & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,1],
-         1,        # General snag class
+         1L,        # General snag class
 
   ifelse(sph_PtDen>=2 & sph_PtDen<=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,2] &
          sm_cyl_PtDen>=2 & sm_cyl_PtDen<=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,2] &
          lg_cyl_PtDen>=2 & lg_cyl_PtDen<=pt_den_req & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,2],
-         2,        # Small snag class
+         2L,        # Small snag class
 
   ifelse(sph_PtDen>=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,3] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,3] &
          lg_cyl_PtDen>=pt_den_req*7 & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,3],
-         3,        # Live crown edge snag class
+         3L,        # Live crown edge snag class
 
   ifelse(sph_PtDen>=pt_den_req & sph_BranchBolePtRatio_mean>=bbpr_thresholds[1,4] &
          sm_cyl_PtDen>=pt_den_req & sm_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[2,4] &
          lg_cyl_PtDen>=pt_den_req*15 & lg_cyl_BranchBolePtRatio_mean>=bbpr_thresholds[3,4],
-          4,        # High canopy cover snag class
+          4L,        # High canopy cover snag class
 
-          0))))]    # Remaining points assigned to live tree class
+          0L))))   # Remaining points assigned to live tree class
+
+  lasaddextrabytes(las, snagCls, "snagCls", "Number identifying a snag class")
+
+  return(invisible(las))
 }
 
-# Wing's branch and bole point ratio (BBPR) function, independent of neighborhood
-# type (see pg. 172 of Wing et al 2015)
-branchBolePtRatio = function(intensity, low_int_thrsh, uppr_int_thrsh)
+#' @export
+lassnags_wing.LAScluster = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
-  num = sum(intensity <= low_int_thrsh | intensity >= uppr_int_thrsh)
-  n = length(intensity)
-  return(num/n)
+  x <- readLAS(las)
+  if (is.null(x)) return(NULL)
+  lassnags_wing(x, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, bbpr_thresholds)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lassnags_wing.LAScatalog = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
+{
+  output      <- catalog_apply2(las, lassnags_wing,  neigh_radii = neigh_radii, low_int_thrsh = low_int_thrsh, uppr_int_thrsh = uppr_int_thrsh, pt_den_req = pt_den_req, bbpr_thresholds = bbpr_thresholds, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, propagate_read_option = FALSE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  ctg@proj4string <- las@proj4string
+  return(ctg)
 }
