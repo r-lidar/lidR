@@ -118,7 +118,7 @@
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
 #' @importClassesFrom sp SpatialPolygonsDataFrame
-#' @exportClass LAS
+#' @export
 #' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAScatalog",

@@ -73,7 +73,7 @@
 #' @import methods
 #' @include class-lasheader.r
 #' @importClassesFrom sp CRS
-#' @exportClass LAS
+#' @export
 #' @useDynLib lidR, .registration = TRUE
 setClass(
   Class = "LAS",
