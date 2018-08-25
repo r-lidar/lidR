@@ -112,7 +112,6 @@ Collate:
     'metrics_canopy_roughness.r'
     'options.r'
     'plot.catalog.r'
-    'plot.lashexametrics.r'
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'
