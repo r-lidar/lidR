@@ -10,6 +10,7 @@
 * Change: the `LAS` class **is** now a `Spatial` or more thecnically it inherits a `Spatial`.
 * Change: being a `Spatial` a `LAS` does not have any slot `@crs`. It is now `@proj4string`.
 * New: being a `Spatial` a `LAS` inherit of mutilple function from `raster`and `sp` such as `$` and `[[` accessors or `raster::extent`, `sp::bbox`, `raster::projection` and so on.
+* New: empty `LAS` with 0 points are now allowed. This have repercussions on several function including `lasfilter`, `lasclip`, `readLAS` that do not return `NULL` for empty data but a `LAS` objects with 0 points. This new behavior to fixes the old unconsitant behavior of function that return either `LAS` or `NULL`. `LAS` is always returned.
 
 **LAScatalog class**
 
@@ -37,7 +38,12 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 ```
 
 * Change: documentation has been reviewed and extented
+* Change: `lasclip` does not return `NULL` for empty queries but an empty `LAS`.
 * Fix: `lasclipRectangle` returns the same output both with a `LAS` and a `LAScatalog`. With a `LAS` the rectangle range is now close on the bottom and the left and open on the right and the top.
+
+**catalog_queries**
+
+* Change: `catalog_queries` have been removed because it superseded by `lasclip`
 
 **lasnormalize**
 

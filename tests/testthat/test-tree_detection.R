@@ -66,7 +66,7 @@ test_that("tree_detection mutltichm works with a LAS", {
   expect_equal(ttops@proj4string, las@proj4string)
 })
 
-test_that("tree_detection LMF works with a LAScatalog", {
+test_that("tree_detection multichm works with a LAScatalog", {
 
   ttops = tree_detection_multichm(ctg, 2, layer_thickness = 2)
 

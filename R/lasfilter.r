@@ -69,12 +69,6 @@ lasfilter_ <- function(.las, conditions)
     combined_bools = combined_bools & bools
   }
 
-  if(sum(combined_bools) == 0)
-  {
-    err = paste(paste(conditions), collapse=" & ")
-    return(NULL)
-  }
-
   return(LAS(.las@data[combined_bools], .las@header, .las@proj4string))
 }
 

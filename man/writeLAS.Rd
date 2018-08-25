@@ -15,5 +15,5 @@ writeLAS(.las, file)
 void
 }
 \description{
-Write a LAS object into a binary file (.las or .laz specified in filename)
+Write a LAS object into a binary .las or .laz file (compression specified in filename)
 }

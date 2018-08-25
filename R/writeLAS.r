@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -29,7 +29,7 @@
 
 #' Write a las or laz file
 #'
-#' Write a LAS object into a binary file (.las or .laz specified in filename)
+#' Write a LAS object into a binary .las or .laz file (compression specified in filename)
 #'
 #' @param .las an object of class LAS
 #' @param file character. A character string naming an output file
@@ -39,6 +39,8 @@ writeLAS = function(.las, file)
 {
   stopifnotlas(.las)
   assertive::assert_is_a_string(file)
+
+  if (is.empty(.las)) stop("Cannot write a file with 0 points", call. = FALSE)
 
   file  = path.expand(file)
   islas = tools::file_ext(file) %in% c("las", "laz")

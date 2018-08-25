@@ -115,7 +115,7 @@
 lasclip = function(las, geometry)
 {
   if (is.character(geometry))
-    geometry = rgeos::readWKT(geometry)
+    geometry <- rgeos::readWKT(geometry)
 
   if (is(geometry, "Polygon"))
     geometry <- sp::Polygons(list(geometry), ID = 1)
@@ -194,16 +194,10 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
   output = vector(mode = "list", length(xleft))
   for (i in 1:length(xleft))
   {
-    roi =  lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
-    if (is.null(roi))
-    {
-      warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]}). NULL returned."), call. = FALSE)
-      output[i] = list(NULL)
-    }
-    else
-      output[[i]] = roi
+    roi = lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
+    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."), call. = FALSE)
+    output[[i]] = roi
   }
-
 
   if(length(output) == 0)
     return(NULL)
@@ -273,13 +267,8 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
   for (i in 1:length(xcenter))
   {
     roi = lasfilter(las, (X-xcenter[i])^2 + (Y-ycenter[i])^2 <= radius[i]^2)
-    if (is.null(roi))
-    {
-      warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]}). NULL returned."), call. = FALSE)
-      output[i] = list(NULL)
-    }
-    else
-      output[[i]] = roi
+    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."), call. = FALSE)
+    output[[i]] = roi
   }
 
   if(length(output) == 0)
@@ -290,7 +279,6 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
     return(output)
 }
 
-#' @export
 #' @export
 lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
 {
@@ -329,13 +317,8 @@ lasclipSimpleFeature.LAS = function(las, sf)
   for (i in 1:length(wkt))
   {
     roi = lasfilter(las, C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt[i]))
-    if (is.null(roi))
-    {
-      warning(glue::glue("No point found for within {wkt[i]}. NULL returned."), call. = FALSE)
-      output[i] = list(NULL)
-    }
-    else
-      output[[i]] = roi
+    if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."), call. = FALSE)
+    output[[i]] = roi
   }
 
   if(length(output) == 0)
@@ -372,11 +355,9 @@ lasclipSimpleFeature.LAScatalog = function(las, sf)
 
 catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
 {
-  progress  <- progress(ctg)
-
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
-  if (progress) plot.LAScatalog(ctg, FALSE)
+  if (progress(ctg)) plot.LAScatalog(ctg, FALSE)
 
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)
@@ -385,36 +366,42 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
     streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)
   }
 
-  # Find the ROIs in the catalog and return LASclusters
+  # Find the ROIs in the catalog and return LASclusters. If a ROI fall outside the catalog
+  # its associated LAScluster is NULL a must receive a special treatment in following code
   clusters <- catalog_index(ctg, bboxes, shape, 0)
 
-  # Add some useful information in the clusters
+  # Add some information in the clusters to extract properly polygons and to write correct file names
   for (i in 1:length(clusters))
   {
-    if(!is.null(clusters[[i]]))
-    {
-      if (!is.null(sf))
-        clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
+    # skip NULL clusters
+    if(is.null(clusters[[i]]))
+      next
 
-      if (output_files(ctg) != "")
-      {
-        X         <-  if (!is.null(sf)) sf[1,] else list()
-        X$ID      <- i
-        X$XCENTER <- clusters[[i]]@center$x
-        X$XCENTER <- clusters[[i]]@center$y
-        X$XLEFT   <- clusters[[i]]@bbox$xmin
-        X$XRIGHT  <- clusters[[i]]@bbox$xmax
-        X$YBOTTOM <- clusters[[i]]@bbox$ymin
-        X$YTOP    <- clusters[[i]]@bbox$ymax
-        format    <- if (laz_compression(ctg)) ".laz" else ".las"
-        clusters[[i]]@save <- paste0(glue::glue_data(X, output_files(ctg)), format)
-      }
+    # If a simple feature is provided we want to extract a polygon. Insert WKT string
+    if (!is.null(sf))
+      clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
+
+    # If the user want to write the ROIs in files. Generate a filename.
+    if (output_files(ctg) != "")
+    {
+      X         <-  if (!is.null(sf)) sf[1,] else list()
+      X$ID      <- i
+      X$XCENTER <- clusters[[i]]@center$x
+      X$XCENTER <- clusters[[i]]@center$y
+      X$XLEFT   <- clusters[[i]]@bbox$xmin
+      X$XRIGHT  <- clusters[[i]]@bbox$xmax
+      X$YBOTTOM <- clusters[[i]]@bbox$ymin
+      X$YTOP    <- clusters[[i]]@bbox$ymax
+      format    <- if (laz_compression(ctg)) ".laz" else ".las"
+      clusters[[i]]@save <- paste0(glue::glue_data(X, output_files(ctg)), format)
     }
   }
 
+  # Process the cluster using LAScatalog internal engine
   output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE)
 
-  if (ctg@output_options$output_files != "")   # output should contains nothing because everything have been streamed into files
+  # output should contains nothing because everything have been streamed into files
+  if (output_files(ctg) != "")
   {
     written_path = c()
     for (cluster in clusters)
@@ -425,17 +412,27 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
 
     return(list(catalog(written_path)))
   }
-  else                                          # output should contains LAS objects returned at the R level
+  # output should contains LAS objects returned at the R level
+  else
   {
-    # Transfer CRS
     for (i in 1:length(output))
     {
       if (!is.null(output[[i]]))
       {
+        # Transfer the CRS of the catalog.
         output[[i]]@proj4string <- ctg@proj4string
 
         # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
         if (cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
+      }
+      else
+      {
+        # For consitancy with LAS dispatched functions, LAScatalog must return empty LAS that respect
+        # select option. The following is definitively a twist to get a consitant ouput but happend
+        # only for dummy queries outise the catalog
+        emptylas <- readLAS(ctg@data$filename[1], ctg@input_options$select, filter = "-inside 0 0 0 0")
+        output[[i]] <- emptylas
+        warning(glue::glue("No point found for within region of interest {i}."), call. = FALSE)
       }
     }
 

@@ -442,7 +442,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
   hmin = if(is.null(p$hmin)) formals(tree_detection_lmf)$hmin else p$hmin
 
 
-  while(!is.null(las_copy))
+  while(!is.empty(las_copy))
   {
     chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
 
@@ -457,7 +457,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
       i = i+1
     }
     else
-      las_copy = NULL
+      las_copy = new("LAS")
   }
 
   LM = data.table::rbindlist(LM)

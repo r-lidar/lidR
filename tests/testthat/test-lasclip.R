@@ -135,17 +135,12 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_equal(rect1, rect2)
 })
 
-test_that("clip returns NULL if no point found in the query", {
+test_that("clip returns an empty point cloud if no point found in the query", {
   circ1 = suppressWarnings(lasclipCircle(las, 68480, 5017850, 10))
   circ2 = suppressWarnings(lasclipCircle(ctg, 68480, 5017850, 10))
 
-  expect_true(is.null(circ1))
-  expect_true(is.null(circ2))
-})
-
-test_that("clip throw a warning if the query is outside the bounding box", {
-  expect_warning(lasclipCircle(las, 68480, 5017850, 10), "No point found")
-  #expect_warning(lasclipCircle(ctg, 68480, 5017850, 10), "outside the catalog")
+  expect_true(is.empty(circ1))
+  expect_true(is.empty(circ2))
 })
 
 
@@ -206,7 +201,7 @@ test_that("clip returns NULL for empty multiple queries", {
 
   expect_is(circ1, "list")
   expect_equal(length(circ1), 2L)
-  expect_true(is.null(circ1[[2]]))
+  expect_true(is.empty(circ1[[2]]))
   expect_equal(circ1, circ2)
 
 
@@ -220,7 +215,7 @@ test_that("clip returns NULL for empty multiple queries", {
 
   expect_is(rect1, "list")
   expect_equal(length(rect1), 2L)
-  expect_true(is.null(rect1[[2]]))
+  expect_true(is.empty(rect1[[2]]))
   expect_equal(rect1, rect2)
 
   # Multiple polygons
@@ -235,7 +230,7 @@ test_that("clip returns NULL for empty multiple queries", {
 
   expect_is(polys1, "list")
   expect_equal(length(polys1), 2L)
-  expect_true(is.null(polys1[[2]]))
+  expect_true(is.empty(polys1[[2]]))
   expect_equal(polys1, polys2)
 })
 
@@ -243,7 +238,7 @@ test_that("clip returns NULL for empty multiple queries", {
 test_that("clip throws errors with invalid queries", {
 
   # Invalid WKT
-  wkt = "POLGON ((684975.7 5017899, 685007.3 5017873, 684994.3 5017816, 684936.1 5017812, 684918.8 5017845, 684975.7 5017899))"
+  wkt = "POLGON ((684975.7 5«017899, 685007.3 5017873, 684994.3 5017816, 684936.1 5017812, 684918.8 5017845, 684975.7 5017899))"
   expect_error(lasclip(las, wkt), "Unable to parse")
   expect_error(lasclip(ctg, wkt), "Unable to parse")
 

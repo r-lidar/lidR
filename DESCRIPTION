@@ -71,7 +71,6 @@ Collate:
     'catalog_index.r'
     'catalog_laxindex.r'
     'catalog_makecluster.r'
-    'catalog_query.r'
     'catalog_retile.r'
     'catalog_select.r'
     'clusters_apply.r'
