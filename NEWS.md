@@ -5,10 +5,16 @@
 * New: the three exemple files are now georeference with an EPSG code that is read and converted to a `proj4string`.
 * New: the exemple file `MixedConifers.laz` contains the segmented trees in extra bytes 0.
 
-**LAScatalog**
+**LAS class**
+
+* Change: the `LAS` class **is** now a `Spatial` or more thecnically it inherits a `Spatial`.
+* Change: being a `Spatial` a `LAS` does not have any slot `@crs`. It is now `@proj4string`.
+* New: being a `Spatial` a `LAS` inherit of mutilple function from `raster`and `sp` such as `$` and `[[` accessors or `raster::extent`, `sp::bbox`, `raster::projection` and so on.
+
+**LAScatalog class**
 
 * Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more thecnically it inherits a `SpatialPolygonsDataFrame`.
-* Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` do not have any slot `@crs`. It is now `@proj4string`.
+* Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` does not have any slot `@crs`. It is now `@proj4string`.
 * Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options` and `@clustering_options` that are list of options classified by their main role.
 * Change: documentation has been reviewed
 

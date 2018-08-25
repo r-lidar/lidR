@@ -155,8 +155,8 @@ tree_detection_lmf.RasterLayer = function(x, ws, hmin = 2, shape = c("circular",
 tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square"), ...)
 {
   output = tree_detection_lmf(x@data , ws, hmin, shape)
-  output@proj4string = x@crs
-  output@bbox = raster::as.matrix(extent(x))
+  output@proj4string = x@proj4string
+  output@bbox = sp:sp::bbox(x)
   return(output)
 }
 
@@ -241,7 +241,7 @@ tree_detection_ptrees.LAS = function(las, k, hmin = 3, nmax = 7L, ...)
   apices[, treeID := 1:.N]
 
   output = sp::SpatialPointsDataFrame(apices[, .(X,Y)], apices[, .(treeID, Z)])
-  output@proj4string = las@crs
+  output@proj4string = las@proj4string
   return(output)
 }
 
@@ -476,7 +476,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
 
   detected[, treeID := 1:.N]
 
-  output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@crs)
+  output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@proj4string)
   return(output)
 }
 

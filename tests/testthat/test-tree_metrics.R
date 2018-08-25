@@ -15,13 +15,13 @@ test_that("tree_metrics works with a LAS", {
   expect_is(metrics, "SpatialPointsDataFrame")
   expect_equal(names(metrics@data), c("treeID", "Z", "Mean Z", "Max I"))
   expect_equal(dim(metrics@data), c(205,4))
-  expect_equal(metrics@proj4string, las@crs)
+  expect_equal(metrics@proj4string, las@proj4string)
 
   metrics = tree_metrics(las, .stdtreemetrics)
 
   expect_is(metrics, "SpatialPointsDataFrame")
   expect_equal(nrow(metrics@data), 205)
-  expect_equal(metrics@proj4string, las@crs)
+  expect_equal(metrics@proj4string, las@proj4string)
 })
 
 test_that("tree_metrics works with a LAScatalog", {
@@ -31,13 +31,13 @@ test_that("tree_metrics works with a LAScatalog", {
   expect_is(metrics, "SpatialPointsDataFrame")
   expect_equal(names(metrics@data), c("treeID", "Z", "Mean Z", "Max I"))
   expect_equal(dim(metrics@data), c(205,4))
-  expect_equal(metrics@proj4string, las@crs)
+  expect_equal(metrics@proj4string, las@proj4string)
 
   metrics = tree_metrics(ctg, .stdtreemetrics)
 
   expect_is(metrics, "SpatialPointsDataFrame")
   expect_equal(nrow(metrics@data), 205)
-  expect_equal(metrics@proj4string, las@crs)
+  expect_equal(metrics@proj4string, las@proj4string)
 })
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

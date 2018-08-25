@@ -17,14 +17,14 @@ test_that("tree_detection LMF works with a LAS", {
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(175,2))
-  expect_equal(ttops@proj4string, las@crs)
+  expect_equal(ttops@proj4string, las@proj4string)
 
   f = function(x) { x * 0.07 + 3}
   ttops = tree_detection_lmf(las, f)
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(205,2))
-  expect_equal(ttops@proj4string, las@crs)
+  expect_equal(ttops@proj4string, las@proj4string)
 })
 
 test_that("tree_detection LMF works with a RasterLayer", {
@@ -63,7 +63,7 @@ test_that("tree_detection mutltichm works with a LAS", {
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(234,2))
-  expect_equal(ttops@proj4string, las@crs)
+  expect_equal(ttops@proj4string, las@proj4string)
 })
 
 test_that("tree_detection LMF works with a LAScatalog", {
@@ -83,7 +83,7 @@ test_that("tree_detection ptree works with a LAS", {
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(261,2))
-  expect_equal(ttops@proj4string, las@crs)
+  expect_equal(ttops@proj4string, las@proj4string)
 })
 
 test_that("tree_detection ptree works with a LAScatalog", {

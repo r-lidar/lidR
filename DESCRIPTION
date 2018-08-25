@@ -57,8 +57,9 @@ Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
-    'class-lasheader.r'
-    'LAS.r'
+    'LASheader.r'
+    'Class-LAS.r'
+    'LAS-methods.r'
     'LAScatalog.r'
     'LAScluster.r'
     'RcppExports.R'
@@ -109,7 +110,6 @@ Collate:
     'metrics_canopy_roughness.r'
     'options.r'
     'plot.catalog.r'
-    'plot.las.r'
     'plot.lashexametrics.r'
     'plot.lasmetrics3d.r'
     'plot3d.r'

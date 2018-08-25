@@ -172,7 +172,7 @@ grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model 
   else
   {
     layout = make_overlay_raster(las, resolution)
-    layout@crs = las@crs
+    layout@crs = las@proj4string
     names(layout) = "Z"
     grid = raster::as.data.frame(layout, xy = TRUE)
     data.table::setDT(grid)

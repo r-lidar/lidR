@@ -14,12 +14,12 @@ lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
 test_that("clip rectangle works on a LAS and a LAScatalog", {
   rect1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
   expect_true(extent(rect1) <= raster::extent(684850, 5017850, 684900, 5017900))
-  expect_equal(rect1@crs, las@crs)
+  expect_equal(rect1@proj4string, las@proj4string)
   expect_equal(nrow(rect1@data), 2789)
 
   rect2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
   expect_true(extent(rect2) <= raster::extent(684850, 5017850, 684900, 5017900))
-  expect_equal(rect2@crs, ctg@proj4string)
+  expect_equal(rect2@proj4string, ctg@proj4string)
 
   expect_equal(rect1, rect2)
 })
@@ -27,12 +27,12 @@ test_that("clip rectangle works on a LAS and a LAScatalog", {
 test_that("clip circle works on a LAS and a LAScatalog", {
   circ1 = lasclipCircle(las, 684850, 5017850, 10)
   expect_true(extent(circ1) <= raster::extent(684850-10,5017850-10,684850+10,5017850+10))
-  expect_equal(circ1@crs, las@crs)
+  expect_equal(circ1@proj4string, las@proj4string)
   expect_equal(nrow(circ1@data), 361L)
 
   circ2 = lasclipCircle(ctg, 684850, 5017850, 10)
   expect_true(extent(circ2) <= raster::extent(684850-10,5017850-10,684850+10,5017850+10))
-  expect_equal(circ2@crs, ctg@proj4string)
+  expect_equal(circ2@proj4string, ctg@proj4string)
 
   expect_equal(circ1, circ2)
 })
@@ -40,12 +40,12 @@ test_that("clip circle works on a LAS and a LAScatalog", {
 test_that("clip polygon works on a LAS and a LAScatalog", {
   tri1 = lasclipPolygon(las, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850))
   expect_true(extent(tri1) <= raster::extent(684850, 5017800, 684975, 5017900))
-  expect_equal(tri1@crs, las@crs)
+  expect_equal(tri1@proj4string, las@proj4string)
   expect_equal(nrow(tri1@data), 4784L)
 
   tri2 = lasclipPolygon(ctg, c(684850, 684900, 684975, 684850), c(5017850, 5017900, 5017800, 5017850))
   expect_true(extent(tri2) <= raster::extent(684850, 5017800, 684975, 5017900))
-  expect_equal(tri2@crs, ctg@proj4string)
+  expect_equal(tri2@proj4string, ctg@proj4string)
 
   expect_equal(tri1, tri2)
 })
@@ -66,8 +66,8 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
   expect_equal(nrow(poly1@data), 4473L)
   expect_equal(mpoly1, mpoly2)
   expect_equal(poly1, poly2)
-  expect_equal(mpoly1@crs, las@crs)
-  expect_equal(mpoly2@crs, ctg@proj4string)
+  expect_equal(mpoly1@proj4string, las@proj4string)
+  expect_equal(mpoly2@proj4string, ctg@proj4string)
 
   # Polygon
   spatialpolygons1 = rgeos::readWKT(wkt1)
@@ -80,8 +80,8 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
 
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 2117L)
-  expect_equal(poly1@crs, las@crs)
-  expect_equal(poly2@crs, ctg@proj4string)
+  expect_equal(poly1@proj4string, las@proj4string)
+  expect_equal(poly2@proj4string, ctg@proj4string)
 
   expect_equal(poly1, poly2)
 
@@ -93,8 +93,8 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
 
   expect_is(poly1, "LAS")
   expect_equal(nrow(poly1@data), 22520L)
-  expect_equal(poly1@crs, las@crs)
-  expect_equal(poly2@crs, ctg@proj4string)
+  expect_equal(poly1@proj4string, las@proj4string)
+  expect_equal(poly2@proj4string, ctg@proj4string)
 
   expect_equal(poly1, poly2)
 
@@ -190,7 +190,7 @@ test_that("clip supports multiple queries", {
   expect_equal(length(polys1), 2L)
   expect_equal(nrow(polys1[[1]]@data), 22520L)
   expect_equal(nrow(polys1[[2]]@data), 4473L)
-  expect_equal(polys1[[1]]@crs, las@crs)
+  expect_equal(polys1[[1]]@proj4string, las@proj4string)
   expect_equal(polys1, polys2)
 })
 

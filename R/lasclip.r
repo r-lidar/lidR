@@ -432,7 +432,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
     {
       if (!is.null(output[[i]]))
       {
-        output[[i]]@crs <- ctg@proj4string
+        output[[i]]@proj4string <- ctg@proj4string
 
         # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
         if (cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)

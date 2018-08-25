@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -17,7 +17,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -25,7 +25,114 @@
 #
 # ===============================================================================
 
+#' Create object of class \link[lidR:LAS-class]{LAS}
+#'
+#' @param data a \link[data.table:data.table]{data.table} containing the data of a las or laz file.
+#' @param header a \code{list} or a \link[lidR:LASheader-class]{LASheader} containing the header of
+#' a las or laz file.
+#' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
+#' @param check logical. consistency tests while building the object.
+#' @return An object of class \code{LAS}
+#' @seealso
+#' \link[lidR:LAS]{Class LAS}
+#' @export LAS
+LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
+{
+  if(is.data.frame(data))
+    data.table::setDT(data)
 
+  if(!data.table::is.data.table(data))
+    stop("Invalid parameter data in constructor.", call. = FALSE)
+
+  if(nrow(data) == 0)
+    stop("'data' is empty. No point found.", call. = FALSE)
+
+  if (check)
+    rlas::check_data(data)
+
+  if (is(header, "LASheader"))
+    header = as.list(header)
+
+  if(is.list(header))
+  {
+    if (length(header) == 0)
+    {
+      header = rlas::header_create(data)
+      check = FALSE
+    }
+  }
+  else
+    stop("Wrong header object provided.", call. = FALSE)
+
+  header = rlas::header_update(header, data)
+
+  if(check)
+  {
+    rlas::check_header(header)
+    rlas::check_data_vs_header(header, data, hard = F)
+  }
+
+  header <- LASheader(header)
+
+  if(is.na(proj4string@projargs))
+    proj4string<- epsg2proj(get_epsg(header))
+
+  las <- new("LAS")
+  las@proj4string <- proj4string
+  las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
+  las@header      <- header
+  las@data        <- data
+
+  return(las)
+}
+
+if (!isGeneric("summary"))
+  setGeneric("summary", function(object, ...)
+    standardGeneric("summary"))
+
+if (!isGeneric("print"))
+  setGeneric("print", function(x, ...)
+    standardGeneric("print"))
+
+if (!isGeneric("plot"))
+  setGeneric("plot", function(x, y, ...)
+    standardGeneric("plot"))
+
+setMethod("show", "LAS", function(object)
+{
+  size <- format(utils::object.size(object), units = "auto")
+  surf <- area(object)
+  npts <- nrow(object@data)
+  dpts <- npts/surf
+  attr <- names(object@data)
+  ext  <- raster::extent(object)
+  phb  <- object@header@PHB
+
+  cat("class        : LAS (", phb$`File Signature`, " v", phb$`Version Major`, ".", phb$`Version Minor`, ")\n", sep = "")
+  cat("point format : ", phb$`Point Data Format ID`, "\n", sep = "")
+  cat("memory       :", size, "\n")
+  cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
+  cat("coord. ref.  :", object@proj4string@projargs, "\n")
+  cat("area         :", surf, "unit\u00B2 (convex hull)\n")
+  cat("points       :", npts, "points\n")
+  cat("density      :", round(dpts, 2), "points/unit\u00B2\n")
+  cat("names        :", attr, "\n")
+})
+
+summary.LAS <- function(object, ...)
+{
+  print(object)
+  print(object@header)
+}
+
+setMethod("summary", "LAS", summary.LAS)
+
+print.LAS <- function(x, ...)
+{
+  show(x)
+}
+
+setMethod("print", "LAS", print.LAS)
 
 #' Plot LiDAR data
 #'
@@ -114,15 +221,28 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
     inargs$col[is.na(inargs$col)] = "lightgray"
 
-    plot_with_rgl(x, bg, coldata, inargs)
+    .plot_with_rgl(x, bg, coldata, inargs)
   }
   else
-    plot_with_pcv(x, coldata, colorPalette, inargs)
+    .plot_with_pcv(x, coldata, colorPalette, inargs)
 
   return(invisible())
 }
 
-plot_with_rgl = function(x, bg, coldata, inargs)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x,y,...) plot.LAS(x,...))
+
+
+setReplaceMethod("$", "LAS", function(x, name, value)
+{
+
+  if (! name %in% names(x@data))
+    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
+
+  x@data[, (name) := value][]
+  return(x)
+})
+
+.plot_with_rgl = function(x, bg, coldata, inargs)
 {
   rgl::open3d()
   rgl::rgl.bg(color = bg)
@@ -131,7 +251,7 @@ plot_with_rgl = function(x, bg, coldata, inargs)
   return(invisible())
 }
 
-plot_with_pcv = function(x, coldata, colors, inargs)
+.plot_with_pcv = function(x, coldata, colors, inargs)
 {
   if (is.character(coldata) && coldata == "rgb")
   {

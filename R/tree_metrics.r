@@ -106,7 +106,7 @@ tree_metrics.LAS = function(las, func, field = "treeID")
   coords = stats[, .(x.pos.t, y.pos.t)]
   stats[, c("x.pos.t", "y.pos.t") := NULL]
 
-  output = sp::SpatialPointsDataFrame(coords, stats, proj4string = las@crs)
+  output = sp::SpatialPointsDataFrame(coords, stats, proj4string = las@proj4string)
   return(output)
 }
 

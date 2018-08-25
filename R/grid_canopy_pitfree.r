@@ -78,7 +78,7 @@ grid_canopy_pitfree.LAS = function(las, res = 0.5, thresholds =  c(0,2,5,10,15),
   {
     verbose("Subcircling points...")
 
-    ex = extent(las)
+    ex = raster::extent(las)
     cloud = subcircled(cloud, subcircle, 8)
     cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
   }

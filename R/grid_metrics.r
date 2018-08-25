@@ -137,7 +137,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   {
     xy_coords <- raster::xyFromCell(layout, metrics[[1]])
     metrics[, cells := NULL]
-    output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@crs)
+    output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@proj4string)
     return(raster::brick(output))
   }
 }

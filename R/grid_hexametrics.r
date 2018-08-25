@@ -86,7 +86,7 @@ grid_hexametrics = function(las, func, res = 20)
     stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
 
   res  <- round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
-  ext  <- extent(las)
+  ext  <- raster::extent(las)
   xmin <- round_any(ext@xmin, res)
   xmax <- round_any(ext@xmax, res)
   ymin <- round_any(ext@ymin, res)

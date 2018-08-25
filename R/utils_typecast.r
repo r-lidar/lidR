@@ -151,7 +151,7 @@ as.spatial.LAS = function(x)
 {
   ..coords <- NULL
   coords = c("X", "Y")
-  sp::SpatialPointsDataFrame(x@data[,..coords], x@data[, -..coords], proj4string = x@crs)
+  sp::SpatialPointsDataFrame(x@data[,..coords], x@data[, -..coords], proj4string = x@proj4string)
 }
 
 #' @export

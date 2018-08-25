@@ -91,7 +91,7 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
 
   data = data.frame(dt[, 1])
   spdf = sp::SpatialPolygonsDataFrame(spoly, data)
-  sp::proj4string(spdf)<-las@crs
+  sp::proj4string(spdf)<-las@proj4string
 
   return(spdf)
 }

@@ -131,7 +131,7 @@
 #' \link[lidR:catalog]{catalog}
 #' @import data.table
 #' @import methods
-#' @include class-lasheader.r
+#' @include LASheader.r
 #' @importClassesFrom sp CRS
 #' @importClassesFrom sp SpatialPolygonsDataFrame
 #' @export
@@ -439,9 +439,6 @@ laz_compression = function(ctg)
   ctg@output_options$drivers$LAS$laz_compression <- value
   return(ctg)
 }
-
-
-
 
 setMethod("show", "LAScatalog", function(object)
 {

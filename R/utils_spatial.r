@@ -25,39 +25,6 @@
 #
 # ===============================================================================
 
-#' Extent
-#'
-#' Returns an Extent object of a \code{LAS} or \code{LAScatalog} object.
-#'
-#' @rdname extent
-#' @param x An object of the class \code{LAS} or \code{LAScatalog}
-#' @param \dots Unused
-#' @return Extent object from \pkg{raster}
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
-#' extent(las)
-#' @seealso \code{\link[raster:extent]{raster::extent} }
-#' @export
-#' @importMethodsFrom raster extent
-setMethod("extent", "LAS",
-	function(x, ...)
-	{
-		return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
-	}
-)
-
-#' @rdname extent
-#' @export
-#' @importMethodsFrom raster extent
-setMethod("extent", "LAScatalog",
-  function(x, ...)
-  {
-    return(raster::extent(min(x@data$`Min X`), max(x@data$`Max X`), min(x@data$`Min Y`), max(x@data$`Max Y`)))
-  }
-)
-
-
 #' Surface covered by a \code{LAS} object or by a \code{LAScatalog}.
 #'
 #' The area is computed with the convex hull for \code{LAS} objects or x,y coordinates. If
@@ -106,6 +73,7 @@ setMethod("area", "numeric",
   function(x, y, ...)
   {
     stopifnot(length(x) == length(y))
+    if (length(x) == 0) return(0)
     hull <- convex_hull(x, y)
     area <- polygon_area(hull$x, hull$y)
     return(area)

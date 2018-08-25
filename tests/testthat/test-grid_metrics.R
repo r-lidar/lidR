@@ -1,7 +1,7 @@
 context("grid_metrics")
 
 las = lidR:::dummy_las(2000)
-las@crs = sp::CRS("+init=epsg:4326")
+las@proj4string = sp::CRS("+init=epsg:4326")
 
 test_that("grid_metrics returns a RasterLayer", {
   x = grid_metrics(las, list(`mean Z` = mean(Z)))
@@ -10,7 +10,7 @@ test_that("grid_metrics returns a RasterLayer", {
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(5,5,1))
   expect_equal(raster::extent(x), raster::extent(0,100,0,100))
-  expect_equal(x@crs, las@crs)
+  expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "mean.Z")
 })
 
@@ -21,7 +21,7 @@ test_that("grid_metrics returns a RasterLayer aligned with the start option", {
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(6,6,1))
   expect_equal(raster::extent(x), raster::extent(-10,110,-10,110))
-  expect_equal(x@crs, las@crs)
+  expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "V1")
 })
 
@@ -32,7 +32,7 @@ test_that("grid_metrics returns a RasterBrick with a LAS", {
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(5,5,2))
   expect_equal(raster::extent(x), raster::extent(0,100,0,100))
-  expect_equal(x@crs, las@crs)
+  expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), c("mean.Z", "max.Z"))
 })
 
@@ -43,7 +43,7 @@ test_that("grid_metrics returns a RasterBrick aligned with the start option", {
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(6,6,2))
   expect_equal(raster::extent(x), raster::extent(-10,110,-10,110))
-  expect_equal(x@crs, las@crs)
+  expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), c("mean.Z", "max.Z"))
 })
 

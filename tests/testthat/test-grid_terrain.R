@@ -1,7 +1,7 @@
 context("grid_terrain")
 
 las = lidR:::dummy_las(5000)
-las@crs = sp::CRS("+init=epsg:4326")
+las@proj4string = sp::CRS("+init=epsg:4326")
 las@data[, Z := Z + 0.1*X+0.1*Y+sin(0.01*X)-sin(0.1*Y)+sin(0.003*X*Y)]
 
 truedtm = lidR:::make_overlay_raster(las, 1)
@@ -17,7 +17,7 @@ test_that("grid_terrain works with knnidw", {
   expect_equal(raster::res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(truedtm))
   expect_equal(raster::extent(dtm), raster::extent(truedtm))
-  expect_equal(dtm@crs, las@crs)
+  expect_equal(dtm@crs, las@proj4string)
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
@@ -34,7 +34,7 @@ test_that("grid_terrain works with delaunay", {
   expect_equal(raster::res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(truedtm))
   expect_equal(raster::extent(dtm), raster::extent(truedtm))
-  expect_equal(dtm@crs, las@crs)
+  expect_equal(dtm@crs, las@proj4string)
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
@@ -51,7 +51,7 @@ test_that("gridterrain works with kriging", {
   expect_equal(raster::res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(truedtm))
   expect_equal(raster::extent(dtm), raster::extent(truedtm))
-  expect_equal(dtm@crs, las@crs)
+  expect_equal(dtm@crs, las@proj4string)
   expect_equal(names(dtm), "Z")
 
   error = abs(dtm-truedtm)
@@ -69,7 +69,7 @@ test_that("grid_terrain returns a circular dtm ", {
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(raster::res(dtm), c(1,1))
-  expect_equal(dtm@crs, las@crs)
+  expect_equal(dtm@crs, las@proj4string)
   expect_equal(names(dtm), "Z")
 
   error = suppressWarnings(abs(dtm-truedtm))
