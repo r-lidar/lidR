@@ -2,7 +2,7 @@
 % Please edit documentation in R/LASmethods-LAS.r
 \name{LAS}
 \alias{LAS}
-\title{Create object of class \link[lidR:LAS-class]{LAS}}
+\title{Create objects of class \link[lidR:LAS-class]{LAS}}
 \usage{
 LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 }
@@ -14,14 +14,11 @@ a las or laz file.}
 
 \item{proj4string}{projection string of class \link[sp:CRS-class]{CRS-class}.}
 
-\item{check}{logical. consistency tests while building the object.}
+\item{check}{logical. conformity tests while building the object.}
 }
 \value{
 An object of class \code{LAS}
 }
 \description{
-Create object of class \link[lidR:LAS-class]{LAS}
-}
-\seealso{
-\link[lidR:LAS]{Class LAS}
+Create objects of class \link[lidR:LAS-class]{LAS}
 }

@@ -25,17 +25,15 @@
 #
 # ===============================================================================
 
-#' Create object of class \link[lidR:LAS-class]{LAS}
+#' Create objects of class \link[lidR:LAS-class]{LAS}
 #'
 #' @param data a \link[data.table:data.table]{data.table} containing the data of a las or laz file.
 #' @param header a \code{list} or a \link[lidR:LASheader-class]{LASheader} containing the header of
 #' a las or laz file.
 #' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
-#' @param check logical. consistency tests while building the object.
+#' @param check logical. conformity tests while building the object.
 #' @return An object of class \code{LAS}
-#' @seealso
-#' \link[lidR:LAS]{Class LAS}
-#' @export LAS
+#' @export
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
   if(is.data.frame(data))
@@ -216,6 +214,9 @@ setMethod("print", "LAS", print.LAS)
 #' @export
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, backend = c("rgl", "pcv"), ...)
 {
+  if (is.empty(x))
+    stop("Cannot display an empty point cloud", call. = FALSE)
+
   if (!is.character(color))
     color = lazyeval::expr_text(color)
 

@@ -121,6 +121,7 @@ Collate:
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
+    'utils_catalog_options.r'
     'utils_colors.r'
     'utils_geometry.r'
     'utils_interpolations.r'

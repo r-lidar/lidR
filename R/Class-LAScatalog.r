@@ -178,10 +178,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
   )
 
   .Object@output_options <- list(
-    output_dir = "",
     output_files = "",
-    save_with_buffer = FALSE,
-    merge_files = FALSE,
     drivers = drivers
   )
 

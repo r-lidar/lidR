@@ -25,19 +25,51 @@
 #
 # ===============================================================================
 
-#' Build a catalog of las tiles/files
+#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog}
 #'
-#' Build a \link[lidR:LAScatalog-class]{LAScatalog} object from a folder name. A catalog is the
-#' representation of a set of las files, since a computer cannot load all the data at once. A
-#' catalog is a simple way to manage all the files sequentially by reading only the headers. Also a
-#' catalog contains metadata so users can configure how it will be processed.
+#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filename.
+#' A LAScatalog is a representation of a set of las/laz files. A computer cannot load all the data at
+#' once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most function from
+#' \code{lidR} can seamlessly be used with a LAScatalog using the internal \code{LAScatalog} processing
+#' engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
+#' processing options using the appropriated functions. The careful reading of the
+#' \link[lidR:LAScatalog-class]{LAScatalog class documentation} is requiered to use the \code{LAScatalog}
+#' class correclty.
 #'
-#' @param folder string. The path of a folder containing a set of .las files
+#' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
+#' file paths.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #' @param ctg A LAScatalog object.
 #' @param value An appropriated value for catalog settings. See \link[lidR:LAScatalog-class]{LAScatalog}
 #' @return A \code{LAScatalog} object
 #' @export
+#' @examples
+#' # A single file LAScatalog using data provided with the package
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' ctg = catalog(LASfile)
+#' plot(ctg)
+#'
+#' \dontrun{
+#' ctg <- catalog("/path/to/a/folder/of/las/files")
+#'
+#' # Internal engine will compute in parallel using two cores
+#' cores(ctg) <- 2L
+#'
+#' # Internal engine will process sequentially regions of interest of 500 x 500 m (clusters)
+#' tiling_size(ctg) <- 500
+#'
+#' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
+#' alignement(ctg) <- c(250, 300)
+#'
+#' # Internal engine will not display any progress estimation
+#' progress(ctg) <- FALSE
+#'
+#' # Internal engine will not return result into R. Instead it will write results in files
+#' output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#'
+#' # More details in the documentation
+#' help("LAScatalog-class", "lidR")
+#' }
 catalog <- function(folder, ...)
 {
   assertive::assert_is_character(folder)
@@ -105,170 +137,6 @@ catalog <- function(folder, ...)
     message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
   return(res)
-}
-
-#' @rdname catalog
-#' @export
-cores = function(ctg)
-{
-  return(ctg@processing_options$cores)
-}
-
-
-#' @rdname catalog
-#' @export
-`cores<-` = function(ctg, value)
-{
-  sys.cores = future::availableCores()
-  value = as.integer(value)
-
-  if(value > sys.cores) {
-    message(glue::glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
-    value = sys.cores
-  }
-
-  if(value < 1) {
-    message("Number of cores must be positive. Number of cores set to 1.")
-    value = 1L
-  }
-
-  ctg@processing_options$cores <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-by_file = function(ctg)
-{
-  return(ctg@clustering_options$by_file)
-}
-
-#' @rdname catalog
-#' @export
-`by_file<-` = function(ctg, value)
-{
-  stopifnot(is.logical(value), length(value) == 1)
-  ctg@clustering_options$by_file <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-buffer = function(ctg)
-{
-  return(ctg@clustering_options$buffer)
-}
-
-#' @rdname catalog
-#' @export
-`buffer<-` = function(ctg, value)
-{
-  assertive::assert_is_a_number(value)
-  if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
-  ctg@clustering_options$buffer <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-progress = function(ctg)
-{
-  return(ctg@processing_options$progress)
-}
-
-#' @rdname catalog
-#' @export
-`progress<-` = function(ctg, value)
-{
-  assertive::assert_is_a_bool(value)
-  ctg@processing_options$progress <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-tiling_size = function(ctg)
-{
-  return(ctg@clustering_options$tiling_size)
-}
-
-#' @rdname catalog
-#' @export
-`tiling_size<-` = function(ctg, value)
-{
-  assertive::assert_is_a_number(value)
-  assertive::assert_all_are_non_negative(value)
-  ctg@clustering_options$tiling_size <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-vrt = function(ctg)
-{
-  return(ctg@output_options$output_dir)
-}
-
-#' @rdname catalog
-#' @export
-`vrt<-` = function(ctg, value)
-{
-  assertive::assert_is_a_string(value)
-  ctg@output_options$output_dir <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-stop_early = function(ctg)
-{
-  return(ctg@processing_options$stop_early)
-}
-
-#' @rdname catalog
-#' @export
-`stop_early<-` = function(ctg, value)
-{
-  assertive::assert_is_a_bool(value)
-  ctg@processing_options$stop_early <- value
-  return(ctg)
-}
-
-save_vrt = function(ctg)
-{
-  vrt(ctg) != ""
-}
-
-#' @rdname catalog
-#' @export
-`output_files<-` = function(ctg, value)
-{
-  assertive::assert_is_a_string(value)
-  ctg@output_options$output_files <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-output_files = function(ctg)
-{
-  return(ctg@output_options$output_files)
-}
-
-#' @rdname catalog
-#' @export
-laz_compression = function(ctg)
-{
-  return(ctg@output_options$drivers$LAS$laz_compression)
-}
-
-#' @rdname catalog
-#' @export
-`laz_compression<-` = function(ctg, value)
-{
-  assertive::assert_is_a_bool(value)
-  ctg@output_options$drivers$LAS$laz_compression <- value
-  return(ctg)
 }
 
 setMethod("show", "LAScatalog", function(object)
