@@ -156,7 +156,7 @@ tree_detection_lmf.LAS = function(x, ws, hmin = 2, shape = c("circular", "square
 {
   output = tree_detection_lmf(x@data , ws, hmin, shape)
   output@proj4string = x@proj4string
-  output@bbox = sp:sp::bbox(x)
+  output@bbox = sp::bbox(x)
   return(output)
 }
 
