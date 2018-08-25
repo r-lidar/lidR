@@ -70,7 +70,7 @@
 #' @rdname LAS-class
 #' @import data.table
 #' @import methods
-#' @include LASheader.r
+#' @include Class-LASheader.r
 #' @importClassesFrom sp Spatial
 #' @export
 #' @useDynLib lidR, .registration = TRUE

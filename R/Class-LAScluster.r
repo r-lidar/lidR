@@ -77,26 +77,3 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
 
   return(.Object)
 })
-
-Cluster <- function(center, width, height, buffer, shape, files, name)
-{
-  return(new("LAScluster", center, width, height, buffer, shape, files, name, ""))
-}
-
-LAScluster <- function(center, width, height, buffer, shape, files, name)
-{
-  return(new("LAScluster", center, width, height, buffer, shape, files, name, ""))
-}
-
-
-setMethod("show", "LAScluster", function(object)
-{
-  cat("class   : LAScluster\n")
-  cat("name    :", object@name, "\n")
-  cat("center  :", object@center$x, ",", object@center$y, "\n")
-  cat("extent  :", object@bbox$xmin, ",", object@bbox$xmax, ",", object@bbox$ymin, ",", object@bbox$ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("extent+ :", object@bbbox$xmin, ",", object@bbbox$xmax, ",", object@bbbox$ymin, ",", object@bbbox$ymax, "(xmin, xmax, ymin, ymax)\n")
-  cat("size    :", object@width, "x", object@height, "\n")
-  cat("files   :", basename(object@files), "\n")
-  cat("filter  :", object@filter, "\n")
-})

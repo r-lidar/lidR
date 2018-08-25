@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -24,41 +24,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 # ===============================================================================
-
-
-
-#' An S4 class to represent the header read in a .las or .laz file
-#'
-#' A \code{LASheader} object contains a \code{list} in the slot \code{@PHB} with
-#' the data read from the Public Header Block and \code{list} in the slot \code{@VLR} with
-#' the data read from the Variable Lenght Records
-#' @slot PHB list. Represents the Public Header Block
-#' @slot VLR list. Represents the Variable Length Records
-#' @seealso
-#' \link[lidR:LAS]{LAS}
-#' \link[lidR:readLAS]{readLAS}
-#' @name LASheader-class
-#' @rdname LASheader-class
-#' @exportClass LASheader
-setClass(
-  Class = "LASheader",
-  representation(PHB = "list", VLR = "list")
-)
-
-setMethod("initialize", "LASheader", function(.Object, data = list())
-{
-  assertive::assert_is_list(data)
-
-  vlr <- list()
-  if (!is.null(data$`Variable Length Records`))
-    vlr <- data$`Variable Length Records`
-
-  .Object@PHB <- data
-  .Object@PHB$`Variable Length Records` <- NULL
-  .Object@VLR <- vlr
-
-  return(.Object)
-})
 
 #' Create a \code{LASheader} object
 #'

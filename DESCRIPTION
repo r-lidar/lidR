@@ -57,11 +57,14 @@ Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
-    'LASheader.r'
+    'Class-LASheader.r'
     'Class-LAS.r'
-    'LAS-methods.r'
-    'LAScatalog.r'
-    'LAScluster.r'
+    'Class-LAScatalog.r'
+    'Class-LAScluster.r'
+    'LASmethods-LAS.r'
+    'LASmethods-LAScatalog.r'
+    'LASmethods-LAScluster.r'
+    'LASmethods-LASheader.r'
     'RcppExports.R'
     'catalog_apply.r'
     'catalog_fakerun.r'
