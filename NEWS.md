@@ -129,6 +129,10 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * `as.spatial` no longer convert `lasmetrics` to `SpatialPixelsDataFrame` but still converts `LAS` to `SpatialPointsDataFrame`. 
 * `plot.lasmetrics` have been removed obviously.
 
+**lasroi**
+
+* Change: `lasoi` have been removed. It was not useful and bugged. It will maybe be reintroduce later in `lasclipManual`.
+
 ## lidR v1.6.1 (2018-08-21)
 
 #### BUG FIXES
