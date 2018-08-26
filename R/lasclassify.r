@@ -133,7 +133,7 @@ classify_from_shapefile = function(las, shapefile, field = NULL)
   if (raster::extent(shapefile) >  2*raster::extent(las))
   {
     verbose("Croping the shapefile...")
-    polys = raster::crop(shapefile, extent(las)*1.01)
+    polys = raster::crop(shapefile, raster::extent(las)*1.01)
   }
   else
     polys = shapefile

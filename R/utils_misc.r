@@ -43,7 +43,7 @@ make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
 
 make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
 {
-  bbox      <- extent(las) + 2 * subcircle
+  bbox      <- raster::extent(las) + 2 * subcircle
   bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
   bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
   bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
