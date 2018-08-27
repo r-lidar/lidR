@@ -51,10 +51,10 @@ test_that("grid_canopy p2r works with subcircle", {
 LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzr")
 ctg = catalog(LASfile)
-cores(ctg) <- 1
-tiling_size(ctg) <- 160
-buffer(ctg) <- 5
-progress(ctg) <- FALSE
+set_cores(ctg) <- 1
+set_tiling_size(ctg) <- 160
+set_buffer(ctg) <- 5
+set_progress(ctg) <- FALSE
 
 test_that("grid_canopy tin works both with LAS and LAScatalog", {
   x = grid_canopy(las, "tin", res = 1)

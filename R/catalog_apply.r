@@ -77,9 +77,9 @@
 #' # 2. Set some catalog options
 #' # For this dummy example, the clustering size is 80 m and the buffer is 15 m using
 #' # a single core (because this example is run on the CRAN server when the package is submitted).
-#' buffer(project) = 15
-#' cores(project) = 1
-#' tiling_size(project) = 120
+#' set_buffer(project) = 15
+#' set_cores(project) = 1
+#' set_tiling_size(project) = 120
 #'
 #' # 3. Load the shapefile needed to filter your points.
 #' folder <- system.file("extdata", "", package="lidR")
@@ -172,9 +172,6 @@ catalog_apply <- function(ctg, func, func_args = NULL, ...)
   assertive::assert_is_all_of(ctg, "LAScatalog")
   assertive::assert_is_function(func)
 
-  progress  <- progress(ctg)
-  ncores    <- cores(ctg)
-  stopearly <- stop_early(ctg)
   clusters  <- catalog_makecluster(ctg)
   output    <- cluster_apply(clusters, cluster_apply_func, ctg@processing_options, ctg@output_options, func = func, ctg = ctg, func_args = func_args, ...)
   return(output)
@@ -202,34 +199,34 @@ catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer
 
   if (need_buffer)
   {
-    if (buffer(ctg) <= 0)
+    if (get_buffer(ctg) <= 0)
       stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
   }
 
   if (check_alignement)
   {
     # If the clustering option do not match with the resolution
-    t_size     <- tiling_size(ctg)
+    t_size     <- get_tiling_size(ctg)
     new_t_size <- round_any(t_size, res)
     if (new_t_size != t_size)
     {
-      tiling_size(ctg) <- new_t_size
+      set_tiling_size(ctg) <- new_t_size
       message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
     }
 
     # If the alignement of the clusters do not match with the start point of the raster
-    alignment     <- ctg@clustering_options$alignment
+    alignment     <- get_alignment(ctg)
     new_alignment <- (alignment - start) %% res + alignment
     if (any(new_alignment != alignment))
     {
-      ctg@clustering_options$alignment <- new_alignment
+      set_alignment(ctg) <- new_alignment
       message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
     }
   }
 
   if (need_output_file)
   {
-    if (output_files(ctg) == "")
+    if (get_output_files(ctg) == "")
       stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
   }
 

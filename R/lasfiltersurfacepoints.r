@@ -44,8 +44,9 @@ lasfiltersurfacepoints.LAS = function(las, res)
 #' @export
 lasfiltersurfacepoints.LAScluster = function(las, res)
 {
+  buffer <- NULL
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   x <- lasfiltersurfacepoints(x, res)
   x <- lasfilter(x, buffer == 0)
   return(x)
@@ -54,8 +55,8 @@ lasfiltersurfacepoints.LAScluster = function(las, res)
 #' @export
 lasfiltersurfacepoints.LAScatalog = function(las, res)
 {
-  buffer(las) <- 0.1*res
-  las@input_options$select <- "*"
+  set_buffer(las) <- 0.1*res
+  set_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

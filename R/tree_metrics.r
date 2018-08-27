@@ -114,7 +114,7 @@ tree_metrics.LAS = function(las, func, field = "treeID")
 tree_metrics.LAScluster = function(las, func, field = "treeID")
 {
   x = readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   metrics = tree_metrics(x, func, field)
   bbox = raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
   metrics = raster::crop(metrics, bbox)

@@ -5,10 +5,10 @@ lidr_options(progress = FALSE)
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
-cores(ctg) <- 1
-progress(ctg) <- FALSE
-tiling_size(ctg) <- 60
-buffer(ctg) <- 20
+set_cores(ctg) <- 1
+set_progress(ctg) <- FALSE
+set_tiling_size(ctg) <- 60
+set_buffer(ctg) <- 20
 
 
 test_that("tree_detection LMF works with a LAS", {
@@ -87,7 +87,7 @@ test_that("tree_detection ptree works with a LAS", {
 })
 
 test_that("tree_detection ptree works with a LAScatalog", {
-  buffer(ctg) <- 30
+  set_buffer(ctg) <- 30
   ttops = tree_detection_ptrees(ctg, k = c(30,20,15,10))
 
   expect_is(ttops, "SpatialPointsDataFrame")

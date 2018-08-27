@@ -124,7 +124,7 @@ grid_canopy_pitfree.LAS = function(las, res = 0.5, thresholds =  c(0,2,5,10,15),
 grid_canopy_pitfree.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   x = readLAS(las, filter = "-keep_first", select = "xyzr")
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   bbox = raster::extent(as.numeric(las@bbox))
   metrics = grid_canopy_pitfree(x, res, thresholds, max_edge, subcircle)
   metrics = raster::crop(metrics, bbox)
@@ -134,12 +134,11 @@ grid_canopy_pitfree.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,
 #' @export
 grid_canopy_pitfree.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
-  las@input_options$select <- "xyzr"
-
-  output        <- catalog_apply2(las, grid_canopy_pitfree, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  set_select(las) <- "xyzr"
+  output          <- catalog_apply2(las, grid_canopy_pitfree, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
-  if (output_files(las) != "")  return(unlist(output))
+  if (get_output_files(las) != "")  return(unlist(output))
 
   # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])
@@ -149,48 +148,3 @@ grid_canopy_pitfree.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,
   names(output) <- names
   return(output)
 }
-
-
-# Canopy height model based on a triangulation.
-#
-# Canopy height model based on a triangulation of first returns. Depending on the inputs
-# this function computes a simple Delaunay triangulation of the first returns with a linear
-# interpolation within each triangle. This function also enables the use of the pit-free algorithm
-# developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
-# triangulations at different heights (see reference).
-#
-# @template LAScatalog
-#
-# @template param-las
-# @param res numeric. Resolution of the canopy height model.
-# @param thresholds numeric. Set of height thresholds. If \code{thresholds = 0} the algorithm
-# is a strict rasterization of the triangulation of the first returns. However, if an array is
-# passed to the function it becomes the Khosravipour et al. pit-free algorithm.
-# @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-# If a triangle has an edge greater than this value it will be removed. It is used to drive
-# the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
-# The first number is the value for the classical triangulation (threshold = 0), the second number
-# is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
-# is done.
-# @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
-# can replace each return with a circle consisting of 8 points before computing the triangulation
-# (see also \link{grid_canopy}).
-#
-# @template return-grid-Layer
-#
-# @export
-# @examples
-# LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
-# las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0")
-#
-# # Basic triangulation and rasterization
-# chm1 = grid_tincanopy(las, thresholds = 0, max_edge = 0)
-#
-# # Khosravipour et al. pitfree algorithm
-# chm2 = grid_tincanopy(las, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
-#
-# plot(chm1)
-# plot(chm2)
-# @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
-# Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
-# Remote Sensing, 80(9), 863-872.

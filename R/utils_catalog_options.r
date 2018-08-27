@@ -23,37 +23,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
-# ===============================================================================
+# ==============================================================================
+
 
 # ========= Clustering Options ===============
 
-#' @rdname catalog
+#' Get or set \link[lidR:LAScatalog-class]{LAScatalog} processing engine options
+#'
+#' The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
+#' The options are used by all the functions that take a \code{LAScatalog} as input.
+#'
+#' @param ctg An object of class \link[lidR:LAScatalog-class]{LAScatalog}
+#' @param value An appropriated value depending on the expected input.
+#' @return Functions \code{get_*} return the value of the associated options
+#' @rdname catalog_options_tools
 #' @export
-by_file = function(ctg)
-{
-  return(ctg@clustering_options$by_file)
-}
-
-#' @rdname catalog
-#' @export
-`by_file<-` = function(ctg, value)
-{
-  stopifnot(is.logical(value), length(value) == 1)
-  ctg@clustering_options$by_file <- value
-  return(ctg)
-}
-
-#' @rdname catalog
-#' @export
-#' @importFrom raster buffer
-buffer.LAScatalog = function(ctg)
+get_buffer = function(ctg)
 {
   return(ctg@clustering_options$buffer)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`buffer<-` = function(ctg, value)
+`set_buffer<-` = function(ctg, value)
 {
   assertive::assert_is_a_number(value)
   if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
@@ -61,16 +53,16 @@ buffer.LAScatalog = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-tiling_size = function(ctg)
+get_tiling_size = function(ctg)
 {
   return(ctg@clustering_options$tiling_size)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`tiling_size<-` = function(ctg, value)
+`set_tiling_size<-` = function(ctg, value)
 {
   assertive::assert_is_a_number(value)
   assertive::assert_all_are_non_negative(value)
@@ -78,35 +70,41 @@ tiling_size = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-alignement = function(ctg)
+get_alignment = function(ctg)
 {
-  return(ctg@clustering_options$alignement)
+  return(ctg@clustering_options$alignment)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`alignement<-` = function(ctg, value)
+`set_alignment<-` = function(ctg, value)
 {
   assertive::assert_is_numeric(value)
   assertive::assert_is_of_length(value, 2)
-  ctg@clustering_options$alignement <- value
+  ctg@clustering_options$alignment <- value
   return(ctg)
 }
 
+get_by_file = function(ctg)
+{
+  return(ctg@clustering_options$tiling_size == 0)
+}
+
+
 # ========= Processing Options ===============
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-cores = function(ctg)
+get_cores = function(ctg)
 {
   return(ctg@processing_options$cores)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`cores<-` = function(ctg, value)
+`set_cores<-` = function(ctg, value)
 {
   sys.cores = future::availableCores()
   value = as.integer(value)
@@ -125,32 +123,32 @@ cores = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-progress = function(ctg)
+get_progress = function(ctg)
 {
   return(ctg@processing_options$progress)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`progress<-` = function(ctg, value)
+`set_progress<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@processing_options$progress <- value
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-stop_early = function(ctg)
+get_stop_early = function(ctg)
 {
   return(ctg@processing_options$stop_early)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`stop_early<-` = function(ctg, value)
+`set_stop_early<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@processing_options$stop_early <- value
@@ -159,9 +157,16 @@ stop_early = function(ctg)
 
 # =========   Output Options   ===============
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`output_files<-` = function(ctg, value)
+get_output_files = function(ctg)
+{
+  return(ctg@output_options$output_files)
+}
+
+#' @rdname catalog_options_tools
+#' @export
+`set_output_files<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
   ext = tools::file_ext(value)
@@ -173,23 +178,16 @@ stop_early = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-output_files = function(ctg)
-{
-  return(ctg@output_options$output_files)
-}
-
-#' @rdname catalog
-#' @export
-laz_compression = function(ctg)
+get_laz_compression = function(ctg)
 {
   return(ctg@output_options$drivers$LAS$laz_compression)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`laz_compression<-` = function(ctg, value)
+`set_laz_compression<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@output_options$drivers$LAS$laz_compression <- value
@@ -198,35 +196,35 @@ laz_compression = function(ctg)
 
 # =========   Input Options    ===============
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-use_select = function(ctg)
+get_select = function(ctg)
 {
-  return(ctg@intput_options$select)
+  return(ctg@input_options$select)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`use_select<-` = function(ctg, value)
+`set_select<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
-  ctg@intput_options$select <- value
+  ctg@input_options$select <- value
   return(ctg)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-use_filter = function(ctg)
+get_filter = function(ctg)
 {
-  return(ctg@intput_options$select)
+  return(ctg@input_options$filter)
 }
 
-#' @rdname catalog
+#' @rdname catalog_options_tools
 #' @export
-`use_filter<-` = function(ctg, value)
+`set_filter<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
-  ctg@intput_options$select <- value
+  ctg@input_options$filter <- value
   return(ctg)
 }
 

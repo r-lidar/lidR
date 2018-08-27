@@ -97,8 +97,9 @@ lasground_csf.LAS = function(las, sloop_smooth = FALSE, class_threshold = 0.5, c
 #' @export
 lasground_csf.LAScluster = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
 {
+  buffer <- NULL
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   lasground_csf(x, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step, last_returns)
   x <- lasfilter(x, buffer == 0)
   return(x)
@@ -107,7 +108,7 @@ lasground_csf.LAScluster = function(las, sloop_smooth = FALSE, class_threshold =
 #' @export
 lasground_csf.LAScatalog = function(las, sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65, last_returns = TRUE)
 {
-  las@input_options$select <- "*"
+  set_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasground_csf, sloop_smooth = sloop_smooth, class_threshold = class_threshold, cloth_resolution = cloth_resolution, rigidness = rigidness, iterations = iterations, time_step = time_step, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

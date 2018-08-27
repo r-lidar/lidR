@@ -249,7 +249,7 @@ tree_detection_ptrees.LAS = function(las, k, hmin = 3, nmax = 7L, ...)
 tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
 {
   x <- readLAS(las, ...)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   ttops <- tree_detection_ptrees(x, k, hmin, nmax)
   bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
   ttops <- raster::crop(ttops, bbox)
@@ -259,7 +259,7 @@ tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
 #' @export
 tree_detection_ptrees.LAScatalog = function(las, k, hmin = 3, nmax = 7L, ...)
 {
-  las@input_options$select <- "xyz"
+  set_select(las) <- "xyz"
 
   output <- catalog_apply2(las, tree_detection_ptrees, k = k, hmin = hmin, nmax = nmax, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)
@@ -279,7 +279,7 @@ tree_detection_ptrees.LAScatalog = function(las, k, hmin = 3, nmax = 7L, ...)
 #' @param las An object of the class LAS
 #' @param detected \code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
 #' containing X,Y,Z coordinates of already found tree tops that need manual corrections.
-#' @param ... supplementary parameters to be pass to \link{plot.LAS}.
+#' @param ... supplementary parameters to be pass to \link{plot}.
 #'
 #' @template return-tree_detection
 #' @export
@@ -484,7 +484,7 @@ tree_detection_multichm.LAS = function(las, res, layer_thickness = 0.5, dist_2d 
 tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   ttops <- tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
   bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
   ttops <- raster::crop(ttops, bbox)
@@ -494,7 +494,7 @@ tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, d
 #' @export
 tree_detection_multichm.LAScatalog = function(las, res, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
-  las@input_options$select <- "xyz"
+  set_select(las) <- "xyz"
 
   output <- catalog_apply2(las, tree_detection_multichm, res = res, layer_thickness = layer_thickness, dist_2d = dist_2d, dist_3d = dist_3d, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)

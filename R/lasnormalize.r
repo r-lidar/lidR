@@ -215,8 +215,9 @@ lasnormalize_generic.LAS = function(las, dtm = NULL, method, k = 10L, p = 1, mod
 
 lasnormalize_generic.LAScluster = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
 {
+  buffer <- NULL
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   lasnormalize_generic(x, dtm, method, k, p, model)
   x <- lasfilter(x, buffer == 0)
   return(x)
@@ -224,7 +225,7 @@ lasnormalize_generic.LAScluster = function(las, dtm = NULL, method, k = 10L, p =
 
 lasnormalize_generic.LAScatalog = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874))
 {
-  las@input_options$select <- "*"
+  set_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasnormalize_generic, dtm = dtm, method = method, k = k, p = p, model = model, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

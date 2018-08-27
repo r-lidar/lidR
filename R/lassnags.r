@@ -308,8 +308,9 @@ lassnags_wing.LAS = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50,
 #' @export
 lassnags_wing.LAScluster = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
+  buffer <- NULL
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   lassnags_wing(x, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, bbpr_thresholds)
   x <- lasfilter(x, buffer == 0)
   return(x)
@@ -318,7 +319,7 @@ lassnags_wing.LAScluster = function (las, neigh_radii = c(1.5,1,2), low_int_thrs
 #' @export
 lassnags_wing.LAScatalog = function (las, neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
-  las@input_options$select <- "*"
+  set_select(las) <- "*"
 
   output      <- catalog_apply2(las, lassnags_wing,  neigh_radii = neigh_radii, low_int_thrsh = low_int_thrsh, uppr_int_thrsh = uppr_int_thrsh, pt_den_req = pt_den_req, bbpr_thresholds = bbpr_thresholds, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

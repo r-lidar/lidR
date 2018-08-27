@@ -2,8 +2,8 @@ catalog_laxindex = function(ctg)
 {
   stopifnot(is(ctg, "LAScatalog"))
 
-  by_file(ctg) <- TRUE
-  buffer(ctg)  <- 0
+  set_tiling_size(ctg) <- 0
+  set_buffer(ctg)      <- 0
 
   create_lax_file = function(cluster)
   {

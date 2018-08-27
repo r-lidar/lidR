@@ -3,10 +3,10 @@ context("catalog_retile")
 lidr_options(interactive = FALSE)
 folder <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(folder)
-cores(ctg) <- 1
-buffer(ctg) <- 0
-tiling_size(ctg) = 80
-progress(ctg) <- FALSE
+set_cores(ctg) <- 1
+set_buffer(ctg) <- 0
+set_tiling_size(ctg) = 80
+set_progress(ctg) <- FALSE
 
 test_that("catalog reshape works", {
   temp = tempfile()

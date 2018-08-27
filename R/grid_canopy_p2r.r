@@ -84,7 +84,7 @@ grid_canopy_p2r.LAS = function(las, res = 2, subcircle = 0)
 grid_canopy_p2r.LAScluster = function(las, res = 2, subcircle = 0)
 {
   x = readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   bbox = raster::extent(as.numeric(las@bbox))
   metrics = grid_canopy(x, res, subcircle)
   metrics = raster::crop(metrics, bbox)
@@ -94,13 +94,12 @@ grid_canopy_p2r.LAScluster = function(las, res = 2, subcircle = 0)
 #' @export
 grid_canopy_p2r.LAScatalog = function(las, res = 2, subcircle = 0)
 {
-  buffer(las)   <- 0.1*res
-  las@input_options$select <- "xyz"
-
-  output        <- catalog_apply2(las, grid_canopy_p2r, res = res, subcircle = subcircle, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  set_buffer(las) <- 0.1*res
+  set_select(las) <- "xyz"
+  output          <- catalog_apply2(las, grid_canopy_p2r, res = res, subcircle = subcircle, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
-  if (output_files(las) != "")  return(unlist(output))
+  if (get_output_files(las) != "")  return(unlist(output))
 
   # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])

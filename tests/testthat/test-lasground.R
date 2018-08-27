@@ -3,11 +3,11 @@ context("lasground")
 file <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(file, select = "xyzrn")
 ctg = catalog(file)
-cores(ctg) <- 1
-tiling_size(ctg) <- 160
+set_cores(ctg) <- 1
+set_tiling_size(ctg) <- 160
 ctg@clustering_options$alignment = c(332550, 5238450)
-buffer(ctg) <- 0
-progress(ctg) <- FALSE
+set_buffer(ctg) <- 0
+set_progress(ctg) <- FALSE
 
 test_that("lasground pmf works", {
   ws = seq(3,21, 5)
@@ -23,11 +23,11 @@ test_that("lasground pmf works", {
 
   expect_error(lasground(ctg, "pmf", ws, th), "buffer")
 
-  buffer(ctg) <- 30
+  set_buffer(ctg) <- 30
 
   expect_error(lasground(ctg, "pmf", ws, th), "output file")
 
-  output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  set_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = lasground(ctg, "pmf", ws, th)
   las2 = readLAS(ctg2)
@@ -47,8 +47,8 @@ test_that("lasground csf works", {
   expect_equal(unique(las@data$Classification), c(0L, 2L))
   expect_equal(sum(las@data$Classification == 2L), 12836L)
 
-  output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}_ground")
-  buffer(ctg) <- 30
+  set_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}_ground")
+  set_buffer(ctg) <- 30
 
   ctg2 = lasground(ctg, "csf")
   las2 = readLAS(ctg2)

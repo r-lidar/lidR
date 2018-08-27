@@ -214,7 +214,7 @@ grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model 
 grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
 {
   x = readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   bbox <- raster::extent(as.numeric(las@bbox))
   dtm  <- grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
   dtm  <- raster::crop(dtm, bbox)
@@ -223,12 +223,12 @@ grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, 
 
 grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE, ...)
 {
-  las@input_options$select <- "xyzc"
+  set_select(las) <- "xyzc"
 
-  output        <- catalog_apply2(las, grid_terrain_generic, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  output <- catalog_apply2(las, grid_terrain_generic, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
-  if (output_files(las) != "")  return(unlist(output))
+  if (get_output_files(las) != "")  return(unlist(output))
 
   # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])

@@ -3,10 +3,10 @@ context("lasclip")
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-keep_first")
 ctg = catalog(LASfile)
-cores(ctg) <- 1
-progress(ctg) <- FALSE
-ctg@input_options$select = "xyz"
-ctg@input_options$filter = "-keep_first"
+set_cores(ctg) <- 1
+set_progress(ctg) <- FALSE
+set_select(ctg) = "xyz"
+set_filter(ctg) = "-keep_first"
 
 shapefile_dir <- system.file("extdata", package = "lidR")
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
@@ -274,8 +274,8 @@ test_that("clip writes file following LAScatalog options", {
   tmp = tempdir()
   ctg2 = ctg
   file = paste0(tmp, "/file_{XLEFT}")
-  output_files(ctg2) = file
-  laz_compression (ctg2) = TRUE
+  set_output_files(ctg2) = file
+  set_laz_compression(ctg2) = TRUE
   ctg3 = lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900)
 
   expect_true(is(ctg3, "LAScatalog"))
@@ -284,8 +284,8 @@ test_that("clip writes file following LAScatalog options", {
   file.remove(paste0(tmp, "/file_684850.laz"))
 
   file = paste0(tmp, "/file_{LAKENAME_1}")
-  output_files(ctg2) = file
-  laz_compression (ctg2) = FALSE
+  set_output_files(ctg2) = file
+  set_laz_compression(ctg2) = FALSE
   ctg3 = lasclip(ctg2, lakes)
 
   expect_equal(ctg3@data$filename, paste0(tmp, "/file_Havelock Lake.las"))

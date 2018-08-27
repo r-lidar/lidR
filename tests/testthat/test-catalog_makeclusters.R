@@ -50,16 +50,27 @@ data = data.table::data.table(
   filename = paste0("abc", 1:62)
 )
 
-ctg = new("LAScatalog")
-ctg@data = data
-ctg@proj4string = sp::CRS("+init=epsg:26917")
+
+pgeom <- lapply(1:nrow(data), function(i)
+{
+  mtx <- matrix(c(data$`Min X`[i], data$`Max X`[i], data$`Min Y`[i], data$`Max Y`[i])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
+  sp::Polygons(list(sp::Polygon(mtx)),as.character(i))
+})
+
+Sr = sp::SpatialPolygons(pgeom, proj4string = sp::CRS("+init=epsg:26917"))
+
+ctg <- new("LAScatalog")
+ctg@bbox <- Sr@bbox
+ctg@proj4string <- Sr@proj4string
+ctg@plotOrder <- Sr@plotOrder
+ctg@data <- data
+ctg@polygons <- Sr@polygons
 
 test_that("makecluster, tiling", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = 0
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = 0
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -85,10 +96,9 @@ test_that("makecluster, tiling", {
 
 test_that("makecluster, tiling + buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = 50
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = 50
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -114,10 +124,9 @@ test_that("makecluster, tiling + buffer", {
 
 test_that("makecluster, tiling + negative buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = -100
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = -100
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -143,10 +152,9 @@ test_that("makecluster, tiling + negative buffer", {
 
 test_that("makecluster, by file", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = 0
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = 0
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -174,10 +182,9 @@ test_that("makecluster, by file", {
 
 test_that("makecluster, by file + buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = 30
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = 30
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -205,10 +212,9 @@ test_that("makecluster, by file + buffer", {
 
 test_that("makecluster, by file + negative buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = -30
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = -30
+  set_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -238,8 +244,8 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project = catalog(LASfile)
 
 test_that("Clusters do not overlap", {
-  buffer(project) <- 15
-  tiling_size(project) <- 120
+  set_buffer(project) <- 15
+  set_tiling_size(project) <- 120
 
   cluster = lidR:::catalog_makecluster(project)
 
@@ -251,8 +257,8 @@ test_that("Clusters do not overlap", {
 })
 
 test_that("No extra cluster are generated", {
-  buffer(project) <- 0
-  tiling_size(project) <- 160
+  set_buffer(project) <- 0
+  set_tiling_size(project) <- 160
 
   cluster = lidR:::catalog_makecluster(project)
 
@@ -262,3 +268,4 @@ test_that("No extra cluster are generated", {
   expect_equal(length(unique(x)), 4)
   expect_equal(length(unique(y)), 3)
 })
+

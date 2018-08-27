@@ -102,7 +102,7 @@
 #' subset3 = lasclip(ctg, lakes)
 #'
 #' # Extract the polygons, write them in files name after the lake names, do not load anything in R
-#' output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
+#' set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 #' lasclip(ctg, lakes)
 #'
 #' \dontrun{
@@ -357,7 +357,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
 {
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
-  if (progress(ctg)) plot.LAScatalog(ctg, FALSE)
+  if (get_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE)
 
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)
@@ -382,7 +382,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
       clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
 
     # If the user want to write the ROIs in files. Generate a filename.
-    if (output_files(ctg) != "")
+    if (get_output_files(ctg) != "")
     {
       X         <-  if (!is.null(sf)) sf[1,] else list()
       X$ID      <- i
@@ -392,8 +392,8 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
       X$XRIGHT  <- clusters[[i]]@bbox$xmax
       X$YBOTTOM <- clusters[[i]]@bbox$ymin
       X$YTOP    <- clusters[[i]]@bbox$ymax
-      format    <- if (laz_compression(ctg)) ".laz" else ".las"
-      clusters[[i]]@save <- paste0(glue::glue_data(X, output_files(ctg)), format)
+      format    <- if (get_laz_compression(ctg)) ".laz" else ".las"
+      clusters[[i]]@save <- paste0(glue::glue_data(X, get_output_files(ctg)), format)
     }
   }
 
@@ -401,7 +401,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
   output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE)
 
   # output should contains nothing because everything have been streamed into files
-  if (output_files(ctg) != "")
+  if (get_output_files(ctg) != "")
   {
     written_path = c()
     for (cluster in clusters)
@@ -423,7 +423,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
         output[[i]]@proj4string <- ctg@proj4string
 
         # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
-        if (cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
+        if (get_cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
       }
       else
       {

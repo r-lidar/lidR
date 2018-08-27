@@ -69,7 +69,7 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   {
     for (j in not_finished)
     {
-      codes[j] = early_eval(output[[j]], stop_early)
+      codes[j] = early_eval(output[[j]], processing_options$stop_early)
       if (codes[j] == ASYNC_RUN) next
       if (processing_options$progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
     }

@@ -135,8 +135,9 @@ lasfilterdecimate.LAS = function(las, density, homogenize = TRUE, res = 5, use_p
 #' @export
 lasfilterdecimate.LAScluster = function(las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
+  buffer <- NULL
   x <- readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   x <- lasfilterdecimate(x, density, homogenize, res, use_pulse)
   x <- lasfilter(x, buffer == 0)
   return(x)
@@ -145,8 +146,8 @@ lasfilterdecimate.LAScluster = function(las, density, homogenize = TRUE, res = 5
 #' @export
 lasfilterdecimate.LAScatalog = function(las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
 {
-  buffer(las) <- 0.1*res
-  las@input_options$select <- "*"
+  set_buffer(las) <- 0.1*res
+  set_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasfilterdecimate, density = density, homogenize = homogenize, res = res, use_pulse = use_pulse, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

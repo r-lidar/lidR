@@ -3,10 +3,10 @@ context("tree_metrics")
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "ia0", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
-cores(ctg) <- 1
-progress(ctg) <- FALSE
-tiling_size(ctg) <- 60
-buffer(ctg) <- 20
+set_cores(ctg) <- 1
+set_progress(ctg) <- FALSE
+set_tiling_size(ctg) <- 60
+set_buffer(ctg) <- 20
 
 test_that("tree_metrics works with a LAS", {
 
@@ -43,10 +43,10 @@ test_that("tree_metrics works with a LAScatalog", {
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "ia0", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
-cores(ctg) <- 1
-progress(ctg) <- TRUE
-tiling_size(ctg) <- 60
-buffer(ctg) <- 20
+set_cores(ctg) <- 1
+set_progress(ctg) <- TRUE
+set_tiling_size(ctg) <- 60
+set_buffer(ctg) <- 20
 
 test_that("tree_metrics throw an error if no treeID", {
 

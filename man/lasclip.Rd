@@ -115,7 +115,7 @@ lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 subset3 = lasclip(ctg, lakes)
 
 # Extract the polygons, write them in files name after the lake names, do not load anything in R
-output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
+set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 lasclip(ctg, lakes)
 
 \dontrun{

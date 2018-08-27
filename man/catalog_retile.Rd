@@ -53,25 +53,25 @@ ctg = catalog("path/to/catalog")
 # path/to/new/catalog/ and iteratively named Forest_001.las, Forest_002.las
 # Forest_003.las, and so on.
 
-buffer(ctg) = 0
-by_file(ctg) = FALSE
-tiling_size(ctg) = 500
+set_buffer(ctg) = 0
+set_tiling_size(ctg) = 500
 newctg = catalog_retile(ctg, "path/to/new/catalog", "Forest_")
 
 # Create a new set of .las files equivalent to the original one
 # but extended with a 50 m buffer in the folder path/to/new/catalog/
 # and iteratively named named after the original files.
 
-buffer(ctg) = 50
-by_file(ctg) = TRUE
+set_buffer(ctg) = 50
+set_tiling_size(ctg) = 500
 newctg = catalog_retile(ctg, "path/to/new/catalog")
 
 # Being flexible this function can also compress a catalog but this is
 # not really useful since laszip from LAStools is a free and open source
 # program.
 
-buffer(ctg) = 0
-by_file(ctg) = TRUE
+
+set_buffer(ctg) = 0
+set_tiling_size(ctg) = 500
 newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
 }
 }

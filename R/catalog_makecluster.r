@@ -28,10 +28,10 @@
 catalog_makecluster = function(ctg)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
-  buffer  <- buffer(ctg)
-  by_file <- by_file(ctg)
-  start   <- ctg@clustering_options$alignment
-  width   <- tiling_size(ctg)
+  buffer  <- get_buffer(ctg)
+  by_file <- get_by_file(ctg)
+  start   <- get_alignment(ctg)
+  width   <- get_tiling_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
   # =======================================================
@@ -111,7 +111,7 @@ catalog_makecluster = function(ctg)
   # Record the path to write the raster if requested
   # ------------------------------------------------
 
-  if (output_files(ctg) != "")
+  if (get_output_files(ctg) != "")
   {
     clusters <- lapply(clusters, function(cl)
     {
@@ -123,7 +123,7 @@ catalog_makecluster = function(ctg)
       X$XRIGHT  <- cl@bbox$xmax
       X$YBOTTOM <- cl@bbox$ymin
       X$YTOP    <- cl@bbox$ymax
-      cl@save   <- glue::glue_data(X, output_files(ctg))
+      cl@save   <- glue::glue_data(X, get_output_files(ctg))
       return(cl)
     })
   }
@@ -131,12 +131,12 @@ catalog_makecluster = function(ctg)
   # Plot the catalog and the clusters
   # =================================
 
-  if(progress(ctg))
+  if(get_progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))
     title  = "Pattern of clusters"
-    plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
+    plot.LAScatalog(ctg, mapview = FALSE, main = title, xlim = xrange, ylim = yrange)
 
     lapply(clusters, function(x)
     {

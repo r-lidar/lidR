@@ -70,11 +70,10 @@ not change that.
 The slot \code{@clustering_options} contains a \code{list} of options that drives how a the cluster
 (the sub-areas that are sequentially processed) are made.
 \itemize{
-\item \strong{by_file}: boolean. The catalog is process sequentially by file. A cluster is a file. Default is FALSE.
 \item \strong{tiling_size}: numeric. The size of the cluster that will be sequentially processeed. A small size
 allows for loading few data at a time saving computer memory. A large size allows for loading large
-region at a time, the computation is thus usually faster but uses much more computer memory. Not relevent
-if \code{by_file = TRUE}.
+region at a time, the computation is thus usually faster but uses much more computer memory. If
+\code{tiling_size = 0} the catalof is process sequentially by file. A cluster is a file.
 \item \strong{buffer}: numeric. Each cluster can be read with an extra buffer around it to ensure there is
 no side effect between to independent cluster and that the output is correct and continuous. This
 is mandatory for some algorithms. Default is 0.

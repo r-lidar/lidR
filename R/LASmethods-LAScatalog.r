@@ -39,9 +39,8 @@
 #' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
 #' file paths.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
-#' @param ctg A LAScatalog object.
-#' @param value An appropriated value for catalog settings. See \link[lidR:LAScatalog-class]{LAScatalog}
 #' @return A \code{LAScatalog} object
+#' @include LASmethods-generic.r
 #' @export
 #' @examples
 #' # A single file LAScatalog using data provided with the package
@@ -53,22 +52,23 @@
 #' ctg <- catalog("/path/to/a/folder/of/las/files")
 #'
 #' # Internal engine will compute in parallel using two cores
-#' cores(ctg) <- 2L
+#' set_cores(ctg) <- 2L
 #'
 #' # Internal engine will process sequentially regions of interest of 500 x 500 m (clusters)
-#' tiling_size(ctg) <- 500
+#' set_tiling_size(ctg) <- 500
 #'
 #' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
-#' alignement(ctg) <- c(250, 300)
+#' set_alignement(ctg) <- c(250, 300)
 #'
 #' # Internal engine will not display any progress estimation
-#' progress(ctg) <- FALSE
+#' set_progress(ctg) <- FALSE
 #'
 #' # Internal engine will not return result into R. Instead it will write results in files
-#' output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#' set_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
 #'
 #' # More details in the documentation
 #' help("LAScatalog-class", "lidR")
+#' help("catalog_options_tools", "lidR")
 #' }
 catalog <- function(folder, ...)
 {
@@ -153,10 +153,73 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      :", npoints, "points\n")
   cat("density     :", round(npoints/surface, 1), "points/unit\u00B2\n")
   cat("num. files  :", dim(object@data)[1], "\n")
-
-  # cat("Processing options: \n")
-  # if (by_file(object)) cat(" - split the dataset using the original files as tiles\n")
-  # else cat(" - split the dataset into", tiling_size(object), "x", tiling_size(object), "m tiles\n")
-  # if (buffer(object) != 0) cat(" - each tile has a", buffer(object), "m buffer\n")
-  # cat(" - processing done using", cores(object), "core(s) if possible.")
 })
+
+#' @rdname area
+#' @export
+setMethod("area", "LAScatalog",  function(x, ...)
+{
+  x <- x@data
+  area <- sum((x$`Max X` - x$`Min X`) * (x$`Max Y` - x$`Min Y`))
+  return(area)
+})
+
+
+#' Plot LAS* objects
+#'
+#' Plot displays an interactive view for \link[lidR:LAScatalog-class]{LAScatalog} objects with pan and
+#' zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
+#' system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps
+#' (satellite data, elevation, street, and so on).
+#'
+#' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+#' @method plot LAScatalog
+#' @export
+#' @examples
+#'
+#' \dontrun{
+#'
+#' # single file catalog using data provided in lidR
+#' ctg = catalog(LASfile)
+#' plot(ctg)
+#' }
+#' @describeIn plot plot LAScatalog
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function (x, y, mapview = TRUE, ...)
+{
+  plot.LAScatalog(x, y, mapview, ...)
+})
+
+plot.LAScatalog = function(x, y, mapview = TRUE, ...)
+{
+  if (mapview)
+  {
+    LAScatalog = x
+    mapview::mapview(LAScatalog, ...)
+  }
+  else
+  {
+    param = list(...)
+
+    xmin = min(x@data$`Min X`)
+    xmax = max(x@data$`Max X`)
+    ymin = min(x@data$`Min Y`)
+    ymax = max(x@data$`Max Y`)
+
+    xcenter = (xmin + xmax)/2
+    ycenter = (ymin + ymax)/2
+
+    if (is.null(param$xlim)) param$xlim = c(xmin, xmax)
+    if (is.null(param$ylim)) param$ylim = c(ymin, ymax)
+    if (is.null(param$xlab)) param$xlab = "X"
+    if (is.null(param$ylab)) param$ylab = "Y"
+    if (is.null(param$asp))  param$xlab = "X"
+    if (is.null(param$asp))  param$asp = 1
+    if (is.null(param$col))  param$col = "white"
+
+    param$x = xcenter
+    param$y = ycenter
+
+    do.call(graphics::plot, param)
+    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+  }
+}

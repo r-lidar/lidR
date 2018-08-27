@@ -498,7 +498,7 @@ stdmetrics_ctrl = function(x, y, z, a)
 stdtreemetrics = function(x, y, z)
 {
   npoints = length(x)
-  convhull.area = area(x,y)
+  convhull.area = area_convex_hull(x,y)
 
   metrics = list(
     npoints = npoints,

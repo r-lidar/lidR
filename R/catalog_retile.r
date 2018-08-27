@@ -66,25 +66,25 @@
 #' # path/to/new/catalog/ and iteratively named Forest_001.las, Forest_002.las
 #' # Forest_003.las, and so on.
 #'
-#' buffer(ctg) = 0
-#' by_file(ctg) = FALSE
-#' tiling_size(ctg) = 500
+#' set_buffer(ctg) = 0
+#' set_tiling_size(ctg) = 500
 #' newctg = catalog_retile(ctg, "path/to/new/catalog", "Forest_")
 #'
 #' # Create a new set of .las files equivalent to the original one
 #' # but extended with a 50 m buffer in the folder path/to/new/catalog/
 #' # and iteratively named named after the original files.
 #'
-#' buffer(ctg) = 50
-#' by_file(ctg) = TRUE
+#' set_buffer(ctg) = 50
+#' set_tiling_size(ctg) = 500
 #' newctg = catalog_retile(ctg, "path/to/new/catalog")
 #'
 #' # Being flexible this function can also compress a catalog but this is
 #' # not really useful since laszip from LAStools is a free and open source
 #' # program.
 #'
-#' buffer(ctg) = 0
-#' by_file(ctg) = TRUE
+#'
+#' set_buffer(ctg) = 0
+#' set_tiling_size(ctg) = 500
 #' newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
 #' }
 catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,0), ...)
@@ -101,15 +101,15 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = 
 
   format           <- match.arg(ext)
   interact         <- LIDROPTIONS("interactive")
-  ncores           <- cores(ctg)
-  progress         <- progress(ctg)
-  stopearly        <- stop_early(ctg)
+  ncores           <- get_cores(ctg)
+  progress         <- get_progress(ctg)
+  stopearly        <- get_stop_early(ctg)
 
   clusters <- catalog_makecluster(ctg)
 
   for (i in 1:length(clusters))
   {
-    if (by_file(ctg) && prefix == "")
+    if (get_by_file(ctg) && prefix == "")
       clusters[[i]]@name <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
     else
       clusters[[i]]@name <- sprintf("%05d", as.numeric(i))

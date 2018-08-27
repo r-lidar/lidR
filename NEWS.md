@@ -18,6 +18,7 @@
 * Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` does not have any slot `@crs`. It is now `@proj4string`.
 * Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options` and `@clustering_options` that are list of options classified by their main role.
 * Change: documentation has been reviewed
+* Change: function `by_file`, `progress`, `tiling_size`, `buffer` were replaced by `set_buffer`, `get_buffer`, `set_progress`, `get_progress` and so on. These allows to get a consitant set of fucntions that do not overlap with functions from `raster`
 
 **readLAS**
 

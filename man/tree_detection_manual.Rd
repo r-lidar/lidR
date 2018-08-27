@@ -12,7 +12,7 @@ tree_detection_manual(las, detected = NULL, ...)
 \item{detected}{\code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
 containing X,Y,Z coordinates of already found tree tops that need manual corrections.}
 
-\item{...}{supplementary parameters to be pass to \link{plot.LAS}.}
+\item{...}{supplementary parameters to be pass to \link{plot}.}
 }
 \value{
 A \code{SpatialPointsDataFrame} with the 2D coordinates of the tree tops (X, Y) and the elevation of

@@ -146,7 +146,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
 grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 {
   x = readLAS(las)
-  if (is.null(x)) return(NULL)
+  if (is.empty(x)) return(NULL)
   bbox = raster::extent(as.numeric(las@bbox))
   metrics = grid_metrics(x, func, res, start)
   metrics = raster::crop(metrics, bbox)
@@ -156,11 +156,11 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
-  buffer(las)   <- 0.1*res
-  output        <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  set_buffer(las) <- 0.1*res
+  output          <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
-  if (output_files(las) != "") return(unlist(output))
+  if (get_output_files(las) != "") return(unlist(output))
 
   # Outputs have been return in R objects. Merge the outptus in a single object
   names         <- names(output[[1]])

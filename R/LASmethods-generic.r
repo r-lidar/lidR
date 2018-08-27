@@ -25,31 +25,23 @@
 #
 # ===============================================================================
 
-catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
-{
-  . <- filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
+if (!isGeneric("summary"))
+  setGeneric("summary", function(object, ...)
+    standardGeneric("summary"))
 
-  stopifnot(is.list(bboxes))
+if (!isGeneric("print"))
+  setGeneric("print", function(x, ...)
+    standardGeneric("print"))
 
-  queries <- lapply(bboxes, function(bbox)
-  {
-    bbox  <- bbox + 2*buffer
-    is_in <- with(catalog@data, !( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
-    files <- catalog@data$filename[is_in]
+#' @export
+setGeneric("plot", function(x, y, ...)
+  standardGeneric("plot"))
 
-    if (length(files) == 0)
-      return(NULL)
+#' @export
+setGeneric("is.empty", function(object, ...)
+  standardGeneric("is.empty"))
 
-    bbox    <- bbox - 2*buffer
-    center  <- list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
-    width   <- (bbox@xmax-bbox@xmin)
-    height  <- (bbox@ymax-bbox@ymin)
-    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname")
-
-    cluster@select <- get_select(catalog)
-    cluster@filter <- paste(cluster@filter, get_filter(catalog))
-    return(cluster)
-  })
-
-  return(queries)
-}
+#' @export
+#' @importMethodsFrom raster area
+setGeneric("area", function(x, ...)
+  standardGeneric("area"))
