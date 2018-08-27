@@ -154,6 +154,13 @@ cluster_write = function(x, path, output_options)
   {
 
   }
+  else if (type == "lidr_internal_skip_write")
+  {
+    # Nothing. This happens because sometime functions such as catalog_retile stream the data. So the called
+    # function do the write job. If the called fwould unction return NULL the progress would be broken
+    # (NULL means no data). Thus we return 0 with a class lidr_internal_skip_write
+    return(0)
+  }
   else
     stop(glue::glue("Trying to write an object of class {type} but this type is not supported."))
 }

@@ -63,60 +63,51 @@
 #' ctg = catalog("path/to/catalog")
 #'
 #' # Create a new set of .las files 500 by 500 wide in the folder
-#' # path/to/new/catalog/ and iteratively named Forest_001.las, Forest_002.las
-#' # Forest_003.las, and so on.
+#' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
+#' # Forest_3.las, and so on.
 #'
-#' set_buffer(ctg) = 0
-#' set_tiling_size(ctg) = 500
-#' newctg = catalog_retile(ctg, "path/to/new/catalog", "Forest_")
+#' set_buffer(ctg) <- 0
+#' set_tiling_size(ctg) <- 500
+#' set_output_files(ctg) <- "path/to/new/catalog/Forest_{ID}
+#' newctg = catalog_retile(ctg)
 #'
 #' # Create a new set of .las files equivalent to the original one
 #' # but extended with a 50 m buffer in the folder path/to/new/catalog/
 #' # and iteratively named named after the original files.
 #'
-#' set_buffer(ctg) = 50
-#' set_tiling_size(ctg) = 500
-#' newctg = catalog_retile(ctg, "path/to/new/catalog")
+#' set_buffer(ctg) <- 50
+#' set_tiling_size(ctg) <- 0
+#' set_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
+#' newctg = catalog_retile(ctg)
 #'
 #' # Being flexible this function can also compress a catalog but this is
 #' # not really useful since laszip from LAStools is a free and open source
 #' # program.
 #'
-#'
-#' set_buffer(ctg) = 0
-#' set_tiling_size(ctg) = 500
-#' newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
+#' set_buffer(ctg) <- 0
+#' set_tiling_size(ctg) <- 0
+#' set_laz_compression(ctg) <- TRUE
+#' newctg = catalog_retile(ctg)
 #' }
-catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,0), ...)
+catalog_retile = function(ctg)
 {
-  assertive::assert_is_all_of(ctg, "LAScatalog")
-  assertive::assert_is_character(path)
-  assertive::assert_is_numeric(alignment)
-  assertive::assert_is_of_length(alignment, 2)
+  interact <- LIDROPTIONS("interactive")
 
-  if(!missing(prefix))
-    assertive::is_character(prefix)
-  else
-    prefix = ""
+  if (get_output_files(ctg) == "")
+    stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
-  format           <- match.arg(ext)
-  interact         <- LIDROPTIONS("interactive")
-  ncores           <- get_cores(ctg)
-  progress         <- get_progress(ctg)
-  stopearly        <- get_stop_early(ctg)
-
-  clusters <- catalog_makecluster(ctg)
-
-  for (i in 1:length(clusters))
-  {
-    if (get_by_file(ctg) && prefix == "")
-      clusters[[i]]@name <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
-    else
-      clusters[[i]]@name <- sprintf("%05d", as.numeric(i))
-  }
+  laz  <- get_laz_compression(ctg)
+  path <- get_output_files(ctg)
+  path <- if(laz) paste0(path, ".laz") else paste0(path, ".las")
+  ctg@output_options$output_files <- path
+  path <- dirname(path)
 
   if(interact)
   {
+    set_progress(ctg) <- TRUE
+
+    clusters  <- catalog_makecluster(ctg)
+
     text = "This is how the catalog will be reshaped (see plots). Do you want to continue?"
     choices = c("yes","no")
 
@@ -135,14 +126,15 @@ catalog_retile = function(ctg, path, prefix, ext = c("las", "laz"), alignment = 
   if(length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.", call. = FALSE)
 
-  reshape_func = function(cluster, path, prefix, ext, ...)
+  reshape_func = function(cluster)
   {
-    ofile = paste0(path, "/", prefix, cluster@name , ".", ext)
-    streamLAS(cluster, ofile, ...)
-    return(0)
+    streamLAS(cluster, cluster@save)
+    ret = 0
+    class(ret) <- "lidr_internal_skip_write"
+    return(ret)
   }
 
-  cluster_apply(clusters, reshape_func, ctg@processing_options, ctg@output_options, path = path, prefix = prefix, ext = format, ...)
+  catalog_apply2(ctg, reshape_func, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
 
   return(catalog(path))
 }

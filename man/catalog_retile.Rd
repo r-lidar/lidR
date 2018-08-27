@@ -4,8 +4,7 @@
 \alias{catalog_retile}
 \title{Retile a catalog}
 \usage{
-catalog_retile(ctg, path, prefix, ext = c("las", "laz"), alignment = c(0,
-  0), ...)
+catalog_retile(ctg)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
@@ -50,29 +49,31 @@ for working in other software for example, but not in \code{lidR}.
 ctg = catalog("path/to/catalog")
 
 # Create a new set of .las files 500 by 500 wide in the folder
-# path/to/new/catalog/ and iteratively named Forest_001.las, Forest_002.las
-# Forest_003.las, and so on.
+# path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
+# Forest_3.las, and so on.
 
-set_buffer(ctg) = 0
-set_tiling_size(ctg) = 500
-newctg = catalog_retile(ctg, "path/to/new/catalog", "Forest_")
+set_buffer(ctg) <- 0
+set_tiling_size(ctg) <- 500
+set_output_files(ctg) <- "path/to/new/catalog/Forest_{ID}
+newctg = catalog_retile(ctg)
 
 # Create a new set of .las files equivalent to the original one
 # but extended with a 50 m buffer in the folder path/to/new/catalog/
 # and iteratively named named after the original files.
 
-set_buffer(ctg) = 50
-set_tiling_size(ctg) = 500
-newctg = catalog_retile(ctg, "path/to/new/catalog")
+set_buffer(ctg) <- 50
+set_tiling_size(ctg) <- 0
+set_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
+newctg = catalog_retile(ctg)
 
 # Being flexible this function can also compress a catalog but this is
 # not really useful since laszip from LAStools is a free and open source
 # program.
 
-
-set_buffer(ctg) = 0
-set_tiling_size(ctg) = 500
-newctg = catalog_retile(ctg, "path/to/compressed/file",  ext = "laz")
+set_buffer(ctg) <- 0
+set_tiling_size(ctg) <- 0
+set_laz_compression(ctg) <- TRUE
+newctg = catalog_retile(ctg)
 }
 }
 \seealso{

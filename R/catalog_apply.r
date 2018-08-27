@@ -184,11 +184,9 @@ cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
   return(do.call(func, c(las, func_args)))
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., select = "*", filter = "", need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE)
+catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE)
 {
   assertive::assert_is_function(FUN)
-  assertive::assert_is_a_string(select)
-  assertive::assert_is_a_string(filter)
   assertive::assert_is_a_bool(need_buffer)
   assertive::assert_is_a_bool(check_alignement)
   assertive::assert_is_a_bool(drop_null)
