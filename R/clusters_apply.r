@@ -124,7 +124,7 @@ display_progress = function(bbox, p, code)
   else if (code == ASYNC_ERROR)
     col = "red"
 
-  graphics::rect(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, border = "black", col = col)
+  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
 }
 
 cluster_write = function(x, path, output_options)

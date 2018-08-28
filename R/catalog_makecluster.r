@@ -119,10 +119,10 @@ catalog_makecluster = function(ctg)
       X         <- list()
       X$XCENTER <- cl@center$x
       X$XCENTER <- cl@center$y
-      X$XLEFT   <- cl@bbox$xmin
-      X$XRIGHT  <- cl@bbox$xmax
-      X$YBOTTOM <- cl@bbox$ymin
-      X$YTOP    <- cl@bbox$ymax
+      X$XLEFT   <- cl@bbox[1]
+      X$XRIGHT  <- cl@bbox[3]
+      X$YBOTTOM <- cl@bbox[2]
+      X$YTOP    <- cl@bbox[4]
       cl@save   <- glue::glue_data(X, get_output_files(ctg))
       return(cl)
     })
@@ -140,10 +140,10 @@ catalog_makecluster = function(ctg)
 
     lapply(clusters, function(x)
     {
-      graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
+      graphics::rect(x@bbox[1], x@bbox[2], x@bbox[3], x@bbox[4], border = "red")
 
       if (x@buffer != 0)
-        graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
+        graphics::rect(x@bbbox[1], x@bbbox[2], x@bbbox[3], x@bbbox[4], border = "darkgreen", lty = "dotted")
     })
   }
 

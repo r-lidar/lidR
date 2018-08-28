@@ -147,7 +147,7 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
-  bbox = raster::extent(as.numeric(las@bbox))
+  bbox = raster::extent(las)
   metrics = grid_metrics(x, func, res, start)
   metrics = raster::crop(metrics, bbox)
   return(metrics)

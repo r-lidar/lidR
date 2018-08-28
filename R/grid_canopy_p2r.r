@@ -85,7 +85,7 @@ grid_canopy_p2r.LAScluster = function(las, res = 2, subcircle = 0)
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
-  bbox = raster::extent(as.numeric(las@bbox))
+  bbox = raster::extent(las)
   metrics = grid_canopy(x, res, subcircle)
   metrics = raster::crop(metrics, bbox)
   return(metrics)

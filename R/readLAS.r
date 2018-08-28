@@ -96,10 +96,11 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
 
   if (files@buffer > 0)
   {
-    ybottom <- files@bbox$ymin
-    ytop    <- files@bbox$ymax
-    xleft   <- files@bbox$xmin
-    xright  <- files@bbox$xmax
+    ext     <- raster::extent(files)
+    ybottom <- ext@ymin
+    ytop    <- ext@ymax
+    xleft   <- ext@xmin
+    xright  <- ext@xmax
     xc      <- files@center$x
     yc      <- files@center$y
     r       <- (files@width - 2*files@buffer)/2

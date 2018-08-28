@@ -388,10 +388,10 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
       X$ID      <- i
       X$XCENTER <- clusters[[i]]@center$x
       X$XCENTER <- clusters[[i]]@center$y
-      X$XLEFT   <- clusters[[i]]@bbox$xmin
-      X$XRIGHT  <- clusters[[i]]@bbox$xmax
-      X$YBOTTOM <- clusters[[i]]@bbox$ymin
-      X$YTOP    <- clusters[[i]]@bbox$ymax
+      X$XLEFT   <- clusters[[i]]@bbox[1]
+      X$XRIGHT  <- clusters[[i]]@bbox[3]
+      X$YBOTTOM <- clusters[[i]]@bbox[2]
+      X$YTOP    <- clusters[[i]]@bbox[4]
       format    <- if (get_laz_compression(ctg)) ".laz" else ".las"
       clusters[[i]]@save <- paste0(glue::glue_data(X, get_output_files(ctg)), format)
     }

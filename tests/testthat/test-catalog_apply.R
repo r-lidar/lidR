@@ -10,7 +10,11 @@ set_progress(ctg)    <- FALSE
 
 test_that("catalog apply works", {
 
-  test = function(las){ return(nrow(las@data)) }
+  test = function(cluster)
+  {
+    las = readLAS(cluster)
+    return(nrow(las@data))
+  }
 
   req = catalog_apply(ctg, test)
 
@@ -19,7 +23,11 @@ test_that("catalog apply works", {
 
   expect_equal(s1,s2)
 
-  test = function(las){ return(sum(las@data$ReturnNumber == 1)) }
+  test = function(cluster)
+  {
+    las = readLAS(cluster)
+    return(sum(las@data$ReturnNumber == 1))
+  }
 
   req = catalog_apply(ctg, test)
 

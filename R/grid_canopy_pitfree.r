@@ -125,7 +125,7 @@ grid_canopy_pitfree.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,
 {
   x = readLAS(las, filter = "-keep_first", select = "xyzr")
   if (is.empty(x)) return(NULL)
-  bbox = raster::extent(as.numeric(las@bbox))
+  bbox = raster::extent(las)
   metrics = grid_canopy_pitfree(x, res, thresholds, max_edge, subcircle)
   metrics = raster::crop(metrics, bbox)
   return(metrics)

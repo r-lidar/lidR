@@ -25,17 +25,12 @@
 #
 # ===============================================================================
 
-
-#' An S4 class to represent an arbitrary region in the catalog.
-#'
-#' @keywords internal
 setClass(
-  Class = "LAScluster",
+  Class = "LAScluster", contains = "Spatial",
   representation(
     center = "list",
-    bbox   = "list",
-    bbbox  = "list",
-    width   = "numeric",
+    bbbox  = "matrix",
+    width  = "numeric",
     height = "numeric",
     buffer = "numeric",
     shape  = "numeric",
@@ -54,13 +49,12 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   hh = height/2
   xc = center$x
   yc = center$y
-  bu = buffer
 
   .Object@center <- center
-  .Object@bbox   <- list(xmin = xc - hw, xmax = xc + hw, ymin = yc - hh, ymax = yc + hh)
-  .Object@bbbox  <- list(xmin = xc - hw - bu, xmax = xc + hw + bu, ymin = yc - hh - bu, ymax = yc + hh + bu)
-  .Object@width  <- width  + 2*buffer
-  .Object@height <- height + 2*buffer
+  .Object@bbox   <- matrix(c(xc - hw, yc - hh, xc + hw, yc + hh), ncol = 2)
+  .Object@bbbox  <- .Object@bbox + buffer * matrix(c(-1, -1, +1, +1), ncol = 2)
+  .Object@width  <- width  + 2 * buffer
+  .Object@height <- height + 2 * buffer
   .Object@buffer <- buffer
   .Object@shape  <- shape
   .Object@name   <- name
@@ -71,7 +65,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   if (shape == LIDRCIRCLE)
     .Object@filter = paste("-inside_circle", xc, yc, hw + buffer)
   else if (shape == LIDRRECTANGLE)
-    .Object@filter = paste("-inside", .Object@bbbox$xmin, .Object@bbbox$ymin, .Object@bbbox$xmax, .Object@bbbox$ymax)
+    .Object@filter = paste("-inside", .Object@bbbox[1], .Object@bbbox[2], .Object@bbbox[3], .Object@bbbox[4])
   else
     stop("Something went wrong internally initializing a cluster. Process aborted.")
 

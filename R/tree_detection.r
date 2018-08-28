@@ -198,7 +198,7 @@ tree_detection_lmf.LAScluster = function(x, ws, hmin = 2, shape = c("circular", 
   las <- readLAS(x, ...)
   if (is.null(las)) return(NULL)
   ttops <- tree_detection_lmf(las, ws, hmin, shape)
-  bbox  <- raster::extent(x@bbox$xmin, x@bbox$xmax, x@bbox$ymin, x@bbox$ymax)
+  bbox  <- raster::extent(x)
   ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
@@ -251,7 +251,7 @@ tree_detection_ptrees.LAScluster = function(las, k, hmin = 3, nmax = 7L, ...)
   x <- readLAS(las, ...)
   if (is.empty(x)) return(NULL)
   ttops <- tree_detection_ptrees(x, k, hmin, nmax)
-  bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
@@ -486,7 +486,7 @@ tree_detection_multichm.LAScluster = function(las, res, layer_thickness = 0.5, d
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   ttops <- tree_detection_multichm(x, res, layer_thickness, dist_2d, dist_3d)
-  bbox  <- raster::extent(las@bbox$xmin, las@bbox$xmax, las@bbox$ymin, las@bbox$ymax)
+  bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }

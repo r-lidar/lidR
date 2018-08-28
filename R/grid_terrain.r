@@ -215,7 +215,7 @@ grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, 
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
-  bbox <- raster::extent(as.numeric(las@bbox))
+  bbox <- raster::extent(las)
   dtm  <- grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
