@@ -8,21 +8,6 @@ catalog_retile(ctg)
 }
 \arguments{
 \item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
-
-\item{path}{string. The folder where the new files should be saved.}
-
-\item{prefix}{character. The prefix of the written file name. It can be missing, in which case if the
-catalog is processed by file, the original name of the file will be retained.}
-
-\item{ext}{character. The format of the written files. Can be ".las" or ".laz".}
-
-\item{alignment}{numeric vector. A vector of size 2 (x and y coordinates, respectively) to align the
-pattern. By default the alignment is made along (0,0) as in all LAScatalog processes, meaning the edge
-of a virtual tile will belong on x = 0 and y = 0 and all the the others will be multiples of the
-tiling size.}
-
-\item{...}{extra parameter 'filter' to pass to \link{readLAS} (readLAS is not actually called but
-the parameter can be passed anyway).}
 }
 \value{
 A new \code{LAScatalog} object

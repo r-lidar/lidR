@@ -44,16 +44,6 @@
 #' for working in other software for example, but not in \code{lidR}.
 #'
 #' @param ctg  A \link[lidR:catalog]{LAScatalog} object
-#' @param path string. The folder where the new files should be saved.
-#' @param prefix character. The prefix of the written file name. It can be missing, in which case if the
-#' catalog is processed by file, the original name of the file will be retained.
-#' @param ext character. The format of the written files. Can be ".las" or ".laz".
-#' @param alignment numeric vector. A vector of size 2 (x and y coordinates, respectively) to align the
-#' pattern. By default the alignment is made along (0,0) as in all LAScatalog processes, meaning the edge
-#' of a virtual tile will belong on x = 0 and y = 0 and all the the others will be multiples of the
-#' tiling size.
-#' @param ... extra parameter 'filter' to pass to \link{readLAS} (readLAS is not actually called but
-#' the parameter can be passed anyway).
 #'
 #' @return A new \code{LAScatalog} object
 #' @seealso \link{catalog}

@@ -27,13 +27,13 @@
 
 
 
-#' Apply functions over a \link[LAScatalog-class]{LAScatalog}
+#' Apply functions over a LAScatalog
 #'
-#' This function gives access at the user level to the \link[LAScatalog-class]{LAScatalog} processing
+#' This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
 #' engine. It allows the application of a user-defined routine over an entire catalog using a
 #' multi-core process (see detail).
 #'
-#' The LAScatalog processing engine tools is explained in the \link[LAScatalog-class]{LAScatalog class}
+#' The LAScatalog processing engine tools is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}
 #' \strong{Warning:} the LAScatalog processing engine have a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 #' this task is very specific to each process. In other \code{lidR} functions this task is performed
