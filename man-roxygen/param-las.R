@@ -1,1 +1,1 @@
-#' @param las An object of class \code{LAS} or \code{LAScatalog}.
+#' @param las An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.

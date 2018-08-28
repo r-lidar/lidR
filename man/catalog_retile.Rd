@@ -29,6 +29,39 @@ Note that this function is not actually very useful since \code{lidR} manages ev
 (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
 for working in other software for example, but not in \code{lidR}.
 }
+\section{Working with a \code{LAScatalog}}{
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer}: Load clusters with a buffer
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used. .
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{output_files}: The user-function outputs will be written in files instead of being
+returned into R
+\item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
+return a \code{LAS} object.
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item \strong{select}: Select only the data of interest to save processing memory.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 \dontrun{
 ctg = catalog("path/to/catalog")

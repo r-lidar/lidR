@@ -11,7 +11,7 @@ lassnags_wing(las, neigh_radii = c(1.5, 1, 2), low_int_thrsh = 50,
   uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{character. The name of an algorithm. At present, can only be \code{"wing2015"}.
 (see sections relevant to each algorithm).}
@@ -39,8 +39,8 @@ cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be pro
 the user.}
 }
 \value{
-If the input is a \code{LAS} object, return nothing. If the input is a
-\code{LAScatalog} returns a \code{LAScatalog}
+If the input is a \code{LAS} object, return nothing. The original LAS object is updated by
+reference. If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 Snag classification/segmentation using several possible algorithms (see details).
@@ -52,12 +52,14 @@ thresholds and specified neighborhoods to differentiate bole and branch from fol
 }
 \section{Working with a \code{LAScatalog}}{
 
-In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
-the catalog processing options. The user can modify the processing options using the
-\link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
-spatial queries using a spatial index. Users should really take advange a .lax files but this is
-not mandatory.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
 \section{Wing et al. 2015}{

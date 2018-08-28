@@ -28,12 +28,14 @@ thus the user must take care of this point himself (See section "Edge artifacts"
 }
 \section{Working with a \code{LAScatalog}}{
 
-In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
-the catalog processing options. The user can modify the processing options using the
-\link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
-spatial queries using a spatial index. Users should really take advange a .lax files but this is
-not mandatory.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
 \section{Edge artifacts}{
@@ -84,6 +86,27 @@ The line \code{if(is.empty(las)) return(NULL)} is of major importance because so
 0 point (we can't know that before to read the file). In this case an empty point cloud with 0 point
 is returned by \code{readLAS} and this may fails in subsequent code. Thus, exiting early the user-function
 by returning \code{NULL} allows the internal engine to knows that the cluster was empty.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer}: Load clusters with a buffer
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used. .
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{output_files}: The user-function outputs will be written in files instead of being
+returned into R
+\item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
+return a \code{LAS} object.
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item \strong{select}: Select only the data of interest to save processing memory.
+\item \strong{filter}: Read only points of interest.
+}
 }
 
 \examples{

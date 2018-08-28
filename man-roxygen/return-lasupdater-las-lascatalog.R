@@ -1,2 +1,2 @@
-#' @return If the input is a \code{LAS} object, return nothing. If the input is a
-#' \code{LAScatalog} returns a \code{LAScatalog}
+#' @return If the input is a \code{LAS} object, return nothing. The original LAS object is updated by
+#' reference. If the input is a \code{LAScatalog} returns a \code{LAScatalog}.

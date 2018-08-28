@@ -8,7 +8,7 @@ lasfilterdecimate(las, density, homogenize = TRUE, res = 5,
   use_pulse = FALSE)
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{density}{numeric. The expected density}
 
@@ -23,7 +23,7 @@ area.}
 }
 \value{
 If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a
-\code{LAScatalog} returns a \code{LAScatalog}
+\code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 This routine creates a grid with a given resolution and filters the point cloud by selecting randomly
@@ -37,28 +37,38 @@ density i.e., in a 2 points/m^2 dataset, 25 square meters would be feasible; how
 small to thin (e.g. <1 square meter) would not be feasible because density does not have meaning
 at this scale.
 }
-\section{Supported processing options for a LAScatalog}{
+\section{Supported processing options}{
 
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{cores}: See \link{LAScatalog-class}.
-\item \strong{progress}: See \link{LAScatalog-class}.
-\item \strong{stop_early}: See \link{LAScatalog-class}.
-\item \strong{by_file}: See \link{LAScatalog-class}.
-\item \strong{tiling_size}: See \link{LAScatalog-class}.
-\item \strong{alignment}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: How many data are loaded at once.
+\item buffer: This function guarantee a stric wall-to-wall continous output. The \code{buffer} option
+is no considered.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used. .
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
  in R and needs to be written in las/laz files.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
 }
 }
 
 \section{Working with a \code{LAScatalog}}{
 
-In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
-the catalog processing options. The user can modify the processing options using the
-\link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
-spatial queries using a spatial index. Users should really take advange a .lax files but this is
-not mandatory.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
 \examples{

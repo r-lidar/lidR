@@ -7,7 +7,7 @@
 grid_density(las, res = 4)
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 square meters.}
@@ -21,21 +21,34 @@ density.
 }
 \section{Working with a \code{LAScatalog}}{
 
-In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
-the catalog processing options. The user can modify the processing options using the
-\link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
-spatial queries using a spatial index. Users should really take advange a .lax files but this is
-not mandatory.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
-\section{Supported processing options for a LAScatalog}{
+\section{Supported processing options}{
 
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{cores}: See \link{LAScatalog-class}.
-\item \strong{progress}: See \link{LAScatalog-class}.
-\item \strong{stop_early}: See \link{LAScatalog-class}.
-\item \strong{tiling_size}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: How many data are loaded at once. \code{tiling_size = 0} is not allowed
+to guarantee a stric wall-to-wall continous output.
+\item buffer: This function guarantee a stric wall-to-wall continous output. The \code{buffer} option
+is no considered.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used. .
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{output_files}: Return the output in R or write each cluster's output in a file.
+\item laz_compression: is not supported because this function will never write \code{las/laz} files
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item select: The function knows for you what should be loaded or not.
+\item \strong{filter}: Read only points of interest.
 }
 }
 

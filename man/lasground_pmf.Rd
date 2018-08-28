@@ -7,7 +7,7 @@
 lasground_pmf(las, ws, th, last_returns = TRUE)
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
 The values must be positive and in the same units as the point cloud (usually meters, occasionally
@@ -22,8 +22,9 @@ in the cases of single return) to run the algorithm. If FALSE all the returns ar
 to \code{FALSE} automatically.}
 }
 \value{
-Nothing, this function is used for its side effect. The original LAS object is updated by
-reference. In the 'Classification' column a value of 2 denotes 'ground' according to LAS specifications.
+If the input is a \code{LAS} object, returns nothing. The original LAS object is updated by
+reference. The 'Classification' column have a value of 2 that denotes 'ground' according to LAS
+specifications. If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 Implements algorithms for segmentation of ground points. The function updates the field
@@ -40,25 +41,35 @@ of the parameters according to the original paper.
 }
 \section{Working with a \code{LAScatalog}}{
 
-In \code{lidR} when the input is a \link[lidR:LAScatalog-class]{LAScatalog} the functions run following
-the catalog processing options. The user can modify the processing options using the
-\link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files that \strong{significantly} improve the computation speed of
-spatial queries using a spatial index. Users should really take advange a .lax files but this is
-not mandatory.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the internal catalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+function should come with a section that doucment the avaible engine options.\cr\cr
+\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
-\section{Supported processing options for a LAScatalog}{
+\section{Supported processing options}{
 
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{cores}: See \link{LAScatalog-class}.
-\item \strong{progress}: See \link{LAScatalog-class}.
-\item \strong{stop_early}: See \link{LAScatalog-class}.
-\item \strong{by_file}: See \link{LAScatalog-class}.
-\item \strong{tiling_size}: See \link{LAScatalog-class}.
-\item \strong{alignment}: See \link{LAScatalog-class}.
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
+always removed once processed and will never be returned neither in R nor in files.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used. .
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Requiered because the output is likely to be too big to be returned
  in R and needs to be written in las/laz files.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
 }
 }
 

@@ -15,7 +15,7 @@ lastrees_mcwatershed(las, chm, treetops, th_tree = 2, extra = FALSE,
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 automatically.}
 
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read  from
+\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
 an external file.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
@@ -32,7 +32,7 @@ and return nothing (NULL) i.e. the original point cloud is automatically updated
 each tree, the name of this column. This way, original IDs will be preserved. If there is no scuh data
 trees will be numbered sequentially.}
 
-\item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
+\item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 }
 \value{

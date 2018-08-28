@@ -43,6 +43,10 @@
 #' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
 #' for working in other software for example, but not in \code{lidR}.
 #'
+#' @template LAScatalog
+#'
+#' @template section-supported-option-catalog_apply
+#'
 #' @param ctg  A \link[lidR:catalog]{LAScatalog} object
 #'
 #' @return A new \code{LAScatalog} object

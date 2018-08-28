@@ -11,10 +11,10 @@ lastrees_silva(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 automatically.}
 
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read  from
+\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
 an external file.}
 
-\item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
+\item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as a proportion of the

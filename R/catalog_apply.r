@@ -86,6 +86,8 @@
 #' is returned by \code{readLAS} and this may fails in subsequent code. Thus, exiting early the user-function
 #' by returning \code{NULL} allows the internal engine to knows that the cluster was empty.
 #'
+#' @template section-supported-option-catalog_apply
+#'
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
 #' @param FUN A user-defined function that respect a given template (see section function template)
 #' @param ... Optional arguments to FUN.

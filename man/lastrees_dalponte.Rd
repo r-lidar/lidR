@@ -11,10 +11,10 @@ lastrees_dalponte(las, chm, treetops, th_tree = 2, th_seed = 0.45,
 \item{las}{An object of the class \code{LAS}. If missing \code{extra} is turned to \code{TRUE}
 automatically.}
 
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read  from
+\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
 an external file.}
 
-\item{treetops}{\code{SpatialPolygonsDataFrame}. Can be computed with
+\item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}

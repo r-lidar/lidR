@@ -46,6 +46,8 @@
 #'
 #' @template LAScatalog
 #'
+#' @template section-supported-option-grid_functions
+#'
 #' @template param-las
 #' @param algorithm character. The name of an algorithm. Can be \code{"p2r"},
 #' \code{"tin"} or \code{"pitfree"}. (see details)
