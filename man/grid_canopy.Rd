@@ -85,7 +85,9 @@ internally to ensure a strict wall-to-wall continuous output.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
-\item \strong{output_files}: Return the output in R or write each cluster's output in a file.
+\item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
+templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
+\code{ID} and, if tiling size equal to 0 (processing by file), \code{ORIGINALFILENAME}.
 \item laz_compression: is not supported because this function will never write \code{las/laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded or not
