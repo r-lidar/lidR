@@ -70,13 +70,14 @@ not change that.
 The slot \code{@clustering_options} contains a \code{list} of options that drives how a the cluster
 (the sub-areas that are sequentially processed) are made.
 \itemize{
-\item \strong{tiling_size}: numeric. The size of the cluster that will be sequentially processeed. A small size
-allows for loading few data at a time saving computer memory. A large size allows for loading large
-region at a time, the computation is thus usually faster but uses much more computer memory. If
-\code{tiling_size = 0} the catalof is process sequentially by file. A cluster is a file.
+\item \strong{tiling_size}: numeric. The size of the cluster that will be sequentially processeed.
+A small size allows for loading few data at a time saving computer memory. A large size allows for
+loading large region at a time. The computation is thus usually faster but uses much more computer
+memory. If \code{tiling_size = 0} the catalog is processed sequentially  \emph{by file}. A cluster
+is a file. Default is 0.
 \item \strong{buffer}: numeric. Each cluster can be read with an extra buffer around it to ensure there is
 no side effect between to independent cluster and that the output is correct and continuous. This
-is mandatory for some algorithms. Default is 0.
+is mandatory for some algorithms. Default is 30.
 \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 clustering pattern. By default the alignment is made along (0,0) meaning the edge of a virtual cluster
 will belong on x = 0 and y = 0 and all the the others will be multiples of the tiling size. Not relevent

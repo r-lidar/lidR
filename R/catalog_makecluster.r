@@ -78,7 +78,7 @@ catalog_makecluster = function(ctg)
     clusters = lapply(1:length(xcenter), function(i)
     {
       center  <- list(x = xcenter[i], y = ycenter[i])
-      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname")
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname", proj4string = ctg@proj4string)
 
       cluster@select <- ctg@input_options$select
       cluster@filter <- paste(cluster@filter, ctg@input_options$filter)

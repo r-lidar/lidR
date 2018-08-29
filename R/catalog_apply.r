@@ -189,17 +189,26 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   assertive::assert_is_a_bool(check_alignement)
   assertive::assert_is_a_bool(drop_null)
 
-  p = list(...)
-  res   <- if (is.null(p$res)) 0 else p$res
-  start <- if (is.null(p$start)) c(0,0) else p$start
+  p        <- list(...)
+  res      <- if (is.null(p$res)) 0 else p$res
+  start    <- if (is.null(p$start)) c(0,0) else p$start
+  ctg      <- .catalog_apply_check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = res, start = start)
+  clusters <- catalog_makecluster(ctg)
+  clusters <- .catalog_apply_check_and_fix_clusters(ctg, clusters, check_alignement, res = res, start = start)
+  output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
 
-  if (need_buffer)
-  {
-    if (get_buffer(ctg) <= 0)
-      stop("A buffer greater than 0 is requiered to process the catalog. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-  }
+  return(output)
+}
 
-  if (check_alignement)
+.catalog_apply_check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output_file, res = NULL, start = NULL)
+{
+  if (need_buffer & get_buffer(ctg) <= 0)
+    stop("A buffer greater than 0 is requiered to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  # If we want to return a Raster*, to ensure a strict continuous output we need to check if the
+  # clusters are aligned with the pixels. In case of tiling_size > 0 it is easy to check before to make
+  # the clusters
+  if (check_alignement & !get_by_file(ctg))
   {
     # If the clustering option do not match with the resolution
     t_size     <- get_tiling_size(ctg)
@@ -207,7 +216,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
     if (new_t_size != t_size)
     {
       set_tiling_size(ctg) <- new_t_size
-      message(glue::glue("Clustering size do no match with the resolution of the RasterLayer. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
+      message(glue::glue("Clustering size do no match with the resolution of the Raster. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
     }
 
     # If the alignement of the clusters do not match with the start point of the raster
@@ -220,14 +229,40 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
     }
   }
 
-  if (need_output_file)
+  # Some functions require to write outputs in files because the output it likely to be to  big to
+  # be returned in R
+  if (need_output_file & get_output_files(ctg) == "")
+    stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+
+  return(ctg)
+}
+
+.catalog_apply_check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
+{
+  if (check_alignement & get_by_file(ctg))
   {
-    if (get_output_files(ctg) == "")
-      stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+    for(i in 1:length(clusters))
+    {
+      cluster <- clusters[[i]]
+      bbox1 <- raster::extent(cluster)
+      bbox2 <- bbox1
+      xmin <- round_any(bbox1@xmin, res)
+      ymin <- round_any(bbox1@ymin, res)
+      xmax <- round_any(bbox1@xmax, res)
+      ymax <- round_any(bbox1@ymax, res)
+      bbox2@xmin <- if (xmin >= bbox1@xmin) xmin - res else xmin
+      bbox2@ymin <- if (ymin >= bbox1@ymin) ymin - res else ymin
+      bbox2@xmax <- if (xmax <= bbox1@xmax) xmax + res else xmax
+      bbox2@ymax <- if (ymax <= bbox1@ymax) ymax + res else ymax
+
+      if (!bbox1 == bbox2)
+      {
+        new_cluster <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, get_buffer(ctg))[[1]]
+        clusters[[i]] <- new_cluster
+        message(glue::glue("Cluster {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
+      }
+    }
   }
 
-  clusters <- catalog_makecluster(ctg)
-  output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
-
-  return(output)
+  return(clusters)
 }

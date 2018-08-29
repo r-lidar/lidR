@@ -135,16 +135,11 @@ grid_canopy_pitfree.LAScluster = function(las, res = 0.5, thresholds =  c(0,2,5,
 grid_canopy_pitfree.LAScatalog = function(las, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
   set_select(las) <- "xyzr"
-  output          <- catalog_apply2(las, grid_canopy_pitfree, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  output <- catalog_apply2(las, grid_canopy_pitfree, res = res, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (get_output_files(las) != "")  return(unlist(output))
 
-  # Outputs have been return in R objects. Merge the outptus in a single object
-  names         <- names(output[[1]])
-  factor        <- output[[1]]@data@isfactor
-  output        <- do.call(raster::merge, output)
-  output@crs    <- las@proj4string
-  names(output) <- names
-  return(output)
+  # Outputs have been returned in R objects. Merge the outputs in a single object
+  return(merge_rasters(output))
 }

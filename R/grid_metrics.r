@@ -147,9 +147,11 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
-  bbox = raster::extent(las)
-  metrics = grid_metrics(x, func, res, start)
-  metrics = raster::crop(metrics, bbox)
+
+  bbox        <- raster::extent(las)
+  metrics     <- grid_metrics(x, func, res, start)
+  metrics     <- raster::crop(metrics, bbox)
+
   return(metrics)
 }
 
@@ -157,18 +159,13 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
   set_buffer(las) <- 0.1*res
-  output          <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+  output <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (get_output_files(las) != "") return(unlist(output))
 
-  # Outputs have been return in R objects. Merge the outptus in a single object
-  names         <- names(output[[1]])
-  factor        <- output[[1]]@data@isfactor
-  output        <- do.call(raster::merge, output)
-  output@crs    <- las@proj4string
-  names(output) <- names
-  if (is(output, "RasterBrick")) colnames(output@data@values) <- names
-  return(output)
+  # Outputs have been returned in R objects. Merge the outputs in a single object
+  return(merge_rasters(output))
 }
+
 

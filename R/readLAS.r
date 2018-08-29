@@ -90,9 +90,7 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
   buffer <- X <- Y <- NULL
 
   las <- readLAS(files@files, files@select,files@filter)
-
-  if (is.null(las))
-    return(invisible())
+  las@proj4string <- files@proj4string
 
   if (files@buffer > 0)
   {
@@ -105,7 +103,7 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
     yc      <- files@center$y
     r       <- (files@width - 2*files@buffer)/2
 
-    las@data[, buffer := 0]
+    las@data[, buffer := 0L]
 
     if (files@shape == LIDRCIRCLE)
     {

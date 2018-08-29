@@ -52,6 +52,18 @@ make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
   return(layout)
 }
 
+merge_rasters = function(output)
+{
+  # Outputs have been return in R objects. Merge the outptus in a single object
+  names         <- names(output[[1]])
+  factor        <- output[[1]]@data@isfactor
+  output        <- do.call(raster::merge, output)
+  names(output) <- names
+  if (is(output, "RasterBrick")) colnames(output@data@values) <- names
+  return(output)
+}
+
+
 group_grid = function(x, y, res, start = c(0,0))
 {
   xgrid = f_grid(x, res, start[1])
