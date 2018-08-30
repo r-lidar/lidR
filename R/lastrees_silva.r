@@ -85,7 +85,7 @@ lastrees_silva = function(las, chm, treetops, max_cr_factor = 0.6, exclusion = 0
   }
 
   if (!extra & !missing(las))
-    return(invisible())
+    return(invisible(las))
   else
     return(crown)
 }

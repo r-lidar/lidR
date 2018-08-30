@@ -51,7 +51,8 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
   if (!"Zraw" %in% names(las@data))
     las@data[, Zraw := Z]
 
-  las@data[, Z := Zs]
+  las@data[, Z := Zs][]
+  return(invisible(las))
 }
 
 #' @export
@@ -68,5 +69,7 @@ lasunsmooth = function(las)
     las@data[]
   }
   else
-    message("No column named 'Zraw' found. Unsmoothing is not possible.")
+    stop("No column named 'Zraw' found. Unsmoothing is not possible.")
+
+  return(invisible(las))
 }
