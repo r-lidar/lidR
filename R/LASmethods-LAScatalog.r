@@ -141,23 +141,50 @@ catalog <- function(folder, ...)
 
 setMethod("show", "LAScatalog", function(object)
 {
-  surface <- raster::area(object)
+  area    <- raster::area(object)
+  area.h  <- area
   npoints <- sum(object@data$`Number of point records`)
+  npoints.h <- npoints
   inherit <- getClass("LAScatalog")@contains[[1]]@superClass
   ext     <- raster::extent(object)
+  units   <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
+  units   <- if (length(units) == 0) "units" else units
+  areaprefix <- ""
+  pointprefix <- ""
+  if (area > 1000*1000)
+  {
+    areaprefix <- "k"
+    area.h  <- round(area/(1000*1000),2)
+  }
+
+  if (npoints > 1000 & npoints < 1000^2)
+  {
+    pointprefix <- "thouthands"
+    npoints.h <- round(npoints/1000, 1)
+  }
+  else if (npoints >= 1000^2 & npoints < 1000^3)
+  {
+    pointprefix <- "millions"
+    npoints.h <- round(npoints/(1000^2),2)
+  }
+  else if (npoints >= 1000^3)
+  {
+    pointprefix <- "billions"
+    npoints.h <- round(npoints/(1000^3),2)
+  }
 
   cat("class       : ", class(object), " (inherit ", inherit, ")\n", sep = "")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("coord. ref. :", object@proj4string@projargs, "\n")
-  cat("area        :", surface, "units\u00B2\n")
-  cat("points      :", npoints, "points\n")
-  cat("density     :", round(npoints/surface, 1), "points/unit\u00B2\n")
+  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep="")
+  cat("points      :", npoints.h, pointprefix, "points\n")
+  cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
 })
 
 #' @rdname redefined_behviors
 #' @export
-setMethod("[", c("LAScatalog"), function(x, i, j, ...) {
+setMethod("[", "LAScatalog", function(x, i, j, ...) {
 
   ctgname <- deparse(substitute(x))
   iname   <- deparse(substitute(i))
@@ -189,14 +216,14 @@ setMethod("[", c("LAScatalog"), function(x, i, j, ...) {
 
 #' @rdname redefined_behviors
 #' @export
-setReplaceMethod("[", c("LAScatalog"),  function(x, i, j, value)
+setReplaceMethod("[", "LAScatalog",  function(x, i, j, value)
 {
   stop("LAScatalog data are read from standard files and cannot be modified")
 })
 
 #' @rdname redefined_behviors
 #' @export
-setReplaceMethod("[[", c("LAScatalog"),  function(x, i, j, value)
+setReplaceMethod("[[", "LAScatalog",  function(x, i, j, value)
 {
   stop("LAScatalog data are read from standard files and cannot be modified")
 })
