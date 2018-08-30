@@ -30,11 +30,12 @@
 #' Select LAS files interactively
 #'
 #' Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-#' enables the user to select a set of las files from a LAScatalog by clicking
-#' on the map of the file using the mouse. The selected files will be highlighted in red on
-#' the plot after selection is complete.
-#' @param x A LAScatalog object
-#' @param Rbase logical. If TRUE, will use R base plot (no pan, no zoom and not convenient).
+#' enables the user to subset a LAScatalog by clicking on the map of the file using the mouse. The
+#' selected files will be highlighted in red on the plot after selection is complete.
+#'
+#' @param ctg A LAScatalog object
+#' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
+#' also \link[lidR:plot]{plot})
 #' @return A LAScatalog object
 #' @export
 #' @examples
@@ -44,32 +45,26 @@
 #' }
 #' @seealso
 #' \link[lidR:catalog]{LAScatalog}
-catalog_select = function(x, Rbase = FALSE)
+catalog_select = function(ctg, mapview = TRUE)
 {
-  assertive::assert_is_all_of(x, "LAScatalog")
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_a_bool(mapview)
 
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
-  if (!Rbase)
+  if (mapview)
   {
     mapview::mapview()
-    catalog <- as.spatial(x)
-    map = mapview::mapview(catalog)
-    sfdata <- mapedit::selectFeatures(catalog, map = map)
-    data.table::setDT(sfdata)
-    sfdata[, geometry := NULL]
-    newnames <- gsub(x = names(sfdata), pattern = "(\\.)+", replacement = " ")
-    data.table::setnames(sfdata, names(sfdata), newnames)
-    x@data <- sfdata
-    return(x)
+    map     <- mapview::mapview(ctg)
+    index   <- mapedit::selectFeatures(ctg, map = map, index = TRUE)
   }
   else
   {
-    graphics::plot(x)
-    selected = with(x@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
-    x@data <- x@data[selected]
-    return(x)
+    plot.LAScatalog(ctg, mapview = FALSE)
+    index <- with(ctg@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
   }
+
+  return(ctg[index,])
 }
 
 identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)

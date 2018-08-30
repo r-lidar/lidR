@@ -4,21 +4,21 @@
 \alias{catalog_select}
 \title{Select LAS files interactively}
 \usage{
-catalog_select(x, Rbase = FALSE)
+catalog_select(ctg, mapview = TRUE)
 }
 \arguments{
-\item{x}{A LAScatalog object}
+\item{ctg}{A LAScatalog object}
 
-\item{Rbase}{logical. If TRUE, will use R base plot (no pan, no zoom and not convenient).}
+\item{mapview}{logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
+also \link[lidR:plot]{plot})}
 }
 \value{
 A LAScatalog object
 }
 \description{
 Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-enables the user to select a set of las files from a LAScatalog by clicking
-on the map of the file using the mouse. The selected files will be highlighted in red on
-the plot after selection is complete.
+enables the user to subset a LAScatalog by clicking on the map of the file using the mouse. The
+selected files will be highlighted in red on the plot after selection is complete.
 }
 \examples{
 \dontrun{

@@ -203,10 +203,10 @@ setReplaceMethod("$", "LAS", function(x, name, value)
 #' @param j Unused.
 #' @rdname redefined_behviors
 #' @export
-setReplaceMethod("[[", c("Spatial", "ANY", "missing", "ANY"),  function(x, i, j, value)
+setReplaceMethod("[[", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (! i %in% names(x@data))
-    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
+    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   type1 <- storage.mode(x@data[[i]])
   type2 <- storage.mode(value)

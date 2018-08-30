@@ -155,6 +155,59 @@ setMethod("show", "LAScatalog", function(object)
   cat("num. files  :", dim(object@data)[1], "\n")
 })
 
+#' @rdname redefined_behviors
+#' @export
+setMethod("[", c("LAScatalog"), function(x, i, j, ...) {
+
+  ctgname <- deparse(substitute(x))
+  iname   <- deparse(substitute(i))
+  nargs   <- nargs()
+
+  if (!missing(i) & !missing(j))
+    stop(glue::glue("This action is not allowed for a {class(x)}. j must be missing. Maybe you meant: {ctgname}[{iname}, ]."))
+
+  if (missing(i) & !missing(j))
+    stop(glue::glue("This action is not allowed for a {class(x)}. i cannot be missing."))
+
+  if (!missing(i) & missing(j) & nargs == 2L)
+    stop(glue::glue("This action is not allowed for a {class(x)}. Maybe you meant: {ctgname}[{iname}, ]."))
+
+  y <- callNextMethod()
+
+  new_ctg <- new("LAScatalog")
+  new_ctg@clustering_options <- x@clustering_options
+  new_ctg@processing_options <- x@processing_options
+  new_ctg@output_options     <- x@output_options
+  new_ctg@input_options      <- x@input_options
+  new_ctg@data               <- y@data
+  new_ctg@polygons           <- y@polygons
+  new_ctg@plotOrder          <- y@plotOrder
+  new_ctg@bbox               <- y@bbox
+  new_ctg@proj4string        <- y@proj4string
+  return(new_ctg)
+})
+
+#' @rdname redefined_behviors
+#' @export
+setReplaceMethod("[", c("LAScatalog"),  function(x, i, j, value)
+{
+  stop("LAScatalog data are read from standard files and cannot be modified")
+})
+
+#' @rdname redefined_behviors
+#' @export
+setReplaceMethod("[[", c("LAScatalog"),  function(x, i, j, value)
+{
+  stop("LAScatalog data are read from standard files and cannot be modified")
+})
+
+#' @rdname redefined_behviors
+#' @export
+setReplaceMethod("$", "LAScatalog", function(x, name, value)
+{
+  stop("LAScatalog data are read from standard files and cannot be modified")
+})
+
 #' @rdname area
 #' @export
 setMethod("area", "LAScatalog",  function(x, ...)

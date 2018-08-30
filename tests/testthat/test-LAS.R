@@ -111,3 +111,24 @@ test_that("build a LAS invalid LAS object works as expected", {
 
   expect_error(LAS(data, header), "Version minor")
 })
+
+test_that("LAS redefined behavior of $, [, and [[", {
+
+  las = lidR:::dummy_las(10)
+
+  expect_true(is.numeric(las$Z))
+  expect_equal(length(las$Z), 10)
+
+  expect_true(is.null(las$U))
+
+  expect_error(las$Z <- 1:10, "replace data of type double")
+  expect_error(las$U <- 1:10, "Addition of a new column")
+
+  expect_true(is.numeric(las[["Z"]]))
+  expect_equal(length(las[["Z"]]), 10)
+
+  expect_true(is.null(las[["U"]]))
+
+  expect_error(las[["Z"]] <- 1:10, "replace data of type double")
+  expect_error(las[["U"]] <- 1:10, "Addition of a new column")
+})
