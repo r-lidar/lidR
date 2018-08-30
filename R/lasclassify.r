@@ -89,8 +89,7 @@ lasclassify = function(las, source, field = NULL)
     field = "id"
 
   las@data[,(field) := values][]
-
-  return(invisible())
+  return(invisible(las))
 }
 
 classify_from_shapefile = function(las, shapefile, field = NULL)

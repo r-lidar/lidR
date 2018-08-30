@@ -52,5 +52,5 @@ lascolor = function(.las, nbits = 16)
 
   .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
 
-  return(invisible())
+  return(invisible(las))
 }
