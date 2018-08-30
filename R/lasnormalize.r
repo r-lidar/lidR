@@ -261,5 +261,5 @@ lasunnormalize = function(las)
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
 {
   lasnormalize_dtm(e1,e2)
-  return(invisible())
+  return(invisible(las))
 })

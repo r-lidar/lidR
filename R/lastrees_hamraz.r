@@ -210,6 +210,6 @@ lastrees_hamraz = function(las, nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc
 
   lasaddextrabytes(las, treeID, field, "A unique ID for each tree")
 
-  return(invisible())
+  return(invisible(las))
 }
 

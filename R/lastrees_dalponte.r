@@ -94,7 +94,7 @@ lastrees_dalponte = function(las, chm, treetops, th_tree = 2, th_seed = 0.45, th
   }
 
   if (!extra & !missing(las))
-    return(invisible(NULL))
+    return(invisible(las))
   else
     return(Crowns)
 }

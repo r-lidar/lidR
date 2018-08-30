@@ -57,7 +57,7 @@ lasadddata = function(las, x, name)
   stopif_forbidden_name(name)
 
   las@data[, (name) := x]
-  return(invisible())
+  return(invisible(las))
 }
 
 #' @export
@@ -77,7 +77,7 @@ lasaddextrabytes = function(las, x, name, desc)
   header = rlas::header_add_extrabytes(header, x, name, desc)
   header = LASheader(header)
   C_lasupdateheader(las, header)
-  return(invisible())
+  return(invisible(las))
 }
 
 #' @export
@@ -101,7 +101,7 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   header = LASheader(header)
   C_lasupdateheader(las, header)
 
-  return(invisible())
+  return(invisible(las))
 }
 
 lasupdateheader = function(las)
@@ -112,7 +112,7 @@ lasupdateheader = function(las)
   new_header = rlas::header_update(header, las@data)
   new_header = LASheader(new_header)
   C_lasupdateheader(las, new_header)
-  return(invisible())
+  return(invisible(las))
 }
 
 # type = 0 : undocumented

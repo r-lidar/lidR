@@ -76,5 +76,5 @@ lastrees_li = function(las, dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_
 
   lasaddextrabytes(las, id, field, "An ID for each segmented tree")
 
-  return(invisible())
+  return(invisible(las))
 }
