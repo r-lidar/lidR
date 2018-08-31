@@ -15,14 +15,14 @@ IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double
 {
   std::vector<int> id;
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
   std::vector<Point*> pts;
-  tree->circle_lookup(x, y, r, pts);
+  Circle circ(x,y,r);
+  tree.lookup(circ, pts);
 
-  for (size_t j =0 ; j < pts.size() ; j++)
+  for (size_t j = 0 ; j < pts.size() ; j++)
     id.push_back(pts[j]->id + 1);
 
-  delete tree;
   return wrap(id);
 }
 

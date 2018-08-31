@@ -291,22 +291,6 @@ template <typename T> bool QuadTree3D<T>::in_cube(const BoundingBox3D<T>& bb, co
   return(dx <= bb.half_res.x && dy <= bb.half_res.y && dz <= bb.half_res.z);
 }
 
-static inline double max (double a, double b, double c)
-{
-  if (a < b)
-    return (b < c ? c : b);
-  else
-    return (a < c ? c : a);
-}
-
-static inline double min (double a, double b, double c)
-{
-  if (a > b)
-    return (b > c ? c : b);
-  else
-    return (a > c ? c : a);
-}
-
 template <typename T> int QuadTree3D<T>::count()
 {
   return npoints;

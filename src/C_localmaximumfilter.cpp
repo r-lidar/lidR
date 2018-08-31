@@ -45,7 +45,7 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
   double hws = ws[0]/2;
   LogicalVector seeds(n);
   //std::vector<bool> not_seeds(n);
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
 
   // Loop through all the point cloud
   for (int i = 0 ; i < n ; i++)
@@ -59,9 +59,15 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
     // Get the points within a windows centered on the current point
     std::vector<Point*> pts;
     if(!circular)
-      tree->rect_lookup(X[i], Y[i], hws, hws, pts);
+    {
+      Rectangle rect(X[i]-hws, X[i]+hws, Y[i]-hws, Y[i]+hws);
+      tree.lookup(rect, pts);
+    }
     else
-      tree->circle_lookup(X[i], Y[i], hws, pts);
+    {
+      Circle circ(X[i], Y[i], hws);
+      tree.lookup(circ, pts);
+    }
 
     // Get the highest Z in the windows
     double Zmax = std::numeric_limits<double>::min();
@@ -81,7 +87,6 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
       seeds[i] = true;
   }
 
-  delete tree;
   return seeds;
 }
 

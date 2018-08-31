@@ -160,5 +160,41 @@ template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
   return y;
 }
 
+static inline double max (double a, double b, double c)
+{
+  if (a < b)
+    return (b < c ? c : b);
+  else
+    return (a < c ? c : a);
+}
+
+static inline double min (double a, double b, double c)
+{
+  if (a > b)
+    return (b > c ? c : b);
+  else
+    return (a > c ? c : a);
+}
+
+static inline double distanceSquarePointToSegment(const Point& p1, const Point& p2, const Point& p)
+{
+  double p1_p2_squareLength = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y);
+  double dotProduct = ((p.x - p1.x)*(p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y)) / p1_p2_squareLength;
+
+  if ( dotProduct < 0 )
+  {
+    return (p.x - p1.x)*(p.x - p1.x) + (p.y - p1.y)*(p.y - p1.y);
+  }
+  else if ( dotProduct <= 1 )
+  {
+    double p_p1_squareLength = (p1.x - p.x)*(p1.x - p.x) + (p1.y - p.y)*(p1.y - p.y);
+    return p_p1_squareLength - dotProduct * dotProduct * p1_p2_squareLength;
+  }
+  else
+  {
+    return (p.x - p2.x)*(p.x - p2.x) + (p.y - p2.y)*(p.y - p2.y);
+  }
+}
+
 #endif //POINT_H
 

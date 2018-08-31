@@ -53,7 +53,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
   NumericVector Z_temp;
   NumericVector Z_out  = clone(Z);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
 
   Progress p(n, false);
 
@@ -62,9 +62,15 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
     std::vector<Point*> pts;
 
     if(shape == 1)
-      tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
+    {
+      Rectangle rect(X[i]-half_res, X[i]+half_res, Y[i]-half_res,  Y[i]+half_res);
+      tree.lookup(rect, pts);
+    }
     else
-      tree->circle_lookup(X[i], Y[i], half_res, pts);
+    {
+      Circle circ(X[i], Y[i], half_res);
+      tree.lookup(circ, pts);
+    }
 
     double w = 0;
     double ztot = 0;
@@ -91,13 +97,11 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
 
     if (p.check_abort())
     {
-      delete tree;
       p.exit();
     }
 
     p.update(i);
   }
 
-  delete tree;
   return Z_out;
 }
