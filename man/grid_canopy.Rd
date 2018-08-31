@@ -91,7 +91,7 @@ templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XC
 \item laz_compression: is not supported because this function will never write \code{las/laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded or not
-and this options is not considered. In \link{grid_metric} this option is respected.
+and this options is not considered. In \link{grid_metrics} this option is respected.
 \item \strong{filter}: Read only points of interest.
 }
 }

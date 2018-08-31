@@ -26,31 +26,30 @@
 # ===============================================================================
 
 
-
-#' Compute the color from RGB fields
+#' Compute the color from RGB attributes
 #'
-#' Compute the hexadecimal name of a color from RGB fields. A column 'color' is added in the
-#' slot @data
+#' Compute the hexadecimal name of a color from RGB attributes. A column 'color' is added in \code{LAS}
+#' object.
 #'
-#' @param .las A LAS object
-#' @param nbits the number of bits used to store the R G and B field. Default is 16 bits i.e.
+#' @param las A LAS object
+#' @param nbits the number of bits used to store the R G and B attributes. Default is 16 bits i.e.
 #' each channel ranged between 0 and 65535 as defined in LAS specifications. But sometime this rule
 #' is not respected. You can force the default behavior. A 8 bit color ranged between 0 and 255.
 #' @return Return nothing. The original object is modified in place by reference.
 #' @export
-lascolor = function(.las, nbits = 16)
+lascolor = function(las, nbits = 16)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
   assertive::assert_is_a_number(nbits)
   assertive::assert_all_are_in_closed_range(nbits, 0, 16)
 
   color <-R <- G <- B <- NULL
   maxcol = 2^nbits-1
 
-  if(!all(c("R", "G", "B") %in% names(.las@data)))
-    warning("No 'RGB' fields found. 'color' cannot be computed from this file.", call. = FALSE)
+  if(!all(c("R", "G", "B") %in% names(las@data)))
+    warning("No 'RGB' attributes found. 'color' cannot be computed from this file.", call. = FALSE)
 
-  .las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
+  las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
 
   return(invisible(las))
 }

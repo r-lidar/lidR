@@ -182,9 +182,11 @@ setMethod("show", "LAScatalog", function(object)
   cat("num. files  :", dim(object@data)[1], "\n")
 })
 
-#' @rdname redefined_behviors
+#' @param ... Unused
+#' @param drop Unused
+#' @rdname redefined_behaviors
 #' @export
-setMethod("[", "LAScatalog", function(x, i, j, ...) {
+setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
 
   ctgname <- deparse(substitute(x))
   iname   <- deparse(substitute(i))
@@ -214,23 +216,23 @@ setMethod("[", "LAScatalog", function(x, i, j, ...) {
   return(new_ctg)
 })
 
-#' @rdname redefined_behviors
+#' @rdname redefined_behaviors
 #' @export
-setReplaceMethod("[", "LAScatalog",  function(x, i, j, value)
+setMethod("[<-", "LAScatalog",  function(x, i, j, value)
 {
   stop("LAScatalog data are read from standard files and cannot be modified")
 })
 
-#' @rdname redefined_behviors
+#' @rdname redefined_behaviors
 #' @export
-setReplaceMethod("[[", "LAScatalog",  function(x, i, j, value)
+setMethod("[[<-", "LAScatalog",  function(x, i, j, value)
 {
   stop("LAScatalog data are read from standard files and cannot be modified")
 })
 
-#' @rdname redefined_behviors
+#' @rdname redefined_behaviors
 #' @export
-setReplaceMethod("$", "LAScatalog", function(x, name, value)
+setMethod("$<-", "LAScatalog", function(x, name, value)
 {
   stop("LAScatalog data are read from standard files and cannot be modified")
 })

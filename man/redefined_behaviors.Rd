@@ -32,6 +32,10 @@
 \item{i}{string, name of elements to extract or replace.}
 
 \item{j}{Unused.}
+
+\item{...}{Unused}
+
+\item{drop}{Unused}
 }
 \description{
 \code{LAS*} objects being \link[sp:Spatial-class]{Spatial} object they inherit several methods

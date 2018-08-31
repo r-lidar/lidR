@@ -173,7 +173,7 @@ setMethod("print", "LAS", function(x)
 #' @param name A literal character string or a name (possibly backtick quoted).
 #' @param value typically an array-like R object of a similar class as x.
 #' @export
-#' @rdname redefined_behviors
+#' @rdname redefined_behaviors
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -184,7 +184,7 @@ setMethod("print", "LAS", function(x)
 #' las$NewCol = 0
 #' las[["NewCol"]] = 0
 #' }
-setReplaceMethod("$", "LAS", function(x, name, value)
+setMethod("$<-", "LAS", function(x, name, value)
 {
   if (! name %in% names(x@data))
     stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
@@ -201,9 +201,9 @@ setReplaceMethod("$", "LAS", function(x, name, value)
 
 #' @param i string, name of elements to extract or replace.
 #' @param j Unused.
-#' @rdname redefined_behviors
+#' @rdname redefined_behaviors
 #' @export
-setReplaceMethod("[[", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
+setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (! i %in% names(x@data))
     stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)

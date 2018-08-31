@@ -25,13 +25,11 @@
 #
 # ===============================================================================
 
-if (!isGeneric("summary"))
-  setGeneric("summary", function(object, ...)
-    standardGeneric("summary"))
+setGeneric("summary", function(object, ...)
+  standardGeneric("summary"))
 
-if (!isGeneric("print"))
-  setGeneric("print", function(x, ...)
-    standardGeneric("print"))
+setGeneric("print", function(x, ...)
+  standardGeneric("print"))
 
 #' Plot a LAS* object
 #'
