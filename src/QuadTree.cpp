@@ -6,6 +6,7 @@
 
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
+  use3D = false;
   init();
   boundary = BoundingBox(Point(xcenter, ycenter), Point(range, range));
 }
@@ -15,21 +16,19 @@ QuadTree::QuadTree(const BoundingBox boundary, const QuadTree* parent)
   init();
   this->boundary = boundary;
   this->depth = parent->depth + 1;
+  this->Z = parent->Z;
+  this->use3D = parent->use3D;
 }
 
 QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y)
 {
+  use3D = false;
   init(x,y);
-
-  for(int i = 0 ; i < x.size() ; i++)
-  {
-    Point p(x[i], y[i], i);
-    insert(p);
-  }
 }
 
 QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
 {
+  use3D = true;
   init(x,y,z);
 }
 
@@ -39,6 +38,7 @@ QuadTree::QuadTree(Rcpp::S4 las)
   Rcpp::NumericVector x = data["X"];
   Rcpp::NumericVector y = data["Y"];
   Rcpp::NumericVector z = data["Z"];
+  use3D = true;
   init(x,y,z);
 }
 
@@ -102,16 +102,13 @@ void QuadTree::knn(const Point& p, const int k, std::vector<Point*>& res)
   // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
   double radius = std::sqrt((double)k / (density * 3.14));
 
-  std::vector<Point*> pts;
-
   // Get at least k point within a circle
-  int n = 0;
-  while (n < k)
+  std::vector<Point*> pts;
+  while (pts.size() < k)
   {
     pts.clear();
     Circle circ(p.x, p.y, radius);
     this->lookup(circ, pts);
-    n = pts.size();
     radius *= 1.5;
   }
 
@@ -122,6 +119,36 @@ void QuadTree::knn(const Point& p, const int k, std::vector<Point*>& res)
 
   return;
 }
+
+void QuadTree::knn(const PointXYZ& p, const int k, std::vector<PointXYZ>& res)
+{
+  double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
+  double density = npoints / area;                              // Approx point density
+
+  // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
+  double radius = std::sqrt((double)k / (density * 3.14));
+
+  // Get at least k point within a sphere
+  std::vector<PointXYZ> pts;
+  while (pts.size() < k)
+  {
+    pts.clear();
+    Sphere sphere(p.x, p.y, p.z, radius);
+    this->lookup(sphere, pts);
+    radius *= 1.5;
+
+    if (radius > 100)
+      throw std::runtime_error("error");
+  }
+
+  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
+
+  for (int i = 0 ; i < k ; i++)
+    res.push_back(pts[i]);
+
+  return;
+}
+
 
 void QuadTree::init()
 {
@@ -148,6 +175,12 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
   boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
+
+  for(int i = 0 ; i < x.size() ; i++)
+  {
+    Point p(x[i], y[i], i);
+    insert(p);
+  }
 }
 
 void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
@@ -155,10 +188,9 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericV
   if (x.size() != z.size())
     throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
 
+  Z = z;
   init();
   init(x,y);
-  Z = z;
-  use3D = true;
 }
 
 BoundingBox QuadTree::bbox()

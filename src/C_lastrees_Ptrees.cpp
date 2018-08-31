@@ -1,15 +1,14 @@
-#include "Point.h"
-#include "QuadTree3D.h"
 #include "TreeSegmentManager.h"
 #include "TreeSegment.h"
+#include "Point.h"
+#include "QuadTree.h"
 #include "Progress.h"
 
 typedef std::vector<PointXYZ> vpoint;
-typedef QuadTree3D<PointXYZ> QuadTree;
 typedef std::vector<ptrees::TreeSegment> vtreesegment;
 
-ptrees::TreeSegmentManager PTrees_detection(vpoint&, int, double, QuadTree*, Progress&);
-ptrees::TreeSegmentManager PTrees_segmentation(vpoint&, vpoint&, std::vector<int>&, double, QuadTree*, Progress&);
+ptrees::TreeSegmentManager PTrees_detection(vpoint&, int, double, QuadTree&, Progress&);
+ptrees::TreeSegmentManager PTrees_segmentation(vpoint&, vpoint&, std::vector<int>&, double, QuadTree&, Progress&);
 
 // [[Rcpp::export]]
 Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmin, int nmax, bool segmentation = true)
@@ -33,8 +32,7 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
   std::sort(k_values.begin(), k_values.end(), std::greater<int>());
 
   // Creation of a QuadTree
-  QuadTree *qtree;
-  qtree = QuadTreeCreate(points);
+  QuadTree qtree(X,Y,Z);
 
   // Progress and check abort (user iteraction)
   unsigned int niter = k_values.size()*n;
@@ -52,7 +50,6 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
   // If a single k is given we can't apply ptrees's selection rules. Return the unique segmentation
   if (k_values.size() == 1)
   {
-    delete qtree;
     return its_reference.to_R();
   }
 
@@ -170,7 +167,6 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
 
     if (p.check_abort())
     {
-      delete qtree;
       p.exit();
     }
 
@@ -186,11 +182,10 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
 
   p.update(niter);
 
-  delete qtree;
   return(its_reference.to_R());
 }
 
-ptrees::TreeSegmentManager PTrees_detection(vpoint &points, int k, double hmin, QuadTree *qtree, Progress &p)
+ptrees::TreeSegmentManager PTrees_detection(vpoint &points, int k, double hmin, QuadTree& qtree, Progress &p)
 {
   //   INITIALISATIONS
   // ======================
@@ -211,7 +206,6 @@ ptrees::TreeSegmentManager PTrees_detection(vpoint &points, int k, double hmin, 
     // Interaction with user
     if (p.check_abort())
     {
-      delete qtree;
       p.exit();
     }
 
@@ -232,7 +226,7 @@ ptrees::TreeSegmentManager PTrees_detection(vpoint &points, int k, double hmin, 
 
     // knn search
     vpoint knn_points;
-    qtree->knn_lookup3D(u, k, knn_points); // 'knn_points' contains the k neighbours + the current point
+    qtree.knn(u, k, knn_points); // 'knn_points' contains the k neighbours + the current point
 
     // Remove points having a planimetric distance from u above threshold (page 100 eq. 1/2)
     vpoint filtered_knn_points;
@@ -283,7 +277,7 @@ ptrees::TreeSegmentManager PTrees_detection(vpoint &points, int k, double hmin, 
   return trees;
 }
 
-ptrees::TreeSegmentManager PTrees_segmentation(vpoint &points, vpoint &apices, std::vector<int> &k, double hmin, QuadTree *qtree, Progress &p)
+ptrees::TreeSegmentManager PTrees_segmentation(vpoint &points, vpoint &apices, std::vector<int> &k, double hmin, QuadTree& qtree, Progress &p)
 {
   //   INITIALISATIONS
   // ======================
@@ -307,7 +301,6 @@ ptrees::TreeSegmentManager PTrees_segmentation(vpoint &points, vpoint &apices, s
   {
     if (p.check_abort())
     {
-      delete qtree;
       p.exit();
     }
 
@@ -328,7 +321,7 @@ ptrees::TreeSegmentManager PTrees_segmentation(vpoint &points, vpoint &apices, s
     {
       // storage  corresponding points into result
       vpoint knn_points;
-      qtree->knn_lookup3D(u, k[k_i], knn_points); // 'knn_points' contains the k neighbours + the current point
+      qtree.knn(u, k[k_i], knn_points); // 'knn_points' contains the k neighbours + the current point
 
       // Removal of points having a planimetric distance from u above threshold T (page 100 eq. 1/2)
       vpoint filtered_knn_points;

@@ -14,10 +14,10 @@ class QuadTree
 	  QuadTree(Rcpp::S4 las);
 	  ~QuadTree();
 		bool insert(const Point&);
-		template<typename T> void lookup(T& shape, std::vector<Point>&); // solve issue with const correctness
 		template<typename T> void lookup(T& shape, std::vector<Point*>&); // solve issue with const correctness
 		template<typename T> void lookup(T& shape, std::vector<PointXYZ>&); // solve issue with const correctness
 		void knn(const Point&, const int, std::vector<Point*>&);
+		void knn(const PointXYZ&, const int, std::vector<PointXYZ>&);
 		int count();
 		BoundingBox bbox();
 
@@ -55,32 +55,6 @@ template<typename T> void QuadTree::lookup(T& shape, std::vector<Point*>& res)
     {
       if(shape.contains(*it))
         res.push_back(&(*it));
-    }
-    return;
-  }
-
-  if(NW == 0)
-    return;
-
-  NE->lookup(shape, res);
-  NW->lookup(shape, res);
-  SE->lookup(shape, res);
-  SW->lookup(shape, res);
-
-  return;
-}
-
-template<typename T> void QuadTree::lookup(T& shape, std::vector<Point>& res)
-{
-  if(!boundary.intersects(shape.bbox))
-    return;
-
-  if(depth == MAX_DEPTH)
-  {
-    for(std::vector<Point>::iterator it = points.begin(); it != points.end(); it++)
-    {
-      if(shape.contains(*it))
-        res.push_back(*it);
     }
     return;
   }

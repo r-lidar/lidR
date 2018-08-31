@@ -29,13 +29,7 @@ Shape::Shape(double xcenter, double ycenter, double radius)
 
 bool Shape::contains(const Point& p)
 {
-  if(p.x >= bbox.center.x - bbox.half_res.x &&
-     p.x <= bbox.center.x + bbox.half_res.x &&
-     p.y >= bbox.center.y - bbox.half_res.y &&
-     p.y <= bbox.center.y + bbox.half_res.y)
-    return true;
-  else
-    return false;
+  return(p.x >= bbox.center.x - bbox.half_res.x && p.x <= bbox.center.x + bbox.half_res.x && p.y >= bbox.center.y - bbox.half_res.y && p.y <= bbox.center.y + bbox.half_res.y);
 }
 
 Rectangle::Rectangle(double xmin, double xmax, double ymin, double ymax) : Shape(xmin, xmax, ymin, ymax)
@@ -124,11 +118,11 @@ Sphere::Sphere(double xcenter, double ycenter, double zcenter, double radius) : 
   this->radius = radius;
 }
 
-bool Sphere::contains(const PointXYZ&p)
+bool Sphere::contains(const PointXYZ& p)
 {
   double A = center.x - p.x;
   double B = center.y - p.y;
   double C = center.z - p.z;
-  double d = A*A + B*B  + C*C;
+  double d = A*A + B*B + C*C;
   return(d <= radius*radius);
 }
