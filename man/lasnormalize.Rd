@@ -3,50 +3,29 @@
 \docType{methods}
 \name{lasnormalize}
 \alias{lasnormalize}
-\alias{lasnormalize_dtm}
-\alias{lasnormalize_tin}
-\alias{lasnormalize_knnidw}
-\alias{lasnormalize_kriging}
 \alias{lasunnormalize}
 \alias{-,LAS,RasterLayer-method}
+\alias{-,LAS,function-method}
 \title{Remove the topography from a point cloud}
 \usage{
-lasnormalize(las, method, ...)
-
-lasnormalize_dtm(las, dtm)
-
-lasnormalize_tin(las)
-
-lasnormalize_knnidw(las, k = 10L, p = 1)
-
-lasnormalize_kriging(las, k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+lasnormalize(las, algorithm)
 
 lasunnormalize(las)
 
 \S4method{-}{LAS,RasterLayer}(e1, e2)
+
+\S4method{-}{LAS,`function`}(e1, e2)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{method}{character. Can be \code{"dtm"}, \code{"knnidw"}, \code{"tin"} or \code{"kriging"}
-(see details)}
-
-\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
-of the algorithms).}
-
-\item{dtm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}).}
-
-\item{k}{numeric. Number of k-nearest neighbours. Default 10.}
-
-\item{p}{numeric. Power for inverse distance weighting. Default 2.}
-
-\item{model}{A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary
-or weighted least squares prediction.}
+\item{algorithm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}}
 
 \item{e1}{a LAS object}
 
-\item{e2}{a RasterLayer}
+\item{e2}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}}
 }
 \value{
 If the input is a \code{LAS} object the function returns NULL. The LAS object is updated
@@ -59,33 +38,10 @@ Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset 
 the ground at 0. The DTM can originate from an external file or be computed by the user. It can
 also be computed on the fly. In this case the algorithm does not use rasterized data and each point
 is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
-of the terrain is virtually infinite (but it is slower).\cr
+of the terrain is virtually infinite.\cr\cr
 Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
-effects.
-
-Convenient operator to lasnormalize
-}
-\details{
-\describe{
-\item{\code{dtm}}{Normalization is done by substracting the digital terrain model to the point cloud.
-The \code{RasterLayer} must encompass the whole point cloud. If a single point fall within a NA pixel
-the methods will stop and throw an error.}
-\item{\code{knnidw}}{Normalization is done by without rasterizationby interpolating each point.
-Spatial interpolation is done using a k-nearest neighbour (KNN) approach with an inverse distance
-weighting (IDW). This is a fast but basic method for spatial data interpolation.}
-\item{\code{tin}}{Normalization is done by without rasterization by interpolating each point.
-Spatial interpolation is based on a Delaunay triangulation. It performs a linear
-interpolation within each triangle. There are usually a few points outside the convex hull,
-determined by the ground points at the very edge of the dataset, which cannot be interpolated
-with a triangulation. Extrapolation is done using knnidw.}
-\item{\code{kriging}}{Normalization is done by without rasterizationby interpolating each point.
-Spatial interpolation is done by universal kriging using the \link[gstat:krige]{krige} function.
-This method combines the KNN approach with the kriging approach. For each point of interest it
-kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to
-manipulate but it is also the most advanced method for interpolating spatial data. }
-}
-
+effects.\cr\cr
 \code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
 in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
 the point cloud was normalized with the package lidR).
@@ -132,11 +88,11 @@ las = readLAS(LASfile)
 
 plot(las)
 
-# First option: compute a raster DTM with grid_terrain (or read it from a file)
-# ============================================================================
+# First option: use a RasterLayer as DTM
+# =======================================================
 
 dtm = grid_terrain(las, method = "kriging", k = 10L)
-lasnormalize(las, method = "dtm", dtm = dtm)
+lasnormalize(las, dtm)
 
 plot(dtm)
 plot(las)
@@ -145,7 +101,7 @@ plot(las)
 lasunnormalize(las)
 plot(las)
 
-# operator - can be used. This is equivalent to the previous line
+# operator - can be used. This, is equivalent to the previous
 las - dtm
 plot(las)
 
@@ -155,8 +111,23 @@ lasunnormalize(las)
 # Second option: interpolate each point (no discretization)
 # =========================================================
 
-lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+lasnormalize(las, tin())
 plot(las)
+
+# operator - can be used. This, is equivalent to the previous
+lasunnormalize(las)
+las - tin()
+
+\dontrun{
+# All the following syntaxes are correct
+lasnormalize(las, knnidw())
+lasnormalize(las, knnidw(k = 8, p = 2))
+las - knnidw()
+las - knnidw(k = 8)
+lasnormalize(las, kriging())
+las - kriging(k = 8)
+}
+
 }
 \seealso{
 \link[raster:raster]{raster}

@@ -3,7 +3,7 @@ context("grid_canopy")
 las = lidR:::dummy_las(10000)
 
 test_that("grid_canopy p2r works", {
-  x = grid_canopy(las, "p2r", 4)
+  x = grid_canopy(las, 4, p2r())
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(4,4))
@@ -18,12 +18,12 @@ test_that("grid_canopy p2r works 2", {
   dt = data.table::data.table(X = seq(0,10, 0.5), Y = seq(0,10, 0.5), Z = runif(21))
   las = suppressWarnings(LAS(dt))
 
-  x = grid_canopy(las, "p2r", 2)
+  x = grid_canopy(las, 2, p2r())
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::extent(x), raster::extent(-2,12,-2,12))
 
-  x = grid_canopy(las, "p2r", 1)
+  x = grid_canopy(las, 1, p2r())
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::extent(x), raster::extent(-1,11,-1,11))
@@ -34,7 +34,7 @@ test_that("grid_canopy p2r works with subcircle", {
   dt = data.table::data.table(X = 0, Y = 0, Z = 0)
   las = suppressWarnings(LAS(dt))
 
-  x = grid_canopy(las, "p2r", 0.5, 10)
+  x = grid_canopy(las, 0.5, p2r(10))
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::extent(x), raster::extent(-10.5,10.5,-10.5,10.5))
@@ -42,7 +42,7 @@ test_that("grid_canopy p2r works with subcircle", {
   dt = data.table::data.table(X = c(0,10), Y = c(0,20), Z = c(0, 5))
   las = suppressWarnings(LAS(dt))
 
-  x = grid_canopy(las, "p2r", 0.5, 10)
+  x = grid_canopy(las, 0.5, p2r(10))
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::extent(x), raster::extent(-10.5,20.5,-10.5,30.5))
@@ -57,8 +57,8 @@ set_buffer(ctg) <- 5
 set_progress(ctg) <- FALSE
 
 test_that("grid_canopy tin works both with LAS and LAScatalog", {
-  x = grid_canopy(las, "tin", res = 1)
-  y = grid_canopy(ctg, "tin", res = 1)
+  x = grid_canopy(las, 1, dsmtin())
+  y = grid_canopy(ctg, 1, dsmtin())
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(1,1))
@@ -70,8 +70,9 @@ test_that("grid_canopy tin works both with LAS and LAScatalog", {
 })
 
 test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
-  x = grid_canopy(las, "pitfree", res = 1, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
-  y = grid_canopy(ctg, "pitfree", res = 1, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
+  f = pitfree(thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
+  x = grid_canopy(las, 1, f)
+  y = grid_canopy(ctg, 1, f)
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(1,1))

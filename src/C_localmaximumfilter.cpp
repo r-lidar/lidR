@@ -85,7 +85,6 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
     }
 
     // The central pixel is the highest, it is a LM
-    // and the other one are NOT a LM
     if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
       seeds[i] = true;
 

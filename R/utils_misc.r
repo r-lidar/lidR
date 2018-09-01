@@ -111,6 +111,16 @@ dummy_las = function(n, seeds = c)
   return(las)
 }
 
+stopif_wrong_context = function(received_context, expected_contexts, func_name)
+{
+  str = paste0(expected_contexts, collapse  = "' or '")
+
+  if (is.null(received_context))
+    stop(glue::glue("The '{func_name}' function has not been called within a correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+  if (!received_context %in% expected_contexts)
+    stop(glue::glue("The '{func_name}' function has not been called within a correct context. It is expected to be used in '{str}'"), call. = FALSE)
+}
+
 #' Parameters for progressive morphological filter
 #'
 #' The function \link{lasground} with the progressive morphological filter allows for any

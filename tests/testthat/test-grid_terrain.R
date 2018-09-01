@@ -11,7 +11,7 @@ Y = xy[,2]
 truedtm[] = 0.1*X+0.1*Y+sin(0.01*X)-sin(0.1*Y)+sin(0.003*X*Y)
 
 test_that("grid_terrain works with knnidw", {
-  dtm = grid_terrain(las, 1, method = "knnidw", k = 10L)
+  dtm = grid_terrain(las, 1, knnidw(k = 10L))
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(raster::res(dtm), c(1,1))
@@ -28,7 +28,7 @@ test_that("grid_terrain works with knnidw", {
 })
 
 test_that("grid_terrain works with delaunay", {
-  dtm = suppressWarnings(grid_terrain(las, 1, method = "delaunay"))
+  dtm = suppressWarnings(grid_terrain(las, 1, tin()))
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(raster::res(dtm), c(1,1))
@@ -45,7 +45,7 @@ test_that("grid_terrain works with delaunay", {
 })
 
 test_that("gridterrain works with kriging", {
-  dtm = grid_terrain(las, 1, method = "kriging", k = 10L)
+  dtm = grid_terrain(las, 1, kriging(k = 10L))
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(raster::res(dtm), c(1,1))
@@ -65,7 +65,7 @@ las2 = lasclipCircle(las, 50,50,40)
 
 test_that("grid_terrain returns a circular dtm ", {
 
-  dtm = grid_terrain(las2, 1, method = "delaunay")
+  dtm = grid_terrain(las2, 1, tin())
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(raster::res(dtm), c(1,1))
@@ -89,8 +89,8 @@ ctg@clustering_options$alignment = c(332400, 5238400)
 set_progress(ctg) <- FALSE
 
 test_that("grid_terrain return the same both with LAScatalog and LAS", {
-  dtm1 = grid_terrain(las, 1, method = "delaunay")
-  dtm2 = grid_terrain(ctg, 1, method = "delaunay")
+  dtm1 = grid_terrain(las, 1, tin())
+  dtm2 = grid_terrain(ctg, 1, tin())
 
   bbox = raster::extent(dtm1)-2*3
 

@@ -28,10 +28,9 @@
 
 #' Classify points as ground or not ground
 #'
-#' Classify points as ground or not ground with several possible algorithms. The function is a wrapper
-#' around all the existing methods. The functions update the field \code{Classification} of the LAS
-#' input object. The points classified as 'ground' are assigned a value of 2 according to las
-#' specifications (See the ASPRS documentation for the
+#' Classify points as ground or not ground with several possible algorithms. The function updates the
+#' attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
+#' a value of 2 according to las' specifications (See the ASPRS documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 #'
 #' @template LAScatalog
@@ -39,45 +38,54 @@
 #' @template section-supported-option-lasupdater
 #'
 #' @template param-las
-#' @param algorithm character. The name of an algorithm. Currently \code{"pmf"} and \code{"csf"} are
-#' supported (see related sections).
-#' @param ... parameters for the algorithms. These depend on the algorithm used (see details
-#' of the algorithms).
+#' @param algorithm a ground segmentation function. lidR have two compatible functions: \link{pmf} and \link{csf}
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
 #'
-#' @template  return-lasground
+#' @return If the input is a \code{LAS} object, returns nothing. The original LAS object is updated by
+#' reference. The 'Classification' attributes have a value of 2 that denotes 'ground' according to LAS
+#' specifications.\cr\cr
+#' If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
 #'
 #' @export
-#' @family lasground
+#' @family Ground Segmentation
 #' @importFrom data.table :=
-#'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#'
+#' # Using the Progressive Morphological Filter
+#' # --------------------------------------
+#'
 #' las = readLAS(LASfile, select = "xyzrn")
 #'
 #' ws = seq(3,12, 3)
 #' th = seq(0.1, 1.5, length.out = length(ws))
 #'
-#' lasground(las, "pmf", ws, th)
-#'
+#' lasground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
-lasground = function(las, algorithm,  ...)
+#'
+#' # Using the Cloth Simulation Filter
+#' # --------------------------------------
+#'
+#' las = readLAS(LASfile, select = "xyzrn")
+#'
+#' lasground(las, csf())
+lasground = function(las, algorithm, last_returns = TRUE)
 {
-  if (algorithm == "pmf")
-    return(lasground_pmf(las, ...))
-  else if (algorithm == "csf")
-    return(lasground_csf(las, ...))
-  else
-    stop("This algorithm does not exist.", call. = F)
+  UseMethod("lasground", las)
 }
 
-lasground_generic = function(las, method, last_returns, ...)
+#' @export
+lasground.LAS = function(las, algorithm, last_returns = TRUE)
 {
-  UseMethod("lasground_generic", las)
-}
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
 
+  if (!is(algorithm, "GroundSegmentation"))
+    stop("The algorithm is not an algorithm for ground segmentation", call. = FALSE)
 
-lasground_generic.LAS = function(las, method, last_returns, ...)
-{
   . <- X <- Y <- Z <- Classification <- NULL
 
   npoints <- nrow(las@data)
@@ -100,54 +108,50 @@ lasground_generic.LAS = function(las, method, last_returns, ...)
   cloud <- las@data[filter, .(X,Y,Z)]
   cloud[, idx := pointID[filter]]
 
-  p = list(...)
+  lidR.context <- "lasground"
+  idx <- algorithm(cloud)
 
-  if (method == "pmf")
-  {
-    for (i in 1:length(p$ws))
-    {
-      verbose(glue::glue("Pass {i} of {length(p$ws)}..."))
-      verbose(glue::glue("Windows size = {p$ws[i]} ; height_threshold = {p$th[i]}"))
-
-      Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, p$ws[i])
-
-      # Find indices of the points whose difference between the source and
-      # filtered point clouds is less than the current height threshold
-      diff = cloud$Z - Z_f
-      indices = diff < p$th[i]
-
-      # Limit filtering to those points currently considered ground returns
-      cloud = cloud[indices]
-    }
-
-    idx <- cloud$idx
-  }
-  else if (method == "csf")
-  {
-    gnd <- RCSF:::R_CSF(cloud, p$sloop_smooth, p$class_threshold, p$cloth_resolution, p$rigidness, p$iterations, p$time_step)
-    idx <- cloud$idx[gnd]
-  }
-  else
-    stop("Internal error in 'lasground_generic'. Please report the issue.")
-
-  message(glue::glue("{length(idx)} ground points found."))
+  #message(glue::glue("{length(idx)} ground points found."))
 
   if ("Classification" %in% names(las@data))
   {
-    nground = fast_countequal(las@data$Classification, 2)
+    nground = fast_countequal(las@data$Classification, 2L)
 
     if (nground > 0)
     {
-      message(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."), call. = FALSE)
-      las@data[Classification == 2, Classification := 0]
+      message(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."))
+      las@data[Classification == LASGROUND, Classification := LASUNCLASSIFIED]
     }
   }
   else
   {
-    las@data[, Classification := 0L]
+    las@data[, Classification := LASUNCLASSIFIED]
   }
 
-  las@data[idx, Classification := 2L]
+  las@data[idx, Classification := LASGROUND]
 
   return(invisible(las))
+}
+
+#' @export
+lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
+{
+  buffer <- NULL
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+  lasground(x, algorithm, last_returns)
+  x <- lasfilter(x, buffer == LIDRNOBUFFER)
+  return(x)
+}
+
+#' @export
+lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
+{
+  set_select(las) <- "*"
+
+  output <- catalog_apply2(las, lasground, algorithm = algorithm, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output <- unlist(output)
+  ctg    <- catalog(output)
+  ctg@proj4string <- las@proj4string
+  return(ctg)
 }

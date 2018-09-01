@@ -10,14 +10,14 @@ set_buffer(ctg) <- 20
 
 test_that("tree_detection LMF works with a LAS", {
 
-  ttops = tree_detection_lmf(las, 5)
+  ttops = tree_detection(las, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(175,2))
   expect_equal(ttops@proj4string, las@proj4string)
 
   f = function(x) { x * 0.07 + 3}
-  ttops = tree_detection_lmf(las, f)
+  ttops = tree_detection(las, lmf(f))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(205,2))
@@ -26,9 +26,9 @@ test_that("tree_detection LMF works with a LAS", {
 
 test_that("tree_detection LMF works with a RasterLayer", {
 
-  chm = grid_canopy(las, "p2r", 1, subcircle = 0.15)
+  chm = grid_canopy(las, 1, p2r(0.15))
 
-  ttops = tree_detection_lmf(chm, 5)
+  ttops = tree_detection(chm, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(157,2))
@@ -36,7 +36,7 @@ test_that("tree_detection LMF works with a RasterLayer", {
 
   # variable windows size
   f = function(x) { x * 0.07 + 3 }
-  ttops = tree_detection_lmf(chm, f)
+  ttops = tree_detection(chm, lmf(f))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(183,2))
@@ -45,7 +45,7 @@ test_that("tree_detection LMF works with a RasterLayer", {
 
 test_that("tree_detection LMF works with a LAScatalog", {
 
-  ttops = tree_detection_lmf(ctg, 5)
+  ttops = tree_detection(ctg, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(175,2))
@@ -56,7 +56,7 @@ test_that("tree_detection LMF works with a LAScatalog", {
 
 test_that("tree_detection mutltichm works with a LAS", {
 
-  ttops = tree_detection_multichm(las, 2, layer_thickness = 2)
+  ttops = tree_detection(las, multichm(res = 2, layer_thickness = 2, ws = 5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(234,2))
@@ -65,7 +65,7 @@ test_that("tree_detection mutltichm works with a LAS", {
 
 test_that("tree_detection multichm works with a LAScatalog", {
 
-  ttops = tree_detection_multichm(ctg, 2, layer_thickness = 2)
+  ttops = tree_detection(ctg, multichm(res = 2, layer_thickness = 2, ws = 5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(234,2))
@@ -76,7 +76,7 @@ test_that("tree_detection multichm works with a LAScatalog", {
 
 test_that("tree_detection ptree works with a LAS", {
 
-  ttops = tree_detection_ptrees(las, k = c(30,20,15,10))
+  ttops = tree_detection(las, ptrees(k = c(30,20,15,10)))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(261,2))
@@ -85,7 +85,7 @@ test_that("tree_detection ptree works with a LAS", {
 
 test_that("tree_detection ptree works with a LAScatalog", {
   set_buffer(ctg) <- 30
-  ttops = tree_detection_ptrees(ctg, k = c(30,20,15,10))
+  ttops = tree_detection(ctg, ptrees(k = c(30,20,15,10)))
 
   expect_is(ttops, "SpatialPointsDataFrame")
   expect_equal(dim(ttops@data), c(261,2))

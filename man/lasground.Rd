@@ -4,27 +4,28 @@
 \alias{lasground}
 \title{Classify points as ground or not ground}
 \usage{
-lasground(las, algorithm, ...)
+lasground(las, algorithm, last_returns = TRUE)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} and \code{"csf"} are
-supported (see related sections).}
+\item{algorithm}{a ground segmentation function. lidR have two compatible functions: \link{pmf} and \link{csf}}
 
-\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
-of the algorithms).}
+\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
+in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+to \code{FALSE} automatically.}
 }
 \value{
 If the input is a \code{LAS} object, returns nothing. The original LAS object is updated by
-reference. The 'Classification' column have a value of 2 that denotes 'ground' according to LAS
-specifications. If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
+reference. The 'Classification' attributes have a value of 2 that denotes 'ground' according to LAS
+specifications.\cr\cr
+If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
-Classify points as ground or not ground with several possible algorithms. The function is a wrapper
-around all the existing methods. The functions update the field \code{Classification} of the LAS
-input object. The points classified as 'ground' are assigned a value of 2 according to las
-specifications (See the ASPRS documentation for the
+Classify points as ground or not ground with several possible algorithms. The function updates the
+attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
+a value of 2 according to las' specifications (See the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
 }
 \section{Working with a \code{LAScatalog}}{
@@ -65,16 +66,26 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+
+# Using the Progressive Morphological Filter
+# --------------------------------------
+
 las = readLAS(LASfile, select = "xyzrn")
 
 ws = seq(3,12, 3)
 th = seq(0.1, 1.5, length.out = length(ws))
 
-lasground(las, "pmf", ws, th)
-
+lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
+
+# Using the Cloth Simulation Filter
+# --------------------------------------
+
+las = readLAS(LASfile, select = "xyzrn")
+
+lasground(las, csf())
 }
 \seealso{
-Other lasground: \code{\link{lasground_csf}},
-  \code{\link{lasground_pmf}}
+Other Ground Segmentation: \code{\link{csf}},
+  \code{\link{pmf}}
 }

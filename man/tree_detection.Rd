@@ -2,62 +2,25 @@
 % Please edit documentation in R/tree_detection.r
 \name{tree_detection}
 \alias{tree_detection}
-\title{Tree top detection}
+\title{Individual tree detection}
 \usage{
-tree_detection(x, algorithm, ...)
+tree_detection(las, algorithm)
 }
 \arguments{
-\item{x}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
-canopy height model. depending on the algorithm
-used (see respective documentation)}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
+canopy height model. depending on the algorithm used (see respective documentation)}
 
-\item{algorithm}{character. Can be either \code{"lmf"} or \code{"ptrees"}.}
-
-\item{...}{Other parameters for each respective algorithm (see section "see also").}
+\item{algorithm}{An algorithm for individual tree detection. lidR have four of them: \link{lmf}, \link{ptrees},
+\link{multichm} and \link{manual}.}
 }
 \value{
-The output of each algorithm as documedevtools::chented in each method.
+A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID for an individual
+ID for each tree.
 }
 \description{
-This function is a wrapper for all the implemented tree detection methods. Tree detection functions
-find the position of the trees before the segmentation process. Several methods may be used
-(see documentation of each method)
+Individual Tree detection function that find the position of the trees before the segmentation process. Several
+methods may be used.
 }
-\section{Working with a \code{LAScatalog}}{
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
-\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
-but this is not mandatory.
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \strong{tiling_size}: How many data are loaded at once.
-\item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
-always removed once processed and will never be returned neither in R nor in files.
-\item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used.
-\item \strong{progress}: Displays a progression estimation.
-\item \strong{stop_early}: Leave it as it unless you are an advanced user.
-\item \strong{output_files*}: Supported templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM},
-\code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if tiling size equal to 0 (processing by file),
-\code{ORIGINALFILENAME}.
-\item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item \strong{drivers}: Leave it as it unless you are an advanced user.
-\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
-and cannot be changed.
-\item \strong{filter}: Read only points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
@@ -66,7 +29,4 @@ ttops = tree_detection(las, "lmf", ws = 5)
 
 plot(las)
 rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
-}
-\seealso{
-\link{tree_detection_lmf} \link{tree_detection_ptrees} \link{tree_detection_manual} \link{tree_detection_multichm}
 }

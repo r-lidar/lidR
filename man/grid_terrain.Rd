@@ -2,66 +2,31 @@
 % Please edit documentation in R/grid_terrain.r
 \name{grid_terrain}
 \alias{grid_terrain}
-\alias{grid_terrain_delaunay}
-\alias{grid_terrain_knnidw}
-\alias{grid_terrain_kriging}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(las, method, ...)
-
-grid_terrain_delaunay(las, res = 1, keep_lowest = FALSE)
-
-grid_terrain_knnidw(las, res = 1, k = 10L, p = 2, keep_lowest = FALSE)
-
-grid_terrain_kriging(las, res = 1, k = 10L, model = gstat::vgm(0.59,
-  "Sph", 874), keep_lowest = FALSE)
+grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
-
-\item{...}{parameters for the algorithms. These depend on the algorithm used (see documentation
-of each method).}
-
 \item{res}{numeric. resolution of the \code{RasterLayer}. Default 1.}
+
+\item{algorithm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}.
+See also \link{lasnormalize} for a more extensive description of this parameter.}
 
 \item{keep_lowest}{logical. This option forces the original lowest ground point of each
 cell (if it exists) to be chosen instead of the interpolated values.}
-
-\item{k}{numeric. number of k-nearest neighbours. Default 10.}
-
-\item{p}{numeric. Power for inverse-distance weighting. Default 2.}
-
-\item{model}{a variogram model computed with \link[gstat:vgm]{vgm}. If null, it performs an ordinary
-or weighted least squares prediction.}
 }
 \value{
 A \code{RasterLayer} containing the metric for each cell.
 }
 \description{
-Interpolates ground points and creates a rasterized digital terrain model. The interpolation
-can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
-details). The algorithm uses the points classified as "ground" to compute the interpolation.\cr
+Interpolates ground points and creates a rasterized digital terrain model. The algorithm uses the
+points classified as "ground" to compute the interpolation.\cr
 Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
-effects.
-}
-\details{
-\describe{
-\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-an inverse-distance weighting (IDW). This is a fast but basic method for spatial
-data interpolation.}
-\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-interpolation within each triangle. There are usually few cells outside the convex hull,
-determined by the ground points at the very edge of the dataset that cannot be interpolated
-with a triangulation. Extrapolation is done using knnidw.}
-\item{\code{kriging}}{Interpolation is done by universal kriging using the
-\link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging
-approach. For each point of interest the terrain is kriged using the k-nearest neighbour ground
-points. This method is more difficult to manipulate but it is also the most advanced method for
-interpolating spatial data. }
-}
+effects
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -106,9 +71,9 @@ LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 plot(las)
 
-dtm1 = grid_terrain(las, method = "knnidw", k = 6L, p = 2)
-dtm2 = grid_terrain(las, method = "delaunay")
-dtm3 = grid_terrain(las, method = "kriging", k = 10L)
+dtm1 = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
+dtm2 = grid_terrain(las, algorithm = tin())
+dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
 
 \dontrun{
 plot(dtm1)

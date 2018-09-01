@@ -29,27 +29,11 @@
 
 #' Digital Terrain Model
 #'
-#' Interpolates ground points and creates a rasterized digital terrain model. The interpolation
-#' can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
-#' details). The algorithm uses the points classified as "ground" to compute the interpolation.\cr
+#' Interpolates ground points and creates a rasterized digital terrain model. The algorithm uses the
+#' points classified as "ground" to compute the interpolation.\cr
 #' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 #' interpolated. A buffer around the region of interest is always recommended to avoid edge
-#' effects.
-#'
-#' \describe{
-#' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse-distance weighting (IDW). This is a fast but basic method for spatial
-#' data interpolation.}
-#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-#' interpolation within each triangle. There are usually few cells outside the convex hull,
-#' determined by the ground points at the very edge of the dataset that cannot be interpolated
-#' with a triangulation. Extrapolation is done using knnidw.}
-#' \item{\code{kriging}}{Interpolation is done by universal kriging using the
-#' \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging
-#' approach. For each point of interest the terrain is kriged using the k-nearest neighbour ground
-#' points. This method is more difficult to manipulate but it is also the most advanced method for
-#' interpolating spatial data. }
-#' }
+#' effects
 #'
 #' @template LAScatalog
 #'
@@ -57,15 +41,11 @@
 #'
 #' @template param-las
 #' @param res numeric. resolution of the \code{RasterLayer}. Default 1.
-#' @param method character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)
-#' @param k numeric. number of k-nearest neighbours. Default 10.
-#' @param p numeric. Power for inverse-distance weighting. Default 2.
-#' @param model a variogram model computed with \link[gstat:vgm]{vgm}. If null, it performs an ordinary
-#' or weighted least squares prediction.
+#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}.
+#' See also \link{lasnormalize} for a more extensive description of this parameter.
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
-#' @param ... parameters for the algorithms. These depend on the algorithm used (see documentation
-#' of each method).
 #'
 #' @template return-grid-Layer
 #'
@@ -75,9 +55,9 @@
 #' las = readLAS(LASfile)
 #' plot(las)
 #'
-#' dtm1 = grid_terrain(las, method = "knnidw", k = 6L, p = 2)
-#' dtm2 = grid_terrain(las, method = "delaunay")
-#' dtm3 = grid_terrain(las, method = "kriging", k = 10L)
+#' dtm1 = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
+#' dtm2 = grid_terrain(las, algorithm = tin())
+#' dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
 #'
 #' \dontrun{
 #' plot(dtm1)
@@ -89,54 +69,20 @@
 #' }
 #' @seealso
 #' \link{lasnormalize}
-grid_terrain = function(las, method, ...)
+grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
-  if (method == "delaunay")
-    return(grid_terrain_delaunay(las, ...))
-  else if (method == "knnidw")
-    return(grid_terrain_knnidw(las, ...))
-  else if (method == "kriging")
-    return(grid_terrain_kriging(las, ...))
-  else
-    stop(glue::glue("Method '{method}' not supported"), call. = FALSE)
+  UseMethod("grid_terrain", las)
 }
 
 #' @export
-#' @rdname grid_terrain
-grid_terrain_delaunay = function(las, res = 1,  keep_lowest = FALSE)
+grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
-  grid_terrain_generic(las, res = 1, method = "delaunay", keep_lowest = keep_lowest)
-}
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
 
-#' @export
-#' @rdname grid_terrain
-grid_terrain_knnidw = function(las, res = 1, k = 10L, p = 2, keep_lowest = FALSE)
-{
-  grid_terrain_generic(las, method = "knnidw", res = res,  k = k, p = p, keep_lowest = keep_lowest)
-}
+  if (!is(algorithm, "SpatialInterpolation"))
+    stop("The algorithm is not an algorithm for spatial interpolation", call. = FALSE)
 
-#' @export
-#' @rdname grid_terrain
-grid_terrain_kriging = function(las, res = 1, k = 10L,  model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
-{
-  grid_terrain_generic(las, method = "kriging", res = res, k = k, model = model, keep_lowest = keep_lowest)
-}
-
-
-grid_terrain_generic = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
-{
-  assertive::assert_is_a_number(k)
-  assertive::assert_is_a_number(p)
-  assertive::assert_all_are_whole_numbers(k)
-  assertive::assert_all_are_positive(k)
-  assertive::assert_all_are_positive(p)
-  assertive::assert_is_a_bool(keep_lowest)
-
-  UseMethod("grid_terrain_generic", las)
-}
-
-grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
-{
   . <- X <- Y <- Z <- Classification <- NULL
   resolution = res
 
@@ -195,37 +141,39 @@ grid_terrain_generic.LAS = function(las, res = 1, method, k = 10L, p = 2, model 
 
   verbose("Interpolating ground points...")
 
-  Zg = interpolate(ground, grid, method, k, p, model, wbuffer = !has_buffer)
-  grid[, Z := round(Zg, 3)][]
+  lidR.context <- "grid_terrain"
+  Zg <- algorithm(ground, grid)
 
-  cells = raster::cellFromXY(layout, grid[, .(X,Y)])
+  cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
   suppressWarnings(layout[cells] <- Zg)
 
   if (keep_lowest)
   {
     verbose("Forcing the lowest ground points to be retained...")
-    rmin = grid_metrics(lasfilterground(las), list(Z = min(Z)), resolution)
-    layout[] = pmin(layout[], rmin[])
+    rmin <- grid_metrics(lasfilterground(las), list(Z = min(Z)), resolution)
+    layout[] <- pmin(layout[], rmin[])
   }
 
   return(layout)
 }
 
-grid_terrain_generic.LAScluster= function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE)
+#' @export
+grid_terrain.LAScluster= function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain_generic(x, res, method, k, p, model, keep_lowest)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
-grid_terrain_generic.LAScatalog = function(las, res = 1, method, k = 10L, p = 2, model = gstat::vgm(.59, "Sph", 874), keep_lowest = FALSE, ...)
+#' @export
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   set_select(las) <- "xyzc"
 
-  output <- catalog_apply2(las, grid_terrain_generic, res = res, method = method, k = k, p = p, model = model, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files
   if (get_output_files(las) != "")  return(unlist(output))

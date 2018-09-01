@@ -1,4 +1,4 @@
-/* This functions exist for units test only */
+/* These functions exist for unit tests only */
 
 #include <Rcpp.h>
 #include "QuadTree.h"

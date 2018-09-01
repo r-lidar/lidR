@@ -25,66 +25,36 @@
 #
 # ===============================================================================
 
-
-
-#' Canopy surface model
+#' Digital Surface Model
 #'
-#' Creates a canopy surface model using several possible algorithm.
-#'
-#' \describe{
-#' \item{p2r}{points-to-raster based method: for each pixel of the ouput raster the function attribute
-#' the height of the highest point found.}
-#' \item{tin}{triangulation based method: Delaunay triangulation of first returns with a linear
-#' interpolation within each triangle.}
-#' \item{pitfree}{the pit-free algorithm developed by Khosravipour et al. (2014), which is based on
-#' the computation of a set of classical triangulations at different heights (see references).}
-#' }
-#' \cr The \code{subcircle} tweak replaces each point with 8 points around the original one. This allows
-#' for virtual 'emulation' of the fact that a lidar point is not a point as such, but more
-#' realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
-#' smoother and contains fewer 'pits' and empty pixels.
-#'
-#' @template LAScatalog
-#'
-#' @template section-supported-option-grid_functions
+#' Creates a digital surface model using several possible algorithms.
 #'
 #' @template param-las
-#' @param algorithm character. The name of an algorithm. Can be \code{"p2r"},
-#' \code{"tin"} or \code{"pitfree"}. (see details)
-#' @param ... parameters for the algorithms. These depend on the algorithm used (see documentation
-#' of each method).
+#' @param algorithm. A function that implements an algorithm to compute a canopy height model. lidR have
+#' three of these function: \link{p2r}, \link{chmtin}, \link{pitfree} (see respective documentations
+#' and exemples).
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units.
-#' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
-#' can replace each return with a circle composed of 8 points (see details).
-#' @param thresholds numeric. Set of height thresholds accoring to Khosravipour et al. (2014) algorithm
-#' description (see references)
-#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-#' If a triangle has an edge greater than this value it will be removed. It is used to drive
-#' the pit-free algorithm and to trim dummy interpolation on non-convex areas.
-#' The first number is the value for the classical triangulation (threshold = 0), the second number
-#' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
-#' is done (see examples.
-
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #' col <- height.colors(50)
 #'
 #' # Points-to-raster algorithm with a resolution of 1 meters
-#' chm <- grid_canopy(las, "p2r", res = 1)
+#' chm <- grid_canopy(las, res = 1, p2r())
 #' plot(chm, col = col)
 #'
 #' # Points-to-raster algorithm with a resolution of 0.5 meter replacing each
 #' # point by a 20 cm radius circle of 8 points
-#' chm <- grid_canopy(las, "p2r", res = 0.5, subcircle = 0.2)
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 #' plot(chm, col = col)
 #'
 #' # Basic triangulation and rasterization of first returns
-#' chm <- grid_canopy(las, "tin", res = 0.5)
+#' chm <- grid_canopy(las, res = 0.5, chmtin())
 #' plot(chm, col = col)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm <- grid_canopy(las, "pitfree", res = 0.5, thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
+#' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 #' plot(chm, col = col)
 #'
 #' \dontrun{
@@ -97,28 +67,70 @@
 #' # The TIN interpolation being done within the convex hull of the point cloud there are lot of
 #' # dummy pixels that are strictly correct regarding the interpolation method used but meaningless
 #' # in our CHM
-#' chm <- grid_canopy(las2, "tin", res = 0.5)
+#' chm <- grid_canopy(las2, res = 0.5, chmtin())
 #' plot(chm, col = col)
 #'
 #' # Use 'max_edge' to trim dummy triangles
-#' chm = grid_canopy(las2, "tin", res = 0.5, max_edge = 3)
+#' chm = grid_canopy(las2, res = 0.5, chmtin(max_edge = 3))
 #' plot(chm, col = col)
 #'
-#' chm = grid_canopy(las2, "pitfree", res = 0.5, max_edge = c(3, 1.5))
+#' chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
 #' plot(chm, col = col)
 #' }
-#' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
-#' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
-#' Remote Sensing, 80(9), 863-872.
 #' @export
-grid_canopy = function(las, algorithm, ...)
+grid_canopy = function(las, res, algorithm)
 {
-  if (algorithm == "p2r")
-   return(grid_canopy_p2r(las, ...))
-  else if (algorithm == "tin")
-    return(grid_canopy_tin(las, ...))
-  else if (algorithm == "pitfree")
-    return(grid_canopy_pitfree(las, ...))
-  else
-    stop("This algorithm does not exist.", call. = FALSE)
+  UseMethod("grid_canopy", las)
+}
+
+#' @export
+grid_canopy.LAS = function(las, res, algorithm)
+{
+
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
+
+  if (!is(algorithm, "DigitalSurfaceModel"))
+    stop("The algorithm is not an algorithm for digital surface model.", call. = FALSE)
+
+  . <- X <- Y <- Z <- NULL
+
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
+
+  subcircle <- as.list(environment(algorithm))$subcircle
+  subcircle <- if(is.null(subcircle)) 0 else subcircle
+
+  layout <- make_overlay_raster(las, res, subcircle = subcircle)
+  names(layout) <- "Z"
+
+  lidR.context <- "grid_canopy"
+  z = algorithm(las, layout)
+
+  suppressWarnings(layout[] <- z)
+  return(layout)
+}
+
+#' @export
+grid_canopy.LAScluster = function(las, res, algorithm)
+{
+  x = readLAS(las)
+  if (is.empty(x)) return(NULL)
+  bbox = raster::extent(las)
+  metrics = grid_canopy(x, res, algorithm)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
+}
+
+#' @export
+grid_canopy.LAScatalog = function(las, res, algorithm)
+{
+  set_select(las) <- "xyzr"
+  output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+
+  # Outputs have been written in files. Return the path to written files
+  if (get_output_files(las) != "")  return(unlist(output))
+
+  # Outputs have been returned in R objects. Merge the outputs in a single object
+  return(merge_rasters(output))
 }
