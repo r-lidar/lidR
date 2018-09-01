@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar = false)
+NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution)
 {
   unsigned int n = X.length();
   double half_res = resolution / 2;
@@ -45,7 +45,7 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
 
   QuadTree tree(X,Y);
 
-  Progress p(2*n, displaybar);
+  Progress p(2*n, "Morphological filter: ");
 
   // Dilate
   for (unsigned int i = 0 ; i < n ; i++)

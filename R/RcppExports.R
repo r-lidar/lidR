@@ -21,8 +21,8 @@ C_hamraz_segmentation <- function(disc, nps, sensitivity, MDCW, Epsilon, CLc, CL
     .Call(`_lidR_C_hamraz_segmentation`, disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius)
 }
 
-C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius, progressbar = FALSE) {
-    .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius, progressbar)
+C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {
+    .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius)
 }
 
 C_lastrees_dalponte <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
@@ -41,8 +41,8 @@ C_LocalMaximumFilter <- function(data, ws, min_height, circular) {
     .Call(`_lidR_C_LocalMaximumFilter`, data, ws, min_height, circular)
 }
 
-C_MorphologicalOpening <- function(X, Y, Z, resolution, displaybar = FALSE) {
-    .Call(`_lidR_C_MorphologicalOpening`, X, Y, Z, resolution, displaybar)
+C_MorphologicalOpening <- function(X, Y, Z, resolution) {
+    .Call(`_lidR_C_MorphologicalOpening`, X, Y, Z, resolution)
 }
 
 C_point_in_polygon <- function(vertx, verty, pointx, pointy) {
@@ -53,8 +53,8 @@ C_points_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call(`_lidR_C_points_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-C_points_in_polygons <- function(vertx, verty, pointx, pointy, displaybar = FALSE) {
-    .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy, displaybar)
+C_points_in_polygons <- function(vertx, verty, pointx, pointy) {
+    .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy)
 }
 
 C_points_in_polygon_wkt <- function(x, y, wkt) {
@@ -97,7 +97,7 @@ C_tinfo <- function(M, X) {
     .Call(`_lidR_C_tinfo`, M, X)
 }
 
-C_tsearch <- function(x, y, elem, xi, yi, diplaybar = FALSE) {
-    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, diplaybar)
+C_tsearch <- function(x, y, elem, xi, yi) {
+    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi)
 }
 

@@ -37,7 +37,7 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
   // Progress and check abort (user iteraction)
   unsigned int niter = k_values.size()*n;
   if (segmentation) niter += n;
-  Progress p(niter, true);
+  Progress p(niter, "Tree segmentation: ");
 
 
   // Apply PTrees for the first scale k
@@ -166,9 +166,7 @@ Rcpp::List C_lastrees_ptrees(Rcpp::S4 las, std::vector<int> k_values, double hmi
     }
 
     if (p.check_abort())
-    {
       p.exit();
-    }
 
     std::swap(its_reference, its_temp);
   }

@@ -1,7 +1,5 @@
 context("lasnormalize")
 
-lidr_options(progress = FALSE)
-
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 ctg = catalog(LASfile)

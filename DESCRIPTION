@@ -34,13 +34,13 @@ Imports:
     mapedit,
     memoise,
     imager,
+    progress,
     RANN,
     Rcpp,
     RCSF,
     rgeos,
     rgl,
     rlas (>= 1.2.5),
-    settings,
     sf,
     stats,
     tools,
@@ -52,7 +52,7 @@ Suggests:
     hexbin
 LazyData: true
 RoxygenNote: 6.0.1
-LinkingTo: BH,Rcpp,RcppArmadillo
+LinkingTo: BH,progress,Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
@@ -111,7 +111,6 @@ Collate:
     'lasupdateheader.r'
     'metrics.r'
     'metrics_canopy_roughness.r'
-    'options.r'
     'plot.lasmetrics3d.r'
     'plot3d.r'
     'readLAS.r'

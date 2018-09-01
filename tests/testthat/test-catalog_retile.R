@@ -1,6 +1,6 @@
 context("catalog_retile")
 
-lidr_options(interactive = FALSE)
+options(lidR.interactive = FALSE)
 folder <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(folder)
 set_cores(ctg) <- 1

@@ -27,9 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
+// [[Rcpp::depends(progress)]]
+
 #include <Rcpp.h>
 #include <limits>
 #include "QuadTree.h"
+#include "Progress.h"
 
 using namespace Rcpp;
 
@@ -44,8 +47,8 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
   int n = X.length();
   double hws = ws[0]/2;
   LogicalVector seeds(n);
-  //std::vector<bool> not_seeds(n);
   QuadTree tree(X,Y);
+  Progress pb(n, "Local maximum filter: ");
 
   // Loop through all the point cloud
   for (int i = 0 ; i < n ; i++)
@@ -85,6 +88,9 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
     // and the other one are NOT a LM
     if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
       seeds[i] = true;
+
+    pb.check_abort();
+    pb.increment();
   }
 
   return seeds;

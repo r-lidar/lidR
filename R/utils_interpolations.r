@@ -89,7 +89,7 @@ interpolate_kriging = function(points, coord, model, k)
 {
   X <- Y <- Z <- NULL
 
-  if (!LIDROPTIONS("verbose"))
+  if (!getOption("lidR.verbose"))
     sink(tempfile())
 
   x  = gstat::krige(Z~X+Y, location = ~X+Y, data = points, newdata = coord, model, nmax = k)
@@ -114,7 +114,7 @@ interpolate_delaunay <- function(points, coord, th = 0)
 
   verbose("Searching for the enclosing Delaunay convex hull...")
 
-  idx  <- C_tsearch(points$X, points$Y, dn, coord$X, coord$Y, LIDROPTIONS("progress"))
+  idx  <- C_tsearch(points$X, points$Y, dn, coord$X, coord$Y)
 
   #uidx <- unique(idx)
   #uidx <- uidx[!is.na(uidx)]

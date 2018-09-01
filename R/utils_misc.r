@@ -88,7 +88,7 @@ f_grid = function(x, res, start)
 
 verbose = function(...)
 {
-  if (LIDROPTIONS("verbose"))
+  if (getOption("lidR.verbose"))
     cat(..., "\n")
 }
 

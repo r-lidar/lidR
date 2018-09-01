@@ -88,8 +88,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lastrees_li2
-IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar);
-RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP, SEXP progressbarSEXP) {
+IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius);
+RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,8 +100,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type R(RSEXP);
     Rcpp::traits::input_parameter< double >::type th_tree(th_treeSEXP);
     Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lastrees_li2(las, dt1, dt2, Zu, R, th_tree, radius, progressbar));
+    rcpp_result_gen = Rcpp::wrap(C_lastrees_li2(las, dt1, dt2, Zu, R, th_tree, radius));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -162,8 +161,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_MorphologicalOpening
-NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar);
-RcppExport SEXP _lidR_C_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP, SEXP displaybarSEXP) {
+NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution);
+RcppExport SEXP _lidR_C_MorphologicalOpening(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP resolutionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -171,8 +170,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_MorphologicalOpening(X, Y, Z, resolution, displaybar));
+    rcpp_result_gen = Rcpp::wrap(C_MorphologicalOpening(X, Y, Z, resolution));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -205,8 +203,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_points_in_polygons
-IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar);
-RcppExport SEXP _lidR_C_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP, SEXP displaybarSEXP) {
+IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy);
+RcppExport SEXP _lidR_C_points_in_polygons(SEXP vertxSEXP, SEXP vertySEXP, SEXP pointxSEXP, SEXP pointySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -214,8 +212,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type verty(vertySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointx(pointxSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type pointy(pointySEXP);
-    Rcpp::traits::input_parameter< bool >::type displaybar(displaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_points_in_polygons(vertx, verty, pointx, pointy, displaybar));
+    rcpp_result_gen = Rcpp::wrap(C_points_in_polygons(vertx, verty, pointx, pointy));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -353,8 +350,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_tsearch
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar);
-RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP diplaybarSEXP) {
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi);
+RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -363,8 +360,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
-    Rcpp::traits::input_parameter< bool >::type diplaybar(diplaybarSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi, diplaybar));
+    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -375,15 +371,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
     {"_lidR_C_hamraz_segmentation", (DL_FUNC) &_lidR_C_hamraz_segmentation, 10},
-    {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 8},
+    {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 7},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 5},
     {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximumFilter", (DL_FUNC) &_lidR_C_LocalMaximumFilter, 4},
-    {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 5},
+    {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
-    {"_lidR_C_points_in_polygons", (DL_FUNC) &_lidR_C_points_in_polygons, 5},
+    {"_lidR_C_points_in_polygons", (DL_FUNC) &_lidR_C_points_in_polygons, 4},
     {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 3},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
@@ -394,7 +390,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
-    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
+    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 5},
     {NULL, NULL, 0}
 };
 

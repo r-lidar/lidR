@@ -34,14 +34,14 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi)
 {
   QuadTree tree(xi, yi);
 
   int nelem = elem.nrow();
   int np = xi.size();
 
-  Progress p(nelem, diplaybar);
+  Progress p(nelem, "Searching in TIN: ");
 
   IntegerVector output(np);
   std::fill(output.begin(), output.end(), NA_INTEGER);
@@ -70,9 +70,7 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
     }
 
     if (p.check_abort())
-    {
       p.exit();
-    }
 
     p.update(k);
   }

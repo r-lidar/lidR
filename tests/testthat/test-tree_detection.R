@@ -1,7 +1,5 @@
 context("tree_detection")
 
-lidr_options(progress = FALSE)
-
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
@@ -9,7 +7,6 @@ set_cores(ctg) <- 1
 set_progress(ctg) <- FALSE
 set_tiling_size(ctg) <- 60
 set_buffer(ctg) <- 20
-
 
 test_that("tree_detection LMF works with a LAS", {
 

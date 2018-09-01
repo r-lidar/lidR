@@ -70,7 +70,7 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
   QuadTree tree(X,Y);
 
-  Progress pbar(n, false);
+  Progress pbar(n, "Inveert distance weigthning: ");
 
   for(unsigned int i = 0 ; i < n ; i++)
   {

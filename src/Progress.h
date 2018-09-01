@@ -2,12 +2,12 @@
 #define PROGRESS_H
 
 #include <Rcpp.h>
+#include <time.h>
 
 class Progress
 {
   public:
-    Progress(unsigned int, bool);
-    ~Progress();
+    Progress(unsigned int, std::string = "");
     bool check_abort();
     void update(unsigned int);
     void increment();
@@ -19,8 +19,9 @@ class Progress
     unsigned int iter_max;
     unsigned int percentage;
     unsigned int j;
+    std::string prefix;
+    clock_t ti;
     bool display;
-    static bool exist;
 };
 
 #endif //PROGRESS_H

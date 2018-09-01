@@ -112,7 +112,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   error = function(e)
   {
     message(paste0(e, "\n'rumple_index' returned NA."))
-    if (LIDROPTIONS("debug")) dput(X[,1:2])
+    if (getOption("lidR.debug")) dput(X[,1:2])
     return(NA_real_)
   })
 

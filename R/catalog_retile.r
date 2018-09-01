@@ -85,7 +85,7 @@
 #' }
 catalog_retile = function(ctg)
 {
-  interact <- LIDROPTIONS("interactive")
+  interact <- getOption("lidR.interactive")
 
   if (get_output_files(ctg) == "")
     stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)

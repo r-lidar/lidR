@@ -55,7 +55,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
 
   QuadTree tree(X,Y);
 
-  Progress p(n, false);
+  Progress p(n, "Point cloud smoothing: ");
 
   for (unsigned int i = 0 ; i < n ; i++)
   {

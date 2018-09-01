@@ -11,6 +11,22 @@ Please read the NEWS file at https://github.com/Jean-Romain/lidR/blob/master/NEW
   }
 }
 
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.lidR <- list(
+    lidR.progress = TRUE,
+    lidR.progress.delay = 2,
+    lidR.verbose = FALSE,
+    lidR.interactive = TRUE,
+    lidR.debug = FALSE
+  )
+
+  toset <- !(names(op.lidR) %in% names(op))
+  if(any(toset)) options(op.lidR[toset])
+
+  invisible()
+}
+
 .onUnload <- function(libpath) {
   library.dynam.unload("lidR", libpath)
 }

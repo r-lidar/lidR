@@ -134,6 +134,10 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * Change: `lasoi` have been removed. It was not useful and bugged. It will maybe be reintroduce later in `lasclipManual`.
 
+**lidr_options**
+
+* Change: `lidr_option` has been removed.
+
 ## lidR v1.6.1 (2018-08-21)
 
 #### BUG FIXES

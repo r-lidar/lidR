@@ -4,14 +4,14 @@
 \alias{lascolor}
 \title{Compute the color from RGB attributes}
 \usage{
-lascolor(.las, nbits = 16)
+lascolor(las, nbits = 16)
 }
 \arguments{
+\item{las}{A LAS object}
+
 \item{nbits}{the number of bits used to store the R G and B attributes. Default is 16 bits i.e.
 each channel ranged between 0 and 65535 as defined in LAS specifications. But sometime this rule
 is not respected. You can force the default behavior. A 8 bit color ranged between 0 and 255.}
-
-\item{las}{A LAS object}
 }
 \value{
 Return nothing. The original object is modified in place by reference.

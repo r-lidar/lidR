@@ -107,7 +107,7 @@ LogicalVector C_points_in_polygon(NumericVector vertx, NumericVector verty, Nume
 // @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a given polygon
 // @export
 // [[Rcpp::export]]
-IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
+IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)
 {
   int npoints = pointx.length();
   int nvert   = vertx.length();
@@ -115,7 +115,7 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
 
   QuadTree tree(pointx, pointy);
 
-  Progress p(nvert, displaybar);
+  Progress p(nvert, "Points un polygons: ");
 
   for(int i = 0 ; i < nvert ; i ++)
   {

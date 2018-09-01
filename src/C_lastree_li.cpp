@@ -36,7 +36,7 @@ using namespace Rcpp;
 LogicalVector C_LocalMaximumFilter(DataFrame las, NumericVector ws, double min_height, bool circular);
 
 // [[Rcpp::export]]
-IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius, bool progressbar = false)
+IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius)
 {
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
   NumericVector X = data["X"];
@@ -55,9 +55,6 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   // The ID of each point (returned object)
   IntegerVector idtree(ni);
   std::fill(idtree.begin(), idtree.end(), NA_INTEGER);
-
-  // A progress bar and script abort options
-  Progress p(ni, progressbar);
 
   // Square distance to speed up computation (dont need sqrt)
   radius = radius * radius;
@@ -81,6 +78,9 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
     is_lm = LogicalVector(ni);
     std::fill(is_lm.begin(), is_lm.end(), true);
   }
+
+  // A progress bar and abort options
+  Progress p(ni, "Tree segmenatation: ");
 
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);

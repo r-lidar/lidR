@@ -109,7 +109,7 @@ lasground_generic.LAS = function(las, method, last_returns, ...)
       verbose(glue::glue("Pass {i} of {length(p$ws)}..."))
       verbose(glue::glue("Windows size = {p$ws[i]} ; height_threshold = {p$th[i]}"))
 
-      Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, p$ws[i], LIDROPTIONS("progress"))
+      Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, p$ws[i])
 
       # Find indices of the points whose difference between the source and
       # filtered point clouds is less than the current height threshold
