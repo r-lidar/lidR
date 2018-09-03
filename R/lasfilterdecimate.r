@@ -94,10 +94,9 @@ lasfilterdecimate.LAScluster = function(las, algorithm)
 #' @export
 lasfilterdecimate.LAScatalog = function(las, algorithm)
 {
-  set_buffer(las) <- 0.1*res
   set_select(las) <- "*"
 
-  output      <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output      <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   ctg@proj4string <- las@proj4string
