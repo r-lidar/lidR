@@ -67,10 +67,12 @@ Alpine Space. Forests, 6(5), 1721–1747. https://doi.org/10.3390/f6051721
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{li2012}}, \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{ptrees}}, \code{\link{random}},
+  \code{\link{silva2016}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other Individual Tree Detection: \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{ptrees}}

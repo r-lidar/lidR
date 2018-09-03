@@ -32,10 +32,12 @@ Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#do
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{li2012}}, \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{ptrees}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{ptrees}}, \code{\link{random}},
+  \code{\link{silva2016}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other Ground Segmentation: \code{\link{csf}},
   \code{\link{lasground}}

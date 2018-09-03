@@ -78,11 +78,13 @@ and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
 }
 \seealso{
 Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{li2012}},
+  \code{\link{dalponte2016}}, \code{\link{highest}},
+  \code{\link{homogenize}}, \code{\link{li2012}},
   \code{\link{lmf}}, \code{\link{manual}},
   \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{ptrees}}, \code{\link{random}},
+  \code{\link{silva2016}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
   \code{\link{lastrees}}, \code{\link{li2012}},

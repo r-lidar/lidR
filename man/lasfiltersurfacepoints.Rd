@@ -16,55 +16,11 @@ If the input is a \code{LAS} object, returns a \code{LAS} object. If the input i
 \code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
-This routine creates a grid with a given resolution and filters the point cloud by selecting the
-highest point within each cell. This function is different from \link{grid_canopy} even if the overall
-concept is exactly the same. \code{grid_canopy} attributes to each cell of a raster the elevation
-of the highest points and the point cloud is rasterized. Here, there is no rasterization, the function
-takes a point cloud as input and returns a point cloud as output. Coordinates and attributes are preserved.
+This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
 }
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \strong{tiling_size}: How many data are loaded at once.
-\item buffer: This function guarantee a stric wall-to-wall continous output. The \code{buffer} option
-is no considered.
-\item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used.
-\item \strong{progress}: Displays a progression estimation.
-\item \strong{stop_early}: Leave it as it unless you are an advanced user.
-\item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
-in R and needs to be written in las/laz files. Supported templates are \code{XLEFT}, \code{XRIGHT},
-\code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if tiling size equal to 0
-(processing by file), \code{ORIGINALFILENAME}.
-\item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item \strong{drivers}: Leave it as it unless you are an advanced user.
-\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
-and cannot be changed.
-\item \strong{filter}: Read only points of interest.
-}
-}
-
-\section{Working with a \code{LAScatalog}}{
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
-\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
-but this is not mandatory.
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset = lasfiltersurfacepoints(las, 2)
 plot(subset)
-}
-\seealso{
-Other lasfilters: \code{\link{lasfilterdecimate}},
-  \code{\link{lasfilters}}, \code{\link{lasfilter}}
 }

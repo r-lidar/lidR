@@ -48,10 +48,12 @@ trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{lmf}}, \code{\link{manual}},
   \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{ptrees}}, \code{\link{random}},
+  \code{\link{silva2016}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{lastrees}},

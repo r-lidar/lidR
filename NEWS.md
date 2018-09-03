@@ -2,9 +2,13 @@
 
 # Main visible changes
 
-* `LAScatalog` processing engine:
-* Algorithm dispatch and third party extensions:
-* Consistency improvements:
+**`LAScatalog` processing engine**
+
+**Algorithm dispatch**
+
+**Third party extensions**
+
+**Consistency improvement**
 
 # Complete description of visible changes
 
@@ -138,6 +142,15 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 **lasroi**
 
 * Change: `lasoi` has been removed. It was not useful and bugged. It will maybe be reintroduced later in `lasclipManual`.
+
+**lasfilterdecimate**
+
+* Change: relies now on "lidR algorithms dispatch". lidR algorithms are function factories that allow to use one or another algorithm within a given function. (see also the main new features above).
+* New: introduction of the algorithm `highest` available in `lasfilterdecimate` and that supersedes the fonction `lasfiltersurfacepoints`.
+
+**lassnags**
+
+* Change: relies now on "lidR algorithms dispatch". lidR algorithms are function factories that allow to use one or another algorithm within a given function. (see also the main new features above).
 
 **lidr_options**
 

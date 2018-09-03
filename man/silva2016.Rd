@@ -55,10 +55,12 @@ https://doi.org/10.1080/07038992.2016.1196582.
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{li2012}}, \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{multichm}},
   \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{random}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{lastrees}},

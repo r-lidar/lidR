@@ -40,8 +40,10 @@ is more difficult to manipulate but it is also the most advanced method for inte
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{li2012}}, \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{multichm}},
   \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{silva2016}}, \code{\link{watershed}}
+  \code{\link{random}}, \code{\link{silva2016}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 }

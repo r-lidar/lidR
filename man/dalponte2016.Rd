@@ -61,11 +61,13 @@ airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–124
 }
 \seealso{
 Other Algorithm: \code{\link{csf}},
-  \code{\link{hamraz2016}}, \code{\link{li2012}},
+  \code{\link{hamraz2016}}, \code{\link{highest}},
+  \code{\link{homogenize}}, \code{\link{li2012}},
   \code{\link{lmf}}, \code{\link{manual}},
   \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
+  \code{\link{ptrees}}, \code{\link{random}},
+  \code{\link{silva2016}}, \code{\link{tin}},
+  \code{\link{watershed}}, \code{\link{wing2015}}
 
 Other IndividualTreeSegmentation: \code{\link{hamraz2016}},
   \code{\link{lastrees}}, \code{\link{li2012}},

@@ -53,10 +53,12 @@ rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", si
 \seealso{
 Other Algorithm: \code{\link{csf}},
   \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
+  \code{\link{highest}}, \code{\link{homogenize}},
   \code{\link{li2012}}, \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{multichm}},
   \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{silva2016}}, \code{\link{tin}}
+  \code{\link{random}}, \code{\link{silva2016}},
+  \code{\link{tin}}, \code{\link{wing2015}}
 
 Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{lastrees}},
