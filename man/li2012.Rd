@@ -4,7 +4,8 @@
 \alias{li2012}
 \title{Algorithm for individual tree segmentation}
 \usage{
-li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
+li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2,
+  speed_up = 10)
 }
 \arguments{
 \item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.}
@@ -61,3 +62,6 @@ Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
 
 Other PointCloudBasedSegmentation: \code{\link{hamraz2016}}
 }
+\concept{Algorithm}
+\concept{IndividualTreeSegmentation}
+\concept{PointCloudBasedSegmentation}

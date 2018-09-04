@@ -16,3 +16,4 @@ An object from sp
 LAS, LAScatalog, lasmetrics are transformed respectively into SpatialPointsDataFrame,
 SpatialPolygonsDataFrame, SpatialPixelsDataFrame
 }
+\concept{cast}

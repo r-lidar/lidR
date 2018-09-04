@@ -34,7 +34,6 @@ Imports:
     mapedit,
     memoise,
     imager,
-    progress,
     RANN,
     Rcpp,
     RCSF,
@@ -51,8 +50,8 @@ Suggests:
     EBImage,
     hexbin
 LazyData: true
-RoxygenNote: 6.0.1
-LinkingTo: BH,progress,Rcpp,RcppArmadillo
+RoxygenNote: 6.1.0
+LinkingTo: BH,Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
@@ -82,8 +81,6 @@ Collate:
     'catalog_retile.r'
     'catalog_select.r'
     'clusters_apply.r'
-    'constant.R'
-    'deprecated.r'
     'grid_canopy.r'
     'grid_density.r'
     'grid_hexametrics.r'
@@ -105,20 +102,17 @@ Collate:
     'lassnags.r'
     'lastrees.r'
     'lasupdateheader.r'
-    'metrics.r'
-    'metrics_canopy_roughness.r'
-    'plot.lasmetrics3d.r'
-    'plot3d.r'
+    'plot.s3.r'
     'readLAS.r'
-    'stopif.r'
-    'subcircled.r'
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
     'utils_catalog_options.r'
     'utils_colors.r'
+    'utils_define_constant.R'
     'utils_geometry.r'
     'utils_match_chm_and_seeds.r'
+    'utils_metrics.r'
     'utils_misc.r'
     'utils_projection.r'
     'utils_typecast.r'

@@ -42,3 +42,5 @@ Other Algorithm: \code{\link{csf}},
 Other Ground Segmentation: \code{\link{csf}},
   \code{\link{lasground}}
 }
+\concept{Algorithm}
+\concept{Ground Segmentation}

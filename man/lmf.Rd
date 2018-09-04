@@ -83,3 +83,5 @@ Other Algorithm: \code{\link{csf}},
 Other Individual Tree Detection: \code{\link{manual}},
   \code{\link{multichm}}, \code{\link{ptrees}}
 }
+\concept{Algorithm}
+\concept{Individual Tree Detection}

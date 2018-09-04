@@ -9,7 +9,6 @@
 \alias{lasfilterlast}
 \alias{lasfilternth}
 \alias{lasfiltersingle}
-\alias{lasfilterfirstofmany}
 \title{Predefined filters}
 \usage{
 lasfilterfirst(.las)
@@ -76,3 +75,4 @@ Other lasfilters: \code{\link{lasfilter}}
 
 Other lasfilters: \code{\link{lasfilter}}
 }
+\concept{lasfilters}

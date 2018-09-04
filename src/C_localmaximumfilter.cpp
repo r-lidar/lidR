@@ -27,8 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-// [[Rcpp::depends(progress)]]
-
 #include <Rcpp.h>
 #include <limits>
 #include "QuadTree.h"

@@ -5,8 +5,8 @@
 \alias{lasunsmooth}
 \title{Smooth a point cloud}
 \usage{
-lassmooth(las, size, method = c("average", "gaussian"), shape = c("circle",
-  "square"), sigma = size/6)
+lassmooth(las, size, method = c("average", "gaussian"),
+  shape = c("circle", "square"), sigma = size/6)
 
 lasunsmooth(las)
 }

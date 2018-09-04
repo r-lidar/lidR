@@ -45,3 +45,5 @@ Other Algorithm: \code{\link{csf}},
 Other Point Cloud Decimation: \code{\link{highest}},
   \code{\link{lasfilterdecimate}}, \code{\link{random}}
 }
+\concept{Algorithm}
+\concept{Point Cloud Decimation}

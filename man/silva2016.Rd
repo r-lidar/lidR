@@ -69,3 +69,6 @@ Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
 Other RasterBasedSegmentation: \code{\link{dalponte2016}},
   \code{\link{watershed}}
 }
+\concept{Algorithm}
+\concept{IndividualTreeSegmentation}
+\concept{RasterBasedSegmentation}

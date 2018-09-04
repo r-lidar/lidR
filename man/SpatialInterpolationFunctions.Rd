@@ -47,3 +47,5 @@ Other Algorithm: \code{\link{csf}},
   \code{\link{random}}, \code{\link{silva2016}},
   \code{\link{watershed}}, \code{\link{wing2015}}
 }
+\concept{Algorithm}
+\concept{Spatial Interpolation}

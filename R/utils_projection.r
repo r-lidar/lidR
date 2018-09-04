@@ -31,7 +31,7 @@ get_epsg = function(header)
   for (tag in header@VLR$GeoKeyDirectoryTag$tag)
   {
     if (tag$key == 3072)
-       epsg = tag$`value offset`
+       return(tag$`value offset`)
   }
 
   return(epsg)

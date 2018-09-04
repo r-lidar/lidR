@@ -4,8 +4,9 @@
 \alias{csf}
 \title{Cloth Simulation Filter}
 \usage{
-csf(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5,
-  rigidness = 1L, iterations = 500L, time_step = 0.65)
+csf(sloop_smooth = FALSE, class_threshold = 0.5,
+  cloth_resolution = 0.5, rigidness = 1L, iterations = 500L,
+  time_step = 0.65)
 }
 \arguments{
 \item{sloop_smooth}{logical. When sharp slopes exist, set this parameter to TRUE to perform a
@@ -50,3 +51,5 @@ Other Algorithm: \code{\link{dalponte2016}},
 Other Ground Segmentation: \code{\link{lasground}},
   \code{\link{pmf}}
 }
+\concept{Algorithm}
+\concept{Ground Segmentation}

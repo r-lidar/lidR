@@ -4,9 +4,9 @@
 \alias{hamraz2016}
 \title{Algorithm for individual tree segmentation}
 \usage{
-hamraz2016(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8,
-  Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24,
-  filter_profiles = TRUE)
+hamraz2016(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
+  CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L,
+  R = 15.24, filter_profiles = TRUE)
 }
 \arguments{
 \item{nps}{numeric. Nominal point spacing (see reference page 533  section 2)}
@@ -92,3 +92,6 @@ Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
 
 Other PointCloudBasedSegmentation: \code{\link{li2012}}
 }
+\concept{Algorithm}
+\concept{IndividualTreeSegmentation}
+\concept{PointCloudBasedSegmentation}

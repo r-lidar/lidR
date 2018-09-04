@@ -25,8 +25,6 @@
 #
 # ===============================================================================
 
-
-
 #' Plot voxelized LiDAR data
 #'
 #' This function implements a 3D plot method for 'lasmetrics3d' objects
@@ -81,4 +79,30 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
   rgl::open3d()
   rgl::rgl.bg(color = bg)
   do.call(rgl::points3d, c(list(x=x$X, y=x$Y, z=x$Z), inargs))
+}
+
+#' Plot a wireframe of a \code{RasterLayer} or a \code{lasmetrics} object
+#'
+#' @param x An object of the class \code{RasterLayer} or \code{lasmetrics}
+#' @param y Unused (inherited from R base)
+#' @param add logical. if TRUE, add to current 3D plot.
+#' @param bg The color for the background. Default is black.
+#' @param \dots Supplementary parameters for \link[rgl:surface3d]{surface3d}
+#' @export
+plot3d = function(x, y, add = FALSE, bg = "black", ...)
+{
+  inargs <- list(...)
+
+  if(!is(x, "RasterLayer"))
+    stop("Object not supported")
+
+  mx =  t(apply(raster::as.matrix(x), 2, rev))
+  x_  = sort(raster::xFromCol(x))
+  y_  = sort(raster::yFromRow(x))
+
+  if(!add)
+    rgl::open3d()
+
+  rgl::rgl.bg(color = bg)
+  rgl::surface3d(x_, y_, mx, front="lines", col="white", ...)
 }

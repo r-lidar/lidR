@@ -4,7 +4,8 @@
 \alias{multichm}
 \title{Tree top detection based on LMF and multi-CHM}
 \usage{
-multichm(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
+multichm(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5,
+  ...)
 }
 \arguments{
 \item{res}{numeric. Resolution of the CHM based on the 95th percentile}
@@ -77,3 +78,5 @@ Other Algorithm: \code{\link{csf}},
 Other Individual Tree Detection: \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{ptrees}}
 }
+\concept{Algorithm}
+\concept{Individual Tree Detection}

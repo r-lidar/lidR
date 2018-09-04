@@ -38,3 +38,5 @@ Other Algorithm: \code{\link{csf}},
 Other Point Cloud Decimation: \code{\link{highest}},
   \code{\link{homogenize}}, \code{\link{lasfilterdecimate}}
 }
+\concept{Algorithm}
+\concept{Point Cloud Decimation}

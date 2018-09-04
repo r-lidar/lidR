@@ -4,8 +4,8 @@
 \alias{dalponte2016}
 \title{Algorithm for individual tree segmentation}
 \usage{
-dalponte2016(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55,
-  max_cr = 10, extra = FALSE, ID = "treeID")
+dalponte2016(chm, treetops, th_tree = 2, th_seed = 0.45,
+  th_cr = 0.55, max_cr = 10, extra = FALSE, ID = "treeID")
 }
 \arguments{
 \item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
@@ -76,3 +76,6 @@ Other IndividualTreeSegmentation: \code{\link{hamraz2016}},
 Other RasterBasedSegmentation: \code{\link{silva2016}},
   \code{\link{watershed}}
 }
+\concept{Algorithm}
+\concept{IndividualTreeSegmentation}
+\concept{RasterBasedSegmentation}

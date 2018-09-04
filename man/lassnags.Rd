@@ -4,7 +4,7 @@
 \alias{lassnags}
 \title{Snag classification}
 \usage{
-lassnags(las, algorithm, attribute = "snagsCls")
+lassnags(las, algorithm, attribute = "snagCls")
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -66,3 +66,4 @@ and cannot be changed.
 \seealso{
 Other Snags Segmentation: \code{\link{wing2015}}
 }
+\concept{Snags Segmentation}

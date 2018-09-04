@@ -37,3 +37,4 @@ Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{li2012}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 }
+\concept{IndividualTreeSegmentation}

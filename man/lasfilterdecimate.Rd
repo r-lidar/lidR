@@ -76,3 +76,4 @@ plot(thinned3)
 Other Point Cloud Decimation: \code{\link{highest}},
   \code{\link{homogenize}}, \code{\link{random}}
 }
+\concept{Point Cloud Decimation}

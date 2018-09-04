@@ -89,3 +89,4 @@ lasground(las, csf())
 Other Ground Segmentation: \code{\link{csf}},
   \code{\link{pmf}}
 }
+\concept{Ground Segmentation}

@@ -111,6 +111,18 @@ dummy_las = function(n, seeds = c)
   return(las)
 }
 
+stopifnotlas = function(x)
+{
+  if (!inherits(x, "LAS"))
+    stop("Argument is not a LAS object", call. = F)
+}
+
+stopif_forbidden_name = function(name)
+{
+  if (name %in% LASFIELDS)
+    stop(glue::glue("{name} is a forbidden name."), call. = FALSE)
+}
+
 stopif_wrong_context = function(received_context, expected_contexts, func_name)
 {
   str = paste0(expected_contexts, collapse  = "' or '")
@@ -119,6 +131,28 @@ stopif_wrong_context = function(received_context, expected_contexts, func_name)
     stop(glue::glue("The '{func_name}' function has not been called within a correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
   if (!received_context %in% expected_contexts)
     stop(glue::glue("The '{func_name}' function has not been called within a correct context. It is expected to be used in '{str}'"), call. = FALSE)
+}
+
+subcircled = function(dt, r, n)
+{
+  X <- Y <- Z <- NULL
+
+  f = function(x, y, z, px, py)
+  {
+    x = x + px
+    y = y + py
+    z = rep(z, length(px))
+
+    list(X = x, Y = y, Z = z)
+  }
+
+  n = n + 1
+
+  alpha = seq(0, 2*pi, length.out = n)[-n]
+  px = r*cos(alpha)
+  py = r*sin(alpha)
+
+  return(dt[, f(X, Y, Z, px, py), by = rownames(dt)][, rownames := NULL][])
 }
 
 #' Parameters for progressive morphological filter

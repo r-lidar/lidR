@@ -104,3 +104,5 @@ Other Snags Segmentation: \code{\link{lassnags}}
 \author{
 Implementation by Andrew Sánchez Meador, optimisations by Jean-Romain Roussel
 }
+\concept{Algorithm}
+\concept{Snags Segmentation}
