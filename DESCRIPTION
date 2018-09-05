@@ -21,7 +21,6 @@ Depends:
     R (>= 3.1.0),methods,raster,sp
 Imports:
     assertive,
-    BH,
     concaveman,
     data.table,
     future,
@@ -35,7 +34,6 @@ Imports:
     memoise,
     imager,
     RANN,
-    Rcpp,
     RCSF,
     rgeos,
     rgl,
@@ -68,11 +66,11 @@ Collate:
     'RcppExports.R'
     'algo_digital_surface_model.r'
     'algo_ground_segmentation.r'
-    'algo_individual_tree_segmentation.r'
     'algo_points_decimation.r'
     'algo_snags_segmentation.r'
     'algo_spatial_interpolations.r'
     'algo_tree_detection.R'
+    'algo_tree_segmentation.r'
     'catalog_apply.r'
     'catalog_fakerun.r'
     'catalog_index.r'
@@ -87,6 +85,8 @@ Collate:
     'grid_metrics.r'
     'grid_metrics3d.r'
     'grid_terrain.r'
+    'io_readLAS.r'
+    'io_writeLAS.r'
     'lasclassify.r'
     'lasclip.r'
     'lascolor.r'
@@ -103,7 +103,6 @@ Collate:
     'lastrees.r'
     'lasupdateheader.r'
     'plot.s3.r'
-    'readLAS.r'
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
@@ -116,5 +115,4 @@ Collate:
     'utils_misc.r'
     'utils_projection.r'
     'utils_typecast.r'
-    'writeLAS.r'
     'zzz.r'

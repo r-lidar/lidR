@@ -34,9 +34,9 @@ lastrees = function(las, algorithm, attribute = "treeID")
 
   lidR.context <- "lastrees"
 
-  if (is(algorithm, "RasterBasedSegmentation"))
+  if (is(algorithm, "RasterBased"))
     output <- algorithm()
-  else if (is(algorithm, "PointCloudBasedSegmentation"))
+  else if (is(algorithm, "PointCloudBased"))
     output <- algorithm(las)
   else
     stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'", call. = FALSE)

@@ -1,6 +1,6 @@
 #' Algorithm for individual tree segmentation
 #'
-#' This functions is made to be used in \link{lastress}. Individual tree segmentation using Dalponte
+#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using Dalponte
 #' et al. (2016) algorithm (see reference). This is a seeds + growing region algorithm. It is
 #' based on the constraints proposed by Dalponte and Coomes (see references). This algorithm exists
 #' in the package \code{itcSegment}. This version is identical to the original but with superfluous
@@ -42,9 +42,9 @@
 #' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 #' @export
 #' @family Algorithm
-#' @family IndividualTreeSegmentation
-#' @family RasterBasedSegmentation
-dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, extra = FALSE, ID = "treeID")
+#' @family Individual Tree Segmentation
+#' @family Raster Based Segmentation
+dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
   assertive::assert_is_all_of(treetops, "SpatialPointsDataFrame")
@@ -52,7 +52,6 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   assertive::assert_is_a_number(th_seed)
   assertive::assert_is_a_number(th_cr)
   assertive::assert_is_a_number(max_cr)
-  assertive::assert_is_a_bool(extra)
   assertive::assert_all_are_in_closed_range(th_seed, 0, 1)
   assertive::assert_all_are_in_closed_range(th_cr, 0, 1)
 
@@ -86,13 +85,13 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     return(Crowns)
   }
 
-  class(f) <- c("RasterBasedSegmentation", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
   return(f)
 }
 
 #' Algorithm for individual tree segmentation
 #'
-#' This functions is made to be used in \link{lastress}. Individual tree segmentation using the algorithm
+#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using the algorithm
 #' proposed by Hamraz et al. (2012). See references and details.
 #'
 #' This function has been written by the \code{lidR} authors from the original article. We made our
@@ -147,8 +146,8 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' plot(las, color = "treeID", colorPalette = pastel.colors(200))
 #'}
 #' @family Algorithm
-#' @family IndividualTreeSegmentation
-#' @family PointCloudBasedSegmentation
+#' @family Individual Tree Segmentation
+#' @family Point Cloud Based Segmentation
 hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24, filter_profiles = TRUE)
 {
   assertive::assert_is_a_number(nps)
@@ -296,14 +295,14 @@ hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc
     return(treeID)
   }
 
-  class(f) <- c("PointCloudBasedSegmentation", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
 
   return(f)
 }
 
 #' Algorithm for individual tree segmentation
 #'
-#' This functions is made to be used in \link{lastress}. Individual tree segmentation using the
+#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using the
 #' Li et al. (2012) algorithm (see reference). This method is' a growing region method working at
 #' the point cloud level. It is an implementation, as strict as possible, made by the \code{lidR}
 #' author but with the addition of a parameter \code{hmin} to stop over-segmentation for objects
@@ -335,8 +334,8 @@ hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc
 #' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 #' @export
 #' @family Algorithm
-#' @family IndividualTreeSegmentation
-#' @family PointCloudBasedSegmentation
+#' @family Individual Tree Segmentation
+#' @family Point Cloud Based Segmentation
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
   assertive::assert_is_a_number(dt1)
@@ -367,14 +366,14 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
     return(id)
   }
 
-  class(f) <- c("PointCloudBasedSegmentation", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
 
   return(f)
 }
 
 #' Algorithm for individual tree segmentation
 #'
-#' This functions is made to be used in \link{lastress}. Individual tree segmentation using Silva et
+#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using Silva et
 #' al. (2016) algorithm (see reference). This is a simple method based on seed + voronoi
 #' tesselation (equivalent to nearest neibourgh). This algorithm is implemented in the package
 #' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a code written from
@@ -411,15 +410,14 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' https://doi.org/10.1080/07038992.2016.1196582.
 #' @export
 #' @family Algorithm
-#' @family IndividualTreeSegmentation
-#' @family RasterBasedSegmentation
-silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra = FALSE, ID = "treeID")
+#' @family Individual Tree Segmentation
+#' @family Raster Based Segmentation
+silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
   assertive::assert_is_all_of(treetops, "SpatialPointsDataFrame")
   assertive::assert_is_a_number(max_cr_factor)
   assertive::assert_is_a_number(exclusion)
-  assertive::assert_is_a_bool(extra)
   assertive::assert_all_are_in_open_range(max_cr_factor, 0, 1)
   assertive::assert_all_are_in_open_range(exclusion, 0, 1)
 
@@ -451,13 +449,13 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra 
     return(crown)
   }
 
-  class(f) <- c("RasterBasedSegmentation", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
   return(f)
 }
 
 #' Algorithm for individual tree segmentation
 #'
-#' This functions is made to be used in \link{lastress}. Individual tree segmentation using watershed
+#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using watershed
 #' and marker controled watershed.\cr\cr
 #' \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install this package
 #' to run this method (see its \href{https://github.com/aoles/EBImage}{github page}). Internally the
@@ -476,8 +474,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, extra 
 #'
 #' @export
 #' @family Algorithm
-#' @family IndividualTreeSegmentation
-#' @family RasterBasedSegmentation
+#' @family Individual Tree Segmentation
+#' @family Raster Based Segmentation
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
@@ -564,6 +562,6 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     return(Crowns)
   }
 
-  class(f) <- c("RasterBasedSegmentation", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
   return(f)
 }

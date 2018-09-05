@@ -127,16 +127,16 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
     return(output)
   }
 
-  class(f) <- c("IndividualTreeDetection", "Algorithm", "lidR")
+  class(f) <- c("PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
 
-#' Algoritm for individual tree detection or individual tree segmentation.
+#' Algoritm for individual tree detection or segmentation.
 #'
 #' This function is made to be used in \link{tree_detection} or \link{lastrees} not alone. Segmentation
 #' algorithm proposed  by Vega et al. (2014) (see references and section details). When used in the function
 #' \link{tree_detection} it runs only the fisrt part of the method i.e. the detection of the trees
-#' while when run in  \link{lastrees} it performs the whole segmentation including the tree detection
+#' while when run in  \link{lastrees} it performs the whole segmentation including the tree segmentation
 #' (see details).
 #'
 #' This function has been written by the \code{lidR} authors from the original article. We made our
@@ -171,7 +171,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz")
 #'
-#' k = c(30,20,15,10)
+#' k = c(30,15)
 #' ttops = tree_detection(las, ptrees(k))
 #'
 #' lastrees(las, ptrees(k))
@@ -179,6 +179,8 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' @family Algorithm
 #' @family Individual Tree Detection
 #' @family Individual Tree Segmentation
+#' @family Point Cloud Based Detection
+#' @family Point Cloud Based Segmentation
 ptrees = function(k, hmin = 2, nmax = 7L)
 {
   assertive::assert_is_numeric(k)
@@ -194,21 +196,29 @@ ptrees = function(k, hmin = 2, nmax = 7L)
 
     . <- X <- Y <- Z <- treeID <- NULL
 
-    segmentation = context == "tree_detection"
+    segmentation = context == "lastrees"
 
-    TreeSegments = C_lastrees_ptrees(las, k, hmin, nmax, FALSE)
-    apices = TreeSegments$Apices
-    apices = data.table::as.data.table(apices)
-    data.table::setnames(apices, names(apices), c("X", "Y", "Z"))
-    apices[, treeID := 1:.N]
+    TreeSegments = C_lastrees_ptrees(las, k, hmin, nmax, segmentation)
 
-    output = sp::SpatialPointsDataFrame(apices[, .(X,Y)], apices[, .(treeID, Z)])
-    output@proj4string = las@proj4string
-    output@bbox = sp::bbox(las)
-    return(output)
+    if (!segmentation)
+    {
+      apices = TreeSegments$Apices
+      apices = data.table::as.data.table(apices)
+      data.table::setnames(apices, names(apices), c("X", "Y", "Z"))
+      apices[, treeID := 1:.N]
+
+      output = sp::SpatialPointsDataFrame(apices[, .(X,Y)], apices[, .(treeID, Z)])
+      output@proj4string = las@proj4string
+      output@bbox = sp::bbox(las)
+      return(output)
+    }
+    else
+    {
+      return(TreeSegments$treeID)
+    }
   }
 
-  class(f) <- c("IndividualTreeSegmentation", "IndividualTreeDetection", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
 
@@ -309,7 +319,7 @@ manual = function(detected = NULL, ...)
   }
 
 
-  class(f) <- c("IndividualTreeDetection", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
 
@@ -368,6 +378,7 @@ manual = function(detected = NULL, ...)
 #' Alpine Space. Forests, 6(5), 1721–1747. https://doi.org/10.3390/f6051721
 #' @family Algorithm
 #' @family Individual Tree Detection
+
 multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
   assertive::assert_is_a_number(res)
@@ -436,6 +447,6 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ..
     return(output)
   }
 
-  class(f) <- c("IndividualTreeDetection", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }

@@ -112,7 +112,7 @@
 #'   if (is.empty(las)) return(NULL)
 #'
 #'   # Find the tree tops using a user-developped method for example (here simply a LMF)
-#'   ttops = tree_detection_lmf(las, ws)
+#'   ttops = tree_detection(las, lmf(ws))
 #'
 #'   # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
 #'   # plus the trees tops in the buffered area. We need to remove buffer otherwise we will get

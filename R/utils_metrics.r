@@ -575,7 +575,7 @@ stdtreemetrics = function(x, y, z)
 #' # Use with a canopy height model
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' chm = grid_canopy(las, "p2r")
+#' chm = grid_canopy(las, 2, p2r())
 #' rumple_index(chm)
 #' @references
 #' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829–839.

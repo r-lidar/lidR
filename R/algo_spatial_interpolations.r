@@ -72,7 +72,7 @@ tin = function()
     return(z)
   }
 
-  class(f) <- c("SpatialInterpolation", "Algorithm", "lidR")
+  class(f) <- c("function", "SpatialInterpolation", "Algorithm", "lidR")
   return(f)
 }
 
@@ -89,7 +89,7 @@ knnidw = function(k = 10, p = 2)
     return(z)
   }
 
-  class(f) <- c("SpatialInterpolation", "Algorithm", "lidR")
+  class(f) <- c("SpatialInterpolation", "Algorithm", "lidR", "function")
   return(f)
 }
 
@@ -106,7 +106,7 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
     return(z)
   }
 
-  class(f) <- c("SpatialInterpolation", "Algorithm", "lidR")
+  class(f) <- c( "function", "SpatialInterpolation", "Algorithm", "lidR")
   return(f)
 }
 

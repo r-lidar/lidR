@@ -72,7 +72,7 @@ random = function(density, use_pulse = FALSE)
       return(sample(1:nrow(las@data), n))
   }
 
-  class(f) <- c("PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
   return(f)
 }
 
@@ -121,6 +121,8 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
       use_pulse <- FALSE
     }
 
+    pulseID <- NULL
+
     n  <- round(density*res^2)
     by <- group_grid(las@data$X, las@data$Y, res)
 
@@ -130,7 +132,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
       return(las@data[, .I[.selected_pulses(1:.N, n)], by = by]$V1)
   }
 
-  class(f) <- c("PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
   return(f)
 }
 
@@ -147,7 +149,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #'
 #' # Select the highest point within each cell of an overlayed grid
 #' thinned = lasfilterdecimate(las, highest(5))
-#' plot(thinned3)
+#' plot(thinned)
 #' @export
 #' @family Algorithm
 #' @family Point Cloud Decimation
@@ -160,7 +162,7 @@ highest = function(res = 1)
     return(las@data[, .I[which.max(Z)], by = by]$V1)
   }
 
-  class(f) <- c("PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
   return(f)
 }
 

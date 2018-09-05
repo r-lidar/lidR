@@ -5,7 +5,7 @@ las = readLAS(LASfile, select = "ia0", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
 set_cores(ctg) <- 1
 set_progress(ctg) <- FALSE
-set_tiling_size(ctg) <- 60
+set_tiling_size(ctg) <- 120
 set_buffer(ctg) <- 20
 
 test_that("tree_metrics works with a LAS", {
@@ -44,8 +44,8 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "ia0", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
 set_cores(ctg) <- 1
-set_progress(ctg) <- TRUE
-set_tiling_size(ctg) <- 60
+set_progress(ctg) <- FALSE
+set_tiling_size(ctg) <- 120
 set_buffer(ctg) <- 20
 
 test_that("tree_metrics throw an error if no treeID", {

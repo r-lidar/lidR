@@ -30,8 +30,8 @@
 #' Creates a digital surface model using several possible algorithms.
 #'
 #' @template param-las
-#' @param algorithm. A function that implements an algorithm to compute a canopy height model. lidR have
-#' three of these function: \link{p2r}, \link{chmtin}, \link{pitfree} (see respective documentations
+#' @param algorithm function. A function that implements an algorithm to compute a canopy height model. lidR have
+#' three of these function: \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations
 #' and exemples).
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units.
 #'
@@ -50,7 +50,7 @@
 #' plot(chm, col = col)
 #'
 #' # Basic triangulation and rasterization of first returns
-#' chm <- grid_canopy(las, res = 0.5, chmtin())
+#' chm <- grid_canopy(las, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
 #' # Khosravipour et al. pitfree algorithm
@@ -67,11 +67,11 @@
 #' # The TIN interpolation being done within the convex hull of the point cloud there are lot of
 #' # dummy pixels that are strictly correct regarding the interpolation method used but meaningless
 #' # in our CHM
-#' chm <- grid_canopy(las2, res = 0.5, chmtin())
+#' chm <- grid_canopy(las2, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
 #' # Use 'max_edge' to trim dummy triangles
-#' chm = grid_canopy(las2, res = 0.5, chmtin(max_edge = 3))
+#' chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
 #' plot(chm, col = col)
 #'
 #' chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))

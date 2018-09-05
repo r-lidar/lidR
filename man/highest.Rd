@@ -19,7 +19,7 @@ las = readLAS(LASfile, select = "xyz")
 
 # Select the highest point within each cell of an overlayed grid
 thinned = lasfilterdecimate(las, highest(5))
-plot(thinned3)
+plot(thinned)
 }
 \seealso{
 Other Algorithm: \code{\link{csf}},

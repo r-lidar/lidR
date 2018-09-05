@@ -136,9 +136,6 @@ void QuadTree::knn(const PointXYZ& p, const int k, std::vector<PointXYZ>& res)
     Sphere sphere(p.x, p.y, p.z, radius);
     this->lookup(sphere, pts);
     radius *= 1.5;
-
-    if (radius > 100)
-      throw std::runtime_error("error");
   }
 
   std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));

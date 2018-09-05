@@ -77,7 +77,7 @@ p2r = function(subcircle = 0)
     return(dsm)
   }
 
-  class(f) <- c("DigitalSurfaceModel", "Algorithm", "lidR")
+  class(f) <- c("function", "DigitalSurfaceModel", "Algorithm", "lidR")
   return(f)
 }
 
@@ -112,6 +112,8 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
 
     if (fast_countequal(las@data$ReturnNumber, 1L) == 0)
       stop("No first returns found. Operation aborted.", call. = FALSE)
+
+    . <- X <- Y <- Z <- ReturnNumber <- NULL
 
     # Initialize the interpolated values with NAs
     z = rep(NA_real_, raster::ncell(layout))
@@ -168,6 +170,6 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     return(z)
   }
 
-  class(f) <- c("DigitalSurfaceModel", "Algorithm", "lidR")
+  class(f) <- c("function", "DigitalSurfaceModel", "Algorithm", "lidR")
   return(f)
 }

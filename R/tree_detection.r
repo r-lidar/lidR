@@ -43,7 +43,7 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
-#' ttops = tree_detection(las, "lmf", ws = 5)
+#' ttops = tree_detection(las, lmf(ws = 5))
 #'
 #' plot(las)
 #' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)

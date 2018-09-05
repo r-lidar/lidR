@@ -63,7 +63,7 @@
 #' # First option: use a RasterLayer as DTM
 #' # =======================================================
 #'
-#' dtm = grid_terrain(las, method = "kriging", k = 10L)
+#' dtm = grid_terrain(las, 1, kriging(k = 10L))
 #' lasnormalize(las, dtm)
 #'
 #' plot(dtm)

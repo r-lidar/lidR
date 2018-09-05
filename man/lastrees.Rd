@@ -32,9 +32,4 @@ col = pastel.colors(200)
 lastrees(las, li2012(R = 3, speed_up = 5))
 plot(las, color = "treeID", colorPalette = col)
 }
-\seealso{
-Other IndividualTreeSegmentation: \code{\link{dalponte2016}},
-  \code{\link{hamraz2016}}, \code{\link{li2012}},
-  \code{\link{silva2016}}, \code{\link{watershed}}
-}
 \concept{IndividualTreeSegmentation}

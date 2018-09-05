@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_detection.R
 \name{ptrees}
 \alias{ptrees}
-\title{Algoritm for individual tree detection or individual tree segmentation.}
+\title{Algoritm for individual tree detection or segmentation.}
 \usage{
 ptrees(k, hmin = 2, nmax = 7L)
 }
@@ -21,7 +21,7 @@ cases (see details). Set to \code{+Inf} to strictly respect the original paper (
 This function is made to be used in \link{tree_detection} or \link{lastrees} not alone. Segmentation
 algorithm proposed  by Vega et al. (2014) (see references and section details). When used in the function
 \link{tree_detection} it runs only the fisrt part of the method i.e. the detection of the trees
-while when run in  \link{lastrees} it performs the whole segmentation including the tree detection
+while when run in  \link{lastrees} it performs the whole segmentation including the tree segmentation
 (see details).
 }
 \details{
@@ -49,7 +49,7 @@ be set to \code{-Inf} for example.
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
-k = c(30,20,15,10)
+k = c(30,15)
 ttops = tree_detection(las, ptrees(k))
 
 lastrees(las, ptrees(k))
@@ -66,7 +66,16 @@ Other Algorithm: \code{\link{csf}},
 
 Other Individual Tree Detection: \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{multichm}}
+
+Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+  \code{\link{hamraz2016}}, \code{\link{li2012}},
+  \code{\link{silva2016}}, \code{\link{watershed}}
+
+Other Point Cloud Based Segmentation: \code{\link{hamraz2016}},
+  \code{\link{li2012}}
 }
 \concept{Algorithm}
 \concept{Individual Tree Detection}
 \concept{Individual Tree Segmentation}
+\concept{Point Cloud Based Detection}
+\concept{Point Cloud Based Segmentation}
