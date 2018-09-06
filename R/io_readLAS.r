@@ -92,6 +92,8 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
   las <- readLAS(files@files, files@select,files@filter)
   las@proj4string <- files@proj4string
 
+  las@data[, buffer := LIDRNOBUFFER]
+
   if (files@buffer > 0)
   {
     ext     <- raster::extent(files)
@@ -102,8 +104,6 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
     xc      <- files@center$x
     yc      <- files@center$y
     r       <- (files@width - 2*files@buffer)/2
-
-    las@data[, buffer := LIDRNOBUFFER]
 
     if (files@shape == LIDRCIRCLE)
     {
