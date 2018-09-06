@@ -113,18 +113,22 @@ catalog_makecluster = function(ctg)
 
   if (get_output_files(ctg) != "")
   {
-    clusters <- lapply(clusters, function(cl)
+    clusters <- lapply(seq_along(clusters), function(i)
     {
-      #X$ID      <- i
       X         <- list()
-      X$XCENTER <- cl@center$x
-      X$XCENTER <- cl@center$y
-      X$XLEFT   <- cl@bbox[1]
-      X$XRIGHT  <- cl@bbox[3]
-      X$YBOTTOM <- cl@bbox[2]
-      X$YTOP    <- cl@bbox[4]
-      cl@save   <- glue::glue_data(X, get_output_files(ctg))
-      return(cl)
+      X$ID      <- i
+      X$XCENTER <- clusters[[i]]@center$x
+      X$XCENTER <- clusters[[i]]@center$y
+      X$XLEFT   <- clusters[[i]]@bbox[1]
+      X$XRIGHT  <- clusters[[i]]@bbox[3]
+      X$YBOTTOM <- clusters[[i]]@bbox[2]
+      X$YTOP    <- clusters[[i]]@bbox[4]
+
+      if (by_file)
+        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
+
+      clusters[[i]]@save   <- glue::glue_data(X, get_output_files(ctg))
+      return(clusters[[i]])
     })
   }
 
