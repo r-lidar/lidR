@@ -40,6 +40,12 @@ overlap if possible. This is possible if the overlapping points are flagged, for
 \section{Slots}{
 
 \describe{
+\item{\code{wall.to.wall}}{logical. The LAScatalog processing engine always guarantee to return a continuous
+output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so some option
+are forbidden such as buffer = 0 for some algorithm. But sometime a LAScatalog is made of individual
+nonwall-to-wall files such as a catalog of ground inventories. In this case setting \code{wall.to.wall}
+to false disable many controls.}
+
 \item{\code{processing_options}}{list. A list that contains some settings describing how the catalog will be
 processed (see dedicated section).}
 

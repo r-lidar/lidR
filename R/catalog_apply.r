@@ -202,13 +202,17 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 
 .catalog_apply_check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output_file, res = NULL, start = NULL)
 {
-  if (need_buffer & get_buffer(ctg) <= 0)
+  # The function expect a buffer to guarantee a stric wall-to-wall output
+  # (can be skipped if the catalog is not a wall-to-wall catalog)
+
+  if (need_buffer & get_buffer(ctg) <= 0 & ctg@wall.to.wall)
     stop("A buffer greater than 0 is requiered to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
-  # If we want to return a Raster*, to ensure a strict continuous output we need to check if the
+  # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
   # clusters are aligned with the pixels. In case of tiling_size > 0 it is easy to check before to make
   # the clusters
-  if (check_alignement & !get_by_file(ctg))
+
+  if (check_alignement & !get_by_file(ctg) & ctg@wall.to.wall)
   {
     # If the clustering option do not match with the resolution
     t_size     <- get_tiling_size(ctg)
@@ -231,6 +235,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 
   # Some functions require to write outputs in files because the output it likely to be to  big to
   # be returned in R
+
   if (need_output_file & get_output_files(ctg) == "")
     stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
@@ -239,7 +244,11 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 
 .catalog_apply_check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
 {
-  if (check_alignement & get_by_file(ctg))
+  # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
+  # clusters are aligned with the pixels. In case of tiling_size =0 (processed by file) the clusters
+  # must be check after there creation. Can be skipped if the catalog is not a wall-to-wall catalog.
+
+  if (check_alignement & get_by_file(ctg) & ctg@wall.to.wall)
   {
     for(i in 1:length(clusters))
     {

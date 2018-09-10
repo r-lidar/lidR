@@ -120,13 +120,24 @@
 #' each functions knows which data must be loaded or not. This is documented in each function.
 #' \item \strong{filter}: string. The \code{filter} option
 #' }
+#'
+#' @slot wall.to.wall logical. The LAScatalog processing engine always guarantee to return a continuous
+#' output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so some option
+#' are forbidden such as buffer = 0 for some algorithm. But sometime a LAScatalog is made of individual
+#' nonwall-to-wall files such as a catalog of ground inventories. In this case setting \code{wall.to.wall}
+#' to false disable many controls.
+#'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
 #' processed (see dedicated section).
+#'
 #' @slot clustering_options list. A list that contains some settings describing how the catalog will be
 #' sub-divided into small cluster to be processed (see dedicated section).
+#'
 #' @slot output_options list. A list that contains some settings describing how the catalog will return
 #' the outputs (see dedicated section).
+#'
 #' @slot input_options list. A list that contains parameter to pass to \link{readLAS} (see dedicated section).
+#'
 #' @seealso
 #' \link[lidR:catalog]{catalog}
 #' @import data.table
@@ -139,6 +150,7 @@ setClass(
   Class = "LAScatalog",
   contains = "SpatialPolygonsDataFrame",
   representation(
+    wall.to.wall = "logical",
     clustering_options = "list",
     processing_options = "list",
     output_options = "list",
@@ -185,6 +197,8 @@ setMethod("initialize", "LAScatalog", function(.Object)
     select = "*",
     filter = ""
   )
+
+  .Object@wall.to.wall = TRUE
 
   return(.Object)
 })
