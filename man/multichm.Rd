@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_detection.R
 \name{multichm}
 \alias{multichm}
-\title{Tree top detection based on LMF and multi-CHM}
+\title{Individual Tree Detection Algorithm}
 \usage{
 multichm(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5,
   ...)
@@ -23,13 +23,13 @@ if there is no detected tree within this 3D distance (see details).}
 to find the local maxima.}
 }
 \description{
-This function is made to be used in \link{tree_detection} not alone. It implements an algorithm
-for tree detection. Find the tree tops positions based on a method described in Eysn et al (2015)
-(see references) and propably proposed originaly by Milan Kobal (we did not find original publication).
-This is a local maximum filter applied on a multi-canopy height model (see details). The tree tops
-returned are the true highest points within a given pixel whenever the CHMs where computed with
-the 95th percentile of height. Otherwise these maxima are not true maxima and cannot be used in
-subsequent segmentation algorithms.
+This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
+detection based on a method described in Eysn et al (2015) (see references) and propably proposed
+originaly by someone else (we did not find original publication). This is a local maximum filter
+applied on a multi-canopy height model (see details).\cr\cr
+Notice: tree tops returned are the true highest points within a given pixel whenever the CHMs where
+computed with the 95th percentile of height. Otherwise these maxima are not true maxima and cannot
+be used in subsequent segmentation algorithms.
 }
 \details{
 Describtion adapted from Eysn et al (2015), page 1728, section 3.1.3 Method #3\cr\cr
@@ -66,17 +66,7 @@ A benchmark of lidar-based single tree detection methods using heterogeneous for
 Alpine Space. Forests, 6(5), 1721–1747. https://doi.org/10.3390/f6051721
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Detection: \code{\link{lmf}},
+Other individual tree detection algorithms: \code{\link{lmf}},
   \code{\link{manual}}, \code{\link{ptrees}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Detection}
+\concept{individual tree detection algorithms}

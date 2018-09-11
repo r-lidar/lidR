@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_detection.R
 \name{ptrees}
 \alias{ptrees}
-\title{Algoritm for individual tree detection or segmentation.}
+\title{Individual Tree Detection and Segmentation Algorithm}
 \usage{
 ptrees(k, hmin = 2, nmax = 7L)
 }
@@ -18,22 +18,20 @@ to strictly respect original paper.}
 cases (see details). Set to \code{+Inf} to strictly respect the original paper (not recommended)}
 }
 \description{
-This function is made to be used in \link{tree_detection} or \link{lastrees} not alone. Segmentation
-algorithm proposed  by Vega et al. (2014) (see references and section details). When used in the function
-\link{tree_detection} it runs only the fisrt part of the method i.e. the detection of the trees
-while when run in  \link{lastrees} it performs the whole segmentation including the tree segmentation
-(see details).
+This function is made to be used in \link{tree_detection} or \link{lastrees}. It implements the
+PTrees algorithm for tree detection and tree segmentation based Vega et al. (2014) (see references).
+When used in the function \link{tree_detection} it runs only the fisrt part of the method i.e. the
+detection of the trees. When used in  \link{lastrees} it performs the  whole segmentation (see details).
 }
 \details{
 This function has been written by the \code{lidR} authors from the original article. We made our
-best to implement as far as possible exactly what is written in the original paper but we
-cannot affirm that it is this exact original algorithm. Also, minor variations were introduced to
-fix some issues that were not adressed in the original paper.
+best to implement as far as possible exactly what is written in the original paper but we cannot
+states that it is the exact original algorithm. Also, minor variations were introduced to fix some
+issues that were not adressed in the original paper:
 \itemize{
 \item Addition of the parameter \code{hmin}: to reduce oversegmentation we introduced a minium height
 threshold. Point below this thresold cannot initiate new trees during the tree detection and cannot
-incrase a crown hull during the segmentation. This way the ground is not segmented but the segmentation
-of each tree is prolongated to the ground anyway.
+incrase a crown hull during the segmentation.
 \item Addition of the parameter \code{nmax}: in the original article page 103 figures 5, the number
 of possible combination is 2^n-n-1. This exponential number of combinations lead, in some cases
 to an infinite computation time. During the developpement we got cases where the number of combinations
@@ -55,27 +53,16 @@ ttops = tree_detection(las, ptrees(k))
 lastrees(las, ptrees(k))
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{pmf}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Detection: \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}}
-
-Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{li2012}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 
-Other Point Cloud Based Segmentation: \code{\link{hamraz2016}},
+Other individual tree detection algorithms: \code{\link{lmf}},
+  \code{\link{manual}}, \code{\link{multichm}}
+
+Other point-cloud based tree segmentation algorithms: \code{\link{hamraz2016}},
   \code{\link{li2012}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Detection}
-\concept{Individual Tree Segmentation}
-\concept{Point Cloud Based Detection}
-\concept{Point Cloud Based Segmentation}
+\concept{individual tree detection algorithms}
+\concept{individual tree segmentation algorithms}
+\concept{point-cloud based tree segmentation algorithms}

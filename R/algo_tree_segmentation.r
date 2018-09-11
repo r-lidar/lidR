@@ -1,28 +1,69 @@
-#' Algorithm for individual tree segmentation
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016-2018 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
+#' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using Dalponte
-#' et al. (2016) algorithm (see reference). This is a seeds + growing region algorithm. It is
-#' based on the constraints proposed by Dalponte and Coomes (see references). This algorithm exists
-#' in the package \code{itcSegment}. This version is identical to the original but with superfluous
-#' code removed and rewritten efficiently. Consequently it is hundreds to millions times faster. Note
-#' that this algorithm strictly performs a segmentation, while the original method as implemented
-#' in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
-#' these tasks are expected to be done by the user in separate functions.
+#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' segmentation based a paper published by Dalponte and Coomes (2016) algorithm (see reference).
+#' This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
+#' This version has been written from the paper in C++. Consequently it is hundreds to millions times
+#' faster to the original one. Notethat this algorithm strictly performs a segmentation, while the
+#' original method as implemented in \code{itcSegment} and described in the manuscript also performs
+#' a pre- and post-process when these tasks are expected to be done by the user in separate functions.
 #'
 #' @template param-chm-lastrees
+#'
 #' @template param-treetops
+#'
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
+#'
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
 #' It should be between 0 and 1. Default 0.45.
+#'
 #' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the current mean height of the region
 #' multiplied by this value. It should be between 0 and 1. Default 0.55.
+#'
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 #' Default 10.
+#'
 #' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 #' each tree, the name of this attribute. This way, original IDs will be preserved. If there is no
 #' such data trees will be numbered sequentially.
+#'
+#' @references
+#' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
+#' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
+#'
+#' @export
+#'
+#' @family individual tree segmentation algorithms
+#' @family raster based tree segmentation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -36,14 +77,6 @@
 #' ttops = tree_detection(chm, lmf(4, 2))
 #' lastrees(las, dalponte2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
-#'
-#' @references
-#' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
-#' airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
-#' @export
-#' @family Algorithm
-#' @family Individual Tree Segmentation
-#' @family Raster Based Segmentation
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
@@ -89,16 +122,16 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   return(f)
 }
 
-#' Algorithm for individual tree segmentation
+#' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using the algorithm
-#' proposed by Hamraz et al. (2012). See references and details.
+#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' segmentation based on paper written by Hamraz et al. (2012). See references and details.
 #'
 #' This function has been written by the \code{lidR} authors from the original article. We made our
-#' best to implement as far as possible exactly what is written in the original paper but we
-#' cannot affirm that it is this exact original algorithm.\cr\cr
-#' Also it is important to notice that we have never been able to segment a single tree properly with
-#' this method. The important sensitivity to minor deviation as well as the great number of difficultly
+#' best to implement as far as possible exactly what is written in the original paper but we cannot
+#' affirm that it is this exact original algorithm.\cr\cr
+#' Also it is important to notice that we have never been able to segment tree properly with this
+#' method. The important sensitivity to minor deviation as well as the great number of difficultly
 #' parametrizable imputs lead us to a method that we are not able to use ourselves.\cr\cr
 #' Also, minor variations were introduced to fix some issues that were not adressed in the original paper.
 #' Because the methods described in section 2.2 of the original article appear extremely sensitive to
@@ -107,22 +140,25 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' \code{2*nps} (basically radius that are close to 0) are removed and the convex hull is build considering
 #' the profiles that describe a crown radius comprise between the 10th and the 90th of the radiuses found.
 #' This enable to remove outliers and reduce dummy segmentation but anyway we were not able to segment
-#' the tree with this method.\cr\cr
+#' the tree properly with this method.\cr\cr
 #' As a conclusion this algorithm might be considered as a free and open source code provided to be
 #' improved by the community. One can check and study the sources to ensure that it correspond to the
 #' original paper and find potential improvement.\cr\cr
 #' Also the current implementation is known to be slow.
 #'
 #' @param nps numeric. Nominal point spacing (see reference page 533  section 2)
-#' @param th numeric. Minimal height. Point below this threshold are not condisered for the segmentation (see reference page 534 section 2)
+#' @param th numeric. Minimal height. Point below this threshold are not condisered for the segmentation
+#' (see reference page 534 section 2)
 #' @param MDCW numeric. Minimum detectable crown width (page 534 section 2)
 #' @param epsilon numeric. Small deviation from vertical (page 535 section 2.2.2)
 #' @param CLc numeric. Crown ratio of a narrow cone-shaped crown (page 535 equation 3)
-#' @param Oc numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand (page 535 equation 3)
+#' @param Oc numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree
+#' is situated in a dense stand (page 535 equation 3)
 #' @param CLs numeric. Crown ratio of a sphere-shaped crown (page 535 equation 4)
-#' @param Os numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped tree (page 535 equation 4)
-#' @param R numeric Maximum horizontal distance of vertical profiles (page 535 sectioh 2.1). Any value greater
-#' than a crown is good because this parameter does not affect the result. However, it greatly affects the
+#' @param Os numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped
+#' tree (page 535 equation 4)
+#' @param R numeric. Maximum horizontal distance of vertical profiles (page 535 sectioh 2.1). Any value
+#' greater than a crown is good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method.
 #' @param gap_sensitivity integer. In the original article, page 535 section 2.2.1, gaps are detected
 #' using six times the interquartile range of square root distance between consecutive points. This
@@ -131,10 +167,15 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' (see details)
 #'
 #' @export
+#'
+#' @family individual tree segmentation algorithms
+#' @family point-cloud based tree segmentation algorithms
+#'
 #' @references
 #' Hamraz, H., Contreras, M. A., & Zhang, J. (2016). A robust approach for tree segmentation in deciduous
 #' forests using small-footprint airborne LiDAR data. International Journal of Applied Earth Observation
 #' and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
+#'
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -142,12 +183,8 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' col =  pastel.colors(200)
 #'
 #' lastrees(las, hamraz2016())
-#'
 #' plot(las, color = "treeID", colorPalette = pastel.colors(200))
 #'}
-#' @family Algorithm
-#' @family Individual Tree Segmentation
-#' @family Point Cloud Based Segmentation
 hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24, filter_profiles = TRUE)
 {
   assertive::assert_is_a_number(nps)
@@ -300,42 +337,47 @@ hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc
   return(f)
 }
 
-#' Algorithm for individual tree segmentation
+#' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using the
-#' Li et al. (2012) algorithm (see reference). This method is' a growing region method working at
-#' the point cloud level. It is an implementation, as strict as possible, made by the \code{lidR}
-#' author but with the addition of a parameter \code{hmin} to stop over-segmentation for objects
-#' that are too low.
+#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
+#' method working at the point cloud level. It is an implementation, as strict as possible, made by
+#' the \code{lidR} author but with the addition of a parameter \code{hmin} to stop over-segmentation
+#' for objects that are too low.
 #'
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.
+#'
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.
+#'
 #' @param R numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2. If \code{R = 0}
 #' all the points are automatically considered as local maxima and the search step is skipped (much
 #' faster).
+#'
 #' @param hmin numeric.  Minimum height of a detected tree. Default 2.
+#'
 #' @param Zu numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
 #' used. See reference page 79 in Li et al. (2012). Default 15.
+#'
 #' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
 #' computation speed. The lower the value, the faster the method. Default is 10.
+#'
+#' @export
+#'
+#' @family individual tree segmentation algorithms
+#' @family point-cloud based tree segmentation algorithms
+#'
+#' @references
+#' Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
+#' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #' col = pastel.colors(200)
 #'
-#' # Li 2012
 #' lastrees(las, li2012(dt1 = 1.4))
 #' plot(las, color = "treeID", colorPalette = col)
-#'
-#' @references
-#' Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
-#' trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
-#' @export
-#' @family Algorithm
-#' @family Individual Tree Segmentation
-#' @family Point Cloud Based Segmentation
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
   assertive::assert_is_a_number(dt1)
@@ -371,24 +413,39 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
   return(f)
 }
 
-#' Algorithm for individual tree segmentation
+#' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using Silva et
-#' al. (2016) algorithm (see reference). This is a simple method based on seed + voronoi
-#' tesselation (equivalent to nearest neibourgh). This algorithm is implemented in the package
-#' \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a code written from
-#' scratch by the lidR author from the original paper and is considerably (between 250 and 1000 times)
-#' faster.
+#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
+#' based on seed + voronoi tesselation (equivalent to nearest neibourgh). This algorithm is implemented
+#' in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a
+#' code written from the original article by the lidR authors and that is considerably (between 250
+#' and 1000 times) faster.
 #'
 #' @template param-chm-lastrees
+#'
 #' @template param-treetops
+#'
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as a proportion of the
 #' tree height. Default is 0.6,  meaning 60\% of the tree height.
+#'
 #' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 #' multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.
+#'
 #' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 #' each tree, the name of this column. This way, original IDs will be preserved. If there is no such
 #' data trees will be numbered sequentially.
+#'
+#' @references
+#' Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
+#' J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.)
+#' Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
+#' https://doi.org/10.1080/07038992.2016.1196582.
+#'
+#' @export
+#'
+#' @family individual tree segmentation algorithms
+#' @family raster based tree segmentation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -402,16 +459,6 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' ttops = tree_detection(chm, lmf(4, 2))
 #' lastrees(las, silva2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
-#'
-#' @references
-#' Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
-#' J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.)
-#' Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
-#' https://doi.org/10.1080/07038992.2016.1196582.
-#' @export
-#' @family Algorithm
-#' @family Individual Tree Segmentation
-#' @family Raster Based Segmentation
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
   assertive::assert_is_all_of(chm, "RasterLayer")
@@ -453,29 +500,37 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   return(f)
 }
 
-#' Algorithm for individual tree segmentation
+#' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. Individual tree segmentation using watershed
-#' and marker controled watershed.\cr\cr
-#' \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install this package
-#' to run this method (see its \href{https://github.com/aoles/EBImage}{github page}). Internally the
-#' function EBImage::watershed is called.\cr\cr
-#' \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
+#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' segmentation based on a watershed or a marker controled watershed.
+#' \itemize{
+#' \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
+#' this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
+#' Internally the function EBImage::watershed is called.
+#' \item \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
 #' function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+#' }
 #'
 #' @template param-chm-lastrees
+#'
 #' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
+#'
 #' @param tol numeric. Tolerance see ?EBImage::watershed.
+#'
 #' @param ext numeric. see ?EBImage::watershed.
+#'
 #' @template param-treetops
+#'
 #' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 #' each tree, the name of this column. This way, original IDs will be preserved. If there is no such
 #' data trees will be numbered sequentially.
 #'
 #' @export
-#' @family Algorithm
-#' @family Individual Tree Segmentation
-#' @family Raster Based Segmentation
+#'
+#' @family individual tree segmentation algorithms
+#' @family raster based tree segmentation algorithms
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")

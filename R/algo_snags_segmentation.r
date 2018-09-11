@@ -26,12 +26,13 @@
 #
 # ===============================================================================
 
-#' Algorithm for snags segmentation
+#' Snags Segmentation Algorithm
 #'
-#' This is an automated filtering algorithm that utilizes three dimensional neighborhood
-#' lidar point-based intensity and density statistics to remove lidar points associated with
-#' live trees and retain lidar points associated with snags developed by Wing et al (2015)
-#' (see references).\cr\cr
+#' This function is made to be used in \link{lassnags}. It implements an algorithms for snags segmenation
+#' based on Wing et al (2015) (see references). This is an automated filtering algorithm that utilizes
+#' three dimensional neighborhood lidar point-based intensity and density statistics to remove lidar
+#' points associated with live trees and retain lidar points associated with snags.
+#'
 #' Note that this algorithm strictly performs a classification based on user input while
 #' the original publication's methods also included a segmentation step and some pre-
 #' (filtering for first and single returns only) and post-process (filtering for only the
@@ -58,12 +59,16 @@
 #' @param neigh_radii numeric. A vector of three radii used in quantifying local-area centered
 #' neighborhoods. See Wing et al. (2015) reference page 171 and Figure 4. Defaults are 1.5,
 #' 1, and 2 for the sphere, small cylinder and large cylinder neighborhoods, respectively.
+#'
 #' @param low_int_thrsh numeric. The lower intensity threshold filtering value. See Wing
 #' et al. (2015) page 171. Default is 50.
+#'
 #' @param uppr_int_thrsh numeric. The upper intensity threshold filtering value. See Wing
 #' et al. (2015) page 171. Default is 170.
+#'
 #' @param pt_den_req numeric. Point density requirement based on plot-level point density
 #' defined classes. See Wing et al. (2015) page 172. Default is 3.
+#'
 #' @param bbpr_thresholds matrix. A 3x4 matrix providing the four average BBPR (branch and bole
 #' point ratio) values for each of the three neighborhoods (sphere, small cylinder and large
 #' cylinder) to be used for conditional assessments and classification into the following four snag
@@ -105,9 +110,10 @@
 #' Wing, Brian M.; Ritchie, Martin W.; Boston, Kevin; Cohen, Warren B.; Olsen, Michael J. 2015.
 #' Individual snag detection using neighborhood attribute filtered airborne lidar data. Remote
 #' Sensing of Environment. 163: 165-179 https://doi.org/10.1016/j.rse.2015.03.013
+#'
 #' @export
-#' @family Algorithm
-#' @family Snags Segmentation
+#'
+#' @family snags segmentation algorithms
 wing2015 = function (neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
 {
   assertive::assert_is_numeric(neigh_radii)

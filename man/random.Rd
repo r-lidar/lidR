@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_points_decimation.r
 \name{random}
 \alias{random}
-\title{Algorithm for point cloud decimation}
+\title{Point Cloud Decimation Algorithm}
 \usage{
 random(density, use_pulse = FALSE)
 }
@@ -13,7 +13,8 @@ random(density, use_pulse = FALSE)
 \link{laspulse} first)}
 }
 \description{
-Randomly removes points or pulses to reach the desired density over the whole area (see
+This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+randomly removes points or pulses to reach the desired density over the whole area (see
 \code{\link[lidR:area]{area}}).
 }
 \examples{
@@ -26,17 +27,7 @@ plot(grid_density(las))
 plot(grid_density(thinned1))
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Point Cloud Decimation: \code{\link{highest}},
-  \code{\link{homogenize}}, \code{\link{lasfilterdecimate}}
+Other point cloud decimation algorithms: \code{\link{highest}},
+  \code{\link{homogenize}}
 }
-\concept{Algorithm}
-\concept{Point Cloud Decimation}
+\concept{point cloud decimation algorithms}

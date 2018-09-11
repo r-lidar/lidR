@@ -25,22 +25,33 @@
 #
 # ===============================================================================
 
-#' Algorithm for individual tree detection.
+#' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{tree_detection} not alone. This method is a local maximum
-#' filter. The windows size can be fix or variable and the windows shape can be square or circular.
-#' The internal algorithm works either with a raster or a point cloud. It is deeply inspired from Popescu
-#' & Wynne (2004) (see references).
+#' This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
+#' detection based on a local maximum filter. The windows size can be fix or variable and the windows
+#' shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
+#' It is deeply inspired from Popescu & Wynne (2004) (see references).
 #'
 #' @param ws numeric or function. Length or diameter of the moving window used to the detect the local
 #' maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
 #' If it is a function, the function determines the size of the window at any given location on the canopy.
-#' It should take the height of a given pixel or points as its only argument and return the desired size
-#' of the search window when centered on that pixel/point.
+#' The function should take the height of a given pixel or points as its only argument and return the
+#' desired size of the search window when centered on that pixel/point.
+#'
 #' @param hmin numeric. Minimum height of a tree. Threshold below which a pixel or a point
 #' cannot be a local maxima. Default 2.
+#'
 #' @param shape character. Shape of the moving windows used to find the local maxima. Can be "square"
 #' or "circular".
+#'
+#' @references
+#' Popescu, Sorin & Wynne, Randolph. (2004). Seeing the Trees in the Forest: Using Lidar and
+#' Multispectral Data Fusion with Local Filtering and Variable Window Size for Estimating Tree Height.
+#' Photogrammetric Engineering and Remote Sensing. 70. 589-604. 10.14358/PERS.70.5.589.
+#'
+#' @export
+#'
+#' @family individual tree detection algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -81,13 +92,6 @@
 #'
 #' raster::plot(chm, col = height.colors(30))
 #' sp::plot(ttops, add = TRUE)
-#' @references
-#' Popescu, Sorin & Wynne, Randolph. (2004). Seeing the Trees in the Forest: Using Lidar and
-#' Multispectral Data Fusion with Local Filtering and Variable Window Size for Estimating Tree Height.
-#' Photogrammetric Engineering and Remote Sensing. 70. 589-604. 10.14358/PERS.70.5.589.
-#' @export
-#' @family Algorithm
-#' @family Individual Tree Detection
 lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 {
   shape = match.arg(shape)
@@ -131,23 +135,21 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
   return(f)
 }
 
-#' Algoritm for individual tree detection or segmentation.
+#' Individual Tree Detection and Segmentation Algorithm
 #'
-#' This function is made to be used in \link{tree_detection} or \link{lastrees} not alone. Segmentation
-#' algorithm proposed  by Vega et al. (2014) (see references and section details). When used in the function
-#' \link{tree_detection} it runs only the fisrt part of the method i.e. the detection of the trees
-#' while when run in  \link{lastrees} it performs the whole segmentation including the tree segmentation
-#' (see details).
+#' This function is made to be used in \link{tree_detection} or \link{lastrees}. It implements the
+#' PTrees algorithm for tree detection and tree segmentation based Vega et al. (2014) (see references).
+#' When used in the function \link{tree_detection} it runs only the fisrt part of the method i.e. the
+#' detection of the trees. When used in  \link{lastrees} it performs the  whole segmentation (see details).
 #'
 #' This function has been written by the \code{lidR} authors from the original article. We made our
-#' best to implement as far as possible exactly what is written in the original paper but we
-#' cannot affirm that it is this exact original algorithm. Also, minor variations were introduced to
-#' fix some issues that were not adressed in the original paper.
+#' best to implement as far as possible exactly what is written in the original paper but we cannot
+#' states that it is the exact original algorithm. Also, minor variations were introduced to fix some
+#' issues that were not adressed in the original paper:
 #' \itemize{
 #' \item Addition of the parameter \code{hmin}: to reduce oversegmentation we introduced a minium height
 #' threshold. Point below this thresold cannot initiate new trees during the tree detection and cannot
-#' incrase a crown hull during the segmentation. This way the ground is not segmented but the segmentation
-#' of each tree is prolongated to the ground anyway.
+#' incrase a crown hull during the segmentation.
 #' \item Addition of the parameter \code{nmax}: in the original article page 103 figures 5, the number
 #' of possible combination is 2^n-n-1. This exponential number of combinations lead, in some cases
 #' to an infinite computation time. During the developpement we got cases where the number of combinations
@@ -161,11 +163,20 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #'
 #' @param k integer vector. A serie of k-nearest neighbors to use. In this original paper a k refers
 #' to a 'scale' of analyse (see reference).
+#'
 #' @param hmin scalar. This is an addition from the original paper to limit oversegmentation.
 #' Point below this threshold cannot initiate new trees or increase a hull (see details). Set to \code{-Inf}
 #' to strictly respect original paper.
+#'
 #' @param nmax integer. This is an addition from the original paper to protect against uncomputable
 #' cases (see details). Set to \code{+Inf} to strictly respect the original paper (not recommended)
+#'
+#'
+#' @export
+#'
+#' @family individual tree segmentation algorithms
+#' @family individual tree detection algorithms
+#' @family point-cloud based tree segmentation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -175,12 +186,6 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = tree_detection(las, ptrees(k))
 #'
 #' lastrees(las, ptrees(k))
-#' @export
-#' @family Algorithm
-#' @family Individual Tree Detection
-#' @family Individual Tree Segmentation
-#' @family Point Cloud Based Detection
-#' @family Point Cloud Based Segmentation
 ptrees = function(k, hmin = 2, nmax = 7L)
 {
   assertive::assert_is_numeric(k)
@@ -222,18 +227,22 @@ ptrees = function(k, hmin = 2, nmax = 7L)
   return(f)
 }
 
-#' Tree top detection based on manual selection
+#' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{tree_detection} not alone. It implements an algorithm
-#' for tree detection. Find the tree top positions manually and interactively using the mouse. This
-#' is only suitable for small to medium size plots. First the point cloud is displayed, then the user
-#' is invited to select a rectangular region of interest in the scene using the right button of the mouse.
-#' Within the selected points the highest will be flaged as 'tree top' in the scene. Once all the tree
+#' This function is made to be used in \link{tree_detection}. It implements an algorithm for manual
+#' tree detection. User can point the tree top positions manually and interactively using the mouse.
+#' This is only suitable for small size plots. First the point cloud is displayed, then the user is
+#' invited to select a rectangular region of interest in the scene using the right button of the mouse.
+#' Within the selected points the highest one will be flaged as 'tree top' in the scene. Once all the tree
 #' are labelled the user can exit the tools by selecting an empty region. Points can also be unflagged.
+#' The goal of this tool is mainly for minor correction of automatically detected tree outputs.
 #'
 #' @param detected \code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
 #' containing X,Y,Z coordinates of already found tree tops that need manual corrections.
+#'
 #' @param ... supplementary parameters to be pass to \link{plot}.
+#'
+#' @family individual tree detection algorithms
 #'
 #' @export
 #' @examples
@@ -248,8 +257,6 @@ ptrees = function(k, hmin = 2, nmax = 7L)
 #' ttops = tree_detection(las, lmf(5))
 #' ttops = tree_detection(las, manual(ttops))
 #' }
-#' @family Algorithm
-#' @family Individual Tree Detection
 manual = function(detected = NULL, ...)
 {
   f = function(las)
@@ -324,15 +331,15 @@ manual = function(detected = NULL, ...)
 }
 
 
-#' Tree top detection based on LMF and multi-CHM
+#' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{tree_detection} not alone. It implements an algorithm
-#' for tree detection. Find the tree tops positions based on a method described in Eysn et al (2015)
-#' (see references) and propably proposed originaly by Milan Kobal (we did not find original publication).
-#' This is a local maximum filter applied on a multi-canopy height model (see details). The tree tops
-#' returned are the true highest points within a given pixel whenever the CHMs where computed with
-#' the 95th percentile of height. Otherwise these maxima are not true maxima and cannot be used in
-#' subsequent segmentation algorithms.
+#' This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
+#' detection based on a method described in Eysn et al (2015) (see references) and propably proposed
+#' originaly by someone else (we did not find original publication). This is a local maximum filter
+#' applied on a multi-canopy height model (see details).\cr\cr
+#' Notice: tree tops returned are the true highest points within a given pixel whenever the CHMs where
+#' computed with the 95th percentile of height. Otherwise these maxima are not true maxima and cannot
+#' be used in subsequent segmentation algorithms.
 #'
 #' Describtion adapted from Eysn et al (2015), page 1728, section 3.1.3 Method #3\cr\cr
 #' The method is based on iterative canopy height model generation (CHM) and local maximum filter (LMF)
@@ -352,16 +359,28 @@ manual = function(detected = NULL, ...)
 #' }
 
 #' @param res numeric. Resolution of the CHM based on the 95th percentile
+#'
 #' @param layer_thickness numeric. The “eliminating” layer is defined as a band of \code{layer_thickness} m
 #' below the current CHM (see details).
+#'
 #' @param dist_2d numeric. 2D distance threshold. A local maximum is considered a detected tree
 #' if there is no detected tree within this 2D distance (see details).
+#'
 #' @param dist_3d numeric. 3D distance threshold. A local maximum is considered a detected tree
 #' if there is no detected tree within this 3D distance (see details).
+#'
 #' @param ... supplementary parameters to be pass to \link{lmf} that is used internally
 #' to find the local maxima.
 #'
 #' @export
+#'
+#' @references
+#' Eysn, L., Hollaus, M., Lindberg, E., Berger, F., Monnet, J. M., Dalponte, M., … Pfeifer, N. (2015).
+#' A benchmark of lidar-based single tree detection methods using heterogeneous forest data from the
+#' Alpine Space. Forests, 6(5), 1721–1747. https://doi.org/10.3390/f6051721
+#'
+#' @family individual tree detection algorithms
+#'
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -372,13 +391,6 @@ manual = function(detected = NULL, ...)
 #' plot(las)
 #' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #' }
-#' @references
-#' Eysn, L., Hollaus, M., Lindberg, E., Berger, F., Monnet, J. M., Dalponte, M., … Pfeifer, N. (2015).
-#' A benchmark of lidar-based single tree detection methods using heterogeneous forest data from the
-#' Alpine Space. Forests, 6(5), 1721–1747. https://doi.org/10.3390/f6051721
-#' @family Algorithm
-#' @family Individual Tree Detection
-
 multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
 {
   assertive::assert_is_a_number(res)
@@ -407,7 +419,6 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ..
 
     p = list(...)
     hmin = if(is.null(p$hmin)) formals(lmf)$hmin else p$hmin
-
 
     while(!is.empty(las_copy))
     {

@@ -3,7 +3,7 @@
 \name{watershed}
 \alias{watershed}
 \alias{mcwatershed}
-\title{Algorithm for individual tree segmentation}
+\title{Individual Tree Segmentation Algorithm}
 \usage{
 watershed(chm, th_tree = 2, tol = 1, ext = 1)
 
@@ -27,13 +27,15 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. Individual tree segmentation using watershed
-and marker controled watershed.\cr\cr
-\strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install this package
-to run this method (see its \href{https://github.com/aoles/EBImage}{github page}). Internally the
-function EBImage::watershed is called.\cr\cr
-\strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
+This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+segmentation based on a watershed or a marker controled watershed.
+\itemize{
+\item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
+this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
+Internally the function EBImage::watershed is called.
+\item \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
 function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+}
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -51,22 +53,12 @@ plot(las, color = "treeID", colorPalette = col)
 rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{random}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{wing2015}}
-
-Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{li2012}},
   \code{\link{ptrees}}, \code{\link{silva2016}}
 
-Other Raster Based Segmentation: \code{\link{dalponte2016}},
+Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{silva2016}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Segmentation}
-\concept{Raster Based Segmentation}
+\concept{individual tree segmentation algorithms}
+\concept{raster based tree segmentation algorithms}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_segmentation.r
 \name{hamraz2016}
 \alias{hamraz2016}
-\title{Algorithm for individual tree segmentation}
+\title{Individual Tree Segmentation Algorithm}
 \usage{
 hamraz2016(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
   CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L,
@@ -11,7 +11,8 @@ hamraz2016(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
 \arguments{
 \item{nps}{numeric. Nominal point spacing (see reference page 533  section 2)}
 
-\item{th}{numeric. Minimal height. Point below this threshold are not condisered for the segmentation (see reference page 534 section 2)}
+\item{th}{numeric. Minimal height. Point below this threshold are not condisered for the segmentation
+(see reference page 534 section 2)}
 
 \item{MDCW}{numeric. Minimum detectable crown width (page 534 section 2)}
 
@@ -19,33 +20,35 @@ hamraz2016(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5,
 
 \item{CLc}{numeric. Crown ratio of a narrow cone-shaped crown (page 535 equation 3)}
 
-\item{Oc}{numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree is situated in a dense stand (page 535 equation 3)}
+\item{Oc}{numeric. Crown radius reduction due to the overlap assuming the narrow cone-shaped tree
+is situated in a dense stand (page 535 equation 3)}
 
 \item{CLs}{numeric. Crown ratio of a sphere-shaped crown (page 535 equation 4)}
 
-\item{Os}{numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped tree (page 535 equation 4)}
+\item{Os}{numeric. Crown radius reduction due to the overlap within a dense stand for the sphere-shaped
+tree (page 535 equation 4)}
 
 \item{gap_sensitivity}{integer. In the original article, page 535 section 2.2.1, gaps are detected
 using six times the interquartile range of square root distance between consecutive points. This
 paramter control this value. Default is 6.}
 
-\item{R}{numeric Maximum horizontal distance of vertical profiles (page 535 sectioh 2.1). Any value greater
-than a crown is good because this parameter does not affect the result. However, it greatly affects the
+\item{R}{numeric. Maximum horizontal distance of vertical profiles (page 535 sectioh 2.1). Any value
+greater than a crown is good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method.}
 
 \item{filter_profiles}{logical. This is an addition to the original method to filter dummy profiles
 (see details)}
 }
 \description{
-This functions is made to be used in \link{lastrees}. Individual tree segmentation using the algorithm
-proposed by Hamraz et al. (2012). See references and details.
+This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+segmentation based on paper written by Hamraz et al. (2012). See references and details.
 }
 \details{
 This function has been written by the \code{lidR} authors from the original article. We made our
-best to implement as far as possible exactly what is written in the original paper but we
-cannot affirm that it is this exact original algorithm.\cr\cr
-Also it is important to notice that we have never been able to segment a single tree properly with
-this method. The important sensitivity to minor deviation as well as the great number of difficultly
+best to implement as far as possible exactly what is written in the original paper but we cannot
+affirm that it is this exact original algorithm.\cr\cr
+Also it is important to notice that we have never been able to segment tree properly with this
+method. The important sensitivity to minor deviation as well as the great number of difficultly
 parametrizable imputs lead us to a method that we are not able to use ourselves.\cr\cr
 Also, minor variations were introduced to fix some issues that were not adressed in the original paper.
 Because the methods described in section 2.2 of the original article appear extremely sensitive to
@@ -54,7 +57,7 @@ the convex hull. When \code{filter_profiles = TRUE}, profiles that discribe a cr
 \code{2*nps} (basically radius that are close to 0) are removed and the convex hull is build considering
 the profiles that describe a crown radius comprise between the 10th and the 90th of the radiuses found.
 This enable to remove outliers and reduce dummy segmentation but anyway we were not able to segment
-the tree with this method.\cr\cr
+the tree properly with this method.\cr\cr
 As a conclusion this algorithm might be considered as a free and open source code provided to be
 improved by the community. One can check and study the sources to ensure that it correspond to the
 original paper and find potential improvement.\cr\cr
@@ -67,7 +70,6 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col =  pastel.colors(200)
 
 lastrees(las, hamraz2016())
-
 plot(las, color = "treeID", colorPalette = pastel.colors(200))
 }
 }
@@ -77,22 +79,12 @@ forests using small-footprint airborne LiDAR data. International Journal of Appl
 and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{highest}},
-  \code{\link{homogenize}}, \code{\link{li2012}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{li2012}}, \code{\link{ptrees}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 
-Other Point Cloud Based Segmentation: \code{\link{li2012}},
+Other point-cloud based tree segmentation algorithms: \code{\link{li2012}},
   \code{\link{ptrees}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Segmentation}
-\concept{Point Cloud Based Segmentation}
+\concept{individual tree segmentation algorithms}
+\concept{point-cloud based tree segmentation algorithms}

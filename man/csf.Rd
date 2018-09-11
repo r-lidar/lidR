@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_ground_segmentation.r
 \name{csf}
 \alias{csf}
-\title{Cloth Simulation Filter}
+\title{Ground Segmentation Algorithm}
 \usage{
 csf(sloop_smooth = FALSE, class_threshold = 0.5,
   cloth_resolution = 0.5, rigidness = 1L, iterations = 500L,
@@ -29,9 +29,16 @@ is 0.65. Usually, do not change this value. It is suitable for most cases.}
 }
 \description{
 This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
-of ground points. This method is the a strict implementation of the CSF algorithm made by Zhang
-et al. (2016) (see references) that relies on the orginal source code written by the original
-author and exposed to R via the the \code{RCSF} package.
+of ground points base on a Cloth Simulation Filter. This method is the a strict implementation of
+the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the orginal source
+code written by the original author and exposed to R via the the \code{RCSF} package.
+}
+\examples{
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile, select = "xyzrn")
+
+lasground(las, csf())
+plot(las, color = "Classification")
 }
 \references{
 W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Use Airborne LiDAR Data
@@ -39,17 +46,6 @@ Filtering Method Based on Cloth Simulation,” Remote Sens., vol. 8, no. 6, p. 5
 (http://www.mdpi.com/2072-4292/8/6/501/htm)
 }
 \seealso{
-Other Algorithm: \code{\link{dalponte2016}},
-  \code{\link{hamraz2016}}, \code{\link{highest}},
-  \code{\link{homogenize}}, \code{\link{li2012}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Ground Segmentation: \code{\link{lasground}},
-  \code{\link{pmf}}
+Other ground segmentation algorithms: \code{\link{pmf}}
 }
-\concept{Algorithm}
-\concept{Ground Segmentation}
+\concept{ground segmentation algorithms}

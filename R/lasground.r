@@ -8,7 +8,7 @@
 #
 # Copyright 2016-2018 Jean-Romain Roussel
 #
-# This file is part of lidRExtra R package.
+# This file is part of lidR R package.
 #
 # lidR is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,8 +50,9 @@
 #' If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
 #'
 #' @export
-#' @family Ground Segmentation
+#'
 #' @importFrom data.table :=
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #'

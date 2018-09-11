@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_points_decimation.r
 \name{homogenize}
 \alias{homogenize}
-\title{Algorithm for point cloud decimation}
+\title{Point Cloud Decimation Algorithm}
 \usage{
 homogenize(density, res = 5, use_pulse = FALSE)
 }
@@ -15,13 +15,14 @@ homogenize(density, res = 5, use_pulse = FALSE)
 \link{laspulse} first)}
 }
 \description{
-Creates a grid with a given resolution and filters the point cloud by selecting randomly
-some point in each cell. It is designed to produce point cloud that have uniform densities throughout
+This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+creates a grid with a given resolution and filters the point cloud by selecting randomly
+some point in each cell. It is designed to produce point clouds that have uniform densities throughout
 the coverage area. For each cell, the proportion of points or pulses that will be retained is computed
 using the actual local density and the desired density. If the desired density is greater than the actual
 density it returns an unchanged set of points (it cannot increase the density). The cell size must be
 large enough to compute a coherent local density. For example in a 2 points/m^2 point cloud, 25 square
-meters would be feasible; however 1 square meter cells would not be  feasible because density does
+meters would be feasible; however 1 square meter cells would not be feasible because density does
 not have meaning at this scale.
 }
 \examples{
@@ -33,17 +34,7 @@ thinned = lasfilterdecimate(las, homogenize(1,5))
 plot(grid_density(thinned))
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{li2012}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Point Cloud Decimation: \code{\link{highest}},
-  \code{\link{lasfilterdecimate}}, \code{\link{random}}
+Other point cloud decimation algorithms: \code{\link{highest}},
+  \code{\link{random}}
 }
-\concept{Algorithm}
-\concept{Point Cloud Decimation}
+\concept{point cloud decimation algorithms}

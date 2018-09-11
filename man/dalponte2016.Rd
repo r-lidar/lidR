@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_segmentation.r
 \name{dalponte2016}
 \alias{dalponte2016}
-\title{Algorithm for individual tree segmentation}
+\title{Individual Tree Segmentation Algorithm}
 \usage{
 dalponte2016(chm, treetops, th_tree = 2, th_seed = 0.45,
   th_cr = 0.55, max_cr = 10, ID = "treeID")
@@ -32,14 +32,13 @@ each tree, the name of this attribute. This way, original IDs will be preserved.
 such data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. Individual tree segmentation using Dalponte
-et al. (2016) algorithm (see reference). This is a seeds + growing region algorithm. It is
-based on the constraints proposed by Dalponte and Coomes (see references). This algorithm exists
-in the package \code{itcSegment}. This version is identical to the original but with superfluous
-code removed and rewritten efficiently. Consequently it is hundreds to millions times faster. Note
-that this algorithm strictly performs a segmentation, while the original method as implemented
-in \code{itcSegment} and described in the manuscript also performs a pre- and post-process when
-these tasks are expected to be done by the user in separate functions.
+This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+segmentation based a paper published by Dalponte and Coomes (2016) algorithm (see reference).
+This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
+This version has been written from the paper in C++. Consequently it is hundreds to millions times
+faster to the original one. Notethat this algorithm strictly performs a segmentation, while the
+original method as implemented in \code{itcSegment} and described in the manuscript also performs
+a pre- and post-process when these tasks are expected to be done by the user in separate functions.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -53,29 +52,18 @@ chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 ttops = tree_detection(chm, lmf(4, 2))
 lastrees(las, dalponte2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
-
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{hamraz2016}}, \code{\link{highest}},
-  \code{\link{homogenize}}, \code{\link{li2012}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Segmentation: \code{\link{hamraz2016}},
+Other individual tree segmentation algorithms: \code{\link{hamraz2016}},
   \code{\link{li2012}}, \code{\link{ptrees}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 
-Other Raster Based Segmentation: \code{\link{silva2016}},
+Other raster based tree segmentation algorithms: \code{\link{silva2016}},
   \code{\link{watershed}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Segmentation}
-\concept{Raster Based Segmentation}
+\concept{individual tree segmentation algorithms}
+\concept{raster based tree segmentation algorithms}

@@ -85,8 +85,3 @@ las = readLAS(LASfile, select = "xyzrn")
 
 lasground(las, csf())
 }
-\seealso{
-Other Ground Segmentation: \code{\link{csf}},
-  \code{\link{pmf}}
-}
-\concept{Ground Segmentation}

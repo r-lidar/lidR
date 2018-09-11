@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_points_decimation.r
 \name{highest}
 \alias{highest}
-\title{Algorithm for point cloud decimation}
+\title{Point Cloud Decimation Algorithm}
 \usage{
 highest(res = 1)
 }
@@ -10,29 +10,20 @@ highest(res = 1)
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 }
 \description{
-This routine creates a grid with a given resolution and filters the point cloud by selecting the
-highest point within each cell.
+This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+creates a grid with a given resolution and filters the point cloud by selecting the highest point
+within each cell.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
 # Select the highest point within each cell of an overlayed grid
-thinned = lasfilterdecimate(las, highest(5))
+thinned = lasfilterdecimate(las, highest(4))
 plot(thinned)
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{homogenize}}, \code{\link{li2012}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Point Cloud Decimation: \code{\link{homogenize}},
-  \code{\link{lasfilterdecimate}}, \code{\link{random}}
+Other point cloud decimation algorithms: \code{\link{homogenize}},
+  \code{\link{random}}
 }
-\concept{Algorithm}
-\concept{Point Cloud Decimation}
+\concept{point cloud decimation algorithms}

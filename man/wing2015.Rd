@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_snags_segmentation.r
 \name{wing2015}
 \alias{wing2015}
-\title{Algorithm for snags segmentation}
+\title{Snags Segmentation Algorithm}
 \usage{
 wing2015(neigh_radii = c(1.5, 1, 2), low_int_thrsh = 50,
   uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
@@ -29,10 +29,12 @@ cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be pro
 the user.}
 }
 \description{
-This is an automated filtering algorithm that utilizes three dimensional neighborhood
-lidar point-based intensity and density statistics to remove lidar points associated with
-live trees and retain lidar points associated with snags developed by Wing et al (2015)
-(see references).\cr\cr
+This function is made to be used in \link{lassnags}. It implements an algorithms for snags segmenation
+based on Wing et al (2015) (see references). This is an automated filtering algorithm that utilizes
+three dimensional neighborhood lidar point-based intensity and density statistics to remove lidar
+points associated with live trees and retain lidar points associated with snags.
+}
+\details{
 Note that this algorithm strictly performs a classification based on user input while
 the original publication's methods also included a segmentation step and some pre-
 (filtering for first and single returns only) and post-process (filtering for only the
@@ -89,20 +91,7 @@ Wing, Brian M.; Ritchie, Martin W.; Boston, Kevin; Cohen, Warren B.; Olsen, Mich
 Individual snag detection using neighborhood attribute filtered airborne lidar data. Remote
 Sensing of Environment. 163: 165-179 https://doi.org/10.1016/j.rse.2015.03.013
 }
-\seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{random}}, \code{\link{silva2016}},
-  \code{\link{tin}}, \code{\link{watershed}}
-
-Other Snags Segmentation: \code{\link{lassnags}}
-}
 \author{
 Implementation by Andrew Sánchez Meador, optimisations by Jean-Romain Roussel
 }
-\concept{Algorithm}
-\concept{Snags Segmentation}
+\concept{snags segmentation algorithms}

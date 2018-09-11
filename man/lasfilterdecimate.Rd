@@ -72,8 +72,4 @@ plot(grid_density(thinned2))
 thinned3 = lasfilterdecimate(las, highest(5))
 plot(thinned3)
 }
-\seealso{
-Other Point Cloud Decimation: \code{\link{highest}},
-  \code{\link{homogenize}}, \code{\link{random}}
-}
 \concept{Point Cloud Decimation}

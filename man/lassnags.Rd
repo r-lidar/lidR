@@ -63,7 +63,4 @@ and cannot be changed.
 }
 }
 
-\seealso{
-Other Snags Segmentation: \code{\link{wing2015}}
-}
 \concept{Snags Segmentation}

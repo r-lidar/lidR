@@ -25,38 +25,35 @@
 #
 # ===============================================================================
 
-#' Canopy Surface Model algorithms
+#' Digital Surface Model Algorithm
 #'
-#' \describe{
-#' \item{p2r}{points-to-raster based method: for each pixel of the ouput raster the function attribute
-#' the height of the highest point found.}
-#' \item{dsmtin}{triangulation based method: Delaunay triangulation of first returns with a linear
-#' interpolation within each triangle.}
-#' \item{pitfree}{the pit-free algorithm developed by Khosravipour et al. (2014), which is based on
-#' the computation of a set of classical triangulations at different heights (see references).}
-#' }
-#' \cr The \code{subcircle} tweak replaces each point with 8 points around the original one. This allows
-#' for virtual 'emulation' of the fact that a lidar point is not a point as such, but more
-#' realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
-#' smoother and contains fewer 'pits' and empty pixels.
+#' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
+#' surface model computation based on a points-to-raster method: for each pixel of the output raster
+#' the function attributes the height of the highest point found. The \code{subcircle} tweak replaces
+#' each point with 8 points around the original one. This allows for virtual 'emulation' of the fact
+#' that a lidar point is not a point as such, but more realistically a disc. This tweak densifies the
+#' point cloud and the resulting canopy model is smoother and contains fewer 'pits' and empty pixels.
 #'
 #' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 #' can replace each return with a circle composed of 8 points (see details).
-#' @param thresholds numeric. Set of height thresholds accoring to Khosravipour et al. (2014) algorithm
-#' description (see references)
-#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-#' If a triangle has an edge greater than this value it will be removed. It is used to drive
-#' the pit-free algorithm and to trim dummy interpolation on non-convex areas.
-#' The first number is the value for the classical triangulation (threshold = 0), the second number
-#' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
-#' is done (see examples).
 #'
-#' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
-#' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
-#' Remote Sensing, 80(9), 863-872.
-#'
-#' @rdname DigitalSurfaceModel
 #' @export
+#'
+#' @family digital surface model algorithms
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#' col <- height.colors(50)
+#'
+#' # Points-to-raster algorithm with a resolution of 1 meters
+#' chm <- grid_canopy(las, res = 1, p2r())
+#' plot(chm, col = col)
+#'
+#' # Points-to-raster algorithm with a resolution of 0.5 meter replacing each
+#' # point by a 20 cm radius circle of 8 points
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
+#' plot(chm, col = col)
 p2r = function(subcircle = 0)
 {
   assertive::assert_is_a_number(subcircle)
@@ -81,14 +78,109 @@ p2r = function(subcircle = 0)
   return(f)
 }
 
-#' @rdname DigitalSurfaceModel
+#' Digital Surface Model Algorithm
+#'
+#' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
+#' surface model computation using a Delaunay triangulation of first returns with a linear interpolation
+#' within each triangle.
+#'
+#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
+#' If a triangle has an edge greater than this value it will be removed to trim dummy interpolation
+#' on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).
+#'
 #' @export
+#'
+#' @family digital surface model algorithms
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#' col <- height.colors(50)
+#'
+#' # Basic triangulation and rasterization of first returns
+#' chm <- grid_canopy(las, res = 1, dsmtin())
+#' plot(chm, col = col)
+#'
+#' \dontrun{
+#' # Potentially complex concave subset of point cloud
+#' x = c(481340, 481340, 481280, 481300, 481280, 481340)
+#' y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
+#' las2 = lasclipPolygon(las,x,y)
+#' plot(las2)
+#'
+#' # The TIN interpolation being done within the convex hull of the point cloud there
+#' # are lot of dummy pixels that are strictly correct regarding the interpolation method
+#' used but meaningless in our CHM
+#' chm <- grid_canopy(las2, res = 0.5, dsmtin())
+#' plot(chm, col = col)
+#'
+#' # Use 'max_edge' to trim dummy triangles
+#' chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
+#' plot(chm, col = col)
+#' }
 dsmtin = function(max_edge = 0)
 {
   return(pitfree(0, c(max_edge, 0), 0))
 }
 
-#' @rdname DigitalSurfaceModel
+#' Digital Surface Model Algorithm
+#'
+#' This function is made to be used in \link{grid_canopy}. It implements the pit-free algorithm
+#' developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
+#' triangulations at different heights (see references). The \code{subcircle} tweak replaces each
+#' point with 8 points around the original one. This allows for virtual 'emulation' of the fact that
+#' a lidar point is not a point as such, but more realistically a disc. This tweak densifies the point
+#' cloud and the resulting canopy model is smoother and contains fewer 'pits' and empty pixels.
+#'
+#' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
+#' can replace each return with a circle composed of 8 points (see details).
+#'
+#' @param thresholds numeric. Set of height thresholds accoring to Khosravipour et al. (2014) algorithm
+#' description (see references)
+#'
+#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
+#' If a triangle has an edge greater than this value it will be removed. The first number is the value
+#' for the classical triangulation (threshold = 0, see also \link{dsmtin}), the second number
+#' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
+#' is done (see examples).
+#'
+#' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
+#' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
+#' Remote Sensing, 80(9), 863-872.
+#'
+#' @export
+#'
+#' @family digital surface model algorithms
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#' col <- height.colors(50)
+#'
+#' # Basic triangulation and rasterization of first returns
+#' chm <- grid_canopy(las, res = 0.5, dsmtin())
+#' plot(chm, col = col)
+#'
+#' # Khosravipour et al. pitfree algorithm
+#' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+#' plot(chm, col = col)
+#'
+#' \dontrun{
+#' # Potentially complex concave subset of point cloud
+#' x = c(481340, 481340, 481280, 481300, 481280, 481340)
+#' y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
+#' las2 = lasclipPolygon(las,x,y)
+#' plot(las2)
+#'
+#' # The TIN interpolation being done within the convex hull of the point cloud there are lot of
+#' # dummy pixels that are strictly correct regarding the interpolation method used but meaningless
+#' # in our CHM
+#' chm <- grid_canopy(las2, res = 0.5, pitfree())
+#' plot(chm, col = col)
+#'
+#' chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
+#' plot(chm, col = col)
+#' }
 #' @export
 pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {

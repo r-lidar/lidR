@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_ground_segmentation.r
 \name{pmf}
 \alias{pmf}
-\title{Progressive Morphological Filter}
+\title{Ground Segmentation Algorithm}
 \usage{
 pmf(ws, th)
 }
@@ -16,13 +16,23 @@ considered a ground return. The values must be positive and in the same units as
 }
 \description{
 This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
-of ground points. This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-Note that this is not a strict implementation of Zhang et al. This algorithm works at the point
-cloud level without any rasterization process. The morphological operator is applied on the point
-cloud, not on a raster. Also, Zhang et al. proposed some formulas (eq. 4, 5 and 7) to compute the
-sequence of windows sizes and thresholds. Here, these parameters are free and specified by the user.
-The function \link{util_makeZhangParam} enables computation of the parameters according to the
-original paper.
+of ground points based on a progressive morphological filter. This method is an implementation of
+the Zhang et al. (2003) algorithm (see reference). Note that this is not a strict implementation
+of Zhang et al. This algorithm works at the point cloud level without any rasterization process.
+The morphological operator is applied on the point'cloud, not on a raster. Also, Zhang et al.
+proposed some formulas (eq. 4, 5 and 7) to compute the sequence of windows sizes and thresholds.
+Here, these parameters are free and specified by the user. The function \link{util_makeZhangParam}
+enables computation of the parameters according to the original paper.
+}
+\examples{
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile, select = "xyzrn")
+
+ws = seq(3,12, 3)
+th = seq(0.1, 1.5, length.out = length(ws))
+
+lasground(las, pmf(ws, th))
+plot(las, color = "Classification")
 }
 \references{
 Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
@@ -30,17 +40,6 @@ morphological filter for removing nonground measurements from airborne LIDAR dat
 Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Ground Segmentation: \code{\link{csf}},
-  \code{\link{lasground}}
+Other ground segmentation algorithms: \code{\link{csf}}
 }
-\concept{Algorithm}
-\concept{Ground Segmentation}
+\concept{ground segmentation algorithms}

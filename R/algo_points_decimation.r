@@ -27,14 +27,20 @@
 
 
 
-#' Algorithm for point cloud decimation
+#' Point Cloud Decimation Algorithm
 #'
-#' Randomly removes points or pulses to reach the desired density over the whole area (see
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+#' randomly removes points or pulses to reach the desired density over the whole area (see
 #' \code{\link[lidR:area]{area}}).
 #'
 #' @param density numeric. The desired output density.
+#'
 #' @param use_pulse logical. Decimate by removing random pulses instead of random points (requieres to run
 #' \link{laspulse} first)
+#'
+#' @export
+#'
+#' @family point cloud decimation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -44,9 +50,6 @@
 #' thinned1 = lasfilterdecimate(las, random(1))
 #' plot(grid_density(las))
 #' plot(grid_density(thinned1))
-#' @export
-#' @family Algorithm
-#' @family Point Cloud Decimation
 random = function(density, use_pulse = FALSE)
 {
   assertive::assert_is_a_number(density)
@@ -76,21 +79,28 @@ random = function(density, use_pulse = FALSE)
   return(f)
 }
 
-#' Algorithm for point cloud decimation
+#' Point Cloud Decimation Algorithm
 #'
-#' Creates a grid with a given resolution and filters the point cloud by selecting randomly
-#' some point in each cell. It is designed to produce point cloud that have uniform densities throughout
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+#' creates a grid with a given resolution and filters the point cloud by selecting randomly
+#' some point in each cell. It is designed to produce point clouds that have uniform densities throughout
 #' the coverage area. For each cell, the proportion of points or pulses that will be retained is computed
 #' using the actual local density and the desired density. If the desired density is greater than the actual
 #' density it returns an unchanged set of points (it cannot increase the density). The cell size must be
 #' large enough to compute a coherent local density. For example in a 2 points/m^2 point cloud, 25 square
-#' meters would be feasible; however 1 square meter cells would not be  feasible because density does
+#' meters would be feasible; however 1 square meter cells would not be feasible because density does
 #' not have meaning at this scale.
 #'
 #' @param density numeric. The desired output density.
+#'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
+#'
 #' @param use_pulse logical. Decimate by removing random pulses instead of random points (requieres to run
 #' \link{laspulse} first)
+#'
+#' @export
+#'
+#' @family point cloud decimation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -99,9 +109,6 @@ random = function(density, use_pulse = FALSE)
 #' # Select point randomly to reach an homogeneous density of 1
 #' thinned = lasfilterdecimate(las, homogenize(1,5))
 #' plot(grid_density(thinned))
-#' @export
-#' @family Algorithm
-#' @family Point Cloud Decimation
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
   assertive::assert_is_a_number(density)
@@ -136,27 +143,32 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
   return(f)
 }
 
-#' Algorithm for point cloud decimation
+#' Point Cloud Decimation Algorithm
 #'
-#' This routine creates a grid with a given resolution and filters the point cloud by selecting the
-#' highest point within each cell.
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+#' creates a grid with a given resolution and filters the point cloud by selecting the highest point
+#' within each cell.
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
+#'
+#' @export
+#'
+#' @family point cloud decimation algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz")
 #'
 #' # Select the highest point within each cell of an overlayed grid
-#' thinned = lasfilterdecimate(las, highest(5))
+#' thinned = lasfilterdecimate(las, highest(4))
 #' plot(thinned)
-#' @export
-#' @family Algorithm
-#' @family Point Cloud Decimation
 highest = function(res = 1)
 {
   f = function(las)
   {
+    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
+    stopif_wrong_context(context, c("lasfilterdecimate"), "highest")
+
     Z   <- NULL
     by  <- group_grid(las@data$X, las@data$Y, res)
     return(las@data[, .I[which.max(Z)], by = by]$V1)

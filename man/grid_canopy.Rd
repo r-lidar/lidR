@@ -39,25 +39,4 @@ plot(chm, col = col)
 # Khosravipour et al. pitfree algorithm
 chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 plot(chm, col = col)
-
-\dontrun{
-# Potentially complex concave subset of point cloud
-x = c(481340, 481340, 481280, 481300, 481280, 481340)
-y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
-las2 = lasclipPolygon(las,x,y)
-plot(las2)
-
-# The TIN interpolation being done within the convex hull of the point cloud there are lot of
-# dummy pixels that are strictly correct regarding the interpolation method used but meaningless
-# in our CHM
-chm <- grid_canopy(las2, res = 0.5, dsmtin())
-plot(chm, col = col)
-
-# Use 'max_edge' to trim dummy triangles
-chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
-plot(chm, col = col)
-
-chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
-plot(chm, col = col)
-}
 }

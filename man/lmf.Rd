@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_detection.R
 \name{lmf}
 \alias{lmf}
-\title{Algorithm for individual tree detection.}
+\title{Individual Tree Detection Algorithm}
 \usage{
 lmf(ws, hmin = 2, shape = c("circular", "square"))
 }
@@ -10,8 +10,8 @@ lmf(ws, hmin = 2, shape = c("circular", "square"))
 \item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
 maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
 If it is a function, the function determines the size of the window at any given location on the canopy.
-It should take the height of a given pixel or points as its only argument and return the desired size
-of the search window when centered on that pixel/point.}
+The function should take the height of a given pixel or points as its only argument and return the
+desired size of the search window when centered on that pixel/point.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default 2.}
@@ -20,10 +20,10 @@ cannot be a local maxima. Default 2.}
 or "circular".}
 }
 \description{
-This function is made to be used in \link{tree_detection} not alone. This method is a local maximum
-filter. The windows size can be fix or variable and the windows shape can be square or circular.
-The internal algorithm works either with a raster or a point cloud. It is deeply inspired from Popescu
-& Wynne (2004) (see references).
+This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
+detection based on a local maximum filter. The windows size can be fix or variable and the windows
+shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
+It is deeply inspired from Popescu & Wynne (2004) (see references).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -71,17 +71,7 @@ Multispectral Data Fusion with Local Filtering and Variable Window Size for Esti
 Photogrammetric Engineering and Remote Sensing. 70. 589-604. 10.14358/PERS.70.5.589.
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Detection: \code{\link{manual}},
+Other individual tree detection algorithms: \code{\link{manual}},
   \code{\link{multichm}}, \code{\link{ptrees}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Detection}
+\concept{individual tree detection algorithms}

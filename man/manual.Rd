@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_detection.R
 \name{manual}
 \alias{manual}
-\title{Tree top detection based on manual selection}
+\title{Individual Tree Detection Algorithm}
 \usage{
 manual(detected = NULL, ...)
 }
@@ -13,12 +13,13 @@ containing X,Y,Z coordinates of already found tree tops that need manual correct
 \item{...}{supplementary parameters to be pass to \link{plot}.}
 }
 \description{
-This function is made to be used in \link{tree_detection} not alone. It implements an algorithm
-for tree detection. Find the tree top positions manually and interactively using the mouse. This
-is only suitable for small to medium size plots. First the point cloud is displayed, then the user
-is invited to select a rectangular region of interest in the scene using the right button of the mouse.
-Within the selected points the highest will be flaged as 'tree top' in the scene. Once all the tree
+This function is made to be used in \link{tree_detection}. It implements an algorithm for manual
+tree detection. User can point the tree top positions manually and interactively using the mouse.
+This is only suitable for small size plots. First the point cloud is displayed, then the user is
+invited to select a rectangular region of interest in the scene using the right button of the mouse.
+Within the selected points the highest one will be flaged as 'tree top' in the scene. Once all the tree
 are labelled the user can exit the tools by selecting an empty region. Points can also be unflagged.
+The goal of this tool is mainly for minor correction of automatically detected tree outputs.
 }
 \examples{
 \dontrun{
@@ -34,17 +35,7 @@ ttops = tree_detection(las, manual(ttops))
 }
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Detection: \code{\link{lmf}},
+Other individual tree detection algorithms: \code{\link{lmf}},
   \code{\link{multichm}}, \code{\link{ptrees}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Detection}
+\concept{individual tree detection algorithms}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_segmentation.r
 \name{silva2016}
 \alias{silva2016}
-\title{Algorithm for individual tree segmentation}
+\title{Individual Tree Segmentation Algorithm}
 \usage{
 silva2016(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
   ID = "treeID")
@@ -25,12 +25,12 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. Individual tree segmentation using Silva et
-al. (2016) algorithm (see reference). This is a simple method based on seed + voronoi
-tesselation (equivalent to nearest neibourgh). This algorithm is implemented in the package
-\code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a code written from
-scratch by the lidR author from the original paper and is considerably (between 250 and 1000 times)
-faster.
+This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
+based on seed + voronoi tesselation (equivalent to nearest neibourgh). This algorithm is implemented
+in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a
+code written from the original article by the lidR authors and that is considerably (between 250
+and 1000 times) faster.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -44,7 +44,6 @@ chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
 ttops = tree_detection(chm, lmf(4, 2))
 lastrees(las, silva2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
-
 }
 \references{
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
@@ -53,22 +52,12 @@ Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 4
 https://doi.org/10.1080/07038992.2016.1196582.
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{li2012}}, \code{\link{lmf}},
-  \code{\link{manual}}, \code{\link{multichm}},
-  \code{\link{pmf}}, \code{\link{ptrees}},
-  \code{\link{random}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{li2012}},
   \code{\link{ptrees}}, \code{\link{watershed}}
 
-Other Raster Based Segmentation: \code{\link{dalponte2016}},
+Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{watershed}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Segmentation}
-\concept{Raster Based Segmentation}
+\concept{individual tree segmentation algorithms}
+\concept{raster based tree segmentation algorithms}

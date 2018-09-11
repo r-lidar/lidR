@@ -2,7 +2,7 @@
 % Please edit documentation in R/algo_tree_segmentation.r
 \name{li2012}
 \alias{li2012}
-\title{Algorithm for individual tree segmentation}
+\title{Individual Tree Segmentation Algorithm}
 \usage{
 li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2,
   speed_up = 10)
@@ -26,43 +26,31 @@ good because this parameter does not affect the result. However, it greatly affe
 computation speed. The lower the value, the faster the method. Default is 10.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. Individual tree segmentation using the
-Li et al. (2012) algorithm (see reference). This method is' a growing region method working at
-the point cloud level. It is an implementation, as strict as possible, made by the \code{lidR}
-author but with the addition of a parameter \code{hmin} to stop over-segmentation for objects
-that are too low.
+This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
+method working at the point cloud level. It is an implementation, as strict as possible, made by
+the \code{lidR} author but with the addition of a parameter \code{hmin} to stop over-segmentation
+for objects that are too low.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col = pastel.colors(200)
 
-# Li 2012
 lastrees(las, li2012(dt1 = 1.4))
 plot(las, color = "treeID", colorPalette = col)
-
 }
 \references{
 Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual
 trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 }
 \seealso{
-Other Algorithm: \code{\link{csf}},
-  \code{\link{dalponte2016}}, \code{\link{hamraz2016}},
-  \code{\link{highest}}, \code{\link{homogenize}},
-  \code{\link{lmf}}, \code{\link{manual}},
-  \code{\link{multichm}}, \code{\link{pmf}},
-  \code{\link{ptrees}}, \code{\link{random}},
-  \code{\link{silva2016}}, \code{\link{tin}},
-  \code{\link{watershed}}, \code{\link{wing2015}}
-
-Other Individual Tree Segmentation: \code{\link{dalponte2016}},
+Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{hamraz2016}}, \code{\link{ptrees}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 
-Other Point Cloud Based Segmentation: \code{\link{hamraz2016}},
+Other point-cloud based tree segmentation algorithms: \code{\link{hamraz2016}},
   \code{\link{ptrees}}
 }
-\concept{Algorithm}
-\concept{Individual Tree Segmentation}
-\concept{Point Cloud Based Segmentation}
+\concept{individual tree segmentation algorithms}
+\concept{point-cloud based tree segmentation algorithms}
