@@ -30,15 +30,17 @@
 #'
 #' Reduce the number of points using several possible algorithms.
 #'
-#' @template section-supported-option-lasfilter
+#' @template param-las
+#' @param algorithm function. An algorithm of point decimation. \code{lidR} have: \link{random},
+#' \link{homogenize} and \link{highest}.
 #'
 #' @template LAScatalog
 #'
-#' @template param-las
-#' @param algorithm function. An algorithm of point decimation. \code{lidR} have three of them:
-#' \link{random}, \link{homogenize} and \link{highest}.
+#' @template section-supported-option-lasfilter
 #'
 #' @template return-lasfilter-las-lascatalog
+#'
+#' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -56,8 +58,6 @@
 #' # Select the highest point within each pixel of an overlayed grid
 #' thinned3 = lasfilterdecimate(las, highest(5))
 #' plot(thinned3)
-#' @export
-#' @family Point Cloud Decimation
 lasfilterdecimate = function(las, algorithm)
 {
   UseMethod("lasfilterdecimate", las)

@@ -9,33 +9,37 @@ grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. resolution of the \code{RasterLayer}. Default 1.}
+\item{res}{numeric. Resolution of the \code{RasterLayer}. Default 1.}
 
-\item{algorithm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}.
-See also \link{lasnormalize} for a more extensive description of this parameter.}
+\item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
+\code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).}
 
 \item{keep_lowest}{logical. This option forces the original lowest ground point of each
 cell (if it exists) to be chosen instead of the interpolated values.}
 }
 \value{
-A \code{RasterLayer} containing the metric for each cell.
+A \code{RasterLayer} containing a numeric value in each cell.
 }
 \description{
-Interpolates ground points and creates a rasterized digital terrain model. The algorithm uses the
-points classified as "ground" to compute the interpolation.\cr
+Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
+the points classified as "ground" (Classification = 2 according to
+\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
+to compute the interpolation.\cr
 Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
-effects
+effects.
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -46,12 +50,12 @@ Supported processing options for a \code{LAScatalog} in \code{grid_*} functions 
 more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
-internally to ensure a strict wall-to-wall continuous output even when tiling size equal to 0 (processing
+internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
 by file).
-\item buffer: This function guarantee a stric wall-to-wall continuous output. The \code{buffer} option
+\item buffer: This function guarantee a stric continuous wall-to-wall output. The \code{buffer} option
 is no considered.
 \item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
-internally to ensure a strict wall-to-wall continuous output.
+internally to ensure a strict continuous wall-to-wall output.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.

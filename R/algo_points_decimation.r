@@ -72,7 +72,12 @@ random = function(density, use_pulse = FALSE)
     if (use_pulse)
       return(.selected_pulses(las@data$pulseID, n))
     else
-      return(sample(1:nrow(las@data), n))
+    {
+      if (nrow(las@data) > n)
+        return(sample(1:nrow(las@data), n))
+      else
+        return(1:nrow(las@data))
+    }
   }
 
   class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")

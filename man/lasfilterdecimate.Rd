@@ -9,8 +9,8 @@ lasfilterdecimate(las, algorithm)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{function. An algorithm of point decimation. \code{lidR} have three of them:
-\link{random}, \link{homogenize} and \link{highest}.}
+\item{algorithm}{function. An algorithm of point decimation. \code{lidR} have: \link{random},
+\link{homogenize} and \link{highest}.}
 }
 \value{
 If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a
@@ -19,6 +19,21 @@ If the input is a \code{LAS} object, returns a \code{LAS} object. If the input i
 \description{
 Reduce the number of points using several possible algorithms.
 }
+\section{Working with a \code{LAScatalog}}{
+
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
+}
+
 \section{Supported processing options}{
 
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
@@ -28,7 +43,7 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item buffer: This function guarantee a stric wall-to-wall continous output. The \code{buffer} option
 is no considered.
 \item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used.
+\item \strong{cores}: How many cores are used. More cores means more data loaded at once.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
@@ -41,18 +56,6 @@ in R and needs to be written in las/laz files. Supported templates are \code{XLE
 and cannot be changed.
 \item \strong{filter}: Read only points of interest.
 }
-}
-
-\section{Working with a \code{LAScatalog}}{
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
-\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
-but this is not mandatory.
 }
 
 \examples{
@@ -72,4 +75,3 @@ plot(grid_density(thinned2))
 thinned3 = lasfilterdecimate(las, highest(5))
 plot(thinned3)
 }
-\concept{Point Cloud Decimation}

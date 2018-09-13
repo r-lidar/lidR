@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -41,15 +41,17 @@
 #' in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
 #' the point cloud was normalized with the package lidR).
 #'
+#' @template param-las
+#'
+#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
+#' \link{kriging}, \link{knnidw}.
+#'
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
 #'
-#' @template param-las
-#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}
-#'
-#' @return If the input is a \code{LAS} object the function returns NULL. The LAS object is updated
+#' @return If the input is a \code{LAS} object the function returns nothing. The LAS object is updated
 #' by reference. Z is now the normalized elevation, A new column 'Zref' records the former elevation
 #' values which enable to use \code{lasunormalize} to restore original point elevations.\cr
 #' If the input is a \code{LAScatalog} object, a new \code{LAScatalog}.
@@ -205,8 +207,9 @@ lasunnormalize = function(las)
 }
 
 #' @param e1 a LAS object
-#' @param e2 a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}
+#' @param e2 \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
+#' \link{kriging}, \link{knnidw}.
 #' @export
 #' @rdname lasnormalize
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)

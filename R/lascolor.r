@@ -35,7 +35,10 @@
 #' @param nbits the number of bits used to store the R G and B attributes. Default is 16 bits i.e.
 #' each channel ranged between 0 and 65535 as defined in LAS specifications. But sometime this rule
 #' is not respected. You can force the default behavior. A 8 bit color ranged between 0 and 255.
-#' @return Return nothing. The original object is modified in place by reference.
+#'
+#' @return Nothing. The original LAS object is updated by reference (using side effect) to avoid any
+#' copy in memory of the point cloud.
+#'
 #' @export
 lascolor = function(las, nbits = 16)
 {
@@ -47,7 +50,7 @@ lascolor = function(las, nbits = 16)
   maxcol = 2^nbits-1
 
   if(!all(c("R", "G", "B") %in% names(las@data)))
-    warning("No 'RGB' attributes found. 'color' cannot be computed from this file.", call. = FALSE)
+    stop("No 'RGB' attributes found. 'color' cannot be computed from this file.", call. = FALSE)
 
   las@data[, color := grDevices::rgb(R/maxcol, G/maxcol, B/maxcol)]
 

@@ -4,10 +4,10 @@
 \alias{lasfilter}
 \title{Return points with matching conditions}
 \usage{
-lasfilter(.las, ...)
+lasfilter(las, ...)
 }
 \arguments{
-\item{.las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
+\item{las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
 
 \item{\dots}{Logical predicates. Multiple conditions are combined with & or ,}
 }

@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -26,7 +26,6 @@
 # ===============================================================================
 
 
-
 #' Area Based Approach
 #'
 #' Computes a series of user-defined descriptive statistics for a LiDAR dataset within
@@ -36,6 +35,15 @@
 #' (10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
 #' res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
 #' the corner of a cell on (-10, -10).
+#'
+#' @template param-las
+#'
+#' @param func expression. The function to be applied to each cell (see section "Parameter func")
+#'
+#' @param res numeric. The size of the cells. Default 20.
+#'
+#' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+#' grid aligns on (0,0).
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -64,16 +72,11 @@
 #'
 #' @template section-supported-option-grid_functions
 #'
-#' @template param-las
-#' @param func the function to be applied to each cell (see section "Parameter func")
-#' @param res numeric. The size of the cells. Default 20.
-#' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
-#' grid aligns on (0,0).
-#'
 #' @template return-grid-LayerBrick
 #'
-#' @examples
+#' @export
 #'
+#' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' colors = height.colors(50)
@@ -104,7 +107,6 @@
 #' plot(metrics, "zwimean", col = colors)
 #' plot(metrics, "zimean", col = colors)
 #' plot(metrics, "zsqmean", col = colors)
-#' @export
 grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
   assertive::assert_is_a_number(res)
@@ -120,6 +122,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   . <- X <- Y <- NULL
 
   call = substitute(func)
+
   if (call == "func") call = func
   if (is.name(call)) call = parse(text = eval(call))
 

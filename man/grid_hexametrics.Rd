@@ -13,7 +13,7 @@ grid_hexametrics(las, func, res = 20)
 
 \item{res}{numeric. To be consistent with \link{grid_metrics} the square of \code{res} give the area
 of the hexagonal cells like in \code{grid_metrics}. The difference being the fact that for square pixels this
-is obvious. So \code{res = 20} give 400 square meters cells.}
+is obvious. Here \code{res = 20} gives 400 square meters hexagonal cells.}
 }
 \value{
 An \link[hexbin:hexbin-class]{hexbin} object from package \code{hexbin} or a \code{list} of
@@ -23,7 +23,7 @@ An \link[hexbin:hexbin-class]{hexbin} object from package \code{hexbin} or a \co
 Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
 This function is identical to \link{grid_metrics} but with hexagonal cells instead of classical
 square pixels. After all we make circular plot inventories and we map models on pixel-based maps.
-\code{grid_hexametrics} provide the opportunity to test somthing else. Please refer to \link{grid_metrics}
+\code{grid_hexametrics} provide the opportunity to test somthing else. Refer to \link{grid_metrics}
 for more information.
 }
 \examples{

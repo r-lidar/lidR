@@ -1,1 +1,1 @@
-#' @return A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.
+#' @return A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell.

@@ -14,7 +14,8 @@ each channel ranged between 0 and 65535 as defined in LAS specifications. But so
 is not respected. You can force the default behavior. A 8 bit color ranged between 0 and 255.}
 }
 \value{
-Return nothing. The original object is modified in place by reference.
+Nothing. The original LAS object is updated by reference (using side effect) to avoid any
+copy in memory of the point cloud.
 }
 \description{
 Compute the hexadecimal name of a color from RGB attributes. A column 'color' is added in \code{LAS}

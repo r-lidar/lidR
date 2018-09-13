@@ -11,24 +11,24 @@
 \alias{lasfiltersingle}
 \title{Predefined filters}
 \usage{
-lasfilterfirst(.las)
+lasfilterfirst(las)
 
-lasfilterfirstlast(.las)
+lasfilterfirstlast(las)
 
-lasfilterfirstofmany(.las)
+lasfilterfirstofmany(las)
 
-lasfilterground(.las)
+lasfilterground(las)
 
-lasfilterlast(.las)
+lasfilterlast(las)
 
-lasfilternth(.las, n)
+lasfilternth(las, n)
 
-lasfiltersingle(.las)
+lasfiltersingle(las)
 
-lasfilterfirstofmany(.las)
+lasfilterfirstofmany(las)
 }
 \arguments{
-\item{.las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
+\item{las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
 
 \item{n}{the position in the return sequence}
 }
@@ -42,7 +42,7 @@ Select only some returns
 \itemize{
 \item{\code{lasfilterfirst} Select only the first returns.}
 \item{\code{lasfilterfirstlast} Select only the first and last returns.}
-\item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification v1.3.}
+\item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification.}
 \item{\code{lasfilterlast} Select only the last returns i.e. the last returns and the single returns.}
 \item{\code{lasfilternth} Select the returns from their position in the return sequence.}
 \item{\code{lasfilterfirstofmany} Select only the first returns from pulses which returned multiple points.}

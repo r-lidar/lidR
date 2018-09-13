@@ -25,18 +25,18 @@
 #
 # ===============================================================================
 
-#' An S4 class to represent the header read in a .las or .laz file
+#' An S4 class to represent the header of .las or .laz file
 #'
+#' An S4 class to represent the header of .las or .laz file according to the
+#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
 #' A \code{LASheader} object contains a \code{list} in the slot \code{@PHB} with
 #' the data read from the Public Header Block and \code{list} in the slot \code{@VLR} with
 #' the data read from the Variable Lenght Records
+#'
 #' @slot PHB list. Represents the Public Header Block
+#'
 #' @slot VLR list. Represents the Variable Length Records
-#' @seealso
-#' \link[lidR:LAS]{LAS}
-#' \link[lidR:readLAS]{readLAS}
-#' @name LASheader-class
-#' @rdname LASheader-class
+#'
 #' @exportClass LASheader
 setClass(
   Class = "LASheader",

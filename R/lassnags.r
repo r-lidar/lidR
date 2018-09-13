@@ -35,26 +35,23 @@
 #' thresholds and specified neighborhoods to differentiate bole and branch from foliage points
 #' (see details).
 #'
+#' @template param-las
+#' @param algorithm function. An algorithm for snag segmentation. \code{lidR} have \link{wing2015}.
+#' @param attribute character. The original LAS object is automatically updated by the function. A new
+#' column is added. This parameter is the name of this new column.
+#'
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
 #'
-#' @template param-las
-#' @param algorithm function.  An algorithm for snag segmentation. At present, lidR have only
-#' \link{wing2015}.
-#' @param attribute character. The original LAS object is automatically updated by the function. A new
-#' column is added. This parameter is the name of this new column.
-#'
 #' @template return-lasupdater-las-lascatalog
 #'
 #' @export
-#' @family Snags Segmentation
 lassnags = function (las, algorithm, attribute = "snagCls")
 {
   UseMethod("lassnags", las)
 }
 
-#' @export
 #' @export
 lassnags.LAS = function (las, algorithm, attribute = "snagCls")
 {

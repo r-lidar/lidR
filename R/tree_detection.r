@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2017 Jean-Romain Roussel
+# Copyright 2017-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,16 +27,20 @@
 
 #' Individual tree detection
 #'
-#' Individual Tree detection function that find the position of the trees before the segmentation process. Several
-#' methods may be used.
+#' Individual tree detection function that find the position of the trees using several possible
+#' algorithms.
 #'
 #' @param las An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
-#' canopy height model. depending on the algorithm used (see respective documentation)
-#' @param algorithm An algorithm for individual tree detection. lidR have four of them: \link{lmf}, \link{ptrees},
+#' canopy height model depending on the algorithm used (see respective documentation)
+#'
+#' @param algorithm An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
 #' \link{multichm} and \link{manual}.
 #'
-#' @return A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID for an individual
+#' @template section-supported-option-tree_detection
+#'
+#' @return A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID with an individual
 #' ID for each tree.
+#'
 #' @export
 #'
 #' @examples

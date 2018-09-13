@@ -15,7 +15,3 @@ An object of class \code{LASheader}
 \description{
 Create a \code{LASheader} object
 }
-\seealso{
-\link[lidR:LASheader]{Class LASheader}
-\link[lidR:LAS]{Class LAS}
-}

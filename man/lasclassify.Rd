@@ -2,7 +2,7 @@
 % Please edit documentation in R/lasclassify.r
 \name{lasclassify}
 \alias{lasclassify}
-\title{Classify LiDAR points from source data}
+\title{Classify points from a source of spatial data}
 \usage{
 lasclassify(las, source, field = NULL)
 }
@@ -12,32 +12,23 @@ lasclassify(las, source, field = NULL)
 \item{source}{An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}}
 
 \item{field}{characters. The name of a field in the table of attributes of the shapefile or
-the name of the new column in the LAS object (see details)}
+the name of a new column in the LAS object.}
 }
 \value{
-Nothing. The new field is added by reference to the original data.
+Nothing. The original LAS object is updated by reference (using side effect) to avoid any
+copy in memory of the point cloud.
 }
 \description{
-Classify LAS points based on geographic data from external sources. It adds an attribute
-to each point based on a value found in the external data. External sources can be an ESRI
-Shapefile (SpatialPolygonsDataFrame) or a Raster (RasterLayer).
-}
-\details{
-The function recognizes several type of sources:
+Classify points based on spatial data from external sources. It adds an attribute
+along each point based on a value found in the spatial data. External sources can be a
+\code{SpatialPolygonsDataFrame}) or a \code{RasterLayer}.\cr
 \itemize{
-\item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
-multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
-given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
-of the shapefile it assigns to the points the values of that field. Otherwise it classifies
-the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
-allows filtering of lakes, for example.
+\item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
+the parameter \code{field} is the name of a an attribute in the table of attributes of the shapefile
+it assigns to the points the values of that field. Otherwise it classifies the points as boolean.
+TRUE if the points are in a polygon, FALSE otherwise.}
+\item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
 }
-\item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
-Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
-is used internally to normalize the lidar dataset and is exported because some users may find it useful
-(for example to colorize the point cloud using a georeferenced RGB image.}
-}
-More examples available on \href{https://github.com/Jean-Romain/lidR/wiki/lasclassify}{lidR wiki}.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -55,8 +46,4 @@ plot(forest)
 # The field "LAKENAME_1" exists in the shapefile.
 # Points are classified with the values of the polygons
 lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
-}
-\seealso{
-\code{\link[rgdal:readOGR]{readOGR} }
-\code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
 }

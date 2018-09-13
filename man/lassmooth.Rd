@@ -22,7 +22,7 @@ lasunsmooth(las)
 \item{sigma}{numeric. The standard deviation of the gaussian if the method is gaussian}
 }
 \value{
-Nothing (NULL). The original object has been updated in place. The 'Z' column is now the
+Nothing. The original object has been updated in place without copy. The 'Z' column is now the
 smoothed 'Z'. A new column 'Zraw' is added in the original object to store the original values.
 }
 \description{
@@ -34,7 +34,7 @@ restore the point cloud with \code{lasunsmooth}.
 \details{
 This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
 smoothing. It is not really useful by itself but may be interesting in combination with filters such
-as \link{lasfiltersurfacepoints}, for example.
+as \link{lasfiltersurfacepoints}, for example to develop algorithms.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

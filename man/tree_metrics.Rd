@@ -36,12 +36,15 @@ are defined without the need to consider each segmented tree i.e. only the point
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -58,9 +61,9 @@ always removed once processed and will never be returned neither in R nor in fil
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
-\item \strong{output_files*}: Supported templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM},
-\code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if tiling size equal to 0 (processing by file),
-\code{ORIGINALFILENAME}.
+\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}

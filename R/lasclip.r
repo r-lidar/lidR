@@ -30,9 +30,21 @@
 #'
 #' Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
 #' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
-#' in memory and then can clip it to get a subset  within a region of interest (ROI). With a \code{LAScatalog}
+#' in memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
 #' object, the user can extracts any arbitrary ROI for a set of \code{las/laz} file loading only the
 #' points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
+#'
+#' @template param-las
+#' @param geometry a geometric object. Many types are supported, see section 'supported geometries'.
+#' @param xleft numeric. left x coordinates of rectangles.
+#' @param ybottom	numeric. bottom y coordinates of rectangles.
+#' @param xright numeric. right x coordinates of rectangles.
+#' @param ytop numeric. top y coordinates of rectangles.
+#' @param xpoly numeric. x coordinates of a polygon.
+#' @param ypoly numeric. y coordinates of a polygon.
+#' @param xcenter numeric. x coordinates of discs centers.
+#' @param ycenter numeric. y coordinates of discs centers.
+#' @param radius numeric. disc radiuses.
 #'
 #' @section Supported geometries:
 #' \itemize{
@@ -55,24 +67,33 @@
 #'
 #' @template LAScatalog
 #'
-#' @template section-supported-option-lasclip
+#' @section Supported processing options:
+#' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \itemize{
+#' \item tiling_size: Does not make sense here.
+#' \item buffer: Not supported yet.
+#' \item alignment: Does not makes sense here.
+#' \item \strong{cores}: How many cores are used.
+#' \item \strong{progress}: Displays a progression estimation.
+#' \item \strong{stop_early}: Leave it as it unless you are an advanced user.
+#' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
+#' They will be written immediatly in files. See \link{LAScatalog-class} and examples. The allowed templates in
+#' \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+#' {YCENTER}} or any names from the table of attributes of a \code{SpatialPolygons*} objects given as
+#' input such as \code{{LAKENAME}} or \code{{YEAR}} for example if these attributes exist. If empty everything
+#' is returned into R.
+#' \item \strong{laz_compression}: write \code{las} or \code{laz} files
+#' \item \strong{drivers}: Leave it as it unless you are an advanced user.
+#' \item select: The function will write file equivalent to the original ones. This option is not respected.
+#' \item \strong{filter}: Read only points of interest.
+#' }
 #'
-#' @template param-las
-#' @param geometry a geometric object. Many types are supported, see section 'supported geometries'.
-#' @param xleft numeric. left x coordinates of rectangles.
-#' @param ybottom	numeric. bottom y coordinates of rectangles.
-#' @param xright numeric. right x coordinates of rectangles.
-#' @param ytop numeric. top y coordinates of rectangles.
-#' @param xpoly numeric. x coordinates of a polygon.
-#' @param ypoly numeric. y coordinates of a polygon.
-#' @param xcenter numeric. x coordinates of discs centers.
-#' @param ycenter numeric. y coordinates of discs centers.
-#' @param radius numeric. disc radiuses.
+#' @return If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+#' several regions of interest\cr
+#' If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+#' several regions of interest or a \code{LAScatalog} if the query is immediatly written into file without loading anything in R.
 #'
-#' @return An object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-#' several regions of interest or \code{NULL} if the query is outside the dataset or within a region that does
-#' not contains any point or a \code{LAScatalog} if the query is immediatly written into file without
-#' loading anything in R..
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #'
@@ -91,7 +112,7 @@
 #'
 #' # Extract the polygons, write them in files name after the lake names, do not load anything in R
 #' set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
-#' lasclip(ctg, lakes)
+#' new_ctg = lasclip(ctg, lakes)
 #'
 #' \dontrun{
 #' plot(subset1)

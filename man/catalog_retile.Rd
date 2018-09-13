@@ -2,7 +2,7 @@
 % Please edit documentation in R/catalog_retile.r
 \name{catalog_retile}
 \alias{catalog_retile}
-\title{Retile a catalog}
+\title{Retile a LAScatalog}
 \usage{
 catalog_retile(ctg)
 }
@@ -14,29 +14,28 @@ A new \code{LAScatalog} object
 }
 \description{
 Splits or merges files to reshape the original catalog files (.las or .laz) into smaller or larger
-files. It also enables the addition or removal of a buffer around the tiles. The new files are written
-in a dedicated folder. The function first displays the layout of the new tiling pattern and then asks
-the user to validate the command.
-}
-\details{
-Internally the function reads and writes the clusters defined by the internal processing options of a
-\link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and
+files. It also enables the addition or removal of a buffer around the tiles. The function first
+displays the layout of the new tiling pattern and then asks the user to validate the command.\cr
+Internally the function reads and writes the clusters defined by the internal processing options
+of a \link[lidR:LAScatalog-class]{LAScatalog} processing engine. Thus the function is flexible and
 enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
 allowed), or optionally to compress the data by retiling without changing the pattern but by changing
 the format (las/laz).\cr\cr
-
 Note that this function is not actually very useful since \code{lidR} manages everything
-(clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
-for working in other software for example, but not in \code{lidR}.
+(clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
+useful for working in other softwares for example, but not in \code{lidR}.
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -46,19 +45,18 @@ but this is not mandatory.
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{tiling_size}: How many data are loaded at once.
-\item \strong{buffer}: Load clusters with a buffer
-\item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used. .
+\item \strong{tiling_size}: Size of the new tiles.
+\item \strong{buffer}: Load new tiles with a buffer. Usually 0 is the expected value.
+\item \strong{alignment}: Alignment of the new tiles.
+\item \strong{cores}: How many cores are used. \code{catalog_retile} streams the data (nothing is
+loaded at th R level). The maximum number of core can be safely used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
-\item \strong{output_files}: The user-function outputs will be written in files instead of being
-returned into R
-\item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
-return a \code{LAS} object.
+\item \strong{output_files*}: Mandatory. The new tiles will be written in files new files.
+\item \strong{laz_compression}: save \code{las} or \code{laz} files.
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
-\item \strong{select}: Select only the data of interest to save processing memory.
-\item \strong{filter}: Read only points of interest.
+\item select: \code{catalog_retile} preserve the file format anyway.
+\item \strong{filter}: Retile and save only points of interest.
 }
 }
 
@@ -84,16 +82,13 @@ set_tiling_size(ctg) <- 0
 set_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
 newctg = catalog_retile(ctg)
 
-# Being flexible this function can also compress a catalog but this is
-# not really useful since laszip from LAStools is a free and open source
-# program.
+# Create a new set of compressed .laz file equivalent to the original one keeping only
+# first returns above 2 m
 
 set_buffer(ctg) <- 0
 set_tiling_size(ctg) <- 0
 set_laz_compression(ctg) <- TRUE
+set_filter(ctg) <- "-keep_first -drop_z_below 2"
 newctg = catalog_retile(ctg)
 }
-}
-\seealso{
-\link{catalog}
 }

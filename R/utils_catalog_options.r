@@ -28,14 +28,19 @@
 
 # ========= Clustering Options ===============
 
-#' Get or set \link[lidR:LAScatalog-class]{LAScatalog} processing engine options
+#' Get or set LAScatalog processing engine options
 #'
 #' The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
 #' The options are used by all the functions that take a \code{LAScatalog} as input.
 #'
 #' @param ctg An object of class \link[lidR:LAScatalog-class]{LAScatalog}
 #' @param value An appropriated value depending on the expected input.
+#'
 #' @return Functions \code{get_*} return the value of the associated options
+#'
+#' @name catalog_options_tools
+NULL
+
 #' @rdname catalog_options_tools
 #' @export
 get_buffer = function(ctg)

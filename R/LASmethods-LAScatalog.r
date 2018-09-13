@@ -25,23 +25,27 @@
 #
 # ===============================================================================
 
-#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog}
+#' Create an object of class LAScatalog
 #'
 #' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filename.
 #' A LAScatalog is a representation of a set of las/laz files. A computer cannot load all the data at
 #' once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most function from
 #' \code{lidR} can seamlessly be used with a LAScatalog using the internal \code{LAScatalog} processing
 #' engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
-#' processing options using the appropriated functions. The careful reading of the
-#' \link[lidR:LAScatalog-class]{LAScatalog class documentation} is requiered to use the \code{LAScatalog}
-#' class correclty.
+#' processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. The careful
+#' reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is requiered to use the
+#' \code{LAScatalog} class correclty.
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
 #' file paths.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
+#'
 #' @return A \code{LAScatalog} object
+#'
 #' @include LASmethods-generic.r
+#'
 #' @export
+#'
 #' @examples
 #' # A single file LAScatalog using data provided with the package
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -60,10 +64,10 @@
 #' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
 #' set_alignement(ctg) <- c(250, 300)
 #'
-#' # Internal engine will not display any progress estimation
+#' # Internal engine will not display a progress estimation
 #' set_progress(ctg) <- FALSE
 #'
-#' # Internal engine will not return result into R. Instead it will write results in files
+#' # Internal engine will not return results into R. Instead it will write results in files.
 #' set_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
 #'
 #' # More details in the documentation

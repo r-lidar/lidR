@@ -31,9 +31,11 @@
 #'
 #' Return points with matching conditions.
 #'
-#' @param .las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param las An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @param \dots Logical predicates. Multiple conditions are combined with & or ,
+#'
 #' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -48,19 +50,19 @@
 #' first_or_ground = lasfilter(lidar, Classification == 1 | ReturnNumber == 1)
 #' @export
 #' @family lasfilters
-lasfilter = function(.las, ...)
+lasfilter = function(las, ...)
 {
-  stopifnotlas(.las)
-  lasfilter_(.las, lazyeval::dots_capture(...))
+  stopifnotlas(las)
+  lasfilter_(las, lazyeval::dots_capture(...))
 }
 
-lasfilter_ <- function(.las, conditions)
+lasfilter_ <- function(las, conditions)
 {
-  combined_bools = !logical(nrow(.las@data))
+  combined_bools = !logical(nrow(las@data))
 
   for(condition in conditions)
   {
-    bools <- lazyeval::f_eval(condition, .las@data)
+    bools <- lazyeval::f_eval(condition, las@data)
 
     if (!is.logical(bools))
       stop("`conditions` must be logical.", call. = FALSE)
@@ -69,7 +71,7 @@ lasfilter_ <- function(.las, conditions)
     combined_bools = combined_bools & bools
   }
 
-  return(LAS(.las@data[combined_bools], .las@header, .las@proj4string))
+  return(LAS(las@data[combined_bools], las@header, las@proj4string))
 }
 
 #' Predefined filters
@@ -79,15 +81,17 @@ lasfilter_ <- function(.las, conditions)
 #' \itemize{
 #' \item{\code{lasfilterfirst} Select only the first returns.}
 #' \item{\code{lasfilterfirstlast} Select only the first and last returns.}
-#' \item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification v1.3.}
+#' \item{\code{lasfilterground} Select only the returns classified as ground according to LAS specification.}
 #' \item{\code{lasfilterlast} Select only the last returns i.e. the last returns and the single returns.}
 #' \item{\code{lasfilternth} Select the returns from their position in the return sequence.}
 #' \item{\code{lasfilterfirstofmany} Select only the first returns from pulses which returned multiple points.}
 #' \item{\code{lasfiltersingle} Select only the returns which return only one point.}
 #' }
-#' @param .las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param las An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @param n the position in the return sequence
+#'
 #' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -101,72 +105,72 @@ NULL
 #' @export lasfilterfirst
 #' @family lasfilters
 #' @rdname lasfilters
-lasfilterfirst = function(.las)
+lasfilterfirst = function(las)
 {
-  return(lasfilternth(.las, 1))
+  return(lasfilternth(las, 1))
 }
 
 #' @export lasfilterfirstlast
 #' @family lasfilters
 #' @rdname lasfilters
-lasfilterfirstlast = function(.las)
+lasfilterfirstlast = function(las)
 {
   ReturnNumber <- NumberOfReturns <- NULL
-  return(lasfilter(.las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
+  return(lasfilter(las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
 }
 
 #' @export lasfilterfirstofmany
 #' @family lasfilters
 #' @rdname lasfilters
-lasfilterfirstofmany = function(.las)
+lasfilterfirstofmany = function(las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-  return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
+  return(lasfilter(las, NumberOfReturns > 1, ReturnNumber == 1))
 }
 
 #' @export lasfilterground
 #' @family lasfilters
 #' @rdname lasfilters
-lasfilterground = function(.las)
+lasfilterground = function(las)
 {
   Classification <- NULL
-  return(lasfilter(.las, Classification == 2))
+  return(lasfilter(las, Classification == 2))
 }
 
 #' @family lasfilters
 #' @export lasfilterlast
 #' @rdname lasfilters
-lasfilterlast = function(.las)
+lasfilterlast = function(las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-  return(lasfilter(.las, ReturnNumber == NumberOfReturns))
+  return(lasfilter(las, ReturnNumber == NumberOfReturns))
 }
 
 #' @family lasfilters
 #' @export lasfilternth
 #' @rdname lasfilters
-lasfilternth = function(.las, n)
+lasfilternth = function(las, n)
 {
   ReturnNumber <- NULL
-  return(lasfilter(.las, ReturnNumber == n))
+  return(lasfilter(las, ReturnNumber == n))
 }
 
 #' @family lasfilters
 #' @export lasfiltersingle
 #' @rdname lasfilters
-lasfiltersingle = function(.las)
+lasfiltersingle = function(las)
 {
   NumberOfReturns <- NULL
-  return(lasfilter(.las, NumberOfReturns == 1))
+  return(lasfilter(las, NumberOfReturns == 1))
 }
 
 #' @family lasfilters
 #' @export lasfilterfirstofmany
 #' @rdname lasfilters
-lasfilterfirstofmany = function(.las)
+lasfilterfirstofmany = function(las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-  return(lasfilter(.las, NumberOfReturns > 1, ReturnNumber == 1))
+  return(lasfilter(las, NumberOfReturns > 1, ReturnNumber == 1))
 }
 
 

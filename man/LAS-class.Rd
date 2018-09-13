@@ -4,7 +4,7 @@
 \name{LAS-class}
 \alias{LAS-class}
 \alias{LAS}
-\title{An S4 class to represent the data read in a .las or .laz files}
+\title{An S4 class to represent a .las or .laz file}
 \usage{
 LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 }
@@ -22,7 +22,8 @@ a las or laz file.}
 An object of class \code{LAS}
 }
 \description{
-Class is the representation of a las/laz file.
+Class LAS is the representation of a las/laz file according to the
+\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
 }
 \details{
 A \code{LAS} object inherit a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
@@ -57,7 +58,7 @@ is also normalized. Columns are named:
 \section{Slots}{
 
 \describe{
-\item{\code{bbox}}{Object of class "matrix", with bounding box}
+\item{\code{bbox}}{Object of class \code{matrix}, with bounding box}
 
 \item{\code{proj4string}}{Object of class \link[sp:CRS-class]{CRS}, projection string}
 
@@ -73,3 +74,11 @@ is also normalized. Columns are named:
 Class  \link[sp:Spatial-class]{Spatial}, directly.
 }
 
+\examples{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las = readLAS(LASfile)
+
+}
+\seealso{
+\link{readLAS}
+}

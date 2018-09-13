@@ -29,22 +29,22 @@
 
 #' Voxelize the space and compute metrics for each voxel
 #'
-#' Voxelize the cloud of points and compute a series of descriptive statistics for
-#' each voxel.
-#'
-#' Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
-#' from the cloud of points if there is at least one point in the voxel. For each voxel
-#' the function allows computation of one or several derived metrics in the same way as
-#' the \link[lidR:grid_metrics]{grid_metrics} functions.
-#' Basically there are no predefined metrics. Users must write their own function to create metrics.
-#' Voxelize will dispatch the LiDAR data for each voxel in the user's function. The user writes their
-#' function without considering voxels, only a cloud of points (see example).
+#' This is a 3D version of \link{grid_metrics}. It creates a 3D matrix of voxels with a given resolution.
+#' It creates a voxel from the cloud of points if there is at least one point in the voxel. For each voxel
+#' the function allows computation of one or several derived metrics in the same way as the \link{grid_metrics}
+#' functions. The function will dispatch the LiDAR data for each voxel in the user's function (see \link{grid_metrics}).
 #'
 #' @param las An object of class \code{LAS}
-#' @param func the function to be apply to each voxel.
+#'
+#' @param func expression. The function to be apply to each voxel (see also \link{grid_metrics})
+#'
 #' @param res numeric. The size of the voxels
+#'
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting.
+#'
+#' @export
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -76,9 +76,6 @@
 #' plot(voxels, color = "imean")
 #' #etc.
 #' }
-#' @seealso
-#' \link[lidR:grid_metrics]{grid_metrics}
-#' @export
 grid_metrics3d = function(las, func, res = 1)
 {
   stopifnotlas(las)

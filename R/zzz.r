@@ -1,13 +1,15 @@
+#' @importFrom data.table :=
 .onAttach <- function(libname, pkgname) {
   # Runs when attached to search() path such as by library() or require()
   if (interactive())
   {
     v = utils::packageVersion("lidR")
-    packageStartupMessage("lidR ", v, ". Help on <https://gis.stackexchange.com/>. Bug report on <https://github.com/Jean-Romain/lidR>.
+    packageStartupMessage("
+lidR ", v, ". Help on <https://gis.stackexchange.com/>. Bug report on <https://github.com/Jean-Romain/lidR>.
 
-WARNING: lidR version 2.0 is a major reingeeniring of lidR versions 1.x.
+WARNING: lidR version 2 is a major reingeeniring of lidR versions 1.
 It comes with many new features and internals improvements but also with many incompatibilities with previous versions.
-Please read the NEWS file at https://github.com/Jean-Romain/lidR/blob/master/NEWS.md before to use this new version.")
+If you were a user of lidR version 1 please read the NEWS file at https://github.com/Jean-Romain/lidR/blob/master/NEWS.md before to use this new version.")
   }
 }
 

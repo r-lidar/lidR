@@ -1,10 +1,10 @@
-#' Add data into a las object
+#' Add attributes into a las object
 #'
-#' A LAS object represents a .las file in R. According to the
+#' A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
-#' a las file contains a core of defined variables such as XYZ coordinates, intensity, return number,
-#' and so on for each point. It is possible to add supplementary data. The functions \code{lasadd*}
-#' enable the user to add new data (see details)
+#' a las file contains a core of defined attributes such as XYZ coordinates, intensity, return number,
+#' and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
+#' enable the user to add new attribute (see details)
 #'
 #' \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
 #' object is not strictly valid. These data will be usable at the R level but will not be written in a
@@ -26,8 +26,8 @@
 #' @param NA_value numeric or integer. NA is not a valid value in a las file. At writing time it will
 #' be replaced by this value that will be considered as NA. NULL if not relevant.
 #'
-#' @return Nothing (NULL). The LAS object is updated in place by reference to avoid copies.
-#' @export
+#' @return Nothing. The LAS object is updated in place by reference to avoid copies.
+#' @name lasaddattribute
 #' @examples
 #' LASfile <- system.file("extdata", "example.laz", package="rlas")
 #' las = readLAS(LASfile)
@@ -35,20 +35,24 @@
 #' print(las)
 #' print(las@header)
 #'
-#' x= 1:30
+#' x = 1:30
 #'
 #' lasadddata(las, x, "mydata")
-#' print(las) # The las object has a new field called "mydata"
+#' print(las) # The las object has a new attribute called "mydata"
 #' print(las@header) # But the header has not been updated. This new data will not be written
 #'
 #' lasaddextrabytes(las, x, "mydata2", "A new data")
-#' print(las) # The las object has a new field called "mydata2"
-#' print(las@header) # The header has not been updated. This new data will be written
+#' print(las) # The las object has a new attribute called "mydata2"
+#' print(las@header) # The header has been updated. This new data will be written
 #'
 #' # optionally if the data is already in the LAS object you can update the header skipping the
 #' # parameter x
 #' lasaddextrabytes(las, name ="mydata", desc = "Amplitude")
 #' print(las@header)
+NULL
+
+#' #' @export
+#' @rdname lasaddattribute
 lasadddata = function(las, x, name)
 {
   stopifnotlas(las)
@@ -61,7 +65,7 @@ lasadddata = function(las, x, name)
 }
 
 #' @export
-#' @rdname lasadddata
+#' @rdname lasaddattribute
 lasaddextrabytes = function(las, x, name, desc)
 {
   stopifnotlas(las)
@@ -81,7 +85,7 @@ lasaddextrabytes = function(las, x, name, desc)
 }
 
 #' @export
-#' @rdname lasadddata
+#' @rdname lasaddattribute
 lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL)
 {
   stopifnotlas(las)

@@ -9,7 +9,7 @@ grid_metrics(las, func, res = 20, start = c(0, 0))
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{the function to be applied to each cell (see section "Parameter func")}
+\item{func}{expression. The function to be applied to each cell (see section "Parameter func")}
 
 \item{res}{numeric. The size of the cells. Default 20.}
 
@@ -17,7 +17,7 @@ grid_metrics(las, func, res = 20, start = c(0, 0))
 grid aligns on (0,0).}
 }
 \value{
-A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.
+A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell.
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset within
@@ -55,12 +55,15 @@ dispatch the point cloud in the user's function.
 
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -71,12 +74,12 @@ Supported processing options for a \code{LAScatalog} in \code{grid_*} functions 
 more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
-internally to ensure a strict wall-to-wall continuous output even when tiling size equal to 0 (processing
+internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
 by file).
-\item buffer: This function guarantee a stric wall-to-wall continuous output. The \code{buffer} option
+\item buffer: This function guarantee a stric continuous wall-to-wall output. The \code{buffer} option
 is no considered.
 \item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
-internally to ensure a strict wall-to-wall continuous output.
+internally to ensure a strict continuous wall-to-wall output.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
@@ -92,7 +95,6 @@ and this options is not considered. In \link{grid_metrics} this option is respec
 }
 
 \examples{
-
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 colors = height.colors(50)

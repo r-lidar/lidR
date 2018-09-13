@@ -25,23 +25,27 @@
 #
 # ===============================================================================
 
-
-
 #' Area Based Approach in hexagonal cells.
 #'
 #' Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells
 #' This function is identical to \link{grid_metrics} but with hexagonal cells instead of classical
 #' square pixels. After all we make circular plot inventories and we map models on pixel-based maps.
-#' \code{grid_hexametrics} provide the opportunity to test somthing else. Please refer to \link{grid_metrics}
+#' \code{grid_hexametrics} provide the opportunity to test somthing else. Refer to \link{grid_metrics}
 #' for more information.
 #'
 #' @param las An object of class \code{LAS}
+#'
 #' @param func the function to be applied to each hexagonal cell
+#'
 #' @param res numeric. To be consistent with \link{grid_metrics} the square of \code{res} give the area
 #' of the hexagonal cells like in \code{grid_metrics}. The difference being the fact that for square pixels this
-#' is obvious. So \code{res = 20} give 400 square meters cells.
+#' is obvious. Here \code{res = 20} gives 400 square meters hexagonal cells.
+#'
 #' @return An \link[hexbin:hexbin-class]{hexbin} object from package \code{hexbin} or a \code{list} of
 #' \code{hexbin} objects if several metrics are returned.
+#'
+#' @export
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -73,7 +77,6 @@
 #' hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
 #' hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
 #' hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
-#' @export
 grid_hexametrics = function(las, func, res = 20)
 {
   stopifnotlas(las)

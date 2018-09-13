@@ -9,12 +9,12 @@ lastrees(las, algorithm, attribute = "treeID")
 \arguments{
 \item{las}{An object of the class \link[lidR:LAS-class]{LAS}.}
 
-\item{algorithm}{function. An algorithm of individual tree segmentation. \code{lidR} have several
-possible algorithms:  \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012},
-\link{hamraz2016}, \link{silva2016} or \link{ptrees}.}
+\item{algorithm}{function. An algorithm of individual tree segmentation. \code{lidR} have:
+\link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012}, \link{hamraz2016},
+\link{silva2016} or \link{ptrees}.}
 
 \item{attribute}{character. The original LAS object is automatically updated by the function. A new
-column is added. This parameter is the name of this new column.}
+column is added. This parameter is the name of the new column. Default is \code{"treeID"}}
 }
 \value{
 Nothing. The point cloud is updated by reference (in place without copy). It has a new column
@@ -32,4 +32,3 @@ col = pastel.colors(200)
 lastrees(las, li2012(R = 3, speed_up = 5))
 plot(las, color = "treeID", colorPalette = col)
 }
-\concept{IndividualTreeSegmentation}

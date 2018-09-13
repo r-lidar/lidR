@@ -27,50 +27,48 @@
 
 
 
-#' Apply functions over a LAScatalog
+#' LAScatalog processing engine
 #'
 #' This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
-#' engine. It allows the application of a user-defined routine over an entire catalog using a
-#' multi-core process (see detail).
-#'
-#' The LAScatalog processing engine tools is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}
+#' engine. It allows the application of a user-defined routine over an entire catalog. The LAScatalog
+#' processing engine tools is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
 #' \strong{Warning:} the LAScatalog processing engine have a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
-#' this task is very specific to each process. In other \code{lidR} functions this task is performed
+#' this task is specific to each process. In other \code{lidR} functions this task is performed
 #' specifically for each function. In \code{catalog_apply} the users's function can return any input,
 #' thus the user must take care of this point himself (See section "Edge artifacts")
 #'
-#' @template LAScatalog
+#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
+#' @param FUN A user-defined function that respect a given template (see section function template)
+#' @param ... Optional arguments to FUN.
 #'
 #' @section Edge artifacts:
 #'
-#' It is very important to take precautions to avoid 'edge artifacts' when processing LiDAR
+#' It is important to take precautions to avoid 'edge artifacts' when processing wall-to-wall
 #' tiles. If the points from neighboring tiles are not included during certain processes,
 #' this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
-#' pixels in a rasterization process or dummy elavations in a ground interpolation.
-#' The LAScatalog processing engine provides internal tools to load buffered data. However, there is
+#' pixels in a rasterization process or dummy elavations in a ground interpolation. The LAScatalog
+#' processing engine provides internal tools to load buffered data. However, there is
 #' no mechanism to remove the results computed in the buffered area since this task depends on the
-#' output of the user-defined function.
+#' output of the user-defined function. The user must take care of this task (see also examples).
 #'
 #' @section Buffered data:
 #'
-#' The LAS objects read by the user function have a special column called 'buffer'
-#' which indicates, for each point, if it comes from a buffered area or not. Points
-#' from non-buffered areas have a 'buffer' value of 0, while points from buffered areas
-#' have a 'buffer' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the
-#' left, top and right buffers, respectively
+#' The LAS objects read by the user function have a special column called 'buffer' which indicates,
+#' for each point, if it comes from a buffered area or not. Points from non-buffered areas have a
+#' 'buffer' value of 0, while points from buffered areas have a 'buffer' value of 1, 2, 3 or 4, where
+#' 1 is the bottom buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
 #'
 #' @section Function template:
 #'
 #' The parameter \code{FUN} expect a function that have a first argument that will be fed automatically
-#' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A
-#' \code{LAScluster} is an internal undocumented class but the user needs to know only two this about
-#' this class:
+#' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
+#' is an internal undocumented class but the user needs to know only two this about this class:
 #' \itemize{
 #' \item The function \link{readLAS} can be used with a \code{LAScluster}
 #' \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
-#' and it returns the bouding box of the cluster whitout the buffer. It can be used to clip the ouput and
-#' remove the buffered region (see examples)
+#' and it returns the bouding box of the cluster whithout the buffer. It can be used to clip the ouput
+#' and remove the buffered region (see examples).
 #' }
 #' A user-defined function must be templated like this:
 #' \preformatted{
@@ -81,23 +79,36 @@
 #'    # do something
 #'    return(something)
 #' }}
-#' The line \code{if(is.empty(las)) return(NULL)} is of major importance because some cluster may contain
+#' The line \code{if(is.empty(las)) return(NULL)} is important because some cluster may contain
 #' 0 point (we can't know that before to read the file). In this case an empty point cloud with 0 point
 #' is returned by \code{readLAS} and this may fails in subsequent code. Thus, exiting early the user-function
 #' by returning \code{NULL} allows the internal engine to knows that the cluster was empty.
 #'
-#' @template section-supported-option-catalog_apply
-#'
-#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
-#' @param FUN A user-defined function that respect a given template (see section function template)
-#' @param ... Optional arguments to FUN.
+#' @section Supported processing options:
+#' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \itemize{
+#' \item \strong{tiling_size}: How many data are loaded at once.
+#' \item \strong{buffer}: Load clusters with a buffer
+#' \item \strong{alignment}: Align the processed clusters
+#' \item \strong{cores}: How many cores are used.
+#' \item \strong{progress}: Displays a progression estimation.
+#' \item \strong{stop_early}: Leave it as it unless you are an advanced user.
+#' \item \strong{output_files}: The user-function outputs will be written in files instead of being
+#' returned into R
+#' \item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
+#' return a \code{LAS} object.
+#' \item \strong{drivers}: Leave it as it unless you are an advanced user.
+#' \item \strong{select}: Select only the data of interest to save processing memory.
+#' \item \strong{filter}: Read only points of interest.
+#' }
 #'
 #' @examples
 #' # Visit http://jean-romain.github.io/lidR/wiki for more examples
 #'
 #' ## =========================================================================
 #' ## Exemple 1: get all the tree tops over an entiere catalog
-#' ## (this is nothing else that the existing lidR function tree_detection)
+#' ## (this is nothing else that the existing lidR function 'tree_detection')
 #' ## =========================================================================
 #'
 #' # 1. Build the user-defined function that analyzes each cluster of the catalog.
@@ -163,7 +174,7 @@
 #' }
 #'
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' ?cataproject <- catalog(LASfile)
+#' project <- catalog(LASfile)
 #'
 #' set_buffer(project) <- 1
 #' set_cores(project) <- 1L

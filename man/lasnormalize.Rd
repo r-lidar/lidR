@@ -20,15 +20,17 @@ lasunnormalize(las)
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}}
+computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
+\link{kriging}, \link{knnidw}.}
 
 \item{e1}{a LAS object}
 
-\item{e2}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}}
+\item{e2}{\link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
+\link{kriging}, \link{knnidw}.}
 }
 \value{
-If the input is a \code{LAS} object the function returns NULL. The LAS object is updated
+If the input is a \code{LAS} object the function returns nothing. The LAS object is updated
 by reference. Z is now the normalized elevation, A new column 'Zref' records the former elevation
 values which enable to use \code{lasunormalize} to restore original point elevations.\cr
 If the input is a \code{LAScatalog} object, a new \code{LAScatalog}.
@@ -48,12 +50,15 @@ the point cloud was normalized with the package lidR).
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -67,13 +72,13 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
 always removed once processed and will never be returned neither in R nor in files.
 \item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used.
+\item \strong{cores}: How many cores are used. More cores means more data loaded at once.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
- in R and needs to be written in las/laz files. Supported templates are \code{XLEFT}, \code{XRIGHT},
-\code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if tiling size equal to 0
-(processing by file), \code{ORIGINALFILENAME}.
+ in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}

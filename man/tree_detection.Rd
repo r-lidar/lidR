@@ -8,19 +8,42 @@ tree_detection(las, algorithm)
 }
 \arguments{
 \item{las}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
-canopy height model. depending on the algorithm used (see respective documentation)}
+canopy height model depending on the algorithm used (see respective documentation)}
 
-\item{algorithm}{An algorithm for individual tree detection. lidR have four of them: \link{lmf}, \link{ptrees},
+\item{algorithm}{An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
 \link{multichm} and \link{manual}.}
 }
 \value{
-A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID for an individual
+A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID with an individual
 ID for each tree.
 }
 \description{
-Individual Tree detection function that find the position of the trees before the segmentation process. Several
-methods may be used.
+Individual tree detection function that find the position of the trees using several possible
+algorithms.
 }
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
+always removed once processed and will never be returned neither in R nor in files.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")

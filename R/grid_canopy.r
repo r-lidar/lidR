@@ -30,10 +30,19 @@
 #' Creates a digital surface model using several possible algorithms.
 #'
 #' @template param-las
-#' @param algorithm function. A function that implements an algorithm to compute a canopy height model. lidR have
-#' three of these function: \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations
-#' and exemples).
+#'
+#' @param algorithm function. A function that implements an algorithm to compute a digital surface model.
+#' \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).
+#'
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units.
+#'
+#' @template LAScatalog
+#'
+#' @template section-supported-option-grid_functions
+#'
+#' @template return-grid-Layer
+#'
+#' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -56,7 +65,6 @@
 #' # Khosravipour et al. pitfree algorithm
 #' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 #' plot(chm, col = col)
-#' @export
 grid_canopy = function(las, res, algorithm)
 {
   UseMethod("grid_canopy", las)

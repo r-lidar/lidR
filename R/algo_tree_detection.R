@@ -369,6 +369,10 @@ manual = function(detected = NULL, ...)
 #' @param dist_3d numeric. 3D distance threshold. A local maximum is considered a detected tree
 #' if there is no detected tree within this 3D distance (see details).
 #'
+#' @param use_max logical. The CHMs are computed with the 95th percentiles of height in the original
+#' description. If \code{use_max = TRUE} it uses the 100th percentiles (max height) and thus does
+#' not implies any sorting algorithm. The algoithm is therefore 5 to 10 times faster.
+#'
 #' @param ... supplementary parameters to be pass to \link{lmf} that is used internally
 #' to find the local maxima.
 #'
@@ -391,7 +395,7 @@ manual = function(detected = NULL, ...)
 #' plot(las)
 #' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 #' }
-multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ...)
+multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, use_max = FALSE, ...)
 {
   assertive::assert_is_a_number(res)
   assertive::assert_is_a_number(layer_thickness)
@@ -414,7 +418,7 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ..
 
     las_copy = LAS(las@data[, .(X,Y,Z)], las@header)
     LM = list()
-    chm = grid_metrics(las, max(Z), res)
+    chm = grid_canopy(las, res, p2r())
     i = 1
 
     p = list(...)
@@ -422,7 +426,10 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ..
 
     while(!is.empty(las_copy))
     {
-      chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
+      if (use_max)
+        chm95 = grid_canopy(las_copy, res, p2r())
+      else
+        chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
 
       if (max(chm95[], na.rm = TRUE) > hmin)
       {
@@ -440,16 +447,16 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, ..
 
     LM = data.table::rbindlist(LM)
     data.table::setorder(LM, -Z)
+    LM = unique(LM, by = c("X", "Y"))
 
-    detected = LM[1]
+    detected = LM[1,.(X,Y,Z)]
     for(i in 2:nrow(LM))
     {
-      lm = LM[i]
-      distance2D = (lm$X - detected$X)^2 + (lm$Y - detected$Y)^2
-      distance3D = distance2D + (lm$Z - detected$Z)^2
+      distance2D = (LM$X[i] - detected$X)^2 + (LM$Y[i] - detected$Y)^2
+      distance3D = distance2D + (LM$Z[i] - detected$Z)^2
 
       if (!any(distance2D < dist_2d) & !any(distance3D < dist_3d))
-        detected = rbind(detected, lm)
+        detected = rbind(detected, data.table(X = LM$X[i], Y = LM$Y[i], Z = LM$X[i]))
     }
 
     detected[, treeID := 1:.N]

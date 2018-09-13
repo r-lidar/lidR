@@ -13,20 +13,23 @@ grid_density(las, res = 4)
 square meters.}
 }
 \value{
-A \code{RasterLayer} or a \code{RasterBrick} containing the metrics for each cell.
+A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell.
 }
 \description{
-Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
+Creates a map of the point density. If a "pulseID" attribute is found, returns also a map of the pulse
 density.
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -37,12 +40,12 @@ Supported processing options for a \code{LAScatalog} in \code{grid_*} functions 
 more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
-internally to ensure a strict wall-to-wall continuous output even when tiling size equal to 0 (processing
+internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
 by file).
-\item buffer: This function guarantee a stric wall-to-wall continuous output. The \code{buffer} option
+\item buffer: This function guarantee a stric continuous wall-to-wall output. The \code{buffer} option
 is no considered.
 \item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
-internally to ensure a strict wall-to-wall continuous output.
+internally to ensure a strict continuous wall-to-wall output.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
@@ -65,7 +68,4 @@ d = grid_density(lidar, 5)
 plot(d)
 d = grid_density(lidar, 10)
 plot(d)
-}
-\seealso{
-\link[lidR:grid_metrics]{grid_metrics}
 }

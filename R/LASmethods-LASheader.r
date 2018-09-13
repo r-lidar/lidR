@@ -29,10 +29,7 @@
 #'
 #' @param data a list containing the data from the header of a las file.
 #' @return An object of class \code{LASheader}
-#' @seealso
-#' \link[lidR:LASheader]{Class LASheader}
-#' \link[lidR:LAS]{Class LAS}
-#' @export LAS
+#' @export
 LASheader <- function(data = list()) {return(new("LASheader", data))}
 
 setMethod("show", "LASheader",  function(object)

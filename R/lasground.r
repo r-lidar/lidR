@@ -30,28 +30,21 @@
 #'
 #' Classify points as ground or not ground with several possible algorithms. The function updates the
 #' attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
-#' a value of 2 according to las' specifications (See the ASPRS documentation for the
-#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
-#'
-#' @template LAScatalog
-#'
-#' @template section-supported-option-lasupdater
+#' a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}).
 #'
 #' @template param-las
-#' @param algorithm a ground segmentation function. lidR have two compatible functions: \link{pmf} and \link{csf}
+#'
+#' @param algorithm a ground segmentation function. \code{lidR} have: \link{pmf} and \link{csf}
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
 #' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
 #' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
-#' @return If the input is a \code{LAS} object, returns nothing. The original LAS object is updated by
-#' reference. The 'Classification' attributes have a value of 2 that denotes 'ground' according to LAS
-#' specifications.\cr\cr
-#' If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasupdater
 #'
 #' @export
-#'
-#' @importFrom data.table :=
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")

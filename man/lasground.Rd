@@ -9,33 +9,29 @@ lasground(las, algorithm, last_returns = TRUE)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{a ground segmentation function. lidR have two compatible functions: \link{pmf} and \link{csf}}
+\item{algorithm}{a ground segmentation function. \code{lidR} have: \link{pmf} and \link{csf}}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
 in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
 \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
 to \code{FALSE} automatically.}
 }
-\value{
-If the input is a \code{LAS} object, returns nothing. The original LAS object is updated by
-reference. The 'Classification' attributes have a value of 2 that denotes 'ground' according to LAS
-specifications.\cr\cr
-If the input is a \code{LAScatalog} returns a \code{LAScatalog}.
-}
 \description{
 Classify points as ground or not ground with several possible algorithms. The function updates the
 attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
-a value of 2 according to las' specifications (See the ASPRS documentation for the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
+a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}).
 }
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -49,13 +45,13 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
 always removed once processed and will never be returned neither in R nor in files.
 \item \strong{alignment}: Align the processed clusters
-\item \strong{cores}: How many cores are used.
+\item \strong{cores}: How many cores are used. More cores means more data loaded at once.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
- in R and needs to be written in las/laz files. Supported templates are \code{XLEFT}, \code{XRIGHT},
-\code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if tiling size equal to 0
-(processing by file), \code{ORIGINALFILENAME}.
+ in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}

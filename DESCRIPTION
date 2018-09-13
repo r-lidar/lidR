@@ -31,7 +31,6 @@ Imports:
     lazyeval,
     mapview,
     mapedit,
-    memoise,
     imager,
     RANN,
     RCSF,

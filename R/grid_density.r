@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -26,21 +26,22 @@
 # ===============================================================================
 
 
-
 #' Map the pulse or point density
 #'
-#' Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
+#' Creates a map of the point density. If a "pulseID" attribute is found, returns also a map of the pulse
 #' density.
-#'
-#' @template LAScatalog
-#'
-#' @template section-supported-option-grid_functions
 #'
 #' @template param-las
 #' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is 4 = 16
 #' square meters.
 #'
+#' @template LAScatalog
+#'
+#' @template section-supported-option-grid_functions
+#'
 #' @template return-grid-LayerBrick
+#'
+#' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -50,9 +51,6 @@
 #' plot(d)
 #' d = grid_density(lidar, 10)
 #' plot(d)
-#' @seealso
-#' \link[lidR:grid_metrics]{grid_metrics}
-#' @export
 grid_density = function(las, res = 4)
 {
   pulseID <- density <- X <- NULL

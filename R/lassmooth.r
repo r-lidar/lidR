@@ -7,7 +7,7 @@
 #'
 #' This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
 #' smoothing. It is not really useful by itself but may be interesting in combination with filters such
-#' as \link{lasfiltersurfacepoints}, for example.
+#' as \link{lasfiltersurfacepoints}, for example to develop algorithms.
 #'
 #' @param las An object of class \code{LAS}
 #' @param size numeric. The size of the windows used to smooth
@@ -15,7 +15,7 @@
 #' @param shape character. The shape of the windows. Can be circle or square.
 #' @param sigma numeric. The standard deviation of the gaussian if the method is gaussian
 #'
-#' @return Nothing (NULL). The original object has been updated in place. The 'Z' column is now the
+#' @return Nothing. The original object has been updated in place without copy. The 'Z' column is now the
 #' smoothed 'Z'. A new column 'Zraw' is added in the original object to store the original values.
 #' @export
 #' @examples

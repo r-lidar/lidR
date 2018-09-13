@@ -39,15 +39,15 @@ lasclipCircle(las, xcenter, ycenter, radius)
 \item{radius}{numeric. disc radiuses.}
 }
 \value{
-An object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-several regions of interest or \code{NULL} if the query is outside the dataset or within a region that does
-not contains any point or a \code{LAScatalog} if the query is immediatly written into file without
-loading anything in R..
+If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+several regions of interest\cr
+If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+several regions of interest or a \code{LAScatalog} if the query is immediatly written into file without loading anything in R.
 }
 \description{
 Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
 (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
-in memory and then can clip it to get a subset  within a region of interest (ROI). With a \code{LAScatalog}
+in memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
 object, the user can extracts any arbitrary ROI for a set of \code{las/laz} file loading only the
 points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
 }
@@ -74,12 +74,15 @@ y 5017823 5017957}
 
 \section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
+
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the internal catalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the engine
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
 \link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-function should come with a section that doucment the avaible engine options.\cr\cr
-\code{LAScatalog} engine supports \code{.lax} files that \strong{significantly} improve the computation
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
 but this is not mandatory.
 }
@@ -89,22 +92,21 @@ but this is not mandatory.
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item tiling_size: Does not make sense here
-\item buffer: Not supported yet
-\item alignment: Does not makes sense here
+\item tiling_size: Does not make sense here.
+\item buffer: Not supported yet.
+\item alignment: Does not makes sense here.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
-They will be written in files. See \link{LAScatalog-class} and examples. The allowed templates in
+They will be written immediatly in files. See \link{LAScatalog-class} and examples. The allowed templates in
 \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
 {YCENTER}} or any names from the table of attributes of a \code{SpatialPolygons*} objects given as
-input such as \code{{LAKENAME}} or \code{{YEAR}} for example if these fields exist. If empty everything
+input such as \code{{LAKENAME}} or \code{{YEAR}} for example if these attributes exist. If empty everything
 is returned into R.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
 \item \strong{drivers}: Leave it as it unless you are an advanced user.
-\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
-and cannot be changed.
+\item select: The function will write file equivalent to the original ones. This option is not respected.
 \item \strong{filter}: Read only points of interest.
 }
 }
@@ -127,7 +129,7 @@ subset3 = lasclip(ctg, lakes)
 
 # Extract the polygons, write them in files name after the lake names, do not load anything in R
 set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
-lasclip(ctg, lakes)
+new_ctg = lasclip(ctg, lakes)
 
 \dontrun{
 plot(subset1)

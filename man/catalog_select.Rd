@@ -2,12 +2,12 @@
 % Please edit documentation in R/catalog_select.r
 \name{catalog_select}
 \alias{catalog_select}
-\title{Select LAS files interactively}
+\title{Select LAS files manually from a LAScatalog}
 \usage{
 catalog_select(ctg, mapview = TRUE)
 }
 \arguments{
-\item{ctg}{A LAScatalog object}
+\item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object}
 
 \item{mapview}{logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
 also \link[lidR:plot]{plot})}
@@ -17,15 +17,11 @@ A LAScatalog object
 }
 \description{
 Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-enables the user to subset a LAScatalog by clicking on the map of the file using the mouse. The
-selected files will be highlighted in red on the plot after selection is complete.
+enables the user to subset a LAScatalog by clicking on the map of the file using the mouse.
 }
 \examples{
 \dontrun{
-project = catalog("<Path to a folder containing a set of .las files>")
-selectedFiles = catalog_select(project)
+ctg = catalog("<Path to a folder containing a set of .las files>")
+new_ctg = catalog_select(ctg)
 }
-}
-\seealso{
-\link[lidR:catalog]{LAScatalog}
 }

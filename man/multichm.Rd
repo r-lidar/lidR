@@ -5,7 +5,7 @@
 \title{Individual Tree Detection Algorithm}
 \usage{
 multichm(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5,
-  ...)
+  use_max = FALSE, ...)
 }
 \arguments{
 \item{res}{numeric. Resolution of the CHM based on the 95th percentile}
@@ -18,6 +18,10 @@ if there is no detected tree within this 2D distance (see details).}
 
 \item{dist_3d}{numeric. 3D distance threshold. A local maximum is considered a detected tree
 if there is no detected tree within this 3D distance (see details).}
+
+\item{use_max}{logical. The CHMs are computed with the 95th percentiles of height in the original
+description. If \code{use_max = TRUE} it uses the 100th percentiles (max height) and thus does
+not implies any sorting algorithm. The algoithm is therefore 5 to 10 times faster.}
 
 \item{...}{supplementary parameters to be pass to \link{lmf} that is used internally
 to find the local maxima.}

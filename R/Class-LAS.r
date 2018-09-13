@@ -25,9 +25,10 @@
 #
 # ===============================================================================
 
-#' An S4 class to represent the data read in a .las or .laz files
+#' An S4 class to represent a .las or .laz file
 #'
-#' Class is the representation of a las/laz file.
+#' Class LAS is the representation of a las/laz file according to the
+#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
 #'
 #' A \code{LAS} object inherit a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
 #' a \code{Spatial} object plus a \code{data.table} with the data read from  a \code{las/laz} file and
@@ -56,18 +57,29 @@
 #' @section Extends:
 #' Class  \link[sp:Spatial-class]{Spatial}, directly.
 #'
-#' @slot bbox Object of class "matrix", with bounding box
+#' @slot bbox Object of class \code{matrix}, with bounding box
+#'
 #' @slot proj4string Object of class \link[sp:CRS-class]{CRS}, projection string
+#'
 #' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data accoridng to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
+#'
 #' @slot header Object of class \link[lidR:LASheader-class]{LASheader}. las file header accoridng to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
+#'
 #' @import data.table
 #' @import methods
-#' @include Class-LASheader.r
 #' @importClassesFrom sp Spatial
+#'
+#' @include Class-LASheader.r
 #' @export
 #' @useDynLib lidR, .registration = TRUE
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile)
+#'
+#' @seealso
+#' \link{readLAS}
 setClass(
   Class = "LAS", contains = "Spatial",
   representation(data = "data.table", header = "LASheader")

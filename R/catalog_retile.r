@@ -26,32 +26,46 @@
 # ===============================================================================
 
 
-#' Retile a catalog
+#' Retile a LAScatalog
 #'
 #' Splits or merges files to reshape the original catalog files (.las or .laz) into smaller or larger
-#' files. It also enables the addition or removal of a buffer around the tiles. The new files are written
-#' in a dedicated folder. The function first displays the layout of the new tiling pattern and then asks
-#' the user to validate the command.
-#'
-#' Internally the function reads and writes the clusters defined by the internal processing options of a
-#' \link[lidR:LAScatalog-class]{LAScatalog} (see also \link{catalog}). Thus the function is flexible and
+#' files. It also enables the addition or removal of a buffer around the tiles. The function first
+#' displays the layout of the new tiling pattern and then asks the user to validate the command.\cr
+#' Internally the function reads and writes the clusters defined by the internal processing options
+#' of a \link[lidR:LAScatalog-class]{LAScatalog} processing engine. Thus the function is flexible and
 #' enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
 #' allowed), or optionally to compress the data by retiling without changing the pattern but by changing
 #' the format (las/laz).\cr\cr
-#'
 #' Note that this function is not actually very useful since \code{lidR} manages everything
-#' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be useful
-#' for working in other software for example, but not in \code{lidR}.
+#' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
+#' useful for working in other softwares for example, but not in \code{lidR}.
 #'
 #' @template LAScatalog
 #'
-#' @template section-supported-option-catalog_apply
+#' @section Supported processing options:
+#' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \itemize{
+#' \item \strong{tiling_size}: Size of the new tiles.
+#' \item \strong{buffer}: Load new tiles with a buffer. Usually 0 is the expected value.
+#' \item \strong{alignment}: Alignment of the new tiles.
+#' \item \strong{cores}: How many cores are used. \code{catalog_retile} streams the data (nothing is
+#' loaded at th R level). The maximum number of core can be safely used.
+#' \item \strong{progress}: Displays a progression estimation.
+#' \item \strong{stop_early}: Leave it as it unless you are an advanced user.
+#' \item \strong{output_files*}: Mandatory. The new tiles will be written in files new files.
+#' \item \strong{laz_compression}: save \code{las} or \code{laz} files.
+#' \item \strong{drivers}: Leave it as it unless you are an advanced user.
+#' \item select: \code{catalog_retile} preserve the file format anyway.
+#' \item \strong{filter}: Retile and save only points of interest.
+#' }
 #'
-#' @param ctg  A \link[lidR:catalog]{LAScatalog} object
+#' @param ctg A \link[lidR:catalog]{LAScatalog} object
 #'
 #' @return A new \code{LAScatalog} object
-#' @seealso \link{catalog}
+#'
 #' @export
+#'
 #' @examples
 #' \dontrun{
 #' ctg = catalog("path/to/catalog")
@@ -74,13 +88,13 @@
 #' set_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
 #' newctg = catalog_retile(ctg)
 #'
-#' # Being flexible this function can also compress a catalog but this is
-#' # not really useful since laszip from LAStools is a free and open source
-#' # program.
+#' # Create a new set of compressed .laz file equivalent to the original one keeping only
+#' # first returns above 2 m
 #'
 #' set_buffer(ctg) <- 0
 #' set_tiling_size(ctg) <- 0
 #' set_laz_compression(ctg) <- TRUE
+#' set_filter(ctg) <- "-keep_first -drop_z_below 2"
 #' newctg = catalog_retile(ctg)
 #' }
 catalog_retile = function(ctg)

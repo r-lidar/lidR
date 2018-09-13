@@ -29,27 +29,35 @@
 
 #' Digital Terrain Model
 #'
-#' Interpolates ground points and creates a rasterized digital terrain model. The algorithm uses the
-#' points classified as "ground" to compute the interpolation.\cr
+#' Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
+#' the points classified as "ground" (Classification = 2 according to
+#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
+#' to compute the interpolation.\cr
 #' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 #' interpolated. A buffer around the region of interest is always recommended to avoid edge
-#' effects
+#' effects.
+#'
+#' @template param-las
+#'
+#' @param res numeric. Resolution of the \code{RasterLayer}. Default 1.
+#'
+#' @param algorithm function. A function that implements an algorithm to compute spatial interpolation.
+#' \code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).
+#'
+#' @param keep_lowest logical. This option forces the original lowest ground point of each
+#' cell (if it exists) to be chosen instead of the interpolated values.
 #'
 #' @template LAScatalog
 #'
 #' @template section-supported-option-grid_functions
 #'
-#' @template param-las
-#' @param res numeric. resolution of the \code{RasterLayer}. Default 1.
-#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a \link[lidR:SpatialInterpolationFunctions]{Spatial Interpolation Function}.
-#' See also \link{lasnormalize} for a more extensive description of this parameter.
-#' @param keep_lowest logical. This option forces the original lowest ground point of each
-#' cell (if it exists) to be chosen instead of the interpolated values.
-#'
 #' @template return-grid-Layer
 #'
+#' @seealso
+#' \link{lasnormalize}
+#'
 #' @export
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
@@ -67,8 +75,6 @@
 #' plot3d(dtm2)
 #' plot3d(dtm3)
 #' }
-#' @seealso
-#' \link{lasnormalize}
 grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   UseMethod("grid_terrain", las)
