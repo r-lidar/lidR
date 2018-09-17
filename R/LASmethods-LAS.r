@@ -292,7 +292,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 {
   rgl::open3d()
   rgl::rgl.bg(color = bg)
-  do.call(rgl::points3d, c(list(x=x@data$X, y=x@data$Y, z=x@data$Z), inargs))
+  do.call(rgl::points3d, c(list(x=x@data$X-min(x@data$X), y=x@data$Y-min(x@data$Y), z=x@data$Z), inargs))
   return(invisible())
 }
 
