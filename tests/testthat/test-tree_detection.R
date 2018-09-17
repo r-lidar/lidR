@@ -60,7 +60,7 @@ test_that("tree_detection mutltichm works with a LAS", {
   ttops = tree_detection(las, multichm(res = 2, layer_thickness = 2, ws = 5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(234,2))
+  expect_equal(dim(ttops@data), c(243,2))
   expect_equal(ttops@proj4string, las@proj4string)
 })
 
@@ -69,7 +69,7 @@ test_that("tree_detection multichm works with a LAScatalog", {
   ttops = tree_detection(ctg, multichm(res = 2, layer_thickness = 2, ws = 5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(234,2))
+  expect_equal(dim(ttops@data), c(243,2))
   expect_equal(ttops@proj4string, ctg@proj4string)
 })
 
