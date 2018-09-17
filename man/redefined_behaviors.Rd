@@ -5,7 +5,6 @@
 \alias{$<-,LAS-method}
 \alias{[[<-,LAS,ANY,missing-method}
 \alias{[,LAScatalog,ANY,ANY-method}
-\alias{[<-,LAScatalog,ANY,ANY,ANY-method}
 \alias{[[<-,LAScatalog,ANY,ANY-method}
 \alias{$<-,LAScatalog-method}
 \title{Inherited but modified methods from sp}
@@ -15,8 +14,6 @@
 \S4method{[[}{LAS,ANY,missing}(x, i, j) <- value
 
 \S4method{[}{LAScatalog,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{LAScatalog,ANY,ANY,ANY}(x, i, j) <- value
 
 \S4method{[[}{LAScatalog,ANY,ANY}(x, i, j) <- value
 

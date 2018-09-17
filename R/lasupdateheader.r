@@ -51,7 +51,7 @@
 #' print(las@header)
 NULL
 
-#' #' @export
+#' @export
 #' @rdname lasaddattribute
 lasadddata = function(las, x, name)
 {

@@ -204,7 +204,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   resolution <- if (is.null(p$res)) 0 else p$res
   start      <- if (is.null(p$start)) c(0,0) else p$start
 
-  if (is(res, "RasterLayer"))
+  if (is(resolution, "RasterLayer"))
   {
     ext          <- raster::extent(resolution)
     resolution   <- raster::res(resolution)[1]

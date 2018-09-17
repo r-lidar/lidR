@@ -220,12 +220,12 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
   return(new_ctg)
 })
 
-#' @rdname redefined_behaviors
-#' @export
-setMethod("[<-", "LAScatalog",  function(x, i, j, value)
-{
-  stop("LAScatalog data are read from standard files and cannot be modified")
-})
+# #' @rdname redefined_behaviors
+# #' @export
+# setMethod("[<-", "LAScatalog",  function(x, i, j, value)
+# {
+#  stop("LAScatalog data are read from standard files and cannot be modified")
+# })
 
 #' @rdname redefined_behaviors
 #' @export
