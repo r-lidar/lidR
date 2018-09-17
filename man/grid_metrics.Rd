@@ -11,7 +11,8 @@ grid_metrics(las, func, res = 20, start = c(0, 0))
 
 \item{func}{expression. The function to be applied to each cell (see section "Parameter func")}
 
-\item{res}{numeric. The size of the cells. Default 20.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
+In that case the the \code{RasterLayer} is used as layout.}
 
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0).}

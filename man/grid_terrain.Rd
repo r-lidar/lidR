@@ -9,7 +9,8 @@ grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. Resolution of the \code{RasterLayer}. Default 1.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
+In that case the the \code{RasterLayer} is used as layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
 \code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).}
@@ -71,6 +72,7 @@ and this options is not considered. In \link{grid_metrics} this option is respec
 }
 
 \examples{
+
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 plot(las)

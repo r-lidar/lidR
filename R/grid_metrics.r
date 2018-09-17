@@ -40,7 +40,7 @@
 #'
 #' @param func expression. The function to be applied to each cell (see section "Parameter func")
 #'
-#' @param res numeric. The size of the cells. Default 20.
+#' @template param-res-grid
 #'
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0).
@@ -109,8 +109,12 @@
 #' plot(metrics, "zsqmean", col = colors)
 grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_non_negative(res)
+  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+     stop("res is not a number or a RasterLayer", call. = FALSE)
+
+  if(assertive::is_a_number(res))
+    assertive::assert_all_are_non_negative(res)
+
   assertive::assert_is_numeric(start)
 
   UseMethod("grid_metrics", las)
@@ -161,7 +165,16 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
-  set_buffer(las) <- 0.1*res
+  resolution = res
+  if (is(res, "RasterLayer"))
+  {
+    ext = raster::extent(res)
+    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
+    las = las[keep,]
+    resolution = raster::res(res)[1]
+  }
+
+  set_buffer(las) <- 0.1*resolution
   output <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files

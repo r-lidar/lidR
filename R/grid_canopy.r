@@ -34,7 +34,7 @@
 #' @param algorithm function. A function that implements an algorithm to compute a digital surface model.
 #' \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).
 #'
-#' @param res numeric. The size of a grid cell in LiDAR data coordinates units.
+#' @template param-res-grid
 #'
 #' @template LAScatalog
 #'
@@ -67,6 +67,12 @@
 #' plot(chm, col = col)
 grid_canopy = function(las, res, algorithm)
 {
+  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+    stop("res is not a number or a RasterLayer", call. = FALSE)
+
+  if(assertive::is_a_number(res))
+    assertive::assert_all_are_non_negative(res)
+
   UseMethod("grid_canopy", las)
 }
 
@@ -81,9 +87,6 @@ grid_canopy.LAS = function(las, res, algorithm)
     stop("The algorithm is not an algorithm for digital surface model.", call. = FALSE)
 
   . <- X <- Y <- Z <- NULL
-
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
 
   subcircle <- as.list(environment(algorithm))$subcircle
   subcircle <- if(is.null(subcircle)) 0 else subcircle
@@ -112,6 +115,13 @@ grid_canopy.LAScluster = function(las, res, algorithm)
 #' @export
 grid_canopy.LAScatalog = function(las, res, algorithm)
 {
+  if (is(res, "RasterLayer"))
+  {
+    ext = raster::extent(res)
+    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
+    las = las[keep,]
+  }
+
   set_select(las) <- "xyzr"
   output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 

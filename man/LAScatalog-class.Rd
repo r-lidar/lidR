@@ -40,12 +40,6 @@ overlap if possible. This is possible if the overlapping points are flagged, for
 \section{Slots}{
 
 \describe{
-\item{\code{wall.to.wall}}{logical. The LAScatalog processing engine always guarantee to return a continuous
-output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so, some options
-are controlled internally to prevent agains bad settings such as buffer = 0 for some algorithm that
-requires buffer. In rare case it might be useful to disable these controls. If \code{wall.to.wall = FALSE}
-controls are disabled and wall-to-wall output are not anymore guaranteed.}
-
 \item{\code{processing_options}}{list. A list that contains some settings describing how the catalog will be
 processed (see dedicated section).}
 
@@ -71,6 +65,11 @@ always pertinent to set \code{core > 1}.
 \item \strong{stop_early}: boolean. Stop the processsing if an error occur in a clusters. If \code{FALSE}
 the process can run until the end removing cluster that failed. Default is TRUE and the user should
 not change that.
+\item \strong{wall.to.wall} logical. The LAScatalog processing engine always guarantee to return a continuous
+output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so, some options
+are controlled internally to prevent agains bad settings such as buffer = 0 for some algorithm that
+requires buffer. In rare case it might be useful to disable these controls. If \code{wall.to.wall = FALSE}
+controls are disabled and wall-to-wall output are not anymore guaranteed.
 }
 }
 

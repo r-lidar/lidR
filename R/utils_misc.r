@@ -43,6 +43,13 @@ make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
 
 make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
 {
+  if (is(res, "RasterLayer"))
+  {
+    resolution = raster::res(res)
+    if (resolution[1] !=  resolution[2]) stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+    return(res)
+  }
+
   bbox      <- raster::extent(las) + 2 * subcircle
   bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
   bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]

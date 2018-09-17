@@ -76,15 +76,18 @@ RasterProcessor::~RasterProcessor()
 {
 }
 
-void RasterProcessor::xy2ij(double x, double y)
+bool RasterProcessor::xy2ij(double x, double y)
 {
-  i = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
-  j = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
+  int i_ = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
+  int j_ = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
 
-  if (i < 0 || i >= m_ncols || j < 0 || j >= m_nrows)
-    throw exception("in xy2ij(): index out of bounds");
+  if (i_ < 0 || i_ >= m_ncols || j_ < 0 || j_ >= m_nrows)
+    return false;
 
-  return;
+  i = i_;
+  j = j_;
+
+  return true;
 }
 
 double RasterProcessor::roundany(double x)
@@ -137,7 +140,8 @@ PointToRasterProcessor::~PointToRasterProcessor()
 
 void PointToRasterProcessor::max(double x, double y, double z)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (m_raster(i,j) < z || NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = z;
@@ -147,7 +151,8 @@ void PointToRasterProcessor::max(double x, double y, double z)
 
 void PointToRasterProcessor::min(double x, double y, double z)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (m_raster(i,j) > z || NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = z;
@@ -157,7 +162,8 @@ void PointToRasterProcessor::min(double x, double y, double z)
 
 void PointToRasterProcessor::count(double x, double y)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = 1;

@@ -58,12 +58,6 @@
 #' overlap if possible. This is possible if the overlapping points are flagged, for example in the
 #' 'withheld' attribute. Otherwise \code{lidR} will not be able to process the dataset correctly.
 #'
-#' @slot wall.to.wall logical. The LAScatalog processing engine always guarantee to return a continuous
-#' output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so, some options
-#' are controlled internally to prevent agains bad settings such as buffer = 0 for some algorithm that
-#' requires buffer. In rare case it might be useful to disable these controls. If \code{wall.to.wall = FALSE}
-#' controls are disabled and wall-to-wall output are not anymore guaranteed.
-#'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
 #' processed (see dedicated section).
 #'
@@ -87,6 +81,11 @@
 #' \item \strong{stop_early}: boolean. Stop the processsing if an error occur in a clusters. If \code{FALSE}
 #' the process can run until the end removing cluster that failed. Default is TRUE and the user should
 #' not change that.
+#' \item \strong{wall.to.wall} logical. The LAScatalog processing engine always guarantee to return a continuous
+#' output without edge effect assuming that the catalog is a wall-to-wall catalog. To do so, some options
+#' are controlled internally to prevent agains bad settings such as buffer = 0 for some algorithm that
+#' requires buffer. In rare case it might be useful to disable these controls. If \code{wall.to.wall = FALSE}
+#' controls are disabled and wall-to-wall output are not anymore guaranteed.
 #' }
 #'
 #' @section Clustering options:
@@ -153,7 +152,6 @@ setClass(
   Class = "LAScatalog",
   contains = "SpatialPolygonsDataFrame",
   representation(
-    wall.to.wall = "logical",
     clustering_options = "list",
     processing_options = "list",
     output_options = "list",
@@ -188,7 +186,8 @@ setMethod("initialize", "LAScatalog", function(.Object)
   .Object@processing_options <- list(
     cores = 1L,
     progress = TRUE,
-    stop_early = TRUE
+    stop_early = TRUE,
+    wall.to.wall = TRUE
   )
 
   .Object@output_options <- list(
@@ -200,8 +199,6 @@ setMethod("initialize", "LAScatalog", function(.Object)
     select = "*",
     filter = ""
   )
-
-  .Object@wall.to.wall = TRUE
 
   return(.Object)
 })

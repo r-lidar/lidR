@@ -17,11 +17,13 @@ lastrees(las, algorithm, attribute = "treeID")
 column is added. This parameter is the name of the new column. Default is \code{"treeID"}}
 }
 \value{
-Nothing. The point cloud is updated by reference (in place without copy). It has a new column
-names after the parameter \code{attribute}.
+Nothing. The original LAS object is updated by reference (using side effect) to avoid any
+copy in memory of the point cloud
 }
 \description{
-Individual tree segmentation with several possible algorithms.
+Individual tree segmentation with several possible algorithms. The point cloud is updated by
+reference (in place without copy). It has a new extra byte attribue names after the parameter
+\code{attribute} independently of the algorithm used.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

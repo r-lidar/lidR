@@ -200,12 +200,20 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   assertive::assert_is_a_bool(check_alignement)
   assertive::assert_is_a_bool(drop_null)
 
-  p        <- list(...)
-  res      <- if (is.null(p$res)) 0 else p$res
-  start    <- if (is.null(p$start)) c(0,0) else p$start
-  ctg      <- .catalog_apply_check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = res, start = start)
+  p          <- list(...)
+  resolution <- if (is.null(p$res)) 0 else p$res
+  start      <- if (is.null(p$start)) c(0,0) else p$start
+
+  if (is(res, "RasterLayer"))
+  {
+    ext          <- raster::extent(resolution)
+    resolution   <- raster::res(resolution)[1]
+    start        <- c(ext@xmin, ext@ymin)
+  }
+
+  ctg      <- .catalog_apply_check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = resolution, start = start)
   clusters <- catalog_makecluster(ctg)
-  clusters <- .catalog_apply_check_and_fix_clusters(ctg, clusters, check_alignement, res = res, start = start)
+  clusters <- .catalog_apply_check_and_fix_clusters(ctg, clusters, check_alignement, res = resolution, start = start)
   output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
 
   return(output)
@@ -216,14 +224,14 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   # The function expect a buffer to guarantee a stric wall-to-wall output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
 
-  if (need_buffer & get_buffer(ctg) <= 0 & ctg@wall.to.wall)
+  if (need_buffer & get_buffer(ctg) <= 0 & get_wall.to.wall(ctg))
     stop("A buffer greater than 0 is requiered to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
   # clusters are aligned with the pixels. In case of tiling_size > 0 it is easy to check before to make
   # the clusters
 
-  if (check_alignement & !get_by_file(ctg) & ctg@wall.to.wall)
+  if (check_alignement & !get_by_file(ctg) & get_wall.to.wall(ctg))
   {
     # If the clustering option do not match with the resolution
     t_size     <- get_tiling_size(ctg)
@@ -259,7 +267,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   # clusters are aligned with the pixels. In case of tiling_size =0 (processed by file) the clusters
   # must be check after there creation. Can be skipped if the catalog is not a wall-to-wall catalog.
 
-  if (check_alignement & get_by_file(ctg) & ctg@wall.to.wall)
+  if (check_alignement & get_by_file(ctg) & get_wall.to.wall(ctg))
   {
     for(i in 1:length(clusters))
     {

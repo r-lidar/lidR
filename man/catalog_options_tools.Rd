@@ -14,6 +14,8 @@
 \alias{set_progress<-}
 \alias{get_stop_early}
 \alias{set_stop_early<-}
+\alias{get_wall.to.wall}
+\alias{set_wall.to.wall<-}
 \alias{get_output_files}
 \alias{set_output_files<-}
 \alias{get_laz_compression}
@@ -47,6 +49,10 @@ set_progress(ctg) <- value
 get_stop_early(ctg)
 
 set_stop_early(ctg) <- value
+
+get_wall.to.wall(ctg)
+
+set_wall.to.wall(ctg) <- value
 
 get_output_files(ctg)
 

@@ -9,7 +9,8 @@ grid_canopy(las, res, algorithm)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
+In that case the the \code{RasterLayer} is used as layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute a digital surface model.
 \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).}

@@ -39,7 +39,7 @@
 #'
 #' @template param-las
 #'
-#' @param res numeric. Resolution of the \code{RasterLayer}. Default 1.
+#' @template param-res-grid
 #'
 #' @param algorithm function. A function that implements an algorithm to compute spatial interpolation.
 #' \code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).
@@ -59,6 +59,7 @@
 #' @export
 #'
 #' @examples
+#'
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' plot(las)
@@ -77,6 +78,12 @@
 #' }
 grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
+  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+    stop("res is not a number or a RasterLayer", call. = FALSE)
+
+  if(assertive::is_a_number(res))
+    assertive::assert_all_are_non_negative(res)
+
   UseMethod("grid_terrain", las)
 }
 
@@ -90,7 +97,6 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
     stop("The algorithm is not an algorithm for spatial interpolation", call. = FALSE)
 
   . <- X <- Y <- Z <- Classification <- NULL
-  resolution = res
 
   # Select the ground points
   # ========================
@@ -108,42 +114,27 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 
   verbose("Generating interpolation coordinates...")
 
-  if (is(res, "RasterLayer"))
-  {
-    resolution = raster::res(res)
+  layout <- make_overlay_raster(las, res)
 
-    if (resolution[1] !=  resolution[2])
-      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+  names(layout) <- "Z"
+  grid <- raster::as.data.frame(layout, xy = TRUE)
+  data.table::setDT(grid)
+  grid[, Z := NULL]
+  data.table::setnames(grid, names(grid), c("X", "Y"))
 
-    resolution = resolution[1]
+  hull <- convex_hull(las@data$X, las@data$Y)
+  hull <- sp::Polygon(hull)
+  hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+  hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
+  hull <- hull@polygons[[1]]@Polygons[[1]]@coords
+  keep <- C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
+  if (!all(keep)) grid = grid[keep]
 
-    grid = raster::xyFromCell(res, 1:raster::ncell(res))
-    grid = data.table::as.data.table(grid)
-    data.table::setnames(grid, names(grid), c("X", "Y"))
-  }
-  else
-  {
-    layout = make_overlay_raster(las, resolution)
-    layout@crs = las@proj4string
-    names(layout) = "Z"
-    grid = raster::as.data.frame(layout, xy = TRUE)
-    data.table::setDT(grid)
-    grid[, Z := NULL]
-    data.table::setnames(grid, names(grid), c("X", "Y"))
-
-    hull = convex_hull(las@data$X, las@data$Y)
-    hull = sp::Polygon(hull)
-    hull = sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-    hull = rgeos::gBuffer(hull, width = resolution)
-    hull = hull@polygons[[1]]@Polygons[[1]]@coords
-    keep = C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-    if (!all(keep)) grid = grid[keep]
-  }
 
   # Interpolate the terrain
   # =======================
 
-  has_buffer = "buffer" %in% names(las@data)
+  has_buffer <- "buffer" %in% names(las@data)
 
   verbose("Interpolating ground points...")
 
@@ -177,8 +168,14 @@ grid_terrain.LAScluster= function(las, res = 1, algorithm, keep_lowest = FALSE)
 #' @export
 grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
-  set_select(las) <- "xyzc"
+  if (is(res, "RasterLayer"))
+  {
+    ext = raster::extent(res)
+    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
+    las = las[keep,]
+  }
 
+  set_select(las) <- "xyzc"
   output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
   # Outputs have been written in files. Return the path to written files

@@ -160,6 +160,23 @@ get_stop_early = function(ctg)
   return(ctg)
 }
 
+#' @rdname catalog_options_tools
+#' @export
+get_wall.to.wall = function(ctg)
+{
+  return(ctg@processing_options$wall.to.wall)
+}
+
+#' @rdname catalog_options_tools
+#' @export
+`set_wall.to.wall<-` = function(ctg, value)
+{
+  assertive::assert_is_a_bool(value)
+  ctg@processing_options$wall.to.wall <- value
+  return(ctg)
+}
+
+
 # =========   Output Options   ===============
 
 #' @rdname catalog_options_tools
