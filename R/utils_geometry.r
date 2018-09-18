@@ -25,6 +25,14 @@
 #
 # ===============================================================================
 
+area_convex_hull = function(x, y)
+{
+  stopifnot(length(x) == length(y))
+  hull <- convex_hull(x, y)
+  area <- polygon_area(hull$x, hull$y)
+  return(area)
+}
+
 convex_hull = function(x, y)
 {
   i <- grDevices::chull(x,y)

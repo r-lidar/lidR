@@ -107,15 +107,15 @@ LogicalVector C_points_in_polygon(NumericVector vertx, NumericVector verty, Nume
 // @return numerical array. 0 if the points are in any polygon or the number of the polygon if points fall in a given polygon
 // @export
 // [[Rcpp::export]]
-IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy, bool displaybar = false)
+IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVector pointx, NumericVector pointy)
 {
   int npoints = pointx.length();
   int nvert   = vertx.length();
   IntegerVector id(npoints);
 
-  QuadTree *tree = QuadTreeCreate(pointx, pointy);
+  QuadTree tree(pointx, pointy);
 
-  Progress p(nvert, displaybar);
+  Progress p(nvert, "Points un polygons: ");
 
   for(int i = 0 ; i < nvert ; i ++)
   {
@@ -127,14 +127,10 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
     double ymin = min(ypoly);
     double ymax = max(ypoly);
 
-    double xc = (xmax + xmin)/2;
-    double yc = (ymax + ymin)/2;
-    double xhw = (xmax - xmin)/2;
-    double yhw = (ymax - ymin)/2;
-
     std::vector<Point*> pts;
     std::vector<Point*>::iterator it;
-    tree->rect_lookup(xc, yc, xhw, yhw, pts);
+    Rectangle rect(xmin, xmax, ymin, ymax);
+    tree.lookup(rect, pts);
 
     for (it = pts.begin() ; it != pts.end() ; ++it)
     {
@@ -146,13 +142,11 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
 
     if (p.check_abort())
     {
-      delete tree;
       p.exit();
     }
 
     p.update(i);
   }
 
-  delete tree;
   return id;
 }

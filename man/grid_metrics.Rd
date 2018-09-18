@@ -2,92 +2,111 @@
 % Please edit documentation in R/grid_metrics.r
 \name{grid_metrics}
 \alias{grid_metrics}
-\title{Rasterize the space and compute metrics for each cell}
+\title{Area Based Approach}
 \usage{
-grid_metrics(x, func, res = 20, start = c(0, 0), splitlines = FALSE,
-  filter = "")
+grid_metrics(las, func, res = 20, start = c(0, 0))
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{the function to be applied to each cell (see section "Parameter func")}
+\item{func}{expression. The function to be applied to each cell (see section "Parameter func")}
 
-\item{res}{numeric. The size of the cells. Default 20.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
+In that case the the \code{RasterLayer} is used as layout.}
 
-\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) (see section "Parameter start").}
-
-\item{splitlines}{logical. If TRUE the algorithm will compute the metrics for each
-flightline individually. It returns the same cells several times in overlap.}
-
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data directly but can use streaming filters instead.}
+\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+grid aligns on (0,0).}
 }
 \value{
-Returns a \code{data.table} containing the metrics for each cell. The table
-has the class "lasmetrics" enabling easy plotting.
+A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell. If the
+\code{RasterLayer}s are written on disk when running the function with a \code{LAScatalog}, a
+virtual raster mosaic is returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset within
-each pixel of a raster. Output is a data.table in which each line is a pixel (single grid cell),
-and each column is a metric. Works both with \link{LAS} or \link{catalog} objects.
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-computes metrics within each cell in a predefined grid. The grid cell coordinates are
-pre-determined for a given resolution.
-}
-\details{
-\code{grid_metrics} is similar to \link{lasmetrics} or \link{grid_hexametrics} except it
-computes metrics within each cell in a predefined grid. The grid cell coordinates are
-pre-determined for a given resolution, so the algorithm will always provide the same coordinates
-independently of the dataset. When start = (0,0) and res = 20 grid_metrics will produce the
-following raster centers: (10,10), (10,30), (30,10) etc.. When start = (-10, -10) and res = 20
-grid_metrics will produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec
-(Canada) the reference is (-831600, 117980) in the NAD83 coordinate system.
+each pixel of a raster (area-based approach). The grid cell coordinates are pre-determined for a
+given resolution, so the algorithm will always provide the same coordinates independently of the
+dataset. When start = (0,0) and res = 20 grid_metrics will produce the following cell centers:
+(10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
+res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
+the corner of a cell on (-10, -10).
 }
 \section{Parameter \code{func}}{
 
 The function to be applied to each cell is a classical function (see examples) that
-returns a labelled list of metrics. The following existing functions allow the user to
-compute some metrics:
+returns a labelled list of metrics. For exemple the following function \code{f} is correctly formed.
+\preformatted{
+f = function(x) {list(mean = mean(x), max = max(x))}
+}
+And could be applied either on the \code{Z} coordinates or the Intensities for exemples. These two
+statements are valid:
+\preformatted{
+grid_metrics(las, f(Z), res = 20)
+grid_metrics(las, f(Intensity), res = 20)
+}
+The following existing functions allow the user to
+compute some predefined metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics}}
 \item{\link[lidR:entropy]{entropy}}
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
-} Users must write their own functions to create metrics. \code{grid_metrics} will
-dispatch the LiDAR data for each cell in the user's function. The user writes their
-function without considering grid cells, only a point cloud (see example).
+}
+But usually the users must write their own functions to create metrics. \code{grid_metrics} will
+dispatch the point cloud in the user's function.
 }
 
-\section{Parameter \code{start}}{
+\section{Working with a \code{LAScatalog}}{
 
-The algorithm will always provide the same coordinates independently of the dataset.
-When start = (0,0) and res = 20 grid_metrics will produce the following raster centers:
-(10,10), (10,30), (30,10) etc..  When start = (-10, -10) and res = 20 grid_metrics will
-produce the following raster centers: (0,0), (0,20), (20,0) etc.. In Quebec (Canada)
-reference is (-831600,  117980) in the NAD83 coordinate system.
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
 }
 
-\section{Use with a \code{LAScatalog}}{
+\section{Supported processing options}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+Supported processing options for a \code{LAScatalog} in \code{grid_*} functions (in bold). For
+more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
+internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
+by file).
+\item buffer: This function guarantee a strict continuous wall-to-wall output. The \code{buffer} option
+is no considered.
+\item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
+internally to ensure a strict continuous wall-to-wall output.
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
+templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
+\code{ID} and, if tiling size equal to 0 (processing by file), \code{ORIGINALFILENAME}.
+\item laz_compression: is not supported because this function will never write \code{las/laz} files
+\item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded or not
+and this options is not considered. In \link{grid_metrics} this option is respected.
+\item \strong{filter}: Read only points of interest.
+}
 }
 
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
+colors = height.colors(50)
 
 # Canopy surface model with 4 m^2 cells
-metrics = grid_metrics(lidar, max(Z), 2)
-plot(metrics)
+metrics = grid_metrics(las, max(Z), 2)
+plot(metrics, col = colors)
 
 # Mean height with 400 m^2 cells
-metrics = grid_metrics(lidar, mean(Z), 20)
-plot(metrics)
+metrics = grid_metrics(las, mean(Z), 20)
+plot(metrics, col = colors)
 
 # Define your own new metrics
 myMetrics = function(z, i)
@@ -101,11 +120,10 @@ myMetrics = function(z, i)
    return(metrics)
 }
 
-metrics = grid_metrics(lidar, myMetrics(Z, Intensity))
+metrics = grid_metrics(las, myMetrics(Z, Intensity))
 
-plot(metrics)
-plot(metrics, "zwimean")
-plot(metrics, "zimean")
-plot(metrics, "zsqmean")
-#etc.
+plot(metrics, col = colors)
+plot(metrics, "zwimean", col = colors)
+plot(metrics, "zimean", col = colors)
+plot(metrics, "zsqmean", col = colors)
 }

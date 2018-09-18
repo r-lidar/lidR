@@ -56,7 +56,7 @@ class RasterProcessor
     NumericMatrix m_raster;
 
   protected:
-    void xy2ij(double x, double y);
+    bool xy2ij(double x, double y);
     double roundany(double x);
 };
 

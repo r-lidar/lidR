@@ -31,14 +31,14 @@ get_epsg = function(header)
   for (tag in header@VLR$GeoKeyDirectoryTag$tag)
   {
     if (tag$key == 3072)
-       epsg = tag$`value offset`
+       return(tag$`value offset`)
   }
 
   return(epsg)
 }
 
 
-.epsg2proj = function(code)
+epsg2proj = function(code)
 {
   if (is.null(code))
     return(sp::CRS())
@@ -48,7 +48,7 @@ get_epsg = function(header)
   return(crs)
 }
 
-.epsg2wkt = function(code)
+epsg2wkt = function(code)
 {
   if (is.null(code))
     return(NA_character_)
@@ -59,6 +59,3 @@ get_epsg = function(header)
 
   return(proj)
 }
-
-epsg2proj = memoise::memoise(.epsg2proj)
-epsg2wkt = memoise::memoise(.epsg2wkt)

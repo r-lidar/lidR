@@ -34,16 +34,14 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, bool diplaybar = false)
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi)
 {
-  // Algorithm
-
-  QuadTree *tree = QuadTreeCreate(xi,yi);
+  QuadTree tree(xi, yi);
 
   int nelem = elem.nrow();
   int np = xi.size();
 
-  Progress p(nelem, diplaybar);
+  Progress p(nelem, "Searching in TIN: ");
 
   IntegerVector output(np);
   std::fill(output.begin(), output.end(), NA_INTEGER);
@@ -52,7 +50,6 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
   for (int k = 0; k < nelem; k++)
   {
     // Retrieve triangle A B C coordinates
-
     int iA = elem(k, 0) - 1;
     int iB = elem(k, 1) - 1;
     int iC = elem(k, 2) - 1;
@@ -61,9 +58,9 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
     Point B(x(iB), y(iB));
     Point C(x(iC), y(iC));
 
-    // QuadTree search of points in the triangle
+    Triangle triangle(A,B,C);
     std::vector<Point*> points;
-    tree->triangle_lookup(A, B, C, points);
+    tree.lookup(triangle, points);
 
     // Return the id of the triangle
     for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
@@ -73,14 +70,10 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
     }
 
     if (p.check_abort())
-    {
-      delete tree;
       p.exit();
-    }
 
     p.update(k);
   }
 
-  delete tree;
   return(output);
 }

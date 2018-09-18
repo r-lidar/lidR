@@ -2,152 +2,173 @@
 % Please edit documentation in R/catalog_apply.r
 \name{catalog_apply}
 \alias{catalog_apply}
-\title{Apply a user-defined function to an entire catalog in a continuous way}
+\title{LAScatalog processing engine}
 \usage{
-catalog_apply(ctg, func, func_args = NULL, ...)
+catalog_apply(ctg, FUN, ...)
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{LAScatalog} object.}
+\item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object.}
 
-\item{func}{A user-defined function for which the first input is a LAS object.}
+\item{FUN}{A user-defined function that respect a given template (see section function template)}
 
-\item{func_args}{A list of extra arguments to pass in the function 'func'.}
-
-\item{...}{Any argument available in \link{readLAS} to reduce the amount of data loaded.}
+\item{...}{Optional arguments to FUN.}
 }
 \description{
-This function enables application of a user-defined routine over an entire catalog using a
-multi-core process. When a user has a dataset organized into several files, it applies the
-user-defined function to the entire catalog by automatically splitting it into several
-clusters. The clustering pattern can be either split into a set of squared areas or split by
-file. The clustering pattern can be modified using the catalog options (see \link{catalog}.
-The "Examples" section describes the procedure for applying functions to the catalog, beginning
-with data loading (see example). \cr\cr
-\strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
-but no mechanism to remove the buffer after applying user-defined functions, since this task
-is very specific to each process. See section "Edge artifacts".\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
+engine. It allows the application of a user-defined routine over an entire catalog. The LAScatalog
+processing engine tools is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
+\strong{Warning:} the LAScatalog processing engine have a mechanism to load buffered data to avoid
+edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
+this task is specific to each process. In other \code{lidR} functions this task is performed
+specifically for each function. In \code{catalog_apply} the users's function can return any input,
+thus the user must take care of this point himself (See section "Edge artifacts")
 }
 \section{Edge artifacts}{
 
 
-It is very important to take precautions to avoid 'edge artifacts' when processing LiDAR
+It is important to take precautions to avoid 'edge artifacts' when processing wall-to-wall
 tiles. If the points from neighboring tiles are not included during certain processes,
 this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
-pixels in a rasterization process. The lidR package provides internal tools to load buffered
-data. However, there is no mechanism to remove the results computed in the buffered area
-since this task depends on the output of the user-defined function. Therefore, depending
-on the metric being computed, some output results could appear several times.\cr\cr
-The LAS object received by the user-defined function has a special column called 'buffer_side'
-which indicates, for each point, if it comes from a buffered area or not. Points
-from non-buffered areas have a 'buffer_side' value of zero, while points from buffered areas
-have a 'buffer_side' value of 1, 2, 3 or 4, where 1 is the bottom buffer and 2, 3 and 4 are the
-left, top and right buffers, respectively (see example).
+pixels in a rasterization process or dummy elavations in a ground interpolation. The LAScatalog
+processing engine provides internal tools to load buffered data. However, there is
+no mechanism to remove the results computed in the buffered area since this task depends on the
+output of the user-defined function. The user must take care of this task (see also examples).
+}
+
+\section{Buffered data}{
+
+
+The LAS objects read by the user function have a special column called 'buffer' which indicates,
+for each point, if it comes from a buffered area or not. Points from non-buffered areas have a
+'buffer' value of 0, while points from buffered areas have a 'buffer' value of 1, 2, 3 or 4, where
+1 is the bottom buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
+}
+
+\section{Function template}{
+
+
+The parameter \code{FUN} expect a function that have a first argument that will be fed automatically
+by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
+is an internal undocumented class but the user needs to know only two this about this class:
+\itemize{
+\item The function \link{readLAS} can be used with a \code{LAScluster}
+\item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
+and it returns the bouding box of the cluster whithout the buffer. It can be used to clip the ouput
+and remove the buffered region (see examples).
+}
+A user-defined function must be templated like this:
+\preformatted{
+myfun = function(cluster, ....)
+{
+   las = readLAS(cluster)
+   if (is.empty(las)) return(NULL)
+   # do something
+   return(something)
+}}
+The line \code{if(is.empty(las)) return(NULL)} is important because some cluster may contain
+0 point (we can't know that before to read the file). In this case an empty point cloud with 0 point
+is returned by \code{readLAS} and this may fails in subsequent code. Thus, exiting early the user-function
+by returning \code{NULL} allows the internal engine to knows that the cluster was empty.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer}: Load clusters with a buffer
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: The user-function outputs will be written in files instead of being
+returned into R
+\item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
+return a \code{LAS} object.
+\item \strong{select}: Select only the data of interest to save processing memory.
+\item \strong{filter}: Read only points of interest.
+}
 }
 
 \examples{
-\dontrun{
-# Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
-# version of this example.
-# This is a dummy example. It is more efficient to load the entire file than
-# splitting it into several pieces to process, even when using multiple cores.
+# Visit http://jean-romain.github.io/lidR/wiki for more examples
 
-# 1. Build a project (here, a single file catalog for the purposes of this example).
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-project = catalog(LASfile)
+## =========================================================================
+## Exemple 1: get all the tree tops over an entiere catalog
+## (this is nothing else that the existing lidR function 'tree_detection')
+## =========================================================================
+
+# 1. Build the user-defined function that analyzes each cluster of the catalog.
+# The function's first argument is a LAScluster object. The other arguments can be freely
+# choosen by the user.
+my_tree_detection_method = function(cluster, ws)
+{
+  # The cluster argument is a LAScluster object. The user don't need to know how it works.
+  # readLAS will load the region of interest with a buffer around it, taking advantage of
+  # point cloud indexation if possible. The filter and select options are propagated automatically
+  las = readLAS(cluster)
+  if (is.empty(las)) return(NULL)
+
+  # Find the tree tops using a user-developped method for example (here simply a LMF)
+  ttops = tree_detection(las, lmf(ws))
+
+  # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
+  # plus the trees tops in the buffered area. We need to remove buffer otherwise we will get
+  # some trees more than once.
+  bbox  <- raster::extent(cluster)
+  ttops <- raster::crop(ttops, bbox)
+
+  return(ttops)
+}
+
+# 2. Build a project (here, a single file catalog for the purposes of this dummmy example).
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+project <- catalog(LASfile)
 plot(project)
 
-# 2. Set some catalog options
-# For this dummy example, the clustering size is 80 m and the buffer is 15 m using
-# a single core (because this example is run on the CRAN server when the package is submitted).
-buffer(project) = 15
-cores(project) = 1
-tiling_size(project) = 120
+# 3. Set some catalog options
+# For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
+set_buffer(project) <- 10
+set_cores(project) <- 1L
+set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
+set_select(project) <- "xyz"         # don't need to read something else than the coordinates
+set_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
 
-# 3. Load the shapefile needed to filter your points.
-folder <- system.file("extdata", "", package="lidR")
-lake_shp = rgdal::readOGR(folder, "lake_polygons_UTM17")
+# 4. Apply user-defined function to take advantage of the internal engine
+output = catalog_apply(project, my_tree_detection_method, ws = 5)
 
-# 4. Build the function that analyzes each cluster of the catalog.
-# The function's first argument is a LAS object. The internal routine takes care of
-# this part. The other arguments can be freely choosen by the user. See the following
-# template:
-tree_area = function(las, lake)
+# 5. Post-process the output to merge the results (depending on the output computed).
+# Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
+output = do.call(rbind, output)
+sp::plot(output)
+
+## ===================================================
+## Exemple 2: compute a rumple index on surface points
+## ===================================================
+
+rumple_index_surface = function(cluster, res)
 {
-  # The las argument is a LAS object with each field loaded and an extra column 'buffer'
+  las = readLAS(cluster)
+  if (is.empty(las)) return(NULL)
 
-  # Associate geographic data with lidar points
-  lasclassify(las, lake, field = "lake")
+  las = lasfiltersurfacepoints(las, 0.5)
 
-  # filter lakes, and low elevation points
-  las = lasfilter(las, lake == FALSE, Z > 4)
+  rumple <- grid_metrics(las, rumple_index(X,Y,Z), res)
+  bbox   <- raster::extent(cluster)
+  rumple <- raster::crop(rumple, bbox)
 
-  if (is.null(las))
-    return(NULL)
-
-  # segment trees (in this example the low point density does not enable
-  # accurate segmentation of trees. This is just a proof-of-concept)
-  chm = grid_canopy(las, 1, subcircle = 0.3)
-  chm = as.raster(chm)
-  kernel = matrix(1,3,3)
-  chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
-  lastrees(las, algorithm = "watershed", chm = chm)
-
-  # Here we used the function tree_metric to compute some metrics for each tree. This
-  # function is defined later in the global environment.
-  m = tree_metrics(las, myMetrics(X, Y, Z, buffer))
-
-  # If min buffer is 0 it means the trees were at least partly in the non-buffered area, so we
-  # want to keep these trees.
-  # However, the trees that are on the edge of the buffered area will be counted
-  # twice. So we must remove the trees on the right side and on the top side of the buffer
-  # If max buffer is <= 2 it means that the trees belong inside the area of interest, on
-  # the left side or the bottom side, or both.
-  m = m[minbuff == 0 & maxbuff <= 2]
-
-  # Remove buffering information that is no longer useful
-  m[, c("minbuff","maxbuff") := NULL]
-
-  return(m)
+  return(rumple)
 }
 
-# This function enables users to extract, for a single tree, the position of the highest point
-# and some information about the buffering position of the tree. The function tree_metrics takes
-# care of mapping along each tree.
-myMetrics <- function(x, y, z, buff)
-{
-  i = which.max(z)
-  xcenter = x[i]
-  ycenter = y[i]
-  A = area(x,y)
-  minbuff = min(buff)
-  maxbuff = max(buff)
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+project <- catalog(LASfile)
 
-  return(
-    list(
-      x = xcenter,
-      y = ycenter,
-      area = A,
-      minbuff = minbuff,
-      maxbuff = maxbuff
-    ))
-}
+set_buffer(project) <- 1
+set_cores(project) <- 1L
+set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
+set_select(project) <- "xyz"         # don't need to read something else than the coordinates
 
-# Everything is now well defined, so now we can process over an entire catalog with
-# hundreds of files (but in this example we use just one file...)
-
-# 4. Process the project. The arguments of the user-defined function must
-# belong in a labelled list. We also pass extra arguments to the function readLAS
-# to load only X, Y and Z coordinates. This way we save a huge amount of memory, which
-# can be used for the current process.
-fargs = list(lake = lake_shp)
-output = catalog_apply(project, tree_area, fargs, select = "xyz")
-
-# 5. Post-process the output result (depending on the output computed). Here, each value
-# of the list is a data.table, so rbindlist does the job:
-output = data.table::rbindlist(output)
-
-with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
-}
+output = catalog_apply(project, rumple_index_surface, res = 20)
+output = do.call(raster::merge, output)
+plot(output, col = height.colors(50))
 }

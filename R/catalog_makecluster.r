@@ -25,12 +25,13 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
+catalog_makecluster = function(ctg)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
-  buffer  <- buffer(ctg)
-  by_file <- by_file(ctg)
-  size    <- tiling_size(ctg)
+  buffer  <- get_buffer(ctg)
+  by_file <- get_by_file(ctg)
+  start   <- get_alignment(ctg)
+  width   <- get_tiling_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
   # =======================================================
@@ -44,9 +45,6 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   }
   else
   {
-    # Dimension of the clusters (width = height) rounded up to a multiple of the resolution
-    width = ceiling(size/res) * res
-
     # Bounding box of the catalog
     bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
 
@@ -71,22 +69,28 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   ycenter = (ymin + ymax)/2
   width   = xmax - xmin
   height  = ymax - ymin
-  names   = paste0("ROI", 1:length(xcenter))
 
   # Creation of a set of cluster from the rectangles
   # ================================================
 
-  if (by_file && buffer <= 0)
+  if (by_file & buffer <= 0)
   {
     clusters = lapply(1:length(xcenter), function(i)
     {
-      center = list(x = xcenter[i], y = ycenter[i])
-      Cluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], names[i])
+      center  <- list(x = xcenter[i], y = ycenter[i])
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname", proj4string = ctg@proj4string)
+
+      cluster@select <- ctg@input_options$select
+      cluster@filter <- paste(cluster@filter, ctg@input_options$filter)
+
+      return(cluster)
     })
   }
   else
   {
-    clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+    bboxes = mapply(raster::extent, xcenter-width/2, xcenter+width/2, ycenter-height/2, ycenter+height/2)
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer))
+    clusters = clusters[!sapply(clusters, is.null)]
   }
 
   # Post process the clusters
@@ -99,7 +103,7 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   {
     clusters <- lapply(clusters, function(x)
     {
-      x@filter <- ""
+      x@filter <- ctg@input_options$filter
       return(x)
     })
   }
@@ -107,31 +111,43 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   # Record the path to write the raster if requested
   # ------------------------------------------------
 
-  if (save_vrt(ctg))
+  if (get_output_files(ctg) != "")
   {
-    clusters <- lapply(clusters, function(x)
+    clusters <- lapply(seq_along(clusters), function(i)
     {
-      x@save <- paste0(vrt(ctg), "/tile-", x@bbox$xmin, "-", x@bbox$ymin, ".tiff")
-      return(x)
+      X         <- list()
+      X$ID      <- i
+      X$XCENTER <- clusters[[i]]@center$x
+      X$XCENTER <- clusters[[i]]@center$y
+      X$XLEFT   <- clusters[[i]]@bbox[1]
+      X$XRIGHT  <- clusters[[i]]@bbox[3]
+      X$YBOTTOM <- clusters[[i]]@bbox[2]
+      X$YTOP    <- clusters[[i]]@bbox[4]
+
+      if (by_file)
+        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
+
+      clusters[[i]]@save   <- glue::glue_data(X, get_output_files(ctg))
+      return(clusters[[i]])
     })
   }
 
   # Plot the catalog and the clusters
   # =================================
 
-  if(plot)
+  if(get_progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))
     title  = "Pattern of clusters"
-    plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
+    plot.LAScatalog(ctg, mapview = FALSE, main = title, xlim = xrange, ylim = yrange)
 
     lapply(clusters, function(x)
     {
-      graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
+      graphics::rect(x@bbox[1], x@bbox[2], x@bbox[3], x@bbox[4], border = "red")
 
       if (x@buffer != 0)
-        graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
+        graphics::rect(x@bbbox[1], x@bbbox[2], x@bbbox[3], x@bbbox[4], border = "darkgreen", lty = "dotted")
     })
   }
 

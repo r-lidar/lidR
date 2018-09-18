@@ -2,88 +2,85 @@
 % Please edit documentation in R/grid_canopy.r
 \name{grid_canopy}
 \alias{grid_canopy}
-\title{Canopy surface model}
+\title{Digital Surface Model}
 \usage{
-grid_canopy(x, res = 2, subcircle = 0, na.fill = "none", ...,
-  filter = "")
+grid_canopy(las, res, algorithm)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. The size of a grid cell in LiDAR data coordinates units. Default is
-2 meters i.e. 4 square meters.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
+In that case the the \code{RasterLayer} is used as layout.}
 
-\item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
-can replace each return with a circle composed of 8 points (see details).}
-
-\item{na.fill}{character. name of the algorithm used to interpolate the data and fill the empty pixels.
-Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).}
-
-\item{...}{extra parameters for the algorithm used to interpolate the empty pixels (see details)}
-
-\item{filter}{character. Streaming filter while reading the files (see \link{readLAS}).
-If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-user cannot manipulate the lidar data directly but can use streaming filters instead.}
+\item{algorithm}{function. A function that implements an algorithm to compute a digital surface model.
+\code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).}
 }
 \value{
-Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
-plotting and RasterLayer casting.
+A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s
+are written on disk when running the function with a \code{LAScatalog}, a virtual raster mosaic is
+returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
-Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
-returns the highest point found (point-to-raster). This basic method could be improved
-by replacing each LiDAR return with a small disc. An interpolation for empty pixels is
-also available.
+Creates a digital surface model using several possible algorithms.
 }
-\details{
-The algorithm relies on a point-to-raster approach. For each pixel the elevation of the
-highest point is found and attributed to this pixel. This method implies that the resulting
-surface model can contain empty pixels. Those 'holes' can be filled by interpolation.
-Internally, the interpolation is based on the same method used in the function
-\link[lidR:grid_terrain]{grid_terrain}. Therefore the documentation for
-\link[lidR:grid_terrain]{grid_terrain} is also applicable to this function (see also
-examples).\cr\cr
-The 'subcircle' tweak replaces each point with 8 points around the original one. This allows
-for virtual 'emulation' of the fact that a lidar point is not a point as such, but more
-realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
-smoother and contains fewer 'pits' and empty pixels.
-}
-\section{Use with a \code{LAScatalog}}{
+\section{Working with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} in \code{grid_*} functions (in bold). For
+more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
+internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
+by file).
+\item buffer: This function guarantee a strict continuous wall-to-wall output. The \code{buffer} option
+is no considered.
+\item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
+internally to ensure a strict continuous wall-to-wall output.
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
+templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
+\code{ID} and, if tiling size equal to 0 (processing by file), \code{ORIGINALFILENAME}.
+\item laz_compression: is not supported because this function will never write \code{las/laz} files
+\item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded or not
+and this options is not considered. In \link{grid_metrics} this option is respected.
+\item \strong{filter}: Read only points of interest.
+}
 }
 
 \examples{
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+las <- readLAS(LASfile)
+col <- height.colors(50)
 
-# Local maximum algorithm with a resolution of 2 meters
-chm = grid_canopy(lidar, 2)
-plot(chm)
+# Points-to-raster algorithm with a resolution of 1 meters
+chm <- grid_canopy(las, res = 1, p2r())
+plot(chm, col = col)
 
-# Local maximum algorithm with a resolution of 1 meter replacing each
+# Points-to-raster algorithm with a resolution of 0.5 meter replacing each
 # point by a 20 cm radius circle of 8 points
-chm = grid_canopy(lidar, 1, 0.2)
-plot(chm)
+chm <- grid_canopy(las, res = 0.5, p2r(0.2))
+plot(chm, col = col)
 
-# Local maximum algorithm with a resolution of 1 meter replacing each
-# point by a 10 cm radius circle of 8 points and interpolating the empty
-# pixels using the 3-nearest neighbours and an inverse-distance weighting.
-chm = grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2)
-plot(chm)
+# Basic triangulation and rasterization of first returns
+chm <- grid_canopy(las, res = 0.5, dsmtin())
+plot(chm, col = col)
 
-\dontrun{
-chm = grid_canopy(lidar, 1, na.fill = "knnidw", k = 3)
-plot(chm)
-chm = grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay")
-plot(chm)
-}
-}
-\seealso{
-\link[lidR:grid_metrics]{grid_metrics}
-\link[lidR:as.raster.lasmetrics]{as.raster}
+# Khosravipour et al. pitfree algorithm
+chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+plot(chm, col = col)
 }

@@ -16,7 +16,4 @@ An object from sp
 LAS, LAScatalog, lasmetrics are transformed respectively into SpatialPointsDataFrame,
 SpatialPolygonsDataFrame, SpatialPixelsDataFrame
 }
-\seealso{
-Other cast: \code{\link{as.lasmetrics}},
-  \code{\link{as.raster.lasmetrics}}
-}
+\concept{cast}
