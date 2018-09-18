@@ -51,6 +51,12 @@ catalog_select = function(ctg, mapview = TRUE)
 
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
+  if(mapview & (!requireNamespace("mapview", quietly = TRUE) | !requireNamespace("mapedit", quietly = TRUE)))
+  {
+    message("This function can be enhanced by installing the libraries 'mapview' and 'mapedit'.")
+    mapview = FALSE
+  }
+
   if (mapview)
   {
     mapview::mapview()

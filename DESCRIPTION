@@ -29,8 +29,6 @@ Imports:
     grDevices,
     gstat,
     lazyeval,
-    mapview,
-    mapedit,
     imager,
     RANN,
     RCSF,
@@ -43,8 +41,10 @@ Imports:
     utils
 Suggests:
     EBImage,
-    hexbin,
     gdalUtils,
+    hexbin,
+    mapview,
+    mapedit,
     rgdal,
     testthat
 LazyData: true

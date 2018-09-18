@@ -277,6 +277,13 @@ setMethod("plot", signature(x = "LAScatalog", y = "missing"), function (x, y, ma
 
 plot.LAScatalog = function(x, y, mapview = TRUE, ...)
 {
+
+  if(mapview & !requireNamespace("mapview", quietly = TRUE))
+  {
+    message("This function can be enhanced by installing the library 'mapview'.")
+    mapview = FALSE
+  }
+
   if (mapview)
   {
     LAScatalog = x
