@@ -1,1 +1,15 @@
 context("grid_density")
+
+file <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg = catalog(file)
+las = readLAS(file)
+set_cores(ctg) <- 1
+set_tiling_size(ctg) <- 160
+set_buffer(ctg) <- 0
+set_progress(ctg) <- FALSE
+
+test_that("grid_density returns the same both with LAScatalog and LAS", {
+  d1 = grid_density(ctg)
+  d2 = grid_density(las)
+  expect_equal(d1, d2)
+})

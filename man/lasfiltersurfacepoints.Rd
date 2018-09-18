@@ -7,30 +7,20 @@
 lasfiltersurfacepoints(las, res)
 }
 \arguments{
-\item{las}{A LAS object}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 }
 \value{
-A LAS object
+If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a
+\code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
-This routine creates a grid with a given resolution and filters the point cloud by selecting the
-highest point within each cell.
-}
-\details{
-This function is different from \link{grid_canopy} even if the overall concept is exactly the same.
-\code{grid_canopy} attributes to each cell the elevation of the highest points and the point cloud is
-rasterized. Here, there is no rasterization, the function takes a point cloud as input and a point
-cloud as output. Coordinates and attributes are preserved.
+This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset = lasfiltersurfacepoints(las, 2)
 plot(subset)
-}
-\seealso{
-Other lasfilters: \code{\link{lasfilters}},
-  \code{\link{lasfilter}}
 }

@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution, bool displaybar = false)
+NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVector Z, double resolution)
 {
   unsigned int n = X.length();
   double half_res = resolution / 2;
@@ -43,15 +43,16 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   NumericVector Z_temp = clone(Z);
   NumericVector Z_out  = clone(Z);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
 
-  Progress p(2*n, displaybar);
+  Progress p(2*n, "Morphological filter: ");
 
   // Dilate
   for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
+    Rectangle rect(X[i]-half_res, X[i]+half_res,Y[i]-half_res, Y[i]+half_res);
+    tree.lookup(rect, pts);
 
     double min_pt(std::numeric_limits<double>::max());
 
@@ -67,7 +68,6 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
 
     if (p.check_abort())
     {
-      delete tree;
       p.exit();
     }
 
@@ -80,7 +80,8 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
   for (unsigned int i = 0 ; i < n ; i++)
   {
     std::vector<Point*> pts;
-    tree->rect_lookup(X[i], Y[i], half_res, half_res, pts);
+    Rectangle rect(X[i]-half_res, X[i]+half_res,Y[i]-half_res, Y[i]+half_res);
+    tree.lookup(rect, pts);
 
     double max_pt(std::numeric_limits<double>::min());
 
@@ -96,13 +97,11 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
 
     if (p.check_abort())
     {
-      delete tree;
       p.exit();
     }
 
     p.update(i+n);
   }
 
-  delete tree;
   return Z_out;
 }

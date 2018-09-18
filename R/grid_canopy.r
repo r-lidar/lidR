@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,153 +25,111 @@
 #
 # ===============================================================================
 
-
-
-#' Canopy surface model
+#' Digital Surface Model
 #'
-#' Creates a canopy surface model using a LiDAR point cloud. For each pixel the function
-#' returns the highest point found (point-to-raster). This basic method could be improved
-#' by replacing each LiDAR return with a small disc. An interpolation for empty pixels is
-#' also available.
+#' Creates a digital surface model using several possible algorithms.
 #'
-#' The algorithm relies on a point-to-raster approach. For each pixel the elevation of the
-#' highest point is found and attributed to this pixel. This method implies that the resulting
-#' surface model can contain empty pixels. Those 'holes' can be filled by interpolation.
-#' Internally, the interpolation is based on the same method used in the function
-#' \link[lidR:grid_terrain]{grid_terrain}. Therefore the documentation for
-#' \link[lidR:grid_terrain]{grid_terrain} is also applicable to this function (see also
-#' examples).\cr\cr
-#' The 'subcircle' tweak replaces each point with 8 points around the original one. This allows
-#' for virtual 'emulation' of the fact that a lidar point is not a point as such, but more
-#' realistically a disc. This tweak densifies the point cloud and the resulting canopy model is
-#' smoother and contains fewer 'pits' and empty pixels.
+#' @template param-las
 #'
-#' @section Use with a \code{LAScatalog}:
-#' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
-#' options using the \link[lidR:catalog]{available options}.\cr\cr
-#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-#' spatial index.
+#' @param algorithm function. A function that implements an algorithm to compute a digital surface model.
+#' \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).
 #'
-#' @aliases  grid_canopy
-#' @param x An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")
-#' @param res numeric. The size of a grid cell in LiDAR data coordinates units. Default is
-#' 2 meters i.e. 4 square meters.
-#' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
-#' can replace each return with a circle composed of 8 points (see details).
-#' @param na.fill character. name of the algorithm used to interpolate the data and fill the empty pixels.
-#' Can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details).
-#' @param ... extra parameters for the algorithm used to interpolate the empty pixels (see details)
-#' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
-#' If \code{x} is a \code{LAScatalog} the function \link{readLAS} is called internally. The
-#' user cannot manipulate the lidar data directly but can use streaming filters instead.
-#' @return Returns a \code{data.table} of class \code{lasmetrics}, which enables easier
-#' plotting and RasterLayer casting.
+#' @template param-res-grid
+#'
+#' @template LAScatalog
+#'
+#' @template section-supported-option-grid_functions
+#'
+#' @template return-grid-Layer
+#'
+#' @export
 #'
 #' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#' col <- height.colors(50)
 #'
-#' # Local maximum algorithm with a resolution of 2 meters
-#' chm = grid_canopy(lidar, 2)
-#' plot(chm)
+#' # Points-to-raster algorithm with a resolution of 1 meters
+#' chm <- grid_canopy(las, res = 1, p2r())
+#' plot(chm, col = col)
 #'
-#' # Local maximum algorithm with a resolution of 1 meter replacing each
+#' # Points-to-raster algorithm with a resolution of 0.5 meter replacing each
 #' # point by a 20 cm radius circle of 8 points
-#' chm = grid_canopy(lidar, 1, 0.2)
-#' plot(chm)
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
+#' plot(chm, col = col)
 #'
-#' # Local maximum algorithm with a resolution of 1 meter replacing each
-#' # point by a 10 cm radius circle of 8 points and interpolating the empty
-#' # pixels using the 3-nearest neighbours and an inverse-distance weighting.
-#' chm = grid_canopy (lidar, 1, subcircle = 0.1, na.fill = "knnidw", k = 3, p = 2)
-#' plot(chm)
+#' # Basic triangulation and rasterization of first returns
+#' chm <- grid_canopy(las, res = 0.5, dsmtin())
+#' plot(chm, col = col)
 #'
-#' \dontrun{
-#' chm = grid_canopy(lidar, 1, na.fill = "knnidw", k = 3)
-#' plot(chm)
-#' chm = grid_canopy(lidar, 1, subcircle = 0.1, na.fill = "delaunay")
-#' plot(chm)
-#' }
-#' @family grid_alias
-#' @seealso
-#' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:as.raster.lasmetrics]{as.raster}
-#' @export grid_canopy
-grid_canopy = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+#' # Khosravipour et al. pitfree algorithm
+#' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+#' plot(chm, col = col)
+grid_canopy = function(las, res, algorithm)
 {
-  UseMethod("grid_canopy", x)
+  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+    stop("res is not a number or a RasterLayer", call. = FALSE)
+
+  if(assertive::is_a_number(res))
+    assertive::assert_all_are_non_negative(res)
+
+  UseMethod("grid_canopy", las)
 }
 
 #' @export
-grid_canopy.LAS = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+grid_canopy.LAS = function(las, res, algorithm)
 {
+
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
+
+  if (!is(algorithm, "DigitalSurfaceModel"))
+    stop("The algorithm is not an algorithm for digital surface model.", call. = FALSE)
+
   . <- X <- Y <- Z <- NULL
 
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
-  assertive::assert_is_a_number(subcircle)
-  assertive::assert_all_are_non_negative(subcircle)
+  subcircle <- as.list(environment(algorithm))$subcircle
+  subcircle <- if(is.null(subcircle)) 0 else subcircle
 
-  if (res < 0)
-    stop("Argument 'res' should be greater than 0", call. = FALSE)
+  layout <- make_overlay_raster(las, res, subcircle = subcircle)
+  names(layout) <- "Z"
 
-  if (!is.numeric(subcircle))
-    stop("Argument 'subcircle' should be a number", call. = FALSE)
+  lidR.context <- "grid_canopy"
+  z = algorithm(las, layout)
 
-  if (subcircle < 0)
-    stop("Argument 'subcircle' should be greater than 0", call. = FALSE)
-
-  verbose("Gridding highest points in each cell...")
-
-  dsm = C_grid_canopy(x, res, subcircle)
-  as.lasmetrics(dsm, res)
-
-  if (na.fill != "none")
-  {
-    verbose("Interpolating empty cells...")
-
-    ex = extent(x)
-    grid = make_grid(ex@xmin, ex@xmax, ex@ymin, ex@ymax, res)
-
-    hull = convex_hull(x@data$X, x@data$Y)
-
-    # buffer around convex hull
-    sphull = sp::Polygon(hull)
-    sphull = sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-    hull = rgeos::gBuffer(sphull, width = res)
-    hull = hull@polygons[[1]]@Polygons[[1]]@coords
-
-    grid = grid[C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)]
-
-    data.table::setkeyv(grid, c("X", "Y"))
-    data.table::setkeyv(dsm, c("X", "Y"))
-    data.table::setattr(dsm, "class", class(grid))
-
-    dsm = dsm[grid]
-
-    z = interpolate(dsm[!is.na(Z)], dsm[is.na(Z)], method = na.fill, ...)
-
-    dsm[is.na(Z), Z := z]
-
-    as.lasmetrics(dsm, res)
-  }
-
-  return(dsm)
+  suppressWarnings(layout[] <- z)
+  return(layout)
 }
 
 #' @export
-grid_canopy.LAScatalog = function(x, res = 2, subcircle = 0, na.fill = "none", ..., filter = "")
+grid_canopy.LAScluster = function(las, res, algorithm)
 {
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
-  assertive::assert_is_a_number(subcircle)
-  assertive::assert_all_are_non_negative(subcircle)
-
-  x = catalog_old_compatibility(x)
-
-  buffer(x) <- res/2 + subcircle
-  canopy = grid_catalog(x, grid_canopy, res, "xyz", filter, subcircle = subcircle, na.fill = na.fill, ...)
-  return(canopy)
+  x = readLAS(las)
+  if (is.empty(x)) return(NULL)
+  bbox = raster::extent(las)
+  metrics = grid_canopy(x, res, algorithm)
+  metrics = raster::crop(metrics, bbox)
+  return(metrics)
 }
 
+#' @export
+grid_canopy.LAScatalog = function(las, res, algorithm)
+{
+  if (is(res, "RasterLayer"))
+  {
+    ext = raster::extent(res)
+    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
+    las = las[keep,]
+  }
+
+  set_select(las) <- "xyzr"
+  output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+
+  # Outputs have been written in files. Return the path to written files
+  if (get_output_files(las) != "")  return(unlist(output))
+
+  if (get_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+    return(build_vrt(output, "grid_canopy"))
+  else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
+    return(merge_rasters(output))
+}

@@ -27,33 +27,31 @@
 
 
 
-#' Classify LiDAR points from source data
+#' Classify points from a source of spatial data
 #'
-#' Classify LAS points based on geographic data from external sources. It adds an attribute
-#' to each point based on a value found in the external data. External sources can be an ESRI
-#' Shapefile (SpatialPolygonsDataFrame) or a Raster (RasterLayer).
-#'
-#' The function recognizes several type of sources:
+#' Classify points based on spatial data from external sources. It adds an attribute
+#' along each point based on a value found in the spatial data. External sources can be a
+#' \code{SpatialPolygonsDataFrame}) or a \code{RasterLayer}.\cr
 #' \itemize{
-#' \item{\code{SpatialPolygonsDataFrame}: Polygons can be simple, one-part shapes,
-#' multi-part polygons, or polygons with holes. It checks if the LiDAR points are in polygons
-#' given in the shapefile. If the parameter \code{field} is the name of a field in the table of attributes
-#' of the shapefile it assigns to the points the values of that field. Otherwise it classifies
-#' the points as boolean. TRUE if the points are in a polygon, FALSE otherwise. This function
-#' allows filtering of lakes, for example.
+#' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
+#' the parameter \code{field} is the name of a an attribute in the table of attributes of the shapefile
+#' it assigns to the points the values of that field. Otherwise it classifies the points as boolean.
+#' TRUE if the points are in a polygon, FALSE otherwise.}
+#' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
 #' }
-#' \item{\code{RasterLayer}: It attributes to each point the value found in each pixel of the RasterLayer.
-#' Use the parameter \code{field} to force the name of the new column added in the LAS object. This function
-#' is used internally to normalize the lidar dataset and is exported because some users may find it useful
-#' (for example to colorize the point cloud using a georeferenced RGB image.}
-#' }
-#' More examples available on \href{https://github.com/Jean-Romain/lidR/wiki/lasclassify}{lidR wiki}.
 #'
-#' @param .las An object of the class \code{LAS}
+#' @param las An object of the class \code{LAS}
+#'
 #' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}
+#'
 #' @param field characters. The name of a field in the table of attributes of the shapefile or
-#' the name of the new column in the LAS object (see details)
-#' @return Nothing. The new field is added by reference to the original data.
+#' the name of a new column in the LAS object.
+#'
+#' @return Nothing. The original LAS object is updated by reference (using side effect) to avoid any
+#' copy in memory of the point cloud.
+#'
+#' @export
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
@@ -70,60 +68,54 @@
 #' # The field "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the values of the polygons
 #' lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
-#' @seealso
-#' \code{\link[rgdal:readOGR]{readOGR} }
-#' \code{\link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame} }
-#' @export
-lasclassify = function(.las, source, field = NULL)
+lasclassify = function(las, source, field = NULL)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
 
   if (is(source, "SpatialPolygonsDataFrame"))
-    values = classify_from_shapefile(.las, source, field)
+    values = classify_from_shapefile(las, source, field)
   else if (is(source, "RasterLayer") | is(source, "RasterStack"))
-    values = classify_from_rasterlayer(.las, source, field)
+    values = classify_from_rasterlayer(las, source, field)
   else
     stop("No method for this source format.", call. = F)
 
   if (is.null(field))
     field = "id"
 
-  .las@data[,(field) := values][]
-
-  return(invisible())
+  las@data[,(field) := values][]
+  return(invisible(las))
 }
 
-classify_from_shapefile = function(.las, shapefile, field = NULL)
+classify_from_shapefile = function(las, shapefile, field = NULL)
 {
   info <- NULL
 
-  npoints = dim(.las@data)[1]
+  npoints = dim(las@data)[1]
 
-  # No field is provided:
-  # Assign the number of the polygon
+  # No field is provided: assign the number of the polygon
   if (is.null(field))
   {
     method = 0
   }
-  # The field is the name of a field in the attribute table:
-  # Assign the value of the field
+  # The field is the name of a field in the attribute table: assign the value of the field
   else if (field %in% names(shapefile@data))
   {
     method = 1
 
     if (class(shapefile@data[,field]) == "factor")
-      values = factor(rep(NA, npoints), levels = levels(shapefile@data[,field]))
+      values = factor(rep(NA_integer_, npoints), levels = levels(shapefile@data[,field]))
     else if (class(shapefile@data[,field]) == "integer")
       values = rep(NA_integer_, npoints)
     else if (class(shapefile@data[,field]) == "logical")
       values = rep(NA, npoints)
     else if (class(shapefile@data[,field]) == "numeric")
       values = rep(NA_real_, npoints)
+    else if (class(shapefile@data[,field]) == "character")
+      values = rep(NA_character_, npoints)
     else
-      stop("Type no supported.")
+      stop(glue::glue("The attribute {field} the in the table of attribute is not of a supported type."), call. = FALSE)
   }
-  # The field is not the name of a field in the attribute table:
-  # Assign a boolean if the point is in a polygon or not.
+  # The field is not the name of a field in the attribute table: assign a boolean if the point is in a polygon or not.
   else
   {
     method = 2
@@ -131,91 +123,55 @@ classify_from_shapefile = function(.las, shapefile, field = NULL)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
-  if (raster::extent(shapefile) >  2*extent(.las))
+  if (raster::extent(shapefile) >  2*raster::extent(las))
   {
     verbose("Croping the shapefile...")
-    polys = raster::crop(shapefile, extent(.las) + 20)
+    polys = raster::crop(shapefile, raster::extent(las)*1.01)
   }
   else
     polys = shapefile
 
   # No polygon? Return NA or false depending on the method used
-  if (!is.null(polys))
+  if (is.null(polys))
   {
-    verbose("Analysing the polygons...")
+    verbose("No polygon found within the data", call. = F)
+    return(values)
+  }
 
-    # Extract the coordinates of each polygon as a list.
-    # The list has 2 levels of depth because of multi part polygons
-    xcoords = lapply(polys@polygons,
-                     function(x)
-                     {
-                       lapply(x@Polygons, function(x){x@coords[,1]})
-                     })
+  verbose("Analysing the polygons...")
 
-    ycoords = lapply(polys@polygons,
-                     function(x)
-                     {
-                       lapply(x@Polygons, function(x){x@coords[,2]})
-                     })
+  sfgeom = sf::st_as_sf(polys)
 
-    is_hole = lapply(polys@polygons,
-                     function(x)
-                     {
-                       lapply(x@Polygons, function(x){x@hole})
-                     })
+  verbose("Testing whether points fall in a given polygon...")
 
-    # The reduction to 1 level of depth list will cause loss of information
-    # for multi-part polygon. Here we need to retrieve the real IDs of each polygon
-    # before reducing to 1 level of depth
-    i = 0
-    lengths = unlist(lapply(xcoords, length))
-    idpolys = unlist(lapply(lengths, function(x){i <<- i + 1 ; rep.int(i,x)}))
+  ids = rep(0L, npoints)
+  for (i in 1:length(sfgeom$geometry))
+  {
+    wkt = sf::st_as_text(sfgeom$geometry[i])
+    in_poly = C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt)
+    ids[in_poly] = i
+  }
 
-    # Make the lists 1 level depth
-    xcoords = unlist(xcoords, recursive = FALSE)
-    ycoords = unlist(ycoords, recursive = FALSE)
-
-    is_hole = unlist(is_hole)
-    is_hole = c(FALSE, is_hole)
-
-    # Return the id of each polygon
-    verbose("Testing whether points fall in a given polygon...")
-
-    ids = C_points_in_polygons(xcoords, ycoords, .las@data$X, .las@data$Y, LIDROPTIONS("progress"))
-
-    if (method == 1)
-    {
-      verbose("Retrieving correspondances in the table of attributes...")
-
-      inpoly = ids > 0
-      inhole = is_hole[ids + 1]
-      inpoly.nothole = inpoly & !inhole
-
-      id = idpolys[ids[inpoly.nothole]]
-      values[inpoly.nothole] = polys@data[, field][id]
-
-      verbose(glue("Assigned the value of field {field} from the table of attibutes to the points"))
-    }
-    else if (method == 2)
-    {
-      values = ids > 0 & !is_hole[ids + 1]
-      verbose("Assigned a boolean value to the points")
-    }
-    else
-    {
-      values = ifelse(ids == 0L, NA_integer_, ids)
-      verbose("Assigned a number to each individual polygon")
-    }
+  if (method == 1)
+  {
+    values[ids] = polys@data[, field][ids]
+    verbose(glue::glue("Assigned the value of field {field} from the table of attibutes to the points"))
+  }
+  else if (method == 2)
+  {
+    values = ids > 0
+    verbose("Assigned a boolean value to the points")
   }
   else
   {
-    verbose("No polygon found within the data", call. = F)
+    values = ifelse(ids == 0L, NA_integer_, ids)
+    verbose("Assigned a number to each individual polygon")
   }
 
   return(values)
 }
 
-classify_from_rasterlayer = function(.las, raster, field = NULL)
+classify_from_rasterlayer = function(las, raster, field = NULL)
 {
   . <- X <- Y <- info <- NULL
 
@@ -226,8 +182,8 @@ classify_from_rasterlayer = function(.las, raster, field = NULL)
   #xmin = raster@extent@xmin
   #ymin = raster@extent@ymin
   #m  = raster::as.matrix(raster)
-  #v = fast_extract(m, .las@data$X, .las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
-  values = raster::extract(raster, .las@data[,.(X,Y)])
-  return(values)
+  #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
+  cells = raster::cellFromXY(raster, las@data[,.(X,Y)])
+  return(raster@data@values[cells])
 }
 

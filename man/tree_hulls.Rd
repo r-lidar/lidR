@@ -5,10 +5,10 @@
 \title{Compute the hull of each tree.}
 \usage{
 tree_hulls(las, type = c("convex", "concave", "bbox"), concavity = 3,
-  length_threshold = 0, field = "treeID")
+  length_threshold = 0, attribute = "treeID")
 }
 \arguments{
-\item{las}{An object of class \code{LAS}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{type}{character. Hull type. Can be 'convex', 'concave' or 'bbox'.}
 
@@ -18,7 +18,7 @@ in a relatively detailed shape, Infinity results in a convex hull.}
 \item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is below this
 threshold, no further detail is added. Higher values result in simpler shapes.}
 
-\item{field}{character. The field where the ID of each tree is stored. In lidR, default is
+\item{attribute}{character. The attribute where the ID of each tree is stored. In lidR, default is
 "treeID".}
 }
 \value{
@@ -33,11 +33,45 @@ The concave hull method under the hood is described in Park & Oh (2012). The fun
 the \link[concaveman:concaveman]{concaveman} function which itself is a wrapper around
 \href{https://github.com/mapbox/concaveman}{Vladimir Agafonking's implementation}.
 }
+\section{Working with a \code{LAScatalog}}{
+
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
+always removed once processed and will never be returned neither in R nor in files.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-
-lastrees_li2(las, speed_up = 7)
+las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 
 convex_hulls = tree_hulls(las)
 sp::plot(convex_hulls)

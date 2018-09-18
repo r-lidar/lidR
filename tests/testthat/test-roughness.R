@@ -1,7 +1,5 @@
 context("roughness")
 
-lidr_options(debug = FALSE)
-
 test_that("Flat surfaces have a rumple index of 1. Delaunay method", {
   n = sample(10:20, 1)
   x = runif(n, 0, 100)
@@ -14,11 +12,9 @@ test_that("Flat surfaces have a rumple index of 1. Delaunay method", {
 })
 
 test_that("Flat surfaces have a rumple index of 1. Jenness method", {
-  n = sample(10:20, 1)
-  r = expand.grid(X = 1:n, Y = 1:n)
-  r$Z = 1
-  data.table::setDT(r)
-  as.lasmetrics(r, 1)
+  bbox = raster::extent(0,10,0,10)
+  r = raster::raster(bbox, res = 0.5)
+  r[] = 2.56
 
   expect_equal(rumple_index(r), 1)
 })

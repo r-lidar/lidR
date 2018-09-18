@@ -2,51 +2,53 @@
 % Please edit documentation in R/tree_detection.r
 \name{tree_detection}
 \alias{tree_detection}
-\title{Tree top detection based on local maxima filters}
+\title{Individual tree detection}
 \usage{
-tree_detection(x, ws, hmin = 2)
+tree_detection(las, algorithm)
 }
 \arguments{
-\item{x}{A object of class \code{LAS} or an object representing a canopy height model
-such as a \code{RasterLayer} or a \code{lasmetrics} or a \code{matrix}.}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer}
+representing a canopy height model. In that case it is processed like a regularly spaced point
+cloud.}
 
-\item{ws}{numeric. Size of the moving window used to the detect the local maxima. On
-a raster-like object this size is in pixels and should be an odd number larger than 3.
-On a raw point cloud this size is in the point cloud units (usually meters).}
-
-\item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
-cannot be a local maxima. Default 2.}
+\item{algorithm}{An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
+\link{multichm} and \link{manual}.}
 }
 \value{
-A \code{data.table} with the coordinates of the tree tops (X, Y, Z) if the input
-is a point cloud, or a RasterLayer if the input is a raster-like object.
+A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID with an individual
+ID for each tree.
 }
 \description{
-Tree top detection based on local maxima filters. There are two types of filter. The
-first, called for gridded objects, works on images with a matrix-based algorithm
-and the second one, called for point clouds, works at the point cloud level without any
-rasterization.
+Individual tree detection function that find the position of the trees using several possible
+algorithms.
 }
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How many data are loaded at once.
+\item \strong{buffer*}: Mandatory to get a continuous output without edge effect. The buffer is
+always removed once processed and will never be returned neither in R nor in files.
+\item \strong{alignment}: Align the processed clusters
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
+(processing by file), \code{\{ORIGINALFILENAME\}}.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
-# point-cloud-based method
-
-ttops = tree_detection(las, 5)
+ttops = tree_detection(las, lmf(ws = 5))
 
 plot(las)
-with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
-
-# raster-based method
-
-chm = grid_canopy(las, 1, subcircle = 0.15)
-chm = as.raster(chm)
-kernel = matrix(1,3,3)
-chm = raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
-
-ttops = tree_detection(chm, 5)
-
-raster::plot(chm, col = height.colors(30))
-raster::plot(ttops, add = TRUE, col = "black", legend = FALSE)
+rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
 }

@@ -50,25 +50,38 @@ data = data.table::data.table(
   filename = paste0("abc", 1:62)
 )
 
-ctg = new("LAScatalog", data = data, crs = sp::CRS())
+
+pgeom <- lapply(1:nrow(data), function(i)
+{
+  mtx <- matrix(c(data$`Min X`[i], data$`Max X`[i], data$`Min Y`[i], data$`Max Y`[i])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
+  sp::Polygons(list(sp::Polygon(mtx)),as.character(i))
+})
+
+Sr = sp::SpatialPolygons(pgeom, proj4string = sp::CRS("+init=epsg:26917"))
+
+ctg <- new("LAScatalog")
+ctg@bbox <- Sr@bbox
+ctg@proj4string <- Sr@proj4string
+ctg@plotOrder <- Sr@plotOrder
+ctg@data <- data
+ctg@polygons <- Sr@polygons
 
 test_that("makecluster, tiling", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = 0
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = 0
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
 
   expect_equal(length(cl), 194)
   expect_true(all(width == 800))
@@ -83,21 +96,20 @@ test_that("makecluster, tiling", {
 
 test_that("makecluster, tiling + buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = 50
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = 50
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
 
   expect_equal(length(cl), 197)
   expect_true(all(width == 900))
@@ -112,21 +124,20 @@ test_that("makecluster, tiling + buffer", {
 
 test_that("makecluster, tiling + negative buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = FALSE
-  buffer(ctg) = -100
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 800
+  set_buffer(ctg) = -100
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
 
   expect_equal(length(cl), 189)
   expect_true(all(width == 600))
@@ -141,21 +152,20 @@ test_that("makecluster, tiling + negative buffer", {
 
 test_that("makecluster, by file", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = 0
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = 0
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
   nfiles  = sapply(cl, function(x) length(x@files))
 
   expect_equal(length(cl), nrow(ctg@data))
@@ -172,21 +182,20 @@ test_that("makecluster, by file", {
 
 test_that("makecluster, by file + buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = 30
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = 30
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
   nfiles  = sapply(cl, function(x) length(x@files))
 
   expect_equal(length(cl), nrow(ctg@data))
@@ -203,21 +212,20 @@ test_that("makecluster, by file + buffer", {
 
 test_that("makecluster, by file + negative buffer", {
 
-  tiling_size(ctg) = 800
-  by_file(ctg) = TRUE
-  buffer(ctg) = -30
-  cores(ctg) = 1L
+  set_tiling_size(ctg) = 0
+  set_buffer(ctg) = -30
+  set_cores(ctg) = 1L
 
-  cl  = lidR:::catalog_makecluster(ctg, 1)
+  cl  = lidR:::catalog_makecluster(ctg)
 
   width  = sapply(cl, function(x) x@width)
   buffer = sapply(cl, function(x) x@buffer)
-  xwidth = sapply(cl, function(x) x@bbox$xmax - x@bbox$xmin)
-  ywidth = sapply(cl, function(x) x@bbox$ymax - x@bbox$ymin)
-  xbwidth = sapply(cl, function(x) x@bbbox$xmax - x@bbbox$xmin)
-  ybwidth = sapply(cl, function(x) x@bbbox$ymax - x@bbbox$ymin)
-  xbuffer = sapply(cl, function(x) x@bbbox$xmax - x@bbox$xmax)
-  ybuffer = sapply(cl, function(x) x@bbbox$ymax - x@bbox$ymax)
+  xwidth = sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth = sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth = sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth = sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
+  ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
   nfiles  = sapply(cl, function(x) length(x@files))
 
   expect_equal(length(cl), nrow(ctg@data))
@@ -236,27 +244,28 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project = catalog(LASfile)
 
 test_that("Clusters do not overlap", {
-  buffer(project) <- 15
-  tiling_size(project) <- 120
+  set_buffer(project) <- 15
+  set_tiling_size(project) <- 120
 
-  cluster = lidR:::catalog_makecluster(project, 1)
+  cluster = lidR:::catalog_makecluster(project)
 
-  x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
-  y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))
+  x = unlist(lapply(cluster, function(cl) {c(cl@bbox[1], cl@bbox[3])}))
+  y = unlist(lapply(cluster, function(cl) {c(cl@bbox[2], cl@bbox[4])}))
 
   expect_equal(length(unique(x)), 4)
   expect_equal(length(unique(y)), 4)
 })
 
 test_that("No extra cluster are generated", {
-  buffer(project) <- 0
-  tiling_size(project) <- 160
+  set_buffer(project) <- 0
+  set_tiling_size(project) <- 160
 
-  cluster = lidR:::catalog_makecluster(project, 20)
+  cluster = lidR:::catalog_makecluster(project)
 
-  x = unlist(lapply(cluster, function(cl) {c(cl@bbox$xmin, cl@bbox$xmax)}))
-  y = unlist(lapply(cluster, function(cl) {c(cl@bbox$ymin, cl@bbox$ymax)}))
+  x = unlist(lapply(cluster, function(cl) {c(cl@bbox[1], cl@bbox[3])}))
+  y = unlist(lapply(cluster, function(cl) {c(cl@bbox[2], cl@bbox[4])}))
 
   expect_equal(length(unique(x)), 4)
   expect_equal(length(unique(y)), 3)
 })
+

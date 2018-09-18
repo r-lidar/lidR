@@ -26,17 +26,6 @@
 # ===============================================================================
 
 
-#' Set the class 'lasmetrics' to a data.frame or a data.table
-#'
-#' Set the class lasmetrics to a data.frame. Useful when reading data from a file.
-#' In this case the data.frame does not have the class lasmetrics and cannot easily be
-#' plotted or transformed into a raster
-#'
-#' @param x A data.frame or a data.table
-#' @param res numeric the original resolution
-#' @return Nothing. Object is updated in place by reference.
-#' @export
-#' @family cast
 as.lasmetrics = function(x, res)
 {
   assertive::assert_is_a_number(res)
@@ -45,32 +34,6 @@ as.lasmetrics = function(x, res)
   data.table::setattr(x, "class", c("lasmetrics", "data.table", "data.frame"))
 }
 
-#' Transform a \code{lasmetrics} object into a spatial \code{RasterLayer} object
-#'
-#' @param x a \code{lasmetrics} object
-#' @param z character. If 3 columns or more, the names of the field to extract. If NULL returns
-#' a RasterStack instead of a RasterLayer.
-#' @param fun.aggregate Should the data be aggregated before casting? If the table does not
-#' contain a single observation for each cell, then aggregation defaults to mean value with
-#' a message.
-#' @param ... Internal use only.
-#' @seealso
-#' \link[lidR:grid_metrics]{grid_metrics}
-#' \link[lidR:grid_canopy]{grid_canopy}
-#' \link[lidR:grid_canopy]{grid_canopy}
-#' \link[raster:raster]{raster}
-#' @return A \link[raster:RasterLayer-class]{RasterLayer} object from package \pkg{raster}
-#' or a \link[raster:RasterStack-class]{RasterStack} if there are several layers.
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#'
-#' meanHeight = grid_metrics(lidar, mean(Z))
-#' rmeanHeight = as.raster(meanHeight)
-#' @method as.raster lasmetrics
-#' @importMethodsFrom raster as.raster
-#' @export
-#' @family cast
 as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
 {
   X <- Y <- . <- SD <- flightline <- NULL
@@ -97,7 +60,7 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
     else
     {
       res = round(stats::median(c(dx,dy)), 2)
-      message(glue("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: {res}"))
+      message(glue::glue("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: {res}"))
     }
 
     data.table::setattr(x, "res", res)
@@ -188,7 +151,7 @@ as.spatial.LAS = function(x)
 {
   ..coords <- NULL
   coords = c("X", "Y")
-  sp::SpatialPointsDataFrame(x@data[,..coords], x@data[, -..coords], proj4string = x@crs)
+  sp::SpatialPointsDataFrame(x@data[,..coords], x@data[, -..coords], proj4string = x@proj4string)
 }
 
 #' @export
@@ -204,17 +167,11 @@ as.spatial.lasmetrics = function(x)
 #' @export
 as.spatial.LAScatalog = function(x)
 {
-  xmin <- x@data$`Min X`
-  xmax <- x@data$`Max X`
-  ymin <- x@data$`Min Y`
-  ymax <- x@data$`Max Y`
-  ids  <- as.character(seq_along(xmin))
-
-  pgeom <- lapply(seq_along(ids), function(xi)
-  {
-    mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
-  })
-  data <- data.frame(x@data)
-  sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), data)
+  res <- new("SpatialPolygonsDataFrame")
+  res@bbox <- x@bbox
+  res@proj4string <- x@proj4string
+  res@plotOrder <- x@plotOrder
+  res@data <- x@data
+  res@polygons <- x@polygons
+  return(res)
 }

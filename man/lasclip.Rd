@@ -7,67 +7,110 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(x, geometry, ofile = "", inside = TRUE, ...)
+lasclip(las, geometry)
 
-lasclipRectangle(x, xleft, ybottom, xright, ytop, ofile = "", inside = TRUE,
-  ...)
+lasclipRectangle(las, xleft, ybottom, xright, ytop)
 
-lasclipPolygon(x, xpoly, ypoly, ofile = "", inside = TRUE, ...)
+lasclipPolygon(las, xpoly, ypoly)
 
-lasclipCircle(x, xcenter, ycenter, radius, ofile = "", inside = TRUE, ...)
+lasclipCircle(las, xcenter, ycenter, radius)
 }
 \arguments{
-\item{x}{An object of class \code{LAS} or \code{LAScatalog}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{geometry}{a geometric object. Currently \code{Polygon} and \code{SpatialPolygonsDataFrame}
-from \code{sp} are supported.}
+\item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
 
-\item{ofile}{character. Path to an output file (only with a \code{LAScatalog} object).
-If \code{ofile = ""} the result is loaded into R, otherwise the result is written to a
-file while reading. This is much more memory-efficient than loading into R first, then writing.}
+\item{xleft}{numeric. left x coordinates of rectangles.}
 
-\item{inside}{logical. Inverts the selection (only with a \code{LAS} object). Select inside or outside
-the shape.}
+\item{ybottom}{numeric. bottom y coordinates of rectangles.}
 
-\item{...}{Additional argument for readLAS to reduce the amount of data loaded (only with a
-\code{LAScatalog} object)}
+\item{xright}{numeric. right x coordinates of rectangles.}
 
-\item{xleft}{scalar of left x position of rectangle.}
+\item{ytop}{numeric. top y coordinates of rectangles.}
 
-\item{ybottom}{scalar of bottom y position of rectangle.}
+\item{xpoly}{numeric. x coordinates of a polygon.}
 
-\item{xright}{scalar of right x position of rectangle.}
+\item{ypoly}{numeric. y coordinates of a polygon.}
 
-\item{ytop}{scalar of top y position of rectangle.}
+\item{xcenter}{numeric. x coordinates of discs centers.}
 
-\item{xpoly}{numerical array. x-coordinates of polygon.}
+\item{ycenter}{numeric. y coordinates of discs centers.}
 
-\item{ypoly}{numerical array. y-coordinates of polygon.}
-
-\item{xcenter}{scalar of x disc center.}
-
-\item{ycenter}{scalar of y disc center.}
-
-\item{radius}{scalar of disc radius.}
+\item{radius}{numeric. disc radiuses.}
 }
 \value{
-An object of class \code{LAS} or NULL if the result is immediately written to a file.
+If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+several regions of interest\cr
+If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
+several regions of interest or a \code{LAScatalog} if the query is immediatly written into file without loading anything in R.
 }
 \description{
 Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
-(\code{LAScatalog} object)
+(\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
+in memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
+object, the user can extracts any arbitrary ROI for a set of \code{las/laz} file loading only the
+points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
 }
-\details{
-\code{lasclip} functions work both on \code{LAS} and \code{LAScatalog} objects. With a \code{LAS}
-object, the user first reads and loads a point-cloud and then clip it to get a subset within a region
-of interest (ROI). With a \code{LAScatalog} object, the user extracts the ROI without
-loading the whole point-cloud. This is faster and much more memory-efficient for extracting ROIs.
-\cr\cr
-Minor differences exist between the \code{LAS} and \code{LAScatalog} version of \code{lasclip}.
-For example the user can clip a \code{SpatialPolygonsDataFrame} from a \code{LAS} object but not
-from a \code{LAScatalog}. Also the option \code{inside = FALSE} is disabled for \code{LAScatalog}
-objects. These differences are generally justified by memory safety concerns.
+\section{Supported geometries}{
+
+\itemize{
+ \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POLYGON or
+ a MULTIPOLYGON.
+ \item \link[sp:Polygon-class]{Polygon}
+ \item \link[sp:Polygons-class]{Polygons}
+ \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
+ \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
+ \item \link[sf:sf]{SimpleFeature}
+ \item \link[raster:Extent-class]{Extent}
+ \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
+ \preformatted{
+  min     max
+x 684816  684943
+y 5017823 5017957}
+ \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
+ \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
+ }
 }
+
+\section{Working with a \code{LAScatalog}}{
+
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+functions uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful read of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that document the supported engine options.\cr
+
+\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item tiling_size: Does not make sense here.
+\item buffer: Not supported yet.
+\item alignment: Does not makes sense here.
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
+They will be written immediatly in files. See \link{LAScatalog-class} and examples. The allowed templates in
+\code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+{YCENTER}} or any names from the table of attributes of a \code{SpatialPolygons*} objects given as
+input such as \code{{LAKENAME}} or \code{{YEAR}} for example if these attributes exist. If empty everything
+is returned into R.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item \strong{drivers}: Leave it as it unless you are an advanced user.
+\item select: The function will write file equivalent to the original ones. This option is not respected.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
@@ -75,19 +118,18 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 
-# Do not load the file, extract only the region of interest
+# Do not load the file(s), extract only the region of interest from a bigger dataset
 ctg = catalog(LASfile)
 subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
-# Extract a polygon from a shapefile
+# Extract all the polygons from a shapefile
 shapefile_dir <- system.file("extdata", package = "lidR")
 lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
-lake = lakes@polygons[[1]]@Polygons[[1]]
-subset3 = lasclip(ctg, lake)
+subset3 = lasclip(ctg, lakes)
 
-# Extract a polygon, write it in a file, do not load anything in R
-file = paste0(tempfile(), ".las")
-lasclip(ctg, lake, ofile = file)
+# Extract the polygons, write them in files name after the lake names, do not load anything in R
+set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
+new_ctg = lasclip(ctg, lakes)
 
 \dontrun{
 plot(subset1)
