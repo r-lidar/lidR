@@ -43,9 +43,6 @@
 #' dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
 #' are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).
 #'
-#' @template LAScatalog
-#' @template section-supported-option-tree_detection
-#'
 #' @template param-las
 #' @param func The function to be applied to each tree.
 #' @param field character. The column name of the field containing tree IDs. Default is \code{"treeID"}
@@ -53,6 +50,10 @@
 #' @return A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that
 #' associates the z-elevation (highest points) of the trees and the id of the tree plus the metrics
 #' defined by the user.
+#'
+#' @template LAScatalog
+#' @template section-supported-option-tree_detection
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, filter = "-drop_z_below 0")
