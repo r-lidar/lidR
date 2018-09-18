@@ -59,10 +59,7 @@ tin = function()
     nnas <- sum(isna)
 
     if (nnas > 0)
-    {
       z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1)
-      message(glue::glue("{nnas} points outside the convex hull of the triangulation were interpolated using the nearest neighbour."))
-    }
 
     return(z)
   }

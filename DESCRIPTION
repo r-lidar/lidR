@@ -45,6 +45,7 @@ Suggests:
     hexbin,
     mapview,
     mapedit,
+    progress,
     rgdal,
     testthat
 LazyData: true

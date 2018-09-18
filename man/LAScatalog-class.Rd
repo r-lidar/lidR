@@ -62,6 +62,7 @@ all single core algorithms. What is parallelized is the number of clusters proce
 by using 4 cores, 4 points cloud are loaded at once using 4 times more memory. Thus it is not
 always pertinent to set \code{core > 1}.
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
+Progress estimation can be enhanced by installing the package \code{progress}.
 \item \strong{stop_early}: boolean. Stop the processsing if an error occur in a clusters. If \code{FALSE}
 the process can run until the end removing cluster that failed. Default is TRUE and the user should
 not change that.

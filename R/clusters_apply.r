@@ -10,42 +10,18 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   codes  <- rep(ASYNC_RUN, nclust)
   dots   <- list(...)
 
-  # The following is bad and have been introduced in v1.6.1 to fix a bug in a dirty way
-  # In v2.0 this will not be relevant anymore. Consider this code as fonctionnal but poor.
-  select   <- if(is.null(dots$select)) "*" else dots$select
-  filter   <- if(is.null(dots$filter)) "" else dots$filter
-  autoread <- if(is.null(dots$autoread)) FALSE else TRUE
-
   future::plan(future::multiprocess, workers = ncores)
 
-  required.pkgs <- "lidR"
-
-  # User supplied function not being analysed for globals/packages by the future we have to do it manually.
-  # Not sure it will be requiered in v2.0
-  if (ncores > 1 & !future::supportsMulticore())
-  {
-    is.fun <- vapply(dots, is.function, logical(1))
-
-    if(any(is.fun))
-    {
-      dots <- dots[is.fun]
-      for(fun in dots)
-      {
-        globals <- future::getGlobalsAndPackages(fun)
-        required.pkgs <- c(required.pkgs, setdiff(globals$packages, required.pkgs))
-
-        where   <- attr(globals$globals, "where")
-        pkgs    <- unlist(lapply(where, attr, "name"), use.names = FALSE)
-        pkgs    <- unique(grep("package\\:", pkgs, value = TRUE))
-        pkgs    <- gsub("package\\:", "", unique(pkgs))
-        required.pkgs <- c(required.pkgs, setdiff(pkgs, required.pkgs))
-      }
-    }
-  }
-
-  # Display the color legend over the LAScatalog that should have already been plotted.
+  # Display the color legend over the LAScatalog that should have already been plotted by makecluster.
   if (processing_options$progress)
+  {
+    if (requireNamespace("progress", quietly = TRUE))
+      pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = nclust, clear = FALSE)
+    else
+      pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
+
     graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
+  }
 
   # Parallel loop using asynchronous computation
   for (i in seq_along(clusters))
@@ -56,7 +32,7 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
       if (is.null(x)) return(NULL)
       if (clusters[[i]]@save == "") return(x)
       return(cluster_write(x, clusters[[i]]@save, output_options))
-    }, substitute = TRUE, packages = required.pkgs)
+    }, substitute = TRUE)
 
     # Error handling and progress report
     for (j in 1:i)
@@ -64,7 +40,11 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
       if (codes[j] != ASYNC_RUN) next
       codes[j] = early_eval(output[[j]], processing_options$stop_early)
       if (codes[j] == ASYNC_RUN) next
-      if (processing_options$progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
+      if (processing_options$progress)
+      {
+        update_graphic(clusters[[j]]@bbox, codes[j])
+        update_pb(pb, i/nclust)
+      }
     }
   }
 
@@ -77,20 +57,21 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
     {
       codes[j] = early_eval(output[[j]], processing_options$stop_early)
       if (codes[j] == ASYNC_RUN) next
-      if (processing_options$progress) display_progress(clusters[[j]]@bbox, i/nclust, codes[j])
+      if (processing_options$progress)
+      {
+        update_graphic(clusters[[j]]@bbox, codes[j])
+        update_pb(pb, i/nclust)
+      }
     }
 
     not_finished = which(codes == ASYNC_RUN)
     Sys.sleep(0.1)
   }
 
-  if (processing_options$progress) cat("\n")
   if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
+  if (drop_null) output <- output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
 
-  if (drop_null)
-    output = output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
-
-  output = future::values(output)
+  output <- future::values(output)
   return(output)
 }
 
@@ -119,10 +100,8 @@ early_eval <- function(future, stop_early)
   return(code)
 }
 
-display_progress = function(bbox, p, code)
+update_graphic = function(bbox, code)
 {
-  cat(sprintf("\rProgress: %g%%", round(p*100)), file = stderr())
-
   if (code == ASYNC_OK)
     col = "forestgreen"
   else if (code == ASYNC_NULL)
@@ -131,6 +110,16 @@ display_progress = function(bbox, p, code)
     col = "red"
 
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+}
+
+update_pb = function(pb, ratio)
+{
+  pb_type = class(pb)[1]
+
+  if (pb_type == "txtProgressBar")
+    utils::setTxtProgressBar(pb, ratio)
+  else
+    pb$update(ratio)
 }
 
 cluster_write = function(x, path, output_options)
@@ -183,3 +172,27 @@ cluster_write = function(x, path, output_options)
   else
     stop(glue::glue("Trying to write an object of class {type} but this type is not supported."))
 }
+
+# This was introduced in https://github.com/Jean-Romain/lidR/pull/159 and is expected to be no longer useful
+# User supplied function not being analysed for globals/packages by the future we have to do it manually.
+# Not sure it will be requiered in v2.0
+# if (ncores > 1 & !future::supportsMulticore())
+# {
+#   is.fun <- vapply(dots, is.function, logical(1))
+#
+#   if(any(is.fun))
+#   {
+#     dots <- dots[is.fun]
+#     for(fun in dots)
+#     {
+#       globals <- future::getGlobalsAndPackages(fun)
+#       required.pkgs <- c(required.pkgs, setdiff(globals$packages, required.pkgs))
+#
+#       where   <- attr(globals$globals, "where")
+#       pkgs    <- unlist(lapply(where, attr, "name"), use.names = FALSE)
+#       pkgs    <- unique(grep("package\\:", pkgs, value = TRUE))
+#       pkgs    <- gsub("package\\:", "", unique(pkgs))
+#       required.pkgs <- c(required.pkgs, setdiff(pkgs, required.pkgs))
+#     }
+#   }
+# }
