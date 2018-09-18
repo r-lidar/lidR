@@ -52,7 +52,7 @@ tin = function()
   f = function(what, where)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "grid_canopy"), "tin")
+    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "tin")
 
     z    <- interpolate_delaunay(what, where)
     isna <- is.na(z)

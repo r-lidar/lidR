@@ -222,6 +222,9 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 #' @rdname area
 setMethod("area", "LAS", function(x, ...)
 {
+  if(nrow(x@data) == 0)
+    return(0)
+
   return(area_convex_hull(x@data$X, x@data$Y))
 })
 

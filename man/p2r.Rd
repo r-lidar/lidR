@@ -4,11 +4,15 @@
 \alias{p2r}
 \title{Digital Surface Model Algorithm}
 \usage{
-p2r(subcircle = 0)
+p2r(subcircle = 0, na.fill = NULL)
 }
 \arguments{
 \item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 can replace each return with a circle composed of 8 points (see details).}
+
+\item{na.fill}{function. A function that implements an algorithm to compute spatial interpolation
+to fill the empty pixel often leave by point-to-raster methods. \code{lidR} have \link{knnidw},
+\link{tin}, \link{kriging} (see also \link{grid_terrain} for more details).}
 }
 \description{
 This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
@@ -31,6 +35,11 @@ plot(chm, col = col)
 # point by a 20 cm radius circle of 8 points
 chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 plot(chm, col = col)
+
+\dontrun{
+chm <- grid_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
+plot(chm, col = col)
+}
 }
 \seealso{
 Other digital surface model algorithms: \code{\link{dsmtin}},

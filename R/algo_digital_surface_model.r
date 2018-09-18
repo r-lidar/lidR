@@ -37,6 +37,10 @@
 #' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 #' can replace each return with a circle composed of 8 points (see details).
 #'
+#' @param na.fill function. A function that implements an algorithm to compute spatial interpolation
+#' to fill the empty pixel often leave by point-to-raster methods. \code{lidR} have \link{knnidw},
+#' \link{tin}, \link{kriging} (see also \link{grid_terrain} for more details).
+#'
 #' @export
 #'
 #' @family digital surface model algorithms
@@ -54,10 +58,21 @@
 #' # point by a 20 cm radius circle of 8 points
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 #' plot(chm, col = col)
-p2r = function(subcircle = 0)
+#'
+#' \dontrun{
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
+#' plot(chm, col = col)
+#' }
+p2r = function(subcircle = 0, na.fill = NULL)
 {
   assertive::assert_is_a_number(subcircle)
   assertive::assert_all_are_non_negative(subcircle)
+
+  if (!is.null(na.fill))
+  {
+    if (!is(na.fill, "SpatialInterpolation"))
+      stop("'na.fill' is not an algorithm for spatial interpolation", call. = FALSE)
+  }
 
   f = function(las, layout)
   {
@@ -70,6 +85,34 @@ p2r = function(subcircle = 0)
 
     if (!all(dim(layout)[1:2] == dim(dsm)))
       stop("Internal error: matrix returned at the C++ level don't match with the layout. Please report this bug.", call. = FALSE)
+
+    if (!is.null(na.fill))
+    {
+      verbose("Interpolating empty cells...")
+
+      layout[] <- dsm
+      hull = convex_hull(las@data$X, las@data$Y)
+
+      # buffer around convex hull
+      sphull <- sp::Polygon(hull)
+      sphull <- sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
+      hull   <- rgeos::gBuffer(sphull, width = raster::res(layout)[1])
+      hull   <- hull@polygons[[1]]@Polygons[[1]]@coords
+      grid   <- raster::as.data.frame(layout, xy = TRUE, na.rm = TRUE)
+      data.table::setDT(grid)
+      data.table::setnames(grid, names(grid), c("X", "Y", "Z"))
+      where  <- raster::xyFromCell(layout, which(is.na(layout[])))
+      where  <- as.data.frame(where)
+      data.table::setDT(where)
+      data.table::setnames(where, names(where), c("X", "Y"))
+      where  <- where[C_points_in_polygon(hull[,1], hull[,2], where$X, where$Y)]
+
+      lidR.context <- "spatial_interpolation"
+      cells <- raster::cellFromXY(layout, where)
+      layout[cells] <- na.fill(grid, where)
+
+      return(layout@data@values)
+    }
 
     return(dsm)
   }
