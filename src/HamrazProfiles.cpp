@@ -6,7 +6,7 @@ namespace Hamraz
 {
   Profile::Profile(std::vector<PointXYZR* >& disc, PointXYZR Center, double Angle, double Radius, double Width, int Sensitivity, double MDCW, double Epsilon, double CLc, double CLs, double Oc, double Os)
   {
-    angle = Angle * PI / 180;
+    angle = Angle * M_PI / 180;
     center = Center;
     width = Width;
     sensitivity = Sensitivity;
@@ -149,7 +149,7 @@ namespace Hamraz
 
       // cone-shaped crown radius (eq 3)
       double h_ad = (points_no_gaps[0]->z + right_windows_prior_mdcw[0]->z) / 2;      //mean value between center - and considered LM height
-      double crc = ((h_ad * clc) / (std::tan(theta * PI / 180.0))) * oc;
+      double crc = ((h_ad * clc) / (std::tan(theta * M_PI / 180.0))) * oc;
 
       //sphere-shaped crown radius (eq 4)
       double crs = ( (h_ad * cls) / 2 ) * os;
@@ -242,13 +242,13 @@ namespace Hamraz
     for(int i = 0 ; i < subProfile.size() -1 ; i++)
       slope[i] = (subProfile[i+1]->z - subProfile[i]->z) / (subProfile[i+1]->r - subProfile[i]->r);
 
-    return std::atan(median(slope)) * (180/PI);
+    return std::atan(median(slope)) * (180/M_PI);
   }
 
   Rcpp::List Profile::to_R()
   {
     Rcpp::List L;
-    L["angle"] = angle*180/PI;
+    L["angle"] = angle*180/M_PI;
 
     Rcpp::NumericMatrix M(points.size(), 5);
     for ( int i = 0; i < points.size(); i++ )
@@ -336,12 +336,12 @@ namespace Hamraz
 
     for (int i = 0 ; i < s ; i++)
     {
-        a1 = profiles[i].angle * 180 / PI;
+        a1 = profiles[i].angle * 180 / M_PI;
 
         if (i == s-1)
           a2 = 360;
         else
-          a2 = profiles[i+1].angle * 180 / PI;
+          a2 = profiles[i+1].angle * 180 / M_PI;
 
         double a = (a2 - a1)/2 + a1;
 

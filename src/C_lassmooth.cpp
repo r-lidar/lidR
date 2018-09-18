@@ -48,7 +48,7 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
   unsigned int n = X.length();
   double half_res = size / 2;
   double twosquaresigma = 2*sigma*sigma;
-  double twosquaresigmapi = twosquaresigma * PI;
+  double twosquaresigmapi = twosquaresigma * M_PI;
 
   NumericVector Z_temp;
   NumericVector Z_out  = clone(Z);

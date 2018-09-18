@@ -50,7 +50,7 @@ NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subci
 
     if (subcircle > 0)
     {
-      double angle[8] = {0, 2*PI/8, 4*PI/8, 6*PI/8, PI, 10*PI/8, 12*PI/8, 14*PI/8};
+      double angle[8] = {0, 2*M_PI/8, 4*M_PI/8, 6*M_PI/8, M_PI, 10*M_PI/8, 12*M_PI/8, 14*M_PI/8};
 
       for (int i = 0 ; i < X.length() ; i++)
       {

@@ -21,9 +21,9 @@ TreeSegment::TreeSegment(int k)
   area = 0;
   this->k = k;
 
-  PointXYZ pmax(DOUBLE_XMIN,DOUBLE_XMIN,DOUBLE_XMIN, 0);
+  PointXYZ pmax(DBL_MIN,DBL_MIN,DBL_MIN, 0);
   Zmax = pmax;
-  PointXYZ pmin(DOUBLE_XMAX,DOUBLE_XMAX,DOUBLE_XMAX, 0);
+  PointXYZ pmin(DBL_MAX,DBL_MAX,DBL_MAX, 0);
   Zmin = pmin;
 
   scoreS = 0;
@@ -190,7 +190,7 @@ void TreeSegment::compute_regularity_score()
   double radius = planimetricDist_MCH[index_percentile95-1];
 
   //page 101 Eq. 8 regularity criterion
-  scoreR = (area/(PI*radius*radius));
+  scoreR = (area/(M_PI*radius*radius));
 }
 
 void TreeSegment::compute_circularity_score()
