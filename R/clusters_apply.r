@@ -8,6 +8,13 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   output <- vector("list", nclust)
   ncores <- if (nclust <= processing_options$core) nclust else processing_options$core
   codes  <- rep(ASYNC_RUN, nclust)
+  dots   <- list(...)
+
+  # The following is bad and have been introduced in v1.6.1 to fix a bug in a dirty way
+  # In v2.0 this will not be relevant anymore. Consider this code as fonctionnal but poor.
+  select   <- if(is.null(dots$select)) "*" else dots$select
+  filter   <- if(is.null(dots$filter)) "" else dots$filter
+  autoread <- if(is.null(dots$autoread)) FALSE else TRUE
 
   future::plan(future::multiprocess, workers = ncores)
 
@@ -17,7 +24,6 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   # Not sure it will be requiered in v2.0
   if (ncores > 1 & !future::supportsMulticore())
   {
-    dots <- list(...)
     is.fun <- vapply(dots, is.function, logical(1))
 
     if(any(is.fun))

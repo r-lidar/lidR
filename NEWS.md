@@ -213,7 +213,7 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * [[#161](https://github.com/Jean-Romain/lidR/pull/161)] Fix tree ID matching.
 * Fix undefined variable in cluster_apply on mac and linux if multicore processing is used.
 * Fix rare case of unit test failure due to the random nature of the test dataset using seeds.
-
+* [[#165](https://github.com/Jean-Romain/lidR/pull/165)] Unexported function in `catalog_apply` on Windows.
 
 ## lidR v1.6.0 (2018-07-20)
 
