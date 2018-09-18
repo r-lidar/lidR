@@ -177,11 +177,10 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
   set_buffer(las) <- 0.1*resolution
   output <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
 
-  # Outputs have been written in files. Return the path to written files
-  if (get_output_files(las) != "") return(unlist(output))
-
-  # Outputs have been returned in R objects. Merge the outputs in a single object
-  return(merge_rasters(output))
+  if (get_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+    return(build_vrt(output, "grid_metrics"))
+  else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
+    return(merge_rasters(output))
 }
 
 

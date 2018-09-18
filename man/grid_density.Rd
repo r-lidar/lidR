@@ -13,7 +13,9 @@ grid_density(las, res = 4)
 square meters.}
 }
 \value{
-A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell.
+A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell. If the
+\code{RasterLayer}s are written on disk when running the function with a \code{LAScatalog}, a
+virtual raster mosaic is returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
 Creates a map of the point density. If a "pulseID" attribute is found, returns also a map of the pulse

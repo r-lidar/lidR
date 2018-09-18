@@ -16,7 +16,9 @@ In that case the the \code{RasterLayer} is used as layout.}
 \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).}
 }
 \value{
-A \code{RasterLayer} containing a numeric value in each cell.
+A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s
+are written on disk when running the function with a \code{LAScatalog}, a virtual raster mosaic is
+returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
 Creates a digital surface model using several possible algorithms.

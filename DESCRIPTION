@@ -42,10 +42,11 @@ Imports:
     tools,
     utils
 Suggests:
-    rgdal,
-    testthat,
     EBImage,
-    hexbin
+    hexbin,
+    gdalUtils,
+    rgdal,
+    testthat
 LazyData: true
 RoxygenNote: 6.1.0
 LinkingTo: BH,Rcpp,RcppArmadillo
