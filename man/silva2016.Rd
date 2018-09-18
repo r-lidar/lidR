@@ -32,6 +32,17 @@ in the package \code{rLiDAR}. This version is \emph{not} the version from \code{
 code written from the original article by the lidR authors and that is considerably (between 250
 and 1000 times) faster.
 }
+\details{
+Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
+user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
+library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
+cloud. However the user can use this function alone like that:
+\preformatted{
+ chm = raster("file/to/a/chm/")
+ ttops = tree_detection(chm, lmf(3))
+ crowns = silva2016(chm, ttops)()
+}
+}
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")

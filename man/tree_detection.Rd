@@ -7,8 +7,9 @@
 tree_detection(las, algorithm)
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog} or a \code{RasterLayer} representing a
-canopy height model depending on the algorithm used (see respective documentation)}
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer}
+representing a canopy height model. In that case it is processed like a regularly spaced point
+cloud.}
 
 \item{algorithm}{An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
 \link{multichm} and \link{manual}.}

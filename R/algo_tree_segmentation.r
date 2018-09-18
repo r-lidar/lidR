@@ -35,6 +35,16 @@
 #' original method as implemented in \code{itcSegment} and described in the manuscript also performs
 #' a pre- and post-process when these tasks are expected to be done by the user in separate functions.
 #'
+#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
+#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
+#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
+#' cloud. However the user can use this function alone like that:
+#' \preformatted{
+#'  chm = raster("file/to/a/chm/")
+#'  ttops = tree_detection(chm, lmf(3))
+#'  crowns = dalponte2016(chm, ttops)()
+#' }
+#'
 #' @template param-chm-lastrees
 #'
 #' @template param-treetops
@@ -91,7 +101,9 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   f = function()
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lastrees"), "dalponte2016")
+
+    if (!is.null(context))
+      stopif_wrong_context(context, c("lastrees"), "dalponte2016")
 
     X     <- match_chm_and_seeds(chm, treetops, ID)
     cells <- X$cells
@@ -422,6 +434,16 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' code written from the original article by the lidR authors and that is considerably (between 250
 #' and 1000 times) faster.
 #'
+#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
+#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
+#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
+#' cloud. However the user can use this function alone like that:
+#' \preformatted{
+#'  chm = raster("file/to/a/chm/")
+#'  ttops = tree_detection(chm, lmf(3))
+#'  crowns = silva2016(chm, ttops)()
+#' }
+#'
 #' @template param-chm-lastrees
 #'
 #' @template param-treetops
@@ -471,7 +493,9 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   f = function()
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lastrees"), "silva2016")
+
+    if (!is.null(context))
+      stopif_wrong_context(context, c("lastrees"), "silva2016")
 
     . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
@@ -510,6 +534,16 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' Internally the function EBImage::watershed is called.
 #' \item \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
 #' function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+#' }
+#'
+#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
+#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
+#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
+#' cloud. However the user can use this function alone like that:
+#' \preformatted{
+#'  chm = raster("file/to/a/chm/")
+#'  ttops = tree_detection(chm, lmf(3))
+#'  crowns = watershed(chm)()
 #' }
 #'
 #' @template param-chm-lastrees
@@ -567,7 +601,9 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
   f = function()
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lastrees"), "watershed")
+
+    if (!is.null(context))
+      stopif_wrong_context(context, c("lastrees"), "watershed")
 
     # Test if requiered packages are installed
     if (is.null(treetops))
