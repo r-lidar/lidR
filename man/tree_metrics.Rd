@@ -60,12 +60,10 @@ always removed once processed and will never be returned neither in R nor in fil
 \item \strong{alignment}: Align the processed clusters
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
-\item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
 \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if tiling size equal to 0
 (processing by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item select: The function will write file equivalent to the original ones. Thus \code{select = "*"}
 and cannot be changed.
 \item \strong{filter}: Read only points of interest.
