@@ -154,11 +154,17 @@ cluster_write = function(x, path, output_options)
   }
   else if (type %in% c("SpatialPoints", "SpatialPointsDataFrame", "SpatialPolygons", "SpatialPolygonsDataFrame", "SpatialLines", "SpatialLinesDataFrame"))
   {
-
+    driver <- output_options$drivers$SimpleFeature
+    path   <- paste0(path, ".shp")
+    driver$write(sf::st_as_sf(x), path)
+    return(path)
   }
   else if (type == "SimpleFeature")
   {
-
+    driver <- output_options$drivers$SimpleFeature
+    path   <- paste0(path, ".shp")
+    driver$write(x, path)
+    return(path)
   }
   else if (type == "lidr_internal_skip_write")
   {
@@ -166,6 +172,13 @@ cluster_write = function(x, path, output_options)
     # function do the write job. If the called fwould unction return NULL the progress would be broken
     # (NULL means no data). Thus we return 0 with a class lidr_internal_skip_write
     return(0)
+  }
+  else if (type %in% c("data.frame", "data.table"))
+  {
+    driver <- output_options$drivers$SimpleFeature
+    path   <- paste0(path, ".txt")
+    driver$write(x, path)
+    return(path)
   }
   else
     stop(glue::glue("Trying to write an object of class {type} but this type is not supported."))

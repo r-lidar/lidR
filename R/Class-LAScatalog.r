@@ -174,6 +174,12 @@ setMethod("initialize", "LAScatalog", function(.Object)
     ),
     Spatial = list(
       write = rgdal::writeOGR
+    ),
+    SimpleFeature = list(
+      write = sf::st_write
+    ),
+    DataFrame = list(
+      write = data.table::fwrite
     )
   )
 
