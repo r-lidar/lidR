@@ -51,10 +51,8 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item \strong{cores}: How many cores are used. \code{catalog_retile} streams the data (nothing is
 loaded at th R level). The maximum number of core can be safely used.
 \item \strong{progress}: Displays a progression estimation.
-\item \strong{stop_early}: Leave it as it unless you are an advanced user.
 \item \strong{output_files*}: Mandatory. The new tiles will be written in files new files.
 \item \strong{laz_compression}: save \code{las} or \code{laz} files.
-\item \strong{drivers}: Leave it as it unless you are an advanced user.
 \item select: \code{catalog_retile} preserve the file format anyway.
 \item \strong{filter}: Retile and save only points of interest.
 }

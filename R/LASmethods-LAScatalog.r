@@ -186,6 +186,42 @@ setMethod("show", "LAScatalog", function(object)
   cat("num. files  :", dim(object@data)[1], "\n")
 })
 
+setMethod("summary", "LAScatalog", function(object, ...)
+{
+  show(object)
+  byfile <- get_by_file(object)
+  save   <- get_output_files(object) == ""
+  laz    <- get_laz_compression(object)
+
+  cat("Summary of the processing options:\n")
+
+  if(byfile)
+    cat("  - Catalog will be process by file respecting the original tilling pattern\n")
+  else
+    cat("  - Catalog will be process by chuncks of size:", get_tiling_size(object), "\n")
+
+  cat("  - Catalog will be processed using", get_cores(object), "core(s).\n")
+
+  cat("Summary of the output options:\n")
+
+  if(!save)
+    cat("  - Outputs will be returned at R level.\n")
+  else
+    cat("  - Outputs will be written in files:", get_output_files(object), "\n")
+
+  if(!laz & save)
+    cat("  - If outputs are LAS objects, they will not be compress (.las)\n")
+  else if(laz & save)
+    cat("  - If outputs are LAS objects, they will be compress (.laz)\n")
+
+  cat("Summary of the input options:\n")
+
+  cat("  - readLAS will be called with the following select option:", get_select(object), "\n")
+  cat("  - readLAS will be called with the following filter option:", get_filter(object), "\n")
+
+
+})
+
 #' @param ... Unused
 #' @param drop Unused
 #' @rdname redefined_behaviors
