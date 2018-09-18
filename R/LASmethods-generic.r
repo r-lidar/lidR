@@ -25,11 +25,17 @@
 #
 # ===============================================================================
 
-setGeneric("summary", function(object, ...)
-  standardGeneric("summary"))
-
+#' Summary and Print for \code{LAS*} object
+#'
+#' @param object,x A \code{LAS*} object
+#' @param ... Unused
+#'
+#' @return NULL, used for its side effect of printing informations
 setGeneric("print", function(x, ...)
   standardGeneric("print"))
+
+setGeneric("summary", function(object, ...)
+  standardGeneric("summary"))
 
 #' Plot a LAS* object
 #'

@@ -137,15 +137,8 @@ setMethod("is.empty", "LAS", function(object, ...)
   return(empty)
 })
 
-#' Summary and Print for \code{LAS*} object
-#'
-#' Summarize a \code{LAS*} object.
-#'
-#' @param object,x A \code{LAS*} object
-#' @param ... Unused
-#'
-#' @return NULL, used for its side effect of printing informations
-#' @rdname summarize.las
+
+#' @rdname print
 #' @aliases summary
 #' @export
 setMethod("summary", "LAS", function(object, ...)
@@ -154,7 +147,7 @@ setMethod("summary", "LAS", function(object, ...)
   print(object@header)
 })
 
-#' @rdname summarize.las
+#' @rdname print
 #' @export
 setMethod("print", "LAS", function(x)
 {

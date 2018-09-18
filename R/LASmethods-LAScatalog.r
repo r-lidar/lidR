@@ -186,6 +186,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("num. files  :", dim(object@data)[1], "\n")
 })
 
+#' @rdname print
 setMethod("summary", "LAScatalog", function(object, ...)
 {
   show(object)
