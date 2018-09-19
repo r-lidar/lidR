@@ -71,6 +71,8 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
   if (drop_null) output <- output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
 
+  pb$terminate()
+
   output <- future::values(output)
   return(output)
 }
@@ -119,7 +121,9 @@ update_pb = function(pb, ratio)
   if (pb_type == "txtProgressBar")
     utils::setTxtProgressBar(pb, ratio)
   else
-    pb$update(ratio)
+  {
+    if(!pb$finished) pb$update(ratio)
+  }
 }
 
 cluster_write = function(x, path, output_options)
