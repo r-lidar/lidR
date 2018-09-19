@@ -71,8 +71,6 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
   if (drop_null) output <- output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
 
-  pb$terminate()
-
   output <- future::values(output)
   return(output)
 }
