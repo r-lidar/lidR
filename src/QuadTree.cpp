@@ -1,8 +1,4 @@
 #include "QuadTree.h"
-#include <cmath>
-#include <limits>
-#include <algorithm>
-#include <iostream>
 
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
