@@ -39,7 +39,7 @@ void Progress::update(unsigned int iter)
 
   this->iter = iter;
 
-  int p = (float)iter/(float)iter_max*100;
+  unsigned int p = (float)iter/(float)iter_max*100;
 
   if (p == percentage)
     return;
@@ -63,7 +63,7 @@ void Progress::increment()
 
   iter++;
 
-  int p = (float)iter/(float)iter_max*100;
+ unsigned int p = (float)iter/(float)iter_max*100;
 
   if (p == percentage)
     return;

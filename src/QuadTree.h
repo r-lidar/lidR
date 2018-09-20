@@ -16,8 +16,8 @@ class QuadTree
 		bool insert(const Point&);
 		template<typename T> void lookup(T& shape, std::vector<Point*>&); // solve issue with const correctness
 		template<typename T> void lookup(T& shape, std::vector<PointXYZ>&); // solve issue with const correctness
-		void knn(const Point&, const int, std::vector<Point*>&);
-		void knn(const PointXYZ&, const int, std::vector<PointXYZ>&);
+		void knn(const Point&, const unsigned int, std::vector<Point*>&);
+		void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ>&);
 		int count();
 		BoundingBox bbox();
 

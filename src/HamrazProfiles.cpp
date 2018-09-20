@@ -1,6 +1,7 @@
 #include <math.h>
 #include <memory>
 #include "HamrazProfiles.h"
+#include <stdint.h>
 
 namespace Hamraz
 {
@@ -58,13 +59,13 @@ namespace Hamraz
     }
 
     std::vector<double> distance(points.size()-1, 0);
-    for (int i = 0 ; i < points.size()-1 ; i++)
+    for (size_t i = 0 ; i < points.size()-1 ; i++)
       distance[i] = std::sqrt(points[i+1]->r - points[i]->r);
 
     // Gap identification if dist > (sensitivity * interquantile range from Q3)
     double iqr = IQR(distance);
 
-    int a = 0;
+    unsigned int a = 0;
     while(distance[a] <= sensitivity * iqr)
     {
       a++;
@@ -81,14 +82,14 @@ namespace Hamraz
     // If there are less than 3 points, LM search is meaningless.
     if (points_no_gaps.size() <= 3)
     {
-      localMinimaIndex.push_back(INT16_MIN);
+      localMinimaIndex.push_back(INT32_MIN);
       return;
     }
 
     double slope = 0;
     double previous_slope = 0;
 
-    for (int i = 0; i < points_no_gaps.size() - 1 ; i++ )
+    for (size_t i = 0; i < points_no_gaps.size() - 1 ; i++ )
     {
       slope = (points[i+1]->z - points[i]->z) / (points[i+1]->r - points[i]->r);
 
@@ -99,20 +100,20 @@ namespace Hamraz
     }
 
     if(localMinimaIndex.empty())
-      localMinimaIndex.push_back(INT16_MIN);
+      localMinimaIndex.push_back(INT32_MIN);
   }
 
   // Section 2.2.2 page 535
   void Profile::find_boundary()
   {
-    if (*localMinimaIndex.begin() == INT16_MIN)
+    if (*localMinimaIndex.begin() == INT32_MIN)
     {
       points_no_boundaries.assign(points_no_gaps.begin(), points_no_gaps.end());
       return;
     }
 
     // Initialisation
-    int p = 0;
+    unsigned int p = 0;
     double S_left = 0;
     double S_right = 0;
 
@@ -227,7 +228,7 @@ namespace Hamraz
 
   void Profile::extract_points_prior( std::vector<PointXYZR*> &subProfile, double limit, std::vector<PointXYZR*> &subProfileSubset )
   {
-    int i = 1, keep = 0;
+    size_t i = 1, keep = 0;
     while ( (i < subProfile.size()) && ((subProfile[i]->r - subProfile[0]->r) <= limit) )
     {
       keep = i++;
@@ -239,7 +240,7 @@ namespace Hamraz
   {
     std::vector<double> slope(subProfile.size()-1, 0);
 
-    for(int i = 0 ; i < subProfile.size() -1 ; i++)
+    for(size_t i = 0 ; i < subProfile.size() -1 ; i++)
       slope[i] = (subProfile[i+1]->z - subProfile[i]->z) / (subProfile[i+1]->r - subProfile[i]->r);
 
     return std::atan(median(slope)) * (180/M_PI);
@@ -251,7 +252,7 @@ namespace Hamraz
     L["angle"] = angle*180/M_PI;
 
     Rcpp::NumericMatrix M(points.size(), 5);
-    for ( int i = 0; i < points.size(); i++ )
+    for (size_t i = 0; i < points.size(); i++ )
     {
       M(i, 0) = points[i]->x;
       M(i, 1) = points[i]->y;
@@ -263,7 +264,7 @@ namespace Hamraz
     L["points"] = M;
 
     Rcpp::NumericMatrix MM(points_no_gaps.size(), 5);
-    for ( int i = 0; i < points_no_gaps.size(); i++ )
+    for (size_t i = 0; i < points_no_gaps.size(); i++ )
     {
       MM(i, 0) = points_no_gaps[i]->x;
       MM(i, 1) = points_no_gaps[i]->y;
@@ -334,7 +335,7 @@ namespace Hamraz
     double a1;
     double a2;
 
-    for (int i = 0 ; i < s ; i++)
+    for (size_t i = 0 ; i < s ; i++)
     {
         a1 = profiles[i].angle * 180 / M_PI;
 
@@ -362,7 +363,7 @@ namespace Hamraz
   {
     std::vector<PointXYZ> out(profiles.size());
 
-    for (int i = 0 ; i < profiles.size() ; i++)
+    for (size_t i = 0 ; i < profiles.size() ; i++)
     {
       out[i].x = center.x + profiles[i].extremityPoint.r * std::cos(profiles[i].angle);
       out[i].y = center.y + profiles[i].extremityPoint.r * std::sin(profiles[i].angle);
@@ -382,7 +383,7 @@ namespace Hamraz
     Rcpp::NumericVector Z(profiles.size());
     Rcpp::NumericVector R(profiles.size());
 
-    for (int i = 0 ; i < profiles.size() ; i++)
+    for (size_t i = 0 ; i < profiles.size() ; i++)
     {
       X(i) = center.x + (profiles[i].extremityPoint.r + 0.5*width/2) * std::cos(profiles[i].angle);
       Y(i) = center.y + (profiles[i].extremityPoint.r + 0.5*width/2) * std::sin(profiles[i].angle);
@@ -392,7 +393,7 @@ namespace Hamraz
 
     L["polygon"] = Rcpp::DataFrame::create(Rcpp::Named("X") = X, Rcpp::Named("Y") = Y, Rcpp::Named("Z") = Z, Rcpp::Named("R") = R);
 
-    for(int i = 0 ; i < profiles.size() ; i++)
+    for(size_t i = 0 ; i < profiles.size() ; i++)
     {
       l.push_back(profiles[i].to_R());
     }
