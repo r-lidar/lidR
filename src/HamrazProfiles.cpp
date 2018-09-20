@@ -1,7 +1,4 @@
-#include <math.h>
-#include <memory>
 #include "HamrazProfiles.h"
-#include <stdint.h>
 
 namespace Hamraz
 {
@@ -82,7 +79,7 @@ namespace Hamraz
     // If there are less than 3 points, LM search is meaningless.
     if (points_no_gaps.size() <= 3)
     {
-      localMinimaIndex.push_back(INT32_MIN);
+      localMinimaIndex.push_back(INT_MIN);
       return;
     }
 
@@ -100,13 +97,13 @@ namespace Hamraz
     }
 
     if(localMinimaIndex.empty())
-      localMinimaIndex.push_back(INT32_MIN);
+      localMinimaIndex.push_back(INT_MIN);
   }
 
   // Section 2.2.2 page 535
   void Profile::find_boundary()
   {
-    if (*localMinimaIndex.begin() == INT32_MIN)
+    if (*localMinimaIndex.begin() == INT_MIN)
     {
       points_no_boundaries.assign(points_no_gaps.begin(), points_no_gaps.end());
       return;
