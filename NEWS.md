@@ -182,6 +182,10 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * Change: `lasoi` has been removed. It was not useful and bugged. It will maybe be reintroduced later in `lasclipManual`.
 
+**lascolor**
+
+* Change: `lascolor`has been removed. It is one of the first function of the package and is no longer a useful.
+
 **lasfilterdecimate**
 
 * Change: relies now on "lidR algorithms dispatch" (see also the main new features above).
@@ -199,6 +203,12 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * New: the three exemple files are now georeference with an EPSG code that is read and converted to a `proj4string`.
 * New: the exemple file `MixedConifers.laz` contains the segmented trees in extra bytes 0.
+
+**plot**
+
+* New: `plot` for `LAS` object supports "RGB" as a color atribute.
+* New: option `clear_artifact` to shift the point cloud to (0,0) and reduce the display artifact due to floating point rounding in `rgl`.
+* Change: `trim` do not trim on percentile of values but on values themselve.
 
 
 ### Other changes that are not directly visible

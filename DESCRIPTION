@@ -90,7 +90,6 @@ Collate:
     'io_writeLAS.r'
     'lasclassify.r'
     'lasclip.r'
-    'lascolor.r'
     'lasfilter.r'
     'lasfilterdecimate.r'
     'lasfiltersurfacepoints.r'
