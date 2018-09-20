@@ -34,19 +34,19 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5>struct 
   T1 x;
   T2 y;
   T3 z;
-  T4 r;
-  T5 id;
+  T4 id;
+  T5 r;
 
   Point4D() {}
   Point4D(const T1 _x, const T2 _y) : x(_x), y(_y), z(0), id(0), r(0) {}
   Point4D(const T1 _x, const T2 _y, const T3 _z) : x(_x), y(_y), z(_z), id(0), r(0) {}
-  Point4D(const T1 _x, const T2 _y, const T3 _z, const T5 _id) : x(_x), y(_y), z(_z), id(_id), r(0) {}
-  Point4D(const T1 _x, const T2 _y, const T3 _z, const T5 _id, const T4 _r) : x(_x), y(_y), z(_z), id(_id), r(_r) {}
+  Point4D(const T1 _x, const T2 _y, const T3 _z, const T4 _id) : x(_x), y(_y), z(_z), id(_id), r(0) {}
+  Point4D(const T1 _x, const T2 _y, const T3 _z, const T4 _id, const T5 _r) : x(_x), y(_y), z(_z), id(_id), r(_r) {}
 };
 
 typedef Point2D<double, double, int> Point;
 typedef Point3D<double, double, double, int> PointXYZ;
-typedef Point4D<double, double, double, double, int> PointXYZR;
+typedef Point4D<double, double, double, int, double> PointXYZR;
 
 
 /*

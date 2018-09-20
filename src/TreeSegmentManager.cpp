@@ -160,7 +160,7 @@ TreeSegment TreeSegmentManager::build_combination(std::vector<TreeSegment> &tree
 {
   TreeSegment tree = trees[combination[0]];
 
-  for (int i = 1 ; i < combination.size() ; i++)
+  for (size_t i = 1 ; i < combination.size() ; i++)
   {
     int id = combination[i];
     TreeSegment& tree2 = trees[id];
@@ -174,7 +174,7 @@ std::vector<TreeSegment> TreeSegmentManager::get_non_combined_tree(std::vector<T
 {
   std::vector<TreeSegment> out_trees;
 
-  for (int i = 0 ; i < trees.size() ; i++)
+  for (size_t i = 0 ; i < trees.size() ; i++)
   {
     if(std::find(combination.begin(), combination.end(), i) == combination.end())
       out_trees.push_back(trees[i]);
@@ -251,7 +251,7 @@ void TreeSegmentManager::planimetric_filter(std::vector<PointXYZ> &subProfile, s
   double threshold = meanValueForThreshold + 2*stdValueForThreshold;
   //--------------------------------------------------------------------------------------
   // Keeping all points below threshold and storage of their IDs
-  int i = 0, keep = 0;
+  size_t i = 0, keep = 0;
   subProfileSubset.push_back(subProfile[0]);
   while ( (i < subProfile.size()-1) && (dist[i] <= threshold) )
   {
@@ -262,7 +262,7 @@ void TreeSegmentManager::planimetric_filter(std::vector<PointXYZ> &subProfile, s
 
 Rcpp::List TreeSegmentManager::to_R()
 {
-  int n = treeStorage.size();
+  size_t n = treeStorage.size();
 
   std::replace(points_labels.begin(), points_labels.end(), 0, NA_INTEGER);
 

@@ -94,7 +94,7 @@ void QuadTree::subdivide()
   SW = new QuadTree(BoundingBox(pSW, p), this);
 }
 
-void QuadTree::knn(const Point& p, const int k, std::vector<Point*>& res)
+void QuadTree::knn(const Point& p, const unsigned int k, std::vector<Point*>& res)
 {
   double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
   double density = npoints / area;                              // Approx point density
@@ -114,13 +114,13 @@ void QuadTree::knn(const Point& p, const int k, std::vector<Point*>& res)
 
   std::sort(pts.begin(), pts.end(), DSort2D<Point>(p));
 
-  for (int i = 0 ; i < k ; i++)
+  for (unsigned int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);
 
   return;
 }
 
-void QuadTree::knn(const PointXYZ& p, const int k, std::vector<PointXYZ>& res)
+void QuadTree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
   double density = npoints / area;                              // Approx point density
@@ -140,7 +140,7 @@ void QuadTree::knn(const PointXYZ& p, const int k, std::vector<PointXYZ>& res)
 
   std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
 
-  for (int i = 0 ; i < k ; i++)
+  for (unsigned int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);
 
   return;
