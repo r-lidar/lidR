@@ -90,7 +90,8 @@ catalog <- function(folder, ...)
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  crs <- epsg2proj(get_epsg(header))
+  epsg <- epsg(header)
+  crs <- tryCatch({ sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
 
   headers <- lapply(files, function(x)
   {
