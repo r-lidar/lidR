@@ -97,7 +97,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   header <- LASheader(header)
 
   if(is.na(proj4string@projargs))
-    proj4string <- epsg2proj(get_epsg(header))
+    proj4string <- tryCatch(sp::CRS(paste0("+init=epsg:", epsg(header))), error = function (e) sp::CRS())
 
   las <- new("LAS")
   las@proj4string <- proj4string
@@ -219,6 +219,24 @@ setMethod("area", "LAS", function(x, ...)
     return(0)
 
   return(area_convex_hull(x@data$X, x@data$Y))
+})
+
+
+#' @export
+#' @rdname epsg
+setMethod("epsg", "LAS", function(object)
+{
+  return(epsg(las@header))
+})
+
+#' @export
+#' @rdname epsg
+setMethod("epsg<-", "LAS", function(object, value)
+{
+  proj4 <- sp::CRS(glue::glue("+init=epsg:{value}"))
+  epsg(object@header) <- value
+  raster::projection(object)  <- proj4
+  return(object)
 })
 
 #' @rdname plot

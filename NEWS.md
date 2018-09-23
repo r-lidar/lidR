@@ -210,6 +210,10 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * New: option `clear_artifact` to shift the point cloud to (0,0) and reduce the display artifact due to floating point rounding in `rgl`.
 * Change: `trim` do not trim on percentile of values but on values themselve.
 
+**Coordinate reference system**
+
+* New: coordinate reference system is supported everywhere and can be written in las file. See function epsg.
+
 
 ### Other changes that are not directly visible
 

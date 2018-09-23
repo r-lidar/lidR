@@ -56,11 +56,11 @@ Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
+    'LASmethods-generic.r'
     'Class-LASheader.r'
     'Class-LAS.r'
     'Class-LAScatalog.r'
     'Class-LAScluster.r'
-    'LASmethods-generic.r'
     'LASmethods-LAS.r'
     'LASmethods-LAScatalog.r'
     'LASmethods-LAScluster.r'
@@ -114,6 +114,5 @@ Collate:
     'utils_match_chm_and_seeds.r'
     'utils_metrics.r'
     'utils_misc.r'
-    'utils_projection.r'
     'utils_typecast.r'
     'zzz.r'
