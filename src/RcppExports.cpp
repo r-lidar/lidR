@@ -135,17 +135,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_lasupdateheader
-void C_lasupdateheader(S4 las, S4 new_header);
-RcppExport SEXP _lidR_C_lasupdateheader(SEXP lasSEXP, SEXP new_headerSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< S4 >::type new_header(new_headerSEXP);
-    C_lasupdateheader(las, new_header);
-    return R_NilValue;
-END_RCPP
-}
 // C_LocalMaximumFilter
 LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_height, bool circular);
 RcppExport SEXP _lidR_C_LocalMaximumFilter(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
@@ -374,7 +363,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 7},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_lastrees_ptrees", (DL_FUNC) &_lidR_C_lastrees_ptrees, 5},
-    {"_lidR_C_lasupdateheader", (DL_FUNC) &_lidR_C_lasupdateheader, 2},
     {"_lidR_C_LocalMaximumFilter", (DL_FUNC) &_lidR_C_LocalMaximumFilter, 4},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
