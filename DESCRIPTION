@@ -101,6 +101,7 @@ Collate:
     'lasroi.r'
     'lassmooth.r'
     'lassnags.r'
+    'lastransform.r'
     'lastrees.r'
     'lasupdateheader.r'
     'plot.s3.r'

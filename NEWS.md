@@ -229,7 +229,7 @@ metrics = tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 **Coordinate reference system**
 
 * New: coordinate reference system is supported everywhere and can be written in las file. See function epsg.
-
+* New: function `lastranform`that returns transformed coordinates of a LAS object using the a CRS argument
 
 ### Other changes that are not directly visible
 
