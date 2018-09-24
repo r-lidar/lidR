@@ -30,42 +30,41 @@
 #'
 #' Classify points as ground or not ground with several possible algorithms. The function updates the
 #' attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
-#' a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}).
+#' a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
 #'
 #' @template param-las
 #'
 #' @param algorithm a ground segmentation function. \code{lidR} have: \link{pmf} and \link{csf}
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
 #' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
 #'
+#' @template return-lasupdater-las-lascatalog
+#'
 #' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las <- readLAS(LASfile, select = "xyzrn")
 #'
 #' # Using the Progressive Morphological Filter
 #' # --------------------------------------
 #'
-#' las = readLAS(LASfile, select = "xyzrn")
+#' ws  <- seq(3,12, 3)
+#' th  <- seq(0.1, 1.5, length.out = length(ws))
 #'
-#' ws = seq(3,12, 3)
-#' th = seq(0.1, 1.5, length.out = length(ws))
-#'
-#' lasground(las, pmf(ws, th))
+#' las <- lasground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
 #'
 #' # Using the Cloth Simulation Filter
 #' # --------------------------------------
 #'
-#' las = readLAS(LASfile, select = "xyzrn")
-#'
-#' lasground(las, csf())
+#' las <- lasground(las, csf())
 lasground = function(las, algorithm, last_returns = TRUE)
 {
   UseMethod("lasground", las)
@@ -109,22 +108,21 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
 
   if ("Classification" %in% names(las@data))
   {
-    nground = fast_countequal(las@data$Classification, 2L)
+    nground <- fast_countequal(las@data[["Classification"]], 2L)
 
     if (nground > 0)
     {
       message(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."))
-      las@data[Classification == LASGROUND, Classification := LASUNCLASSIFIED]
+      new_classes <- las@data[["Classification"]]
+      new_classes[new_classes == LASGROUND] <- LASUNCLASSIFIED
     }
   }
   else
-  {
-    las@data[, Classification := LASUNCLASSIFIED]
-  }
+    new_classes <-rep(LASUNCLASSIFIED, npoints)
 
-  las@data[idx, Classification := LASGROUND]
-
-  return(invisible(las))
+  new_classes[idx] <- LASGROUND
+  las@data[["Classification"]] <- new_classes
+  return(las)
 }
 
 #' @export
@@ -133,7 +131,7 @@ lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  lasground(x, algorithm, last_returns)
+  x <- lasground(x, algorithm, last_returns)
   x <- lasfilter(x, buffer == LIDRNOBUFFER)
   return(x)
 }

@@ -34,10 +34,10 @@ for objects that are too low.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-col = pastel.colors(200)
+las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+col <- pastel.colors(200)
 
-lastrees(las, li2012(dt1 = 1.4))
+las <- lastrees(las, li2012(dt1 = 1.4))
 plot(las, color = "treeID", colorPalette = col)
 }
 \references{

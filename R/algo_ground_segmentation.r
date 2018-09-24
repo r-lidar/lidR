@@ -54,12 +54,12 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyzrn")
+#' las <- readLAS(LASfile, select = "xyzrn")
 #'
-#' ws = seq(3,12, 3)
-#' th = seq(0.1, 1.5, length.out = length(ws))
+#' ws <- seq(3,12, 3)
+#' th <- seq(0.1, 1.5, length.out = length(ws))
 #'
-#' lasground(las, pmf(ws, th))
+#' las <- lasground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
 pmf = function(ws, th)
 {
@@ -127,9 +127,9 @@ pmf = function(ws, th)
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyzrn")
+#' las <- readLAS(LASfile, select = "xyzrn")
 #'
-#' lasground(las, csf())
+#' las <- lasground(las, csf())
 #' plot(las, color = "Classification")
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {

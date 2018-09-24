@@ -26,12 +26,12 @@ enables computation of the parameters according to the original paper.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzrn")
+las <- readLAS(LASfile, select = "xyzrn")
 
-ws = seq(3,12, 3)
-th = seq(0.1, 1.5, length.out = length(ws))
+ws <- seq(3,12, 3)
+th <- seq(0.1, 1.5, length.out = length(ws))
 
-lasground(las, pmf(ws, th))
+las <- lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
 }
 \references{

@@ -77,15 +77,15 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(200)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <- pastel.colors(200)
 #'
-#' chm = grid_canopy(las, 0.5, p2r(0.3))
-#' kernel = matrix(1,3,3)
-#' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#' chm <- grid_canopy(las, 0.5, p2r(0.3))
+#' ker <- matrix(1,3,3)
+#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
-#' ttops = tree_detection(chm, lmf(4, 2))
-#' lastrees(las, dalponte2016(chm, ttops))
+#' ttops <- tree_detection(chm, lmf(4, 2))
+#' las   <- lastrees(las, dalponte2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
@@ -191,10 +191,10 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col =  pastel.colors(200)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <-  pastel.colors(200)
 #'
-#' lastrees(las, hamraz2016())
+#' las <- lastrees(las, hamraz2016())
 #' plot(las, color = "treeID", colorPalette = pastel.colors(200))
 #'}
 hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc = 2/3, CLs = 0.7, Os = 1/3, gap_sensitivity = 6L, R = 15.24, filter_profiles = TRUE)
@@ -385,10 +385,10 @@ hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(200)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <- pastel.colors(200)
 #'
-#' lastrees(las, li2012(dt1 = 1.4))
+#' las <- lastrees(las, li2012(dt1 = 1.4))
 #' plot(las, color = "treeID", colorPalette = col)
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
@@ -471,15 +471,15 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(200)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <- pastel.colors(200)
 #'
-#' chm = grid_canopy(las, res = 0.5, p2r(0.3))
-#' kernel = matrix(1,3,3)
-#' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.3))
+#' ker <- matrix(1,3,3)
+#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
-#' ttops = tree_detection(chm, lmf(4, 2))
-#' lastrees(las, silva2016(chm, ttops))
+#' ttops <- tree_detection(chm, lmf(4, 2))
+#' las   <- lastrees(las, silva2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
@@ -567,15 +567,15 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(250)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <- pastel.colors(250)
 #'
-#' chm = grid_canopy(las, res = 0.5, p2r(0.3))
-#' kernel = matrix(1,3,3)
-#' chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#' chm <- grid_canopy(las, res = 0.5, p2r(0.3))
+#' ker <- matrix(1,3,3)
+#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
-#' ttops = tree_detection(chm, lmf(4, 2))
-#' lastrees(las, mcwatershed(chm, ttops))
+#' ttops <- tree_detection(chm, lmf(4, 2))
+#' las   <- lastrees(las, mcwatershed(chm, ttops))
 #'
 #' plot(las, color = "treeID", colorPalette = col)
 #' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)

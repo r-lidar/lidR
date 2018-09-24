@@ -15,14 +15,14 @@ lasaddextrabytes_manual(las, x, name, desc, type, offset = NULL,
   scale = NULL, NA_value = NULL)
 }
 \arguments{
-\item{las}{an object of class LAS}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS}}
 
 \item{x}{a vector that need to be added in the LAS object. If missing, the colum \code{'name'} of
 the existing LAS object will be used.}
 
 \item{name}{character. The name of the extrabytes attributes to add in the file.}
 
-\item{desc}{character. A short description of the extrabytes attributes to add in the file.}
+\item{desc}{character. A short description of the extrabytes attributes to add in the file (32 characters).}
 
 \item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"}.}
 
@@ -32,45 +32,45 @@ the existing LAS object will be used.}
 be replaced by this value that will be considered as NA. NULL if not relevant.}
 }
 \value{
-Nothing. The LAS object is updated in place by reference to avoid copies.
+An object of class \link[lidR:LAS-class]{LAS}
 }
 \description{
 A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to the
 \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
 a las file contains a core of defined attributes such as XYZ coordinates, intensity, return number,
 and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
-enable the user to add new attribute (see details)
+enable the user to add new attributes (see details)
 }
 \details{
 \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
-object is not strictly valid. These data will be usable at the R level but will not be written in a
-las file with \link{writeLAS}.\cr\cr
+object is not strictly valid. These data will be temporarilly usable at the R level but will not
+be written in a las file with \link{writeLAS}.\cr\cr
 \code{lasaddextrabyte} does the same as \code{lasadddata} but updates automatically the header of the
 LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
 data will be written in a las file with \link{writeLAS}\cr\cr
-\code{lasaddextrabyte_manual} allows the user to manually write all the extra bytes information.
+\code{lasaddextrabyte_manual} allows the user to manually write all the extra bytes metadata.
 This function is reserved for experienced users with a good knowledge of the LAS specifications.
 The function does not perform tests to check the validity of the information.
 }
 \examples{
 LASfile <- system.file("extdata", "example.laz", package="rlas")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
 
 print(las)
 print(las@header)
 
-x = 1:30
+x <- 1:30
 
-lasadddata(las, x, "mydata")
-print(las) # The las object has a new attribute called "mydata"
+las <- lasadddata(las, x, "mydata")
+print(las)        # The las object has a new attribute called "mydata"
 print(las@header) # But the header has not been updated. This new data will not be written
 
-lasaddextrabytes(las, x, "mydata2", "A new data")
-print(las) # The las object has a new attribute called "mydata2"
+las <- lasaddextrabytes(las, x, "mydata2", "A new data")
+print(las)        # The las object has a new attribute called "mydata2"
 print(las@header) # The header has been updated. This new data will be written
 
 # optionally if the data is already in the LAS object you can update the header skipping the
 # parameter x
-lasaddextrabytes(las, name ="mydata", desc = "Amplitude")
+las <- lasaddextrabytes(las, name = "mydata", desc = "Amplitude")
 print(las@header)
 }

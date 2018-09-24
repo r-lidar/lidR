@@ -49,11 +49,27 @@ lasnormalize(las, knnidw(k = 10))
 
 This allows to extend `lidR` with new algorithms without any restriction either in `lidR` or in third party tools. Also how users use `lidR` function is now more consistant.
 
-**lidR is a GIS tools**
+**lidR as a GIS tools**
 
 `lidR` versions 1.x was not a real GIS tools. Rasterization functions such as `grid_metrics` or `grid_canopy` used to return `data.frame`. Tree tops extraction used to return `data.frame` too. Tree segmentation, when seeds were requiered used to accept `RasterLayer` or `data.frame` in a very unconsitant way. The CRS of the point cloud was partially supported and never propagated to the outputs because output were `data.frame`and not spatial objects.
 
 `lidR` version 2 consitanly used `Raster*` and `Spatial*` object everywhere. Rasterization functions such as `grid_metrics` or `grid_canopy` return `Raster*`. Tree tops extraction returns `SpatialPointDataFrame`. Tree segmentation, when seeds were requiered used to accept `SpatialPointDataFrame` only in a consitant way. The CRS of the point cloud is alway propagated to the outputs. `LAS` objects are `Spatial` objects. That means that `raster`function such as `projection` or `extent` as well as `sp` function such as `bbox` are compatible with `LAS` objects. `LAScatalog` objects are `SpatialPolygonDataFrame` objects. In short `lidR` version 2 is more that ever a GIS tool.
+
+**No longer any update by reference**
+
+Several `lidR` function used to update object by reference. The user write: `lasnormalize(las)` instead of `las2 <- lasnormalize(las1)`. It used to make sense in R < 3.1 but now the gain is no longer relevant because R makes shallow copies instead of deep copies. To simplfies let assume that we have a 1 GB `data.frame` that stores the point cloud.
+
+```r
+las2 <- lasnormalize(las1)
+```
+
+Used to make a deep copy of `las1` into `las2`. i.e the `las1` + `las2` = 2GB . This is why we made functions that work by reference
+
+```r
+lasnormalize(las1)
+```
+
+No copy at all! This was memory optimized but not common or traditionnal in R. The question of memory optimization is not relevant anymore since R 3.1. In the previous example `las2` is no longer a deep copy of `las1` but a shallow copy. Thus `lidR` now uses in a more traditional R behavior.
 
 ### Complete description of visible changes
 

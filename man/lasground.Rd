@@ -13,13 +13,17 @@ lasground(las, algorithm, last_returns = TRUE)
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
 in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-\code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent \code{'last_returns'} is turned
 to \code{FALSE} automatically.}
+}
+\value{
+If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
+\code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 Classify points as ground or not ground with several possible algorithms. The function updates the
 attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
-a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}).
+a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -60,22 +64,19 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las <- readLAS(LASfile, select = "xyzrn")
 
 # Using the Progressive Morphological Filter
 # --------------------------------------
 
-las = readLAS(LASfile, select = "xyzrn")
+ws  <- seq(3,12, 3)
+th  <- seq(0.1, 1.5, length.out = length(ws))
 
-ws = seq(3,12, 3)
-th = seq(0.1, 1.5, length.out = length(ws))
-
-lasground(las, pmf(ws, th))
+las <- lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
 
 # Using the Cloth Simulation Filter
 # --------------------------------------
 
-las = readLAS(LASfile, select = "xyzrn")
-
-lasground(las, csf())
+las <- lasground(las, csf())
 }

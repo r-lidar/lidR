@@ -30,15 +30,15 @@
 #'
 #' Snag classification/segmentation using several possible algorithms (see details).
 #' The function attributes to each point of the point cloud a number identifying a
-#' snag class (\code{snagCls} column). The classification/segmentation is done at the point
+#' snag class (\code{snagCls} attribute). The classification/segmentation is done at the point
 #' cloud level and there is currently only one algorithm implemented (which uses LiDAR intensity
 #' thresholds and specified neighborhoods to differentiate bole and branch from foliage points
 #' (see details).
 #'
 #' @template param-las
 #' @param algorithm function. An algorithm for snag segmentation. \code{lidR} have \link{wing2015}.
-#' @param attribute character. The original LAS object is automatically updated by the function. A new
-#' column is added. This parameter is the name of this new column.
+#' @param attribute character. The returned LAS object is automatically has a new
+#' attribute (a new column). This parameter is the name of this new attribute.
 #'
 #' @template LAScatalog
 #'
@@ -66,8 +66,8 @@ lassnags.LAS = function (las, algorithm, attribute = "snagCls")
   lidR.context <- "lassnags"
   snags <- algorithm(las)
 
-  lasaddextrabytes(las, snags, attribute, "Number identifying a snag class")
-  return(invisible(las))
+  las <- lasaddextrabytes(las, snags, attribute, "Number identifying a snag class")
+  return(las)
 }
 
 #' @export
@@ -76,7 +76,7 @@ lassnags.LAScluster = function (las, algorithm, attribute = "snagCls")
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  lassnags(x, algorithm)
+  x <- lassnags(x, algorithm)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }

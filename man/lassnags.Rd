@@ -11,18 +11,17 @@ lassnags(las, algorithm, attribute = "snagCls")
 
 \item{algorithm}{function. An algorithm for snag segmentation. \code{lidR} have \link{wing2015}.}
 
-\item{attribute}{character. The original LAS object is automatically updated by the function. A new
-column is added. This parameter is the name of this new column.}
+\item{attribute}{character. The returned LAS object is automatically has a new
+attribute (a new column). This parameter is the name of this new attribute.}
 }
 \value{
-If the input is a \code{LAS} object, return nothing. The original LAS object is updated by
-reference (using side effect) to avoid any copy in memory of the point cloud. If the input is a
+If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
 \code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 Snag classification/segmentation using several possible algorithms (see details).
 The function attributes to each point of the point cloud a number identifying a
-snag class (\code{snagCls} column). The classification/segmentation is done at the point
+snag class (\code{snagCls} attribute). The classification/segmentation is done at the point
 cloud level and there is currently only one algorithm implemented (which uses LiDAR intensity
 thresholds and specified neighborhoods to differentiate bole and branch from foliage points
 (see details).

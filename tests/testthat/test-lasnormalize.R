@@ -10,7 +10,7 @@ set_buffer(ctg) <- 0
 set_progress(ctg) <- FALSE
 
 test_that("Each ground point is at 0 with knnidw", {
-  lasnormalize(las, knnidw(k = 10L, p = 1))
+  las <- lasnormalize(las, knnidw(k = 10L, p = 1))
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
 
@@ -18,7 +18,7 @@ test_that("Each ground point is at 0 with knnidw", {
 })
 
 test_that("Each ground point is at 0 with delaunay", {
-  lasnormalize(las, tin())
+  las <- lasnormalize(las, tin())
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
 
@@ -26,7 +26,7 @@ test_that("Each ground point is at 0 with delaunay", {
 })
 
 test_that("Each ground point is at 0 with kriging", {
-  lasnormalize(las, kriging(k = 10L))
+  las <- lasnormalize(las, kriging(k = 10L))
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
 

@@ -10,7 +10,7 @@ chm = raster::focal(chm, w = kernel, fun = mean)
 
 test_that("Dalponte's methods works", {
   ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
-  lastrees(las, dalponte2016(chm, ttops))
+  las <- lastrees(las, dalponte2016(chm, ttops))
 
   expect_true("treeID" %in% names(las@data))
   expect_equal(sort(unique(las@data$treeID)), 1:40L)
@@ -25,13 +25,12 @@ test_that("Dalponte's methods works", {
   ttops@coords <- old
   ttops@data$treeID = 1:40*2L
 
-  lastrees(las, dalponte2016(chm, ttops))
+  las <- lastrees(las, dalponte2016(chm, ttops))
   expect_equal(sort(unique(las@data$treeID)), 1:40L*2L)
 })
 
 test_that("Li's method works", {
-  las@data[, treeID := NULL]
-  lastrees(las, li2012(speed_up = 5), attribute = "TID")
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "TID")
 
   expect_true("TID" %in% names(las@data))
   expect_equal(sort(unique(las@data$TID)), 1:48L)
@@ -39,33 +38,30 @@ test_that("Li's method works", {
 })
 
 test_that("Silvas's methods works", {
-  las@data[, TID := NULL]
-
   ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
-  lastrees(las, silva2016(chm, ttops))
+  las <- lastrees(las, silva2016(chm, ttops))
 
   expect_true("treeID" %in% names(las@data))
   expect_true(is.integer(las@data$treeID))
 })
 
 test_that("MC watershed methods works", {
-  las@data[, treeID := NULL]
-
   ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
-  lastrees(las, mcwatershed(chm, ttops))
+  las <- lastrees(las, mcwatershed(chm, ttops))
 
   expect_true("treeID" %in% names(las@data))
   expect_true(is.integer(las@data$treeID))
 })
 
 test_that("lastrees can store in a user defined column", {
-  lastrees(las, li2012(speed_up = 5), attribute = "plop")
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
   expect_true("plop" %in% names(las@data))
 })
 
 test_that("tree_metrics works", {
-  X = tree_metrics(las, max(Z))
-  Y = tree_metrics(las, max(Z), field = "plop")
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
+  expect_error(tree_metrics(las, max(Z)), "not segmented")
+  Y <- tree_metrics(las, max(Z), field = "plop")
   expect_error(tree_metrics(las, max(Z), field = "abc"), "trees are not segmented")
 })
 
