@@ -3,7 +3,6 @@
 S3method(as.list,LASheader)
 S3method(as.spatial,LAS)
 S3method(as.spatial,LAScatalog)
-S3method(as.spatial,lasmetrics)
 S3method(grid_canopy,LAS)
 S3method(grid_canopy,LAScatalog)
 S3method(grid_canopy,LAScluster)
