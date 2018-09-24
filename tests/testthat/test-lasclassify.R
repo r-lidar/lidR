@@ -11,14 +11,14 @@ lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 sink(NULL)
 
 test_that("las classifies works with shapefiles", {
-  lasclassify(lidar, lakes, "inlakes")
+  lidar <- lasclassify(lidar, lakes, "inlakes")
 
   cn = names(lidar@data)
 
   expect_true("inlakes" %in% cn)
   expect_true(is.logical(lidar@data$inlakes))
 
-  lasclassify(lidar, lakes, "LAKENAME_1")
+  lidar <- lasclassify(lidar, lakes, "LAKENAME_1")
 
   cn = names(lidar@data)
 
@@ -30,7 +30,7 @@ test_that("las classifies works with shapefiles", {
 test_that("las classifies works with raster", {
   r = grid_metrics(lidar, mean(Z))
 
-  lasclassify(lidar, r, "Zmean")
+  lidar <- lasclassify(lidar, r, "Zmean")
 
   cn = names(lidar@data)
 

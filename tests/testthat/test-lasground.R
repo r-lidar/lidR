@@ -14,7 +14,7 @@ test_that("lasground pmf works", {
   th = seq(0.1, 2, length.out = length(ws))
   f  = pmf(ws, th)
 
-  lasground(las, f)
+  las <- lasground(las, f)
 
   n = names(las@data)
 
@@ -40,7 +40,7 @@ test_that("lasground pmf works", {
 })
 
 test_that("lasground csf works", {
-  lasground(las, csf())
+  las <- lasground(las, csf())
 
   n = names(las@data)
 

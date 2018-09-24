@@ -66,10 +66,10 @@ Also the current implementation is known to be slow.
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-col =  pastel.colors(200)
+las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+col <-  pastel.colors(200)
 
-lastrees(las, hamraz2016())
+las <- lastrees(las, hamraz2016())
 plot(las, color = "treeID", colorPalette = pastel.colors(200))
 }
 }

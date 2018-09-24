@@ -18,22 +18,22 @@ lasscanline(las)
 \item{dt}{numeric. The threshold time lag used to retrieve flightlines}
 }
 \value{
-Return nothing. The original object is modified in place by reference.
+An object of class \code{LAS}
 }
 \description{
 Retrieve each individual pulse, individual flighline or individual scanline and attributes a number
 to each point.
 }
 \details{
-The function \code{laspulse} retrieve each individual pulse. It uses the GPS time. A column
+The function \code{laspulse} retrieve each individual pulse. It uses the GPS time. An attribute
 '\code{pulseID}' is added in the \code{LAS} object\cr\cr
 The function \code{lasscanline} each individual scanline. When data are sampled according to a
 saw-tooth pattern (oscillating mirror) a scanline is one line, or row of data. The function relies
 on the GPS field time to order the data. Then, the 'ScanDirectionFlag' attributes (when available)
-is used to retrieve each scanline. A column '\code{scanlineID}' is added in the \code{LAS} object\cr\cr
+is used to retrieve each scanline. An attribute '\code{scanlineID}' is added in the \code{LAS} object\cr\cr
 The function \code{lasflightline} retrieve each individual flightline. It uses the GPS time. In a
 continuous dataset, once points are ordered by GPS time, the time between two consecutive points
 does not exceed a few milliseconds. If the time between two consecutive points is too long it means
 that the second point is from a different flightline. The default threshold is 30 seconds.
-A column  '\code{flightlineID}' is added in the \code{LAS} object
+An attribute  '\code{flightlineID}' is added in the \code{LAS} object.
 }

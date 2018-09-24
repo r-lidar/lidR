@@ -30,10 +30,8 @@ computed with \link{grid_terrain}) or a spatial interpolation function. \code{li
 \link{kriging}, \link{knnidw}.}
 }
 \value{
-If the input is a \code{LAS} object the function returns nothing. The LAS object is updated
-by reference. Z is now the normalized elevation, A new column 'Zref' records the former elevation
-values which enable to use \code{lasunormalize} to restore original point elevations.\cr
-If the input is a \code{LAScatalog} object, a new \code{LAScatalog}.
+If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
+\code{LAScatalog} returns a \code{LAScatalog}.
 }
 \description{
 Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
@@ -44,9 +42,9 @@ of the terrain is virtually infinite.\cr\cr
 Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
 effects.\cr\cr
-\code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
-in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
-the point cloud was normalized with the package lidR).
+The attribute Z of the returned LAS object is the normalized elevation, A new attribute 'Zref' records
+the former elevation values which enable to use \code{lasunormalize} to restore original point elevations.\cr\cr
+\code{lasunnormalize} enables restoration of the original elevation.
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -87,48 +85,48 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
 
 plot(las)
 
 # First option: use a RasterLayer as DTM
 # =======================================================
 
-dtm = grid_terrain(las, 1, kriging(k = 10L))
-lasnormalize(las, dtm)
+dtm <- grid_terrain(las, 1, kriging(k = 10L))
+las <- lasnormalize(las, dtm)
 
 plot(dtm)
 plot(las)
 
 # restore original elevations
-lasunnormalize(las)
+las <- lasunnormalize(las)
 plot(las)
 
 # operator - can be used. This, is equivalent to the previous
-las - dtm
+las <- las - dtm
 plot(las)
 
 # restore original elevations
-lasunnormalize(las)
+las <- lasunnormalize(las)
 
 # Second option: interpolate each point (no discretization)
 # =========================================================
 
-lasnormalize(las, tin())
+las <- lasnormalize(las, tin())
 plot(las)
 
 # operator - can be used. This, is equivalent to the previous
-lasunnormalize(las)
-las - tin()
+las <- lasunnormalize(las)
+las <- las - tin()
 
 \dontrun{
 # All the following syntaxes are correct
-lasnormalize(las, knnidw())
-lasnormalize(las, knnidw(k = 8, p = 2))
-las - knnidw()
-las - knnidw(k = 8)
-lasnormalize(las, kriging())
-las - kriging(k = 8)
+las <- lasnormalize(las, knnidw())
+las <- lasnormalize(las, knnidw(k = 8, p = 2))
+las <- las - knnidw()
+las <- las - knnidw(k = 8)
+las <- lasnormalize(las, kriging())
+las <- las - kriging(k = 8)
 }
 
 }

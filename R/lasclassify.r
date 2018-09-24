@@ -25,8 +25,6 @@
 #
 # ===============================================================================
 
-
-
 #' Classify points from a source of spatial data
 #'
 #' Classify points based on spatial data from external sources. It adds an attribute
@@ -34,8 +32,8 @@
 #' \code{SpatialPolygonsDataFrame}) or a \code{RasterLayer}.\cr
 #' \itemize{
 #' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
-#' the parameter \code{field} is the name of a an attribute in the table of attributes of the shapefile
-#' it assigns to the points the values of that field. Otherwise it classifies the points as boolean.
+#' the parameter \code{attribute} is the name of a an attribute in the table of attributes of the shapefile
+#' it assigns to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
 #' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
 #' }
@@ -44,11 +42,10 @@
 #'
 #' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}
 #'
-#' @param field characters. The name of a field in the table of attributes of the shapefile or
+#' @param attribute characters. The name of a attribute in the table of attributes of the shapefile or
 #' the name of a new column in the LAS object.
 #'
-#' @return Nothing. The original LAS object is updated by reference (using side effect) to avoid any
-#' copy in memory of the point cloud.
+#' @return An object of the class \code{LAS}
 #'
 #' @export
 #'
@@ -56,80 +53,81 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
-#' lidar = readLAS(LASfile)
-#' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+#' las   <- readLAS(LASfile)
+#' lakes <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
-#' # The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-#' lasclassify(lidar, lakes, "inlakes") # New column 'inlakes' is added.
-#' forest = lasfilter(lidar, inlakes == FALSE)
-#' plot(lidar)
+#' # The attribute "inlake" does not exist in the shapefile.
+#' # Points are classified as TRUE if in a polygon
+#' las    <- lasclassify(las, lakes, "inlakes")     # New attribut 'inlakes' is added.
+#' forest <- lasfilter(las, inlakes == FALSE)
+#' plot(las)
 #' plot(forest)
 #'
-#' # The field "LAKENAME_1" exists in the shapefile.
+#' # The attribute "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the values of the polygons
-#' lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
-lasclassify = function(las, source, field = NULL)
+#' las <- lasclassify(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
+lasclassify = function(las, source, attribute = NULL)
 {
   stopifnotlas(las)
 
   if (is(source, "SpatialPolygonsDataFrame"))
-    values = classify_from_shapefile(las, source, field)
+    values = classify_from_shapefile(las, source, attribute)
   else if (is(source, "RasterLayer") | is(source, "RasterStack"))
-    values = classify_from_rasterlayer(las, source, field)
+    values = classify_from_rasterlayer(las, source)
   else
     stop("No method for this source format.", call. = F)
 
-  if (is.null(field))
-    field = "id"
+  if (is.null(attribute))
+    attribute = "id"
 
-  las@data[,(field) := values][]
-  return(invisible(las))
+  las@data[[attribute]] <- values
+  return(las)
 }
 
-classify_from_shapefile = function(las, shapefile, field = NULL)
+classify_from_shapefile = function(las, shapefile, attribute = NULL)
 {
-  info <- NULL
+  info    <- NULL
+  npoints <- nrow(las@data)
 
-  npoints = dim(las@data)[1]
-
-  # No field is provided: assign the number of the polygon
-  if (is.null(field))
+  # No attribute is provided: assign the number of the polygon
+  if (is.null(attribute))
   {
-    method = 0
+    method <- 0
   }
-  # The field is the name of a field in the attribute table: assign the value of the field
-  else if (field %in% names(shapefile@data))
+  # The attribute is the name of a attribute in the attribute table: assign the value of the attribute
+  else if (attribute %in% names(shapefile@data))
   {
-    method = 1
+    method <- 1
+    data   <- shapefile@data[[attribute]]
 
-    if (class(shapefile@data[,field]) == "factor")
-      values = factor(rep(NA_integer_, npoints), levels = levels(shapefile@data[,field]))
-    else if (class(shapefile@data[,field]) == "integer")
+    if (class(data) == "factor")
+      values = factor(rep(NA_integer_, npoints), levels = levels(shapefile@data[,attribute]))
+    else if (class(data) == "integer")
       values = rep(NA_integer_, npoints)
-    else if (class(shapefile@data[,field]) == "logical")
+    else if (class(data) == "logical")
       values = rep(NA, npoints)
-    else if (class(shapefile@data[,field]) == "numeric")
+    else if (class(data) == "numeric")
       values = rep(NA_real_, npoints)
-    else if (class(shapefile@data[,field]) == "character")
+    else if (class(data) == "character")
       values = rep(NA_character_, npoints)
     else
-      stop(glue::glue("The attribute {field} the in the table of attribute is not of a supported type."), call. = FALSE)
+      stop(glue::glue("The attribute {attribute} the in the table of attribute is not of a supported type."), call. = FALSE)
   }
-  # The field is not the name of a field in the attribute table: assign a boolean if the point is in a polygon or not.
+  # The attribute is not the name of a attribute in the attribute table: assign a boolean if the point is in a polygon or not.
   else
   {
-    method = 2
-    values = logical(npoints)
+    method <- 2
+    values <- logical(npoints)
   }
 
   # Crop the shapefile to minimize the computations removing out of bounds polygons
   if (raster::extent(shapefile) >  2*raster::extent(las))
   {
     verbose("Croping the shapefile...")
-    polys = raster::crop(shapefile, raster::extent(las)*1.01)
+    polys <- raster::crop(shapefile, raster::extent(las)*1.01)
   }
   else
-    polys = shapefile
+    polys <- shapefile
 
   # No polygon? Return NA or false depending on the method used
   if (is.null(polys))
@@ -140,43 +138,40 @@ classify_from_shapefile = function(las, shapefile, field = NULL)
 
   verbose("Analysing the polygons...")
 
-  sfgeom = sf::st_as_sf(polys)
+  sfgeom <- sf::st_as_sf(polys)
 
   verbose("Testing whether points fall in a given polygon...")
 
-  ids = rep(0L, npoints)
+  ids <- rep(0L, npoints)
   for (i in 1:length(sfgeom$geometry))
   {
-    wkt = sf::st_as_text(sfgeom$geometry[i])
-    in_poly = C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt)
-    ids[in_poly] = i
+    wkt          <- sf::st_as_text(sfgeom$geometry[i])
+    in_poly      <- C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt)
+    ids[in_poly] <- i
   }
 
   if (method == 1)
   {
-    values[ids] = polys@data[, field][ids]
-    verbose(glue::glue("Assigned the value of field {field} from the table of attibutes to the points"))
+    values[ids] <- polys@data[, attribute][ids]
+    verbose(glue::glue("Assigned the value of attribute {attribute} from the table of attibutes to the points"))
   }
   else if (method == 2)
   {
-    values = ids > 0
+    values <- ids > 0
     verbose("Assigned a boolean value to the points")
   }
   else
   {
-    values = ifelse(ids == 0L, NA_integer_, ids)
+    values <- ifelse(ids == 0L, NA_integer_, ids)
     verbose("Assigned a number to each individual polygon")
   }
 
   return(values)
 }
 
-classify_from_rasterlayer = function(las, raster, field = NULL)
+classify_from_rasterlayer = function(las, raster)
 {
   . <- X <- Y <- info <- NULL
-
-  if (is.null(field))
-    field = lazyeval::expr_label(raster)
 
   #xres = raster::res(raster)[1]
   #xmin = raster@extent@xmin

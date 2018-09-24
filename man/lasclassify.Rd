@@ -4,19 +4,18 @@
 \alias{lasclassify}
 \title{Classify points from a source of spatial data}
 \usage{
-lasclassify(las, source, field = NULL)
+lasclassify(las, source, attribute = NULL)
 }
 \arguments{
 \item{las}{An object of the class \code{LAS}}
 
 \item{source}{An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}}
 
-\item{field}{characters. The name of a field in the table of attributes of the shapefile or
+\item{attribute}{characters. The name of a attribute in the table of attributes of the shapefile or
 the name of a new column in the LAS object.}
 }
 \value{
-Nothing. The original LAS object is updated by reference (using side effect) to avoid any
-copy in memory of the point cloud.
+An object of the class \code{LAS}
 }
 \description{
 Classify points based on spatial data from external sources. It adds an attribute
@@ -24,8 +23,8 @@ along each point based on a value found in the spatial data. External sources ca
 \code{SpatialPolygonsDataFrame}) or a \code{RasterLayer}.\cr
 \itemize{
 \item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
-the parameter \code{field} is the name of a an attribute in the table of attributes of the shapefile
-it assigns to the points the values of that field. Otherwise it classifies the points as boolean.
+the parameter \code{attribute} is the name of a an attribute in the table of attributes of the shapefile
+it assigns to the points the values of that attribute. Otherwise it classifies the points as boolean.
 TRUE if the points are in a polygon, FALSE otherwise.}
 \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
 }
@@ -34,16 +33,17 @@ TRUE if the points are in a polygon, FALSE otherwise.}
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
 
-lidar = readLAS(LASfile)
-lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+las   <- readLAS(LASfile)
+lakes <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 
-# The field "inlake" does not exist in the shapefile. Points are classified as TRUE if in a polygon
-lasclassify(lidar, lakes, "inlakes") # New column 'inlakes' is added.
-forest = lasfilter(lidar, inlakes == FALSE)
-plot(lidar)
+# The attribute "inlake" does not exist in the shapefile.
+# Points are classified as TRUE if in a polygon
+las    <- lasclassify(las, lakes, "inlakes")     # New attribut 'inlakes' is added.
+forest <- lasfilter(las, inlakes == FALSE)
+plot(las)
 plot(forest)
 
-# The field "LAKENAME_1" exists in the shapefile.
+# The attribute "LAKENAME_1" exists in the shapefile.
 # Points are classified with the values of the polygons
-lasclassify(lidar, lakes, "LAKENAME_1") # New column 'LAKENAME_1' is added.
+las <- lasclassify(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
 }

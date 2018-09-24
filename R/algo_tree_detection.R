@@ -413,55 +413,55 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, us
 
     . <- X <- Y <- Z <- treeID <- NULL
 
-    dist_2d = dist_2d^2
-    dist_3d = dist_3d^2
+    dist_2d <- dist_2d^2
+    dist_3d <- dist_3d^2
 
-    las_copy = LAS(las@data[, .(X,Y,Z)], las@header)
-    LM = list()
-    chm = grid_canopy(las, res, p2r())
-    i = 1
-
-    p = list(...)
-    hmin = if(is.null(p$hmin)) formals(lmf)$hmin else p$hmin
+    las_copy <- LAS(las@data[, .(X,Y,Z)], las@header)
+    LM       <- list()
+    chm      <- grid_canopy(las, res, p2r())
+    i        <- 1
+    p        <- list(...)
+    hmin     <- if(is.null(p$hmin)) formals(lmf)$hmin else p$hmin
 
     while(!is.empty(las_copy))
     {
       if (use_max)
-        chm95 = grid_canopy(las_copy, res, p2r())
+        chm95 <- grid_canopy(las_copy, res, p2r())
       else
-        chm95 = grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
+        chm95 <- grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
 
       if (max(chm95[], na.rm = TRUE) > hmin)
       {
-        lm  = tree_detection(chm95, lmf(...))
-        lm  = raster::as.data.frame(lm)
+        lm       <- tree_detection(chm95, lmf(...))
+        lm       <- raster::as.data.frame(lm)
         data.table::setDT(lm)
-        LM[[i]] = lm
-        lasclassify(las_copy, chm95, "chm95")
-        las_copy = lasfilter(las_copy, Z < chm95 - layer_thickness)
-        i = i+1
+        LM[[i]]  <- lm
+        las_copy <- lasclassify(las_copy, chm95, "chm95")
+        las_copy <- lasfilter(las_copy, Z < chm95 - layer_thickness)
+
+        i <- i+1
       }
       else
-        las_copy = new("LAS")
+        las_copy <- new("LAS")
     }
 
-    LM = data.table::rbindlist(LM)
+    LM <- data.table::rbindlist(LM)
     data.table::setorder(LM, -Z)
-    LM = unique(LM, by = c("X", "Y"))
+    LM <- unique(LM, by = c("X", "Y"))
 
-    detected = LM[1,.(X,Y,Z)]
+    detected <- LM[1,.(X,Y,Z)]
     for(i in 2:nrow(LM))
     {
-      distance2D = (LM$X[i] - detected$X)^2 + (LM$Y[i] - detected$Y)^2
-      distance3D = distance2D + (LM$Z[i] - detected$Z)^2
+      distance2D <- (LM$X[i] - detected$X)^2 + (LM$Y[i] - detected$Y)^2
+      distance3D <- distance2D + (LM$Z[i] - detected$Z)^2
 
       if (!any(distance2D < dist_2d) & !any(distance3D < dist_3d))
-        detected = rbind(detected, data.table(X = LM$X[i], Y = LM$Y[i], Z = LM$X[i]))
+        detected <- rbind(detected, data.table(X = LM$X[i], Y = LM$Y[i], Z = LM$X[i]))
     }
 
     detected[, treeID := 1:.N]
 
-    output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@proj4string)
+    output <- sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@proj4string)
     return(output)
   }
 

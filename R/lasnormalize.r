@@ -37,9 +37,9 @@
 #' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 #' interpolated. A buffer around the region of interest is always recommended to avoid edge
 #' effects.\cr\cr
-#' \code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
-#' in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
-#' the point cloud was normalized with the package lidR).
+#' The attribute Z of the returned LAS object is the normalized elevation, A new attribute 'Zref' records
+#' the former elevation values which enable to use \code{lasunormalize} to restore original point elevations.\cr\cr
+#' \code{lasunnormalize} enables restoration of the original elevation.
 #'
 #' @template param-las
 #'
@@ -51,55 +51,52 @@
 #'
 #' @template section-supported-option-lasupdater
 #'
-#' @return If the input is a \code{LAS} object the function returns nothing. The LAS object is updated
-#' by reference. Z is now the normalized elevation, A new column 'Zref' records the former elevation
-#' values which enable to use \code{lasunormalize} to restore original point elevations.\cr
-#' If the input is a \code{LAScatalog} object, a new \code{LAScatalog}.
+#' @template return-lasupdater-las-lascatalog
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #'
 #' plot(las)
 #'
 #' # First option: use a RasterLayer as DTM
 #' # =======================================================
 #'
-#' dtm = grid_terrain(las, 1, kriging(k = 10L))
-#' lasnormalize(las, dtm)
+#' dtm <- grid_terrain(las, 1, kriging(k = 10L))
+#' las <- lasnormalize(las, dtm)
 #'
 #' plot(dtm)
 #' plot(las)
 #'
 #' # restore original elevations
-#' lasunnormalize(las)
+#' las <- lasunnormalize(las)
 #' plot(las)
 #'
 #' # operator - can be used. This, is equivalent to the previous
-#' las - dtm
+#' las <- las - dtm
 #' plot(las)
 #'
 #' # restore original elevations
-#' lasunnormalize(las)
+#' las <- lasunnormalize(las)
 #'
 #' # Second option: interpolate each point (no discretization)
 #' # =========================================================
 #'
-#' lasnormalize(las, tin())
+#' las <- lasnormalize(las, tin())
 #' plot(las)
 #'
 #' # operator - can be used. This, is equivalent to the previous
-#' lasunnormalize(las)
-#' las - tin()
+#' las <- lasunnormalize(las)
+#' las <- las - tin()
 #'
 #' \dontrun{
 #' # All the following syntaxes are correct
-#' lasnormalize(las, knnidw())
-#' lasnormalize(las, knnidw(k = 8, p = 2))
-#' las - knnidw()
-#' las - knnidw(k = 8)
-#' lasnormalize(las, kriging())
-#' las - kriging(k = 8)
+#' las <- lasnormalize(las, knnidw())
+#' las <- lasnormalize(las, knnidw(k = 8, p = 2))
+#' las <- las - knnidw()
+#' las <- las - knnidw(k = 8)
+#' las <- lasnormalize(las, kriging())
+#' las <- las - kriging(k = 8)
 #' }
 #'
 #' @seealso
@@ -158,11 +155,11 @@ lasnormalize.LAS = function(las, algorithm)
   }
 
   if (!"Zref" %in% names(las@data))
-    las@data[, Zref := Z]
+    las@data[["Zref"]] <- las@data[["Z"]]
 
-  las@data[, Z := round(Z - Zground, 3)]
-  lasupdateheader(las)
-  return(invisible(las))
+  las@data[["Z"]] <- round(las@data[["Z"]] - Zground, 3)
+  las <- lasupdateheader(las)
+  return(las)
 }
 
 #' @export
@@ -171,7 +168,7 @@ lasnormalize.LAScluster = function(las, algorithm)
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  lasnormalize(x, algorithm)
+  x <- lasnormalize(x, algorithm)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }
@@ -192,18 +189,19 @@ lasnormalize.LAScatalog = function(las, algorithm)
 #' @export
 lasunnormalize = function(las)
 {
+  stopifnotlas(las)
   Z <- Zref <- NULL
 
   if ("Zref" %in% names(las@data))
   {
-    las@data[, Z := Zref]
+    las@data[["Z"]] <- las@data[["Zref"]]
     las@data[, Zref := NULL]
     las@data[]
   }
   else
-    message("No field 'Zref' found. Unormalizisation is impossible.")
+    message("No attribute 'Zref' found. Unormalizisation is impossible.")
 
-  return(invisible(las))
+  return(las)
 }
 
 #' @param e1 a LAS object
@@ -214,16 +212,14 @@ lasunnormalize = function(las)
 #' @rdname lasnormalize
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
 {
-  lasnormalize(e1,e2)
-  return(invisible())
+  return(lasnormalize(e1,e2))
 })
 
 #' @export
 #' @rdname lasnormalize
 setMethod("-", c("LAS", "function"), function(e1, e2)
 {
-  lasnormalize(e1,e2)
-  return(invisible())
+  return(lasnormalize(e1,e2))
 })
 
 check_degenerated_points = function(points)

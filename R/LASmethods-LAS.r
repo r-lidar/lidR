@@ -226,7 +226,7 @@ setMethod("area", "LAS", function(x, ...)
 #' @rdname epsg
 setMethod("epsg", "LAS", function(object)
 {
-  return(epsg(las@header))
+  return(epsg(object@header))
 })
 
 #' @export

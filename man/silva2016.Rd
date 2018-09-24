@@ -45,15 +45,15 @@ cloud. However the user can use this function alone like that:
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-col = pastel.colors(200)
+las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+col <- pastel.colors(200)
 
-chm = grid_canopy(las, res = 0.5, p2r(0.3))
-kernel = matrix(1,3,3)
-chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+chm <- grid_canopy(las, res = 0.5, p2r(0.3))
+ker <- matrix(1,3,3)
+chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
-ttops = tree_detection(chm, lmf(4, 2))
-lastrees(las, silva2016(chm, ttops))
+ttops <- tree_detection(chm, lmf(4, 2))
+las   <- lastrees(las, silva2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
 }
 \references{

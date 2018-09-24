@@ -35,9 +35,9 @@ code written by the original author and exposed to R via the the \code{RCSF} pac
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzrn")
+las <- readLAS(LASfile, select = "xyzrn")
 
-lasground(las, csf())
+las <- lasground(las, csf())
 plot(las, color = "Classification")
 }
 \references{
