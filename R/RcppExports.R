@@ -33,10 +33,6 @@ C_lastrees_ptrees <- function(las, k_values, hmin, nmax, segmentation = TRUE) {
     .Call(`_lidR_C_lastrees_ptrees`, las, k_values, hmin, nmax, segmentation)
 }
 
-C_lasupdateheader <- function(las, new_header) {
-    invisible(.Call(`_lidR_C_lasupdateheader`, las, new_header))
-}
-
 C_LocalMaximumFilter <- function(data, ws, min_height, circular) {
     .Call(`_lidR_C_LocalMaximumFilter`, data, ws, min_height, circular)
 }
