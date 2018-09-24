@@ -60,6 +60,8 @@ lastransform = function(las, epsg, CRSobj = NULL)
 #' @export
 lastransform.LAS = function(las, epsg, CRSobj = NULL)
 {
+  . <- X <- Y <- NULL
+
   if (!missing(epsg))
     CRSobj = sp::CRS(paste0("+init=epsg:", epsg))
 
@@ -68,7 +70,7 @@ lastransform.LAS = function(las, epsg, CRSobj = NULL)
 
   spts = sp::SpatialPoints(las@data[, .(X,Y)])
   sp::proj4string(spts) <- sp::proj4string(las)
-  spts = spTransform(spts, CRSobj)
+  spts = sp::spTransform(spts, CRSobj)
 
   las@data[["X"]] <- spts@coords[,1]
   las@data[["Y"]] <- spts@coords[,2]

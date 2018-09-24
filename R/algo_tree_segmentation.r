@@ -499,23 +499,26 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
     . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
-    X = match_chm_and_seeds(chm, treetops, ID)
-    cells = X$cells
-    ids = X$ids
+    X     <- match_chm_and_seeds(chm, treetops, ID)
+    cells <- X$cells
+    ids   <- X$ids
 
-    chmdt = data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
+    chmdt <- data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
     data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
     # Voronoi tesselation is nothing else than the nearest neigbour
-    u = C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
+    u <- C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
+
     chmdt[, id := u$nn.idx[,1]]
     chmdt[, id := ids[id]]
     chmdt[, d := u$nn.dist[,1]]
-
     chmdt[, hmax := max(Z), by = id]
-    chmdt = chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
-    as.lasmetrics(chmdt, raster::res(chm)[1])
-    crown = as.raster.lasmetrics(chmdt)
+
+    chmdt   <- chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
+    crown   <- chm
+    suppressWarnings(crown[] <- NA_integer_)
+    cells   <- raster::cellFromXY(crown, chmdt[, .(X,Y)])
+    suppressWarnings(crown[cells] <- chmdt[["id"]])
 
     return(crown)
   }
