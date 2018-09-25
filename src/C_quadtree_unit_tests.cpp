@@ -27,7 +27,6 @@ IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double
 IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, double x, double y, double z, int k)
 {
   std::vector<int> id;
-  unsigned int n = X.size();
 
   // Creation of a QuadTree
   QuadTree tree(X, Y, Z);

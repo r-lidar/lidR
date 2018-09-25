@@ -251,7 +251,7 @@ void TreeSegmentManager::planimetric_filter(std::vector<PointXYZ> &subProfile, s
   double threshold = meanValueForThreshold + 2*stdValueForThreshold;
   //--------------------------------------------------------------------------------------
   // Keeping all points below threshold and storage of their IDs
-  size_t i = 0, keep = 0;
+  size_t i = 0;
   subProfileSubset.push_back(subProfile[0]);
   while ( (i < subProfile.size()-1) && (dist[i] <= threshold) )
   {
