@@ -37,3 +37,11 @@ does not exceed a few milliseconds. If the time between two consecutive points i
 that the second point is from a different flightline. The default threshold is 30 seconds.
 An attribute  '\code{flightlineID}' is added in the \code{LAS} object.
 }
+\examples{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las <- readLAS(LASfile)
+
+las <- laspulse(las)
+las <- lasflightline(las)
+las
+}

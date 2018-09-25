@@ -145,3 +145,96 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   class(f) <- c("GroundSegmentation", "Algorithm", "lidR")
   return(f)
 }
+
+
+#' Parameters for progressive morphological filter
+#'
+#' The function \link{lasground} with the progressive morphological filter allows for any
+#' sequence of parameters. This function enables computation of the sequences using equations (4),
+#'  (5) and (7) from Zhang et al. (see reference and details).
+#' @details
+#' In the original paper the windows size sequence is given by eq. 4 or 5:\cr\cr
+#'
+#' \eqn{w_k = 2kb + 1} \cr\cr
+#' or\cr\cr
+#' \eqn{w_k = 2b^k + 1}\cr\cr
+#'
+#' In the original paper the threshold sequence is given by eq. 7:\cr\cr
+#' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
+#' Because the function \link{lasground} applies the morphological operation at the point
+#' cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
+#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).
+#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limits
+#' the number of windows created.
+#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (eq. 7).
+#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
+#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
+#' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
+#' @return A list with two components: the windows size sequence and the threshold sequence.
+#' @references
+#' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
+#' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
+#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
+#' @export
+#'
+#' @examples
+#' p = util_makeZhangParam()
+util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
+{
+  if (exp & b <= 1)
+    stop("b cannot be lower than 1 with an exponentially growing windows", call. = FALSE)
+
+  if (dh0 >= dhmax)
+    stop("dh0 greater than dhmax", call. = FALSE)
+
+  if (max_ws < 3)
+    stop("Minimum windows size is 3. max_ws cannot must be greater than 3", call. = FALSE)
+
+  if (!is.logical(exp))
+    stop("exp should be logical", call. = FALSE)
+
+  if (!exp & b < 1)
+    warning("Due to an incoherence in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
+
+
+  dhtk = c()
+  wk = c()
+  k = 0
+  ws = 0
+  th = 0
+  c = 1
+
+  while (ws <= max_ws)
+  {
+    # Determine the initial window size.
+    if (exp)
+      ws = (2.0*b^k) + 1
+    else
+      ws = 2.0*(k + 1)*b + 1
+
+    # Calculate the height threshold to be used in the next k.
+    if (ws <= 3)
+      th = dh0
+    else
+    {
+      if(exp)
+        th = s * (ws - wk[k]) * c + dh0
+      else
+        th = s*2*b*c+dh0
+    }
+
+    # Enforce max distance on height threshold
+    if (th > dhmax)
+      th = dhmax
+
+    if (ws <= max_ws)
+    {
+      wk = append(wk, ws)
+      dhtk = append(dhtk, th)
+    }
+
+    k = k + 1
+  }
+
+  return(list(ws = wk, th = dhtk))
+}

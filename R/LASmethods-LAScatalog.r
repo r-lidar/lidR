@@ -192,7 +192,7 @@ setMethod("summary", "LAScatalog", function(object, ...)
 {
   show(object)
   byfile <- get_by_file(object)
-  save   <- get_output_files(object) == ""
+  save   <- get_output_files(object) != ""
   laz    <- get_laz_compression(object)
 
   cat("Summary of the processing options:\n")
@@ -207,7 +207,7 @@ setMethod("summary", "LAScatalog", function(object, ...)
   cat("Summary of the output options:\n")
 
   if(!save)
-    cat("  - Outputs will be returned at R level.\n")
+    cat("  - Outputs will be returned in R objects.\n")
   else
     cat("  - Outputs will be written in files:", get_output_files(object), "\n")
 

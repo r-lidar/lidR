@@ -96,6 +96,7 @@ LogicalVector C_points_in_polygon(NumericVector vertx, NumericVector verty, Nume
   return c;
 }
 
+/*
 // Do points fall inside a given polygon?
 //
 // Verifies for a set of points whether they fall inside a given polygon
@@ -150,3 +151,4 @@ IntegerVector C_points_in_polygons(Rcpp::List vertx, Rcpp::List verty, NumericVe
 
   return id;
 }
+ */
