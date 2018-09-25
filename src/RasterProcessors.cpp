@@ -90,37 +90,6 @@ bool RasterProcessor::xy2ij(double x, double y)
   return true;
 }
 
-double RasterProcessor::roundany(double x)
-{
-  return round(x / m_res) * m_res;
-}
-
-List RasterProcessor::expend()
-{
-  double x;
-  double y;
-  std::vector<double> X, Y, Z;
-
-  for (i = 0 ; i < m_ncols ; i++)
-  {
-    x = m_startx + i * m_res + 0.5 * m_res;
-
-    for (j = 0 ; j < m_nrows ; j++)
-    {
-      y = m_starty + (m_nrows - j - 1) * m_res + 0.5 * m_res;
-
-      if (!NumericVector::is_na(m_raster(i,j)))
-      {
-        X.push_back(x);
-        Y.push_back(y);
-        Z.push_back(m_raster(i,j));
-      }
-    }
-  }
-
-  return List::create(Named("X") = X, Named("Y") = Y, Named("Z") = Z);
-}
-
 NumericMatrix RasterProcessor::getmatrix()
 {
   return m_raster;
@@ -149,7 +118,7 @@ void PointToRasterProcessor::max(double x, double y, double z)
   return;
 }
 
-void PointToRasterProcessor::min(double x, double y, double z)
+/*void PointToRasterProcessor::min(double x, double y, double z)
 {
   if(!xy2ij(x,y))
     return;
@@ -158,7 +127,7 @@ void PointToRasterProcessor::min(double x, double y, double z)
     m_raster(i,j) = z;
 
   return;
-}
+}*/
 
 void PointToRasterProcessor::count(double x, double y)
 {

@@ -49,10 +49,6 @@ C_points_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call(`_lidR_C_points_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-C_points_in_polygons <- function(vertx, verty, pointx, pointy) {
-    .Call(`_lidR_C_points_in_polygons`, vertx, verty, pointx, pointy)
-}
-
 C_points_in_polygon_wkt <- function(x, y, wkt) {
     .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt)
 }

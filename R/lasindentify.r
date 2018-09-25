@@ -51,6 +51,14 @@
 #'
 #' @export
 #' @rdname lasidentify
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#'
+#' las <- laspulse(las)
+#' las <- lasflightline(las)
+#' las
 laspulse = function(las)
 {
   stopifnotlas(las)
