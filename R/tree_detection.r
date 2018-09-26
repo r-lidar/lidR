@@ -95,7 +95,7 @@ tree_detection.LAScluster = function(las, algorithm)
 #' @export
 tree_detection.LAScatalog = function(las, algorithm)
 {
-  set_select(las) <- "xyz"
+  opt_select(las) <- "xyz"
 
   output <- catalog_apply2(las, tree_detection, algorithm = algorithm, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
   output <- do.call(rbind, output)

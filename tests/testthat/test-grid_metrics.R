@@ -76,13 +76,13 @@ test_that("grid_metrics return a correct raster brick (tricky case)", {
 file <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(file)
 las = readLAS(file, select = "xyz", filter = "-keep_first")
-set_cores(ctg) <- 1
-set_tiling_size(ctg) <- 160
-ctg@clustering_options$alignment = c(684750, 5017760)
-set_buffer(ctg) <- 0
-set_progress(ctg) <- FALSE
-set_select(ctg) = "xyz"
-set_filter(ctg) = "-keep_first"
+opt_cores(ctg) <- 1
+opt_chunk_size(ctg) <- 160
+ctg@chunk_options$alignment = c(684750, 5017760)
+opt_chunk_buffer(ctg) <- 0
+opt_progress(ctg) <- FALSE
+opt_select(ctg) = "xyz"
+opt_filter(ctg) = "-keep_first"
 
 test_that("grid_metric return the same both with LAScatalog and LAS", {
   m1 = grid_metrics(ctg, length(Z), 20)

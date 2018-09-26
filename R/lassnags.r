@@ -111,7 +111,7 @@ lassnags.LAScluster = function (las, algorithm, attribute = "snagCls")
 #' @export
 lassnags.LAScatalog = function (las, algorithm, attribute = "snagCls")
 {
-  set_select(las) <- "*"
+  opt_select(las) <- "*"
 
   output      <- catalog_apply2(las, lassnags,  algorithm = algorithm, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

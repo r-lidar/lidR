@@ -139,7 +139,7 @@ lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
 #' @export
 lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
-  set_select(las) <- "*"
+  opt_select(las) <- "*"
 
   output <- catalog_apply2(las, lasground, algorithm = algorithm, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output <- unlist(output)

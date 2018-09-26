@@ -176,7 +176,7 @@ lasnormalize.LAScluster = function(las, algorithm)
 #' @export
 lasnormalize.LAScatalog = function(las, algorithm)
 {
-  set_select(las) <- "*"
+  opt_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasnormalize, algorithm = algorithm, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

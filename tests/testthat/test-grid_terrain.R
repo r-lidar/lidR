@@ -82,11 +82,11 @@ test_that("grid_terrain returns a circular dtm ", {
 file <- system.file("extdata", "Topography.laz", package="lidR")
 ctg = catalog(file)
 las = readLAS(file)
-set_cores(ctg) <- 1
-set_tiling_size(ctg) <- 180
-set_buffer(ctg) <- 30
-ctg@clustering_options$alignment = c(332400, 5238400)
-set_progress(ctg) <- FALSE
+opt_cores(ctg) <- 1
+opt_chunk_size(ctg) <- 180
+opt_chunk_buffer(ctg) <- 30
+ctg@chunk_options$alignment = c(332400, 5238400)
+opt_progress(ctg) <- FALSE
 
 test_that("grid_terrain return the same both with LAScatalog and LAS", {
   dtm1 = grid_terrain(las, 1, tin())

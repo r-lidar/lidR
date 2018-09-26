@@ -175,10 +175,10 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
     las = las[keep,]
   }
 
-  set_select(las) <- "xyzc"
+  opt_select(las) <- "xyzc"
   output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
-  if (get_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+  if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_terrain"))
   else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
     return(merge_rasters(output))

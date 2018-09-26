@@ -88,9 +88,9 @@
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 #' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 #' \itemize{
-#' \item \strong{tiling_size}: How many data are loaded at once.
-#' \item \strong{buffer}: Load clusters with a buffer
-#' \item \strong{alignment}: Align the processed clusters
+#' \item \strong{chunk_size}: How many data are loaded at once.
+#' \item \strong{chunk_buffer}: Load clusters with a buffer
+#' \item \strong{chunk_alignment}: Align the processed clusters
 #' \item \strong{cores}: How many cores are used.
 #' \item \strong{progress}: Displays a progression estimation.
 #' \item \strong{output_files}: The user-function outputs will be written in files instead of being
@@ -139,11 +139,11 @@
 #'
 #' # 3. Set some catalog options
 #' # For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
-#' set_buffer(project) <- 10
-#' set_cores(project) <- 1L
-#' set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
-#' set_select(project) <- "xyz"         # don't need to read something else than the coordinates
-#' set_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
+#' opt_chunk_buffer(project) <- 10
+#' opt_cores(project) <- 1L
+#' opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
+#' opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
+#' opt_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
 #'
 #' # 4. Apply user-defined function to take advantage of the internal engine
 #' output = catalog_apply(project, my_tree_detection_method, ws = 5)
@@ -174,10 +174,10 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' project <- catalog(LASfile)
 #'
-#' set_buffer(project) <- 1
-#' set_cores(project) <- 1L
-#' set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
-#' set_select(project) <- "xyz"         # don't need to read something else than the coordinates
+#' opt_chunk_buffer(project) <- 1
+#' opt_cores(project) <- 1L
+#' opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
+#' opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
 #'
 #' output = catalog_apply(project, rumple_index_surface, res = 20)
 #' output = do.call(raster::merge, output)
@@ -222,30 +222,30 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   # The function expect a buffer to guarantee a stric wall-to-wall output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
 
-  if (need_buffer & get_buffer(ctg) <= 0 & get_wall.to.wall(ctg))
+  if (need_buffer & opt_chunk_buffer(ctg) <= 0 & opt_wall_to_wall(ctg))
     stop("A buffer greater than 0 is requiered to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
-  # clusters are aligned with the pixels. In case of tiling_size > 0 it is easy to check before to make
+  # clusters are aligned with the pixels. In case of chunk_size > 0 it is easy to check before to make
   # the clusters
 
-  if (check_alignement & !get_by_file(ctg) & get_wall.to.wall(ctg))
+  if (check_alignement & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
     # If the clustering option do not match with the resolution
-    t_size     <- get_tiling_size(ctg)
+    t_size     <- opt_chunk_size(ctg)
     new_t_size <- round_any(t_size, res)
     if (new_t_size != t_size)
     {
-      set_tiling_size(ctg) <- new_t_size
+      opt_chunk_size(ctg) <- new_t_size
       message(glue::glue("Clustering size do no match with the resolution of the Raster. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
     }
 
     # If the alignement of the clusters do not match with the start point of the raster
-    alignment     <- get_alignment(ctg)
+    alignment     <- opt_chunk_alignment(ctg)
     new_alignment <- (alignment - start) %% res + alignment
     if (any(new_alignment != alignment))
     {
-      set_alignment(ctg) <- new_alignment
+      opt_chunk_alignment(ctg) <- new_alignment
       message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
     }
   }
@@ -253,7 +253,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   # Some functions require to write outputs in files because the output it likely to be to  big to
   # be returned in R
 
-  if (need_output_file & get_output_files(ctg) == "")
+  if (need_output_file & opt_output_files(ctg) == "")
     stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   return(ctg)
@@ -262,10 +262,10 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 .catalog_apply_check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
 {
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
-  # clusters are aligned with the pixels. In case of tiling_size =0 (processed by file) the clusters
+  # clusters are aligned with the pixels. In case of chunk_size =0 (processed by file) the clusters
   # must be check after there creation. Can be skipped if the catalog is not a wall-to-wall catalog.
 
-  if (check_alignement & get_by_file(ctg) & get_wall.to.wall(ctg))
+  if (check_alignement & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
     for(i in 1:length(clusters))
     {
@@ -283,7 +283,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 
       if (!bbox1 == bbox2)
       {
-        new_cluster <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, get_buffer(ctg))[[1]]
+        new_cluster <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg))[[1]]
         clusters[[i]] <- new_cluster
         message(glue::glue("Cluster {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
       }

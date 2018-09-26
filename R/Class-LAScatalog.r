@@ -60,7 +60,7 @@
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
 #' processed (see dedicated section).
 #'
-#' @slot clustering_options list. A list that contains some settings describing how the catalog will be
+#' @slot chunk_options list. A list that contains some settings describing how the catalog will be
 #' sub-divided into chunks to be processed (see dedicated section).
 #'
 #' @slot output_options list. A list that contains some settings describing how the catalog will return
@@ -90,13 +90,13 @@
 #' }
 #'
 #' @section Chunk options:
-#' The slot \code{@clustering_options} contains a \code{list} of options that drives how a the chunks
+#' The slot \code{@chunk_options} contains a \code{list} of options that drives how a the chunks
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
-#' \item \strong{tiling_size}: numeric. The size of the chunks that will be sequentially processed.
+#' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
 #' A small size allows for loading few data at a time saving computer memory. A large size allows for
 #' loading large region at a time. The computation is  usually faster but uses much more computer
-#' memory. If \code{tiling_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
+#' memory. If \code{chunk_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
 #' is a file. Default is 0 i.e. by default the processing engine respects existing tiling pattern.
 #' \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 #' no side effect between to independent chunks and that the output is a continuous wall-to-wall output.
@@ -104,7 +104,7 @@
 #' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 #' chunk pattern. By default the alignment is made along (0,0) meaning that the edge of the first chunk
 #' will belong on x = 0 and y = 0 and all the the others chunks will be multiples of the chunk size.
-#' Not relevent if \code{tiling_size = 0}.
+#' Not relevent if \code{chunk_size = 0}.
 #' }
 #'
 #' @section Output options:
@@ -156,8 +156,8 @@
 #' ctg <- catalog("filder/to/las/files/")
 #'
 #' # Set some options
-#' set_cores(ctg) <- 2
-#' set_filter(ctg) <- "-keep_first"
+#' opt_cores(ctg) <- 2
+#' opt_filter(ctg) <- "-keep_first"
 #'
 #' # Summary gives a summary of how the catalog will be processed
 #' summary(ctg)
@@ -168,8 +168,8 @@
 #'
 #' # For low memory config it might be adivsed to do not load entire files
 #' # and process chunks instead
-#' set_cores(ctg) <- 1
-#' set_tiling_size(ctg) <- 500
+#' opt_cores(ctg) <- 1
+#' opt_chunk_size(ctg) <- 500
 #'
 #' # Output are expected to be strictly identical
 #' hmean <- grid_metrics(ctg, mean(Z), 20)
@@ -179,22 +179,22 @@
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
 #' # In that case it is advised to write the output into files
-#' set_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
+#' opt_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
 #'
 #' # Raster will be written on disk. What is returned is the list of writtem files
 #' # or, in this specific case, a virtual raster mosaic.
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
 #' # When chunks are files the origanal name of the las files can be preserved
-#' set_tiling_size(ctg) <- 0
-#' set_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
+#' opt_chunk_size(ctg) <- 0
+#' opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
 #' # For some functions, files MUST be written on disk. Indeed it is sure that R cannot
 #' # handle the whole output.
-#' set_tiling_size(ctg) <- 0
-#' set_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
-#' set_laz_compression(ctg) <- TRUE
+#' opt_chunk_size(ctg) <- 0
+#' opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
+#' opt_laz_compression(ctg) <- TRUE
 #' new_ctg <- lasnormalize(ctg, tin())
 #'
 #' # The user have access to the catalog engine througt the function catalog_apply
@@ -204,7 +204,7 @@ setClass(
   Class = "LAScatalog",
   contains = "SpatialPolygonsDataFrame",
   representation(
-    clustering_options = "list",
+    chunk_options = "list",
     processing_options = "list",
     output_options = "list",
     input_options = "list"
@@ -235,8 +235,8 @@ setMethod("initialize", "LAScatalog", function(.Object)
     )
   )
 
-  .Object@clustering_options <- list(
-    tiling_size = 0,
+  .Object@chunk_options <- list(
+    size = 0,
     buffer = 30,
     alignment = c(0,0)
   )
@@ -245,7 +245,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
     cores = 1L,
     progress = TRUE,
     stop_early = TRUE,
-    wall.to.wall = TRUE
+    wall_to_wall = TRUE
   )
 
   .Object@output_options <- list(

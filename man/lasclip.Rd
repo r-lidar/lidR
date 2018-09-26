@@ -92,7 +92,7 @@ but this is not mandatory.
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item tiling_size: Does not make sense here.
+\item chunk_size: Does not make sense here.
 \item buffer: Not supported yet.
 \item alignment: Does not makes sense here.
 \item \strong{cores}: How many cores are used.
@@ -128,7 +128,7 @@ lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 subset3 = lasclip(ctg, lakes)
 
 # Extract the polygons, write them in files name after the lake names, do not load anything in R
-set_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
+opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = lasclip(ctg, lakes)
 
 \dontrun{

@@ -3,11 +3,11 @@ context("lasnormalize")
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 ctg = catalog(LASfile)
-set_cores(ctg) <- 1
-set_tiling_size(ctg) <- 160
-ctg@clustering_options$alignment = c(332550, 5238450)
-set_buffer(ctg) <- 0
-set_progress(ctg) <- FALSE
+opt_cores(ctg) <- 1
+opt_chunk_size(ctg) <- 160
+ctg@chunk_options$alignment = c(332550, 5238450)
+opt_chunk_buffer(ctg) <- 0
+opt_progress(ctg) <- FALSE
 
 test_that("Each ground point is at 0 with knnidw", {
   las <- lasnormalize(las, knnidw(k = 10L, p = 1))
@@ -36,11 +36,11 @@ test_that("Each ground point is at 0 with kriging", {
 test_that("lasnormalize work with a catalog", {
   expect_error(lasnormalize(ctg, tin()), "buffer")
 
-  set_buffer(ctg) <- 30
+  opt_chunk_buffer(ctg) <- 30
 
   expect_error(lasnormalize(ctg, tin()), "output file")
 
-  set_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = lasnormalize(ctg, tin())
   las2 = readLAS(ctg2)

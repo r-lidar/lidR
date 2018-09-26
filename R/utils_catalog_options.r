@@ -31,70 +31,68 @@
 #' Get or set LAScatalog processing engine options
 #'
 #' The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
-#' The options are used by all the functions that take a \code{LAScatalog} as input.
+#' The options are used by all the functions that support a \code{LAScatalog} as input.
 #'
 #' @param ctg An object of class \link[lidR:LAScatalog-class]{LAScatalog}
 #' @param value An appropriated value depending on the expected input.
-#'
-#' @return Functions \code{get_*} return the value of the associated options
 #'
 #' @name catalog_options_tools
 NULL
 
 #' @rdname catalog_options_tools
 #' @export
-get_buffer = function(ctg)
+opt_chunk_buffer = function(ctg)
 {
-  return(ctg@clustering_options$buffer)
+  return(ctg@chunk_options$buffer)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_buffer<-` = function(ctg, value)
+`opt_chunk_buffer<-` = function(ctg, value)
 {
   assertive::assert_is_a_number(value)
   if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
-  ctg@clustering_options$buffer <- value
+  ctg@chunk_options$buffer <- value
   return(ctg)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-get_tiling_size = function(ctg)
+opt_chunk_size = function(ctg)
 {
-  return(ctg@clustering_options$tiling_size)
+  return(ctg@chunk_options$size)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_tiling_size<-` = function(ctg, value)
+`opt_chunk_size<-` = function(ctg, value)
 {
   assertive::assert_is_a_number(value)
   assertive::assert_all_are_non_negative(value)
-  ctg@clustering_options$tiling_size <- value
+  ctg@chunk_options$size <- value
   return(ctg)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-get_alignment = function(ctg)
+opt_chunk_alignment = function(ctg)
 {
-  return(ctg@clustering_options$alignment)
+  return(ctg@chunk_options$alignment)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_alignment<-` = function(ctg, value)
+`opt_chunk_alignment<-` = function(ctg, value)
 {
   assertive::assert_is_numeric(value)
   assertive::assert_is_of_length(value, 2)
-  ctg@clustering_options$alignment <- value
+  ctg@chunk_options$alignment <- value
   return(ctg)
 }
 
-get_by_file = function(ctg)
+opt_chunk_is_file = function(ctg)
 {
-  return(ctg@clustering_options$tiling_size == 0)
+  return(ctg@chunk_options$size == 0)
 }
 
 
@@ -102,14 +100,14 @@ get_by_file = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_cores = function(ctg)
+opt_cores = function(ctg)
 {
   return(ctg@processing_options$cores)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_cores<-` = function(ctg, value)
+`opt_cores<-` = function(ctg, value)
 {
   sys.cores = future::availableCores()
   value = as.integer(value)
@@ -130,14 +128,14 @@ get_cores = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_progress = function(ctg)
+opt_progress = function(ctg)
 {
   return(ctg@processing_options$progress)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_progress<-` = function(ctg, value)
+`opt_progress<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@processing_options$progress <- value
@@ -146,14 +144,14 @@ get_progress = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_stop_early = function(ctg)
+opt_stop_early = function(ctg)
 {
   return(ctg@processing_options$stop_early)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_stop_early<-` = function(ctg, value)
+`opt_stop_early<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@processing_options$stop_early <- value
@@ -162,17 +160,17 @@ get_stop_early = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_wall.to.wall = function(ctg)
+opt_wall_to_wall = function(ctg)
 {
-  return(ctg@processing_options$wall.to.wall)
+  return(ctg@processing_options$wall_to_wall)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_wall.to.wall<-` = function(ctg, value)
+`opt_wall_to_wall<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-  ctg@processing_options$wall.to.wall <- value
+  ctg@processing_options$wall_to_wall <- value
   return(ctg)
 }
 
@@ -181,14 +179,14 @@ get_wall.to.wall = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_output_files = function(ctg)
+opt_output_files = function(ctg)
 {
   return(ctg@output_options$output_files)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_output_files<-` = function(ctg, value)
+`opt_output_files<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
   ext = tools::file_ext(value)
@@ -207,14 +205,14 @@ get_output_files = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_laz_compression = function(ctg)
+opt_laz_compression = function(ctg)
 {
   return(ctg@output_options$drivers$LAS$laz_compression)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_laz_compression<-` = function(ctg, value)
+`opt_laz_compression<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
   ctg@output_options$drivers$LAS$laz_compression <- value
@@ -225,14 +223,14 @@ get_laz_compression = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_select = function(ctg)
+opt_select = function(ctg)
 {
   return(ctg@input_options$select)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_select<-` = function(ctg, value)
+`opt_select<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
   ctg@input_options$select <- value
@@ -241,14 +239,14 @@ get_select = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-get_filter = function(ctg)
+opt_filter = function(ctg)
 {
   return(ctg@input_options$filter)
 }
 
 #' @rdname catalog_options_tools
 #' @export
-`set_filter<-` = function(ctg, value)
+`opt_filter<-` = function(ctg, value)
 {
   assertive::assert_is_a_string(value)
   ctg@input_options$filter <- value

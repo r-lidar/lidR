@@ -94,7 +94,7 @@ lasfilterdecimate.LAScluster = function(las, algorithm)
 #' @export
 lasfilterdecimate.LAScatalog = function(las, algorithm)
 {
-  set_select(las) <- "*"
+  opt_select(las) <- "*"
 
   output      <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)

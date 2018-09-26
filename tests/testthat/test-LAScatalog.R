@@ -27,6 +27,8 @@ test_that("LAScatalog redefined behavior of $, [, and [[", {
 })
 
 test_that("Print LAScatalog works", {
-expect_error(print(ctg), NA)
-expect_error(summary(ctg), NA)
+  sink(tempfile())
+  expect_error(print(ctg), NA)
+  expect_error(summary(ctg), NA)
+  sink(NULL)
 })
