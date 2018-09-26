@@ -45,7 +45,7 @@ but this is not mandatory.
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{tiling_size}: Size of the new tiles.
+\item \strong{chunk_size}: Size of the new tiles.
 \item \strong{buffer}: Load new tiles with a buffer. Usually 0 is the expected value.
 \item \strong{alignment}: Alignment of the new tiles.
 \item \strong{cores}: How many cores are used. \code{catalog_retile} streams the data (nothing is
@@ -66,27 +66,27 @@ ctg = catalog("path/to/catalog")
 # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
 # Forest_3.las, and so on.
 
-set_buffer(ctg) <- 0
-set_tiling_size(ctg) <- 500
-set_output_files(ctg) <- "path/to/new/catalog/Forest_{ID}
+opt_chunk_buffer(ctg) <- 0
+opt_chunk_size(ctg) <- 500
+opt_output_files(ctg) <- "path/to/new/catalog/Forest_{ID}
 newctg = catalog_retile(ctg)
 
 # Create a new set of .las files equivalent to the original one
 # but extended with a 50 m buffer in the folder path/to/new/catalog/
 # and iteratively named named after the original files.
 
-set_buffer(ctg) <- 50
-set_tiling_size(ctg) <- 0
-set_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
+opt_chunk_buffer(ctg) <- 50
+opt_chunk_size(ctg) <- 0
+opt_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
 newctg = catalog_retile(ctg)
 
 # Create a new set of compressed .laz file equivalent to the original one keeping only
 # first returns above 2 m
 
-set_buffer(ctg) <- 0
-set_tiling_size(ctg) <- 0
-set_laz_compression(ctg) <- TRUE
-set_filter(ctg) <- "-keep_first -drop_z_below 2"
+opt_chunk_buffer(ctg) <- 0
+opt_chunk_size(ctg) <- 0
+opt_laz_compression(ctg) <- TRUE
+opt_filter(ctg) <- "-keep_first -drop_z_below 2"
 newctg = catalog_retile(ctg)
 }
 }

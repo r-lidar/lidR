@@ -74,7 +74,7 @@ new_ctg = lasnormalize(ctg)
 * Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` does not have a slot `@crs` anymore. It has now a slot `@proj4string` accesible with the function `raster::projection`  or `sp::proj4string`
 * Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options`, `@clustering_options` and `@input_options` that are list of options classified by their main role.
 * Change: documentation has been entierly rewritten to explain the whole potential of the class.
-* Change: functions `by_file`, `progress`, `tiling_size`, `buffer` were replaced by `set_buffer`, `get_buffer`, `set_progress`, `get_progress` and so on. These allows to get a consitant set of functions that do not overlap with functions from `raster` or `sp`.
+* Change: functions `by_file`, `progress`, `tiling_size`, `buffer` were replaced by `opt_chunk_size`, `opt_chunk_buffer`, `opt_progress` and so on. These allows to get a consitant set of functions that do not overlap with functions from `raster` or `sp`.
 
 **readLAS**
 

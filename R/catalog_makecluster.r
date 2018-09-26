@@ -28,10 +28,10 @@
 catalog_makecluster = function(ctg)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
-  buffer  <- get_buffer(ctg)
-  by_file <- get_by_file(ctg)
-  start   <- get_alignment(ctg)
-  width   <- get_tiling_size(ctg)
+  buffer  <- opt_chunk_buffer(ctg)
+  by_file <- opt_chunk_is_file(ctg)
+  start   <- opt_chunk_alignment(ctg)
+  width   <- opt_chunk_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
   # =======================================================
@@ -111,7 +111,7 @@ catalog_makecluster = function(ctg)
   # Record the path to write the raster if requested
   # ------------------------------------------------
 
-  if (get_output_files(ctg) != "")
+  if (opt_output_files(ctg) != "")
   {
     clusters <- lapply(seq_along(clusters), function(i)
     {
@@ -127,7 +127,7 @@ catalog_makecluster = function(ctg)
       if (by_file)
         X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
 
-      clusters[[i]]@save   <- glue::glue_data(X, get_output_files(ctg))
+      clusters[[i]]@save   <- glue::glue_data(X, opt_output_files(ctg))
       return(clusters[[i]])
     })
   }
@@ -135,7 +135,7 @@ catalog_makecluster = function(ctg)
   # Plot the catalog and the clusters
   # =================================
 
-  if(get_progress(ctg))
+  if(opt_progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))

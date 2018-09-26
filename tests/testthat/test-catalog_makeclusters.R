@@ -68,9 +68,9 @@ ctg@polygons <- Sr@polygons
 
 test_that("makecluster, tiling", {
 
-  set_tiling_size(ctg) = 800
-  set_buffer(ctg) = 0
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 800
+  opt_chunk_buffer(ctg) = 0
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -96,9 +96,9 @@ test_that("makecluster, tiling", {
 
 test_that("makecluster, tiling + buffer", {
 
-  set_tiling_size(ctg) = 800
-  set_buffer(ctg) = 50
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 800
+  opt_chunk_buffer(ctg) = 50
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -124,9 +124,9 @@ test_that("makecluster, tiling + buffer", {
 
 test_that("makecluster, tiling + negative buffer", {
 
-  set_tiling_size(ctg) = 800
-  set_buffer(ctg) = -100
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 800
+  opt_chunk_buffer(ctg) = -100
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -152,9 +152,9 @@ test_that("makecluster, tiling + negative buffer", {
 
 test_that("makecluster, by file", {
 
-  set_tiling_size(ctg) = 0
-  set_buffer(ctg) = 0
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 0
+  opt_chunk_buffer(ctg) = 0
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -182,9 +182,9 @@ test_that("makecluster, by file", {
 
 test_that("makecluster, by file + buffer", {
 
-  set_tiling_size(ctg) = 0
-  set_buffer(ctg) = 30
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 0
+  opt_chunk_buffer(ctg) = 30
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -212,9 +212,9 @@ test_that("makecluster, by file + buffer", {
 
 test_that("makecluster, by file + negative buffer", {
 
-  set_tiling_size(ctg) = 0
-  set_buffer(ctg) = -30
-  set_cores(ctg) = 1L
+  opt_chunk_size(ctg) = 0
+  opt_chunk_buffer(ctg) = -30
+  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -244,8 +244,8 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project = catalog(LASfile)
 
 test_that("Clusters do not overlap", {
-  set_buffer(project) <- 15
-  set_tiling_size(project) <- 120
+  opt_chunk_buffer(project) <- 15
+  opt_chunk_size(project) <- 120
 
   cluster = lidR:::catalog_makecluster(project)
 
@@ -257,8 +257,8 @@ test_that("Clusters do not overlap", {
 })
 
 test_that("No extra cluster are generated", {
-  set_buffer(project) <- 0
-  set_tiling_size(project) <- 160
+  opt_chunk_buffer(project) <- 0
+  opt_chunk_size(project) <- 160
 
   cluster = lidR:::catalog_makecluster(project)
 

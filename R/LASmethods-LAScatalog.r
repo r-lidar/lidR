@@ -56,19 +56,19 @@
 #' ctg <- catalog("/path/to/a/folder/of/las/files")
 #'
 #' # Internal engine will compute in parallel using two cores
-#' set_cores(ctg) <- 2L
+#' opt_cores(ctg) <- 2L
 #'
 #' # Internal engine will process sequentially regions of interest of 500 x 500 m (clusters)
-#' set_tiling_size(ctg) <- 500
+#' opt_chunk_size(ctg) <- 500
 #'
 #' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
-#' set_alignement(ctg) <- c(250, 300)
+#' opt_alignement(ctg) <- c(250, 300)
 #'
 #' # Internal engine will not display a progress estimation
-#' set_progress(ctg) <- FALSE
+#' opt_progress(ctg) <- FALSE
 #'
 #' # Internal engine will not return results into R. Instead it will write results in files.
-#' set_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#' opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
 #'
 #' # More details in the documentation
 #' help("LAScatalog-class", "lidR")
@@ -191,25 +191,25 @@ setMethod("show", "LAScatalog", function(object)
 setMethod("summary", "LAScatalog", function(object, ...)
 {
   show(object)
-  byfile <- get_by_file(object)
-  save   <- get_output_files(object) != ""
-  laz    <- get_laz_compression(object)
+  byfile <- opt_chunk_is_file(object)
+  save   <- opt_output_files(object) != ""
+  laz    <- opt_laz_compression(object)
 
   cat("Summary of the processing options:\n")
 
   if(byfile)
     cat("  - Catalog will be process by file respecting the original tilling pattern\n")
   else
-    cat("  - Catalog will be process by chuncks of size:", get_tiling_size(object), "\n")
+    cat("  - Catalog will be process by chuncks of size:", opt_chunk_size(object), "\n")
 
-  cat("  - Catalog will be processed using", get_cores(object), "core(s).\n")
+  cat("  - Catalog will be processed using", opt_cores(object), "core(s).\n")
 
   cat("Summary of the output options:\n")
 
   if(!save)
     cat("  - Outputs will be returned in R objects.\n")
   else
-    cat("  - Outputs will be written in files:", get_output_files(object), "\n")
+    cat("  - Outputs will be written in files:", opt_output_files(object), "\n")
 
   if(!laz & save)
     cat("  - If outputs are LAS objects, they will not be compress (.las)\n")
@@ -218,8 +218,8 @@ setMethod("summary", "LAScatalog", function(object, ...)
 
   cat("Summary of the input options:\n")
 
-  cat("  - readLAS will be called with the following select option:", get_select(object), "\n")
-  cat("  - readLAS will be called with the following filter option:", get_filter(object), "\n")
+  cat("  - readLAS will be called with the following select option:", opt_select(object), "\n")
+  cat("  - readLAS will be called with the following filter option:", opt_filter(object), "\n")
 
 
 })
@@ -246,7 +246,7 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
   y <- callNextMethod()
 
   new_ctg <- new("LAScatalog")
-  new_ctg@clustering_options <- x@clustering_options
+  new_ctg@chunk_options <- x@chunk_options
   new_ctg@processing_options <- x@processing_options
   new_ctg@output_options     <- x@output_options
   new_ctg@input_options      <- x@input_options

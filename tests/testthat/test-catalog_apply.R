@@ -3,10 +3,10 @@ context("catalog_apply")
 LASfile          <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg              <- catalog(LASfile)
 ctg@data         <- ctg@data[1,]
-set_cores(ctg)       <- 1
-set_buffer(ctg)      <- 0
-set_tiling_size(ctg) <- 150
-set_progress(ctg)    <- FALSE
+opt_cores(ctg)       <- 1
+opt_chunk_buffer(ctg)      <- 0
+opt_chunk_size(ctg) <- 150
+opt_progress(ctg)    <- FALSE
 
 test_that("catalog apply works", {
 

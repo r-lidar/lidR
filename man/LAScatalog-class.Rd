@@ -42,7 +42,7 @@ the overlap if possible. This is possible if the overlapping points are flagged,
 \item{\code{processing_options}}{list. A list that contains some settings describing how the catalog will be
 processed (see dedicated section).}
 
-\item{\code{clustering_options}}{list. A list that contains some settings describing how the catalog will be
+\item{\code{chunk_options}}{list. A list that contains some settings describing how the catalog will be
 sub-divided into chunks to be processed (see dedicated section).}
 
 \item{\code{output_options}}{list. A list that contains some settings describing how the catalog will return
@@ -79,10 +79,10 @@ guaranteed.
 The slot \code{@clustering_options} contains a \code{list} of options that drives how a the chunks
 (the sub-areas that are sequentially processed) are made.
 \itemize{
-\item \strong{tiling_size}: numeric. The size of the chunks that will be sequentially processed.
+\item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
 A small size allows for loading few data at a time saving computer memory. A large size allows for
 loading large region at a time. The computation is  usually faster but uses much more computer
-memory. If \code{tiling_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
+memory. If \code{chunk_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
 is a file. Default is 0 i.e. by default the processing engine respects existing tiling pattern.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 no side effect between to independent chunks and that the output is a continuous wall-to-wall output.
@@ -90,7 +90,7 @@ This is mandatory for some algorithms. Default is 30.
 \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 chunk pattern. By default the alignment is made along (0,0) meaning that the edge of the first chunk
 will belong on x = 0 and y = 0 and all the the others chunks will be multiples of the chunk size.
-Not relevent if \code{tiling_size = 0}.
+Not relevent if \code{chunk_size = 0}.
 }
 }
 
@@ -138,8 +138,8 @@ each functions knows which data must be loaded or not. This is documented in eac
 ctg <- catalog("filder/to/las/files/")
 
 # Set some options
-set_cores(ctg) <- 2
-set_filter(ctg) <- "-keep_first"
+opt_cores(ctg) <- 2
+opt_filter(ctg) <- "-keep_first"
 
 # Summary gives a summary of how the catalog will be processed
 summary(ctg)
@@ -150,8 +150,8 @@ ttops <- tree_detection(ctg, lmf(5))
 
 # For low memory config it might be adivsed to do not load entire files
 # and process chunks instead
-set_cores(ctg) <- 1
-set_tiling_size(ctg) <- 500
+opt_cores(ctg) <- 1
+opt_chunk_size(ctg) <- 500
 
 # Output are expected to be strictly identical
 hmean <- grid_metrics(ctg, mean(Z), 20)
@@ -161,22 +161,22 @@ ttops <- tree_detection(ctg, lmf(5))
 dtm <- grid_terrain(ctg, 1, tin())
 
 # In that case it is advised to write the output into files
-set_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
+opt_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
 
 # Raster will be written on disk. What is returned is the list of writtem files
 # or, in this specific case, a virtual raster mosaic.
 dtm <- grid_terrain(ctg, 1, tin())
 
-# When chunks are file the origanal name of the las files can be preserved
-set_tiling_size(ctg) <- 0
-set_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
+# When chunks are files the origanal name of the las files can be preserved
+opt_chunk_size(ctg) <- 0
+opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
 dtm <- grid_terrain(ctg, 1, tin())
 
 # For some functions, files MUST be written on disk. Indeed it is sure that R cannot
 # handle the whole output.
-set_tiling_size(ctg) <- 0
-set_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
-set_laz_compression(ctg) <- TRUE
+opt_chunk_size(ctg) <- 0
+opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
+opt_laz_compression(ctg) <- TRUE
 new_ctg <- lasnormalize(ctg, tin())
 
 # The user have access to the catalog engine througt the function catalog_apply

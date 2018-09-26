@@ -76,9 +76,9 @@ by returning \code{NULL} allows the internal engine to knows that the cluster wa
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{tiling_size}: How many data are loaded at once.
-\item \strong{buffer}: Load clusters with a buffer
-\item \strong{alignment}: Align the processed clusters
+\item \strong{chunk_size}: How many data are loaded at once.
+\item \strong{chunk_buffer}: Load clusters with a buffer
+\item \strong{chunk_alignment}: Align the processed clusters
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{output_files}: The user-function outputs will be written in files instead of being
@@ -128,11 +128,11 @@ plot(project)
 
 # 3. Set some catalog options
 # For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
-set_buffer(project) <- 10
-set_cores(project) <- 1L
-set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
-set_select(project) <- "xyz"         # don't need to read something else than the coordinates
-set_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
+opt_chunk_buffer(project) <- 10
+opt_cores(project) <- 1L
+opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
+opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
+opt_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
 
 # 4. Apply user-defined function to take advantage of the internal engine
 output = catalog_apply(project, my_tree_detection_method, ws = 5)
@@ -163,10 +163,10 @@ rumple_index_surface = function(cluster, res)
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project <- catalog(LASfile)
 
-set_buffer(project) <- 1
-set_cores(project) <- 1L
-set_tiling_size(project) <- 80       # extremely tiny because this is a dummy example
-set_select(project) <- "xyz"         # don't need to read something else than the coordinates
+opt_chunk_buffer(project) <- 1
+opt_cores(project) <- 1L
+opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
+opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
 
 output = catalog_apply(project, rumple_index_surface, res = 20)
 output = do.call(raster::merge, output)

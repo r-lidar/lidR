@@ -4,7 +4,7 @@ context("grid_catalog")
 #' shapefile_dir <- system.file("extdata", package = "lidR")
 #'
 #' ctg = catalog(LASfile)
-#' set_tiling_size(ctg) <- 160
+#' opt_chunk_size(ctg) <- 160
 #'
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #'
