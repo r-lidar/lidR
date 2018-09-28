@@ -13,6 +13,7 @@ test_that("catalog apply works", {
   test = function(cluster)
   {
     las = readLAS(cluster)
+    if(is.empty(las)) return(NULL)
     return(nrow(las@data))
   }
 
@@ -26,6 +27,7 @@ test_that("catalog apply works", {
   test = function(cluster)
   {
     las = readLAS(cluster)
+    if(is.empty(las)) return(NULL)
     return(sum(las@data$ReturnNumber == 1))
   }
 
@@ -43,6 +45,7 @@ test_that("catalog apply write drivers work", {
   test = function(cluster)
   {
     las = readLAS(cluster)
+    if(is.empty(las)) return(NULL)
     return(head(las@data))
   }
 
@@ -56,6 +59,7 @@ test_that("catalog apply write drivers work", {
   test = function(cluster)
   {
     las = readLAS(cluster)
+    if(is.empty(las)) return(NULL)
     las = lasfilterground(las)
     las = as.spatial(las)
     return(las)
@@ -74,6 +78,8 @@ test_that("catalog apply custom drivers work", {
 
   test = function(cluster)
   {
+    las = readLAS(cluster)
+    if(is.empty(las)) return(NULL)
     return(list(0))
   }
 

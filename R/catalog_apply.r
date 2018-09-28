@@ -54,7 +54,7 @@
 #'
 #' @section Buffered data:
 #'
-#' The LAS objects read by the user function have a special column called 'buffer' which indicates,
+#' The LAS objects read by the user function have a special attribute called 'buffer' which indicates,
 #' for each point, if it comes from a buffered area or not. Points from non-buffered areas have a
 #' 'buffer' value of 0, while points from buffered areas have a 'buffer' value of 1, 2, 3 or 4, where
 #' 1 is the bottom buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
@@ -63,7 +63,7 @@
 #'
 #' The parameter \code{FUN} expect a function that have a first argument that will be fed automatically
 #' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
-#' is an internal undocumented class but the user needs to know only two this about this class:
+#' is an internal undocumented class but the user needs to know only two things about this class:
 #' \itemize{
 #' \item The function \link{readLAS} can be used with a \code{LAScluster}
 #' \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
@@ -89,9 +89,9 @@
 #' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 #' \itemize{
 #' \item \strong{chunk_size}: How many data are loaded at once.
-#' \item \strong{chunk_buffer}: Load clusters with a buffer
-#' \item \strong{chunk_alignment}: Align the processed clusters
-#' \item \strong{cores}: How many cores are used.
+#' \item \strong{chunk_buffer}: Load chunks with a buffer
+#' \item \strong{chunk_alignment}: Align the chunks
+#' \item \strong{cores}: How many chunks are loaded and processed at once.
 #' \item \strong{progress}: Displays a progression estimation.
 #' \item \strong{output_files}: The user-function outputs will be written in files instead of being
 #' returned into R
@@ -141,7 +141,7 @@
 #' # For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
 #' opt_chunk_buffer(project) <- 10
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
+#' opt_chunk_size(project) <- 80        # extremely tiny because this is a dummy example
 #' opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
 #' opt_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
 #'
@@ -177,7 +177,7 @@
 #' opt_chunk_buffer(project) <- 1
 #' opt_cores(project) <- 1L
 #' opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
-#' opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
+#' opt_select(project) <- "xyz"        # don't need to read something else than the coordinates
 #'
 #' output = catalog_apply(project, rumple_index_surface, res = 20)
 #' output = do.call(raster::merge, output)
@@ -187,6 +187,10 @@ catalog_apply <- function(ctg, FUN, ...)
 {
   assertive::assert_is_all_of(ctg, "LAScatalog")
   assertive::assert_is_function(FUN)
+
+  if(!check_fun_with_empty_cluster(FUN, ...))
+    stop("User's function does not return NULL for empty chunks. Please see to the documentation.")
+
   output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = FALSE)
   return(output)
 }
@@ -209,15 +213,15 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
     start        <- c(ext@xmin, ext@ymin)
   }
 
-  ctg      <- .catalog_apply_check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = resolution, start = start)
+  ctg      <- check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = resolution, start = start)
   clusters <- catalog_makecluster(ctg)
-  clusters <- .catalog_apply_check_and_fix_clusters(ctg, clusters, check_alignement, res = resolution, start = start)
+  clusters <- check_and_fix_clusters(ctg, clusters, check_alignement, res = resolution, start = start)
   output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
 
   return(output)
 }
 
-.catalog_apply_check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output_file, res = NULL, start = NULL)
+check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output_file, res = NULL, start = NULL)
 {
   # The function expect a buffer to guarantee a stric wall-to-wall output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
@@ -259,7 +263,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   return(ctg)
 }
 
-.catalog_apply_check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
+check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
 {
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
   # clusters are aligned with the pixels. In case of chunk_size =0 (processed by file) the clusters
@@ -291,4 +295,11 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   }
 
   return(clusters)
+}
+
+check_fun_with_empty_cluster = function(FUN, ...)
+{
+  cl <- LAScluster(list(x=0,y=0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package="rlas"), "noname")
+  cl@select <- "*"
+  return(is.null(FUN(cl, ...)))
 }
