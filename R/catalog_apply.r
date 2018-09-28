@@ -216,7 +216,15 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   ctg      <- check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = resolution, start = start)
   clusters <- catalog_makecluster(ctg)
   clusters <- check_and_fix_clusters(ctg, clusters, check_alignement, res = resolution, start = start)
-  output   <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+
+  oldstate <- options("lidR.progress")[[1]]
+  options(lidR.progress = FALSE)
+
+  output <- tryCatch(
+  {
+    cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+  },
+  finally = {options(lidR.progress = oldstate)})
 
   return(output)
 }

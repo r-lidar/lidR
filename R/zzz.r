@@ -16,7 +16,7 @@ If you were a user of lidR version 1 please read the NEWS file at https://github
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.lidR <- list(
-    lidR.progress = FALSE,
+    lidR.progress = TRUE,
     lidR.progress.delay = 2,
     lidR.verbose = FALSE,
     lidR.interactive = TRUE,
