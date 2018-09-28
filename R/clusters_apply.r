@@ -126,53 +126,60 @@ update_pb = function(pb, ratio)
 
 cluster_write = function(x, path, output_options)
 {
-  type = class(x)
-
-  if (type == "LAS")
+  if (is(x, "LAS"))
   {
     driver <- output_options$drivers$LAS
-    ext    <- if (driver$laz_compression) ".laz" else ".las"
-    path   <- paste0(path, ext)
-    driver$write(x, path)
-    return(path)
+    path   <- paste0(path, driver$extension)
+    driver$param$las <- x
+    driver$param$file <- path
   }
-  else if (type %in% c("RasterLayer", "RasterBrick", "RasterStack"))
+  else if (is(x, "RasterLayer") | is(x, "RasterBrick") | is(x, "RasterStack"))
   {
     driver <- output_options$drivers$Raster
-    path   <- paste0(path, ".tif")
-    driver$write(x, path, driver$format)
-    return(path)
+    path   <- paste0(path, driver$extension)
+    driver$param$x <- x
+    driver$param$filename <- path
   }
-  else if (type %in% c("SpatialPoints", "SpatialPointsDataFrame", "SpatialPolygons", "SpatialPolygonsDataFrame", "SpatialLines", "SpatialLinesDataFrame"))
+  else if (is(x, "SpatialPoints") | is(x, "SpatialPointsDataFrame") | is(x, "SpatialPolygons") | is(x, "SpatialPolygonsDataFrame") | is(x, "SpatialLines") | is(x, "SpatialLinesDataFrame"))
   {
     driver <- output_options$drivers$SimpleFeature
     path   <- paste0(path, ".shp")
-    driver$write(sf::st_as_sf(x), path)
-    return(path)
+    driver$param$obj <- sf::st_as_sf(x)
+    driver$param$dsn <- path
   }
-  else if (type == "SimpleFeature")
+  else if (is(x, "sf"))
   {
     driver <- output_options$drivers$SimpleFeature
     path   <- paste0(path, ".shp")
-    driver$write(x, path)
-    return(path)
+    driver$param$obj <- x
+    driver$param$dsn <- path
   }
-  else if (type == "lidr_internal_skip_write")
+  else if (is(x, "lidr_internal_skip_write"))
   {
     # Nothing. This happens because sometime functions such as catalog_retile stream the data. So the called
     # function do the write job. If the called fwould unction return NULL the progress would be broken
     # (NULL means no data). Thus we return 0 with a class lidr_internal_skip_write
     return(0)
   }
-  else if (type %in% c("data.frame", "data.table"))
+  else if (is(x, "data.frame"))
   {
-    driver <- output_options$drivers$SimpleFeature
-    path   <- paste0(path, ".txt")
-    driver$write(x, path)
-    return(path)
+    driver <- output_options$drivers$DataFrame
+    path   <- paste0(path, driver$extension)
+    driver$param$x <- x
+    driver$param$file <- path
+  }
+  else if (class(x)[1] %in% names(output_options$drivers))
+  {
+    driver <- output_options$drivers[[class(x)[1]]]
+    path   <- paste0(path, driver$extension)
+    driver$param[[driver$object]] <- x
+    driver$param[[driver$path]] <- path
   }
   else
-    stop(glue::glue("Trying to write an object of class {type} but this type is not supported."))
+    stop(glue::glue("Trying to write an object of class {class(x)} but this type is not supported."))
+
+  do.call(driver$write, driver$param)
+  return(path)
 }
 
 # This was introduced in https://github.com/Jean-Romain/lidR/pull/159 and is expected to be no longer useful
