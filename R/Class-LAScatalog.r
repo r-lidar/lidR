@@ -90,7 +90,7 @@
 #' }
 #'
 #' @section Chunk options:
-#' The slot \code{@chunk_options} contains a \code{list} of options that drives how a the chunks
+#' The slot \code{@clustering_options} contains a \code{list} of options that drives how a the chunks
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
 #' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
@@ -218,20 +218,24 @@ setMethod("initialize", "LAScatalog", function(.Object)
   drivers = list(
     Raster = list(
       write = raster::writeRaster,
-      format = "GTiff"
+      extension = ".tif",
+      param = list(
+        format = "GTiff"
+      )
     ),
     LAS = list(
       write = lidR::writeLAS,
-      laz_compression = FALSE
-    ),
-    Spatial = list(
-      write = rgdal::writeOGR
+      extension = ".las",
+      param = list()
     ),
     SimpleFeature = list(
-      write = sf::st_write
+      write = sf::st_write,
+      param = list(quiet = TRUE)
     ),
     DataFrame = list(
-      write = data.table::fwrite
+      write = data.table::fwrite,
+      extension = ".txt",
+      param = list()
     )
   )
 

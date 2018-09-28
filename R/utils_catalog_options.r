@@ -207,7 +207,7 @@ opt_output_files = function(ctg)
 #' @export
 opt_laz_compression = function(ctg)
 {
-  return(ctg@output_options$drivers$LAS$laz_compression)
+  return(ctg@output_options$drivers$LAS$extension == ".laz")
 }
 
 #' @rdname catalog_options_tools
@@ -215,7 +215,12 @@ opt_laz_compression = function(ctg)
 `opt_laz_compression<-` = function(ctg, value)
 {
   assertive::assert_is_a_bool(value)
-  ctg@output_options$drivers$LAS$laz_compression <- value
+
+  if (value)
+    ctg@output_options$drivers$LAS$extension <- ".laz"
+  else
+    ctg@output_options$drivers$LAS$extension <- ".las"
+
   return(ctg)
 }
 
