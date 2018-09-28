@@ -99,6 +99,6 @@ lasfilterdecimate.LAScatalog = function(las, algorithm)
   output      <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
-  ctg@proj4string <- las@proj4string
+  opt_copy(ctg) <- las
   return(ctg)
 }

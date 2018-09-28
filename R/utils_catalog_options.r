@@ -258,3 +258,16 @@ opt_filter = function(ctg)
   return(ctg)
 }
 
+# ========= Unexported ===============
+
+`opt_copy<-` = function(ctg, value)
+{
+  assertive::assert_is_all_of(value, "LAScatalog")
+  ctg@chunk_options <- value@chunk_options
+  ctg@processing_options <- value@processing_options
+  ctg@output_options <- value@output_options
+  ctg@input_options <-value@output_options
+  ctg@proj4string <- value@proj4string
+  return(ctg)
+}
+
