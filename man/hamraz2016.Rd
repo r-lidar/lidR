@@ -86,5 +86,8 @@ Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
 Other point-cloud based tree segmentation algorithms: \code{\link{li2012}},
   \code{\link{ptrees}}
 }
+\author{
+Jasmin Siefert
+}
 \concept{individual tree segmentation algorithms}
 \concept{point-cloud based tree segmentation algorithms}

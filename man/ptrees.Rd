@@ -63,6 +63,9 @@ Other individual tree detection algorithms: \code{\link{lmf}},
 Other point-cloud based tree segmentation algorithms: \code{\link{hamraz2016}},
   \code{\link{li2012}}
 }
+\author{
+Jasmin Siefert and Jean-Romain Roussel
+}
 \concept{individual tree detection algorithms}
 \concept{individual tree segmentation algorithms}
 \concept{point-cloud based tree segmentation algorithms}

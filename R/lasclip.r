@@ -176,9 +176,7 @@ lasclip = function(las, geometry)
   }
 }
 
-# =========
-# RECTANGLE
-# =========
+# ========= RECTANGLE =========
 
 #' @export
 #' @rdname lasclip
@@ -230,9 +228,7 @@ lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
     return(output)
 }
 
-# ========
-# POLYGON
-# ========
+# ========  POLYGON ========
 
 #' @export lasclipPolygon
 #' @rdname lasclip
@@ -246,9 +242,7 @@ lasclipPolygon = function(las, xpoly, ypoly)
   return(lasclip(las, poly))
 }
 
-# ========
-# CIRCLE
-# ========
+# ======== CIRCLE ========
 
 #' @export lasclipCircle
 #' @rdname lasclip
@@ -309,9 +303,7 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
     return(output)
 }
 
-# ========
-# WKT
-# ========
+# ======== WKT ========
 
 lasclipSimpleFeature = function(las, sf)
 {
@@ -358,9 +350,7 @@ lasclipSimpleFeature.LAScatalog = function(las, sf)
     return(output)
 }
 
-# =============
-# GENERIC QUERY
-# =============
+# ============= GENERIC QUERY  =============
 
 catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
 {
