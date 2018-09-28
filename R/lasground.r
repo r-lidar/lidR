@@ -144,6 +144,6 @@ lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
   output <- catalog_apply2(las, lasground, algorithm = algorithm, last_returns = last_returns,  need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output <- unlist(output)
   ctg    <- catalog(output)
-  ctg@proj4string <- las@proj4string
+  opt_copy(ctg) <- las
   return(ctg)
 }

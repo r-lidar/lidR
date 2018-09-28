@@ -419,7 +419,9 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
         written_path = append(written_path, cluster@save)
     }
 
-    return(list(catalog(written_path)))
+    new_ctg <- catalog(written_path)
+    opt_copy(new_ctg) <- ctg
+    return(list(new_ctg))
   }
   # output should contains LAS objects returned at the R level
   else
