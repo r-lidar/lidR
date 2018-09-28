@@ -171,6 +171,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' @param nmax integer. This is an addition from the original paper to protect against uncomputable
 #' cases (see details). Set to \code{+Inf} to strictly respect the original paper (not recommended)
 #'
+#'@author Jasmin Siefert and Jean-Romain Roussel
 #'
 #' @export
 #'

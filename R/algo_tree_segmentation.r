@@ -188,6 +188,8 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' forests using small-footprint airborne LiDAR data. International Journal of Applied Earth Observation
 #' and Geoinformation, 52, 532–541. https://doi.org/10.1016/j.cageo.2017.02.017
 #'
+#' @author Jasmin Siefert
+#'
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -229,116 +231,101 @@ hamraz2016 = function(nps = 0.25, th = 5, MDCW = 1.5, epsilon = 5, CLc = 0.8, Oc
     . <- X <- Y <- Z <- NULL
 
     # Preprocess : LSP + remove low point + smooth
-    LSP = LAS(las@data[, .(X,Y,Z)], las@header)
-    LSP = lasfiltersurfacepoints(LSP, nps)    # page 533
-    LSP = lasfilter(LSP, Z > th)              # page 534
-    lassmooth(LSP, 3*nps, "gaussian", "square", sigma = nps)
+    LSP <- LAS(las@data[, .(X,Y,Z)], las@header)
+    LSP <- lasfiltersurfacepoints(LSP, nps)    # page 533
+    LSP <- lasfilter(LSP, Z > th)              # page 534
+    LSP <- lassmooth(LSP, 3*nps, "gaussian", "square", sigma = nps)
 
     # ID initalization
-    idTree = 0L
-    treeID = rep(NA_integer_, nrow(las@data))
+    idTree <- 0L
+    treeID <- rep(NA_integer_, nrow(las@data))
 
     # Progress estimation and stop criterion
-    npts = nrow(LSP@data)
-    npoints = nrow(LSP@data)
-    pbar =  utils::txtProgressBar(0, npoints)
+    npts    <- nrow(LSP@data)
+    npoints <- nrow(LSP@data)
+
+    if(getOption("lidR.progress"))
+      pbar <- utils::txtProgressBar(0, npoints)
 
     while (npts != 0)
     {
-      utils::setTxtProgressBar(pbar, npoints - npts)
+      if(getOption("lidR.progress"))
+        utils::setTxtProgressBar(pbar, npoints - npts)
 
       # (1) Locate the global maximum GMX (page 534)
 
-      i = which.max(LSP@data$Z)
-      GMX = LSP@data[i]
-      GMX$i = i
+      i     <- which.max(LSP@data$Z)
+      GMX   <- LSP@data[i]
+      GMX$i <- i
 
-      disc = lasclipCircle(LSP, GMX$X, GMX$Y, R)            # Extract a disc around GMX
-      disc@data[, R := sqrt((X-GMX$X)^2 + (Y-GMX$Y)^2)]     # Compute cylindrical cordinates
+      disc  <- lasclipCircle(LSP, GMX$X, GMX$Y, R)            # Extract a disc around GMX
+      disc@data[, R := sqrt((X-GMX$X)^2 + (Y-GMX$Y)^2)]       # Compute cylindrical cordinates
 
       # (2-4) Find the convex hull according to Hamraz rules
-      l = C_hamraz_segmentation(disc, nps, gap_sensitivity, MDCW, epsilon, CLc, CLs, Oc, Os, R)
-      p = l$polygon
+      l <- C_hamraz_segmentation(disc, nps, gap_sensitivity, MDCW, epsilon, CLc, CLs, Oc, Os, R)
+      p <- l$polygon
       data.table::setDT(p)
 
       #  Filter the convex hull and rebuild a new clean one
       if (filter_profiles)
       {
-        p = p[p$R > 2 * nps]                          # Keep the profile over 1.5 m
-        q = stats::quantile(p$R, probs = c(0.1, 0.9)) # Keep the profile within the 10 and 90th percentile of lenghts
-        p = p[R < q[2] & R > q[1]]
+        p <- p[p$R > 2 * nps]                          # Keep the profile over 1.5 m
+        q <- stats::quantile(p$R, probs = c(0.1, 0.9)) # Keep the profile within the 10 and 90th percentile of lenghts
+        p <- p[R < q[2] & R > q[1]]
       }
 
-      area = 0
+      area <- 0
       if (nrow(p) > 3)
       {
-        ch = convex_hull(p$X, p$Y)
-        area = polygon_area(ch$x, ch$y)
+        ch   <- convex_hull(p$X, p$Y)
+        area <- polygon_area(ch$x, ch$y)
       }
 
 
-      # plot(disc@data$X, disc@data$Y, col = lidR:::set.colors(disc@data$Z, height.colors(50)), asp = 1)
-
-      # x = numeric(64)
-      # y = numeric(64)
-      # a = numeric(64)
-      # for(i in 1:64)
-      # {
-      #   x[i] = GMX$X + l$profile[[i]]$extremityPoint[5] * cos(l$profile[[i]]$angle*pi/180)
-      #   y[i] = GMX$Y + l$profile[[i]]$extremityPoint[5] * sin(l$profile[[i]]$angle*pi/180)
-      #   a[i] = l$profile[[i]]$angle
-      #   points(l$profile[[i]]$extremityPoint[1], l$profile[[i]]$extremityPoint[2], col = "red", pch = 19)
-      # }
-
-      #lines(l$polygon[,1 ], l$polygon[,2], col = "red")
-      #lines(p$x, p$y)
-
       # (5) cluster all LSPs encompassed within the convex hull and assign them as the current tallest tree crown
-      in_p = logical(nrow(LSP@data))
+      in_p <- logical(nrow(LSP@data))
 
       if(area == 0)
       {
         # The current point GMX will be removed (otherwise, we get stucked in a infinite loop).
-        in_p[GMX$i] = TRUE
+        in_p[GMX$i] <- TRUE
       }
       # else this is a normal case
       else
       {
         # Find the points that belong in the convex hull
-        in_p = C_points_in_polygon(ch$x, ch$y, LSP@data$X, LSP@data$Y)
+        in_p <- C_points_in_polygon(ch$x, ch$y, LSP@data$X, LSP@data$Y)
 
         # If no point found within this polygon only GMX will be remove
-        if (sum(in_p) == 0) in_p[GMX$i] = TRUE
+        if (sum(in_p) == 0)
+          in_p[GMX$i] <- TRUE
       }
 
       # extract the tree as a data.table
       tree = LSP@data[in_p]
 
       # extract the rest of the forest as a LAS
-      LSP = suppressWarnings(lasfilter(LSP, !in_p))
+      LSP <- suppressWarnings(lasfilter(LSP, !in_p))
 
       #plot(LSP@data$X, LSP@data$Y, col = lidR:::set.colors(LSP@data$Z, height.colors(50)), asp = 1)
 
       # There are still points to classify
       if (!is.null(LSP))
-        npts = nrow(LSP@data)
+        npts <- nrow(LSP@data)
       else
-        npts = 0
+        npts <- 0
 
       # Finally attribute an ID to each point of the original dataset (Hamraz considers only the LSP
       # but we classify the whole point cloud)
       if (area > pi*(MDCW/2)^2)
       {
-        idTree <- idTree + 1L
-
-        las_in_p = C_points_in_polygon(ch$x, ch$y, las@data$X, las@data$Y)
+        idTree   <- idTree + 1L
+        las_in_p <- C_points_in_polygon(ch$x, ch$y, las@data$X, las@data$Y)
 
         # a new ID is attributed only to points that don't already have an ID (dominant has precedence)
-        update = las_in_p & is.na(treeID)
-        treeID[update] = idTree
+        update <- las_in_p & is.na(treeID)
+        treeID[update] <- idTree
       }
-
-      #plot(las@data$X, las@data$Y, col = treeID, asp = 1)
     }
 
     return(treeID)
@@ -659,3 +646,21 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
   class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
   return(f)
 }
+
+
+
+# plot(disc@data$X, disc@data$Y, col = lidR:::set.colors(disc@data$Z, height.colors(50)), asp = 1)
+
+# x = numeric(64)
+# y = numeric(64)
+# a = numeric(64)
+# for(i in 1:64)
+# {
+#   x[i] = GMX$X + l$profile[[i]]$extremityPoint[5] * cos(l$profile[[i]]$angle*pi/180)
+#   y[i] = GMX$Y + l$profile[[i]]$extremityPoint[5] * sin(l$profile[[i]]$angle*pi/180)
+#   a[i] = l$profile[[i]]$angle
+#   points(l$profile[[i]]$extremityPoint[1], l$profile[[i]]$extremityPoint[2], col = "red", pch = 19)
+# }
+
+#lines(l$polygon[,1 ], l$polygon[,2], col = "red")
+#lines(p$x, p$y)
