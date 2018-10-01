@@ -25,6 +25,8 @@
 #
 # ===============================================================================
 
+# ===== LMF ======
+
 #' Individual Tree Detection Algorithm
 #'
 #' This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
@@ -135,6 +137,8 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
   return(f)
 }
 
+# ===== PTREE ======
+
 #' Individual Tree Detection and Segmentation Algorithm
 #'
 #' This function is made to be used in \link{tree_detection} or \link{lastrees}. It implements the
@@ -227,6 +231,8 @@ ptrees = function(k, hmin = 2, nmax = 7L)
   class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
+
+# ===== MANUAL ======
 
 #' Individual Tree Detection Algorithm
 #'
@@ -330,6 +336,8 @@ manual = function(detected = NULL, ...)
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
+
+# ===== MULTICHM ======
 
 
 #' Individual Tree Detection Algorithm
@@ -450,22 +458,90 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, us
     data.table::setorder(LM, -Z)
     LM <- unique(LM, by = c("X", "Y"))
 
-    detected <- LM[1,.(X,Y,Z)]
-    for(i in 2:nrow(LM))
+    detected = logical(nrow(LM))
+    detected[1] = TRUE
+
+    for (i in 2:nrow(LM))
     {
-      distance2D <- (LM$X[i] - detected$X)^2 + (LM$Y[i] - detected$Y)^2
-      distance3D <- distance2D + (LM$Z[i] - detected$Z)^2
+      distance2D = (LM$X[i] - LM$X[detected])^2 + (LM$Y[i] - LM$Y[detected])^2
+      distance3D = distance2D + (LM$Z[i] - LM$Z[detected])^2
 
       if (!any(distance2D < dist_2d) & !any(distance3D < dist_3d))
-        detected <- rbind(detected, data.table(X = LM$X[i], Y = LM$Y[i], Z = LM$X[i]))
+      {
+        detected[i] = TRUE
+      }
     }
 
+    detected = LM[detected]
     detected[, treeID := 1:.N]
 
-    output <- sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)], proj4string = las@proj4string)
+    output <- sp::SpatialPointsDataFrame(detected[, 1:2], detected[, 3:4], proj4string = las@proj4string)
     return(output)
   }
 
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
+  return(f)
+}
+
+
+# ===== LMFX ======
+
+lmfx = function(ws, hmin = 2, dist_2d = 3, dist_3d = 5)
+{
+  f = function(las)
+  {
+    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
+    lidR:::stopif_wrong_context(context, "tree_detection", "lmf")
+
+    . <- X <- Y <- Z <- treeID <- NULL
+
+    dist_2d = dist_2d^2
+    dist_3d = dist_3d^2
+
+    if (assertive::is_a_number(ws))
+    {
+      # nothing to do
+    }
+    else if (assertive::is_function(ws))
+    {
+      n  = nrow(las@data)
+      ws = ws(las@data$Z)
+
+      if (!is.numeric(ws)) stop("The function 'ws' did not return correct output. ", call. = FALSE)
+      if (any(ws <= 0))    stop("The function 'ws' returned negative or nul values.", call. = FALSE)
+      if (anyNA(ws))       stop("The function 'ws' returned NA values.", call. = FALSE)
+      if (length(ws) != n) stop("The function 'ws' did not return correct output.", call. = FALSE)
+    }
+    else
+      stop("'ws' must be a number or a function", call. = FALSE)
+
+    . <- X <- Y <- Z <- treeID <- NULL
+    is_maxima = lidR:::C_LocalMaximumFilter(las@data, ws, hmin, TRUE)
+    LM = las@data[is_maxima, .(X,Y,Z)]
+
+    data.table::setorder(LM, -Z)
+
+    detected = LM[1,.(X,Y,Z)]
+
+    knn = with(detected, lidR:::C_knn(X,Y,X,Y,2))
+
+    for (i in 2:nrow(LM))
+    {
+      distance2D = (LM$X[i] - detected$X)^2 + (LM$Y[i] - detected$Y)^2
+      distance3D = distance2D + (LM$Z[i] - detected$Z)^2
+
+      if (!any(distance2D < dist_2d) & !any(distance3D < dist_3d))
+        detected = rbind(detected, data.table(X = LM$X[i], Y = LM$Y[i], Z = LM$X[i]))
+    }
+
+    detected[, treeID := 1:.N]
+
+    output = sp::SpatialPointsDataFrame(detected[, .(X,Y)], detected[, .(treeID, Z)])
+    output@proj4string = las@proj4string
+    output@bbox = sp::bbox(las)
+    return(output)
+  }
+
+  class(f) <- c("PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
