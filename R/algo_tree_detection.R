@@ -475,7 +475,7 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, us
     detected = LM[detected]
     detected[, treeID := 1:.N]
 
-    output <- sp::SpatialPointsDataFrame(detected[, 1:2], detected[, 3:4], proj4string = las@proj4string)
+    output <- sp::SpatialPointsDataFrame(detected[, 3:4], detected[, 1:2], proj4string = las@proj4string)
     return(output)
   }
 
