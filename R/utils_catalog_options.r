@@ -112,12 +112,12 @@ opt_cores = function(ctg)
   sys.cores = future::availableCores()
   value = as.integer(value)
 
-  if(value > sys.cores) {
+  if (value > sys.cores) {
     message(glue::glue("Available cores: {sys.cores}. Number of cores set to {sys.cores}."))
     value = sys.cores
   }
 
-  if(value < 1) {
+  if (value < 1) {
     message("Number of cores must be positive. Number of cores set to 1.")
     value = 1L
   }
@@ -196,7 +196,7 @@ opt_output_files = function(ctg)
 
   dir = dirname(value)
 
-  if(!dir.exists(dir))
+  if (!dir.exists(dir))
     dir.create(dir, recursive = TRUE)
 
   ctg@output_options$output_files <- value
@@ -266,7 +266,7 @@ opt_filter = function(ctg)
   ctg@chunk_options <- value@chunk_options
   ctg@processing_options <- value@processing_options
   ctg@output_options <- value@output_options
-  ctg@input_options <-value@output_options
+  ctg@input_options <- value@input_options
   ctg@proj4string <- value@proj4string
   return(ctg)
 }
