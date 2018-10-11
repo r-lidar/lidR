@@ -430,14 +430,14 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, us
     chm      <- grid_canopy(las, res, p2r())
     i        <- 1
     p        <- list(...)
-    hmin     <- if(is.null(p$hmin)) formals(lmf)$hmin else p$hmin
+    hmin     <- if (is.null(p$hmin)) formals(lmf)$hmin else p$hmin
 
-    while(!is.empty(las_copy))
+    while (!is.empty(las_copy))
     {
       if (use_max)
         chm95 <- grid_canopy(las_copy, res, p2r())
       else
-        chm95 <- grid_metrics(las_copy, stats::quantile(Z, probs = 0.95), res)
+        chm95 <- grid_metrics(las_copy, ~stats::quantile(Z, probs = 0.95), res)
 
       if (max(chm95[], na.rm = TRUE) > hmin)
       {
@@ -448,7 +448,7 @@ multichm = function(res = 1, layer_thickness = 0.5, dist_2d = 3, dist_3d = 5, us
         las_copy <- lasclassify(las_copy, chm95, "chm95")
         las_copy <- lasfilter(las_copy, Z < chm95 - layer_thickness)
 
-        i <- i+1
+        i <- i + 1
       }
       else
         las_copy <- new("LAS")
@@ -491,7 +491,7 @@ lmfx = function(ws, hmin = 2, dist_2d = 3, dist_3d = 5)
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    lidR:::stopif_wrong_context(context, "tree_detection", "lmf")
+    stopif_wrong_context(context, "tree_detection", "lmf")
 
     . <- X <- Y <- Z <- treeID <- NULL
 
@@ -516,14 +516,14 @@ lmfx = function(ws, hmin = 2, dist_2d = 3, dist_3d = 5)
       stop("'ws' must be a number or a function", call. = FALSE)
 
     . <- X <- Y <- Z <- treeID <- NULL
-    is_maxima = lidR:::C_LocalMaximumFilter(las@data, ws, hmin, TRUE)
+    is_maxima = C_LocalMaximumFilter(las@data, ws, hmin, TRUE)
     LM = las@data[is_maxima, .(X,Y,Z)]
 
     data.table::setorder(LM, -Z)
 
     detected = LM[1,.(X,Y,Z)]
 
-    knn = with(detected, lidR:::C_knn(X,Y,X,Y,2))
+    knn = with(detected, C_knn(X,Y,X,Y,2))
 
     for (i in 2:nrow(LM))
     {

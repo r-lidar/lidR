@@ -90,43 +90,47 @@ tree_metrics.LAS = function(las, func, field = "treeID")
 {
   . <- X <- Y <- Z <- x.pos.t <- y.pos.t <- NULL
 
-  if(! field %in% names(las@data))
+  if (!field %in% names(las@data))
     stop("The trees are not segmented yet. Please see function 'lastrees'.", call. = FALSE)
 
-  call = substitute(func)
-  if (call == "func") call = func
-  if (is.name(call)) call = parse(text = eval(call))
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+  call <- lazyeval::as_call(func)
 
-  find_apex = function(x,y,z)
+  find_apex <- function(x,y,z)
   {
-    j = which.max(z)
+    j <- which.max(z)
     return(list(x.pos.t = x[j], y.pos.t = y[j], Z = z[j]))
   }
 
   stats <- las@data[, if (!anyNA(.BY)) c(find_apex(X,Y,Z), eval(call)), by = field]
-  coords = stats[, .(x.pos.t, y.pos.t)]
+  coords <- stats[, .(x.pos.t, y.pos.t)]
   stats[, c("x.pos.t", "y.pos.t") := NULL]
 
-  output = sp::SpatialPointsDataFrame(coords, stats, proj4string = las@proj4string)
+  output <- sp::SpatialPointsDataFrame(coords, stats, proj4string = las@proj4string)
   return(output)
 }
 
 #' @export
 tree_metrics.LAScluster = function(las, func, field = "treeID")
 {
-  x = readLAS(las)
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  metrics = tree_metrics(x, func, field)
-  bbox = raster::extent(las)
-  metrics = raster::crop(metrics, bbox)
+  metrics <- tree_metrics(x, func, field)
+  bbox    <- raster::extent(las)
+  metrics <- raster::crop(metrics, bbox)
   return(metrics)
 }
 
 #' @export
 tree_metrics.LAScatalog = function(las, func, field = "treeID")
 {
-  output = catalog_apply2(las, tree_metrics, func = substitute(func), field = field, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE)
-  output = do.call(rbind, output)
-  output@proj4string = las@proj4string
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+  glob <- future::getGlobalsAndPackages(func)
+
+  output <- catalog_apply2(las, tree_metrics, func = substitute(func), field = field, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, globals = glob$globals)
+  output <- do.call(rbind, output)
+  output@proj4string <- las@proj4string
   return(output)
 }

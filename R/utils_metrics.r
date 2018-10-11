@@ -63,34 +63,34 @@
 #' @param dz Layer thickness for metrics requiring this data, such as \link[lidR:entropy]{entropy}
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile, select = "*")
+#' las = readLAS(LASfile, select = "*")
 #'
 #' # All the predefined functions
-#' m1 = grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
+#' m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
 #'
 #' # Convenient shortcut
-#' m2 = grid_metrics(lidar, .stdmetrics)
+#' m2 = grid_metrics(las, .stdmetrics)
 #'
 #' # Basic metrics from intensities
-#' m3 = grid_metrics(lidar, stdmetrics_i(Intensity))
+#' m3 = grid_metrics(las, stdmetrics_i(Intensity))
 #'
 #' # All the metrics from intensities
-#' m4 = grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+#' m4 = grid_metrics(las, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 #'
 #' # Convenient shortcut for the previous example
-#' m5 = grid_metrics(lidar, .stdmetrics_i)
+#' m5 = grid_metrics(las, .stdmetrics_i)
 #'
 #' # Compute the metrics only on first return
-#' first = lasfilterfirst(lidar)
+#' first = lasfilterfirst(las)
 #' m6 = grid_metrics(first, .stdmetrics_z)
 #'
 #' # Compute the metrics with a threshold at 2 meters
-#' over2 = lasfilter(lidar, Z > 2)
+#' over2 = lasfilter(las, Z > 2)
 #' m7 = grid_metrics(over2, .stdmetrics_z)
 #'
 #' # Works also with lasmetrics and grid_hexametrics
-#' m8 = lasmetrics(lidar, .stdmetrics)
-#' m9 = grid_hexametrics(lidar, .stdmetrics)
+#' m8 = lasmetrics(las, .stdmetrics)
+#' m9 = grid_hexametrics(las, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -105,12 +105,12 @@
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' m10 = grid_metrics(lidar, myMetrics(Z, Intensity))
+#' m10 = grid_metrics(las, myMetrics(Z, Intensity))
 #'
 #' # User can write your own convenient shorcuts like this:
-#' .myMetrics = expression(myMetrics(Z,Intensity))
+#' .myMetrics = ~myMetrics(Z,Intensity)
 #'
-#' m11 = grid_metrics(lidar, .myMetrics)
+#' m11 = grid_metrics(las, .myMetrics)
 #' @seealso
 #' \link{grid_metrics}
 #' \link{lasmetrics}
@@ -133,7 +133,7 @@ stdmetrics = function(x, y, z, i, a, rn, class, dz = 1)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics = expression(stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1))
+.stdmetrics = ~stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1)
 
 #' Gap fraction profile
 #'
@@ -157,13 +157,13 @@ stdmetrics = function(x, y, z, i, a, rn, class, dz = 1)
 #' gapFraction = gap_fraction_profile(z)
 #'
 #' plot(gapFraction, type="l", xlab="Elevation", ylab="Gap fraction")
-#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
+#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 #' @seealso \link[lidR:LAD]{LAD}
 #' @export gap_fraction_profile
 gap_fraction_profile = function(z, dz = 1, z0 = 2)
 {
 
-  bk = seq(floor((min(z)-z0)/dz)*dz+z0, ceiling((max(z)-z0)/dz)*dz+z0, dz)
+  bk = seq(floor((min(z) - z0)/dz)*dz + z0, ceiling((max(z) - z0)/dz)*dz + z0, dz)
 
   histogram = graphics::hist(z, breaks = bk, plot = F)
   h = histogram$mids
@@ -172,7 +172,7 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
   p = c(p, 0)
 
   cs = cumsum(p)
-  i = data.table::shift(cs) /cs
+  i = data.table::shift(cs)/cs
   i[is.na(i)] = 0
 
   i[is.nan(i)] = NA
@@ -180,7 +180,7 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
   z = h #[-1]
   i = i[-length(i)] #[-c(1, length(i))]
 
-  return(data.frame(z = z[z>z0], gf = i[z>z0]))
+  return(data.frame(z = z[z > z0], gf = i[z > z0]))
 }
 
 #' Leaf area density
@@ -205,14 +205,14 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
 #' lad = LAD(z)
 #'
 #' plot(lad, type="l", xlab="Elevation", ylab="Leaf area density")
-#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne LiDAR data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
+#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 #' @seealso \link[lidR:gap_fraction_profile]{gap_fraction_profile}
 #' @export LAD
 LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
 	ld = gap_fraction_profile(z, dz, z0)
 
-	if(anyNA(ld))
+	if (anyNA(ld))
 	  return(NA_real_)
 
 	lad = ld$gf
@@ -231,7 +231,7 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 #' quantifying diversity and is based on the number and frequency of species present. This index,
 #' developed by Shannon and Weaver for use in information theory, was successfully transferred
 #' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
-#' to quantify the diversity and the evenness of an elevational distribution of LiDAR points. It
+#' to quantify the diversity and the evenness of an elevational distribution of las points. It
 #' makes bins between 0 and the maximum elevation. If there are negative value the function
 #' returns NA.
 #'
@@ -263,14 +263,14 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 entropy = function(z, by = 1, zmax = NULL)
 {
   # Fixed entropy (van Ewijk et al. (2011)) or flexible entropy
-  if(is.null(zmax))
+  if (is.null(zmax))
 	  zmax = max(z)
 
 	# If zmax < 3 it is meaningless to compute entropy
-	if(zmax < 2 * by)
+	if (zmax < 2 * by)
 		return(NA_real_)
 
-  if(min(z) < 0)
+  if (min(z) < 0)
     return(NA_real_)
 
 	# Define the x meters bins from 0 to zmax (rounded to the next integer)
@@ -278,7 +278,7 @@ entropy = function(z, by = 1, zmax = NULL)
 
 	# Compute the p for each bin
 	hist = findInterval(z, bk)
-	hist = fast_table(hist, length(bk)-1)
+	hist = fast_table(hist, length(bk) - 1)
 	hist = hist/sum(hist)
 
 	# Remove bin where there are no points because of log(0)
@@ -286,7 +286,7 @@ entropy = function(z, by = 1, zmax = NULL)
 	pref = rep(1/length(hist), length(hist))
 
 	# normalized entropy
-	S = - sum(p*log(p)) / -sum(pref*log(pref))
+	S = -sum(p*log(p)) / -sum(pref*log(pref))
 
 	return(S)
 }
@@ -331,9 +331,9 @@ stdmetrics_z = function(z, dz = 1)
 
   probs = seq(0.05, 0.95, 0.05)
   zq 	  = as.list(stats::quantile(z, probs))
-  names(zq) = paste("zq", probs*100, sep="")
+  names(zq) = paste("zq", probs*100, se = "")
 
-  if(zmax <= 0)
+  if (zmax <= 0)
   {
     d = rep(0, 9)
   }
@@ -364,7 +364,7 @@ stdmetrics_z = function(z, dz = 1)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_z = expression(stdmetrics_z(Z, dz =1))
+.stdmetrics_z = ~stdmetrics_z(Z, dz =1)
 
 #' @rdname stdmetrics
 #' @export
@@ -380,7 +380,7 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 
   probs = seq(0.05, 0.95, 0.05)
   iq 	  = as.list(stats::quantile(i, probs))
-  names(iq) = paste("iq", probs*100, sep="")
+  names(iq) = paste("iq", probs*100, sep = "")
 
   metrics = list(
     itot = itot,
@@ -391,12 +391,12 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
     ikurt = n * sum((i - imean)^4)/(sum((i - imean)^2)^2)
   )
 
-  if(!is.null(class))
+  if (!is.null(class))
   {
     metrics = c(metrics, list(ipground = sum(i[class == 2])/itot*100))
   }
 
-  if(!is.null(z))
+  if (!is.null(z))
   {
     zq = stats::quantile(z, probs = seq(0.1, 0.9, 0.2))
 
@@ -416,7 +416,7 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_i = expression(stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+.stdmetrics_i = ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber)
 
 #' @rdname stdmetrics
 #' @export
@@ -426,13 +426,13 @@ stdmetrics_rn = function(rn, class = NULL)
 
   n = length(rn)
 
-  prn = table(factor(rn, levels=c(1:5)))/n*100
+  prn = table(factor(rn, levels = c(1:5)))/n*100
   prn = as.list(prn)
   names(prn) = paste0("p", names(prn), "th")
 
   metrics = prn
 
-  if(!is.null(class))
+  if (!is.null(class))
     metrics = c(metrics, list(pground = sum(class == 2)/n*100))
 
   return(metrics)
@@ -440,7 +440,7 @@ stdmetrics_rn = function(rn, class = NULL)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_rn = expression(stdmetrics_rn(ReturnNumber, Classification))
+.stdmetrics_rn = ~stdmetrics_rn(ReturnNumber, Classification)
 
 
 #' @rdname stdmetrics
@@ -466,7 +466,7 @@ stdmetrics_pulse = function(pulseID, rn)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_pulse = expression(stdmetrics_pulse(pulseID, ReturnNumber))
+.stdmetrics_pulse = ~stdmetrics_pulse(pulseID, ReturnNumber)
 
 #' @rdname stdmetrics
 #' @export
@@ -491,7 +491,7 @@ stdmetrics_ctrl = function(x, y, z, a)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_ctrl = expression(stdmetrics_ctrl(X, Y, Z, ScanAngle))
+.stdmetrics_ctrl = ~stdmetrics_ctrl(X, Y, Z, ScanAngle)
 
 #' @rdname stdmetrics
 #' @export
@@ -510,7 +510,7 @@ stdtreemetrics = function(x, y, z)
 
 #' @rdname stdmetrics
 #' @export
-.stdtreemetrics = expression(stdtreemetrics(X, Y, Z))
+.stdtreemetrics = ~stdtreemetrics(X, Y, Z)
 
 # canopy = canopyMatrix(x,y,z, canopyResolution)
 
@@ -609,7 +609,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   assertive::assert_are_same_length(x,z)
 
   if (length(x) <= 3)
-    return (NA_real_)
+    return(NA_real_)
 
   rumple = tryCatch(
     {

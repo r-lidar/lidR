@@ -195,7 +195,7 @@ catalog_apply <- function(ctg, FUN, ...)
   return(output)
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE)
+catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = TRUE)
 {
   assertive::assert_is_function(FUN)
   assertive::assert_is_a_bool(need_buffer)
@@ -222,7 +222,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
 
   output <- tryCatch(
   {
-    cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+    cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, globals = globals, ...)
   },
   finally = {options(lidR.progress = oldstate)})
 
