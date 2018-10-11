@@ -7,10 +7,11 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
   nclust <- length(clusters)
   output <- vector("list", nclust)
   ncores <- if (nclust <= processing_options$core) nclust else processing_options$core
+  plan   <- processing_options$plan
   codes  <- rep(ASYNC_RUN, nclust)
   params <- list(...)
 
-  future::plan(future::multisession, workers = ncores)
+  future::plan(plan, workers = ncores)
 
   # Display the color legend over the LAScatalog that should have already been plotted by makecluster.
   if (processing_options$progress)
