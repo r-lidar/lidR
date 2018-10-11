@@ -188,7 +188,7 @@ catalog_apply <- function(ctg, FUN, ...)
   assertive::assert_is_all_of(ctg, "LAScatalog")
   assertive::assert_is_function(FUN)
 
-  if(!check_fun_with_empty_cluster(FUN, ...))
+  if (!check_fun_with_empty_cluster(FUN, ...))
     stop("User's function does not return NULL for empty chunks. Please see to the documentation.")
 
   output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = FALSE)
@@ -279,7 +279,7 @@ check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, s
 
   if (check_alignement & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
-    for(i in 1:length(clusters))
+    for (i in 1:length(clusters))
     {
       cluster <- clusters[[i]]
       bbox1 <- raster::extent(cluster)
@@ -307,7 +307,7 @@ check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, s
 
 check_fun_with_empty_cluster = function(FUN, ...)
 {
-  cl <- LAScluster(list(x=0,y=0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package="rlas"), "noname")
+  cl <- LAScluster(list(x = 0, y = 0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package = "rlas"), "noname")
   cl@select <- "*"
   return(is.null(FUN(cl, ...)))
 }
