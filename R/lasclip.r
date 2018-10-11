@@ -50,17 +50,14 @@
 #'
 #' @section Supported geometries:
 #' \itemize{
-#'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POLYGON or
+#'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
 #'  a MULTIPOLYGON.
-#'  \item \link[sp:Polygon-class]{Polygon}
-#'  \item \link[sp:Polygons-class]{Polygons}
-#'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
-#'  \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
-#'  \item \link[sp:SpatialPoints-class]{SpatialPoints} (in that case a parameter 'radius' must be
-#'  passed in '...')
-#'  \item \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame} (in that case a parameter
-#'  'radius' must be passed in '...')
-#'  \item \link[sf:sf]{SimpleFeature}
+#'  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
+#'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
+#'  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+#'  in that case a parameter 'radius' must be passed in '...'
+#'  \item \link[sf:sf]{SimpleFeature} that consistanly contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+#'  In case of \code{POINT} a parameter 'radius' must be passed in '...'
 #'  \item \link[raster:Extent-class]{Extent}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
 #'  \preformatted{
@@ -96,9 +93,9 @@
 #' }
 #'
 #' @return If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-#' several regions of interest\cr
+#' several regions of interest.\cr\cr
 #' If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-#' several regions of interest or a \code{LAScatalog} if the query is immediatly written into file without loading anything in R.
+#' several regions of interest or a \code{LAScatalog} if the queries are immediatly written into files without loading anything in R.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -145,7 +142,7 @@ lasclip = function(las, geometry, ...)
   {
     p <- list(...)
     if (is.null(p$radius))
-      stop("Clipping using SpatialPoints* requieres to add a paramter 'radius'.")
+      stop("Clipping using SpatialPoints* requieres to add a parameter 'radius'.")
 
     centers <- sp::coordinates(geometry)
     ycenter <- centers[,2]
@@ -156,13 +153,28 @@ lasclip = function(las, geometry, ...)
     return(catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data))
   }
 
-
   if (is(geometry, "sf"))
   {
-    if (!all(sf::st_is(geometry, "POLYGON") | sf::st_is(geometry, "MULTIPOLYGON")))
-      stop("Incorrect geometry type. POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
+    if (all(sf::st_is(geometry, "POLYGON") | sf::st_is(geometry, "MULTIPOLYGON")))
+    {
+      return(lasclipSimpleFeature(las, geometry))
+    }
+    else if (all(sf::st_is(geometry, "POINT")))
+    {
+      p <- list(...)
+      if (is.null(p$radius))
+        stop("Clipping using sfc_POINT requieres to add a parameter 'radius'.")
 
-    return(lasclipSimpleFeature(las, geometry))
+      centers <- sf::st_coordinates(geometry)
+      ycenter <- centers[,2]
+      xcenter <- centers[,1]
+      radius  <- p$radius
+      bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
+
+      return(catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data))
+    }
+    else
+      stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
   }
   else if (is(geometry, "Extent"))
   {
@@ -361,7 +373,7 @@ lasclipSimpleFeature.LAScatalog = function(las, sf)
     return(raster::extent(spgeom))
   })
 
-  output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf)
+  output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf = sf)
 
   if (length(output) == 0)
     return(NULL)
@@ -404,8 +416,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     # If the user want to write the ROIs in files. Generate a filename.
     if (opt_output_files(ctg) != "")
     {
-      X         <- if (!is.null(sf)) sf[i,] else list()
-      X         <- if (!is.null(data)) data[i,] else list()
+      X         <- if (!is.null(sf)) sf[i,] else if (!is.null(data)) data[i,] else list()
       X$ID      <- i
       X$XCENTER <- clusters[[i]]@center$x
       X$XCENTER <- clusters[[i]]@center$y
