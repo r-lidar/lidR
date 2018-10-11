@@ -81,9 +81,10 @@ grid_hexametrics = function(las, func, res = 20)
 {
   stopifnotlas(las)
 
-  call = substitute(func)
-  if (call == "func") call = func
-  if (is.name(call)) call = parse(text = eval(call))
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+
+  call <- lazyeval::as_call(func)
 
   if (!requireNamespace("hexbin", quietly = TRUE))
     stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
@@ -95,10 +96,10 @@ grid_hexametrics = function(las, func, res = 20)
   ymin <- round_any(ext@ymin, res)
   ymax <- round_any(ext@ymax, res)
 
-  if(xmax < ext@xmax) xmax <- xmax + res
-  if(xmin > ext@xmin) xmin <- xmin - res
-  if(ymax < ext@ymax) ymax <- ymax + res
-  if(ymin > ext@ymin) ymin <- ymin - res
+  if (xmax < ext@xmax) xmax <- xmax + res
+  if (xmin > ext@xmin) xmin <- xmin - res
+  if (ymax < ext@ymax) ymax <- ymax + res
+  if (ymin > ext@ymin) ymin <- ymin - res
 
   dx    <- (xmax - xmin)
   dy    <- (ymax - ymin)

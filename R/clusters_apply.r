@@ -1,16 +1,16 @@
-cluster_apply = function(clusters, f, processing_options, output_options, drop_null = TRUE, ...)
+cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = TRUE, ...)
 {
   stopifnot(is.list(clusters))
-  assertive::assert_is_function(f)
+  assertive::assert_is_function(FUN)
   assertive::assert_is_a_bool(drop_null)
 
   nclust <- length(clusters)
   output <- vector("list", nclust)
   ncores <- if (nclust <= processing_options$core) nclust else processing_options$core
   codes  <- rep(ASYNC_RUN, nclust)
-  dots   <- list(...)
+  params <- list(...)
 
-  future::plan(future::multiprocess, workers = ncores)
+  future::plan(future::multisession, workers = ncores)
 
   # Display the color legend over the LAScatalog that should have already been plotted by makecluster.
   if (processing_options$progress)
@@ -23,16 +23,41 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
     graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
   }
 
+  # Find the name of the first paramter of FUN
+  # (it can be anything because FUN might be a user-defined function)
+  formal_f <- formals(FUN)
+  first_p  <- names(formal_f)[1]
+
   # Parallel loop using asynchronous computation
   for (i in seq_along(clusters))
   {
+    # Add the current LAScluster into params of function FUN
+    current_processed_cluster <- clusters[[i]]
+
+    if (!is.null(current_processed_cluster))
+      params[[first_p]] <- current_processed_cluster
+    else
+      params[first_p] <- list(NULL)
+
+    # if globals is a list it means that global variables were manually given to the future
+    # thus we need to add the function FUN and its params as globals. global variables are
+    # manually given in grid_metrics and tree_metrics because of the lazy evaluation of the
+    # user's expression that CANNOT be exported automatically by future.
+    if (is.list(globals))
+    {
+      globals$params <- params
+      globals$FUN <- FUN
+      globals$current_processed_cluster <- current_processed_cluster
+    }
+
+    # Asyncroneous comptation of FUN
     output[[i]] <- future::future(
     {
-      x = f(clusters[[i]], ...)
+      x <- do.call(FUN, params)
       if (is.null(x)) return(NULL)
-      if (clusters[[i]]@save == "") return(x)
-      return(cluster_write(x, clusters[[i]]@save, output_options))
-    }, substitute = TRUE)
+      if (current_processed_cluster@save == "") return(x)
+      return(cluster_write(x, current_processed_cluster@save, output_options))
+    }, substitute = TRUE, globals = globals)
 
     # Error handling and progress report
     for (j in 1:i)

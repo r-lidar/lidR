@@ -82,7 +82,10 @@ grid_metrics3d = function(las, func, res = 1)
   assertive::assert_is_a_number(res)
   assertive::assert_all_are_non_negative(res)
 
-  call <- substitute(func)
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+
+  call <- lazyeval::as_call(func)
   by   <- group_grid_3d(las@data$X, las@data$Y, las@data$Z, res, c(0,0,0))
   stat <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
   data.table::setnames(stat, c("Xgrid", "Ygrid", "Zgrid"), c("X", "Y", "Z"))

@@ -109,10 +109,10 @@
 #' plot(metrics, "zsqmean", col = colors)
 grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
-  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+  if (!assertive::is_a_number(res) & !is(res, "RasterLayer"))
      stop("res is not a number or a RasterLayer", call. = FALSE)
 
-  if(assertive::is_a_number(res))
+  if (assertive::is_a_number(res))
     assertive::assert_all_are_non_negative(res)
 
   assertive::assert_is_numeric(start)
@@ -125,11 +125,10 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
 {
   . <- X <- Y <- NULL
 
-  call = substitute(func)
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
 
-  if (call == "func") call = func
-  if (is.name(call)) call = parse(text = eval(call))
-
+  call      <- lazyeval::as_call(func)
   layout    <- make_overlay_raster(las, res, start)
   cells     <- raster::cellFromXY(layout, las@data[, .(X,Y)])
   metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
@@ -165,17 +164,23 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
-  resolution = res
+  resolution <- res
+
   if (is(res, "RasterLayer"))
   {
-    ext = raster::extent(res)
-    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
-    las = las[keep,]
-    resolution = raster::res(res)[1]
+    ext        <- raster::extent(res)
+    keep       <- with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
+    las        <- las[keep,]
+    resolution <- raster::res(res)[1]
   }
 
   opt_chunk_buffer(las) <- 0.1*resolution
-  output <- catalog_apply2(las, grid_metrics, func = substitute(func), res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE)
+
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+  glob <- future::getGlobalsAndPackages(func)
+
+  output  <- catalog_apply2(las, grid_metrics, func = func, res = res, start = start, need_buffer = FALSE, check_alignement = TRUE, drop_null = TRUE, globals = glob$globals)
 
   if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_metrics"))
