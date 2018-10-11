@@ -42,7 +42,9 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
       if (codes[j] == ASYNC_RUN) next
       if (processing_options$progress)
       {
-        update_graphic(clusters[[j]]@bbox, codes[j])
+        if (!is.null(clusters[[j]]))
+          update_graphic(clusters[[j]]@bbox, codes[j])
+
         update_pb(pb, i/nclust)
       }
     }
@@ -51,7 +53,7 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
   # Because of asynchronous computation, the loop may be ended
   # but the computations not. Wait & check until the end.
   not_finished = which(codes == ASYNC_RUN)
-  while(length(not_finished) > 0)
+  while (length(not_finished) > 0)
   {
     for (j in not_finished)
     {
@@ -59,7 +61,9 @@ cluster_apply = function(clusters, f, processing_options, output_options, drop_n
       if (codes[j] == ASYNC_RUN) next
       if (processing_options$progress)
       {
-        update_graphic(clusters[[j]]@bbox, codes[j])
+        if (!is.null(clusters[[j]]))
+          update_graphic(clusters[[j]]@bbox, codes[j])
+
         update_pb(pb, i/nclust)
       }
     }
