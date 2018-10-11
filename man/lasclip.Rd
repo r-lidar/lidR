@@ -42,9 +42,9 @@ lasclipCircle(las, xcenter, ycenter, radius)
 }
 \value{
 If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-several regions of interest\cr
+several regions of interest.\cr\cr
 If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-several regions of interest or a \code{LAScatalog} if the query is immediatly written into file without loading anything in R.
+several regions of interest or a \code{LAScatalog} if the queries are immediatly written into files without loading anything in R.
 }
 \description{
 Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
@@ -56,17 +56,14 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 \section{Supported geometries}{
 
 \itemize{
- \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POLYGON or
+ \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
  a MULTIPOLYGON.
- \item \link[sp:Polygon-class]{Polygon}
- \item \link[sp:Polygons-class]{Polygons}
- \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
- \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
- \item \link[sp:SpatialPoints-class]{SpatialPoints} (in that case a parameter 'radius' must be
- passed in '...')
- \item \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame} (in that case a parameter
- 'radius' must be passed in '...')
- \item \link[sf:sf]{SimpleFeature}
+ \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
+ \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
+ \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+ in that case a parameter 'radius' must be passed in '...'
+ \item \link[sf:sf]{SimpleFeature} that consistanly contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+ In case of \code{POINT} a parameter 'radius' must be passed in '...'
  \item \link[raster:Extent-class]{Extent}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
  \preformatted{
