@@ -7,7 +7,7 @@
 \alias{lasclipCircle}
 \title{Clip LiDAR points}
 \usage{
-lasclip(las, geometry)
+lasclip(las, geometry, ...)
 
 lasclipRectangle(las, xleft, ybottom, xright, ytop)
 
@@ -19,6 +19,8 @@ lasclipCircle(las, xcenter, ycenter, radius)
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
+
+\item{...}{optionnal supplementary options (see supported geometries)}
 
 \item{xleft}{numeric. left x coordinates of rectangles.}
 
@@ -60,6 +62,10 @@ points of interest. This is faster, easier and much more memory-efficient for ex
  \item \link[sp:Polygons-class]{Polygons}
  \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
  \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
+ \item \link[sp:SpatialPoints-class]{SpatialPoints} (in that case a parameter 'radius' must be
+ passed in '...')
+ \item \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame} (in that case a parameter
+ 'radius' must be passed in '...')
  \item \link[sf:sf]{SimpleFeature}
  \item \link[raster:Extent-class]{Extent}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:

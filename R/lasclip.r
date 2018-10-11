@@ -25,6 +25,7 @@
 #
 # ===============================================================================
 
+# ======== GENERIC =========
 
 #' Clip LiDAR points
 #'
@@ -45,6 +46,7 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radiuses.
+#' @param ... optionnal supplementary options (see supported geometries)
 #'
 #' @section Supported geometries:
 #' \itemize{
@@ -54,6 +56,10 @@
 #'  \item \link[sp:Polygons-class]{Polygons}
 #'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons}
 #'  \item \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
+#'  \item \link[sp:SpatialPoints-class]{SpatialPoints} (in that case a parameter 'radius' must be
+#'  passed in '...')
+#'  \item \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame} (in that case a parameter
+#'  'radius' must be passed in '...')
 #'  \item \link[sf:sf]{SimpleFeature}
 #'  \item \link[raster:Extent-class]{Extent}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
@@ -121,7 +127,7 @@
 #' }
 #' @name lasclip
 #' @export
-lasclip = function(las, geometry)
+lasclip = function(las, geometry, ...)
 {
   if (is.character(geometry))
     geometry <- rgeos::readWKT(geometry)
@@ -135,9 +141,25 @@ lasclip = function(las, geometry)
   if (is(geometry, "SpatialPolygons") | is(geometry, "SpatialPolygonsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
+  if (is(geometry, "SpatialPoint") | is(geometry, "SpatialPointsDataFrame"))
+  {
+    p <- list(...)
+    if (is.null(p$radius))
+      stop("Clipping using SpatialPoints* requieres to add a paramter 'radius'.")
+
+    centers <- sp::coordinates(geometry)
+    ycenter <- centers[,2]
+    xcenter <- centers[,1]
+    radius  <- p$radius
+    bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
+
+    return(catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data))
+  }
+
+
   if (is(geometry, "sf"))
   {
-    if (!all(sf::st_is(geometry, "POLYGON") |sf::st_is(geometry, "MULTIPOLYGON")))
+    if (!all(sf::st_is(geometry, "POLYGON") | sf::st_is(geometry, "MULTIPOLYGON")))
       stop("Incorrect geometry type. POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
 
     return(lasclipSimpleFeature(las, geometry))
@@ -198,15 +220,15 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
 {
   X <- Y <- NULL
 
-  output = vector(mode = "list", length(xleft))
+  output <- vector(mode = "list", length(xleft))
   for (i in 1:length(xleft))
   {
-    roi = lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
+    roi <- lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."), call. = FALSE)
     output[[i]] = roi
   }
 
-  if(length(output) == 0)
+  if (length(output) == 0)
     return(NULL)
   else if (length(output) == 1)
     return(output[[1]])
@@ -217,10 +239,10 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
 #' @export
 lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
 {
-  bboxes  = mapply(raster::extent, xleft, xright, ybottom, ytop)
-  output  = catalog_extract(las, bboxes, LIDRRECTANGLE)
+  bboxes  <- mapply(raster::extent, xleft, xright, ybottom, ytop)
+  output  <- catalog_extract(las, bboxes, LIDRRECTANGLE)
 
-  if(length(output) == 0)
+  if (length(output) == 0)
     return(NULL)
   else if (length(output) == 1)
     return(output[[1]])
@@ -238,7 +260,7 @@ lasclipPolygon = function(las, xpoly, ypoly)
   assertive::assert_is_numeric(ypoly)
   assertive::assert_are_same_length(xpoly, ypoly)
 
-  poly = sp::Polygon(cbind(xpoly, ypoly))
+  poly <- sp::Polygon(cbind(xpoly, ypoly))
   return(lasclip(las, poly))
 }
 
@@ -252,7 +274,6 @@ lasclipCircle = function(las, xcenter, ycenter, radius)
   assertive::assert_is_numeric(ycenter)
   assertive::assert_is_numeric(radius)
   assertive::assert_are_same_length(xcenter, ycenter)
-
   UseMethod("lasclipCircle", las)
 }
 
@@ -262,19 +283,19 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
   if (length(radius) > 1)
     assertive::assert_are_same_length(xcenter, radius)
   else
-    radius = rep(radius, length(xcenter))
+    radius <- rep(radius, length(xcenter))
 
   X <- Y <- NULL
 
-  output = vector(mode = "list", length(xcenter))
+  output <- vector(mode = "list", length(xcenter))
   for (i in 1:length(xcenter))
   {
-    roi = lasfilter(las, (X-xcenter[i])^2 + (Y-ycenter[i])^2 <= radius[i]^2)
+    roi <- lasfilter(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."), call. = FALSE)
-    output[[i]] = roi
+    output[[i]] <- roi
   }
 
-  if(length(output) == 0)
+  if (length(output) == 0)
     return(NULL)
   else if (length(output) == 1)
     return(output[[1]])
@@ -288,14 +309,14 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
   if (length(radius) > 1)
     assertive::assert_are_same_length(xcenter, radius)
   else
-    radius = rep(radius, length(xcenter))
+    radius <- rep(radius, length(xcenter))
 
-  xmin   = xcenter - radius
-  xmax   = xcenter + radius
-  ymin   = ycenter - radius
-  ymax   = ycenter + radius
-  bboxes = mapply(raster::extent, xmin, xmax, ymin, ymax)
-  output = catalog_extract(las, bboxes, LIDRCIRCLE)
+  xmin   <- xcenter - radius
+  xmax   <- xcenter + radius
+  ymin   <- ycenter - radius
+  ymax   <- ycenter + radius
+  bboxes <- mapply(raster::extent, xmin, xmax, ymin, ymax)
+  output <- catalog_extract(las, bboxes, LIDRCIRCLE)
 
   if (length(output) == 1)
     return(output[[1]])
@@ -322,7 +343,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
     output[[i]] = roi
   }
 
-  if(length(output) == 0)
+  if (length(output) == 0)
     return(NULL)
   else if (length(output) == 1)
     return(output[[1]])
@@ -334,15 +355,15 @@ lasclipSimpleFeature.LAScatalog = function(las, sf)
 {
   wkt  <- sf::st_as_text(sf$geometry)
 
-  bboxes = lapply(wkt, function(string)
+  bboxes <- lapply(wkt, function(string)
   {
-    spgeom = rgeos::readWKT(string)
+    spgeom <- rgeos::readWKT(string)
     return(raster::extent(spgeom))
   })
 
   output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf)
 
-  if(length(output) == 0)
+  if (length(output) == 0)
     return(NULL)
   else if (length(output) == 1)
     return(output[[1]])
@@ -352,7 +373,7 @@ lasclipSimpleFeature.LAScatalog = function(las, sf)
 
 # ============= GENERIC QUERY  =============
 
-catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
+catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data = NULL)
 {
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
@@ -373,7 +394,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
   for (i in 1:length(clusters))
   {
     # skip NULL clusters
-    if(is.null(clusters[[i]]))
+    if (is.null(clusters[[i]]))
       next
 
     # If a simple feature is provided we want to extract a polygon. Insert WKT string
@@ -383,7 +404,8 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL)
     # If the user want to write the ROIs in files. Generate a filename.
     if (opt_output_files(ctg) != "")
     {
-      X         <-  if (!is.null(sf)) sf[1,] else list()
+      X         <- if (!is.null(sf)) sf[i,] else list()
+      X         <- if (!is.null(data)) data[i,] else list()
       X$ID      <- i
       X$XCENTER <- clusters[[i]]@center$x
       X$XCENTER <- clusters[[i]]@center$y
