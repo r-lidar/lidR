@@ -17,20 +17,12 @@ C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
     .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
 }
 
-C_hamraz_segmentation <- function(disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius) {
-    .Call(`_lidR_C_hamraz_segmentation`, disc, nps, sensitivity, MDCW, Epsilon, CLc, CLs, Oc, Os, radius)
-}
-
 C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {
     .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius)
 }
 
 C_lastrees_dalponte <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_lastrees_dalponte`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
-}
-
-C_lastrees_ptrees <- function(las, k_values, hmin, nmax, segmentation = TRUE) {
-    .Call(`_lidR_C_lastrees_ptrees`, las, k_values, hmin, nmax, segmentation)
 }
 
 C_LocalMaximumFilter <- function(data, ws, min_height, circular) {

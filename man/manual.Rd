@@ -35,7 +35,6 @@ ttops = tree_detection(las, manual(ttops))
 }
 }
 \seealso{
-Other individual tree detection algorithms: \code{\link{lmf}},
-  \code{\link{multichm}}, \code{\link{ptrees}}
+Other individual tree detection algorithms: \code{\link{lmf}}
 }
 \concept{individual tree detection algorithms}

@@ -65,15 +65,6 @@ test_that("tree_metrics works", {
   expect_error(tree_metrics(las, max(Z), field = "abc"), "trees are not segmented")
 })
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -inside 481260 3812921 481300 3812961")
-
-test_that("Hamraz method works", {
-  expect_error(lastrees(las, hamraz2016()), NA)
-})
-
-
-
 # Commented because CRAN doesn't like to call Bioconductor package
 # test_that("Watershed's methods works", {
 #   las@data[, treeID := NULL]

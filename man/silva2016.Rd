@@ -64,8 +64,7 @@ https://doi.org/10.1080/07038992.2016.1196582.
 }
 \seealso{
 Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{hamraz2016}}, \code{\link{li2012}},
-  \code{\link{ptrees}}, \code{\link{watershed}}
+  \code{\link{li2012}}, \code{\link{watershed}}
 
 Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{watershed}}

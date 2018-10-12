@@ -11,8 +11,8 @@ tree_detection(las, algorithm)
 representing a canopy height model. In that case it is processed like a regularly spaced point
 cloud.}
 
-\item{algorithm}{An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
-\link{multichm} and \link{manual}.}
+\item{algorithm}{An algorithm for individual tree detection. lidR have: \link{lmf} and \link{manual}
+and more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.}
 }
 \value{
 A SpatialPointsDataFrame with an attribute Z for the tree tops and treeID with an individual
