@@ -149,8 +149,14 @@ lasclip = function(las, geometry, ...)
     xcenter <- centers[,1]
     radius  <- p$radius
     bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
+    output  <- catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data)
 
-    return(catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data))
+    if (length(output) == 0)
+      return(NULL)
+    else if (length(output) == 1)
+      return(output[[1]])
+    else
+      return(output)
   }
 
   if (is(geometry, "sf"))
@@ -170,8 +176,14 @@ lasclip = function(las, geometry, ...)
       xcenter <- centers[,1]
       radius  <- p$radius
       bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
+      output  <- catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry)
 
-      return(catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data))
+      if (length(output) == 0)
+        return(NULL)
+      else if (length(output) == 1)
+        return(output[[1]])
+      else
+        return(output)
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
