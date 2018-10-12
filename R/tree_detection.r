@@ -34,8 +34,8 @@
 #' representing a canopy height model. In that case it is processed like a regularly spaced point
 #' cloud.
 #'
-#' @param algorithm An algorithm for individual tree detection. lidR have: \link{lmf}, \link{ptrees},
-#' \link{multichm} and \link{manual}.
+#' @param algorithm An algorithm for individual tree detection. lidR have: \link{lmf} and \link{manual}
+#' and more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
 #'
 #' @template section-supported-option-tree_detection
 #'

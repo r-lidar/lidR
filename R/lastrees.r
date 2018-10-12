@@ -6,8 +6,8 @@
 #' @param las An object of the class \link[lidR:LAS-class]{LAS}.
 #'
 #' @param algorithm function. An algorithm of individual tree segmentation. \code{lidR} have:
-#' \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012}, \link{hamraz2016},
-#' \link{silva2016} or \link{ptrees}.
+#' \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012} and \link{silva2016} and
+#' more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}
 #'
 #' @param attribute character. The returned LAS object as a new extra byte attribute (in a new columns).
 #' This parameter controls the name of the new attribute. Default is \code{"treeID"}.

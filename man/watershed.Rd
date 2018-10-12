@@ -65,8 +65,7 @@ rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", si
 }
 \seealso{
 Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{hamraz2016}}, \code{\link{li2012}},
-  \code{\link{ptrees}}, \code{\link{silva2016}}
+  \code{\link{li2012}}, \code{\link{silva2016}}
 
 Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
   \code{\link{silva2016}}

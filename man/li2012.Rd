@@ -46,11 +46,7 @@ trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 
 }
 \seealso{
 Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{hamraz2016}}, \code{\link{ptrees}},
   \code{\link{silva2016}}, \code{\link{watershed}}
-
-Other point-cloud based tree segmentation algorithms: \code{\link{hamraz2016}},
-  \code{\link{ptrees}}
 }
 \concept{individual tree segmentation algorithms}
 \concept{point-cloud based tree segmentation algorithms}

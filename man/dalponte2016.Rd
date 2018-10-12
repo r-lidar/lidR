@@ -69,8 +69,7 @@ Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon den
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other individual tree segmentation algorithms: \code{\link{hamraz2016}},
-  \code{\link{li2012}}, \code{\link{ptrees}},
+Other individual tree segmentation algorithms: \code{\link{li2012}},
   \code{\link{silva2016}}, \code{\link{watershed}}
 
 Other raster based tree segmentation algorithms: \code{\link{silva2016}},
