@@ -25,6 +25,9 @@
 #
 # ===============================================================================
 
+
+# ====== POINT TO RASTER =======
+
 #' Digital Surface Model Algorithm
 #'
 #' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
@@ -121,6 +124,8 @@ p2r = function(subcircle = 0, na.fill = NULL)
   return(f)
 }
 
+# ====== STRICT TRIANGULATION =======
+
 #' Digital Surface Model Algorithm
 #'
 #' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
@@ -165,6 +170,8 @@ dsmtin = function(max_edge = 0)
 {
   return(pitfree(0, c(max_edge, 0), 0))
 }
+
+# ====== PITFREE =======
 
 #' Digital Surface Model Algorithm
 #'
@@ -283,7 +290,7 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     for (th in thresholds)
     {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
-      i =  i+ 1
+      i =  i + 1
 
       if (th == 0)
         edge = max_edge[1]
@@ -292,14 +299,14 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
 
       cloud = cloud[Z >= th]
 
-      if (nrow(cloud) > 0)
+      if (nrow(cloud) >= 3)
       {
         Ztemp = interpolate_delaunay(cloud, grid, edge)
         z = pmax(z, Ztemp, na.rm = T)
       }
     }
 
-    if(all(is.na(z)))
+    if (all(is.na(z)))
       stop("Interpolation failed. Input parameters might be wrong.", call. = FALSE)
 
     return(z)

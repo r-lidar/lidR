@@ -163,6 +163,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * Change: `grid_canopy()` relies now on lidR algorithms dispatch (see also the main new features above). It unifies the former functions `grid_canopy()` and `grid_tincanopy()` functions.
 * Change: `grid_canopy()` returns consitantly a `RasterLayer` instead of a `data.table` whatever the algorithm used.
+* Fix: the pitfree algorithm failed if a layer contains only 1 ou 2 points.
 
 **grid_tincanopy**
 
