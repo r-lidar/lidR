@@ -47,10 +47,11 @@ be install from github (see. \url{https://github.com/Jean-Romain/PointCloudViewe
 
 \item{clear_artifact}{logical. It is a known and docunented issue that the 3D visialisation with
 \code{rgl} displays artifacts. The points look aligned and/or regularly space in some view angle.
-This is because \code{rgl} computes with single precsion \code{float}. To fix that the user can
+This is because \code{rgl} computes with single precision \code{float}. To fix that the user can
 set this option to \code{TRUE}. In this case the point cloud is shifted to (0,0) to reduce the
 number of digit needed to represent its coordinates. The drawback is that the user cannot anymore
-add other object in the scene since de coordinates will not match anymore.}
+add easily other objects in the scene since de coordinates will not match anymore. If \code{clear_artifact = TRUE}
+the function returns the xy shift values invisibly.}
 
 \item{nbits}{integer. If \code{color = RGB} it assume that RGB color are coded on 16 bits as described
 in the LAS format specifications. Actually this is not always respected. If the colors are stored

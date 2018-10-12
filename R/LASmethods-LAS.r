@@ -255,23 +255,23 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   backend <- match.arg(backend)
   pcv     <- "PointCloudViewer" %in% rownames(utils::installed.packages())
 
-  if(backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
-  if(length(color) > 1)          stop("'color' should contains a single value.", call. = F)
+  if (backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
+  if (length(color) > 1)          stop("'color' should contains a single value.", call. = F)
 
   if (color != "RGB" & !color %in% names(x@data))
     stop("'color' should refer to an attribute of the LAS data.", call. = F)
 
   if (color == "RGB")
   {
-    if(backend == "pcv")
+    if (backend == "pcv")
     {
       coldata  = "RGB"
     }
     else
     {
-      if(!all(c("R", "G", "B") %in% names(x@data))) stop("No 'RGB' attributes found.", call. = FALSE)
+      if (!all(c("R", "G", "B") %in% names(x@data))) stop("No 'RGB' attributes found.", call. = FALSE)
 
-      maxcol  <- 2^nbits-1
+      maxcol  <- 2^nbits - 1
       coldata <- grDevices::rgb(x@data$R/maxcol, x@data$G/maxcol, x@data$B/maxcol)
     }
   }
@@ -279,26 +279,24 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     coldata <- x@data[[color]]
 
   args <- list(...)
-  if(is.null(args$size))
+  if (is.null(args$size))
     args$size <- 1.5
 
   if (backend == "rgl")
   {
-    if(is.numeric(coldata))
+    if (is.numeric(coldata))
       args$col <- set.colors(coldata, colorPalette, trim)
-    else if(is.character(coldata))
+    else if (is.character(coldata))
       args$col <- coldata
-    else if(is.logical(coldata))
+    else if (is.logical(coldata))
       args$col <- set.colors(as.numeric(coldata), colorPalette)
 
     args$col[is.na(args$col)] <- "lightgray"
 
-    .plot_with_rgl(x, bg, coldata, clear_artifact, args)
+    return(.plot_with_rgl(x, bg, coldata, clear_artifact, args))
   }
   else
-    .plot_with_pcv(x, coldata, colorPalette, args)
-
-  return(invisible())
+    return(.plot_with_pcv(x, coldata, colorPalette, args))
 }
 
 .plot_with_rgl = function(x, bg, coldata, clear_artifact, args)
@@ -307,17 +305,21 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   {
     minx = min(x@data$X)
     miny = min(x@data$Y)
-    with = c(list(x=x@data$X-minx, y=x@data$Y-miny, z=x@data$Z), args)
+    with = c(list(x = x@data$X - minx, y = x@data$Y - miny, z = x@data$Z), args)
   }
   else
   {
-    with = c(list(x=x@data$X, y=x@data$Y, z=x@data$Z), args)
+    with = c(list(x = x@data$X, y = x@data$Y, z = x@data$Z), args)
   }
 
   rgl::open3d()
   rgl::rgl.bg(color = bg)
   do.call(rgl::points3d, with)
-  return(invisible())
+
+  if (clear_artifact)
+    return(invisible(c(minx, miny)))
+  else
+    return(invisible())
 }
 
 .plot_with_pcv = function(x, coldata, colors, args)
@@ -325,12 +327,13 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   if (is.character(coldata) & coldata == "RGB")
   {
     # Dirty trick to avoid R CMD check complaining with unexisting package...
-    eval(parse(text="PointCloudViewer::plot_xyzrgb(x@data$X, x@data$Y, x@data$Z, x@data$R, x@data$G, x@data$B, args$size)"))
+    eval(parse(text = "PointCloudViewer::plot_xyzrgb(x@data$X, x@data$Y, x@data$Z, x@data$R, x@data$G, x@data$B, args$size)"))
   }
   else
   {
     id = cut(coldata, length(colors), labels = FALSE)
-    eval(parse(text="PointCloudViewer::plot_xyzcol(x@data$X, x@data$Y, x@data$Z, colors, id, args$size)"))
+    eval(parse(text = "PointCloudViewer::plot_xyzcol(x@data$X, x@data$Y, x@data$Z, colors, id, args$size)"))
   }
+
   return(invisible())
 }
