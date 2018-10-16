@@ -76,6 +76,7 @@ Collate:
     'catalog_apply.r'
     'catalog_fakerun.r'
     'catalog_index.r'
+    'catalog_intersect.r'
     'catalog_laxindex.r'
     'catalog_makecluster.r'
     'catalog_retile.r'
