@@ -116,9 +116,13 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
       new_classes <- las@data[["Classification"]]
       new_classes[new_classes == LASGROUND] <- LASUNCLASSIFIED
     }
+    else
+    {
+      new_classes <- rep(LASUNCLASSIFIED, npoints)
+    }
   }
   else
-    new_classes <-rep(LASUNCLASSIFIED, npoints)
+    new_classes <- rep(LASUNCLASSIFIED, npoints)
 
   new_classes[idx] <- LASGROUND
   las@data[["Classification"]] <- new_classes
