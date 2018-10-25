@@ -97,8 +97,8 @@ plot3d = function(x, y, add = FALSE, bg = "black", ...)
     stop("Object not supported")
 
   mx =  t(apply(raster::as.matrix(x), 2, rev))
-  x_  = sort(raster::xFromCol(x))
-  y_  = sort(raster::yFromRow(x))
+  x_  = sort(raster::xFromCol(x, 1:raster::ncol(x)))
+  y_  = sort(raster::yFromRow(x, 1:raster::nrow(x)))
 
   if(!add)
     rgl::open3d()
