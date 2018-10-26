@@ -111,6 +111,7 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 
 **lasclassify**
 
+* Change: `lasclassify()` is now named `lasmergespatial()` to free the name `lasclassify` that should be reserved for other usage
 * Change: `lasclassify()` no longer update the original object by reference.
 * Fix: the classification, when made with a `RasterLayer` preserve the data type of the `RasterLayer`. This also fixes the fact that `lastrees()` classified the tree with `double` instead of `int`.
 

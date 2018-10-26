@@ -104,6 +104,10 @@ tree_metrics.LAS = function(las, func, field = "treeID")
   }
 
   stats <- las@data[, if (!anyNA(.BY)) c(find_apex(X,Y,Z), eval(call)), by = field]
+
+  if (nrow(stats) == 0)
+    stop(glue::glue("The attributes {field} exists but there is no tree segmented. Cannot compute any tree metric."))
+
   coords <- stats[, .(x.pos.t, y.pos.t)]
   stats[, c("x.pos.t", "y.pos.t") := NULL]
 

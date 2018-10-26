@@ -58,7 +58,6 @@ NULL
 lasadddata = function(las, x, name)
 {
   stopifnotlas(las)
-  assertive::assert_is_numeric(x)
   assertive::assert_is_a_string(name)
   stopif_forbidden_name(name)
 
