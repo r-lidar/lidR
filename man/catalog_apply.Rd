@@ -49,8 +49,9 @@ for each point, if it comes from a buffered area or not. Points from non-buffere
 
 The parameter \code{FUN} expect a function that have a first argument that will be fed automatically
 by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
-is an internal undocumented class but the user needs to know only two things about this class:
+is an internal undocumented class but the user needs to know only three things about this class:
 \itemize{
+\item It represents a chunk of the catalog
 \item The function \link{readLAS} can be used with a \code{LAScluster}
 \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
 and it returns the bouding box of the cluster whithout the buffer. It can be used to clip the ouput
@@ -104,7 +105,7 @@ return a \code{LAS} object.
 my_tree_detection_method = function(cluster, ws)
 {
   # The cluster argument is a LAScluster object. The user don't need to know how it works.
-  # readLAS will load the region of interest with a buffer around it, taking advantage of
+  # readLAS will load the region of interest (chunk) with a buffer around it, taking advantage of
   # point cloud indexation if possible. The filter and select options are propagated automatically
   las = readLAS(cluster)
   if (is.empty(las)) return(NULL)
