@@ -44,9 +44,9 @@ lastrees = function(las, algorithm, attribute = "treeID")
     stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'", call. = FALSE)
 
   if (is(output, "RasterLayer"))
-    las@data[[attribute]] <- classify_from_rasterlayer(las, output)
+    las <- lasmergespatial(las, output, attribute)
   else if (is.integer(output))
-    las@data[[attribute]] <- output
+    las <- lasadddata(las, output, attribute)
   else
     stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"), call. = FALSE)
 

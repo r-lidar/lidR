@@ -25,11 +25,11 @@
 #
 # ===============================================================================
 
-#' Classify points from a source of spatial data
+#' Merge a point cloud and a source of spatial data
 #'
-#' Classify points based on spatial data from external sources. It adds an attribute
-#' along each point based on a value found in the spatial data. External sources can be a
-#' \code{SpatialPolygonsDataFrame}) or a \code{RasterLayer}.\cr
+#' Merge a point cloud and a source of spatial data. It adds an attribute along each point based on
+#' a value found in the spatial data. Sources of spatial data can be a \code{SpatialPolygonsDataFrame})
+#' or a \code{RasterLayer}.\cr
 #' \itemize{
 #' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
 #' the parameter \code{attribute} is the name of a an attribute in the table of attributes of the shapefile
@@ -58,35 +58,34 @@
 #'
 #' # The attribute "inlake" does not exist in the shapefile.
 #' # Points are classified as TRUE if in a polygon
-#' las    <- lasclassify(las, lakes, "inlakes")     # New attribut 'inlakes' is added.
+#' las    <- lasmergespatial(las, lakes, "inlakes")     # New attribut 'inlakes' is added.
 #' forest <- lasfilter(las, inlakes == FALSE)
 #' plot(las)
 #' plot(forest)
 #'
 #' # The attribute "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the values of the polygons
-#' las <- lasclassify(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
-lasclassify = function(las, source, attribute = NULL)
+#' las <- lasmergespatial(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
+lasmergespatial = function(las, source, attribute = NULL)
 {
   stopifnotlas(las)
 
   if (is(source, "SpatialPolygonsDataFrame"))
-    values = classify_from_shapefile(las, source, attribute)
+    values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
   else if (is(source, "RasterLayer") | is(source, "RasterStack"))
-    values = classify_from_rasterlayer(las, source)
+    values = lasmergeRasterLayer(las, source)
   else
     stop("No method for this source format.", call. = F)
 
   if (is.null(attribute))
     attribute = "id"
 
-  las@data[[attribute]] <- values
+  las = lasadddata(las, values, attribute)
   return(las)
 }
 
-classify_from_shapefile = function(las, shapefile, attribute = NULL)
+lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 {
-  info    <- NULL
   npoints <- nrow(las@data)
 
   # No attribute is provided: assign the number of the polygon
@@ -169,7 +168,7 @@ classify_from_shapefile = function(las, shapefile, attribute = NULL)
   return(values)
 }
 
-classify_from_rasterlayer = function(las, raster)
+lasmergeRasterLayer = function(las, raster)
 {
   . <- X <- Y <- info <- NULL
 

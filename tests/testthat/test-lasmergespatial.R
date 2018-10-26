@@ -1,4 +1,4 @@
-context("lasclassify")
+context("lasmergespatial")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shapefile_dir <- system.file("extdata", package = "lidR")
@@ -11,14 +11,14 @@ lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 sink(NULL)
 
 test_that("las classifies works with shapefiles", {
-  lidar <- lasclassify(lidar, lakes, "inlakes")
+  lidar <- lasmergespatial(lidar, lakes, "inlakes")
 
   cn = names(lidar@data)
 
   expect_true("inlakes" %in% cn)
   expect_true(is.logical(lidar@data$inlakes))
 
-  lidar <- lasclassify(lidar, lakes, "LAKENAME_1")
+  lidar <- lasmergespatial(lidar, lakes, "LAKENAME_1")
 
   cn = names(lidar@data)
 
@@ -30,7 +30,7 @@ test_that("las classifies works with shapefiles", {
 test_that("las classifies works with raster", {
   r = grid_metrics(lidar, mean(Z))
 
-  lidar <- lasclassify(lidar, r, "Zmean")
+  lidar <- lasmergespatial(lidar, r, "Zmean")
 
   cn = names(lidar@data)
 
