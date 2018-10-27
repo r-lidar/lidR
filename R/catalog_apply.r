@@ -190,7 +190,7 @@ catalog_apply <- function(ctg, FUN, ...)
   assertive::assert_is_function(FUN)
 
   if (!check_fun_with_empty_cluster(FUN, ...))
-    stop("User's function does not return NULL for empty chunks. Please see to the documentation.")
+    stop("User's function does not return NULL for empty chunks. Please see the documentation.")
 
   output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = FALSE)
   return(output)
@@ -250,7 +250,7 @@ check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output
     if (new_t_size != t_size)
     {
       opt_chunk_size(ctg) <- new_t_size
-      message(glue::glue("Clustering size do no match with the resolution of the Raster. Clustering size changed to {new_t_size} to ensure the continuity of the ouput."))
+      message(glue::glue("Chunk size do no match with the resolution of the raster. Chunk size changed to {new_t_size} to ensure the continuity of the ouput."))
     }
 
     # If the alignement of the clusters do not match with the start point of the raster
@@ -259,11 +259,11 @@ check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output
     if (any(new_alignment != alignment))
     {
       opt_chunk_alignment(ctg) <- new_alignment
-      message(glue::glue("Alignement of the clusters do no match with the starting points of the RasterLayer. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
+      message(glue::glue("Alignement of the chunks do no match with the starting points of the raster. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
     }
   }
 
-  # Some functions require to write outputs in files because the output it likely to be to  big to
+  # Some functions require to write outputs in files because the output it likely to be too big to
   # be returned in R
 
   if (need_output_file & opt_output_files(ctg) == "")
@@ -298,7 +298,7 @@ check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, s
       {
         new_cluster <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg))[[1]]
         clusters[[i]] <- new_cluster
-        message(glue::glue("Cluster {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
+        message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
       }
     }
   }
