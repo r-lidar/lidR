@@ -1,6 +1,6 @@
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/lidr-ban.png)<br/>
 
-![CRAN](https://img.shields.io/badge/CRAN-1.6.1-brightgreen.svg)  ![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
@@ -102,16 +102,10 @@ install.packages("lidR")
 
 * The latest stable development version from github with
 
-```r
-devtools::install_github("Jean-Romain/rlas", dependencies=TRUE)
-devtools::install_github("Jean-Romain/lidR", dependencies=TRUE)
-```
-
-* The latest unstable development version from github with
 
 ```r
-devtools::install_github("Jean-Romain/rlas", dependencies=TRUE, ref="devel")
-devtools::install_github("Jean-Romain/lidR", dependencies=TRUE, ref="devel")
+devtools::install_github("Jean-Romain/rlas", ref="devel")
+devtools::install_github("Jean-Romain/lidR", ref="devel")
 ```
 
 To install the package from github make sure you have a working development environment.
@@ -119,7 +113,6 @@ To install the package from github make sure you have a working development envi
 * **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
 * **Mac**: Install `Xcode` from the Mac App Store.
 * **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
-* The latest stable development version from github with
 
 # Changelog
 
