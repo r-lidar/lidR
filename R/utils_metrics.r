@@ -331,7 +331,7 @@ stdmetrics_z = function(z, dz = 1)
 
   probs = seq(0.05, 0.95, 0.05)
   zq 	  = as.list(stats::quantile(z, probs))
-  names(zq) = paste("zq", probs*100, se = "")
+  names(zq) = paste0("zq", probs*100)
 
   if (zmax <= 0)
   {
