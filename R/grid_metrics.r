@@ -128,6 +128,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
 
+  func      <- lazyeval::f_interp(func)
   call      <- lazyeval::as_call(func)
   layout    <- make_overlay_raster(las, res, start)
   cells     <- raster::cellFromXY(layout, las@data[, .(X,Y)])
