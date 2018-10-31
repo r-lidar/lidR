@@ -26,25 +26,25 @@ test_that("grid_metrics returns a RasterLayer aligned with the start option", {
 })
 
 test_that("grid_metrics returns a RasterBrick with a LAS", {
-  x = grid_metrics(las, list(`mean Z` = mean(Z), `max Z` = max(Z)))
+  x = grid_metrics(las, list(meanZ = mean(Z), maxZ = max(Z)))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(5,5,2))
   expect_equal(raster::extent(x), raster::extent(0,100,0,100))
   expect_equal(x@crs, las@proj4string)
-  expect_equal(names(x), c("mean.Z", "max.Z"))
+  expect_equal(names(x), c("meanZ", "maxZ"))
 })
 
 test_that("grid_metrics returns a RasterBrick aligned with the start option", {
-  x = grid_metrics(las, list(`mean Z` = mean(Z), `max Z` = max(Z)), start = c(10,10))
+  x = grid_metrics(las, list(meanZ = mean(Z), maxZ = max(Z)), start = c(10,10))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(6,6,2))
   expect_equal(raster::extent(x), raster::extent(-10,110,-10,110))
   expect_equal(x@crs, las@proj4string)
-  expect_equal(names(x), c("mean.Z", "max.Z"))
+  expect_equal(names(x), c("meanZ", "maxZ"))
 })
 
 test_that("grid_metrics returns a correct raster layer (tricky case)", {
