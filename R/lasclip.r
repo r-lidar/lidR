@@ -437,7 +437,14 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
       X$YBOTTOM <- clusters[[i]]@bbox[2]
       X$YTOP    <- clusters[[i]]@bbox[4]
       format    <- if (opt_laz_compression(ctg)) ".laz" else ".las"
-      clusters[[i]]@save <- paste0(glue::glue_data(X, opt_output_files(ctg)), format)
+
+      filepath  <- paste0(glue::glue_data(X, opt_output_files(ctg)), format)
+      n         <- length(filepath)
+
+      if (n > 1)
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each region of interest"))
+
+      clusters[[i]]@save <- filepath
     }
   }
 

@@ -88,7 +88,7 @@ catalog_makecluster = function(ctg)
   }
   else
   {
-    bboxes = mapply(raster::extent, xcenter-width/2, xcenter+width/2, ycenter-height/2, ycenter+height/2)
+    bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
     clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer))
     clusters = clusters[!sapply(clusters, is.null)]
   }
@@ -127,7 +127,13 @@ catalog_makecluster = function(ctg)
       if (by_file)
         X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
 
-      clusters[[i]]@save   <- glue::glue_data(X, opt_output_files(ctg))
+      filepath  <- paste0(glue::glue_data(X, opt_output_files(ctg)))
+      n         <- length(filepath)
+
+      if (n > 1)
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each chunk"))
+
+      clusters[[i]]@save <- filepath
       return(clusters[[i]])
     })
   }
@@ -135,7 +141,7 @@ catalog_makecluster = function(ctg)
   # Plot the catalog and the clusters
   # =================================
 
-  if(opt_progress(ctg))
+  if (opt_progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))
