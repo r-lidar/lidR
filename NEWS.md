@@ -225,6 +225,11 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * New: coordinate reference system is supported everywhere and can be written in las file. See function `epsg()`.
 * New: function `lastranform` that returns transformed coordinates of a `LAS` object using the a CRS argument
 
+** New functions**
+
+* New: function `lasfilterduplicates`
+* New: function `lascheck`
+
 ### Other changes that are not directly visible
 
 * Change: the code that drives the `point_in_polygon` algorithm relies on `boost` and drastically simplyfies the former code of `lasclassify()`

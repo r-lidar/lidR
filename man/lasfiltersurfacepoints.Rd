@@ -23,4 +23,10 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset = lasfiltersurfacepoints(las, 2)
 plot(subset)
+
 }
+\seealso{
+Other lasfilters: \code{\link{lasfilterduplicates}},
+  \code{\link{lasfilters}}, \code{\link{lasfilter}}
+}
+\concept{lasfilters}
