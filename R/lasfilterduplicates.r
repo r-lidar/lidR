@@ -25,25 +25,53 @@
 #
 # ===============================================================================
 
-#' Filter the surface points
+
+#' Filter duplicated points
 #'
-#' This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
+#' Filter points that appear more than once in the point cloud according to their X Y Z coordinates
 #'
 #' @template param-las
-#' @param res numeric. The resolution of the grid used to filter the point cloud
+#'
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasfilter
 #'
 #' @template return-lasfilter-las-lascatalog
 #'
 #' @export
 #'
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
-#' subset = lasfiltersurfacepoints(las, 2)
-#' plot(subset)
-#'
 #' @family lasfilters
-lasfiltersurfacepoints = function(las, res)
+lasfilterduplicates = function(las)
 {
-  return(lasfilterdecimate(las, highest(res)))
+  UseMethod("lasfilterduplicates", las)
+}
+
+#' @export
+lasfilterduplicates.LAS = function(las)
+{
+  dup_xyz <- duplicated(las@data, by = c("X", "Y", "Z"))
+  return(lasfilter(las, dup_xyz == FALSE))
+}
+
+#' @export
+lasfilterduplicates.LAScluster = function(las)
+{
+  buffer <- NULL
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+  x <- lasfilterduplicates(x)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lasfilterduplicates.LAScatalog = function(las)
+{
+  opt_select(las) <- "*"
+
+  output      <- catalog_apply2(las, lasfilterduplicates, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  opt_copy(ctg) <- las
+  return(ctg)
 }

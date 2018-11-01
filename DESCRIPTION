@@ -42,6 +42,7 @@ Imports:
     utils
 Suggests:
     EBImage,
+    crayon,
     gdalUtils,
     hexbin,
     mapview,
@@ -90,9 +91,11 @@ Collate:
     'grid_terrain.r'
     'io_readLAS.r'
     'io_writeLAS.r'
+    'lascheck.r'
     'lasclip.r'
     'lasfilter.r'
     'lasfilterdecimate.r'
+    'lasfilterduplicates.r'
     'lasfiltersurfacepoints.r'
     'lasground.r'
     'lasindentify.r'
