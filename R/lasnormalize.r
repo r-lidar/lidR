@@ -230,7 +230,7 @@ check_degenerated_points = function(points)
   dup_xyz  = duplicated(points, by = c("X", "Y", "Z"))
   dup_xy   = duplicated(points, by = c("X", "Y"))
   ndup_xyz = sum(dup_xyz)
-  ndup_xy  = sum(dup_xy)
+  ndup_xy  = sum(dup_xy & !dup_xyz)
 
   if (ndup_xyz > 0)
     warning(glue::glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
