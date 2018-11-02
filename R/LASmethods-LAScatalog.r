@@ -164,17 +164,17 @@ setMethod("show", "LAScatalog", function(object)
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thouthands"
+    pointprefix <- "thouthand"
     npoints.h <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "millions"
+    pointprefix <- "million"
     npoints.h <- round(npoints/(1000^2),2)
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billions"
+    pointprefix <- "billion"
     npoints.h <- round(npoints/(1000^3),2)
   }
 
