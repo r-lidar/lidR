@@ -406,19 +406,27 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)
   {
-    if (is.null(cluster)) return(NULL)
-    suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
+    if (cluster@files[1] == "") return(NULL)
+    x <- suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
+
+    if (is.null(x))
+    {
+      x <- 0
+      class(x) <- "lidr_internal_skip_write"
+    }
+
+    return(x)
   }
 
   # Find the ROIs in the catalog and return LASclusters. If a ROI fall outside the catalog
   # its associated LAScluster is NULL a must receive a special treatment in following code
-  clusters <- catalog_index(ctg, bboxes, shape, 0)
+  clusters <- catalog_index(ctg, bboxes, shape, 0, outside_catalog_is_null = FALSE)
 
   # Add some information in the clusters to extract properly polygons and to write correct file names
   for (i in 1:length(clusters))
   {
     # skip NULL clusters
-    if (is.null(clusters[[i]]))
+    if (clusters[[i]]@files[1] == "")
       next
 
     # If a simple feature is provided we want to extract a polygon. Insert WKT string
@@ -455,13 +463,21 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   if (opt_output_files(ctg) != "")
   {
     written_path = c()
-    for (cluster in clusters)
+    for (i in seq_along(clusters))
     {
-      if (file.exists(cluster@save))
-        written_path = append(written_path, cluster@save)
+      if (clusters[[i]]@files[1] == "")
+      {
+        message(glue::glue("No point found for within region of interest {i}."))
+        next
+      }
+
+      if (file.exists(clusters[[i]]@save))
+        written_path = append(written_path, clusters[[i]]@save)
+      else
+        message(glue::glue("No point found for within region of interest {i}."))
     }
 
-    new_ctg <- catalog(written_path)
+    new_ctg <- suppressMessages(catalog(written_path))
     opt_copy(new_ctg) <- ctg
     return(list(new_ctg))
   }
@@ -485,7 +501,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
         # only for dummy queries outise the catalog
         emptylas <- readLAS(ctg@data$filename[1], ctg@input_options$select, filter = "-inside 0 0 0 0")
         output[[i]] <- emptylas
-        warning(glue::glue("No point found for within region of interest {i}."), call. = FALSE)
+        message(glue::glue("No point found for within region of interest {i}."))
       }
     }
 

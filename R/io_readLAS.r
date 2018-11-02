@@ -162,6 +162,13 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   if (any(!islas)) stop("File(s) are not las or laz", call. = FALSE)
 
   ifiles <- normalizePath(x)
+
+  if (ofile != "")
+  {
+    dir = dirname(ofile)
+    if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
+  }
+
   header <- rlas::read.lasheader(ifiles[1])
   data   <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
 

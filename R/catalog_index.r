@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
+catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, outside_catalog_is_null = TRUE)
 {
   . <- filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
 
@@ -34,16 +34,18 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0)
   queries <- lapply(bboxes, function(bbox)
   {
     bbox  <- bbox + 2*buffer
-    is_in <- with(catalog@data, !( `Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
+    is_in <- with(catalog@data, !(`Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
     files <- catalog@data$filename[is_in]
 
-    if (length(files) == 0)
+    if (length(files) == 0 & outside_catalog_is_null)
       return(NULL)
+    else if (length(files) == 0 & !outside_catalog_is_null)
+      files <- ""
 
     bbox    <- bbox - 2*buffer
-    center  <- list(x = (bbox@xmax+bbox@xmin)/2, y = (bbox@ymax+bbox@ymin)/2)
-    width   <- (bbox@xmax-bbox@xmin)
-    height  <- (bbox@ymax-bbox@ymin)
+    center  <- list(x = (bbox@xmax + bbox@xmin)/2, y = (bbox@ymax + bbox@ymin)/2)
+    width   <- (bbox@xmax - bbox@xmin)
+    height  <- (bbox@ymax - bbox@ymin)
     cluster <- LAScluster(center, width, height, buffer, shape, files, "noname", proj4string = catalog@proj4string)
 
     cluster@select <- opt_select(catalog)
