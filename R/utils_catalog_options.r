@@ -194,11 +194,6 @@ opt_output_files = function(ctg)
   if (ext != "")
     warning(glue::glue("{value} contains a file extension. User don't need to provide file extension. It will be added automaticaly as a function of the output."), call. = FALSE)
 
-  dir = dirname(value)
-
-  if (!dir.exists(dir))
-    dir.create(dir, recursive = TRUE)
-
   ctg@output_options$output_files <- value
   return(ctg)
 }
