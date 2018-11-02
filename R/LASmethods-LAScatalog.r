@@ -315,8 +315,7 @@ setMethod("plot", signature(x = "LAScatalog", y = "missing"), function (x, y, ma
 
 plot.LAScatalog = function(x, y, mapview = TRUE, ...)
 {
-
-  if(mapview & !requireNamespace("mapview", quietly = TRUE))
+  if (mapview & !requireNamespace("mapview", quietly = TRUE))
   {
     message("This function can be enhanced by installing the library 'mapview'.")
     mapview = FALSE
@@ -350,7 +349,12 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
     param$x = xcenter
     param$y = ycenter
 
-    do.call(graphics::plot, param)
-    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
+    if (!is.null(param$add))
+    {
+      if (param$add != TRUE)
+        do.call(graphics::plot, param)
+    }
+
+    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
   }
 }
