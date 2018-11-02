@@ -296,8 +296,9 @@ check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, s
 
       if (!bbox1 == bbox2)
       {
-        new_cluster <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg))[[1]]
-        clusters[[i]] <- new_cluster
+        new_cluster      <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg))[[1]]
+        new_cluster@save <- cluster@save
+        clusters[[i]]    <- new_cluster
         #message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
       }
     }

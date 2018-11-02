@@ -127,9 +127,6 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
 
   output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
-  # Outputs have been written in files. Return the path to written files
-  if (opt_output_files(las) != "")  return(unlist(output))
-
   if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_canopy"))
   else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
