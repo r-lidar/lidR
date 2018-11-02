@@ -47,10 +47,10 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 #' plot(ctg)
 #' }
 #' @describeIn plot plot LASheader
-setMethod("plot", signature(x = "LASheader", y = "missing"), function (x, y, mapview = TRUE, ...)
+setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapview = TRUE, ...)
 {
   epsg <- epsg(x)
-  crs  <- tryCatch({ sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
+  crs  <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
   xmin <- x@PHB$`Min X`
   xmax <- x@PHB$`Max X`
   ymin <- x@PHB$`Min Y`
@@ -68,48 +68,6 @@ setMethod("plot", signature(x = "LASheader", y = "missing"), function (x, y, map
 
   plot.LAScatalog(res, mapview = mapview, ...)
 })
-
-plot.LAScatalog = function(x, y, mapview = TRUE, ...)
-{
-
-  if(mapview & !requireNamespace("mapview", quietly = TRUE))
-  {
-    message("This function can be enhanced by installing the library 'mapview'.")
-    mapview = FALSE
-  }
-
-  if (mapview)
-  {
-    LASheader = x
-    mapview::mapview(LASheader, ...)
-  }
-  else
-  {
-    param = list(...)
-
-    xmin = min(x@data$`Min X`)
-    xmax = max(x@data$`Max X`)
-    ymin = min(x@data$`Min Y`)
-    ymax = max(x@data$`Max Y`)
-
-    xcenter = (xmin + xmax)/2
-    ycenter = (ymin + ymax)/2
-
-    if (is.null(param$xlim)) param$xlim = c(xmin, xmax)
-    if (is.null(param$ylim)) param$ylim = c(ymin, ymax)
-    if (is.null(param$xlab)) param$xlab = "X"
-    if (is.null(param$ylab)) param$ylab = "Y"
-    if (is.null(param$asp))  param$xlab = "X"
-    if (is.null(param$asp))  param$asp = 1
-    if (is.null(param$col))  param$col = "white"
-
-    param$x = xcenter
-    param$y = ycenter
-
-    do.call(graphics::plot, param)
-    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha=0.1))
-  }
-}
 
 setMethod("show", "LASheader",  function(object)
 {
