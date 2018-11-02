@@ -81,7 +81,7 @@ catalog <- function(folder, ...)
   finfo <- file.info(folder)
 
   if (all(!finfo$isdir))
-    files <- folder
+    files <- normalizePath(folder)
   else if (!dir.exists(folder))
     stop(glue::glue("{folder} does not exist."))
   else
@@ -164,17 +164,17 @@ setMethod("show", "LAScatalog", function(object)
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thouthand"
+    pointprefix <- "thouthands"
     npoints.h <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "million"
+    pointprefix <- "millions"
     npoints.h <- round(npoints/(1000^2),2)
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billion"
+    pointprefix <- "billions"
     npoints.h <- round(npoints/(1000^3),2)
   }
 
@@ -308,13 +308,14 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' plot(ctg)
 #' }
 #' @describeIn plot plot LAScatalog
-setMethod("plot", signature(x = "LAScatalog", y = "missing"), function (x, y, mapview = TRUE, ...)
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = TRUE, ...)
 {
   plot.LAScatalog(x, y, mapview, ...)
 })
 
 plot.LAScatalog = function(x, y, mapview = TRUE, ...)
 {
+
   if (mapview & !requireNamespace("mapview", quietly = TRUE))
   {
     message("This function can be enhanced by installing the library 'mapview'.")
@@ -349,11 +350,10 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
     param$x = xcenter
     param$y = ycenter
 
-    if (!is.null(param$add))
-    {
-      if (param$add != TRUE)
-        do.call(graphics::plot, param)
-    }
+    if (is.null(param$add))
+      do.call(graphics::plot, param)
+    else if (param$add != TRUE)
+      do.call(graphics::plot, param)
 
     graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
   }
