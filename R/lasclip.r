@@ -407,7 +407,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   extract_query = function(cluster)
   {
     if (is.null(cluster)) return(NULL)
-    streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)
+    suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
   }
 
   # Find the ROIs in the catalog and return LASclusters. If a ROI fall outside the catalog
