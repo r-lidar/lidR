@@ -27,7 +27,8 @@
 
 #' Inspect a LAS object
 #'
-#' Performs a deep inspection of a LAS object and print a report. It checks:
+#' Performs a deep inspection of a LAS or LAScatalog object and print a report.\cr\cr
+#' For a LAS object it checks:
 #' \itemize{
 #' \item if the point cloud is valid according to las specification
 #' \item if the header is valid according to las specification
@@ -36,16 +37,24 @@
 #' \item it the coordinate reference sytem is correctly recorded
 #' \item if some pre-processing such as normalization or ground filtering are already done.
 #' }
-#' For th last one the check may produce a wrong estimation in rare case and should only be considered
-#' as an indication. Also this check does not guarantee the full validity of the object. Some tests
-#' may be missing.
+#' For a LAScatalog object it checks:
+#' \itemize{
+#' \item if the headers are consistant accross files
+#' \item if the files are overlapping
+#' \item if some pre-processing such as normalization are already done.
+#' }
+#' For the pre-processing tests the function only makes an estimation an may be mistaken.
 #'
-#' @param las a LAS object
+#' @template param-las
 #' @export
 lascheck = function(las)
 {
-  stopifnotlas(las)
+  UseMethod("lascheck", las)
+}
 
+#' @export
+lascheck.LAS = function(las)
+{
   data <- las@data
   phb  <- las@header@PHB
   vlr  <- las@header@VLR
@@ -63,19 +72,19 @@ lascheck = function(las)
     green <- red <- orange <- silver <- function(x) { return(x) }
   }
 
-  h1   <- function(x) {cat("\n", x)}
-  h2   <- function(x) {cat("\n  -", x)}
-  ok   <- function()  {cat(green(" ok"))}
-  fail <- function(x) {cat("\n", red(g("   error: {x}")))}
-  warn <- function(x) {cat("\n", orange(g("   warning: {x}")))}
-  skip <- function()  {cat(silver(g(" skipped")))}
-  no   <- function()  {cat(red(g(" no")))}
-  yes  <- function()  {cat(green(g(" yes")))}
-  maybe<- function()  {cat(orange(g(" maybe")))}
+  h1    <- function(x) {cat("\n", x)}
+  h2    <- function(x) {cat("\n  -", x)}
+  ok    <- function()  {cat(green(" ok"))}
+  fail  <- function(x) {cat("\n", red(g("   error: {x}")))}
+  warn  <- function(x) {cat("\n", orange(g("   warning: {x}")))}
+  skip  <- function()  {cat(silver(g(" skipped")))}
+  no    <- function()  {cat(red(g(" no")))}
+  yes   <- function()  {cat(green(g(" yes")))}
+  maybe <- function()  {cat(orange(g(" maybe")))}
 
   # ==== data =====
 
- h1("Checking the data...")
+  h1("Checking the data")
 
   h2("Checking coordinates...")
 
@@ -574,5 +583,143 @@ lascheck = function(las)
   else
     no()
 
+  h2("Checking negative outliers...")
+
+  s = fast_countbelow(data$Z, 0)
+
+  if (s > 0)
+    warn(g("{s} points below 0"))
+  else
+    ok()
+
+  h2("Checking flightline classification...")
+
+  if (!is.null(data$PointSourceID))
+  {
+    s = fast_countequal(data$PointSourceID)
+
+    if (s == nrow(data))
+      no()
+    else if (s > 0 & s <  nrow(data))
+      maybe()
+    else
+      yes()
+  }
+  else
+    skip()
+
   return(invisible())
+}
+
+#' @export
+lascheck.LAScatalog = function(las)
+{
+  data <- las@data
+  g    <- glue::glue
+
+  if (requireNamespace("crayon", quietly = TRUE))
+  {
+    green = crayon::green
+    red = crayon::red
+    orange = crayon::yellow
+    silver = crayon::silver
+  }
+  else
+  {
+    green <- red <- orange <- silver <- function(x) { return(x) }
+  }
+
+  h1    <- function(x) {cat("\n", x)}
+  h2    <- function(x) {cat("\n  -", x)}
+  ok    <- function()  {cat(green(" ok"))}
+  fail  <- function(x) {cat("\n", red(g("   error: {x}")))}
+  warn  <- function(x) {cat("\n", orange(g("   warning: {x}")))}
+  skip  <- function()  {cat(silver(g(" skipped")))}
+  no    <- function()  {cat(red(g(" no")))}
+  yes   <- function()  {cat(green(g(" yes")))}
+  maybe <- function()  {cat(orange(g(" maybe")))}
+
+  # ==== data =====
+
+  h1("Checking headers consistency")
+
+  h2("Checking file version consistency...")
+
+  s = length(unique(paste0(data$`Version Major`, ".", data$`Version Minor`)))
+
+  if (s > 1L)
+    fail("Unconsistant file versions")
+  else
+    ok()
+
+  h2("Checking scale consistency...")
+
+  s1 = length(unique(data$`X scale factor`))
+  s2 = length(unique(data$`Y scale factor`))
+  s3 = length(unique(data$`Z scale factor`))
+
+  if (s1 + s2 + s3 > 3L)
+    fail("Unconsistant scale factors")
+  else
+    ok()
+
+  h2("Checking offset consistency...")
+
+  s1 = length(unique(data$`X offset`))
+  s2 = length(unique(data$`Y offset`))
+  s3 = length(unique(data$`Z offset`))
+
+  if (s1 + s2 + s3 > 3L)
+    fail("Unconsistant offsets")
+  else
+    ok()
+
+  h2("Checking point type consistency...")
+
+  s = length(unique(data$`Point Data Format ID`))
+
+  if (s > 1L)
+    fail("Unconsistant point formats")
+  else
+    ok()
+
+  h2("Checking VLR consistency...")
+
+  s = length(unique(data$`Number of variable length record`))
+
+  if (s > 1L)
+    fail("Unconsistant number of VLR")
+  else
+    ok()
+
+  h1("Checking already done preprocessing")
+
+  h2("Checking negative outliers...")
+
+  s = sum(data$`Min Z` < 0)
+
+  if (s > 0)
+    warn(g("{s} file(s) with points below 0"))
+  else
+    ok()
+
+  h2("Checking normalization...")
+
+  mean_min = mean(abs(data$`Min Z`))
+
+  if (mean_min <= 0.1)
+    yes()
+  else if (mean_min > 0.1 & mean_min < 2)
+    maybe()
+  else
+    no()
+
+  h1("Checking the geometry")
+
+  h2("Checking overlapping tiles...")
+
+  if (is.overlapping(las))
+    warn("Some tiles seem to overlap each other")
+  else
+    ok()
 }

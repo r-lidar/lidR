@@ -127,18 +127,10 @@ catalog <- function(folder, ...)
   res@data <- headers
   res@polygons <- Sr@polygons
 
-  # Test for overlaps
-  contour = rgeos::gUnaryUnion(res)
-
-  actual_area = round(contour@polygons[[1]]@area, 4)
-  measured_area = round(area(res), 4)
-
-  if (actual_area < measured_area)
+  if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
 
-  # Test of point indexation
-  laxfiles <- paste0(tools::file_path_sans_ext(res@data$filename), ".lax")
-  if (any(!file.exists(laxfiles)))
+  if (!is.indexed(res))
     message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
   return(res)
