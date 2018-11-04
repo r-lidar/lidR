@@ -1,0 +1,48 @@
+<VRTDataset rasterXSize="420" rasterYSize="280">
+  <SRS>PROJCS["UTM Zone 23, Southern Hemisphere",GEOGCS["GRS 1980(IUGG, 1980)",DATUM["unknown",SPHEROID["GRS80",6378137,298.257222101],TOWGS84[0,0,0,0,0,0,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-45],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]]]</SRS>
+  <GeoTransform>  2.0776000000000000e+05,  1.0000000000000000e+00,  0.0000000000000000e+00,  7.3575600000000000e+06,  0.0000000000000000e+00, -1.0000000000000000e+00</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>-3.4e+38</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/jr/Documents/Post-doc/Workshop lidR/data/CHM//CHM_207760_7357280_PRJ_A_207760_7357280_g_c_d_n_u.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="140" RasterYSize="140" DataType="Float32" BlockXSize="140" BlockYSize="14" />
+      <SrcRect xOff="0" yOff="0" xSize="140" ySize="140" />
+      <DstRect xOff="0" yOff="140" xSize="140" ySize="140" />
+      <NODATA>-3.4e+38</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/jr/Documents/Post-doc/Workshop lidR/data/CHM//CHM_207900_7357280_PRJ_A_207900_7357280_g_c_d_n_u.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="141" RasterYSize="140" DataType="Float32" BlockXSize="141" BlockYSize="14" />
+      <SrcRect xOff="0" yOff="0" xSize="141" ySize="140" />
+      <DstRect xOff="139" yOff="140" xSize="141" ySize="140" />
+      <NODATA>-3.4e+38</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/jr/Documents/Post-doc/Workshop lidR/data/CHM//CHM_207900_7357420_PRJ_A_207900_7357420_g_c_d_n_u.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="141" RasterYSize="141" DataType="Float32" BlockXSize="141" BlockYSize="14" />
+      <SrcRect xOff="0" yOff="0" xSize="141" ySize="141" />
+      <DstRect xOff="139" yOff="0" xSize="141" ySize="141" />
+      <NODATA>-3.4e+38</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/jr/Documents/Post-doc/Workshop lidR/data/CHM//CHM_208040_7357280_PRJ_A_208040_7357280_g_c_d_n_u.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="141" RasterYSize="140" DataType="Float32" BlockXSize="141" BlockYSize="14" />
+      <SrcRect xOff="0" yOff="0" xSize="141" ySize="140" />
+      <DstRect xOff="279" yOff="140" xSize="141" ySize="140" />
+      <NODATA>-3.4e+38</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/jr/Documents/Post-doc/Workshop lidR/data/CHM//CHM_208040_7357420_PRJ_A_208040_7357420_g_c_d_n_u.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="141" RasterYSize="141" DataType="Float32" BlockXSize="141" BlockYSize="14" />
+      <SrcRect xOff="0" yOff="0" xSize="141" ySize="141" />
+      <DstRect xOff="279" yOff="0" xSize="141" ySize="141" />
+      <NODATA>-3.4e+38</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>
