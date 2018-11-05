@@ -13,7 +13,7 @@ lasfiltersurfacepoints(las, res)
 }
 \value{
 If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a
-\code{LAScatalog} returns a \code{LAScatalog}.
+\code{LAScatalog}, returns a \code{LAScatalog}.
 }
 \description{
 This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
