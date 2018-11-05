@@ -123,7 +123,7 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
   }
 
   opt_select(las) <- "xyzr"
-  opt_chunk_buffer(las) <- 0.1*res
+  opt_chunk_buffer(las) <- 2
 
   output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
 
