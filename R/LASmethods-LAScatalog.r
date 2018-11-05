@@ -148,7 +148,7 @@ setMethod("show", "LAScatalog", function(object)
   units   <- if (length(units) == 0) "units" else units
   areaprefix <- ""
   pointprefix <- ""
-  if (area > 1000*1000)
+  if (area > 1000*1000/2)
   {
     areaprefix <- "k"
     area.h  <- round(area/(1000*1000),2)
@@ -156,24 +156,24 @@ setMethod("show", "LAScatalog", function(object)
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thouthands"
+    pointprefix <- "thouthand"
     npoints.h <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "millions"
+    pointprefix <- "million"
     npoints.h <- round(npoints/(1000^2),2)
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billions"
+    pointprefix <- "billion"
     npoints.h <- round(npoints/(1000^3),2)
   }
 
-  cat("class       : ", class(object), " (inherit ", inherit, ")\n", sep = "")
+  cat("class       : ", class(object), "\n", sep = "")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("coord. ref. :", object@proj4string@projargs, "\n")
-  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep="")
+  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
@@ -189,23 +189,23 @@ setMethod("summary", "LAScatalog", function(object, ...)
 
   cat("Summary of the processing options:\n")
 
-  if(byfile)
+  if (byfile)
     cat("  - Catalog will be process by file respecting the original tilling pattern\n")
   else
-    cat("  - Catalog will be process by chuncks of size:", opt_chunk_size(object), "\n")
+    cat("  - Catalog will be process by chunks of size:", opt_chunk_size(object), "\n")
 
   cat("  - Catalog will be processed using", opt_cores(object), "core(s).\n")
 
   cat("Summary of the output options:\n")
 
-  if(!save)
+  if (!save)
     cat("  - Outputs will be returned in R objects.\n")
   else
     cat("  - Outputs will be written in files:", opt_output_files(object), "\n")
 
-  if(!laz & save)
+  if (!laz & save)
     cat("  - If outputs are LAS objects, they will not be compress (.las)\n")
-  else if(laz & save)
+  else if (laz & save)
     cat("  - If outputs are LAS objects, they will be compress (.laz)\n")
 
   cat("Summary of the input options:\n")
