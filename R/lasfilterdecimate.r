@@ -84,7 +84,7 @@ lasfilterdecimate.LAS = function(las, algorithm)
 lasfilterdecimate.LAScluster = function(las, algorithm)
 {
   buffer <- NULL
-  x <- readLAS(las)
+  x <- suppressMessages(suppressWarnings(readLAS(las)))
   if (is.empty(x)) return(NULL)
   x <- lasfilterdecimate(x, algorithm)
   x <- lasfilter(x, buffer == 0)
@@ -104,9 +104,11 @@ lasfilterdecimate.LAScatalog = function(las, algorithm)
 
   opt_select(las) <- "*"
 
-  output        <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  output        <- unlist(output)
-  ctg           <- catalog(output)
+  output  <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- unlist(output)
+  ctg     <- catalog(output)
+
   opt_copy(ctg) <- las
+
   return(ctg)
 }
