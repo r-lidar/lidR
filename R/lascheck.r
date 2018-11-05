@@ -596,11 +596,11 @@ lascheck.LAS = function(las)
 
   if (!is.null(data$PointSourceID))
   {
-    s = fast_countequal(data$PointSourceID)
+    s = fast_countequal(data$PointSourceID, 0L)
 
     if (s == nrow(data))
       no()
-    else if (s > 0 & s <  nrow(data))
+    else if (s > 0 & s < nrow(data))
       maybe()
     else
       yes()
