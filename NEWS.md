@@ -75,6 +75,7 @@ new_ctg = lasnormalize(ctg)
 * Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options`, `@clustering_options` and `@input_options` that are list of options classified by their main role.
 * Change: documentation has been entierly rewritten to explain the whole potential of the class.
 * Change: functions `by_file`, `progress`, `tiling_size`, `buffer` were replaced by `opt_chunk_size`, `opt_chunk_buffer`, `opt_progress` and so on. These allows to get a consitant set of functions that do not overlap with functions from `raster` or `sp`.
+* Change: standard column names were renamed to make syntactically valid names and be compatible with `sp` functions.
 
 **readLAS**
 

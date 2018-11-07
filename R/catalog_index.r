@@ -27,14 +27,14 @@
 
 catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, outside_catalog_is_null = TRUE)
 {
-  . <- filename <- `Min X` <- `Max X` <- `Min Y` <- `Max Y` <- NULL
+  . <- filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
 
   stopifnot(is.list(bboxes))
 
   queries <- lapply(bboxes, function(bbox)
   {
     bbox  <- bbox + 2*buffer
-    is_in <- with(catalog@data, !(`Min X` >= bbox@xmax | `Max X` <= bbox@xmin | `Min Y` >= bbox@ymax | `Max Y` <= bbox@ymin))
+    is_in <- with(catalog@data, !(Min.X >= bbox@xmax | Max.X <= bbox@xmin | Min.Y >= bbox@ymax | Max.Y <= bbox@ymin))
     files <- catalog@data$filename[is_in]
 
     if (length(files) == 0 & outside_catalog_is_null)
