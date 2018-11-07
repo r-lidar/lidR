@@ -90,24 +90,28 @@ catalog <- function(folder, ...)
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
+  epsg(header)
   epsg   <- epsg(header)
   crs    <- tryCatch({ sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
 
   headers <- lapply(files, function(x)
   {
-    header <- rlas::read.lasheader(x)
-    header$`Variable Length Records` <- NULL
-    data.table::setDT(header)
-    return(header)
+    header        <- LASheader(rlas::read.lasheader(x))
+    epsg          <- epsg(header)
+    PHB           <- header@PHB
+    PHB$EPSG      <- epsg
+    names(PHB)    <- make.names(names(PHB))
+    names(PHB)[4] <-  "GUID"
+    return(PHB)
   })
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
 
-  xmin <- headers$`Min X`
-  xmax <- headers$`Max X`
-  ymin <- headers$`Min Y`
-  ymax <- headers$`Max Y`
+  xmin <- headers$Min.X
+  xmax <- headers$Max.X
+  ymin <- headers$Min.Y
+  ymax <- headers$Max.Y
   ids  <- as.character(seq_along(files))
 
   pgeom <- lapply(seq_along(ids), function(xi)
@@ -138,9 +142,9 @@ catalog <- function(folder, ...)
 
 setMethod("show", "LAScatalog", function(object)
 {
-  area    <- raster::area(object)
+  area    <- area(object)
   area.h  <- area
-  npoints <- sum(object@data$`Number of point records`)
+  npoints <- sum(object@data$Number.of.point.records)
   npoints.h <- npoints
   inherit <- getClass("LAScatalog")@contains[[1]]@superClass
   ext     <- raster::extent(object)
@@ -276,7 +280,7 @@ setMethod("$<-", "LAScatalog", function(x, name, value)
 setMethod("area", "LAScatalog",  function(x, ...)
 {
   x <- x@data
-  area <- sum((x$`Max X` - x$`Min X`) * (x$`Max Y` - x$`Min Y`))
+  area <- sum((x$Max.X - x$Min.X) * (x$Max.Y - x$Min.Y))
   return(area)
 })
 
@@ -323,10 +327,10 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
   {
     param = list(...)
 
-    xmin = min(x@data$`Min X`)
-    xmax = max(x@data$`Max X`)
-    ymin = min(x@data$`Min Y`)
-    ymax = max(x@data$`Max Y`)
+    xmin = min(x@data$Min.X)
+    xmax = max(x@data$Max.X)
+    ymin = min(x@data$Min.Y)
+    ymax = max(x@data$Max.Y)
 
     xcenter = (xmin + xmax)/2
     ycenter = (ymin + ymax)/2
@@ -347,6 +351,6 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
     else if (param$add != TRUE)
       do.call(graphics::plot, param)
 
-    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
+    graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
   }
 }

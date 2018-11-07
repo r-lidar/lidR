@@ -80,7 +80,7 @@ IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R
   }
 
   // A progress bar and abort options
-  Progress p(ni, "Tree segmenatation: ");
+  Progress p(ni, "Tree segmentation: ");
 
   // U the points to be segmented (see Li et al. page 78)
   std::vector<PointXYZ*> U(ni);

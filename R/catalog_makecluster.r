@@ -38,15 +38,15 @@ catalog_makecluster = function(ctg)
 
   if (by_file)
   {
-    xmin = ctg@data$`Min X`
-    xmax = ctg@data$`Max X`
-    ymin = ctg@data$`Min Y`
-    ymax = ctg@data$`Max Y`
+    xmin = ctg@data$Min.X
+    xmax = ctg@data$Max.X
+    ymin = ctg@data$Min.Y
+    ymax = ctg@data$Max.Y
   }
   else
   {
     # Bounding box of the catalog
-    bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
+    bbox = with(ctg@data, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
 
     # Shift to align the grid
     shift = numeric(2)
