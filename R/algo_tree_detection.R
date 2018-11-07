@@ -113,6 +113,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
     else if (assertive::is_function(ws))
     {
       ws = ws(las@data$Z)
+      ws[las@data$Z < hmin] = ws(hmin)
 
       if (!is.numeric(ws)) stop("The function 'ws' did not return correct output. ", call. = FALSE)
       if (any(ws <= 0))    stop("The function 'ws' returned negative or nul values.", call. = FALSE)

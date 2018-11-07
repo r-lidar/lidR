@@ -54,7 +54,7 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
     if (vws)
       hws = ws[i]/2;
 
-    if (Z[i] <= min_height)
+    if (Z[i] < min_height)
       continue;
 
     // Get the points within a windows centered on the current point
