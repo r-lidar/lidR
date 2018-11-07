@@ -304,18 +304,20 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' plot(ctg)
 #' }
 #' @describeIn plot plot LAScatalog
-setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = TRUE, ...)
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, ...)
 {
   plot.LAScatalog(x, y, mapview, ...)
 })
 
-plot.LAScatalog = function(x, y, mapview = TRUE, ...)
+plot.LAScatalog = function(x, y, mapview = FALSE, ...)
 {
-
-  if (mapview & !requireNamespace("mapview", quietly = TRUE))
+  if (mapview == TRUE)
   {
-    message("This function can be enhanced by installing the library 'mapview'.")
-    mapview = FALSE
+    if (!requireNamespace("mapview", quietly = TRUE))
+    {
+      message("'mapview' is requiered to display the LAScatalog interactively.")
+      mapview = FALSE
+    }
   }
 
   if (mapview)

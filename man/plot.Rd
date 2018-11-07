@@ -15,7 +15,7 @@ plot(x, y, ...)
   colorPalette = height.colors(50), bg = "black", trim = Inf,
   backend = c("rgl", "pcv"), clear_artifact = FALSE, nbits = 16, ...)
 
-\S4method{plot}{LAScatalog,missing}(x, y, mapview = TRUE, ...)
+\S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE, ...)
 
 \S4method{plot}{LASheader,missing}(x, y, mapview = TRUE, ...)
 }
