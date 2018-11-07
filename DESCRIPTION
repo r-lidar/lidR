@@ -46,7 +46,6 @@ Suggests:
     gdalUtils,
     hexbin,
     mapview,
-    mapedit,
     progress,
     rgdal,
     testthat
