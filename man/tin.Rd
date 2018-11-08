@@ -22,7 +22,7 @@ las = readLAS(LASfile)
 dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 
 plot(dtm, col = terrain.colors(50))
-plot3d(dtm)
+plot_dtm3d(dtm)
 }
 \seealso{
 Other spatial interpolation algorithms: \code{\link{knnidw}},

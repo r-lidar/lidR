@@ -50,8 +50,8 @@
 #'
 #' ttops <- tree_detection(las, lmf(ws = 5))
 #'
-#' plot(las)
-#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+#' x = plot(las)
+#' add_treetops3d(x, ttops)
 tree_detection = function(las, algorithm)
 {
   UseMethod("tree_detection", las)
