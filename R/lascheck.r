@@ -55,6 +55,8 @@ lascheck = function(las)
 #' @export
 lascheck.LAS = function(las)
 {
+  Classification <- Z <- NULL
+
   data <- las@data
   phb  <- las@header@PHB
   vlr  <- las@header@VLR
