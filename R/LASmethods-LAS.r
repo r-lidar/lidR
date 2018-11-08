@@ -113,7 +113,7 @@ setMethod("show", "LAS", function(object)
   size <- format(utils::object.size(object), units = "auto")
   surf <- area(object)
   npts <- nrow(object@data)
-  dpts <- if(surf > 0) npts/surf else 0
+  dpts <- if (surf > 0) npts/surf else 0
   attr <- names(object@data)
   ext  <- raster::extent(object)
   phb  <- object@header@PHB
@@ -198,7 +198,7 @@ setMethod("$<-", "LAS", function(x, name, value)
 #' @export
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
-  if (! i %in% names(x@data))
+  if (!i %in% names(x@data))
     stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   type1 <- storage.mode(x@data[[i]])
@@ -215,7 +215,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 #' @rdname area
 setMethod("area", "LAS", function(x, ...)
 {
-  if(nrow(x@data) == 0)
+  if (nrow(x@data) == 0)
     return(0)
 
   return(area_convex_hull(x@data$X, x@data$Y))
@@ -240,12 +240,12 @@ setMethod("epsg<-", "LAS", function(object, value)
 })
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifact = FALSE, nbits = 16, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifact, nbits, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, ...)
 })
 
-plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifact = FALSE, nbits = 16, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
 {
   if (is.empty(x)) stop("Cannot display an empty point cloud", call. = FALSE)
 
@@ -293,15 +293,15 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
     args$col[is.na(args$col)] <- "lightgray"
 
-    return(.plot_with_rgl(x, bg, coldata, clear_artifact, args))
+    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, args))
   }
   else
     return(.plot_with_pcv(x, coldata, colorPalette, args))
 }
 
-.plot_with_rgl = function(x, bg, coldata, clear_artifact, args)
+.plot_with_rgl = function(x, bg, coldata, clear_artifacts, args)
 {
-  if (clear_artifact)
+  if (clear_artifacts)
   {
     minx = min(x@data$X)
     miny = min(x@data$Y)
@@ -316,10 +316,10 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   rgl::rgl.bg(color = bg)
   do.call(rgl::points3d, with)
 
-  if (clear_artifact)
+  if (clear_artifacts)
     return(invisible(c(minx, miny)))
   else
-    return(invisible())
+    return(invisible(c(0,0)))
 }
 
 .plot_with_pcv = function(x, coldata, colors, args)

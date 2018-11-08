@@ -51,15 +51,13 @@ setGeneric("summary", function(object, ...)
 #' @param bg The color for the background. Default is black.
 #' @param trim numeric. Enables trimming of values when outliers break the color palette range.
 #' Every point with a value higher than \code{trim} will be plotted with the highest color.
-#' @param clear_artifact logical. It is a known and docunented issue that the 3D visialisation with
+#' @param clear_artifacts logical. It is a known and docunented issue that the 3D visualisation with
 #' \code{rgl} displays artifacts. The points look aligned and/or regularly space in some view angle.
 #' This is because \code{rgl} computes with single precision \code{float}. To fix that the user can
-#' set this option to \code{TRUE}. In this case the point cloud is shifted to (0,0) to reduce the
-#' number of digit needed to represent its coordinates. The drawback is that the user cannot anymore
-#' add easily other objects in the scene since de coordinates will not match anymore. If \code{clear_artifact = TRUE}
-#' the function returns the xy shift values invisibly.
-#' @param nbits integer. If \code{color = RGB} it assume that RGB color are coded on 16 bits as described
-#' in the LAS format specifications. Actually this is not always respected. If the colors are stored
+#' the point cloud is shifted to (0,0) to reduce the number of digit needed to represent its coordinates.
+#' The drawback is that the point cloud is not plotted at its actual coordinates.
+#' @param nbits integer. If \code{color = RGB} it assumes that RGB color are coded on 16 bits as described
+#' in the LAS format specification. Actually this is not always respected. If the colors are stored
 #' on 8 bits set this parameter to 8.
 #' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
 #' the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
@@ -76,8 +74,8 @@ setGeneric("summary", function(object, ...)
 #'
 #' # Outliers in intensity breaks the color range. Use the trim parameter.
 #' col <- heat.colors(50)
-#' plot(las, color = Intensity, colorPalette = col, clear_artifact = TRUE)
-#' plot(las, color = Intensity, colorPalette = col, trim = 70, clear_artifact = TRUE)
+#' plot(las, color = Intensity, colorPalette = col)
+#' plot(las, color = Intensity, colorPalette = col, trim = 70)
 #' @export
 #' @method plot LAS
 setGeneric("plot", function(x, y, ...)

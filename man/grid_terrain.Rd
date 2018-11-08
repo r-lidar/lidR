@@ -85,9 +85,9 @@ dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
 plot(dtm1)
 plot(dtm2)
 plot(dtm3)
-plot3d(dtm1)
-plot3d(dtm2)
-plot3d(dtm3)
+plot_dtm3d(dtm1)
+plot_dtm3d(dtm2)
+plot_dtm3d(dtm3)
 }
 }
 \seealso{
