@@ -99,42 +99,42 @@
 #' no edge effect between two independent chunks and that the output is continuous. This is mandatory for 
 #' some algorithms. Default is 30.
 #' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
-#' chunk pattern. By default the alignment is made along (0,0) meaning that the edge of the first chunk
+#' chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
 #' will belong on x = 0 and y = 0 and all the the others chunks will be multiples of the chunk size.
 #' Not relevent if \code{chunk_size = 0}.
 #' }
 #'
 #' @section Output options:
-#' The slot \code{@output_options} contains a \code{list} of options that drives how a the cluster
-#' (the sub-areas that are sequentially processed) are written. By "written" we mean written in files
+#' The slot \code{@output_options} contains a \code{list} of options that drives how clusters
+#' (the sub-areas that are sequentially processed) are written. By "written" we mean written to files
 #' or written in R memory.
 #'
 #' \itemize{
 #' \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned to R. If
-#' \code{output_files} is a string the outputs will not be returned to R but it will be written in files.
+#' \code{output_files} is a string the outputs will not be returned to R but will be written to files.
 #' This is useful if the output is too big to be returned in R. A path to a templated filename
-#' without extension (the engine guess it for you) is expected. When several files are going to be
-#' written a single string is provided with a template that is automatically fullfilled. For example
-#' these file names are possible:
+#' without extension (the engine guesses it for you) is expected. When several files are going to be
+#' written a single string is provided with a template that is automatically filled. For example,
+#' the following file names are possible:
 #' \preformatted{
 #' "/home/user/als/normalized/file_{ID}_segmented"
 #' "C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
 #' "C:/user/document/als/{ORIGINALFILNAME}_normalized"
 #' }
-#' And will generate as many files name as needed with custom names for each file. The list of allowed
-#' templates is described in the documentation of each function.
-#' \item \strong{drivers}: list. This contains all the drivers requiered to write seamlessly Raster*,
-#' Spatial*, LAS objects. This don't need to be changed if the user is not an advanced user.
+#' This option will generate as many filenames as needed with custom names for each file. The list of allowed
+#' templates is described in the documentation for each function.
+#' \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
+#' Spatial*, LAS objects. TIt is recommended that only advanced users change this option.
 #' }
 #'
 #' @section Input options:
 #' The slot \code{@input_options} contains a \code{list} of options that are passed to the function
-#' \link{readLAS}. Indeed the \code{readLAS} function is not called directly by the user but by the
-#' internal processing engine. User can propagate these options throught the \code{LAScatalog} settings.
+#' \link{readLAS}. Indeed, the \code{readLAS} function is not called directly by the user but by the
+#' internal processing engine. Users can propagate these options through the \code{LAScatalog} settings.
 #'
 #' \itemize{
 #' \item \strong{select}: string. The \code{select} option. Usually this option is not respected because
-#' each functions knows which data must be loaded or not. This is documented in each function.
+#' each function knows which data must be loaded or not. This is documented in each function.
 #' \item \strong{filter}: string. The \code{filter} option.
 #' }
 #'
@@ -163,38 +163,38 @@
 #' hmean <- grid_metrics(ctg, mean(Z), 20)
 #' ttops <- tree_detection(ctg, lmf(5))
 #'
-#' # For low memory config it might be adivsed to do not load entire files
+#' # For low memory config it is probably advisable not to load entire files
 #' # and process chunks instead
 #' opt_cores(ctg) <- 1
 #' opt_chunk_size(ctg) <- 500
 #'
-#' # Output are expected to be strictly identical
+#' # Outputs are expected to be strictly identical
 #' hmean <- grid_metrics(ctg, mean(Z), 20)
 #' ttops <- tree_detection(ctg, lmf(5))
 #'
-#' # Sometime the output is likely to be huge
+#' # Sometimes the output is likely to be very large
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
-#' # In that case it is advised to write the output into files
+#' # In that case it is advisable to write the output(s) to files
 #' opt_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
 #'
-#' # Raster will be written on disk. What is returned is the list of writtem files
+#' # Raster will be written to disk. The list of written files is returned
 #' # or, in this specific case, a virtual raster mosaic.
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
-#' # When chunks are files the origanal name of the las files can be preserved
+#' # When chunks are files the original name of the las files can be preserved
 #' opt_chunk_size(ctg) <- 0
 #' opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
-#' # For some functions, files MUST be written on disk. Indeed it is sure that R cannot
-#' # handle the whole output.
+#' # For some functions, files MUST be written to disk. Indeed it is certain that R cannot
+#' # handle the entire output.
 #' opt_chunk_size(ctg) <- 0
 #' opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
 #' opt_laz_compression(ctg) <- TRUE
 #' new_ctg <- lasnormalize(ctg, tin())
 #'
-#' # The user have access to the catalog engine througt the function catalog_apply
+#' # The user has access to the catalog engine througt the function catalog_apply
 #' output <- catalog_apply(ctg, FUN, ...)
 #' }
 setClass(
