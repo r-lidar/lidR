@@ -31,15 +31,15 @@
 #'
 #' This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
 #' engine. It allows the application of a user-defined routine over an entire catalog. The LAScatalog
-#' processing engine tools is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
-#' \strong{Warning:} the LAScatalog processing engine have a mechanism to load buffered data to avoid
+#' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
+#' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 #' this task is specific to each process. In other \code{lidR} functions this task is performed
-#' specifically for each function. In \code{catalog_apply} the users's function can return any input,
-#' thus the user must take care of this point himself (See section "Edge artifacts")
+#' specifically for each function. In \code{catalog_apply} the user's function can return any input,
+#' thus users must take care of this task themselves (See section "Edge artifacts")
 #'
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
-#' @param FUN A user-defined function that respect a given template (see section function template)
+#' @param FUN A user-defined function that respects a given template (see section function template)
 #' @param ... Optional arguments to FUN.
 #'
 #' @section Edge artifacts:
@@ -47,67 +47,67 @@
 #' It is important to take precautions to avoid 'edge artifacts' when processing wall-to-wall
 #' tiles. If the points from neighboring tiles are not included during certain processes,
 #' this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
-#' pixels in a rasterization process or dummy elavations in a ground interpolation. The LAScatalog
+#' pixels in a rasterization process or dummy elevations in a ground interpolation. The LAScatalog
 #' processing engine provides internal tools to load buffered data. However, there is
 #' no mechanism to remove the results computed in the buffered area since this task depends on the
 #' output of the user-defined function. The user must take care of this task (see also examples).
 #'
 #' @section Buffered data:
 #'
-#' The LAS objects read by the user function have a special attribute called 'buffer' which indicates,
+#' The LAS objects read by the user function have a special attribute called 'buffer' that indicates,
 #' for each point, if it comes from a buffered area or not. Points from non-buffered areas have a
 #' 'buffer' value of 0, while points from buffered areas have a 'buffer' value of 1, 2, 3 or 4, where
 #' 1 is the bottom buffer and 2, 3 and 4 are the left, top and right buffers, respectively.
 #'
 #' @section Function template:
 #'
-#' The parameter \code{FUN} expect a function that have a first argument that will be fed automatically
+#' The parameter \code{FUN} expects a function that has a first argument that will be supplied automatically
 #' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
 #' is an internal undocumented class but the user needs to know only three things about this class:
 #' \itemize{
 #' \item It represents a chunk of the catalog
 #' \item The function \link{readLAS} can be used with a \code{LAScluster}
 #' \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
-#' and it returns the bouding box of the cluster whithout the buffer. It can be used to clip the ouput
+#' and it returns the bouding box of the cluster without the buffer. It can be used to clip the ouput
 #' and remove the buffered region (see examples).
 #' }
 #' A user-defined function must be templated like this:
 #' \preformatted{
-#' myfun = function(cluster, ....)
+#' myfun = function(cluster, ...)
 #' {
 #'    las = readLAS(cluster)
 #'    if (is.empty(las)) return(NULL)
 #'    # do something
 #'    return(something)
 #' }}
-#' The line \code{if(is.empty(las)) return(NULL)} is important because some cluster may contain
-#' 0 point (we can't know that before to read the file). In this case an empty point cloud with 0 point
-#' is returned by \code{readLAS} and this may fails in subsequent code. Thus, exiting early the user-function
-#' by returning \code{NULL} allows the internal engine to knows that the cluster was empty.
+#' The line \code{if(is.empty(las)) return(NULL)} is important because some clusters may contain
+#' 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
+#' is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-function
+#' by returning \code{NULL} allows the internal engine to know that the cluster was empty.
 #'
 #' @section Supported processing options:
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 #' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 #' \itemize{
-#' \item \strong{chunk_size}: How many data are loaded at once.
-#' \item \strong{chunk_buffer}: Load chunks with a buffer
-#' \item \strong{chunk_alignment}: Align the chunks
+#' \item \strong{chunk_size}: How much data is loaded at once.
+#' \item \strong{chunk_buffer}: Load chunks with a buffer.
+#' \item \strong{chunk_alignment}: Align the chunks.
 #' \item \strong{cores}: How many chunks are loaded and processed at once.
-#' \item \strong{progress}: Displays a progression estimation.
-#' \item \strong{output_files}: The user-function outputs will be written in files instead of being
-#' returned into R
-#' \item \strong{laz_compression}: write \code{las} or \code{laz} files (only if the user-defined function)
-#' return a \code{LAS} object.
+#' \item \strong{progress}: Displays a progress estimate.
+#' \item \strong{output_files}: The user-function outputs will be written to files instead of being
+#' returned into R.
+#' \item \strong{laz_compression}: write \code{las} or \code{laz} files only if the user-defined function
+#' returns a \code{LAS} object.
 #' \item \strong{select}: Select only the data of interest to save processing memory.
-#' \item \strong{filter}: Read only points of interest.
+#' \item \strong{filter}: Read only the points of interest.
 #' }
 #'
 #' @examples
 #' # Visit http://jean-romain.github.io/lidR/wiki for more examples
 #'
 #' ## =========================================================================
-#' ## Exemple 1: get all the tree tops over an entiere catalog
-#' ## (this is nothing else that the existing lidR function 'tree_detection')
+#' ## Example 1: detect all the tree tops over an entire catalog
+#' ## (this is the existing lidR function 'tree_detection')
 #' ## =========================================================================
 #'
 #' # 1. Build the user-defined function that analyzes each cluster of the catalog.
@@ -115,17 +115,17 @@
 #' # choosen by the user.
 #' my_tree_detection_method = function(cluster, ws)
 #' {
-#'   # The cluster argument is a LAScluster object. The user don't need to know how it works.
+#'   # The cluster argument is a LAScluster object. The user does not need to know how it works.
 #'   # readLAS will load the region of interest (chunk) with a buffer around it, taking advantage of
 #'   # point cloud indexation if possible. The filter and select options are propagated automatically
 #'   las = readLAS(cluster)
 #'   if (is.empty(las)) return(NULL)
 #'
-#'   # Find the tree tops using a user-developped method for example (here simply a LMF)
+#'   # Find the tree tops using a user-developed method. For example (here simply a LMF),
 #'   ttops = tree_detection(las, lmf(ws))
 #'
 #'   # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
-#'   # plus the trees tops in the buffered area. We need to remove buffer otherwise we will get
+#'   # plus the trees tops in the buffered area. We need to remove the buffer otherwise we will get
 #'   # some trees more than once.
 #'   bbox  <- raster::extent(cluster)
 #'   ttops <- raster::crop(ttops, bbox)
@@ -142,11 +142,11 @@
 #' # For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
 #' opt_chunk_buffer(project) <- 10
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 80        # extremely tiny because this is a dummy example
-#' opt_select(project) <- "xyz"         # don't need to read something else than the coordinates
-#' opt_filter(project) <- "-keep_first" # for this exemple we will use only first returns. why not
+#' opt_chunk_size(project) <- 80        # extremely small because this is a dummy example
+#' opt_select(project) <- "xyz"         # don't need to read something other than the coordinates
+#' opt_filter(project) <- "-keep_first" # for this example we will use only first returns. Why not?
 #'
-#' # 4. Apply user-defined function to take advantage of the internal engine
+#' # 4. Apply a user-defined function to take advantage of the internal engine
 #' output = catalog_apply(project, my_tree_detection_method, ws = 5)
 #'
 #' # 5. Post-process the output to merge the results (depending on the output computed).
@@ -155,7 +155,7 @@
 #' sp::plot(output)
 #'
 #' ## ===================================================
-#' ## Exemple 2: compute a rumple index on surface points
+#' ## Example 2: compute a rumple index on surface points
 #' ## ===================================================
 #'
 #' rumple_index_surface = function(cluster, res)
@@ -177,8 +177,8 @@
 #'
 #' opt_chunk_buffer(project) <- 1
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 80       # extremely tiny because this is a dummy example
-#' opt_select(project) <- "xyz"        # don't need to read something else than the coordinates
+#' opt_chunk_size(project) <- 80       # extremely small because this is a dummy example
+#' opt_select(project) <- "xyz"        # don't need to read something other than the coordinates
 #'
 #' output = catalog_apply(project, rumple_index_surface, res = 20)
 #' output = do.call(raster::merge, output)
@@ -236,38 +236,38 @@ check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
 
   if (need_buffer & opt_chunk_buffer(ctg) <= 0 & opt_wall_to_wall(ctg))
-    stop("A buffer greater than 0 is requiered to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+    stop("A buffer greater than 0 is required to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
-  # clusters are aligned with the pixels. In case of chunk_size > 0 it is easy to check before to make
+  # clusters are aligned with the pixels. In case of chunk_size > 0 this is an easy to check before making
   # the clusters
 
   if (check_alignement & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
-    # If the clustering option do not match with the resolution
+    # If the clustering option does not match with the resolution
     t_size     <- opt_chunk_size(ctg)
     new_t_size <- round_any(t_size, res)
     if (new_t_size != t_size)
     {
       opt_chunk_size(ctg) <- new_t_size
-      message(glue::glue("Chunk size do no match with the resolution of the raster. Chunk size changed to {new_t_size} to ensure the continuity of the ouput."))
+      message(glue::glue("Chunk size does not match with the resolution of the raster. Chunk size changed to {new_t_size} to ensure the continuity of the ouput."))
     }
 
-    # If the alignement of the clusters do not match with the start point of the raster
+    # If the alignment of the clusters does not match the start point of the raster
     alignment     <- opt_chunk_alignment(ctg)
     new_alignment <- (alignment - start) %% res + alignment
     if (any(new_alignment != alignment))
     {
       opt_chunk_alignment(ctg) <- new_alignment
-      message(glue::glue("Alignement of the chunks do no match with the starting points of the raster. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
+      message(glue::glue("Alignment of the chunks do not match with the starting points of the raster. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
     }
   }
 
-  # Some functions require to write outputs in files because the output it likely to be too big to
+  # Some functions require outputs to be written in files because the output is likely to be too big to
   # be returned in R
 
   if (need_output_file & opt_output_files(ctg) == "")
-    stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+    stop("This function requires that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   return(ctg)
 }
@@ -276,7 +276,7 @@ check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, s
 {
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
   # clusters are aligned with the pixels. In case of chunk_size =0 (processed by file) the clusters
-  # must be check after there creation. Can be skipped if the catalog is not a wall-to-wall catalog.
+  # must be checked after being created. Can be skipped if the catalog is not a wall-to-wall catalog.
 
   if (check_alignement & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
