@@ -5,15 +5,15 @@ ctg     <- catalog(LASfile)
 
 test_that("LAScatalog redefined behavior of $, [, and [[", {
 
-  expect_true(is.character(ctg$`File Signature`))
-  expect_equal(length(ctg$`File Signature`), 1)
+  expect_true(is.character(ctg$File.Signature))
+  expect_equal(length(ctg$File.Signature), 1)
 
   expect_true(is.null(ctg$U))
 
-  expect_error(ctg$`File Signature` <- 1, "cannot be modified")
+  expect_error(ctg$File.Signature <- 1, "cannot be modified")
 
-  expect_true(is.character(ctg[["File Signature"]]))
-  expect_equal(length(ctg[["File Signature"]]), 1)
+  expect_true(is.character(ctg[["File.Signature"]]))
+  expect_equal(length(ctg[["File.Signature"]]), 1)
 
   expect_true(is.null(ctg[["U"]]))
 

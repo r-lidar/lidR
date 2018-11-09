@@ -32,6 +32,8 @@
 #' @template param-las
 #' @param res numeric. The resolution of the grid used to filter the point cloud
 #'
+#' @template section-supported-option-lasfilter
+#'
 #' @template return-lasfilter-las-lascatalog
 #'
 #' @export
@@ -45,5 +47,37 @@
 #' @family lasfilters
 lasfiltersurfacepoints = function(las, res)
 {
+  UseMethod("lasfiltersurfacepoints", las)
+}
+
+#' @export
+lasfiltersurfacepoints.LAS = function(las, res)
+{
   return(lasfilterdecimate(las, highest(res)))
+}
+
+#' @export
+lasfiltersurfacepoints.LAScluster = function(las, res)
+{
+  buffer <- NULL
+  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  if (is.empty(x)) return(NULL)
+  x <- lasfiltersurfacepoints(x, res)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lasfiltersurfacepoints.LAScatalog = function(las, res)
+{
+  opt_select(las)       <- "*"
+  opt_chunk_buffer(las) <- res
+
+  output <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output <- unlist(output)
+  ctg    <- suppressMessages(suppressWarnings(catalog(output)))
+
+  opt_copy(ctg) <- las
+
+  return(ctg)
 }

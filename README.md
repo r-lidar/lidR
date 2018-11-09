@@ -68,8 +68,7 @@ plot(chm)
 
 ```r
 ctg <- catalog("<folder/>")
-projection(ctg) <- sp::CRS("+proj=utm +zone=17")
-plot(ctg)
+plot(ctg, map = TRUE)
 ```
 
 From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `lasclip`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that can be done with multicore processing, where possible.

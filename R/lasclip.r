@@ -406,7 +406,9 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)
   {
-    if (cluster@files[1] == "") return(NULL)
+    if (cluster@files[1] == "")
+      return(NULL)
+
     x <- suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
 
     if (is.null(x))
@@ -436,7 +438,35 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     # If the user want to write the ROIs in files. Generate a filename.
     if (opt_output_files(ctg) != "")
     {
-      X         <- if (!is.null(sf)) sf[i,] else if (!is.null(data)) data[i,] else list()
+      if (!is.null(sf))
+      {
+        if (ncol(sf) > 1)
+        {
+          X <- sf[i,]
+        }
+        else
+        {
+          X <- sf[i,]
+          X <- as.list(X)
+          names(X) <- names(sf)
+        }
+      }
+      else if (!is.null(data))
+      {
+        if (ncol(data) > 1)
+        {
+          X <- data[i,]
+        }
+        else
+        {
+          X <- data[i,]
+          X <- as.list(X)
+          names(X) <- names(data)
+        }
+      }
+      else
+        X <- list()
+
       X$ID      <- i
       X$XCENTER <- clusters[[i]]@center$x
       X$XCENTER <- clusters[[i]]@center$y

@@ -90,24 +90,28 @@ catalog <- function(folder, ...)
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
+  epsg(header)
   epsg   <- epsg(header)
   crs    <- tryCatch({ sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
 
   headers <- lapply(files, function(x)
   {
-    header <- rlas::read.lasheader(x)
-    header$`Variable Length Records` <- NULL
-    data.table::setDT(header)
-    return(header)
+    header        <- LASheader(rlas::read.lasheader(x))
+    epsg          <- epsg(header)
+    PHB           <- header@PHB
+    PHB$EPSG      <- epsg
+    names(PHB)    <- make.names(names(PHB))
+    names(PHB)[4] <-  "GUID"
+    return(PHB)
   })
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
 
-  xmin <- headers$`Min X`
-  xmax <- headers$`Max X`
-  ymin <- headers$`Min Y`
-  ymax <- headers$`Max Y`
+  xmin <- headers$Min.X
+  xmax <- headers$Max.X
+  ymin <- headers$Min.Y
+  ymax <- headers$Max.Y
   ids  <- as.character(seq_along(files))
 
   pgeom <- lapply(seq_along(ids), function(xi)
@@ -138,9 +142,9 @@ catalog <- function(folder, ...)
 
 setMethod("show", "LAScatalog", function(object)
 {
-  area    <- raster::area(object)
+  area    <- area(object)
   area.h  <- area
-  npoints <- sum(object@data$`Number of point records`)
+  npoints <- sum(object@data$Number.of.point.records)
   npoints.h <- npoints
   inherit <- getClass("LAScatalog")@contains[[1]]@superClass
   ext     <- raster::extent(object)
@@ -148,7 +152,7 @@ setMethod("show", "LAScatalog", function(object)
   units   <- if (length(units) == 0) "units" else units
   areaprefix <- ""
   pointprefix <- ""
-  if (area > 1000*1000)
+  if (area > 1000*1000/2)
   {
     areaprefix <- "k"
     area.h  <- round(area/(1000*1000),2)
@@ -156,24 +160,24 @@ setMethod("show", "LAScatalog", function(object)
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thouthands"
+    pointprefix <- "thouthand"
     npoints.h <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "millions"
+    pointprefix <- "million"
     npoints.h <- round(npoints/(1000^2),2)
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billions"
+    pointprefix <- "billion"
     npoints.h <- round(npoints/(1000^3),2)
   }
 
-  cat("class       : ", class(object), " (inherit ", inherit, ")\n", sep = "")
+  cat("class       : ", class(object), "\n", sep = "")
   cat("extent      :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
   cat("coord. ref. :", object@proj4string@projargs, "\n")
-  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep="")
+  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
@@ -189,23 +193,23 @@ setMethod("summary", "LAScatalog", function(object, ...)
 
   cat("Summary of the processing options:\n")
 
-  if(byfile)
+  if (byfile)
     cat("  - Catalog will be process by file respecting the original tilling pattern\n")
   else
-    cat("  - Catalog will be process by chuncks of size:", opt_chunk_size(object), "\n")
+    cat("  - Catalog will be process by chunks of size:", opt_chunk_size(object), "\n")
 
   cat("  - Catalog will be processed using", opt_cores(object), "core(s).\n")
 
   cat("Summary of the output options:\n")
 
-  if(!save)
+  if (!save)
     cat("  - Outputs will be returned in R objects.\n")
   else
     cat("  - Outputs will be written in files:", opt_output_files(object), "\n")
 
-  if(!laz & save)
+  if (!laz & save)
     cat("  - If outputs are LAS objects, they will not be compress (.las)\n")
-  else if(laz & save)
+  else if (laz & save)
     cat("  - If outputs are LAS objects, they will be compress (.laz)\n")
 
   cat("Summary of the input options:\n")
@@ -276,7 +280,7 @@ setMethod("$<-", "LAScatalog", function(x, name, value)
 setMethod("area", "LAScatalog",  function(x, ...)
 {
   x <- x@data
-  area <- sum((x$`Max X` - x$`Min X`) * (x$`Max Y` - x$`Min Y`))
+  area <- sum((x$Max.X - x$Min.X) * (x$Max.Y - x$Min.Y))
   return(area)
 })
 
@@ -300,18 +304,20 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' plot(ctg)
 #' }
 #' @describeIn plot plot LAScatalog
-setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = TRUE, ...)
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, ...)
 {
   plot.LAScatalog(x, y, mapview, ...)
 })
 
-plot.LAScatalog = function(x, y, mapview = TRUE, ...)
+plot.LAScatalog = function(x, y, mapview = FALSE, ...)
 {
-
-  if (mapview & !requireNamespace("mapview", quietly = TRUE))
+  if (mapview == TRUE)
   {
-    message("This function can be enhanced by installing the library 'mapview'.")
-    mapview = FALSE
+    if (!requireNamespace("mapview", quietly = TRUE))
+    {
+      message("'mapview' is requiered to display the LAScatalog interactively.")
+      mapview = FALSE
+    }
   }
 
   if (mapview)
@@ -323,10 +329,10 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
   {
     param = list(...)
 
-    xmin = min(x@data$`Min X`)
-    xmax = max(x@data$`Max X`)
-    ymin = min(x@data$`Min Y`)
-    ymax = max(x@data$`Max Y`)
+    xmin = min(x@data$Min.X)
+    xmax = max(x@data$Max.X)
+    ymin = min(x@data$Min.Y)
+    ymax = max(x@data$Max.Y)
 
     xcenter = (xmin + xmax)/2
     ycenter = (ymin + ymax)/2
@@ -347,6 +353,6 @@ plot.LAScatalog = function(x, y, mapview = TRUE, ...)
     else if (param$add != TRUE)
       do.call(graphics::plot, param)
 
-    graphics::rect(x@data$`Min X`, x@data$`Min Y`, x@data$`Max X`, x@data$`Max Y`, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
+    graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
   }
 }

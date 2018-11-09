@@ -11,14 +11,14 @@ grid_metrics(las, func, res = 20, start = c(0, 0))
 
 \item{func}{expression. The function to be applied to each cell (see section "Parameter func")}
 
-\item{res}{numeric. The resolution of the output \code{Raster}. Can optionnaly be a \code{RasterLayer}.
-In that case the the \code{RasterLayer} is used as layout.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionally be a \code{RasterLayer}.
+In that case the \code{RasterLayer} is used as the layout.}
 
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0).}
 }
 \value{
-A \code{RasterLayer} or a \code{RasterBrick} containing a numeric in each cell. If the
+A \code{RasterLayer} or a \code{RasterBrick} containing a numeric value in each cell. If the
 \code{RasterLayer}s are written on disk when running the function with a \code{LAScatalog}, a
 virtual raster mosaic is returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
@@ -61,13 +61,13 @@ dispatch the point cloud in the user's function.
 This section appears in each function that supports a LAScatalog as input.\cr
 
 In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-functions uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful read of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended to process \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that document the supported engine options.\cr
+function uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that documents the supported engine options.\cr
 
-\code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files
+The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
 but this is not mandatory.
 }
 
@@ -76,21 +76,21 @@ but this is not mandatory.
 Supported processing options for a \code{LAScatalog} in \code{grid_*} functions (in bold). For
 more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item \strong{tiling_size}: How much data are loaded at once. The tiling size may be slightly modified
-internally to ensure a strict continuous wall-to-wall output even when tiling size equal to 0 (processing
+\item \strong{chunk size}: How much data are loaded at once. The chunk size may be slightly modified
+internally to ensure a strict continuous wall-to-wall output even when chunk size equal to 0 (processing
 by file).
-\item buffer: This function guarantee a strict continuous wall-to-wall output. The \code{buffer} option
-is no considered.
-\item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified
+\item chunk buffer: This function guarantee a strict continuous wall-to-wall output. The \code{buffer}
+option is not considered.
+\item \strong{chunk alignment}: Align the processed chunks. The alignment may be slightly modified
 internally to ensure a strict continuous wall-to-wall output.
 \item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
 templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
-\code{ID} and, if tiling size equal to 0 (processing by file), \code{ORIGINALFILENAME}.
+\code{ID} and, if chunk size equal to 0 (processing by file), \code{ORIGINALFILENAME}.
 \item laz_compression: is not supported because this function will never write \code{las/laz} files
-\item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded or not
-and this options is not considered. In \link{grid_metrics} this option is respected.
+\item \strong{\emph{select}}: The functions \code{grid_*} usually know for you what should be loaded
+or not and this options is not considered. In \link{grid_metrics} this option is respected.
 \item \strong{filter}: Read only points of interest.
 }
 }

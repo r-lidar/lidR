@@ -52,34 +52,37 @@ LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzr")
 ctg = catalog(LASfile)
 opt_cores(ctg) <- 1
-opt_chunk_size(ctg) <- 160
-opt_chunk_buffer(ctg) <- 5
+opt_chunk_size(ctg) <- 100
 opt_progress(ctg) <- FALSE
 
 test_that("grid_canopy tin works both with LAS and LAScatalog", {
   x = grid_canopy(las, 1, dsmtin())
   y = grid_canopy(ctg, 1, dsmtin())
+  x = crop(x, extent(x) - 1)
+  y = crop(y, extent(y) - 1)
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(1,1))
-  expect_equal(dim(x), c(90,90,1))
-  expect_equal(raster::extent(x), raster::extent(481260,481350,3812921,3813011))
+  expect_equal(dim(x), c(88,90,1))
+  expect_equal(raster::extent(x), raster::extent(481260,481350,3812922,3813010))
   expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "Z")
-  expect_equal(x, y, tolerance = 0.0002)
+  expect_equal(x, y, tolerance = 0.00025)
 })
 
 test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
   f = pitfree(thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5))
   x = grid_canopy(las, 1, f)
   y = grid_canopy(ctg, 1, f)
+  x = crop(x, extent(x) - 1)
+  y = crop(y, extent(y) - 1)
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(1,1))
-  expect_equal(dim(x), c(90,90,1))
-  expect_equal(raster::extent(x), raster::extent(481260,481350,3812921,3813011))
+  expect_equal(dim(x), c(88,90,1))
+  expect_equal(raster::extent(x), raster::extent(481260,481350,3812922,3813010))
   expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "Z")
-  expect_equal(x, y, tolerance = 0.0002)
+  expect_equal(x, y, tolerance = 0.00025)
 })
 

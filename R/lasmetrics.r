@@ -74,12 +74,11 @@
 #' lasmetrics(lidar, .stdmetrics)
 lasmetrics = function(obj, func)
 {
-  func_call = substitute(func)
-
-  if(is(func_call, "name"))
-    func_call = eval(func_call)
-
-  metric = with(obj@data, eval(func_call))
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+  func      <- lazyeval::f_interp(func)
+  call      <- lazyeval::as_call(func)
+  metric    <- with(obj@data, eval(call))
   return(metric)
 }
 
