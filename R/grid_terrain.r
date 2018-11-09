@@ -155,7 +155,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 }
 
 #' @export
-grid_terrain.LAScluster= function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
@@ -176,7 +176,9 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
   }
 
   opt_select(las) <- "xyzc"
-  output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  alignment <- list(res = res, start = c(0,0))
+
+  output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
 
   if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_terrain"))

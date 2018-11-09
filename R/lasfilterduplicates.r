@@ -69,7 +69,7 @@ lasfilterduplicates.LAScatalog = function(las)
 {
   opt_select(las) <- "*"
 
-  output <- catalog_apply2(las, lasfilterduplicates, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output <- catalog_apply2(las, lasfilterduplicates, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output <- unlist(output)
   ctg    <- suppressMessages(suppressWarnings(catalog(output)))
 

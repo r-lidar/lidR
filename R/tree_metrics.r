@@ -133,7 +133,7 @@ tree_metrics.LAScatalog = function(las, func, field = "treeID")
   if (!is_formula) func <- lazyeval::f_capture(func)
   glob <- future::getGlobalsAndPackages(func)
 
-  output <- catalog_apply2(las, tree_metrics, func = substitute(func), field = field, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, globals = glob$globals)
+  output <- catalog_apply2(las, tree_metrics, func = substitute(func), field = field, need_buffer = TRUE, check_alignment = FALSE, drop_null = TRUE, globals = glob$globals)
   output <- do.call(rbind, output)
   output@proj4string <- las@proj4string
   return(output)
