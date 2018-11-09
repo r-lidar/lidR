@@ -40,7 +40,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     else
       params[first_p] <- list(NULL)
 
-    # if globals is a list it means that global variables were manually given to the future
+    # If globals is a list it means that global variables were manually given to the future
     # thus we need to add the function FUN and its params as globals. global variables are
     # manually given in grid_metrics and tree_metrics because of the lazy evaluation of the
     # user's expression that CANNOT be exported automatically by future.
@@ -68,10 +68,8 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       if (codes[j] == ASYNC_RUN) next
       if (processing_options$progress)
       {
-        if (!is.null(clusters[[j]]))
-          update_graphic(clusters[[j]]@bbox, codes[j])
-
-        update_pb(pb, i/nclust)
+        update_graphic(clusters[[j]], codes[j])
+        update_pb(pb, sum(codes != ASYNC_RUN)/length(codes))
       }
     }
   }
@@ -87,10 +85,8 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       if (codes[j] == ASYNC_RUN) next
       if (processing_options$progress)
       {
-        if (!is.null(clusters[[j]]))
-          update_graphic(clusters[[j]]@bbox, codes[j])
-
-        update_pb(pb, i/nclust)
+        update_graphic(clusters[[j]], codes[j])
+        update_pb(pb, sum(codes != ASYNC_RUN)/length(codes))
       }
     }
 
@@ -130,8 +126,13 @@ early_eval <- function(future, stop_early)
   return(code)
 }
 
-update_graphic = function(bbox, code)
+update_graphic = function(cluster, code)
 {
+  if (is.null(cluster))
+    return(NULL)
+
+  bbox = cluster@bbox
+
   if (code == ASYNC_OK)
     col = "forestgreen"
   else if (code == ASYNC_NULL)
