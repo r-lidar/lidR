@@ -67,10 +67,10 @@
 #' plot(chm, col = col)
 grid_canopy = function(las, res, algorithm)
 {
-  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+  if (!assertive::is_a_number(res) & !is(res, "RasterLayer"))
     stop("res is not a number or a RasterLayer", call. = FALSE)
 
-  if(assertive::is_a_number(res))
+  if (assertive::is_a_number(res))
     assertive::assert_all_are_non_negative(res)
 
   UseMethod("grid_canopy", las)
@@ -89,7 +89,7 @@ grid_canopy.LAS = function(las, res, algorithm)
   . <- X <- Y <- Z <- NULL
 
   subcircle <- as.list(environment(algorithm))$subcircle
-  subcircle <- if(is.null(subcircle)) 0 else subcircle
+  subcircle <- if (is.null(subcircle)) 0 else subcircle
 
   layout <- make_overlay_raster(las, res, subcircle = subcircle)
   names(layout) <- "Z"
@@ -124,8 +124,9 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
 
   opt_select(las) <- "xyzr"
   opt_chunk_buffer(las) <- 2
+  alignment <- list(res = res, start = c(0,0))
 
-  output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignement = TRUE, drop_null = TRUE)
+  output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
 
   if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_canopy"))

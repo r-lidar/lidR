@@ -104,11 +104,11 @@ catalog_retile = function(ctg)
 
   laz  <- opt_laz_compression(ctg)
   path <- opt_output_files(ctg)
-  path <- if(laz) paste0(path, ".laz") else paste0(path, ".las")
+  path <- if (laz) paste0(path, ".laz") else paste0(path, ".las")
   ctg@output_options$output_files <- path
   path <- dirname(path)
 
-  if(interact)
+  if (interact)
   {
     opt_progress(ctg) <- TRUE
 
@@ -124,12 +124,12 @@ catalog_retile = function(ctg)
       return(invisible(NULL))
   }
 
-  if(!dir.exists(path))
+  if (!dir.exists(path))
     dir.create(path, recursive = TRUE)
 
   files <- list.files(path, pattern = "(?i)\\.la(s|z)$")
 
-  if(length(files) > 0)
+  if (length(files) > 0)
     stop("The output folder already contains .las or .laz files. Operation aborted.", call. = FALSE)
 
   reshape_func = function(cluster)
@@ -140,7 +140,7 @@ catalog_retile = function(ctg)
     return(ret)
   }
 
-  catalog_apply2(ctg, reshape_func, need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  catalog_apply2(ctg, reshape_func, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
 
   return(catalog(path))
 }

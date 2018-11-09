@@ -41,6 +41,7 @@
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
 #' @param FUN A user-defined function that respects a given template (see section function template)
 #' @param ... Optional arguments to FUN.
+#' @param check_alignment See dedicated section and example.
 #'
 #' @section Edge artifacts:
 #'
@@ -84,6 +85,23 @@
 #' 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
 #' is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-function
 #' by returning \code{NULL} allows the internal engine to know that the cluster was empty.
+#'
+#' @section raster alignment:
+#' When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
+#' with the raster to avoid egde artifact. Indeed if the egde of a chunk do not correspond to the edge
+#' of the pixels the output will not be strictly continuous and will have egde artifacts (potentially
+#' not visible). To to so the argument \code{check_alignment} can take the resolution of the raster
+#' as input as well as the starting point if needed. The folowing are accepted:\cr\cr
+#' \preformatted{
+#' # check if the chunks are aligned with a raster of resolution 20
+#' check_alignment = 20
+#' check_alignment = liste(res = 20)
+#'
+#' # check if chunks are alignedre aligned with a raster of resolution 20
+#' # that starts a (0,10)
+#' check_alignment = liste(res = 20, start = c(0,10))
+#' }
+#' See also \link{grid_metrics} for more details.
 #'
 #' @section Supported processing options:
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
@@ -151,7 +169,7 @@
 #'
 #' # 5. Post-process the output to merge the results (depending on the output computed).
 #' # Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
-#' output = do.call(sp::rbind, output)
+#' output = do.call(rbind, output)
 #' sp::plot(output)
 #'
 #' ## ===================================================
@@ -180,11 +198,11 @@
 #' opt_chunk_size(project) <- 80       # extremely small because this is a dummy example
 #' opt_select(project) <- "xyz"        # don't need to read something other than the coordinates
 #'
-#' output = catalog_apply(project, rumple_index_surface, res = 20)
+#' output = catalog_apply(project, rumple_index_surface, res = 20, check_alignment = 20)
 #' output = do.call(raster::merge, output)
 #' plot(output, col = height.colors(50))
 #' @export
-catalog_apply <- function(ctg, FUN, ...)
+catalog_apply <- function(ctg, FUN, ..., check_alignment = 0)
 {
   assertive::assert_is_all_of(ctg, "LAScatalog")
   assertive::assert_is_function(FUN)
@@ -192,20 +210,43 @@ catalog_apply <- function(ctg, FUN, ...)
   if (!check_fun_with_empty_cluster(FUN, ...))
     stop("User's function does not return NULL for empty chunks. Please see the documentation.")
 
-  output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = TRUE, need_output_file = FALSE)
+  if (is.numeric(check_alignment))
+  {
+    assertive::assert_is_a_number(check_alignment)
+    assertive::assert_all_are_non_negative(check_alignment)
+    check_alignment <- list(res = check_alignment, start = c(0,0))
+  }
+  else if (is.list(check_alignment))
+  {
+    assertive::assert_is_a_number(check_alignment$res)
+    assertive::assert_all_are_non_negative(check_alignment$res)
+
+    if (!is.null(check_alignment$start))
+      assertive::assert_is_numeric(check_alignment$start)
+  }
+  else
+    stop("Invalid parameter 'check_alignment")
+
+  raster_alignment = check_alignment
+
+  if (check_alignment$res == 0)
+    check_alignment = FALSE
+  else
+    check_alignment = TRUE
+
+  output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignment = check_alignment, drop_null = TRUE, need_output_file = FALSE, globals = TRUE, raster_alignment = raster_alignment)
   return(output)
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = TRUE)
+catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignment = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = TRUE, raster_alignment = list(res = 0, start = c(0,0)))
 {
   assertive::assert_is_function(FUN)
   assertive::assert_is_a_bool(need_buffer)
-  assertive::assert_is_a_bool(check_alignement)
+  assertive::assert_is_a_bool(check_alignment)
   assertive::assert_is_a_bool(drop_null)
 
-  p          <- list(...)
-  resolution <- if (is.null(p$res)) 0 else p$res
-  start      <- if (is.null(p$start)) c(0,0) else p$start
+  resolution <- raster_alignment$res
+  start      <- raster_alignment$start
 
   if (is(resolution, "RasterLayer"))
   {
@@ -214,9 +255,9 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
     start        <- c(ext@xmin, ext@ymin)
   }
 
-  ctg      <- check_and_fix_options(ctg, need_buffer, check_alignement, need_output_file, res = resolution, start = start)
+  ctg      <- check_and_fix_options(ctg, need_buffer, check_alignment, need_output_file, res = resolution, start = start)
   clusters <- catalog_makecluster(ctg)
-  clusters <- check_and_fix_clusters(ctg, clusters, check_alignement, res = resolution, start = start)
+  clusters <- check_and_fix_clusters(ctg, clusters, check_alignment, res = resolution, start = start)
 
   oldstate <- options("lidR.progress")[[1]]
   options(lidR.progress = FALSE)
@@ -230,7 +271,7 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignement 
   return(output)
 }
 
-check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output_file, res = NULL, start = NULL)
+check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_file, res = NULL, start = NULL)
 {
   # The function expect a buffer to guarantee a stric wall-to-wall output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
@@ -242,7 +283,7 @@ check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output
   # clusters are aligned with the pixels. In case of chunk_size > 0 this is an easy to check before making
   # the clusters
 
-  if (check_alignement & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
+  if (check_alignment & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
     # If the clustering option does not match with the resolution
     t_size     <- opt_chunk_size(ctg)
@@ -272,13 +313,13 @@ check_and_fix_options = function(ctg, need_buffer, check_alignement, need_output
   return(ctg)
 }
 
-check_and_fix_clusters = function(ctg, clusters, check_alignement, res = NULL, start = NULL)
+check_and_fix_clusters = function(ctg, clusters, check_alignment, res = NULL, start = NULL)
 {
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
   # clusters are aligned with the pixels. In case of chunk_size =0 (processed by file) the clusters
   # must be checked after being created. Can be skipped if the catalog is not a wall-to-wall catalog.
 
-  if (check_alignement & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
+  if (check_alignment & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
   {
     for (i in 1:length(clusters))
     {

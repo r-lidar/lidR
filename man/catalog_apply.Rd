@@ -4,7 +4,7 @@
 \alias{catalog_apply}
 \title{LAScatalog processing engine}
 \usage{
-catalog_apply(ctg, FUN, ...)
+catalog_apply(ctg, FUN, ..., check_alignment = 0)
 }
 \arguments{
 \item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object.}
@@ -12,6 +12,8 @@ catalog_apply(ctg, FUN, ...)
 \item{FUN}{A user-defined function that respects a given template (see section function template)}
 
 \item{...}{Optional arguments to FUN.}
+
+\item{check_alignment}{See dedicated section and example.}
 }
 \description{
 This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
@@ -70,6 +72,25 @@ The line \code{if(is.empty(las)) return(NULL)} is important because some cluster
 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
 is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-function
 by returning \code{NULL} allows the internal engine to know that the cluster was empty.
+}
+
+\section{raster alignment}{
+
+When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
+with the raster to avoid egde artifact. Indeed if the egde of a chunk do not correspond to the edge
+of the pixels the output will not be strictly continuous and will have egde artifacts (potentially
+not visible). To to so the argument \code{check_alignment} can take the resolution of the raster
+as input as well as the starting point if needed. The folowing are accepted:\cr\cr
+\preformatted{
+# check if the chunks are aligned with a raster of resolution 20
+check_alignment = 20
+check_alignment = liste(res = 20)
+
+# check if chunks are alignedre aligned with a raster of resolution 20
+# that starts a (0,10)
+check_alignment = liste(res = 20, start = c(0,10))
+}
+See also \link{grid_metrics} for more details.
 }
 
 \section{Supported processing options}{
@@ -140,7 +161,7 @@ output = catalog_apply(project, my_tree_detection_method, ws = 5)
 
 # 5. Post-process the output to merge the results (depending on the output computed).
 # Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
-output = do.call(sp::rbind, output)
+output = do.call(rbind, output)
 sp::plot(output)
 
 ## ===================================================
@@ -169,7 +190,7 @@ opt_cores(project) <- 1L
 opt_chunk_size(project) <- 80       # extremely small because this is a dummy example
 opt_select(project) <- "xyz"        # don't need to read something other than the coordinates
 
-output = catalog_apply(project, rumple_index_surface, res = 20)
+output = catalog_apply(project, rumple_index_surface, res = 20, check_alignment = 20)
 output = do.call(raster::merge, output)
 plot(output, col = height.colors(50))
 }

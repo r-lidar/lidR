@@ -113,7 +113,7 @@ lassnags.LAScatalog = function (las, algorithm, attribute = "snagCls")
 {
   opt_select(las) <- "*"
 
-  output      <- catalog_apply2(las, lassnags,  algorithm = algorithm, need_buffer = TRUE, check_alignement = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output      <- catalog_apply2(las, lassnags,  algorithm = algorithm, need_buffer = TRUE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output      <- unlist(output)
   ctg         <- catalog(output)
   opt_copy(ctg) <- las
