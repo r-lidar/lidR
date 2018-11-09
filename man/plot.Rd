@@ -13,9 +13,9 @@ plot(x, y, ...)
 
 \S4method{plot}{LAS,missing}(x, y, color = "Z",
   colorPalette = height.colors(50), bg = "black", trim = Inf,
-  backend = c("rgl", "pcv"), clear_artifact = FALSE, nbits = 16, ...)
+  backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
 
-\S4method{plot}{LAScatalog,missing}(x, y, mapview = TRUE, ...)
+\S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE, ...)
 
 \S4method{plot}{LASheader,missing}(x, y, mapview = TRUE, ...)
 }
@@ -45,16 +45,14 @@ the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relie
 using few memory. \code{PointCloudViewer} is not available on CRAN yet and should
 be install from github (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).}
 
-\item{clear_artifact}{logical. It is a known and docunented issue that the 3D visialisation with
+\item{clear_artifacts}{logical. It is a known and docunented issue that the 3D visualisation with
 \code{rgl} displays artifacts. The points look aligned and/or regularly space in some view angle.
 This is because \code{rgl} computes with single precision \code{float}. To fix that the user can
-set this option to \code{TRUE}. In this case the point cloud is shifted to (0,0) to reduce the
-number of digit needed to represent its coordinates. The drawback is that the user cannot anymore
-add easily other objects in the scene since de coordinates will not match anymore. If \code{clear_artifact = TRUE}
-the function returns the xy shift values invisibly.}
+the point cloud is shifted to (0,0) to reduce the number of digit needed to represent its coordinates.
+The drawback is that the point cloud is not plotted at its actual coordinates.}
 
-\item{nbits}{integer. If \code{color = RGB} it assume that RGB color are coded on 16 bits as described
-in the LAS format specifications. Actually this is not always respected. If the colors are stored
+\item{nbits}{integer. If \code{color = RGB} it assumes that RGB color are coded on 16 bits as described
+in the LAS format specification. Actually this is not always respected. If the colors are stored
 on 8 bits set this parameter to 8.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
@@ -85,8 +83,8 @@ plot(las, clear_artifact = TRUE)
 
 # Outliers in intensity breaks the color range. Use the trim parameter.
 col <- heat.colors(50)
-plot(las, color = Intensity, colorPalette = col, clear_artifact = TRUE)
-plot(las, color = Intensity, colorPalette = col, trim = 70, clear_artifact = TRUE)
+plot(las, color = Intensity, colorPalette = col)
+plot(las, color = Intensity, colorPalette = col, trim = 70)
 
 \dontrun{
 

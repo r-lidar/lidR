@@ -46,7 +46,7 @@
 #' dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #'
 #' plot(dtm, col = terrain.colors(50))
-#' plot3d(dtm)
+#' plot_dtm3d(dtm)
 tin = function()
 {
   f = function(what, where)
@@ -91,7 +91,7 @@ tin = function()
 #' dtm = grid_terrain(las, algorithm = tin())
 #'
 #' plot(dtm, col = terrain.colors(50))
-#' plot3d(dtm)
+#' plot_dtm3d(dtm)
 knnidw = function(k = 10, p = 2)
 {
   f = function(what, where)
@@ -133,7 +133,7 @@ knnidw = function(k = 10, p = 2)
 #' dtm = grid_terrain(las, algorithm = kriging())
 #'
 #' plot(dtm, col = terrain.colors(50))
-#' plot3d(dtm)
+#' plot_dtm3d(dtm)
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
   f = function(what, where)

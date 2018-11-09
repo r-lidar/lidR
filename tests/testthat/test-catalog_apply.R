@@ -13,28 +13,28 @@ test_that("catalog apply works", {
   test = function(cluster)
   {
     las = readLAS(cluster)
-    if(is.empty(las)) return(NULL)
+    if (is.empty(las)) return(NULL)
     return(nrow(las@data))
   }
 
   req = catalog_apply(ctg, test)
 
   s1 = do.call(sum, req)
-  s2 = sum(ctg@data$`Number of point records`)
+  s2 = sum(ctg@data$Number.of.point.records)
 
   expect_equal(s1,s2)
 
   test = function(cluster)
   {
     las = readLAS(cluster)
-    if(is.empty(las)) return(NULL)
+    if (is.empty(las)) return(NULL)
     return(sum(las@data$ReturnNumber == 1))
   }
 
   req = catalog_apply(ctg, test)
 
   s1 = do.call(sum, req)
-  s2 = sum(ctg@data$`Number of 1st return`)
+  s2 = sum(ctg@data$Number.of.1st.return)
 
   expect_equal(s1,s2)
 })
@@ -45,7 +45,7 @@ test_that("catalog apply write drivers work", {
   test = function(cluster)
   {
     las = readLAS(cluster)
-    if(is.empty(las)) return(NULL)
+    if (is.empty(las)) return(NULL)
     return(head(las@data))
   }
 
@@ -59,7 +59,7 @@ test_that("catalog apply write drivers work", {
   test = function(cluster)
   {
     las = readLAS(cluster)
-    if(is.empty(las)) return(NULL)
+    if (is.empty(las)) return(NULL)
     las = lasfilterground(las)
     las = as.spatial(las)
     return(las)
@@ -79,7 +79,7 @@ test_that("catalog apply custom drivers work", {
   test = function(cluster)
   {
     las = readLAS(cluster)
-    if(is.empty(las)) return(NULL)
+    if (is.empty(las)) return(NULL)
     return(list(0))
   }
 

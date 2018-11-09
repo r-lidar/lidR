@@ -55,6 +55,8 @@ lascheck = function(las)
 #' @export
 lascheck.LAS = function(las)
 {
+  Classification <- Z <- NULL
+
   data <- las@data
   phb  <- las@header@PHB
   vlr  <- las@header@VLR
@@ -596,11 +598,11 @@ lascheck.LAS = function(las)
 
   if (!is.null(data$PointSourceID))
   {
-    s = fast_countequal(data$PointSourceID)
+    s = fast_countequal(data$PointSourceID, 0L)
 
     if (s == nrow(data))
       no()
-    else if (s > 0 & s <  nrow(data))
+    else if (s > 0 & s < nrow(data))
       maybe()
     else
       yes()
@@ -645,58 +647,68 @@ lascheck.LAScatalog = function(las)
 
   h2("Checking file version consistency...")
 
-  s = length(unique(paste0(data$`Version Major`, ".", data$`Version Minor`)))
+  s = length(unique(paste0(data$Version.Major, ".", data$Version.Minor)))
 
   if (s > 1L)
-    fail("Unconsistant file versions")
+    warn("Unconsistant file versions")
   else
     ok()
 
   h2("Checking scale consistency...")
 
-  s1 = length(unique(data$`X scale factor`))
-  s2 = length(unique(data$`Y scale factor`))
-  s3 = length(unique(data$`Z scale factor`))
+  s1 = length(unique(data$X.scale.factor))
+  s2 = length(unique(data$Y.scale.factor))
+  s3 = length(unique(data$Z.scale.factor))
 
   if (s1 + s2 + s3 > 3L)
-    fail("Unconsistant scale factors")
+    warn("Unconsistant scale factors")
   else
     ok()
 
   h2("Checking offset consistency...")
 
-  s1 = length(unique(data$`X offset`))
-  s2 = length(unique(data$`Y offset`))
-  s3 = length(unique(data$`Z offset`))
+  s1 = length(unique(data$X.offset))
+  s2 = length(unique(data$Y.offset))
+  s3 = length(unique(data$Z.offset))
 
   if (s1 + s2 + s3 > 3L)
-    fail("Unconsistant offsets")
+    warn("Unconsistant offsets")
   else
     ok()
 
   h2("Checking point type consistency...")
 
-  s = length(unique(data$`Point Data Format ID`))
+  s = length(unique(data$Point.Data.Format.ID))
 
   if (s > 1L)
-    fail("Unconsistant point formats")
+    warn("Unconsistant point formats")
   else
     ok()
 
   h2("Checking VLR consistency...")
 
-  s = length(unique(data$`Number of variable length record`))
+  s = length(unique(data$Number.of.variable.length.record))
 
   if (s > 1L)
     fail("Unconsistant number of VLR")
   else
     ok()
 
+  h2("Checking CRS consistency...")
+
+  s = length(unique(data$EPSG))
+
+  if (s > 1L)
+    fail("Unconsistant EPSG codes")
+  else
+    ok()
+
+
   h1("Checking already done preprocessing")
 
   h2("Checking negative outliers...")
 
-  s = sum(data$`Min Z` < 0)
+  s = sum(data$Min.Z < 0)
 
   if (s > 0)
     warn(g("{s} file(s) with points below 0"))
@@ -705,7 +717,7 @@ lascheck.LAScatalog = function(las)
 
   h2("Checking normalization...")
 
-  mean_min = mean(abs(data$`Min Z`))
+  mean_min = mean(abs(data$Min.Z))
 
   if (mean_min <= 0.1)
     yes()

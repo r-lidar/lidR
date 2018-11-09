@@ -25,74 +25,74 @@
 #
 # ===============================================================================
 
-#' Select LAS files manually from a LAScatalog
-#'
-#' Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-#' enables the user to subset a LAScatalog by clicking on the map of the file using the mouse.
-#'
-#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
-#'
-#' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
-#' also \link[lidR:plot]{plot})
-#'
-#' @return A LAScatalog object
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' ctg = catalog("<Path to a folder containing a set of .las files>")
-#' new_ctg = catalog_select(ctg)
-#' }
-catalog_select = function(ctg, mapview = TRUE)
-{
-  assertive::assert_is_all_of(ctg, "LAScatalog")
-  assertive::assert_is_a_bool(mapview)
-
-  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
-
-  if(mapview & (!requireNamespace("mapview", quietly = TRUE) | !requireNamespace("mapedit", quietly = TRUE)))
-  {
-    message("This function can be enhanced by installing the libraries 'mapview' and 'mapedit'.")
-    mapview = FALSE
-  }
-
-  if (mapview)
-  {
-    mapview::mapview()
-    map     <- mapview::mapview(ctg)
-    index   <- mapedit::selectFeatures(ctg, map = map, index = TRUE)
-  }
-  else
-  {
-    plot.LAScatalog(ctg, mapview = FALSE)
-    index <- with(ctg@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
-  }
-
-  return(ctg[index,])
-}
-
-identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
-{
-  n <- length(minx)
-  x <- (minx + maxx)/2
-  y <- (miny + maxy)/2
-
-  sel <- rep(FALSE, n)
-
-  while(sum(sel) < n)
-  {
-    ans <- graphics::identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
-
-    if(!length(ans))
-      break
-
-    ans <- which(!sel)[ans]
-
-    graphics::rect(minx[ans], miny[ans], maxx[ans], maxy[ans], col = "forestgreen")
-
-    sel[ans] <- TRUE
-  }
-
-  return(which(sel))
-}
+# Select LAS files manually from a LAScatalog
+#
+# Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
+# enables the user to subset a LAScatalog by clicking on the map of the file using the mouse.
+#
+# @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
+#
+# @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
+# also \link[lidR:plot]{plot})
+#
+# @return A LAScatalog object
+#
+# @export
+#
+# @examples
+# \dontrun{
+# ctg = catalog("<Path to a folder containing a set of .las files>")
+# new_ctg = catalog_select(ctg)
+# }
+# catalog_select = function(ctg, mapview = TRUE)
+# {
+#   assertive::assert_is_all_of(ctg, "LAScatalog")
+#   assertive::assert_is_a_bool(mapview)
+#
+#   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
+#
+#   if(mapview & (!requireNamespace("mapview", quietly = TRUE) | !requireNamespace("mapedit", quietly = TRUE)))
+#   {
+#     message("This function can be enhanced by installing the libraries 'mapview' and 'mapedit'.")
+#     mapview = FALSE
+#   }
+#
+#   if (mapview)
+#   {
+#     mapview::mapview()
+#     map     <- mapview::mapview(ctg)
+#     index   <- mapedit::selectFeatures(ctg, map = map, index = TRUE)
+#   }
+#   else
+#   {
+#     plot.LAScatalog(ctg, mapview = FALSE)
+#     index <- with(ctg@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
+#   }
+#
+#   return(ctg[index,])
+# }
+#
+# identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
+# {
+#   n <- length(minx)
+#   x <- (minx + maxx)/2
+#   y <- (miny + maxy)/2
+#
+#   sel <- rep(FALSE, n)
+#
+#   while(sum(sel) < n)
+#   {
+#     ans <- graphics::identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
+#
+#     if(!length(ans))
+#       break
+#
+#     ans <- which(!sel)[ans]
+#
+#     graphics::rect(minx[ans], miny[ans], maxx[ans], maxy[ans], col = "forestgreen")
+#
+#     sel[ans] <- TRUE
+#   }
+#
+#   return(which(sel))
+# }

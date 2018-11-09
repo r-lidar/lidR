@@ -72,16 +72,16 @@
 #' plot(dtm1)
 #' plot(dtm2)
 #' plot(dtm3)
-#' plot3d(dtm1)
-#' plot3d(dtm2)
-#' plot3d(dtm3)
+#' plot_dtm3d(dtm1)
+#' plot_dtm3d(dtm2)
+#' plot_dtm3d(dtm3)
 #' }
 grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
-  if(!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+  if (!assertive::is_a_number(res) & !is(res, "RasterLayer"))
     stop("res is not a number or a RasterLayer", call. = FALSE)
 
-  if(assertive::is_a_number(res))
+  if (assertive::is_a_number(res))
     assertive::assert_all_are_non_negative(res)
 
   UseMethod("grid_terrain", las)
