@@ -97,6 +97,11 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' @param x The output of the function plot used with a LAS object
 #' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates
 #' @param z character. The name of the attribute that contains the height of the tree tops
+#' @param clear_artifacts logical. It is a known and docunented issue that the 3D visualisation with
+#' \code{rgl} displays artifacts. The objects look aligned missplaced in space in some view angle.
+#' This is because \code{rgl} computes with single precision \code{float}. To fix that the objects are
+#' shifted to (0,0) to reduce the number of digit needed to represent their coordinates. The drawback
+#' is that the objects are not plotted at their actual coordinates.
 #'
 #' @name plot_3d
 #' @examples
@@ -111,15 +116,28 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' x = plot(las)
 #' add_dtm3d(x, dtm)
 #' add_treetops3d(x, ttops)
+#'
+#' \dontrun{
+#' library(magrittr)
+#' plot(las) %>% add_dtm3d(dtm) %>% add_treetops3d(ttops)
+#' }
 NULL
 
 #' @rdname plot_3d
 #' @export
-plot_dtm3d = function(dtm, bg = "black", ...)
+plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
 {
   rgl::open3d()
   rgl::rgl.bg(color = bg)
-  add_dtm3d(c(0,0), dtm, ...)
+  shift = c(0,0)
+
+  if (clear_artifacts)
+  {
+    bbox  <- raster::extent(dtm)
+    shift <- c(bbox@xmin, bbox@ymin)
+  }
+
+  add_dtm3d(shift, dtm, ...)
 }
 
 #' @rdname plot_3d
@@ -149,6 +167,7 @@ add_dtm3d = function(x, dtm, ...)
   args$z <- mx
 
   do.call(rgl::surface3d, args)
+  return(invisible(x))
 }
 
 #' @rdname plot_3d
@@ -175,5 +194,6 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
   args$z   <- ttops@data[[z]]
 
   do.call(rgl::spheres3d, args)
+  return(invisible(x))
 }
 

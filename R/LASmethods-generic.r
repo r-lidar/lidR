@@ -53,8 +53,8 @@ setGeneric("summary", function(object, ...)
 #' Every point with a value higher than \code{trim} will be plotted with the highest color.
 #' @param clear_artifacts logical. It is a known and docunented issue that the 3D visualisation with
 #' \code{rgl} displays artifacts. The points look aligned and/or regularly space in some view angle.
-#' This is because \code{rgl} computes with single precision \code{float}. To fix that the user can
-#' the point cloud is shifted to (0,0) to reduce the number of digit needed to represent its coordinates.
+#' This is because \code{rgl} computes with single precision \code{float}. To fix that the point
+#' cloud is shifted to (0,0) to reduce the number of digit needed to represent its coordinates.
 #' The drawback is that the point cloud is not plotted at its actual coordinates.
 #' @param nbits integer. If \code{color = RGB} it assumes that RGB color are coded on 16 bits as described
 #' in the LAS format specification. Actually this is not always respected. If the colors are stored
