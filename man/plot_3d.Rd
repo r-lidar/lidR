@@ -7,7 +7,7 @@
 \alias{add_treetops3d}
 \title{Add spatial object to a point cloud scene}
 \usage{
-plot_dtm3d(dtm, bg = "black", ...)
+plot_dtm3d(dtm, bg = "black", clear_artifacts = TRUE, ...)
 
 add_dtm3d(x, dtm, ...)
 
@@ -17,6 +17,12 @@ add_treetops3d(x, ttops, z = "Z", ...)
 \item{dtm}{An object of the class \code{RasterLayer}}
 
 \item{bg}{The color for the background. Default is black.}
+
+\item{clear_artifacts}{logical. It is a known and docunented issue that the 3D visualisation with
+\code{rgl} displays artifacts. The objects look aligned missplaced in space in some view angle.
+This is because \code{rgl} computes with single precision \code{float}. To fix that the objects are
+shifted to (0,0) to reduce the number of digit needed to represent their coordinates. The drawback
+is that the objects are not plotted at their actual coordinates.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:surface3d]{surface3d} or
 \link[rgl:spheres3d]{spheres3d}}
@@ -47,4 +53,9 @@ plot_dtm3d(dtm)
 x = plot(las)
 add_dtm3d(x, dtm)
 add_treetops3d(x, ttops)
+
+\dontrun{
+library(magrittr)
+plot(las) \%>\% add_dtm3d(dtm) \%>\% add_treetops3d(ttops)
+}
 }
