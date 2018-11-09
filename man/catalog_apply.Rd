@@ -66,7 +66,7 @@ myfun = function(cluster, ...)
    # do something
    return(something)
 }}
-The line \code{if(is.empty(las)) return(NULL)} is important because some clusters may contain
+The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunk) may contain
 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
 is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-function
 by returning \code{NULL} allows the internal engine to know that the cluster was empty.
@@ -96,7 +96,7 @@ returns a \code{LAS} object.
 
 ## =========================================================================
 ## Example 1: detect all the tree tops over an entire catalog
-## (this is the existing lidR function 'tree_detection')
+## (this is basically the existing lidR function 'tree_detection')
 ## =========================================================================
 
 # 1. Build the user-defined function that analyzes each cluster of the catalog.
@@ -110,7 +110,7 @@ my_tree_detection_method = function(cluster, ws)
   las = readLAS(cluster)
   if (is.empty(las)) return(NULL)
 
-  # Find the tree tops using a user-developed method. For example (here simply a LMF),
+  # Find the tree tops using a user-developed method (here simply a LMF).
   ttops = tree_detection(las, lmf(ws))
 
   # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
@@ -133,14 +133,14 @@ opt_chunk_buffer(project) <- 10
 opt_cores(project) <- 1L
 opt_chunk_size(project) <- 80        # extremely small because this is a dummy example
 opt_select(project) <- "xyz"         # don't need to read something other than the coordinates
-opt_filter(project) <- "-keep_first" # for this example we will use only first returns. Why not?
+opt_filter(project) <- "-keep_first" # for this example we will use only first returns.
 
 # 4. Apply a user-defined function to take advantage of the internal engine
 output = catalog_apply(project, my_tree_detection_method, ws = 5)
 
 # 5. Post-process the output to merge the results (depending on the output computed).
 # Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
-output = do.call(rbind, output)
+output = do.call(sp::rbind, output)
 sp::plot(output)
 
 ## ===================================================

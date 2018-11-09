@@ -27,10 +27,11 @@
 
 #' An S4 class to represent a catalog of .las or .laz files
 #'
-#' A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is a way to manage and process an
-#' entire dataset. It allows the user to process a large area or to selectively clip data from a large area without
-#' loading all the data into the computer's memory. A \code{LAScatalog} can be built with the function \link{catalog}
-#' and is formally an extension of a \code{SpatialPolygonsDataFrame} that contains extra data to allow users greater control over
+#' A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
+#' a way to manage and process an entire dataset. It allows the user to process a large area or to
+#' selectively clip data from a large area without loading all the data into the computer's memory.
+#' A \code{LAScatalog} can be built with the function \link{catalog} and is formally an extension of
+#' a \code{SpatialPolygonsDataFrame} that contains extra data to allow users greater control over
 #' how the dataset is processed (see details).
 #'
 #' A \code{LAScatalog} is formally a \code{SpatialPolygonsDataFrame} extended with new slots that
@@ -43,16 +44,17 @@
 #' \item Loop over each chunk (in parallel or not).
 #' \item For each chunk, load the points inside the ROI into R, run some R functions,
 #' return the expected output.
-#' \item Merge the outputs of the different chunks once they are all processed to build a continuous (wall-to-wall) output.
+#' \item Merge the outputs of the different chunks once they are all processed to build a continuous
+#' (wall-to-wall) output.
 #' }
 #' So basically, a \code{LAScatalog} is an object that allows for batch processing but with the specificity
 #' that \code{lidR} does not loop through las files, but loops seamlessly through chunks that do not not
-#' necessarily match with the file pattern. This way \code{lidR} can sequentially process tiny ROIs even if 
-#' each file may be individually too big to fit in memory. This is also why point cloud indexation 
+#' necessarily match with the file pattern. This way \code{lidR} can sequentially process tiny ROIs even if
+#' each file may be individually too big to fit in memory. This is also why point cloud indexation
 #' with \code{lax} files may significantly speed-up the processing.\cr\cr
-#' It is important to note that buffered catalogs (i.e. catalogs with files that overlap each other) are not
-#' natively supported by \code{lidR}. When encountering such datasets the user should always filter
-#' any overlaps if possible. This is possible if the overlapping points are flagged, for example in the
+#' It is important to note that catalogs with files that overlap each other are not natively supported
+#' by \code{lidR}. When encountering such datasets the user should always filter any overlaps if
+#' possible. This is possible if the overlapping points are flagged, for example in the
 #' 'withheld' attribute. Otherwise \code{lidR} will not be able to process the dataset correctly.
 #'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
@@ -91,12 +93,12 @@
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
 #' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-#' A small size allows small amounts of data to be loaded at a time, saving computer memory. Conversely, a 
+#' A small size allows small amounts of data to be loaded at a time, saving computer memory. Conversely, a
 #' large size allows large ROIs to be loaded. The computation is  usually faster but uses much more
 #' memory. If \code{chunk_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
 #' is a file. Default is 0 i.e. by default the processing engine respects the existing tiling pattern.
 #' \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
-#' no edge effect between two independent chunks and that the output is continuous. This is mandatory for 
+#' no edge effect between two independent chunks and that the output is continuous. This is mandatory for
 #' some algorithms. Default is 30.
 #' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 #' chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
@@ -121,10 +123,10 @@
 #' "C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
 #' "C:/user/document/als/{ORIGINALFILNAME}_normalized"
 #' }
-#' This option will generate as many filenames as needed with custom names for each file. The list of allowed
-#' templates is described in the documentation for each function.
+#' This option will generate as many filenames as needed with custom names for each file. The list of
+#' allowed templates is described in the documentation for each function.
 #' \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
-#' Spatial*, LAS objects. TIt is recommended that only advanced users change this option.
+#' Spatial*, LAS objects. It is recommended that only advanced users change this option.
 #' }
 #'
 #' @section Input options:
