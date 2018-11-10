@@ -29,13 +29,13 @@
 
 #' Point Cloud Decimation Algorithm
 #'
-#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
 #' randomly removes points or pulses to reach the desired density over the whole area (see
 #' \code{\link[lidR:area]{area}}).
 #'
 #' @param density numeric. The desired output density.
 #'
-#' @param use_pulse logical. Decimate by removing random pulses instead of random points (requieres to run
+#' @param use_pulse logical. Decimate by removing random pulses instead of random points (requires running
 #' \link{laspulse} first)
 #'
 #' @export
@@ -86,9 +86,9 @@ random = function(density, use_pulse = FALSE)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
-#' creates a grid with a given resolution and filters the point cloud by selecting randomly
-#' some point in each cell. It is designed to produce point clouds that have uniform densities throughout
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
+#' creates a grid with a given resolution and filters the point cloud by randomly selecting some
+#' points in each cell. It is designed to produce point clouds that have uniform densities throughout
 #' the coverage area. For each cell, the proportion of points or pulses that will be retained is computed
 #' using the actual local density and the desired density. If the desired density is greater than the actual
 #' density it returns an unchanged set of points (it cannot increase the density). The cell size must be
@@ -100,7 +100,7 @@ random = function(density, use_pulse = FALSE)
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
 #'
-#' @param use_pulse logical. Decimate by removing random pulses instead of random points (requieres to run
+#' @param use_pulse logical. Decimate by removing random pulses instead of random points (requires running
 #' \link{laspulse} first)
 #'
 #' @export
@@ -111,7 +111,7 @@ random = function(density, use_pulse = FALSE)
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz")
 #'
-#' # Select point randomly to reach an homogeneous density of 1
+#' # Select points randomly to reach an homogeneous density of 1
 #' thinned = lasfilterdecimate(las, homogenize(1,5))
 #' plot(grid_density(thinned))
 homogenize = function(density, res = 5, use_pulse = FALSE)
@@ -150,7 +150,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+#' This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
 #' creates a grid with a given resolution and filters the point cloud by selecting the highest point
 #' within each cell.
 #'

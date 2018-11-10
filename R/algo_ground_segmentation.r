@@ -27,11 +27,11 @@
 
 #' Ground Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
+#' This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
 #' of ground points based on a progressive morphological filter. This method is an implementation of
 #' the Zhang et al. (2003) algorithm (see reference). Note that this is not a strict implementation
 #' of Zhang et al. This algorithm works at the point cloud level without any rasterization process.
-#' The morphological operator is applied on the point'cloud, not on a raster. Also, Zhang et al.
+#' The morphological operator is applied on the point cloud, not on a raster. Also, Zhang et al.
 #' proposed some formulas (eq. 4, 5 and 7) to compute the sequence of windows sizes and thresholds.
 #' Here, these parameters are free and specified by the user. The function \link{util_makeZhangParam}
 #' enables computation of the parameters according to the original paper.
@@ -75,8 +75,8 @@ pmf = function(ws, th)
 
       Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i])
 
-      # Find indices of the points whose difference between the source and
-      # filtered point clouds is less than the current height threshold
+      # Find indices of the points for which the difference between the source
+      # and filtered point clouds is less than the current height threshold
       diff = cloud$Z - Z_f
       indices = diff < th[i]
 
@@ -93,28 +93,28 @@ pmf = function(ws, th)
 
 #' Ground Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
-#' of ground points base on a Cloth Simulation Filter. This method is the a strict implementation of
-#' the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the orginal source
-#' code written by the original author and exposed to R via the the \code{RCSF} package.
+#' This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+#' of ground points base on a Cloth Simulation Filter. This method is a strict implementation of
+#' the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the authors' original
+#' source code written and exposed to R via the the \code{RCSF} package.
 #'
-#' @param sloop_smooth logical. When sharp slopes exist, set this parameter to TRUE to perform a
-#' post-processing which will reduced errors.
+#' @param sloop_smooth logical. When steep slopes exist, set this parameter to TRUE to reduce
+#' errors during post-processing.
 #'
-#' @param class_threshold scalar. The distance to the simulated cloth to classify point cloud into ground
+#' @param class_threshold scalar. The distance to the simulated cloth to classify a point cloud into ground
 #' and non-ground. The default is 0.5.
 #'
-#' @param cloth_resolution scalar. The distance between paticles in cloth. This is usually set to the
+#' @param cloth_resolution scalar. The distance between particles in the cloth. This is usually set to the
 #' average distance of the points in the point cloud. The default value is 0.5.
 #'
-#' @param rigidness integer. The rididness of the cloth. 1 stands for very soft cloth (to fit rugged
-#' terrain), 2 stands for medium cloth and 3 stands for hard cloth (for flat terrain). The default is 1.
+#' @param rigidness integer. The rididness of the cloth. 1 stands for very soft (to fit rugged
+#' terrain), 2 stands for medium, and 3 stands for hard cloth (for flat terrain). The default is 1.
 #'
-#' @param iterations integer. Maximum iteration for simulating cloth. The default value is 500. Usually,
-#' users do not need to change this.
+#' @param iterations integer. Maximum iterations for simulating cloth. The default value is 500. Usually,
+#' there is no need to change this value.
 #'
-#' @param time_step scalar. Time step when simulating the cloth under the gravity. The default value
-#' is 0.65. Usually, do not change this value. It is suitable for most cases.
+#' @param time_step scalar. Time step when simulating the cloth under gravity. The default value
+#' is 0.65. Usually, there is no need to change this value. It is suitable for most cases.
 #'
 #' @references
 #' W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Use Airborne LiDAR Data
@@ -182,19 +182,19 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
 {
   if (exp & b <= 1)
-    stop("b cannot be lower than 1 with an exponentially growing windows", call. = FALSE)
+    stop("b cannot be less than 1 with an exponentially growing window", call. = FALSE)
 
   if (dh0 >= dhmax)
     stop("dh0 greater than dhmax", call. = FALSE)
 
   if (max_ws < 3)
-    stop("Minimum windows size is 3. max_ws cannot must be greater than 3", call. = FALSE)
+    stop("Minimum windows size is 3. max_ws must be greater than 3", call. = FALSE)
 
   if (!is.logical(exp))
     stop("exp should be logical", call. = FALSE)
 
   if (!exp & b < 1)
-    warning("Due to an incoherence in the original paper when b < 1 the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherence in the original paper when b < 1, the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
 
 
   dhtk = c()
