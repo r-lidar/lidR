@@ -8,28 +8,28 @@ li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2,
   speed_up = 10)
 }
 \arguments{
-\item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.}
+\item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default is 1.5.}
 
-\item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.}
+\item{dt2}{numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default is 2.}
 
-\item{R}{numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2. If \code{R = 0}
+\item{R}{numeric. Search radius. See page 79 in Li et al. (2012). Default is 2. If \code{R = 0}
 all the points are automatically considered as local maxima and the search step is skipped (much
 faster).}
 
 \item{Zu}{numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
-used. See reference page 79 in Li et al. (2012). Default 15.}
+used. See page 79 in Li et al. (2012). Default is 15.}
 
-\item{hmin}{numeric.  Minimum height of a detected tree. Default 2.}
+\item{hmin}{numeric. Minimum height of a detected tree. Default is 2.}
 
 \item{speed_up}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
 computation speed. The lower the value, the faster the method. Default is 10.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
 segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
 method working at the point cloud level. It is an implementation, as strict as possible, made by
-the \code{lidR} author but with the addition of a parameter \code{hmin} to stop over-segmentation
+the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
 for objects that are too low.
 }
 \examples{

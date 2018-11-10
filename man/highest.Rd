@@ -10,7 +10,7 @@ highest(res = 1)
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 }
 \description{
-This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
 creates a grid with a given resolution and filters the point cloud by selecting the highest point
 within each cell.
 }

@@ -9,10 +9,10 @@ knnidw(k = 10, p = 2)
 \arguments{
 \item{k}{numeric. Number of k-nearest neighbours. Default 10.}
 
-\item{p}{numeric. Power for inverse distance weighting. Default 2.}
+\item{p}{numeric. Power for inverse-distance weighting. Default 2.}
 }
 \description{
-This function is made to be used in \link{grid_terrain} or \link{lasnormalize}. It implements an algorithms
+This function is made to be used in \link{grid_terrain} or \link{lasnormalize}. It implements an algorithm
 for spatial interpolation. Interpolation is done using a k-nearest neighbour (KNN) approach with
 an inverse-distance weighting (IDW).
 }

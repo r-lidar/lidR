@@ -115,10 +115,10 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       ws = ws(las@data$Z)
       ws[las@data$Z < hmin] = ws(hmin)
 
-      if (!is.numeric(ws)) stop("The function 'ws' did not return the correct output. ", call. = FALSE)
+      if (!is.numeric(ws)) stop("The function 'ws' did not return a correct output. ", call. = FALSE)
       if (any(ws <= 0))    stop("The function 'ws' returned negative or null values.", call. = FALSE)
       if (anyNA(ws))       stop("The function 'ws' returned NA values.", call. = FALSE)
-      if (length(ws) != n) stop("The function 'ws' did not return the correct output.", call. = FALSE)
+      if (length(ws) != n) stop("The function 'ws' did not return a correct output.", call. = FALSE)
     }
     else
       stop("'ws' must be a number or a function", call. = FALSE)

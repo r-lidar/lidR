@@ -10,16 +10,16 @@ manual(detected = NULL, ...)
 \item{detected}{\code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
 containing X,Y,Z coordinates of already found tree tops that need manual corrections.}
 
-\item{...}{supplementary parameters to be pass to \link{plot}.}
+\item{...}{supplementary parameters to be passed to \link{plot}.}
 }
 \description{
 This function is made to be used in \link{tree_detection}. It implements an algorithm for manual
-tree detection. User can point the tree top positions manually and interactively using the mouse.
-This is only suitable for small size plots. First the point cloud is displayed, then the user is
-invited to select a rectangular region of interest in the scene using the right button of the mouse.
-Within the selected points the highest one will be flaged as 'tree top' in the scene. Once all the tree
-are labelled the user can exit the tools by selecting an empty region. Points can also be unflagged.
-The goal of this tool is mainly for minor correction of automatically detected tree outputs.
+tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
+This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
+invited to select a rectangular region of interest in the scene using the right mouse button.
+Within the selected points the highest one will be flagged as 'tree top' in the scene. Once all the trees
+are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
+The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 }
 \examples{
 \dontrun{

@@ -9,11 +9,11 @@ random(density, use_pulse = FALSE)
 \arguments{
 \item{density}{numeric. The desired output density.}
 
-\item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requieres to run
+\item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requires running
 \link{laspulse} first)}
 }
 \description{
-This function is made to be used in \link{lasfilterdecimate}. It implements an algorithms that
+This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
 randomly removes points or pulses to reach the desired density over the whole area (see
 \code{\link[lidR:area]{area}}).
 }

@@ -9,29 +9,29 @@ csf(sloop_smooth = FALSE, class_threshold = 0.5,
   time_step = 0.65)
 }
 \arguments{
-\item{sloop_smooth}{logical. When sharp slopes exist, set this parameter to TRUE to perform a
-post-processing which will reduced errors.}
+\item{sloop_smooth}{logical. When steep slopes exist, set this parameter to TRUE to reduce
+errors during post-processing.}
 
-\item{class_threshold}{scalar. The distance to the simulated cloth to classify point cloud into ground
+\item{class_threshold}{scalar. The distance to the simulated cloth to classify a point cloud into ground
 and non-ground. The default is 0.5.}
 
-\item{cloth_resolution}{scalar. The distance between paticles in cloth. This is usually set to the
+\item{cloth_resolution}{scalar. The distance between particles in the cloth. This is usually set to the
 average distance of the points in the point cloud. The default value is 0.5.}
 
-\item{rigidness}{integer. The rididness of the cloth. 1 stands for very soft cloth (to fit rugged
-terrain), 2 stands for medium cloth and 3 stands for hard cloth (for flat terrain). The default is 1.}
+\item{rigidness}{integer. The rididness of the cloth. 1 stands for very soft (to fit rugged
+terrain), 2 stands for medium, and 3 stands for hard cloth (for flat terrain). The default is 1.}
 
-\item{iterations}{integer. Maximum iteration for simulating cloth. The default value is 500. Usually,
-users do not need to change this.}
+\item{iterations}{integer. Maximum iterations for simulating cloth. The default value is 500. Usually,
+there is no need to change this value.}
 
-\item{time_step}{scalar. Time step when simulating the cloth under the gravity. The default value
-is 0.65. Usually, do not change this value. It is suitable for most cases.}
+\item{time_step}{scalar. Time step when simulating the cloth under gravity. The default value
+is 0.65. Usually, there is no need to change this value. It is suitable for most cases.}
 }
 \description{
-This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
-of ground points base on a Cloth Simulation Filter. This method is the a strict implementation of
-the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the orginal source
-code written by the original author and exposed to R via the the \code{RCSF} package.
+This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+of ground points base on a Cloth Simulation Filter. This method is a strict implementation of
+the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the authors' original
+source code written and exposed to R via the the \code{RCSF} package.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")

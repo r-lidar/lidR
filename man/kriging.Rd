@@ -13,7 +13,7 @@ or weighted least squares prediction.}
 \item{k}{numeric. Number of k-nearest neighbours. Default 10.}
 }
 \description{
-This function is made to be used in \link{grid_terrain} or \link{lasground}. It implements an algorithms
+This function is made to be used in \link{grid_terrain} or \link{lasground}. It implements an algorithm
 for spatial interpolation. Spatial interpolation is based on universal kriging using the \link[gstat:krige]{krige}
 function from \code{gstat}. This method combines the KNN approach with the kriging approach. For each
 point of interest it kriges the terrain using the k-nearest neighbour ground points. This method

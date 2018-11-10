@@ -15,11 +15,11 @@ feet).}
 considered a ground return. The values must be positive and in the same units as the point cloud.}
 }
 \description{
-This function is made to be used in \link{lasground}. It implements an algorithms for segmentation
+This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
 of ground points based on a progressive morphological filter. This method is an implementation of
 the Zhang et al. (2003) algorithm (see reference). Note that this is not a strict implementation
 of Zhang et al. This algorithm works at the point cloud level without any rasterization process.
-The morphological operator is applied on the point'cloud, not on a raster. Also, Zhang et al.
+The morphological operator is applied on the point cloud, not on a raster. Also, Zhang et al.
 proposed some formulas (eq. 4, 5 and 7) to compute the sequence of windows sizes and thresholds.
 Here, these parameters are free and specified by the user. The function \link{util_makeZhangParam}
 enables computation of the parameters according to the original paper.

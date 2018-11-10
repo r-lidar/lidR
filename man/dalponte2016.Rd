@@ -14,37 +14,37 @@ an external file.}
 \item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 
-\item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
+\item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default is 2.}
 
 \item{th_seed}{numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 is added to a region if its height is greater than the tree height multiplied by this value.
-It should be between 0 and 1. Default 0.45.}
+It should be between 0 and 1. Default is 0.45.}
 
 \item{th_cr}{numeric. Growing threshold 2. See reference in Dalponte et al. 2016. A pixel
 is added to a region if its height is greater than the current mean height of the region
-multiplied by this value. It should be between 0 and 1. Default 0.55.}
+multiplied by this value. It should be between 0 and 1. Default is 0.55.}
 
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixels).
-Default 10.}
+Default is 10.}
 
 \item{ID}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 each tree, the name of this attribute. This way, original IDs will be preserved. If there is no
 such data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
-segmentation based a paper published by Dalponte and Coomes (2016) algorithm (see reference).
+This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+segmentation based on the Dalponte and Coomes (2016) algorithm (see reference).
 This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
 This version has been written from the paper in C++. Consequently it is hundreds to millions times
-faster to the original one. Notethat this algorithm strictly performs a segmentation, while the
+faster than the original version. Note that this algorithm strictly performs a segmentation, while the
 original method as implemented in \code{itcSegment} and described in the manuscript also performs
-a pre- and post-process when these tasks are expected to be done by the user in separate functions.
+pre- and post-processing tasks. Here these tasks are expected to be done by the user in separate functions.
 }
 \details{
-Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-cloud. However the user can use this function alone like that:
+Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+library, which is why this algorithm must be used in \link{lastrees} to merge the result with the point
+cloud. However the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
  ttops = tree_detection(chm, lmf(3))
