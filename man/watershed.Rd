@@ -13,7 +13,7 @@ mcwatershed(chm, treetops, th_tree = 2, ID = "treeID")
 \item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
 an external file.}
 
-\item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default 2.}
+\item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default is 2.}
 
 \item{tol}{numeric. Tolerance see ?EBImage::watershed.}
 
@@ -27,21 +27,21 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
-segmentation based on a watershed or a marker controled watershed.
+This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+segmentation based on a watershed or a marker-controlled watershed.
 \itemize{
 \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
 this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
-Internally the function EBImage::watershed is called.
-\item \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
-function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+Internally, the function EBImage::watershed is called.
+\item \strong{Marker-controlled watershed} is based on the \code{imager} package. Internally, the
+function \link[imager:watershed]{imager::watershed} is called using the tree tops as a priority map.
 }
 }
 \details{
-Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-cloud. However the user can use this function alone like that:
+Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
  ttops = tree_detection(chm, lmf(3))

@@ -7,15 +7,15 @@
 p2r(subcircle = 0, na.fill = NULL)
 }
 \arguments{
-\item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
+\item{subcircle}{numeric. Radius of the circles. To obtain fewer empty pixels the algorithm
 can replace each return with a circle composed of 8 points (see details).}
 
 \item{na.fill}{function. A function that implements an algorithm to compute spatial interpolation
-to fill the empty pixel often leave by point-to-raster methods. \code{lidR} have \link{knnidw},
-\link{tin}, \link{kriging} (see also \link{grid_terrain} for more details).}
+to fill the empty pixel often left by points-to-raster methods. \code{lidR} has \link{knnidw},
+\link{tin}, and \link{kriging} (see also \link{grid_terrain} for more details).}
 }
 \description{
-This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
+This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
 surface model computation based on a points-to-raster method: for each pixel of the output raster
 the function attributes the height of the highest point found. The \code{subcircle} tweak replaces
 each point with 8 points around the original one. This allows for virtual 'emulation' of the fact
@@ -27,11 +27,11 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile)
 col <- height.colors(50)
 
-# Points-to-raster algorithm with a resolution of 1 meters
+# Points-to-raster algorithm with a resolution of 1 meter
 chm <- grid_canopy(las, res = 1, p2r())
 plot(chm, col = col)
 
-# Points-to-raster algorithm with a resolution of 0.5 meter replacing each
+# Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 # point by a 20 cm radius circle of 8 points
 chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 plot(chm, col = col)

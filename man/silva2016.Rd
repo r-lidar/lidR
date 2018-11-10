@@ -15,7 +15,7 @@ an external file.}
 \link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as a proportion of the
-tree height. Default is 0.6,  meaning 60\% of the tree height.}
+tree height. Default is 0.6, meaning 60\% of the tree height.}
 
 \item{exclusion}{numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.}
@@ -25,18 +25,18 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
 segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
-based on seed + voronoi tesselation (equivalent to nearest neibourgh). This algorithm is implemented
-in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a
-code written from the original article by the lidR authors and that is considerably (between 250
+based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
+in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+code written from the original article by the lidR authors and is considerably (between 250
 and 1000 times) faster.
 }
 \details{
-Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-cloud. However the user can use this function alone like that:
+Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
  ttops = tree_detection(chm, lmf(3))

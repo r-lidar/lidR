@@ -8,11 +8,11 @@ pitfree(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1),
   subcircle = 0)
 }
 \arguments{
-\item{thresholds}{numeric. Set of height thresholds accoring to Khosravipour et al. (2014) algorithm
+\item{thresholds}{numeric. Set of height thresholds according to the Khosravipour et al. (2014) algorithm
 description (see references)}
 
-\item{max_edge}{numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-If a triangle has an edge greater than this value it will be removed. The first number is the value
+\item{max_edge}{numeric. Maximum edge length of a triangle in the Delaunay triangulation.
+If a triangle has an edge length greater than this value it will be removed. The first number is the value
 for the classical triangulation (threshold = 0, see also \link{dsmtin}), the second number
 is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
 is done (see examples).}
@@ -48,9 +48,9 @@ y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
 las2 = lasclipPolygon(las,x,y)
 plot(las2)
 
-# The TIN interpolation being done within the convex hull of the point cloud there are lot of
-# dummy pixels that are strictly correct regarding the interpolation method used but meaningless
-# in our CHM
+# Since the TIN interpolation is done within the convex hull of the point cloud
+# dummy pixels are interpolated that are strictly correct according to the interpolation method
+# used, but meaningless in our CHM
 chm <- grid_canopy(las2, res = 0.5, pitfree())
 plot(chm, col = col)
 

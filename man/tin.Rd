@@ -7,11 +7,11 @@
 tin()
 }
 \description{
-This function is made to be used in \link{grid_terrain} or \link{lasnormalize}. It implements an algorithms
-for spatial interpolation. Spatial interpolation is based on a Delaunay triangulation. It performs
+This function is made to be used in \link{grid_terrain} or \link{lasnormalize}. It implements an algorithm
+for spatial interpolation. Spatial interpolation is based on a Delaunay triangulation, which performs
 a linear interpolation within each triangle. There are usually a few points outside the convex hull,
-determined by the ground points at the very edge of the dataset, which cannot be interpolated with
-a triangulation. Extrapolation is done using the nearest neighbour.
+determined by the ground points at the very edge of the dataset, that cannot be interpolated with
+a triangulation. Extrapolation is done using the nearest neighbour approach.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")

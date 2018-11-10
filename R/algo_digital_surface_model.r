@@ -158,7 +158,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #'
 #' # Since the TIN interpolation is done within the convex hull of the point cloud
 #' # dummy pixels are interpolated that are strictly correct according to the interpolation method
-#' used, but meaningless in our CHM
+#' # used, but meaningless in our CHM
 #' chm <- grid_canopy(las2, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
@@ -224,7 +224,7 @@ dsmtin = function(max_edge = 0)
 #'
 #' # Since the TIN interpolation is done within the convex hull of the point cloud
 #' # dummy pixels are interpolated that are strictly correct according to the interpolation method
-#' used, but meaningless in our CHM
+#' # used, but meaningless in our CHM
 #' chm <- grid_canopy(las2, res = 0.5, pitfree())
 #' plot(chm, col = col)
 #'

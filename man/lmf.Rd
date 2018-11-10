@@ -8,20 +8,20 @@ lmf(ws, hmin = 2, shape = c("circular", "square"))
 }
 \arguments{
 \item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
-maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
+maxima in the unit of the input data (usually meters). If it is numeric a fixed window size is used.
 If it is a function, the function determines the size of the window at any given location on the canopy.
 The function should take the height of a given pixel or points as its only argument and return the
 desired size of the search window when centered on that pixel/point.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
-cannot be a local maxima. Default 2.}
+cannot be a local maxima. Default is 2.}
 
 \item{shape}{character. Shape of the moving windows used to find the local maxima. Can be "square"
 or "circular".}
 }
 \description{
-This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
-detection based on a local maximum filter. The windows size can be fix or variable and the windows
+This function is made to be used in \link{tree_detection}. It implements an algorithm for tree
+detection based on a local maximum filter. The windows size can be fixed or variable and its
 shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
 It is deeply inspired from Popescu & Wynne (2004) (see references).
 }
