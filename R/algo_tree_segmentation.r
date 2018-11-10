@@ -30,18 +30,18 @@
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
-#' segmentation based a paper published by Dalponte and Coomes (2016) algorithm (see reference).
+#' This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' segmentation based on the Dalponte and Coomes (2016) algorithm (see reference).
 #' This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
 #' This version has been written from the paper in C++. Consequently it is hundreds to millions times
-#' faster to the original one. Notethat this algorithm strictly performs a segmentation, while the
+#' faster than the original version. Note that this algorithm strictly performs a segmentation, while the
 #' original method as implemented in \code{itcSegment} and described in the manuscript also performs
-#' a pre- and post-process when these tasks are expected to be done by the user in separate functions.
+#' pre- and post-processing tasks. Here these tasks are expected to be done by the user in separate functions.
 #'
-#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-#' cloud. However the user can use this function alone like that:
+#' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+#' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+#' library, which is why this algorithm must be used in \link{lastrees} to merge the result with the point
+#' cloud. However the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
 #'  ttops = tree_detection(chm, lmf(3))
@@ -52,18 +52,18 @@
 #'
 #' @template param-treetops
 #'
-#' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
+#' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default is 2.
 #'
 #' @param th_seed numeric. Growing threshold 1. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the tree height multiplied by this value.
-#' It should be between 0 and 1. Default 0.45.
+#' It should be between 0 and 1. Default is 0.45.
 #'
 #' @param th_cr numeric. Growing threshold 2. See reference in Dalponte et al. 2016. A pixel
 #' is added to a region if its height is greater than the current mean height of the region
-#' multiplied by this value. It should be between 0 and 1. Default 0.55.
+#' multiplied by this value. It should be between 0 and 1. Default is 0.55.
 #'
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixels).
-#' Default 10.
+#' Default is 10.
 #'
 #' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 #' each tree, the name of this attribute. This way, original IDs will be preserved. If there is no
@@ -142,24 +142,24 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
 #' segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
 #' method working at the point cloud level. It is an implementation, as strict as possible, made by
-#' the \code{lidR} author but with the addition of a parameter \code{hmin} to stop over-segmentation
+#' the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
 #' for objects that are too low.
 #'
-#' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default 1.5.
+#' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default is 1.5.
 #'
-#' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default 2.
+#' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default is 2.
 #'
-#' @param R numeric. Search radius. See reference page 79 in Li et al. (2012). Default 2. If \code{R = 0}
+#' @param R numeric. Search radius. See page 79 in Li et al. (2012). Default is 2. If \code{R = 0}
 #' all the points are automatically considered as local maxima and the search step is skipped (much
 #' faster).
 #'
-#' @param hmin numeric.  Minimum height of a detected tree. Default 2.
+#' @param hmin numeric. Minimum height of a detected tree. Default is 2.
 #'
 #' @param Zu numeric. If point elevation is greater than Zu, \code{dt2} is used, otherwise \code{dt1} is
-#' used. See reference page 79 in Li et al. (2012). Default 15.
+#' used. See page 79 in Li et al. (2012). Default is 15.
 #'
 #' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
@@ -220,17 +220,17 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
+#' This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
 #' segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
-#' based on seed + voronoi tesselation (equivalent to nearest neibourgh). This algorithm is implemented
-#' in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is a
-#' code written from the original article by the lidR authors and that is considerably (between 250
+#' based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
+#' in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+#' code written from the original article by the lidR authors and is considerably (between 250
 #' and 1000 times) faster.
 #'
-#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-#' cloud. However the user can use this function alone like that:
+#' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+#' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+#' library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+#' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
 #'  ttops = tree_detection(chm, lmf(3))
@@ -242,7 +242,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' @template param-treetops
 #'
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as a proportion of the
-#' tree height. Default is 0.6,  meaning 60\% of the tree height.
+#' tree height. Default is 0.6, meaning 60\% of the tree height.
 #'
 #' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 #' multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.
@@ -299,7 +299,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     chmdt <- data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
     data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
-    # Voronoi tesselation is nothing else than the nearest neigbour
+    # Voronoi tesselation is nothing else but the nearest neigbour
     u <- C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
 
     chmdt[, id := u$nn.idx[,1]]
@@ -324,20 +324,20 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithms for tree
-#' segmentation based on a watershed or a marker controled watershed.
+#' This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' segmentation based on a watershed or a marker-controlled watershed.
 #' \itemize{
 #' \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
 #' this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
-#' Internally the function EBImage::watershed is called.
-#' \item \strong{Marker controlled watershed} is based on the \code{imager} package. Internally the
-#' function \link[imager:watershed]{imager::watershed} is called using the tree tops as priority map.
+#' Internally, the function EBImage::watershed is called.
+#' \item \strong{Marker-controlled watershed} is based on the \code{imager} package. Internally, the
+#' function \link[imager:watershed]{imager::watershed} is called using the tree tops as a priority map.
 #' }
 #'
-#' Because this algorithm works on a CHM only there is no actual need of a point cloud. Sometime the
-#' user do not even have the point cloud that generated the CHM. \code{lidR} is a point cloud oriented
-#' library this is why this algorithm must be used in \link{lastrees} to reafect the result into the point
-#' cloud. However the user can use this function alone like that:
+#' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
+#' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+#' library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+#' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
 #'  ttops = tree_detection(chm, lmf(3))
@@ -346,7 +346,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #'
 #' @template param-chm-lastrees
 #'
-#' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default 2.
+#' @param th_tree numeric. Threshold below which a pixel cannot be a tree. Default is 2.
 #'
 #' @param tol numeric. Tolerance see ?EBImage::watershed.
 #'
@@ -412,7 +412,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     else
     {
       if (!requireNamespace("imager", quietly = TRUE))
-        stop("'imager' package is needed for this function to work.", call. = F)
+        stop("'imager' package is needed for this function to work. Please read documentation.", call. = F)
     }
 
     # Convert the CHM to a matrix
@@ -425,7 +425,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     {
       Crowns = EBImage::watershed(Canopy, tol, ext)
     }
-    # Marker controlled watershed
+    # Marker-controlled watershed
     else
     {
       X = match_chm_and_seeds(chm, treetops, ID)

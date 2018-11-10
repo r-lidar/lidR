@@ -29,19 +29,19 @@
 
 #' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{tree_detection}. It implements an algorithms for tree
-#' detection based on a local maximum filter. The windows size can be fix or variable and the windows
+#' This function is made to be used in \link{tree_detection}. It implements an algorithm for tree
+#' detection based on a local maximum filter. The windows size can be fixed or variable and its
 #' shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
 #' It is deeply inspired from Popescu & Wynne (2004) (see references).
 #'
 #' @param ws numeric or function. Length or diameter of the moving window used to the detect the local
-#' maxima in the unit of the input data (usually meters). If it is numeric a fixed windows size is used.
+#' maxima in the unit of the input data (usually meters). If it is numeric a fixed window size is used.
 #' If it is a function, the function determines the size of the window at any given location on the canopy.
 #' The function should take the height of a given pixel or points as its only argument and return the
 #' desired size of the search window when centered on that pixel/point.
 #'
 #' @param hmin numeric. Minimum height of a tree. Threshold below which a pixel or a point
-#' cannot be a local maxima. Default 2.
+#' cannot be a local maxima. Default is 2.
 #'
 #' @param shape character. Shape of the moving windows used to find the local maxima. Can be "square"
 #' or "circular".
@@ -115,10 +115,10 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       ws = ws(las@data$Z)
       ws[las@data$Z < hmin] = ws(hmin)
 
-      if (!is.numeric(ws)) stop("The function 'ws' did not return correct output. ", call. = FALSE)
-      if (any(ws <= 0))    stop("The function 'ws' returned negative or nul values.", call. = FALSE)
+      if (!is.numeric(ws)) stop("The function 'ws' did not return the correct output. ", call. = FALSE)
+      if (any(ws <= 0))    stop("The function 'ws' returned negative or null values.", call. = FALSE)
       if (anyNA(ws))       stop("The function 'ws' returned NA values.", call. = FALSE)
-      if (length(ws) != n) stop("The function 'ws' did not return correct output.", call. = FALSE)
+      if (length(ws) != n) stop("The function 'ws' did not return the correct output.", call. = FALSE)
     }
     else
       stop("'ws' must be a number or a function", call. = FALSE)
@@ -143,17 +143,17 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' Individual Tree Detection Algorithm
 #'
 #' This function is made to be used in \link{tree_detection}. It implements an algorithm for manual
-#' tree detection. User can point the tree top positions manually and interactively using the mouse.
-#' This is only suitable for small size plots. First the point cloud is displayed, then the user is
-#' invited to select a rectangular region of interest in the scene using the right button of the mouse.
-#' Within the selected points the highest one will be flaged as 'tree top' in the scene. Once all the tree
-#' are labelled the user can exit the tools by selecting an empty region. Points can also be unflagged.
-#' The goal of this tool is mainly for minor correction of automatically detected tree outputs.
+#' tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
+#' This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
+#' invited to select a rectangular region of interest in the scene using the right mouse button.
+#' Within the selected points the highest one will be flagged as 'tree top' in the scene. Once all the trees
+#' are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
+#' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 #'
 #' @param detected \code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
 #' containing X,Y,Z coordinates of already found tree tops that need manual corrections.
 #'
-#' @param ... supplementary parameters to be pass to \link{plot}.
+#' @param ... supplementary parameters to be passed to \link{plot}.
 #'
 #' @family individual tree detection algorithms
 #'

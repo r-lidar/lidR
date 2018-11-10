@@ -26,23 +26,23 @@
 # ===============================================================================
 
 
-# ====== POINT TO RASTER =======
+# ====== POINTS-TO-RASTER =======
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
+#' This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
 #' surface model computation based on a points-to-raster method: for each pixel of the output raster
 #' the function attributes the height of the highest point found. The \code{subcircle} tweak replaces
 #' each point with 8 points around the original one. This allows for virtual 'emulation' of the fact
 #' that a lidar point is not a point as such, but more realistically a disc. This tweak densifies the
 #' point cloud and the resulting canopy model is smoother and contains fewer 'pits' and empty pixels.
 #'
-#' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
+#' @param subcircle numeric. Radius of the circles. To obtain fewer empty pixels the algorithm
 #' can replace each return with a circle composed of 8 points (see details).
 #'
 #' @param na.fill function. A function that implements an algorithm to compute spatial interpolation
-#' to fill the empty pixel often leave by point-to-raster methods. \code{lidR} have \link{knnidw},
-#' \link{tin}, \link{kriging} (see also \link{grid_terrain} for more details).
+#' to fill the empty pixel often left by points-to-raster methods. \code{lidR} has \link{knnidw},
+#' \link{tin}, and \link{kriging} (see also \link{grid_terrain} for more details).
 #'
 #' @export
 #'
@@ -53,11 +53,11 @@
 #' las <- readLAS(LASfile)
 #' col <- height.colors(50)
 #'
-#' # Points-to-raster algorithm with a resolution of 1 meters
+#' # Points-to-raster algorithm with a resolution of 1 meter
 #' chm <- grid_canopy(las, res = 1, p2r())
 #' plot(chm, col = col)
 #'
-#' # Points-to-raster algorithm with a resolution of 0.5 meter replacing each
+#' # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 #' # point by a 20 cm radius circle of 8 points
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 #' plot(chm, col = col)
@@ -87,7 +87,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
     dsm  <- t(dsm)
 
     if (!all(dim(layout)[1:2] == dim(dsm)))
-      stop("Internal error: matrix returned at the C++ level don't match with the layout. Please report this bug.", call. = FALSE)
+      stop("Internal error: matrix returned at the C++ level does not match with the layout. Please report this bug.", call. = FALSE)
 
     if (!is.null(na.fill))
     {
@@ -128,12 +128,12 @@ p2r = function(subcircle = 0, na.fill = NULL)
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{grid_canopy}. It implements an algorithms for digital
+#' This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
 #' surface model computation using a Delaunay triangulation of first returns with a linear interpolation
 #' within each triangle.
 #'
-#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-#' If a triangle has an edge greater than this value it will be removed to trim dummy interpolation
+#' @param max_edge numeric. Maximum edge length of a triangle in the Delaunay triangulation.
+#' If a triangle has an edge length greater than this value it will be removed to trim dummy interpolation
 #' on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).
 #'
 #' @export
@@ -156,9 +156,9 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' las2 = lasclipPolygon(las,x,y)
 #' plot(las2)
 #'
-#' # The TIN interpolation being done within the convex hull of the point cloud there
-#' # are lot of dummy pixels that are strictly correct regarding the interpolation method
-#' used but meaningless in our CHM
+#' # Since the TIN interpolation is done within the convex hull of the point cloud
+#' # dummy pixels are interpolated that are strictly correct according to the interpolation method
+#' used, but meaningless in our CHM
 #' chm <- grid_canopy(las2, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
@@ -171,7 +171,7 @@ dsmtin = function(max_edge = 0)
   return(pitfree(0, c(max_edge, 0), 0))
 }
 
-# ====== PITFREE =======
+# ====== PIT-FREE =======
 
 #' Digital Surface Model Algorithm
 #'
@@ -185,11 +185,11 @@ dsmtin = function(max_edge = 0)
 #' @param subcircle numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 #' can replace each return with a circle composed of 8 points (see details).
 #'
-#' @param thresholds numeric. Set of height thresholds accoring to Khosravipour et al. (2014) algorithm
+#' @param thresholds numeric. Set of height thresholds according to the Khosravipour et al. (2014) algorithm
 #' description (see references)
 #'
-#' @param max_edge numeric. Maximum edge-length of a triangle in the Delaunay triangulation.
-#' If a triangle has an edge greater than this value it will be removed. The first number is the value
+#' @param max_edge numeric. Maximum edge length of a triangle in the Delaunay triangulation.
+#' If a triangle has an edge length greater than this value it will be removed. The first number is the value
 #' for the classical triangulation (threshold = 0, see also \link{dsmtin}), the second number
 #' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
 #' is done (see examples).
@@ -222,9 +222,9 @@ dsmtin = function(max_edge = 0)
 #' las2 = lasclipPolygon(las,x,y)
 #' plot(las2)
 #'
-#' # The TIN interpolation being done within the convex hull of the point cloud there are lot of
-#' # dummy pixels that are strictly correct regarding the interpolation method used but meaningless
-#' # in our CHM
+#' # Since the TIN interpolation is done within the convex hull of the point cloud
+#' # dummy pixels are interpolated that are strictly correct according to the interpolation method
+#' used, but meaningless in our CHM
 #' chm <- grid_canopy(las2, res = 0.5, pitfree())
 #' plot(chm, col = col)
 #'
