@@ -150,8 +150,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
 #' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 #'
-#' @param detected \code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
-#' containing X,Y,Z coordinates of already found tree tops that need manual corrections.
+#' @param detected \code{SpatialPointsDataFrame} of already found tree tops that need manual corrections.
 #'
 #' @param ... supplementary parameters to be passed to \link{plot}.
 #'
@@ -177,7 +176,7 @@ manual = function(detected = NULL, ...)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, "tree_detection", "manual")
 
-    . <- X <- Y <-Z <- treeID <- NULL
+    . <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
     crs = sp::CRS()
@@ -186,55 +185,68 @@ manual = function(detected = NULL, ...)
       stop("R is not being used interactively", call. = FALSE)
 
     if (is.null(detected))
+    {
       apice <- data.table::data.table(X = numeric(0), Y = numeric(0), Z = numeric(0))
+    }
     else if (is(detected, "SpatialPointsDataFrame"))
     {
-      crs = detected@proj4string
-      apice <- data.table::data.table(detected@coords)
-      apice$Z = detected@data$Z
+      crs          <- detected@proj4string
+      apice        <- data.table::data.table(detected@coords)
+      apice$Z      <- detected@data[["Z"]]
       names(apice) <- c("X","Y","Z")
     }
     else
     {
-      apice <- data.table::as.data.table(detected[,1:3])
-      names(apice) <- c("X","Y","Z")
+      stop("Input is not of the good type.")
     }
 
-    plot.LAS(las, ...)
+    minx <- min(las$X)
+    miny <- min(las$Y)
+
+    las@data <- las@data[, .(X, Y, Z)]
+    las@data[, X := X - minx]
+    las@data[, Y := Y - miny]
+    apice[, X := X - minx]
+    apice[, Y := Y - miny]
+
+    plot.LAS(las, ..., clear_artifacts = FALSE)
 
     id = numeric(nrow(apice))
+
     for (i in 1:nrow(apice))
       id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = 1, color = "red")
-    apice$id = id
+
+    apice$id <- id
 
     repeat
     {
-      f <- rgl::select3d(button = c("right"))
+      f   <- rgl::select3d(button = c("right"))
       pts <- las@data[f(las@data), .(X,Y,Z)]
 
       if (length(pts$X) == 0)
         break;
 
       apex <- unique(pts[pts$Z == max(pts$Z)])
-
-      ii = which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
+      ii   <- which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
 
       if (length(ii) > 0)
       {
         rgl::rgl.pop(id = apice[ii]$id)
-        apice = apice[-ii]
+        apice <- apice[-ii]
       }
       else
       {
-        apex$id = as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = 1, color = "red"))
-        apice = rbind(apice, apex)
+        apex$id <- as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = 1, color = "red"))
+        apice   <- rbind(apice, apex)
       }
     }
 
     rgl::rgl.close()
 
     apice[, treeID := 1:.N]
-    output = sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
+    apice[, X := X + minx]
+    apice[, Y := Y + miny]
+    output <- sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
     return(output)
   }
 
