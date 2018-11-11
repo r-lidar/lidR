@@ -1,9 +1,11 @@
-This is an early release to fix issues on fedora and macos. New policies regarding bioconductor packages
-result in errors with one example of the doc and one unit test. I removed the incriminated example and 
-the test which implie the bioconductor package. The package is still only a suggested dependency. 
+This release comes after prof Bryan Ripley's request: "We see occasional check failures, e.g. with clang 
+and sanitizers". Indeed some test datasets were randomly generated and a tolerance on the output was added 
+to deal with the variability of the output. Variability can be greater than expected in rare cases.
+I added fixed and hard coded seeds, thus the tests are not subject to variability. I remove empirically
+etablished tolerances. This issue will not happen anymore.
 
 ## Test environments
-* Linux Mint 19 (Ubuntu 16.04), R 3.4.3
+* Linux Mint 19 (Ubuntu 16.04), R 3.4.4
 * win-builder (release and devel)
 
 ## R CMD check results

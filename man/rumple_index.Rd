@@ -48,7 +48,7 @@ rumple_index(x/10, y/10, z)
 # Use with a canopy height model
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
-chm = las \%>\% grid_canopy
+chm = grid_canopy(las)
 rumple_index(chm)
 }
 \references{

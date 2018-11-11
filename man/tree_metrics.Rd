@@ -4,7 +4,7 @@
 \alias{tree_metrics}
 \title{Compute metrics for each tree}
 \usage{
-tree_metrics(.las, func, debug = FALSE)
+tree_metrics(.las, func, debug = FALSE, field = "treeID")
 }
 \arguments{
 \item{.las}{An object of class \code{LAS}.}
@@ -12,6 +12,8 @@ tree_metrics(.las, func, debug = FALSE)
 \item{func}{The function to be applied to each tree.}
 
 \item{debug}{logical. When facing a non trivial error, try \code{debug = TRUE}.}
+
+\item{field}{character. The column name of the field containing tree IDs. Defaul is \code{"treeID"}}
 }
 \value{
 Returns a \code{data.table} containing the metrics for each segmented tree.
@@ -35,7 +37,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
 # segment trees (see lastrees)
-lastrees(las, algorithm = "li2012")
+lastrees(las, algorithm = "li2012-2")
 
 # Max height for each tree
 tree_metrics(las, mean(Z))

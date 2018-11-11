@@ -59,42 +59,6 @@ QuadTree::~QuadTree()
   delete SW;
 }
 
-QuadTree* QuadTree::create(const std::vector<double> x, const std::vector<double> y)
-{
-  int n = x.size();
-
-  double xmin = x[0];
-  double ymin = y[0];
-  double xmax = x[0];
-  double ymax = y[0];
-
-  for(int i = 0 ; i < n ; i++)
-  {
-    if(x[i] < xmin)
-      xmin = x[i];
-    else if(x[i] > xmax)
-      xmax = x[i];
-    if(y[i] < ymin)
-      ymin = y[i];
-    else if(y[i] > ymax)
-      ymax = y[i];
-  }
-
-  double xrange = xmax - xmin;
-  double yrange = ymax - ymin;
-  double range = xrange > yrange ? xrange/2 : yrange/2;
-
-  QuadTree *tree = new QuadTree( (xmin+xmax)/2, (ymin+ymax)/2, range+0.01);
-
-  for(int i = 0 ; i < n ; i++)
-  {
-    Point p(x[i], y[i], i);
-    tree->insert(p);
-  }
-
-  return tree;
-}
-
 bool QuadTree::insert(const Point& p)
 {
   if(!boundary.contains(p))
@@ -228,7 +192,7 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
     radius *= 1.5;
   }
 
-  std::sort(pts.begin(), pts.end(), DistanceFunc(p));
+  std::sort(pts.begin(), pts.end(), distance_to<Point>(p));
 
   for (int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);

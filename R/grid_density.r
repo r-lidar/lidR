@@ -29,15 +29,14 @@
 
 #' Map the pulse or point density
 #'
-#' Creates a pulse density map using a LiDAR point cloud. This function is an alias
-#' for \code{grid_metrics(obj, f, res)} with \code{f} = \code{length(unique(pulseID))/res^2)}
+#' Creates a map of the point density. If a "pulseID" field is found, return also a map of the pulse
+#' density.
 #'
 #' @section Use with a \code{LAScatalog}:
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
-#' by default to the number of core available in the computer. The user can modify the global
-#' options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{signifcantly} improved with a
+#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
+#' options using the \link[lidR:catalog]{available options}.\cr\cr
+#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @aliases grid_density
@@ -54,8 +53,10 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' lidar %>% grid_density(5) %>% plot
-#' lidar %>% grid_density(10) %>% plot
+#' d = grid_density(lidar, 5)
+#' plot(d)
+#' d = grid_density(lidar, 10)
+#' plot(d)
 #' @seealso
 #' \link[lidR:grid_metrics]{grid_metrics}
 #' @export
@@ -72,11 +73,12 @@ grid_density.LAS = function(x, res = 4, filter = "")
 
   if(! "pulseID" %in% names(x@data))
   {
-    warning("No column named pulseID found. The pulse density cannot be computed. Computing the point density instead of the pulse density.", call. = F)
-    ret = grid_metrics(x, list(density = length(X)/res^2), res)
+    ret = grid_metrics(x, list(point_density = length(X)/res^2), res)
   }
   else
-    ret = grid_metrics(x, list(density = length(unique(pulseID))/res^2), res)
+  {
+    ret = grid_metrics(x, list(point_density = .N/res^2, pulse_density = length(unique(pulseID))/res^2), res)
+  }
 
   return(ret)
 }
@@ -84,12 +86,9 @@ grid_density.LAS = function(x, res = 4, filter = "")
 #' @export
 grid_density.LAScatalog = function(x, res = 4, filter = "")
 {
-  oldbuffer <- CATALOGOPTIONS("buffer")
-  CATALOGOPTIONS(buffer = 0)
+  x = catalog_old_compatibility(x)
 
-  ret <- grid_catalog(x, grid_density, res, "xyztP", filter)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
+  buffer(x) <- res/2
+  ret <- grid_catalog(x, grid_density, res, "xyzt", filter)
   return(ret)
 }

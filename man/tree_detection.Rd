@@ -36,7 +36,7 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 ttops = tree_detection(las, 5)
 
 plot(las)
-ttops \%$\% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
+with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
 
 # raster-based method
 

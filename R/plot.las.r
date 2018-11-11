@@ -70,20 +70,16 @@
 #' @export
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, backend = c("rgl", "pcv"), ...)
 {
+  if (!is.character(color))
+    color = lazyeval::expr_text(color)
+
   backend = match.arg(backend)
   pcv = "PointCloudViewer" %in% rownames(utils::installed.packages())
 
-  if (backend == "pcv" & !pcv)
-    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
-
-  if(length(color) > 1)
-    stop("'color' should contains a single value.", call. = F)
-
-  if(!is.character(color))
-    stop("'color' should be of type character.", call. = F)
-
-  if(! color %in% names(x@data))
-    stop("'color' should refer to a colunm of the LAS data.", call. = F)
+  if (backend == "pcv" & !pcv)   stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
+  if(length(color) > 1)          stop("'color' should contains a single value.", call. = F)
+  if(!is.character(color))       stop("'color' should be of type character.", call. = F)
+  if(! color %in% names(x@data)) stop("'color' should refer to a colunm of the LAS data.", call. = F)
 
   if (color == "Z")
     coldata = x@data$Z
@@ -104,7 +100,6 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     coldata = unlist(x@data[,color, with = FALSE])
 
   inargs = list(...)
-
   if(is.null(inargs$size))
     inargs$size = 1.5
 

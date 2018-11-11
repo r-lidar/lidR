@@ -33,7 +33,7 @@
 #' multi-core process. When a user has a dataset organized into several files, it applies the
 #' user-defined function to the entire catalog by automatically splitting it into several
 #' clusters. The clustering pattern can be either split into a set of squared areas or split by
-#' file. The clustering pattern can be modified using the global catalog options with \link{catalog_options}.
+#' file. The clustering pattern can be modified using the catalog options (see \link{catalog}.
 #' The "Examples" section describes the procedure for applying functions to the catalog, beginning
 #' with data loading (see example). \cr\cr
 #' \strong{Warning:} there is a mechanism to load buffered data and to avoid edge artifacts,
@@ -63,6 +63,7 @@
 #' @param func_args A list of extra arguments to pass in the function 'func'.
 #' @param ... Any argument available in \link{readLAS} to reduce the amount of data loaded.
 #' @examples
+#' \dontrun{
 #' # Visit http://jean-romain.github.io/lidR/wiki for an illustrated and commented
 #' # version of this example.
 #' # This is a dummy example. It is more efficient to load the entire file than
@@ -73,10 +74,12 @@
 #' project = catalog(LASfile)
 #' plot(project)
 #'
-#' # 2. Set some global catalog options
+#' # 2. Set some catalog options
 #' # For this dummy example, the clustering size is 80 m and the buffer is 15 m using
 #' # a single core (because this example is run on the CRAN server when the package is submitted).
-#' catalog_options(buffer = 15, multicore = 1, tiling_size = 120)
+#' buffer(project) = 15
+#' cores(project) = 1
+#' tiling_size(project) = 120
 #'
 #' # 3. Load the shapefile needed to filter your points.
 #' folder <- system.file("extdata", "", package="lidR")
@@ -94,14 +97,18 @@
 #'   lasclassify(las, lake, field = "lake")
 #'
 #'   # filter lakes, and low elevation points
-#'   las %<>% lasfilter(lake == FALSE, Z > 4)
+#'   las = lasfilter(las, lake == FALSE, Z > 4)
 #'
 #'   if (is.null(las))
 #'     return(NULL)
 #'
 #'   # segment trees (in this example the low point density does not enable
 #'   # accurate segmentation of trees. This is just a proof-of-concept)
-#'   lastrees(las, algorithm = "li2012")
+#'   chm = grid_canopy(las, 1, subcircle = 0.3)
+#'   chm = as.raster(chm)
+#'   kernel = matrix(1,3,3)
+#'   chm = raster::focal(chm, w = kernel, fun = mean, na.rm = TRUE)
+#'   lastrees(las, algorithm = "watershed", chm = chm)
 #'
 #'   # Here we used the function tree_metric to compute some metrics for each tree. This
 #'   # function is defined later in the global environment.
@@ -157,54 +164,18 @@
 #' # of the list is a data.table, so rbindlist does the job:
 #' output = data.table::rbindlist(output)
 #'
-#' output %$% plot(x,y, cex = sqrt(area/pi)/5, asp = 1)
+#' with(output, plot(x,y, cex = sqrt(area/pi)/5, asp = 1))
+#' }
 #' @export
 catalog_apply <- function(ctg, func, func_args = NULL, ...)
 {
-  progress  = CATALOGOPTIONS("progress")
-  ncores   <- CATALOGOPTIONS("multicore")
-  buffer   <- CATALOGOPTIONS("buffer")
-  by_file  <- CATALOGOPTIONS("by_file")
-  res      <- 1
+  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assertive::assert_is_function(func)
 
-  clusters <- catalog_makecluster(ctg, res, buffer, by_file)
-
-  nclust = length(clusters)
-
-  if (nclust < ncores)
-    ncores <- nclust
-
-  if (ncores > 1)
-    future::plan(future::multiprocess, workers = ncores)
-  else
-    future::plan(future::sequential)
-
-  output = list()
-
-  for(i in seq_along(clusters))
-  {
-    cluster = clusters[[i]]
-
-    output[[i]] <- future::future({cluster_apply_func(cluster, func, ctg, func_args, ...) })
-
-    if(progress)
-    {
-      cat(sprintf("\rProgress: %g%%", round(i/nclust*100)), file = stderr())
-      graphics::rect(cluster@bbox$xmin, cluster@bbox$ymin, cluster@bbox$xmax, cluster@bbox$ymax, border = "black", col = "forestgreen")
-    }
-  }
-
-  cat("\n")
-
-  return(future::values(output))
-}
-
-cluster_apply_func <- function(cluster, func, ctg, func_args, ...)
-{
-  las = readLAS(cluster, ...)
-
-  if (is.null(las))
-    return(NULL)
-
-  return(do.call(func, c(las, func_args)))
+  progress  <- progress(ctg)
+  ncores    <- cores(ctg)
+  stopearly <- stop_early(ctg)
+  clusters  <- catalog_makecluster(ctg, 1)
+  output    <- cluster_apply(clusters, func, ncores, progress, stopearly, func_args = func_args, ..., autoread = TRUE)
+  return(output)
 }

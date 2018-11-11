@@ -35,10 +35,9 @@
 #'
 #' @section Use with a \code{LAScatalog}:
 #' When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-#' the entire dataset in a continuous way using a multicore process. Parallel computing is set
-#' by default to the number of core available in the computer. A buffer is required. The user
-#' can modify the global options using the function \link{catalog_options}.\cr\cr
-#' \code{lidR} support .lax files. Computation speed will be \emph{significantly} improved with a
+#' the entire dataset in a continuous way using a multicore process. The user can modify the processing
+#' options using the \link[lidR:catalog]{available options}.\cr\cr
+#' \code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
 #' spatial index.
 #'
 #' @param x A LAS object
@@ -50,10 +49,10 @@
 #' If a triangle has an edge greater than this value it will be removed. It is used to drive
 #' the pit-free algorithm (see reference) and to trim dummy interpolation on non-convex areas.
 #' The first number is the value for the classical triangulation (threshold = 0), the second number
-#' is the value for the pit-free algorithm for (thresholds > 0). If \code{max_edge = 0} no trimming
-#' will be done.
+#' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
+#' is done.
 #' @param subcircle numeric. Radius of the circles. To obtain fewer pits the algorithm
-#' can replace each return with a circle composed of 8 points before computing the triangulation
+#' can replace each return with a circle consisting of 8 points before computing the triangulation
 #' (see also \link{grid_canopy}).
 #' @param filter character. Streaming filter while reading the files (see \link{readLAS}).
 #' If the input is a \code{LAScatalog} the function \link{readLAS} is called internally. The
@@ -84,6 +83,13 @@ grid_tincanopy = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge =
 #' @export
 grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
+  assertive::assert_is_numeric(thresholds)
+  assertive::assert_all_are_non_negative(thresholds)
+  assertive::assert_is_numeric(max_edge)
+  assertive::assert_all_are_non_negative(max_edge)
+  assertive::assert_is_a_number(subcircle)
+  assertive::assert_all_are_non_negative(subcircle)
+
   . <- X <- Y <- Z <- ReturnNumber <- Xgrid <- Ygrid <- NULL
 
   if (length(thresholds) > 1 & length(max_edge) < 2)
@@ -125,19 +131,14 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 
   verbose("Selecting only the highest points within the grid cells...")
 
-  f = function(x,y,z) {
-    i = which.max(z)
-    return(list(X = x[i], Y = y[i], Z = z[i]))
-  }
-
   by = group_grid(cloud$X, cloud$Y, res)
-  cloud = cloud[, f(X,Y,Z), by = by][, Xgrid := NULL][, Ygrid := NULL][]
+  cloud = cloud[cloud[, .I[which.max(Z)], by = by]$V1]
 
-  # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour)
+  # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
   i = 1
   for (th in thresholds)
   {
-    verbose(paste0("Triangulation pass ", i, " of ", length(thresholds), "..."))
+    verbose(glue("Triangulation pass {i} of {length(thresholds)}..."))
     i =  i+ 1
 
     if (th == 0)
@@ -154,6 +155,9 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
     }
   }
 
+  if(all(is.na(z)))
+    stop("Interpolation failed. Input parameters might be wrong.")
+
   grid[, Z := z][]
   grid = grid[!is.na(Z)]
   as.lasmetrics(grid,res)
@@ -164,14 +168,8 @@ grid_tincanopy.LAS = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_ed
 #' @export
 grid_tincanopy.LAScatalog = function(x, res = 0.5, thresholds =  c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0, filter = "-keep_first")
 {
-  oldbuffer <- CATALOGOPTIONS("buffer")
-
-  if (subcircle == 0)
-    CATALOGOPTIONS(buffer = res)
-
+  x = catalog_old_compatibility(x)
+  buffer(x) <- buffer(x) + subcircle
   canopy = grid_catalog(x, grid_tincanopy, res, "xyzr", filter, thresholds = thresholds, max_edge = max_edge, subcircle = subcircle)
-
-  CATALOGOPTIONS(buffer = oldbuffer)
-
   return(canopy)
 }

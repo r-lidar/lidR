@@ -93,31 +93,31 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile, select = "*")
 
 # All the predefined functions
-lidar \%>\% grid_metrics(stdmetrics(X,Y,Z,Intensity, ScanAngle,
-                                  ReturnNumber, Classification,
-                                  dz = 1))
+m1 = grid_metrics(lidar, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
-lidar \%>\% grid_metrics(.stdmetrics)
+m2 = grid_metrics(lidar, .stdmetrics)
 
 # Basic metrics from intensities
-lidar \%>\% grid_metrics(stdmetrics_i(Intensity))
+m3 = grid_metrics(lidar, stdmetrics_i(Intensity))
 
 # All the metrics from intensities
-lidar \%>\% grid_metrics(stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+m4 = grid_metrics(lidar, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 
 # Convenient shortcut for the previous example
-lidar \%>\% grid_metrics(.stdmetrics_i)
+m5 = grid_metrics(lidar, .stdmetrics_i)
 
 # Compute the metrics only on first return
-lidar \%>\% lasfilterfirst \%>\% grid_metrics(.stdmetrics_z)
+first = lasfilterfirst(lidar)
+m6 = grid_metrics(first, .stdmetrics_z)
 
 # Compute the metrics with a threshold at 2 meters
-lidar \%>\% lasfilter(Z > 2) \%>\% grid_metrics(.stdmetrics_z)
+over2 = lasfilter(lidar, Z > 2)
+m7 = grid_metrics(over2, .stdmetrics_z)
 
 # Works also with lasmetrics and grid_hexametrics
-lidar \%>\% lasmetrics(.stdmetrics)
-lidar \%>\% grid_hexametrics(.stdmetrics)
+m8 = lasmetrics(lidar, .stdmetrics)
+m9 = grid_hexametrics(lidar, .stdmetrics)
 
 # Combine some predefined function with your own new metrics
 # Here convenient shortcuts are no longer usable.
@@ -132,12 +132,12 @@ myMetrics = function(z, i)
   return( c(metrics, stdmetrics_z(z)) )
 }
 
-lidar \%>\% grid_metrics(myMetrics(Z, Intensity))
+m10 = grid_metrics(lidar, myMetrics(Z, Intensity))
 
-# You can write your own convenient shorcuts like this:
+# User can write your own convenient shorcuts like this:
 .myMetrics = expression(myMetrics(Z,Intensity))
 
-lidar \%>\% grid_metrics(.myMetrics)
+m11 = grid_metrics(lidar, .myMetrics)
 }
 \seealso{
 \link{grid_metrics}
