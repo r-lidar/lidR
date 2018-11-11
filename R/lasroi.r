@@ -27,38 +27,38 @@
 
 
 
-#' Select a region of interest interactively
-#'
-#' Select a rectangular region of interest interactively using the mouse
-#'
-#' \code{lasroi} enables the user to select a region of interest (ROI) by drawing
-#' a rectangle with the mouse
-#' @aliases lasroi
-#' @param .las An object of class \code{LAS}
-#' @param \dots Optional parameters for the plot function
-#' @return An object of class \code{LAS}
-#' @examples
-#'\dontrun{
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
-#' subset = lasroi(lidar)
-#' }
-#' @export
-lasroi = function(.las, ...)
-{
-  X <- Y <- NULL
-
-  stopifnotlas(.las)
-
-  plot.LAS(.las, ...)
-  rgl::view3d(0,0)
-
-  f = rgl::select3d()
-  keep = f(.las@data$X, .las@data$Y,0)
-  rgl::rgl.close()
-
-  out = lasfilter(.las, keep)
-  plot.LAS(out, ...)
-
-  return(out)
-}
+# Select a region of interest interactively
+#
+# Select a rectangular region of interest interactively using the mouse
+#
+# \code{lasroi} enables the user to select a region of interest (ROI) by drawing
+# a rectangle with the mouse
+# @aliases lasroi
+# @param .las An object of class \code{LAS}
+# @param \dots Optional parameters for the plot function
+# @return An object of class \code{LAS}
+# @examples
+#\dontrun{
+# LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+# lidar = readLAS(LASfile)
+# subset = lasroi(lidar)
+# }
+# @export
+# lasroi = function(.las, ...)
+# {
+#   X <- Y <- NULL
+#
+#   stopifnotlas(.las)
+#
+#   plot(.las, ...)
+#   rgl::view3d(0,0)
+#
+#   f = rgl::select3d()
+#   keep = f(.las@data$X, .las@data$Y,0)
+#   rgl::rgl.close()
+#
+#   out = lasfilter(.las, keep)
+#   plot.LAS(out, ...)
+#
+#   return(out)
+# }

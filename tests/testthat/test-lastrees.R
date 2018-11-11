@@ -3,80 +3,67 @@ context("lastrees")
 LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
 las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
 
-chm = grid_tincanopy(las, res = 0.5)
-chm = as.raster(chm)
+chm = grid_canopy(las, 0.5, pitfree())
 kernel = matrix(1,3,3)
 chm = raster::focal(chm, w = kernel, fun = mean)
 
 
 test_that("Dalponte's methods works", {
-  ttops = tree_detection(chm, 3, 2)
-  seg1 = lastrees_dalponte(las, chm, ttops, extra = T)
+  ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  las <- lastrees(las, dalponte2016(chm, ttops))
 
-  expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
-  expect_equal(sort(unique(seg1[])), 1:59)
-
-  # Test if it works with a data.frame as input
-  ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
-  seg2 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
-
-  # Tree are nor ordered the same. Just ckeck if pixels are filled the same.
-  seg1[!is.na(seg1)] <- 1
-  seg2[!is.na(seg2)] <- 1
-
-  expect_equal(seg1, seg2)
+  expect_equal(sort(unique(las@data$treeID)), 1:40L)
+  expect_true(is.integer(las@data$treeID))
 
   # Test if a seed is not in the chm
-  old = ttopsdf[1,1]
-  ttopsdf[1,1] <- 0
-  expect_warning(lastrees_dalponte(las, chm, ttopsdf, extra = T), "outside")
+  old = ttops@coords
+  ttops@coords[1,1] <- 0
+  expect_warning(lastrees(las, dalponte2016(chm, ttops)), "outside")
 
   # Test if seed IDs are propagated
-  ttopsdf[1,1] <- old
-  ttopsdf$layer = 1:59*2
+  ttops@coords <- old
+  ttops@data$treeID = 1:40*2L
 
-  seg3 = lastrees_dalponte(las, chm, ttopsdf, extra = T)
-  expect_equal(sort(unique(seg3[])), 1:59*2)
-
+  las <- lastrees(las, dalponte2016(chm, ttops))
+  expect_equal(sort(unique(las@data$treeID)), 1:40L*2L)
 })
 
 test_that("Li's method works", {
-  las@data[, treeID := NULL]
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "TID")
 
-  lastrees_li2(las, speed_up = 5)
-  expect_true("treeID" %in% names(las@data))
+  expect_true("TID" %in% names(las@data))
+  expect_equal(sort(unique(las@data$TID)), 1:48L)
+  expect_true(is.integer(las@data$TID))
 })
 
 test_that("Silvas's methods works", {
-  las@data[, treeID := NULL]
+  ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  las <- lastrees(las, silva2016(chm, ttops))
 
-  ttops = tree_detection(chm, 3, 2)
-  seg1 = lastrees_silva(las, chm, ttops, extra = TRUE)
-
-  expect_true(is(seg1, "RasterLayer"))
   expect_true("treeID" %in% names(las@data))
+  expect_true(is.integer(las@data$treeID))
+})
 
-  ttopsdf = raster::as.data.frame(ttops, na.rm = T, xy = T)
+test_that("MC watershed methods works", {
+  ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  las <- lastrees(las, mcwatershed(chm, ttops))
 
-  seg2 = lastrees_silva(las, chm, ttopsdf, extra = TRUE)
-
-  expect_equal(seg1, seg2)
+  expect_true("treeID" %in% names(las@data))
+  expect_true(is.integer(las@data$treeID))
 })
 
 test_that("lastrees can store in a user defined column", {
-  lastrees_li2(las, speed_up = 5, field = "plop")
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
   expect_true("plop" %in% names(las@data))
 })
 
-
 test_that("tree_metrics works", {
-  X = tree_metrics(las, max(Z))
-  Y = tree_metrics(las, max(Z), field = "plop")
+  las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
+  expect_error(tree_metrics(las, max(Z)), "not segmented")
+  Y <- tree_metrics(las, max(Z), field = "plop")
   expect_error(tree_metrics(las, max(Z), field = "abc"), "trees are not segmented")
 })
-
-
 
 # Commented because CRAN doesn't like to call Bioconductor package
 # test_that("Watershed's methods works", {

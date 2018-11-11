@@ -30,32 +30,27 @@
 #include "RasterProcessors.h"
 
 // [[Rcpp::export]]
-List C_grid_canopy(S4 las, double res, double subcircle = 0)
+NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subcircle = 0)
 {
   S4 header = las.slot("header");
   List phb  = header.slot("PHB");
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
-
-  double xmax = phb["Max X"];
-  double xmin = phb["Min X"];
-  double ymax = phb["Max Y"];
-  double ymin = phb["Min Y"];
-
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
+  double xmin = bbox(0,0);
+  double xmax = bbox(0,1);
+  double ymin = bbox(1,0);
+  double ymax = bbox(1,1);
+
   try
   {
-    PointToRasterProcessor processor(xmin - subcircle,
-                                     ymin - subcircle,
-                                     xmax + subcircle,
-                                     ymax + subcircle,
-                                     res);
+    PointToRasterProcessor processor(xmin, ymin, xmax, ymax, res);
 
     if (subcircle > 0)
     {
-      double angle[8] = {0, 2*PI/8, 4*PI/8, 6*PI/8, PI, 10*PI/8, 12*PI/8, 14*PI/8};
+      double angle[8] = {0, 2*M_PI/8, 4*M_PI/8, 6*M_PI/8, M_PI, 10*M_PI/8, 12*M_PI/8, 14*M_PI/8};
 
       for (int i = 0 ; i < X.length() ; i++)
       {
@@ -75,12 +70,12 @@ List C_grid_canopy(S4 las, double res, double subcircle = 0)
       }
     }
 
-    return processor.expend();
+    return processor.getmatrix();
   }
   catch (std::exception const& e)
   {
     stop(e.what());
-    return(List(0));
+    return(NumericMatrix(0));
   }
 }
 

@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 1.6.1
+Version: 2.0.0
 Date: 2018-08-21
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
@@ -18,110 +18,106 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.1.0),methods
+    R (>= 3.1.0),methods,raster,sp
 Imports:
     assertive,
     concaveman,
     data.table,
     future,
-    gdalUtils,
     geometry,
     glue,
     grDevices,
     gstat,
     lazyeval,
-    mapview,
-    mapedit,
-    memoise,
+    imager,
     RANN,
-    raster,
-    Rcpp,
+    Rcpp (>= 0.11.0),
+    RCSF,
     rgeos,
     rgl,
-    rlas (>= 1.1.10),
-    settings,
-    sp,
+    rlas (>= 1.2.5),
+    sf,
     stats,
     tools,
     utils
 Suggests:
-    rgdal,
-    testthat,
     EBImage,
-    hexbin
+    crayon,
+    gdalUtils,
+    hexbin,
+    mapview,
+    progress,
+    rgdal,
+    testthat
 LazyData: true
-RoxygenNote: 6.0.1
-LinkingTo: Rcpp
+RoxygenNote: 6.1.0
+LinkingTo: BH,Rcpp
 Encoding: UTF-8
 ByteCompile: true
 biocViews: 
 Collate: 
+    'LASmethods-generic.r'
+    'Class-LASheader.r'
+    'Class-LAS.r'
+    'Class-LAScatalog.r'
+    'Class-LAScluster.r'
+    'LASmethods-LAS.r'
+    'LASmethods-LAScatalog.r'
+    'LASmethods-LAScluster.r'
+    'LASmethods-LASheader.r'
     'RcppExports.R'
+    'algo_digital_surface_model.r'
+    'algo_ground_segmentation.r'
+    'algo_points_decimation.r'
+    'algo_snags_segmentation.r'
+    'algo_spatial_interpolations.r'
+    'algo_tree_detection.R'
+    'algo_tree_segmentation.r'
     'catalog_apply.r'
     'catalog_fakerun.r'
     'catalog_index.r'
+    'catalog_intersect.r'
     'catalog_laxindex.r'
     'catalog_makecluster.r'
-    'catalog_query.r'
     'catalog_retile.r'
     'catalog_select.r'
-    'class-lasheader.r'
-    'class-las.r'
-    'class-lascatalog.r'
-    'class-lascluster.r'
     'clusters_apply.r'
-    'constant.R'
-    'deprecated.r'
     'grid_canopy.r'
-    'grid_catalog.r'
     'grid_density.r'
     'grid_hexametrics.r'
     'grid_metrics.r'
     'grid_metrics3d.r'
     'grid_terrain.r'
-    'grid_tincanopy.r'
-    'lasaggreagte.r'
-    'lasclassify.r'
+    'io_readLAS.r'
+    'io_writeLAS.r'
+    'lascheck.r'
     'lasclip.r'
-    'lascolor.r'
     'lasfilter.r'
     'lasfilterdecimate.r'
+    'lasfilterduplicates.r'
     'lasfiltersurfacepoints.r'
     'lasground.r'
     'lasindentify.r'
+    'lasmergespatial.r'
     'lasmetrics.r'
     'lasnormalize.r'
     'lasroi.r'
     'lassmooth.r'
     'lassnags.r'
+    'lastransform.r'
     'lastrees.r'
-    'lastrees_dalponte.r'
-    'lastrees_li.r'
-    'lastrees_li2.r'
-    'lastrees_silva.r'
-    'lastrees_watershed.r'
     'lasupdateheader.r'
-    'metrics.r'
-    'metrics_canopy_roughness.r'
-    'options.r'
-    'plot.catalog.r'
-    'plot.las.r'
-    'plot.lashexametrics.r'
-    'plot.lasmetrics.r'
-    'plot.lasmetrics3d.r'
-    'plot3d.r'
-    'readLAS.r'
-    'stopif.r'
-    'subcircled.r'
+    'plot.s3.r'
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
+    'utils_catalog_options.r'
     'utils_colors.r'
+    'utils_define_constant.R'
     'utils_geometry.r'
-    'utils_interpolations.r'
+    'utils_is.r'
+    'utils_match_chm_and_seeds.r'
+    'utils_metrics.r'
     'utils_misc.r'
-    'utils_projection.r'
-    'utils_spatial.r'
     'utils_typecast.r'
-    'writeLAS.r'
     'zzz.r'

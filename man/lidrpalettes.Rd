@@ -25,3 +25,4 @@ Create a vector of n contiguous (or not) colors
 \seealso{
 \link[grDevices:heat.colors]{grDevices::Palettes}
 }
+\concept{lidrpalettes}

@@ -13,14 +13,14 @@ test_that("entropy returns proper values", {
   Z = runif(20000, 0, 5)
   S = entropy(Z)
 
-  expect_equal(S, 1, tolerance = 0.001)
+  expect_equal(S, 1, tolerance = 0.0001)
 
   set.seed(42)
   Z = runif(20000, 0, 1)
   Z = c(Z, 5)
   S = entropy(Z)
 
-  expect_equal(S, 0, tolerance = 0.001)
+  expect_equal(S, 0)
 })
 
 test_that("VCI returns the same as entropy values", {

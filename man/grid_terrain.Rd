@@ -4,85 +4,98 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(x, res = 1, method, k = 10L, p = 2,
-  model = gstat::vgm(0.59, "Sph", 874), keep_lowest = FALSE)
+grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE)
 }
 \arguments{
-\item{x}{An object of class \link{LAS} or a \link{catalog} (see section "Use with a LAScatalog")}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. resolution.}
+\item{res}{numeric. The resolution of the output \code{Raster}. Can optionally be a \code{RasterLayer}.
+In that case the \code{RasterLayer} is used as the layout.}
 
-\item{method}{character. can be \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see details)}
+\item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
+\code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).}
 
-\item{k}{numeric. number of k-nearest neighbours when the selected method is either \code{"knnidw"} or \code{"kriging"}}
-
-\item{p}{numeric. Power for inverse-distance weighting. Default 2.}
-
-\item{model}{a variogram model computed with \link[gstat:vgm]{vgm} when the selected method
-is \code{"kriging"}. If null, it performs an ordinary or weighted least squares prediction.}
-
-\item{keep_lowest}{logical. This function forces the original lowest ground point of each
-pixel (if it exists) to be chosen instead of the interpolated values.}
+\item{keep_lowest}{logical. This option forces the original lowest ground point of each
+cell (if it exists) to be chosen instead of the interpolated values.}
 }
 \value{
-A \code{lasmetrics} data.table.
+A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s
+are written on disk when running the function with a \code{LAScatalog}, a virtual raster mosaic is
+returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
-Interpolates ground points and creates a rasterized digital terrain model. The interpolation
-can be done using 3 methods: \code{"knnidw"}, \code{"delaunay"} or \code{"kriging"} (see
-details). The algorithm uses the points classified as "ground" to compute the interpolation.\cr
+Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
+the points classified as "ground" (Classification = 2 according to
+\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
+to compute the interpolation.\cr
 Depending on the interpolation method, the edges of the dataset can be more, or less poorly
 interpolated. A buffer around the region of interest is always recommended to avoid edge
 effects.
 }
-\details{
-\describe{
-\item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-an inverse-distance weighting (IDW). This is a fast but basic method for spatial
-data interpolation.}
-\item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It makes a linear
-interpolation within each triangle. There are usually few cells outside the convex hull,
-determined by the ground points at the very edge of the dataset that cannot be interpolated
-with a triangulation. Extrapolation is done using knnidw.}
-\item{\code{kriging}}{Interpolation is done by universal kriging using the
-\link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging
-approach. For each point of interest the terrain is kriged using the k-nearest neighbour ground
-points. This method is more difficult to manipulate but it is also the most advanced method for
-interpolating spatial data. }
-}
-}
-\section{Use with a \code{LAScatalog}}{
+\section{Working with a \code{LAScatalog}}{
 
-When the parameter \code{x} is a \link[lidR:LAScatalog-class]{LAScatalog} the function processes
-the entire dataset in a continuous way using a multicore process. The user can modify the processing
-options using the \link[lidR:catalog]{available options}.\cr\cr
-\code{lidR} supports .lax files. Computation speed will be \emph{significantly} improved with a
-spatial index.
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+function uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that documents the supported engine options.\cr
+
+The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} in \code{grid_*} functions (in bold). For
+more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{tiling_size}: How much data is loaded at once. The tiling size may be slightly modified
+internally to ensure a strict continuous wall-to-wall output even when tiling size is equal to 0 (processing
+by file).
+\item buffer: This function guarantees a strict continuous wall-to-wall output. The \code{buffer} option
+is not considered.
+\item \strong{alignment}: Align the processed clusters. The alignment may be slightly modified.
+\item \strong{chunk size}: How much data is loaded at once. The chunk size may be slightly modified
+internally to ensure a strict continuous wall-to-wall output even when chunk size is equal to 0 (processing
+by file).
+\item chunk buffer: This function guarantees a strict continuous wall-to-wall output. The \code{buffer}
+option is not considered.
+\item \strong{chunk alignment}: Align the processed chunks. The alignment may be slightly modified
+internally to ensure a strict continuous wall-to-wall output.
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progress estimate.
+\item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
+templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
+\code{ID} and, if chunk size is equal to 0 (processing by file), \code{ORIGINALFILENAME}.
+\item laz_compression: is not supported because this function will never write \code{las/laz} files.
+\item \strong{\emph{select}}: The \code{grid_*} functions usually 'know' what should be loaded
+and this option is not considered. In \link{grid_metrics} this option is respected.
+\item \strong{filter}: Read only the points of interest.
+}
 }
 
 \examples{
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-lidar = readLAS(LASfile)
-plot(lidar)
 
-dtm1 = grid_terrain(lidar, method = "knnidw", k = 6, p = 2)
-dtm2 = grid_terrain(lidar, method = "delaunay")
-dtm3 = grid_terrain(lidar, method = "kriging", k = 10)
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile)
+plot(las)
+
+dtm1 = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
+dtm2 = grid_terrain(las, algorithm = tin())
+dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
 
 \dontrun{
 plot(dtm1)
 plot(dtm2)
 plot(dtm3)
-plot3d(dtm1)
-plot3d(dtm2)
-plot3d(dtm3)
+plot_dtm3d(dtm1)
+plot_dtm3d(dtm2)
+plot_dtm3d(dtm3)
 }
 }
 \seealso{
-\link[lidR:grid_terrain]{grid_terrain}
-\link[lidR:lasnormalize]{lasnormalize}
-\link[gstat:vgm]{vgm}
-\link[gstat:krige]{krige}
-\link[lidR:lasnormalize]{lasnormalize}
-\link[raster:raster]{RasterLayer}
+\link{lasnormalize}
 }
