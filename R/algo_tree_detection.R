@@ -220,22 +220,26 @@ manual = function(detected = NULL, ...)
 
     repeat
     {
-      f   <- rgl::select3d(button = c("right"))
-      pts <- las@data[f(las@data), .(X,Y,Z)]
+      f <- rgl::select3d(button = c("right"))
 
-      if (length(pts$X) == 0)
-        break;
+      i <- f(apice)
 
-      apex <- unique(pts[pts$Z == max(pts$Z)])
-      ii   <- which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
-
-      if (length(ii) > 0)
+      if (sum(i) > 0)
       {
+        ii <- which(i == TRUE)
         rgl::rgl.pop(id = apice[ii]$id)
         apice <- apice[-ii]
       }
       else
       {
+        i <- f(las@data)
+
+        if (sum(i) == 0)
+          break;
+
+        pts     <- las@data[i, .(X,Y,Z)]
+        apex    <- unique(pts[pts$Z == max(pts$Z)])
+        ii      <- which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
         apex$id <- as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = 1, color = "red"))
         apice   <- rbind(apice, apex)
       }
