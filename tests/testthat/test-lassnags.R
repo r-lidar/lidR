@@ -10,7 +10,7 @@ BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
                          nrow =3, ncol = 4)
 
 test_that("Wing's method works", {
-  las <- lassnags(las, wing2015(bbpr = BBPRthrsh_mat))
+  las <- lassnags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = BBPRthrsh_mat))
   expect_true("snagCls" %in% names(las@data))
-  expect_equal(as.numeric(table(las@data$snagCls)), c(7227, 95, 54, 10))
+  expect_equal(as.numeric(table(las@data$snagCls)), c(7223, 93, 55, 15))
 })
