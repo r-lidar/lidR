@@ -1,44 +1,55 @@
 #' Individual tree segmentation
 #'
-#' Individual tree segmentation with several possible algorithms. The function is a wrapper around
-#' all the existing methods. Considering the increasing number of tree segmentation methods available,
-#' each method is now documented on its own page (see section "See Also")
+#' Individual tree segmentation with several possible algorithms. The returned point cloud has a new
+#' extra byte attribute named after the parameter \code{attribute} independently of the algorithm used.
 #'
-#' @param las An object of the class \code{LAS}. If missing, \code{extra} is turned to \code{TRUE}
-#' automatically.
-#' @param algorithm character. The name of an algorithm. Can be \code{"dalponte2016"},
-#' \code{"watershed"},\code{"li2012"} (deprecated), \code{"li2012-2"} or \code{"silva2016"}.
-#' @param ... parameters for the algorithms. These depend on the algorithm used (see documentation
-#' of each method).
+#' @param las An object of the class \link[lidR:LAS-class]{LAS}.
 #'
-#' @return Usually nothing (NULL). The point cloud is updated by reference (in place without copy).
-#' But some algorithms may provide extra outputs. Usually it returns intermediate objects used
-#' internally, such as a \code{RasterLayer} or a \code{SpatialPolygonDataFrame}.
+#' @param algorithm function. An algorithm of individual tree segmentation. \code{lidR} have:
+#' \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012} and \link{silva2016} and
+#' more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}
+#'
+#' @param attribute character. The returned LAS object as a new extra byte attribute (in a new columns).
+#' This parameter controls the name of the new attribute. Default is \code{"treeID"}.
+#'
+#' @return An object of the class \code{LAS}
+#'
+#' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
-#' col = pastel.colors(200)
+#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' col <- pastel.colors(200)
 #'
-#' # Li 2012
-#' lastrees(las, "li2012-2", R = 3, speed_up = 5)
+#' # Using Li et al. (2012)
+#' las <- lastrees(las, li2012(R = 3, speed_up = 5))
 #' plot(las, color = "treeID", colorPalette = col)
-#' @export
-#' @family  tree_segmentation
-lastrees <- function(las, algorithm, ...)
+lastrees = function(las, algorithm, attribute = "treeID")
 {
-  stopifnotlas(las)
+  stopif_forbidden_name(attribute)
 
-  if (algorithm == "dalponte2016" )
-    return(lastrees_dalponte(las, ...))
-  else if (algorithm == "watershed")
-    return(lastrees_watershed(las, ...))
-  else if (algorithm == "li2012")
-    return(lastrees_li(las, ...))
-  else if (algorithm == "li2012-2")
-    return(lastrees_li2(las, ...))
-  else if (algorithm == "silva2016")
-    return(lastrees_silva(las, ...))
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
+
+  if (!is(algorithm, "IndividualTreeSegmentation"))
+    stop("The algorithm is not an algorithm for individual tree segmentation", call. = FALSE)
+
+  lidR.context <- "lastrees"
+
+  if (is(algorithm, "RasterBased"))
+    output <- algorithm()
+  else if (is(algorithm, "PointCloudBased"))
+    output <- algorithm(las)
   else
-    stop("This algorithm does not exist.", call. = FALSE)
+    stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'", call. = FALSE)
+
+  if (is(output, "RasterLayer"))
+    las <- lasmergespatial(las, output, attribute)
+  else if (is.integer(output))
+    las <- lasadddata(las, output, attribute)
+  else
+    stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"), call. = FALSE)
+
+  las <- lasaddextrabytes(las, name = attribute, desc = "An ID for each segmented tree")
+  return(las)
 }

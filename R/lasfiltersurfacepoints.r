@@ -1,32 +1,83 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016-2018 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
 #' Filter the surface points
 #'
-#' This routine creates a grid with a given resolution and filters the point cloud by selecting the
-#' highest point within each cell.
+#' This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
 #'
-#' This function is different from \link{grid_canopy} even if the overall concept is exactly the same.
-#' \code{grid_canopy} attributes to each cell the elevation of the highest points and the point cloud is
-#' rasterized. Here, there is no rasterization, the function takes a point cloud as input and a point
-#' cloud as output. Coordinates and attributes are preserved.
-#'
-#' @param las A LAS object
+#' @template param-las
 #' @param res numeric. The resolution of the grid used to filter the point cloud
-#' @return A LAS object
+#'
+#' @template section-supported-option-lasfilter
+#'
+#' @template return-lasfilter-las-lascatalog
+#'
 #' @export
-#' @family lasfilters
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' subset = lasfiltersurfacepoints(las, 2)
 #' plot(subset)
+#'
+#' @family lasfilters
 lasfiltersurfacepoints = function(las, res)
 {
-  stopifnotlas(las)
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
+  UseMethod("lasfiltersurfacepoints", las)
+}
 
-  Z <- NULL
-  by  = group_grid(las@data$X, las@data$Y, res)
-  sub = las@data[las@data[, .I[which.max(Z)], by = by]$V1]
-  las = LAS(sub, las@header, las@crs)
-  return(las)
+#' @export
+lasfiltersurfacepoints.LAS = function(las, res)
+{
+  return(lasfilterdecimate(las, highest(res)))
+}
+
+#' @export
+lasfiltersurfacepoints.LAScluster = function(las, res)
+{
+  buffer <- NULL
+  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  if (is.empty(x)) return(NULL)
+  x <- lasfiltersurfacepoints(x, res)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lasfiltersurfacepoints.LAScatalog = function(las, res)
+{
+  opt_select(las)       <- "*"
+  opt_chunk_buffer(las) <- res
+
+  output <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output <- unlist(output)
+  ctg    <- suppressMessages(suppressWarnings(catalog(output)))
+
+  opt_copy(ctg) <- las
+
+  return(ctg)
 }

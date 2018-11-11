@@ -25,30 +25,28 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
+catalog_makecluster = function(ctg)
 {
   xmin    <- ymin <- xmax <- ymax <- 0
-  buffer  <- buffer(ctg)
-  by_file <- by_file(ctg)
-  size    <- tiling_size(ctg)
+  buffer  <- opt_chunk_buffer(ctg)
+  by_file <- opt_chunk_is_file(ctg)
+  start   <- opt_chunk_alignment(ctg)
+  width   <- opt_chunk_size(ctg)
 
   # Creation of a set rectangle that encompass the catalog
   # =======================================================
 
   if (by_file)
   {
-    xmin = ctg@data$`Min X`
-    xmax = ctg@data$`Max X`
-    ymin = ctg@data$`Min Y`
-    ymax = ctg@data$`Max Y`
+    xmin = ctg@data$Min.X
+    xmax = ctg@data$Max.X
+    ymin = ctg@data$Min.Y
+    ymax = ctg@data$Max.Y
   }
   else
   {
-    # Dimension of the clusters (width = height) rounded up to a multiple of the resolution
-    width = ceiling(size/res) * res
-
     # Bounding box of the catalog
-    bbox = with(ctg@data, c(min(`Min X`), min(`Min Y`), max(`Max X`), max(`Max Y`)))
+    bbox = with(ctg@data, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
 
     # Shift to align the grid
     shift = numeric(2)
@@ -71,22 +69,28 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   ycenter = (ymin + ymax)/2
   width   = xmax - xmin
   height  = ymax - ymin
-  names   = paste0("ROI", 1:length(xcenter))
 
   # Creation of a set of cluster from the rectangles
   # ================================================
 
-  if (by_file && buffer <= 0)
+  if (by_file & buffer <= 0)
   {
     clusters = lapply(1:length(xcenter), function(i)
     {
-      center = list(x = xcenter[i], y = ycenter[i])
-      Cluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], names[i])
+      center  <- list(x = xcenter[i], y = ycenter[i])
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname", proj4string = ctg@proj4string)
+
+      cluster@select <- ctg@input_options$select
+      cluster@filter <- paste(cluster@filter, ctg@input_options$filter)
+
+      return(cluster)
     })
   }
   else
   {
-    clusters = suppressWarnings(catalog_index(ctg, xcenter, ycenter, width, height, buffer, names))
+    bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer))
+    clusters = clusters[!sapply(clusters, is.null)]
   }
 
   # Post process the clusters
@@ -99,7 +103,7 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   {
     clusters <- lapply(clusters, function(x)
     {
-      x@filter <- ""
+      x@filter <- ctg@input_options$filter
       return(x)
     })
   }
@@ -107,31 +111,49 @@ catalog_makecluster = function(ctg, res, start = c(0,0), plot = TRUE)
   # Record the path to write the raster if requested
   # ------------------------------------------------
 
-  if (save_vrt(ctg))
+  if (opt_output_files(ctg) != "")
   {
-    clusters <- lapply(clusters, function(x)
+    clusters <- lapply(seq_along(clusters), function(i)
     {
-      x@save <- paste0(vrt(ctg), "/tile-", x@bbox$xmin, "-", x@bbox$ymin, ".tiff")
-      return(x)
+      X         <- list()
+      X$ID      <- i
+      X$XCENTER <- clusters[[i]]@center$x
+      X$XCENTER <- clusters[[i]]@center$y
+      X$XLEFT   <- clusters[[i]]@bbox[1]
+      X$XRIGHT  <- clusters[[i]]@bbox[3]
+      X$YBOTTOM <- clusters[[i]]@bbox[2]
+      X$YTOP    <- clusters[[i]]@bbox[4]
+
+      if (by_file)
+        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
+
+      filepath  <- paste0(glue::glue_data(X, opt_output_files(ctg)))
+      n         <- length(filepath)
+
+      if (n > 1)
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each chunk"))
+
+      clusters[[i]]@save <- filepath
+      return(clusters[[i]])
     })
   }
 
   # Plot the catalog and the clusters
   # =================================
 
-  if(plot)
+  if (opt_progress(ctg))
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))
     title  = "Pattern of clusters"
-    plot.LAScatalog(ctg, y = FALSE, main = title, xlim = xrange, ylim = yrange)
+    plot.LAScatalog(ctg, mapview = FALSE, main = title, xlim = xrange, ylim = yrange)
 
     lapply(clusters, function(x)
     {
-      graphics::rect(x@bbox$xmin, x@bbox$ymin, x@bbox$xmax, x@bbox$ymax, border = "red")
+      graphics::rect(x@bbox[1], x@bbox[2], x@bbox[3], x@bbox[4], border = "red")
 
       if (x@buffer != 0)
-        graphics::rect(x@bbbox$xmin, x@bbbox$ymin, x@bbbox$xmax, x@bbbox$ymax, border = "darkgreen", lty = "dotted")
+        graphics::rect(x@bbbox[1], x@bbbox[2], x@bbbox[3], x@bbbox[4], border = "darkgreen", lty = "dotted")
     })
   }
 

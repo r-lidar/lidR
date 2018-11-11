@@ -40,12 +40,13 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
   IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
 
   for(unsigned int i = 0 ; i < n ; i++)
   {
+    Point pt(x[i], y[i]);
     std::vector<Point*> pts;
-    tree->knn_lookup(x[i], y[i], k, pts);
+    tree.knn(pt, k, pts);
 
     for (unsigned int j = 0 ; j < pts.size() ; j++)
     {
@@ -58,8 +59,6 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
     }
   }
 
-  delete tree;
-
   return Rcpp::List::create(Rcpp::Named("nn.idx") = knn_idx, Rcpp::Named("nn.dist") = knn_dist);
 }
 
@@ -69,14 +68,15 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   unsigned int n = x.length();
   NumericVector iZ(n);
 
-  QuadTree *tree = QuadTreeCreate(X,Y);
+  QuadTree tree(X,Y);
 
-  Progress pbar(n, false);
+  Progress pbar(n, "Inveert distance weigthning: ");
 
   for(unsigned int i = 0 ; i < n ; i++)
   {
+    Point pt(x[i], y[i]);
     std::vector<Point*> pts;
-    tree->knn_lookup(x[i], y[i], k, pts);
+    tree.knn(pt, k, pts);
 
     double sum_zw = 0;
     double sum_w  = 0;
@@ -107,13 +107,11 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
     if (pbar.check_abort())
     {
-      delete tree;
       pbar.exit();
     }
 
     pbar.update(i);
   }
 
-  delete tree;
   return iZ;
 }

@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,105 +27,89 @@
 
 
 
-#' Retrieve individual pulses
+#' Retrieve individual pulses flightlines or scanlines
 #'
-#' Retrieve each individual pulse by attributing a number to each point. The
-#' function depends on the GPS time to retrieve each individual
-#' beam. A column '\code{pulseID}' is added in the slot \code{@data}
+#' Retrieve each individual pulse, individual flighline or individual scanline and attributes a number
+#' to each point.
 #'
-#' @param .las A LAS object
-#' @return Return nothing. The original object is modified in place by reference.
+#' The function \code{laspulse} retrieve each individual pulse. It uses the GPS time. An attribute
+#' '\code{pulseID}' is added in the \code{LAS} object\cr\cr
+#' The function \code{lasscanline} each individual scanline. When data are sampled according to a
+#' saw-tooth pattern (oscillating mirror) a scanline is one line, or row of data. The function relies
+#' on the GPS field time to order the data. Then, the 'ScanDirectionFlag' attributes (when available)
+#' is used to retrieve each scanline. An attribute '\code{scanlineID}' is added in the \code{LAS} object\cr\cr
+#' The function \code{lasflightline} retrieve each individual flightline. It uses the GPS time. In a
+#' continuous dataset, once points are ordered by GPS time, the time between two consecutive points
+#' does not exceed a few milliseconds. If the time between two consecutive points is too long it means
+#' that the second point is from a different flightline. The default threshold is 30 seconds.
+#' An attribute  '\code{flightlineID}' is added in the \code{LAS} object.
 #'
-#' @export laspulse
-laspulse = function(.las)
+#' @param las A LAS object
+#' @param dt numeric. The threshold time lag used to retrieve flightlines
+#'
+#' @return An object of class \code{LAS}
+#'
+#' @export
+#' @rdname lasidentify
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#'
+#' las <- laspulse(las)
+#' las <- lasflightline(las)
+#' las
+laspulse = function(las)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
 
-  if(!"gpstime" %in% names(.las@data))
-  {
-    stop("No gpstime field found. pulseID cannot be computed from this file.")
-    return(invisible())
-  }
+  if(!"gpstime" %in% names(las@data))
+    stop("No gpstime attribute found. Pulses cannot be computed from this file.")
 
   gpstime <- pulseID <- NULL
-  data.table::setorder(.las@data, gpstime)
-  .las@data[, pulseID := .lagisdiff(gpstime)][]
-  return(invisible())
+  data.table::setorder(las@data, gpstime)
+  las@data[["pulseID"]] <- .lagisdiff(gpstime)
+  return(las)
 }
 
-
-#' Retrieve individual flightlines
-#'
-#' Retrieve each individual flightline by attributing a number to each point. The
-#' function depends on the GPS time to retrieve each individual flightline. In a
-#' continuous dataset, once points are ordered by GPS time, the time between two
-#' consecutive points does not exceed a few milliseconds. If the time between two consecutive
-#' points is too long it means that the second point is from a different flightline. The default
-#' threshold is 30 seconds. A column  '\code{flightlineID}' is added in the slot  \code{@data}
-#'
-#' @param .las A LAS object
-#' @param dt numeric. The threshold time lag used to retrieve flightlines
-#' @return Return nothing. The original object is modified in place by reference.
-#'
-#' @export lasflightline
-lasflightline = function(.las, dt = 30)
+#' @export
+#' @rdname lasidentify
+lasflightline = function(las, dt = 30)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
   assertive::assert_is_a_number(dt)
   assertive::assert_all_are_non_negative(dt)
 
-  if(!"gpstime" %in% names(.las@data))
-  {
-    warning("No gpstime field found. flightlineID cannot be computed from this file.", call. = FALSE)
-    return(invisible())
-  }
+  if(!"gpstime" %in% names(las@data))
+    stop("No gpstime attribute found. Flightlines cannot be computed from this file.", call. = FALSE)
 
   gpstime <- flightlineID <- NULL
-  data.table::setorder(.las@data, gpstime)
-  .las@data[, flightlineID := .lagissup(gpstime, dt)][]
-  return(invisible())
+  data.table::setorder(las@data, gpstime)
+  las@data[["flightlineID"]] <- .lagissup(gpstime, dt)
+  return(las)
 }
 
-
-#' Retrieve individual scanline
-#'
-#' Retrieve each individual scanline by attributing to each point a number. When
-#' data are sampled according to a saw-tooth pattern (oscillating mirror) a scanline
-#' is one line, or row of data. The function relies on the GPS field time to
-#' order the data. Then, the 'ScanDirectionFlag' field (when available) is used to
-#' retrieve each scanline  A column '\code{scanline}' is added in the slot \code{@data}
-#'
-#' @param .las A LAS object
-#' @return Return nothing. The original object is modified in place by reference.
-#' @export lasscanline
-lasscanline = function(.las)
+#' @export
+#' @rdname lasidentify
+lasscanline = function(las)
 {
-  stopifnotlas(.las)
+  stopifnotlas(las)
 
-  if(!"gpstime" %in% names(.las@data))
-  {
-    warning("No gpstime field found. scanlineID cannot be computed from this file.", call. = FALSE)
-    return(invisible())
-  }
+  if(!"gpstime" %in% names(las@data))
+    stop("No gpstime attribute found. Scanlines cannot be computed from this object", call. = FALSE)
 
-  if (!"ScanDirectionFlag" %in% names(.las@data))
-  {
-    warning("No gpstime field found. scanlineID cannot be computed from this file.", call. = FALSE)
-    return(invisible())
-  }
-
-  gpstime <- scanlineID <- ScanDirectionFlag <- NULL
-  data.table::setorder(.las@data, gpstime)
-  values <- unique(.las@data$ScanDirectionFlag)
+  if (!"ScanDirectionFlag" %in% names(las@data))
+    stop("No ScanDirectionFlag field found. Scanlines cannot be computed from this object", call. = FALSE)
 
   if(!all(sort(values) == c(0L,1L)))
-  {
-    warning("ScanDirectionFlag field is not properly populated according to LAS specifications. Cannot compute 'scanlineID'", call. = FALSE)
-    return(invisible())
-  }
+    stop("ScanDirectionFlag field is not properly populated according to LAS specifications. Scanlines cannot be computed from this object'", call. = FALSE)
 
-  .las@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
-  return(invisible())
+  gpstime <- scanlineID <- ScanDirectionFlag <- NULL
+  data.table::setorder(las@data, gpstime)
+  values <- unique(las@data$ScanDirectionFlag)
+
+  las@data[["scanlineID"]] <- .lagisdiff(ScanDirectionFlag)
+  return(las)
 }
 
 .lagissup = function(x, dx)

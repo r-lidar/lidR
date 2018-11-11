@@ -41,6 +41,56 @@ make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
   return(grid)
 }
 
+make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
+{
+  if (is(res, "RasterLayer"))
+  {
+    resolution = raster::res(res)
+    if (resolution[1] !=  resolution[2]) stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+    return(res)
+  }
+
+  bbox      <- raster::extent(las) + 2 * subcircle
+  bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
+  bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
+  bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
+  bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
+  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@proj4string))
+  return(layout)
+}
+
+merge_rasters = function(output)
+{
+  # Outputs have been return in R objects. Merge the outptus in a single object
+  if (length(output) > 1)
+  {
+    names         <- names(output[[1]])
+    factor        <- output[[1]]@data@isfactor
+    output        <- do.call(raster::merge, output)
+    names(output) <- names
+    if (is(output, "RasterBrick")) colnames(output@data@values) <- names
+  }
+
+  return(output)
+}
+
+build_vrt = function(output, vrt)
+{
+  if (!requireNamespace("gdalUtils", quietly = TRUE))
+  {
+    message("'gdalUtils' package is needed to build a virtual raster mosaic. Return the list of written files instead.", call. = F)
+    return(unlist(output))
+  }
+
+  output <- unlist(output)
+  folder <- dirname(output[1])
+  file   <- paste0("/", vrt, ".vrt")
+  vrt    <- paste0(folder, file)
+  gdalUtils::gdalbuildvrt(output, vrt)
+  return(raster::stack(vrt))
+}
+
+
 group_grid = function(x, y, res, start = c(0,0))
 {
   xgrid = f_grid(x, res, start[1])
@@ -65,7 +115,7 @@ f_grid = function(x, res, start)
 
 verbose = function(...)
 {
-  if (LIDROPTIONS("verbose"))
+  if (getOption("lidR.verbose"))
     cat(..., "\n")
 }
 
@@ -88,4 +138,46 @@ dummy_las = function(n, seeds = c)
   return(las)
 }
 
-`%+%` <- function(a, b) paste0(a, b)
+stopifnotlas = function(x)
+{
+  if (!inherits(x, "LAS"))
+    stop("Argument is not a LAS object", call. = F)
+}
+
+stopif_forbidden_name = function(name)
+{
+  if (name %in% LASFIELDS)
+    stop(glue::glue("{name} is a forbidden name."), call. = FALSE)
+}
+
+stopif_wrong_context = function(received_context, expected_contexts, func_name)
+{
+  str = paste0(expected_contexts, collapse  = "' or '")
+
+  if (is.null(received_context))
+    stop(glue::glue("The '{func_name}' function has not been called within a correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+  if (!received_context %in% expected_contexts)
+    stop(glue::glue("The '{func_name}' function has not been called within a correct context. It is expected to be used in '{str}'"), call. = FALSE)
+}
+
+subcircled = function(dt, r, n)
+{
+  X <- Y <- Z <- NULL
+
+  f = function(x, y, z, px, py)
+  {
+    x = x + px
+    y = y + py
+    z = rep(z, length(px))
+
+    list(X = x, Y = y, Z = z)
+  }
+
+  n = n + 1
+
+  alpha = seq(0, 2*pi, length.out = n)[-n]
+  px = r*cos(alpha)
+  py = r*sin(alpha)
+
+  return(dt[, f(X, Y, Z, px, py), by = rownames(dt)][, rownames := NULL][])
+}
