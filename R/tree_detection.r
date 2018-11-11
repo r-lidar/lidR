@@ -53,7 +53,7 @@
 #' ttops = tree_detection(las, 5)
 #'
 #' plot(las)
-#' ttops %$% rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE)
+#' with(ttops, rgl::points3d(X, Y, Z, col = "red", size = 5, add = TRUE))
 #'
 #' # raster-based method
 #'
@@ -74,18 +74,24 @@ tree_detection = function(x, ws, hmin = 2)
 #'@export
 tree_detection.LAS = function(x, ws, hmin = 2)
 {
-  if (ws <= 0) stop("ws should be stricly positive", call. = FALSE)
-  if (hmin < 0) stop("hmin should be positive", call. = FALSE)
+  assertive::assert_is_a_number(ws)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_positive(hmin)
 
   . <- X <- Y <- Z <- NULL
-  bar = LIDROPTIONS("progress")
-  maxima = C_LocalMaximaPoints(x, ws, hmin, bar)
+  maxima = C_LocalMaximaPoints(x, ws, hmin)
   return(x@data[maxima, .(X,Y,Z)])
 }
 
 #'@export
 tree_detection.lasmetrics = function(x, ws, hmin = 2)
 {
+  assertive::assert_is_a_number(ws)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_positive(hmin)
+
   x = as.raster(x)
   return(tree_detection(x, ws, hmin))
 }
@@ -93,6 +99,11 @@ tree_detection.lasmetrics = function(x, ws, hmin = 2)
 #'@export
 tree_detection.RasterLayer = function(x, ws, hmin = 2)
 {
+  assertive::assert_is_a_number(ws)
+  assertive::assert_all_are_positive(ws)
+  assertive::assert_is_a_number(hmin)
+  assertive::assert_all_are_positive(hmin)
+
   xx <- raster::as.matrix(x)
   xx <- t(apply(xx, 2, rev))
   LM = tree_detection(xx, ws, hmin)
@@ -104,11 +115,9 @@ tree_detection.RasterLayer = function(x, ws, hmin = 2)
 #'@export
 tree_detection.matrix = function(x, ws, hmin = 2)
 {
-  if (ws < 3)
-    stop("ws should be equal or greater than 3", call. = FALSE)
-
-  if (ws %% 2 == 0)
-    stop("ws should be an odd number", call. = FALSE)
+  assertive::assert_is_a_number(ws)
+  assertive::assert_all_are_greater_than_or_equal_to(ws, 3)
+  assertive::assert_all_are_odd(ws)
 
   x[is.na(x)] <- -Inf
   LM = C_LocalMaximaMatrix(x, ws, hmin)

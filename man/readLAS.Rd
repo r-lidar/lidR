@@ -4,7 +4,7 @@
 \alias{readLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, select = "xyztinrcaRGBP", filter = "")
+readLAS(files, select = "*", filter = "")
 }
 \arguments{
 \item{files}{array of characters or a \link[lidR:catalog]{LAScatalog} object}
@@ -17,39 +17,28 @@ readLAS(files, select = "xyztinrcaRGBP", filter = "")
 A LAS object
 }
 \description{
-Reads .las or .laz files in format 1 to 3 according to LAS specification and returns an
+Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
 object of class LAS. If several files are given the returned LAS object is considered
-as one LAS file. The information retained in the header will be read from the first file
-in the list. The optional parameters enable the user to save a substantial amount of memory by
-choosing to load only the fields or points required. These internal options are much more memory
-efficient than any other R code.
+as one LAS file. The optional parameters enable the user to save a substantial amount of memory by
+choosing to load only the fields or points required. These internal options are much more memory-efficient than any other R code.
 }
 \details{
-The 'select' argument specifies which data will actually be loaded. For example, 'xyzia'
-means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
+\strong{Select:} the 'select' argument specifies which data will actually be loaded. For example,
+'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
 r - return number, c - classification, u - user data, p - point source ID, e - edge of
 flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
-channel of RGB color, B - blue channel of RGB color, * - is the wildcard and enables
-everything from the LAS file. \cr
-x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia' and an empty string is
-equivalent to 'xyz' but \code{select = "xyz"} is more readable and explicit than
-\code{select = ""}.\cr
-
-Three extra metrics can be computed on the fly with the following flags:
-P - pulse id, F - flightline id and C - color string (see \link[lidR:LAS-class]{Class LAS}.
-The symbol + is a shortcut for 'PFC'.\cr\cr
-
-The 'filter' argument allows filtering of the point cloud while reading files. This is much
-more efficient than \link{lasfilter} in many ways. If the desired filters are known before
-reading the file, the internal filters should always be preferred. The available filters are
-those from \code{LASlib} and can be found by running the following command:
-rlas:::lasfilterusage()
-
-The selection of specific Extra Byte fields can be done either with select argument for extra bytes 1-9,
-or with \code{eb} argument for more specific queries, e.g. \code{eb = c(2, 4, 24)} would load
-Extra Bytes 2, 4 and 24 if they exist. \code{eb = 0} selects all Extra Bytes available.
-Argument \code{eb} overrides extra byte arguments in \code{select}.
+channel of RGB color, B - blue channel of RGB color, N - near infrared channel. Also numbers from
+1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*' is
+the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit and
+always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
+Three extra data attributes can be computed on the fly with the following flags: P - pulse id, F -
+flightline id and C - color string. The symbol + is a shortcut for 'PFC'.\cr\cr
+\strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
+This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
+before reading the file, the internal filters should always be preferred. The available filters are
+those from \code{LASlib} and can be found by running the following command: rlas:::lasfilterusage().
+(see also \link[rlas:read.las]{rlas::read.las})
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -57,7 +46,9 @@ las = readLAS(LASfile)
 las = readLAS(LASfile, select = "xyz")
 las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
-las = readLAS(LASfile, select = "*+")
+
+# Negation of data is also available (all except intensity and angle)
+las = readLAS(LASfile, select = "* -i -a")
 }
 \seealso{
 \link[lidR:LAS-class]{Class LAS}

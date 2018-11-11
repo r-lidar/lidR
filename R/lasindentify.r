@@ -39,21 +39,17 @@
 #' @export laspulse
 laspulse = function(.las)
 {
-  gpstime <- pulseID <- .GRP <- NULL
-
   stopifnotlas(.las)
 
-  fields <- names(.las@data)
-  dpulse = NA_real_
-
-  if("gpstime" %in% fields)
+  if(!"gpstime" %in% names(.las@data))
   {
-    data.table::setorder(.las@data, gpstime)
-    .las@data[, pulseID := .lagisdiff(gpstime)][]
+    stop("No gpstime field found. pulseID cannot be computed from this file.")
+    return(invisible())
   }
-  else
-    lidRError("LDR4", infield = "gpstime", outfield = "pulseID", behaviour = warning)
 
+  gpstime <- pulseID <- NULL
+  data.table::setorder(.las@data, gpstime)
+  .las@data[, pulseID := .lagisdiff(gpstime)][]
   return(invisible())
 }
 
@@ -74,20 +70,19 @@ laspulse = function(.las)
 #' @export lasflightline
 lasflightline = function(.las, dt = 30)
 {
-  gpstime <- flightlineID <- NULL
-
   stopifnotlas(.las)
+  assertive::assert_is_a_number(dt)
+  assertive::assert_all_are_non_negative(dt)
 
-  fields <- names(.las@data)
-
-  if("gpstime" %in% fields)
+  if(!"gpstime" %in% names(.las@data))
   {
-    data.table::setorder(.las@data, gpstime)
-    .las@data[, flightlineID := .lagissup(gpstime, dt)][]
+    warning("No gpstime field found. flightlineID cannot be computed from this file.", call. = FALSE)
+    return(invisible())
   }
-  else
-    lidRError("LDR4", infield = "gpstime", outfield = "flightlineID", behaviour = warning)
 
+  gpstime <- flightlineID <- NULL
+  data.table::setorder(.las@data, gpstime)
+  .las@data[, flightlineID := .lagissup(gpstime, dt)][]
   return(invisible())
 }
 
@@ -105,31 +100,31 @@ lasflightline = function(.las, dt = 30)
 #' @export lasscanline
 lasscanline = function(.las)
 {
-  gpstime <- scanlineID <- ScanDirectionFlag <- NULL
-
   stopifnotlas(.las)
 
-  fields <- names(.las@data)
-
-  if("gpstime" %in% fields)
+  if(!"gpstime" %in% names(.las@data))
   {
-    data.table::setorder(.las@data, gpstime)
-
-    if ("ScanDirectionFlag" %in% fields)
-    {
-      values = unique(.las@data$ScanDirectionFlag)
-
-      if(length(values) == 2 & 1 %in% values & 2 %in% values)
-        .las@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
-      else
-        lidRError("LDR8", behaviour = warning)
-    }
-    else
-      lidRError("LDR4", infield = "ScanDirectionFlag", outfield = "scanlineID", behaviour = warning)
+    warning("No gpstime field found. scanlineID cannot be computed from this file.", call. = FALSE)
+    return(invisible())
   }
-  else
-    lidRError("LDR4", infield = "gpstime", outfield = "scanlineID", behaviour = warning)
 
+  if (!"ScanDirectionFlag" %in% names(.las@data))
+  {
+    warning("No gpstime field found. scanlineID cannot be computed from this file.", call. = FALSE)
+    return(invisible())
+  }
+
+  gpstime <- scanlineID <- ScanDirectionFlag <- NULL
+  data.table::setorder(.las@data, gpstime)
+  values <- unique(.las@data$ScanDirectionFlag)
+
+  if(!all(sort(values) == c(0L,1L)))
+  {
+    warning("ScanDirectionFlag field is not properly populated according to LAS specifications. Cannot compute 'scanlineID'", call. = FALSE)
+    return(invisible())
+  }
+
+  .las@data[, scanlineID := .lagisdiff(ScanDirectionFlag)][]
   return(invisible())
 }
 

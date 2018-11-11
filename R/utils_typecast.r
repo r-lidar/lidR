@@ -39,6 +39,8 @@
 #' @family cast
 as.lasmetrics = function(x, res)
 {
+  assertive::assert_is_a_number(res)
+  assertive::assert_all_are_positive(res)
   data.table::setattr(x, "res", res)
   data.table::setattr(x, "class", c("lasmetrics", "data.table", "data.frame"))
 }
@@ -86,16 +88,16 @@ as.raster.lasmetrics = function(x, z = NULL, fun.aggregate = mean, ...)
   {
     verbose("Retrieving the resolution of the raster...")
 
-    dx = x$X %>% unique %>% sort %>% diff
-    dy = x$Y %>% unique %>% sort %>% diff
+    dx = diff(sort(unique(x$X)))
+    dy =  diff(sort(unique(x$Y)))
     ts = table(c(dx, dy))
 
     if (length(ts) == 1)
       res = dx[1]
     else
     {
-      res = stats::median(c(dx,dy)) %>% round(2)
-      message(paste0("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: ", res))
+      res = round(stats::median(c(dx,dy)), 2)
+      message(glue("Attribute resolution 'attr(x, \"res\")' not found. Algorithm guessed that resolution was: {res}"))
     }
 
     data.table::setattr(x, "res", res)
@@ -184,15 +186,19 @@ as.spatial = function(x)
 #' @export
 as.spatial.LAS = function(x)
 {
-  . <- X <- Y <- NULL
-  sp::SpatialPointsDataFrame(x@data[,.(X,Y)], x@data[, 3:ncol(x@data), with = F])
+  ..coords <- NULL
+  coords = c("X", "Y")
+  sp::SpatialPointsDataFrame(x@data[,..coords], x@data[, -..coords], proj4string = x@crs)
 }
 
 #' @export
 as.spatial.lasmetrics = function(x)
 {
-  .data = as.data.frame(x)
-  sp::SpatialPixelsDataFrame(.data[c("X","Y")], .data[3:ncol(.data)])
+  ..coords <- NULL
+  coords <- c("X", "Y")
+  points <- as.data.frame(x@data[,..coords])
+  data   <- as.data.frame(x@data[,-..coords])
+  sp::SpatialPixelsDataFrame(points, data)
 }
 
 #' @export
@@ -209,6 +215,6 @@ as.spatial.LAScatalog = function(x)
     mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
     sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
   })
-  data = data.frame(x@data)
+  data <- data.frame(x@data)
   sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(pgeom, proj4string = x@crs), data)
 }

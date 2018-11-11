@@ -79,7 +79,7 @@ lasmetrics = function(obj, func)
   if(is(func_call, "name"))
     func_call = eval(func_call)
 
-  metric = obj@data %$% eval(func_call)
+  metric = with(obj@data, eval(func_call))
   return(metric)
 }
 

@@ -34,6 +34,7 @@
 #' on the map of the file using the mouse. The selected files will be highlighted in red on
 #' the plot after selection is complete.
 #' @param x A LAScatalog object
+#' @param Rbase logical. If TRUE, will use R base plot (no pan, no zoom and not convenient).
 #' @return A LAScatalog object
 #' @export
 #' @examples
@@ -43,14 +44,18 @@
 #' }
 #' @seealso
 #' \link[lidR:catalog]{LAScatalog}
-catalog_select = function(x)
+catalog_select = function(x, Rbase = FALSE)
 {
+  assertive::assert_is_all_of(x, "LAScatalog")
+
   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 
-  if (!is.na(x@crs@projargs))
+  if (!Rbase)
   {
+    mapview::mapview()
     catalog <- as.spatial(x)
-    sfdata <- mapedit::selectFeatures(catalog)
+    map = mapview::mapview(catalog)
+    sfdata <- mapedit::selectFeatures(catalog, map = map)
     data.table::setDT(sfdata)
     sfdata[, geometry := NULL]
     newnames <- gsub(x = names(sfdata), pattern = "(\\.)+", replacement = " ")
