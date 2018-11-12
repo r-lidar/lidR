@@ -77,7 +77,6 @@
 #' the user.
 #'
 #' @examples
-#' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzi", filter="-keep_first") # Wing also included -keep_single
 #'
@@ -101,10 +100,9 @@
 #'
 #' # Wing et al's (2015) methods ended with performing tree segmentation on the
 #' # classified and filtered point cloud using the watershed method
-#' }
 #'
 #' @author
-#' Implementation by Andrew Sánchez Meador, optimizations by Jean-Romain Roussel
+#' Implementation by Andrew Sánchez Meador
 #'
 #' @references
 #' Wing, Brian M.; Ritchie, Martin W.; Boston, Kevin; Cohen, Warren B.; Olsen, Michael J. 2015.
@@ -114,7 +112,7 @@
 #' @export
 #'
 #' @family snags segmentation algorithms
-wing2015 = function(neigh_radii = c(1.5,1.2),
+wing2015 = function(neigh_radii = c(1.5,1,2),
                     low_int_thrsh = 50, uppr_int_thrsh = 170,
                     pt_den_req = 3, BBPRthrsh_mat = NULL)
 {
@@ -128,18 +126,15 @@ wing2015 = function(neigh_radii = c(1.5,1.2),
   assertive::assert_is_a_number(pt_den_req)
   assertive::assert_all_are_in_open_range(pt_den_req, 0, 100)
 
-  if(is.null(BBPRthrsh_mat))
-  stop("Branch and bole point ratio thresholds matrix not supplied!")
+  if (is.null(BBPRthrsh_mat))
+    stop("Branch and bole point ratio thresholds matrix not supplied.")
 
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lassnags"), "wing2015")
 
-    id = rep(NA_integer_, nrow(las@data))
-
     id = C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
-
     return(id)
   }
 

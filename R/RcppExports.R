@@ -17,6 +17,10 @@ C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
     .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
 }
 
+C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat) {
+    .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
+}
+
 C_lastrees_li2 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {
     .Call(`_lidR_C_lastrees_li2`, las, dt1, dt2, Zu, R, th_tree, radius)
 }

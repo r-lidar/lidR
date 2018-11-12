@@ -5,7 +5,7 @@
 \title{Snags Segmentation Algorithm}
 \usage{
 wing2015(neigh_radii = c(1.5, 1, 2), low_int_thrsh = 50,
-  uppr_int_thrsh = 170, pt_den_req = 3, bbpr_thresholds = NULL)
+  uppr_int_thrsh = 170, pt_den_req = 3, BBPRthrsh_mat = NULL)
 }
 \arguments{
 \item{neigh_radii}{numeric. A vector of three radii used in quantifying local-area centered
@@ -21,7 +21,7 @@ et al. (2015) page 171. Default is 170.}
 \item{pt_den_req}{numeric. Point density requirement based on plot-level point density
 defined classes. See Wing et al. (2015) page 172. Default is 3.}
 
-\item{bbpr_thresholds}{matrix. A 3x4 matrix providing the four average BBPR (branch and bole
+\item{BBPRthrsh_mat}{matrix. A 3x4 matrix providing the four average BBPR (branch and bole
 point ratio) values for each of the three neighborhoods (sphere, small cylinder and large
 cylinder) to be used for conditional assessments and classification into the following four snag
 classes: 1) general snag 2) small snag 3) live crown edge snag 4) high canopy
@@ -59,20 +59,19 @@ integer matrix returning the near neighbor indices for each point in the point c
 Improvements are possible in future package versions.
 }
 \examples{
-\dontrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzi", filter="-keep_first") # Wing also included -keep_single
 
 # For the Wing2015 method, supply a matrix of snag BranchBolePtRatio conditional
 # assessment thresholds (see Wing et al. 2015, Table 2, pg. 172)
-BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
+bbpr_thresholds <- matrix(c(0.80, 0.80, 0.70,
                           0.85, 0.85, 0.60,
                           0.80, 0.80, 0.60,
                           0.90, 0.90, 0.55),
                           nrow =3, ncol = 4)
 
 # Run snag classification and assign classes to each point
-las <- lassnags(las, wing2015(bbpr_thresholds = BBPRthrsh_mat))
+las <- lassnags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
 
 # Plot it all, tree and snag points...
 plot(las, color="snagCls", colorPalette = rainbow(5))
@@ -83,7 +82,6 @@ plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 
 # Wing et al's (2015) methods ended with performing tree segmentation on the
 # classified and filtered point cloud using the watershed method
-}
 
 }
 \references{
@@ -92,6 +90,6 @@ Individual snag detection using neighborhood attribute filtered airborne lidar d
 Sensing of Environment. 163: 165-179 https://doi.org/10.1016/j.rse.2015.03.013
 }
 \author{
-Implementation by Andrew Sánchez Meador, optimisations by Jean-Romain Roussel
+Implementation by Andrew Sánchez Meador
 }
 \concept{snags segmentation algorithms}

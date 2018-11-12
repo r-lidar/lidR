@@ -70,14 +70,14 @@ las <- readLAS(LASfile, select = "xyzi", filter="-keep_first") # Wing also inclu
 
 # For the Wing2015 method, supply a matrix of snag BranchBolePtRatio conditional
 # assessment thresholds (see Wing et al. 2015, Table 2, pg. 172)
-BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
+bbpr_thresholds <- matrix(c(0.80, 0.80, 0.70,
                           0.85, 0.85, 0.60,
                           0.80, 0.80, 0.60,
                           0.90, 0.90, 0.55),
                           nrow =3, ncol = 4)
 
 # Run snag classification and assign classes to each point
-las <- lassnags(las, wing2015(bbpr_thresholds = BBPRthrsh_mat))
+las <- lassnags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
 
 # Plot it all, tree and snag points...
 plot(las, color="snagCls", colorPalette = rainbow(5))
