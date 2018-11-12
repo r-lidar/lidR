@@ -30,7 +30,6 @@ Imports:
     gstat,
     lazyeval,
     imager,
-    RANN,
     Rcpp (>= 0.11.0),
     RCSF,
     rgeos,
