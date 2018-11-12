@@ -66,6 +66,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_Wing2015
+IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
+RcppExport SEXP _lidR_C_Wing2015(SEXP lasSEXP, SEXP neigh_radiiSEXP, SEXP low_int_thrshSEXP, SEXP uppr_int_thrshSEXP, SEXP pt_den_reqSEXP, SEXP BBPRthrsh_matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type neigh_radii(neigh_radiiSEXP);
+    Rcpp::traits::input_parameter< double >::type low_int_thrsh(low_int_thrshSEXP);
+    Rcpp::traits::input_parameter< double >::type uppr_int_thrsh(uppr_int_thrshSEXP);
+    Rcpp::traits::input_parameter< int >::type pt_den_req(pt_den_reqSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type BBPRthrsh_mat(BBPRthrsh_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lastrees_li2
 IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius);
 RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP) {
@@ -309,6 +325,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
+    {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
     {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 7},
     {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
     {"_lidR_C_LocalMaximumFilter", (DL_FUNC) &_lidR_C_LocalMaximumFilter, 4},
