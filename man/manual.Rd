@@ -7,8 +7,7 @@
 manual(detected = NULL, ...)
 }
 \arguments{
-\item{detected}{\code{SpatialPointsDataFrame} or \code{data.table} or \code{data.frame} or \code{matrix}
-containing X,Y,Z coordinates of already found tree tops that need manual corrections.}
+\item{detected}{\code{SpatialPointsDataFrame} of already found tree tops that need manual corrections.}
 
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
