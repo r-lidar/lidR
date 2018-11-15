@@ -34,10 +34,10 @@ bool Progress::check_abort()
 
 void Progress::update(unsigned int iter)
 {
+  this->iter = iter;
+
   if (!display)
     return;
-
-  this->iter = iter;
 
   unsigned int p = (float)iter/(float)iter_max*100;
 
@@ -58,12 +58,12 @@ void Progress::update(unsigned int iter)
 
 void Progress::increment()
 {
+  this->iter++;
+
   if (!display)
     return;
 
-  iter++;
-
- unsigned int p = (float)iter/(float)iter_max*100;
+  unsigned int p = (float)iter/(float)iter_max*100;
 
   if (p == percentage)
     return;

@@ -51,6 +51,9 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
   // Loop through all the point cloud
   for (int i = 0 ; i < n ; i++)
   {
+    pb.check_abort();
+    pb.increment();
+
     if (vws)
       hws = ws[i]/2;
 
@@ -85,9 +88,6 @@ LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_
     // The central pixel is the highest, it is a LM
     if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
       seeds[i] = true;
-
-    pb.check_abort();
-    pb.increment();
   }
 
   return seeds;

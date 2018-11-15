@@ -35,15 +35,15 @@ las = readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 # 5x5 m fixed windows size
 ttops = tree_detection(las, lmf(5))
 
-plot(las)
-rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+x = plot(las)
+add_treetops3d(x, ttops)
 
 # variable windows size
 f = function(x) { x * 0.07 + 3}
 ttops = tree_detection(las, lmf(f))
 
-plot(las)
-rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+x = plot(las)
+add_treetops3d(x, ttops)
 
 # raster-based
 # ============
