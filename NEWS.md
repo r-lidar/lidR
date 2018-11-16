@@ -1,30 +1,41 @@
 ## lidR v2.0.0 (in development)
 
-### Why version `2.0.0` is incompatible with versions `1.x.y`?
+### Why versions `> 2.0` are incompatible with versions `1.x.y`?
 
-The lidR package versions `1.x.y` package were largely built upon "personal R scripts" wrote 3 years ago. These scripts were written for my own use at a time when the lidR package was much smaller (both in term of code and users). lidR became a relatively big framework built upon a too unstructured base and it was no more possible develop it futher. Many features and functions were missing because the way lidR was built did not allowed to make them. lidR version 2 breaks the former code to built a more robust, more consistant and more scalable framework that is expected to continue over years without the need to break anything more in the future.
+The lidR package versions 1 were mainly built upon "personal R scripts" wrote 3 years ago. These scripts were written for my own use at a time when the lidR package was much smaller (both in term of code and users). The lidR package became a relatively big framework built on top of an unstructured base and it was no more possible to develop it futher. Many features and functions were missing because the way lidR was built did not allowed to make them. The new release (lidR version 2) breaks the former code to built a more robust, more consistant and more scalable framework that is expected to continue over years without the need to break anything more in the future.
+
+Old binaries can still be found here for 6 months:
+
+- [Windows R-3.6](https://drive.google.com/open?id=1VHM38ftV71lasTQCcm8BxEChP2qxpV9e)
+- [Windows R-3.5](https://drive.google.com/open?id=1E-Iieu0DTKHsDq1TDwq_VUGeiXta2T_Y)
+- [Windows R-3.4](https://drive.google.com/open?id=1nRUyH0SaBCflGDCItkZhhSU9NQR0DXqr)
+- [Mac OSX R-3.5](https://drive.google.com/open?id=1fmMTi6haFQpJFjAVVqW-vIFTULT_YWak)
+- [Mac OSX R-3.4](https://drive.google.com/open?id=1Pw04QHeoF4uE8QPRIASGX_sB17r-sdZm)
 
 ### Overview of the main visible changes
 
 **lidR as a GIS tools**
 
-lidR versions `1.x.y` did not constituted a real GIS tool. For example, rasterization functions such as `grid_metrics()` or `grid_canopy()` used to return `data.frame`s. Tree tops extraction (`tree_detection()` used to return `data.frame`s as well. Tree segmentation (`lastrees`), used to accept `RasterLayer`s or `data.frame`s as input in a very unconsitant way. Moreover the CRS of the point cloud was useless and never propagated to the outputs because output were not spatial obj
-lidR version `2.0.0` consitanly used `Raster*` and `Spatial*` object everywhere. Rasterization functions such as `grid_metrics()` or `grid_canopy()` return `Raster*` objects. Tree tops extraction returns `SpatialPointDataFrame` object. Tree segmentation methods accept `SpatialPointDataFrame` only in a consitant way accross functions. The CRS of the point cloud is always propagated to the outputs. `LAS` objects are `Spatial` objects. That means that `raster` functions such as `projection` or `extent` as well as `sp` functions such as `bbox` are compatible with `LAS` objects. Also `LAScatalog` objects are `SpatialPolygonDataFrame` objects. In short lidR version 2 is more that ever a GIS tool.
+lidR versions 1 did not constituted a GIS tool. For example, rasterization functions such as `grid_metrics()` or `grid_canopy()` used to return a `data.frame`. Tree tops extraction with `tree_detection()` used to return `data.frame` as well. Tree segmentation with `lastrees()` used to accept `RasterLayer` or `data.frame` as input in a very unconsitant way. Moreover the CRS of the point cloud was useless and never propagated to the outputs because output were not spatial objects.
+
+lidR version 2 consitanly used `Raster*` and `Spatial*` objects everywhere. Rasterization functions such as `grid_metrics()` or `grid_canopy()` return `Raster*` objects. Tree tops extraction returns `SpatialPointDataFrame` object. Tree segmentation methods accept `SpatialPointDataFrame` only in a consitant way accross functions. The CRS of the point cloud is always propagated to the outputs. `LAS` objects are `Spatial` objects. `LAScatalog` objects are `SpatialPolygonDataFrame` objects. In short lidR version 2 is more that ever a GIS tool compatible with the R ecosystem.
 
 **No longer any update by reference**
 
-Several lidR functions used to update object by reference. The user write: `lasnormalize(las)` instead of `las2 <- lasnormalize(las1)`. It used to make sense in R < 3.1 but now the gain is no longer as relevant because R makes shallow copies instead of deep copies. To simplfies, let assume that we have a 1 GB `data.frame` that stores the point cloud. In the second `las2` was a copy of `las1`. i.e the `las1` + `las2` = 2GB . This is why we made functions that worked by reference (first syntax) that implies no copy at all. This was memory optimized but not common or traditionnal in R. The question of memory optimization is less relevant since R >= 3.1. In the previous example `las2` is no longer a deep copy of `las1` but a shallow copy. Thus lidR now uses consitantly a traditional syntax `y <- f(x)`.
+Several lidR functions used to update object by reference. In lidR versions 1 the user wrote: `lasnormalize(las)` instead of `las2 <- lasnormalize(las1)`. It used to make sense in R < 3.1 but now the gain is no longer as relevant because R makes shallow copies instead of deep copies. 
+
+To simplfies, let assume that we have a 1 GB `data.frame` that stores the point cloud. In R < 3.1 `las2` was a copy of `las1`. i.e `las1` + `las2` = 2GB . This is why we made functions that worked by reference that implies no copy at all. This was memory optimized but not common or traditionnal in R. The question of memory optimization is less relevant since R >= 3.1. In the previous example `las2` is no longer a deep copy of `las1` but a shallow copy. Thus lidR now uses consistently a traditional syntax `y <- f(x)`.
 
 **Algorithm dispatch**
 
-The frame of lidR versions 1 was designed at a time there were fewer algorithms. The incresing number of algorithms lead to and unconsistant way to dispatch algorithms. For examples:
+The frame of lidR versions 1 was designed at a time there were fewer algorithms. The incresing number of algorithms lead to unconsistant ways to dispatch algorithms. For examples:
 
-* `grid_canopy()` implement one algotirhm for CHM and a second function was created (`grid_tincanopy()`) to implement another algorithm. It means a thrid function must be added for a new algorithm.
-* `lastrees()` have several variants to provide access to several algorithm: `lastrees_li()`, `lastrees_dalpontes()`, `lastrees_watershed()` and so on. This is inconsistant with `grid_canopy()`
-* `grid_tincanopy()` implements two algorithms as a function of the inputs. This is hard to understand and to document and unconsitant with `lastrees()`.
-* `tree_detection` does not have several variants, thus it is impossible to introduce a new algorithm consistantly with `lastrees()`. It must be done consistantly with `grid_canopy()`.
+* `grid_canopy()` implemented one algorithm and a second function `grid_tincanopy()` was created  to implement another algorithm. With two functions the switch was possible by using two different names (algorithms dispached by names).
+* `grid_tincanopy()` actually implemented two algorithms in one function. The switch was possible by changing the input parameters in the function (algorithm dispached by input).
+* `lastrees()` had several variants to provide access to several algorithms: `lastrees_li()`, `lastrees_dalpontes()`, `lastrees_watershed()` and so on. With several functions the switch was possible by using several different names (algorithms dispached by names).
+* `tree_detection` did not have several variants, thus it was impossible to introduce a new algorithm (no dispatch at all).
 
-lidR version 2 comes with a flexible and scalable algorithm dispatch method that unifies all the former functions. For example `grid_canopy()` is the only one function to make CHM. No longer needs of a second function `grid_tincanopy()`. `grid_canopy()` unifies the two functions by accepting as input an algorithm for digital surface model:
+lidR version 2 comes with a flexible and scalable dispatch method that unifies all the former functions. For example `grid_canopy()` is the only one function to make CHM. No longer needs of a second function `grid_tincanopy()`. `grid_canopy()` unifies the two functions by accepting as input an algorithm for digital surface model:
 
 ```r
 chm = grid_canopy(las, res = 1, algo = pitfree())
@@ -34,12 +45,12 @@ chm = grid_canopy(las, res = 1, algo = p2r(0.2))
 The same idea drives several other functions including `lastrees`, `lassnags`, `tree_detection`, `grid_terrain`, `lasnormalize` and so on. Exemples:
 
 ```r
-ttops = tree_detection(las, lmf(5))
-ttops = tree_detection(las, multichm(1,2))
-lastrees(las, li2012(1.5, 2))
-lastrees(las, watershed(chm))
-lasnormalize(las, tin())
-lasnormalize(las, knnidw(k = 10))
+ttops = tree_detection(las, algo = lmf(5))
+ttops = tree_detection(las, algo = lidRplugins::multichm(1,2))
+lastrees(las, algo = li2012(1.5, 2))
+lastrees(las, algo = watershed(chm))
+lasnormalize(las, algo = tin())
+lasnormalize(las, algo = knnidw(k = 10))
 ```
 
 This allows to extend `lidR` with new algorithms without any restriction either in lidR or even from third party tools. Also how users use lidR functions is now more consistant accross the package.
@@ -51,12 +62,12 @@ lidR versions 1 was designed to run algorithms on medium size point cloud loaded
 * It was possible to extract a polygon of points from a `LAScatalog` but not multipart-polygons or polygon with holes. This was only possible with `LAS` objects i.e loaded in memory (unconsistant behaviors within a function).
 * It was possible to run `grid_metrics()` on a `LAScatalog` i.e. over a wide area not loaded in memory but not `lasnormalize` or `lasground` or `tree_detection` (unconsistant behavior accross the functions).
 
-lidR version 2 comes with a powerful and scalable catalog processing engine. Almost all the lidR functions can be used either with `LAS` or `LAScatalog` objects. The following chuncks of code are now possible:
+lidR version 2 comes with a powerful and scalable catalog processing engine. Almost all the lidR functions can be used either with `LAS` or `LAScatalog` objects seemlessly. The following chuncks of code are now possible:
 
 ```r
 ctg = catalog("folfer/to/las/file")
-set_output_file(ctg) <- "folder/to/normalized/las/files/{ORIGINALFILENAME}_normalized"
-new_ctg = lasnormalize(ctg)
+opt_output_file(ctg) <- "folder/to/normalized/las/files/{ORIGINALFILENAME}_normalized"
+new_ctg = lasnormalize(ctg, algo = tin())
 ```
 
 ### Complete description of visible changes
@@ -70,16 +81,17 @@ new_ctg = lasnormalize(ctg)
 
 **LAScatalog class**
 
-* Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more technically it inherits a `SpatialPolygonsDataFrame`.
+* Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or more technically it inherits a `SpatialPolygonsDataFrame`. 
 * Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` does not have a slot `@crs` anymore. It has now a slot `@proj4string` accesible with the function `raster::projection`  or `sp::proj4string`
-* Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options`, `@clustering_options` and `@input_options` that are list of options classified by their main role.
+* Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` can be plotted with `sp::spplot()`.
+* Change: there are no longer any slot `@cores`, `@by_file`, `@buffer` and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options`, `@clustering_options` and `@input_options` that are list of options classified by their main roles.
 * Change: documentation has been entierly rewritten to explain the whole potential of the class.
 * Change: functions `by_file`, `progress`, `tiling_size`, `buffer` were replaced by `opt_chunk_size`, `opt_chunk_buffer`, `opt_progress` and so on. These allows to get a consitant set of functions that do not overlap with functions from `raster` or `sp`.
 * Change: standard column names were renamed to make syntactically valid names and be compatible with `sp` functions.
 
 **readLAS**
 
-* Change: `readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines`
+* Change: `readLAS` no longer supports option `PFC`. User must use function `laspulse`, `lasflightlines` manually.
 
 **lasclip**
 
@@ -113,17 +125,15 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 **lasclassify**
 
 * Change: `lasclassify()` is now named `lasmergespatial()` to free the name `lasclassify` that should be reserved for other usage
-* Change: `lasclassify()` no longer update the original object by reference.
+* Change: `lasmergespatial()` no longer update the original object by reference.
 * Fix: the classification, when made with a `RasterLayer` preserve the data type of the `RasterLayer`. This also fixes the fact that `lastrees()` classified the tree with `double` instead of `int`.
 
 **tree_detection**
 
-* Change: `tree_detection()` relies now on lidR algorithms dispatch (see also the main new features above).
+* Change: `tree_detection()` relies now on the new dispatch method (see also the main new features above).
 * New: algorithm `lmf` have a user-defined variable size search windows and have two possible search windows shapes (square of disc).
 * New: introduction of the `manual` algorithm for manual correction of tree detections.
-* New: introduction of the `multichm` algorithm using a multi chm as published in a paper (see reference).
-* New: introduction of the `ptrees` algorithm as ublished in a paper (see reference) 
-* New: `tree_detection` algorithms (except `manual`) are seamlessly useable with a `LAScatalog` using the catalog processing engine (see also the main new features above). Thus, the following just works:
+* New: `tree_detection` algorithms are seamlessly useable with a `LAScatalog` using the catalog processing engine (see also the main new features above). Thus, the following just works:
 
 ```r
 ctg  <- catalog(folder)
@@ -137,7 +147,7 @@ ttop <- tree_detection(ctg, lmf(5))
 **tree_metrics**
 
 * Change: `tree_metrics()` returns a `SpatialPointsDataFrame`.
-* Change: `tree_metrics()` is seamlessly useable with a `LAScatalog` using the catalog processing engine (see also the main new features above). Thus, this just works if the las file have and extra bytes attributes that stores the tree ids:
+* Change: `tree_metrics()` is seamlessly useable with a `LAScatalog` using the catalog processing engine (see also the main new features above). Thus, this just works if the las file have extra bytes attributes that stores the tree ids:
 
 ```r
 ctg <- catalog(folder)
@@ -146,25 +156,23 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 **lastrees**
 
-* Change: `lastrees()` relies now on lidR algorithms dispatch (see also the main new features above).
-* New: introduction of the `ptrees` algorithm as published in a paper (see reference) 
-* New: introduction of the `hamraz2016` algorithm as published in a paper (see reference) 
+* Change: `lastrees()` relies now on the new algorithms dispatch method (see also the main new features above).
 * New: introduction of the `mcwatershed` algorithm that implements a marker-controlled watershed.
 
 **grid_metrics**
 
-* Change: `grid_metrics()` as well as other `grid_*` functions return consitantly a `RasterLayer` or a `RasterBrick` instead of a `data.table`.
+* Change: `grid_metrics()` as well as other `grid_*` functions return consistently a `RasterLayer` or a `RasterBrick` instead of a `data.table`.
 * Change: option `splitlines` has been removed. `grid_metrics()` used to return a `data.table` because of the `splitlines` option and all lidR was built on top of that feature from the very begining. Now lidR uses consistantly `sp` and `raster` and this option is no longer supported.
 
 **grid_terrain**
 
-* Change: `grid_terrain()` relies now on lidR algorithms dispatch (see also the main new features above).
-* Change: `grid_terrain()` returns consitantly a `RasterLayer` instead of a `data.table` whatever the algorithm used.
+* Change: `grid_terrain()` relies now on the new algorithms dispatch method (see also the main new features above).
+* Change: `grid_terrain()` returns consistently a `RasterLayer` instead of a `data.table` whatever the algorithm used.
 
 **grid_canopy**
 
-* Change: `grid_canopy()` relies now on lidR algorithms dispatch (see also the main new features above). It unifies the former functions `grid_canopy()` and `grid_tincanopy()` functions.
-* Change: `grid_canopy()` returns consitantly a `RasterLayer` instead of a `data.table` whatever the algorithm used.
+* Change: `grid_canopy()` relies now on the new algorithms dispatch method (see also the main new features above). It unifies the former functions `grid_canopy()` and `grid_tincanopy()` functions.
+* Change: `grid_canopy()` returns consistently a `RasterLayer` instead of a `data.table` whatever the algorithm used.
 * Fix: the pitfree algorithm failed if a layer contains only 1 ou 2 points.
 
 **grid_tincanopy**
@@ -182,7 +190,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 **class lasmetrics**
 
-* `data.table` with a class `lasmetrics` no longer exists. It has been consitantly replaced by `RasterLayer` and `RasterBrick` everywhere.
+* `data.table` with a class `lasmetrics` no longer exists. It has been consistently replaced by `RasterLayer` and `RasterBrick` everywhere.
 * `as.raster` no longer exists because it used to convert `lasmetrics` into `RasterLayer` and `RasterStack`.
 * `as.spatial` no longer convert `lasmetrics` to `SpatialPixelsDataFrame` but still converts `LAS` to `SpatialPointsDataFrame`. 
 * `plot.lasmetrics` have been removed obviously.
@@ -193,16 +201,16 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 **lascolor**
 
-* Change: `lascolor()`has been removed. It is one of the first function of the package and is no longer useful because `plot()` have enhanced capabilities.
+* Change: `lascolor()` has been removed. It is one of the first function of the package and is no longer useful because `plot()` have enhanced capabilities.
 
 **lasfilterdecimate**
 
-* Change: relies now on lidR algorithms dispatch (see also the main new features above).
+* Change: relies now on the new algorithms dispatch method (see also the main new features above).
 * New: introduction of the algorithm `highest` available in `lasfilterdecimate()` and that supersedes the fonction `lasfiltersurfacepoints()`.
 
 **lassnags**
 
-* Change: `lassnags()` relies now on lidR algorithms dispatch (see also the main new features above).
+* Change: `lassnags()` relies now new algorithms dispatch method (see also the main new features above).
 * New: `lasnsnags()` can be applied on a `LAScatalog` to write a new catalog using the catalog processing engine (see also the main new features above).
 
 **lidr_options**
@@ -218,13 +226,14 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 * New: `plot()` for `LAS` object supports `RGB` as a color attribute.
 * New: option `color` supports lazy evaluation. This syntax is correct: `plot(las, color = Classification)`.
-* New: option `clear_artifact` to shift the point cloud to (0,0) and reduce the display artifact due to floating point rounding in `rgl`.
+* New: option `clear_artifact = TRUE` to shift the point cloud to (0,0) and reduce the display artifact due to the use of floating point in `rgl`.
+* New: new functions `add_treetops3d`, `add_dtm3d` and `plot_dtm3d` to add elements in the point cloud.
 * Change: `trim` do not trim on percentile of values but on values themselve.
 
 **Coordinate reference system**
 
 * New: coordinate reference system is supported everywhere and can be written in las file. See function `epsg()`.
-* New: function `lastranform` that returns transformed coordinates of a `LAS` object using the a CRS argument
+* New: function `lastranform` that returns transformed coordinates of a `LAS` object using the a CRS argument.
 
 ** New functions**
 
@@ -233,7 +242,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 ### Other changes that are not directly visible
 
-* Change: the code that drives the `point_in_polygon` algorithm relies on `boost` and drastically simplyfies the former code of `lasclassify()`
+* Change: the code that drives the `point_in_polygon` algorithm relies on `boost` and drastically simplyfies the former code of `lasmergespatial()`
 
 ## lidR v1.6.1 (2018-08-21)
 
