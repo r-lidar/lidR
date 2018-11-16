@@ -181,7 +181,7 @@
 #'   las = readLAS(cluster)
 #'   if (is.empty(las)) return(NULL)
 #'
-#'   las = lasfiltersurfacepoints(las, 0.5)
+#'   las = lasfiltersurfacepoints(las, 1)
 #'
 #'   rumple <- grid_metrics(las, rumple_index(X,Y,Z), res)
 #'   bbox   <- raster::extent(cluster)
@@ -195,7 +195,7 @@
 #'
 #' opt_chunk_buffer(project) <- 1
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 80       # extremely small because this is a dummy example
+#' opt_chunk_size(project) <- 120      # extremely small because this is a dummy example
 #' opt_select(project) <- "xyz"        # don't need to read something other than the coordinates
 #'
 #' output = catalog_apply(project, rumple_index_surface, res = 20, check_alignment = 20)
