@@ -50,7 +50,7 @@ test_that("clip polygon works on a LAS and a LAScatalog", {
   expect_equal(tri1, tri2)
 })
 
-test_that("clip polygon works with all supported geometries on a LAS and LAScatalog", {
+test_that("clip polygon works with WTK on a LAS and LAScatalog", {
 
   # WKT
   wkt1 = "MULTIPOLYGON (((684950.8 5017989, 685003.3 5017962, 684938.5 5017905, 684950.8 5017989)), ((684796.2 5017963, 684921.6 5017977, 684899.2 5017806, 684780.7 5017795, 684796.2 5017963), (684899.4 5017924, 684851.7 5017945, 684863.7 5017857, 684899.4 5017924)))"
@@ -108,7 +108,7 @@ test_that("clip polygon works with all supported geometries on a LAS and LAScata
 
   # Extent
   bbox = extent(las)
-  bbox = bbox - 100
+  bbox = bbox - 200
 
   rect1 = lasclip(las, bbox)
   rect2 = lasclip(ctg, bbox)
@@ -279,7 +279,7 @@ test_that("clip writes file following LAScatalog options", {
   ctg3 = lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900)
 
   expect_true(is(ctg3, "LAScatalog"))
-  expect_equal(ctg3@data$filename, paste0(tmp, "/file_684850.laz"))
+  expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/file_684850.laz")))
 
   file.remove(paste0(tmp, "/file_684850.laz"))
 
@@ -288,7 +288,7 @@ test_that("clip writes file following LAScatalog options", {
   opt_laz_compression(ctg2) = FALSE
   ctg3 = lasclip(ctg2, lakes)
 
-  expect_equal(ctg3@data$filename, paste0(tmp, "/file_Havelock Lake.las"))
+  expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/file_Havelock Lake.las")))
 
   file.remove(paste0(tmp, "/file_Havelock Lake.las"))
 })
