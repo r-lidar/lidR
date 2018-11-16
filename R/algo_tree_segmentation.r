@@ -375,8 +375,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' ttops <- tree_detection(chm, lmf(4, 2))
 #' las   <- lastrees(las, mcwatershed(chm, ttops))
 #'
-#' plot(las, color = "treeID", colorPalette = col)
-#' rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+#' x = plot(las, color = "treeID", colorPalette = col)
+#' add_treetops3d(x, ttops)
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
   ws_generic(chm, th_tree = th_tree, tol = tol, ext = ext)
