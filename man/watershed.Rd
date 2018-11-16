@@ -60,8 +60,8 @@ chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 ttops <- tree_detection(chm, lmf(4, 2))
 las   <- lastrees(las, mcwatershed(chm, ttops))
 
-plot(las, color = "treeID", colorPalette = col)
-rgl::spheres3d(ttops@coords[,1], ttops@coords[,2], ttops@data$Z, col = "red", size = 5, add = TRUE)
+x = plot(las, color = "treeID", colorPalette = col)
+add_treetops3d(x, ttops)
 }
 \seealso{
 Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
