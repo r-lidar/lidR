@@ -147,7 +147,7 @@ stopifnotlas = function(x)
 stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
-    stop(glue::glue("{name} is a forbidden name."), call. = FALSE)
+    stop(glue::glue("{name} is part of the core attributes and is a forbidden name."), call. = FALSE)
 }
 
 stopif_wrong_context = function(received_context, expected_contexts, func_name)
