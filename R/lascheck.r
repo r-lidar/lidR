@@ -575,7 +575,7 @@ lascheck.LAS = function(las)
 
   h2("Checking normalization...")
 
-  min = grid_metrics(las, min(Z), res = 20)
+  min = grid_metrics(las, ~min(Z), res = 20)
   mean_min = mean(abs(min[]), na.rm = TRUE)
 
   if (mean_min <= 0.1)
