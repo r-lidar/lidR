@@ -12,8 +12,18 @@ readLAS(files, select = "*", filter = "")
 
 \item{select}{character. Read only attibutes of interest to save memory (see details)}
 
-\item{filter}{character. Read only points of interest to save memory (see details)
-
+\item{filter}{character. Read only points of interest to save memory (see details)}
+}
+\value{
+A LAS object
+}
+\description{
+Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
+object of class \link[lidR:LAS-class]{LAS}. If several files are read at once the returned LAS object
+is considered as one LAS file. The optional parameters enable the user to save a substantial amount
+of memory by choosing to load only the attributes or points of interest.
+}
+\details{
 \strong{Select:} the 'select' argument specifies which attribute will actually be loaded. For example,
 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
@@ -27,16 +37,7 @@ and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
 This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
 before reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command: rlas:::lasfilterusage().
-(see also \link[rlas:read.las]{rlas::read.las})}
-}
-\value{
-A LAS object
-}
-\description{
-Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
-object of class \link[lidR:LAS-class]{LAS}. If several files are read at once the returned LAS object
-is considered as one LAS file. The optional parameters enable the user to save a substantial amount
-of memory by choosing to load only the attributes or points of interest.
+(see also \link[rlas:read.las]{rlas::read.las})
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
