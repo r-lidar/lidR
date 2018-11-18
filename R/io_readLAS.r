@@ -34,11 +34,6 @@
 #' is considered as one LAS file. The optional parameters enable the user to save a substantial amount
 #' of memory by choosing to load only the attributes or points of interest.
 #'
-#' @param files characters. Path(s) to one or several a file(s). Can also be a
-#' \link[lidR:LAScatalog-class]{LAScatalog} object.
-#' @param select character. Read only attibutes of interest to save memory (see details)
-#' @param filter character. Read only points of interest to save memory (see details)
-#'
 #' \strong{Select:} the 'select' argument specifies which attribute will actually be loaded. For example,
 #' 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 #' The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
@@ -53,6 +48,12 @@
 #' before reading the file, the internal filters should always be preferred. The available filters are
 #' those from \code{LASlib} and can be found by running the following command: rlas:::lasfilterusage().
 #' (see also \link[rlas:read.las]{rlas::read.las})
+#'
+#' @param files characters. Path(s) to one or several a file(s). Can also be a
+#' \link[lidR:LAScatalog-class]{LAScatalog} object.
+#' @param select character. Read only attibutes of interest to save memory (see details)
+#' @param filter character. Read only points of interest to save memory (see details)
+#'
 #'
 #' @return A LAS object
 #'
