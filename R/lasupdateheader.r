@@ -1,4 +1,4 @@
-#' Add attributes into a las object
+#' Add attributes into a LAS object
 #'
 #' A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
@@ -6,23 +6,27 @@
 #' and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
 #' enable the user to add new attributes (see details).
 #'
+#' It is forbidden to use the name of one of the core attribute. These functions are dedicated to add
+#' data that are not part of the LAS specification. For example \code{lasaddextrabytes(las, x, "R")}
+#' will fail because \code{R} is a name reserved for the red channel of las file that contains RGB
+#' attributes.\cr\cr
 #' \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
 #' object is not strictly valid. These data will be temporarilly usable at the R level but will not
 #' be written in a las file with \link{writeLAS}.\cr\cr
 #' \code{lasaddextrabytes} does the same as \code{lasadddata} but updates automatically the header of the
 #' LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
-#' data will be written in a las file with \link{writeLAS} (see also details)\cr\cr
+#' data will be written in a las file with \link{writeLAS}.\cr\cr
 #' \code{lasaddextrabytes_manual} allows the user to manually write all the extra bytes metadata.
 #' This function is reserved for experienced users with a good knowledge of the LAS specifications.
 #' The function does not perform tests to check the validity of the information.\cr\cr
 #' When using \code{lasaddextrabytes} and \code{lasaddextrabytes_manual}, \code{x} can only be of type numeric
 #' (\code{integer} or \code{double}). It cannot be of type \code{character} or \code{logical} this is
 #' not supported by the las specifications. Also the types that are supported in lidR are type 0 to 10
-#' (table 24 page 25 of the specification). Tyoes greater than 10 are not supported.
+#' (table 24 page 25 of the specification). Types greater than 10 are not supported.
 #'
 #' @param las An object of class \link[lidR:LAS-class]{LAS}
-#' @param x a vector that need to be added in the LAS object. If missing, the colum \code{'name'} of
-#' the existing LAS object will be used. For \code{lasaddextrabytes*} see also the details.
+#' @param x a vector that need to be added in the LAS object. For \code{lasaddextrabytes*} it can
+#' be missing (see also the details).
 #' @param name character. The name of the extrabytes attributes to add in the file.
 #' @param desc character. A short description of the extrabytes attributes to add in the file (32 characters).
 #' @param type character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"}.
@@ -36,7 +40,7 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "example.laz", package="rlas")
-#' las <- readLAS(LASfile)
+#' las <- readLAS(LASfile, select = "xyz")
 #'
 #' print(las)
 #' print(las@header)
@@ -51,9 +55,18 @@
 #' print(las)        # The las object has a new attribute called "mydata2"
 #' print(las@header) # The header has been updated. This new data will be written
 #'
-#' # optionally if the data is already in the LAS object you can update the header skipping the
+#' # Optionally if the data is already in the LAS object you can update the header skipping the
 #' # parameter x
 #' las <- lasaddextrabytes(las, name = "mydata", desc = "Amplitude")
+#' print(las@header)
+#'
+#' # Remove an extrabytes attribute
+#' las <- lasremoveextrabytes(las, "mydata2")
+#' print(las)
+#' print(las@header)
+#'
+#' las <- lasremoveextrabytes(las, "mydata")
+#' print(las)
 #' print(las@header)
 NULL
 
@@ -80,13 +93,23 @@ lasaddextrabytes = function(las, x, name, desc)
 
   if (missing(x))
   {
-    if (name %in% names(las@data))
-      x <- las@data[[name]]
-    else
-      stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
+    if (!name %in% names(las@data))
+      stop(glue::glue("{name} is not an attribute of the LAS object."))
+
+    x <- las@data[[name]]
+
+    if (!is.numeric(x))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not enable for storing '{class(las@data[[name]])}' extra bytes."))
   }
   else
+  {
+    assertive::assert_is_vector(x)
+
+    if (!is.numeric(x))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
+
     las <- lasadddata(las, x, name)
+  }
 
   header     <- as.list(las@header)
   new_header <- rlas::header_add_extrabytes(header, x, name, desc)
@@ -109,20 +132,63 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
 
   if (missing(x))
   {
-    if (name %in% names(las@data))
-      x <- las@data[[name]]
-    else
-      stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
+    if (!name %in% names(las@data))
+      stop(glue::glue("{name} is not an attribute of the LAS object."))
+
+    x <- las@data[[name]]
+
+    if (!is.numeric(x))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not enable for storing '{class(las@data[[name]])}' extra bytes."))
   }
   else
-    las <- lasadddata(las, x, name)
+  {
+    assertive::assert_is_vector(x)
 
+    if (!is.numeric(x))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
+
+    las <- lasadddata(las, x, name)
+  }
 
   header     <- as.list(las@header)
   new_header <- rlas::header_add_extrabytes_manual(header, name, desc, type, offset, scale, min(x, na.rm = TRUE), max(x, na.rm = TRUE), NA_value)
   new_header <- LASheader(new_header)
   las@header <- new_header
   return(las)
+}
+
+#' @export
+#' @rdname lasaddattribute
+lasremoveextrabytes = function(las, name)
+{
+  stopifnotlas(las)
+  assertive::assert_is_a_string(name)
+  stopif_forbidden_name(name)
+
+  if (!name %in% names(las@data))
+  {
+     message(glue::glue("{name} is not an attribute of the LAS object."))
+     return(las)
+  }
+
+  eb <- las@header@VLR$Extra_Bytes$`Extra Bytes Description`[[name]]
+
+  if (is.null(eb))
+  {
+    message(glue::glue("{name} is not an extrabytes attribute of the LAS object."))
+    las@data[[name]] <- NULL
+    return(las)
+  }
+  else
+  {
+    las@header@VLR$Extra_Bytes$`Extra Bytes Description`[[name]] <- NULL
+    las@data[[name]] <- NULL
+
+    if (length(las@header@VLR$Extra_Bytes$`Extra Bytes Description`) == 0)
+      las@header@VLR$Extra_Bytes <- NULL
+
+    return(las)
+  }
 }
 
 lasupdateheader = function(las)

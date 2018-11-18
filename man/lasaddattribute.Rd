@@ -5,6 +5,7 @@
 \alias{lasadddata}
 \alias{lasaddextrabytes}
 \alias{lasaddextrabytes_manual}
+\alias{lasremoveextrabytes}
 \title{Add attributes into a las object}
 \usage{
 lasadddata(las, x, name)
@@ -13,12 +14,14 @@ lasaddextrabytes(las, x, name, desc)
 
 lasaddextrabytes_manual(las, x, name, desc, type, offset = NULL,
   scale = NULL, NA_value = NULL)
+
+lasremoveextrabytes(las, name)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS}}
 
-\item{x}{a vector that need to be added in the LAS object. If missing, the colum \code{'name'} of
-the existing LAS object will be used. For \code{lasaddextrabytes*} see also the details.}
+\item{x}{a vector that need to be added in the LAS object. For \code{lasaddextrabytes*} it can
+be missing (see also the details).}
 
 \item{name}{character. The name of the extrabytes attributes to add in the file.}
 
@@ -42,23 +45,27 @@ and so on for each point. It is possible to add supplementary attributes. The fu
 enable the user to add new attributes (see details).
 }
 \details{
+It is forbidden to use the name of one of the core attribute. These functions are dedicated to add
+data that are not part of the LAS specification. For example \code{lasaddextrabytes(las, x, "R")}
+will fail because \code{R} is a name reserved for the red channel of las file that contains RGB
+attributes.\cr\cr
 \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
 object is not strictly valid. These data will be temporarilly usable at the R level but will not
 be written in a las file with \link{writeLAS}.\cr\cr
 \code{lasaddextrabytes} does the same as \code{lasadddata} but updates automatically the header of the
 LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
-data will be written in a las file with \link{writeLAS} (see also details)\cr\cr
+data will be written in a las file with \link{writeLAS}.\cr\cr
 \code{lasaddextrabytes_manual} allows the user to manually write all the extra bytes metadata.
 This function is reserved for experienced users with a good knowledge of the LAS specifications.
 The function does not perform tests to check the validity of the information.\cr\cr
 When using \code{lasaddextrabytes} and \code{lasaddextrabytes_manual}, \code{x} can only be of type numeric
 (\code{integer} or \code{double}). It cannot be of type \code{character} or \code{logical} this is
 not supported by the las specifications. Also the types that are supported in lidR are type 0 to 10
-(table 24 page 25 of the specification). Tyoes greater than 10 are not supported.
+(table 24 page 25 of the specification). Types greater than 10 are not supported.
 }
 \examples{
 LASfile <- system.file("extdata", "example.laz", package="rlas")
-las <- readLAS(LASfile)
+las <- readLAS(LASfile, select = "xyz")
 
 print(las)
 print(las@header)
@@ -73,8 +80,17 @@ las <- lasaddextrabytes(las, x, "mydata2", "A new data")
 print(las)        # The las object has a new attribute called "mydata2"
 print(las@header) # The header has been updated. This new data will be written
 
-# optionally if the data is already in the LAS object you can update the header skipping the
+# Optionally if the data is already in the LAS object you can update the header skipping the
 # parameter x
 las <- lasaddextrabytes(las, name = "mydata", desc = "Amplitude")
+print(las@header)
+
+# Remove an extrabytes attribute
+las <- lasremoveextrabytes(las, "mydata2")
+print(las)
+print(las@header)
+
+las <- lasremoveextrabytes(las, "mydata")
+print(las)
 print(las@header)
 }
