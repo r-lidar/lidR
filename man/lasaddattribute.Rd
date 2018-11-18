@@ -18,7 +18,7 @@ lasaddextrabytes_manual(las, x, name, desc, type, offset = NULL,
 \item{las}{An object of class \link[lidR:LAS-class]{LAS}}
 
 \item{x}{a vector that need to be added in the LAS object. If missing, the colum \code{'name'} of
-the existing LAS object will be used.}
+the existing LAS object will be used. For \code{lasaddextrabytes*} see also the details.}
 
 \item{name}{character. The name of the extrabytes attributes to add in the file.}
 
@@ -39,18 +39,22 @@ A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to th
 \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
 a las file contains a core of defined attributes such as XYZ coordinates, intensity, return number,
 and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
-enable the user to add new attributes (see details)
+enable the user to add new attributes (see details).
 }
 \details{
 \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
 object is not strictly valid. These data will be temporarilly usable at the R level but will not
 be written in a las file with \link{writeLAS}.\cr\cr
-\code{lasaddextrabyte} does the same as \code{lasadddata} but updates automatically the header of the
+\code{lasaddextrabytes} does the same as \code{lasadddata} but updates automatically the header of the
 LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
-data will be written in a las file with \link{writeLAS}\cr\cr
-\code{lasaddextrabyte_manual} allows the user to manually write all the extra bytes metadata.
+data will be written in a las file with \link{writeLAS} (see also details)\cr\cr
+\code{lasaddextrabytes_manual} allows the user to manually write all the extra bytes metadata.
 This function is reserved for experienced users with a good knowledge of the LAS specifications.
-The function does not perform tests to check the validity of the information.
+The function does not perform tests to check the validity of the information.\cr\cr
+When using \code{lasaddextrabytes} and \code{lasaddextrabytes_manual}, \code{x} can only be of type numeric
+(\code{integer} or \code{double}). It cannot be of type \code{character} or \code{logical} this is
+not supported by the las specifications. Also the types that are supported in lidR are type 0 to 10
+(table 24 page 25 of the specification). Tyoes greater than 10 are not supported.
 }
 \examples{
 LASfile <- system.file("extdata", "example.laz", package="rlas")
