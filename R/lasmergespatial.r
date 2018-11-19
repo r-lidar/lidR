@@ -36,16 +36,17 @@
 #' it assigns to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
 #' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
+#' \item{\code{RasterStack} or \code{RasterBrick} must have 3 channels for RGB colors. It colorize the
+#' point cloud with RGB values.}
 #' }
 #'
 #' @param las An object of the class \code{LAS}
-#'
-#' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer}
-#'
+#' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer} or a
+#' \code{RasterStack} or \code{RasterBrick} with RGB colors.
 #' @param attribute characters. The name of a attribute in the table of attributes of the shapefile or
-#' the name of a new column in the LAS object.
+#' the name of a new column in the LAS object. Not relevant for RGB colorization.
 #'
-#' @return An object of the class \code{LAS}
+#' @return An object of the class \code{LAS}.
 #'
 #' @export
 #'
@@ -72,8 +73,10 @@ lasmergespatial = function(las, source, attribute = NULL)
 
   if (is(source, "SpatialPolygonsDataFrame"))
     values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
-  else if (is(source, "RasterLayer") | is(source, "RasterStack"))
+  else if (is(source, "RasterLayer"))
     values = lasmergeRasterLayer(las, source)
+  else if (is(source, "RasterStack") | is(source, "RasterBrick"))
+    return(lasmergergb(las, source))
   else
     stop("No method for this source format.", call. = F)
 
@@ -81,6 +84,50 @@ lasmergespatial = function(las, source, attribute = NULL)
     attribute = "id"
 
   las = lasadddata(las, values, attribute)
+  return(las)
+}
+
+lasmergergb = function(las, source)
+{
+  R <- source[[1]]@data@values
+  G <- source[[2]]@data@values
+  B <- source[[3]]@data@values
+
+  maxr <- max(R, na.rm = TRUE)
+  maxg <- max(G, na.rm = TRUE)
+  maxb <- max(B, na.rm = TRUE)
+
+  scale <- 1
+  if (maxr <= 255 & maxg <= 255 & maxb <= 255)
+    scale <- 257
+
+  cells <- raster::cellFromXY(source[[1]], las@data[,.(X,Y)])
+
+  las@data$R <- as.integer(R[cells]*scale)
+  las@data$G <- as.integer(G[cells]*scale)
+  las@data$B <- as.integer(B[cells]*scale)
+
+  format <- las@header@PHB$`Point Data Format ID`
+
+  if (format %in% c(2,3,8))
+  {
+    # nothing to do
+  }
+  else if ("NIR" %in% names(las@data))
+  {
+    format <- 8L
+  }
+  else if ("gpstime" %in% names(las@data))
+  {
+    format <- 3L
+  }
+  else
+  {
+    format <- 2L
+  }
+
+  las@header@PHB$`Point Data Format ID` <- format
+
   return(las)
 }
 
