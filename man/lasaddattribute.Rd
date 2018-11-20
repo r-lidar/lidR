@@ -6,7 +6,7 @@
 \alias{lasaddextrabytes}
 \alias{lasaddextrabytes_manual}
 \alias{lasremoveextrabytes}
-\title{Add attributes into a las object}
+\title{Add attributes into a LAS object}
 \usage{
 lasadddata(las, x, name)
 
