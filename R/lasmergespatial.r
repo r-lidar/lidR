@@ -69,8 +69,12 @@
 #' las <- lasmergespatial(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
 lasmergespatial = function(las, source, attribute = NULL)
 {
-  stopifnotlas(las)
+  UseMethod("lasmergespatial", las)
+}
 
+#' @export
+lasmergespatial.LAS = function(las, source, attribute = NULL)
+{
   if (is(source, "SpatialPolygonsDataFrame"))
     values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
   else if (is(source, "RasterLayer"))
