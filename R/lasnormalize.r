@@ -190,13 +190,11 @@ lasnormalize.LAScatalog = function(las, algorithm)
 lasunnormalize = function(las)
 {
   stopifnotlas(las)
-  Z <- Zref <- NULL
 
   if ("Zref" %in% names(las@data))
   {
     las@data[["Z"]] <- las@data[["Zref"]]
-    las@data[, Zref := NULL]
-    las@data[]
+    las@data[["Zref"]] <- NULL
   }
   else
     message("No attribute 'Zref' found. Unormalizisation is impossible.")
