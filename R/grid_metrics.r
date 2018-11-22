@@ -183,7 +183,7 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
   glob <- future::getGlobalsAndPackages(func)
   alignment <- list(res = res, start = start)
 
-  output  <- catalog_apply2(las, grid_metrics, func = func, res = res, start = start, need_buffer = FALSE, check_alignment = TRUE, drop_null = TRUE, globals = glob$globals, raster_alignment = alignment)
+  output  <- catalog_apply2(las, grid_metrics, func = func, res = res, start = start, need_buffer = FALSE, check_alignment = TRUE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
 
   if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_metrics"))

@@ -23,7 +23,7 @@ Imports:
     assertive,
     concaveman,
     data.table,
-    future,
+    future (>= 1.10.0),
     geometry,
     glue,
     grDevices,

@@ -1,4 +1,4 @@
-cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = TRUE, ...)
+cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = NULL, ...)
 {
   stopifnot(is.list(clusters))
   assertive::assert_is_function(FUN)
@@ -40,17 +40,6 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     else
       params[first_p] <- list(NULL)
 
-    # If globals is a list it means that global variables were manually given to the future
-    # thus we need to add the function FUN and its params as globals. global variables are
-    # manually given in grid_metrics and tree_metrics because of the lazy evaluation of the
-    # user's expression that CANNOT be exported automatically by future.
-    if (is.list(globals))
-    {
-      globals$params <- params
-      globals$FUN <- FUN
-      globals$current_processed_cluster <- current_processed_cluster
-    }
-
     # Asyncroneous comptation of FUN
     output[[i]] <- future::future(
     {
@@ -58,7 +47,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       if (is.null(x)) return(NULL)
       if (current_processed_cluster@save == "") return(x)
       return(cluster_write(x, current_processed_cluster@save, output_options))
-    }, substitute = TRUE, globals = globals)
+    }, substitute = TRUE, globals = structure(TRUE, add = globals))
 
     # Error handling and progress report
     for (j in 1:i)
