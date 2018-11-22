@@ -234,11 +234,11 @@ catalog_apply <- function(ctg, FUN, ..., check_alignment = 0)
   else
     check_alignment = TRUE
 
-  output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignment = check_alignment, drop_null = TRUE, need_output_file = FALSE, globals = TRUE, raster_alignment = raster_alignment)
+  output <- catalog_apply2(ctg, FUN, ..., need_buffer = FALSE, check_alignment = check_alignment, drop_null = TRUE, need_output_file = FALSE, globals = NULL, raster_alignment = raster_alignment)
   return(output)
 }
 
-catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignment = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = TRUE, raster_alignment = list(res = 0, start = c(0,0)))
+catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignment = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = NULL, raster_alignment = list(res = 0, start = c(0,0)))
 {
   assertive::assert_is_function(FUN)
   assertive::assert_is_a_bool(need_buffer)
