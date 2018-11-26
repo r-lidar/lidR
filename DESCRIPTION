@@ -97,6 +97,7 @@ Collate:
     'lasfiltersurfacepoints.r'
     'lasground.r'
     'lasindentify.r'
+    'lasmergelas.r'
     'lasmergespatial.r'
     'lasmetrics.r'
     'lasnormalize.r'
