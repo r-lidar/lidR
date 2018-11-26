@@ -117,12 +117,12 @@ catalog_makecluster = function(ctg)
     {
       X         <- list()
       X$ID      <- i
-      X$XCENTER <- clusters[[i]]@center$x
-      X$XCENTER <- clusters[[i]]@center$y
-      X$XLEFT   <- clusters[[i]]@bbox[1]
-      X$XRIGHT  <- clusters[[i]]@bbox[3]
-      X$YBOTTOM <- clusters[[i]]@bbox[2]
-      X$YTOP    <- clusters[[i]]@bbox[4]
+      X$XCENTER <- format(clusters[[i]]@center$x, scientific = F)
+      X$XCENTER <- format(clusters[[i]]@center$y, scientific = F)
+      X$XLEFT   <- format(clusters[[i]]@bbox[1], scientific = F)
+      X$XRIGHT  <- format(clusters[[i]]@bbox[3], scientific = F)
+      X$YBOTTOM <- format(clusters[[i]]@bbox[2], scientific = F)
+      X$YTOP    <- format(clusters[[i]]@bbox[4], scientific = F)
 
       if (by_file)
         X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
