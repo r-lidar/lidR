@@ -46,8 +46,8 @@
 # }
 # catalog_select = function(ctg, mapview = TRUE)
 # {
-#   assertive::assert_is_all_of(ctg, "LAScatalog")
-#   assertive::assert_is_a_bool(mapview)
+#   assert_is_all_of(ctg, "LAScatalog")
+#   assert_is_a_bool(mapview)
 #
 #   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
 #

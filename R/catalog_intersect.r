@@ -41,7 +41,7 @@
 #' @export
 catalog_intersect = function(ctg, y)
 {
-  assertive::assert_is_all_of(ctg, "LAScatalog")
+  assert_is_all_of(ctg, "LAScatalog")
   spdf <- as.spatial(ctg)
   spdf$PolygonID <- 1:nrow(spdf@data)
   i <- raster::intersect(spdf, y)$PolygonID

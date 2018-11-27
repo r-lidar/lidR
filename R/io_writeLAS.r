@@ -47,7 +47,7 @@
 writeLAS = function(las, file)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_string(file)
+  assert_is_a_string(file)
 
   if (is.empty(las)) stop("Cannot write a file with 0 points", call. = FALSE)
 

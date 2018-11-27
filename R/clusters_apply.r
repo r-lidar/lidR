@@ -1,8 +1,8 @@
 cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = TRUE, ...)
 {
   stopifnot(is.list(clusters))
-  assertive::assert_is_function(FUN)
-  assertive::assert_is_a_bool(drop_null)
+  assert_is_function(FUN)
+  assert_is_a_bool(drop_null)
 
   nclust <- length(clusters)
   output <- vector("list", nclust)
