@@ -75,7 +75,7 @@ NULL
 lasadddata = function(las, x, name)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_string(name)
+  assert_is_a_string(name)
   stopif_forbidden_name(name)
 
   las@data[[name]] <- x
@@ -87,8 +87,8 @@ lasadddata = function(las, x, name)
 lasaddextrabytes = function(las, x, name, desc)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_string(name)
-  assertive::assert_is_a_string(desc)
+  assert_is_a_string(name)
+  assert_is_a_string(desc)
   stopif_forbidden_name(name)
 
   if (missing(x))
@@ -103,7 +103,7 @@ lasaddextrabytes = function(las, x, name, desc)
   }
   else
   {
-    assertive::assert_is_vector(x)
+    assert_is_vector(x)
 
     if (!is.numeric(x))
       stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
@@ -123,9 +123,9 @@ lasaddextrabytes = function(las, x, name, desc)
 lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_string(name)
-  assertive::assert_is_a_string(desc)
-  assertive::assert_is_a_string(type)
+  assert_is_a_string(name)
+  assert_is_a_string(desc)
+  assert_is_a_string(type)
   stopif_forbidden_name(name)
 
   type = match.arg(type, c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"))
@@ -142,7 +142,7 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   }
   else
   {
-    assertive::assert_is_vector(x)
+    assert_is_vector(x)
 
     if (!is.numeric(x))
       stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
@@ -162,7 +162,7 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
 lasremoveextrabytes = function(las, name)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_string(name)
+  assert_is_a_string(name)
   stopif_forbidden_name(name)
 
   if (!name %in% names(las@data))

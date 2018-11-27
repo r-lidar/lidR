@@ -109,13 +109,13 @@
 #' plot(metrics, "zsqmean", col = colors)
 grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
-  if (!assertive::is_a_number(res) & !is(res, "RasterLayer"))
+  if (!is_a_number(res) & !is(res, "RasterLayer"))
      stop("res is not a number or a RasterLayer", call. = FALSE)
 
-  if (assertive::is_a_number(res))
-    assertive::assert_all_are_non_negative(res)
+  if (is_a_number(res))
+    assert_all_are_non_negative(res)
 
-  assertive::assert_is_numeric(start)
+  assert_is_numeric(start)
 
   UseMethod("grid_metrics", las)
 }

@@ -78,11 +78,11 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
 {
   stopifnotlas(las)
   type <- match.arg(type)
-  assertive::assert_is_a_number(concavity)
-  assertive::assert_all_are_non_negative(concavity)
-  assertive::assert_is_a_number(length_threshold)
-  assertive::assert_all_are_non_negative(length_threshold)
-  assertive::assert_is_a_string(attribute)
+  assert_is_a_number(concavity)
+  assert_all_are_non_negative(concavity)
+  assert_is_a_number(length_threshold)
+  assert_all_are_non_negative(length_threshold)
+  assert_is_a_string(attribute)
 
   X <- Y <- tree <- NULL
 

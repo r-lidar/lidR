@@ -146,8 +146,8 @@ add_dtm3d = function(x, dtm, ...)
 {
   args <- list(...)
 
-  assertive::assert_is_numeric(x)
-  assertive::assert_is_of_length(x, 2)
+  assert_is_numeric(x)
+  assert_is_of_length(x, 2)
 
   if (!is(dtm, "RasterLayer"))
     stop("'dtm' is not RasterLayer.")
@@ -176,8 +176,8 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
 {
   args <- list(...)
 
-  assertive::assert_is_numeric(x)
-  assertive::assert_is_of_length(x, 2)
+  assert_is_numeric(x)
+  assert_is_of_length(x, 2)
 
   if (!is(ttops, "SpatialPointsDataFrame"))
     stop("'ttops' is not SpatialPointsDataFrame")

@@ -228,13 +228,13 @@ lasclip = function(las, geometry, ...)
 #' @rdname lasclip
 lasclipRectangle = function(las, xleft, ybottom, xright, ytop)
 {
-  assertive::assert_is_numeric(xleft)
-  assertive::assert_is_numeric(ybottom)
-  assertive::assert_is_numeric(xright)
-  assertive::assert_is_numeric(ytop)
-  assertive::assert_are_same_length(xleft, ybottom)
-  assertive::assert_are_same_length(xleft, xright)
-  assertive::assert_are_same_length(xleft, ytop)
+  assert_is_numeric(xleft)
+  assert_is_numeric(ybottom)
+  assert_is_numeric(xright)
+  assert_is_numeric(ytop)
+  assert_are_same_length(xleft, ybottom)
+  assert_are_same_length(xleft, xright)
+  assert_are_same_length(xleft, ytop)
 
   UseMethod("lasclipRectangle", las)
 }
@@ -280,9 +280,9 @@ lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
 #' @rdname lasclip
 lasclipPolygon = function(las, xpoly, ypoly)
 {
-  assertive::assert_is_numeric(xpoly)
-  assertive::assert_is_numeric(ypoly)
-  assertive::assert_are_same_length(xpoly, ypoly)
+  assert_is_numeric(xpoly)
+  assert_is_numeric(ypoly)
+  assert_are_same_length(xpoly, ypoly)
 
   poly <- sp::Polygon(cbind(xpoly, ypoly))
   return(lasclip(las, poly))
@@ -294,10 +294,10 @@ lasclipPolygon = function(las, xpoly, ypoly)
 #' @rdname lasclip
 lasclipCircle = function(las, xcenter, ycenter, radius)
 {
-  assertive::assert_is_numeric(xcenter)
-  assertive::assert_is_numeric(ycenter)
-  assertive::assert_is_numeric(radius)
-  assertive::assert_are_same_length(xcenter, ycenter)
+  assert_is_numeric(xcenter)
+  assert_is_numeric(ycenter)
+  assert_is_numeric(radius)
+  assert_are_same_length(xcenter, ycenter)
   UseMethod("lasclipCircle", las)
 }
 
@@ -305,7 +305,7 @@ lasclipCircle = function(las, xcenter, ycenter, radius)
 lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
 {
   if (length(radius) > 1)
-    assertive::assert_are_same_length(xcenter, radius)
+    assert_are_same_length(xcenter, radius)
   else
     radius <- rep(radius, length(xcenter))
 
@@ -331,7 +331,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
 lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
 {
   if (length(radius) > 1)
-    assertive::assert_are_same_length(xcenter, radius)
+    assert_are_same_length(xcenter, radius)
   else
     radius <- rep(radius, length(xcenter))
 
