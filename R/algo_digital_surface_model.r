@@ -68,8 +68,8 @@
 #' }
 p2r = function(subcircle = 0, na.fill = NULL)
 {
-  assertive::assert_is_a_number(subcircle)
-  assertive::assert_all_are_non_negative(subcircle)
+  assert_is_a_number(subcircle)
+  assert_all_are_non_negative(subcircle)
 
   if (!is.null(na.fill))
   {
@@ -234,12 +234,12 @@ dsmtin = function(max_edge = 0)
 #' @export
 pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
 {
-  assertive::assert_is_numeric(thresholds)
-  assertive::assert_all_are_non_negative(thresholds)
-  assertive::assert_is_numeric(max_edge)
-  assertive::assert_all_are_non_negative(max_edge)
-  assertive::assert_is_a_number(subcircle)
-  assertive::assert_all_are_non_negative(subcircle)
+  assert_is_numeric(thresholds)
+  assert_all_are_non_negative(thresholds)
+  assert_is_numeric(max_edge)
+  assert_all_are_non_negative(max_edge)
+  assert_is_a_number(subcircle)
+  assert_all_are_non_negative(subcircle)
 
   if (length(thresholds) > 1L & length(max_edge) < 2L)
     stop("'max_edge' should contain 2 numbers", call. = FALSE)

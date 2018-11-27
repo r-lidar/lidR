@@ -20,7 +20,6 @@ License: GPL-3
 Depends:
     R (>= 3.1.0),methods,raster,sp
 Imports:
-    assertive,
     concaveman,
     data.table,
     future (>= 1.10.0),
@@ -111,6 +110,7 @@ Collate:
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
+    'utils_assertive.r'
     'utils_catalog_options.r'
     'utils_colors.r'
     'utils_define_constant.R'

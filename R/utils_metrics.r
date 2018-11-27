@@ -602,11 +602,11 @@ rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 #' @export
 rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 {
-  assertive::assert_is_numeric(x)
-  assertive::assert_is_numeric(y)
-  assertive::assert_is_numeric(z)
-  assertive::assert_are_same_length(x,y)
-  assertive::assert_are_same_length(x,z)
+  assert_is_numeric(x)
+  assert_is_numeric(y)
+  assert_is_numeric(z)
+  assert_are_same_length(x,y)
+  assert_are_same_length(x,z)
 
   if (length(x) <= 3)
     return(NA_real_)

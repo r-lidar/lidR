@@ -79,8 +79,8 @@
 grid_metrics3d = function(las, func, res = 1)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_non_negative(res)
+  assert_is_a_number(res)
+  assert_all_are_non_negative(res)
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)

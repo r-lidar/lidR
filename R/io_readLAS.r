@@ -76,16 +76,16 @@ readLAS = function(files, select = "*", filter = "")
 #' @export
 readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
-  assertive::assert_is_a_string(select)
-  assertive::assert_is_a_string(filter)
+  assert_is_a_string(select)
+  assert_is_a_string(filter)
   return(readLAS(files@data$filename, select, filter))
 }
 
 #' @export
 readLAS.LAScluster = function(files, select = "*", filter = "")
 {
-  assertive::assert_is_a_string(select)
-  assertive::assert_is_a_string(filter)
+  assert_is_a_string(select)
+  assert_is_a_string(filter)
 
   buffer <- X <- Y <- NULL
 
@@ -125,8 +125,8 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
 #' @export
 readLAS.character = function(files, select = "*", filter = "")
 {
-  assertive::assert_is_a_string(select)
-  assertive::assert_is_a_string(filter)
+  assert_is_a_string(select)
+  assert_is_a_string(filter)
   return(streamLAS(files, ofile = "", select, filter))
 }
 
@@ -156,7 +156,7 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt 
 
 streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
-  assertive::assert_all_are_existing_files(x)
+  assert_all_are_existing_files(x)
 
   islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
