@@ -1,7 +1,7 @@
 match_chm_and_seeds = function(chm, seeds, field)
 {
-  assertive::assert_is_all_of(chm, "RasterLayer")
-  assertive::assert_is_all_of(seeds, "SpatialPointsDataFrame")
+  assert_is_all_of(chm, "RasterLayer")
+  assert_is_all_of(seeds, "SpatialPointsDataFrame")
   stopif_forbidden_name(field)
 
   if(is.null(raster::intersect(raster::extent(chm), raster::extent(seeds))))

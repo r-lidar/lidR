@@ -77,8 +77,8 @@ laspulse = function(las)
 lasflightline = function(las, dt = 30)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_number(dt)
-  assertive::assert_all_are_non_negative(dt)
+  assert_is_a_number(dt)
+  assert_all_are_non_negative(dt)
 
   if(!"gpstime" %in% names(las@data))
     stop("No gpstime attribute found. Flightlines cannot be computed from this file.", call. = FALSE)

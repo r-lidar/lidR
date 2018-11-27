@@ -52,9 +52,9 @@
 #' plot(grid_density(thinned1))
 random = function(density, use_pulse = FALSE)
 {
-  assertive::assert_is_a_number(density)
-  assertive::assert_all_are_positive(density)
-  assertive::assert_is_a_bool(use_pulse)
+  assert_is_a_number(density)
+  assert_all_are_positive(density)
+  assert_is_a_bool(use_pulse)
 
   f = function(las)
   {
@@ -116,11 +116,11 @@ random = function(density, use_pulse = FALSE)
 #' plot(grid_density(thinned))
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
-  assertive::assert_is_a_number(density)
-  assertive::assert_all_are_positive(density)
-  assertive::assert_is_a_bool(use_pulse)
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
+  assert_is_a_number(density)
+  assert_all_are_positive(density)
+  assert_is_a_bool(use_pulse)
+  assert_is_a_number(res)
+  assert_all_are_positive(res)
 
   f = function(las)
   {

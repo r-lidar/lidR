@@ -204,25 +204,25 @@
 #' @export
 catalog_apply <- function(ctg, FUN, ..., check_alignment = 0)
 {
-  assertive::assert_is_all_of(ctg, "LAScatalog")
-  assertive::assert_is_function(FUN)
+  assert_is_all_of(ctg, "LAScatalog")
+  assert_is_function(FUN)
 
   if (!check_fun_with_empty_cluster(FUN, ...))
     stop("User's function does not return NULL for empty chunks. Please see the documentation.")
 
   if (is.numeric(check_alignment))
   {
-    assertive::assert_is_a_number(check_alignment)
-    assertive::assert_all_are_non_negative(check_alignment)
+    assert_is_a_number(check_alignment)
+    assert_all_are_non_negative(check_alignment)
     check_alignment <- list(res = check_alignment, start = c(0,0))
   }
   else if (is.list(check_alignment))
   {
-    assertive::assert_is_a_number(check_alignment$res)
-    assertive::assert_all_are_non_negative(check_alignment$res)
+    assert_is_a_number(check_alignment$res)
+    assert_all_are_non_negative(check_alignment$res)
 
     if (!is.null(check_alignment$start))
-      assertive::assert_is_numeric(check_alignment$start)
+      assert_is_numeric(check_alignment$start)
   }
   else
     stop("Invalid parameter 'check_alignment")
@@ -240,10 +240,10 @@ catalog_apply <- function(ctg, FUN, ..., check_alignment = 0)
 
 catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignment = FALSE, drop_null = FALSE, need_output_file = FALSE, globals = NULL, raster_alignment = list(res = 0, start = c(0,0)))
 {
-  assertive::assert_is_function(FUN)
-  assertive::assert_is_a_bool(need_buffer)
-  assertive::assert_is_a_bool(check_alignment)
-  assertive::assert_is_a_bool(drop_null)
+  assert_is_function(FUN)
+  assert_is_a_bool(need_buffer)
+  assert_is_a_bool(check_alignment)
+  assert_is_a_bool(drop_null)
 
   resolution <- raster_alignment$res
   start      <- raster_alignment$start

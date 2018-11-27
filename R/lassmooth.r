@@ -36,10 +36,10 @@
 lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
 {
   stopifnotlas(las)
-  assertive::assert_is_a_number(size)
-  assertive::assert_all_are_positive(size)
-  assertive::assert_is_a_number(sigma)
-  assertive::assert_all_are_positive(sigma)
+  assert_is_a_number(size)
+  assert_all_are_positive(size)
+  assert_is_a_number(sigma)
+  assert_all_are_positive(sigma)
   method <- match.arg(method)
   shape  <- match.arg(shape)
 

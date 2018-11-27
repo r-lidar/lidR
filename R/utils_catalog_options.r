@@ -50,7 +50,7 @@ opt_chunk_buffer = function(ctg)
 #' @export
 `opt_chunk_buffer<-` = function(ctg, value)
 {
-  assertive::assert_is_a_number(value)
+  assert_is_a_number(value)
   if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
   ctg@chunk_options$buffer <- value
   return(ctg)
@@ -67,8 +67,8 @@ opt_chunk_size = function(ctg)
 #' @export
 `opt_chunk_size<-` = function(ctg, value)
 {
-  assertive::assert_is_a_number(value)
-  assertive::assert_all_are_non_negative(value)
+  assert_is_a_number(value)
+  assert_all_are_non_negative(value)
   ctg@chunk_options$size <- value
   return(ctg)
 }
@@ -84,8 +84,8 @@ opt_chunk_alignment = function(ctg)
 #' @export
 `opt_chunk_alignment<-` = function(ctg, value)
 {
-  assertive::assert_is_numeric(value)
-  assertive::assert_is_of_length(value, 2)
+  assert_is_numeric(value)
+  assert_is_of_length(value, 2)
   ctg@chunk_options$alignment <- value
   return(ctg)
 }
@@ -137,7 +137,7 @@ opt_progress = function(ctg)
 #' @export
 `opt_progress<-` = function(ctg, value)
 {
-  assertive::assert_is_a_bool(value)
+  assert_is_a_bool(value)
   ctg@processing_options$progress <- value
   return(ctg)
 }
@@ -153,7 +153,7 @@ opt_stop_early = function(ctg)
 #' @export
 `opt_stop_early<-` = function(ctg, value)
 {
-  assertive::assert_is_a_bool(value)
+  assert_is_a_bool(value)
   ctg@processing_options$stop_early <- value
   return(ctg)
 }
@@ -169,7 +169,7 @@ opt_wall_to_wall = function(ctg)
 #' @export
 `opt_wall_to_wall<-` = function(ctg, value)
 {
-  assertive::assert_is_a_bool(value)
+  assert_is_a_bool(value)
   ctg@processing_options$wall_to_wall <- value
   return(ctg)
 }
@@ -188,7 +188,7 @@ opt_output_files = function(ctg)
 #' @export
 `opt_output_files<-` = function(ctg, value)
 {
-  assertive::assert_is_a_string(value)
+  assert_is_a_string(value)
   ext = tools::file_ext(value)
 
   if (ext != "")
@@ -209,7 +209,7 @@ opt_laz_compression = function(ctg)
 #' @export
 `opt_laz_compression<-` = function(ctg, value)
 {
-  assertive::assert_is_a_bool(value)
+  assert_is_a_bool(value)
 
   if (value)
     ctg@output_options$drivers$LAS$extension <- ".laz"
@@ -232,7 +232,7 @@ opt_select = function(ctg)
 #' @export
 `opt_select<-` = function(ctg, value)
 {
-  assertive::assert_is_a_string(value)
+  assert_is_a_string(value)
   ctg@input_options$select <- value
   return(ctg)
 }
@@ -248,7 +248,7 @@ opt_filter = function(ctg)
 #' @export
 `opt_filter<-` = function(ctg, value)
 {
-  assertive::assert_is_a_string(value)
+  assert_is_a_string(value)
   ctg@input_options$filter <- value
   return(ctg)
 }
@@ -257,7 +257,7 @@ opt_filter = function(ctg)
 
 `opt_copy<-` = function(ctg, value)
 {
-  assertive::assert_is_all_of(value, "LAScatalog")
+  assert_is_all_of(value, "LAScatalog")
   ctg@chunk_options <- value@chunk_options
   ctg@processing_options <- value@processing_options
   ctg@output_options <- value@output_options

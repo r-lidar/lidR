@@ -80,7 +80,7 @@
 #' @export
 tree_metrics = function(las, func, field = "treeID")
 {
-  assertive::assert_is_a_string(field)
+  assert_is_a_string(field)
 
   UseMethod("tree_metrics", las)
 }

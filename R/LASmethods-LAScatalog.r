@@ -76,7 +76,7 @@
 #' }
 catalog <- function(folder, ...)
 {
-  assertive::assert_is_character(folder)
+  assert_is_character(folder)
 
   finfo <- file.info(folder)
 
