@@ -127,37 +127,19 @@
 lasclip = function(las, geometry, ...)
 {
   if (is.character(geometry))
-    geometry <- rgeos::readWKT(geometry)
+    geometry <- rgeos::readWKT(geometry, p4s = las@proj4string)
 
   if (is(geometry, "Polygon"))
     geometry <- sp::Polygons(list(geometry), ID = 1)
 
   if (is(geometry, "Polygons"))
-    geometry <- sp::SpatialPolygons(list(geometry))
+    geometry <- sp::SpatialPolygons(list(geometry), proj4string = las@proj4string)
 
   if (is(geometry, "SpatialPolygons") | is(geometry, "SpatialPolygonsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
   if (is(geometry, "SpatialPoint") | is(geometry, "SpatialPointsDataFrame"))
-  {
-    p <- list(...)
-    if (is.null(p$radius))
-      stop("Clipping using SpatialPoints* requieres to add a parameter 'radius'.")
-
-    centers <- sp::coordinates(geometry)
-    ycenter <- centers[,2]
-    xcenter <- centers[,1]
-    radius  <- p$radius
-    bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
-    output  <- catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry@data)
-
-    if (length(output) == 0)
-      return(NULL)
-    else if (length(output) == 1)
-      return(output[[1]])
-    else
-      return(output)
-  }
+    geometry <- sf::st_as_sf(geometry)
 
   if (is(geometry, "sf"))
   {
@@ -169,7 +151,7 @@ lasclip = function(las, geometry, ...)
     {
       p <- list(...)
       if (is.null(p$radius))
-        stop("Clipping using sfc_POINT requieres to add a parameter 'radius'.")
+        stop("Clipping using sfc_POINT or SpatialPoints* requieres to add a parameter 'radius'.")
 
       centers <- sf::st_coordinates(geometry)
       ycenter <- centers[,2]
@@ -186,7 +168,7 @@ lasclip = function(las, geometry, ...)
         return(output)
     }
     else
-      stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
+      stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
   }
   else if (is(geometry, "Extent"))
   {
