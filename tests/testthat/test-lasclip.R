@@ -249,15 +249,15 @@ test_that("clip throws errors with invalid queries", {
   xc = c(684800)
   yc = c(5017850, 5017900)
   r  = 10
-  expect_error(lasclipCircle(las, xc, yc, r), "are_same_length")
-  expect_error(lasclipCircle(ctg, xc, yc, r), "are_same_length")
+  expect_error(lasclipCircle(las, xc, yc, r), "different lengths")
+  expect_error(lasclipCircle(ctg, xc, yc, r), "different lengths")
 
   xmin = 684850
   ymin = 5017850 + c(0,1)
   xmax = 684900 + c(0,1)
   ymax = 5017900 + c(0,1)
-  expect_error(lasclipRectangle(las, xmin, ymin, xmax, ymax), "are_same_length")
-  expect_error(lasclipRectangle(ctg, xmin, ymin, xmax, ymax), "are_same_length")
+  expect_error(lasclipRectangle(las, xmin, ymin, xmax, ymax), "different lengths")
+  expect_error(lasclipRectangle(ctg, xmin, ymin, xmax, ymax), "different lengths")
 
   # Wrong matrix dimension
   m = matrix(0, 3, 2)

@@ -8,7 +8,7 @@ test_that("readLAS works", {
 })
 
 test_that("readLAS returns a error for non-existing file", {
-  expect_error(readLAS("unexistingfile.las"), regexp = "nonexistent")
+  expect_error(readLAS("unexistingfile.las"), regexp = "File does not exist")
 })
 
 test_that("read only XYZ attributes works", {
