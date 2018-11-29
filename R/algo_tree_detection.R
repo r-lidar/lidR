@@ -106,11 +106,11 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
     n = nrow(las@data)
 
-    if (assertive::is_a_number(ws))
+    if (is.numeric(ws))
     {
       # nothing to do
     }
-    else if (assertive::is_function(ws))
+    else if (is.function(ws))
     {
       ws = ws(las@data$Z)
       ws[las@data$Z < hmin] = ws(hmin)
