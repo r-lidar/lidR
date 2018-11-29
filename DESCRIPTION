@@ -46,12 +46,14 @@ Suggests:
     mapview,
     progress,
     rgdal,
-    testthat
+    testthat,
+    knitr
 LazyData: true
 RoxygenNote: 6.1.0
 LinkingTo: BH,Rcpp
 Encoding: UTF-8
 ByteCompile: true
+VignetteBuilder: knitr
 biocViews: 
 Collate: 
     'LASmethods-generic.r'
