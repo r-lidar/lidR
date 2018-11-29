@@ -1,0 +1,264 @@
+---
+title: "LAS formal class"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LAS formal class}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(lidR)
+```
+
+A LAS class is a representation in R of a las file that tries to respect as closely as possible the official [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) that describes the file format. "As closely as possible" means that it is not possible to strictly represent a las file as it should be because of R internal limitations. Also some part of the specification are not supported in lidR. Being a representation of a standardized format a `LAS` object cannot contains anything and some retrictions are imposed to the users.
+
+## Build a LAS object reading a las file
+
+The function `readLAS` reads one or several .las or .laz file(s) to build a LAS object.
+
+```{r}
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las <- readLAS(LASfile)
+print(las)
+```
+
+## Basic structure of a LAS object
+
+A `LAS` object is composed of four slots: `@data`, `@header` and `@proj4string` and `@bbox` and inherits `Spatial` from package `sp`.
+
+### @data: the point cloud
+
+The slot `data` of a `LAS` object contains a `data.table` with the data read from .las or .laz file(s). The columns of the table are named after the [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) version 1.4. Each name is reserved and is  associated to a given type:
+
+- `X` `Y` `Z` (dbl)
+- `Intensity` (int)
+- `gpstime` (dbl)
+- `ReturnNumber` (int)
+- `NumberOfReturns` (int)
+- `ScanDirectionFlag` (int)
+- `EdgeOfFlightline`(int)
+- `Classification` (int)
+- `Synthetic_flag` (bool)
+- `Withheld_flag` (bool)
+- `Keypoint_flag` (bool)
+- `ScanAngle` (int)
+- `UserData` (int)
+- `PointSourceID` (int)
+- `R` `G` `B` (int)
+- `NIR` (int)
+
+We can already see some deviances from the offical las format specifications. For example the attribute 'Classification' should be an `unsigned char` stored on 8 bits. However the R language does not have such data type and consequently this attribute is stored into a signed `int` using 32 bits. One can read the official las specifications to figure out the other deviations form the original file format induced by the fact that R only have 32-bits signed integers and 64-bits signed decimal numbers.
+
+### @header: the header
+
+A `LAS` object contains a slot `@header` that represents the header of the las file. The header is stored in a `LASheader`  object. A `LASheader` object contains two slots: `@PHB` for the public header block and `@VLR` for the variable length records. Both are a list labeled according to the las file format specification. See [public documentation of las file format](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) for more information about las headers. The users should almost never have to worried of the header as long as they use functions from lidR. Everthing is managed internally to ensure that objects are valid. But it is important to know that the content of the header is important especially when writing `LAS` objects into las or laz files.
+
+```{r}
+print(las@header)
+```
+
+### @proj4string: the CRS
+
+The slot `@proj4string` is inherited from the `Spatial` class from `sp`. It is a `CRS` object from the `sp` package. It stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS but it is also stored in the slot `@proj4string` to meet the R standards and be in adequation with the other packages for spatial data of the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `epsg()`. This function updates the header of the LAS object **and** the proj4string while function such as `raster::projection()` or `sp::proj4string` only update the slot `@proj4string`.
+
+```{r}
+epsg(las) = 2567
+projection(las)
+```
+
+### @bbox: the bounding box
+
+The slot `@bbox` is inherited from the `Spatial` class from `sp`. It is a `matrix` object. It stores the XY bounding box of the point cloud. In the official las specifications the bounding box is stored in the header. In a `LAS` object the bounding is stored in the header and is also stored in the slot `@bbox` to meet the R standards and be in adequation with the other packages for spatial data of the R ecosystem. The user should never change the bounding box manually. Anyway it is likely to be consequentless because this slot is barely useless.
+
+## Allowed and non-allowed manipulation of a LAS object
+
+R users who are used to manipulate spatial data are likely to well know the `sp` package and all the class used to store spatial data such as `SpatialPointsDataFrame`, `SpatialPolygonsDataFrame` and so on. The data contained in these classes are freely modifiable by the user because they can be of any type. A `LAS` object is not freely modifiable because it is a representation of a las file that is strongly standardized.
+
+For example the user can not replace the `Classification` attribute with the vale `0` because `0` is a decimal number in R and the 'Classification' attribute is an integer. The following throw an error:
+
+```{r, error = TRUE, purl = FALSE}
+las$Classification <- 0
+```
+
+In R `0L` is an integer and thus the following is allowed:
+
+```{r}
+las$Classification <- 0L
+```
+
+It could be possible to automatically cast the input into the correct type without throwing any error. But instead the lidR package chose to be very pedantic on this point to avoid any potential problem and force the user to be careful on the content of the data.
+
+The addition of a new colomn is also retricted. For example one may want to add an attribute `R` corresponding to the red channel. 
+```{r, error = TRUE, purl = FALSE}
+las$R <- 0
+```
+
+This is not allowed because a LAS object should always be valid and by allowing the user to add an R column the LAS object would not be valid anymore for two reasons:
+
+1. `R` is a reserved name of the core attributes and must be an integer. In the example above it is a decinal number
+2. A LAS file with RGB attribute is of type 3, 7 or 8. The header must be updated in consequence but in the previous example it is not.
+
+In consequence, adding a colomn must be done via the functions `lasadddata` or `lasaddextrabytes`. This way user are forced to read the documentation of these two functions. And yet some restriction are still in place. The following is not allowed for the same reasons than above:
+
+```{r, error = TRUE, purl = FALSE}
+las <- lasadddata(las, 0, "R")
+```
+
+But anyway R being R there no way to entierly retrict object edition. User can always by-pass the restrictions to make not striclty valid LAS objects:
+
+```{r}
+las@data$R <- 0
+```
+
+```{r, echo = FALSE}
+las@data$R <- NULL
+```
+
+As a conclusion a LAS object is not actually immmutable but at least there are some restrictions to ensure that the user is aware that not everything is authorized.
+
+## Extra attributes and extra bytes in a LAS object
+
+A LAS object contains a core of attributes associated to a reserved name accordingly to the las specifications as seen previously. It is possible to add more attributes in a LAS object even if they are not part of the cores attributes imposed by the las specifications.
+
+### Extra attributes
+
+Extra attributes are just like adding a column in a regular table in R. One can modify the data freely using the function `lasadddata`. It is thus possible to add an attribute to a LAS object. For example it is possible to attribute to each point an ID and use this value in subsquent code:
+
+```{r}
+las  <- lasadddata(las, 1:81590, "ID")
+las2 <- lasfilter(las, ID > 50000)
+```
+
+But it is important to understand that this attribute is invalid with respect to the las specifications. Thus is can be used at the R level but will not be written in a las file and thus will be lost at write time. Depending on the purpose of this attribute I may or may not be useful to be able to write this extra data. Most of the time the information is only useful at the R level but sometime it might be suitable to be able to store the data in a file.
+
+### Extra bytes attributes
+
+The las specifications allows for storing extra attributes that are not part of the core attributes. But the way to do that is more complex. Basically it is called extra bytes attributes and it implies to modify the header of the LAS object to indicate that the content of the file contains more than the core attributes. This is abstracted with the function `lasaddextrabytes`.
+
+```{r}
+las  <- lasaddextrabytes(las, 1:81590, "ID", "An ID for each point")
+```
+
+Using this function, the header is updated according to the las specification and thus the extra bytes attributes can be written in the file. lidR supports up to 10 extra bytes attributes. The extra bytes attributes are limited to numeric type. Indeed the las specifications does not allows for storing extra bytes attributes of type string or boolean. Thus the following fails:
+
+```{r, error = TRUE, purl = FALSE}
+abc  <- sample(letters, 81590, replace = TRUE)
+las  <- lasaddextrabytes(las, abc, "ID", "An ID for each point")
+```
+
+
+## Validation of LAS object
+
+It is common that user report bugs that are due to the fact that the point cloud is invalid. This is why we introduced the function `lascheck` to perform a deep inspection of the LAS objects. This function checks if a LAS object is in adequation with the las specifications but also it checks for weird points cloud that are likely to be valid with respect to the specifications but invalid for actual processing. For example it often happens that a las files contains duplicated points for no valid reasons. This may lead to trees detected twice, to invalid metrics, to error in DTM generation and so on...
+
+```{r}
+lascheck(las)
+```
+
+## Display a LAS object
+
+lidR provides a simple `plot` function to plot in 3D a LAS object. It is based on the `rgl` package. The `rgl` package is amazing but has some difficulties holding large point clouds. We are also developing [our own viewer](https://github.com/Jean-Romain/PointCloudViewer) to overcome this issue. This viewer is fully compatible with `lidR` but still in heavy development.
+
+```r
+plot(las)
+```
+
+```{r echo = FALSE}
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg <- catalog(LASfile)
+opt_progress(ctg) <- FALSE
+las <- lasclipCircle(ctg, 684850, 5017850, 20)
+plot(las)
+rgl::rglwidget()
+```
+
+The parameter `color` expects the name of the attribute you want to use to colorize the points. Default is `Z`
+
+```r
+plot(las, color = "Intensity", colorPalette = heat.colors(50))
+```
+
+If your file contains RGB data the string `"RGB"` is supported:
+
+```r
+plot(las, color ="RGB")
+```
+
+The `trim` parameter enables trimming of values when outliers break the color palette range. For example, Intensity often contains large outliers. The palette range would be too large and most of the values will be considered as "very low", so everything will appear in the same color.
+
+```r
+plot(las, color = "Intensity", colorPalette = heat.colors(50), trim = 450)
+```
+
+
+## Memory considerations
+
+This section is of major importance. R is weak at memory management in many ways. 
+
+First, one important point is that it enables manipulation of only 32-bit integers and 64 bit-decimal numbers. But the las specification states, for example, that the intensity is stored on 16 bits (see also previous sections). When read in R it must be converted to 32 bits and therefore uses twice as much memory than is actually required. Worse, the return numbers are stored on 3 bits in las files and 32 bits in R. We thus use 11 times more memory than is actually required. Last but not least, flags are stored on 1 bit, we use 32. 32 times more memory than is needed. As a conclusion a LAS object is 2 to 3 time bigger than it should/could.
+
+Secondly the way the point cloud is stored and the way R works implies to make copies of the point cloud either in the user's workspace or internally. Considering that point cloud may be huge it is important to study this point.
+
+### Deep copies
+
+Let assume we have loaded a big las file that uses 1 GB of R memory.
+
+```r
+las.original <- readLAS("big_file.las")
+```
+
+Suppose now we want to remove few outliers above 50 m. One can write the following:
+
+```r
+las.denoised <- lasfilter(las.original, Z < 50)
+```
+
+And the user have now two objects:
+
+- `las.original` that weight 1 GB
+- `las.denoised` that also weight 1 GB because we actually remove a dozen of points among millions.
+
+This use 2 GB into the memory. This is how R works. When a vector is subseted it is necessarily copied. We talk about **deep copies**. In regular data processing it rarely matters and this behavior is barely invisible. Indeed our data rarely use a lot of memory. But LiDAR data are massive data and it implies that the users must consider the memory usage carefully to do not run out of RAM
+
+### Shallow copies
+
+In the previous example we showed a deep copy. A deep copy means that the point cloud is actually copied into the memory. A deep copy occurs when the number of point of the output is different from the number of point of the input. But many function return the same number of point than the input. In that case there is no deep copies but only **shallow copies**. For example when classifying the point into ground and non ground points:
+
+```r
+las.classified <- lasground(las.original, csf())
+```
+
+In that case the vectors that store the X Y Z coordinates as well as those that store the Intensity, ReturnNumber, NumberOfReturn and other attributes where not modified by the function. Only the content of the 'Classification' attribute was modified. In that case `las.classified` and `las.original` even if they are two different objects share the same memory for X Y Z and so on but the attributes 'Classification' are different. As a conclusion:
+
+- `las.original` weight 1 GB
+- `las.classified` also weight 1 GB.
+
+But both together they do not weight 2 GB. Only ~1.1 GB because they share the same memory. Content of the original LAS object was shallow copied. The concept of deep copies and shallow copies are important to optimized your script. 
+
+Because of the way R is designed, lidR uses a large amount of memory anyway as we have seen above. To deal with this limitation `readLAS` has two optimizations: the parameter `select` and the parameter `filter`.
+
+### Parameter `select`
+
+To save memory only useful data can be loaded. `readLAS` can take an optional parameter `select` which enables the user to selectively load the data of interest. For example one can load only the `X Y Z` fields. This selection is done at the C++ level while reading and is memory-optimized.
+
+```r
+las = readLAS("file", select = "xyz")
+las = readLAS("file", select = "xyzi")
+las = readLAS("file", select = "* -i -u") # Negation works too
+```
+
+### Parameter `filter`
+
+If `select` enables the user to select "columns" (or attributes) while reading, `filter` enables selection of "rows" (or points) while reading. Again the selection is done at the C++ level while reading and is memory-optimized. Not a single bit is lost at the R level. Removing useless data for your purposes at reading time saves memory and decreases computation time.
+
+```r
+las = readLAS("file", filter = "-keep_first")
+las = readLAS("file", select = "xyzi", filter = "-keep_first -drop_z_below 5 - drop_z_above 50")
+```
+
+
