@@ -93,6 +93,8 @@ lasmergespatial.LAS = function(las, source, attribute = NULL)
 
 lasmergergb = function(las, source)
 {
+  . <- X <- Y <- NULL
+
   R <- source[[1]]@data@values
   G <- source[[2]]@data@values
   B <- source[[3]]@data@values
