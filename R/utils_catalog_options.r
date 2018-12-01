@@ -34,7 +34,7 @@
 #' The options are used by all the functions that support a \code{LAScatalog} as input.
 #'
 #' @param ctg An object of class \link[lidR:LAScatalog-class]{LAScatalog}
-#' @param value An appropriated value depending on the expected input.
+#' @param value An appropriate value depending on the expected input.
 #'
 #' @name catalog_options_tools
 NULL
@@ -51,7 +51,7 @@ opt_chunk_buffer = function(ctg)
 `opt_chunk_buffer<-` = function(ctg, value)
 {
   assert_is_a_number(value)
-  if (value < 0) message("Negative buffers are allowed in lidR but you should do that cautiously!")
+  if (value < 0) message("Negative buffers are allowed in lidR but use them cautiously!")
   ctg@chunk_options$buffer <- value
   return(ctg)
 }
@@ -192,7 +192,7 @@ opt_output_files = function(ctg)
   ext = tools::file_ext(value)
 
   if (ext != "")
-    warning(glue::glue("{value} contains a file extension. User don't need to provide file extension. It will be added automaticaly as a function of the output."), call. = FALSE)
+    warning(glue::glue("{value} contains a file extension. Users don't need to provide a file extension. It will be added automaticaly as a function of the output."), call. = FALSE)
 
   ctg@output_options$output_files <- value
   return(ctg)

@@ -29,8 +29,8 @@
 #'
 #' Attribute a color to each element of a vector
 #'
-#' @param x A vector
-#' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR
+#' @param x A vector.
+#' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR.
 #' @param trim numeric.
 #' @keywords internal
 set.colors = function(x, palette, trim = Inf)
