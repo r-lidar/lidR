@@ -42,7 +42,7 @@
 #' channel of RGB color, B - blue channel of RGB color, N - near infrared channel. Also numbers from
 #' 1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*'
 #' is the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit
-#' and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
+#' and always loaded, thus 'xyzia' is equivalent to 'ia'.\cr\cr
 #' \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
 #' This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
 #' before reading the file, the internal filters should always be preferred. The available filters are
@@ -51,8 +51,8 @@
 #'
 #' @param files characters. Path(s) to one or several a file(s). Can also be a
 #' \link[lidR:LAScatalog-class]{LAScatalog} object.
-#' @param select character. Read only attibutes of interest to save memory (see details)
-#' @param filter character. Read only points of interest to save memory (see details)
+#' @param select character. Read only attibutes of interest to save memory (see details).
+#' @param filter character. Read only points of interest to save memory (see details).
 #'
 #'
 #' @return A LAS object

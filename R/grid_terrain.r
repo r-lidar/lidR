@@ -33,16 +33,15 @@
 #' the points classified as "ground" (Classification = 2 according to
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
 #' to compute the interpolation.\cr
-#' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
-#' interpolated. A buffer around the region of interest is always recommended to avoid edge
-#' effects.
+#' How well the edges of the dataset are interpolated depends on the interpolation method used. 
+#' Thus, a buffer around the region of interest is always recommended to avoid edge effects.
 #'
 #' @template param-las
 #'
 #' @template param-res-grid
 #'
 #' @param algorithm function. A function that implements an algorithm to compute spatial interpolation.
-#' \code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).
+#' \code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).
 #'
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
@@ -180,8 +179,8 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
 
   output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
 
-  if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_terrain"))
-  else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
+  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
     return(merge_rasters(output))
 }
