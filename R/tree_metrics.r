@@ -29,11 +29,11 @@
 
 #' Compute metrics for each tree
 #'
-#' Once the trees are segmented, i.e. it exists an attributes in the point cloud that reference each
+#' Once the trees are segmented, i.e. attributes exist in the point cloud that reference each
 #' tree, computes a set of user-defined descriptive statistics for each individual tree. This is the
 #' "tree version" of \link{grid_metrics}.
 #'
-#' By default the function computes the xyz-coordinates of the highest point of each tree and use
+#' By default the function computes the xyz-coordinates of the highest point of each tree and uses
 #' xy as tree coordinates in \code{SpatialPoinsDataFrame}. z is stored in the table of attributes
 #' along with the id of each tree. All the other attributes are user-defined attributes:\cr\cr
 #' The following existing functions contain a small set of pre-defined metrics:
@@ -47,8 +47,8 @@
 #' @param func The function to be applied to each tree.
 #' @param field character. The column name of the field containing tree IDs. Default is \code{"treeID"}
 #'
-#' @return A \code{SpatialPoinsDataFrame} that reference the xy-position with a table of attribute that
-#' associates the z-elevation (highest points) of the trees and the id of the tree plus the metrics
+#' @return A \code{SpatialPoinsDataFrame} that references the xy-position with a table of attributes that
+#' associates the z-elevation (highest points) of the trees and the id of the trees, plus the metrics
 #' defined by the user.
 #'
 #' @template LAScatalog
