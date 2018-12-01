@@ -25,25 +25,25 @@
 #
 # ===============================================================================
 
-#' Merge a point cloud and a source of spatial data
+#' Merge a point cloud with a source of spatial data
 #'
-#' Merge a point cloud and a source of spatial data. It adds an attribute along each point based on
+#' Merge a point cloud with a source of spatial data. It adds an attribute along each point based on
 #' a value found in the spatial data. Sources of spatial data can be a \code{SpatialPolygonsDataFrame})
 #' or a \code{RasterLayer}.\cr
 #' \itemize{
-#' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belong within each polygons. If
-#' the parameter \code{attribute} is the name of a an attribute in the table of attributes of the shapefile
+#' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belongs within each polygon. If
+#' the parameter \code{attribute} is the name of an attribute in the table of attributes of the shapefile,
 #' it assigns to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
 #' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
-#' \item{\code{RasterStack} or \code{RasterBrick} must have 3 channels for RGB colors. It colorize the
+#' \item{\code{RasterStack} or \code{RasterBrick} must have 3 channels for RGB colors. It colorizes the
 #' point cloud with RGB values.}
 #' }
 #'
-#' @param las An object of the class \code{LAS}
+#' @param las An object of class \code{LAS}
 #' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer} or a
 #' \code{RasterStack} or \code{RasterBrick} with RGB colors.
-#' @param attribute characters. The name of a attribute in the table of attributes of the shapefile or
+#' @param attribute character. The name of an attribute in the table of attributes of the shapefile or
 #' the name of a new column in the LAS object. Not relevant for RGB colorization.
 #'
 #' @return An object of the class \code{LAS}.
@@ -59,7 +59,7 @@
 #'
 #' # The attribute "inlake" does not exist in the shapefile.
 #' # Points are classified as TRUE if in a polygon
-#' las    <- lasmergespatial(las, lakes, "inlakes")     # New attribut 'inlakes' is added.
+#' las    <- lasmergespatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
 #' forest <- lasfilter(las, inlakes == FALSE)
 #' plot(las)
 #' plot(forest)
@@ -146,7 +146,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   {
     method <- 0
   }
-  # The attribute is the name of a attribute in the attribute table: assign the value of the attribute
+  # The attribute is the name of an attribute in the attribute table: assign the value of the attribute
   else if (attribute %in% names(shapefile@data))
   {
     method <- 1
@@ -165,14 +165,15 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
     else
       stop(glue::glue("The attribute {attribute} the in the table of attribute is not of a supported type."), call. = FALSE)
   }
-  # The attribute is not the name of a attribute in the attribute table: assign a boolean if the point is in a polygon or not.
+  # The attribute is not the name of an attribute in the attribute table: assign a boolean value if the point is in a polygon or
+  # not.
   else
   {
     method <- 2
     values <- logical(npoints)
   }
 
-  # Crop the shapefile to minimize the computations removing out of bounds polygons
+  # Crop the shapefile to minimize the computations removing out-of-bounds polygons
   if (raster::extent(shapefile) >  2*raster::extent(las))
   {
     verbose("Croping the shapefile...")
@@ -229,7 +230,8 @@ lasmergeRasterLayer = function(las, raster)
   #xmin = raster@extent@xmin
   #ymin = raster@extent@ymin
   #m  = raster::as.matrix(raster)
-  #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
+  #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract and much more 
+  #memory-effcient
   cells = raster::cellFromXY(raster, las@data[,.(X,Y)])
   return(raster@data@values[cells])
 }

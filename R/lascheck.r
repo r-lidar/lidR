@@ -27,23 +27,23 @@
 
 #' Inspect a LAS object
 #'
-#' Performs a deep inspection of a LAS or LAScatalog object and print a report.\cr\cr
+#' Performs a deep inspection of a LAS or LAScatalog object and prints a report.\cr\cr
 #' For a LAS object it checks:
 #' \itemize{
 #' \item if the point cloud is valid according to las specification
 #' \item if the header is valid according to las specification
 #' \item if the point cloud is in accordance with the header
-#' \item if the point cloud have duplicated points and degenerated ground points
+#' \item if the point cloud has duplicated points and degenerated ground points
 #' \item it the coordinate reference sytem is correctly recorded
-#' \item if some pre-processing such as normalization or ground filtering are already done.
+#' \item if some pre-processing, such as normalization or ground filtering, is already done.
 #' }
 #' For a LAScatalog object it checks:
 #' \itemize{
-#' \item if the headers are consistant accross files
+#' \item if the headers are consistent across files
 #' \item if the files are overlapping
-#' \item if some pre-processing such as normalization are already done.
+#' \item if some pre-processing, such as normalization, is already done.
 #' }
-#' For the pre-processing tests the function only makes an estimation an may be mistaken.
+#' For the pre-processing tests the function only makes an estimation and may not be correct.
 #'
 #' @template param-las
 #' @export
@@ -454,15 +454,15 @@ lascheck.LAS = function(las)
     { fail("EPSG code unknown.") ; failure = TRUE }
 
     if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { fail("ESPG code and proj4string do no match.") ; failure = TRUE }
+    { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
 
     if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
-    { fail("ESPG code and proj4string do no match.") ; failure = TRUE }
+    { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
 
     if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
     {
       if (codeproj@projargs != lasproj@projargs)
-      { fail("ESPG code and proj4string do no match.") ; failure = TRUE }
+      { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
     }
 
     if (!failure)
@@ -481,7 +481,7 @@ lascheck.LAS = function(las)
 
   # ==== data vs header ====
 
-  h1("Checking header vs data adequation")
+  h1("Checking header vs data adequacy")
 
   h2("Checking attributes vs. point format...")
 
@@ -498,7 +498,7 @@ lascheck.LAS = function(las)
     { fail("Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8.") ; failure = TRUE }
 
     if (any(c("R", "G", "B") %in% fields) & !format %in% c(2,3,8))
-    { fail("Invalid file: the data contains a 'RGB' attributes but point data format is not set to 2, 3 or 8.") ; failure = TRUE }
+    { fail("Invalid file: the data contains 'RGB' attributes but point data format is not set to 2, 3 or 8.") ; failure = TRUE }
 
     if (!failure)
       ok()
@@ -557,7 +557,7 @@ lascheck.LAS = function(las)
 
   # ==== Preprocessing ====
 
-  h1("Checking already done preprocessing")
+  h1("Checking preprocessing already done ")
 
   h2("Checking ground classification...")
 
@@ -650,7 +650,7 @@ lascheck.LAScatalog = function(las)
   s = length(unique(paste0(data$Version.Major, ".", data$Version.Minor)))
 
   if (s > 1L)
-    warn("Unconsistant file versions")
+    warn("Inconsistent file versions")
   else
     ok()
 
@@ -661,7 +661,7 @@ lascheck.LAScatalog = function(las)
   s3 = length(unique(data$Z.scale.factor))
 
   if (s1 + s2 + s3 > 3L)
-    warn("Unconsistant scale factors")
+    warn("Inconsistent scale factors")
   else
     ok()
 
@@ -672,7 +672,7 @@ lascheck.LAScatalog = function(las)
   s3 = length(unique(data$Z.offset))
 
   if (s1 + s2 + s3 > 3L)
-    warn("Unconsistant offsets")
+    warn("Inconsistent offsets")
   else
     ok()
 
@@ -681,7 +681,7 @@ lascheck.LAScatalog = function(las)
   s = length(unique(data$Point.Data.Format.ID))
 
   if (s > 1L)
-    warn("Unconsistant point formats")
+    warn("Inconsistent point formats")
   else
     ok()
 
@@ -690,7 +690,7 @@ lascheck.LAScatalog = function(las)
   s = length(unique(data$Number.of.variable.length.record))
 
   if (s > 1L)
-    fail("Unconsistant number of VLR")
+    fail("Inconsistent number of VLR")
   else
     ok()
 
@@ -699,12 +699,12 @@ lascheck.LAScatalog = function(las)
   s = length(unique(data$EPSG))
 
   if (s > 1L)
-    fail("Unconsistant EPSG codes")
+    fail("Inconsistent EPSG codes")
   else
     ok()
 
 
-  h1("Checking already done preprocessing")
+  h1("Checking preprocessing already done ")
 
   h2("Checking negative outliers...")
 
