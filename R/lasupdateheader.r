@@ -2,36 +2,35 @@
 #'
 #' A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
-#' a las file contains a core of defined attributes such as XYZ coordinates, intensity, return number,
+#' a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
 #' and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
 #' enable the user to add new attributes (see details).
 #'
-#' It is forbidden to use the name of one of the core attribute. These functions are dedicated to add
-#' data that are not part of the LAS specification. For example \code{lasaddextrabytes(las, x, "R")}
-#' will fail because \code{R} is a name reserved for the red channel of las file that contains RGB
-#' attributes.\cr\cr
+#' Users cannot assign names that are the same as the names of the core attributes. These functions are dedicated 
+#' to adding data not part of the LAS specification. For example, \code{lasaddextrabytes(las, x, "R")}
+#' will fail because \code{R} is a name reserved for the red channel of las file that contains RGB attributes.\cr\cr
 #' \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
-#' object is not strictly valid. These data will be temporarilly usable at the R level but will not
+#' object is not strictly valid. These data will be temporarily usable at the R level but will not
 #' be written in a las file with \link{writeLAS}.\cr\cr
-#' \code{lasaddextrabytes} does the same as \code{lasadddata} but updates automatically the header of the
+#' \code{lasaddextrabytes} does the same as \code{lasadddata} but automatically updates the header of the
 #' LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
 #' data will be written in a las file with \link{writeLAS}.\cr\cr
 #' \code{lasaddextrabytes_manual} allows the user to manually write all the extra bytes metadata.
 #' This function is reserved for experienced users with a good knowledge of the LAS specifications.
 #' The function does not perform tests to check the validity of the information.\cr\cr
 #' When using \code{lasaddextrabytes} and \code{lasaddextrabytes_manual}, \code{x} can only be of type numeric
-#' (\code{integer} or \code{double}). It cannot be of type \code{character} or \code{logical} this is
-#' not supported by the las specifications. Also the types that are supported in lidR are type 0 to 10
+#' (\code{integer} or \code{double}). It cannot be of types \code{character} or \code{logical} as these are
+#' not supported by the las specifications. The types that are supported in lidR are types 0 to 10
 #' (table 24 page 25 of the specification). Types greater than 10 are not supported.
 #'
 #' @param las An object of class \link[lidR:LAS-class]{LAS}
-#' @param x a vector that need to be added in the LAS object. For \code{lasaddextrabytes*} it can
-#' be missing (see also the details).
-#' @param name character. The name of the extrabytes attributes to add in the file.
-#' @param desc character. A short description of the extrabytes attributes to add in the file (32 characters).
+#' @param x a vector that need sto be added in the LAS object. For \code{lasaddextrabytes*} it can
+#' be missing (see details).
+#' @param name character. The name of the extra bytes attribute to add in the file.
+#' @param desc character. A short description of the extra bytes attribute to add in the file (32 characters).
 #' @param type character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"}.
 #' @param scale,offset numeric. The scale and offset of the data. NULL if not relevant.
-#' @param NA_value numeric or integer. NA is not a valid value in a las file. At writing time it will
+#' @param NA_value numeric or integer. NA is not a valid value in a las file. At time of writing it will
 #' be replaced by this value that will be considered as NA. NULL if not relevant.
 #'
 #' @return An object of class \link[lidR:LAS-class]{LAS}
@@ -99,14 +98,14 @@ lasaddextrabytes = function(las, x, name, desc)
     x <- las@data[[name]]
 
     if (!is.numeric(x))
-      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not enable for storing '{class(las@data[[name]])}' extra bytes."))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."))
   }
   else
   {
     assert_is_vector(x)
 
     if (!is.numeric(x))
-      stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."))
 
     las <- lasadddata(las, x, name)
   }
@@ -138,14 +137,14 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
     x <- las@data[[name]]
 
     if (!is.numeric(x))
-      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not enable for storing '{class(las@data[[name]])}' extra bytes."))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."))
   }
   else
   {
     assert_is_vector(x)
 
     if (!is.numeric(x))
-      stop(glue::glue("'x' must be numeric. LAS format specifications do not enable for storing '{class(x)}' extra bytes."))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."))
 
     las <- lasadddata(las, x, name)
   }

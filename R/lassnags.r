@@ -29,15 +29,14 @@
 #' Snag classification
 #'
 #' Snag classification/segmentation using several possible algorithms (see details).
-#' The function attributes to each point of the point cloud a number identifying a
-#' snag class (\code{snagCls} attribute). The classification/segmentation is done at the point
-#' cloud level and there is currently only one algorithm implemented (which uses LiDAR intensity
-#' thresholds and specified neighborhoods to differentiate bole and branch from foliage points
-#' (see details).
+#' The function attributes a number identifying a snag class (\code{snagCls} attribute) to each point
+#' of the point cloud. The classification/segmentation is done at the point cloud level and currently 
+#' only one algorithm implemented, which uses LiDAR intensity thresholds and specified neighborhoods 
+#' to differentiate bole and branch from foliage points (see details).
 #'
 #' @template param-las
-#' @param algorithm function. An algorithm for snag segmentation. \code{lidR} have \link{wing2015}.
-#' @param attribute character. The returned LAS object is automatically has a new
+#' @param algorithm function. An algorithm for snag segmentation. \code{lidR} has \link{wing2015}.
+#' @param attribute character. The returned LAS object automatically has a new
 #' attribute (a new column). This parameter is the name of this new attribute.
 #'
 #' @template LAScatalog
