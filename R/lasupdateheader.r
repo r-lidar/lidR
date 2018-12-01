@@ -59,7 +59,7 @@
 #' las <- lasaddextrabytes(las, name = "mydata", desc = "Amplitude")
 #' print(las@header)
 #'
-#' # Remove an extrabytes attribute
+#' # Remove an extra bytes attribute
 #' las <- lasremoveextrabytes(las, "mydata2")
 #' print(las)
 #' print(las@header)

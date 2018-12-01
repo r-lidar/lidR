@@ -204,27 +204,3 @@ cluster_write = function(x, path, output_options)
   do.call(driver$write, driver$param)
   return(path)
 }
-
-# This was introduced in https://github.com/Jean-Romain/lidR/pull/159 and is expected to be no longer useful.
-# User-supplied function not being analysed for globals/packages in the future we will have to do it manually.
-# Not sure it will be required in v2.0.
-# if (ncores > 1 & !future::supportsMulticore())
-# {
-#   is.fun <- vapply(dots, is.function, logical(1))
-#
-#   if(any(is.fun))
-#   {
-#     dots <- dots[is.fun]
-#     for(fun in dots)
-#     {
-#       globals <- future::getGlobalsAndPackages(fun)
-#       required.pkgs <- c(required.pkgs, setdiff(globals$packages, required.pkgs))
-#
-#       where   <- attr(globals$globals, "where")
-#       pkgs    <- unlist(lapply(where, attr, "name"), use.names = FALSE)
-#       pkgs    <- unique(grep("package\\:", pkgs, value = TRUE))
-#       pkgs    <- gsub("package\\:", "", unique(pkgs))
-#       required.pkgs <- c(required.pkgs, setdiff(pkgs, required.pkgs))
-#     }
-#   }
-# }
