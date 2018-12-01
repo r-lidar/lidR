@@ -40,7 +40,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     else
       params[first_p] <- list(NULL)
 
-    # Asyncroneous comptation of FUN
+    # Asynchronous computation of FUN
     output[[i]] <- future::future(
     {
       x <- do.call(FUN, params)
@@ -64,7 +64,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
   }
 
   # Because of asynchronous computation, the loop may be ended
-  # but the computations not. Wait & check until the end.
+  # but not the computations. Wait until the end & check.
   not_finished = which(codes == ASYNC_RUN)
   while (length(not_finished) > 0)
   {
@@ -179,8 +179,8 @@ cluster_write = function(x, path, output_options)
   }
   else if (is(x, "lidr_internal_skip_write"))
   {
-    # Nothing. This happens because sometime functions such as catalog_retile stream the data. So the called
-    # function do the write job. If the called function would return NULL the progress would be broken
+    # Nothing. This happens because sometimes functions such as catalog_retile stream the data. So the called
+    # function does the writing job. If the called function returned NULL the progress would be broken
     # (NULL means no data). Thus we return 0 with a class lidr_internal_skip_write
     return(0)
   }
@@ -205,9 +205,9 @@ cluster_write = function(x, path, output_options)
   return(path)
 }
 
-# This was introduced in https://github.com/Jean-Romain/lidR/pull/159 and is expected to be no longer useful
-# User supplied function not being analysed for globals/packages by the future we have to do it manually.
-# Not sure it will be requiered in v2.0
+# This was introduced in https://github.com/Jean-Romain/lidR/pull/159 and is expected to be no longer useful.
+# User-supplied function not being analysed for globals/packages in the future we will have to do it manually.
+# Not sure it will be required in v2.0.
 # if (ncores > 1 & !future::supportsMulticore())
 # {
 #   is.fun <- vapply(dots, is.function, logical(1))

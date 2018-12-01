@@ -28,10 +28,10 @@
 #' An S4 class to represent a catalog of .las or .laz files
 #'
 #' A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
-#' a way to manage and process an entire dataset. It allows the user to process a large area or to
-#' selectively clip data from a large area without loading all the data into the computer's memory.
+#' a way to manage and process an entire dataset. It allows the user to process a large area, or to
+#' selectively clip data from a large area without loading all the data into computer memory.
 #' A \code{LAScatalog} can be built with the function \link{catalog} and is formally an extension of
-#' a \code{SpatialPolygonsDataFrame} that contains extra data to allow users greater control over
+#' a \code{SpatialPolygonsDataFrame} containing extra data to allow users greater control over
 #' how the dataset is processed (see details).
 #'
 #' A \code{LAScatalog} is formally a \code{SpatialPolygonsDataFrame} extended with new slots that
@@ -39,7 +39,7 @@
 #' input will respect these processing options. Internally, processing a catalog is almost always the
 #' same and relies on just a few steps:
 #' \enumerate{
-#' \item Define chunks. A chunk is an arbitrarily defined region of interest (ROI) of the
+#' \item Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
 #' catalog. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
 #' \item Loop over each chunk (in parallel or not).
 #' \item For each chunk, load the points inside the ROI into R, run some R functions,
@@ -80,40 +80,40 @@
 #' Progress estimation can be enhanced by installing the package \code{progress}.
 #' \item \strong{stop_early}: boolean. Stop the processsing if an error occurs in a chunk. If \code{FALSE}
 #' the process can run until the end removing chunks that failed. Default is TRUE and the user should
-#' have no need to change this.
+#' have no reason to change this.
 #' \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a
 #' continuous output without edge effects, assuming that the catalog is a wall-to-wall catalog. To do
-#' so, some options are checked internally to guard against bad settings, such as buffer = 0 for some
+#' so, some options are checked internally to guard against bad settings, such as buffer = 0 for an
 #' algorithm that requires a buffer. In rare cases it might be useful to disable these controls. If
 #' \code{wall.to.wall = FALSE} controls are disabled and wall-to-wall outputs cannot be guaranteed.
 #' }
 #'
 #' @section Chunk options:
-#' The slot \code{@clustering_options} contains a \code{list} of options that determine how a the chunks
+#' The slot \code{@clustering_options} contains a \code{list} of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
 #' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-#' A small size allows small amounts of data to be loaded at a time, saving computer memory. Conversely, a
-#' large size allows large ROIs to be loaded. The computation is  usually faster but uses much more
-#' memory. If \code{chunk_size = 0} the catalog is processed sequentially \emph{by file} i.e. a chunk
-#' is a file. Default is 0 i.e. by default the processing engine respects the existing tiling pattern.
+#' A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa. 
+#' The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the 
+#' catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default 
+#' the processing engine respects the existing tiling pattern.
 #' \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 #' no edge effect between two independent chunks and that the output is continuous. This is mandatory for
 #' some algorithms. Default is 30.
 #' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 #' chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
-#' will belong on x = 0 and y = 0 and all the the others chunks will be multiples of the chunk size.
-#' Not relevent if \code{chunk_size = 0}.
+#' will belong on x = 0 and y = 0 and all the the other chunks will be multiples of the chunk size.
+#' Not relevant if \code{chunk_size = 0}.
 #' }
 #'
 #' @section Output options:
-#' The slot \code{@output_options} contains a \code{list} of options that drives how clusters
+#' The slot \code{@output_options} contains a \code{list} of options that determine how clusters
 #' (the sub-areas that are sequentially processed) are written. By "written" we mean written to files
 #' or written in R memory.
 #'
 #' \itemize{
-#' \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned to R. If
-#' \code{output_files} is a string the outputs will not be returned to R but will be written to files.
+#' \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned in R. Otherwise, if
+#' \code{output_files} is a string the outputs will be written to files.
 #' This is useful if the output is too big to be returned in R. A path to a templated filename
 #' without extension (the engine guesses it for you) is expected. When several files are going to be
 #' written a single string is provided with a template that is automatically filled. For example,
@@ -184,19 +184,19 @@
 #' # or, in this specific case, a virtual raster mosaic.
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
-#' # When chunks are files the original name of the las files can be preserved
+#' # When chunks are files the original names of the las files can be preserved
 #' opt_chunk_size(ctg) <- 0
 #' opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
 #' dtm <- grid_terrain(ctg, 1, tin())
 #'
-#' # For some functions, files MUST be written to disk. Indeed it is certain that R cannot
+#' # For some functions, files MUST be written to disk. Indeed, it is certain that R cannot
 #' # handle the entire output.
 #' opt_chunk_size(ctg) <- 0
 #' opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
 #' opt_laz_compression(ctg) <- TRUE
 #' new_ctg <- lasnormalize(ctg, tin())
 #'
-#' # The user has access to the catalog engine througt the function catalog_apply
+#' # The user has access to the catalog engine through the function catalog_apply
 #' output <- catalog_apply(ctg, FUN, ...)
 #' }
 setClass(
