@@ -29,8 +29,8 @@
 
 #' LAScatalog processing engine
 #'
-#' This function gives access at the user level to the \link[lidR:LAScatalog-class]{LAScatalog} processing
-#' engine. It allows the application of a user-defined routine over an entire catalog. The LAScatalog
+#' This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
+#' It allows the application of a user-defined routine over an entire catalog. The LAScatalog
 #' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
 #' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
@@ -48,10 +48,10 @@
 #' It is important to take precautions to avoid 'edge artifacts' when processing wall-to-wall
 #' tiles. If the points from neighboring tiles are not included during certain processes,
 #' this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
-#' pixels in a rasterization process or dummy elevations in a ground interpolation. The LAScatalog
+#' pixels in a rasterization process, or dummy elevations in a ground interpolation. The LAScatalog
 #' processing engine provides internal tools to load buffered data. However, there is
 #' no mechanism to remove the results computed in the buffered area since this task depends on the
-#' output of the user-defined function. The user must take care of this task (see also examples).
+#' output of the user-defined function. The user must take care of this task (see examples).
 #'
 #' @section Buffered data:
 #'
@@ -62,7 +62,7 @@
 #'
 #' @section Function template:
 #'
-#' The parameter \code{FUN} expects a function that has a first argument that will be supplied automatically
+#' The parameter \code{FUN} expects a function with a first argument that will be supplied automatically
 #' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
 #' is an internal undocumented class but the user needs to know only three things about this class:
 #' \itemize{
@@ -81,25 +81,25 @@
 #'    # do something
 #'    return(something)
 #' }}
-#' The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunk) may contain
+#' The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
 #' 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
-#' is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-function
-#' by returning \code{NULL} allows the internal engine to know that the cluster was empty.
+#' is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-defined 
+#' function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
 #'
 #' @section raster alignment:
 #' When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
-#' with the raster to avoid egde artifact. Indeed if the egde of a chunk do not correspond to the edge
-#' of the pixels the output will not be strictly continuous and will have egde artifacts (potentially
-#' not visible). To to so the argument \code{check_alignment} can take the resolution of the raster
-#' as input as well as the starting point if needed. The folowing are accepted:\cr\cr
+#' with the raster to avoid egde artifacts. Indeed, if the edge of a chunk does not correspond to the edge
+#' of the pixels the output will not be strictly continuous and will have egde artifacts (that might
+#' not be visible). Users can check this with the argument \code{check_alignment}, that  can take the 
+#' resolution of the raster as input, as well as the starting point if needed. The folowing are accepted:\cr\cr
 #' \preformatted{
 #' # check if the chunks are aligned with a raster of resolution 20
 #' check_alignment = 20
 #' check_alignment = liste(res = 20)
 #'
-#' # check if chunks are alignedre aligned with a raster of resolution 20
+#' # check if chunks are aligned with a raster of resolution 20
 #' # that starts a (0,10)
-#' check_alignment = liste(res = 20, start = c(0,10))
+#' check_alignment = list(res = 20, start = c(0,10))
 #' }
 #' See also \link{grid_metrics} for more details.
 #'
@@ -112,7 +112,7 @@
 #' \item \strong{chunk_alignment}: Align the chunks.
 #' \item \strong{cores}: How many chunks are loaded and processed at once.
 #' \item \strong{progress}: Displays a progress estimate.
-#' \item \strong{output_files}: The user-function outputs will be written to files instead of being
+#' \item \strong{output_files}: The user-defined function outputs will be written to files instead of being
 #' returned into R.
 #' \item \strong{laz_compression}: write \code{las} or \code{laz} files only if the user-defined function
 #' returns a \code{LAS} object.
@@ -156,12 +156,12 @@
 #' project <- catalog(LASfile)
 #' plot(project)
 #'
-#' # 3. Set some catalog options
+#' # 3. Set some catalog options.
 #' # For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
 #' opt_chunk_buffer(project) <- 10
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 80        # extremely small because this is a dummy example
-#' opt_select(project) <- "xyz"         # don't need to read something other than the coordinates
+#' opt_chunk_size(project) <- 80        # extremely small because this is a dummy example.
+#' opt_select(project) <- "xyz"         # only read the coordinates.
 #' opt_filter(project) <- "-keep_first" # for this example we will use only first returns.
 #'
 #' # 4. Apply a user-defined function to take advantage of the internal engine
@@ -195,8 +195,8 @@
 #'
 #' opt_chunk_buffer(project) <- 1
 #' opt_cores(project) <- 1L
-#' opt_chunk_size(project) <- 120      # extremely small because this is a dummy example
-#' opt_select(project) <- "xyz"        # don't need to read something other than the coordinates
+#' opt_chunk_size(project) <- 120      # extremely small because this is a dummy example.
+#' opt_select(project) <- "xyz"        # only read the coordinates.
 #'
 #' output = catalog_apply(project, rumple_index_surface, res = 20, check_alignment = 20)
 #' output = do.call(raster::merge, output)
@@ -273,14 +273,14 @@ catalog_apply2 =  function(ctg, FUN, ..., need_buffer = FALSE, check_alignment =
 
 check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_file, res = NULL, start = NULL)
 {
-  # The function expect a buffer to guarantee a stric wall-to-wall output
+  # The function expects a buffer to guarantee a strict wall-to-wall output
   # (can be skipped if the catalog is not a wall-to-wall catalog)
 
   if (need_buffer & opt_chunk_buffer(ctg) <= 0 & opt_wall_to_wall(ctg))
     stop("A buffer greater than 0 is required to process the catalog. See help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
-  # clusters are aligned with the pixels. In case of chunk_size > 0 this is an easy to check before making
+  # clusters are aligned with the pixels. In case of chunk_size > 0 this is easy to check before making
   # the clusters
 
   if (check_alignment & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
@@ -291,7 +291,7 @@ check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_
     if (new_t_size != t_size)
     {
       opt_chunk_size(ctg) <- new_t_size
-      message(glue::glue("Chunk size does not match with the resolution of the raster. Chunk size changed to {new_t_size} to ensure the continuity of the ouput."))
+      message(glue::glue("Chunk size does not match with the resolution of the raster. Chunk size changed to {new_t_size} to ensure the continuity of the output."))
     }
 
     # If the alignment of the clusters does not match the start point of the raster
@@ -300,7 +300,7 @@ check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_
     if (any(new_alignment != alignment))
     {
       opt_chunk_alignment(ctg) <- new_alignment
-      message(glue::glue("Alignment of the chunks do not match with the starting points of the raster. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the ouput."))
+      message(glue::glue("Alignment of the chunks does not match with the starting points of the raster. Alignment changed to ({new_alignment[1]}, {new_alignment[2]}) to ensure the continuity of the output."))
     }
   }
 
@@ -316,7 +316,7 @@ check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_
 check_and_fix_clusters = function(ctg, clusters, check_alignment, res = NULL, start = NULL)
 {
   # If we want to return a Raster*, to ensure a strict wall-to-wall output we need to check if the
-  # clusters are aligned with the pixels. In case of chunk_size =0 (processed by file) the clusters
+  # clusters are aligned with the pixels. In case of chunk_size = 0 (processed by file) the clusters
   # must be checked after being created. Can be skipped if the catalog is not a wall-to-wall catalog.
 
   if (check_alignment & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
@@ -340,7 +340,7 @@ check_and_fix_clusters = function(ctg, clusters, check_alignment, res = NULL, st
         new_cluster      <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg))[[1]]
         new_cluster@save <- cluster@save
         clusters[[i]]    <- new_cluster
-        #message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the ouput."))
+        #message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the output."))
       }
     }
   }

@@ -33,7 +33,7 @@ catalog_makecluster = function(ctg)
   start   <- opt_chunk_alignment(ctg)
   width   <- opt_chunk_size(ctg)
 
-  # Creation of a set rectangle that encompass the catalog
+  # Creation of a set rectangle that encompasses the catalog
   # =======================================================
 
   if (by_file)
@@ -53,7 +53,7 @@ catalog_makecluster = function(ctg)
     shift[1] = (bbox[1] - start[1]) %% width
     shift[2] = (bbox[2] - start[2]) %% width
 
-    # Generate coordinates of bottom left clusters corners
+    # Generate coordinates of bottom-left corner
     xmin = seq(bbox[1] - shift[1], bbox[3], width)
     ymin = seq(bbox[2] - shift[2], bbox[4], width)
     grid = expand.grid(xmin = xmin, ymin = ymin)
@@ -63,14 +63,14 @@ catalog_makecluster = function(ctg)
     ymax = ymin + width
   }
 
-  verbose("Creating a set of cluster for the catalog...")
+  verbose("Creating a set of clusters for the catalog...")
 
   xcenter = (xmin + xmax)/2
   ycenter = (ymin + ymax)/2
   width   = xmax - xmin
   height  = ymax - ymin
 
-  # Creation of a set of cluster from the rectangles
+  # Creation of a set of clusters from the rectangles
   # ================================================
 
   if (by_file & buffer <= 0)
@@ -93,7 +93,7 @@ catalog_makecluster = function(ctg)
     clusters = clusters[!sapply(clusters, is.null)]
   }
 
-  # Post process the clusters
+  # Post-process the clusters
   # =========================
 
   # Specific case for computation speed
