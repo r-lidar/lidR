@@ -32,7 +32,7 @@
 #' @template param-las
 #'
 #' @param algorithm function. A function that implements an algorithm to compute a digital surface model.
-#' \code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).
+#' \code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentation and examples).
 #'
 #' @template param-res-grid
 #'
@@ -49,12 +49,12 @@
 #' las <- readLAS(LASfile)
 #' col <- height.colors(50)
 #'
-#' # Points-to-raster algorithm with a resolution of 1 meters
+#' # Points-to-raster algorithm with a resolution of 1 meter
 #' chm <- grid_canopy(las, res = 1, p2r())
 #' plot(chm, col = col)
 #'
-#' # Points-to-raster algorithm with a resolution of 0.5 meter replacing each
-#' # point by a 20 cm radius circle of 8 points
+#' # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
+#' # point by a 20-cm radius circle of 8 points
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 #' plot(chm, col = col)
 #'
@@ -84,7 +84,7 @@ grid_canopy.LAS = function(las, res, algorithm)
     stop("Invalid function provided as algorithm.", call. = FALSE)
 
   if (!is(algorithm, "DigitalSurfaceModel"))
-    stop("The algorithm is not an algorithm for digital surface model.", call. = FALSE)
+    stop("The algorithm is not an algorithm for a digital surface model.", call. = FALSE)
 
   . <- X <- Y <- Z <- NULL
 
@@ -128,8 +128,8 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
 
   output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
 
-  if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_canopy"))
-  else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
+  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
     return(merge_rasters(output))
 }

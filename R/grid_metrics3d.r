@@ -34,11 +34,11 @@
 #' the function allows computation of one or several derived metrics in the same way as the \link{grid_metrics}
 #' functions. The function will dispatch the LiDAR data for each voxel in the user's function (see \link{grid_metrics}).
 #'
-#' @param las An object of class \code{LAS}
+#' @param las An object of class \code{LAS}.
 #'
-#' @param func expression. The function to be apply to each voxel (see also \link{grid_metrics})
+#' @param func expression. The function to be applied to each voxel (see also \link{grid_metrics}).
 #'
-#' @param res numeric. The size of the voxels
+#' @param res numeric. The size of the voxels.
 #'
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting.
