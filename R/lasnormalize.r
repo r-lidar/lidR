@@ -30,16 +30,14 @@
 #' Remove the topography from a point cloud
 #'
 #' Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
-#' the ground at 0. The DTM can originate from an external file or be computed by the user. It can
-#' also be computed on the fly. In this case the algorithm does not use rasterized data and each point
+#' the ground at 0. The DTM can originate from an external file or can be computed by the user. It can
+#' also be computed on-the-fly. In this case the algorithm does not use rasterized data and each point
 #' is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
 #' of the terrain is virtually infinite.\cr\cr
-#' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
-#' interpolated. A buffer around the region of interest is always recommended to avoid edge
-#' effects.\cr\cr
-#' The attribute Z of the returned LAS object is the normalized elevation, A new attribute 'Zref' records
-#' the former elevation values which enable to use \code{lasunormalize} to restore original point elevations.\cr\cr
-#' \code{lasunnormalize} enables restoration of the original elevation.
+#' How well the edges of the dataset are interpolated depends on the interpolation method used.
+#' Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
+#' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref' records
+#' the former elevation values, which enables the use of \code{lasunormalize} to restore original point elevations.\cr\cr
 #'
 #' @template param-las
 #'
@@ -72,7 +70,7 @@
 #' las <- lasunnormalize(las)
 #' plot(las)
 #'
-#' # operator - can be used. This, is equivalent to the previous
+#' # operator - can be used. This is equivalent to the previous
 #' las <- las - dtm
 #' plot(las)
 #'
@@ -85,7 +83,7 @@
 #' las <- lasnormalize(las, tin())
 #' plot(las)
 #'
-#' # operator - can be used. This, is equivalent to the previous
+#' # operator - can be used. This is equivalent to the previous
 #' las <- lasunnormalize(las)
 #' las <- las - tin()
 #'
@@ -120,7 +118,7 @@ lasnormalize.LAS = function(las, algorithm)
     nnas    <- sum(isna)
 
     if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."), call. = F)
   }
   else if (is.function(algorithm))
   {
@@ -133,7 +131,7 @@ lasnormalize.LAS = function(las, algorithm)
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
     if (! "Classification" %in% names(las@data))
-      stop("No field 'Classification' found. This attribute is requiered to interpolate ground points.", call. = FALSE)
+      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
     if (fast_countequal(las@data$Classification, LASGROUND) == 0)
       stop("No ground point found in the point cloud.", call. = FALSE)
@@ -147,7 +145,7 @@ lasnormalize.LAS = function(las, algorithm)
     nnas    <- sum(isna)
 
     if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborded."), call. = FALSE)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
   }
   else
   {
@@ -197,15 +195,15 @@ lasunnormalize = function(las)
     las@data[["Zref"]] <- NULL
   }
   else
-    message("No attribute 'Zref' found. Unormalizisation is impossible.")
+    message("No attribute 'Zref' found. Un-normalizisation is impossible.")
 
   return(las)
 }
 
 #' @param e1 a LAS object
 #' @param e2 \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
-#' \link{kriging}, \link{knnidw}.
+#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} has \link{tin},
+#' \link{kriging}, and \link{knnidw}.
 #' @export
 #' @rdname lasnormalize
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
