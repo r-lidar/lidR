@@ -35,7 +35,7 @@
 #' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 #' this task is specific to each process. In other \code{lidR} functions this task is performed
-#' specifically for each function. In \code{catalog_apply} the user's function can return any input,
+#' specifically for each function. In \code{catalog_apply} the user's function can return any output,
 #' thus users must take care of this task themselves (See section "Edge artifacts")
 #'
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
