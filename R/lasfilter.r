@@ -58,20 +58,24 @@ lasfilter = function(las, ...)
 
 lasfilter_ <- function(las, conditions)
 {
-  combined_bools = !logical(nrow(las@data))
+  n <- nrow(las@data)
+  combined_bools <- !logical(n)
 
-  for(condition in conditions)
+  for (condition in conditions)
   {
     bools <- lazyeval::f_eval(condition, las@data)
 
     if (!is.logical(bools))
-      stop("`conditions` must be logical.", call. = FALSE)
+      stop("`conditions` must be logical.")
 
     bools[is.na(bools)] <- FALSE
-    combined_bools = combined_bools & bools
+    combined_bools <- combined_bools & bools
   }
 
-  return(LAS(las@data[combined_bools], las@header, las@proj4string))
+  if (sum(combined_bools) == n)
+    return(las)
+  else
+    return(LAS(las@data[combined_bools], las@header, las@proj4string))
 }
 
 #' Predefined filters
