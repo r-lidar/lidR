@@ -31,11 +31,10 @@
 #' algorithms.
 #'
 #' @param las An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer}
-#' representing a canopy height model. In that case it is processed like a regularly spaced point
-#' cloud.
+#' representing a canopy height model, in which case it is processed like a regularly-spaced point cloud.
 #'
-#' @param algorithm An algorithm for individual tree detection. lidR have: \link{lmf} and \link{manual}
-#' and more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
+#' @param algorithm An algorithm for individual tree detection. lidR has: \link{lmf} and \link{manual}.
+#' More experimental algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
 #'
 #' @template section-supported-option-tree_detection
 #'

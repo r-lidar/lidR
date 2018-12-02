@@ -27,14 +27,14 @@
 
 #' Create an object of class LAScatalog
 #'
-#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filename.
+#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filenames.
 #' A LAScatalog is a representation of a set of las/laz files. A computer cannot load all the data at
-#' once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most function from
-#' \code{lidR} can seamlessly be used with a LAScatalog using the internal \code{LAScatalog} processing
+#' once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most functions from
+#' \code{lidR} can be used seamlessly with a LAScatalog using the internal \code{LAScatalog} processing
 #' engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
-#' processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. The careful
-#' reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is requiered to use the
-#' \code{LAScatalog} class correclty.
+#' processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. Careful
+#' reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is required to use the
+#' \code{LAScatalog} class correctly.
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
 #' file paths.
@@ -58,11 +58,11 @@
 #' # Internal engine will compute in parallel using two cores
 #' opt_cores(ctg) <- 2L
 #'
-#' # Internal engine will process sequentially regions of interest of 500 x 500 m (clusters)
+#' # Internal engine will sequentially process regions of interest of size 500 x 500 m (clusters)
 #' opt_chunk_size(ctg) <- 500
 #'
 #' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
-#' opt_alignement(ctg) <- c(250, 300)
+#' opt_alignment(ctg) <- c(250, 300)
 #'
 #' # Internal engine will not display a progress estimation
 #' opt_progress(ctg) <- FALSE
@@ -194,9 +194,9 @@ setMethod("summary", "LAScatalog", function(object, ...)
   cat("Summary of the processing options:\n")
 
   if (byfile)
-    cat("  - Catalog will be process by file respecting the original tilling pattern\n")
+    cat("  - Catalog will be processed by file respecting the original tiling pattern\n")
   else
-    cat("  - Catalog will be process by chunks of size:", opt_chunk_size(object), "\n")
+    cat("  - Catalog will be processed by chunks of size:", opt_chunk_size(object), "\n")
 
   cat("  - Catalog will be processed using", opt_cores(object), "core(s).\n")
 
@@ -208,9 +208,9 @@ setMethod("summary", "LAScatalog", function(object, ...)
     cat("  - Outputs will be written in files:", opt_output_files(object), "\n")
 
   if (!laz & save)
-    cat("  - If outputs are LAS objects, they will not be compress (.las)\n")
+    cat("  - If outputs are LAS objects, they will not be compressed (.las)\n")
   else if (laz & save)
-    cat("  - If outputs are LAS objects, they will be compress (.laz)\n")
+    cat("  - If outputs are LAS objects, they will be compressed (.laz)\n")
 
   cat("Summary of the input options:\n")
 
@@ -315,7 +315,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, ...)
   {
     if (!requireNamespace("mapview", quietly = TRUE))
     {
-      message("'mapview' is requiered to display the LAScatalog interactively.")
+      message("'mapview' is required to display the LAScatalog interactively.")
       mapview = FALSE
     }
   }

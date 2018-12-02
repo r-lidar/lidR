@@ -3,13 +3,13 @@
 #' Individual tree segmentation with several possible algorithms. The returned point cloud has a new
 #' extra byte attribute named after the parameter \code{attribute} independently of the algorithm used.
 #'
-#' @param las An object of the class \link[lidR:LAS-class]{LAS}.
+#' @param las An object of class \link[lidR:LAS-class]{LAS}.
 #'
-#' @param algorithm function. An algorithm of individual tree segmentation. \code{lidR} have:
-#' \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012} and \link{silva2016} and
-#' more experimental algorithms may be found in package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}
+#' @param algorithm function. An algorithm of individual tree segmentation. \code{lidR} has:
+#' \link{dalponte2016}, \link{watershed}, \link{mcwatershed}, \link{li2012} and \link{silva2016}.
+#' More experimental algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}
 #'
-#' @param attribute character. The returned LAS object as a new extra byte attribute (in a new columns).
+#' @param attribute character. The returned LAS object as a new extra byte attribute (in a new column).
 #' This parameter controls the name of the new attribute. Default is \code{"treeID"}.
 #'
 #' @return An object of the class \code{LAS}

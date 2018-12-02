@@ -28,7 +28,7 @@
 
 #' Map the pulse or point density
 #'
-#' Creates a map of the point density. If a "pulseID" attribute is found, returns also a map of the pulse
+#' Creates a map of the point density. If a "pulseID" attribute is found, also returns a map of the pulse
 #' density.
 #'
 #' @template param-las

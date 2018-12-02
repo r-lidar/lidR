@@ -32,10 +32,10 @@
 #' Write a \link[lidR:LAS-class]{LAS} object into a binary .las or .laz file (compression
 #' specified in filename)
 #'
-#' @param las an object of class LAS
-#' @param file character. A character string naming an output file
+#' @param las an object of class LAS.
+#' @param file character. A character string naming an output file.
 #'
-#' @return Nothing. This function is use for it side effect of writting a file
+#' @return Nothing. This function is used for its side-effect of writing a file.
 #'
 #' @export
 #'

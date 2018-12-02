@@ -26,19 +26,19 @@
 # ===============================================================================
 
 
-#' Area Based Approach
+#' Area-Based Approach
 #'
 #' Computes a series of user-defined descriptive statistics for a LiDAR dataset within
 #' each pixel of a raster (area-based approach). The grid cell coordinates are pre-determined for a
 #' given resolution, so the algorithm will always provide the same coordinates independently of the
 #' dataset. When start = (0,0) and res = 20 grid_metrics will produce the following cell centers:
 #' (10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
-#' res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
+#' res = 20 grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
 #' the corner of a cell on (-10, -10).
 #'
 #' @template param-las
 #'
-#' @param func expression. The function to be applied to each cell (see section "Parameter func")
+#' @param func expression. The function to be applied to each cell (see section "Parameter func").
 #'
 #' @template param-res-grid
 #'
@@ -47,11 +47,11 @@
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
-#' returns a labelled list of metrics. For exemple the following function \code{f} is correctly formed.
+#' returns a labelled list of metrics. For example, the following function \code{f} is correctly formed.
 #' \preformatted{
 #' f = function(x) {list(mean = mean(x), max = max(x))}
 #' }
-#' And could be applied either on the \code{Z} coordinates or the Intensities for exemples. These two
+#' And could be applied either on the \code{Z} coordinates or the intensities. These two
 #' statements are valid:
 #' \preformatted{
 #' grid_metrics(las, f(Z), res = 20)
@@ -65,7 +65,7 @@
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
-#' But usually the users must write their own functions to create metrics. \code{grid_metrics} will
+#' But usually users must write their own functions to create metrics. \code{grid_metrics} will
 #' dispatch the point cloud in the user's function.
 #'
 #' @template LAScatalog
@@ -85,7 +85,7 @@
 #' metrics = grid_metrics(las, max(Z), 2)
 #' plot(metrics, col = colors)
 #'
-#' # Mean height with 400 m^2 cells
+#' # Mean height with 400-m^2 cells
 #' metrics = grid_metrics(las, mean(Z), 20)
 #' plot(metrics, col = colors)
 #'
@@ -185,9 +185,9 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 
   output  <- catalog_apply2(las, grid_metrics, func = func, res = res, start = start, need_buffer = FALSE, check_alignment = TRUE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
 
-  if (opt_output_files(las) != "")                  # Outputs have been written in files. Return a virtual raster mosaic
+  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_metrics"))
-  else                                              # Outputs have been returned in R objects. Merge the outputs in a single object
+  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
     return(merge_rasters(output))
 }
 
