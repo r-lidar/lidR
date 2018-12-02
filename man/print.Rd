@@ -8,7 +8,7 @@
 \alias{summary}
 \alias{print,LAS-method}
 \alias{summary,LAScatalog-method}
-\title{Summary and Print for \code{LAS*} object}
+\title{Summary and Print for \code{LAS*} objects}
 \usage{
 print(x, ...)
 
@@ -21,11 +21,11 @@ print(x, ...)
 \arguments{
 \item{...}{Unused}
 
-\item{object, x}{A \code{LAS*} object}
+\item{object, }{x A \code{LAS*} object}
 }
 \value{
-NULL, used for its side effect of printing informations
+NULL, used for its side-effect of printing information
 }
 \description{
-Summary and Print for \code{LAS*} object
+Summary and Print for \code{LAS*} objects
 }

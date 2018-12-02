@@ -26,8 +26,8 @@ computed with \link{grid_terrain}) or a spatial interpolation function. \code{li
 \item{e1}{a LAS object}
 
 \item{e2}{\link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
-\link{kriging}, \link{knnidw}.}
+computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} has \link{tin},
+\link{kriging}, and \link{knnidw}.}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
@@ -35,16 +35,14 @@ If the input is a \code{LAS} object, return a \code{LAS} object. If the input is
 }
 \description{
 Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
-the ground at 0. The DTM can originate from an external file or be computed by the user. It can
-also be computed on the fly. In this case the algorithm does not use rasterized data and each point
+the ground at 0. The DTM can originate from an external file or can be computed by the user. It can
+also be computed on-the-fly. In this case the algorithm does not use rasterized data and each point
 is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
 of the terrain is virtually infinite.\cr\cr
-Depending on the interpolation method, the edges of the dataset can be more, or less poorly
-interpolated. A buffer around the region of interest is always recommended to avoid edge
-effects.\cr\cr
-The attribute Z of the returned LAS object is the normalized elevation, A new attribute 'Zref' records
-the former elevation values which enable to use \code{lasunormalize} to restore original point elevations.\cr\cr
-\code{lasunnormalize} enables restoration of the original elevation.
+How well the edges of the dataset are interpolated depends on the interpolation method used.
+Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
+The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref' records
+the former elevation values, which enables the use of \code{lasunormalize} to restore original point elevations.\cr\cr
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -102,7 +100,7 @@ plot(las)
 las <- lasunnormalize(las)
 plot(las)
 
-# operator - can be used. This, is equivalent to the previous
+# operator - can be used. This is equivalent to the previous
 las <- las - dtm
 plot(las)
 
@@ -115,7 +113,7 @@ las <- lasunnormalize(las)
 las <- lasnormalize(las, tin())
 plot(las)
 
-# operator - can be used. This, is equivalent to the previous
+# operator - can be used. This is equivalent to the previous
 las <- lasunnormalize(las)
 las <- las - tin()
 

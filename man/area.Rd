@@ -23,8 +23,8 @@ area(x, ...)
 numeric. The area of the object computed in the same units as the coordinate reference system
 }
 \description{
-Surface covered by a \code{LAS*} object. For \code{LAS} point cloud it is computed based on the
-convex hull of the points. For a \code{LAScatalog} it is computed a the sum of the bounding box
-of the files. For overlaping tiles the value may be larger that the total covered area because
+Surface covered by a \code{LAS*} object. For \code{LAS} point clouds it is computed based on the
+convex hull of the points. For a \code{LAScatalog} it is computed as the sum of the bounding boxes
+of the files. For overlapping tiles the value may be larger than the total covered area because
 some regions are sampled twice.
 }

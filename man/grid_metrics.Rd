@@ -2,14 +2,14 @@
 % Please edit documentation in R/grid_metrics.r
 \name{grid_metrics}
 \alias{grid_metrics}
-\title{Area Based Approach}
+\title{Area-Based Approach}
 \usage{
 grid_metrics(las, func, res = 20, start = c(0, 0))
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{expression. The function to be applied to each cell (see section "Parameter func")}
+\item{func}{expression. The function to be applied to each cell (see section "Parameter func").}
 
 \item{res}{numeric. The resolution of the output \code{Raster}. Can optionally be a \code{RasterLayer}.
 In that case the \code{RasterLayer} is used as the layout.}
@@ -28,17 +28,17 @@ each pixel of a raster (area-based approach). The grid cell coordinates are pre-
 given resolution, so the algorithm will always provide the same coordinates independently of the
 dataset. When start = (0,0) and res = 20 grid_metrics will produce the following cell centers:
 (10,10), (10,30), (30,10) etc. aligning the corner of a cell on (0,0). When start = (-10, -10) and
-res = 20' grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
+res = 20 grid_metrics will produce the following cell centers: (0,0), (0,20), (20,0) etc. aligning
 the corner of a cell on (-10, -10).
 }
 \section{Parameter \code{func}}{
 
 The function to be applied to each cell is a classical function (see examples) that
-returns a labelled list of metrics. For exemple the following function \code{f} is correctly formed.
+returns a labelled list of metrics. For example, the following function \code{f} is correctly formed.
 \preformatted{
 f = function(x) {list(mean = mean(x), max = max(x))}
 }
-And could be applied either on the \code{Z} coordinates or the Intensities for exemples. These two
+And could be applied either on the \code{Z} coordinates or the intensities. These two
 statements are valid:
 \preformatted{
 grid_metrics(las, f(Z), res = 20)
@@ -52,7 +52,7 @@ compute some predefined metrics:
 \item{\link[lidR:VCI]{VCI}}
 \item{\link[lidR:LAD]{LAD}}
 }
-But usually the users must write their own functions to create metrics. \code{grid_metrics} will
+But usually users must write their own functions to create metrics. \code{grid_metrics} will
 dispatch the point cloud in the user's function.
 }
 
@@ -110,7 +110,7 @@ colors = height.colors(50)
 metrics = grid_metrics(las, max(Z), 2)
 plot(metrics, col = colors)
 
-# Mean height with 400 m^2 cells
+# Mean height with 400-m^2 cells
 metrics = grid_metrics(las, mean(Z), 20)
 plot(metrics, col = colors)
 

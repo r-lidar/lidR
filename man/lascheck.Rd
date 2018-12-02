@@ -10,21 +10,21 @@ lascheck(las)
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 }
 \description{
-Performs a deep inspection of a LAS or LAScatalog object and print a report.\cr\cr
+Performs a deep inspection of a LAS or LAScatalog object and prints a report.\cr\cr
 For a LAS object it checks:
 \itemize{
 \item if the point cloud is valid according to las specification
 \item if the header is valid according to las specification
 \item if the point cloud is in accordance with the header
-\item if the point cloud have duplicated points and degenerated ground points
+\item if the point cloud has duplicated points and degenerated ground points
 \item it the coordinate reference sytem is correctly recorded
-\item if some pre-processing such as normalization or ground filtering are already done.
+\item if some pre-processing, such as normalization or ground filtering, is already done.
 }
 For a LAScatalog object it checks:
 \itemize{
-\item if the headers are consistant accross files
+\item if the headers are consistent across files
 \item if the files are overlapping
-\item if some pre-processing such as normalization are already done.
+\item if some pre-processing, such as normalization, is already done.
 }
-For the pre-processing tests the function only makes an estimation an may be mistaken.
+For the pre-processing tests the function only makes an estimation and may not be correct.
 }

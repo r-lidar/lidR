@@ -35,10 +35,10 @@
 \item{drop}{Unused}
 }
 \description{
-\code{LAS*} objects being \link[sp:Spatial-class]{Spatial} object they inherit several methods
-from \code{sp}. However, some have modified behaviors to forbid some unrelevant modifications. Indeed
-a \code{LAS*} object cannot contains anything. The content is restricted by the LAS specifications.
-If a user try to use one of these function in a bad way an informative error will be thrown.
+\code{LAS*} objects are \link[sp:Spatial-class]{Spatial} objects so they inherit several methods
+from \code{sp}. However, some have modified behaviors to prevent some irrrelevant modifications. Indeed,
+a \code{LAS*} object cannot contain anything, as the content is restricted by the LAS specifications.
+If a user attempts to use one of these functions inappropriately an informative error will be thrown.
 }
 \examples{
 \dontrun{

@@ -21,9 +21,9 @@
 \item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
 Default is 1 meaning that the whole range of the values is used for the color palette.
 0.9 means that 10% of the highest values are not used to define the color palette.
-In this case the values higher than the 90th percentile are set to the highest color. They are not removed}
+In this case the values higher than the 90th percentile are set to the highest color. They are not removed.}
 
-\item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d} if display method is "points"}
+\item{\dots}{Supplementary parameters for \link[rgl:points3d]{points3d} if the display method is "points".}
 }
 \description{
 This function implements a 3D plot method for 'lasmetrics3d' objects

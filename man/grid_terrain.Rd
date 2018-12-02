@@ -13,7 +13,7 @@ grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE)
 In that case the \code{RasterLayer} is used as the layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
-\code{lidR} have \link{knnidw}, \link{tin}, \link{kriging} (see respective documentations and exemples).}
+\code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).}
 
 \item{keep_lowest}{logical. This option forces the original lowest ground point of each
 cell (if it exists) to be chosen instead of the interpolated values.}
@@ -28,9 +28,8 @@ Interpolates the ground points and creates a rasterized digital terrain model. T
 the points classified as "ground" (Classification = 2 according to
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
 to compute the interpolation.\cr
-Depending on the interpolation method, the edges of the dataset can be more, or less poorly
-interpolated. A buffer around the region of interest is always recommended to avoid edge
-effects.
+How well the edges of the dataset are interpolated depends on the interpolation method used. 
+Thus, a buffer around the region of interest is always recommended to avoid edge effects.
 }
 \section{Working with a \code{LAScatalog}}{
 
