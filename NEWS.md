@@ -28,7 +28,7 @@ To simplfy, let's assume that we have a 1 GB `data.frame` that stores the point 
 
 **Algorithm dispatch**
 
-The frame of lidR versions 1 was designed at a time when there were fewer algorithms. The incresing number of algorithms led to inconsisten ways to dispatch algorithms. For example:
+The frame of lidR versions 1 was designed at a time when there were fewer algorithms. The increasing number of algorithms led to inconsistent ways to dispatch algorithms. For example:
 
 * `grid_canopy()` implemented one algorithm and a second function `grid_tincanopy()` was created to implement another algorithm. With two functions the switch was possible by using two different names (algorithms dispatched by names).
 * `grid_tincanopy()` actually implemented two algorithms in one function. The switch was possible by changing the input parameters in the function (algorithm dispatched by input).
@@ -57,7 +57,7 @@ This allows `lidR` to be extended with new algorithms without any restriction ei
 
 **`LAScatalog` processing engine**
 
-lidR versions 1 was designed to run algorithms on medium-sized point clouds loaded in memory but not to run algorithms over a set of files covering wide areas. in addition, lidR 1 had a poorly and inconsistently designed engine to process catalogs of las files. For example:
+lidR versions 1 was designed to run algorithms on medium-sized point clouds loaded in memory but not to run algorithms over a set of files covering wide areas. In addition, lidR 1 had a poorly and inconsistently designed engine to process catalogs of las files. For example:
 
 * It was possible to extract a polygon of points from a `LAScatalog` but not multipart-polygons or polygons with holes. This was only possible with `LAS` objects i.e loaded in memory (inconsistent behaviors within a function).
 * It was possible to run `grid_metrics()` on a `LAScatalog` i.e. over a wide area not loaded in memory, but not `lasnormalize`, `lasground` or `tree_detection` (inconsistent behavior across the functions).
@@ -95,7 +95,7 @@ new_ctg = lasnormalize(ctg, algo = tin())
 
 **lasclip**
 
-* New: `lasclip` wnow works both with a `LAS` object and a `LAScatalog` objecct in a seamless and consistent way. There are no longer any differences between the capabilities of the `LAS` version or the `LAScatalog` one.
+* New: `lasclip` now works both with a `LAS` object and a `LAScatalog` objecct in a seamless and consistent way. There are no longer any differences between the capabilities of the `LAS` version or the `LAScatalog` one.
 * New: `lasclip` support many geometries including multipart polygons and polygons with holes, both with a `LAS` object and a `LAScatalog` object.
 * Change: The option `inside` has been removed for consistency because it cannot be safely supported both on `LAS` and `LAScatalog`.
 * Change: The option `ofile` has been removed for consistency and this option in now managed by the `LAScatalog` processing engine. For example, one can extract ground inventories and write them in `laz` files automatically named after their center coordinates like this:

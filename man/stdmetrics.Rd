@@ -60,7 +60,7 @@ stdtreemetrics(x, y, z)
 Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics}, \link{tree_metrics},
 and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
 to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
-standard metrics has been predefined. To use these functions please read the Details and Examples sections.
+standard metrics has been predefined. To use these functions please read the details and examples sections.
 }
 \details{
 The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
@@ -78,14 +78,14 @@ The metric \code{pground} refers to a percentage. It is the percentage of points
 The function \code{stdmetric_i} refers to metrics of intensity. A description of each existing metric can be found
 on the \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
 Some functions have optional parameters. If these parameters are not provided the function
-computes only a subset of existing metrics. For example \code{stdmetrics_i} requires the intensity
-values, but if the elevation values are provided it can compute additional metrics such as cumulative
+computes only a subset of existing metrics. For example, \code{stdmetrics_i} requires the intensity
+values, but if the elevation values are also provided it can compute additional metrics such as cumulative
 intensity at a given percentile of height.\cr\cr
 Each function has a convenient associated variable. It is the name of the function, with a
 dot before the name. This enables the function to be used without writing parameters. The cost
 of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr\cr
-\code{stdtreemetrics} is a special function which works with \link{tree_metrics}. Actually
-it won't fail with other functions but the output make sense more sense if computed at the
+\code{stdtreemetrics} is a special function that works with \link{tree_metrics}. Actually,
+it won't fail with other functions but the output makes more sense if computed at the
 individual tree level.
 }
 \examples{
@@ -134,7 +134,7 @@ myMetrics = function(z, i)
 
 m10 = grid_metrics(las, myMetrics(Z, Intensity))
 
-# User can write your own convenient shorcuts like this:
+# Users can write your own convenient shorcuts like this:
 .myMetrics = ~myMetrics(Z,Intensity)
 
 m11 = grid_metrics(las, .myMetrics)

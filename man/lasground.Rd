@@ -2,18 +2,18 @@
 % Please edit documentation in R/lasground.r
 \name{lasground}
 \alias{lasground}
-\title{Classify points as ground or not ground}
+\title{Classify points as 'ground' or 'not ground'}
 \usage{
 lasground(las, algorithm, last_returns = TRUE)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{a ground segmentation function. \code{lidR} have: \link{pmf} and \link{csf}}
+\item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
-in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent \code{'last_returns'} is turned
+in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 to \code{FALSE} automatically.}
 }
 \value{
@@ -21,7 +21,7 @@ If the input is a \code{LAS} object, return a \code{LAS} object. If the input is
 \code{LAScatalog}, returns a \code{LAScatalog}.
 }
 \description{
-Classify points as ground or not ground with several possible algorithms. The function updates the
+Classify points as 'ground' or 'not ground' with several possible algorithms. The function updates the
 attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
 a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
 }

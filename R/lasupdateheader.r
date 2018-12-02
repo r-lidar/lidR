@@ -6,7 +6,7 @@
 #' and so on for each point. It is possible to add supplementary attributes. The functions \code{lasadd*}
 #' enable the user to add new attributes (see details).
 #'
-#' Users cannot assign names that are the same as the names of the core attributes. These functions are dedicated 
+#' Users cannot assign names that are the same as the names of the core attributes. These functions are dedicated
 #' to adding data not part of the LAS specification. For example, \code{lasaddextrabytes(las, x, "R")}
 #' will fail because \code{R} is a name reserved for the red channel of las file that contains RGB attributes.\cr\cr
 #' \code{lasadddata} simply adds a new column in the data but does not update the header. Thus the LAS
@@ -24,7 +24,7 @@
 #' (table 24 page 25 of the specification). Types greater than 10 are not supported.
 #'
 #' @param las An object of class \link[lidR:LAS-class]{LAS}
-#' @param x a vector that need sto be added in the LAS object. For \code{lasaddextrabytes*} it can
+#' @param x a vector that needs to be added in the LAS object. For \code{lasaddextrabytes*} it can
 #' be missing (see details).
 #' @param name character. The name of the extra bytes attribute to add in the file.
 #' @param desc character. A short description of the extra bytes attribute to add in the file (32 characters).

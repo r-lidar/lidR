@@ -157,7 +157,7 @@ stopif_wrong_context = function(received_context, expected_contexts, func_name)
   if (is.null(received_context))
     stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
   if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' function has not been called in the  correct context. It is expected to be used in '{str}'"), call. = FALSE)
+    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
 }
 
 subcircled = function(dt, r, n)

@@ -111,7 +111,7 @@
 #'
 #' # Extract all the polygons from a shapefile
 #' shapefile_dir <- system.file("extdata", package = "lidR")
-#' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+#' lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
 #' subset3 = lasclip(ctg, lakes)
 #'
 #' # Extract the polygons, write them in files named after the lake names, do not load anything in R

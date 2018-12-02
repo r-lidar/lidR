@@ -18,7 +18,7 @@ A \code{RasterLayer} or a \code{RasterBrick} containing a numeric value in each 
 virtual raster mosaic is returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
-Creates a map of the point density. If a "pulseID" attribute is found, returns also a map of the pulse
+Creates a map of the point density. If a "pulseID" attribute is found, also returns a map of the pulse
 density.
 }
 \section{Working with a \code{LAScatalog}}{

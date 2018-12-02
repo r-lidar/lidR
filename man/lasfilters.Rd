@@ -46,7 +46,7 @@ Select only some returns
 \item{\code{lasfilterlast} Select only the last returns i.e. the last returns and the single returns.}
 \item{\code{lasfilternth} Select the returns from their position in the return sequence.}
 \item{\code{lasfilterfirstofmany} Select only the first returns from pulses which returned multiple points.}
-\item{\code{lasfiltersingle} Select only the returns which return only one point.}
+\item{\code{lasfiltersingle} Select only the returns that return only one point.}
 }
 }
 \examples{
