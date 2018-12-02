@@ -16,14 +16,14 @@ file paths.}
 A \code{LAScatalog} object
 }
 \description{
-Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filename.
+Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filenames.
 A LAScatalog is a representation of a set of las/laz files. A computer cannot load all the data at
-once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most function from
-\code{lidR} can seamlessly be used with a LAScatalog using the internal \code{LAScatalog} processing
+once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most functions from
+\code{lidR} can be used seamlessly with a LAScatalog using the internal \code{LAScatalog} processing
 engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
-processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. The careful
-reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is requiered to use the
-\code{LAScatalog} class correclty.
+processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. Careful
+reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is required to use the
+\code{LAScatalog} class correctly.
 }
 \examples{
 # A single file LAScatalog using data provided with the package
@@ -37,11 +37,11 @@ ctg <- catalog("/path/to/a/folder/of/las/files")
 # Internal engine will compute in parallel using two cores
 opt_cores(ctg) <- 2L
 
-# Internal engine will process sequentially regions of interest of 500 x 500 m (clusters)
+# Internal engine will sequentially process regions of interest of size 500 x 500 m (clusters)
 opt_chunk_size(ctg) <- 500
 
 # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
-opt_alignement(ctg) <- c(250, 300)
+opt_alignment(ctg) <- c(250, 300)
 
 # Internal engine will not display a progress estimation
 opt_progress(ctg) <- FALSE

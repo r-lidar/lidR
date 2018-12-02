@@ -7,11 +7,11 @@
 grid_metrics3d(las, func, res = 1)
 }
 \arguments{
-\item{las}{An object of class \code{LAS}}
+\item{las}{An object of class \code{LAS}.}
 
-\item{func}{expression. The function to be apply to each voxel (see also \link{grid_metrics})}
+\item{func}{expression. The function to be applied to each voxel (see also \link{grid_metrics}).}
 
-\item{res}{numeric. The size of the voxels}
+\item{res}{numeric. The size of the voxels.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table

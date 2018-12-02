@@ -73,7 +73,7 @@ opt_filter(ctg) <- value
 \arguments{
 \item{ctg}{An object of class \link[lidR:LAScatalog-class]{LAScatalog}}
 
-\item{value}{An appropriated value depending on the expected input.}
+\item{value}{An appropriate value depending on the expected input.}
 }
 \description{
 The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.

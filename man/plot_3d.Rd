@@ -5,7 +5,7 @@
 \alias{plot_dtm3d}
 \alias{add_dtm3d}
 \alias{add_treetops3d}
-\title{Add spatial object to a point cloud scene}
+\title{Add a spatial object to a point cloud scene}
 \usage{
 plot_dtm3d(dtm, bg = "black", clear_artifacts = TRUE, ...)
 
@@ -18,27 +18,27 @@ add_treetops3d(x, ttops, z = "Z", ...)
 
 \item{bg}{The color for the background. Default is black.}
 
-\item{clear_artifacts}{logical. It is a known and docunented issue that the 3D visualisation with
-\code{rgl} displays artifacts. The objects look aligned missplaced in space in some view angle.
-This is because \code{rgl} computes with single precision \code{float}. To fix that the objects are
-shifted to (0,0) to reduce the number of digit needed to represent their coordinates. The drawback
-is that the objects are not plotted at their actual coordinates.}
+\item{clear_artifacts}{logical. It is a known and documented issue that 3D visualisation with
+\code{rgl} displays artifacts. The points and lines are inaccurately positioned in the space and thus
+the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}.
+To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
+their coordinates. The drawback is that the objects are not plotted at their actual coordinates.}
 
 \item{\dots}{Supplementary parameters for \link[rgl:surface3d]{surface3d} or
-\link[rgl:spheres3d]{spheres3d}}
+\link[rgl:spheres3d]{spheres3d}.}
 
-\item{x}{The output of the function plot used with a LAS object}
+\item{x}{The output of the function plot used with a LAS object.}
 
-\item{ttops}{A SpatialPointsDataFrame that contains tree tops coordinates}
+\item{ttops}{A SpatialPointsDataFrame that contains tree tops coordinates.}
 
-\item{z}{character. The name of the attribute that contains the height of the tree tops}
+\item{z}{character. The name of the attribute that contains the height of the tree tops.}
 }
 \description{
 Add a \code{RasterLayer} object that represents a digital terrain model or a
-\code{SpatialPointsDataFrame} that represents tree tops to a point cloud scene. To add a elements
-to a scene with a point cloud plotted with the function plot from lidR the functions \code{add_*}
-take as first argument the output of the plot function (see examples) because the plot function
-does not plot the actual coordinates of the point cloud but offseted values. See function
+\code{SpatialPointsDataFrame} that represents tree tops to a point cloud scene. To add elements
+to a scene with a point cloud plotted with the function plot from lidR, the functions \code{add_*}
+take as first argument the output of the plot function (see examples), because the plot function
+does not plot the actual coordinates of the point cloud, but offsetted values. See function
 \link[lidR:plot]{plot} and its argument \code{clear_artifacts} for more details.
 }
 \examples{

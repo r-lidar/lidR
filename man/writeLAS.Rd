@@ -7,12 +7,12 @@
 writeLAS(las, file)
 }
 \arguments{
-\item{las}{an object of class LAS}
+\item{las}{an object of class LAS.}
 
-\item{file}{character. A character string naming an output file}
+\item{file}{character. A character string naming an output file.}
 }
 \value{
-Nothing. This function is use for it side effect of writting a file
+Nothing. This function is used for its side-effect of writing a file.
 }
 \description{
 Write a \link[lidR:LAS-class]{LAS} object into a binary .las or .laz file (compression

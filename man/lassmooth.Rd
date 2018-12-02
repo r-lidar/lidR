@@ -13,21 +13,21 @@ lasunsmooth(las)
 \arguments{
 \item{las}{An object of class \code{LAS}}
 
-\item{size}{numeric. The size of the windows used to smooth}
+\item{size}{numeric. The size of the windows used to smooth.}
 
 \item{method}{character. Smoothing method. Can be 'average' or 'gaussian'.}
 
 \item{shape}{character. The shape of the windows. Can be circle or square.}
 
-\item{sigma}{numeric. The standard deviation of the gaussian if the method is gaussian}
+\item{sigma}{numeric. The standard deviation of the gaussian if the method is gaussian.}
 }
 \value{
 An object of the class \code{LAS}.
 }
 \description{
 Point cloud-based smoothing algorithm. Two methods are available: average within a window and
-Gaussian smooth within a window. The attribute \code{Z} of the return LAS object is the smoothed Z.
-A new attribute \code{Zraw} is added to store the original values and can be used to' restore the
+Gaussian smooth within a window. The attribute \code{Z} of the returned LAS object is the smoothed Z.
+A new attribute \code{Zraw} is added to store the original values and can be used to restore the
 point cloud with \code{lasunsmooth}.
 }
 \details{

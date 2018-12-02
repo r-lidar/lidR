@@ -22,7 +22,7 @@ quantifying diversity and is based on the number and frequency of species presen
 developed by Shannon and Weaver for use in information theory, was successfully transferred
 to the description of species diversity in biological systems (Shannon 1948). Here it is applied
 to quantify the diversity and the evenness of an elevational distribution of las points. It
-makes bins between 0 and the maximum elevation. If there are negative value the function
+makes bins between 0 and the maximum elevation. If there are negative values the function
 returns NA.
 }
 \examples{

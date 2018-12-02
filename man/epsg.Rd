@@ -24,7 +24,7 @@ epsg(object) <- value
 \S4method{epsg}{LAS}(object) <- value
 }
 \arguments{
-\item{object}{An object of class LAS or eventually LASheader (regular user don't need to manipulate
+\item{object}{An object of class LAS or eventually LASheader (regular users don't need to manipulate
 LASheader objects)}
 
 \item{...}{Unused}
@@ -33,12 +33,12 @@ LASheader objects)}
 }
 \description{
 Currently, at least in R, the only way to store the CRS in a las file is to store the epsg code of
-the CRS. In another hand, all spatial R packages use the proj4string to store the CRS. This is why
-the CRS is duplicated in a LAS object. The proj4string is accessible with the function \code{projection}
-from \code{raster} or \code{proj4string} from \code{sp}. These functions do nothing special exept
-they return or update the proj4string which is not recognized in a las file. The function \code{epsg},
+the CRS. On the other hand, all spatial R packages use the proj4string to store the CRS. This is why
+the CRS is duplicated in a LAS object. The proj4string is accessible with the functions \code{projection}
+from \code{raster} or \code{proj4string} from \code{sp}. These functions do nothing special except
+they return or update the proj4string, which is not recognized in a las file. The function \code{epsg},
 in turn, updates the header of the LAS object \strong{and} updates the proj4string and thus should
-be prefered to ensure that the CRS will be written into a las file.
+be preferred to ensure that the CRS will be written into a las file.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -47,15 +47,15 @@ las = readLAS(LASfile)
 projection(las)
 epsg(las)
 
-# Change the CRS via projection updates the proj4string but not the header
-# The proj4string will be propagated in all subsquent spatial objects but the las file
-# itself still have the epsg code 26917 if written on the disk
+# Changing the CRS via projection updates the proj4string but not the header
+# The proj4string will be propagated in all subsequent spatial objects but the las file
+# itself will still have the epsg code 26917 if written on the disk
 projection(las) = sp::CRS("+init=epsg:2567")
 projection(las)
 epsg(las)
 
-# Change the CRS via epsg update the proj4string and the header. This way the good CRS will
-# witten in the las file (if written).
+# Changing the CRS via epsg updates the proj4string and the header. This way the good CRS will
+# written in the las file (if written).
 epsg(las) = 2567
 epsg(las)
 projection(las)

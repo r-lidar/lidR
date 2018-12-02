@@ -4,7 +4,7 @@
 \alias{laspulse}
 \alias{lasflightline}
 \alias{lasscanline}
-\title{Retrieve individual pulses flightlines or scanlines}
+\title{Retrieve individual pulses, flightlines or scanlines}
 \usage{
 laspulse(las)
 
@@ -15,27 +15,27 @@ lasscanline(las)
 \arguments{
 \item{las}{A LAS object}
 
-\item{dt}{numeric. The threshold time lag used to retrieve flightlines}
+\item{dt}{numeric. The threshold time-lag used to retrieve flightlines}
 }
 \value{
 An object of class \code{LAS}
 }
 \description{
-Retrieve each individual pulse, individual flighline or individual scanline and attributes a number
+Retrieve each individual pulse, individual flightline or individual scanline and assigns a number
 to each point.
 }
 \details{
-The function \code{laspulse} retrieve each individual pulse. It uses the GPS time. An attribute
+The function \code{laspulse} retrieves each individual pulse. It uses GPS time. An attribute
 '\code{pulseID}' is added in the \code{LAS} object\cr\cr
-The function \code{lasscanline} each individual scanline. When data are sampled according to a
-saw-tooth pattern (oscillating mirror) a scanline is one line, or row of data. The function relies
-on the GPS field time to order the data. Then, the 'ScanDirectionFlag' attributes (when available)
+The function \code{lasscanline} retrieves each individual scanline. When data are sampled according to a
+saw-tooth pattern (oscillating mirror), a scanline is one line, or row of data. The function relies
+on the GPS field time to order the data. Then, the 'ScanDirectionFlag' attribute (when available)
 is used to retrieve each scanline. An attribute '\code{scanlineID}' is added in the \code{LAS} object\cr\cr
-The function \code{lasflightline} retrieve each individual flightline. It uses the GPS time. In a
+The function \code{lasflightline} retrieves each individual flightline. It uses GPS time. In a
 continuous dataset, once points are ordered by GPS time, the time between two consecutive points
 does not exceed a few milliseconds. If the time between two consecutive points is too long it means
 that the second point is from a different flightline. The default threshold is 30 seconds.
-An attribute  '\code{flightlineID}' is added in the \code{LAS} object.
+An attribute '\code{flightlineID}' is added in the \code{LAS} object.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
