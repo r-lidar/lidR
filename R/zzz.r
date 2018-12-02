@@ -5,9 +5,9 @@
   {
     v = utils::packageVersion("lidR")
     packageStartupMessage("
-WARNING: lidR version ", v, " is a major reingeeniring of former lidR versions 1.x.y.
+WARNING: lidR version ", v, " is a major reengineering of former lidR versions 1.x.y.
 It comes with many new features and internals improvements but is also *incompatible* with previous versions.
-If you were a user of lidR versions 1 please read the NEWS file at <https://github.com/Jean-Romain/lidR/blob/master/NEWS.md> before to use this new version.
+If you were a user of lidR versions 1.x.y please read the NEWS file at <https://github.com/Jean-Romain/lidR/blob/master/NEWS.md> before using this new version.
 Ask for help on <https://gis.stackexchange.com/>. Report bugs on <https://github.com/Jean-Romain/lidR>.")
   }
 }

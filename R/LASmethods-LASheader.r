@@ -34,8 +34,8 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 
 #' Plot LAS* objects
 #'
-#' Plot displays a \link[lidR:LASheader-class]{LASheader} objects exactly like it displays a LAScatalog
-#' objects.
+#' Plot displays a \link[lidR:LASheader-class]{LASheader} object exactly like it displays a LAScatalog
+#' object.
 #'
 #' @export
 #' @examples

@@ -25,9 +25,9 @@
 #
 # ===============================================================================
 
-#' Transform a LAS* object into sp object
+#' Transform a LAS* object into an sp object
 #'
-#' LAS, LAScatalog are transformed respectively into SpatialPointsDataFrame and SpatialPolygonsDataFrame.
+#' LAS and LAScatalog objects are transformed into SpatialPointsDataFrame and SpatialPolygonsDataFrame objects, respectively.
 #'
 #' @param x an object from the lidR package
 #' @return An object from sp

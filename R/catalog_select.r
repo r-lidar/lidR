@@ -27,8 +27,8 @@
 
 # Select LAS files manually from a LAScatalog
 #
-# Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-# enables the user to subset a LAScatalog by clicking on the map of the file using the mouse.
+# Select a set of LAS tiles from a LAScatalog interactively using the mouse. This function
+# allows users to subset a LAScatalog by clicking on a map of the file.
 #
 # @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
 #

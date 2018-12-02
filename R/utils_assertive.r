@@ -1,13 +1,13 @@
 # All that stuff aims to replace the functions needed by lidR that come from the assertive package.
 # On 2018-11-20 I received an email from Kurt Hornik to announce that assertive will be removed
-# from cran and consequently lidR as well because it as a strong dependency to assertive. This file
-# is quick fix that removes dependency to assertive.
+# from cran and consequently lidR as well because it has a strong dependency to assertive. This file
+# is quick fix that removes the dependency to assertive.
 
 assert_all_are_non_negative = function(x)
 {
   x. <- lazyeval::expr_text(x)
   if (!all(x >= 0))
-    stop(glue::glue("Values of {x.} are not all positive or nul.."))
+    stop(glue::glue("Values of {x.} are not all positive or null."))
 }
 
 
@@ -94,7 +94,7 @@ assert_is_vector = function(x)
 {
   x. <- lazyeval::expr_text(x)
   if (!is.vector(x))
-    stop(glue::glue("{x.} is not vector it is a {class(x)}."))
+    stop(glue::glue("{x.} is not a vector it is a {class(x)}."))
 }
 
 assert_is_list = function(x)

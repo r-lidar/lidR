@@ -31,8 +31,8 @@
 #'
 #' Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
 #' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
-#' in memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
-#' object, the user can extracts any arbitrary ROI for a set of \code{las/laz} file loading only the
+#' into memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
+#' object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
 #' points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
 #'
 #' @template param-las
@@ -46,7 +46,7 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radiuses.
-#' @param ... optionnal supplementary options (see supported geometries)
+#' @param ... optional supplementary options (see supported geometries)
 #'
 #' @section Supported geometries:
 #' \itemize{
@@ -64,7 +64,7 @@
 #'   min     max
 #' x 684816  684943
 #' y 5017823 5017957}
-#'  \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
+#'  \item Any other object that has a bounding box accessible via \code{raster::extent}, such as a
 #'  \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
 #'  }
 #'
@@ -78,24 +78,25 @@
 #' \item buffer: Not supported yet.
 #' \item alignment: Does not makes sense here.
 #' \item \strong{cores}: How many cores are used.
-#' \item \strong{progress}: Displays a progression estimation.
-#' \item \strong{stop_early}: Leave it as it unless you are an advanced user.
+#' \item \strong{progress}: Displays a progress estimation.
+#' \item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 #' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
-#' They will be written immediatly in files. See \link{LAScatalog-class} and examples. The allowed templates in
+#' They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
 #' \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-#' {YCENTER}} or any names from the table of attributes of a spatial objects given as
-#' input such as \code{{PLOT_ID}} or \code{{YEAR}} for example if these attributes exist. If empty everything
+#' {YCENTER}} or any names from the table of attributes of a spatial object given as
+#' input such as \code{{PLOT_ID}} or \code{{YEAR}}, for example, if these attributes exist. If empty everything
 #' is returned into R.
 #' \item \strong{laz_compression}: write \code{las} or \code{laz} files
-#' \item \strong{drivers}: Leave it as it unless you are an advanced user.
-#' \item select: The function will write file equivalent to the original ones. This option is not respected.
-#' \item \strong{filter}: Read only points of interest.
+#' \item \strong{drivers}: Leave this 'as-is' unless you are an advanced user.
+#' \item select: The function will write files equivalent to the originals. This option is not respected.
+#' \item \strong{filter}: Read only the points of interest.
 #' }
 #'
-#' @return If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-#' several regions of interest.\cr\cr
-#' If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-#' several regions of interest or a \code{LAScatalog} if the queries are immediatly written into files without loading anything in R.
+#' @return If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+#' implies several regions of interest will be returned.\cr\cr
+#' If the intput is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+#' implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
+#' without loading anything in R.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -113,7 +114,7 @@
 #' lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
 #' subset3 = lasclip(ctg, lakes)
 #'
-#' # Extract the polygons, write them in files name after the lake names, do not load anything in R
+#' # Extract the polygons, write them in files named after the lake names, do not load anything in R
 #' opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 #' new_ctg = lasclip(ctg, lakes)
 #'
@@ -151,7 +152,7 @@ lasclip = function(las, geometry, ...)
     {
       p <- list(...)
       if (is.null(p$radius))
-        stop("Clipping using sfc_POINT or SpatialPoints* requieres to add a parameter 'radius'.")
+        stop("Clipping using sfc_POINT or SpatialPoints* requires addition of parameter 'radius'.")
 
       centers <- sf::st_coordinates(geometry)
       ycenter <- centers[,2]
@@ -403,10 +404,10 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   }
 
   # Find the ROIs in the catalog and return LASclusters. If a ROI fall outside the catalog
-  # its associated LAScluster is NULL a must receive a special treatment in following code
+  # its associated LAScluster is NULL and must receive a special treatment in following code
   clusters <- catalog_index(ctg, bboxes, shape, 0, outside_catalog_is_null = FALSE)
 
-  # Add some information in the clusters to extract properly polygons and to write correct file names
+  # Add some information in the clusters to correctly extract polygons and to write correct file names
   for (i in 1:length(clusters))
   {
     # skip NULL clusters
@@ -417,7 +418,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     if (!is.null(sf))
       clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
 
-    # If the user want to write the ROIs in files. Generate a filename.
+    # If the user wants to write the ROIs in files. Generate a filename.
     if (opt_output_files(ctg) != "")
     {
       if (!is.null(sf))
@@ -471,7 +472,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   # Process the cluster using LAScatalog internal engine
   output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE)
 
-  # output should contains nothing because everything have been streamed into files
+  # output should contain nothing because everything has been streamed into files
   if (opt_output_files(ctg) != "")
   {
     written_path = c()
@@ -493,7 +494,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     opt_copy(new_ctg) <- ctg
     return(list(new_ctg))
   }
-  # output should contains LAS objects returned at the R level
+  # output should contain LAS objects returned at the R level
   else
   {
     for (i in 1:length(output))
@@ -503,14 +504,14 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
         # Transfer the CRS of the catalog.
         output[[i]]@proj4string <- ctg@proj4string
 
-        # Patch to solves issue #73 waiting for a better solution in issue 2333 in data.table
+        # Patch to solve issue #73 waiting for a better solution in issue #2333 in data.table
         if (opt_cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
       }
       else
       {
-        # For consitancy with LAS dispatched functions, LAScatalog must return empty LAS that respect
-        # select option. The following is definitively a twist to get a consitant ouput but happend
-        # only for dummy queries outise the catalog
+        # For consistency with LAS dispatched functions, LAScatalog must return empty LAS objects that respect
+        # the select option. The following is definitively a twist to get a consistent output but happened
+        # only for dummy queries outide the catalog
         emptylas <- readLAS(ctg@data$filename[1], ctg@input_options$select, filter = "-inside 0 0 0 0")
         output[[i]] <- emptylas
         message(glue::glue("No point found for within region of interest {i}."))

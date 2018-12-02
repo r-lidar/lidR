@@ -29,7 +29,7 @@
 #' @param header a \code{list} or a \link[lidR:LASheader-class]{LASheader} containing the header of
 #' a las or laz file.
 #' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
-#' @param check logical. conformity tests while building the object.
+#' @param check logical. Conformity tests while building the object.
 #' @return An object of class \code{LAS}
 #' @export
 #' @include LASmethods-generic.r
@@ -160,10 +160,10 @@ setMethod("print", "LAS", function(x)
 
 #' Inherited but modified methods from sp
 #'
-#' \code{LAS*} objects being \link[sp:Spatial-class]{Spatial} object they inherit several methods
-#' from \code{sp}. However, some have modified behaviors to forbid some unrelevant modifications. Indeed
-#' a \code{LAS*} object cannot contains anything. The content is restricted by the LAS specifications.
-#' If a user try to use one of these function in a bad way an informative error will be thrown.
+#' \code{LAS*} objects are \link[sp:Spatial-class]{Spatial} objects so they inherit several methods
+#' from \code{sp}. However, some have modified behaviors to prevent some irrrelevant modifications. Indeed,
+#' a \code{LAS*} object cannot contain anything, as the content is restricted by the LAS specifications.
+#' If a user attempts to use one of these functions inappropriately an informative error will be thrown.
 #'
 #' @param x A \code{LAS*} object
 #' @param name A literal character string or a name (possibly backtick quoted).
@@ -259,7 +259,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   pcv     <- "PointCloudViewer" %in% rownames(utils::installed.packages())
 
   if (backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
-  if (length(color) > 1)          stop("'color' should contains a single value.", call. = F)
+  if (length(color) > 1)          stop("'color' should contain a single value.", call. = F)
 
   if (color != "RGB" & !color %in% names(x@data))
     stop("'color' should refer to an attribute of the LAS data.", call. = F)

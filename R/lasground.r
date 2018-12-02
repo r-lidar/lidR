@@ -26,18 +26,18 @@
 # ===============================================================================
 
 
-#' Classify points as ground or not ground
+#' Classify points as 'ground' or 'not ground'
 #'
-#' Classify points as ground or not ground with several possible algorithms. The function updates the
+#' Classify points as 'ground' or 'not ground' with several possible algorithms. The function updates the
 #' attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
 #' a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
 #'
 #' @template param-las
 #'
-#' @param algorithm a ground segmentation function. \code{lidR} have: \link{pmf} and \link{csf}
+#' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
-#' in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent \code{'last_returns'} is turned
+#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
 #' @template LAScatalog
@@ -112,7 +112,7 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
 
     if (nground > 0)
     {
-      message(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before to perform a new ground classification."))
+      message(glue::glue("Original dataset already contains {nground} ground points. These points were reclassified as 'unclassified' before performing a new ground classification."))
       new_classes <- las@data[["Classification"]]
       new_classes[new_classes == LASGROUND] <- LASUNCLASSIFIED
     }

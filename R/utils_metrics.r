@@ -30,7 +30,7 @@
 #' Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics}, \link{tree_metrics},
 #' and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
 #' to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
-#' standard metrics has been predefined. To use these functions please read the Details and Examples sections.
+#' standard metrics has been predefined. To use these functions please read the details and examples sections.
 #'
 #' The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
 #' \itemize{
@@ -47,14 +47,14 @@
 #' The function \code{stdmetric_i} refers to metrics of intensity. A description of each existing metric can be found
 #' on the \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
 #' Some functions have optional parameters. If these parameters are not provided the function
-#' computes only a subset of existing metrics. For example \code{stdmetrics_i} requires the intensity
-#' values, but if the elevation values are provided it can compute additional metrics such as cumulative
+#' computes only a subset of existing metrics. For example, \code{stdmetrics_i} requires the intensity
+#' values, but if the elevation values are also provided it can compute additional metrics such as cumulative
 #' intensity at a given percentile of height.\cr\cr
 #' Each function has a convenient associated variable. It is the name of the function, with a
 #' dot before the name. This enables the function to be used without writing parameters. The cost
 #' of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr\cr
-#' \code{stdtreemetrics} is a special function which works with \link{tree_metrics}. Actually
-#' it won't fail with other functions but the output make sense more sense if computed at the
+#' \code{stdtreemetrics} is a special function that works with \link{tree_metrics}. Actually,
+#' it won't fail with other functions but the output makes more sense if computed at the
 #' individual tree level.
 #'
 #' @param x,y,z,i,a Coordinates of the points, Intensity and ScanAngle
@@ -107,7 +107,7 @@
 #'
 #' m10 = grid_metrics(las, myMetrics(Z, Intensity))
 #'
-#' # User can write your own convenient shorcuts like this:
+#' # Users can write your own convenient shorcuts like this:
 #' .myMetrics = ~myMetrics(Z,Intensity)
 #'
 #' m11 = grid_metrics(las, .myMetrics)
@@ -232,7 +232,7 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 #' developed by Shannon and Weaver for use in information theory, was successfully transferred
 #' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
 #' to quantify the diversity and the evenness of an elevational distribution of las points. It
-#' makes bins between 0 and the maximum elevation. If there are negative value the function
+#' makes bins between 0 and the maximum elevation. If there are negative values the function
 #' returns NA.
 #'
 #' @param z vector of positive z coordinates
@@ -273,7 +273,7 @@ entropy = function(z, by = 1, zmax = NULL)
   if (min(z) < 0)
     return(NA_real_)
 
-	# Define the x meters bins from 0 to zmax (rounded to the next integer)
+	# Define the number of x meters bins from 0 to zmax (rounded to the next integer)
 	bk = seq(0, ceiling(zmax/by)*by, by)
 
 	# Compute the p for each bin
@@ -281,7 +281,7 @@ entropy = function(z, by = 1, zmax = NULL)
 	hist = fast_table(hist, length(bk) - 1)
 	hist = hist/sum(hist)
 
-	# Remove bin where there are no points because of log(0)
+	# Remove bins where there are no points because of log(0)
 	p    = hist[hist > 0]
 	pref = rep(1/length(hist), length(hist))
 
@@ -632,14 +632,13 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 
 # fractal_dimension
 #
-# Computes the fractal dimension of a surface. The fractal dimension is a measure
-# of roughness.
+# Computes the fractal dimension of a surface. The fractal dimension is a measure of roughness.
 #
 # Fractal dimension computes the roughness based on the box counting method (see Taud and Parrot).
 # If the input has an NA value, it returns NA. If the input is too small it returns NA.
-# If the input matrix is not a square matrix, the function cuts the input matrix to create a square matrix.
-# @param mtx numeric matrix that is the representation of a surface model
-# @return numeric. A number between 0 and 3. 3 being the dimension of a volume
+# If the input matrix is not square, the function cuts the input matrix to create a square matrix.
+# @param mtx numeric matrix that is the representation of a surface model.
+# @return numeric. A number between 0 and 3, with 3 being the dimension of a volume.
 # @references Taud, H., & Parrot, J.-F. (2005). Mesure de la rugosite des MNT a l'aide de la dimension fractale. Geomorphologie : Relief, Processus, Environnement, 4, 327-338. http://doi.org/10.4000/geomorphologie.622
 # @examples
 # mtx = matrix(runif(100), 10, 10)

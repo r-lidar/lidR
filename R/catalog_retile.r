@@ -31,14 +31,14 @@
 #' Splits or merges files to reshape the original catalog files (.las or .laz) into smaller or larger
 #' files. It also enables the addition or removal of a buffer around the tiles. The function first
 #' displays the layout of the new tiling pattern and then asks the user to validate the command.\cr
-#' Internally the function reads and writes the clusters defined by the internal processing options
-#' of a \link[lidR:LAScatalog-class]{LAScatalog} processing engine. Thus the function is flexible and
+#' Internally, the function reads and writes the clusters defined by the internal processing options
+#' of a \link[lidR:LAScatalog-class]{LAScatalog} processing engine. Thus, the function is flexible and
 #' enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
 #' allowed), or optionally to compress the data by retiling without changing the pattern but by changing
 #' the format (las/laz).\cr\cr
 #' Note that this function is not actually very useful since \code{lidR} manages everything
 #' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
-#' useful for working in other softwares for example, but not in \code{lidR}.
+#' useful for working in other software, for example, but not in \code{lidR}.
 #'
 #' @template LAScatalog
 #'
@@ -47,15 +47,15 @@
 #' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 #' \itemize{
 #' \item \strong{chunk_size}: Size of the new tiles.
-#' \item \strong{buffer}: Load new tiles with a buffer. Usually 0 is the expected value.
+#' \item \strong{buffer}: Load new tiles with a buffer. The expected value is usually 0.
 #' \item \strong{alignment}: Alignment of the new tiles.
-#' \item \strong{cores}: How many cores are used. \code{catalog_retile} streams the data (nothing is
-#' loaded at th R level). The maximum number of core can be safely used.
-#' \item \strong{progress}: Displays a progression estimation.
-#' \item \strong{output_files*}: Mandatory. The new tiles will be written in files new files.
+#' \item \strong{cores}: The number of cores used. \code{catalog_retile} streams the data (nothing is
+#' loaded at th R level). The maximum number of cores can be safely used.
+#' \item \strong{progress}: Displays a progress estimation.
+#' \item \strong{output_files*}: Mandatory. The new tiles will be written in new files.
 #' \item \strong{laz_compression}: save \code{las} or \code{laz} files.
 #' \item select: \code{catalog_retile} preserve the file format anyway.
-#' \item \strong{filter}: Retile and save only points of interest.
+#' \item \strong{filter}: Retile and save only the points of interest.
 #' }
 #'
 #' @param ctg A \link[lidR:catalog]{LAScatalog} object
@@ -68,7 +68,7 @@
 #' \dontrun{
 #' ctg = catalog("path/to/catalog")
 #'
-#' # Create a new set of .las files 500 by 500 wide in the folder
+#' # Create a new set of .las files 500 x 500 wide in the folder
 #' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
 #' # Forest_3.las, and so on.
 #'
@@ -77,7 +77,7 @@
 #' opt_output_files(ctg) <- "path/to/new/catalog/Forest_{ID}
 #' newctg = catalog_retile(ctg)
 #'
-#' # Create a new set of .las files equivalent to the original one
+#' # Create a new set of .las files equivalent to the original,
 #' # but extended with a 50 m buffer in the folder path/to/new/catalog/
 #' # and iteratively named named after the original files.
 #'
@@ -86,7 +86,7 @@
 #' opt_output_files(ctg) <- "path/to/new/catalog/{ORIGINALFILENAME}_buffered
 #' newctg = catalog_retile(ctg)
 #'
-#' # Create a new set of compressed .laz file equivalent to the original one keeping only
+#' # Create a new set of compressed .laz file equivalent to the original, keeping only
 #' # first returns above 2 m
 #'
 #' opt_chunk_buffer(ctg) <- 0
@@ -100,7 +100,7 @@ catalog_retile = function(ctg)
   interact <- getOption("lidR.interactive")
 
   if (opt_output_files(ctg) == "")
-    stop("This function requieres that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
+    stop("This function requires that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
 
   laz  <- opt_laz_compression(ctg)
   path <- opt_output_files(ctg)
