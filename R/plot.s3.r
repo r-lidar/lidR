@@ -98,9 +98,9 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates.
 #' @param z character. The name of the attribute that contains the height of the tree tops.
 #' @param clear_artifacts logical. It is a known and documented issue that 3D visualisation with
-#' \code{rgl} displays artifacts. The oints and lines are inaccurately positioned in the space and thus
-#' the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}. 
-#' To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent 
+#' \code{rgl} displays artifacts. The points and lines are inaccurately positioned in the space and thus
+#' the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}.
+#' To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
 #' their coordinates. The drawback is that the objects are not plotted at their actual coordinates.
 #'
 #' @name plot_3d

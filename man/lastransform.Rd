@@ -2,17 +2,17 @@
 % Please edit documentation in R/lastransform.r
 \name{lastransform}
 \alias{lastransform}
-\title{Datum transformation for LAS object}
+\title{Datum transformation for LAS objects}
 \usage{
 lastransform(las, epsg, CRSobj = NULL)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS}}
 
-\item{epsg}{integer. Unlike \code{spTransform} the EPSG code of the CRS should be prefereed for
-LAS objects. See also \link{epsg} to understand why. If missing \code{CRSobj} will be used instead.}
+\item{epsg}{integer. Unlike \code{spTransform} the EPSG code of the CRS should be preferred for
+LAS objects. See also \link{epsg} to understand why. If missing, \code{CRSobj} will be used instead.}
 
-\item{CRSobj}{logical. Object of class \link[sp:CRS-class]{CRS}, or of class character in which
+\item{CRSobj}{logical. Object of class \link[sp:CRS-class]{CRS} or of class character, in which
 case it is converted to \link[sp:CRS-class]{CRS}.}
 }
 \value{
@@ -20,9 +20,9 @@ An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to
 coordinate reference system.
 }
 \description{
-A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects. r
-Returns transformed coordinates of an \code{LAS} object from the projection of the object to the
-the projection given in argument.
+A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects. 
+Returns transformed coordinates of a \code{LAS} object from the projection of the object to the
+the projection given by arguments.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

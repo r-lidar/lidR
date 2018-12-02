@@ -13,7 +13,7 @@ grid_canopy(las, res, algorithm)
 In that case the \code{RasterLayer} is used as the layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute a digital surface model.
-\code{lidR} have \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentations and exemples).}
+\code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree} (see respective documentation and examples).}
 }
 \value{
 A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s
@@ -73,12 +73,12 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile)
 col <- height.colors(50)
 
-# Points-to-raster algorithm with a resolution of 1 meters
+# Points-to-raster algorithm with a resolution of 1 meter
 chm <- grid_canopy(las, res = 1, p2r())
 plot(chm, col = col)
 
-# Points-to-raster algorithm with a resolution of 0.5 meter replacing each
-# point by a 20 cm radius circle of 8 points
+# Points-to-raster algorithm with a resolution of 0.5 meters replacing each
+# point by a 20-cm radius circle of 8 points
 chm <- grid_canopy(las, res = 0.5, p2r(0.2))
 plot(chm, col = col)
 

@@ -16,7 +16,7 @@ a las or laz file.}
 
 \item{proj4string}{projection string of class \link[sp:CRS-class]{CRS-class}.}
 
-\item{check}{logical. conformity tests while building the object.}
+\item{check}{logical. Conformity tests while building the object.}
 }
 \value{
 An object of class \code{LAS}
@@ -26,11 +26,11 @@ Class LAS is the representation of a las/laz file according to the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
 }
 \details{
-A \code{LAS} object inherit a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
+A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
 a \code{Spatial} object plus a \code{data.table} with the data read from  a \code{las/laz} file and
 a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
-for more information). las files being normalised the table of attributes read from the las/laz file
+for more information). Because las files are normalised the table of attributes read from the las/laz file
 is also normalized. Columns are named:
 \itemize{
 \item{\code{X} (numeric)}
@@ -62,10 +62,10 @@ is also normalized. Columns are named:
 
 \item{\code{proj4string}}{Object of class \link[sp:CRS-class]{CRS}, projection string}
 
-\item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data accoridng to the
+\item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
 
-\item{\code{header}}{Object of class \link[lidR:LASheader-class]{LASheader}. las file header accoridng to the
+\item{\code{header}}{Object of class \link[lidR:LASheader-class]{LASheader}. las file header according to the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
 }}
 

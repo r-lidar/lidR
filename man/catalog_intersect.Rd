@@ -15,8 +15,8 @@ catalog_intersect(ctg, y)
 A LAScatalog
 }
 \description{
-Subset a LAScatalog with a Spatial* object to keep only tile of interest. It uses internally the
-function \link[raster:intersect]{intersect} from \code{raster} with a tweak to make it working
-with a LAScatalog. It can be used to select tile of interest that encompass Spatial* objects such
+Subset a LAScatalog with a Spatial* object to keep only the tiles of interest. Internally, it uses the
+function \link[raster:intersect]{intersect} from \code{raster} with a tweak to make it work
+with a LAScatalog. It can be used to select tiles of interest that encompass Spatial* objects such
 as SpatialPoints, SpatialPolygons or SpatialLines.
 }

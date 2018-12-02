@@ -18,7 +18,7 @@ in a relatively detailed shape, Infinity results in a convex hull.}
 \item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is below this
 threshold, no further detail is added. Higher values result in simpler shapes.}
 
-\item{attribute}{character. The attribute where the ID of each tree is stored. In lidR, default is
+\item{attribute}{character. The attribute where the ID of each tree is stored. In lidR, the default is
 "treeID".}
 }
 \value{

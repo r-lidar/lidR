@@ -20,7 +20,7 @@ lasclipCircle(las, xcenter, ycenter, radius)
 
 \item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
 
-\item{...}{optionnal supplementary options (see supported geometries)}
+\item{...}{optional supplementary options (see supported geometries)}
 
 \item{xleft}{numeric. left x coordinates of rectangles.}
 
@@ -41,16 +41,17 @@ lasclipCircle(las, xcenter, ycenter, radius)
 \item{radius}{numeric. disc radiuses.}
 }
 \value{
-If the intput is a \code{LAS} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-several regions of interest.\cr\cr
-If the intput is a \code{LAScatalog} object: an object of class \code{LAS} or a \code{list} of \code{LAS} objects if the query implies to return
-several regions of interest or a \code{LAScatalog} if the queries are immediatly written into files without loading anything in R.
+If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+implies several regions of interest will be returned.\cr\cr
+If the intput is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
+without loading anything in R.
 }
 \description{
 Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
 (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
-in memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
-object, the user can extracts any arbitrary ROI for a set of \code{las/laz} file loading only the
+into memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
+object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
 points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
 }
 \section{Supported geometries}{
@@ -70,7 +71,7 @@ points of interest. This is faster, easier and much more memory-efficient for ex
   min     max
 x 684816  684943
 y 5017823 5017957}
- \item Any other object that have a bouding box accessible via \code{raster::extent} such as a
+ \item Any other object that has a bounding box accessible via \code{raster::extent}, such as a
  \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
  }
 }
@@ -99,18 +100,18 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item buffer: Not supported yet.
 \item alignment: Does not makes sense here.
 \item \strong{cores}: How many cores are used.
-\item \strong{progress}: Displays a progression estimation.
-\item \strong{stop_early}: Leave it as it unless you are an advanced user.
+\item \strong{progress}: Displays a progress estimation.
+\item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
-They will be written immediatly in files. See \link{LAScatalog-class} and examples. The allowed templates in
+They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
 \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-{YCENTER}} or any names from the table of attributes of a spatial objects given as
-input such as \code{{PLOT_ID}} or \code{{YEAR}} for example if these attributes exist. If empty everything
+{YCENTER}} or any names from the table of attributes of a spatial object given as
+input such as \code{{PLOT_ID}} or \code{{YEAR}}, for example, if these attributes exist. If empty everything
 is returned into R.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item \strong{drivers}: Leave it as it unless you are an advanced user.
-\item select: The function will write file equivalent to the original ones. This option is not respected.
-\item \strong{filter}: Read only points of interest.
+\item \strong{drivers}: Leave this 'as-is' unless you are an advanced user.
+\item select: The function will write files equivalent to the originals. This option is not respected.
+\item \strong{filter}: Read only the points of interest.
 }
 }
 
@@ -127,10 +128,10 @@ subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
 # Extract all the polygons from a shapefile
 shapefile_dir <- system.file("extdata", package = "lidR")
-lakes = rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
 subset3 = lasclip(ctg, lakes)
 
-# Extract the polygons, write them in files name after the lake names, do not load anything in R
+# Extract the polygons, write them in files named after the lake names, do not load anything in R
 opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = lasclip(ctg, lakes)
 
