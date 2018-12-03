@@ -5,48 +5,47 @@
 \alias{lasunsmooth}
 \title{Smooth a point cloud}
 \usage{
-lassmooth(las, size, method = c("average", "gaussian"), shape = c("circle",
-  "square"), sigma = size/6)
+lassmooth(las, size, method = c("average", "gaussian"),
+  shape = c("circle", "square"), sigma = size/6)
 
 lasunsmooth(las)
 }
 \arguments{
 \item{las}{An object of class \code{LAS}}
 
-\item{size}{numeric. The size of the windows used to smooth}
+\item{size}{numeric. The size of the windows used to smooth.}
 
 \item{method}{character. Smoothing method. Can be 'average' or 'gaussian'.}
 
 \item{shape}{character. The shape of the windows. Can be circle or square.}
 
-\item{sigma}{numeric. The standard deviation of the gaussian if the method is gaussian}
+\item{sigma}{numeric. The standard deviation of the gaussian if the method is gaussian.}
 }
 \value{
-Nothing (NULL). The original object has been updated in place. The 'Z' column is now the
-smoothed 'Z'. A new column 'Zraw' is added in the original object to store the original values.
+An object of the class \code{LAS}.
 }
 \description{
 Point cloud-based smoothing algorithm. Two methods are available: average within a window and
-Gaussian smooth within a window. The original object is updated in place. The Z column is now
-the smoothed Z. A new column Zraw is added to store the original values and can be used to
-restore the point cloud with \code{lasunsmooth}.
+Gaussian smooth within a window. The attribute \code{Z} of the returned LAS object is the smoothed Z.
+A new attribute \code{Zraw} is added to store the original values and can be used to restore the
+point cloud with \code{lasunsmooth}.
 }
 \details{
 This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
 smoothing. It is not really useful by itself but may be interesting in combination with filters such
-as \link{lasfiltersurfacepoints}, for example.
+as \link{lasfiltersurfacepoints}, for example to develop new algorithms.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
+las <- readLAS(LASfile, select = "xyz")
 
-las = lasfiltersurfacepoints(las, 1)
+las <- lasfiltersurfacepoints(las, 1)
 plot(las)
 
-lassmooth(las, 5, "gaussian", "circle", sigma = 2)
+las <- lassmooth(las, 5, "gaussian", "circle", sigma = 2)
 plot(las)
 
-lasunsmooth(las)
+las <- lasunsmooth(las)
 plot(las)
 }
 \seealso{

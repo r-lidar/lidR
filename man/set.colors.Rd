@@ -4,12 +4,12 @@
 \alias{set.colors}
 \title{Automatic colorization}
 \usage{
-set.colors(x, palette, trim = 1)
+set.colors(x, palette, trim = Inf)
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{A vector.}
 
-\item{palette}{function. A color palette function. Default is \code{height.colors} provided by the package lidR}
+\item{palette}{function. A color palette function. Default is \code{height.colors} provided by the package lidR.}
 
 \item{trim}{numeric.}
 }

@@ -29,32 +29,26 @@
 #'
 #' Attribute a color to each element of a vector
 #'
-#' @param x A vector
-#' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR
+#' @param x A vector.
+#' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR.
 #' @param trim numeric.
 #' @keywords internal
-set.colors = function(x, palette, trim = 1)
+set.colors = function(x, palette, trim = Inf)
 {
   if (all(is.na(x)))
     return(rep("lightgrey", length(x)))
 
-  ncolors = length(palette)
-
-  if (trim < 1)
-  {
-    n = stats::quantile(x, trim)
-    x[x > n] = n
-  }
-
-  minx = min(x, na.rm = T)
-  maxx = max(x, na.rm = T)
+  ncolors <- length(palette)
+  if(!is.infinite(trim)) x[x > trim] <- trim
+  minx <- min(x, na.rm = T)
+  maxx <- max(x, na.rm = T)
 
   if (maxx-minx == 0)
-    colors = palette[1]
+    colors <- palette[1]
   else
   {
-    idx = findInterval(x, seq(minx, maxx, length.out = ncolors))
-    colors = palette[idx]
+    idx <- findInterval(x, seq(minx, maxx, length.out = ncolors))
+    colors <- palette[idx]
   }
 
   return(colors)

@@ -54,16 +54,16 @@ RasterProcessor::RasterProcessor(double minx, double miny, double maxx, double m
   j = 0;
 
   m_res = res;
-  m_startx = roundany(minx);
-  m_starty = roundany(miny);
+  m_startx = minx;
+  m_starty = miny;
   m_xmin   = minx;
   m_ymin   = miny;
 
-  double endx = roundany(maxx) + res;
-  double endy = roundany(maxy) + res;
+  double endx = maxx;
+  double endy = maxy;
 
-  m_ncols  = (endx - m_startx) / m_res + 1;
-  m_nrows  = (endy - m_starty) / m_res + 1;
+  m_ncols  = (endx - m_startx) / m_res;
+  m_nrows  = (endy - m_starty) / m_res;
 
   m_raster = NumericMatrix(m_ncols, m_nrows);
   std::fill(m_raster.begin(), m_raster.end(), NA_REAL);
@@ -76,46 +76,18 @@ RasterProcessor::~RasterProcessor()
 {
 }
 
-void RasterProcessor::xy2ij(double x, double y)
+bool RasterProcessor::xy2ij(double x, double y)
 {
-  i = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
-  j = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
+  int i_ = (int)(std::abs((m_startx - x) / m_res) + 1)-1;
+  int j_ = m_nrows - (int)(std::abs((m_starty - y) / m_res))-1;
 
-  if (i < 0 || i >= m_ncols || j < 0 || j >= m_nrows)
-    throw exception("in xy2ij(): index out of bounds");
+  if (i_ < 0 || i_ >= m_ncols || j_ < 0 || j_ >= m_nrows)
+    return false;
 
-  return;
-}
+  i = i_;
+  j = j_;
 
-double RasterProcessor::roundany(double x)
-{
-  return round(x / m_res) * m_res;
-}
-
-List RasterProcessor::expend()
-{
-  double x;
-  double y;
-  std::vector<double> X, Y, Z;
-
-  for (i = 0 ; i < m_ncols ; i++)
-  {
-    x = m_startx + i * m_res + 0.5 * m_res;
-
-    for (j = 0 ; j < m_nrows ; j++)
-    {
-      y = m_starty + (m_nrows - j - 1) * m_res + 0.5 * m_res;
-
-      if (!NumericVector::is_na(m_raster(i,j)))
-      {
-        X.push_back(x);
-        Y.push_back(y);
-        Z.push_back(m_raster(i,j));
-      }
-    }
-  }
-
-  return List::create(Named("X") = X, Named("Y") = Y, Named("Z") = Z);
+  return true;
 }
 
 NumericMatrix RasterProcessor::getmatrix()
@@ -137,7 +109,8 @@ PointToRasterProcessor::~PointToRasterProcessor()
 
 void PointToRasterProcessor::max(double x, double y, double z)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (m_raster(i,j) < z || NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = z;
@@ -145,19 +118,21 @@ void PointToRasterProcessor::max(double x, double y, double z)
   return;
 }
 
-void PointToRasterProcessor::min(double x, double y, double z)
+/*void PointToRasterProcessor::min(double x, double y, double z)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (m_raster(i,j) > z || NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = z;
 
   return;
-}
+}*/
 
 void PointToRasterProcessor::count(double x, double y)
 {
-  xy2ij(x,y);
+  if(!xy2ij(x,y))
+    return;
 
   if (NumericVector::is_na(m_raster(i,j)))
     m_raster(i,j) = 1;

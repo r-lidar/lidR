@@ -4,18 +4,18 @@
 \alias{lasfilter}
 \title{Return points with matching conditions}
 \usage{
-lasfilter(.las, ...)
+lasfilter(las, ...)
 }
 \arguments{
-\item{.las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
+\item{las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
 
-\item{\dots}{Logical predicates. Multiple conditions are combined with & or ,}
+\item{\dots}{Logical predicates. Multiple conditions are combined with '&' or ','}
 }
 \value{
 An object of class \code{\link[lidR:LAS-class]{LAS}}
 }
 \description{
-Return points with matching conditions.
+Return points with matching conditions
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -31,6 +31,8 @@ firstground = lasfilter(lidar, Classification == 1, ReturnNumber == 1)
 first_or_ground = lasfilter(lidar, Classification == 1 | ReturnNumber == 1)
 }
 \seealso{
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
+Other lasfilters: \code{\link{lasfilterduplicates}},
+  \code{\link{lasfiltersurfacepoints}},
   \code{\link{lasfilters}}
 }
+\concept{lasfilters}

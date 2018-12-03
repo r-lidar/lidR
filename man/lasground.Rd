@@ -2,69 +2,81 @@
 % Please edit documentation in R/lasground.r
 \name{lasground}
 \alias{lasground}
-\alias{lasground_pmf}
-\title{Classify points as ground or not ground}
+\title{Classify points as 'ground' or 'not ground'}
 \usage{
-lasground(las, algorithm, ...)
-
-lasground_pmf(las, ws, th, last_returns = TRUE)
+lasground(las, algorithm, last_returns = TRUE)
 }
 \arguments{
-\item{las}{a LAS object.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{character. The name of an algorithm. Currently \code{"pmf"} is supported
-(see related sections).}
-
-\item{...}{parameters for the algorithms. These depend on the algorithm used (see details
-of the algorithms).}
-
-\item{ws}{numeric. Sequence of windows sizes to be used in filtering ground returns.
-The values must be positive and in the same units as the point cloud (usually meters, occasionally
-feet).}
-
-\item{th}{numeric. Sequence of threshold heights above the parameterized ground surface to be
-considered a ground return. The values must be positive and in the same units as the point cloud.}
+\item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
-in the cases of single return) to run the algorithm. If FALSE all the returns are used. If the fields
-\code{'ReturnNumber'} or \code{'NumberOfReturns'} are not specified \code{'last_returns'} is turned
+in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 to \code{FALSE} automatically.}
 }
 \value{
-Nothing. The original LAS object is updated by reference. In the 'Classification'
-column a value of 2 denotes 'ground' according to LAS specifications.
+If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
+\code{LAScatalog}, returns a \code{LAScatalog}.
 }
 \description{
-Implements algorithms for segmentation of ground points. The function updates the field
-\code{Classification} of the LAS input object. The points classified as 'ground' are
-assigned a value of 2 according to las specifications (See the ASPRS documentation for the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}).
+Classify points as 'ground' or 'not ground' with several possible algorithms. The function updates the
+attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
+a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
 }
-\section{Progressive morphological filter (PMF)}{
+\section{Working with a \code{LAScatalog}}{
 
+This section appears in each function that supports a LAScatalog as input.\cr
 
-This method is an implementation of the Zhang et al. (2003) algorithm (see reference).
-Note that this is not a strict implementation of Zhang et al. This algorithm works at the point
-cloud level without any rasterization process. The morphological operator is applied on
-the point cloud, not on a raster. Also, Zhang et al. proposed some formulas (eq. 4, 5 and 7)
-to compute the sequence of windows sizes and thresholds. Here, these parameters are free
-and specified by the user. The function \link{util_makeZhangParam} enables computation
-of the parameters according to the original paper.
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+function uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that documents the supported engine options.\cr
+
+The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{chunk size}: How much data is loaded at once.
+\item \strong{chunk buffer*}: Mandatory to get a continuous output without edge effects. The buffer
+is always removed once processed and will never be returned either in R or in files.
+\item \strong{chunk alignment}: Align the processed chunks.
+\item \strong{cores}: How many cores are used. More cores means more data is loaded at once.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
+ in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
+chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
+}
 }
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzRN")
+las <- readLAS(LASfile, select = "xyzrn")
 
-ws = seq(3,12, 3)
-th = seq(0.1, 1.5, length.out = length(ws))
+# Using the Progressive Morphological Filter
+# --------------------------------------
 
-lasground(las, "pmf", ws, th)
+ws  <- seq(3,12, 3)
+th  <- seq(0.1, 1.5, length.out = length(ws))
 
+las <- lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
-}
-\references{
-Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
-morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
-Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
+
+# Using the Cloth Simulation Filter
+# --------------------------------------
+
+las <- lasground(las, csf())
 }

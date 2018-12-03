@@ -1,54 +1,41 @@
 #include "QuadTree.h"
-#include <cmath>
-#include <limits>
-#include <algorithm>
-#include <iostream>
 
-static inline double max (double a, double b, double c)
+QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
-  if (a < b)
-    return (b < c ? c : b);
-  else
-    return (a < c ? c : a);
+  use3D = false;
+  init();
+  boundary = BoundingBox(Point(xcenter, ycenter), Point(range, range));
 }
 
-static inline double min (double a, double b, double c)
+QuadTree::QuadTree(const BoundingBox boundary, const QuadTree* parent)
 {
-  if (a > b)
-    return (b > c ? c : b);
-  else
-    return (a > c ? c : a);
+  init();
+  this->boundary = boundary;
+  this->depth = parent->depth + 1;
+  this->Z = parent->Z;
+  this->use3D = parent->use3D;
 }
 
-QuadTree::QuadTree(const double cx, const double cy, const double range)
+QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y)
 {
-  MAX_DEPTH = 6;
-  EPSILON = 0.001;
-  EPSILONSQ = EPSILON*EPSILON;
-  npoints = 0;
-
-  boundary = BoundingBox(Point(cx, cy), Point(range, range));
-  depth = 1;
-
-  NE = 0;
-  NW = 0;
-  SE = 0;
-  SW = 0;
+  use3D = false;
+  init(x,y);
 }
 
-QuadTree::QuadTree(const BoundingBox boundary, const QuadTree* parent) : boundary(boundary)
+QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
 {
-  MAX_DEPTH = 6;
-  EPSILON = 0.001;
-  EPSILONSQ = EPSILON*EPSILON;
-  npoints = 0;
+  use3D = true;
+  init(x,y,z);
+}
 
-  depth = parent->depth + 1;
-
-  NE = 0;
-  NW = 0;
-  SE = 0;
-  SW = 0;
+QuadTree::QuadTree(Rcpp::S4 las)
+{
+  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
+  Rcpp::NumericVector x = data["X"];
+  Rcpp::NumericVector y = data["Y"];
+  Rcpp::NumericVector z = data["Z"];
+  use3D = true;
+  init(x,y,z);
 }
 
 QuadTree::~QuadTree()
@@ -91,7 +78,7 @@ void QuadTree::subdivide()
 {
   double half_res_half = boundary.half_res.x * 0.5;
 
-  Point p(half_res_half+EPSILONSQ, half_res_half+EPSILONSQ);
+  Point p(half_res_half+0.0001, half_res_half+0.0001);
   Point pNE(boundary.center.x + half_res_half, boundary.center.y + half_res_half);
   Point pNW(boundary.center.x - half_res_half, boundary.center.y + half_res_half);
   Point pSE(boundary.center.x + half_res_half, boundary.center.y - half_res_half);
@@ -103,75 +90,7 @@ void QuadTree::subdivide()
   SW = new QuadTree(BoundingBox(pSW, p), this);
 }
 
-void QuadTree::range_lookup(const BoundingBox bb, std::vector<Point*>& res, const int method)
-{
-  if(!boundary.intersects(bb))
-    return;
-
-  if(depth == MAX_DEPTH)
-  {
-    switch(method)
-    {
-    case 1: getPointsSquare(bb, points, res);
-      break;
-
-    case 2: getPointsCircle(bb, points, res);
-      break;
-    }
-  }
-
-  if(NW == 0)
-    return;
-
-  NE->range_lookup(bb, res, method);
-  NW->range_lookup(bb, res, method);
-  SE->range_lookup(bb, res, method);
-  SW->range_lookup(bb, res, method);
-
-  return;
-}
-
-void QuadTree::rect_lookup(const double xc, const double yc, const double half_width, const double half_height, std::vector<Point*>& res)
-{
-  range_lookup(BoundingBox(Point(xc, yc), Point(half_width, half_height)), res, 1);
-  return;
-}
-
-
-void QuadTree::circle_lookup(const double cx, const double cy, const double range, std::vector<Point*>& res)
-{
-  range_lookup(BoundingBox(Point(cx, cy), Point(range, range)), res, 2);
-  return;
-}
-
-void QuadTree::triangle_lookup(const Point& A, const Point& B, const Point& C, std::vector<Point*>& res)
-{
-  // Boundingbox of A B C
-  double rminx = min(A.x, B.x, C.x);
-  double rmaxx = max(A.x, B.x, C.x);
-  double rminy = min(A.y, B.y, C.y);
-  double rmaxy = max(A.y, B.y, C.y);
-
-  double xcenter = (rminx + rmaxx)/2;
-  double ycenter = (rminy + rmaxy)/2;
-  double half_width = (rmaxx - rminx)/2 + EPSILON;
-  double half_height = (rmaxy - rminy )/2 + EPSILON;
-
-  // Boundingbox lookup
-  std::vector<Point*> points;
-  rect_lookup(xcenter, ycenter, half_width, half_height, points);
-
-  // Compute if the points are in A B C
-  for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
-  {
-    if (in_triangle(**it, A, B, C))
-      res.push_back(*it);
-  }
-
-  return;
-}
-
-void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::vector<Point*>& res)
+void QuadTree::knn(const Point& p, const unsigned int k, std::vector<Point*>& res)
 {
   double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
   double density = npoints / area;                              // Approx point density
@@ -179,106 +98,92 @@ void QuadTree::knn_lookup(const double cx, const double cy, const int k, std::ve
   // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
   double radius = std::sqrt((double)k / (density * 3.14));
 
-  Point p(cx, cy);
-  std::vector<Point*> pts;
-
   // Get at least k point within a circle
-  int n = 0;
-  while (n < k)
+  std::vector<Point*> pts;
+  while (pts.size() < k)
   {
     pts.clear();
-    circle_lookup(p.x, p.y, radius, pts);
-    n = pts.size();
+    Circle circ(p.x, p.y, radius);
+    this->lookup(circ, pts);
     radius *= 1.5;
   }
 
-  std::sort(pts.begin(), pts.end(), distance_to<Point>(p));
+  std::sort(pts.begin(), pts.end(), DSort2D<Point>(p));
 
-  for (int i = 0 ; i < k ; i++)
+  for (unsigned int i = 0 ; i < k ; i++)
     res.push_back(pts[i]);
 
   return;
 }
 
-void QuadTree::getPointsSquare(const BoundingBox bb, std::vector<Point>& points, std::vector<Point*>& res)
+void QuadTree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
-  for(std::vector<Point>::iterator it = points.begin(); it != points.end(); it++)
+  double area = 4 * boundary.half_res.x * boundary.half_res.y ; // Dimension of the Quadtree
+  double density = npoints / area;                              // Approx point density
+
+  // Radius of the first circle lookup. Computed based on point density to reduce lookup iterations
+  double radius = std::sqrt((double)k / (density * 3.14));
+
+  // Get at least k point within a sphere
+  std::vector<PointXYZ> pts;
+  while (pts.size() < k)
   {
-    if(in_rect(bb, *it))
-      res.push_back(&(*it));
+    pts.clear();
+    Sphere sphere(p.x, p.y, p.z, radius);
+    this->lookup(sphere, pts);
+    radius *= 1.5;
   }
+
+  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
+
+  for (unsigned int i = 0 ; i < k ; i++)
+    res.push_back(pts[i]);
+
   return;
 }
 
-void QuadTree::getPointsCircle(const BoundingBox bb, std::vector<Point>& points, std::vector<Point*>& res)
+
+void QuadTree::init()
 {
-  for(std::vector<Point>::iterator it = points.begin(); it != points.end(); it++)
-  {
-    if(in_circle(bb.center, (*it), bb.half_res.x))
-      res.push_back(&(*it));
-  }
-  return;
+  MAX_DEPTH = 6;
+  depth = 1;
+  npoints = 0;
+  NE = 0;
+  NW = 0;
+  SE = 0;
+  SW = 0;
 }
 
-bool QuadTree::in_circle(const Point& p1, const Point& p2, const double r)
+void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
 {
-  double A = p1.x - p2.x;
-  double B = p1.y - p2.y;
-  double d = sqrt(A*A + B*B);
+  if (x.size() != y.size())
+    throw(std::runtime_error("Internal error in QuadTree. x and y have different sizes."));
 
-  return(d <= r);
+  init();
+  double xmin = Rcpp::min(x);
+  double ymin = Rcpp::min(y);
+  double xmax = Rcpp::max(x);
+  double ymax = Rcpp::max(y);
+  double xrange = xmax - xmin;
+  double yrange = ymax - ymin;
+  double range = xrange > yrange ? xrange/2 : yrange/2;
+  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
+
+  for(int i = 0 ; i < x.size() ; i++)
+  {
+    Point p(x[i], y[i], i);
+    insert(p);
+  }
 }
 
-bool QuadTree::in_rect(const BoundingBox& bb, const Point& p)
+void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
 {
-  double dx = bb.center.x - p.x;
-  double dy = bb.center.y - p.y;
-  dx = dx < 0 ? -dx : dx;
-  dy = dy < 0 ? -dy : dy;
+  if (x.size() != z.size())
+    throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
 
-  return(dx <= bb.half_res.x && dy <= bb.half_res.y);
-}
-
-bool QuadTree::in_triangle(const Point& p, const Point& p0, const Point& p1, const Point& p2)
-{
-  double denominator = (p0.x*(p1.y - p2.y) + p0.y*(p2.x - p1.x) + p1.x*p2.y - p1.y*p2.x);
-  double t1 = (p.x*(p2.y - p0.y) + p.y*(p0.x - p2.x) - p0.x*p2.y + p0.y*p2.x) / denominator;
-  double t2 = (p.x*(p1.y - p0.y) + p.y*(p0.x - p1.x) - p0.x*p1.y + p0.y*p1.x) / -denominator;
-  double s = t1 + t2;
-
-  if (0 <= t1 && t1 <= 1 && 0 <= t2 && t2 <= 1 && s <= 1)
-    return true;
-
-  // see http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
-
-  if (distanceSquarePointToSegment(p0, p1, p) <= EPSILONSQ)
-    return true;
-  if (distanceSquarePointToSegment(p1, p2, p) <= EPSILONSQ)
-    return true;
-  if (distanceSquarePointToSegment(p2, p0, p) <= EPSILONSQ)
-    return true;
-
-  return false;
-}
-
-double QuadTree::distanceSquarePointToSegment(const Point& p1, const Point& p2, const Point& p)
-{
-  double p1_p2_squareLength = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y);
-  double dotProduct = ((p.x - p1.x)*(p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y)) / p1_p2_squareLength;
-
-  if ( dotProduct < 0 )
-  {
-    return (p.x - p1.x)*(p.x - p1.x) + (p.y - p1.y)*(p.y - p1.y);
-  }
-  else if ( dotProduct <= 1 )
-  {
-    double p_p1_squareLength = (p1.x - p.x)*(p1.x - p.x) + (p1.y - p.y)*(p1.y - p.y);
-    return p_p1_squareLength - dotProduct * dotProduct * p1_p2_squareLength;
-  }
-  else
-  {
-    return (p.x - p2.x)*(p.x - p2.x) + (p.y - p2.y)*(p.y - p2.y);
-  }
+  Z = z;
+  init();
+  init(x,y);
 }
 
 BoundingBox QuadTree::bbox()

@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -27,160 +27,215 @@
 
 
 
-#' Subtract digital terrain model
+#' Remove the topography from a point cloud
 #'
-#' Subtract digital terrain model (DTM) from LiDAR data to create a dataset normalized with
-#' the ground at 0. The DTM can originate from several sources e.g. from an external file or
-#' computed by the user. It can also be computed on the fly. In this case the algorithm does
-#' not use rasterized data and each point is interpolated. There is no inaccuracy due to the
-#' discretization of the terrain and the resolution of the terrain is virtually infinite (but
-#' it is slower).\cr
-#' Depending on the interpolation method, the edges of the dataset can be more, or less poorly
-#' interpolated. A buffer around the region of interest is always recommended to avoid edge
-#' effects.
+#' Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
+#' the ground at 0. The DTM can originate from an external file or can be computed by the user. It can
+#' also be computed on-the-fly. In this case the algorithm does not use rasterized data and each point
+#' is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
+#' of the terrain is virtually infinite.\cr\cr
+#' How well the edges of the dataset are interpolated depends on the interpolation method used.
+#' Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
+#' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref' records
+#' the former elevation values, which enables the use of \code{lasunormalize} to restore original point elevations.\cr\cr
 #'
-#' \describe{
-#' \item{\code{knnidw}}{Interpolation is done using a k-nearest neighbour (KNN) approach with
-#' an inverse distance weighting (IDW). This is a fast but basic method for spatial
-#' data interpolation.}
-#' \item{\code{delaunay}}{Interpolation based on Delaunay triangulation. It performs a linear
-#' interpolation within each triangle. There are usually a few points outside the convex hull,
-#' determined by the ground points at the very edge of the dataset, which cannot be interpolated
-#' with a triangulation. Extrapolation is done using knnidw.}
-#' \item{\code{kriging}}{Interpolation is done by universal kriging using the \link[gstat:krige]{krige} function. This method combines the KNN approach with the kriging approach. For each point of #' interest it kriges the terrain using the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also the most advanced method for interpolating spatial data. }
-#' }
+#' @template param-las
 #'
-#' \code{lasunnormalize} enables restoration of the original elevation in a memory efficient way
-#' in the case when the original elevations are recorded in the columns \code{Zref} (i.e. if
-#' the point cloud was normalized with the package lidR).
+#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
+#' \link{kriging}, \link{knnidw}.
 #'
-#' @param las a LAS object
-#' @param dtm a \link[raster:raster]{RasterLayer} or a \code{lasmetrics} object computed with
-#' \link[lidR:grid_terrain]{grid_terrain}.
-#' @param method character. Used if \code{dtm = NULL}. Can be \code{"knnidw"},
-#' \code{"delaunay"} or \code{"kriging"} (see \link{grid_terrain} for more details).
-#' @param k numeric. Used if \code{dtm = NULL}. Number of k-nearest neighbours when the selected
-#' method is either \code{"knnidw"} or \code{"kriging"}.
-#' @param p numeric. Power for inverse distance weighting. Default 2.
-#' @param model Used if \code{dtm = NULL}. A variogram model computed with \link[gstat:vgm]{vgm}
-#' when the selected method is \code{"kriging"}. If NULL it performs an ordinary or weighted least
-#' squares prediction.
-#' @param copy By default the point cloud is updated in place by reference. Users can force
-#' the function to return a new point cloud. Set TRUE for compatibility with versions < 1.3.0
-#' @return The function returns NULL. The LAS object is updated by reference. Z is now the
-#' normalized elevation, A new column 'Zref' records the former elevation values. This is a
-#' way to save memory by avoiding making copies of the point cloud. But if \code{copy = TRUE},
-#' a new LAS object is returned and the original one is not modified.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasupdater
+#'
+#' @template return-lasupdater-las-lascatalog
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #'
 #' plot(las)
 #'
-#' # --- First option: compute a raster DTM with grid_terrain ---
-#' # (or read it from a file)
+#' # First option: use a RasterLayer as DTM
+#' # =======================================================
 #'
-#' dtm = grid_terrain(las, method = "kriging", k = 10L)
-#' lasnormalize(las, dtm)
+#' dtm <- grid_terrain(las, 1, kriging(k = 10L))
+#' las <- lasnormalize(las, dtm)
 #'
 #' plot(dtm)
 #' plot(las)
 #'
-#' # --- Second option: interpolate each point (no discretization) ---
-#' las = readLAS(LASfile)
-#'
-#' lasnormalize(las, method = "kriging", k = 10L, model = gstat::vgm(0.59, "Sph", 874))
+#' # restore original elevations
+#' las <- lasunnormalize(las)
 #' plot(las)
+#'
+#' # operator - can be used. This is equivalent to the previous
+#' las <- las - dtm
+#' plot(las)
+#'
+#' # restore original elevations
+#' las <- lasunnormalize(las)
+#'
+#' # Second option: interpolate each point (no discretization)
+#' # =========================================================
+#'
+#' las <- lasnormalize(las, tin())
+#' plot(las)
+#'
+#' # operator - can be used. This is equivalent to the previous
+#' las <- lasunnormalize(las)
+#' las <- las - tin()
+#'
+#' \dontrun{
+#' # All the following syntaxes are correct
+#' las <- lasnormalize(las, knnidw())
+#' las <- lasnormalize(las, knnidw(k = 8, p = 2))
+#' las <- las - knnidw()
+#' las <- las - knnidw(k = 8)
+#' las <- lasnormalize(las, kriging())
+#' las <- las - kriging(k = 8)
+#' }
+#'
 #' @seealso
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-lasnormalize = function(las, dtm = NULL, method, k = 10L, p = 1, model = gstat::vgm(.59, "Sph", 874), copy = FALSE)
+#' @rdname lasnormalize
+#' @export
+lasnormalize = function(las, algorithm)
 {
-  . <- Z <- Zref <- X <- Y <- Classification <- NULL
+  UseMethod("lasnormalize", las)
+}
 
-  stopifnotlas(las)
-
-
-  if(is.null(dtm))
+#' @export
+lasnormalize.LAS = function(las, algorithm)
+{
+  if (is(algorithm, "RasterLayer"))
   {
-    if (! "Classification" %in% names(las@data))
-      stop("No field 'Classification' found.", call. = FALSE)
+    Zground <- raster::extract(algorithm, las@data[, .(X,Y)])
+    isna    <- is.na(Zground)
+    nnas    <- sum(isna)
 
-    if (fast_countequal(las@data$Classification, 2) == 0)
+    if(nnas > 0)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."), call. = F)
+  }
+  else if (is.function(algorithm))
+  {
+    if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+      stop("Invalid function provided as algorithm.", call. = FALSE)
+
+    if (!is(algorithm, "SpatialInterpolation"))
+      stop("The algorithm is not an algorithm for spatial interpolation.", call. = FALSE)
+
+    . <- Z <- Zref <- X <- Y <- Classification <- NULL
+
+    if (! "Classification" %in% names(las@data))
+      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
+
+    if (fast_countequal(las@data$Classification, LASGROUND) == 0)
       stop("No ground point found in the point cloud.", call. = FALSE)
 
-    Zground = interpolate(las@data[Classification == 2, .(X,Y,Z)], las@data[, .(X,Y)], method = method, k = k, p = p, model = model)
-
-    isna = is.na(Zground)
-    nnas = sum(isna)
+    # wbuffer = !"buffer" %in% names(las@data)
+    lidR.context <- "lasnormalize"
+    ground  <- las@data[Classification == 2, .(X,Y,Z)]
+    ground  <- check_degenerated_points(ground)
+    Zground <- algorithm(ground, las@data)
+    isna    <- is.na(Zground)
+    nnas    <- sum(isna)
 
     if(nnas > 0)
-      stop(glue("{nnas} points were not normalizable. Process aborded."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
   }
   else
   {
-    if(is(dtm, "lasmetrics"))
-      dtm = as.raster(dtm)
-
-    if(!is(dtm, "RasterLayer"))
-      stop("The terrain model is not a RasterLayer or a lasmetrics", call. = F)
-
-    #xres = raster::res(dtm)[1]
-    #xmin = dtm@extent@xmin
-    #ymin = dtm@extent@ymin
-    #dtm  = raster::as.matrix(dtm)
-    #Zground = fast_extract(dtm, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract + much memory effcient
-    Zground = raster::extract(dtm, las@data[, .(X,Y)])
-
-    isna = is.na(Zground)
-    nnas = sum(isna)
-
-    if(nnas > 0)
-      stop(glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborded."), call. = F)
+    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
   }
 
-  if (!copy)
-  {
-    if (!"Zref" %in% names(las@data))
-      las@data[, Zref := Z]
+  if (!"Zref" %in% names(las@data))
+    las@data[["Zref"]] <- las@data[["Z"]]
 
-    las@data[, Z := round(Z - Zground, 3)]
-    lasupdateheader(las)
-    return(invisible())
-  }
-  else
-  {
-    norm = data.table::copy(las@data)
-    norm[, Z := round(Z - Zground, 3)]
-    return(LAS(norm, las@header, las@crs))
-  }
+  las@data[["Z"]] <- round(las@data[["Z"]] - Zground, 3)
+  las <- lasupdateheader(las)
+  return(las)
+}
+
+#' @export
+lasnormalize.LAScluster = function(las, algorithm)
+{
+  buffer <- NULL
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+  x <- lasnormalize(x, algorithm)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lasnormalize.LAScatalog = function(las, algorithm)
+{
+  opt_select(las) <- "*"
+
+  output      <- catalog_apply2(las, lasnormalize, algorithm = algorithm, need_buffer = TRUE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output      <- unlist(output)
+  ctg         <- catalog(output)
+  opt_copy(ctg) <- las
+  return(ctg)
 }
 
 #' @rdname lasnormalize
 #' @export
 lasunnormalize = function(las)
 {
-  Z <- Zref <- NULL
+  stopifnotlas(las)
 
   if ("Zref" %in% names(las@data))
   {
-    las@data[, Z := Zref]
-    las@data[, Zref := NULL]
-    las@data[]
+    las@data[["Z"]] <- las@data[["Zref"]]
+    las@data[["Zref"]] <- NULL
   }
   else
-    message("No field 'Zref' found. Unormalizisation is impossible", call. = FALSE)
+    message("No attribute 'Zref' found. Un-normalizisation is impossible.")
 
-  return(invisible())
+  return(las)
 }
 
-#' Convenient operator to lasnormalize
-#'
 #' @param e1 a LAS object
-#' @param e2 a RasterLayer
+#' @param e2 \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
+#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} has \link{tin},
+#' \link{kriging}, and \link{knnidw}.
 #' @export
+#' @rdname lasnormalize
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
 {
   return(lasnormalize(e1,e2))
 })
+
+#' @export
+#' @rdname lasnormalize
+setMethod("-", c("LAS", "function"), function(e1, e2)
+{
+  return(lasnormalize(e1,e2))
+})
+
+check_degenerated_points = function(points)
+{
+  . <- X <- Y <- Z <- NULL
+
+  # test integrity of the data and degenerated points
+  dup_xyz  = duplicated(points, by = c("X", "Y", "Z"))
+  dup_xy   = duplicated(points, by = c("X", "Y"))
+  ndup_xyz = sum(dup_xyz)
+  ndup_xy  = sum(dup_xy & !dup_xyz)
+
+  if (ndup_xyz > 0)
+    warning(glue::glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
+
+  if (ndup_xy > 0)
+    warning(glue::glue("There were {ndup_xy} degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+
+  if (ndup_xy > 0 | ndup_xyz > 0)
+    points = points[, .(Z = min(Z)), by = .(X,Y)]
+
+  return(points)
+}

@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.*\.o$
@@ -6,5 +8,6 @@
 ^laslib_cpp_to_Rcpp\.sh$
 ^\.travis\.yml$
 ^cran-comments\.md$
+^man-roxygen$
 ^profiling$
 ^others$

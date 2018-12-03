@@ -41,7 +41,6 @@ class RasterProcessor
     RasterProcessor(double minx, double miny, double maxx, double maxy, double res);
     ~RasterProcessor();
     NumericMatrix getmatrix();
-    List expend();
 
   protected:
     int i;
@@ -56,8 +55,7 @@ class RasterProcessor
     NumericMatrix m_raster;
 
   protected:
-    void xy2ij(double x, double y);
-    double roundany(double x);
+    bool xy2ij(double x, double y);
 };
 
 class PointToRasterProcessor : public RasterProcessor
@@ -66,7 +64,7 @@ class PointToRasterProcessor : public RasterProcessor
     PointToRasterProcessor(double minx, double miny, double maxx, double maxy, double res);
     ~PointToRasterProcessor();
     void max(double x, double y, double z);
-    void min(double x, double y, double z);
+    //void min(double x, double y, double z);
     void count(double x, double y);
 };
 

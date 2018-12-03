@@ -1,10 +1,31 @@
+#' @importFrom data.table :=
 .onAttach <- function(libname, pkgname) {
   # Runs when attached to search() path such as by library() or require()
   if (interactive())
   {
     v = utils::packageVersion("lidR")
-    packageStartupMessage("lidR ", v, ". Help on <https://gis.stackexchange.com/>. Bug report on <https://github.com/Jean-Romain/lidR>.")
+    packageStartupMessage("
+WARNING: lidR version ", v, " is a major reengineering of former lidR versions 1.x.y.
+It comes with many new features and internals improvements but is also *incompatible* with previous versions.
+If you were a user of lidR versions 1.x.y please read the NEWS file at <https://github.com/Jean-Romain/lidR/blob/master/NEWS.md> before using this new version.
+Ask for help on <https://gis.stackexchange.com/>. Report bugs on <https://github.com/Jean-Romain/lidR>.")
   }
+}
+
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.lidR <- list(
+    lidR.progress = TRUE,
+    lidR.progress.delay = 2,
+    lidR.verbose = FALSE,
+    lidR.interactive = TRUE,
+    lidR.debug = FALSE
+  )
+
+  toset <- !(names(op.lidR) %in% names(op))
+  if(any(toset)) options(op.lidR[toset])
+
+  invisible()
 }
 
 .onUnload <- function(libpath) {

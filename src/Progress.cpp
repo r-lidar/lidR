@@ -1,19 +1,17 @@
 #include "Progress.h"
 
-bool Progress::exist = false;
-
-Progress::Progress(int _iter_max, bool _display)
+Progress::Progress(unsigned int iter_max, std::string prefix)
 {
-  if (exist) { Rf_error("Error: there is already an interruptable instance defined"); }
+  SEXP valueSEXP = Rf_GetOption(Rf_install("lidR.progress"), R_BaseEnv);
+  this->display = Rf_isLogical(valueSEXP) && (Rcpp::as<bool>(valueSEXP) == true);
 
-  iter_max = _iter_max;
-  display = _display;
+  iter = 0;
+  this->iter_max = iter_max;
+  this->prefix = prefix;
   j = 0;
-  percentage = -1;
-  exist = true;
+  ti = clock();
+  percentage = 0;
 }
-
-Progress::~Progress() { exist = false; }
 
 bool Progress::check_abort()
 {
@@ -34,21 +32,57 @@ bool Progress::check_abort()
   return false;
 }
 
-void Progress::update(int iter)
+void Progress::update(unsigned int iter)
 {
+  this->iter = iter;
+
   if (!display)
     return;
 
-  int p = (float)iter/(float)iter_max*100;
+  unsigned int p = (float)iter/(float)iter_max*100;
+
+  if (p == percentage)
+    return;
+
+  clock_t dt = clock() - ti;
+  if( ((float)dt)/CLOCKS_PER_SEC  < 1)
+    return;
+
+
+  percentage = p;
+  Rcpp::Rcout << prefix << percentage << "%\r";
+  Rcpp::Rcout.flush();
+
+  return;
+}
+
+void Progress::increment()
+{
+  this->iter++;
+
+  if (!display)
+    return;
+
+  unsigned int p = (float)iter/(float)iter_max*100;
 
   if (p == percentage)
     return;
 
   percentage = p;
-  Rcpp::Rcout << percentage << "%\r";
+
+  clock_t dt = clock() - ti;
+  if( ((float)dt)/CLOCKS_PER_SEC  < 1)
+    return;
+
+  Rcpp::Rcout  << prefix << percentage << "%\r";
   Rcpp::Rcout.flush();
 
   return;
+}
+
+unsigned int Progress::get_iter()
+{
+  return iter;
 }
 
 void Progress::exit()

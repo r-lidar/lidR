@@ -4,33 +4,24 @@
 \alias{grid_metrics3d}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
-grid_metrics3d(.las, func, res = 1, debug = FALSE)
+grid_metrics3d(las, func, res = 1)
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}}
+\item{las}{An object of class \code{LAS}.}
 
-\item{func}{the function to be apply to each voxel.}
+\item{func}{expression. The function to be applied to each voxel (see also \link{grid_metrics}).}
 
-\item{res}{numeric. The size of the voxels}
-
-\item{debug}{logical. If you encounter a non trivial error try \code{debug = TRUE}.}
+\item{res}{numeric. The size of the voxels.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table
 has the class \code{lasmetrics3d} enabling easier plotting.
 }
 \description{
-Voxelize the cloud of points and compute a series of descriptive statistics for
-each voxel.
-}
-\details{
-Voxelize creates a 3D matrix of voxels with a given resolution. It creates a voxel
-from the cloud of points if there is at least one point in the voxel. For each voxel
-the function allows computation of one or several derived metrics in the same way as
-the \link[lidR:grid_metrics]{grid_metrics} functions.
-Basically there are no predefined metrics. Users must write their own function to create metrics.
-Voxelize will dispatch the LiDAR data for each voxel in the user's function. The user writes their
-function without considering voxels, only a cloud of points (see example).
+This is a 3D version of \link{grid_metrics}. It creates a 3D matrix of voxels with a given resolution.
+It creates a voxel from the cloud of points if there is at least one point in the voxel. For each voxel
+the function allows computation of one or several derived metrics in the same way as the \link{grid_metrics}
+functions. The function will dispatch the LiDAR data for each voxel in the user's function (see \link{grid_metrics}).
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -63,7 +54,4 @@ plot(voxels, color = "angle")
 plot(voxels, color = "imean")
 #etc.
 }
-}
-\seealso{
-\link[lidR:grid_metrics]{grid_metrics}
 }

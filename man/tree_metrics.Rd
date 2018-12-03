@@ -4,45 +4,80 @@
 \alias{tree_metrics}
 \title{Compute metrics for each tree}
 \usage{
-tree_metrics(.las, func, debug = FALSE, field = "treeID")
+tree_metrics(las, func, field = "treeID")
 }
 \arguments{
-\item{.las}{An object of class \code{LAS}.}
+\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{func}{The function to be applied to each tree.}
 
-\item{debug}{logical. When facing a non trivial error, try \code{debug = TRUE}.}
-
-\item{field}{character. The column name of the field containing tree IDs. Defaul is \code{"treeID"}}
+\item{field}{character. The column name of the field containing tree IDs. Default is \code{"treeID"}}
 }
 \value{
-Returns a \code{data.table} containing the metrics for each segmented tree.
+A \code{SpatialPoinsDataFrame} that references the xy-position with a table of attributes that
+associates the z-elevation (highest points) of the trees and the id of the trees, plus the metrics
+defined by the user.
 }
 \description{
-Once the trees are segmented with \link{lastrees}, computes a series of descriptive statistics
-defined by the user for each individual tree. The output is a table in which each line is a tree,
-and each column is a metric. \code{tree_metrics} is similar to \link{lasmetrics} or \link{grid_metrics}
-or \link{grid_metrics3d} or \link{grid_hexametrics}, except it computes metrics for each segmented tree.
+Once the trees are segmented, i.e. attributes exist in the point cloud that reference each
+tree, computes a set of user-defined descriptive statistics for each individual tree. This is the
+"tree version" of \link{grid_metrics}.
 }
 \details{
+By default the function computes the xyz-coordinates of the highest point of each tree and uses
+xy as tree coordinates in \code{SpatialPoinsDataFrame}. z is stored in the table of attributes
+along with the id of each tree. All the other attributes are user-defined attributes:\cr\cr
 The following existing functions contain a small set of pre-defined metrics:
 \itemize{
 \item{\link[lidR:stdmetrics]{stdmetrics_tree}}
 } Users must write their own functions to create their own metrics. \code{tree_metrics} will
 dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
-are defined without the need to considering each segmented tree i.e. only the point cloud (see examples).
+are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).
 }
+\section{Working with a \code{LAScatalog}}{
+
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+function uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that documents the supported engine options.\cr
+
+The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+but this is not mandatory.
+}
+
+\section{Supported processing options}{
+
+Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\itemize{
+\item \strong{chunk size}: How much data is loaded at once.
+\item \strong{chunk buffer*}: Mandatory to get a continuous output without edge effects. The buffer is
+always removed once processed and will never be returned either in R or in files.
+\item \strong{chunk alignment}: Align the processed chunks.
+\item \strong{cores}: How many cores are used.
+\item \strong{progress}: Displays a progression estimation.
+\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and,
+if chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
+\item \strong{laz_compression}: write \code{las} or \code{laz} files
+\item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
+and cannot be changed.
+\item \strong{filter}: Read only points of interest.
+}
+}
+
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
-# segment trees (see lastrees)
-lastrees(las, algorithm = "li2012-2")
+# Mean height and mean intensity for each tree
+metrics = tree_metrics(las, list(`Mean Z` = mean(Z), `Mean I` = mean(Intensity)))
 
-# Max height for each tree
-tree_metrics(las, mean(Z))
-
-# Define your own new metrics
+# Define your own new metrics function
 myMetrics = function(z, i)
 {
   metrics = list(

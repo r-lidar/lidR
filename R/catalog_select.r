@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,74 +25,74 @@
 #
 # ===============================================================================
 
-
-
-#' Select LAS files interactively
-#'
-#' Select a set of LAS tiles from a LAScatalog using the mouse interactively. This function
-#' enables the user to select a set of las files from a LAScatalog by clicking
-#' on the map of the file using the mouse. The selected files will be highlighted in red on
-#' the plot after selection is complete.
-#' @param x A LAScatalog object
-#' @param Rbase logical. If TRUE, will use R base plot (no pan, no zoom and not convenient).
-#' @return A LAScatalog object
-#' @export
-#' @examples
-#' \dontrun{
-#' project = catalog("<Path to a folder containing a set of .las files>")
-#' selectedFiles = catalog_select(project)
-#' }
-#' @seealso
-#' \link[lidR:catalog]{LAScatalog}
-catalog_select = function(x, Rbase = FALSE)
-{
-  assertive::assert_is_all_of(x, "LAScatalog")
-
-  `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
-
-  if (!Rbase)
-  {
-    mapview::mapview()
-    catalog <- as.spatial(x)
-    map = mapview::mapview(catalog)
-    sfdata <- mapedit::selectFeatures(catalog, map = map)
-    data.table::setDT(sfdata)
-    sfdata[, geometry := NULL]
-    newnames <- gsub(x = names(sfdata), pattern = "(\\.)+", replacement = " ")
-    data.table::setnames(sfdata, names(sfdata), newnames)
-    x@data <- sfdata
-    return(x)
-  }
-  else
-  {
-    graphics::plot(x)
-    selected = with(x@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
-    x@data <- x@data[selected]
-    return(x)
-  }
-}
-
-identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
-{
-  n <- length(minx)
-  x <- (minx + maxx)/2
-  y <- (miny + maxy)/2
-
-  sel <- rep(FALSE, n)
-
-  while(sum(sel) < n)
-  {
-    ans <- graphics::identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
-
-    if(!length(ans))
-      break
-
-    ans <- which(!sel)[ans]
-
-    graphics::rect(minx[ans], miny[ans], maxx[ans], maxy[ans], col = "forestgreen")
-
-    sel[ans] <- TRUE
-  }
-
-  return(which(sel))
-}
+# Select LAS files manually from a LAScatalog
+#
+# Select a set of LAS tiles from a LAScatalog interactively using the mouse. This function
+# allows users to subset a LAScatalog by clicking on a map of the file.
+#
+# @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
+#
+# @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
+# also \link[lidR:plot]{plot})
+#
+# @return A LAScatalog object
+#
+# @export
+#
+# @examples
+# \dontrun{
+# ctg = catalog("<Path to a folder containing a set of .las files>")
+# new_ctg = catalog_select(ctg)
+# }
+# catalog_select = function(ctg, mapview = TRUE)
+# {
+#   assert_is_all_of(ctg, "LAScatalog")
+#   assert_is_a_bool(mapview)
+#
+#   `Min X` <- `Min Y` <- `Max X` <- `Max Y` <- filename <- geometry <- NULL
+#
+#   if(mapview & (!requireNamespace("mapview", quietly = TRUE) | !requireNamespace("mapedit", quietly = TRUE)))
+#   {
+#     message("This function can be enhanced by installing the libraries 'mapview' and 'mapedit'.")
+#     mapview = FALSE
+#   }
+#
+#   if (mapview)
+#   {
+#     mapview::mapview()
+#     map     <- mapview::mapview(ctg)
+#     index   <- mapedit::selectFeatures(ctg, map = map, index = TRUE)
+#   }
+#   else
+#   {
+#     plot.LAScatalog(ctg, mapview = FALSE)
+#     index <- with(ctg@data, identify_tile(`Min X`, `Max X`, `Min Y`, `Max Y`))
+#   }
+#
+#   return(ctg[index,])
+# }
+#
+# identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
+# {
+#   n <- length(minx)
+#   x <- (minx + maxx)/2
+#   y <- (miny + maxy)/2
+#
+#   sel <- rep(FALSE, n)
+#
+#   while(sum(sel) < n)
+#   {
+#     ans <- graphics::identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
+#
+#     if(!length(ans))
+#       break
+#
+#     ans <- which(!sel)[ans]
+#
+#     graphics::rect(minx[ans], miny[ans], maxx[ans], maxy[ans], col = "forestgreen")
+#
+#     sel[ans] <- TRUE
+#   }
+#
+#   return(which(sel))
+# }

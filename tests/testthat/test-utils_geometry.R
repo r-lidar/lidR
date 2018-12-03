@@ -11,8 +11,8 @@ test_that("convex hull works", {
 })
 
 test_that("area works", {
-  expect_equal(lidR:::area(x,y), 1)
-  expect_equal(lidR:::area(vertx,verty), 0.5)
+  expect_equal(lidR:::area_convex_hull(x,y), 1)
+  expect_equal(lidR:::area_convex_hull(vertx,verty), 0.5)
 })
 
 test_that("points in polygon works", {

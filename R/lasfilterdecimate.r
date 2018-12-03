@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016 Jean-Romain Roussel
+# Copyright 2016-2018 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -26,97 +26,89 @@
 # ===============================================================================
 
 
-
-#' Thin LiDAR data
+#' Decimate a LAS object
 #'
-#' Thin LIDAR data randomly removes a given proportion of points to reach specific point/pulse densities.
+#' Reduce the number of points using several possible algorithms.
 #'
-#' \code{lasfilterdecimate} is designed to produce output datasets that have uniform densities
-#' throughout the coverage area. For each cell, the proportion of points/pulses that will
-#' be retained is computed using the actual density and the desired density. If the required density
-#' is greater than the actual density it returns an unchanged set of points (it cannot increase the
-#' density). If \code{homogenize = FALSE} is selected, it randomly removes points/pulses to reach the
-#' required density over the whole area (see \code{\link[lidR:area]{area}}). The cell size must be large
-#' enough to compute a coherent local pulse density i.e., in a 2 points/m^2 dataset, 25 square meters
-#' would be feasible; however, an extent too small to thin (e.g. <1 square meter) would not be feasible
-#' because density does not have meaning at this scale.
+#' @template param-las
+#' @param algorithm function. An algorithm of point decimation. \code{lidR} have: \link{random},
+#' \link{homogenize} and \link{highest}.
 #'
-#' @param .las An object of the class \code{LAS}
-#' @param density numeric. The expected density
-#' @param homogenize logical. If \code{TRUE}, the algorithm tries to homogenize the pulse density to
-#' provide a uniform dataset. If \code{FALSE} the algorithm will reach the pulse density over the whole
-#' area.
-#' @param res numeric. Cell size to compute the pulse density.
-#' @param use_pulse logical. Decimate by removing random pulses instead of random points
-#' @return It returns a \code{LAS} object.
+#' @template LAScatalog
+#'
+#' @template section-supported-option-lasfilter
+#'
+#' @template return-lasfilter-las-lascatalog
+#'
+#' @export
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile, select = "xyz")
+#' las = readLAS(LASfile, select = "xyz")
 #'
-#' # By default the method is homogenize = TRUE
-#' thinned = lasfilterdecimate(lidar, 1, res = 5)
-#' plot(grid_density(lidar))
-#' plot(grid_density(thinned))
+#' # Select points randomly to reach an overall density of 1
+#' thinned1 = lasfilterdecimate(las, random(1))
+#' plot(grid_density(las))
+#' plot(grid_density(thinned1))
 #'
-#' # Method homogenize = FALSE enables a global pulse density to be reached
-#' thinned = lasfilterdecimate(lidar, 1, homogenize = FALSE)
-#' summary(thinned)
-#' d = grid_density(thinned)
-#' plot(d)
-#' @export
-lasfilterdecimate = function(.las, density, homogenize = TRUE, res = 5, use_pulse = FALSE)
+#' # Select points randomly to reach an homogeneous density of 1
+#' thinned2 = lasfilterdecimate(las, homogenize(1,5))
+#' plot(grid_density(thinned2))
+#'
+#' # Select the highest point within each pixel of an overlayed grid
+#' thinned3 = lasfilterdecimate(las, highest(5))
+#' plot(thinned3)
+lasfilterdecimate = function(las, algorithm)
 {
-  stopifnotlas(.las)
-  assertive::assert_is_a_number(density)
-  assertive::assert_all_are_positive(density)
-  assertive::assert_is_a_bool(homogenize)
-  assertive::assert_is_a_number(res)
-  assertive::assert_all_are_positive(res)
-  assertive::assert_is_a_bool(use_pulse)
-
-  pulseID <- gpstime <- NULL
-
-  if(use_pulse & !"pulseID" %in% names(.las@data))
-  {
-    warning("No 'pulseID' field found.", call. = FALSE)
-    use_pulse = FALSE
-  }
-
-  npoints = nrow(.las@data)
-
-  if(homogenize == FALSE)
-  {
-    n = round(density*area(.las))
-
-    if (use_pulse)
-      selected = selected_pulses(.las@data$pulseID, n)
-    else
-      selected = sample(1:nrow(.las@data), n)
-  }
-  else
-  {
-    n = round(density*res^2)
-
-    by = group_grid(.las@data$X, .las@data$Y, res)
-
-    if (use_pulse)
-      selected = .las@data[, .I[selected_pulses(pulseID, n)], by = by]$V1
-    else
-      selected = .las@data[, .I[selected_pulses(1:.N, n)], by = by]$V1
-  }
-
-  return(LAS(.las@data[selected], .las@header, .las@crs))
+  UseMethod("lasfilterdecimate", las)
 }
 
-selected_pulses = function(pulseID, n)
+#' @export
+lasfilterdecimate.LAS = function(las, algorithm)
 {
-  p = unique(pulseID)
+  pulseID <- gpstime <- NULL
 
-  if(n > length(p))
-    return(rep(TRUE, length(pulseID)))
+  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
 
-  selectedPulses = sample(p, n)
-  selectedPulses = pulseID %in% selectedPulses
+  if (!is(algorithm, "PointCloudDecimation"))
+    stop("The algorithm is not an algorithm for point cloud decimation.", call. = FALSE)
 
-  return(selectedPulses)
+  lidR.context <- "lasfilterdecimate"
+  selected <- algorithm(las)
+
+  return(LAS(las@data[selected], las@header, las@proj4string))
+}
+
+#' @export
+lasfilterdecimate.LAScluster = function(las, algorithm)
+{
+  buffer <- NULL
+  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  if (is.empty(x)) return(NULL)
+  x <- lasfilterdecimate(x, algorithm)
+  x <- lasfilter(x, buffer == 0)
+  return(x)
+}
+
+#' @export
+lasfilterdecimate.LAScatalog = function(las, algorithm)
+{
+
+  e <- environment(algorithm)
+
+  if (!is.null(e$res))
+    opt_chunk_buffer(las) <- e$res
+  else
+    opt_chunk_buffer(las) <- 0
+
+  opt_select(las) <- "*"
+
+  output  <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- unlist(output)
+  ctg     <- suppressMessages(suppressWarnings(catalog(output)))
+
+  opt_copy(ctg) <- las
+
+  return(ctg)
 }

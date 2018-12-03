@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_typecast.r
 \name{as.spatial}
 \alias{as.spatial}
-\title{Transform a lidR object into sp object}
+\title{Transform a LAS* object into an sp object}
 \usage{
 as.spatial(x)
 }
@@ -13,10 +13,6 @@ as.spatial(x)
 An object from sp
 }
 \description{
-LAS, LAScatalog, lasmetrics are transformed respectively into SpatialPointsDataFrame,
-SpatialPolygonsDataFrame, SpatialPixelsDataFrame
+LAS and LAScatalog objects are transformed into SpatialPointsDataFrame and SpatialPolygonsDataFrame objects, respectively.
 }
-\seealso{
-Other cast: \code{\link{as.lasmetrics}},
-  \code{\link{as.raster.lasmetrics}}
-}
+\concept{cast}
