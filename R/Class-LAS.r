@@ -34,8 +34,8 @@
 #' a \code{Spatial} object plus a \code{data.table} with the data read from  a \code{las/laz} file and
 #' a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
-#' for more information). Because las files are normalised the table of attributes read from the las/laz file
-#' is also normalized. Columns are named:
+#' for more information). Because las files are standardized the table of attributes read from the las/laz file
+#' is also standardized. Columns are named:
 #' \itemize{
 #' \item{\code{X} (numeric)}
 #' \item{\code{Y} (numeric)}

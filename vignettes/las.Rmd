@@ -238,7 +238,7 @@ In this case the vectors that store the X Y Z coordinates as well as those that 
 - `las.original` is of size 1 GB
 - `las.classified` is also 1 GB.
 
-But both together they are not equal to 2 GB, bu ~1.1 GB because they share the same memory. The content of the original LAS object was shallow copied. An understanding of the concepts of deep and shallow copies is important for optimizing your scripts. 
+But both together they are not equal to 2 GB, but ~1.1 GB because they share the same memory. The content of the original LAS object was shallow copied. An understanding of the concepts of deep and shallow copies is important for optimizing your scripts. 
 
 Because of the way R is designed, lidR uses a large amount of memory anyway, as we have seen. To deal with this limitation `readLAS` has two optimizations: the parameter `select` and the parameter `filter`.
 
