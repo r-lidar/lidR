@@ -21,7 +21,7 @@ print(x, ...)
 \arguments{
 \item{...}{Unused}
 
-\item{object, }{x A \code{LAS*} object}
+\item{object, x}{A \code{LAS*} object}
 }
 \value{
 NULL, used for its side-effect of printing information

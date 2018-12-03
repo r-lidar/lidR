@@ -27,7 +27,7 @@
 
 #' Summary and Print for \code{LAS*} objects
 #'
-#' @param object, x A \code{LAS*} object
+#' @param object,x A \code{LAS*} object
 #' @param ... Unused
 #'
 #' @return NULL, used for its side-effect of printing information
