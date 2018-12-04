@@ -97,50 +97,22 @@
 #' }
 catalog_retile = function(ctg)
 {
-  interact <- getOption("lidR.interactive")
-
-  if (opt_output_files(ctg) == "")
-    stop("This function requires that the LAScatalog provides an output file template. See  help(\"LAScatalog-class\", \"lidR\")", call. = FALSE)
-
   laz  <- opt_laz_compression(ctg)
   path <- opt_output_files(ctg)
   path <- if (laz) paste0(path, ".laz") else paste0(path, ".las")
   ctg@output_options$output_files <- path
   path <- dirname(path)
 
-  if (interact)
-  {
-    opt_progress(ctg) <- TRUE
-
-    clusters  <- catalog_makecluster(ctg)
-
-    text = "This is how the catalog will be reshaped (see plots). Do you want to continue?"
-    choices = c("yes","no")
-
-    cat(text)
-    choice = utils::menu(choices)
-
-    if (choice == 2)
-      return(invisible(NULL))
-  }
-
-  if (!dir.exists(path))
-    dir.create(path, recursive = TRUE)
-
-  files <- list.files(path, pattern = "(?i)\\.la(s|z)$")
-
-  if (length(files) > 0)
-    stop("The output folder already contains .las or .laz files. Operation aborted.", call. = FALSE)
-
   reshape_func = function(cluster)
   {
     streamLAS(cluster, cluster@save)
-    ret = 0
-    class(ret) <- "lidr_internal_skip_write"
+    ret <- structure(0, class = "lidr_internal_skip_write")
     return(ret)
   }
 
-  catalog_apply2(ctg, reshape_func, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  opt_wall_to_wall(ctg) <- FALSE
 
-  return(catalog(path))
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  catalog_apply(ctg, reshape_func, .options = options)
+  return(suppressWarnings(suppressMessages(catalog(path))))
 }

@@ -176,9 +176,11 @@ lasnormalize.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "*"
 
-  output      <- catalog_apply2(las, lasnormalize, algorithm = algorithm, need_buffer = TRUE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  output      <- unlist(output)
-  ctg         <- catalog(output)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, .options = options)
+  output  <- unlist(output)
+  ctg     <- catalog(output)
+
   opt_copy(ctg) <- las
   return(ctg)
 }

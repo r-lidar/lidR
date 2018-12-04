@@ -166,24 +166,26 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
 {
-  resolution <- res
-
   if (is(res, "RasterLayer"))
   {
-    ext        <- raster::extent(res)
-    keep       <- with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
-    las        <- las[keep,]
-    resolution <- raster::res(res)[1]
+    ext       <- raster::extent(res)
+    r         <- raster::res(res)[1]
+    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
+    las       <- las[keep,]
+    start     <- c(ext@xmin, ext@ymin)
+    alignment <- list(res = r, start = start)
   }
+  else
+    alignment <- list(res = res, start = start)
 
-  opt_chunk_buffer(las) <- 0.1*resolution
+  opt_chunk_buffer(las) <- 0.1*alignment$res
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
   glob <- future::getGlobalsAndPackages(func)
-  alignment <- list(res = res, start = start)
 
-  output  <- catalog_apply2(las, grid_metrics, func = func, res = res, start = start, need_buffer = FALSE, check_alignment = TRUE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
+  output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_metrics"))

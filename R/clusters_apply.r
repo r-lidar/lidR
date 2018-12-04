@@ -146,6 +146,7 @@ update_pb = function(pb, ratio)
 
 cluster_write = function(x, path, output_options)
 {
+
   dir = dirname(path)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
 

@@ -4,7 +4,7 @@
 \alias{catalog_apply}
 \title{LAScatalog processing engine}
 \usage{
-catalog_apply(ctg, FUN, ..., check_alignment = 0)
+catalog_apply(ctg, FUN, ..., .options = NULL)
 }
 \arguments{
 \item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object.}
@@ -13,7 +13,7 @@ catalog_apply(ctg, FUN, ..., check_alignment = 0)
 
 \item{...}{Optional arguments to FUN.}
 
-\item{check_alignment}{See dedicated section and example.}
+\item{.options}{See dedicated section and example.}
 }
 \description{
 This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
@@ -70,25 +70,37 @@ myfun = function(cluster, ...)
 }}
 The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
 0 points (we can't know that before reading the file). In this case an empty point cloud with 0 points
-is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-defined 
+is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-defined
 function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
 }
 
-\section{raster alignment}{
+\section{.options}{
+
+User may have noticed that some lidR functions throw an errors when the processing options are innapropriated.
+For example, some functions need a buffer and thus \code{buffer = 0} is forbidden. User can add the same
+constrains to protect against innapropriated options. The \code{.options} argument can be a \code{list} of
+options.
+\itemize{
+\item \code{need_buffer = TRUE} the function complains if the buffer is 0
+\item \code{need_output_file = TRUE} the function complains if no output file template is provided
+\item \code{drop_null = FALSE} the NULL outputs are not automatically removed (useful in very
+specific internal cases)
+\item \code{raster_alignment} very important options see below.
+}
 
 When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
 with the raster to avoid egde artifacts. Indeed, if the edge of a chunk does not correspond to the edge
 of the pixels the output will not be strictly continuous and will have egde artifacts (that might
-not be visible). Users can check this with the argument \code{check_alignment}, that  can take the 
+not be visible). Users can check this with the optons \code{raster_alignment}, that  can take the
 resolution of the raster as input, as well as the starting point if needed. The folowing are accepted:\cr\cr
 \preformatted{
 # check if the chunks are aligned with a raster of resolution 20
-check_alignment = 20
-check_alignment = liste(res = 20)
+raster_alignment = 20
+raster_alignment = list(res = 20)
 
 # check if chunks are aligned with a raster of resolution 20
 # that starts a (0,10)
-check_alignment = list(res = 20, start = c(0,10))
+raster_alignment = list(res = 20, start = c(0,10))
 }
 See also \link{grid_metrics} for more details.
 }
@@ -173,7 +185,7 @@ rumple_index_surface = function(cluster, res)
   las = readLAS(cluster)
   if (is.empty(las)) return(NULL)
 
-  las = lasfiltersurfacepoints(las, 1)
+  las <- lasfiltersurfacepoints(las, 1)
 
   rumple <- grid_metrics(las, rumple_index(X,Y,Z), res)
   bbox   <- raster::extent(cluster)
@@ -190,7 +202,8 @@ opt_cores(project) <- 1L
 opt_chunk_size(project) <- 120      # extremely small because this is a dummy example.
 opt_select(project) <- "xyz"        # only read the coordinates.
 
-output = catalog_apply(project, rumple_index_surface, res = 20, check_alignment = 20)
-output = do.call(raster::merge, output)
+options = list(raster_alignment = 20)
+output  =  catalog_apply(project, rumple_index_surface, res = 20, .options = options)
+output  = do.call(raster::merge, output)
 plot(output, col = height.colors(50))
 }
