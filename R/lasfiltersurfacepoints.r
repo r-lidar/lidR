@@ -73,11 +73,11 @@ lasfiltersurfacepoints.LAScatalog = function(las, res)
   opt_select(las)       <- "*"
   opt_chunk_buffer(las) <- res
 
-  output <- catalog_apply2(las, lasfiltersurfacepoints, res = res, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  output <- unlist(output)
-  ctg    <- suppressMessages(suppressWarnings(catalog(output)))
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_apply(las, lasfiltersurfacepoints, res = res, .options = options)
+  output  <- unlist(output)
+  ctg     <- suppressMessages(suppressWarnings(catalog(output)))
 
   opt_copy(ctg) <- las
-
   return(ctg)
 }

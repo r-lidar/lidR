@@ -115,18 +115,23 @@ grid_canopy.LAScluster = function(las, res, algorithm)
 #' @export
 grid_canopy.LAScatalog = function(las, res, algorithm)
 {
+  opt_select(las)       <- "xyzr"
+  opt_chunk_buffer(las) <- 2
+
   if (is(res, "RasterLayer"))
   {
-    ext = raster::extent(res)
-    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
-    las = las[keep,]
+    ext       <- raster::extent(res)
+    r         <- raster::res(res)[1]
+    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
+    las       <- las[keep,]
+    start     <- c(ext@xmin, ext@ymin)
+    alignment <- list(res = r, start = start)
   }
+  else
+    alignment <- list(res = res, start = c(0,0))
 
-  opt_select(las) <- "xyzr"
-  opt_chunk_buffer(las) <- 2
-  alignment <- list(res = res, start = c(0,0))
-
-  output <- catalog_apply2(las, grid_canopy, res = res, algorithm = algorithm, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  output  <- catalog_apply(las, grid_canopy, res = res, algorithm = algorithm, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_canopy"))

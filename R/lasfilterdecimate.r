@@ -94,6 +94,7 @@ lasfilterdecimate.LAScluster = function(las, algorithm)
 #' @export
 lasfilterdecimate.LAScatalog = function(las, algorithm)
 {
+  opt_select(las) <- "*"
 
   e <- environment(algorithm)
 
@@ -102,13 +103,11 @@ lasfilterdecimate.LAScatalog = function(las, algorithm)
   else
     opt_chunk_buffer(las) <- 0
 
-  opt_select(las) <- "*"
-
-  output  <- catalog_apply2(las, lasfilterdecimate, algorithm = algorithm, need_buffer = FALSE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_apply(las, lasfilterdecimate, algorithm = algorithm, .options = options)
   output  <- unlist(output)
   ctg     <- suppressMessages(suppressWarnings(catalog(output)))
 
   opt_copy(ctg) <- las
-
   return(ctg)
 }

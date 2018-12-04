@@ -28,7 +28,7 @@ Interpolates the ground points and creates a rasterized digital terrain model. T
 the points classified as "ground" (Classification = 2 according to
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
 to compute the interpolation.\cr
-How well the edges of the dataset are interpolated depends on the interpolation method used. 
+How well the edges of the dataset are interpolated depends on the interpolation method used.
 Thus, a buffer around the region of interest is always recommended to avoid edge effects.
 }
 \section{Working with a \code{LAScatalog}}{

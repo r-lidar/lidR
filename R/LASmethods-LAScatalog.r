@@ -347,7 +347,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, ...)
     param$x = xcenter
     param$y = ycenter
 
-    op <- par(mar = c(2.5,2.5,1,1) + 0.1)
+    op <- graphics::par(mar = c(2.5,2.5,1,1) + 0.1)
 
     if (is.null(param$add))
       do.call(graphics::plot, param)
@@ -356,6 +356,6 @@ plot.LAScatalog = function(x, y, mapview = FALSE, ...)
 
     graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
 
-    par(op)
+    graphics::par(op)
   }
 }

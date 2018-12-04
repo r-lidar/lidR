@@ -145,9 +145,11 @@ lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
   opt_select(las) <- "*"
 
-  output <- catalog_apply2(las, lasground, algorithm = algorithm, last_returns = last_returns,  need_buffer = TRUE, check_alignment = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  output <- unlist(output)
-  ctg    <- catalog(output)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_apply(las, lasground, algorithm = algorithm, last_returns = last_returns, .options = options)
+  output  <- unlist(output)
+  ctg     <- catalog(output)
+
   opt_copy(ctg) <- las
   return(ctg)
 }

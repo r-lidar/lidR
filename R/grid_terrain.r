@@ -33,7 +33,7 @@
 #' the points classified as "ground" (Classification = 2 according to
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
 #' to compute the interpolation.\cr
-#' How well the edges of the dataset are interpolated depends on the interpolation method used. 
+#' How well the edges of the dataset are interpolated depends on the interpolation method used.
 #' Thus, a buffer around the region of interest is always recommended to avoid edge effects.
 #'
 #' @template param-las
@@ -167,17 +167,22 @@ grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE)
 #' @export
 grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
+  opt_select(las) <- "xyzc"
+
   if (is(res, "RasterLayer"))
   {
-    ext = raster::extent(res)
-    keep = with(las@data, !(`Min X` >= ext@xmax | `Max X` <= ext@xmin | `Min Y` >= ext@ymax | `Max Y` <= ext@ymin))
-    las = las[keep,]
+    ext       <- raster::extent(res)
+    r         <- raster::res(res)[1]
+    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
+    las       <- las[keep,]
+    start     <- c(ext@xmin, ext@ymin)
+    alignment <- list(res = r, start = start)
   }
+  else
+    alignment <- list(res = res, start = c(0,0))
 
-  opt_select(las) <- "xyzc"
-  alignment <- list(res = res, start = c(0,0))
-
-  output <- catalog_apply2(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, need_buffer = TRUE, check_alignment = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_terrain"))
