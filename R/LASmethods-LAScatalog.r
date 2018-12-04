@@ -339,14 +339,15 @@ plot.LAScatalog = function(x, y, mapview = FALSE, ...)
 
     if (is.null(param$xlim)) param$xlim = c(xmin, xmax)
     if (is.null(param$ylim)) param$ylim = c(ymin, ymax)
-    if (is.null(param$xlab)) param$xlab = "X"
-    if (is.null(param$ylab)) param$ylab = "Y"
-    if (is.null(param$asp))  param$xlab = "X"
+    if (is.null(param$xlab)) param$xlab = ""
+    if (is.null(param$ylab)) param$ylab = ""
     if (is.null(param$asp))  param$asp = 1
     if (is.null(param$col))  param$col = "white"
 
     param$x = xcenter
     param$y = ycenter
+
+    op <- par(mar = c(2.5,2.5,1,1) + 0.1)
 
     if (is.null(param$add))
       do.call(graphics::plot, param)
@@ -354,5 +355,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, ...)
       do.call(graphics::plot, param)
 
     graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
+
+    par(op)
   }
 }
