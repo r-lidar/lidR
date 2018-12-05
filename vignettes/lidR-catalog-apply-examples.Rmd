@@ -1,0 +1,118 @@
+---
+title: "Create a function that can process a catalog"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Create a function that can process a catalog}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The following demonstrates how to write your own functions fully applicable on a wide catalog of point clouds and based on the available `lidR` tools. We will a create simple `lasfilternoise` function. This example should not be considered as reference method for filtering noise, but as examples to aid understanding of the logic behind the lidR design and to give a full example of how to create a user-defined function fully operationnal. The code design is the one used internally in lidR and relies on S3 method dispatch. We recomend reading the chapter about [S3 method dispatch](http://adv-r.had.co.nz/S3.html) from [Advanced R](http://adv-r.had.co.nz/) book.
+
+## Create a generic `lasfilternoise` function
+
+First we create a generic function `lasfilternoise` that will be usable on different classes. (see the chapter about [S3 method dispatch](http://adv-r.had.co.nz/S3.html))
+
+```r
+lasfilternoise = function(las, ...)
+{
+  UseMethod("lasfilternoise", las)
+}
+```
+
+
+## Create a `lasfilternoise` for `LAS` objects
+
+A simple way (and a bit naive) to detect outliers is to measure the 95th percentile of height in 10 by 10 m pixels (area-based approach) and then in each pixel remove the points that are above the 95th percentile plus, let's say, 20%. This can easily be built in lidR using `grid_metrics`, `lasmergespatial` and `lasfilter`, and should work either on a normalized or a raw point clouds. Let create a function method `lasfilternoise` for LAS objects:
+
+```r
+lasfilternoise.LAS = function(las, sensitivity)
+{
+  p95 <- grid_metrics(las, ~quantile(Z, probs = 0.95), 10)
+  las <- lasmergespatial(las, p95, "p95")
+  las <- lasfilter(las, Z < p95*sensitivity)
+  las$p95 <- NULL
+  return(las)
+}
+```
+
+This function is fully functionnal on a point clouds loaded in memory
+
+```r
+las <- readLAS("file.las")
+las <- lasfilternoise(las, sensitivity = 1.2)
+writeLAS(las, "denoised-file.las")
+```
+
+## Extend `lasfilternoise`  function to a `LAScatalog`
+
+User can access to the catalog processing engine with the function `catalog_apply` that is the engine use internally. It allows for appling any function over an entire catalog. Here we will apply our custom `lasfilternoise` function. To use our function `lasfilternoise` on a LAScatalog we must create a compatible function (see documentation of `catalog_apply`). In the lidR package we usually create a intermediate method. Here `lasfilternoise` for `LAScluster` objects (see also the documentation of `catalog_apply`):
+
+```r
+lasfilternoise.LAScluster = function(las, sensitivity)
+{
+  # The function is automatically fed with LAScluster objects
+  # Here the input 'las' will a LAScluster
+
+  las <- readLAS(las)                          # Read the LAScluster
+  if (is.empty(las)) return(NULL)              # Exit early (see documentation)
+  
+  las <- lasfilternoise(las, tolerance)        # Filter the noise
+  las <- lasfilter(las, buffer == 0)           # Don't forget to remove the buffer
+  return(las)                                  # Return the filtered point cloud
+}
+```
+
+This function can be used in `catalog_apply`. We can then create a method `lasfilternoise` for a `LAScatalog`:
+
+```r
+lasfilternoise.LAScatalog = function(las, sensitivity)
+{
+   catalog_apply(las, lasfilternoise, sensitivity = sensitivity)
+}
+```
+
+And it just works. This function `lasfilternoise` is now fully compatible with the catalog processing engine and supports all the options of the engine.
+
+```r
+myproject <- catalog("folder/to/lidar/data/")
+
+opt_filter(myproject)       <- "-drop_z_below 0"
+opt_chunk_buffer(myproject) <- 10
+opt_chunk_size(myproject)   <- 0
+opt_cores(myproject)        <- 2
+opt_output_files(myproject) <- "folder/to/lidar/data/denoised/{ORIGINALFILENAME}_denoised"
+
+output <- lasfilternoise(myproject, tolerance = 1.2)
+```
+
+## Finalise the functions
+
+As is, the function `lasfilternoise.LAScatalog` is not actually finished. Indeed:
+
+1. The processing options were not checked. For example this function should not allows to return the output into R otherwise the whole point cloud will be returned.
+2. The output is a list of written file that can be simplified into a LAScatalog. 
+
+In lidR the functions usually look like this:
+
+
+```r
+lasfilternoise.LAScatalog = function(las, sensitivity, res)
+{
+   # Force some options
+   opt_select(las) <-  "*"          # Do not respect the select argument
+   opt_chunck_buffer(las) <- res    # Force the buffer to be greater than 0.
+   
+   # Add this option to throw an error if no output template is provided
+   options <- list(need_output_file = TRUE)
+   
+   output  <- catalog_apply(las, lasfilternoise, sensitivity = sensitivity, .options = options)
+   output  <- unlist(output)
+   
+   # Build a LAScatalog from the written las files
+   output  <- catalog(output)
+   return(output)
+}
+```
+
+Now you know how to build your custom functions that work either on a LAS or LAScatalog object.
