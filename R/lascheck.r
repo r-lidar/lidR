@@ -703,6 +703,35 @@ lascheck.LAScatalog = function(las)
   else
     ok()
 
+  h1("Checking the headers")
+
+  h2("Checking scale factor validity...")
+
+  failure = FALSE
+
+  s = c(1,10,100,1000,10000)
+  valid = c(1/s, 0.5/s, 0.25/s)
+
+  if (any(!data$X.scale.factor %in% valid))
+  { fail("Invalid header: X scale factor should be factor ten of 0.1 or 0.5 or 0.25") ; failure = TRUE }
+
+  if (any(!data$Y.scale.factor %in% valid))
+  { fail("Invalid header: Y scale factor should be factor ten of 0.1 or 0.5 or 0.25") ; failure = TRUE }
+
+  if (any(!data$Z.scale.factor %in% valid))
+  { fail("Invalid header: Z scale factor should be factor ten of 0.1 or 0.5 or 0.25") ; failure = TRUE }
+
+  if (!failure)
+    ok()
+
+  h2("Checking Point Data Format ID validity...")
+
+  if (any(data$Point.Data.Format.ID %in% c(4,5,9,10)))
+    warn("Invalid headers: point data format not supported yet.")
+  else if (any(data$Point.Data.Format.ID <0 | data$Point.Data.Format.ID > 10))
+    fail("Invalid header: point data format invalid.")
+  else
+    ok()
 
   h1("Checking preprocessing already done ")
 

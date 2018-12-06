@@ -145,8 +145,8 @@ catalog_makecluster = function(ctg)
   {
     xrange = c(min(xmin), max(xmax))
     yrange = c(min(ymin), max(ymax))
-    title  = "Pattern of clusters"
-    plot.LAScatalog(ctg, mapview = FALSE, main = title, xlim = xrange, ylim = yrange)
+    title  = "Pattern of chunks"
+    plot.LAScatalog(ctg, mapview = FALSE, chunk_pattern = FALSE, main = title, xlim = xrange, ylim = yrange)
 
     lapply(clusters, function(x)
     {

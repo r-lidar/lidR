@@ -37,6 +37,26 @@
 #' @param value An appropriate value depending on the expected input.
 #'
 #' @name catalog_options_tools
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' ctg = catalog(LASfile)
+#'
+#' plot(ctg, chunk_pattern = TRUE)
+#'
+#' opt_chunk_size(ctg) <- 150
+#' plot(ctg, chunk_pattern = TRUE)
+#'
+#' opt_chunk_buffer(ctg) <- 10
+#' plot(ctg, chunk_pattern = TRUE)
+#'
+#' opt_chunk_alignment(ctg) <- c(270,250)
+#' plot(ctg, chunk_pattern = TRUE)
+#'
+#' summary(ctg)
+#'
+#' opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#' summary(ctg)
 NULL
 
 #' @rdname catalog_options_tools
