@@ -19,11 +19,11 @@
 \title{Predefined standard metrics functions}
 \format{An object of class \code{formula} of length 2.}
 \usage{
-stdmetrics(x, y, z, i, a, rn, class, dz = 1)
+stdmetrics(x, y, z, i, a, rn, class, dz = 1, th = 2)
 
 .stdmetrics
 
-stdmetrics_z(z, dz = 1)
+stdmetrics_z(z, dz = 1, th = 2)
 
 .stdmetrics_z
 
@@ -52,7 +52,9 @@ stdtreemetrics(x, y, z)
 
 \item{rn, class}{ReturnNumber, Classification}
 
-\item{dz}{Layer thickness for metrics requiring this data, such as \link[lidR:entropy]{entropy}}
+\item{dz}{numeric. Layer thickness  metric \link[lidR:entropy]{entropy}}
+
+\item{th}{numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.}
 
 \item{pulseID}{The number referencing each pulse}
 }
@@ -92,7 +94,7 @@ individual tree level.
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "*")
 
-# All the predefined functions
+# All the predefined metrics
 m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
@@ -121,21 +123,30 @@ m9 = grid_hexametrics(las, .stdmetrics)
 
 # Combine some predefined function with your own new metrics
 # Here convenient shortcuts are no longer usable.
-myMetrics = function(z, i)
+myMetrics = function(z, i, rn)
 {
+  first  = rn == 1L
+  zfirst = z[first]
+  nfirst = length(zfirst)
+  above2 = sum(z > 2)
+
+  x = above2/nfirst*100
+
+  # User's metrics
   metrics = list(
-     zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+     above2aboven1st = x,       # Num of returns above 2 divided by num of 1st returns
      zimean  = mean(z*i),       # Mean products of z by intensity
-     zsqmean = sqrt(mean(z^2))  # Quadratic mean
+     zsqmean = sqrt(mean(z^2))  # Quadratic mean of z
    )
 
+  # Combined with standard metrics
   return( c(metrics, stdmetrics_z(z)) )
 }
 
-m10 = grid_metrics(las, myMetrics(Z, Intensity))
+m10 = grid_metrics(las, myMetrics(Z, Intensity, ReturnNumber))
 
-# Users can write your own convenient shorcuts like this:
-.myMetrics = ~myMetrics(Z,Intensity)
+# Users can write their own convenient shorcuts like this:
+.myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
 
 m11 = grid_metrics(las, .myMetrics)
 }
