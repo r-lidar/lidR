@@ -60,12 +60,13 @@
 #' @param x,y,z,i,a Coordinates of the points, Intensity and ScanAngle
 #' @param rn,class ReturnNumber, Classification
 #' @param pulseID The number referencing each pulse
-#' @param dz Layer thickness for metrics requiring this data, such as \link[lidR:entropy]{entropy}
+#' @param dz numeric. Layer thickness  metric \link[lidR:entropy]{entropy}
+#' @param th numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile, select = "*")
 #'
-#' # All the predefined functions
+#' # All the predefined metrics
 #' m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
 #'
 #' # Convenient shortcut
@@ -94,21 +95,31 @@
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
-#' myMetrics = function(z, i)
+#' myMetrics = function(z, i, rn)
 #' {
+#'   first  = rn == 1L
+#'   zfirst = z[first]
+#'   nfirst = length(zfirst)
+#'   above2 = sum(z > 2)
+#'
+#'   x = above2/nfirst*100
+
+#'
+#'   # User's metrics
 #'   metrics = list(
-#'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+#'      above2aboven1st = x,       # Num of returns above 2 divided by num of 1st returns
 #'      zimean  = mean(z*i),       # Mean products of z by intensity
-#'      zsqmean = sqrt(mean(z^2))  # Quadratic mean
+#'      zsqmean = sqrt(mean(z^2))  # Quadratic mean of z
 #'    )
 #'
+#'   # Combined with standard metrics
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' m10 = grid_metrics(las, myMetrics(Z, Intensity))
+#' m10 = grid_metrics(las, myMetrics(Z, Intensity, ReturnNumber))
 #'
-#' # Users can write your own convenient shorcuts like this:
-#' .myMetrics = ~myMetrics(Z,Intensity)
+#' # Users can write their own convenient shorcuts like this:
+#' .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
 #'
 #' m11 = grid_metrics(las, .myMetrics)
 #' @seealso
@@ -119,21 +130,21 @@
 #' \link{tree_metrics}
 #' @rdname stdmetrics
 #' @export
-stdmetrics = function(x, y, z, i, a, rn, class, dz = 1)
+stdmetrics = function(x, y, z, i, a, rn, class, dz = 1, th = 2)
 {
   C  = stdmetrics_ctrl(x, y, z, a)
-  Z  = stdmetrics_z(z, dz)
+  Z  = stdmetrics_z(z, dz, th)
   I  = stdmetrics_i(i, z, class, rn)
   RN = stdmetrics_rn(rn, class)
   #PU = stdmetrics_pulse(pulseID, rn)
 
-  metrics = c(C, Z, I, RN)
+  metrics = c(Z, I, RN, C)
   return(metrics)
 }
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics = ~stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1)
+.stdmetrics = ~stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1, th = 2)
 
 #' Gap fraction profile
 #'
@@ -321,10 +332,8 @@ VCI = function(z, zmax, by = 1)
 
 #' @rdname stdmetrics
 #' @export
-stdmetrics_z = function(z, dz = 1)
+stdmetrics_z = function(z, dz = 1, th = 2)
 {
-  zmax <- zmean <- zsd <- zcv <- zskew <- zkurt <- zentropy <- NULL
-
   n = length(z)
   zmax  = max(z)
   zmean = mean(z)
@@ -332,6 +341,11 @@ stdmetrics_z = function(z, dz = 1)
   probs = seq(0.05, 0.95, 0.05)
   zq 	  = as.list(stats::quantile(z, probs))
   names(zq) = paste0("zq", probs*100)
+
+  pzabovex = lapply(th, function(x) { fast_countover(z, x) / n * 100 })
+  names(pzabovex) = paste0("pzabove", th)
+
+  pzabovemean = fast_countover(z, zmean) / n * 100
 
   if (zmax <= 0)
   {
@@ -354,10 +368,11 @@ stdmetrics_z = function(z, dz = 1)
     zsd   = stats::sd(z),
     zskew = (sum((z - zmean)^3)/n)/(sum((z - zmean)^2)/n)^(3/2),
     zkurt = n * sum((z - zmean)^4)/(sum((z - zmean)^2)^2),
-    zentropy  = entropy(z, dz)
+    zentropy  = entropy(z, dz),
+    pzabovezmean = pzabovemean
   )
 
-  metrics = c(metrics, zq, d)
+  metrics = c(metrics, pzabovex, zq, d)
 
   return(metrics)
 }
