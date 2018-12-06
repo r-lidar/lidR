@@ -79,3 +79,23 @@ opt_filter(ctg) <- value
 The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
 The options are used by all the functions that support a \code{LAScatalog} as input.
 }
+\examples{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg = catalog(LASfile)
+
+plot(ctg, chunk_pattern = TRUE)
+
+opt_chunk_size(ctg) <- 150
+plot(ctg, chunk_pattern = TRUE)
+
+opt_chunk_buffer(ctg) <- 10
+plot(ctg, chunk_pattern = TRUE)
+
+opt_chunk_alignment(ctg) <- c(270,250)
+plot(ctg, chunk_pattern = TRUE)
+
+summary(ctg)
+
+opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+summary(ctg)
+}

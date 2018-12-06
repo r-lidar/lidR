@@ -1,3 +1,30 @@
+# ===============================================================================
+#
+# PROGRAMMERS:
+#
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
+#
+# COPYRIGHT:
+#
+# Copyright 2016-2018 Jean-Romain Roussel
+#
+# This file is part of lidR R package.
+#
+# lidR is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+# ===============================================================================
+
 cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = NULL, ...)
 {
   stopifnot(is.list(clusters))
@@ -13,7 +40,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
 
   future::plan(plan, workers = ncores)
 
-  # Display the color legend over the LAScatalog that should have already been plotted by makecluster.
+  # Progress estimation
   if (processing_options$progress)
   {
     if (requireNamespace("progress", quietly = TRUE))
@@ -24,8 +51,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
   }
 
-  # Find the name of the first paramter of FUN
-  # (it can be anything because FUN might be a user-defined function)
+  # Find the name of the first paramter of FUN (it can be anything because FUN might be a user-defined function)
   formal_f <- formals(FUN)
   first_p  <- names(formal_f)[1]
 
@@ -35,6 +61,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     # Add the current LAScluster into params of function FUN
     current_processed_cluster <- clusters[[i]]
 
+    # !!! A clusters might be NULL?? I don't remember in which case !!!
     if (!is.null(current_processed_cluster))
       params[[first_p]] <- current_processed_cluster
     else
@@ -45,8 +72,8 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     {
       x <- do.call(FUN, params)
       if (is.null(x)) return(NULL)
-      if (current_processed_cluster@save == "") return(x)
-      return(cluster_write(x, current_processed_cluster@save, output_options))
+      if (current_processed_cluster@save == "") return(x)                       # Return the output in R
+      return(cluster_write(x, current_processed_cluster@save, output_options))  # Write the output in file
     }, substitute = TRUE, globals = structure(TRUE, add = globals))
 
     # Error handling and progress report
@@ -154,14 +181,14 @@ cluster_write = function(x, path, output_options)
   {
     driver <- output_options$drivers$LAS
     path   <- paste0(path, driver$extension)
-    driver$param$las <- x
+    driver$param$las  <- x
     driver$param$file <- path
   }
   else if (is(x, "RasterLayer") | is(x, "RasterBrick") | is(x, "RasterStack"))
   {
     driver <- output_options$drivers$Raster
     path   <- paste0(path, driver$extension)
-    driver$param$x <- x
+    driver$param$x        <- x
     driver$param$filename <- path
   }
   else if (is(x, "SpatialPoints") | is(x, "SpatialPointsDataFrame") | is(x, "SpatialPolygons") | is(x, "SpatialPolygonsDataFrame") | is(x, "SpatialLines") | is(x, "SpatialLinesDataFrame"))
@@ -189,7 +216,7 @@ cluster_write = function(x, path, output_options)
   {
     driver <- output_options$drivers$DataFrame
     path   <- paste0(path, driver$extension)
-    driver$param$x <- x
+    driver$param$x    <- x
     driver$param$file <- path
   }
   else if (class(x)[1] %in% names(output_options$drivers))
@@ -197,7 +224,7 @@ cluster_write = function(x, path, output_options)
     driver <- output_options$drivers[[class(x)[1]]]
     path   <- paste0(path, driver$extension)
     driver$param[[driver$object]] <- x
-    driver$param[[driver$path]] <- path
+    driver$param[[driver$path]]   <- path
   }
   else
     stop(glue::glue("Trying to write an object of class {class(x)} but this type is not supported."))

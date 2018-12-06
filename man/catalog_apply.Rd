@@ -66,6 +66,7 @@ myfun = function(cluster, ...)
    las = readLAS(cluster)
    if (is.empty(las)) return(NULL)
    # do something
+   # remove the buffer of the output
    return(something)
 }}
 The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
@@ -85,13 +86,13 @@ options.
 \item \code{need_output_file = TRUE} the function complains if no output file template is provided
 \item \code{drop_null = FALSE} the NULL outputs are not automatically removed (useful in very
 specific internal cases)
-\item \code{raster_alignment} very important options see below.
+\item \code{raster_alignment = ...} very important option, see below.
 }
 
 When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
 with the raster to avoid egde artifacts. Indeed, if the edge of a chunk does not correspond to the edge
 of the pixels the output will not be strictly continuous and will have egde artifacts (that might
-not be visible). Users can check this with the optons \code{raster_alignment}, that  can take the
+not be visible). Users can check this with the options \code{raster_alignment}, that  can take the
 resolution of the raster as input, as well as the starting point if needed. The folowing are accepted:\cr\cr
 \preformatted{
 # check if the chunks are aligned with a raster of resolution 20
@@ -125,26 +126,27 @@ returns a \code{LAS} object.
 }
 
 \examples{
-# Visit http://jean-romain.github.io/lidR/wiki for more examples
+# More examples might be avaible in the official lidR vignettes or
+# on the github wiki <http://jean-romain.github.io/lidR/wiki>
 
 ## =========================================================================
 ## Example 1: detect all the tree tops over an entire catalog
-## (this is basically the existing lidR function 'tree_detection')
+## (this is basically the reproduction of existing lidR function 'tree_detection')
 ## =========================================================================
 
-# 1. Build the user-defined function that analyzes each cluster of the catalog.
+# 1. Build the user-defined function that analyzes each chunk of the catalog.
 # The function's first argument is a LAScluster object. The other arguments can be freely
 # choosen by the user.
-my_tree_detection_method = function(cluster, ws)
+my_tree_detection_method <- function(cluster, ws)
 {
   # The cluster argument is a LAScluster object. The user does not need to know how it works.
   # readLAS will load the region of interest (chunk) with a buffer around it, taking advantage of
   # point cloud indexation if possible. The filter and select options are propagated automatically
-  las = readLAS(cluster)
+  las <- readLAS(cluster)
   if (is.empty(las)) return(NULL)
 
   # Find the tree tops using a user-developed method (here simply a LMF).
-  ttops = tree_detection(las, lmf(ws))
+  ttops <- tree_detection(las, lmf(ws))
 
   # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
   # plus the trees tops in the buffered area. We need to remove the buffer otherwise we will get
@@ -161,20 +163,21 @@ project <- catalog(LASfile)
 plot(project)
 
 # 3. Set some catalog options.
-# For this dummy example, the clustering size is 80 m and the buffer is 10 m using a single core.
+# For this dummy example, the chunk size is 80 m and the buffer is 10 m using a single core.
 opt_chunk_buffer(project) <- 10
-opt_cores(project) <- 1L
-opt_chunk_size(project) <- 80        # extremely small because this is a dummy example.
-opt_select(project) <- "xyz"         # only read the coordinates.
-opt_filter(project) <- "-keep_first" # for this example we will use only first returns.
+opt_cores(project)        <- 1L
+opt_chunk_size(project)   <- 80            # small because this is a dummy example.
+opt_select(project)       <- "xyz"         # read only the coordinates.
+opt_filter(project)       <- "-keep_first" # read only first returns.
 
 # 4. Apply a user-defined function to take advantage of the internal engine
-output = catalog_apply(project, my_tree_detection_method, ws = 5)
+opt    <- list(need_buffer = TRUE)   # catalog_apply will throw an error if buffer = 0
+output <- catalog_apply(project, my_tree_detection_method, ws = 5, .options = opt)
 
 # 5. Post-process the output to merge the results (depending on the output computed).
 # Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
-output = do.call(rbind, output)
-sp::plot(output)
+output <- do.call(rbind, output)
+spplot(output)
 
 ## ===================================================
 ## Example 2: compute a rumple index on surface points
@@ -185,8 +188,7 @@ rumple_index_surface = function(cluster, res)
   las = readLAS(cluster)
   if (is.empty(las)) return(NULL)
 
-  las <- lasfiltersurfacepoints(las, 1)
-
+  las    <- lasfiltersurfacepoints(las, 1)
   rumple <- grid_metrics(las, rumple_index(X,Y,Z), res)
   bbox   <- raster::extent(cluster)
   rumple <- raster::crop(rumple, bbox)
@@ -198,12 +200,12 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project <- catalog(LASfile)
 
 opt_chunk_buffer(project) <- 1
-opt_cores(project) <- 1L
-opt_chunk_size(project) <- 120      # extremely small because this is a dummy example.
-opt_select(project) <- "xyz"        # only read the coordinates.
+opt_cores(project)        <- 1L
+opt_chunk_size(project)   <- 120     # small because this is a dummy example.
+opt_select(project)       <- "xyz"   # read only the coordinates.
 
-options = list(raster_alignment = 20)
-output  =  catalog_apply(project, rumple_index_surface, res = 20, .options = options)
-output  = do.call(raster::merge, output)
+opt     <- list(raster_alignment = 20)  # catalog_apply will adjust the chunks if required
+output  <-  catalog_apply(project, rumple_index_surface, res = 20, .options = opt)
+output  <- do.call(raster::merge, output)
 plot(output, col = height.colors(50))
 }
