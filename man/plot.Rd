@@ -57,6 +57,8 @@ in the LAS format specification. However, this is not always respected. If the c
 on 8 bits set this parameter to 8.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
+
+\item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
 }
 \description{
 Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects
