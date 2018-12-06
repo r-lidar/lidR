@@ -293,6 +293,7 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' (satellite data, elevation, street, and so on).
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+#' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @method plot LAScatalog
 #' @export
 #' @examples
