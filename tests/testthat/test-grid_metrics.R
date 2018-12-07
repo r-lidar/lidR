@@ -104,6 +104,20 @@ test_that("grid_metric return the same both with catalog and las + grid alignmen
   expect_equal(m1, m2)
 })
 
+test_that("grid_metric works with a raster as input", {
+  r = raster::raster(round(extent(las)-80))
+  raster::res(r) = 15
+  r[] = runif(ncell(r))
+
+  m1 = grid_metrics(ctg, length(Z), r)
+  m2 = grid_metrics(las, length(Z), r)
+  expect_equal(m1, m2)
+
+  expect_error(grid_metrics(ctg, mean(Intensity), 20), "Intensity")
+  expect_error(grid_metrics(las, mean(Intensity), 20), "Intensity")
+})
+
+
 las = readLAS(file)
 
 test_that("predefined metric set work both with a LAS and LAScatalog", {
@@ -116,4 +130,6 @@ test_that("predefined metric set work both with a LAS and LAScatalog", {
 
   expect_error(grid_metrics(ctg, .stdmetrics_z), NA)
 })
+
+
 

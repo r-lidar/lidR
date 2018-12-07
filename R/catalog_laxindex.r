@@ -2,8 +2,9 @@ catalog_laxindex = function(ctg)
 {
   stopifnot(is(ctg, "LAScatalog"))
 
-  opt_chunk_size(ctg) <- 0
-  opt_chunk_buffer(ctg)      <- 0
+  opt_chunk_size(ctg)   <- 0
+  opt_chunk_buffer(ctg) <- 0
+  opt_wall_to_wall(ctg) <- FALSE
 
   create_lax_file = function(cluster)
   {
@@ -11,6 +12,8 @@ catalog_laxindex = function(ctg)
     return(0)
   }
 
-  catalog_apply2(ctg, create_lax_file, need_buffer = FALSE, check_alignment = FALSE, drop_null = FALSE)
+  options <- list(need_buffer = FALSE, drop_null = FALSE)
+
+  catalog_apply(ctg, create_lax_file,.options = options())
   return(invisible())
 }

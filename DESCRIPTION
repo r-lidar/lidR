@@ -23,6 +23,7 @@ Imports:
     concaveman,
     data.table,
     future (>= 1.10.0),
+    gdalUtils,
     geometry,
     glue,
     grDevices,
@@ -42,7 +43,6 @@ Imports:
 Suggests:
     EBImage,
     crayon,
-    gdalUtils,
     hexbin,
     mapview,
     progress,

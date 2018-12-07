@@ -34,10 +34,10 @@ point cloud with RGB values.}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-shapefile_dir <- system.file("extdata", package = "lidR")
+shp     <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 
 las   <- readLAS(LASfile)
-lakes <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17")
+lakes <- shapefile(shp)
 
 # The attribute "inlake" does not exist in the shapefile.
 # Points are classified as TRUE if in a polygon

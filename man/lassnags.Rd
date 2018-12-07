@@ -21,8 +21,8 @@ If the input is a \code{LAS} object, return a \code{LAS} object. If the input is
 \description{
 Snag classification/segmentation using several possible algorithms (see details).
 The function attributes a number identifying a snag class (\code{snagCls} attribute) to each point
-of the point cloud. The classification/segmentation is done at the point cloud level and currently 
-only one algorithm implemented, which uses LiDAR intensity thresholds and specified neighborhoods 
+of the point cloud. The classification/segmentation is done at the point cloud level and currently
+only one algorithm implemented, which uses LiDAR intensity thresholds and specified neighborhoods
 to differentiate bole and branch from foliage points (see details).
 }
 \section{Working with a \code{LAScatalog}}{

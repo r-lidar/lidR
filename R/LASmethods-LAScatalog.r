@@ -293,6 +293,7 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' (satellite data, elevation, street, and so on).
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+#' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @method plot LAScatalog
 #' @export
 #' @examples
@@ -304,55 +305,63 @@ setMethod("area", "LAScatalog",  function(x, ...)
 #' plot(ctg)
 #' }
 #' @describeIn plot plot LAScatalog
-setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, ...)
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
 {
-  plot.LAScatalog(x, y, mapview, ...)
+  plot.LAScatalog(x, y, mapview, chunk_pattern, ...)
 })
 
-plot.LAScatalog = function(x, y, mapview = FALSE, ...)
+plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
 {
-  if (mapview == TRUE)
+  assert_is_a_bool(mapview)
+  assert_is_a_bool(chunk_pattern)
+
+  if (mapview)
   {
     if (!requireNamespace("mapview", quietly = TRUE))
     {
       message("'mapview' is required to display the LAScatalog interactively.")
-      mapview = FALSE
+      mapview <- FALSE
     }
   }
 
   if (mapview)
   {
-    LAScatalog = x
+    LAScatalog <- x
     mapview::mapview(LAScatalog, ...)
+  }
+  else if (chunk_pattern)
+  {
+    opt_progress(ctg) <- TRUE
+    catalog_makecluster(ctg)
+    return(invisible())
   }
   else
   {
-    param = list(...)
+    param   <- list(...)
+    xmin    <- min(x@data$Min.X)
+    xmax    <- max(x@data$Max.X)
+    ymin    <- min(x@data$Min.Y)
+    ymax    <- max(x@data$Max.Y)
+    xcenter <- (xmin + xmax)/2
+    ycenter <- (ymin + ymax)/2
 
-    xmin = min(x@data$Min.X)
-    xmax = max(x@data$Max.X)
-    ymin = min(x@data$Min.Y)
-    ymax = max(x@data$Max.Y)
+    if (is.null(param$xlim)) param$xlim <- c(xmin, xmax)
+    if (is.null(param$ylim)) param$ylim <- c(ymin, ymax)
+    if (is.null(param$xlab)) param$xlab <- ""
+    if (is.null(param$ylab)) param$ylab <- ""
+    if (is.null(param$asp))  param$asp  <- 1
+    if (is.null(param$col))  param$col  <- "white"
 
-    xcenter = (xmin + xmax)/2
-    ycenter = (ymin + ymax)/2
+    param$x <- xcenter
+    param$y <- ycenter
 
-    if (is.null(param$xlim)) param$xlim = c(xmin, xmax)
-    if (is.null(param$ylim)) param$ylim = c(ymin, ymax)
-    if (is.null(param$xlab)) param$xlab = "X"
-    if (is.null(param$ylab)) param$ylab = "Y"
-    if (is.null(param$asp))  param$xlab = "X"
-    if (is.null(param$asp))  param$asp = 1
-    if (is.null(param$col))  param$col = "white"
+    op <- graphics::par(mar = c(2.5,2.5,1,1) + 0.1)
 
-    param$x = xcenter
-    param$y = ycenter
-
-    if (is.null(param$add))
-      do.call(graphics::plot, param)
-    else if (param$add != TRUE)
-      do.call(graphics::plot, param)
+    if (is.null(param$add)) do.call(graphics::plot, param)
 
     graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
+    graphics::par(op)
+
+    return(invisible())
   }
 }
