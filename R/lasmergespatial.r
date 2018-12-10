@@ -107,7 +107,7 @@ lasmergergb = function(las, source)
   if (maxr <= 255 & maxg <= 255 & maxb <= 255)
     scale <- 257
 
-  cells <- raster::cellFromXY(source[[1]], las@data[,.(X,Y)])
+  cells <- raster::cellFromXY(source[[1]], coordinates(las))
 
   las@data$R <- as.integer(R[cells]*scale)
   las@data$G <- as.integer(G[cells]*scale)
@@ -232,7 +232,7 @@ lasmergeRasterLayer = function(las, raster)
   #m  = raster::as.matrix(raster)
   #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract and much more
   #memory-effcient
-  cells = raster::cellFromXY(raster, las@data[,.(X,Y)])
+  cells = raster::cellFromXY(raster, coordinates(las))
   return(raster@data@values[cells])
 }
 

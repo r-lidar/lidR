@@ -181,3 +181,21 @@ subcircled = function(dt, r, n)
 
   return(dt[, f(X, Y, Z, px, py), by = rownames(dt)][, rownames := NULL][])
 }
+
+coordinates = function(las)
+{
+  DT <- las@data
+  X  <- DT[["X"]]
+  Y  <- DT[["Y"]]
+  return(data.frame(X,Y))
+}
+
+coordinates3D = function(las)
+{
+  DT <- las@data
+  X  <- DT[["X"]]
+  Y  <- DT[["Y"]]
+  Z  <- DT[["Z"]]
+  return(data.frame(X,Y,Z))
+}
+

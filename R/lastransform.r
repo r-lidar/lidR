@@ -28,7 +28,7 @@
 
 #' Datum transformation for LAS objects
 #'
-#' A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects. 
+#' A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects.
 #' Returns transformed coordinates of a \code{LAS} object from the projection of the object to the
 #' the projection given by arguments.
 #'
@@ -68,7 +68,7 @@ lastransform.LAS = function(las, epsg, CRSobj = NULL)
   if (is.na(sp::proj4string(las)))
     stop("No transformation possible from NA reference system")
 
-  spts = sp::SpatialPoints(las@data[, .(X,Y)])
+  spts = sp::SpatialPoints(coordinates(las))
   sp::proj4string(spts) <- sp::proj4string(las)
   spts = sp::spTransform(spts, CRSobj)
 

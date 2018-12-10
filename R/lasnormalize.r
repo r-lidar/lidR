@@ -113,7 +113,7 @@ lasnormalize.LAS = function(las, algorithm)
 {
   if (is(algorithm, "RasterLayer"))
   {
-    Zground <- raster::extract(algorithm, las@data[, .(X,Y)])
+    Zground <- raster::extract(algorithm, coordinates(las))
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 

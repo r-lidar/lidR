@@ -258,51 +258,51 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     . <- X <- Y <- Z <- ReturnNumber <- NULL
 
     # Initialize the interpolated values with NAs
-    z = rep(NA_real_, raster::ncell(layout))
+    z <- rep(NA_real_, raster::ncell(layout))
 
     # Get only first returns and coordinates (nothing else needed)
     verbose("Selecting first returns...")
 
-    cloud = las@data
+    cloud <- las@data
     if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data))
-      cloud = las@data[ReturnNumber == 1, .(X,Y,Z)]
+      cloud <- las@data[ReturnNumber == 1L, .(X,Y,Z)]
 
     # subcircle the data
     if (subcircle > 0)
     {
       verbose("Subcircling points...")
 
-      ex = raster::extent(las)
-      cloud = subcircled(cloud, subcircle, 8)
-      cloud = cloud[between(X, ex@xmin, ex@xmax) & between(Y, ex@ymin, ex@ymax)]
+      bbox  <- raster::extent(las)
+      cloud <- subcircled(cloud, subcircle, 8L)
+      cloud <- cloud[between(X, bbox@xmin, bbox@xmax) & between(Y, bbox@ymin, bbox@ymax)]
     }
 
     verbose("Selecting only the highest points within the grid cells...")
 
-    cells = raster::cellFromXY(layout, cloud[, .(X,Y)])
-    grid  = raster::xyFromCell(layout, 1:raster::ncell(layout))
-    grid = data.table::as.data.table(grid)
+    cells <- raster::cellFromXY(layout, cloud[, .(X,Y)])
+    grid  <- raster::xyFromCell(layout, 1:raster::ncell(layout))
+    grid  <- data.table::as.data.table(grid)
     data.table::setnames(grid, c("x", "y"), c("X", "Y"))
-    cloud = cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
+    cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
-    i = 1
+    i <- 1
     for (th in thresholds)
     {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
-      i =  i + 1
+      i <- i + 1
 
       if (th == 0)
-        edge = max_edge[1]
+        edge <- max_edge[1]
       else
-        edge = max_edge[2]
+        edge <- max_edge[2]
 
-      cloud = cloud[Z >= th]
+      cloud <- cloud[Z >= th]
 
       if (nrow(cloud) >= 3)
       {
-        Ztemp = interpolate_delaunay(cloud, grid, edge)
-        z = pmax(z, Ztemp, na.rm = T)
+        Ztemp <- interpolate_delaunay(cloud, grid, edge)
+        z     <- pmax(z, Ztemp, na.rm = T)
       }
     }
 
