@@ -97,7 +97,7 @@ knnidw = function(k = 10, p = 2)
   f = function(what, where)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "grid_canopy"), "knnidw")
+    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "knnidw")
 
     z <- interpolate_knnidw(what, where, k, p)
     return(z)
@@ -139,7 +139,7 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
   f = function(what, where)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "grid_canopy"), "kriging")
+    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "kriging")
 
     z <- interpolate_kriging(what, where, model, k)
     return(z)

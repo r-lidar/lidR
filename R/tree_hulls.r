@@ -87,22 +87,23 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   X <- Y <- tree <- NULL
 
   if (type == "convex")
-    dt = las@data[, stdtreehullconvex(X,Y, .GRP), by = attribute]
+    dt <- las@data[, stdtreehullconvex(X,Y, .GRP), by = attribute]
   else if (type == "concave")
-    dt = las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = attribute]
+    dt <- las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = attribute]
   else
-    dt = las@data[, stdtreehullbbox(X,Y, .GRP), by = attribute]
+    dt <- las@data[, stdtreehullbbox(X,Y, .GRP), by = attribute]
 
   data.table::setnames(dt, names(dt), c("tree", "poly"))
-  dt = dt[!is.na(tree)]
+  dt <- dt[!is.na(tree)]
 
-  spoly = sp::SpatialPolygons(dt$poly)
+  spoly <- sp::SpatialPolygons(dt$poly)
 
-  for (i in 1:length(spoly)) spoly@polygons[[i]]@ID = as.character(i)
+  for (i in 1:length(spoly)) spoly@polygons[[i]]@ID <- as.character(i)
 
-  data = data.frame(dt[, 1])
-  spdf = sp::SpatialPolygonsDataFrame(spoly, data)
-  sp::proj4string(spdf)<-las@proj4string
+  data <- data.frame(dt[, 1])
+  names(data) <- attribute
+  spdf <- sp::SpatialPolygonsDataFrame(spoly, data)
+  sp::proj4string(spdf) <- las@proj4string
 
   return(spdf)
 }
