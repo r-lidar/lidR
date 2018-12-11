@@ -9,26 +9,18 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 * Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
 * Development of the `lidR` package between 2018 and 2019 was made possible thanks to the financial support of the Ministère des Forêts, de la Faune et des Parcs of Québec.
 
-# Content
-
-1. [Key features](#key-features)
-2. [Some examples](#some-examples)
-3. [Install lidR](#install-lidr)
-4. [Changelog](#changelog)
-
 # Key features
 
-- [Read and write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki/readLAS)
-- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki/lasplot)
-- [Area-based approach using any set of metrics](https://github.com/Jean-Romain/lidR/wiki/grid_metrics)
-- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki/Tree-segmentation-from-A-to-Z)
-- [Classify and clip data from geographic shapefiles](https://github.com/Jean-Romain/lidR/wiki/lasclassify)
-- [Manage a catalog of tiles](https://github.com/Jean-Romain/lidR/wiki/catalog)
-- [Automatically extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki/catalog_queries)
-- [Analyse a full set of tiles in parallel computing](https://github.com/Jean-Romain/lidR/wiki/catalog_apply)
-- [Compute a digital canopy model (DCM)](https://github.com/Jean-Romain/lidR/wiki/Rasterizing-perfect-canopy-height-models)
-- [Compute a digital terrain model (DTM)](https://github.com/Jean-Romain/lidR/wiki/grid_terrain)
-- [Normalize a point cloud by substracting a DTM](https://github.com/Jean-Romain/lidR/wiki/lasnormalize)
+- Read and write .las and .laz files
+- Plot 3D LiDAR data
+- Area-based approach using any set of metrics
+- Individual tree segmentation
+- Manage and process a catalog of tiles
+- Extract a set of ground plot inventories
+- Compute a digital canopy model
+- Compute a digital terrain model
+- Normalize a point cloud
+- And much more...
     
 # Some examples
 
