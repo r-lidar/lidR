@@ -63,7 +63,7 @@ random = function(density, use_pulse = FALSE)
 
     if(use_pulse & !"pulseID" %in% names(las@data))
     {
-      warning("No 'pulseID' attribute found. Decimation by points is used.", call. = FALSE)
+      warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
     }
 
@@ -129,7 +129,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 
     if(use_pulse & !"pulseID" %in% names(las@data))
     {
-      warning("No 'pulseID' attribute found. Decimation by points is used.", call. = FALSE)
+      warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
     }
 

@@ -87,7 +87,7 @@ grid_hexametrics = function(las, func, res = 20)
   call <- lazyeval::as_call(func)
 
   if (!requireNamespace("hexbin", quietly = TRUE))
-    stop("'hexbin' package is needed for this function to work. Please install it.", call. = F)
+    stop("'hexbin' package is needed for this function to work. Please install it.")
 
   res  <- round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
   ext  <- raster::extent(las)

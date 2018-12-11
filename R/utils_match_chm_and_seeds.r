@@ -5,7 +5,7 @@ match_chm_and_seeds = function(chm, seeds, field)
   stopif_forbidden_name(field)
 
   if(is.null(raster::intersect(raster::extent(chm), raster::extent(seeds))))
-    stop("No seed matches with the canopy height model" , call. = FALSE)
+    stop("No seed matches with the canopy height model" )
 
   if (field %in% names(seeds@data))
   {
@@ -15,7 +15,7 @@ match_chm_and_seeds = function(chm, seeds, field)
       stop("Tree IDs much be of numeric type.",  call. = FALSE)
 
     if (length(unique(ids)) < length(ids))
-      stop("Duplicated tree IDs found.", call. = FALSE)
+      stop("Duplicated tree IDs found.")
   }
   else
     ids = 1:nrow(seeds@data)
@@ -25,9 +25,9 @@ match_chm_and_seeds = function(chm, seeds, field)
   if (anyNA(cells))
   {
     if (all(is.na(cells)))
-      stop("No seed found", call. = FALSE)
+      stop("No seed found")
     else
-      warning("Some seeds are outside the canopy height model. They were removed.", call. = FALSE)
+      warning("Some seeds are outside the canopy height model. They were removed.")
 
     no_na = !is.na(cells)
     seeds = seeds[no_na,]

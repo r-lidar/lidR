@@ -68,7 +68,7 @@
 grid_canopy = function(las, res, algorithm)
 {
   if (!is_a_number(res) & !is(res, "RasterLayer"))
-    stop("res is not a number or a RasterLayer", call. = FALSE)
+    stop("res is not a number or a RasterLayer")
 
   if (is_a_number(res))
     assert_all_are_non_negative(res)
@@ -81,10 +81,10 @@ grid_canopy.LAS = function(las, res, algorithm)
 {
 
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "DigitalSurfaceModel"))
-    stop("The algorithm is not an algorithm for a digital surface model.", call. = FALSE)
+    stop("The algorithm is not an algorithm for a digital surface model.")
 
   . <- X <- Y <- Z <- NULL
 

@@ -74,10 +74,10 @@ lasground = function(las, algorithm, last_returns = TRUE)
 lasground.LAS = function(las, algorithm, last_returns = TRUE)
 {
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "GroundSegmentation"))
-    stop("The algorithm is not an algorithm for ground segmentation", call. = FALSE)
+    stop("The algorithm is not an algorithm for ground segmentation")
 
   . <- X <- Y <- Z <- Classification <- NULL
 
@@ -90,12 +90,12 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
     n <- names(las@data)
 
     if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
-      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used", call. = FALSE)
+      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used")
     else
       filter = las@data$ReturnNumber == las@data$NumberOfReturns
 
     if(sum(filter) == 0)
-      stop("0 last return found. Process aborted.", call. = FALSE)
+      stop("0 last return found. Process aborted.")
   }
 
   cloud <- las@data[filter, .(X,Y,Z)]

@@ -407,12 +407,12 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     if (is.null(treetops))
     {
       if (!requireNamespace("EBImage", quietly = TRUE))
-        stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = F)
+        stop("'EBImage' package is needed for this function to work. Please read documentation.")
     }
     else
     {
       if (!requireNamespace("imager", quietly = TRUE))
-        stop("'imager' package is needed for this function to work. Please read documentation.", call. = F)
+        stop("'imager' package is needed for this function to work. Please read documentation.")
     }
 
     # Convert the CHM to a matrix

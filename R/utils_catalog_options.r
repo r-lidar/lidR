@@ -212,7 +212,7 @@ opt_output_files = function(ctg)
   ext = tools::file_ext(value)
 
   if (ext != "")
-    warning(glue::glue("{value} contains a file extension. Users don't need to provide a file extension. It will be added automaticaly as a function of the output."), call. = FALSE)
+    warning(glue::glue("{value} contains a file extension. Users don't need to provide a file extension. It will be added automaticaly as a function of the output."))
 
   ctg@output_options$output_files <- value
   return(ctg)

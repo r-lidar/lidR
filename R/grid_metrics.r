@@ -110,7 +110,7 @@
 grid_metrics = function(las, func, res = 20, start = c(0,0))
 {
   if (!is_a_number(res) & !is(res, "RasterLayer"))
-     stop("res is not a number or a RasterLayer", call. = FALSE)
+     stop("res is not a number or a RasterLayer")
 
   if (is_a_number(res))
     assert_all_are_non_negative(res)

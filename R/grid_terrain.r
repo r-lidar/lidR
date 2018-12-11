@@ -78,7 +78,7 @@
 grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   if (!is_a_number(res) & !is(res, "RasterLayer"))
-    stop("res is not a number or a RasterLayer", call. = FALSE)
+    stop("res is not a number or a RasterLayer")
 
   if (is_a_number(res))
     assert_all_are_non_negative(res)
@@ -90,10 +90,10 @@ grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "SpatialInterpolation"))
-    stop("The algorithm is not an algorithm for spatial interpolation", call. = FALSE)
+    stop("The algorithm is not an algorithm for spatial interpolation")
 
   . <- X <- Y <- Z <- Classification <- NULL
 
@@ -101,10 +101,10 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
   # ========================
 
   if (!"Classification" %in% names(las@data))
-    stop("LAS object does not contain 'Classification' data", call. = FALSE)
+    stop("LAS object does not contain 'Classification' data")
 
   if (fast_countequal(las@data$Classification, 2L) == 0)
-    stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
+    stop("No ground points found. Impossible to compute a DTM.")
 
   ground = las@data[Classification == LASGROUND, .(X,Y,Z)]
 

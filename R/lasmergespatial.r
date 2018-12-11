@@ -82,7 +82,7 @@ lasmergespatial.LAS = function(las, source, attribute = NULL)
   else if (is(source, "RasterStack") | is(source, "RasterBrick"))
     return(lasmergergb(las, source))
   else
-    stop("No method for this source format.", call. = F)
+    stop("No method for this source format.")
 
   if (is.null(attribute))
     attribute = "id"
@@ -163,7 +163,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
     else if (class(data) == "character")
       values = rep(NA_character_, npoints)
     else
-      stop(glue::glue("The attribute {attribute} the in the table of attribute is not of a supported type."), call. = FALSE)
+      stop(glue::glue("The attribute {attribute} the in the table of attribute is not of a supported type."))
   }
   # The attribute is not the name of an attribute in the attribute table: assign a boolean value if the point is in a polygon or
   # not.
@@ -185,7 +185,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   # No polygon? Return NA or false depending on the method used
   if (is.null(polys))
   {
-    verbose("No polygon found within the data", call. = F)
+    verbose("No polygon found within the data")
     return(values)
   }
 

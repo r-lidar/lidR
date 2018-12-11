@@ -664,7 +664,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 #   if (is(x, "RasterLayer"))
 #     x = raster::as.matrix(x)
 #   else if (!is.matrix(x))
-#     stop("fractal_dimension: mtx should be a RasterLayer or a Matrix", call. = FALSE)
+#     stop("fractal_dimension: mtx should be a RasterLayer or a Matrix")
 #
 #   mtx = x
 #

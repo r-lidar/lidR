@@ -81,7 +81,7 @@ lasflightline = function(las, dt = 30)
   assert_all_are_non_negative(dt)
 
   if(!"gpstime" %in% names(las@data))
-    stop("No gpstime attribute found. Flightlines cannot be computed from this file.", call. = FALSE)
+    stop("No gpstime attribute found. Flightlines cannot be computed from this file.")
 
   gpstime <- flightlineID <- NULL
   data.table::setorder(las@data, gpstime)
@@ -96,13 +96,13 @@ lasscanline = function(las)
   stopifnotlas(las)
 
   if(!"gpstime" %in% names(las@data))
-    stop("No gpstime attribute found. Scanlines cannot be computed from this object", call. = FALSE)
+    stop("No gpstime attribute found. Scanlines cannot be computed from this object")
 
   if (!"ScanDirectionFlag" %in% names(las@data))
-    stop("No ScanDirectionFlag field found. Scanlines cannot be computed from this object", call. = FALSE)
+    stop("No ScanDirectionFlag field found. Scanlines cannot be computed from this object")
 
   if(!all(sort(values) == c(0L,1L)))
-    stop("ScanDirectionFlag field is not properly populated according to LAS specifications. Scanlines cannot be computed from this object'", call. = FALSE)
+    stop("ScanDirectionFlag field is not properly populated according to LAS specifications. Scanlines cannot be computed from this object'")
 
   gpstime <- scanlineID <- ScanDirectionFlag <- NULL
   data.table::setorder(las@data, gpstime)

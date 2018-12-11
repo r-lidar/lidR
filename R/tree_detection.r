@@ -60,10 +60,10 @@ tree_detection = function(las, algorithm)
 tree_detection.LAS = function(las, algorithm)
 {
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "IndividualTreeDetection"))
-    stop("The algorithm used is not an algorithm for individual tree detection.", call. = FALSE)
+    stop("The algorithm used is not an algorithm for individual tree detection.")
 
   lidR.context = "tree_detection"
   return(algorithm(las))

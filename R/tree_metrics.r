@@ -91,7 +91,7 @@ tree_metrics.LAS = function(las, func, field = "treeID")
   . <- X <- Y <- Z <- x.pos.t <- y.pos.t <- NULL
 
   if (!field %in% names(las@data))
-    stop("The trees are not segmented yet. Please see function 'lastrees'.", call. = FALSE)
+    stop("The trees are not segmented yet. Please see function 'lastrees'.")
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)

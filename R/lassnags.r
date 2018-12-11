@@ -82,10 +82,10 @@ lassnags = function(las, algorithm, attribute = "snagCls")
 lassnags.LAS = function(las, algorithm, attribute = "snagCls")
 {
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "SnagsSegmentation"))
-    stop("The algorithm is not an algorithm for snags segmentation.", call. = FALSE)
+    stop("The algorithm is not an algorithm for snags segmentation.")
 
   stopif_forbidden_name(attribute)
 

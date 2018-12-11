@@ -40,7 +40,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     data.table::setDT(data)
 
   if(!data.table::is.data.table(data))
-    stop("Invalid parameter data in constructor.", call. = FALSE)
+    stop("Invalid parameter data in constructor.")
 
   if (nrow(data) > 0)
   {
@@ -56,7 +56,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
       }
     }
     else
-      stop("Wrong header object provided.", call. = FALSE)
+      stop("Wrong header object provided.")
 
     header = rlas::header_update(header, data)
   }
@@ -74,7 +74,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
       }
     }
     else
-      stop("Wrong header object provided.", call. = FALSE)
+      stop("Wrong header object provided.")
 
     header = suppressWarnings(rlas::header_update(header, data))
     header$`Min X` <- 0
@@ -205,7 +205,7 @@ setMethod("$<-", "LAS", function(x, name, value)
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (!i %in% names(x@data))
-    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
+    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata")
 
   if (i %in% LASFIELDS)
   {
@@ -213,7 +213,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
     type2 <- storage.mode(value)
 
     if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"))
   }
 
   x@data[[i]] = value
@@ -256,7 +256,7 @@ setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z
 
 plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
 {
-  if (is.empty(x)) stop("Cannot display an empty point cloud", call. = FALSE)
+  if (is.empty(x)) stop("Cannot display an empty point cloud")
 
   col <- lazyeval::expr_text(color)
   if (substr(col, 1, 1) != "\"") color <- col
@@ -264,11 +264,11 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   backend <- match.arg(backend)
   pcv     <- "PointCloudViewer" %in% rownames(utils::installed.packages())
 
-  if (backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.", call. = F)
-  if (length(color) > 1)          stop("'color' should contain a single value.", call. = F)
+  if (backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.")
+  if (length(color) > 1)          stop("'color' should contain a single value.")
 
   if (color != "RGB" & !color %in% names(x@data))
-    stop("'color' should refer to an attribute of the LAS data.", call. = F)
+    stop("'color' should refer to an attribute of the LAS data.")
 
   if (color == "RGB")
   {
@@ -278,7 +278,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     }
     else
     {
-      if (!all(c("R", "G", "B") %in% names(x@data))) stop("No 'RGB' attributes found.", call. = FALSE)
+      if (!all(c("R", "G", "B") %in% names(x@data))) stop("No 'RGB' attributes found.")
 
       maxcol  <- 2^nbits - 1
       coldata <- grDevices::rgb(x@data$R/maxcol, x@data$G/maxcol, x@data$B/maxcol)

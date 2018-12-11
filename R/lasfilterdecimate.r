@@ -69,10 +69,10 @@ lasfilterdecimate.LAS = function(las, algorithm)
   pulseID <- gpstime <- NULL
 
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "PointCloudDecimation"))
-    stop("The algorithm is not an algorithm for point cloud decimation.", call. = FALSE)
+    stop("The algorithm is not an algorithm for point cloud decimation.")
 
   lidR.context <- "lasfilterdecimate"
   selected <- algorithm(las)

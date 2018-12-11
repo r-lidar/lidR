@@ -182,7 +182,7 @@ lasclip = function(las, geometry, ...)
   else if (is.matrix(geometry))
   {
     if (!all(dim(geometry) == 2))
-      stop("Matrix must have a size 2 x 2", call. = FALSE)
+      stop("Matrix must have a size 2 x 2")
 
     xmin = geometry[1]
     xmax = geometry[3]
@@ -201,7 +201,7 @@ lasclip = function(las, geometry, ...)
   }
   else
   {
-    stop(paste0("Geometry type ", paste0(class(geometry), collapse = " "), " not supported"), call. = FALSE)
+    stop(paste0("Geometry type ", paste0(class(geometry), collapse = " "), " not supported"))
   }
 }
 
@@ -231,7 +231,7 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
   for (i in 1:length(xleft))
   {
     roi <- lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
-    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."), call. = FALSE)
+    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."))
     output[[i]] = roi
   }
 
@@ -298,7 +298,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
   for (i in 1:length(xcenter))
   {
     roi <- lasfilter(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
-    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."), call. = FALSE)
+    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."))
     output[[i]] <- roi
   }
 
@@ -346,7 +346,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
   for (i in 1:length(wkt))
   {
     roi = lasfilter(las, C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt[i]))
-    if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."), call. = FALSE)
+    if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."))
     output[[i]] = roi
   }
 

@@ -118,23 +118,23 @@ lasnormalize.LAS = function(las, algorithm)
     nnas    <- sum(isna)
 
     if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."), call. = F)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
   }
   else if (is.function(algorithm))
   {
     if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-      stop("Invalid function provided as algorithm.", call. = FALSE)
+      stop("Invalid function provided as algorithm.")
 
     if (!is(algorithm, "SpatialInterpolation"))
-      stop("The algorithm is not an algorithm for spatial interpolation.", call. = FALSE)
+      stop("The algorithm is not an algorithm for spatial interpolation.")
 
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
     if (! "Classification" %in% names(las@data))
-      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
+      stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
 
     if (fast_countequal(las@data$Classification, LASGROUND) == 0)
-      stop("No ground point found in the point cloud.", call. = FALSE)
+      stop("No ground point found in the point cloud.")
 
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "lasnormalize"
@@ -145,11 +145,11 @@ lasnormalize.LAS = function(las, algorithm)
     nnas    <- sum(isna)
 
     if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
   }
   else
   {
-    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
+    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"))
   }
 
   if (!"Zref" %in% names(las@data))
@@ -231,10 +231,10 @@ check_degenerated_points = function(points)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
   if (ndup_xyz > 0)
-    warning(glue::glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
+    warning(glue::glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."))
 
   if (ndup_xy > 0)
-    warning(glue::glue("There were {ndup_xy} degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
+    warning(glue::glue("There were {ndup_xy} degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."))
 
   if (ndup_xy > 0 | ndup_xyz > 0)
     points = points[, .(Z = min(Z)), by = .(X,Y)]

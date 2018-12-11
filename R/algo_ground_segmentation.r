@@ -182,19 +182,19 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
 {
   if (exp & b <= 1)
-    stop("b cannot be less than 1 with an exponentially growing window", call. = FALSE)
+    stop("b cannot be less than 1 with an exponentially growing window")
 
   if (dh0 >= dhmax)
-    stop("dh0 greater than dhmax", call. = FALSE)
+    stop("dh0 greater than dhmax")
 
   if (max_ws < 3)
-    stop("Minimum windows size is 3. max_ws must be greater than 3", call. = FALSE)
+    stop("Minimum windows size is 3. max_ws must be greater than 3")
 
   if (!is.logical(exp))
-    stop("exp should be logical", call. = FALSE)
+    stop("exp should be logical")
 
   if (!exp & b < 1)
-    warning("Due to an incoherence in the original paper when b < 1, the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.", call. = FALSE)
+    warning("Due to an incoherence in the original paper when b < 1, the sequences of windows size cannot be computed for a linear increase. The internal routine uses the fact that the increment is constant to bypass this issue.")
 
 
   dhtk = c()

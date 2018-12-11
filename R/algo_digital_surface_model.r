@@ -74,7 +74,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
   if (!is.null(na.fill))
   {
     if (!is(na.fill, "SpatialInterpolation"))
-      stop("'na.fill' is not an algorithm for spatial interpolation", call. = FALSE)
+      stop("'na.fill' is not an algorithm for spatial interpolation")
   }
 
   f = function(las, layout)
@@ -87,7 +87,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
     dsm  <- t(dsm)
 
     if (!all(dim(layout)[1:2] == dim(dsm)))
-      stop("Internal error: matrix returned at the C++ level does not match with the layout. Please report this bug.", call. = FALSE)
+      stop("Internal error: matrix returned at the C++ level does not match with the layout. Please report this bug.")
 
     if (!is.null(na.fill))
     {
@@ -242,7 +242,7 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
   assert_all_are_non_negative(subcircle)
 
   if (length(thresholds) > 1L & length(max_edge) < 2L)
-    stop("'max_edge' should contain 2 numbers", call. = FALSE)
+    stop("'max_edge' should contain 2 numbers")
 
   f = function(las, layout)
   {
@@ -250,10 +250,10 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     stopif_wrong_context(context, c("grid_canopy"), "pitfree")
 
     if (!"ReturnNumber" %in% names(las@data))
-      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns", call. = FALSE)
+      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns")
 
     if (fast_countequal(las@data$ReturnNumber, 1L) == 0)
-      stop("No first returns found. Operation aborted.", call. = FALSE)
+      stop("No first returns found. Operation aborted.")
 
     . <- X <- Y <- Z <- ReturnNumber <- NULL
 
@@ -307,7 +307,7 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     }
 
     if (all(is.na(z)))
-      stop("Interpolation failed. Input parameters might be wrong.", call. = FALSE)
+      stop("Interpolation failed. Input parameters might be wrong.")
 
     return(z)
   }

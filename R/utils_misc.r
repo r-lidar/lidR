@@ -46,7 +46,7 @@ make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
   if (is(res, "RasterLayer"))
   {
     resolution = raster::res(res)
-    if (resolution[1] !=  resolution[2]) stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+    if (resolution[1] !=  resolution[2]) stop("Rasters with different x y resolutions are not supported")
     return(res)
   }
 
@@ -78,7 +78,7 @@ build_vrt = function(output, vrt)
 {
   if (!requireNamespace("gdalUtils", quietly = TRUE))
   {
-    message("'gdalUtils' package is needed to build a virtual raster mosaic. Return the list of written files instead.", call. = F)
+    message("'gdalUtils' package is needed to build a virtual raster mosaic. Return the list of written files instead.")
     return(unlist(output))
   }
 
@@ -141,13 +141,13 @@ dummy_las = function(n, seeds = c)
 stopifnotlas = function(x)
 {
   if (!inherits(x, "LAS"))
-    stop("Argument is not a LAS object", call. = F)
+    stop("Argument is not a LAS object")
 }
 
 stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
-    stop(glue::glue("{name} is part of the core attributes and is a forbidden name."), call. = FALSE)
+    stop(glue::glue("{name} is part of the core attributes and is a forbidden name."))
 }
 
 stopif_wrong_context = function(received_context, expected_contexts, func_name)
@@ -155,9 +155,9 @@ stopif_wrong_context = function(received_context, expected_contexts, func_name)
   str = paste0(expected_contexts, collapse  = "' or '")
 
   if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+    stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."))
   if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
+    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"))
 }
 
 subcircled = function(dt, r, n)

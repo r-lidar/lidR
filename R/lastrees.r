@@ -29,10 +29,10 @@ lastrees = function(las, algorithm, attribute = "treeID")
   stopif_forbidden_name(attribute)
 
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.", call. = FALSE)
+    stop("Invalid function provided as algorithm.")
 
   if (!is(algorithm, "IndividualTreeSegmentation"))
-    stop("The algorithm is not an algorithm for individual tree segmentation", call. = FALSE)
+    stop("The algorithm is not an algorithm for individual tree segmentation")
 
   lidR.context <- "lastrees"
 
@@ -41,14 +41,14 @@ lastrees = function(las, algorithm, attribute = "treeID")
   else if (is(algorithm, "PointCloudBased"))
     output <- algorithm(las)
   else
-    stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'", call. = FALSE)
+    stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'")
 
   if (is(output, "RasterLayer"))
     las <- lasmergespatial(las, output, attribute)
   else if (is.integer(output))
     las <- lasadddata(las, output, attribute)
   else
-    stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"), call. = FALSE)
+    stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"))
 
   las <- lasaddextrabytes(las, name = attribute, desc = "An ID for each segmented tree")
   return(las)

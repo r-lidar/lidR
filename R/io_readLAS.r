@@ -160,7 +160,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 
   islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
 
-  if (any(!islas)) stop("File(s) are not las or laz", call. = FALSE)
+  if (any(!islas)) stop("File(s) are not las or laz")
 
   ifiles <- normalizePath(x)
 
