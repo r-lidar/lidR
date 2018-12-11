@@ -344,22 +344,24 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
     ymax    <- max(x@data$Max.Y)
     xcenter <- (xmin + xmax)/2
     ycenter <- (ymin + ymax)/2
+    col    <- grDevices::rgb(0, 0, 1, alpha = 0.1)
 
     if (is.null(param$xlim)) param$xlim <- c(xmin, xmax)
     if (is.null(param$ylim)) param$ylim <- c(ymin, ymax)
     if (is.null(param$xlab)) param$xlab <- ""
     if (is.null(param$ylab)) param$ylab <- ""
     if (is.null(param$asp))  param$asp  <- 1
-    if (is.null(param$col))  param$col  <- "white"
+    if (!is.null(param$col)) col <- param$col
 
-    param$x <- xcenter
-    param$y <- ycenter
+    param$col <- "white"
+    param$x   <- xcenter
+    param$y   <- ycenter
 
     op <- graphics::par(mar = c(2.5,2.5,1,1) + 0.1)
 
     if (is.null(param$add)) do.call(graphics::plot, param)
 
-    graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = grDevices::rgb(0, 0, 1, alpha = 0.1))
+    graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = col)
     graphics::par(op)
 
     return(invisible())
