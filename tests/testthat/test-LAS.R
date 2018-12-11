@@ -100,7 +100,9 @@ test_that("build a LAS invalid LAS object works as expected", {
 
   expect_warning(LAS(data), "return number")
 
+  set.seed(0)
   data$ReturnNumber = as.integer(sample(1:3, 10, replace = TRUE))
+  set.seed(1)
   data$NumberOfReturns = as.integer(sample(1:3, 10, replace = TRUE))
 
   expect_warning(LAS(data), "number of returns")
