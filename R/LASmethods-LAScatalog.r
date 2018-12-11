@@ -92,7 +92,7 @@ catalog <- function(folder, ...)
   header <- LASheader(rlas::read.lasheader(files[1]))
   epsg(header)
   epsg   <- epsg(header)
-  crs    <- tryCatch({ sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
+  crs    <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
 
   headers <- lapply(files, function(x)
   {
@@ -134,44 +134,44 @@ catalog <- function(folder, ...)
   if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
 
-  if (!is.indexed(res))
-    message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
+  #if (!is.indexed(res))
+    #message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
   return(res)
 }
 
 setMethod("show", "LAScatalog", function(object)
 {
-  area    <- area(object)
-  area.h  <- area
-  npoints <- sum(object@data$Number.of.point.records)
-  npoints.h <- npoints
-  inherit <- getClass("LAScatalog")@contains[[1]]@superClass
-  ext     <- raster::extent(object)
-  units   <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
-  units   <- if (length(units) == 0) "units" else units
-  areaprefix <- ""
+  area        <- area(object)
+  area.h      <- area
+  npoints     <- sum(object@data$Number.of.point.records)
+  npoints.h   <- npoints
+  ext         <- raster::extent(object)
+  units       <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
+  units       <- if (length(units) == 0) "units" else units
+  areaprefix  <- ""
   pointprefix <- ""
+
   if (area > 1000*1000/2)
   {
     areaprefix <- "k"
-    area.h  <- round(area/(1000*1000),2)
+    area.h     <- round(area/(1000*1000), 2)
   }
 
   if (npoints > 1000 & npoints < 1000^2)
   {
     pointprefix <- "thouthand"
-    npoints.h <- round(npoints/1000, 1)
+    npoints.h   <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
     pointprefix <- "million"
-    npoints.h <- round(npoints/(1000^2),2)
+    npoints.h   <- round(npoints/(1000^2), 2)
   }
   else if (npoints >= 1000^3)
   {
     pointprefix <- "billion"
-    npoints.h <- round(npoints/(1000^3),2)
+    npoints.h   <- round(npoints/(1000^3), 2)
   }
 
   cat("class       : ", class(object), "\n", sep = "")

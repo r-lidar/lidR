@@ -728,7 +728,7 @@ lascheck.LAScatalog = function(las)
 
   if (any(data$Point.Data.Format.ID %in% c(4,5,9,10)))
     warn("Invalid headers: point data format not supported yet.")
-  else if (any(data$Point.Data.Format.ID <0 | data$Point.Data.Format.ID > 10))
+  else if (any(data$Point.Data.Format.ID < 0 | data$Point.Data.Format.ID > 10))
     fail("Invalid header: point data format invalid.")
   else
     ok()
@@ -763,4 +763,11 @@ lascheck.LAScatalog = function(las)
     warn("Some tiles seem to overlap each other")
   else
     ok()
+
+  h2("Checking point indexation...")
+
+  if (is.indexed(las))
+    yes()
+  else
+    no()
 }
