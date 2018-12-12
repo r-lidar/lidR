@@ -174,6 +174,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * Change: `grid_canopy()` now relies on the new algorithms dispatch method (see also the main new features above). It unifies the former functions `grid_canopy()` and `grid_tincanopy()`.
 * Change: `grid_canopy()` consistently returns a `RasterLayer` instead of a `data.table`, whatever the algorithm used.
 * Fix: the pitfree algorithm fails if a layer contains only 1 or 2 points.
+* Fix: the p2r algorithm is five times faster with the subcircle tweak.
 
 **grid_tincanopy**
 
