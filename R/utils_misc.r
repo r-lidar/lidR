@@ -138,28 +138,6 @@ dummy_las = function(n, seeds = c)
   return(las)
 }
 
-stopifnotlas = function(x)
-{
-  if (!inherits(x, "LAS"))
-    stop("Argument is not a LAS object")
-}
-
-stopif_forbidden_name = function(name)
-{
-  if (name %in% LASFIELDS)
-    stop(glue::glue("{name} is part of the core attributes and is a forbidden name."))
-}
-
-stopif_wrong_context = function(received_context, expected_contexts, func_name)
-{
-  str = paste0(expected_contexts, collapse  = "' or '")
-
-  if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."))
-  if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"))
-}
-
 subcircled = function(dt, r, n)
 {
   X <- Y <- Z <- NULL
