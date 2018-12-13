@@ -36,7 +36,7 @@ typedef Point3D<int, int, int, int> Pixeli;
 typedef Point3D<int, int, double, int> Pixeld;
 
 //[[Rcpp::export]]
-IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
+IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST)
 {
   bool grown = true;
   bool expend;

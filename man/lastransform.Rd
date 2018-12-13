@@ -20,7 +20,7 @@ An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to
 coordinate reference system.
 }
 \description{
-A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects. 
+A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects.
 Returns transformed coordinates of a \code{LAS} object from the projection of the object to the
 the projection given by arguments.
 }

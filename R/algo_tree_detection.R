@@ -124,7 +124,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
 
     . <- X <- Y <- Z <- treeID <- NULL
-    is_maxima = C_LocalMaximumFilter(las@data, ws, hmin, circular)
+    is_maxima = C_lmf(las@data, ws, hmin, circular)
     maxima = las@data[is_maxima, .(X,Y,Z)]
     maxima[, treeID := 1:.N]
 
