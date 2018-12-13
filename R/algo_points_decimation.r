@@ -135,13 +135,14 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 
     pulseID <- NULL
 
-    n  <- round(density*res^2)
-    by <- group_grid(las@data$X, las@data$Y, res)
+    n       <- round(density*res^2)
+    layout  <- make_overlay_raster(las, res)
+    cells   <- raster::cellFromXY(layout, coordinates(las))
 
     if (use_pulse)
-      return(las@data[, .I[.selected_pulses(pulseID, n)], by = by]$V1)
+      return(las@data[, .I[.selected_pulses(pulseID, n)], by = cells]$V1)
     else
-      return(las@data[, .I[.selected_pulses(1:.N, n)], by = by]$V1)
+      return(las@data[, .I[.selected_pulses(1:.N, n)], by = cells]$V1)
   }
 
   class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
