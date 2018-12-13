@@ -46,7 +46,7 @@ IntegerVector fast_table(IntegerVector x, int size = 5)
 }
 
 // [[Rcpp::export]]
-int fast_countequal(NumericVector x, double t)
+int fast_countequal(IntegerVector x, int t)
 {
   return std::count(x.begin(), x.end(), t);
 }

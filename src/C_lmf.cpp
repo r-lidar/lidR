@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
-LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_height, bool circular)
+//[[Rcpp::export]]
+LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular)
 {
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
