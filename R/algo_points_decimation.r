@@ -127,7 +127,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lasfilterdecimate"), "homogenize")
 
-    if(use_pulse & !"pulseID" %in% names(las@data))
+    if (use_pulse & !"pulseID" %in% names(las@data))
     {
       warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
@@ -174,9 +174,10 @@ highest = function(res = 1)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lasfilterdecimate"), "highest")
 
-    Z   <- NULL
-    by  <- group_grid(las@data$X, las@data$Y, res)
-    return(las@data[, .I[which.max(Z)], by = by]$V1)
+    Z       <- NULL
+    layout  <- make_overlay_raster(las, res)
+    cells   <- raster::cellFromXY(layout, coordinates(las))
+    return(las@data[, .I[which.max(Z)], by = cells]$V1)
   }
 
   class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
@@ -187,7 +188,7 @@ highest = function(res = 1)
 {
   p <- unique(pulseID)
 
-  if(n > length(p))
+  if (n > length(p))
     return(rep(TRUE, length(pulseID)))
 
   selectedPulses <- sample(p, n)
