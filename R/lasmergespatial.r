@@ -224,15 +224,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 
 lasmergeRasterLayer = function(las, raster)
 {
-  . <- X <- Y <- info <- NULL
-
-  #xres = raster::res(raster)[1]
-  #xmin = raster@extent@xmin
-  #ymin = raster@extent@ymin
-  #m  = raster::as.matrix(raster)
-  #v = fast_extract(m, las@data$X, las@data$Y, xmin, ymin, xres) # 15 times faster than raster::extract and much more
-  #memory-effcient
-  cells = raster::cellFromXY(raster, coordinates(las))
+  cells <- raster::cellFromXY(raster, coordinates(las))
   return(raster@data@values[cells])
 }
 
