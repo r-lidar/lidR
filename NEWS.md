@@ -55,7 +55,7 @@ lasnormalize(las, algo = knnidw(k = 10))
 
 This allows `lidR` to be extended with new algorithms without any restriction either in lidR or even from third-party tools. Also, how lidR functions are used is now more consistent accross the package.
 
-**`LAScatalog` processing engine**
+**LAScatalog processing engine**
 
 lidR versions 1 was designed to run algorithms on medium-sized point clouds loaded in memory but not to run algorithms over a set of files covering wide areas. In addition, lidR 1 had a poorly and inconsistently designed engine to process catalogs of las files. For example:
 
@@ -236,14 +236,16 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * New: coordinate reference system is supported everywhere and can be written in las files. See function `epsg()`.
 * New: function `lastranform` that returns transformed coordinates of a `LAS` object using the CRS argument.
 
-** New functions**
+**New functions**
 
 * New: function `lasfilterduplicates`
 * New: function `lascheck`
+* New: function `lasvoxelize`
 
 ### Other changes that are not directly visible
 
 * Change: the code that drives the `point_in_polygon` algorithm relies on `boost` and drastically simplifies the former code of `lasmergespatial()`
+* Change: many memory optimizations
 
 ## lidR v1.6.1 (2018-08-21)
 

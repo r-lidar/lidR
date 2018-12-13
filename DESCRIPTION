@@ -109,6 +109,7 @@ Collate:
     'lastransform.r'
     'lastrees.r'
     'lasupdateheader.r'
+    'lasvoxelize.r'
     'plot.s3.r'
     'tree_detection.r'
     'tree_hulls.r'
