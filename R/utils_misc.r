@@ -101,9 +101,9 @@ group_grid = function(x, y, res, start = c(0,0))
 
 group_grid_3d = function(x, y, z, res, start = c(0,0,0))
 {
-  xgrid = f_grid(x, res, start[1])
-  ygrid = f_grid(y, res, start[2])
-  zgrid = f_grid(z, res, start[3])
+  xgrid = f_grid(x, res[1], start[1])
+  ygrid = f_grid(y, res[1], start[2])
+  zgrid = f_grid(z, res[2], start[3])
 
   return(list(Xgrid = xgrid, Ygrid = ygrid, Zgrid = zgrid))
 }

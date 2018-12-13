@@ -11,7 +11,8 @@ grid_metrics3d(las, func, res = 1)
 
 \item{func}{expression. The function to be applied to each voxel (see also \link{grid_metrics}).}
 
-\item{res}{numeric. The size of the voxels.}
+\item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionnally
+\code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table
@@ -25,15 +26,15 @@ functions. The function will dispatch the LiDAR data for each voxel in the user'
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+las = readLAS(LASfile)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the number of points is computed.
-grid_metrics3d(lidar, length(Z), 3)
+grid_metrics3d(las, length(Z), 3)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the mean scan angle of points is computed.
-grid_metrics3d(lidar, mean(ScanAngle), 3)
+grid_metrics3d(las, mean(ScanAngle), 3)
 
 \dontrun{
 # Define your own metric function
@@ -48,7 +49,7 @@ myMetrics = function(i, angle)
    return(ret)
 }
 
-voxels = grid_metrics3d(lidar, myMetrics(Intensity, ScanAngle), 3)
+voxels = grid_metrics3d(las, myMetrics(Intensity, ScanAngle), 3)
 
 plot(voxels, color = "angle")
 plot(voxels, color = "imean")
