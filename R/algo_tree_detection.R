@@ -151,7 +151,8 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 #'
 #' @param detected \code{SpatialPointsDataFrame} of already found tree tops that need manual corrections.
-#'
+#' @param radius numeric. Radius of the shperes displayed on the point cloud (aesthetic purpose only).
+#' @param color character. Color of the shperes displayed on the point cloud (aesthetic purpose only).
 #' @param ... supplementary parameters to be passed to \link{plot}.
 #'
 #' @family individual tree detection algorithms
@@ -169,7 +170,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = tree_detection(las, lmf(5))
 #' ttops = tree_detection(las, manual(ttops))
 #' }
-manual = function(detected = NULL, ...)
+manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 {
   f = function(las)
   {
@@ -214,7 +215,7 @@ manual = function(detected = NULL, ...)
     id = numeric(nrow(apice))
 
     for (i in 1:nrow(apice))
-      id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = 1, color = "red")
+      id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = radius, color = color)
 
     apice$id <- id
 
@@ -226,7 +227,7 @@ manual = function(detected = NULL, ...)
 
       if (sum(i) > 0)
       {
-        ii <- which(i == TRUE)
+        ii <- which(i == TRUE)[1]
         rgl::rgl.pop(id = apice[ii]$id)
         apice <- apice[-ii]
       }
@@ -238,9 +239,9 @@ manual = function(detected = NULL, ...)
           break;
 
         pts     <- las@data[i, .(X,Y,Z)]
-        apex    <- unique(pts[pts$Z == max(pts$Z)])
+        apex    <- unique(pts[pts$Z == max(pts$Z)])[1]
         ii      <- which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
-        apex$id <- as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = 1, color = "red"))
+        apex$id <- as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = radius, color = color))
         apice   <- rbind(apice, apex)
       }
     }

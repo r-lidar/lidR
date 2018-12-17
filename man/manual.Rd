@@ -4,10 +4,14 @@
 \alias{manual}
 \title{Individual Tree Detection Algorithm}
 \usage{
-manual(detected = NULL, ...)
+manual(detected = NULL, radius = 0.5, color = "red", ...)
 }
 \arguments{
 \item{detected}{\code{SpatialPointsDataFrame} of already found tree tops that need manual corrections.}
+
+\item{radius}{numeric. Radius of the shperes displayed on the point cloud (aesthetic purpose only).}
+
+\item{color}{character. Color of the shperes displayed on the point cloud (aesthetic purpose only).}
 
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
