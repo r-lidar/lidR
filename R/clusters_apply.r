@@ -72,8 +72,8 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     {
       x <- do.call(FUN, params)
       if (is.null(x)) return(NULL)
-      if (current_processed_cluster@save == "") return(x)                       # Return the output in R
-      return(cluster_write(x, current_processed_cluster@save, output_options))  # Write the output in file
+      if (current_processed_cluster@save == "") return(x)                          # Return the output in R
+      return(writeANY(x, current_processed_cluster@save, output_options$drivers))  # Write the output in file
     }, substitute = TRUE, globals = structure(TRUE, add = globals))
 
     # Error handling and progress report
@@ -169,66 +169,4 @@ update_pb = function(pb, ratio)
   {
     if (!pb$finished) pb$update(ratio)
   }
-}
-
-cluster_write = function(x, path, output_options)
-{
-
-  dir = dirname(path)
-  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
-
-  if (is(x, "LAS"))
-  {
-    driver <- output_options$drivers$LAS
-    path   <- paste0(path, driver$extension)
-    driver$param$las  <- x
-    driver$param$file <- path
-  }
-  else if (is(x, "RasterLayer") | is(x, "RasterBrick") | is(x, "RasterStack"))
-  {
-    driver <- output_options$drivers$Raster
-    path   <- paste0(path, driver$extension)
-    driver$param$x        <- x
-    driver$param$filename <- path
-  }
-  else if (is(x, "SpatialPoints") | is(x, "SpatialPointsDataFrame") | is(x, "SpatialPolygons") | is(x, "SpatialPolygonsDataFrame") | is(x, "SpatialLines") | is(x, "SpatialLinesDataFrame"))
-  {
-    driver <- output_options$drivers$SimpleFeature
-    path   <- paste0(path, ".shp")
-    driver$param$obj <- sf::st_as_sf(x)
-    driver$param$dsn <- path
-  }
-  else if (is(x, "sf"))
-  {
-    driver <- output_options$drivers$SimpleFeature
-    path   <- paste0(path, ".shp")
-    driver$param$obj <- x
-    driver$param$dsn <- path
-  }
-  else if (is(x, "lidr_internal_skip_write"))
-  {
-    # Nothing. This happens because sometimes functions such as catalog_retile stream the data. So the called
-    # function does the writing job. If the called function returned NULL the progress would be broken
-    # (NULL means no data). Thus we return 0 with a class lidr_internal_skip_write
-    return(0)
-  }
-  else if (is(x, "data.frame"))
-  {
-    driver <- output_options$drivers$DataFrame
-    path   <- paste0(path, driver$extension)
-    driver$param$x    <- x
-    driver$param$file <- path
-  }
-  else if (class(x)[1] %in% names(output_options$drivers))
-  {
-    driver <- output_options$drivers[[class(x)[1]]]
-    path   <- paste0(path, driver$extension)
-    driver$param[[driver$object]] <- x
-    driver$param[[driver$path]]   <- path
-  }
-  else
-    stop(glue::glue("Trying to write an object of class {class(x)} but this type is not supported."))
-
-  do.call(driver$write, driver$param)
-  return(path)
 }

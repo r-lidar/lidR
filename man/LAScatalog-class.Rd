@@ -79,9 +79,9 @@ The slot \code{@clustering_options} contains a \code{list} of options that deter
 (the sub-areas that are sequentially processed) are made.
 \itemize{
 \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa. 
-The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the 
-catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default 
+A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa.
+The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
+catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
 the processing engine respects the existing tiling pattern.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 no edge effect between two independent chunks and that the output is continuous. This is mandatory for

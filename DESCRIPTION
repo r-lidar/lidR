@@ -3,7 +3,7 @@ Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
 Version: 2.0.0
-Date: 2018-11-16
+Date: 2018-12-21
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -90,6 +90,7 @@ Collate:
     'grid_metrics3d.r'
     'grid_terrain.r'
     'io_readLAS.r'
+    'io_writeANY.r'
     'io_writeLAS.r'
     'lascheck.r'
     'lasclip.r'
