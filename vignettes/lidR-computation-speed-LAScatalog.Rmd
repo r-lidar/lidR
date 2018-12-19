@@ -2,7 +2,7 @@
 title: "Speed-up the computations on a LAScatalog"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Speed-up the computations on a LAScatalog}
+  %\VignetteIndexEntry{4. Speed-up the computations on a LAScatalog}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -100,11 +100,11 @@ ctg@data <- data
 ctg@polygons <- Sr@polygons
 ```
 
-What is long when processing a LAScatalog is not necessarily the computation itself but the time requiered to read the files. The read time (i.e the time need to load the data in R) might be much longer than the actual compuation time. This vignette explain why and how to speed-up the computation by a significant factor of 2 to 8 by carefully preparing the catalog.
+What takes time when processing a LAScatalog is not necessarily the computation itself but the time required to read the files. The read time (i.e the time needed to load the data in R) might be much longer than the actual computation time. This vignette explains why and how to speed-up the computation by a significant factor of 2 to 8 by carefully preparing the catalog.
 
-## Generic consideration on LAScatalog processing
+## Generic considerations on LAScatalog processing
 
-When processing a LAScatalog the covered area is divided into chuncks. Chunks are then processed sequentially. In the following examples we present the case when chuncks are equal to tiles, i.e. when processing sequentially each file. This is the common way to process but not the only one. Anyway the explaination remains valid even if chunks are not equal to the tiles.
+When processing a LAScatalog the covered area is divided into chunks that are then processed sequentially. In the following examples we present the case where chunks are equal to tiles, i.e. when processing each file sequentially. This is the common way to process data but not the only one. Anyway the explaination remains valid even if chunks are not equal to tiles.
 
 So each file is processed sequentially. For a given processed file, the content is read and loaded into R. In the following figure the chunk number 42 is currently read and processed (in blue):
 
@@ -115,7 +115,7 @@ plot(ctg)
 graphics::rect(bbox[1], bbox[3], bbox[2], bbox[4], border = "black", col = "blue")
 ```
 
-But the current processed file is not the only one that needs to be read. To properly process the catalog without edge artifact we need to load an extra buffer around the processed file (in red). 
+But the current processed file is not the only one that needs to be read. To properly process the catalog without edge artifacts we need to load an extra buffer around the processed file (in red). 
 
 ```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
 bbox = as.numeric(ctg@data[42,1:4])
@@ -125,7 +125,7 @@ graphics::rect(bbox[1]+200, bbox[3]+200, bbox[2]-200, bbox[4]-200, border = "bla
 graphics::rect(bbox[2], bbox[4], bbox[1], bbox[3], border = "black", col = "blue")
 ```
 
-To load a buffer the processing engine actually read the processed file **and** the eight neighbouring tiles (in red) to selectivly read a small buffer around the processed file. Thus for each processed file it is not one file that is read but nine. This is one of the reasons why the read time is far to be negligible compared to the actual computation time.
+To load a buffer the processing engine must not only read the processed file **but also** the eight neighbouring tiles (in red) to selectively read a small buffer around the processed file. Thus, for each processed file it is not one file that is read but nine. This is one of the reasons why the read time is far from negligible compared to the actual computation time.
 
 ```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
 neighbourg = ctg@data[c(19,20,23, 41, 43, 44, 45, 47),1:4]
@@ -143,7 +143,7 @@ To process a LAScatalog faster we need to read the files faster.
 
 ## Read a las file vs read a laz file
 
-A laz file is a strongly compressed las file. Reading a laz file is thus slower than reading a las file because it must be un-compressed on the fly at reading time. The following graphic is a benchmark of read time for a single file.
+A laz file is a strongly compressed las file. Reading a laz file is thus slower than reading a las file because it must be un-compressed on the fly at reading time. The following graph shows a benchmark of read time for a single file.
 
 ```r
 system.time(readLAS(file.las))
@@ -173,15 +173,15 @@ barplot(X$t/min(X$t), names.arg = X$format, col = "darkred", xlab = "File format
 graphics::par(op)
 ```
 
-So let assume that the total compuation time is 1 unit of time divided into 0.25 units of actual processing time the 0.75 units of read time (which is a fairly reasonnable ratio). We can divide by 3 the read time and thus have 0.25 units of read time and 0.25 units of computing time and thus the total compuation time is 0.5 instead of 1. We speed-up the compuation by a factor 2 by using las instead of laz. Obviouly the gain is less significant for more computationnaly demanding processes.
+So let's assume that the total compuation time is 1 unit of time divided into 0.25 unit of actual processing time and 0.75 unit of read time (which is a fairly reasonable ratio). We can divide the read time by 3, and thus have 0.25 units of read time and 0.25 units of computing time, which gives a compuation time is 0.5 instead of 1. We can therefore speed-up the compuation time by a factor of 2 by using the las format instead of laz. Obviouly the gain is less significant for more computationnaly demanding processes.
 
-So to compute twice faster user can use las files instead of laz files. Obviously there are good reasons to use laz files instead of las files. The strong compression bring by the laz format has a lot of advantages for storing data. It is up to the user to choose a format by considering the trade-off between space and computation time. This section explain how it works to help users to take a decision but does not take a decision for the user.
+So to compute faster users can opt for las files instead of laz files. Obviously, there are good reasons to use laz files instead of las files. The strong compression brought by the laz format has a lot of advantages for storing data. It is up to the user to choose a format by considering the trade-offs between space and computation time. This section explains how it works only to help users make a decision that best suits their needs.
 
-## Indexation of the point with lax files
+## Indexation of the points with lax files
 
-Another way to speed-up the total computation time is to do no read the full eight neigbouring tiles to load a buffer. Instead we can read only sub-part of the neighbouring tiles. The gain comes from the fact that we read on small portion of the neigbouring files to extract the buffer skipping the majority of the content of the file. Indeed the buffer usually correspond to a very very small percentage of the actual content of a file (few square meters).
+Another way to speed-up the total computation time is to avoid reading the full eight neigbouring tiles to load a buffer. Instead, we can read only sub-part of the neighbouring tiles. The gain comes from the fact that we read on small portion of the neigbouring files to extract the buffer, skipping the majority of the content of the file. Indeed, the buffer usually corresponds to a very very small percentage of the actual content of a file (a few square meters).
 
-This is possible by indexing the las or laz files with lax files. A lax file is a tiny file which can come with a las or laz and which spatially index the points to make faster spatial queries. It has been created by Martin Isenburg in [LAStools](https://rapidlasso.com/). For a better understanding of how does it works one can refere to a talk given by Martin Isenbug about [lasindex](https://rapidlasso.com/2012/12/03/lasindex-spatial-indexing-of-lidar-data/).
+This is possible by indexing the las or laz files with lax files. A lax file is a tiny file that can come with a las or laz and that spatially indexes the points to make faster spatial queries. This file type was created by Martin Isenburg in [LAStools](https://rapidlasso.com/). For a better understanding of how it  works one can refer to a talk given by Martin Isenbug about [lasindex](https://rapidlasso.com/2012/12/03/lasindex-spatial-indexing-of-lidar-data/).
 
 By adding lax files along with your las/laz files the buffer can be added around the processing file by only parially reading the eight neigbouring files (in red)
 
@@ -208,27 +208,28 @@ for (i in 1:nrow(neighbourg))
 }
 ```
 
-The best way to create lax file is to use [laxindex](https://www.cs.unc.edu/~isenburg/lastools/download/lasindex_README.txt) from [LAStools](https://rapidlasso.com/lastools/). It is a free and open source part of LAStools. If you can't or don't want to use LAStools the lidR package have an internal function not documented that creates lax files using the `rlas` package:
+The best way to create a lax file is to use [laxindex](https://www.cs.unc.edu/~isenburg/lastools/download/lasindex_README.txt) from [LAStools](https://rapidlasso.com/lastools/). It is a free and open-source part of LAStools. If you cannot or do not want to use LAStools the lidR package has an (undocumented) internal function that creates lax files using the `rlas` package:
 
 ```r
 lidR:::catalog_laxindex(ctg)
 ```
 
-The gain is really significant and allows to gain another 2 to 3 fold factor of read time and thus speed-up the the computation. Changing the laz format to the laz format has a cost because it implies to store more data and it is understandable to choose laz files instead of laz. However using lax files provides a significant gain for free, there is no incentive at do not creating lax files.
+The gain is really significant and allows an addition 2- to 3-fold saving in terms of read time, which thus speeds-up the computation time. Changing the laz format to the las
+format has a cost because it implies storing more data. However, using lax files provides a significant gain for free, so there is no incentive not to create lax files.
 
 ## Changing the hardware
 
-We demontrasted of important is the time use to read files. The faster you read the files the faster you perform the compuation because the read time is not negligible. Reading files faster significantly improves the compuation time. Opting for a fast SSD disk instead of a slow HDD disk may significantly speed-up the compuatation time independently of the power of your processor. Hardware matters.
+We demontrasted how important is the time use to read files to improve the overall computation time. The faster you read the files the faster you perform the compuation because the read time is not negligible. Opting for a fast SSD disk instead of a slow HDD disk may significantly speed-up the compuatation time independently of the power of your processor. Hardware matters!
 
 ## Use more cores
 
-This section comes at the end for a purpose. lidR allows you to gain speed using multicore processsing. But users will not necessarily have a significant gain with multicore processing. Multicore is not a magic trick. Processing a LAScatalog implie to read file on disk, a task that is hardly parallelisable. As a consequence multicore is not necessarily faster than single core. The multicore engine implemented in lidR reads several file at a time to process them in parallel. It uses more memory (four cores means four chunks read at one time) and the overhead of reading four files at a time may be more penalising thant the gain. 
+This section comes at the end for a purpose. lidR allows you to gain speed using multicore processing. But users will not necessarily have a significant gain with multicore processing. Multicore is not a magic trick. Processing a LAScatalog implies reading a file on disk, a task that is hardly parallelisable. As a consequence, multicore is not necessarily faster than single core. The multicore engine implemented in lidR reads several files at a time to process them in parallel. It uses more memory (four cores means four chunks read at one time) and the overhead of reading four files at a time may be more penalising than the gain. 
 
-As a conclusion multicore processing may or may not speed-up the compuation time and has a big memory cost. 
+In conclusion, multicore processing may or may not speed-up the compuation time and it has a big memory cost. 
 
 ## Benchmarks
 
-The following are bechmark for some functions
+The following are bechmarks for some functions
 
 ### Simple canopy height model
 
@@ -247,12 +248,12 @@ Timing = data.frame(Format, Cores, Runtime)
 knitr::kable(Timing)
 ```
 
-Here with found an almost 8 folds speed-up only by changing the files. With 2 cores we gained 30% more reaching an actual 8 fold speed-up compared to the basic use of laz files. One can try laz files only + 32 cores on a super computer with a lot of RAM but the gain will probably never be a 8 folds speed-up!
+Here we found an almost 8-fold increase in speed only by changing the file types. With 2 cores we gained 30% more, reaching an actual 8-fold speed-up compared to the basic use of laz files. One can try laz files only + 32 cores on a super computer with a lot of RAM, but the gain will probably not reach an 8-fold speed-up!
 
 
 ### Area Based Approach
 
-Compuation of a single metrics on 360 files of 1 x 1 km with 3 pts/m² (~300 km² and 900 millions points) on a laptop with a SSD and a processor intel core i7.
+Computation of a single metric on 360 files of 1 x 1 km with 3 pts/m² (~300 km² and 900 millions points) on a laptop with a SSD and a processor intel core i7.
 
 ```r
 hmean <- grid_metric(ctg, mean(Z), 20)
@@ -268,4 +269,4 @@ Timing = data.frame(Format, Cores, Runtime)
 knitr::kable(Timing)
 ```
 
-Here with found an almost 6 folds speed-up only by changing the files. With 4 cores we gained 20% more reaching almost 7 fold speed-up compared to the basic use of laz files. Using 2 cores instead of two is likely to be faster. One can try laz files only + 32 cores on a super computer with a lot of RAM but the gain will probably never be 8 folds spee-up!
+Here we found an almost 6-fold speed-up only by changing the file types. With 4 cores we gained an additional 20%, reaching almost a 7-fold speed-up compared to the basic use of laz files. Using 2 cores instead of 4 is likely to be faster. One can try laz files only + 32 cores on a super computer with a lot of RAM, but the gain will probably not reach an 8-fold speed-up!

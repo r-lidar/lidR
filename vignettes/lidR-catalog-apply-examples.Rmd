@@ -1,13 +1,13 @@
 ---
-title: "Create a function that can process a catalog"
+title: "Create a function that can process a LAScatalog"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Create a function that can process a catalog}
+  %\VignetteIndexEntry{3. Create a function to process a LAScatalog}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-The following demonstrates how to write your own functions fully applicable on a wide catalog of point clouds and based on the available `lidR` tools. We will a create simple `lasfilternoise` function. This example should not be considered as reference method for filtering noise, but as examples to aid understanding of the logic behind the lidR design and to give a full example of how to create a user-defined function fully operationnal. The code design is the one used internally in lidR and relies on S3 method dispatch. We recomend reading the chapter about [S3 method dispatch](http://adv-r.had.co.nz/S3.html) from [Advanced R](http://adv-r.had.co.nz/) book.
+The following demonstrates how to write your own functions fully applicable on a wide catalog of point clouds and based on the available `lidR` tools. We will create a simple `lasfilternoise` function. This example should not be considered as reference method for filtering noise, but rather as a demonstration to help understand the logic behind the design of lidR, and as a full example of how to create a user-defined function that is fully operationnal. The code design is the one used internally in lidR and it relies on S3 method dispatch. We recomend reading the chapter about [S3 method dispatch](http://adv-r.had.co.nz/S3.html) from the [Advanced R](http://adv-r.had.co.nz/) book.
 
 ## Create a generic `lasfilternoise` function
 
@@ -23,7 +23,7 @@ lasfilternoise = function(las, ...)
 
 ## Create a `lasfilternoise` for `LAS` objects
 
-A simple way (and a bit naive) to detect outliers is to measure the 95th percentile of height in 10 by 10 m pixels (area-based approach) and then in each pixel remove the points that are above the 95th percentile plus, let's say, 20%. This can easily be built in lidR using `grid_metrics`, `lasmergespatial` and `lasfilter`, and should work either on a normalized or a raw point clouds. Let create a function method `lasfilternoise` for LAS objects:
+A simple (perhaps a bit too simplistic) way to detect outliers is to measure the 95th percentile of height in 10 by 10 m pixels (area-based approach) and then remove the points that are above the 95th percentile in each pixel plus, for example, 20%. This can easily be built in lidR using `grid_metrics`, `lasmergespatial` and `lasfilter`, and should work either on a normalized or a raw point cloud. Let's create a function method `lasfilternoise` for LAS objects:
 
 ```r
 lasfilternoise.LAS = function(las, sensitivity)
@@ -36,7 +36,7 @@ lasfilternoise.LAS = function(las, sensitivity)
 }
 ```
 
-This function is fully functionnal on a point clouds loaded in memory
+This function is fully functionnal on a point cloud loaded in memory
 
 ```r
 las <- readLAS("file.las")
@@ -46,7 +46,7 @@ writeLAS(las, "denoised-file.las")
 
 ## Extend `lasfilternoise`  function to a `LAScatalog`
 
-User can access to the catalog processing engine with the function `catalog_apply` that is the engine use internally. It allows for appling any function over an entire catalog. Here we will apply our custom `lasfilternoise` function. To use our function `lasfilternoise` on a LAScatalog we must create a compatible function (see documentation of `catalog_apply`). In the lidR package we usually create a intermediate method. Here `lasfilternoise` for `LAScluster` objects (see also the documentation of `catalog_apply`):
+User can access to the catalog processing engine with the function `catalog_apply` that is the engine used internally. It can be applied to any function over an entire catalog. Here we will apply our custom `lasfilternoise` function. To use our function `lasfilternoise` on a LAScatalog we must create a compatible function (see documentation of `catalog_apply`). In the lidR package we usually create an intermediate method. Here `lasfilternoise` for `LAScluster` objects (see also the documentation of `catalog_apply`):
 
 ```r
 lasfilternoise.LAScluster = function(las, sensitivity)
@@ -90,8 +90,8 @@ output <- lasfilternoise(myproject, tolerance = 1.2)
 
 As is, the function `lasfilternoise.LAScatalog` is not actually finished. Indeed:
 
-1. The processing options were not checked. For example this function should not allows to return the output into R otherwise the whole point cloud will be returned.
-2. The output is a list of written file that can be simplified into a LAScatalog. 
+1. The processing options were not checked. For example this function should not allow to return the output into R otherwise the whole point cloud will be returned.
+2. The output is a list of written files that can be simplified into a LAScatalog. 
 
 In lidR the functions usually look like this:
 

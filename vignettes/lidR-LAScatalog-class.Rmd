@@ -2,7 +2,7 @@
 title: "LAScatalog formal class"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LAScatalog formal class}
+  %\VignetteIndexEntry{2. LAScatalog formal class}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
