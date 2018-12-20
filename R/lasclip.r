@@ -64,8 +64,6 @@
 #'   min     max
 #' x 684816  684943
 #' y 5017823 5017957}
-#'  \item Any other object that has a bounding box accessible via \code{raster::extent}, such as a
-#'  \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
 #'  }
 #'
 #' @template LAScatalog
@@ -139,7 +137,7 @@ lasclip = function(las, geometry, ...)
   if (is(geometry, "SpatialPolygons") | is(geometry, "SpatialPolygonsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
-  if (is(geometry, "SpatialPoint") | is(geometry, "SpatialPointsDataFrame"))
+  if (is(geometry, "SpatialPoints") | is(geometry, "SpatialPointsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
   if (is(geometry, "sf"))
@@ -190,15 +188,15 @@ lasclip = function(las, geometry, ...)
     ymax = geometry[4]
     return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
   }
-  else if (tryCatch(is(raster::extent(geometry), "Extent"), error = function(e) return(FALSE)))
-  {
-    geometry = raster::extent(geometry)
-    xmin = geometry@xmin
-    xmax = geometry@xmax
-    ymin = geometry@ymin
-    ymax = geometry@ymax
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
-  }
+  #else if (tryCatch(is(raster::extent(geometry), "Extent"), error = function(e) return(FALSE)))
+  #{
+    #geometry = raster::extent(geometry)
+    #xmin = geometry@xmin
+    #xmax = geometry@xmax
+    #ymin = geometry@ymin
+    #ymax = geometry@ymax
+    #return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
+  #}
   else
   {
     stop(paste0("Geometry type ", paste0(class(geometry), collapse = " "), " not supported"))
