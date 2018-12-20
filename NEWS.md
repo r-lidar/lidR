@@ -1,4 +1,4 @@
-## lidR v2.0.0 (in development)
+## lidR v2.0.0 (Release date: 2018-12-22)
 
 ### Why versions `> 2.0` are incompatible with versions `1.x.y`?
 
