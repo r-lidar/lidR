@@ -95,8 +95,8 @@ install.packages("lidR")
 
 
 ```r
-devtools::install_github("Jean-Romain/rlas", ref="devel")
-devtools::install_github("Jean-Romain/lidR", ref="devel")
+devtools::install_github("Jean-Romain/rlas")
+devtools::install_github("Jean-Romain/lidR")
 ```
 
 To install the package from github make sure you have a working development environment.
