@@ -54,11 +54,11 @@ writeANY = function(x, path, drivers)
   return(path)
 }
 
-# Function taken from raster and adapted to support multiple output format
+# Function from raster and adapted to support multiple output format
 writeSpatial = function(x, filename, overwrite = FALSE, ...)
 {
   filename <- normalizePath(filename, winslash = "/", mustWork = FALSE)
-  driver   <- sf:::guess_driver_can_write(filename)
+  driver   <- guess_driver_can_write(filename)
   layer    <- tools::file_path_sans_ext(basename(filename))
 
   if (file.exists(filename) & !overwrite)
@@ -93,4 +93,46 @@ writeSpatial = function(x, filename, overwrite = FALSE, ...)
   }
 
   rgdal::writeOGR(x, filename, layer, driver = driver, overwrite_layer = overwrite, ...)
+}
+
+# Function non exported from sf and build from sf source code because CRAN does not accept to use operator :::
+guess_driver_can_write = function(dsn)
+{
+  assert_is_a_string(dsn)
+
+  extension_map <- list(
+    bna = "BNA", csv = "CSV", e00 = "AVCE00", gdb = "OpenFileGDB",
+    geojson = "GeoJSON", gml = "GML", gmt = "GMT", gpkg = "GPKG",
+    gps = "GPSBabel", gtm = "GPSTrackMaker", gxt = "Geoconcept",
+    jml = "JML", kml = "KML", map = "WAsP", mdb = "Geomedia",
+    nc = "netCDF", ods = "ODS", osm = "OSM", pbf = "OSM", shp = "ESRI Shapefile",
+    sqlite = "SQLite", vdv = "VDV", xls = "xls", xlsx = "XLSX")
+
+  prefix_map <- list(
+    couchdb = "CouchDB", db2odbc = "DB2ODBC", dods = "DODS",
+    gft = "GFT", mssql = "MSSQLSpatial", mysql = "MySQL", oci = "OCI",
+    odbc = "ODBC", pg = "PostgreSQL", sde = "SDE")
+
+  drivers <- sf::st_drivers()
+
+  drv <- extension_map[tolower(tools::file_ext(dsn))]
+
+  if (any(grep(":", gsub(":[/\\]", "/", dsn))))
+    drv <- prefix_map[tolower(strsplit(dsn, ":")[[1]][1])]
+
+  drv <- unlist(drv)
+
+  if (is.null(drv))
+    stop("Could not guess driver for ", dsn, call. = FALSE)
+
+  if (is.na(drv))
+    stop("Could not guess driver for ", dsn, call. = FALSE)
+
+  if (is.na(match(drv, drivers$name)))
+    stop(unlist(drv), " driver not available in supported drivers.'", call. = FALSE)
+
+  if (!drivers[match(drv, drivers$name), "write"])
+    stop("Driver ", drv, " cannot write.", call. = FALSE)
+
+  return(drv)
 }
