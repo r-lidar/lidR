@@ -231,7 +231,7 @@ In conclusion, multicore processing may or may not speed-up the compuation time 
 
 The following are bechmarks for some functions
 
-### Simple canopy height model
+#### Simple canopy height model
 
 A simple point-to-raster canopy height model using 25 files of 150 x 150 m with 30 pts/m² on a laptop with a SSD and a processor intel core i7.
 
@@ -251,7 +251,7 @@ knitr::kable(Timing)
 Here we found an almost 8-fold increase in speed only by changing the file types. With 2 cores we gained 30% more, reaching an actual 8-fold speed-up compared to the basic use of laz files. One can try laz files only + 32 cores on a super computer with a lot of RAM, but the gain will probably not reach an 8-fold speed-up!
 
 
-### Area Based Approach
+#### Area Based Approach
 
 Computation of a single metric on 360 files of 1 x 1 km with 3 pts/m² (~300 km² and 900 millions points) on a laptop with a SSD and a processor intel core i7.
 
@@ -270,3 +270,30 @@ knitr::kable(Timing)
 ```
 
 Here we found an almost 6-fold speed-up only by changing the file types. With 4 cores we gained an additional 20%, reaching almost a 7-fold speed-up compared to the basic use of laz files. Using 2 cores instead of 4 is likely to be faster. One can try laz files only + 32 cores on a super computer with a lot of RAM, but the gain will probably not reach an 8-fold speed-up!
+
+#### Clip ground inventories
+
+Extraction of 140 plots of 12 m radius from 1 x 1 km files with 3 pts/m² on a laptop with a SSD and a processor intel core i7.
+
+```r
+# Streaming way
+opt_output_files(ctg) <- "/path/to/output/file_{ID}"
+new_ctg <- lasclip(ctg, shapefile, radius = 12)
+
+# Load in memory
+opt_output_files(ctg)  <- ""
+new_ctg <- lasclip(ctg, shapefile, radius = 12)
+```
+
+```{r, echo = FALSE}
+Cores = c(1,4,1,4, 1,4,1,4)
+Method = c("Streaming", "Streaming", "Streaming", "Streaming", "Memory", "Memory", "Memory", "Memory")
+Format = c("las", "las", "las + lax", "las + lax", "las", "las", "las + lax", "las + lax")
+Runtime = c("45 sec", "35 sec", "4 sec", "6 sec", "45 sec", "35 sec", "4 sec", "17 sec")
+
+Timing = data.frame(Format, Method, Cores, Runtime)
+
+knitr::kable(Timing)
+```
+
+Here using 4 cores instead of 1 increases considerably the computation time. Indeed the runtime is very small and the overhead of the parallelization does not compensate for the the potential gain.
