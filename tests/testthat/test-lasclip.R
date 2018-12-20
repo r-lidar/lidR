@@ -117,13 +117,13 @@ test_that("clip polygon works with WTK on a LAS and LAScatalog", {
   expect_equal(rect1, rect2)
 
   # RasterLayer
-  r = raster::raster(bbox, res = 1)
+  #r = raster::raster(bbox, res = 1)
 
-  rect1 = lasclip(las, r)
-  rect2 = lasclip(ctg, r)
+  #rect1 = lasclip(las, r)
+  #rect2 = lasclip(ctg, r)
 
-  expect_true(extent(rect1) <= raster::extent(r))
-  expect_equal(rect1, rect2)
+  #expect_true(extent(rect1) <= raster::extent(r))
+  #expect_equal(rect1, rect2)
 
   # Matrix 2x2
   m = raster::as.matrix(bbox)
