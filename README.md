@@ -11,16 +11,16 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 
 # Key features
 
-- Read and write .las and .laz files
-- Plot 3D LiDAR data
-- Area-based approach using any set of metrics
-- Individual tree segmentation
-- Manage and process a catalog of tiles
-- Extract a set of ground plot inventories
-- Compute a digital canopy model
-- Compute a digital terrain model
-- Normalize a point cloud
-- And much more...
+- [Read and write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki)
+- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki)
+- [Area-based approach using any set of metrics](https://github.com/Jean-Romain/lidR/wiki)
+- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki)
+- [Manage and process a catalog of tiles](https://github.com/Jean-Romain/lidR/wiki)
+- [Extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki)
+- [Compute a digital canopy model](https://github.com/Jean-Romain/lidR/wiki)
+- [Compute a digital terrain model](https://github.com/Jean-Romain/lidR/wiki)
+- [Normalize a point cloud](https://github.com/Jean-Romain/lidR/wiki)
+- [And much more...](https://github.com/Jean-Romain/lidR/wiki)
     
 # Some examples
 
