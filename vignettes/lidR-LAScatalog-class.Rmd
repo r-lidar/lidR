@@ -101,7 +101,7 @@ ctg@polygons <- Sr@polygons
 ```
 
 
-A LAScatalog class is a representation in R of a file or a set of las files not loaded in memory. Indeed, a regular computer cannot load in R the entiere point cloud if it covers a wide area. For very hight density files it can even fail loading a single file (see also the "LAS formal class"" vignette). In lidR, to process dataset that cannot fits in memory we use a LAScatalog.
+A LAScatalog class is a representation in R of a file or a set of las files not loaded in memory. Indeed, a regular computer cannot load an entire point cloud into R if it covers a wide area. For very high density files it can even fail when loading a single file (see also the "LAS formal class"" vignette). In lidR, to process datasets that cannot fit in memory we use a LAScatalog.
 
 ## Build a LAScatalog object reading a folder of las files
 
@@ -117,31 +117,31 @@ print(ctg)
 
 ## Basic structure of a LAScatalog object
 
-A LAScatalog inherits a SpatialPolygonsDataFrame. Thus, it has the structure of a SpatialPolygonsDataFrame plus some extra slots that stores information relative to how the LAScatalog will be processed.
+A LAScatalog inherits a SpatialPolygonsDataFrame. Thus, it has the structure of a SpatialPolygonsDataFrame plus some extra slots that store information relative to how the LAScatalog will be processed.
 
-The slot `data` of a LAScatalog object contains a `data.frame` with the most important information  read from the header of .las or .laz files. Reading only the header of the file enable to have an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) version 1.4
+The slot `data` of a LAScatalog object contains a `data.frame` with the most important information read only from the header of .las or .laz files. Reading only the file header allows users to get an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) version 1.4.
 
-The other slots are well documented in the documentation ?\`LAScatalog-class\` and not described in this vignette.
+The other slots are covered in detail in the documentation ?\`LAScatalog-class\` so are not described in this vignette.
 
 ## Allowed and non-allowed manipulation of a LAScatalog object
 
-A LAScatalog is formally a SpatialPolygonsDataFrame but in the meantime its purpose is not to manipulate spatial data into R. The purpose of a LAScatalog is to represent a set of existing las/laz files. Thus a LAScatalog cannot be modified because it must be related to the actual content of the files. The following throw an error:
+A LAScatalog is formally a SpatialPolygonsDataFrame but at the same time its purpose is not to manipulate spatial data into R. The purpose of a LAScatalog is to represent a set of existing las/laz files. Thus, a LAScatalog cannot be modified because it must be related to the actual content of the files. The following throws an error:
 
 ```{r, error = TRUE, purl = FALSE}
 ctg$Min.Z <- 0
 ```
 
-Obviously it is always possible to modify an R object by passing the simple restrictions. In that case the user will break something internally and a correct output is not guaranteed.
+Obviously it is always possible to bypass the simple restrictions in order to modify an R object. In that case the user will break something internally and a correct output is not guaranteed.
 
 ## Validation of LAScatalog object
 
-It is common that users report bugs arising from the fact that the point cloud is invalid. This is why we introduced the function `lascheck` to perform an inspection of the LAScatalog objects. This function checks if a LAScatalog object is consistant (files are all of the same type for example). For example, it may happens that a catalog mixes files of type 1 with file of type 3 or files with different scale factors.
+It is common for users to report bugs arising from the fact that the point cloud is invalid. This is why we introduced the function `lascheck` to perform an inspection of the LAScatalog objects. This function checks whether a LAScatalog object is consistent (e.g. files are all of the same type). For example, it could be that a catalog contains files of both type 1 and type 3, or files with different scale factors.
 
 ```{r}
 lascheck(ctg)
 ```
 
-The function `lascheck` when applied to a catalog does not perform a deep inspection of the point cloud unlike when applied to a LAS object. Indeed the point cloud is not actually read.
+When applied to a catalog, the function `lascheck` does not perform a deep inspection of the point cloud, unlike when it is applied to a LAS object. Indeed the point cloud is not actually read.
 
 ## Display a LAScatalog object
 
@@ -151,7 +151,7 @@ lidR provides a simple `plot` function to plot a LAScatalog object:
 plot(ctg)
 ```
 
-The option `mapview = TRUE` displays the catalog on an interactive map with pan and zoom and enable to add a satellite map in background. It uses the package `mapview` internally. It is often useful to check if the CRS of the file are properly registered. The epsg code of the las file appears to be often inccorect according to our own experience.
+The option `mapview = TRUE` displays the catalog on an interactive map with pan and zoom, and allows a satellite map to be added in background. It uses the package `mapview` internally. It is often useful to check if the CRS of a file is properly registered. In our experience, the epsg code of the las file often appears to be inccorect.
 
 ```r
 plot(ctg, mapview = TRUE, map.type = "Esri.WorldImagery")
@@ -162,7 +162,7 @@ plot(ctg, map = TRUE)@map
 ```
 
 
-Being a SpatialPolygonsDataFrame the function `spplot` from `sp` can be used on a LAScatalog to check the content of the files. In the following we can immediatly see that the catalog is not normalized and is likely to contains outliers:
+Because it is a SpatialPolygonsDataFrame, the function `spplot` from `sp` can be used on a LAScatalog to check the contents of the files. In the following example we can immediately see that the catalog is not normalized and is likely to contain outliers:
 
 ```{r, fig.width=4, fig.height=4}
 spplot(ctg, "Min.Z")
@@ -170,26 +170,26 @@ spplot(ctg, "Min.Z")
 
 ## Apply lidR functions on a LAScatalog
 
-Most of the function in lidR are compatible with a LAScatalog and works almost like with a point cloud loaded in memory. In the following example we use the function `grid_metrics` to compute the mean elevation of the points. The output is a continuous wall-to-wall RasterLayer. It works exactly like if the input was a LAS object.
+Most of the functions in lidR are compatible with a LAScatalog and work almost the same as with a point cloud loaded in memory. In the following example we use the function `grid_metrics` to compute the mean elevation of the points. The output is a continuous wall-to-wall RasterLayer. It works exactly as if the input was a LAS object.
 
 ```r
 hmean <- grid_metrics(ctg, mean(Z), 20)
 ```
 
-However usually processing a LAScatalog requieres to tune some processing options to get a better control on the computation. Indeed if the catalog is huge the output is likely to be huge as well and maybe the output cannot fits in R memory. For example `lasnormalize` throw an error if used 'as is' without tuning the processing options. Using `lasnormalize`  like in the following example the expected `output` would be a huge point cloud loaded in memory. The lidR package forbids such call:
+However, processing a LAScatalog usually requires tuning of some processing options to have finer control over the computation. Indeed, if the catalog is huge the output is also likely to be huge and maybe the output cannot fit in R memory. For example, `lasnormalize` throws an error if used 'as is' without tuning the processing options. Using `lasnormalize` as in the following example the expected `output` would be a huge point cloud loaded in memory. The lidR package forbids a call such as:
 
 ```{r, error = TRUE, purl = FALSE}
 output <- lasnormalize(ctg, tin())
 ```
 
-Instead one can use the processing option `opt_output_files`. Processing options drives how the big files are splitted in small chunks and how the outputs are either returned into R or written on disk into files.
+Instead one can use the processing option `opt_output_files`. Processing options drive how large files are split into smaller chunks and how the outputs are either returned into R or written into files on disk.
 
 ```r
 opt_output_file(ctg) <- "folder/where/to/store/outputs/{ORIGINALFILENAME}_normalized"
 output <- lasnormalize(ctg, tin())
 ```
 
-Here output is not a point cloud but a LAScatalog pointing to the new created files. User can check how the catalog will be process by calling `summary`
+Here output is not a point cloud but a LAScatalog pointing to the newly-created files. Users can check how the catalog will be processed by calling `summary`:
 
 ```{r}
 summary(ctg)
@@ -197,7 +197,7 @@ summary(ctg)
 
 
 
-Below some practical examples.
+Below are some practical examples.
 
 #### Example 1 - Raster
 
@@ -210,7 +210,7 @@ hmean <- grid_metrics(ctg, mean(Z), 20)
 
 #### Example 2 - Raster
 
-Load a catalog, process each file sequentially. For each file writes a raster on disk named after the name of the processed files. Returns a lightweight virtual raster mosaic.
+Load a catalog, process each file sequentially. For each file write a raster on disk named after the filename of the processed files. Returns a lightweight virtual raster mosaic.
 
 
 ```r
@@ -221,7 +221,7 @@ dtm <- grid_terrain(ctg, tin())
 
 ### Example 3 - Raster
 
-Load a single big file too big to be actually loaded in memory. Process small chuncks of 100 x 100 meters at a time. Returns a RasterLayer into R.
+Load a single large file that is too big to be loaded into memory. Process small chunks of 100 x 100 meters at a time. Returns a RasterLayer into R.
 
 
 ```r
@@ -232,7 +232,7 @@ chm <- grid_canopy(ctg, p2r())
 
 ### Example 4 - Tree detection
 
-Load a catalog. Process 3 small chuncks of 200 x 200 meters at a time. Each chunk is loadded with an extra 20 m buffer. Returns a Shapefile into R.
+Load a catalog. Process 3 small chunks of 200 x 200 meters at a time. Each chunk is loaded with an extra 20 m buffer. Returns a Shapefile into R.
 
 
 ```r
@@ -255,7 +255,7 @@ decimated <- lasfilterdecimate(ctg, homogenize(4))
 
 ### Example 6 - Decimate
 
-Load a catalog, process small chunks sequentially. For each chunks writes a laz file on disk named after the coordinates of the chunk. Returns a lightweight LAScatalog. Notice that the original catalog has been retiled.
+Load a catalog, process small chunks sequentially. For each chunk write a laz file on disk named after the coordinates of the chunk. Returns a lightweight LAScatalog. Notice that the original catalog has been retiled.
 
 
 ```r
@@ -268,7 +268,7 @@ decimated <- lasfilterdecimate(ctg, homogenize(4))
 
 ### Example 7 - Clip
 
-Load a catalog. Load a shapefile of plot centers. Extract the plots and return a list of extracted plot in R.
+Load a catalog. Load a shapefile of plot centers. Extract the plots and return a list of extracted plots in R.
 
 ```r
 ctg <- catalog("path/to/las/files/")
@@ -279,7 +279,7 @@ plots <- lasclip(ctg, shp, radius = 11.2)
 ### Example 8 - Clip
 
 
-Load a catalog. Load a shapefile of plot centers. Extract the plots and immediatly write them into a file named after the coordinates of the plot and an attribute of the sahpefile (here `FORESTTYPE` if such attribute exists in the shapefile). Returns a lightweight LAScatalog.
+Load a catalog. Load a shapefile of plot centers. Extract the plots and immediately write them to a file named after the coordinates of the plot and an attribute of the shapefile (here `FORESTTYPE`, if such attribute exists in the shapefile). Returns a lightweight LAScatalog.
 
 ```r
 ctg <- catalog("path/to/las/files/")
