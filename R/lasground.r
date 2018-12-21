@@ -85,21 +85,28 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
   filter  <- !logical(npoints)
   pointID <- 1:npoints
 
+  cloud <- coordinates3D(las)
+  data.table::setDT(cloud)
+  cloud[, idx := pointID]
+
   if (last_returns)
   {
     n <- names(las@data)
 
     if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
-      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used")
+    {
+      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.")
+    }
     else
-      filter = las@data$ReturnNumber == las@data$NumberOfReturns
+    {
+      filter <- las@data$ReturnNumber == las@data$NumberOfReturns
 
-    if(sum(filter) == 0)
-      stop("0 last return found. Process aborted.")
+      if (sum(filter) == 0)
+        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
+      else
+        cloud <- cloud[filter]
+    }
   }
-
-  cloud <- las@data[filter, .(X,Y,Z)]
-  cloud[, idx := pointID[filter]]
 
   lidR.context <- "lasground"
   idx <- algorithm(cloud)
