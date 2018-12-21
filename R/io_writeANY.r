@@ -30,7 +30,9 @@ writeANY = function(x, path, drivers)
   dir <- dirname(path)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
 
-  if (inherits(x, "LAS"))
+  if (class(x)[1] %in% names(drivers))
+    driver <- drivers[[class(x)[1]]]
+  else if (inherits(x, "LAS"))
     driver <- drivers$LAS
   else if (inherits(x, "Raster"))
     driver <- drivers$Raster
@@ -40,8 +42,6 @@ writeANY = function(x, path, drivers)
     driver <- drivers$SimpleFeature
   else if (inherits(x, "data.frame"))
     driver <- drivers$DataFrame
-  else if (class(x)[1] %in% names(drivers))
-    driver <- drivers[[class(x)[1]]]
   else if (is(x, "lidr_internal_skip_write"))
     return(0)
   else
