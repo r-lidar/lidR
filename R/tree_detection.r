@@ -98,10 +98,18 @@ tree_detection.LAScatalog = function(las, algorithm)
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
   output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
-  output  <- do.call(rbind, output)
 
-  output@proj4string <- las@proj4string
-  output@data$treeID <- 1:length(output@data$treeID)
+  if (opt_output_files(las) == "")
+  {
+    output  <- do.call(rbind, output)
+    output@proj4string <- las@proj4string
+    output@data$treeID <- 1:length(output@data$treeID)
+  }
+  else
+  {
+    output <- unlist(output)
+  }
+
   return(output)
 }
 

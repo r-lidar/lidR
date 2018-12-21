@@ -125,8 +125,16 @@ tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), con
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
   output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, attribute = attribute, .options = options)
 
-  output <- do.call(rbind, output)
-  output@proj4string = las@proj4string
+  if (opt_output_files(las) == "")
+  {
+    output <- do.call(rbind, output)
+    output@proj4string = las@proj4string
+  }
+  else
+  {
+    output <- unlist(output)
+  }
+
   return(output)
 }
 
