@@ -216,9 +216,16 @@ setMethod("summary", "LAScatalog", function(object, ...)
 
   cat("  - readLAS will be called with the following select option:", opt_select(object), "\n")
   cat("  - readLAS will be called with the following filter option:", opt_filter(object), "\n")
-
-
 })
+
+#' @rdname extent
+#' @export
+#' @importMethodsFrom raster extent
+setMethod("extent", "LAScatalog",
+          function(x, ...) {
+            return(raster::extent(min(x@data$Min.X), max(x@data$Max.X), min(x@data$Min.Y), max(x@data$Max.Y)))
+          }
+)
 
 #' @param ... Unused
 #' @param drop Unused

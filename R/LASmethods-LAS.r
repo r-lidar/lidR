@@ -158,6 +158,24 @@ setMethod("print", "LAS", function(x)
 })
 
 
+#' Extent
+#'
+#' Returns an Extent object of a \code{LAS*}.
+#'
+#' @rdname extent
+#' @param x An object of the class \code{LAS} or \code{LAScatalog}
+#' @param \dots Unused
+#' @return Extent object from \pkg{raster}
+#' @seealso \code{\link[raster:extent]{raster::extent}}
+#' @export
+#' @importMethodsFrom raster extent
+setMethod("extent", "LAS",
+  function(x, ...) {
+    return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
+  }
+)
+
+
 #' Inherited but modified methods from sp
 #'
 #' \code{LAS*} objects are \link[sp:Spatial-class]{Spatial} objects so they inherit several methods
