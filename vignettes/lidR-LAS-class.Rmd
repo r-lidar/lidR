@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+rgl::setupKnitr()
 library(lidR)
 ```
 
@@ -168,13 +169,13 @@ lidR provides a simple `plot` function to plot a LAS object in 3D. It is based o
 plot(las)
 ```
 
-```{r echo = FALSE}
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-ctg <- catalog(LASfile)
-opt_progress(ctg) <- FALSE
-las <- lasclipCircle(ctg, 684850, 5017850, 20)
+```{r echo = FALSE, rgl=TRUE, dev='png'}
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+las = readLAS(LASfile)
+m = structure(c(0.921, -0.146, 0.362, 0, 0.386, 0.482, -0.787, 0, 
+-0.06, 0.864, 0.5, 0, 0, 0, 0, 1), .Dim = c(4L, 4L))
 plot(las)
-rgl::rglwidget()
+rgl::rgl.viewpoint(fov = 50, userMatrix = m)
 ```
 
 The parameter `color` expects the name of the attribute you want to use to colorize the points. Default is `Z`
