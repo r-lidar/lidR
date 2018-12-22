@@ -30,7 +30,7 @@
 #include "RasterProcessors.h"
 
 // [[Rcpp::export]]
-NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subcircle = 0)
+NumericMatrix R_p2r(S4 las, NumericMatrix bbox, double res, double subcircle = 0)
 {
   S4 header = las.slot("header");
   List phb  = header.slot("PHB");
@@ -50,14 +50,15 @@ NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subci
 
     if (subcircle > 0)
     {
-      double angle[8] = {0, 2*M_PI/8, 4*M_PI/8, 6*M_PI/8, M_PI, 10*M_PI/8, 12*M_PI/8, 14*M_PI/8};
+      double cs[8] = {cos(0.0), cos(2*M_PI/8), cos(4*M_PI/8), cos(6*M_PI/8), cos(M_PI), cos(10*M_PI/8), cos(12*M_PI/8), cos(14*M_PI/8)};
+      double ss[8] = {sin(0.0), sin(2*M_PI/8), sin(4*M_PI/8), sin(6*M_PI/8), sin(M_PI), sin(10*M_PI/8), sin(12*M_PI/8), sin(14*M_PI/8)};
 
       for (int i = 0 ; i < X.length() ; i++)
       {
         for (int j = 0 ; j < 8 ; j++)
         {
-          double x = X[i] + subcircle * cos(angle[j]);
-          double y = Y[i] + subcircle * sin(angle[j]);
+          double x = X[i] + subcircle * cs[j];
+          double y = Y[i] + subcircle * ss[j];
           processor.max(x, y, Z[i]);
         }
       }

@@ -2,15 +2,15 @@
 #
 # PROGRAMMERS:
 #
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/rlas
+# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
 #
 # COPYRIGHT:
 #
 # Copyright 2016-2018 Jean-Romain Roussel
 #
-# This file is part of rlas R package.
+# This file is part of lidR R package.
 #
-# rlas is free software: you can redistribute it and/or modify
+# lidR is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -125,8 +125,16 @@ tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), con
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
   output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, attribute = attribute, .options = options)
 
-  output <- do.call(rbind, output)
-  output@proj4string = las@proj4string
+  if (opt_output_files(las) == "")
+  {
+    output <- do.call(rbind, output)
+    output@proj4string = las@proj4string
+  }
+  else
+  {
+    output <- unlist(output)
+  }
+
   return(output)
 }
 

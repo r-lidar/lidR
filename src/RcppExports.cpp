@@ -5,17 +5,79 @@
 
 using namespace Rcpp;
 
-// C_grid_canopy
-NumericMatrix C_grid_canopy(S4 las, NumericMatrix bbox, double res, double subcircle);
-RcppExport SEXP _lidR_C_grid_canopy(SEXP lasSEXP, SEXP bboxSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
+// fast_table
+IntegerVector fast_table(IntegerVector x, int size);
+RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type bbox(bboxSEXP);
-    Rcpp::traits::input_parameter< double >::type res(resSEXP);
-    Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_grid_canopy(las, bbox, res, subcircle));
+    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type size(sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_table(x, size));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fast_countequal
+int fast_countequal(IntegerVector x, int t);
+RcppExport SEXP _lidR_fast_countequal(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countequal(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fast_countbelow
+int fast_countbelow(NumericVector x, double t);
+RcppExport SEXP _lidR_fast_countbelow(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countbelow(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fast_countover
+int fast_countover(NumericVector x, double t);
+RcppExport SEXP _lidR_fast_countover(SEXP xSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countover(x, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// roundc
+NumericVector roundc(NumericVector x, int digit);
+RcppExport SEXP _lidR_roundc(SEXP xSEXP, SEXP digitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
+    rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_dalponte2016
+IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
+RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Image(ImageSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type Seeds(SeedsSEXP);
+    Rcpp::traits::input_parameter< double >::type th_seed(th_seedSEXP);
+    Rcpp::traits::input_parameter< double >::type th_crown(th_crownSEXP);
+    Rcpp::traits::input_parameter< double >::type th_tree(th_treeSEXP);
+    Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_dalponte2016(Image, Seeds, th_seed, th_crown, th_tree, DIST));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -66,25 +128,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_Wing2015
-IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
-RcppExport SEXP _lidR_C_Wing2015(SEXP lasSEXP, SEXP neigh_radiiSEXP, SEXP low_int_thrshSEXP, SEXP uppr_int_thrshSEXP, SEXP pt_den_reqSEXP, SEXP BBPRthrsh_matSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type neigh_radii(neigh_radiiSEXP);
-    Rcpp::traits::input_parameter< double >::type low_int_thrsh(low_int_thrshSEXP);
-    Rcpp::traits::input_parameter< double >::type uppr_int_thrsh(uppr_int_thrshSEXP);
-    Rcpp::traits::input_parameter< int >::type pt_den_req(pt_den_reqSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type BBPRthrsh_mat(BBPRthrsh_matSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_lastrees_li2
-IntegerVector C_lastrees_li2(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius);
-RcppExport SEXP _lidR_C_lastrees_li2(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP) {
+// C_li2012
+IntegerVector C_li2012(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius);
+RcppExport SEXP _lidR_C_li2012(SEXP lasSEXP, SEXP dt1SEXP, SEXP dt2SEXP, SEXP ZuSEXP, SEXP RSEXP, SEXP th_treeSEXP, SEXP radiusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -95,29 +141,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type R(RSEXP);
     Rcpp::traits::input_parameter< double >::type th_tree(th_treeSEXP);
     Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lastrees_li2(las, dt1, dt2, Zu, R, th_tree, radius));
+    rcpp_result_gen = Rcpp::wrap(C_li2012(las, dt1, dt2, Zu, R, th_tree, radius));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_lastrees_dalponte
-IntegerMatrix C_lastrees_dalponte(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
-RcppExport SEXP _lidR_C_lastrees_dalponte(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Image(ImageSEXP);
-    Rcpp::traits::input_parameter< IntegerMatrix >::type Seeds(SeedsSEXP);
-    Rcpp::traits::input_parameter< double >::type th_seed(th_seedSEXP);
-    Rcpp::traits::input_parameter< double >::type th_crown(th_crownSEXP);
-    Rcpp::traits::input_parameter< double >::type th_tree(th_treeSEXP);
-    Rcpp::traits::input_parameter< double >::type DIST(DISTSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lastrees_dalponte(Image, Seeds, th_seed, th_crown, th_tree, DIST));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_LocalMaximumFilter
-LogicalVector C_LocalMaximumFilter(DataFrame data, NumericVector ws, double min_height, bool circular);
-RcppExport SEXP _lidR_C_LocalMaximumFilter(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
+// C_lmf
+LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular);
+RcppExport SEXP _lidR_C_lmf(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -125,7 +155,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
     Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
     Rcpp::traits::input_parameter< bool >::type circular(circularSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_LocalMaximumFilter(data, ws, min_height, circular));
+    rcpp_result_gen = Rcpp::wrap(C_lmf(data, ws, min_height, circular));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,6 +170,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< double >::type resolution(resolutionSEXP);
     rcpp_result_gen = Rcpp::wrap(C_MorphologicalOpening(X, Y, Z, resolution));
+    return rcpp_result_gen;
+END_RCPP
+}
+// R_p2r
+NumericMatrix R_p2r(S4 las, NumericMatrix bbox, double res, double subcircle);
+RcppExport SEXP _lidR_R_p2r(SEXP lasSEXP, SEXP bboxSEXP, SEXP resSEXP, SEXP subcircleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type bbox(bboxSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
+    rcpp_result_gen = Rcpp::wrap(R_p2r(las, bbox, res, subcircle));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -216,82 +260,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// fast_table
-IntegerVector fast_table(IntegerVector x, int size);
-RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type size(sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_table(x, size));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fast_countequal
-int fast_countequal(NumericVector x, double t);
-RcppExport SEXP _lidR_fast_countequal(SEXP xSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_countequal(x, t));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fast_countbelow
-int fast_countbelow(NumericVector x, double t);
-RcppExport SEXP _lidR_fast_countbelow(SEXP xSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_countbelow(x, t));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fast_countover
-int fast_countover(NumericVector x, double t);
-RcppExport SEXP _lidR_fast_countover(SEXP xSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_countover(x, t));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fast_extract
-NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, double xmin, double ymin, double res);
-RcppExport SEXP _lidR_fast_extract(SEXP rSEXP, SEXP xSEXP, SEXP ySEXP, SEXP xminSEXP, SEXP yminSEXP, SEXP resSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< double >::type xmin(xminSEXP);
-    Rcpp::traits::input_parameter< double >::type ymin(yminSEXP);
-    Rcpp::traits::input_parameter< double >::type res(resSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_extract(r, x, y, xmin, ymin, res));
-    return rcpp_result_gen;
-END_RCPP
-}
-// roundc
-NumericVector roundc(NumericVector x, int digit);
-RcppExport SEXP _lidR_roundc(SEXP xSEXP, SEXP digitSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type digit(digitSEXP);
-    rcpp_result_gen = Rcpp::wrap(roundc(x, digit));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_tinfo
 NumericMatrix C_tinfo(IntegerMatrix M, NumericMatrix X);
 RcppExport SEXP _lidR_C_tinfo(SEXP MSEXP, SEXP XSEXP) {
@@ -319,30 +287,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_Wing2015
+IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
+RcppExport SEXP _lidR_C_Wing2015(SEXP lasSEXP, SEXP neigh_radiiSEXP, SEXP low_int_thrshSEXP, SEXP uppr_int_thrshSEXP, SEXP pt_den_reqSEXP, SEXP BBPRthrsh_matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type neigh_radii(neigh_radiiSEXP);
+    Rcpp::traits::input_parameter< double >::type low_int_thrsh(low_int_thrshSEXP);
+    Rcpp::traits::input_parameter< double >::type uppr_int_thrsh(uppr_int_thrshSEXP);
+    Rcpp::traits::input_parameter< int >::type pt_den_req(pt_den_reqSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type BBPRthrsh_mat(BBPRthrsh_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lidR_C_grid_canopy", (DL_FUNC) &_lidR_C_grid_canopy, 4},
+    {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
+    {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
+    {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
+    {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
+    {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
+    {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
-    {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
-    {"_lidR_C_lastrees_li2", (DL_FUNC) &_lidR_C_lastrees_li2, 7},
-    {"_lidR_C_lastrees_dalponte", (DL_FUNC) &_lidR_C_lastrees_dalponte, 6},
-    {"_lidR_C_LocalMaximumFilter", (DL_FUNC) &_lidR_C_LocalMaximumFilter, 4},
+    {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
+    {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 4},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},
+    {"_lidR_R_p2r", (DL_FUNC) &_lidR_R_p2r, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
     {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 3},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
-    {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
-    {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
-    {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
-    {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
-    {"_lidR_fast_extract", (DL_FUNC) &_lidR_fast_extract, 6},
-    {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 5},
+    {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
     {NULL, NULL, 0}
 };
 

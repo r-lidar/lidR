@@ -71,8 +71,6 @@ points of interest. This is faster, easier and much more memory-efficient for ex
   min     max
 x 684816  684943
 y 5017823 5017957}
- \item Any other object that has a bounding box accessible via \code{raster::extent}, such as a
- \link[raster:RasterLayer-class]{RasterLayer} or a \code{Spatial*} object. A rectangle is extracted.
  }
 }
 
@@ -88,7 +86,9 @@ the \link[lidR:catalog_options_tools]{available options}. A careful reading of t
 
 The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
 speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
-but this is not mandatory.
+but this is not mandatory.\cr
+
+More documentation is avaible in the vignettes: \code{browseVignettes("lidR")}
 }
 
 \section{Supported processing options}{

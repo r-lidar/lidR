@@ -123,7 +123,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     Maxima <- raster::as.matrix(rtreetops)
     Maxima <- t(apply(Maxima, 2, rev))
 
-    Crowns <- C_lastrees_dalponte(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+    Crowns <- C_dalponte2016(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
     Maxima[Maxima == 0L] <- NA_integer_
     Crowns[Crowns == 0L] <- NA_integer_
 
@@ -201,14 +201,15 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lastrees"), "li2012")
 
-    id = rep(NA_integer_, nrow(las@data))
-
     if (las@header@PHB$`Max Z` < hmin)
+    {
       warning("'hmin' is higher than the highest point. No tree segmented.")
+      return(rep(NA_integer_, nrow(las@data)))
+    }
     else
-      id = C_lastrees_li2(las, dt1, dt2, Zu, R, hmin, speed_up)
-
-    return(id)
+    {
+      return(C_li2012(las, dt1, dt2, Zu, R, hmin, speed_up))
+    }
   }
 
   class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "Algorithm", "lidR")

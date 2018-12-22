@@ -136,7 +136,15 @@ tree_metrics.LAScatalog = function(las, func, field = "treeID")
   options <- list(need_buffer = TRUE, drop_null = TRUE, globals = names(glob$globals))
   output  <- catalog_apply(las, tree_metrics, func = substitute(func), field = field, .options = options)
 
-  output <- do.call(rbind, output)
-  output@proj4string <- las@proj4string
+  if (opt_output_files(las) == "")
+  {
+    output <- do.call(rbind, output)
+    output@proj4string <- las@proj4string
+  }
+  else
+  {
+    output <- unlist(output)
+  }
+
   return(output)
 }

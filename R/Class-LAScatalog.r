@@ -93,9 +93,9 @@
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
 #' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-#' A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa. 
-#' The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the 
-#' catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default 
+#' A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa.
+#' The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
+#' catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
 #' the processing engine respects the existing tiling pattern.
 #' \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 #' no edge effect between two independent chunks and that the output is continuous. This is mandatory for
@@ -218,22 +218,36 @@ setMethod("initialize", "LAScatalog", function(.Object)
     Raster = list(
       write = raster::writeRaster,
       extension = ".tif",
-      param = list(
-        format = "GTiff"
-      )
+      object = "x",
+      path = "filename",
+      param = list(format = "GTiff")
     ),
     LAS = list(
       write = lidR::writeLAS,
       extension = ".las",
+      object = "las",
+      path = "file",
       param = list()
+    ),
+    Spatial = list(
+      write = writeSpatial,
+      extension = ".shp",
+      object = "x",
+      path = "filename",
+      param = list(overwrite = FALSE)
     ),
     SimpleFeature = list(
       write = sf::st_write,
+      extension = ".shp",
+      object = "obj",
+      path = "dsn",
       param = list(quiet = TRUE)
     ),
     DataFrame = list(
       write = data.table::fwrite,
       extension = ".txt",
+      object = "x",
+      path = "file",
       param = list()
     )
   )

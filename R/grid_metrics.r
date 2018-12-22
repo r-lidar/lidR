@@ -131,7 +131,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   func      <- lazyeval::f_interp(func)
   call      <- lazyeval::as_call(func)
   layout    <- make_overlay_raster(las, res, start)
-  cells     <- raster::cellFromXY(layout, las@data[, .(X,Y)])
+  cells     <- raster::cellFromXY(layout, coordinates(las))
   metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
 
   if (ncol(metrics) == 2L)

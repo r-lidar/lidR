@@ -83,7 +83,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
     stopif_wrong_context(context, c("grid_canopy"), "p2r")
 
     bbox <- raster::extent(layout)
-    dsm  <- C_grid_canopy(las, raster::as.matrix(bbox), raster::res(layout)[1], subcircle)
+    dsm  <- R_p2r(las, raster::as.matrix(bbox), raster::res(layout)[1], subcircle)
     dsm  <- t(dsm)
 
     if (!all(dim(layout)[1:2] == dim(dsm)))

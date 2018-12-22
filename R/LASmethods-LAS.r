@@ -305,7 +305,10 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     return(.plot_with_rgl(x, bg, coldata, clear_artifacts, args))
   }
   else
+  {
+    if (!is.infinite(trim)) coldata[coldata > trim] <- trim
     return(.plot_with_pcv(x, coldata, colorPalette, args))
+  }
 }
 
 .plot_with_rgl = function(x, bg, coldata, clear_artifacts, args)
@@ -333,10 +336,12 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
 .plot_with_pcv = function(x, coldata, colors, args)
 {
-  if (is.character(coldata) & coldata == "RGB")
+  if (is.character(coldata))
   {
-    # Dirty trick to avoid R CMD check complaining with unexisting package...
-    eval(parse(text = "PointCloudViewer::plot_xyzrgb(x@data$X, x@data$Y, x@data$Z, x@data$R, x@data$G, x@data$B, args$size)"))
+    if (coldata == "RGB")
+      eval(parse(text = "PointCloudViewer::plot_xyzrgb(x@data$X, x@data$Y, x@data$Z, x@data$R, x@data$G, x@data$B, args$size)"))
+    else
+      stop("Unexpected error.")
   }
   else
   {

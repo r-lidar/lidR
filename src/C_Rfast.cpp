@@ -46,7 +46,7 @@ IntegerVector fast_table(IntegerVector x, int size = 5)
 }
 
 // [[Rcpp::export]]
-int fast_countequal(NumericVector x, double t)
+int fast_countequal(IntegerVector x, int t)
 {
   return std::count(x.begin(), x.end(), t);
 }
@@ -61,50 +61,6 @@ int fast_countbelow(NumericVector x, double t)
 int fast_countover(NumericVector x, double t)
 {
   return std::count_if(x.begin(), x.end(), std::bind2nd(std::greater<double>(), t));
-}
-
-// [[Rcpp::export]]
-NumericVector fast_extract(NumericMatrix r, NumericVector x, NumericVector y, double xmin, double ymin, double res)
-{
-  NumericVector z(x.length());
-  int h = r.nrow();
-  int w = r.ncol();
-  double xmax = xmin + w * res;
-  double ymax = ymin + h * res;
-
-  for (int k = 0 ; k < x.length() ; k++)
-  {
-    double yk = y[k];
-    double xk = x[k];
-
-    if (yk < ymin || yk > ymax) {
-      z(k) = NumericVector::get_na();
-      continue;
-    }
-
-    if (xk < xmin || xk > xmax) {
-      z(k) = NumericVector::get_na();
-      continue;
-    }
-
-    if (yk == (int)yk)
-      yk = yk-0.01*res;
-
-    double sx = xk - xmin;
-    double sy = yk - ymin;
-
-    int j = (int)(std::abs((sx) / res) + 1)-1;
-    int i = r.nrow() - (int)(std::abs((sy) / res))-1;
-
-    if (j == w)
-      j--;
-
-    //Rcpp::Rcout << i << " " << j << std::endl;
-
-    z(k) = r(i, j);
-  }
-
-  return(z);
 }
 
 // [[Rcpp::export]]

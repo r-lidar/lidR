@@ -101,9 +101,9 @@ group_grid = function(x, y, res, start = c(0,0))
 
 group_grid_3d = function(x, y, z, res, start = c(0,0,0))
 {
-  xgrid = f_grid(x, res, start[1])
-  ygrid = f_grid(y, res, start[2])
-  zgrid = f_grid(z, res, start[3])
+  xgrid = f_grid(x, res[1], start[1])
+  ygrid = f_grid(y, res[1], start[2])
+  zgrid = f_grid(z, res[2], start[3])
 
   return(list(Xgrid = xgrid, Ygrid = ygrid, Zgrid = zgrid))
 }
@@ -136,28 +136,6 @@ dummy_las = function(n, seeds = c)
   las = suppressWarnings(LAS(dt))
 
   return(las)
-}
-
-stopifnotlas = function(x)
-{
-  if (!inherits(x, "LAS"))
-    stop("Argument is not a LAS object")
-}
-
-stopif_forbidden_name = function(name)
-{
-  if (name %in% LASFIELDS)
-    stop(glue::glue("{name} is part of the core attributes and is a forbidden name."))
-}
-
-stopif_wrong_context = function(received_context, expected_contexts, func_name)
-{
-  str = paste0(expected_contexts, collapse  = "' or '")
-
-  if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."))
-  if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"))
 }
 
 subcircled = function(dt, r, n)
