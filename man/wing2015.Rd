@@ -29,7 +29,7 @@ cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be pro
 the user.}
 }
 \description{
-This function is made to be used in \link{lassnags}. It implements an algorithms for snags segmenation
+This function is made to be used in \link{lassnags}. It implements an algorithms for snags segmentation
 based on Wing et al (2015) (see references). This is an automated filtering algorithm that utilizes
 three dimensional neighborhood lidar point-based intensity and density statistics to remove lidar
 points associated with live trees and retain lidar points associated with snags.

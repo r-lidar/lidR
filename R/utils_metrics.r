@@ -52,7 +52,7 @@
 #' intensity at a given percentile of height.\cr\cr
 #' Each function has a convenient associated variable. It is the name of the function, with a
 #' dot before the name. This enables the function to be used without writing parameters. The cost
-#' of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr\cr
+#' of such a feature is inflexibility. It corresponds to a predefined behavior (see examples)\cr\cr
 #' \code{stdtreemetrics} is a special function that works with \link{tree_metrics}. Actually,
 #' it won't fail with other functions but the output makes more sense if computed at the
 #' individual tree level.

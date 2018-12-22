@@ -11,7 +11,7 @@ grid_metrics3d(las, func, res = 1)
 
 \item{func}{expression. The function to be applied to each voxel (see also \link{grid_metrics}).}
 
-\item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionnally
+\item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).}
 }
 \value{

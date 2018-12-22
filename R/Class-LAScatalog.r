@@ -78,7 +78,7 @@
 #' not always pertinent to set \code{core > 1}.
 #' \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
 #' Progress estimation can be enhanced by installing the package \code{progress}.
-#' \item \strong{stop_early}: boolean. Stop the processsing if an error occurs in a chunk. If \code{FALSE}
+#' \item \strong{stop_early}: boolean. Stop the processing if an error occurs in a chunk. If \code{FALSE}
 #' the process can run until the end removing chunks that failed. Default is TRUE and the user should
 #' have no reason to change this.
 #' \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a

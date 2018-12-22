@@ -18,7 +18,7 @@ and non-ground. The default is 0.5.}
 \item{cloth_resolution}{scalar. The distance between particles in the cloth. This is usually set to the
 average distance of the points in the point cloud. The default value is 0.5.}
 
-\item{rigidness}{integer. The rididness of the cloth. 1 stands for very soft (to fit rugged
+\item{rigidness}{integer. The rigidness of the cloth. 1 stands for very soft (to fit rugged
 terrain), 2 stands for medium, and 3 stands for hard cloth (for flat terrain). The default is 1.}
 
 \item{iterations}{integer. Maximum iterations for simulating cloth. The default value is 500. Usually,

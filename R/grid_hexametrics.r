@@ -30,7 +30,7 @@
 #' Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells.
 #' This function is identical to \link{grid_metrics} but with hexagonal cells instead of
 #' square pixels. After all, we conduct circular plot inventories and we map models on pixel-based maps.
-#' \code{grid_hexametrics} provides the opportunity to test somthing else. Refer to \link{grid_metrics}
+#' \code{grid_hexametrics} provides the opportunity to test something else. Refer to \link{grid_metrics}
 #' for more information.
 #'
 #' @param las An object of class \code{LAS}.

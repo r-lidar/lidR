@@ -47,7 +47,7 @@
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
-#' returns a labelled list of metrics. For example, the following function \code{f} is correctly formed.
+#' returns a labeled list of metrics. For example, the following function \code{f} is correctly formed.
 #' \preformatted{
 #' f = function(x) {list(mean = mean(x), max = max(x))}
 #' }

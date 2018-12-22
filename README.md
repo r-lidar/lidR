@@ -1,6 +1,6 @@
 ![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/lidr-ban.png)<br/>
 
-![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
@@ -28,7 +28,7 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 
 ### Read and display a las file
 
-In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [PointCloudViewer](https://github.com/Jean-Romain/PointCloudViewer) with greater display capabilites.
+In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [PointCloudViewer](https://github.com/Jean-Romain/PointCloudViewer) with greater display capabilities.
 
 ```r
 las <- readLAS("<file.las>")
@@ -69,7 +69,7 @@ From a `LAScatalog` object the user can (for example) extract some regions of in
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/its-rotating-tree-segmented.gif" margin-right="5px">
 
-The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviwed papers. Our goal is to make published algorithms usable, testable and comparable.
+The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviewed papers. Our goal is to make published algorithms usable, testable and comparable.
 
 ```r
 las <- readLAS("<file.las>")
@@ -81,7 +81,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 ### Other tools
 
-`lidR` has many other tools and is a continuouly improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasability we will be glad to implement your requested feature.
+`lidR` has many other tools and is a continuously improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasibility we will be glad to implement your requested feature.
 
 # Install `lidR`
 

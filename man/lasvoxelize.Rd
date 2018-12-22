@@ -9,7 +9,7 @@ lasvoxelize(las, res)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionnally
+\item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).}
 }
 \value{
@@ -32,10 +32,8 @@ the \link[lidR:catalog_options_tools]{available options}. A careful reading of t
 \code{lidR} function should come with a section that documents the supported engine options.\cr
 
 The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
 but this is not mandatory.\cr
-
-More documentation is avaible in the vignettes: \code{browseVignettes("lidR")}
 }
 
 \section{Supported processing options}{

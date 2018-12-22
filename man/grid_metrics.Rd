@@ -34,7 +34,7 @@ the corner of a cell on (-10, -10).
 \section{Parameter \code{func}}{
 
 The function to be applied to each cell is a classical function (see examples) that
-returns a labelled list of metrics. For example, the following function \code{f} is correctly formed.
+returns a labeled list of metrics. For example, the following function \code{f} is correctly formed.
 \preformatted{
 f = function(x) {list(mean = mean(x), max = max(x))}
 }
@@ -67,10 +67,8 @@ the \link[lidR:catalog_options_tools]{available options}. A careful reading of t
 \code{lidR} function should come with a section that documents the supported engine options.\cr
 
 The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
 but this is not mandatory.\cr
-
-More documentation is avaible in the vignettes: \code{browseVignettes("lidR")}
 }
 
 \section{Supported processing options}{

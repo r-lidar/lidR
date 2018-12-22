@@ -173,17 +173,17 @@ barplot(X$t/min(X$t), names.arg = X$format, col = "darkred", xlab = "File format
 graphics::par(op)
 ```
 
-So let's assume that the total compuation time is 1 unit of time divided into 0.25 units of actual processing time and 0.75 units of read time (which is a fairly reasonable ratio). We can divide the read time by 3, and thus have 0.25 units of read time and 0.25 units of computing time, which gives a computation time of 0.5 instead of 1. We can therefore speed-up the compuation time by a factor of 2 by using the las format instead of laz. Obviously the gain is less significant for more computationally demanding processes.
+So let's assume that the total computation time is 1 unit of time divided into 0.25 units of actual processing time and 0.75 units of read time (which is a fairly reasonable ratio). We can divide the read time by 3, and thus have 0.25 units of read time and 0.25 units of computing time, which gives a computation time of 0.5 instead of 1. We can therefore speed-up the computation time by a factor of 2 by using the las format instead of laz. Obviously the gain is less significant for more computationally demanding processes.
 
 So for faster computation users can opt for las files instead of laz files. Obviously, there are good reasons to use laz files instead of las files. The strong compression brought by the laz format has a lot of advantages for storing data. It is up to the user to choose a format by considering the trade-offs between space and computation time. This section explains how it works only to help users make a decision that best suits their needs.
 
 ## Indexation of the points with lax files
 
-Another way to speed-up the total computation time is to avoid reading all 8 neigbouring tiles to load a buffer. Instead, we can read only parts of the neighbouring tiles. The gain comes from the fact that we read only a small portion of the neigbouring files to extract the buffer, skipping most of the file contents. Indeed, the buffer usually corresponds to only a very small percentage of the actual contents of a file (equivalent to a few square meters).
+Another way to speed-up the total computation time is to avoid reading all 8 neighbouring tiles to load a buffer. Instead, we can read only parts of the neighbouring tiles. The gain comes from the fact that we read only a small portion of the neighbouring files to extract the buffer, skipping most of the file contents. Indeed, the buffer usually corresponds to only a very small percentage of the actual contents of a file (equivalent to a few square meters).
 
 This is made possible by indexing the las or laz files with lax files. A lax file is a tiny file associated with a las or laz file that spatially indexes the points to make faster spatial queries. This file type was created by Martin Isenburg in [LAStools](https://rapidlasso.com/). For a better understanding of how it works one can refer to a talk given by Martin Isenburg about [lasindex](https://rapidlasso.com/2012/12/03/lasindex-spatial-indexing-of-lidar-data/).
 
-By adding lax files along with your las/laz files the buffer can be added around the processing file by only parially reading the 8 neigbouring files (in red)
+By adding lax files along with your las/laz files the buffer can be added around the processing file by only partially reading the 8 neigbouring files (in red)
 
 
 ```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
@@ -218,13 +218,13 @@ The gain is really significant and allows an additional 2- to 3-fold saving in t
 
 ## Changing the hardware
 
-We demonstrated the importance of decreasing the time taken to read files to improve the overall computation time. The faster you read the files the faster you perform the computation because the read time is non-negligible. Opting for a fast SSD disk instead of a slow HDD disk may significantly speed-up the compuatation time independently of the power of your processor. Hardware matters!
+We demonstrated the importance of decreasing the time taken to read files to improve the overall computation time. The faster you read the files the faster you perform the computation because the read time is non-negligible. Opting for a fast SSD disk instead of a slow HDD disk may significantly speed-up the computation time independently of the power of your processor. Hardware matters!
 
 ## Use more cores
 
-This section comes at the end for a reason. lidR allows you to gain speed using multicore processing. However, users will not necessarily have a significant gain with multicore processing. Multicore is not a magic trick. Processing a LAScatalog implies reading a file on disk, a task that is not really parallelisable. As a consequence, multicore is not necessarily faster than single core. The multicore engine implemented in lidR reads several files at a time to process them in parallel. It uses more memory (four cores means four chunks read at one time) and the overhead of reading four files at a time may be more penalising than the gain. 
+This section comes at the end for a reason. lidR allows you to gain speed using multicore processing. However, users will not necessarily have a significant gain with multicore processing. Multicore is not a magic trick. Processing a LAScatalog implies reading a file on disk, a task that is not really parallelizable. As a consequence, multicore is not necessarily faster than single core. The multicore engine implemented in lidR reads several files at a time to process them in parallel. It uses more memory (four cores means four chunks read at one time) and the overhead of reading four files at a time may be more penalizing than the gain. 
 
-In conclusion, multicore processing may or may not speed-up the compuation time and it has a significant memory cost. 
+In conclusion, multicore processing may or may not speed-up the computation time and it has a significant memory cost. 
 
 ## Benchmarks
 

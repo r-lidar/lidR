@@ -9,9 +9,9 @@ manual(detected = NULL, radius = 0.5, color = "red", ...)
 \arguments{
 \item{detected}{\code{SpatialPointsDataFrame} of already found tree tops that need manual corrections.}
 
-\item{radius}{numeric. Radius of the shperes displayed on the point cloud (aesthetic purpose only).}
+\item{radius}{numeric. Radius of the spheres displayed on the point cloud (aesthetic purpose only).}
 
-\item{color}{character. Color of the shperes displayed on the point cloud (aesthetic purpose only).}
+\item{color}{character. Color of the spheres displayed on the point cloud (aesthetic purpose only).}
 
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
@@ -21,7 +21,7 @@ tree detection. Users can pinpoint the tree top positions manually and interacti
 This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
 invited to select a rectangular region of interest in the scene using the right mouse button.
 Within the selected points the highest one will be flagged as 'tree top' in the scene. Once all the trees
-are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
+are labeled the user can exit the tool by selecting an empty region. Points can also be unflagged.
 The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 }
 \examples{

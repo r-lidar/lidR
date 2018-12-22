@@ -45,7 +45,7 @@
 #' @param ypoly numeric. y coordinates of a polygon.
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
-#' @param radius numeric. disc radiuses.
+#' @param radius numeric. disc radius or radii.
 #' @param ... optional supplementary options (see supported geometries)
 #'
 #' @section Supported geometries:
@@ -56,7 +56,7 @@
 #'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
 #'  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
 #'  in that case a parameter 'radius' must be passed in '...'
-#'  \item \link[sf:sf]{SimpleFeature} that consistanly contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+#'  \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
 #'  In case of \code{POINT} a parameter 'radius' must be passed in '...'
 #'  \item \link[raster:Extent-class]{Extent}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
@@ -92,7 +92,7 @@
 #'
 #' @return If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
 #' implies several regions of interest will be returned.\cr\cr
-#' If the intput is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+#' If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
 #' implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
 #' without loading anything in R.
 #'

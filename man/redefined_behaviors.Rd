@@ -36,7 +36,7 @@
 }
 \description{
 \code{LAS*} objects are \link[sp:Spatial-class]{Spatial} objects so they inherit several methods
-from \code{sp}. However, some have modified behaviors to prevent some irrrelevant modifications. Indeed,
+from \code{sp}. However, some have modified behaviors to prevent some irrelevant modifications. Indeed,
 a \code{LAS*} object cannot contain anything, as the content is restricted by the LAS specifications.
 If a user attempts to use one of these functions inappropriately an informative error will be thrown.
 }

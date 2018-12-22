@@ -69,7 +69,7 @@
 #' \item It represents a chunk of the catalog
 #' \item The function \link{readLAS} can be used with a \code{LAScluster}
 #' \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
-#' and it returns the bouding box of the cluster without the buffer. It can be used to clip the ouput
+#' and it returns the bounding box of the cluster without the buffer. It can be used to clip the output
 #' and remove the buffered region (see examples).
 #' }
 #' A user-defined function must be templated like this:
@@ -88,9 +88,9 @@
 #' function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
 #'
 #' @section .options:
-#' User may have noticed that some lidR functions throw an errors when the processing options are innapropriated.
+#' User may have noticed that some lidR functions throw an errors when the processing options are inappropriate.
 #' For example, some functions need a buffer and thus \code{buffer = 0} is forbidden. User can add the same
-#' constrains to protect against innapropriated options. The \code{.options} argument can be a \code{list} of
+#' constrains to protect against inappropriate options. The \code{.options} argument can be a \code{list} of
 #' options.
 #' \itemize{
 #' \item \code{need_buffer = TRUE} the function complains if the buffer is 0
@@ -101,10 +101,10 @@
 #' }
 #'
 #' When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
-#' with the raster to avoid egde artifacts. Indeed, if the edge of a chunk does not correspond to the edge
-#' of the pixels the output will not be strictly continuous and will have egde artifacts (that might
+#' with the raster to avoid edge artifacts. Indeed, if the edge of a chunk does not correspond to the edge
+#' of the pixels the output will not be strictly continuous and will have edge artifacts (that might
 #' not be visible). Users can check this with the options \code{raster_alignment}, that  can take the
-#' resolution of the raster as input, as well as the starting point if needed. The folowing are accepted:\cr\cr
+#' resolution of the raster as input, as well as the starting point if needed. The following are accepted:\cr\cr
 #' \preformatted{
 #' # check if the chunks are aligned with a raster of resolution 20
 #' raster_alignment = 20

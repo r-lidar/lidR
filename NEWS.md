@@ -24,7 +24,7 @@ lidR version 2 consistently uses `Raster*` and `Spatial*` objects everywhere. Ra
 
 Several lidR functions used to update objects by reference. In lidR versions 1 the user wrote: `lasnormalize(las)` instead of `las2 <- lasnormalize(las1)`. This used to make sense in R < 3.1 but now the gain is no longer as relevant because R makes shallow copies instead of deep copies. 
 
-To simplfy, let's assume that we have a 1 GB `data.frame` that stores the point cloud. In R < 3.1 `las2` was a copy of `las1` i.e. `las1` + `las2` = 2GB . This is why we made functions that worked by reference that implied no copy at all. This was memory optimized but not common or traditionnal in R. The question of memory optimization is now less relevant since R >= 3.1. In the previous example `las2` is no longer a deep copy of `las1`, but a shallow copy. Thus lidR now consistently uses the traditional syntax `y <- f(x)`.
+To simplfy, let's assume that we have a 1 GB `data.frame` that stores the point cloud. In R < 3.1 `las2` was a copy of `las1` i.e. `las1` + `las2` = 2GB . This is why we made functions that worked by reference that implied no copy at all. This was memory optimized but not common or traditional in R. The question of memory optimization is now less relevant since R >= 3.1. In the previous example `las2` is no longer a deep copy of `las1`, but a shallow copy. Thus lidR now consistently uses the traditional syntax `y <- f(x)`.
 
 **Algorithm dispatch**
 
@@ -53,7 +53,7 @@ lasnormalize(las, algo = tin())
 lasnormalize(las, algo = knnidw(k = 10))
 ```
 
-This allows `lidR` to be extended with new algorithms without any restriction either in lidR or even from third-party tools. Also, how lidR functions are used is now more consistent accross the package.
+This allows `lidR` to be extended with new algorithms without any restriction either in lidR or even from third-party tools. Also, how lidR functions are used is now more consistent across the package.
 
 **LAScatalog processing engine**
 
@@ -75,14 +75,14 @@ new_ctg = lasnormalize(ctg, algo = tin())
 **LAS class**
 
 * Change: the `LAS` class **is** now a `Spatial` object or, more technically, it inherits a `Spatial` object.
-* Change: being a `Spatial` object, a `LAS` object no longer has a `@crs` slot. It has now a slot `@proj4string` that is accesible with the functions `raster::projection` or `sp::proj4string`
-* New: being a `Spatial` object, a `LAS` object inherits mutilple functions from `raster` and `sp`, such `$` and `[[` accessors or `raster::extent`, `sp::bbox`, `raster::projection`, and so on. However, the replacement method `$<-`, `[[<-` have restricted capabilities to ensure a `LAS` object cannot be modified in a way that implies loosening the properties of the LAS specifications.
+* Change: being a `Spatial` object, a `LAS` object no longer has a `@crs` slot. It has now a slot `@proj4string` that is accessible with the functions `raster::projection` or `sp::proj4string`
+* New: being a `Spatial` object, a `LAS` object inherits multiple functions from `raster` and `sp`, such `$` and `[[` accessors or `raster::extent`, `sp::bbox`, `raster::projection`, and so on. However, the replacement method `$<-`, `[[<-` have restricted capabilities to ensure a `LAS` object cannot be modified in a way that implies loosening the properties of the LAS specifications.
 * New: empty `LAS` objects with 0 points are now allowed. This has repercussions for several functions including `lasfilter`, `lasclip`, and `readLAS` that do not return `NULL` for empty data but a `LAS` object with 0 points. This new behavior has been introduced to fix the old inconsistent behavior of functions that return either `LAS` or `NULL` objects. `LAS` objects are always returned.
 
 **LAScatalog class**
 
 * Change: the `LAScatalog` class **is** now a `SpatialPolygonsDataFrame` or, more technically, it inherits a `SpatialPolygonsDataFrame`. 
-* Change: being a `SpatialPolygonsDataFrame` object, a `LAScatalog` no longer has a `@crs` slot. It has now a slot `@proj4string` that is accesible with the functions `raster::projection` or `sp::proj4string`.
+* Change: being a `SpatialPolygonsDataFrame` object, a `LAScatalog` no longer has a `@crs` slot. It has now a slot `@proj4string` that is accessible with the functions `raster::projection` or `sp::proj4string`.
 * Change: being a `SpatialPolygonsDataFrame` a `LAScatalog` can be plotted with `sp::spplot()`.
 * Change: there are no longer any slots `@cores`, `@by_file`, `@buffer`, and so on. They are replaced by more generic and scalable slots `@processing_options`, `@output_options`, `@clustering_options` and `@input_options` that are list of options classified by their main roles.
 * Change: documentation has been entirely rewritten to explain the whole potential of the class.
@@ -95,7 +95,7 @@ new_ctg = lasnormalize(ctg, algo = tin())
 
 **lasclip**
 
-* New: `lasclip` now works both with a `LAS` object and a `LAScatalog` objecct in a seamless and consistent way. There are no longer any differences between the capabilities of the `LAS` version or the `LAScatalog` one.
+* New: `lasclip` now works both with a `LAS` object and a `LAScatalog` object in a seamless and consistent way. There are no longer any differences between the capabilities of the `LAS` version or the `LAScatalog` one.
 * New: `lasclip` support many geometries including multipart polygons and polygons with holes, both with a `LAS` object and a `LAScatalog` object.
 * Change: The option `inside` has been removed for consistency because it cannot be safely supported both on `LAS` and `LAScatalog`.
 * Change: The option `ofile` has been removed for consistency and this option in now managed by the `LAScatalog` processing engine. For example, one can extract ground inventories and write them in `laz` files automatically named after their center coordinates like this:
@@ -132,7 +132,7 @@ new_ctg = lasclipCircle(ctg, xc,yc, r)
 
 * Change: `tree_detection()` now relies on the new dispatch method (see also the main new features above).
 * New: algorithm `lmf` has user-defined variable-sized search windows and two possible search window shapes (square or disc).
-* New: introduction of the `manual` algorithm for manual correction of tree detections.
+* New: introduction of the `manual` algorithm for manual correction of tree detection.
 * New: `tree_detection` algorithms are seamlessly useable with a `LAScatalog` object by using the catalog processing engine (see also the main new features above). Thus, the following just works:
 
 ```r
@@ -141,7 +141,7 @@ ttop <- tree_detection(ctg, lmf(5))
 ```
 
 * Change: the `lmf` algorithm, when used with a `RasterLayer` as input, expects parameters given in the units of the map and no longer in pixels.
-* Change: `tree_detection()` function constistently returns a `SpatialPointsDataFrame` whatever the algorithm.
+* Change: `tree_detection()` function consistently returns a `SpatialPointsDataFrame` whatever the algorithm.
 * Change: `tree_detection()` function based on a CHM no longer support a `lasmetric` object as input. Anyway, this class no longer exists.
 
 **tree_metrics**
@@ -178,7 +178,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 
 **grid_tincanopy**
 
-* Change: `grid_tincanopy()` has been removed. Digital Surface Models are constistently driven by the function `grid_canopy()` and the lidR algorithm dispatch engine. The algorithms that replaced `grid_tincanopy()` are `dsmtin` and `pitfree`.
+* Change: `grid_tincanopy()` has been removed. Digital Surface Models are consistently driven by the function `grid_canopy()` and the lidR algorithm dispatch engine. The algorithms that replaced `grid_tincanopy()` are `dsmtin` and `pitfree`.
 
 **grid_hexametrics**
 
@@ -261,13 +261,13 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 #### NEW FEATURE
 
 * New function `tree_hulls` that computes a convex or concave hull for each segmented tree.
-* New option `stop_early` that enables processing of an entire catolog or stops if an error occurs.
+* New option `stop_early` that enables processing of an entire catalog or stops if an error occurs.
 * New function `catalog_retile` supersedes the function `catalog_reshape` and performs the same task while adding much more functionality.
 
 
 #### ENHANCEMENTS
 
-* When processing a `LAScatalog`, error handling has been seriouly improved. A process can now run until the end even with errors. In this case clusters with errors are skipped.
+* When processing a `LAScatalog`, error handling has been seriously improved. A process can now run until the end even with errors. In this case clusters with errors are skipped.
 * When processing  a `LAScatalog`, the graphical progress now uses 3 colors. green: ok, red: error, gray: null.
 * `as.spatial()` for `LAS` object preserves the CRS.
 * All the functions now have strong assertions to check user inputs.
@@ -287,7 +287,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * [[#146](https://github.com/Jean-Romain/lidR/issues/146)] Fix matching between tree tops, raster and canopy raster.
 * `tree_detection` when used with a point cloud was not properly coded and tended to miss some trees.
 * In `lasclip*` if `ofile` was non empty, the function wrote properly the file but returned a non-expected error.
-* [[#155](https://github.com/Jean-Romain/lidR/issues/155)] user supplied function was being analysed by `future` and some function were missing. User supplied function is now manually analysed.
+* [[#155](https://github.com/Jean-Romain/lidR/issues/155)] user supplied function was being analyzed by `future` and some function were missing. User supplied function is now manually analyzed.
 * [[#156](https://github.com/Jean-Romain/lidR/pull/156)] Fix error when `lasclip` was used with a `SpatialPolygonDataFrame`.
 
 ## lidR v1.5.1 (2018-06-14)
@@ -339,7 +339,7 @@ metrics <- tree_metrics(ctg, list(`Mean I` = mean(Intensity)))
 * [[#103](https://github.com/Jean-Romain/lidR/issues/103)] fix user-defined function not exported in clusters on Windows
 * [[#104](https://github.com/Jean-Romain/lidR/pull/104)] fix potential bin exclusion in `entropy` function
 * [[#106](https://github.com/Jean-Romain/lidR/issues/106)] fix wrong count of points below 0
-* Fix wrong type attribution in `lasclassify` when using the shapefile's table of attributes as data.
+* Fix wrong type attribution in `lasclassify` when using the shapefile table of attributes as data.
 * Fix column addition when `field = NULL` in `lasclassify`.
 * Fix `NA` return in entropy when negative value are found.
 

@@ -85,7 +85,7 @@ opt_output_files(myproject) <- "folder/to/lidar/data/denoised/{ORIGINALFILENAME}
 output <- lasfilternoise(myproject, tolerance = 1.2)
 ```
 
-## Finalise the functions
+## Finalize the functions
 
 As is, the function `lasfilternoise.LAScatalog` is not actually complete. Indeed:
 

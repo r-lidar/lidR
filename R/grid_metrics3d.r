@@ -38,7 +38,7 @@
 #'
 #' @param func expression. The function to be applied to each voxel (see also \link{grid_metrics}).
 #'
-#' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionnally
+#' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
 #'
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table

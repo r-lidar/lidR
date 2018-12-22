@@ -53,11 +53,11 @@ The slot `data` of a LAS object contains a `data.table` with the data read from 
 - `R` `G` `B` (int)
 - `NIR` (int)
 
-Here we can already see some deviations from the offical las format specifications. For example, the attribute 'Classification' should be an `unsigned char` stored on 8 bits. However, the R language does not support this data type and consequently this attribute is stored in a 32-bit signed `int`. One can read the official las specifications to figure out the other deviations from the original file format induced by the fact that R only has 32-bit signed integers and 64-bit signed decimal numbers.
+Here we can already see some deviations from the official las format specifications. For example, the attribute 'Classification' should be an `unsigned char` stored on 8 bits. However, the R language does not support this data type and consequently this attribute is stored in a 32-bit signed `int`. One can read the official las specifications to figure out the other deviations from the original file format induced by the fact that R only has 32-bit signed integers and 64-bit signed decimal numbers.
 
 ### @header: the header
 
-A `LAS` object contains a slot `@header` that represents the header of the las file. The header is stored in a `LASheader`  object. A `LASheader` object contains two slots: `@PHB` for the public header block and `@VLR` for the variable length records. Both slots are lists labeled according to the las file format specification. See [public documentation of las file format](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) for more information about las headers. Users should never normally have to worry about the header as long as they use functions from lidR. Everthing is managed internally to ensure that objects are valid. However, users still need to know that the contents of the header are important, especially when writing `LAS` objects into las or laz files.
+A `LAS` object contains a slot `@header` that represents the header of the las file. The header is stored in a `LASheader`  object. A `LASheader` object contains two slots: `@PHB` for the public header block and `@VLR` for the variable length records. Both slots are lists labeled according to the las file format specification. See [public documentation of las file format](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) for more information about las headers. Users should never normally have to worry about the header as long as they use functions from lidR. Everything is managed internally to ensure that objects are valid. However, users still need to know that the contents of the header are important, especially when writing `LAS` objects into las or laz files.
 
 ```{r}
 print(las@header)
@@ -94,7 +94,7 @@ las$Classification <- 0L
 
 It would be possible to automatically cast the input into the correct type without throwing an error. But for the lidR package we chose to be very pedantic on this point to avoid any potential problems and because we would prefer users to be careful about the content of their data.
 
-The addition of a new column is also retricted. For example, one may want to add an attribute `R` corresponding to the red channel. 
+The addition of a new column is also restricted. For example, one may want to add an attribute `R` corresponding to the red channel. 
 ```{r, error = TRUE, purl = FALSE}
 las$R <- 0
 ```
@@ -120,7 +120,7 @@ las@data$R <- 0
 las@data$R <- NULL
 ```
 
-In conclusion, a LAS object is not actually immmutable but at least there are some restrictions to ensure that the user is aware that not everything is authorized.
+In conclusion, a LAS object is not actually immutable but at least there are some restrictions to ensure that the user is aware that not everything is authorized.
 
 ## Extra attributes and extra bytes in a LAS object
 
@@ -223,7 +223,7 @@ And the user now has two objects:
 - `las.original` of size 1 GB
 - `las.denoised` that is also 1 GB, because we only removed a dozen or so points out of millions.
 
-This uses 2 GB of memory. This is how R works. When a vector is subsetted it is necessarily copied. We talk about **deep copies**. In regular data processing it rarely matters and this behavior is barely noticable. Indeed, it is rare that data uses a lot of memory. But LiDAR datasets are often massive, and this necessitates that users must carefully consider memory usage to avoid running out of RAM.
+This uses 2 GB of memory. This is how R works. When a vector is subsetted it is necessarily copied. We talk about **deep copies**. In regular data processing it rarely matters and this behavior is barely noticeable. Indeed, it is rare that data uses a lot of memory. But LiDAR datasets are often massive, and this necessitates that users must carefully consider memory usage to avoid running out of RAM.
 
 ### Shallow copies
 

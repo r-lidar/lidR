@@ -38,12 +38,12 @@ lasclipCircle(las, xcenter, ycenter, radius)
 
 \item{ycenter}{numeric. y coordinates of discs centers.}
 
-\item{radius}{numeric. disc radiuses.}
+\item{radius}{numeric. disc radius or radii.}
 }
 \value{
 If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
 implies several regions of interest will be returned.\cr\cr
-If the intput is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
+If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
 implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
 without loading anything in R.
 }
@@ -63,7 +63,7 @@ points of interest. This is faster, easier and much more memory-efficient for ex
  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
  in that case a parameter 'radius' must be passed in '...'
- \item \link[sf:sf]{SimpleFeature} that consistanly contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+ \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
  In case of \code{POINT} a parameter 'radius' must be passed in '...'
  \item \link[raster:Extent-class]{Extent}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
@@ -85,10 +85,8 @@ the \link[lidR:catalog_options_tools]{available options}. A careful reading of t
 \code{lidR} function should come with a section that documents the supported engine options.\cr
 
 The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
 but this is not mandatory.\cr
-
-More documentation is avaible in the vignettes: \code{browseVignettes("lidR")}
 }
 
 \section{Supported processing options}{

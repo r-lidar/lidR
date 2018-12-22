@@ -27,10 +27,8 @@ the \link[lidR:catalog_options_tools]{available options}. A careful reading of t
 \code{lidR} function should come with a section that documents the supported engine options.\cr
 
 The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advange a \code{.lax} files,
+speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
 but this is not mandatory.\cr
-
-More documentation is avaible in the vignettes: \code{browseVignettes("lidR")}
 }
 
 \section{Supported processing options}{
@@ -39,7 +37,7 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{chunk size}: How much data is loaded at once.
-\item chunk buffer: This function guarantee a strict wall-to-wall continous output. The \code{buffer}
+\item chunk buffer: This function guarantee a strict wall-to-wall continuous output. The \code{buffer}
 option is not considered.
 \item \strong{chunk alignment}: Align the processed chunks.
 \item \strong{cores}: How many cores are used. More cores means more data is loaded at once.

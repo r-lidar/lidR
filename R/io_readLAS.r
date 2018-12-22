@@ -29,7 +29,7 @@
 
 #' Read .las or .laz files
 #'
-#' Reads .las or .laz files in format 1 to 4 according to LAS specifications and returns an
+#' Reads .las or .laz files in format 1 to 3 according to LAS specifications and returns an
 #' object of class \link[lidR:LAS-class]{LAS}. If several files are read at once the returned LAS object
 #' is considered as one LAS file. The optional parameters enable the user to save a substantial amount
 #' of memory by choosing to load only the attributes or points of interest.
@@ -51,7 +51,7 @@
 #'
 #' @param files characters. Path(s) to one or several a file(s). Can also be a
 #' \link[lidR:LAScatalog-class]{LAScatalog} object.
-#' @param select character. Read only attibutes of interest to save memory (see details).
+#' @param select character. Read only attributes of interest to save memory (see details).
 #' @param filter character. Read only points of interest to save memory (see details).
 #'
 #'

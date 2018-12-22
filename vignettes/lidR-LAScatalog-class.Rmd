@@ -131,7 +131,7 @@ A LAScatalog is formally a SpatialPolygonsDataFrame although its purpose is not 
 ctg$Min.Z <- 0
 ```
 
-Obviously it is always possible to modify an R object by overpassing such simple restrictions. In this case the user will break something internally and a correct output is not guaranteed.
+Obviously it is always possible to modify an R object by bypassing such simple restrictions. In this case the user will break something internally and a correct output is not guaranteed.
 
 ## Validation of LAScatalog object
 
@@ -238,7 +238,7 @@ chm <- grid_canopy(ctg, p2r())
 
 #### Example 4 - Tree detection
 
-Load a catalog. Process small chunks of 200 x 200 meters at a time. Each chunk is loadded with an extra 20 m buffer. Use 3 cores. Returns a Shapefile into R.
+Load a catalog. Process small chunks of 200 x 200 meters at a time. Each chunk is loaded with an extra 20 m buffer. Use 3 cores. Returns a Shapefile into R.
 
 
 ```r
@@ -285,7 +285,7 @@ plots <- lasclip(ctg, shp, radius = 11.2)
 #### Example 8 - Clip
 
 
-Load a catalog. Load a shapefile of plot centers. Extract the plots and immediately write them into a file named after the coordinates of the plot and an attributes of the sahpefile (here `PLOTID` if such an attribute exists in the shapefile). Returns a lightweight LAScatalog.
+Load a catalog. Load a shapefile of plot centers. Extract the plots and immediately write them into a file named after the coordinates of the plot and an attributes of the shapefile (here `PLOTID` if such an attribute exists in the shapefile). Returns a lightweight LAScatalog.
 
 ```r
 ctg <- catalog("path/to/las/files/")

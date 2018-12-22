@@ -24,7 +24,7 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{chunk size}: How much data is loaded at once.
-\item chunk buffer: This function guarantee a strict wall-to-wall continous output. The \code{buffer}
+\item chunk buffer: This function guarantee a strict wall-to-wall continuous output. The \code{buffer}
 option is not considered.
 \item \strong{chunk alignment}: Align the processed chunks.
 \item \strong{cores}: How many cores are used. More cores means more data is loaded at once.
