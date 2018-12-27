@@ -83,16 +83,17 @@ plot(las, color = "treeID", colorPalette = col)
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/catalog-processing.gif">
 
-Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other featuresm the engine takes advantage of point indexation with lax files and takes care of processing tiles with a buffer.
+Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows to process big files that do not fits in memory.
 
 ```r
+# Load a LAScatalog instead of a LAS file
 ctg <- catalog("<path/to/folder/>")
 
+# Process it like a LAS file
 chm <- grid_canopy(ctg, 2, p2r())
 col <- random.colors(50)
 plot(chm, col = col)
 ```
-
 
 ### Other tools
 
