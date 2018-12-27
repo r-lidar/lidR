@@ -79,6 +79,21 @@ col <- random.colors(200)
 plot(las, color = "treeID", colorPalette = col)
 ```
 
+### Continuous dataset processing
+
+<img align="left" src="/home/jr/R packages/lidR/others/README/catalog-processing.gif">
+
+Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other featuresm the engine takes advantage of point indexation with lax files and takes care of processing tiles with a buffer.
+
+```r
+ctg <- catalog("<path/to/folder/>")
+
+chm <- grid_canopy(ctg, 2, p2r())
+col <- random.colors(50)
+plot(chm, col = col)
+```
+
+
 ### Other tools
 
 `lidR` has many other tools and is a continuously improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasibility we will be glad to implement your requested feature.
