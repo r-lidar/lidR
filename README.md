@@ -81,7 +81,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 ### Continuous dataset processing
 
-<img align="left" src="/home/jr/R packages/lidR/others/README/catalog-processing.gif">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/catalog-processing.gif">
 
 Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other featuresm the engine takes advantage of point indexation with lax files and takes care of processing tiles with a buffer.
 
