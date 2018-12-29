@@ -24,7 +24,7 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
     
 # Some examples
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/point-cloud-rotating.gif">
+<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/others/README/point-cloud-rotating.gif">
 
 ### Read and display a las file
 
@@ -37,7 +37,7 @@ plot(las)
 
 ### Compute a canopy height model
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/chm-Khosravipour.png">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/others/README/chm-Khosravipour.png">
 
 `lidR` has several algorithms from the literature to compute canopy height models either point-to-raster based or triangulation based. This allows testing and comparison of some methods that rely on a CHM, such as individual tree segmentation or the computation of a canopy roughness index.
 
@@ -54,7 +54,7 @@ plot(chm)
 
 ### Read and display a catalog of las files
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/catalog-plot_interactive.gif">
+<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/others/README/catalog-plot_interactive.gif">
 
 `lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` builds a `LAScatalog` object from a folder. The function `plot` displays this catalog on an interactive map using the `mapview` package (if installed).
 
@@ -67,7 +67,7 @@ From a `LAScatalog` object the user can (for example) extract some regions of in
 
 ### Individual tree segmentation
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/its-rotating-tree-segmented.gif" margin-right="5px">
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/others/README/its-rotating-tree-segmented.gif" margin-right="5px">
 
 The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviewed papers. Our goal is to make published algorithms usable, testable and comparable.
 
@@ -81,7 +81,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 ### Continuous dataset processing
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/README/catalog-processing.gif">
+<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/others/README/catalog-processing.gif">
 
 Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
 

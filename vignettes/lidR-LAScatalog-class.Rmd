@@ -157,7 +157,7 @@ The option `mapview = TRUE` displays the catalog on an interactive map with pan 
 plot(ctg, mapview = TRUE, map.type = "Esri.WorldImagery")
 ```
 
-![](https://raw.githubusercontent.com/Jean-Romain/lidR/master/others/CATALOG/mapview-vignette.png).
+![](https://raw.githubusercontent.com/Jean-Romain/storage/master/CATALOG/mapview-vignette.png).
 
 Being a SpatialPolygonsDataFrame, the function `spplot` from `sp` can be used on a LAScatalog to check the content of the files. In the following we can immediately see that the catalog is not normalized and is likely to contain outliers:
 
