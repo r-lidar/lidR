@@ -32,7 +32,8 @@
 #' Reads .las or .laz files in format 1 to 3 according to LAS specifications and returns an
 #' object of class \link[lidR:LAS-class]{LAS}. If several files are read at once the returned LAS object
 #' is considered as one LAS file. The optional parameters enable the user to save a substantial amount
-#' of memory by choosing to load only the attributes or points of interest.
+#' of memory by choosing to load only the attributes or points of interest. The LAS format 1.4 is
+#' currently only partially supported.
 #'
 #' \strong{Select:} the 'select' argument specifies which attribute will actually be loaded. For example,
 #' 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
