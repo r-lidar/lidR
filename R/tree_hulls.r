@@ -89,7 +89,12 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   if (type == "convex")
     dt <- las@data[, stdtreehullconvex(X,Y, .GRP), by = attribute]
   else if (type == "concave")
+  {
+    if (!requireNamespace("concaveman", quietly = TRUE))
+      stop("'concaveman' package is needed for this function to work.")
+
     dt <- las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = attribute]
+  }
   else
     dt <- las@data[, stdtreehullbbox(X,Y, .GRP), by = attribute]
 
