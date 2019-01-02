@@ -1,6 +1,6 @@
 ![](https://raw.githubusercontent.com/Jean-Romain/storage/master/README/lidr-ban.png)<br/>
 
-![Github](https://img.shields.io/badge/Github-2.0.0-green.svg) ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
@@ -9,20 +9,9 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 * Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
 * Development of the `lidR` package between 2018 and 2019 was made possible thanks to the financial support of the Ministère des Forêts, de la Faune et des Parcs of Québec.
 
-# Key features
+:book: Read the [Wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
 
-- [Read and write .las and .laz files](https://github.com/Jean-Romain/lidR/wiki)
-- [Plot 3D LiDAR data](https://github.com/Jean-Romain/lidR/wiki)
-- [Area-based approach using any set of metrics](https://github.com/Jean-Romain/lidR/wiki)
-- [Individual tree segmentation](https://github.com/Jean-Romain/lidR/wiki)
-- [Manage and process a catalog of tiles](https://github.com/Jean-Romain/lidR/wiki)
-- [Extract a set of ground plot inventories](https://github.com/Jean-Romain/lidR/wiki)
-- [Compute a digital canopy model](https://github.com/Jean-Romain/lidR/wiki)
-- [Compute a digital terrain model](https://github.com/Jean-Romain/lidR/wiki)
-- [Normalize a point cloud](https://github.com/Jean-Romain/lidR/wiki)
-- [And much more...](https://github.com/Jean-Romain/lidR/wiki)
-    
-# Some examples
+# Key features
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/point-cloud-rotating.gif">
 
@@ -79,7 +68,7 @@ col <- random.colors(200)
 plot(las, color = "treeID", colorPalette = col)
 ```
 
-### Continuous dataset processing
+### Wall-to-wall dataset processing
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-processing.gif">
 
@@ -119,7 +108,11 @@ To install the package from github make sure you have a working development envi
 
 * **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
 * **Mac**: Install `Xcode` from the Mac App Store.
-* **Linux**: Install the R development package, usually called `r-devel` or `r-base-dev`
+* **Linux**: Install the following libraries:
+
+```
+sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx11-dev libgl-dev libglu-dev libfreetype6-dev libv8-3.14-dev libcairo2-dev 
+```
 
 # Changelog
 
