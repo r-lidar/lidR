@@ -349,8 +349,8 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
   }
   else if (chunk_pattern)
   {
-    opt_progress(ctg) <- TRUE
-    catalog_makecluster(ctg)
+    opt_progress(x) <- TRUE
+    catalog_makecluster(x)
     return(invisible())
   }
   else

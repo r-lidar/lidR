@@ -2,7 +2,11 @@
 
 **catalog**
 
-The function `catalog` has been slightly modified in prevision of the release of the package `rlas 1.3.0` to preserve future compatibility. This is invisible for the users.
+Change: The function `catalog` has been slightly modified in prevision of the release of the package `rlas 1.3.0` to preserve future compatibility. This is invisible for the users.
+
+**plot**
+
+Fix: an error occurend when plotting a LAScatalog with the option `chunk_pattern = TRUE`: objet 'ctg' introuvable
 
 ## lidR v2.0.0 (Release date: 2018-12-22)
 
