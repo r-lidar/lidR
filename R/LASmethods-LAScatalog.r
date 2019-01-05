@@ -90,7 +90,6 @@ catalog <- function(folder, ...)
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  epsg(header)
   epsg   <- epsg(header)
   crs    <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
 
@@ -101,7 +100,19 @@ catalog <- function(folder, ...)
     PHB           <- header@PHB
     PHB$EPSG      <- epsg
     names(PHB)    <- make.names(names(PHB))
-    names(PHB)[4] <-  "GUID"
+    names(PHB)[4] <- "GUID"
+
+    # Compatibility with rlas 1.3.0
+    if (!is.null( PHB[["Number.of.points.by.return"]]))
+    {
+      PHB[["Number.of.1st.return"]] <- PHB[["Number.of.points.by.return"]][1]
+      PHB[["Number.of.2nd.return"]] <- PHB[["Number.of.points.by.return"]][2]
+      PHB[["Number.of.3rd.return"]] <- PHB[["Number.of.points.by.return"]][3]
+      PHB[["Number.of.4th.return"]] <- PHB[["Number.of.points.by.return"]][4]
+      PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
+      PHB[["Number.of.points.by.return"]] <- NULL
+    }
+
     return(PHB)
   })
 
