@@ -1,6 +1,6 @@
 ## Release summary
 
-Major update with many new features and a better integration of the package within the R spatial ecosystem.
+Minor update in previons of a future break caused by the update of a dependence.
 
 ## Test environments
 

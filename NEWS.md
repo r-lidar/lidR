@@ -1,3 +1,9 @@
+## lidR v2.0.1 (Release date: )
+
+**catalog**
+
+The function `catalog` has been slightly modified in prevision of the release of the package `rlas 1.3.0` to preserve future compatibility. This is invisible for the users.
+
 ## lidR v2.0.0 (Release date: 2018-12-22)
 
 ### Why versions `> 2.0` are incompatible with versions `1.x.y`?
