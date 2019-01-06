@@ -1,3 +1,9 @@
+## lidR v2.1.0 (Release date: )
+
+* Change:CRS LAS 1.4 WKT
+* New: function `projection`
+* New: function `wkt`
+
 ## lidR v2.0.1 (Release date: )
 
 **catalog**

@@ -34,7 +34,7 @@ Imports:
     rgeos,
     rgdal,
     rgl,
-    rlas (>= 1.2.5),
+    rlas (>= 1.3.0),
     sf,
     stats,
     tools,

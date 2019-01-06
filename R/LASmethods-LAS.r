@@ -36,10 +36,10 @@
 #' @describeIn LAS-class Create objects of class LAS
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
-  if(is.data.frame(data))
+  if (is.data.frame(data))
     data.table::setDT(data)
 
-  if(!data.table::is.data.table(data))
+  if (!data.table::is.data.table(data))
     stop("Invalid parameter data in constructor.")
 
   if (nrow(data) > 0)
@@ -47,7 +47,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     if (check) rlas::check_data(data)
     if (is(header, "LASheader")) header = as.list(header)
 
-    if(is.list(header))
+    if (is.list(header))
     {
       if (length(header) == 0)
       {
@@ -65,7 +65,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     if (check) suppressWarnings(rlas::check_data(data))
     if (is(header, "LASheader")) header = as.list(header)
 
-    if(is.list(header))
+    if (is.list(header))
     {
       if (length(header) == 0)
       {
@@ -88,7 +88,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     header$`Z offset` <- 0
   }
 
-  if(check & nrow(data) > 0)
+  if (check & nrow(data) > 0)
   {
     rlas::check_header(header)
     rlas::check_data_vs_header(header, data, hard = F)
@@ -96,10 +96,10 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 
   header <- LASheader(header)
 
-  if(is.na(proj4string@projargs))
-    proj4string <- tryCatch(sp::CRS(paste0("+init=epsg:", epsg(header))), error = function (e) sp::CRS())
+  if (is.na(proj4string@projargs))
+    proj4string <- projection(header, asText = FALSE)
 
-  las <- new("LAS")
+  las             <- new("LAS")
   las@proj4string <- proj4string
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
@@ -248,20 +248,70 @@ setMethod("area", "LAS", function(x, ...)
   return(area_convex_hull(x@data$X, x@data$Y))
 })
 
+#' @export
+#' @rdname projection
+setMethod("projection<-", "LAS", function(x, value)
+{
+  if (is(value, "CRS"))
+    proj4 <- value@projargs
+  else if (is.character(value))
+    proj4 <- value
+  else
+    stop("'value' is not a CRS or a string.")
+
+  proj4 <- gsub("\\+init=epsg:\\d+\\s", "", proj4)
+
+  if (x@header@PHB[["Global Encoding"]][["WKT"]] == TRUE)
+  {
+    wkt <- rgdal::showWKT(proj4)
+    wkt(x@header) <- wkt
+    raster::projection(x) <- proj4
+    return(x)
+  }
+  else
+  {
+    epsg <- rgdal::showEPSG(proj4)
+
+    if (epsg == "OGRERR_UNSUPPORTED_SRS")
+      stop("EPSG not found. Try to use the function epsg() manually.", call. = FALSE)
+
+    epsg(x@header) <- epsg
+    raster::projection(x) <- proj4
+    return(x)
+  }
+})
 
 #' @export
-#' @rdname epsg
+#' @rdname projection
 setMethod("epsg", "LAS", function(object)
 {
   return(epsg(object@header))
 })
 
 #' @export
-#' @rdname epsg
+#' @rdname projection
 setMethod("epsg<-", "LAS", function(object, value)
 {
   proj4 <- sp::CRS(glue::glue("+init=epsg:{value}"))
+  proj4 <- gsub("\\+init=epsg:\\d+\\s", "", proj4)
   epsg(object@header) <- value
+  raster::projection(object)  <- proj4
+  return(object)
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt", "LAS", function(object)
+{
+  return(wkt(object@header))
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt<-", "LAS", function(object, value)
+{
+  proj4 <- rgdal::showP4(value)
+  wkt(object@header) <- value
   raster::projection(object)  <- proj4
   return(object)
 })

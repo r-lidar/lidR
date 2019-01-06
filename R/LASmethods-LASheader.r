@@ -95,7 +95,7 @@ setMethod("show", "LASheader",  function(object)
 
   n = length(object@VLR)
 
-  if(n == 0)
+  if (n == 0)
   {
     cat("Variable length records:  void\n")
     return(invisible())
@@ -103,7 +103,7 @@ setMethod("show", "LASheader",  function(object)
 
   cat("Variable length records: \n")
 
-  for(i in 1:n)
+  for (i in 1:n)
   {
     vlr = object@VLR[[i]]
 
@@ -114,7 +114,7 @@ setMethod("show", "LASheader",  function(object)
     #cat("       Length after header: ", vlr$`length after header`, "\n")
     cat("       Description: ", vlr$description, "\n")
 
-    if(vlr$`record ID` == 34735)
+    if (vlr$`record ID` == 34735)
     {
       cat("       Tags:\n")
       lapply(vlr[[6]], function(xx)
@@ -122,15 +122,15 @@ setMethod("show", "LASheader",  function(object)
         cat("          Key", xx$key, "tiff_tag_location", xx$`tiff tag location`, "count", xx$count, "value offset", xx$`value offset`, "\n")
       })
     }
-    else if(vlr$`record ID` == 34736)
+    else if (vlr$`record ID` == 34736)
     {
       cat("       data:                ", vlr[[6]], "\n")
     }
-    else if(vlr$`record ID` == 34737)
+    else if (vlr$`record ID` == 34737)
     {
       cat("       data:                ", vlr[[6]], "\n")
     }
-    if(vlr$`record ID` == 4)
+    if (vlr$`record ID` == 4)
     {
       cat("       Extra Bytes Description:\n")
       lapply(vlr$`Extra Bytes Description`, function(xx)
@@ -141,6 +141,58 @@ setMethod("show", "LASheader",  function(object)
   }
 
   return(invisible())
+})
+
+#' @export
+#' @rdname projection
+setMethod("projection", "LASheader", function(x, asText = TRUE)
+{
+  if (epsg(x) != 0L)
+  {
+    proj4 <- tryCatch(sp::CRS(paste0("+init=epsg:", epsg(x))), error = function(e) sp::CRS())
+    proj4@projargs <- gsub("\\+init=epsg:\\d+\\s", "", proj4@projargs)
+  }
+  else if (wkt(x) != "")
+    proj4 <- tryCatch(sp::CRS(rgdal::showP4(wkt(x))), error = function(e) sp::CRS())
+  else
+    proj4 <- sp::CRS()
+
+  if (asText)
+    return(proj4@projargs)
+  else
+    return(proj4)
+})
+
+#' @export
+#' @rdname projection
+setMethod("epsg", "LASheader", function(object, ...)
+{
+  return(rlas::header_get_epsg(as.list(object)))
+})
+
+#' @export
+#' @rdname projection
+setMethod("epsg<-", "LASheader", function(object, value)
+{
+  header <- as.list(object)
+  header <- rlas::header_set_epsg(header, value)
+  return(LASheader(header))
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt", "LASheader", function(object, ...)
+{
+  return(rlas::header_get_wktcs(as.list(object)))
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt<-", "LASheader", function(object, value)
+{
+  header <- as.list(object)
+  header <- rlas::header_set_wktcs(header, value)
+  return(LASheader(header))
 })
 
 #' Transform to a list
