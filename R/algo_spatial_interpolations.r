@@ -43,7 +43,7 @@
 #'
 #' # plot(las)
 #'
-#' dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
+#' dtm = grid_terrain(las, algorithm = tin())
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
@@ -88,7 +88,7 @@ tin = function()
 #'
 #' # plot(las)
 #'
-#' dtm = grid_terrain(las, algorithm = tin())
+#' dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
