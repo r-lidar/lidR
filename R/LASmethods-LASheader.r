@@ -75,7 +75,7 @@ setMethod("show", "LASheader",  function(object)
 
   cat("File signature:          ", x$`File Signature`, "\n")
   cat("File source ID:          ", x$`File Source ID`, "\n")
-  cat("Global encoding:         ", x$`Global Encoding`, "\n")
+  #cat("Global encoding:         ", x$`Global Encoding`, "\n")
   cat("Project ID - GUID:       ", x$`Project ID - GUID`, "\n")
   cat("Version:                  ", x$`Version Major`, ".", x$`Version Minor`, "\n", sep = "")
   cat("System identifier:       ", x$`System Identifier`, "\n")

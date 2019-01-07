@@ -110,6 +110,7 @@ catalog <- function(folder, ...)
       PHB[["Number.of.4th.return"]] <- PHB[["Number.of.points.by.return"]][4]
       PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
       PHB[["Number.of.points.by.return"]] <- NULL
+      PHB[["Global.Encoding"]] <- NULL
     }
 
     return(PHB)
