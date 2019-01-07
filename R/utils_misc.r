@@ -133,7 +133,7 @@ dummy_las = function(n, seeds = c)
   NumberOfReturns = as.integer(rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
 
   dt = data.table::data.table(X, Y, Z, Classification, Intensity, ReturnNumber, NumberOfReturns)
-  las = suppressWarnings(LAS(dt))
+  las = suppressWarnings(LAS(dt, check = FALSE))
 
   return(las)
 }

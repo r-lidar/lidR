@@ -73,7 +73,7 @@ lasfilter_ <- function(las, conditions)
   if (sum(combined_bools) == n)
     return(las)
   else
-    return(LAS(las@data[combined_bools], las@header, las@proj4string))
+    return(LAS(las@data[combined_bools], las@header, las@proj4string, check = FALSE))
 }
 
 #' Predefined filters

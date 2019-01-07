@@ -108,7 +108,7 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
 
     if (files@shape == LIDRCIRCLE)
     {
-      las@data[(X-xc)^2 + (Y-yc)^2 > r^2, buffer := LIDRBUFFER]
+      las@data[(X - xc)^2 + (Y - yc)^2 > r^2, buffer := LIDRBUFFER]
     }
     else
     {
@@ -147,7 +147,7 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt 
 
     if (header$`Number of point records` == 0)
     {
-      file.remove(ofile)
+      file.removey(ofile)
       return(NULL)
     }
   }
@@ -179,24 +179,9 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 
   if (nrow(data) > 0)
   {
-    rlas::check_header(header)
-    rlas::check_data(data)
-
-    # If filter is used, header will not be in accordance with the data. Hard check will necessarily return a false positive error
-    hard <- if (nchar(filter) > 0 | length(ifiles) > 1) FALSE else TRUE
-
     # If the number of file read is > 1 header bbox will not be in accordance with the data. Update the header.
     if (length(ifiles) > 1)
-    {
-      header$`Min X` = min(data$X)
-      header$`Max X` = max(data$X)
-      header$`Min Y` = min(data$Y)
-      header$`Max Y` = max(data$Y)
-      header$`Min Z` = min(data$Z)
-      header$`Max Z` = max(data$Z)
-    }
-
-    rlas::check_data_vs_header(header, data, hard = hard)
+      header <- rlas::header_update(header, data)
   }
 
   return(LAS(data, header, check = FALSE))

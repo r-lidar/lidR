@@ -42,56 +42,23 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   if (!data.table::is.data.table(data))
     stop("Invalid parameter data in constructor.")
 
-  if (nrow(data) > 0)
-  {
-    if (check) rlas::check_data(data)
-    if (is(header, "LASheader")) header = as.list(header)
+  rlas::is_defined_coordinates(data, "stop")
 
-    if (is.list(header))
-    {
-      if (length(header) == 0)
-      {
-        header = rlas::header_create(data)
-        check = FALSE
-      }
-    }
-    else
-      stop("Wrong header object provided.")
+  if (is(header, "LASheader"))
+    header <- as.list(header)
 
-    header = rlas::header_update(header, data)
-  }
-  else
-  {
-    if (check) suppressWarnings(rlas::check_data(data))
-    if (is(header, "LASheader")) header = as.list(header)
+  if (!is.list(header))
+    stop("Wrong header object provided.")
 
-    if (is.list(header))
-    {
-      if (length(header) == 0)
-      {
-        header = suppressWarnings(rlas::header_create(data))
-        check = FALSE
-      }
-    }
-    else
-      stop("Wrong header object provided.")
+  if (length(header) == 0)
+    header <- rlas::header_create(data)
 
-    header = suppressWarnings(rlas::header_update(header, data))
-    header$`Min X` <- 0
-    header$`Max X` <- 0
-    header$`Min Y` <- 0
-    header$`Max Y` <- 0
-    header$`Min Z` <- 0
-    header$`Max Z` <- 0
-    header$`X offset` <- 0
-    header$`Y offset` <- 0
-    header$`Z offset` <- 0
-  }
+  header <- rlas::header_update(header, data)
 
   if (check & nrow(data) > 0)
   {
-    rlas::check_header(header)
-    rlas::check_data_vs_header(header, data, hard = F)
+    rlas::check_las_validity(header, data)
+    rlas::check_las_compliance(header, data)
   }
 
   header <- LASheader(header)

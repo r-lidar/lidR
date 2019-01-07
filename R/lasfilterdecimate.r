@@ -77,7 +77,7 @@ lasfilterdecimate.LAS = function(las, algorithm)
   lidR.context <- "lasfilterdecimate"
   selected <- algorithm(las)
 
-  return(LAS(las@data[selected], las@header, las@proj4string))
+  return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE))
 }
 
 #' @export
