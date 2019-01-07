@@ -73,9 +73,18 @@ setMethod("show", "LASheader",  function(object)
 {
   x = object@PHB
 
+  gpstype   = if (x[["Global Encoding"]][["GPS Time Type"]]) "Standard GPS Time" else "GPS Week Time"
+  synthetic = if (x[["Global Encoding"]][["Synthetic Return Numbers"]]) "true" else "no"
+  WKT       = if (x[["Global Encoding"]][["WKT"]]) "CRS is WKT" else "CRS is GeoTIFF"
+  aggregate = if (x[["Global Encoding"]][["Aggregate Model"]]) "true" else "false"
+
   cat("File signature:          ", x$`File Signature`, "\n")
   cat("File source ID:          ", x$`File Source ID`, "\n")
-  #cat("Global encoding:         ", x$`Global Encoding`, "\n")
+  cat("Global encoding:\n")
+  cat(" - GPS Time Type:" , gpstype, "\n")
+  cat(" - Synthetic Return Numbers:" , synthetic, "\n")
+  cat(" - Well Know Text:" , WKT, "\n")
+  cat(" - Aggregate Model:" , aggregate, "\n")
   cat("Project ID - GUID:       ", x$`Project ID - GUID`, "\n")
   cat("Version:                  ", x$`Version Major`, ".", x$`Version Minor`, "\n", sep = "")
   cat("System identifier:       ", x$`System Identifier`, "\n")
@@ -87,7 +96,7 @@ setMethod("show", "LASheader",  function(object)
   cat("Point data format:       ", x$`Point Data Format ID`, "\n")
   cat("Point data record length:", x$`Point Data Record Length`, "\n")
   cat("Num. of point records:   ", x$`Number of point records`, "\n")
-  cat("Num. of points by return:", x$`Number of 1st return`, x$`Number of 2nd return`, x$`Number of 3rd return`, x$`Number of 4th return`, x$`Number of 5th return`, "\n")
+  cat("Num. of points by return:", x$`Number of points by return`, "\n")
   cat("Scale factor X Y Z:      ", x$`X scale factor`, x$`Y scale factor`, x$`Z scale factor`, "\n")
   cat("Offset X Y Z:            ", x$`X offset`, x$`Y offset`, x$`Z offset`, "\n")
   cat("min X Y Z:               ", x$`Min X`, x$`Min Y`, x$`Min Z`, "\n")
@@ -112,14 +121,14 @@ setMethod("show", "LASheader",  function(object)
     #cat("       User ID:             ", vlr$`user ID`, "\n")
     #cat("       record ID:           ", vlr$`record ID`, "\n")
     #cat("       Length after header: ", vlr$`length after header`, "\n")
-    cat("       Description: ", vlr$description, "\n")
+    cat("       Description:", vlr$description, "\n")
 
     if (vlr$`record ID` == 34735)
     {
       cat("       Tags:\n")
       lapply(vlr[[6]], function(xx)
       {
-        cat("          Key", xx$key, "tiff_tag_location", xx$`tiff tag location`, "count", xx$count, "value offset", xx$`value offset`, "\n")
+        cat("          Key", xx$key, "value", xx$`value offset`, "\n")
       })
     }
     else if (vlr$`record ID` == 34736)
@@ -130,13 +139,25 @@ setMethod("show", "LASheader",  function(object)
     {
       cat("       data:                ", vlr[[6]], "\n")
     }
-    if (vlr$`record ID` == 4)
+    else if (vlr$`record ID` == 4)
     {
       cat("       Extra Bytes Description:\n")
       lapply(vlr$`Extra Bytes Description`, function(xx)
       {
         cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
       })
+    }
+    else if (vlr$`record ID` == 4)
+    {
+      cat("       Extra Bytes Description:\n")
+      lapply(vlr$`Extra Bytes Description`, function(xx)
+      {
+        cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
+      })
+    }
+    else if (vlr$`record ID` == 2112)
+    {
+      cat("       WKT OGC COORDINATE SYSTEM: ", strtrim(vlr$`WKT OGC COORDINATE SYSTEM`, 70), " [...] (truncated)\n", sep = "")
     }
   }
 
