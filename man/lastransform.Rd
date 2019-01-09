@@ -14,7 +14,8 @@ case it is converted to \link[sp:CRS-class]{CRS}.}
 }
 \value{
 An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to the new
-coordinate reference system.
+coordinate reference system. The header has been update by add the ESPG code or a WKT OGC CS string
+as a function of the defined Global Encoding WKT bit (see LAS specifications).
 }
 \description{
 A version of \link[rgdal:spTransform]{spTrasform} for \link[lidR:LAS-class]{LAS} objects.
