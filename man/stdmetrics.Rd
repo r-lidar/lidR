@@ -19,7 +19,7 @@
 \title{Predefined standard metrics functions}
 \format{An object of class \code{formula} of length 2.}
 \usage{
-stdmetrics(x, y, z, i, a, rn, class, dz = 1, th = 2)
+stdmetrics(x, y, z, i, rn, class, dz = 1, th = 2)
 
 .stdmetrics
 
@@ -39,7 +39,7 @@ stdmetrics_pulse(pulseID, rn)
 
 .stdmetrics_pulse
 
-stdmetrics_ctrl(x, y, z, a)
+stdmetrics_ctrl(x, y, z)
 
 .stdmetrics_ctrl
 
@@ -48,7 +48,7 @@ stdtreemetrics(x, y, z)
 .stdtreemetrics
 }
 \arguments{
-\item{x, y, z, i, a}{Coordinates of the points, Intensity and ScanAngle}
+\item{x, y, z, i}{Coordinates of the points, Intensity}
 
 \item{rn, class}{ReturnNumber, Classification}
 
@@ -71,7 +71,7 @@ The function names, their parameters and the output names of the metrics rely on
 \item{\code{i}: refers to the intensity}
 \item{\code{rn}: refers to the return number}
 \item{\code{q}: refers to quantile}
-\item{\code{a}: refers to the ScanAngle}
+\item{\code{a}: refers to the ScanAngleRank or ScanAngle}
 \item{\code{n}: refers to a number (a count)}
 \item{\code{p}: refers to a percentage}
 }
@@ -95,7 +95,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "*")
 
 # All the predefined metrics
-m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
+m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
 m2 = grid_metrics(las, .stdmetrics)

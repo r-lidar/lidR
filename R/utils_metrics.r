@@ -38,7 +38,7 @@
 #' \item{\code{i}: refers to the intensity}
 #' \item{\code{rn}: refers to the return number}
 #' \item{\code{q}: refers to quantile}
-#' \item{\code{a}: refers to the ScanAngle}
+#' \item{\code{a}: refers to the ScanAngleRank or ScanAngle}
 #' \item{\code{n}: refers to a number (a count)}
 #' \item{\code{p}: refers to a percentage}
 #' }
@@ -57,7 +57,7 @@
 #' it won't fail with other functions but the output makes more sense if computed at the
 #' individual tree level.
 #'
-#' @param x,y,z,i,a Coordinates of the points, Intensity and ScanAngle
+#' @param x,y,z,i Coordinates of the points, Intensity
 #' @param rn,class ReturnNumber, Classification
 #' @param pulseID The number referencing each pulse
 #' @param dz numeric. Layer thickness  metric \link[lidR:entropy]{entropy}
@@ -67,7 +67,7 @@
 #' las = readLAS(LASfile, select = "*")
 #'
 #' # All the predefined metrics
-#' m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ScanAngle,ReturnNumber,Classification,dz=1))
+#' m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
 #'
 #' # Convenient shortcut
 #' m2 = grid_metrics(las, .stdmetrics)
@@ -130,9 +130,9 @@
 #' \link{tree_metrics}
 #' @rdname stdmetrics
 #' @export
-stdmetrics = function(x, y, z, i, a, rn, class, dz = 1, th = 2)
+stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2)
 {
-  C  = stdmetrics_ctrl(x, y, z, a)
+  C  = stdmetrics_ctrl(x, y, z)
   Z  = stdmetrics_z(z, dz, th)
   I  = stdmetrics_i(i, z, class, rn)
   RN = stdmetrics_rn(rn, class)
@@ -144,7 +144,7 @@ stdmetrics = function(x, y, z, i, a, rn, class, dz = 1, th = 2)
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics = ~stdmetrics(X,Y,Z,Intensity, ScanAngle, ReturnNumber, Classification, dz = 1, th = 2)
+.stdmetrics = ~stdmetrics(X,Y,Z,Intensity, ReturnNumber, Classification, dz = 1, th = 2)
 
 #' Gap fraction profile
 #'
@@ -485,28 +485,22 @@ stdmetrics_pulse = function(pulseID, rn)
 
 #' @rdname stdmetrics
 #' @export
-stdmetrics_ctrl = function(x, y, z, a)
+stdmetrics_ctrl = function(x, y, z)
 {
   xmax = max(x)
   ymax = max(y)
   xmin = min(x)
   ymin = min(y)
   n    = length(z)
-  angle = abs(a)
   area = (xmax - xmin)*(ymax - ymin)
-
-  metrics = list(
-    n    = n,
-    area = area,
-    angle = mean(angle)
-  )
+  metrics = list(n = n, area = area)
 
   return(metrics)
 }
 
 #' @rdname stdmetrics
 #' @export
-.stdmetrics_ctrl = ~stdmetrics_ctrl(X, Y, Z, ScanAngle)
+.stdmetrics_ctrl = ~stdmetrics_ctrl(X, Y, Z)
 
 #' @rdname stdmetrics
 #' @export
