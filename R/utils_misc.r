@@ -82,6 +82,9 @@ build_vrt = function(output, vrt)
     return(unlist(output))
   }
 
+  if (!options("lidR.buildVRT")[[1]])
+    return(unlist(output))
+
   output <- unlist(output)
   folder <- dirname(output[1])
   file   <- paste0("/", vrt, ".vrt")

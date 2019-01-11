@@ -19,7 +19,8 @@ Ask for help on <https://gis.stackexchange.com/>. Report bugs on <https://github
     lidR.progress.delay = 2,
     lidR.verbose = FALSE,
     lidR.interactive = TRUE,
-    lidR.debug = FALSE
+    lidR.debug = FALSE,
+    lidR.buildVRT = TRUE
   )
 
   toset <- !(names(op.lidR) %in% names(op))
