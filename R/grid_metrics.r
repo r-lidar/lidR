@@ -37,13 +37,12 @@
 #' the corner of a cell on (-10, -10).
 #'
 #' @template param-las
-#'
 #' @param func expression. The function to be applied to each cell (see section "Parameter func").
-#'
 #' @template param-res-grid
-#'
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0).
+#' @param filter Logical predicates like in \link{lasfilter}. Enable run the function only with points of
+#' interest in an optimized way. See also examples.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -79,35 +78,49 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' colors = height.colors(50)
+#' col = height.colors(50)
+#'
+#' # === Using all points ===
 #'
 #' # Canopy surface model with 4 m^2 cells
 #' metrics = grid_metrics(las, max(Z), 2)
-#' plot(metrics, col = colors)
+#' plot(metrics, col = col)
 #'
-#' # Mean height with 400-m^2 cells
+#' # Mean height with 400 m^2 cells
 #' metrics = grid_metrics(las, mean(Z), 20)
-#' plot(metrics, col = colors)
+#' plot(metrics, col = col)
 #'
 #' # Define your own new metrics
-#' myMetrics = function(z, i)
-#' {
+#' myMetrics = function(z, i) {
 #'   metrics = list(
 #'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
 #'      zimean  = mean(z*i),       # Mean products of z by intensity
-#'      zsqmean = sqrt(mean(z^2))  # Quadratic mean
-#'    )
+#'      zsqmean = sqrt(mean(z^2))) # Quadratic mean
 #'
 #'    return(metrics)
 #' }
 #'
 #' metrics = grid_metrics(las, myMetrics(Z, Intensity))
 #'
-#' plot(metrics, col = colors)
-#' plot(metrics, "zwimean", col = colors)
-#' plot(metrics, "zimean", col = colors)
-#' plot(metrics, "zsqmean", col = colors)
-grid_metrics = function(las, func, res = 20, start = c(0,0))
+#' plot(metrics, col = col)
+#' plot(metrics, "zwimean", col = col)
+#' plot(metrics, "zimean", col = col)
+#'
+#' # === With point filters ===
+#'
+#' # Compute using only some points: basic
+#' first = lasfilter(las, ReturnNumber == 1)
+#' metrics = grid_metrics(first, mean(Z), 20)
+#'
+#' # Compute using only some points: optimized
+#' # faster and uses less memory. No intermediate object
+#' metrics = grid_metrics(las, mean(Z), 20, filter = ReturnNumber == 1)
+#'
+#' # Compute using only some points: best
+#' # ~50% faster and uses ~10x less memory
+#' las = readLAS(LASfile, filter = "-keep_first")
+#' metrics = grid_metrics(las, mean(Z), 20)
+grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
   if (!is_a_number(res) & !is(res, "RasterLayer"))
      stop("res is not a number or a RasterLayer")
@@ -121,18 +134,31 @@ grid_metrics = function(las, func, res = 20, start = c(0,0))
 }
 
 #' @export
-grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
+grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
-  . <- X <- Y <- NULL
+  is_formula_func <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  is_null_filter  <- tryCatch(is.null(filter), error = function(e) FALSE)
 
-  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
-  if (!is_formula) func <- lazyeval::f_capture(func)
+  if (!is_formula_func) func <- lazyeval::f_capture(func)
 
-  func      <- lazyeval::f_interp(func)
-  call      <- lazyeval::as_call(func)
-  layout    <- make_overlay_raster(las, res, start)
-  cells     <- raster::cellFromXY(layout, coordinates(las))
-  metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
+  func   <- lazyeval::f_interp(func)
+  call   <- lazyeval::as_call(func)
+  layout <- make_overlay_raster(las, res, start)
+  cells  <- raster::cellFromXY(layout, coordinates(las))
+  data   <- las@data
+
+  grp <- "grp"
+  data[[grp]] <- cells
+
+  if (is_null_filter)
+  {
+    metrics <- data[, if (!anyNA(.BY)) c(eval(call)), by = grp]
+  }
+  else
+  {
+    filter  <- lasfilter_(las, list(lazyeval::f_capture(filter)))
+    metrics <- data[filter, if (!anyNA(.BY)) c(eval(call)), by = grp]
+  }
 
   if (ncol(metrics) == 2L)
   {
@@ -151,20 +177,20 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
 }
 
 #' @export
-grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0))
+grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter)
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
 
   bbox        <- raster::extent(las)
-  metrics     <- grid_metrics(x, func, res, start)
+  metrics     <- grid_metrics(x, func, res, start, filter)
   metrics     <- raster::crop(metrics, bbox)
 
   return(metrics)
 }
 
 #' @export
-grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
+grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter)
 {
   if (is(res, "RasterLayer"))
   {
@@ -185,7 +211,7 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
   glob <- future::getGlobalsAndPackages(func)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
-  output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, .options = options)
+  output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, filter = filter, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
     return(build_vrt(output, "grid_metrics"))
