@@ -41,8 +41,8 @@
 #' @template param-res-grid
 #' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0).
-#' @param filter Logical predicates like in \link{lasfilter}. Enable run the function only with points of
-#' interest in an optimized way. See also examples.
+#' @param filter formula of logical predicates. Enable to run the function only on points of interest
+#' in an optimized way. See also examples.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -114,7 +114,7 @@
 #'
 #' # Compute using only some points: optimized
 #' # faster and uses less memory. No intermediate object
-#' metrics = grid_metrics(las, mean(Z), 20, filter = ReturnNumber == 1)
+#' metrics = grid_metrics(las, mean(Z), 20, filter = ~ReturnNumber == 1)
 #'
 #' # Compute using only some points: best
 #' # ~50% faster and uses ~10x less memory
@@ -136,27 +136,24 @@ grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL)
 #' @export
 grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
-  is_formula_func <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
-  is_null_filter  <- tryCatch(is.null(filter), error = function(e) FALSE)
-
-  if (!is_formula_func) func <- lazyeval::f_capture(func)
+  formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!formula) func <- lazyeval::f_capture(func)
 
   func   <- lazyeval::f_interp(func)
   call   <- lazyeval::as_call(func)
   layout <- make_overlay_raster(las, res, start)
   cells  <- raster::cellFromXY(layout, coordinates(las))
   data   <- las@data
-
-  grp <- "grp"
+  grp    <- "grp"
   data[[grp]] <- cells
 
-  if (is_null_filter)
+  if (is.null(filter))
   {
     metrics <- data[, if (!anyNA(.BY)) c(eval(call)), by = grp]
   }
   else
   {
-    filter  <- lasfilter_(las, list(lazyeval::f_capture(filter)))
+    filter  <- lasfilter_(las, list(filter))
     metrics <- data[filter, if (!anyNA(.BY)) c(eval(call)), by = grp]
   }
 
@@ -169,7 +166,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
   else
   {
     xy_coords <- raster::xyFromCell(layout, metrics[[1]])
-    metrics[, cells := NULL]
+    metrics[, grp := NULL]
     output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@proj4string)
     names(output) <- names(metrics)
     return(raster::brick(output))
@@ -177,7 +174,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 }
 
 #' @export
-grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter)
+grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
@@ -190,7 +187,7 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter)
 }
 
 #' @export
-grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter)
+grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
   if (is(res, "RasterLayer"))
   {

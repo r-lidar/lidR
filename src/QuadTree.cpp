@@ -1,5 +1,10 @@
 #include "QuadTree.h"
 
+QuadTree::QuadTree()
+{
+  init();
+}
+
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
   use3D = false;
@@ -36,6 +41,16 @@ QuadTree::QuadTree(Rcpp::S4 las)
   Rcpp::NumericVector z = data["Z"];
   use3D = true;
   init(x,y,z);
+}
+
+QuadTree::QuadTree(Rcpp::S4 las, std::vector<bool>& f)
+{
+  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
+  Rcpp::NumericVector x = data["X"];
+  Rcpp::NumericVector y = data["Y"];
+  Rcpp::NumericVector z = data["Z"];
+  use3D = true;
+  init(x,y,z,f);
 }
 
 QuadTree::~QuadTree()
@@ -176,6 +191,32 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
   }
 }
 
+void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>& f)
+{
+  if (x.size() != y.size())
+    throw(std::runtime_error("Internal error in QuadTree. x and y have different sizes."));
+
+
+  init();
+  double xmin = Rcpp::min(x);
+  double ymin = Rcpp::min(y);
+  double xmax = Rcpp::max(x);
+  double ymax = Rcpp::max(y);
+  double xrange = xmax - xmin;
+  double yrange = ymax - ymin;
+  double range = xrange > yrange ? xrange/2 : yrange/2;
+  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
+
+  for(int i = 0 ; i < x.size() ; i++)
+  {
+    if (f[i])
+    {
+      Point p(x[i], y[i], i);
+      insert(p);
+    }
+  }
+}
+
 void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
 {
   if (x.size() != z.size())
@@ -184,6 +225,19 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericV
   Z = z;
   init();
   init(x,y);
+}
+
+void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z, std::vector<bool>& f)
+{
+  if (x.size() != z.size())
+    throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
+
+  if (x.size() != z.size())
+    throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
+
+  Z = z;
+  init();
+  init(x,y,f);
 }
 
 BoundingBox QuadTree::bbox()

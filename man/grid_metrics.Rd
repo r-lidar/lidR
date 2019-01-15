@@ -17,8 +17,8 @@ In that case the \code{RasterLayer} is used as the layout.}
 \item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0).}
 
-\item{filter}{Logical predicates like in \link{lasfilter}. Enable run the function only with points of
-interest in an optimized way. See also examples.}
+\item{filter}{formula of logical predicates. Enable to run the function only on points of interest
+in an optimized way. See also examples.}
 }
 \value{
 A \code{RasterLayer} or a \code{RasterBrick} containing a numeric value in each cell. If the
@@ -143,7 +143,7 @@ metrics = grid_metrics(first, mean(Z), 20)
 
 # Compute using only some points: optimized
 # faster and uses less memory. No intermediate object
-metrics = grid_metrics(las, mean(Z), 20, filter = ReturnNumber == 1)
+metrics = grid_metrics(las, mean(Z), 20, filter = ~ReturnNumber == 1)
 
 # Compute using only some points: best
 # ~50\% faster and uses ~10x less memory
