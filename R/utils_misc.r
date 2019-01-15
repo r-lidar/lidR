@@ -168,7 +168,10 @@ coordinates = function(las)
   DT <- las@data
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
-  return(data.frame(X,Y))
+  Z  <- DT[["Z"]]
+  DF <- data.frame(X,Y,Z)
+  data.table::setDT(DF)
+  return(DF)
 }
 
 coordinates3D = function(las)
@@ -177,6 +180,8 @@ coordinates3D = function(las)
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
   Z  <- DT[["Z"]]
-  return(data.frame(X,Y,Z))
+  DF <- data.frame(X,Y,Z)
+  data.table::setDT(DF)
+  return(DF)
 }
 

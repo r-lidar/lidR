@@ -35,10 +35,9 @@
 #' @template param-las
 #'
 #' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
-#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
-#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
-#' to \code{FALSE} automatically.
+#' @param filter formula of logical predicates. Enable to run the function only on points of interest
+#' in an optimized way. See also examples. A pertinent conditionnal statement in \code{lasground}
+#' is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.
 #'
 #' @template LAScatalog
 #'
@@ -52,6 +51,12 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
+#' # Using the Cloth Simulation Filter
+#' # --------------------------------------
+#'
+#' las <- lasground(las, csf())
+#' plot(las, color = "Classification")
+#'
 #' # Using the Progressive Morphological Filter
 #' # --------------------------------------
 #'
@@ -61,17 +66,27 @@
 #' las <- lasground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
 #'
-#' # Using the Cloth Simulation Filter
+#' \dontrun{
+#' # Some examples with the filter argument
 #' # --------------------------------------
 #'
-#' las <- lasground(las, csf())
-lasground = function(las, algorithm, last_returns = TRUE)
+#' # Use all returns instead of last returns by default
+#' las <- lasground(las, csf(), filter = NULL)
+#'
+#' # Use only first returns. This is technically possible but meaningless
+#' las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
+#' plot(las, color = "Classification")
+#'
+#' # Use only returns with an intensity above a threshold (why not)
+#' las <- lasground(las, csf(), filter = ~Intensity > 250L)
+#' }
+lasground = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 {
   UseMethod("lasground", las)
 }
 
 #' @export
-lasground.LAS = function(las, algorithm, last_returns = TRUE)
+lasground.LAS = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 {
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
     stop("Invalid function provided as algorithm.")
@@ -79,39 +94,24 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
   if (!is(algorithm, "GroundSegmentation"))
     stop("The algorithm is not an algorithm for ground segmentation")
 
-  . <- X <- Y <- Z <- Classification <- NULL
-
   npoints <- nrow(las@data)
-  filter  <- !logical(npoints)
   pointID <- 1:npoints
-
-  cloud <- coordinates3D(las)
-  data.table::setDT(cloud)
+  cloud   <- coordinates3D(las)
   cloud[, idx := pointID]
 
-  if (last_returns)
+  if (!is.null(filter))
   {
-    n <- names(las@data)
+    filter <- lasfilter_(las, list(filter))
 
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% n))
+    if (sum(filter) == 0)
     {
-      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.")
-    }
-    else
-    {
-      filter <- las@data$ReturnNumber == las@data$NumberOfReturns
-
-      if (sum(filter) == 0)
-        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
-      else
-        cloud <- cloud[filter]
+      warning("Zero point found with the filter predicates: all points were used.")
+      filter = NULL
     }
   }
 
   lidR.context <- "lasground"
-  idx <- algorithm(cloud)
-
-  #message(glue::glue("{length(idx)} ground points found."))
+  idx <- algorithm(cloud, filter)
 
   if ("Classification" %in% names(las@data))
   {
@@ -137,23 +137,23 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
 }
 
 #' @export
-lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
+lasground.LAScluster = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasground(x, algorithm, last_returns)
+  x <- lasground(x, algorithm, filter)
   x <- lasfilter(x, buffer == LIDRNOBUFFER)
   return(x)
 }
 
 #' @export
-lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
+lasground.LAScatalog = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_apply(las, lasground, algorithm = algorithm, last_returns = last_returns, .options = options)
+  output  <- catalog_apply(las, lasground, algorithm = algorithm, filter = filter, .options = options)
   output  <- unlist(output)
   ctg     <- catalog(output)
 

@@ -4,17 +4,16 @@
 \alias{lasground}
 \title{Classify points as 'ground' or 'not ground'}
 \usage{
-lasground(las, algorithm, last_returns = TRUE)
+lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.}
 
-\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
-in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
-\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
-to \code{FALSE} automatically.}
+\item{filter}{formula of logical predicates. Enable to run the function only on points of interest
+in an optimized way. See also examples. A pertinent conditionnal statement in \code{lasground}
+is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
@@ -66,6 +65,12 @@ and cannot be changed.
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn")
 
+# Using the Cloth Simulation Filter
+# --------------------------------------
+
+las <- lasground(las, csf())
+plot(las, color = "Classification")
+
 # Using the Progressive Morphological Filter
 # --------------------------------------
 
@@ -75,8 +80,18 @@ th  <- seq(0.1, 1.5, length.out = length(ws))
 las <- lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
 
-# Using the Cloth Simulation Filter
+\dontrun{
+# Some examples with the filter argument
 # --------------------------------------
 
-las <- lasground(las, csf())
+# Use all returns instead of last returns by default
+las <- lasground(las, csf(), filter = NULL)
+
+# Use only first returns. This is technically possible but meaningless
+las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
+plot(las, color = "Classification")
+
+# Use only returns with an intensity above a threshold (why not)
+las <- lasground(las, csf(), filter = ~Intensity > 250L)
+}
 }
