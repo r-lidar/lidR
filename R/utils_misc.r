@@ -68,7 +68,7 @@ merge_rasters = function(output)
     factor        <- output[[1]]@data@isfactor
     output        <- do.call(raster::merge, output)
     names(output) <- names
-    if (is(output, "RasterBrick")) colnames(output@data@values) <- names
+    if (is(output, "RasterBrick") & raster::inMemory(output)) colnames(output@data@values) <- names
   }
 
   return(output)

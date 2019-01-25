@@ -4,6 +4,7 @@ Change: the function `catalog` has been slightly modified in prevision of the re
 Fix: an error occurend when plotting a LAScatalog with the option `chunk_pattern = TRUE`: objet 'ctg' introuvable.
 Fix: examples in documentation of `tin()` and `knnidw()` were inverted.
 Fix: [#213](https://github.com/Jean-Romain/lidR/issues/213) bug when using option `keep_lowest` in `grid_terrain`.
+Fix: [#212](https://github.com/Jean-Romain/lidR/issues/212) bug when merging big rasters that exeed the memory allowed by the raster package
 
 ## lidR v2.0.0 (Release date: 2018-12-22)
 
