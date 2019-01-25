@@ -5,6 +5,7 @@ Fix: an error occurend when plotting a LAScatalog with the option `chunk_pattern
 Fix: examples in documentation of `tin()` and `knnidw()` were inverted.
 Fix: [#213](https://github.com/Jean-Romain/lidR/issues/213) bug when using option `keep_lowest` in `grid_terrain`.
 Fix: [#212](https://github.com/Jean-Romain/lidR/issues/212) bug when merging big rasters that exeed the memory allowed by the raster package
+Fix: bug when merging rasters when some of then only have one cell
 
 ## lidR v2.0.0 (Release date: 2018-12-22)
 

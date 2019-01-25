@@ -61,14 +61,30 @@ make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
 
 merge_rasters = function(output)
 {
-  # Outputs have been returned in R objects. Merge the outputs in a single object
-  if (length(output) > 1)
+  if (length(output) == 1)
+    return(output)
+
+  names    <- names(output[[1]])
+  factor   <- output[[1]]@data@isfactor
+  issingle <- sapply(output, function(x) { raster::nrow(x) == 1 & raster::ncol(x) == 1 })
+  single   <- list()
+
+  if (any(issingle))
   {
-    names         <- names(output[[1]])
-    factor        <- output[[1]]@data@isfactor
-    output        <- do.call(raster::merge, output)
-    names(output) <- names
-    if (is(output, "RasterBrick") & raster::inMemory(output)) colnames(output@data@values) <- names
+    single <- output[issingle]
+    output <- output[!issingle]
+  }
+
+  output <- do.call(raster::merge, output)
+  names(output) <- names
+
+  if (is(output, "RasterBrick") & raster::inMemory(output))
+    colnames(output@data@values) <- names
+
+  for (pixel in single)
+  {
+    pix = raster::rasterToPoints(pixel, spatial = TRUE)
+    output[pix] <- as.matrix(pix@data)
   }
 
   return(output)
