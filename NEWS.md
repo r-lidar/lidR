@@ -6,6 +6,7 @@
 - Fix: [#213](https://github.com/Jean-Romain/lidR/issues/213) bug when using option `keep_lowest` in `grid_terrain`.
 - Fix: [#212](https://github.com/Jean-Romain/lidR/issues/212) bug when merging big rasters that exeed the memory allowed by the raster package
 - Fix: bug when merging rasters when some of then only have one cell
+- Fix: bug when printing a 0 point LAS object
 
 # lidR v2.0.0 (Release date: 2019-01-02)
 

@@ -115,7 +115,7 @@ setMethod("show", "LAS", function(object)
   npts <- nrow(object@data)
   dpts <- if (surf > 0) npts/surf else 0
   attr <- names(object@data)
-  ext  <- raster::extent(object)
+  ext  <- sp::bbox(object)
   phb  <- object@header@PHB
 
   units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
@@ -124,7 +124,7 @@ setMethod("show", "LAS", function(object)
   cat("class        : LAS (", phb$`File Signature`, " v", phb$`Version Major`, ".", phb$`Version Minor`, ")\n", sep = "")
   cat("point format : ", phb$`Point Data Format ID`, "\n", sep = "")
   cat("memory       :", size, "\n")
-  cat("extent       :", ext@xmin, ",", ext@xmax, ",", ext@ymin, ",", ext@ymax, "(xmin, xmax, ymin, ymax)\n")
+  cat("extent       :", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
   cat("coord. ref.  :", object@proj4string@projargs, "\n")
   cat("area         : ", surf, " ", units, "\u00B2 (convex hull)\n", sep = "")
   cat("points       :", npts, "points\n")
