@@ -123,7 +123,6 @@
 #' \item \strong{chunk_size}: How much data is loaded at once.
 #' \item \strong{chunk_buffer}: Load chunks with a buffer.
 #' \item \strong{chunk_alignment}: Align the chunks.
-#' \item \strong{cores}: How many chunks are loaded and processed at once.
 #' \item \strong{progress}: Displays a progress estimate.
 #' \item \strong{output_files}: The user-defined function outputs will be written to files instead of being
 #' returned into R.
@@ -229,23 +228,21 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   check_alignment  <- options$check_alignment
   drop_null        <- options$drop_null
   need_output_file <- options$need_output_file
-  globals          <- options$globals
-
   resolution       <- raster_alignment$res
   start            <- raster_alignment$start
 
   ctg              <- check_and_fix_options(ctg, need_buffer, check_alignment, need_output_file, resolution, start)
+
   clusters         <- catalog_makecluster(ctg)
   clusters         <- check_and_fix_clusters(ctg, clusters, check_alignment, resolution, start)
 
   oldstate         <- options("lidR.progress")[[1]]
+
   options(lidR.progress = FALSE)
 
-  output <- tryCatch(
-  {
-    cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, globals = globals, ...)
-  },
-  finally = {options(lidR.progress = oldstate)})
+  output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+
+  options(lidR.progress = oldstate)
 
   return(output)
 }

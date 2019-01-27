@@ -6,7 +6,6 @@
 #' \item chunk buffer: This function guarantees a strict continuous wall-to-wall output. The \code{buffer} option
 #' is not considered.
 #' \item \strong{chunk alignment}: Align the processed chunks.
-#' \item \strong{cores}: How many cores are used. More cores means more data is loaded at once.
 #' \item \strong{progress}: Displays a progression estimation.
 #' \item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
 #'  in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},

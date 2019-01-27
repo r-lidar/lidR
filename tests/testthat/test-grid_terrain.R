@@ -82,7 +82,7 @@ test_that("grid_terrain returns a circular dtm ", {
 file <- system.file("extdata", "Topography.laz", package="lidR")
 ctg = catalog(file)
 las = readLAS(file)
-opt_cores(ctg) <- 1
+
 opt_chunk_size(ctg) <- 180
 opt_chunk_buffer(ctg) <- 30
 ctg@chunk_options$alignment = c(332400, 5238400)

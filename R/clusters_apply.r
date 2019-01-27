@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, globals = NULL, ...)
+cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, ...)
 {
   stopifnot(is.list(clusters))
   assert_is_function(FUN)
@@ -33,113 +33,76 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
 
   nclust <- length(clusters)
   output <- vector("list", nclust)
-  ncores <- if (nclust <= processing_options$core) nclust else processing_options$core
-  plan   <- processing_options$plan
-  codes  <- rep(ASYNC_RUN, nclust)
   params <- list(...)
-
-  future::plan(plan, workers = ncores)
+  prgrss <- processing_options$progress
 
   # Progress estimation
-  if (processing_options$progress)
+  if (prgrss)
   {
     if (requireNamespace("progress", quietly = TRUE))
       pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = nclust, clear = FALSE)
     else
       pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
 
-    graphics::legend("topright", title = "Colors", legend = c("No data","Ok","Errors (skipped)"), fill = c("gray","forestgreen", "red"), cex = 0.8)
+    graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Errors"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
   }
 
-  # Find the name of the first paramter of FUN (it can be anything because FUN might be a user-defined function)
+  # Find the name of the first paramter of FUN
+  # (it can be anything because FUN might be a user-defined function)
   formal_f <- formals(FUN)
   first_p  <- names(formal_f)[1]
 
-  # Parallel loop using asynchronous computation
   for (i in seq_along(clusters))
   {
-    # Add the current LAScluster into params of function FUN
-    current_processed_cluster <- clusters[[i]]
+    cluster <- clusters[[i]]
+    params[[first_p]] <- cluster
+    cluster_state <- CHUNK_OK
+    cluster_msg   <- ""
 
-    # !!! A clusters might be NULL?? I don't remember in which case !!!
-    if (!is.null(current_processed_cluster))
-      params[[first_p]] <- current_processed_cluster
-    else
-      params[first_p] <- list(NULL)
-
-    # Asynchronous computation of FUN
-    output[[i]] <- future::future(
+    y <- tryCatch(
     {
-      x <- do.call(FUN, params)
-      if (is.null(x)) return(NULL)
-      if (current_processed_cluster@save == "") return(x)                          # Return the output in R
-      return(writeANY(x, current_processed_cluster@save, output_options$drivers))  # Write the output in file
-    }, substitute = TRUE, globals = structure(TRUE, add = globals))
-
-    # Error handling and progress report
-    for (j in 1:i)
+      do.call(FUN, params)
+    },
+    error = function(e)
     {
-      if (codes[j] != ASYNC_RUN) next
-      codes[j] = early_eval(output[[j]], processing_options$stop_early)
-      if (codes[j] == ASYNC_RUN) next
-      if (processing_options$progress)
-      {
-        update_graphic(clusters[[j]], codes[j])
-        update_pb(pb, sum(codes != ASYNC_RUN)/length(codes))
-      }
-    }
-  }
-
-  # Because of asynchronous computation, the loop may be ended
-  # but not the computations. Wait until the end & check.
-  not_finished = which(codes == ASYNC_RUN)
-  while (length(not_finished) > 0)
-  {
-    for (j in not_finished)
+      cluster_state <<- CHUNK_ERROR
+      cluster_msg   <<- e
+    },
+    warning = function(w)
     {
-      codes[j] = early_eval(output[[j]], processing_options$stop_early)
-      if (codes[j] == ASYNC_RUN) next
-      if (processing_options$progress)
-      {
-        update_graphic(clusters[[j]], codes[j])
-        update_pb(pb, sum(codes != ASYNC_RUN)/length(codes))
-      }
-    }
-
-    not_finished = which(codes == ASYNC_RUN)
-    Sys.sleep(0.1)
-  }
-
-  if (any(codes == ASYNC_RUN)) stop("Unexpected error: a cluster is missing. Please contact the author.")
-  if (drop_null) output <- output[codes != ASYNC_ERROR & codes != ASYNC_NULL]
-
-  output <- future::values(output)
-  return(output)
-}
-
-early_eval <- function(future, stop_early)
-{
-  code = ASYNC_RUN
-
-  if (future::resolved(future))
-  {
-    code = tryCatch(
-    {
-      x = future::value(future)
-
-      if (!is.null(x))
-        return(ASYNC_OK)
-      else
-        return(ASYNC_NULL)
-    }, error = function(e) {
-      if (stop_early)
-        stop(e)
-      else
-        return(ASYNC_ERROR)
+      cluster_state <<- CHUNK_WARNING
+      cluster_msg   <<- w
     })
+
+    if (is.null(y))
+    {
+      cluster_state <- CHUNK_NULL
+    }
+
+    if (prgrss)
+    {
+      update_graphic(cluster, cluster_state)
+      update_pb(pb, i/nclust)
+    }
+
+    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
+      stop(cluster_msg)
+
+    if (cluster_state == CHUNK_WARNING)
+      warning(cluster_msg)
+
+    if (cluster_state == CHUNK_NULL | cluster_state == CHUNK_ERROR)
+      output[i]   <- list(NULL)
+    else if (cluster@save == "")
+      output[[i]] <- y
+    else
+      output[[i]] <- writeANY(y, cluster@save, output_options$drivers)
   }
 
-  return(code)
+  if (drop_null)
+    output <- Filter(Negate(is.null), output)
+
+  return(output)
 }
 
 update_graphic = function(cluster, code)
@@ -149,11 +112,13 @@ update_graphic = function(cluster, code)
 
   bbox = cluster@bbox
 
-  if (code == ASYNC_OK)
+  if (code == CHUNK_OK)
     col = "forestgreen"
-  else if (code == ASYNC_NULL)
+  else if (code == CHUNK_NULL)
     col = "gray"
-  else if (code == ASYNC_ERROR)
+  else if (code == CHUNK_WARNING)
+    col = "orange"
+  else if (code == CHUNK_ERROR)
     col = "red"
 
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)

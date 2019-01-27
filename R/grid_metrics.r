@@ -176,15 +176,16 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0))
     alignment <- list(res = r, start = start)
   }
   else
+  {
     alignment <- list(res = res, start = start)
+  }
 
   opt_chunk_buffer(las) <- 0.1*alignment$res
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
-  glob <- future::getGlobalsAndPackages(func)
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(glob$globals), raster_alignment = alignment)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, raster_alignment = alignment)
   output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic

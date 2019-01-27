@@ -3,7 +3,7 @@ context("lasground")
 file <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(file, select = "xyzrn")
 ctg = catalog(file)
-opt_cores(ctg) <- 1
+
 opt_chunk_size(ctg) <- 160
 ctg@chunk_options$alignment = c(332550, 5238450)
 opt_chunk_buffer(ctg) <- 0

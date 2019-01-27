@@ -114,7 +114,6 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item \strong{chunk_size}: How much data is loaded at once.
 \item \strong{chunk_buffer}: Load chunks with a buffer.
 \item \strong{chunk_alignment}: Align the chunks.
-\item \strong{cores}: How many chunks are loaded and processed at once.
 \item \strong{progress}: Displays a progress estimate.
 \item \strong{output_files}: The user-defined function outputs will be written to files instead of being
 returned into R.

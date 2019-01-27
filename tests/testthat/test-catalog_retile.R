@@ -3,7 +3,6 @@ context("catalog_retile")
 options(lidR.interactive = FALSE)
 folder <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(folder)
-opt_cores(ctg) <- 1
 opt_chunk_buffer(ctg) <- 0
 opt_chunk_size(ctg) = 80
 opt_progress(ctg) <- FALSE

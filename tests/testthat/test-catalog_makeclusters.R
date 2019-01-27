@@ -70,7 +70,6 @@ test_that("makecluster, tiling", {
 
   opt_chunk_size(ctg) = 800
   opt_chunk_buffer(ctg) = 0
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -98,7 +97,6 @@ test_that("makecluster, tiling + buffer", {
 
   opt_chunk_size(ctg) = 800
   opt_chunk_buffer(ctg) = 50
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -126,7 +124,6 @@ test_that("makecluster, tiling + negative buffer", {
 
   opt_chunk_size(ctg) = 800
   opt_chunk_buffer(ctg) = -100
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -211,7 +208,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 800
     opt_chunk_buffer(ctg) = 0
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -239,7 +235,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 800
     opt_chunk_buffer(ctg) = 50
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -267,7 +262,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 800
     opt_chunk_buffer(ctg) = -100
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -295,7 +289,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 0
     opt_chunk_buffer(ctg) = 0
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -325,7 +318,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 0
     opt_chunk_buffer(ctg) = 30
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -355,7 +347,6 @@ test_that("makecluster, tiling + negative buffer", {
 
     opt_chunk_size(ctg) = 0
     opt_chunk_buffer(ctg) = -30
-    opt_cores(ctg) = 1L
 
     cl  = lidR:::catalog_makecluster(ctg)
 
@@ -424,7 +415,6 @@ test_that("makecluster, by file", {
 
   opt_chunk_size(ctg) = 0
   opt_chunk_buffer(ctg) = 0
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -454,7 +444,6 @@ test_that("makecluster, by file + buffer", {
 
   opt_chunk_size(ctg) = 0
   opt_chunk_buffer(ctg) = 30
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 
@@ -484,7 +473,6 @@ test_that("makecluster, by file + negative buffer", {
 
   opt_chunk_size(ctg) = 0
   opt_chunk_buffer(ctg) = -30
-  opt_cores(ctg) = 1L
 
   cl  = lidR:::catalog_makecluster(ctg)
 

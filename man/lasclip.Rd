@@ -97,7 +97,6 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item chunk_size: Does not make sense here.
 \item buffer: Not supported yet.
 \item alignment: Does not makes sense here.
-\item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progress estimation.
 \item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.

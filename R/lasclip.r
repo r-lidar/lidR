@@ -75,7 +75,6 @@
 #' \item chunk_size: Does not make sense here.
 #' \item buffer: Not supported yet.
 #' \item alignment: Does not makes sense here.
-#' \item \strong{cores}: How many cores are used.
 #' \item \strong{progress}: Displays a progress estimation.
 #' \item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 #' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
@@ -503,7 +502,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
         output[[i]]@proj4string <- ctg@proj4string
 
         # Patch to solve issue #73 waiting for a better solution in issue #2333 in data.table
-        if (opt_cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
+        # if (opt_cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
       }
       else
       {

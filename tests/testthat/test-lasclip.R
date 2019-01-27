@@ -3,7 +3,7 @@ context("lasclip")
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz", filter = "-keep_first")
 ctg = catalog(LASfile)
-opt_cores(ctg) <- 1
+
 opt_progress(ctg) <- FALSE
 opt_select(ctg) = "xyz"
 opt_filter(ctg) = "-keep_first"
