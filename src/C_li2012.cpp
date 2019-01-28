@@ -27,13 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-#include <Rcpp.h>
+#include "lidr.h"
 #include "Point.h"
 #include "Progress.h"
 
 using namespace Rcpp;
-
-LogicalVector C_lmf(DataFrame las, NumericVector ws, double min_height, bool circular);
 
 // [[Rcpp::export]]
 IntegerVector C_li2012(S4 las, double dt1, double dt2, double Zu, double R, double th_tree, double radius)
@@ -72,7 +70,7 @@ IntegerVector C_li2012(S4 las, double dt1, double dt2, double Zu, double R, doub
   // Find if a point is a local maxima within an R windows
   LogicalVector is_lm;
   if (radius > 0)
-    is_lm = C_lmf(data, wrap(R), 0, true);
+    is_lm = C_lmf(data, wrap(R), 0, true, 1);
   else
   {
     is_lm = LogicalVector(ni);

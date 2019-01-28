@@ -1,3 +1,4 @@
+#include "myomp.h"
 #include "Progress.h"
 
 Progress::Progress(unsigned int iter_max, std::string prefix)
@@ -15,6 +16,9 @@ Progress::Progress(unsigned int iter_max, std::string prefix)
 
 bool Progress::check_abort()
 {
+  if(omp_get_thread_num() != 0)
+    return false;
+
   j++;
 
   if(j % 100 != 0)
@@ -39,7 +43,7 @@ void Progress::update(unsigned int iter)
   if (!display)
     return;
 
-  unsigned int p = (float)iter/(float)iter_max*100;
+  unsigned int p = ((float)iter*omp_get_num_threads())/(float)iter_max*100;
 
   if (p == percentage)
     return;
@@ -50,20 +54,25 @@ void Progress::update(unsigned int iter)
 
 
   percentage = p;
-  Rcpp::Rcout << prefix << percentage << "%\r";
+
+  Rcpp::Rcout << prefix << percentage << "% (" << omp_get_num_threads() <<  " threads)\r";
   Rcpp::Rcout.flush();
+
 
   return;
 }
 
 void Progress::increment()
 {
+  if(omp_get_thread_num() != 0)
+    return;
+
   this->iter++;
 
   if (!display)
     return;
 
-  unsigned int p = (float)iter/(float)iter_max*100;
+  unsigned int p = ((float)iter*omp_get_num_threads())/(float)iter_max*100;
 
   if (p == percentage)
     return;
@@ -74,7 +83,7 @@ void Progress::increment()
   if( ((float)dt)/CLOCKS_PER_SEC  < 1)
     return;
 
-  Rcpp::Rcout  << prefix << percentage << "%\r";
+  Rcpp::Rcout << prefix << percentage << "% (" << omp_get_num_threads() <<  " threads)\r";
   Rcpp::Rcout.flush();
 
   return;

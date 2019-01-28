@@ -29,13 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include <Rcpp.h>
 #include <limits>
+#include "myomp.h"
 #include "QuadTree.h"
 #include "Progress.h"
 
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular)
+LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular, int ncpu)
 {
   NumericVector X = data["X"];
   NumericVector Y = data["Y"];
@@ -48,7 +49,7 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
   QuadTree tree(X,Y);
   Progress pb(n, "Local maximum filter: ");
 
-  // Loop through all the point cloud
+  #pragma omp parallel for num_threads(ncpu)
   for (int i = 0 ; i < n ; i++)
   {
     pb.check_abort();
@@ -86,8 +87,11 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
     }
 
     // The central pixel is the highest, it is a LM
-    if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
-      seeds[i] = true;
+    #pragma omp critical
+    {
+      if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
+        seeds[i] = true;
+    }
   }
 
   return seeds;

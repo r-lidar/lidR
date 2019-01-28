@@ -146,8 +146,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lmf
-LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular);
-RcppExport SEXP _lidR_C_lmf(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
+LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular, int ncpu);
+RcppExport SEXP _lidR_C_lmf(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -155,7 +155,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
     Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
     Rcpp::traits::input_parameter< bool >::type circular(circularSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lmf(data, ws, min_height, circular));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lmf(data, ws, min_height, circular, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -303,6 +304,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// R_omp_get_max_threads
+int R_omp_get_max_threads();
+RcppExport SEXP _lidR_R_omp_get_max_threads() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(R_omp_get_max_threads());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
@@ -315,7 +326,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
-    {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 4},
+    {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},
     {"_lidR_R_p2r", (DL_FUNC) &_lidR_R_p2r, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
@@ -326,6 +337,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 5},
     {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
+    {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}
 };
 

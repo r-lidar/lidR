@@ -41,8 +41,8 @@ C_li2012 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {
     .Call(`_lidR_C_li2012`, las, dt1, dt2, Zu, R, th_tree, radius)
 }
 
-C_lmf <- function(data, ws, min_height, circular) {
-    .Call(`_lidR_C_lmf`, data, ws, min_height, circular)
+C_lmf <- function(data, ws, min_height, circular, ncpu) {
+    .Call(`_lidR_C_lmf`, data, ws, min_height, circular, ncpu)
 }
 
 C_MorphologicalOpening <- function(X, Y, Z, resolution) {
@@ -83,5 +83,9 @@ C_tsearch <- function(x, y, elem, xi, yi) {
 
 C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat) {
     .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
+}
+
+R_omp_get_max_threads <- function() {
+    .Call(`_lidR_R_omp_get_max_threads`)
 }
 

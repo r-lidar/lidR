@@ -124,7 +124,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
 
     . <- X <- Y <- Z <- treeID <- NULL
-    is_maxima = C_lmf(las@data, ws, hmin, circular)
+    is_maxima = C_lmf(las@data, ws, hmin, circular, getThread())
     maxima = las@data[is_maxima, .(X,Y,Z)]
     maxima[, treeID := 1:.N]
 
@@ -254,7 +254,6 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
     output <- sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
     return(output)
   }
-
 
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
