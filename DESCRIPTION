@@ -50,7 +50,7 @@ Suggests:
     rmarkdown
 LazyData: true
 RoxygenNote: 6.1.1
-LinkingTo: BH,Rcpp
+LinkingTo: BH,Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr
@@ -93,6 +93,7 @@ Collate:
     'io_writeLAS.r'
     'lascheck.r'
     'lasclip.r'
+    'lascoplanar.r'
     'lasfilter.r'
     'lasfilterdecimate.r'
     'lasfilterduplicates.r'
