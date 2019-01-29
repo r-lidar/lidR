@@ -61,32 +61,34 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
 
     y <- tryCatch(
     {
-      do.call(FUN, params)
+      withCallingHandlers(
+      {
+        do.call(FUN, params)
+      },
+      warning = function(w)
+      {
+        cluster_state <<- CHUNK_WARNING
+        cluster_msg   <<- w
+      })
     },
     error = function(e)
     {
       cluster_state <<- CHUNK_ERROR
       cluster_msg   <<- e
-    },
-    warning = function(w)
-    {
-      cluster_state <<- CHUNK_WARNING
-      cluster_msg   <<- w
+      0
     })
 
+    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
+      stop(cluster_msg)
+
     if (is.null(y))
-    {
       cluster_state <- CHUNK_NULL
-    }
 
     if (prgrss)
     {
       update_graphic(cluster, cluster_state)
       update_pb(pb, i/nclust)
     }
-
-    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
-      stop(cluster_msg)
 
     if (cluster_state == CHUNK_WARNING)
       warning(cluster_msg)
