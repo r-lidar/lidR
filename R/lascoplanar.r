@@ -51,7 +51,7 @@ lascoplanar = function(las, k = 8, th1 = 25, th2 = 6, filter = NULL)
     filter <- TRUE
   }
 
-  out <- C_lascoplanar(las, k, th1, th2, filter)
+  out <- C_lascoplanar(las, k, th1, th2, filter, getThread())
   las@data[["Coplanar"]] <- out
   return(las)
 }
@@ -63,7 +63,7 @@ lascolinear = function(las, k = 8, th1 = 10, filter = NULL)
   stopifnot(nrow(las@data) > k, th1)
   filter <- if (!is.null(filter)) lasfilter_(las, list(filter)) else TRUE
   if (sum(filter) < k) stop("No enought point found with the predicate filter")
-  out <- C_lascoplanar(las, k, th1, 0, filter)
+  out <- C_lascoplanar(las, k, th1, 0, filter, getThread())
   las@data[["Colinear"]] <- out
   return(las)
 }

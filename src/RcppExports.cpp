@@ -115,8 +115,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lascoplanar
-LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter);
-RcppExport SEXP _lidR_C_lascoplanar(SEXP lasSEXP, SEXP kSEXP, SEXP th1SEXP, SEXP th2SEXP, SEXP filterSEXP) {
+LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_lascoplanar(SEXP lasSEXP, SEXP kSEXP, SEXP th1SEXP, SEXP th2SEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -125,7 +125,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type th1(th1SEXP);
     Rcpp::traits::input_parameter< double >::type th2(th2SEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lascoplanar(las, k, th1, th2, filter));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lascoplanar(las, k, th1, th2, filter, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -340,7 +341,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
-    {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 5},
+    {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 6},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},

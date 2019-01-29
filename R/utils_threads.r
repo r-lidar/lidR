@@ -17,6 +17,7 @@ LIDRTHREADS$n = 1L
 #'
 #' @param threads An integer >= 0. Default 0 means use all CPU available and leave the operating system
 #' to multi task.
+#' @export
 set_lidr_threads = function(threads)
 {
   assert_is_a_number(threads)

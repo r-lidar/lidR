@@ -33,8 +33,8 @@ C_knnidw <- function(X, Y, Z, x, y, k, p) {
     .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p)
 }
 
-C_lascoplanar <- function(las, k, th1, th2, filter) {
-    .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter)
+C_lascoplanar <- function(las, k, th1, th2, filter, ncpu) {
+    .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter, ncpu)
 }
 
 C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
