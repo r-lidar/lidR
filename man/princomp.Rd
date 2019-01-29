@@ -35,8 +35,18 @@ covariance matrix. The points that meet the following criteria are labeled as ap
 \eqn{a_1, a_2, a_3} being the eigenvalues of the neighborhood (defined by k-nearest neighbors) in
 ascending order.\cr\cr
 Colinearity test performs the same computation but change the critera to label point as approximatly
-colinerar:
+colinear:
 \deqn{th_1*a_2 < a_3 && (th_1*a_1) < a_3}
+}
+\examples{
+\dontrun{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las = readLAS(LASfile)
+
+las = lascoplanar(las, k = 20)
+plot(las, color = "Coplanar")
+}
+
 }
 \references{
 Limberger, F. A., & Oliveira, M. M. (2015). Real-time detection of planar regions in unorganized

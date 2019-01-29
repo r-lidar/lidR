@@ -7,7 +7,7 @@
 #' \eqn{a_1, a_2, a_3} being the eigenvalues of the neighborhood (defined by k-nearest neighbors) in
 #' ascending order.\cr\cr
 #' Colinearity test performs the same computation but change the critera to label point as approximatly
-#' colinerar:
+#' colinear:
 #' \deqn{th_1*a_2 < a_3 && (th_1*a_1) < a_3}
 #'
 #' @return A LAS object with a new column names \code{Coplanar} or \code{Colinear} that indicates
@@ -21,6 +21,15 @@
 #' @param filter formula of logical predicates. Enable to run the function only on points of interest
 #' in an optimized way. See also examples.
 #'
+#' @examples
+#' \dontrun{
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile)
+#'
+#' las = lascoplanar(las, k = 20)
+#' plot(las, color = "Coplanar")
+#' }
+#'
 #' @references
 #' Limberger, F. A., & Oliveira, M. M. (2015). Real-time detection of planar regions in unorganized
 #' point clouds. Pattern Recognition, 48(6), 2043–2053. https://doi.org/10.1016/j.patcog.2014.12.020
@@ -29,8 +38,19 @@
 lascoplanar = function(las, k = 8, th1 = 25, th2 = 6, filter = NULL)
 {
   stopifnot(nrow(las@data) > k, th1 > 0, th2 > 0)
-  filter <- if (!is.null(filter)) lasfilter_(las, list(filter)) else TRUE
-  if (sum(filter) < k) stop("No enought point found with the predicate filter")
+
+  if (!is.null(filter))
+  {
+    filter <- lasfilter_(las, list(filter))
+
+    if (sum(filter) < k)
+      stop("No enought point found with the predicate filter")
+  }
+  else
+  {
+    filter <- TRUE
+  }
+
   out <- C_lascoplanar(las, k, th1, th2, filter)
   las@data[["Coplanar"]] <- out
   return(las)
