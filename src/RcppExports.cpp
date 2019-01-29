@@ -291,8 +291,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_tsearch
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi);
-RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP) {
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, int ncpu);
+RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -301,7 +301,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -353,7 +354,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
-    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 5},
+    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
     {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}

@@ -81,8 +81,8 @@ C_tinfo <- function(M, X) {
     .Call(`_lidR_C_tinfo`, M, X)
 }
 
-C_tsearch <- function(x, y, elem, xi, yi) {
-    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi)
+C_tsearch <- function(x, y, elem, xi, yi, ncpu) {
+    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, ncpu)
 }
 
 C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat) {
