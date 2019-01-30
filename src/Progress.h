@@ -8,7 +8,8 @@ class Progress
 {
   public:
     Progress(unsigned int, std::string = "");
-    bool check_abort(bool = true);
+    void check_abort();
+    bool check_interrupt();
     void update(unsigned int);
     void increment();
     void exit();

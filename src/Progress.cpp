@@ -17,7 +17,21 @@ Progress::Progress(unsigned int iter_max, std::string prefix)
   percentage = 0;
 }
 
-bool Progress::check_abort(bool exit)
+void Progress::check_abort()
+{
+  if(omp_get_thread_num() != 0)
+    return;
+
+  j++;
+  if(j % 1000 != 0)
+    return;
+
+  Rcpp::checkUserInterrupt();
+
+  return;
+}
+
+bool Progress::check_interrupt()
 {
   if(omp_get_thread_num() != 0)
     return false;
@@ -33,10 +47,7 @@ bool Progress::check_abort(bool exit)
   }
   catch(Rcpp::internal::InterruptedException e)
   {
-    if (exit)
-      this->exit();
-    else
-      return true;
+    return true;
   }
 
   return false;

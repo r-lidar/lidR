@@ -65,8 +65,8 @@ C_points_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call(`_lidR_C_points_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-C_points_in_polygon_wkt <- function(x, y, wkt) {
-    .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt)
+C_points_in_polygon_wkt <- function(x, y, wkt, ncpu) {
+    .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt, ncpu)
 }
 
 C_circle_lookup <- function(X, Y, x, y, r) {

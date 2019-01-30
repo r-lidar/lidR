@@ -237,15 +237,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_points_in_polygon_wkt
-LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt);
-RcppExport SEXP _lidR_C_points_in_polygon_wkt(SEXP xSEXP, SEXP ySEXP, SEXP wktSEXP) {
+LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt, int ncpu);
+RcppExport SEXP _lidR_C_points_in_polygon_wkt(SEXP xSEXP, SEXP ySEXP, SEXP wktSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_points_in_polygon_wkt(x, y, wkt));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_points_in_polygon_wkt(x, y, wkt, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -354,7 +355,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_R_p2r", (DL_FUNC) &_lidR_R_p2r, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
-    {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 3},
+    {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 4},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},

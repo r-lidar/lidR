@@ -74,9 +74,7 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
       }
     }
 
-    if (p.check_abort())
-      p.exit();
-
+    p.check_abort();
     p.update(k);
   }
 
