@@ -85,8 +85,8 @@ C_tsearch <- function(x, y, elem, xi, yi, ncpu) {
     .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, ncpu)
 }
 
-C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat) {
-    .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
+C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, ncpu) {
+    .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, ncpu)
 }
 
 R_omp_get_max_threads <- function() {

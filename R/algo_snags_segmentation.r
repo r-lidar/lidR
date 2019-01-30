@@ -102,7 +102,7 @@
 #' # classified and filtered point cloud using the watershed method
 #'
 #' @author
-#' Implementation by Andrew Sánchez Meador
+#' Implementation by Andrew Sánchez Meador & Jean-Romain Roussel
 #'
 #' @references
 #' Wing, Brian M.; Ritchie, Martin W.; Boston, Kevin; Cohen, Warren B.; Olsen, Michael J. 2015.
@@ -134,7 +134,7 @@ wing2015 = function(neigh_radii = c(1.5,1,2),
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lassnags"), "wing2015")
 
-    id = C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
+    id = C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, getThread())
     return(id)
   }
 
