@@ -3,8 +3,11 @@
 
 Progress::Progress(unsigned int iter_max, std::string prefix)
 {
-  SEXP valueSEXP = Rf_GetOption(Rf_install("lidR.progress"), R_BaseEnv);
-  this->display = Rf_isLogical(valueSEXP) && (Rcpp::as<bool>(valueSEXP) == true);
+  SEXP prgssSEXP = Rf_GetOption(Rf_install("lidR.progress"), R_BaseEnv);
+  this->display = Rf_isLogical(prgssSEXP) && (Rcpp::as<bool>(prgssSEXP) == true);
+
+  SEXP delaySEXP = Rf_GetOption(Rf_install("lidR.progress.delay"), R_BaseEnv);
+  this->delay = Rcpp::as<float>(delaySEXP);
 
   iter = 0;
   this->iter_max = iter_max;
@@ -52,7 +55,7 @@ void Progress::update(unsigned int iter)
     return;
 
   clock_t dt = clock() - ti;
-  if( ((float)dt)/CLOCKS_PER_SEC  < 1)
+  if( ((float)dt)/CLOCKS_PER_SEC  < delay)
     return;
 
 
@@ -83,7 +86,7 @@ void Progress::increment()
   percentage = p;
 
   clock_t dt = clock() - ti;
-  if( ((float)dt)/CLOCKS_PER_SEC  < 1)
+  if( ((float)dt)/CLOCKS_PER_SEC  < delay)
     return;
 
   Rcpp::Rcout << prefix << percentage << "% (" << omp_get_num_threads() <<  " threads)\r";

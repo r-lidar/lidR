@@ -21,6 +21,7 @@ class Progress
     unsigned int j;
     std::string prefix;
     clock_t ti;
+    clock_t delay;
     bool display;
 };
 
