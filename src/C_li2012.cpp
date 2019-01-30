@@ -109,7 +109,7 @@ IntegerVector C_li2012(S4 las, double dt1, double dt2, double Zu, double R, doub
     }
     else
     {
-      if (p.check_abort())
+      if (p.check_abort(false))
       {
         for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i];
         delete dummy;

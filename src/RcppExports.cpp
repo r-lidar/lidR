@@ -133,8 +133,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lassmooth
-NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma);
-RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP, SEXP methodSEXP, SEXP shapeSEXP, SEXP sigmaSEXP) {
+NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma, int ncpu);
+RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP, SEXP methodSEXP, SEXP shapeSEXP, SEXP sigmaSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -143,7 +143,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type method(methodSEXP);
     Rcpp::traits::input_parameter< int >::type shape(shapeSEXP);
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size, method, shape, sigma));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size, method, shape, sigma, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -346,7 +347,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
     {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 6},
-    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
+    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 6},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},

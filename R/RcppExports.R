@@ -37,8 +37,8 @@ C_lascoplanar <- function(las, k, th1, th2, filter, ncpu) {
     .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter, ncpu)
 }
 
-C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
-    .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
+C_lassmooth <- function(las, size, method, shape, sigma, ncpu) {
+    .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma, ncpu)
 }
 
 C_li2012 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {

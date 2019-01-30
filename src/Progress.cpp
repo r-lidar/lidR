@@ -14,14 +14,14 @@ Progress::Progress(unsigned int iter_max, std::string prefix)
   percentage = 0;
 }
 
-bool Progress::check_abort()
+bool Progress::check_abort(bool exit)
 {
   if(omp_get_thread_num() != 0)
     return false;
 
   j++;
 
-  if(j % 100 != 0)
+  if(j % 1000 != 0)
     return false;
 
   try
@@ -30,7 +30,10 @@ bool Progress::check_abort()
   }
   catch(Rcpp::internal::InterruptedException e)
   {
-    return true;
+    if (exit)
+      this->exit();
+    else
+      return true;
   }
 
   return false;
