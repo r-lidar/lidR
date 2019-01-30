@@ -59,7 +59,7 @@ tin = function()
     nnas <- sum(isna)
 
     if (nnas > 0)
-      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1)
+      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
 
     return(z)
   }
@@ -151,7 +151,7 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 
 interpolate_knnidw = function(points, coord, k, p)
 {
-  z <- C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p)
+  z <- C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p, getThread())
   return(z)
 }
 

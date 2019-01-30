@@ -29,23 +29,23 @@ test_that("tsearch works", {
   tri <- matrix(c(1, 2, 3), 1, 3)
 
   ## Should be in triangle #1
-  ts <- lidR:::C_tsearch(x, y, tri, -1, -1)
+  ts <- lidR:::C_tsearch(x, y, tri, -1, -1, 1)
   expect_equal(ts, 1)
 
   ## Should be in triangle #1
-  ts <- lidR:::C_tsearch(x, y, tri, 1, -1)
+  ts <- lidR:::C_tsearch(x, y, tri, 1, -1, 1)
   expect_equal(ts, 1)
 
   ## Should be in triangle #1
-  ts <- lidR:::C_tsearch(x, y, tri, -1, 1)
+  ts <- lidR:::C_tsearch(x, y, tri, -1, 1, 1)
   expect_equal(ts, 1)
 
   ## Centroid
-  ts <- lidR:::C_tsearch(x, y, tri, -1/3, -1/3)
+  ts <- lidR:::C_tsearch(x, y, tri, -1/3, -1/3, 1)
   expect_equal(ts, 1)
 
   ## Should be outside triangle #1, so should return NA
-  ts <- lidR:::C_tsearch(x, y, tri, 1, 1)
+  ts <- lidR:::C_tsearch(x, y, tri, 1, 1, 1)
   expect_true(is.na(ts))
 })
 
@@ -54,34 +54,34 @@ test_that("tsearch pass computer precision tests", {
   y <- c(7.76, 7.75, 8.35)
   tri <- matrix(c(1, 2, 3), 1, 3)
 
-  ts <- lidR:::C_tsearch(x, y, tri, 7.125, 7.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 7.125, 7.875, 1)
   expect_equal(ts, 1)
 
   x <- c(278287.03, 278286.89, 278287.15)
   y <- c(602248.35, 602247.76, 602247.75)
 
   tri = matrix(c(1,2,3), 1,3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 
   tri = matrix(c(3,2,1), 1,3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 
   tri = matrix(c(2,3,1), 1,3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 
   tri = matrix(c(2,1,3), 1,3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 
   tri = matrix(c(3,1,2), 1,3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 
   tri <- matrix(c(1, 2, 3), 1, 3)
-  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875)
+  ts <- lidR:::C_tsearch(x, y, tri, 278287.125, 602247.875, 1)
   expect_equal(ts, 1)
 })
 

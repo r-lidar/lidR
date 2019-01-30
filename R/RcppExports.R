@@ -25,12 +25,12 @@ C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
-C_knn <- function(X, Y, x, y, k) {
-    .Call(`_lidR_C_knn`, X, Y, x, y, k)
+C_knn <- function(X, Y, x, y, k, ncpu) {
+    .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
 
-C_knnidw <- function(X, Y, Z, x, y, k, p) {
-    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p)
+C_knnidw <- function(X, Y, Z, x, y, k, p, ncpu) {
+    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, ncpu)
 }
 
 C_lascoplanar <- function(las, k, th1, th2, filter, ncpu) {

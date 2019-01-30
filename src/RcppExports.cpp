@@ -83,8 +83,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_knn
-Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
-RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu);
+RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,13 +93,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knn(X, Y, x, y, k));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knn(X, Y, x, y, k, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_knnidw
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p);
-RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP) {
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, int ncpu);
+RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -110,7 +111,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -340,8 +342,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
-    {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
-    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
+    {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
+    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
     {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 6},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},

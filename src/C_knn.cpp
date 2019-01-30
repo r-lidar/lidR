@@ -30,11 +30,12 @@
 #include <Rcpp.h>
 #include "QuadTree.h"
 #include "Progress.h"
+#include "myomp.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k)
+Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu)
 {
   unsigned int n = x.length();
   IntegerMatrix knn_idx(n, k);
@@ -42,20 +43,24 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
 
   QuadTree tree(X,Y);
 
+  #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
   {
     Point pt(x[i], y[i]);
     std::vector<Point*> pts;
     tree.knn(pt, k, pts);
 
-    for (unsigned int j = 0 ; j < pts.size() ; j++)
+    #pragma omp critical
     {
-      knn_idx(i, j)  = pts[j]->id + 1;
+      for (unsigned int j = 0 ; j < pts.size() ; j++)
+      {
+        knn_idx(i, j)  = pts[j]->id + 1;
 
-      double dx = pts[j]->x - x[i];
-      double dy = pts[j]->y - y[i];
+        double dx = pts[j]->x - x[i];
+        double dy = pts[j]->y - y[i];
 
-      knn_dist(i, j) =  std::sqrt(dx*dx + dy*dy);
+        knn_dist(i, j) = std::sqrt(dx*dx + dy*dy);
+      }
     }
   }
 
@@ -63,17 +68,20 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
 }
 
 // [[Rcpp::export]]
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p)
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, int ncpu)
 {
   unsigned int n = x.length();
   NumericVector iZ(n);
 
   QuadTree tree(X,Y);
-
   Progress pbar(n, "Inverse distance weighting: ");
 
+  #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
   {
+    pbar.check_abort();
+    pbar.increment();
+
     Point pt(x[i], y[i]);
     std::vector<Point*> pts;
     tree.knn(pt, k, pts);
@@ -103,14 +111,10 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
       }
     }
 
-    iZ(i) = sum_zw/sum_w;
-
-    if (pbar.check_abort())
+    #pragma omp critical
     {
-      pbar.exit();
+      iZ(i) = sum_zw/sum_w;
     }
-
-    pbar.update(i);
   }
 
   return iZ;
