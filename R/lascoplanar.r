@@ -38,19 +38,7 @@
 lascoplanar = function(las, k = 8, th1 = 25, th2 = 6, filter = NULL)
 {
   stopifnot(nrow(las@data) > k, th1 > 0, th2 > 0)
-
-  if (!is.null(filter))
-  {
-    filter <- lasfilter_(las, list(filter))
-
-    if (sum(filter) < k)
-      stop("No enought point found with the predicate filter")
-  }
-  else
-  {
-    filter <- TRUE
-  }
-
+  filter <- parse_filter(las, filter, k)
   out <- C_lascoplanar(las, k, th1, th2, filter, getThread())
   las@data[["Coplanar"]] <- out
   return(las)
@@ -61,9 +49,21 @@ lascoplanar = function(las, k = 8, th1 = 25, th2 = 6, filter = NULL)
 lascolinear = function(las, k = 8, th1 = 10, filter = NULL)
 {
   stopifnot(nrow(las@data) > k, th1)
-  filter <- if (!is.null(filter)) lasfilter_(las, list(filter)) else TRUE
-  if (sum(filter) < k) stop("No enought point found with the predicate filter")
+  filter <- parse_filter(las, filter, k)
   out <- C_lascoplanar(las, k, th1, 0, filter, getThread())
   las@data[["Colinear"]] <- out
   return(las)
+}
+
+parse_filter = function(las, filter, k)
+{
+  filter <- TRUE
+
+  if (!is.null(filter))
+  {
+    filter <- lasfilter_(las, list(filter))
+    if (sum(filter) < k) stop("No enought point found with the predicate filter", call. = FALSE)
+  }
+
+  return(filter)
 }
