@@ -44,6 +44,7 @@ QuadTree::QuadTree(Rcpp::S4 las)
 }
 
 QuadTree::QuadTree(Rcpp::S4 las, std::vector<bool>& f)
+
 {
   Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
   Rcpp::NumericVector x = data["X"];
@@ -196,7 +197,6 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bo
   if (x.size() != y.size())
     throw(std::runtime_error("Internal error in QuadTree. x and y have different sizes."));
 
-
   init();
   double xmin = Rcpp::min(x);
   double ymin = Rcpp::min(y);
@@ -229,9 +229,6 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericV
 
 void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z, std::vector<bool>& f)
 {
-  if (x.size() != z.size())
-    throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
-
   if (x.size() != z.size())
     throw(std::runtime_error("Internal error in QuadTree. x and z have different sizes."));
 
