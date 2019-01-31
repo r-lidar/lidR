@@ -168,7 +168,7 @@ setMethod("extent", "LAS",
 setMethod("$<-", "LAS", function(x, name, value)
 {
   if (!name %in% names(x@data))
-    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata")
+    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   if (name %in% LASFIELDS)
   {
@@ -176,7 +176,7 @@ setMethod("$<-", "LAS", function(x, name, value)
     type2 <- storage.mode(value)
 
     if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"))
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
   x@data[[name]] = value
@@ -190,7 +190,7 @@ setMethod("$<-", "LAS", function(x, name, value)
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (!i %in% names(x@data))
-    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata")
+    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   if (i %in% LASFIELDS)
   {
@@ -198,7 +198,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
     type2 <- storage.mode(value)
 
     if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"))
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
   x@data[[i]] = value
