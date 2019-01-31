@@ -534,23 +534,50 @@ lascheck.LAS = function(las)
   {
     number_of <- fast_table(data$ReturnNumber, 5L)
 
-    if (phb["Number of 1st return"] != number_of[1])
-    { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 1st return"], " 1st returns but ", number_of[1], " were found.")) ; failure = TRUE }
+    if (!is.null(phb["Number of points by return"]))
+    {
+      npbr = phb[["Number of points by return"]]
 
-    if (phb["Number of 2nd return"] != number_of[2])
-    { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 2nd return"], " 2nd returns but ", number_of[2], " were found.")) ; failure = TRUE }
+      if (npbr[1] != number_of[1])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 1st return"], " 1st returns but ", number_of[1], " were found.")) ; failure = TRUE }
 
-    if (phb["Number of 3rd return"] != number_of[3])
-    { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 3rd return"], " 3rd returns but ", number_of[3], " were found.")) ; failure = TRUE }
+      if (npbr[2]  != number_of[2])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 2nd return"], " 2nd returns but ", number_of[2], " were found.")) ; failure = TRUE }
 
-    if (phb["Number of 4th return"] != number_of[4])
-    { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 4th return"], " 4th returns but ", number_of[4], " were found.")) ; failure = TRUE }
+      if (npbr[3]  != number_of[3])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 3rd return"], " 3rd returns but ", number_of[3], " were found.")) ; failure = TRUE }
 
-    if (phb["Number of 5th return"] != number_of[5])
-    { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 5th return"], " 5th returns but ", number_of[5], " were found.")) ; failure = TRUE }
+      if (npbr[4]  != number_of[4])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 4th return"], " 4th returns but ", number_of[4], " were found.")) ; failure = TRUE }
 
-    if (!failure)
-      ok()
+      if (npbr[5]  != number_of[5])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 5th return"], " 5th returns but ", number_of[5], " were found.")) ; failure = TRUE }
+
+      if (!failure)
+        ok()
+    }
+    else
+    {
+      if (phb["Number of 1st return"] != number_of[1])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 1st return"], " 1st returns but ", number_of[1], " were found.")) ; failure = TRUE }
+
+      if (phb["Number of 2nd return"] != number_of[2])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 2nd return"], " 2nd returns but ", number_of[2], " were found.")) ; failure = TRUE }
+
+      if (phb["Number of 3rd return"] != number_of[3])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 3rd return"], " 3rd returns but ", number_of[3], " were found.")) ; failure = TRUE }
+
+      if (phb["Number of 4th return"] != number_of[4])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 4th return"], " 4th returns but ", number_of[4], " were found.")) ; failure = TRUE }
+
+      if (phb["Number of 5th return"] != number_of[5])
+      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 5th return"], " 5th returns but ", number_of[5], " were found.")) ; failure = TRUE }
+
+      if (!failure)
+        ok()
+    }
+
+
   }
   else
     skip()
