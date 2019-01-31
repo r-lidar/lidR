@@ -187,7 +187,8 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
   double range = xrange > yrange ? xrange/2 : yrange/2;
   boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
 
-  MAX_DEPTH = std::floor(std::log(n)/std::log(4));
+  int computed_depth = std::floor(std::log(n)/std::log(4));
+  MAX_DEPTH = (computed_depth >= 1) ? computed_depth : 1;
 
   for(int i = 0 ; i < x.size() ; i++)
   {
