@@ -51,8 +51,7 @@ NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sig
   double twosquaresigma = 2*sigma*sigma;
   double twosquaresigmapi = twosquaresigma * M_PI;
 
-  NumericVector Z_temp;
-  NumericVector Z_out  = clone(Z);
+  NumericVector Z_out = clone(Z);
 
   QuadTree tree(X,Y);
 
