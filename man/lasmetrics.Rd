@@ -31,7 +31,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 lasmetrics(lidar, max(Z))
-lasmetrics(lidar, mean(ScanAngle))
+lasmetrics(lidar, mean(Intensity))
 
 # Define your own new metrics
 myMetrics = function(z, i)
