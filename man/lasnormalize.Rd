@@ -8,7 +8,7 @@
 \alias{-,LAS,function-method}
 \title{Remove the topography from a point cloud}
 \usage{
-lasnormalize(las, algorithm)
+lasnormalize(las, algorithm, na.rm = FALSE)
 
 lasunnormalize(las)
 
@@ -19,9 +19,13 @@ lasunnormalize(las)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
-\link{kriging}, \link{knnidw}.}
+\item{algorithm}{a spatial interpolation function. \code{lidR} have \link{tin},
+\link{kriging}, \link{knnidw} or a \link[raster:raster]{RasterLayer} representing a digital terrain
+model (can be computed with \link{grid_terrain})}
+
+\item{na.rm}{logical. When using a \code{RasterLayer} as DTM, by defaut the function fails if a point
+fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
+elvation of NA are filtered. Becareful this creates a copy of the point cloud.}
 
 \item{e1}{a LAS object}
 
