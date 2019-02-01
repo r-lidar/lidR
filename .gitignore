@@ -8,3 +8,4 @@ doc
 *.so
 *.dll
 *Rplots.pdf
+revdep
