@@ -1,6 +1,6 @@
 ## Release summary
 
-Minor update in previons of a future break caused by the update of a dependence.
+Minor update in previons of a future break caused by the update of a dependence + fix few minor bugs
 
 ## Test environments
 

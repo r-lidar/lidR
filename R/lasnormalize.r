@@ -41,9 +41,12 @@
 #'
 #' @template param-las
 #'
-#' @param algorithm a \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} have \link{tin},
-#' \link{kriging}, \link{knnidw}.
+#' @param algorithm a spatial interpolation function. \code{lidR} have \link{tin},
+#' \link{kriging}, \link{knnidw} or a \link[raster:raster]{RasterLayer} representing a digital terrain
+#' model (can be computed with \link{grid_terrain})
+#' @param na.rm logical. When using a \code{RasterLayer} as DTM, by defaut the function fails if a point
+#' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
+#' elvation of NA are filtered. Becareful this creates a copy of the point cloud.
 #'
 #' @template LAScatalog
 #'
@@ -103,13 +106,14 @@
 #' @export
 #' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm)
+lasnormalize = function(las, algorithm, na.rm = FALSE)
 {
+  assert_is_a_bool(na.rm)
   UseMethod("lasnormalize", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm)
+lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
 {
   if (is(algorithm, "RasterLayer"))
   {
@@ -117,24 +121,24 @@ lasnormalize.LAS = function(las, algorithm)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
-    if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
+    if (nnas > 0 & na.rm == FALSE)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."), call. = FALSE)
   }
   else if (is.function(algorithm))
   {
     if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-      stop("Invalid function provided as algorithm.")
+      stop("Invalid function provided as algorithm.", call. = FALSE)
 
     if (!is(algorithm, "SpatialInterpolation"))
-      stop("The algorithm is not an algorithm for spatial interpolation.")
+      stop("The algorithm is not an algorithm for spatial interpolation.", call. = FALSE)
 
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-    if (! "Classification" %in% names(las@data))
-      stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
+    if (!"Classification" %in% names(las@data))
+      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
     if (fast_countequal(las@data$Classification, LASGROUND) == 0)
-      stop("No ground point found in the point cloud.")
+      stop("No ground point found in the point cloud.", call. = FALSE)
 
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "lasnormalize"
@@ -144,40 +148,47 @@ lasnormalize.LAS = function(las, algorithm)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
-    if(nnas > 0)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
+    if (nnas > 0 & na.rm == FALSE)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
   }
   else
   {
-    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"))
+    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
   }
 
   if (!"Zref" %in% names(las@data))
     las@data[["Zref"]] <- las@data[["Z"]]
 
   las@data[["Z"]] <- round(las@data[["Z"]] - Zground, 3)
+
+  if (nnas > 0 & na.rm == TRUE)
+  {
+    las = lasfilter(las, !isna)
+    message(glue::glue("{nnas} points were not normalizable and removed."))
+  }
+
   las <- lasupdateheader(las)
   return(las)
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm)
+lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasnormalize(x, algorithm)
+  x <- lasnormalize(x, algorithm, na.rm)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm)
+lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, .options = options)
   output  <- unlist(output)
   ctg     <- catalog(output)
 

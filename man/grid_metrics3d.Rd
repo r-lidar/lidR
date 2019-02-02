@@ -34,24 +34,22 @@ grid_metrics3d(las, length(Z), 3)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the mean scan angle of points is computed.
-grid_metrics3d(las, mean(ScanAngle), 3)
+grid_metrics3d(las, mean(Intensity), 3)
 
 \dontrun{
 # Define your own metric function
-myMetrics = function(i, angle)
+myMetrics = function(i)
 {
   ret = list(
      npoints = length(i),
-     angle   = mean(angle),
      imean   = mean(i)
    )
 
    return(ret)
 }
 
-voxels = grid_metrics3d(las, myMetrics(Intensity, ScanAngle), 3)
+voxels = grid_metrics3d(las, myMetrics(Intensity), 3)
 
-plot(voxels, color = "angle")
 plot(voxels, color = "imean")
 #etc.
 }
