@@ -236,14 +236,11 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   clusters         <- catalog_makecluster(ctg)
   clusters         <- check_and_fix_clusters(ctg, clusters, check_alignment, resolution, start)
 
-  oldstate         <- options("lidR.progress")[[1]]
-
+  oldstate <- options("lidR.progress")[[1]]
   options(lidR.progress = FALSE)
+  on.exit(options(lidR.progress = oldstate), add = TRUE)
 
   output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
-
-  options(lidR.progress = oldstate)
-
   return(output)
 }
 
