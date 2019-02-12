@@ -258,7 +258,7 @@ While `select` enables the user to select "columns" (or attributes) while readin
 
 ```r
 las = readLAS("file", filter = "-keep_first")
-las = readLAS("file", select = "xyzi", filter = "-keep_first -drop_z_below 5 - drop_z_above 50")
+las = readLAS("file", select = "xyzi", filter = "-keep_first -drop_z_below 5 -drop_z_above 50")
 ```
 
 
