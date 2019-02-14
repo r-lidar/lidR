@@ -255,12 +255,12 @@ check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_
   # The function expects a buffer to guarantee a strict wall-to-wall output
 
   if (need_buffer & opt_chunk_buffer(ctg) <= 0 & opt_wall_to_wall(ctg))
-    stop("A buffer greater than 0 is required to process the catalog.")
+    stop("A buffer greater than 0 is required to process the catalog.", call. = FALSE)
 
   # The function require outputs to be written in files (because the output is likely to be too big to be returned in R)
 
   if (need_output_file & opt_output_files(ctg) == "")
-    stop("This function requires that the LAScatalog provides an output file template.")
+    stop("This function requires that the LAScatalog provides an output file template.", call. = FALSE)
 
   # The function requires that the chunks are aligned with a raster (typically the function returns a Raster*).
   # To ensure a strict wall-to-wall output, check if the chunks are aligned with the pixels. In case
@@ -333,7 +333,7 @@ assert_FUN_is_NULL_with_empty_cluster = function(ctg, FUN, ...)
     cl@select <- "*"
 
     if (!is.null(FUN(cl, ...)))
-      stop("User's function does not return NULL for empty chunks. Please see the documentation.")
+      stop("User's function does not return NULL for empty chunks. Please see the documentation of catalog_apply.", call. = FALSE)
   }
 }
 

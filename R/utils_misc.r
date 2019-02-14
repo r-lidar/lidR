@@ -152,7 +152,7 @@ dummy_las = function(n, seeds = c)
   NumberOfReturns = as.integer(rep(c(1,1,3,3,3,2,2,2,2,1), n/10 ))
 
   dt = data.table::data.table(X, Y, Z, Classification, Intensity, ReturnNumber, NumberOfReturns)
-  las = suppressWarnings(LAS(dt))
+  las = suppressWarnings(LAS(dt, check = FALSE))
 
   return(las)
 }
@@ -184,7 +184,10 @@ coordinates = function(las)
   DT <- las@data
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
-  return(data.frame(X,Y))
+  Z  <- DT[["Z"]]
+  DF <- data.frame(X,Y,Z)
+  data.table::setDT(DF)
+  return(DF)
 }
 
 coordinates3D = function(las)
@@ -193,6 +196,8 @@ coordinates3D = function(las)
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
   Z  <- DT[["Z"]]
-  return(data.frame(X,Y,Z))
+  DF <- data.frame(X,Y,Z)
+  data.table::setDT(DF)
+  return(DF)
 }
 

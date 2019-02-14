@@ -51,7 +51,13 @@
 lasfilter = function(las, ...)
 {
   stopifnotlas(las)
-  lasfilter_(las, lazyeval::dots_capture(...))
+  keep <- lasfilter_(las, lazyeval::dots_capture(...))
+
+  # Memory optimization
+  if (sum(keep) == nrow(las@data))
+    return(las)
+
+  return(LAS(las@data[keep], las@header, las@proj4string, check = FALSE))
 }
 
 lasfilter_ <- function(las, conditions)
@@ -70,10 +76,7 @@ lasfilter_ <- function(las, conditions)
     combined_bools <- combined_bools & bools
   }
 
-  if (sum(combined_bools) == n)
-    return(las)
-  else
-    return(LAS(las@data[combined_bools], las@header, las@proj4string))
+  return(combined_bools)
 }
 
 #' Predefined filters

@@ -33,54 +33,40 @@
 #' the projection given by arguments.
 #'
 #' @param las An object of class \link[lidR:LAS-class]{LAS}
-#'
-#' @param epsg integer. Unlike \code{spTransform} the EPSG code of the CRS should be preferred for
-#' LAS objects. See also \link{epsg} to understand why. If missing, \code{CRSobj} will be used instead.
 #' @param CRSobj logical. Object of class \link[sp:CRS-class]{CRS} or of class character, in which
 #' case it is converted to \link[sp:CRS-class]{CRS}.
-
 #'
 #' @return An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to the new
-#' coordinate reference system.
+#' coordinate reference system. The header has been update by add the ESPG code or a WKT OGC CS string
+#' as a function of the defined Global Encoding WKT bit (see LAS specifications).
 #'
 #' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
+#' crs <- sp::CRS("+init=epsg:26918")
 #'
-#' head(las@data)
-#'
-#' las <- lastransform(las, 26918)
-lastransform = function(las, epsg, CRSobj = NULL)
+#' las <- lastransform(las, crs)
+lastransform = function(las, CRSobj)
 {
   UseMethod("lastransform", las)
 }
 
 #' @export
-lastransform.LAS = function(las, epsg, CRSobj = NULL)
+lastransform.LAS = function(las, CRSobj)
 {
-  . <- X <- Y <- NULL
-
-  if (!missing(epsg))
-    CRSobj = sp::CRS(paste0("+init=epsg:", epsg))
-
   if (is.na(sp::proj4string(las)))
     stop("No transformation possible from NA reference system")
 
-  spts = sp::SpatialPoints(coordinates(las))
+  spts <- sp::SpatialPoints(coordinates(las))
   sp::proj4string(spts) <- sp::proj4string(las)
-  spts = sp::spTransform(spts, CRSobj)
+  spts <- sp::spTransform(spts, CRSobj)
 
   las@data[["X"]] <- spts@coords[,1]
   las@data[["Y"]] <- spts@coords[,2]
 
   las <- lasupdateheader(las)
-
-  if (!missing(epsg))
-    epsg(las) <- epsg
-  else
-    sp::proj4string(las) <- sp::proj4string(spts)
-
+  projection(las) <- CRSobj
   return(las)
 }

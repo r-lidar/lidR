@@ -55,11 +55,8 @@ lascheck = function(las)
 #' @export
 lascheck.LAS = function(las)
 {
-  Classification <- Z <- NULL
-
   data <- las@data
-  phb  <- las@header@PHB
-  vlr  <- las@header@VLR
+  head <- as.list(las@header)
   g    <- glue::glue
 
   if (requireNamespace("crayon", quietly = TRUE))
@@ -74,15 +71,44 @@ lascheck.LAS = function(las)
     green <- red <- orange <- silver <- function(x) { return(x) }
   }
 
-  h1    <- function(x) {cat("\n", x)}
-  h2    <- function(x) {cat("\n  -", x)}
-  ok    <- function()  {cat(green(" ok"))}
-  fail  <- function(x) {cat("\n", red(g("   error: {x}")))}
-  warn  <- function(x) {cat("\n", orange(g("   warning: {x}")))}
-  skip  <- function()  {cat(silver(g(" skipped")))}
-  no    <- function()  {cat(red(g(" no")))}
-  yes   <- function()  {cat(green(g(" yes")))}
-  maybe <- function()  {cat(orange(g(" maybe")))}
+  h1    <- function(x)   {cat("\n", x)}
+  h2    <- function(x)   {cat("\n  -", x)}
+  ok    <- function()    {cat(green(" ok"))}
+  skip  <- function()    {cat(silver(g(" skipped")))}
+  no    <- function()    {cat(red(g(" no")))}
+  yes   <- function()    {cat(green(g(" yes")))}
+  maybe <- function()    {cat(orange(g(" maybe")))}
+
+  fail  <- function(msg)
+  {
+    if (length(msg) == 0)
+    {
+      ok()
+    }
+    else
+    {
+      for (x in msg)
+      {
+        cat("\n", red(g("   {x}")))
+      }
+    }
+  }
+
+  warn  <- function(msg)
+  {
+    if (length(msg) == 0)
+    {
+      ok()
+    }
+    else
+    {
+      for (x in msg)
+      {
+        cat("\n", orange(g("   {x}")))
+      }
+    }
+  }
+
 
   # ==== data =====
 
@@ -90,168 +116,47 @@ lascheck.LAS = function(las)
 
   h2("Checking coordinates...")
 
-  if (is.null(data$X) | is.null(data$Y) | is.null(data$Z))
-    fail("Invalid data: missing coordinates X or Y or Z")
-  else
-    ok()
+  fail(rlas::is_defined_coordinates(data, "vector"))
 
   h2("Checking coordinates type...")
 
-  if (!is.double(data$X) | !is.double(data$Y) | !is.double(data$Z))
-    fail("Invalid data: coordinates are not of type double")
-  else
-    ok()
+  fail(rlas::is_valid_XYZ(data, "vector"))
 
   h2("Checking attributes type...")
 
-  attributes <- c("gpstime")
-  which      <- c()
+  msg = character(0)
+  msg = c(msg, rlas::is_valid_gpstime(data, "vector"))
+  msg = c(msg, rlas::is_valid_Intensity(data, "vector"))
+  msg = c(msg, rlas::is_valid_ReturnNumber(data, head, "vector"))
+  msg = c(msg, rlas::is_valid_EdgeOfFlightline(data, "vector"))
+  msg = c(msg, rlas::is_valid_Classification(data, head, "vector"))
+  msg = c(msg, rlas::is_valid_UserData(data, "vector"))
+  msg = c(msg, rlas::is_valid_ScanAngle(data, "vector"))
+  msg = c(msg, rlas::is_valid_PointSourceID(data, "vector"))
+  msg = c(msg, rlas::is_valid_RGB(data, "vector"))
+  msg = c(msg, rlas::is_valid_NIR(data, "vector"))
+  msg = c(msg, rlas::is_valid_SyntheticFlag(data, "vector"))
+  msg = c(msg, rlas::is_valid_KeypointFlag(data, "vector"))
+  msg = c(msg, rlas::is_valid_WithheldFlag(data, "vector"))
 
-  for (attr in attributes)
-  {
-    if (!is.null(data[[attr]]))
-    {
-      if (!is.numeric(data[[attr]]))
-        which = append(which, attr)
-    }
-  }
+  fail(msg)
 
-  if (length(which) > 0)
-  {
-    which  = paste(which, collapse = ", ")
-    string = paste("The following attributes are not of type integer:", which)
-    fail(string)
-  }
-  else
-    ok()
-
-  h2("Checking attributes type...")
-
-  attributes <- c("Intensity", "ReturnNumber", "NumberOfReturns", "ScanDirectionFlag", "EdgeOfFlightline", "Classification", "UserData", "ScanAngle", "PointSourceID", "R", "G", "B", "NIR")
-  which      <- c()
-
-  for (attr in attributes)
-  {
-    if (!is.null(data[[attr]]))
-    {
-      if (!is.numeric(data[[attr]]))
-        which = append(which, attr)
-    }
-  }
-
-  if (length(which) > 0)
-  {
-    which  = paste(which, collapse = ", ")
-    string = paste("The following attributes are not of type integer:", which)
-    fail(string)
-  }
-  else
-    ok()
-
-  h2("Checking attributes type...")
-
-  attributes <- c("Synthe tic_flag", "Keypoint_flag", "Withheld_flag")
-  which      <- c()
-
-  for (attr in attributes)
-  {
-    if (!is.null(data[[attr]]))
-    {
-      if (!is.logical(data[[attr]]))
-        which = append(which, attr)
-    }
-  }
-
-  if (length(which) > 0)
-  {
-    which  = paste(which, collapse = ", ")
-    string = paste("The following attributes are not of type logical:", which)
-    fail(string)
-  }
-  else
-    ok()
 
   h2("Checking ReturnNumber validity...")
 
-  if (!is.null(data$ReturnNumber))
-  {
-    s = fast_countequal(data$ReturnNumber, 0L)
-
-    if (s > 0)
-      fail(g("Invalid data: {s} points with a return number equal to 0 found."))
-    else
-      ok()
-  }
-  else
-    skip()
+  warn(rlas::is_compliant_ReturnNumber(data, "vector"))
 
   h2("Checking NumberOfReturns validity...")
 
-  if (!is.null(data$NumberOfReturns))
-  {
-    s = fast_countequal(data$NumberOfReturns, 0L)
-
-    if (s > 0)
-      fail(g("Invalid data: {s} points with a number of returns equal to 0 found."))
-    else
-      ok()
-  }
-  else
-    skip()
+  warn(rlas::is_compliant_NumberOfReturns(data, "vector"))
 
   h2("Checking ReturnNumber vs. NumberOfReturns...")
 
-  if (!is.null(data$ReturnNumber) & !is.null(data$NumberOfReturns))
-  {
-    s = sum(data$ReturnNumber > data$NumberOfReturns)
-
-    if (s > 0)
-      fail(g("Invalid data: {s} points with a 'return number' greater than the 'number of returns'."))
-    else
-      ok()
-  }
-  else
-    skip()
-
-  h2("Checking Classification validity...")
-
-  if (!is.null(data$Classification))
-  {
-    s = fast_countequal(data$Classification, 0L)
-
-    if (s > 0 & s < nrow(data))
-      warn(g("{s} unclassified points found."))
-    else
-      ok()
-  }
-  else
-    skip()
+  warn(rlas::is_compliant_ReturnNumber_vs_NumberOfReturns(data, "vector"))
 
   h2("Checking RGB validity...")
 
-  attributes <- c("R", "G", "B")
-  which = c()
-
-  if (any(attributes %in% names(data)))
-  {
-    for (attr in attributes)
-    {
-      if (!is.null(data[[attr]]))
-      {
-        max = max(data[[attr]])
-
-        if (max > 0 & max <= 255)
-          which = append(which, attr)
-      }
-    }
-
-    if (length(which) > 0)
-      warn("Invalid data: RGB colors are recorded on 8 bits instead of 16 bits.")
-    else
-      ok()
-  }
-  else
-    skip()
+  warn(rlas::is_compliant_RGB(data, "vector"))
 
   h2("Checking absence of NAs...")
 
@@ -268,7 +173,6 @@ lascheck.LAS = function(las)
   }
   else
     ok()
-
 
   h2("Checking duplicated points...")
 
@@ -318,138 +222,44 @@ lascheck.LAS = function(las)
 
   h2("Checking header completeness...")
 
-  attributes <- c("X offset", "Y offset", "Z offset", "X scale factor", "Y scale factor", "Z scale factor", "File Source ID",
-                  "Version Major", "Version Minor", "File Creation Day of Year", "File Creation Year", "Point Data Format ID",
-                  "X scale factor", "Y scale factor", "Z scale factor")
-  which      <- c()
+  msg = character(0)
+  msg = c(msg, rlas::is_defined_offsets(head, "vector"))
+  msg = c(msg, rlas::is_defined_scalefactors(head, "vector"))
+  msg = c(msg, rlas::is_defined_version(head, "vector"))
+  msg = c(msg, rlas::is_defined_pointformat(head, "vector"))
+  msg = c(msg, rlas::is_defined_date(head, "vector"))
+  msg = c(msg, rlas::is_defined_globalencoding(head, "vector"))
 
-  for (attr in attributes)
-  {
-    if (is.null(phb[[attr]]))
-      which = append(which, attr)
-  }
-
-  if (length(which) > 0)
-  {
-    which  = paste(which, collapse = ", ")
-    string = paste("Invalid header block: the following fields are missing:", which)
-    fail(string)
-  }
-  else
-    ok()
+  fail(msg)
 
   h2("Checking scale factor validity...")
 
-  failure = FALSE
-
-  if (!is.null(phb[["X scale factor"]]) & !is.null(phb[["Y scale factor"]]) & !is.null(phb[["Z scale factor"]]))
-  {
-    s = c(1,10,100,1000,10000)
-    valid = c(1/s, 0.5/s, 0.25/s)
-
-    if (!phb[["X scale factor"]] %in% valid)
-    { fail(paste0("Invalid header: X scale factor should be factor ten of 0.1 or 0.5 or 0.25 and not ", phb[["X scale factor"]])) ; failure = TRUE }
-
-    if (!phb[["Y scale factor"]] %in% valid)
-    { fail(paste0("Invalid header: Y scale factor should be factor ten of 0.1 or 0.5 or 0.25 and not ", phb[["Y scale factor"]])) ; failure = TRUE }
-
-    if (!phb[["Z scale factor"]] %in% valid)
-    { fail(paste0("Invalid header: Z scale factor should be factor ten of 0.1 or 0.5 or 0.25 and not ", phb[["Z scale factor"]])) ; failure = TRUE }
-
-    if (!failure)
-      ok()
-  }
-  else
-    skip()
+  fail(rlas::is_valid_scalefactors(head, "vector"))
 
   h2("Checking Point Data Format ID validity...")
 
-  if (!is.null(phb[["Point Data Format ID"]]))
-  {
-    if (phb[["Point Data Format ID"]] %in% c(4,5,9,10))
-      warn(paste0("Invalid header: The point data format ", phb[["Point Data Format ID"]], " is not supported yet."))
-    else if (phb[["Point Data Format ID"]] < 0 | phb[["Point Data Format ID"]] > 10)
-      fail(paste0("Invalid header: The point data format ", phb[["Point Data Format ID"]], " is invalid."))
-    else
-      ok()
-  }
-  else
-    skip()
+  fail(rlas::is_valid_pointformat(head, "vector"))
 
   h2("Checking extra bytes attributes validity...")
 
-  if (!is.null(vlr$Extra_Bytes$`Extra Bytes Description`))
-  {
-    failure = FALSE
-    for (extra_byte in vlr$Extra_Bytes$`Extra Bytes Description`)
-    {
-      if (is.null(extra_byte[["options"]]))
-      { fail("Invalid header: 'options' is missing in extra bytes description") ; failure = TRUE }
-
-      if (!is.integer(extra_byte[["options"]]))
-      { fail("Invalid header: 'options' must be an integer in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["data_type"]]))
-      { fail("Invalid header: 'data_type' is missing in extra bytes description") ; failure = TRUE }
-
-      if (extra_byte[["data_type"]] < 1L & extra_byte[["data_type"]] > 10L)
-      { fail("Invalid header: 'data_type' must be between 1 and 10 in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["name"]]))
-      { fail("Invalid header: 'name' is missing in extra bytes description") ; failure = TRUE }
-
-      if (!is.character(extra_byte[["name"]]) | length(extra_byte[["name"]]) > 1L)
-      { fail("Invalid header: 'name' must be a string in extra bytes description") ; failure = TRUE }
-
-      if (nchar(extra_byte[["name"]]) > 32L)
-      { fail("Invalid header: 'name' must be a string of length < 32 in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["description"]]))
-      { fail("Invalid header: 'description' is missing in extra bytes description") ; failure = TRUE }
-
-      if (!is.character(extra_byte[["description"]]) | length(extra_byte[["description"]]) > 1L)
-      { fail("Invalid header: 'description' must be a string in extra bytes description") ; failure = TRUE }
-
-      if (nchar(extra_byte[["description"]]) > 32L)
-      { fail("Invalid header: 'description' must be a string of length < 32 in extra bytes description") ; failure = TRUE }
-
-      options = extra_byte[["options"]]
-      options = as.integer(intToBits(options))[1:5]
-
-      has_no_data = options[1] == 1L;
-      has_min = options[2] == 1L;
-      has_max = options[3] == 1L;
-      has_scale = options[4] == 1L;
-      has_offset = options[5] == 1L;
-
-      if (is.null(extra_byte[["min"]]) & has_min)
-      { fail("Invalid header: 'min' is missing in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["max"]]) & has_max)
-      { fail("Invalid header: max' is missing in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["scale"]]) & has_scale)
-      { fail("Invalid header: 'scale' is missing in extra bytes description") ; failure = TRUE }
-
-      if (is.null(extra_byte[["offset"]]) & has_offset)
-      { fail("Invalid header: 'offset' is missing in extra bytes description") ; failure = TRUE }
-    }
-
-    if (!failure)
-      ok()
-  }
-  else
-    ok()
+  fail(rlas::is_valid_extrabytes(head, "vector"))
 
   h2("Checking coordinate reference sytem...")
 
-  code = epsg(las)
+  code    = epsg(las)
+  swkt    = wkt(las)
   lasproj = las@proj4string
-  codeproj = tryCatch(sp::CRS(glue::glue("+init=epsg:{code}")), error = function(e) return(sp::CRS()))
   failure = FALSE
 
   if (code != 0)
   {
+    codeproj = tryCatch(
+    {
+      proj <- sp::CRS(glue::glue("+init=epsg:{code}"))
+      proj <- gsub("\\+init=epsg:\\d+\\s", "", proj@projargs)
+      sp::CRS(proj)
+    }, error = function(e) return(sp::CRS()))
+
     if (is.na(codeproj@projargs))
     { fail("EPSG code unknown.") ; failure = TRUE }
 
@@ -468,16 +278,36 @@ lascheck.LAS = function(las)
     if (!failure)
       ok()
   }
-  else
+  else if (wkt != "")
   {
-    if (!is.na(lasproj@projargs))
-    { warn("A proj4string found but no EPSG code in the header") ; failure = TRUE }
+    codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
+
+    if (is.na(codeproj@projargs))
+    { fail("WKT OGC CS not understood by rgdal") ; failure = TRUE }
+
+    if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
+    { fail("WKT OGC CS and proj4string do not match.") ; failure = TRUE }
+
+    if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
+    { fail("WKT OGC CS code and proj4string do not match.") ; failure = TRUE }
+
+    if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
+    {
+      if (codeproj@projargs != lasproj@projargs)
+      { fail("WKT OGC CS and proj4string do not match.") ; failure = TRUE }
+    }
 
     if (!failure)
       ok()
   }
+  else
+  {
+    if (!is.na(lasproj@projargs))
+    { warn("A proj4string found but no CRS in the header") ; failure = TRUE }
 
-
+    if (!failure)
+      ok()
+  }
 
   # ==== data vs header ====
 
@@ -485,102 +315,29 @@ lascheck.LAS = function(las)
 
   h2("Checking attributes vs. point format...")
 
-  format = phb$`Point Data Format ID`
-  fields = names(data)
-  failure = FALSE
+  msg = character(0)
+  msg = c(msg, rlas::is_NIR_in_valid_format(head, data, "vector"))
+  msg = c(msg, rlas::is_gpstime_in_valid_format(head, data, "vector"))
+  msg = c(msg, rlas::is_RGB_in_valid_format(head, data, "vector"))
 
-  if (!is.null(format))
-  {
-    if ("NIR" %in% fields & format != 8)
-    { fail("Invalid file: the data contains a 'NIR' attribute but point data format is not set to 8.") ; failure = TRUE }
-
-    if ("gpstime" %in% fields & !format %in% c(1,3,6,7,8))
-    { fail("Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8.") ; failure = TRUE }
-
-    if (any(c("R", "G", "B") %in% fields) & !format %in% c(2,3,8))
-    { fail("Invalid file: the data contains 'RGB' attributes but point data format is not set to 2, 3 or 8.") ; failure = TRUE }
-
-    if (!failure)
-      ok()
-  }
-  else
-    skip()
+  fail(msg)
 
   h2("Checking header bbox vs. actual content...")
 
-  failure = FALSE
+  msg = character(0)
+  msg = c(msg, rlas::is_XY_larger_than_bbox(head, data, "vector"))
+  msg = c(msg, rlas::is_XY_smaller_than_bbox(head, data, "vector"))
+  msg = c(msg, rlas::is_Z_in_bbox(head, data, "vector"))
 
-  if (max(data$X) > phb$`Max X` | max(data$Y) > phb$`Max Y` | min(data$X) < phb$`Min X` | min(data$Y) < phb$`Min Y`)
-  { fail("Invalid file: some points are outside the bounding box defined by the header") ; failure = TRUE }
-
-  if (max(data$Z) > phb$`Max Z` |  min(data$Z) < phb$`Min Z`)
-  { fail("Invalid file: some points are outside the elevation range defined by the header") ; failure = TRUE }
-
-  if (!failure)
-    ok()
+  warn(msg)
 
   h2("Checking header number of points vs. actual content...")
 
-  if (dim(data)[1] != phb["Number of point records"])
-    fail(paste0("Invalid file: header states the file contains ", phb["Number of point records"], " points but ", nrow(data), " were found."))
-  else
-    ok()
+  warn(rlas::is_number_of_points_in_accordance_with_header(head, data, "vector"))
 
   h2("Checking header return number vs. actual content...")
 
-  failure = FALSE
-
-  if ("ReturnNumber" %in% fields)
-  {
-    number_of <- fast_table(data$ReturnNumber, 5L)
-
-    if (!is.null(phb[["Number of points by return"]]))
-    {
-      npbr = phb[["Number of points by return"]]
-
-      if (npbr[1] != number_of[1])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 1st return"], " 1st returns but ", number_of[1], " were found.")) ; failure = TRUE }
-
-      if (npbr[2]  != number_of[2])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 2nd return"], " 2nd returns but ", number_of[2], " were found.")) ; failure = TRUE }
-
-      if (npbr[3]  != number_of[3])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 3rd return"], " 3rd returns but ", number_of[3], " were found.")) ; failure = TRUE }
-
-      if (npbr[4]  != number_of[4])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 4th return"], " 4th returns but ", number_of[4], " were found.")) ; failure = TRUE }
-
-      if (npbr[5]  != number_of[5])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 5th return"], " 5th returns but ", number_of[5], " were found.")) ; failure = TRUE }
-
-      if (!failure)
-        ok()
-    }
-    else
-    {
-      if (phb[["Number of 1st return"]] != number_of[1])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 1st return"], " 1st returns but ", number_of[1], " were found.")) ; failure = TRUE }
-
-      if (phb[["Number of 2nd return"]] != number_of[2])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 2nd return"], " 2nd returns but ", number_of[2], " were found.")) ; failure = TRUE }
-
-      if (phb[["Number of 3rd return"]] != number_of[3])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 3rd return"], " 3rd returns but ", number_of[3], " were found.")) ; failure = TRUE }
-
-      if (phb[["Number of 4th return"]] != number_of[4])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 4th return"], " 4th returns but ", number_of[4], " were found.")) ; failure = TRUE }
-
-      if (phb[["Number of 5th return"]] != number_of[5])
-      { fail(paste0("Invalid file: the header states the file contains ", phb["Number of 5th return"], " 5th returns but ", number_of[5], " were found.")) ; failure = TRUE }
-
-      if (!failure)
-        ok()
-    }
-
-
-  }
-  else
-    skip()
+  warn(rlas::is_number_of_points_by_return_in_accordance_with_header(head, data, "vector"))
 
   # ==== Preprocessing ====
 

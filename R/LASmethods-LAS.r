@@ -36,70 +36,37 @@
 #' @describeIn LAS-class Create objects of class LAS
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
-  if(is.data.frame(data))
+  if (is.data.frame(data))
     data.table::setDT(data)
 
-  if(!data.table::is.data.table(data))
+  if (!data.table::is.data.table(data))
     stop("Invalid parameter data in constructor.")
 
-  if (nrow(data) > 0)
+  rlas::is_defined_coordinates(data, "stop")
+
+  if (is(header, "LASheader"))
+    header <- as.list(header)
+
+  if (!is.list(header))
+    stop("Wrong header object provided.")
+
+  if (length(header) == 0)
+    header <- rlas::header_create(data)
+
+  header <- rlas::header_update(header, data)
+
+  if (check & nrow(data) > 0)
   {
-    if (check) rlas::check_data(data)
-    if (is(header, "LASheader")) header = as.list(header)
-
-    if(is.list(header))
-    {
-      if (length(header) == 0)
-      {
-        header = rlas::header_create(data)
-        check = FALSE
-      }
-    }
-    else
-      stop("Wrong header object provided.")
-
-    header = rlas::header_update(header, data)
-  }
-  else
-  {
-    if (check) suppressWarnings(rlas::check_data(data))
-    if (is(header, "LASheader")) header = as.list(header)
-
-    if(is.list(header))
-    {
-      if (length(header) == 0)
-      {
-        header = suppressWarnings(rlas::header_create(data))
-        check = FALSE
-      }
-    }
-    else
-      stop("Wrong header object provided.")
-
-    header = suppressWarnings(rlas::header_update(header, data))
-    header$`Min X` <- 0
-    header$`Max X` <- 0
-    header$`Min Y` <- 0
-    header$`Max Y` <- 0
-    header$`Min Z` <- 0
-    header$`Max Z` <- 0
-    header$`X offset` <- 0
-    header$`Y offset` <- 0
-    header$`Z offset` <- 0
-  }
-
-  if(check & nrow(data) > 0)
-  {
-    rlas::check_header(header)
-    rlas::check_data_vs_header(header, data, hard = F)
+    rlas::check_las_validity(header, data)
+    rlas::check_las_compliance(header, data)
   }
 
   header <- LASheader(header)
 
-  if(is.na(proj4string@projargs))
-    proj4string <- tryCatch(sp::CRS(paste0("+init=epsg:", epsg(header))), error = function (e) sp::CRS())
+  if (is.na(proj4string@projargs))
+    proj4string <- projection(header, asText = FALSE)
 
-  las <- new("LAS")
+  las             <- new("LAS")
   las@proj4string <- proj4string
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
@@ -201,7 +168,7 @@ setMethod("extent", "LAS",
 setMethod("$<-", "LAS", function(x, name, value)
 {
   if (!name %in% names(x@data))
-    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata")
+    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   if (name %in% LASFIELDS)
   {
@@ -209,7 +176,7 @@ setMethod("$<-", "LAS", function(x, name, value)
     type2 <- storage.mode(value)
 
     if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"))
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
   x@data[[name]] = value
@@ -223,7 +190,7 @@ setMethod("$<-", "LAS", function(x, name, value)
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (!i %in% names(x@data))
-    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata")
+    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
   if (i %in% LASFIELDS)
   {
@@ -231,7 +198,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
     type2 <- storage.mode(value)
 
     if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"))
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
   x@data[[i]] = value
@@ -248,20 +215,70 @@ setMethod("area", "LAS", function(x, ...)
   return(area_convex_hull(x@data$X, x@data$Y))
 })
 
+#' @export
+#' @rdname projection
+setMethod("projection<-", "LAS", function(x, value)
+{
+  if (is(value, "CRS"))
+    proj4 <- value@projargs
+  else if (is.character(value))
+    proj4 <- value
+  else
+    stop("'value' is not a CRS or a string.")
+
+  proj4 <- gsub("\\+init=epsg:\\d+\\s", "", proj4)
+
+  if (x@header@PHB[["Global Encoding"]][["WKT"]] == TRUE)
+  {
+    wkt <- rgdal::showWKT(proj4)
+    wkt(x@header) <- wkt
+    raster::projection(x) <- proj4
+    return(x)
+  }
+  else
+  {
+    epsg <- rgdal::showEPSG(proj4)
+
+    if (epsg == "OGRERR_UNSUPPORTED_SRS")
+      stop("EPSG not found. Try to use the function epsg() manually.", call. = FALSE)
+
+    epsg(x@header) <- epsg
+    raster::projection(x) <- proj4
+    return(x)
+  }
+})
 
 #' @export
-#' @rdname epsg
+#' @rdname projection
 setMethod("epsg", "LAS", function(object)
 {
   return(epsg(object@header))
 })
 
 #' @export
-#' @rdname epsg
+#' @rdname projection
 setMethod("epsg<-", "LAS", function(object, value)
 {
   proj4 <- sp::CRS(glue::glue("+init=epsg:{value}"))
+  proj4 <- gsub("\\+init=epsg:\\d+\\s", "", proj4)
   epsg(object@header) <- value
+  raster::projection(object)  <- proj4
+  return(object)
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt", "LAS", function(object)
+{
+  return(wkt(object@header))
+})
+
+#' @export
+#' @rdname projection
+setMethod("wkt<-", "LAS", function(object, value)
+{
+  proj4 <- rgdal::showP4(value)
+  wkt(object@header) <- value
   raster::projection(object)  <- proj4
   return(object)
 })

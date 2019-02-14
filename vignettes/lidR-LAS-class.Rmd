@@ -44,10 +44,13 @@ The slot `data` of a LAS object contains a `data.table` with the data read from 
 - `ScanDirectionFlag` (int)
 - `EdgeOfFlightline`(int)
 - `Classification` (int)
+- `ScannerChannel` (int) (point format >= 6)
 - `Synthetic_flag` (bool)
 - `Withheld_flag` (bool)
 - `Keypoint_flag` (bool)
-- `ScanAngle` (int)
+- `Overlap_flag` (bool) (point format >= 6)
+- `ScanAngleRank` (int) (point format < 6)
+- `ScanAngle` (dbl) (point format >= 6)
 - `UserData` (int)
 - `PointSourceID` (int)
 - `R` `G` `B` (int)
@@ -65,11 +68,26 @@ print(las@header)
 
 ### @proj4string: the CRS
 
-The slot `@proj4string` is inherited from the `Spatial` class from the `sp` package. It is a `CRS` object that stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS, but it is also stored in the slot `@proj4string`. This is to ensure it meets R standards and is in accordance with other spatial data packages in the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `epsg()`. This function updates the header of the LAS object **and** the proj4string, while functions such as `raster::projection()` or `sp::proj4string` only update the slot `@proj4string`.
+The slot `@proj4string` is inherited from the `Spatial` class from the `sp` package. It is a `CRS` object that stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS or a WKT string (depending how it has been recorded in the file), but it is also stored in the slot `@proj4string`. This is to ensure it meets R standards and is in accordance with other spatial data packages in the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `projection()`. This function updates the header of the LAS object **and** the proj4string.
 
 ```{r}
-epsg(las) = 2567
+projection(las) <- sp::CRS("+init=epsg:26917")
 projection(las)
+
+# Header has been updated but users do not need to take care of that
+las@header@VLR[["GeoKeyDirectoryTag"]][["tags"]][[2]][["value offset"]]
+```
+
+According to LAS specification the CRS system can also be a WKT string when the WKT bit flag is set to `TRUE`.
+
+```{r}
+las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
+
+projection(las) <- sp::CRS("+init=epsg:26917")
+projection(las)
+
+# Header has been updated but users do not need to take care of that
+las@header@VLR[["WKT OGC CS"]][["WKT OGC COORDINATE SYSTEM"]]
 ```
 
 ### @bbox: the bounding box

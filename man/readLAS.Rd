@@ -18,22 +18,22 @@ readLAS(files, select = "*", filter = "")
 A LAS object
 }
 \description{
-Reads .las or .laz files in format 1 to 3 according to LAS specifications and returns an
-object of class \link[lidR:LAS-class]{LAS}. If several files are read at once the returned LAS object
-is considered as one LAS file. The optional parameters enable the user to save a substantial amount
-of memory by choosing to load only the attributes or points of interest. The LAS format 1.4 is
-currently only partially supported.
+Reads .las or .laz files  object of class \link[lidR:LAS-class]{LAS}. If several files are read at
+once the returned LAS object is considered as one LAS file. The optional parameters enable the user
+to save a substantial amount of memory by choosing to load only the attributes or points of interest.
+The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.
 }
 \details{
-\strong{Select:} the 'select' argument specifies which attribute will actually be loaded. For example,
+\strong{Select:} the 'select' argument specifies the data that will actually be loaded. For example,
 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
-r - return number, c - classification, u - user data, p - point source ID, e - edge of
-flight line flag, d - direction of scan flag, R - red channel of RGB color, G - green
-channel of RGB color, B - blue channel of RGB color, N - near infrared channel. Also numbers from
-1 to 9 are available for the extra bytes data 1 to 9. 0 enables loading of all extra bytes and '*'
-is the wildcard and enables everything to be loaded from the LAS file. Note that x, y, z are implicit
-and always loaded, thus 'xyzia' is equivalent to 'ia'.\cr\cr
+r - return number, c - classification, s - synthetic flag, k - keypoint flag, w - withheld flag,
+o - overlap flag (format 6+), u - user data, p - point source ID, e - edge of flight line flag,
+d - direction of scan flag, R - red channel of RGB color, G - green channel of RGB color,
+B - blue channel of RGB color, N - near-infrared channel. C - scanner channel (format 6+).
+Also numbers from 1 to 9 for the extra bytes data numbers 1 to 9. 0 enables all extra bytes to be
+loaded and '*' is the wildcard that enables everything to be loaded from the LAS file. \cr
+Note that x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
 \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
 This is much more efficient than \link{lasfilter} in many ways. If the desired filters are known
 before reading the file, the internal filters should always be preferred. The available filters are

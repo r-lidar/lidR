@@ -74,7 +74,7 @@ test_that("build a LAS invalid LAS object works as expected", {
   header@PHB$`Point Data Format ID` = 3L
   header@PHB$`X scale factor` = 0.412
 
-  expect_warning(LAS(data, header), "X scale factor")
+  expect_error(LAS(data, header), "X scale factor")
 
   data$R = as.integer(runif(10, 0, 2^8))
   data$G = as.integer(runif(10, 0, 2^8))
@@ -89,7 +89,7 @@ test_that("build a LAS invalid LAS object works as expected", {
   expect_error(LAS(data), "double")
 
   data$X = NULL
-  expect_error(LAS(data), "missing coordinates")
+  expect_error(LAS(data), "coordinates")
 
   data$X = runif(10)
   data$R = NULL
@@ -111,7 +111,7 @@ test_that("build a LAS invalid LAS object works as expected", {
   header@PHB$`Version Minor` <- NULL
   data = data.frame(X = runif(10), Y = runif(10), Z = runif(10))
 
-  expect_error(LAS(data, header), "Version minor")
+  expect_error(LAS(data, header), "Version")
 })
 
 test_that("LAS redefined behavior of $, [, and [[", {

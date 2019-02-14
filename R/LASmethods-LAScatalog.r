@@ -90,8 +90,7 @@ catalog <- function(folder, ...)
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  epsg   <- epsg(header)
-  crs    <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
+  crs    <- projection(header, asText = FALSE)
 
   headers <- lapply(files, function(x)
   {
@@ -250,13 +249,13 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
   nargs   <- nargs()
 
   if (!missing(i) & !missing(j))
-    stop(glue::glue("This action is not allowed for a {class(x)}. j must be missing. Maybe you meant: {ctgname}[{iname}, ]."))
+    stop(glue::glue("This action is not allowed for a {class(x)}. j must be missing. Maybe you meant: {ctgname}[{iname}, ]."), call. = FALSE)
 
   if (missing(i) & !missing(j))
-    stop(glue::glue("This action is not allowed for a {class(x)}. i cannot be missing."))
+    stop(glue::glue("This action is not allowed for a {class(x)}. i cannot be missing."), call. = FALSE)
 
   if (!missing(i) & missing(j) & nargs == 2L)
-    stop(glue::glue("This action is not allowed for a {class(x)}. Maybe you meant: {ctgname}[{iname}, ]."))
+    stop(glue::glue("This action is not allowed for a {class(x)}. Maybe you meant: {ctgname}[{iname}, ]."), call. = FALSE)
 
   y <- callNextMethod()
 
@@ -284,14 +283,14 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
 #' @export
 setMethod("[[<-", "LAScatalog",  function(x, i, j, value)
 {
-  stop("LAScatalog data are read from standard files and cannot be modified")
+  stop("LAScatalog data are read from standard files and cannot be modified", call. = FALSE)
 })
 
 #' @rdname redefined_behaviors
 #' @export
 setMethod("$<-", "LAScatalog", function(x, name, value)
 {
-  stop("LAScatalog data are read from standard files and cannot be modified")
+  stop("LAScatalog data are read from standard files and cannot be modified", call. = FALSE)
 })
 
 #' @rdname area
