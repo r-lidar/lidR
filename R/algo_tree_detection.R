@@ -259,3 +259,114 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
 }
+
+# ===== LMFAUTO ======
+
+#' Individual Tree Detection Algorithm
+#'
+#' This function is made to be used in \link{tree_detection}. It implements a fast and parameter-free
+#' algorithm for individual tree detection on wide coverage. It is based on two local maximum filters
+#' (LMF). The first pass performs a very raw estimation of the number of trees with a fixed windows
+#' size. Based on this raw estimation it automatically compute a variable windows size LMF with workable
+#' parameters. This way this algorithm is parameter-free and properly parametrized for many contexts.
+#' This algorithm is made to process wide areas not small plots. See references for more details.
+#'
+#' @param plot logical set it to \code{TRUE} is processing a plot instead of a large area. What change
+#' is the estimation of the local number of trees. It should be based the local neighborhood for general
+#' case but this does not make sense for a plot.
+#' @param hmin numeric. Minimum height of a tree. Threshold below which a point cannot be a local
+#' maxima. Default is 2.
+#'
+#' @references Roussel Jean-Romain, Development of a parameter-free algorithm for automatic tree
+#' detection on wide territories (in prep.)
+#'
+#' @family individual tree detection algorithms
+#'
+#' @export
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#' ttops <- tree_detection(las, lmfauto())
+lmfauto = function(plot = FALSE, hmin = 2)
+{
+  f = function(las)
+  {
+    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
+    lidR:::stopif_wrong_context(context, "tree_detection", "lmfauto")
+
+    # Step 1: detection with a fixe 5 m windows size
+
+    ttop5 <- tree_detection(las, lmf(5))
+
+    # Step 2: raw/rought/poor estimate of number of tree per ha in
+    # the local neighourhood
+
+    if (plot)
+    {
+      # Limit case if we are not processing a wide area
+      A     <- area(las)
+      d     <- nrow(las@data)/A
+      Aha   <- 10000/A
+      ntop5 <- nrow(ttop5)*Aha
+    }
+    else
+    {
+      # The real algorithm
+      A     <- 400
+      Aha   <- 10000/A
+      x     <- ttop5@coords[,1]
+      y     <- ttop5@coords[,2]
+      ntop5 <- C_count_in_disc(x, y, las@data$X, las@data$Y, sqrt(A/pi))
+      ntop5 <- ntop5*Aha
+    }
+
+    # Step 3: estimate the windows size of a variable windows size LMF as a function
+    # of the numbers of trees in the local neighboorhood.
+
+    ws <- lmfauto_ws(las@data$Z, ntop5)
+    lm <- C_lmf(las@data, ws, hmin, TRUE)
+    lm <- las@data[lm, .(X,Y,Z)]
+    lm[, treeID := 1:.N]
+
+    output = sp::SpatialPointsDataFrame(lm[, .(X,Y)], lm[, .(treeID, Z)])
+    output@proj4string = las@proj4string
+    output@bbox = sp::bbox(las)
+    return(output)
+  }
+
+  class(f) <- c("PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
+  return(f)
+}
+
+lmfauto_ws = function(x, n, d = 10)
+{
+  s <- length(n)
+  above200 <- n > 200
+  above300 <- n > 300
+
+  a <- rep(3.5, s)
+  b <- rep(4, s)
+  a[above200] <- 2.5
+  b[above200] <- 3.5
+  a[above300] <- 1.5
+  b[above300] <- 2.5
+
+  if (d < 4)
+  {
+    a <- a + 1.25
+    b <- b + 1.25
+    a[above200] <- a[above200] - 0.5
+    b[above200] <- b[above200] - 0.5
+    a[above300] <- a[above300] - 0.25
+    b[above300] <- b[above300] - 0.25
+  }
+
+  llim  <- 2
+  ulim  <- 20
+  slope <- (b - a)/(ulim - llim)
+  intercept <- a - 2*slope
+  ws <- slope*x + intercept
+  ws[x < llim] <- a[x < llim]
+  ws[x < llim] <- b[x < llim]
+  return(ws)
+}
