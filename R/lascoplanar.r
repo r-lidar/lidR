@@ -57,12 +57,14 @@ lascolinear = function(las, k = 8, th1 = 10, filter = NULL)
 
 parse_filter = function(las, filter, k)
 {
-  filter <- TRUE
-
   if (!is.null(filter))
   {
     filter <- lasfilter_(las, list(filter))
     if (sum(filter) < k) stop("No enought point found with the predicate filter", call. = FALSE)
+  }
+  else
+  {
+    filter <- TRUE
   }
 
   return(filter)
