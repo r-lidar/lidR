@@ -42,9 +42,8 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
-  int vws = ws.length() > 1;
+  bool vws = ws.length() > 1;
   int n = X.length();
-  double hws = ws[0]/2;
   LogicalVector seeds(n);
   QuadTree tree(X,Y);
   Progress pb(n, "Local maximum filter: ");
@@ -55,8 +54,7 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
     pb.check_abort();
     pb.increment();
 
-    if (vws)
-      hws = ws[i]/2;
+    double hws = (vws) ? ws[i]/2 : ws[0]/2;
 
     if (Z[i] < min_height)
       continue;
