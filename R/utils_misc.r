@@ -92,21 +92,26 @@ merge_rasters = function(output)
 
 build_vrt = function(output, vrt)
 {
-  if (!requireNamespace("gdalUtils", quietly = TRUE))
-  {
-    message("'gdalUtils' package is needed to build a virtual raster mosaic. Return the list of written files instead.")
-    return(unlist(output))
-  }
-
   if (!options("lidR.buildVRT")[[1]])
     return(unlist(output))
+
+  if (!requireNamespace("gdalUtils", quietly = TRUE))
+  {
+    message("'gdalUtils' package is needed to build a virtual raster mosaic. Returns the list of written files instead.")
+    return(unlist(output))
+  }
 
   output <- unlist(output)
   folder <- dirname(output[1])
   file   <- paste0("/", vrt, ".vrt")
   vrt    <- paste0(folder, file)
   gdalUtils::gdalbuildvrt(output, vrt)
-  return(raster::stack(vrt))
+  output <- raster::stack(vrt)
+
+  if (dim(output)[3] == 1)
+    return(output[[1]])
+  else
+    return(output)
 }
 
 

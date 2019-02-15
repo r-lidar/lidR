@@ -92,7 +92,7 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   dtm1 = grid_terrain(las, 1, tin())
   dtm2 = grid_terrain(ctg, 1, tin())
 
-  bbox = raster::extent(dtm1)-2*3
+  bbox = raster::extent(dtm1)-2*4
 
   cdtm1 = raster::crop(dtm1, bbox)
   cdtm2 = raster::crop(dtm2, bbox)
@@ -100,12 +100,8 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   error = abs(cdtm1 - cdtm2)
   error = error[error > 0.01]
 
-  # skip unreprodutible error on CRAN with 32 bits arch and Solaris
-  if (!is.na(mean(error)) | Sys.info()['sysname'][[1]] == "SunOS")
-  {
-    expect_lt(length(error), raster::ncell(cdtm1)*0.002)
-    expect_equal(mean(error), 0.048, tolerance = 0.001)
-  }
+  expect_lt(length(error), raster::ncell(cdtm1)*0.002)
+  expect_equal(mean(error), 0.048, tolerance = 0.0055)
 
   z = raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
