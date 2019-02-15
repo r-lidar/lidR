@@ -1,8 +1,24 @@
 ## lidR v2.1.0
 
-* Change:CRS LAS 1.4 WKT
-* New: function `projection`
-* New: function `wkt`
+#### NEW FEATURES
+
+1. [#204](https://github.com/Jean-Romain/lidR/issues/204) LAS 1.4 and point formats > 6 are now suported. `lascheck`, `print` were updated to work correctly with these formats.
+
+2. [#214](https://github.com/Jean-Romain/lidR/issues/214) `opt_cores()` is no longer supported. If used it generates a message. Former parallelisation was inneficient and worked by loading several chunks of LAscatalog at once implying to read/write several files at once (strong overhead) and used a lot of RAM. Many algorithms are now natively parallelised at the C++ level with OpenMP. This significantly speed-up processing of LAS objects. Consequently this also speed-up processing of LAScatalog objects without the need to overload the RAM and kill the read/write bottleneck.
+
+3. New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg` to store CRS. It updates the `proj4string`and the header of the LAS object.
+
+4. New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `prj4string`or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally. Vignette `LAS-class` has been updated in consequence
+
+5. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
+
+6. New functions `lascoplanar` and `lascolinear` for water and human made structure detection.
+
+7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
+
+#### NOTE
+
+1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.
 
 ## lidR v2.0.2
 
