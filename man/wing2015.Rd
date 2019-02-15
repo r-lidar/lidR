@@ -90,6 +90,6 @@ Individual snag detection using neighborhood attribute filtered airborne lidar d
 Sensing of Environment. 163: 165-179 https://doi.org/10.1016/j.rse.2015.03.013
 }
 \author{
-Implementation by Andrew Sánchez Meador
+Implementation by Andrew Sánchez Meador & Jean-Romain Roussel
 }
 \concept{snags segmentation algorithms}

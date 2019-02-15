@@ -76,7 +76,7 @@ test_that("grid_metrics return a correct raster brick (tricky case)", {
 file <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg = catalog(file)
 las = readLAS(file, select = "xyz", filter = "-keep_first")
-opt_cores(ctg) <- 1
+
 opt_chunk_size(ctg) <- 160
 ctg@chunk_options$alignment = c(684750, 5017760)
 opt_chunk_buffer(ctg) <- 0

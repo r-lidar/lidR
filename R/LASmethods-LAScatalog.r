@@ -209,8 +209,6 @@ setMethod("summary", "LAScatalog", function(object, ...)
   else
     cat("  - Catalog will be processed by chunks of size:", opt_chunk_size(object), "\n")
 
-  cat("  - Catalog will be processed using", opt_cores(object), "core(s).\n")
-
   cat("Summary of the output options:\n")
 
   if (!save)

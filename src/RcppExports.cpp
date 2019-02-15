@@ -83,8 +83,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_knn
-Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k);
-RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu);
+RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,13 +93,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knn(X, Y, x, y, k));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knn(X, Y, x, y, k, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_knnidw
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p);
-RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP) {
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, int ncpu);
+RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -110,13 +111,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_lascoplanar
-LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter);
-RcppExport SEXP _lidR_C_lascoplanar(SEXP lasSEXP, SEXP kSEXP, SEXP th1SEXP, SEXP th2SEXP, SEXP filterSEXP) {
+LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_lascoplanar(SEXP lasSEXP, SEXP kSEXP, SEXP th1SEXP, SEXP th2SEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -125,13 +127,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type th1(th1SEXP);
     Rcpp::traits::input_parameter< double >::type th2(th2SEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lascoplanar(las, k, th1, th2, filter));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lascoplanar(las, k, th1, th2, filter, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_lassmooth
-NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma);
-RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP, SEXP methodSEXP, SEXP shapeSEXP, SEXP sigmaSEXP) {
+NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma, int ncpu);
+RcppExport SEXP _lidR_C_lassmooth(SEXP lasSEXP, SEXP sizeSEXP, SEXP methodSEXP, SEXP shapeSEXP, SEXP sigmaSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,7 +143,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type method(methodSEXP);
     Rcpp::traits::input_parameter< int >::type shape(shapeSEXP);
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size, method, shape, sigma));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lassmooth(las, size, method, shape, sigma, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -162,8 +166,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_lmf
-LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular);
-RcppExport SEXP _lidR_C_lmf(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP) {
+LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool circular, int ncpu);
+RcppExport SEXP _lidR_C_lmf(SEXP dataSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -171,7 +175,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
     Rcpp::traits::input_parameter< double >::type min_height(min_heightSEXP);
     Rcpp::traits::input_parameter< bool >::type circular(circularSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lmf(data, ws, min_height, circular));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lmf(data, ws, min_height, circular, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -232,15 +237,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_points_in_polygon_wkt
-LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt);
-RcppExport SEXP _lidR_C_points_in_polygon_wkt(SEXP xSEXP, SEXP ySEXP, SEXP wktSEXP) {
+LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt, int ncpu);
+RcppExport SEXP _lidR_C_points_in_polygon_wkt(SEXP xSEXP, SEXP ySEXP, SEXP wktSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_points_in_polygon_wkt(x, y, wkt));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_points_in_polygon_wkt(x, y, wkt, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -304,8 +310,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_tsearch
-IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi);
-RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP) {
+IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, NumericVector xi, NumericVector yi, int ncpu);
+RcppExport SEXP _lidR_C_tsearch(SEXP xSEXP, SEXP ySEXP, SEXP elemSEXP, SEXP xiSEXP, SEXP yiSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -314,13 +320,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type elem(elemSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type yi(yiSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tsearch(x, y, elem, xi, yi, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_Wing2015
-IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
-RcppExport SEXP _lidR_C_Wing2015(SEXP lasSEXP, SEXP neigh_radiiSEXP, SEXP low_int_thrshSEXP, SEXP uppr_int_thrshSEXP, SEXP pt_den_reqSEXP, SEXP BBPRthrsh_matSEXP) {
+IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat, int ncpu);
+RcppExport SEXP _lidR_C_Wing2015(SEXP lasSEXP, SEXP neigh_radiiSEXP, SEXP low_int_thrshSEXP, SEXP uppr_int_thrshSEXP, SEXP pt_den_reqSEXP, SEXP BBPRthrsh_matSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -330,7 +337,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type uppr_int_thrsh(uppr_int_thrshSEXP);
     Rcpp::traits::input_parameter< int >::type pt_den_req(pt_den_reqSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type BBPRthrsh_mat(BBPRthrsh_matSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat));
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// R_omp_get_max_threads
+int R_omp_get_max_threads();
+RcppExport SEXP _lidR_R_omp_get_max_threads() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(R_omp_get_max_threads());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -342,23 +360,24 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
-    {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 5},
-    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
-    {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 5},
-    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 5},
+    {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
+    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
+    {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 6},
+    {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 6},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
-    {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 4},
+    {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_MorphologicalOpening", (DL_FUNC) &_lidR_C_MorphologicalOpening, 4},
     {"_lidR_R_p2r", (DL_FUNC) &_lidR_R_p2r, 4},
     {"_lidR_C_point_in_polygon", (DL_FUNC) &_lidR_C_point_in_polygon, 4},
     {"_lidR_C_points_in_polygon", (DL_FUNC) &_lidR_C_points_in_polygon, 4},
-    {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 3},
+    {"_lidR_C_points_in_polygon_wkt", (DL_FUNC) &_lidR_C_points_in_polygon_wkt, 4},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
     {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 5},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
-    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 5},
-    {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 6},
+    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 6},
+    {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 7},
+    {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}
 };
 

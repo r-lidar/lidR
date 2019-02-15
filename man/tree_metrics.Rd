@@ -58,7 +58,6 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item \strong{chunk buffer*}: Mandatory to get a continuous output without edge effects. The buffer is
 always removed once processed and will never be returned either in R or in files.
 \item \strong{chunk alignment}: Align the processed chunks.
-\item \strong{cores}: How many cores are used.
 \item \strong{progress}: Displays a progression estimation.
 \item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
 \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and,

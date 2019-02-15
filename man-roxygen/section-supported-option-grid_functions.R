@@ -16,7 +16,6 @@
 #' option is not considered.
 #' \item \strong{chunk alignment}: Align the processed chunks. The alignment may be slightly modified
 #' internally to ensure a strict continuous wall-to-wall output.
-#' \item \strong{cores}: How many cores are used.
 #' \item \strong{progress}: Displays a progress estimate.
 #' \item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
 #' templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}

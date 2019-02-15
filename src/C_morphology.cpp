@@ -66,11 +66,7 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
 
     Z_out[i] = min_pt;
 
-    if (p.check_abort())
-    {
-      p.exit();
-    }
-
+    p.check_abort();
     p.update(i);
   }
 
@@ -95,11 +91,7 @@ NumericVector C_MorphologicalOpening(NumericVector X, NumericVector Y, NumericVe
 
     Z_out[i] = max_pt;
 
-    if (p.check_abort())
-    {
-      p.exit();
-    }
-
+    p.check_abort();
     p.update(i+n);
   }
 

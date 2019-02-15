@@ -301,7 +301,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
 
     # Voronoi tesselation is nothing else but the nearest neigbour
-    u <- C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L)
+    u <- C_knn(treetops@coords[,1], treetops@coords[,2], chmdt$X, chmdt$Y, 1L, getThread())
 
     chmdt[, id := u$nn.idx[,1]]
     chmdt[, id := ids[id]]

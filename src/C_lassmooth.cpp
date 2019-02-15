@@ -31,11 +31,12 @@
 #include <limits>
 #include "QuadTree.h"
 #include "Progress.h"
+#include "myomp.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, double sigma = 1)
+NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sigma, int ncpu)
 {
   // shape: 1- rectangle 2- circle
   // method: 1- average 2- gaussian
@@ -50,15 +51,18 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
   double twosquaresigma = 2*sigma*sigma;
   double twosquaresigmapi = twosquaresigma * M_PI;
 
-  NumericVector Z_temp;
-  NumericVector Z_out  = clone(Z);
+  NumericVector Z_out = clone(Z);
 
   QuadTree tree(X,Y);
 
   Progress p(n, "Point cloud smoothing: ");
 
+  #pragma omp parallel for num_threads(ncpu)
   for (unsigned int i = 0 ; i < n ; i++)
   {
+    p.check_abort();
+    p.increment();
+
     std::vector<Point*> pts;
 
     if(shape == 1)
@@ -93,14 +97,10 @@ NumericVector C_lassmooth(S4 las, double size, int method = 1, int shape = 1, do
       wtot += w;
     }
 
-    Z_out[i] = ztot/wtot;
-
-    if (p.check_abort())
+    #pragma omp critical
     {
-      p.exit();
+      Z_out[i] = ztot/wtot;
     }
-
-    p.update(i);
   }
 
   return Z_out;

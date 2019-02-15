@@ -43,12 +43,10 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
   method <- match.arg(method)
   shape  <- match.arg(shape)
 
-  Z <- Zraw <- NULL
-
   if (method == "average") method <- 1  else method <- 2
   if (method == "circle") shape   <- 1  else shape  <- 2
 
-  Zs <- C_lassmooth(las, size, method, shape, sigma)
+  Zs <- C_lassmooth(las, size, method, shape, sigma, getThread())
 
   if (!"Zraw" %in% names(las@data))
     las@data[["Zraw"]] <- las@data[["Z"]]
@@ -67,8 +65,7 @@ lasunsmooth = function(las)
   if ("Zraw" %in% names(las@data))
   {
     las@data[["Z"]] <- las@data[["Zraw"]]
-    las@data[, Zraw := NULL]
-    las@data[]
+    las@data[["Zraw"]] <- NULL
   }
   else
     stop("No attribute named 'Zraw' found. Unsmoothing is not possible.")

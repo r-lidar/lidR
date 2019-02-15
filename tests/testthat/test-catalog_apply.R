@@ -3,7 +3,6 @@ context("catalog_apply")
 LASfile          <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg              <- catalog(LASfile)
 ctg@data         <- ctg@data[1,]
-opt_cores(ctg)       <- 1
 opt_chunk_buffer(ctg) <- 0
 opt_chunk_size(ctg) <- 150
 opt_progress(ctg)    <- FALSE

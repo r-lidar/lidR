@@ -56,10 +56,6 @@ the outputs (see dedicated section).}
 The slot \code{@processing_options} contains a \code{list} of options that determine how chunks
 (the sub-areas that are sequentially processed) are processed.
 \itemize{
-\item \strong{core}: integer. The number of cores used. Default is 1. In \code{lidR} algorithms are
-all single core algorithms. What is parallelized is the number of chunks processed together. Thus
-by using 4 cores, 4 chunks of point cloud are loaded at once using 4 times more memory. Thus it is
-not always pertinent to set \code{core > 1}.
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
 Progress estimation can be enhanced by installing the package \code{progress}.
 \item \strong{stop_early}: boolean. Stop the processing if an error occurs in a chunk. If \code{FALSE}
@@ -137,7 +133,6 @@ each function knows which data must be loaded or not. This is documented in each
 ctg <- catalog("filder/to/las/files/")
 
 # Set some options
-opt_cores(ctg) <- 2
 opt_filter(ctg) <- "-keep_first"
 
 # Summary gives a summary of how the catalog will be processed
@@ -149,7 +144,6 @@ ttops <- tree_detection(ctg, lmf(5))
 
 # For low memory config it is probably advisable not to load entire files
 # and process chunks instead
-opt_cores(ctg) <- 1
 opt_chunk_size(ctg) <- 500
 
 # Outputs are expected to be strictly identical

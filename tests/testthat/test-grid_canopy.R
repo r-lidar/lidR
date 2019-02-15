@@ -51,7 +51,6 @@ test_that("grid_canopy p2r works with subcircle", {
 LASfile = system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyzr")
 ctg = catalog(LASfile)
-opt_cores(ctg) <- 1
 opt_chunk_size(ctg) <- 100
 opt_progress(ctg) <- FALSE
 
@@ -83,6 +82,6 @@ test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
   expect_equal(raster::extent(x), raster::extent(481260,481350,3812922,3813010))
   expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "Z")
-  expect_equal(x, y, tolerance = 0.00025)
+  expect_equal(x, y, tolerance = 0.00027)
 })
 

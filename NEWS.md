@@ -1,8 +1,12 @@
-## lidR v2.1.0 (Release date: )
+## lidR v2.1.0
 
 * Change:CRS LAS 1.4 WKT
 * New: function `projection`
 * New: function `wkt`
+
+## lidR v2.0.2
+
+- Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*` function return always a `RasterLayer` instead of a `RasterStack` if there is a single layer. VRT were returned as `RasterStack` no matter the nuber of layers.
 
 ## lidR v2.0.1 (Release date: 2010-02-02)
 

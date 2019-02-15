@@ -131,9 +131,8 @@ tree_metrics.LAScatalog = function(las, func, field = "treeID")
 {
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
-  glob <- future::getGlobalsAndPackages(func)
 
-  options <- list(need_buffer = TRUE, drop_null = TRUE, globals = names(glob$globals))
+  options <- list(need_buffer = TRUE, drop_null = TRUE)
   output  <- catalog_apply(las, tree_metrics, func = substitute(func), field = field, .options = options)
 
   if (opt_output_files(las) == "")

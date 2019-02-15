@@ -32,11 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <numeric>
 #include "Progress.h"
 #include "QuadTree.h"
+#include "myomp.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat)
+IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat, int ncpu)
 {
    DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
@@ -65,10 +66,13 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
    // the BBPr counts, then we have to calculate the actual ratio of BBPr to neighborhood points for each focal point
    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-   double BBPr_cnt = 0;                                 // the count of BBPr points (based on thresholds) in the neighborhood
 
+
+   #pragma omp parallel for num_threads(ncpu)
    for (unsigned int i = 0 ; i < n ; i++)
    {
+      double BBPr_cnt = 0;                              // the count of BBPr points (based on thresholds) in the neighborhood
+
       // Step 1.a Sphere neighborhood
       // ----------------------------
 
@@ -84,7 +88,10 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
             BBPr_cnt++;
       }
 
-      BBPr_sph[i] = BBPr_cnt/sphpts.size();             // Ratio of BBPr points in the neighborhood
+      #pragma omp critical
+      {
+        BBPr_sph[i] = BBPr_cnt/sphpts.size();           // Ratio of BBPr points in the neighborhood
+      }
 
       // Step 1.b Small cylinder neighborhood
       // ------------------------------------
@@ -105,7 +112,10 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
          }
       }
 
-      BBPr_smcyl[i] = BBPr_cnt/ptDen_smcyl[i];          // Ratio of BBPr points in the neighborhood
+      #pragma omp critical
+      {
+        BBPr_smcyl[i] = BBPr_cnt/ptDen_smcyl[i];        // Ratio of BBPr points in the neighborhood
+      }
 
       // Step 1.c Big cylinder neighborhood
       // ----------------------------------
@@ -122,16 +132,20 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
             BBPr_cnt++;
       }
 
-      BBPr_bigcyl[i] = BBPr_cnt/bigcylpts.size();       // Ratio of BBPr points in the neighborhood
+      #pragma omp critical
+      {
+        BBPr_bigcyl[i] = BBPr_cnt/bigcylpts.size();     // Ratio of BBPr points in the neighborhood
+      }
    }
 
    // Step 2 - Next we have to calculate he mean BBPr value for points in the neighborhood object for each focal point
    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-   double sum_of_elements = 0;                          // sum the elements in the neighborhood
-
+   #pragma omp parallel for num_threads(ncpu)
    for (unsigned int i = 0 ; i < n ; i++)
    {
+     double sum_of_elements = 0;                          // sum the elements in the neighborhood
+
      // Step 2.a Sphere neighborhood
      // ----------------------------
 
@@ -145,7 +159,10 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
          sum_of_elements += BBPr_sph[sphpts[j].id];
       }
 
-      meanBBPr_sph[i] = sum_of_elements/ptDen_sph[i];   // calculate the mean
+      #pragma omp critical
+      {
+        meanBBPr_sph[i] = sum_of_elements/ptDen_sph[i];   // calculate the mean
+      }
 
       // Step 2.b Small cylinder neighborhood
       // ------------------------------------
@@ -162,7 +179,10 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
             sum_of_elements += BBPr_smcyl[smcylpts[j]->id];
       }
 
-      meanBBPr_smcyl[i] = sum_of_elements/ptDen_smcyl[i]; // calculate the mean
+      #pragma omp critical
+      {
+        meanBBPr_smcyl[i] = sum_of_elements/ptDen_smcyl[i]; // calculate the mean
+      }
 
       // Step 2.c Big cylinder neighborhood
       // ----------------------------------
@@ -177,7 +197,10 @@ IntegerVector C_Wing2015(S4 las, NumericVector neigh_radii, double low_int_thrsh
          sum_of_elements += BBPr_bigcyl[bigcylpts[j]->id];
       }
 
-      meanBBPr_bigcyl[i] = sum_of_elements/ptDen_bigcyl[i]; // calculate the mean
+      #pragma omp critical
+      {
+        meanBBPr_bigcyl[i] = sum_of_elements/ptDen_bigcyl[i]; // calculate the mean
+      }
    }
 
    // Step 3 - Finally classify each point based on point density requirements and mean BBPr values from on the lookup table

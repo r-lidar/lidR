@@ -3,7 +3,6 @@ context("catalog_errors")
 file <- system.file("extdata", "Megaplot.laz", package = "lidR")
 ctg = catalog(file)
 
-opt_cores(ctg) <- 1
 opt_chunk_size(ctg) <- 160
 ctg@chunk_options$alignment = c(684750, 5017760)
 opt_chunk_buffer(ctg) <- 0

@@ -25,28 +25,28 @@ C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
-C_knn <- function(X, Y, x, y, k) {
-    .Call(`_lidR_C_knn`, X, Y, x, y, k)
+C_knn <- function(X, Y, x, y, k, ncpu) {
+    .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
 
-C_knnidw <- function(X, Y, Z, x, y, k, p) {
-    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p)
+C_knnidw <- function(X, Y, Z, x, y, k, p, ncpu) {
+    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, ncpu)
 }
 
-C_lascoplanar <- function(las, k, th1, th2, filter) {
-    .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter)
+C_lascoplanar <- function(las, k, th1, th2, filter, ncpu) {
+    .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter, ncpu)
 }
 
-C_lassmooth <- function(las, size, method = 1L, shape = 1L, sigma = 1) {
-    .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma)
+C_lassmooth <- function(las, size, method, shape, sigma, ncpu) {
+    .Call(`_lidR_C_lassmooth`, las, size, method, shape, sigma, ncpu)
 }
 
 C_li2012 <- function(las, dt1, dt2, Zu, R, th_tree, radius) {
     .Call(`_lidR_C_li2012`, las, dt1, dt2, Zu, R, th_tree, radius)
 }
 
-C_lmf <- function(data, ws, min_height, circular) {
-    .Call(`_lidR_C_lmf`, data, ws, min_height, circular)
+C_lmf <- function(data, ws, min_height, circular, ncpu) {
+    .Call(`_lidR_C_lmf`, data, ws, min_height, circular, ncpu)
 }
 
 C_MorphologicalOpening <- function(X, Y, Z, resolution) {
@@ -65,8 +65,8 @@ C_points_in_polygon <- function(vertx, verty, pointx, pointy) {
     .Call(`_lidR_C_points_in_polygon`, vertx, verty, pointx, pointy)
 }
 
-C_points_in_polygon_wkt <- function(x, y, wkt) {
-    .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt)
+C_points_in_polygon_wkt <- function(x, y, wkt, ncpu) {
+    .Call(`_lidR_C_points_in_polygon_wkt`, x, y, wkt, ncpu)
 }
 
 C_circle_lookup <- function(X, Y, x, y, r) {
@@ -85,11 +85,15 @@ C_tinfo <- function(M, X) {
     .Call(`_lidR_C_tinfo`, M, X)
 }
 
-C_tsearch <- function(x, y, elem, xi, yi) {
-    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi)
+C_tsearch <- function(x, y, elem, xi, yi, ncpu) {
+    .Call(`_lidR_C_tsearch`, x, y, elem, xi, yi, ncpu)
 }
 
-C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat) {
-    .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat)
+C_Wing2015 <- function(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, ncpu) {
+    .Call(`_lidR_C_Wing2015`, las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, ncpu)
+}
+
+R_omp_get_max_threads <- function() {
+    .Call(`_lidR_R_omp_get_max_threads`)
 }
 

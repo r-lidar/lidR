@@ -30,13 +30,14 @@
 #include <RcppArmadillo.h>
 #include "Progress.h"
 #include "QuadTree.h"
+#include "myomp.h"
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter)
+LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter, int ncpu)
 {
   DataFrame data = as<Rcpp::DataFrame>(las.slot("data"));
 
@@ -47,11 +48,6 @@ LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector
   unsigned int n = X.length();
 
   LogicalVector output(n);
-
-  arma::mat A(k,3);
-  arma::mat coeff;
-  arma::mat score;
-  arma::vec latent;
 
   Progress pb(n, "Eigenvalues computation: ");
 
@@ -64,10 +60,16 @@ LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector
 
   QuadTree qtree(las, f);
 
+  #pragma omp parallel for num_threads(ncpu)
   for (unsigned int i = 0 ; i < n ; i++)
   {
     pb.check_abort();
     pb.increment();
+
+    arma::mat A(k,3);
+    arma::mat coeff;
+    arma::mat score;
+    arma::vec latent;
 
     if (use_filter && !f[i]) continue;
 
@@ -85,10 +87,13 @@ LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector
 
     arma::princomp(coeff, score, latent, A);
 
-    if (!colinear_mode && latent[1] > th1*latent[2] && th2*latent[1] > latent[0])
-      output[i] = true;
-    else if (colinear_mode && th1*latent[2] < latent[0] && th1*latent[1] < latent[0])
-      output[i] = true;
+    #pragma omp critical
+    {
+      if (!colinear_mode && latent[1] > th1*latent[2] && th2*latent[1] > latent[0])
+        output[i] = true;
+      else if (colinear_mode && th1*latent[2] < latent[0] && th1*latent[1] < latent[0])
+        output[i] = true;
+    }
   }
 
   return(output);

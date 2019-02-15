@@ -23,8 +23,11 @@ Ask for help on <https://gis.stackexchange.com/>. Report bugs on <https://github
     lidR.buildVRT = TRUE
   )
 
+  max <- R_omp_get_max_threads()
+  if (max > 0) LIDRTHREADS$n <- max
+
   toset <- !(names(op.lidR) %in% names(op))
-  if(any(toset)) options(op.lidR[toset])
+  if (any(toset)) options(op.lidR[toset])
 
   invisible()
 }
