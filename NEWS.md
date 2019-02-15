@@ -1,3 +1,7 @@
+## lidR v2.0.2
+
+- Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*` function return always a `RasterLayer` instead of a `RasterStack` if there is a single layer. VRT were returned as `RasterStack` no matter the nuber of layers.
+
 ## lidR v2.0.1 (Release date: 2010-02-02)
 
 - Change: the function `catalog` has been slightly modified in prevision of the release of the package `rlas 1.3.0` to preserve future compatibility. This is invisible for the users.
