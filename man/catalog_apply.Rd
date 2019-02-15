@@ -164,7 +164,6 @@ plot(project)
 # 3. Set some catalog options.
 # For this dummy example, the chunk size is 80 m and the buffer is 10 m using a single core.
 opt_chunk_buffer(project) <- 10
-opt_cores(project)        <- 1L
 opt_chunk_size(project)   <- 80            # small because this is a dummy example.
 opt_select(project)       <- "xyz"         # read only the coordinates.
 opt_filter(project)       <- "-keep_first" # read only first returns.
@@ -199,7 +198,6 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 project <- catalog(LASfile)
 
 opt_chunk_buffer(project) <- 1
-opt_cores(project)        <- 1L
 opt_chunk_size(project)   <- 120     # small because this is a dummy example.
 opt_select(project)       <- "xyz"   # read only the coordinates.
 
