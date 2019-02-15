@@ -189,8 +189,7 @@ coordinates = function(las)
   DT <- las@data
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
-  Z  <- DT[["Z"]]
-  DF <- data.frame(X,Y,Z)
+  DF <- data.frame(X,Y)
   data.table::setDT(DF)
   return(DF)
 }

@@ -191,6 +191,7 @@ lascheck.LAS = function(las)
 
     if (s > 0)
     {
+      Classification <- NULL
       gnd = data[Classification == 2L]
 
       s1 = duplicated(gnd, by = c("X", "Y", "Z"))

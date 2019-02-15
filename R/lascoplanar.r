@@ -3,12 +3,12 @@
 #' An approximate coplanarity and colinearity tests. Coplanarity test is based on Limberger & Oliveira
 #' (2015). For each point it looks for the k-nearest neighbors. It computes the eigenvalues of the
 #' covariance matrix. The points that meet the following criteria are labeled as approximately coplanar:\cr
-#' \deqn{a_2 > (th_1*a_1) && (th_2*a_2) > a_3}
+#' \deqn{a_2 > (th_1*a_1) and (th_2*a_2) > a_3}
 #' \eqn{a_1, a_2, a_3} being the eigenvalues of the neighborhood (defined by k-nearest neighbors) in
 #' ascending order.\cr\cr
 #' Colinearity test performs the same computation but change the critera to label point as approximatly
 #' colinear:
-#' \deqn{th_1*a_2 < a_3 && (th_1*a_1) < a_3}
+#' \deqn{th_1*a_2 < a_3 and (th_1*a_1) < a_3}
 #'
 #' @return A LAS object with a new column names \code{Coplanar} or \code{Colinear} that indicates
 #' those points that are part of a neighborhood that is approximately coplanar/colinear (TRUE) or not

@@ -6,8 +6,8 @@ catalog_fakerun = function(ctg, sleep = 0.05)
   fake = function(x)
   {
     Sys.sleep(sleep)
-    if (runif(1) < 0.05) warning("Fake warning", call. = FALSE)
-    if (runif(1) < 0.01) stop("Fake error", call. = FALSE)
+    if (stats::runif(1) < 0.05) warning("Fake warning", call. = FALSE)
+    if (stats::runif(1) < 0.01) stop("Fake error", call. = FALSE)
     return(0)
   }
 
