@@ -101,7 +101,7 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   error = error[error > 0.01]
 
   expect_lt(length(error), raster::ncell(cdtm1)*0.002)
-  expect_equal(mean(error), 0.048, tolerance = 0.001)
+  expect_equal(mean(error), 0.048, tolerance = 0.0055)
 
   z = raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
