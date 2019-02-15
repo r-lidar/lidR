@@ -182,7 +182,7 @@ output <- lasnormalize(ctg, tin())
 Instead, one can use the processing option `opt_output_files`. Processing options drive how the big files are split in small chunks and how the outputs are either returned into R or written on disk into files.
 
 ```r
-opt_output_file(ctg) <- "folder/where/to/store/outputs/{ORIGINALFILENAME}_normalized"
+opt_output_files(ctg) <- "folder/where/to/store/outputs/{ORIGINALFILENAME}_normalized"
 output <- lasnormalize(ctg, tin())
 ```
 
