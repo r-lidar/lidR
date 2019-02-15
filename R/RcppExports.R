@@ -77,8 +77,8 @@ C_knn3d_lookup <- function(X, Y, Z, x, y, z, k) {
     .Call(`_lidR_C_knn3d_lookup`, X, Y, Z, x, y, z, k)
 }
 
-C_count_in_disc <- function(X, Y, x, y, radius) {
-    .Call(`_lidR_C_count_in_disc`, X, Y, x, y, radius)
+C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {
+    .Call(`_lidR_C_count_in_disc`, X, Y, x, y, radius, ncpu)
 }
 
 C_tinfo <- function(M, X) {

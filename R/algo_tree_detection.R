@@ -315,7 +315,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
       Aha   <- 10000/A
       x     <- ttop5@coords[,1]
       y     <- ttop5@coords[,2]
-      ntop5 <- C_count_in_disc(x, y, las@data$X, las@data$Y, sqrt(A/pi))
+      ntop5 <- C_count_in_disc(x, y, las@data$X, las@data$Y, sqrt(A/pi), getThread())
       ntop5 <- ntop5*Aha
     }
 
@@ -323,7 +323,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
     # of the numbers of trees in the local neighboorhood.
 
     ws <- lmfauto_ws(las@data$Z, ntop5)
-    lm <- C_lmf(las@data, ws, hmin, TRUE)
+    lm <- C_lmf(las@data, ws, hmin, TRUE, getThread())
     lm <- las@data[lm, .(X,Y,Z)]
     lm[, treeID := 1:.N]
 
