@@ -106,7 +106,12 @@ build_vrt = function(output, vrt)
   file   <- paste0("/", vrt, ".vrt")
   vrt    <- paste0(folder, file)
   gdalUtils::gdalbuildvrt(output, vrt)
-  return(raster::stack(vrt))
+  output <- raster::stack(vrt)
+
+  if (dim(output)[3] == 1)
+    return(output[[1]])
+  else
+    return(output)
 }
 
 
