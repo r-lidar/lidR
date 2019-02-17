@@ -27,8 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ===============================================================================
 */
 
-#include <Rcpp.h>
-#include "QuadTree.h"
+#include <RcppArmadillo.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -76,5 +75,15 @@ NumericVector roundc(NumericVector x, int digit = 0)
   }
 
   return y;
+}
+
+// [[Rcpp::export]]
+SEXP fast_eigen_values(arma::mat A)
+{
+  arma::mat coeff;
+  arma::mat score;
+  arma::vec latent;
+  arma::princomp(coeff, score, latent, A);
+  return(Rcpp::wrap(latent));
 }
 

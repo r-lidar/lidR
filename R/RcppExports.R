@@ -21,6 +21,10 @@ roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
 }
 
+fast_eigen_values <- function(A) {
+    .Call(`_lidR_fast_eigen_values`, A)
+}
+
 C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }

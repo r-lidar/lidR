@@ -66,6 +66,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_eigen_values
+SEXP fast_eigen_values(arma::mat A);
+RcppExport SEXP _lidR_fast_eigen_values(SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_eigen_values(A));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_dalponte2016
 IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
 RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
@@ -344,6 +355,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
+    {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
