@@ -93,7 +93,7 @@ Collate:
     'io_writeLAS.r'
     'lascheck.r'
     'lasclip.r'
-    'lascoplanar.r'
+    'lasdetectshape.r'
     'lasfilter.r'
     'lasfilterdecimate.r'
     'lasfilterduplicates.r'
