@@ -305,12 +305,10 @@ stdmetrics_ctrl = function(x, y, z)
 #' @export
 stdtreemetrics = function(x, y, z)
 {
-  npoints = length(x)
-  convhull.area = round(area_convex_hull(x,y),3)
-
   metrics = list(
-    npoints = npoints,
-    convhull_area = convhull.area
+    Z = max(z),
+    npoints = length(x),
+    convhull_area = round(area_convex_hull(x,y),3)
   )
 
   return(metrics)
@@ -337,6 +335,13 @@ stdshapemetrics = function(x,y,z)
   )
   return(shapemetrics)
 }
+
+stdtreeapex <- function(x,y,z)
+{
+  j <- which.max(z)
+  return(list(x.pos.t = x[j], y.pos.t = y[j]))
+}
+
 
 stdtreehullconvex = function(x,y, grp, ...)
 {

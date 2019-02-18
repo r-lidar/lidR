@@ -4,14 +4,16 @@
 \alias{tree_metrics}
 \title{Compute metrics for each tree}
 \usage{
-tree_metrics(las, func, field = "treeID")
+tree_metrics(las, func = ~max(Z), attribute = "treeID")
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{The function to be applied to each tree.}
+\item{func}{expression. A expression to be applied to each tree. It works like in \link{grid_metrics}
+\link{grid_metrics3d} or \link{tree_hull} and compute, in addition to tree locations a set of metrics
+for each tree.}
 
-\item{field}{character. The column name of the field containing tree IDs. Default is \code{"treeID"}}
+\item{attribute}{character. The column name of the attribute containing tree IDs. Default is \code{"treeID"}}
 }
 \value{
 A \code{SpatialPoinsDataFrame} that references the xy-position with a table of attributes that
@@ -74,7 +76,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
 # Mean height and mean intensity for each tree
-metrics = tree_metrics(las, list(`Mean Z` = mean(Z), `Mean I` = mean(Intensity)))
+metrics = tree_metrics(las, ~list(Zmean = mean(Z), Imean = mean(Intensity)))
 
 # Define your own new metrics function
 myMetrics = function(z, i)
@@ -88,7 +90,7 @@ myMetrics = function(z, i)
    return(metrics)
 }
 
-metrics = tree_metrics(las, myMetrics(Z, Intensity))
+metrics = tree_metrics(las, ~myMetrics(Z, Intensity))
 
 # predefined metrics (see ?stdmetrics)
 metrics = tree_metrics(las, .stdtreemetrics)
