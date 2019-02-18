@@ -16,6 +16,8 @@
 
 7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
 
+8. `plot` for LAS object gained an options `axis = TRUE`
+
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.

@@ -284,12 +284,12 @@ setMethod("wkt<-", "LAS", function(object, value)
 })
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, ...)
 })
 
-plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
 {
   if (is.empty(x)) stop("Cannot display an empty point cloud")
 
@@ -337,7 +337,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
     args$col[is.na(args$col)] <- "lightgray"
 
-    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, args))
+    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, axis, args))
   }
   else
   {
@@ -346,7 +346,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   }
 }
 
-.plot_with_rgl = function(x, bg, coldata, clear_artifacts, args)
+.plot_with_rgl = function(x, bg, coldata, clear_artifacts, axis, args)
 {
   if (clear_artifacts)
   {
@@ -362,6 +362,15 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   rgl::open3d()
   rgl::rgl.bg(color = bg)
   do.call(rgl::points3d, with)
+
+  if (axis)
+  {
+    col <- grDevices::col2rgb(bg)
+    col <- grDevices::rgb(t(255 - col)/255)
+    rgl::axis3d("x", col = col)
+    rgl::axis3d("y", col = col)
+    rgl::axis3d("z", col = col)
+  }
 
   if (clear_artifacts)
     return(invisible(c(minx, miny)))
