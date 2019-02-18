@@ -12,11 +12,13 @@
 
 5. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
 
-6. New functions `lascoplanar` and `lascolinear` for water and human made structure detection.
+6. New functions `lasdetectshape()` for water and human made structure detection.
 
 7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
 
-8. `plot` for LAS object gained an options `axis = TRUE`
+8. `plot` for LAS object gained an options `axis = TRUE` to display axis.
+
+9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
 
 #### NOTE
 
