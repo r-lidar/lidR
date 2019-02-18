@@ -20,6 +20,8 @@
 
 9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
 
+10. `tree_hull()` can compute metric for each tree like `tree_metrics`
+
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.

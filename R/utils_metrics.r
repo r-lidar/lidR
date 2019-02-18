@@ -306,7 +306,7 @@ stdmetrics_ctrl = function(x, y, z)
 stdtreemetrics = function(x, y, z)
 {
   npoints = length(x)
-  convhull.area = area_convex_hull(x,y)
+  convhull.area = round(area_convex_hull(x,y),3)
 
   metrics = list(
     npoints = npoints,
@@ -336,6 +336,51 @@ stdshapemetrics = function(x,y,z)
     anisotrophy    = (eigen_m[1] - eigen_m[3])/eigen_m[1]
   )
   return(shapemetrics)
+}
+
+stdtreehullconvex = function(x,y, grp, ...)
+{
+  if (length(x) < 4)
+    return(NULL)
+
+  i = grDevices::chull(x,y)
+  i = c(i, i[1])
+  P = cbind(x[i], y[i])
+  poly = sp::Polygon(P)
+  poly = sp::Polygons(list(poly), ID = grp)
+
+  list(poly = list(poly))
+}
+
+stdtreehullconcave = function(x,y, grp, concavity, length_threshold)
+{
+  if (length(x) < 4)
+    return(NULL)
+
+  P = concaveman::concaveman(cbind(x,y), concavity, length_threshold)
+  poly = sp::Polygon(P)
+  poly = sp::Polygons(list(poly), ID = grp)
+
+  list(poly = list(poly))
+}
+
+stdtreehullbbox = function(x,y, grp, ...)
+{
+  if (length(x) < 4)
+    return(NULL)
+
+  xmin = min(x)
+  ymin = min(y)
+  xmax = max(x)
+  ymax = max(y)
+
+  x = c(xmin, xmax, xmax, xmin, xmin)
+  y = c(ymin, ymin, ymax, ymax, ymin)
+  P = cbind(x, y)
+  poly = sp::Polygon(P)
+  poly = sp::Polygons(list(poly), ID = grp)
+
+  list(poly = list(poly))
 }
 
 #' @rdname stdmetrics

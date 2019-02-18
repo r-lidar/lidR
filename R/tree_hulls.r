@@ -43,6 +43,9 @@
 #' threshold, no further detail is added. Higher values result in simpler shapes.
 #' @param attribute character. The attribute where the ID of each tree is stored. In lidR, the default is
 #' "treeID".
+#' @param func expression. A expression to be applied to each tree. It works like in \link{grid_metrics}
+#' \link{grid_metrics3d} or \link{tree_metrics} and compute, in addition to the hulls a set of metrics
+#' for each tree.
 #'
 #' @return A \code{SpatialPolygonsDataFrame}. If a tree has less than 4 points it is not considered.
 #'
@@ -58,25 +61,33 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 #'
-#' convex_hulls = tree_hulls(las)
-#' sp::plot(convex_hulls)
+#' # NOTE: This dataset is already segmented
+#' # plot(las, color = "treeID", colorPalette = pastel.colors(200))
 #'
+#' # Only the hulls
+#' convex_hulls = tree_hulls(las)
+#' plot(convex_hulls)
+#'
+#' # The hulls + some user-defined metrics
+#' convex_hulls = tree_hulls(las, func = ~list(Zmax = max(Z)))
+#' spplot(convex_hulls, "Zmax")
+#'
+#' # The bounding box
 #' bbox_hulls = tree_hulls(las, "bbox")
-#' sp::plot(bbox_hulls)
+#' plot(bbox_hulls)
 #'
 #' \dontrun{
 #' concave_hulls = tree_hulls(las, "concave")
 #' sp::plot(concave_hulls)
 #' }
-tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, attribute = "treeID")
+tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   UseMethod("tree_hulls", las)
 }
 
 #' @export
-tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, attribute = "treeID")
+tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
-  stopifnotlas(las)
   type <- match.arg(type)
   assert_is_a_number(concavity)
   assert_all_are_non_negative(concavity)
@@ -84,32 +95,41 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   assert_all_are_non_negative(length_threshold)
   assert_is_a_string(attribute)
 
-  X <- Y <- tree <- NULL
-
-  if (type == "convex")
-    dt <- las@data[, stdtreehullconvex(X,Y, .GRP), by = attribute]
-  else if (type == "concave")
+  # concaveman is only a 'suggested' dependency
+  if (type == "concave")
   {
     if (!requireNamespace("concaveman", quietly = TRUE))
-      stop("'concaveman' package is needed for this function to work.")
-
-    dt <- las@data[, stdtreehullconcave(X,Y, .GRP, concavity, length_threshold), by = attribute]
+      stop("'concaveman' packagthe hullse is needed to compute concave hull.", call. = FALSE)
   }
-  else
-    dt <- las@data[, stdtreehullbbox(X,Y, .GRP), by = attribute]
 
-  data.table::setnames(dt, names(dt), c("tree", "poly"))
-  dt <- dt[!is.na(tree)]
+  # Pointeur on function C style coding
+  if      (type == "convex")  fhull <- stdtreehullconvex
+  else if (type == "concave") fhull <- stdtreehullconcave
+  else if (type == "bbox")    fhull <- stdtreehullbbox
 
-  spoly <- sp::SpatialPolygons(dt$poly)
+  # Hulls computation -- aggregation by tree
+  X <- Y <- NULL
+  hulls <- las@data[, if (!anyNA(.BY)) fhull(X,Y, .GRP, concavity, length_threshold), by = attribute]
 
+  # Convert to SpatialPolygons
+  spoly <- sp::SpatialPolygons(hulls[["poly"]])
   for (i in 1:length(spoly)) spoly@polygons[[i]]@ID <- as.character(i)
 
-  data <- data.frame(dt[, 1])
-  names(data) <- attribute
+  # Compute metrics
+  data = hulls[,1]
+  if (!is.null(func))
+  {
+    func    <- lazyeval::f_interp(func)
+    call    <- lazyeval::as_call(func)
+    metrics <- las@data[, if (!anyNA(.BY)) eval(call), by = attribute]
+    remove  <- metrics[[attribute]] %in% hulls[[attribute]]
+    metrics <- metrics[remove]
+    data    <- cbind(data, metrics[,-1])
+  }
+
+  data.table::setDF(data)
   spdf <- sp::SpatialPolygonsDataFrame(spoly, data)
   sp::proj4string(spdf) <- las@proj4string
-
   return(spdf)
 }
 
@@ -141,50 +161,5 @@ tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), con
   }
 
   return(output)
-}
-
-stdtreehullconvex = function(x,y, grp)
-{
-  if (length(x) < 4)
-    return(NULL)
-
-  i = grDevices::chull(x,y)
-  i = c(i, i[1])
-  P = cbind(x[i], y[i])
-  poly = sp::Polygon(P)
-  poly = sp::Polygons(list(poly), ID = grp)
-
-  list(poly = list(poly))
-}
-
-stdtreehullconcave = function(x,y, grp, concavity, length_threshold)
-{
-  if (length(x) < 4)
-    return(NULL)
-
-  P = concaveman::concaveman(cbind(x,y), concavity, length_threshold)
-  poly = sp::Polygon(P)
-  poly = sp::Polygons(list(poly), ID = grp)
-
-  list(poly = list(poly))
-}
-
-stdtreehullbbox = function(x,y, grp)
-{
-  if (length(x) < 4)
-    return(NULL)
-
-  xmin = min(x)
-  ymin = min(y)
-  xmax = max(x)
-  ymax = max(y)
-
-  x = c(xmin, xmax, xmax, xmin, xmin)
-  y = c(ymin, ymin, ymax, ymax, ymin)
-  P = cbind(x, y)
-  poly = sp::Polygon(P)
-  poly = sp::Polygons(list(poly), ID = grp)
-
-  list(poly = list(poly))
 }
 
