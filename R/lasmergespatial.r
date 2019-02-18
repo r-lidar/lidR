@@ -153,7 +153,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
     data   <- shapefile@data[[attribute]]
 
     if (class(data) == "factor")
-      values = factor(rep(NA_integer_, npoints), levels = levels(shapefile@data[,attribute]))
+      values = factor(rep(NA_integer_, npoints), levels = levels(data))
     else if (class(data) == "integer")
       values = rep(NA_integer_, npoints)
     else if (class(data) == "logical")
@@ -205,7 +205,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 
   if (method == 1)
   {
-    values[ids] <- polys@data[, attribute][ids]
+    values[ids > 0L] <- polys@data[[attribute]][ids[ids > 0]]
     verbose(glue::glue("Assigned the value of attribute {attribute} from the table of attibutes to the points"))
   }
   else if (method == 2)
