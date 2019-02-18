@@ -316,6 +316,7 @@ stdtreemetrics = function(x, y, z)
   return(metrics)
 }
 #' @rdname stdmetrics
+#' @export
 #' @references
 #' Lucas, C., Bouten, W., Koma, Z., Kissling, W. D., & Seijmonsbergen, A. C. (2019). Identification
 #' of Linear Vegetation Elements in a Rural Landscape Using LiDAR Point Clouds. Remote Sensing, 11(3), 292.
