@@ -143,13 +143,13 @@ verbose = function(...)
     cat(..., "\n")
 }
 
-dummy_las = function(n, seeds = c)
+dummy_las = function(n, seeds = 1)
 {
-  set.seed(1)
+  set.seed(seeds)
   X = stats::runif(n, 0, 100)
-  set.seed(2)
+  set.seed(seeds + 1)
   Y = stats::runif(n, 0, 100)
-  set.seed(3)
+  set.seed(seeds + 2)
   Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n))
   Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n)))
   Intensity = sample(10:50, n, TRUE)
