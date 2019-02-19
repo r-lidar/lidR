@@ -124,6 +124,7 @@ Collate:
     'utils_match_chm_and_seeds.r'
     'utils_metrics.r'
     'utils_misc.r'
+    'utils_raster.r'
     'utils_threads.r'
     'utils_typecast.r'
     'zzz.r'
