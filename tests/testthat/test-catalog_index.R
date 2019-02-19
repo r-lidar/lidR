@@ -1,6 +1,6 @@
 context("catalog_index")
 
-data = data.table::data.table(
+data <- data.table::data.table(
   Max.X   = c(885228.88, 886993.96, 885260.93, 887025.96,
               885292.94, 887056.88, 892199.94, 893265.54, 892229.99, 893295.15,
               888759.96, 890524.95, 892259.98, 894025.98, 892289.96, 894055.93,
@@ -50,49 +50,47 @@ data = data.table::data.table(
   filename = paste0("abc", 1:62)
 )
 
+ctg             <- new("LAScatalog")
+ctg@data        <- data
+ctg@proj4string <- sp::CRS("+init=epsg:26917")
 
+test_that("catalog_index finds files and makes correct chunks", {
 
-ctg = new("LAScatalog")
-ctg@data = data
-ctg@proj4string = sp::CRS("+init=epsg:26917")
+  bboxes <- list(
+    raster::extent(890000, 890800, 630000, 630800),
+    raster::extent(890000 - 400, 890800 - 400, 630000 + 400, 630800 + 400)
+  )
 
-test_that("catalog index works", {
-
-  bboxes = list(raster::extent(890000, 890800, 630000, 630800))
-  bboxes[[2]] = raster::extent(890000-400, 890800-400, 630000+400, 630800+400)
-
-  clusters = catalog_index(ctg, bboxes)
+  clusters <- lidR:::catalog_index(ctg, bboxes)
 
   expect_is(clusters, "list")
-
-  expect_equal(length(clusters[[1]]@files), 4L)
+  expect_equal(length(clusters), 2L)
   expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))
   expect_equal(clusters[[1]]@filter, "-inside 890000 630000 890800 630800 ")
-  expect_equal(length(clusters), 2L)
-  expect_equal(length(clusters[[2]]@files), 1L)
   expect_equal(clusters[[2]]@files, c("abc18"))
   expect_equal(clusters[[2]]@filter, "-inside 889600 630400 890400 631200 ")
 
-  clusters = catalog_index(ctg, bboxes, LIDRCIRCLE)
+  clusters <- lidR:::catalog_index(ctg, bboxes, lidR:::LIDRCIRCLE)
 
   expect_is(clusters, "list")
-
-  expect_equal(length(clusters[[1]]@files), 4L)
+  expect_equal(length(clusters), 2L)
   expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))
   expect_equal(clusters[[1]]@filter, "-inside_circle 890400 630400 400 ")
-  expect_equal(length(clusters), 2L)
-  expect_equal(length(clusters[[2]]@files), 1L)
   expect_equal(clusters[[2]]@files, c("abc18"))
   expect_equal(clusters[[2]]@filter, "-inside_circle 890000 630800 400 ")
 })
 
-test_that("catalog index returns NULL if there is no match", {
+test_that("catalog_index returns NULL if there is no match", {
 
-  bboxes = list(raster::extent(890000, 890800, 630000, 630800))
-  bboxes[[2]] = raster::extent(890000-400, 890800-400, 630000-2000, 630800 -2000)
+  bboxes <- list(
+    raster::extent(890000, 890800, 630000, 630800),
+    raster::extent(890000 - 400, 890800 - 400, 630000 - 2000, 630800 - 2000)
+  )
 
-  clusters = catalog_index(ctg, bboxes)
+  clusters <- lidR:::catalog_index(ctg, bboxes)
 
+  expect_is(clusters, "list")
+  expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))
   expect_true(is.null(clusters[[2]]))
 })
 

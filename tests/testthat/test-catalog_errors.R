@@ -1,10 +1,10 @@
 context("catalog_errors")
 
 file <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg = catalog(file)
+ctg  <- catalog(file)
 
 opt_chunk_size(ctg) <- 160
-ctg@chunk_options$alignment = c(684750, 5017760)
+ctg@chunk_options$alignment <- c(684750, 5017760)
 opt_chunk_buffer(ctg) <- 0
 
 test_that("functions throw error were needed", {
