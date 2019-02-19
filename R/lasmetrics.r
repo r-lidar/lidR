@@ -40,7 +40,7 @@
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
 #' @param obj An object of class \code{LAS}
-#' @param func The function to be applied to a cloud of points. Function must return a \code{list} (see example)
+#' @param func formula. An expression to be applied to the point cloud (see example)
 #' @return It returns a \code{list} containing the metrics
 #' @export
 #' @seealso
@@ -53,8 +53,8 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' lasmetrics(lidar, max(Z))
-#' lasmetrics(lidar, mean(Intensity))
+#' lasmetrics(lidar, ~max(Z))
+#' lasmetrics(lidar, ~mean(Intensity))
 #'
 #' # Define your own new metrics
 #' myMetrics = function(z, i)
@@ -68,7 +68,7 @@
 #'    return(metrics)
 #' }
 #'
-#' metrics = lasmetrics(lidar, myMetrics(Z, Intensity))
+#' metrics = lasmetrics(lidar, ~myMetrics(Z, Intensity))
 #'
 #' # Predefined metrics
 #' lasmetrics(lidar, .stdmetrics)

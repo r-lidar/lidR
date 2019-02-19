@@ -18,8 +18,8 @@ in a relatively detailed shape, Infinity results in a convex hull.}
 \item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is below this
 threshold, no further detail is added. Higher values result in simpler shapes.}
 
-\item{func}{expression. A expression to be applied to each tree. It works like in \link{grid_metrics}
-\link{grid_metrics3d} or \link{tree_metrics} and compute, in addition to the hulls a set of metrics
+\item{func}{formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
+\link{grid_metrics3d} or \link{tree_metrics} and computes, in addition to the hulls a set of metrics
 for each tree.}
 
 \item{attribute}{character. The attribute where the ID of each tree is stored. In lidR, the default is

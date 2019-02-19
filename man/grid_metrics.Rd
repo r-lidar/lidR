@@ -9,7 +9,7 @@ grid_metrics(las, func, res = 20, start = c(0, 0), filter = NULL)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{expression. The function to be applied to each cell (see section "Parameter func").}
+\item{func}{formula. An expression to be applied to each cell (see section "Parameter func").}
 
 \item{res}{numeric. The resolution of the output \code{Raster}. Can optionally be a \code{RasterLayer}.
 In that case the \code{RasterLayer} is used as the layout.}
@@ -44,8 +44,8 @@ f = function(x) {list(mean = mean(x), max = max(x))}
 And could be applied either on the \code{Z} coordinates or the intensities. These two
 statements are valid:
 \preformatted{
-grid_metrics(las, f(Z), res = 20)
-grid_metrics(las, f(Intensity), res = 20)
+grid_metrics(las, ~f(Z), res = 20)
+grid_metrics(las, ~f(Intensity), res = 20)
 }
 The following existing functions allow the user to
 compute some predefined metrics:
@@ -111,11 +111,11 @@ col = height.colors(50)
 # === Using all points ===
 
 # Canopy surface model with 4 m^2 cells
-metrics = grid_metrics(las, max(Z), 2)
+metrics = grid_metrics(las, ~max(Z), 2)
 plot(metrics, col = col)
 
 # Mean height with 400 m^2 cells
-metrics = grid_metrics(las, mean(Z), 20)
+metrics = grid_metrics(las, ~mean(Z), 20)
 plot(metrics, col = col)
 
 # Define your own new metrics
@@ -128,7 +128,7 @@ myMetrics = function(z, i) {
    return(metrics)
 }
 
-metrics = grid_metrics(las, myMetrics(Z, Intensity))
+metrics = grid_metrics(las, ~myMetrics(Z, Intensity))
 
 plot(metrics, col = col)
 plot(metrics, "zwimean", col = col)
@@ -138,14 +138,14 @@ plot(metrics, "zimean", col = col)
 
 # Compute using only some points: basic
 first = lasfilter(las, ReturnNumber == 1)
-metrics = grid_metrics(first, mean(Z), 20)
+metrics = grid_metrics(first, ~mean(Z), 20)
 
 # Compute using only some points: optimized
 # faster and uses less memory. No intermediate object
-metrics = grid_metrics(las, mean(Z), 20, filter = ~ReturnNumber == 1)
+metrics = grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
 
 # Compute using only some points: best
 # ~50\% faster and uses ~10x less memory
 las = readLAS(LASfile, filter = "-keep_first")
-metrics = grid_metrics(las, mean(Z), 20)
+metrics = grid_metrics(las, ~mean(Z), 20)
 }

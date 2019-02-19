@@ -9,7 +9,7 @@ grid_hexametrics(las, func, res = 20)
 \arguments{
 \item{las}{An object of class \code{LAS}.}
 
-\item{func}{the function to be applied to each hexagonal cell.}
+\item{func}{formula. An expression to be applied to each hexagonal cell.}
 
 \item{res}{numeric. To be consistent with \link{grid_metrics}, the square of \code{res} give the area
 of the hexagonal cells, like in \code{grid_metrics}. The difference being the fact that for square pixels this
@@ -33,11 +33,11 @@ lidar = readLAS(LASfile)
 col = grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
 
 # Maximum elevation with a resolution of 8 m
-hm = grid_hexametrics(lidar, max(Z), 8)
+hm = grid_hexametrics(lidar, ~max(Z), 8)
 hexbin::plot(hm, colramp = col, main = "Max Z")
 
 # Mean height with a resolution of 20 m
-hm = grid_hexametrics(lidar, mean(Z), 20)
+hm = grid_hexametrics(lidar, ~mean(Z), 20)
 hexbin::plot(hm, colramp = col, main = "Mean Z")
 
 # Define your own new metrics
@@ -52,7 +52,7 @@ myMetrics = function(z, i)
   return(metrics)
 }
 
-metrics = grid_hexametrics(lidar, myMetrics(Z, Intensity), 10)
+metrics = grid_hexametrics(lidar, ~myMetrics(Z, Intensity), 10)
 
 hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
 hexbin::plot(metrics$zimean, colramp = col, main = "zimean")

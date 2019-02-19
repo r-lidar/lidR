@@ -35,9 +35,7 @@
 #' functions. The function will dispatch the LiDAR data for each voxel in the user's function (see \link{grid_metrics}).
 #'
 #' @param las An object of class \code{LAS}.
-#'
-#' @param func expression. The function to be applied to each voxel (see also \link{grid_metrics}).
-#'
+#' @param func formula. An expression to be applied to each voxel (see also \link{grid_metrics}).
 #' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
 #'
@@ -52,11 +50,11 @@
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the number of points is computed.
-#' grid_metrics3d(las, length(Z), 3)
+#' grid_metrics3d(las, ~length(Z), 3)
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the mean scan angle of points is computed.
-#' grid_metrics3d(las, mean(Intensity), 3)
+#' grid_metrics3d(las, ~mean(Intensity), 3)
 #'
 #' \dontrun{
 #' # Define your own metric function
@@ -70,7 +68,7 @@
 #'    return(ret)
 #' }
 #'
-#' voxels = grid_metrics3d(las, myMetrics(Intensity), 3)
+#' voxels = grid_metrics3d(las, ~myMetrics(Intensity), 3)
 #'
 #' plot(voxels, color = "imean")
 #' #etc.

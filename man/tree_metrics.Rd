@@ -9,8 +9,8 @@ tree_metrics(las, func = ~max(Z), attribute = "treeID")
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{expression. A expression to be applied to each tree. It works like in \link{grid_metrics}
-\link{grid_metrics3d} or \link{tree_hull} and compute, in addition to tree locations a set of metrics
+\item{func}{formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
+\link{grid_metrics3d} or \link{tree_hull} and computes, in addition to tree locations a set of metrics
 for each tree.}
 
 \item{attribute}{character. The column name of the attribute containing tree IDs. Default is \code{"treeID"}}
@@ -75,7 +75,13 @@ and cannot be changed.
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 0")
 
-# Mean height and mean intensity for each tree
+# NOTE: This dataset is already segmented
+# plot(las, color = "treeID", colorPalette = pastel.colors(200))
+
+# Default computes only Z max
+metrics = tree_metrics(las)
+
+# User-defined metrics - mean height and mean intensity for each tree
 metrics = tree_metrics(las, ~list(Zmean = mean(Z), Imean = mean(Intensity)))
 
 # Define your own new metrics function

@@ -20,11 +20,15 @@
 
 9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
 
-10. `tree_hull()` can compute metric for each tree like `tree_metrics`
+10. `tree_hull()` can compute metrics for each tree like `tree_metrics`
 
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.
+
+2. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
+
+3. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
 
 ## lidR v2.0.2
 

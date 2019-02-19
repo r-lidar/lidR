@@ -109,16 +109,16 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "*")
 
 # All the predefined metrics
-m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
+m1 = grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
 m2 = grid_metrics(las, .stdmetrics)
 
 # Basic metrics from intensities
-m3 = grid_metrics(las, stdmetrics_i(Intensity))
+m3 = grid_metrics(las, ~stdmetrics_i(Intensity))
 
 # All the metrics from intensities
-m4 = grid_metrics(las, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+m4 = grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 
 # Convenient shortcut for the previous example
 m5 = grid_metrics(las, .stdmetrics_i)
@@ -157,7 +157,7 @@ myMetrics = function(z, i, rn)
   return( c(metrics, stdmetrics_z(z)) )
 }
 
-m10 = grid_metrics(las, myMetrics(Z, Intensity, ReturnNumber))
+m10 = grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber))
 
 # Users can write their own convenient shorcuts like this:
 .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
