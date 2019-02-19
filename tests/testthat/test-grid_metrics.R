@@ -39,7 +39,7 @@ test_that("grid_metrics returns a named multilayers RasterBrick", {
   expect_equal(names(x), c("meanZ", "maxZ"))
 })
 
-test_that("grid_metrics returns a a named multilayers RasterBrick aligned with the start option", {
+test_that("grid_metrics returns a named multilayers RasterBrick aligned with the start option", {
 
   x <- grid_metrics(las, list(meanZ = mean(Z), maxZ = max(Z)), start = c(10,10))
 
@@ -76,7 +76,7 @@ test_that("grid_metrics return a RasterBrick -- tricky case", {
   expect_equal(raster::res(out), c(10, 10))
 })
 
-test_that("grid_metrics accepts both and expression or a formula", {
+test_that("grid_metrics accepts both an expression or a formula", {
 
   x <- grid_metrics(las,  list(mean(Z), max(Z)), 20)
   y <- grid_metrics(las, ~list(mean(Z), max(Z)), 20)

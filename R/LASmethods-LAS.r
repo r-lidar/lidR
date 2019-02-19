@@ -67,10 +67,10 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     proj4string <- projection(header, asText = FALSE)
 
   las             <- new("LAS")
-  las@proj4string <- proj4string
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
   las@data        <- data
+  projection(las) <- proj4string
 
   return(las)
 }
@@ -230,6 +230,9 @@ setMethod("projection<-", "LAS", function(x, value)
 
   if (x@header@PHB[["Global Encoding"]][["WKT"]] == TRUE)
   {
+    if (is.na(proj4))
+      return(x)
+
     wkt <- rgdal::showWKT(proj4)
     wkt(x@header) <- wkt
     raster::projection(x) <- proj4
@@ -237,6 +240,9 @@ setMethod("projection<-", "LAS", function(x, value)
   }
   else
   {
+    if (is.na(proj4))
+      return(x)
+
     epsg <- rgdal::showEPSG(proj4)
 
     if (epsg == "OGRERR_UNSUPPORTED_SRS")

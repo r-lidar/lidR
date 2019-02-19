@@ -1,4 +1,4 @@
-context("test-projection")
+context("projection")
 
 las = lidR:::dummy_las(10)
 

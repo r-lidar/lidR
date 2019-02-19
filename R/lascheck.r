@@ -280,7 +280,7 @@ lascheck.LAS = function(las)
     if (!failure)
       ok()
   }
-  else if (wkt != "")
+  else if (swkt != "")
   {
     codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
 
