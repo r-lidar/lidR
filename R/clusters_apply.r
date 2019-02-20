@@ -78,16 +78,22 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       0
     })
 
-    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
-      stop(cluster_msg)
-
-    if (is.null(y))
+    if (is.null(y) & cluster_state != CHUNK_ERROR)
       cluster_state <- CHUNK_NULL
 
     if (prgrss)
     {
       update_graphic(cluster, cluster_state)
       update_pb(pb, i/nclust)
+    }
+
+    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
+    {
+      log <- paste0(tempdir(), "/catalog_apply_chunk_", i, ".rds")
+      saveRDS(cluster, log)
+      cat("\n")
+      message(glue::glue("An error occurred when processing the chunk {i}. Try to load this chunk only with:\n chunk <- readRDS({log})\n las <- readLAS(chunk)"))
+      stop(cluster_msg)
     }
 
     if (cluster_state == CHUNK_WARNING)
