@@ -338,7 +338,7 @@ lasclipSimpleFeature = function(las, sf)
 
 lasclipSimpleFeature.LAS = function(las, sf)
 {
-  wkt <- sf::st_as_text(sf$geometry)
+  wkt <- sf::st_as_text(sf$geometry, digits = 10)
 
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
@@ -358,7 +358,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
 
 lasclipSimpleFeature.LAScatalog = function(las, sf)
 {
-  wkt  <- sf::st_as_text(sf$geometry)
+  wkt  <- sf::st_as_text(sf$geometry, digits = 10)
 
   bboxes <- lapply(wkt, function(string)
   {
@@ -414,7 +414,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 
     # If a simple feature is provided we want to extract a polygon. Insert WKT string
     if (!is.null(sf))
-      clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i])
+      clusters[[i]]@wkt = sf::st_as_text(sf$geometry[i], digits = 10)
 
     # If the user wants to write the ROIs in files. Generate a filename.
     if (opt_output_files(ctg) != "")

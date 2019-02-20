@@ -3,6 +3,7 @@
 - Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*()` function return always a `RasterLayer` instead of a `RasterStack` if there is a single layer. VRT were returned as `RasterStack` no matter the nuber of layers.
 - Fix: [#223](https://github.com/Jean-Romain/lidR/issues/223) `lasmergespatial()` wrongly copied shapefile attributes to each point when the paramter `attribute` was the name of an attribute of the shapefile.
 - Fix: [#225](https://github.com/Jean-Romain/lidR/issues/225) `laspulse()`, `lasflightline()`, `lasscanline()` were broken since v2.0.0.
+- Fix: [#228](https://github.com/Jean-Romain/lidR/issues/225) `lasmergespatial()` and `lasclip()` loose precision when extracting polygons due to missing digits in the WKT string used to build the polygons at C++ level.
 
 ## lidR v2.0.1 (Release date: 2010-02-02)
 
