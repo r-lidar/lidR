@@ -546,8 +546,10 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 #' @export gap_fraction_profile
 gap_fraction_profile = function(z, dz = 1, z0 = 2)
 {
-
   bk = seq(floor((min(z) - z0)/dz)*dz + z0, ceiling((max(z) - z0)/dz)*dz + z0, dz)
+
+  if (length(bk) <= 1)
+    return(data.frame(z = numeric(0), gf = numeric(0)))
 
   histogram = graphics::hist(z, breaks = bk, plot = F)
   h = histogram$mids
@@ -596,8 +598,11 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
   ld = gap_fraction_profile(z, dz, z0)
 
+  if (nrow(ld) <= 2)
+    return(data.frame(z = numeric(0), lad = numeric(0)))
+
   if (anyNA(ld))
-    return(NA_real_)
+    return(data.frame(z = numeric(0), lad = numeric(0)))
 
   lad = ld$gf
   lad = -log(lad)/(k*dz)
@@ -606,7 +611,7 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 
   lad = lad
 
-  return(data.frame(z = ld$z, lad))
+  return(data.frame(z = ld$z, lad = lad))
 }
 
 #' Normalized Shannon diversity index
