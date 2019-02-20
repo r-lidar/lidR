@@ -103,7 +103,7 @@ test_that("clip polygon works with WTK on a LAS and LAScatalog", {
   poly2 = lasclip(ctg, lakes)
 
   expect_is(poly1, "LAS")
-  expect_equal(nrow(poly1@data), 6898L)
+  expect_equal(nrow(poly1@data), 6800L)
   expect_equal(poly1, poly2)
 
   # Extent

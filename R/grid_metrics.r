@@ -157,6 +157,9 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
     metrics <- data[filter, if (!anyNA(.BY)) c(eval(call)), by = grp]
   }
 
+  if (any(duplicated(metrics[[1]])))
+    stop("Duplicated pixels found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
+
   if (ncol(metrics) == 2L)
   {
     suppressWarnings(layout[metrics[[1]]] <- metrics[[2]])
