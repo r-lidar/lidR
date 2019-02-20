@@ -22,6 +22,8 @@
 
 10. `tree_hull()` can compute metrics for each tree like `tree_metrics`
 
+11. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically.
+
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.
