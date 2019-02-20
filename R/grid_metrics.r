@@ -133,7 +133,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
 
   if (any(duplicated(metrics[["cells"]])))
-    stop("Duplicated pixel founds. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
+    stop("Duplicated pixels found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
 
   if (ncol(metrics) == 2L)
   {
