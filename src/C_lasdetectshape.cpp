@@ -52,6 +52,7 @@ LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, Logi
 
   Progress pb(n, "Eigenvalues computation: ");
 
+  bool abort = false;
   bool use_filter = filter.size() == n;
 
   std::vector<bool> f(n);
@@ -60,26 +61,24 @@ LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, Logi
 
   QuadTree qtree(las, f);
 
-  bool (*test)(arma::vec&, arma::mat&, NumericVector&);
+  bool (*predicate)(arma::vec&, arma::mat&, NumericVector&);
   switch(method)
   {
-    case 1: test = &coplanar; break;
-    case 2: test = &hcoplanar; break;
-    case 3: test = &colinear; break;
+    case 1: predicate = &coplanar; break;
+    case 2: predicate = &hcoplanar; break;
+    case 3: predicate = &colinear; break;
   }
 
   #pragma omp parallel for num_threads(ncpu)
   for (unsigned int i = 0 ; i < n ; i++)
   {
-    pb.check_abort();
-    pb.increment();
+    if (abort) continue;
+    if (use_filter && !f[i]) continue;
 
     arma::mat A(k,3);
     arma::mat coeff;  // Principle component matrix
     arma::mat score;
     arma::vec latent; // Eigenvalues in descending order
-
-    if (use_filter && !f[i]) continue;
 
     PointXYZ p(X[i], Y[i], Z[i]);
 
@@ -97,9 +96,13 @@ LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, Logi
 
     #pragma omp critical
     {
-      output[i] = test(latent, coeff, th);
+      pb.increment();
+      if (pb.check_interrupt()) abort = true;
+      output[i] = predicate(latent, coeff, th);
     }
   }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
 
   return(output);
 }

@@ -55,13 +55,14 @@ NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sig
 
   QuadTree tree(X,Y);
 
-  Progress p(n, "Point cloud smoothing: ");
+  Progress pb(n, "Point cloud smoothing: ");
+
+  bool abort = false;
 
   #pragma omp parallel for num_threads(ncpu)
   for (unsigned int i = 0 ; i < n ; i++)
   {
-    p.check_abort();
-    p.increment();
+    if (abort) continue;
 
     std::vector<Point*> pts;
 
@@ -99,9 +100,13 @@ NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sig
 
     #pragma omp critical
     {
+      pb.increment();
+      if (pb.check_interrupt()) abort = true;
       Z_out[i] = ztot/wtot;
     }
   }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
 
   return Z_out;
 }
