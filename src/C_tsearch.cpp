@@ -7,7 +7,7 @@
 
  COPYRIGHT:
 
- Copyright 2017 Jean-Romain Roussel
+ Copyright 2017-2019 Jean-Romain Roussel
 
  This file is part of lidR R package.
 
@@ -54,6 +54,8 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
   for (int k = 0; k < nelem; k++)
   {
     if (abort) continue;
+    if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
+    pb.increment();
 
     // Retrieve triangle A B C coordinates
     int iA = elem(k, 0) - 1;
@@ -71,9 +73,6 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
     // Return the id of the triangle
     #pragma omp critical
     {
-      pb.increment();
-      if (pb.check_interrupt()) abort = true;
-
       for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
       {
         int id = (*it)->id;

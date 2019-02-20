@@ -7,7 +7,7 @@ jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
 
 COPYRIGHT:
 
-Copyright 2016 Jean-Romain Roussel
+Copyright 2016-2019 Jean-Romain Roussel
 
 This file is part of lidR R package.
 
@@ -53,6 +53,9 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
   for (int i = 0 ; i < n ; i++)
   {
     if (abort) continue;
+    if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
+    pb.increment();
+
 
     double hws = (vws) ? ws[i]/2 : ws[0]/2;
 
@@ -87,9 +90,6 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
     // The central pixel is the highest, it is a LM
     #pragma omp critical
     {
-      if (pb.check_interrupt()) abort = true;
-      pb.increment();
-
       if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
         seeds[i] = true;
     }

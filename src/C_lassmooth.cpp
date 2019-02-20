@@ -63,6 +63,8 @@ NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sig
   for (unsigned int i = 0 ; i < n ; i++)
   {
     if (abort) continue;
+    if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
+    pb.increment();
 
     std::vector<Point*> pts;
 
@@ -100,8 +102,6 @@ NumericVector C_lassmooth(S4 las, double size, int method, int shape, double sig
 
     #pragma omp critical
     {
-      pb.increment();
-      if (pb.check_interrupt()) abort = true;
       Z_out[i] = ztot/wtot;
     }
   }
