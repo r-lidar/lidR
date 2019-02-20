@@ -203,6 +203,18 @@ test_that("catalog_makecluster makes correct clusters by file with negative buff
   expect_true(all(nfiles == 1))
 })
 
+
+test_that("catalog_makecluster makes not cluster that belong on a tile only with buffer", {
+
+  opt_chunk_size(ctg)   <- 800
+  opt_chunk_buffer(ctg) <- 150
+  opt_chunk_alignment(ctg) <- c(-100, -150)
+
+  cl <- lidR:::catalog_makecluster(ctg)
+
+  expect_equal(length(cl), 100L)
+})
+
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 project <- catalog(LASfile)
 
