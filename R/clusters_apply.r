@@ -92,7 +92,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       log <- paste0(tempdir(), "/catalog_apply_chunk_", i, ".rds")
       saveRDS(cluster, log)
       cat("\n")
-      message(glue::glue("An error occurred when processing the chunk {i}. Try to load this chunk only with:\n chunk <- readRDS({log})\n las <- readLAS(chunk)"))
+      message(glue::glue("An error occurred when processing the chunk {i}. Try to load this chunk only with:\n chunk <- readRDS(\"{log}\")\n las <- readLAS(chunk)"))
       stop(cluster_msg)
     }
 
