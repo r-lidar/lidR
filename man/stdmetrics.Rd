@@ -3,49 +3,55 @@
 \docType{data}
 \name{stdmetrics}
 \alias{stdmetrics}
-\alias{.stdmetrics}
 \alias{stdmetrics_z}
-\alias{.stdmetrics_z}
 \alias{stdmetrics_i}
-\alias{.stdmetrics_i}
 \alias{stdmetrics_rn}
-\alias{.stdmetrics_rn}
 \alias{stdmetrics_pulse}
-\alias{.stdmetrics_pulse}
 \alias{stdmetrics_ctrl}
-\alias{.stdmetrics_ctrl}
 \alias{stdtreemetrics}
+\alias{stdshapemetrics}
+\alias{.stdmetrics}
+\alias{.stdmetrics_z}
+\alias{.stdmetrics_i}
+\alias{.stdmetrics_rn}
+\alias{.stdmetrics_pulse}
+\alias{.stdmetrics_ctrl}
 \alias{.stdtreemetrics}
+\alias{.stdshapemetrics}
 \title{Predefined standard metrics functions}
 \format{An object of class \code{formula} of length 2.}
 \usage{
 stdmetrics(x, y, z, i, rn, class, dz = 1, th = 2)
 
-.stdmetrics
-
 stdmetrics_z(z, dz = 1, th = 2)
-
-.stdmetrics_z
 
 stdmetrics_i(i, z = NULL, class = NULL, rn = NULL)
 
-.stdmetrics_i
-
 stdmetrics_rn(rn, class = NULL)
-
-.stdmetrics_rn
 
 stdmetrics_pulse(pulseID, rn)
 
-.stdmetrics_pulse
-
 stdmetrics_ctrl(x, y, z)
-
-.stdmetrics_ctrl
 
 stdtreemetrics(x, y, z)
 
+stdshapemetrics(x, y, z)
+
+.stdmetrics
+
+.stdmetrics_z
+
+.stdmetrics_i
+
+.stdmetrics_rn
+
+.stdmetrics_pulse
+
+.stdmetrics_ctrl
+
 .stdtreemetrics
+
+.stdshapemetrics
 }
 \arguments{
 \item{x, y, z, i}{Coordinates of the points, Intensity}
@@ -59,10 +65,12 @@ stdtreemetrics(x, y, z)
 \item{pulseID}{The number referencing each pulse}
 }
 \description{
-Predefined functions usable in \link{grid_metrics}, \link{grid_hexametrics}, \link{lasmetrics}, \link{tree_metrics},
-and their convenient shortcuts. The philosophy of the \code{lidR} package is to provide an easy way
-to compute user-defined metrics rather than to provide them. However, for efficiency and to save time, a set of
-standard metrics has been predefined. To use these functions please read the details and examples sections.
+Predefined functions computable at pixel level (\link{grid_metrics}), hexagonal cell level
+(\link{grid_hexametrics}), point cloud level (\link{lasmetrics}), tree level (\link{tree_metrics})
+and voxel level (\link{grid_metrics3d}). Each function comes with a convenient shortcuts for lazy
+coding. The \code{lidR} package aims to provide an easy way to compute user-defined metrics rather
+than to provide them. However, for efficiency and to save time, a set of standard metrics has been
+predefined (see details.
 }
 \details{
 The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
@@ -85,26 +93,32 @@ values, but if the elevation values are also provided it can compute additional 
 intensity at a given percentile of height.\cr\cr
 Each function has a convenient associated variable. It is the name of the function, with a
 dot before the name. This enables the function to be used without writing parameters. The cost
-of such a feature is inflexibility. It corresponds to a predefined behavior (see examples)\cr\cr
-\code{stdtreemetrics} is a special function that works with \link{tree_metrics}. Actually,
+of such a feature is inflexibility. It corresponds to a predefined behavior (see examples)\cr
+\describe{
+\item{\code{stdmetrics}}{is a combinaison of \code{stdmetrics_ctrl} + \code{stdmetrics_z} +
+\code{stdmetrics_i} +  \code{stdmetrics_rn}}
+\item{\code{stdtreemetrics}}{is a special function that works with \link{tree_metrics}. Actually,
 it won't fail with other functions but the output makes more sense if computed at the
-individual tree level.
+individual tree level.}
+\item{\code{stdshapemetrics}}{is a set of eigenvalue based feature decribed in Lucas et al, 2019
+(see references).}
+}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "*")
 
 # All the predefined metrics
-m1 = grid_metrics(las, stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
+m1 = grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
 m2 = grid_metrics(las, .stdmetrics)
 
 # Basic metrics from intensities
-m3 = grid_metrics(las, stdmetrics_i(Intensity))
+m3 = grid_metrics(las, ~stdmetrics_i(Intensity))
 
 # All the metrics from intensities
-m4 = grid_metrics(las, stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+m4 = grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 
 # Convenient shortcut for the previous example
 m5 = grid_metrics(las, .stdmetrics_i)
@@ -143,12 +157,16 @@ myMetrics = function(z, i, rn)
   return( c(metrics, stdmetrics_z(z)) )
 }
 
-m10 = grid_metrics(las, myMetrics(Z, Intensity, ReturnNumber))
+m10 = grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber))
 
 # Users can write their own convenient shorcuts like this:
 .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
 
 m11 = grid_metrics(las, .myMetrics)
+}
+\references{
+Lucas, C., Bouten, W., Koma, Z., Kissling, W. D., & Seijmonsbergen, A. C. (2019). Identification
+of Linear Vegetation Elements in a Rural Landscape Using LiDAR Point Clouds. Remote Sensing, 11(3), 292.
 }
 \seealso{
 \link{grid_metrics}

@@ -13,7 +13,8 @@ plot(x, y, ...)
 
 \S4method{plot}{LAS,missing}(x, y, color = "Z",
   colorPalette = height.colors(50), bg = "black", trim = Inf,
-  backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
+  backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16,
+  axis = FALSE, ...)
 
 \S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE,
   chunk_pattern = FALSE, ...)
@@ -55,6 +56,8 @@ The drawback is that the point cloud is not plotted at its actual coordinates.}
 \item{nbits}{integer. If \code{color = RGB} it assumes that RGB colors are coded on 16 bits as described
 in the LAS format specification. However, this is not always respected. If the colors are stored
 on 8 bits set this parameter to 8.}
+
+\item{axis}{logical. Display axis on XYZ coordinates.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
 

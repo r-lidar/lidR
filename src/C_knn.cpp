@@ -74,13 +74,14 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   NumericVector iZ(n);
 
   QuadTree tree(X,Y);
-  Progress pbar(n, "Inverse distance weighting: ");
+  Progress pb(n, "Inverse distance weighting: ");
+
+  bool abort = false;
 
   #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
   {
-    pbar.check_abort();
-    pbar.increment();
+    if (abort) continue;
 
     Point pt(x[i], y[i]);
     std::vector<Point*> pts;
@@ -113,9 +114,13 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
     #pragma omp critical
     {
+      pb.increment();
+      if (pb.check_interrupt()) abort = true;
       iZ(i) = sum_zw/sum_w;
     }
   }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
 
   return iZ;
 }

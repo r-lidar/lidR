@@ -189,6 +189,7 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
 
   int computed_depth = std::floor(std::log(n)/std::log(4));
   MAX_DEPTH = (computed_depth >= 1) ? computed_depth : 1;
+  MAX_DEPTH = (computed_depth >= 8) ? 8 : computed_depth;
 
   for(int i = 0 ; i < x.size() ; i++)
   {

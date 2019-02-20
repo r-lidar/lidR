@@ -44,7 +44,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
     else
       pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
 
-    graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Errors"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
+    graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Error"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
   }
 
   # Find the name of the first paramter of FUN
@@ -78,16 +78,22 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, drop
       0
     })
 
-    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
-      stop(cluster_msg)
-
-    if (is.null(y))
+    if (is.null(y) & cluster_state != CHUNK_ERROR)
       cluster_state <- CHUNK_NULL
 
     if (prgrss)
     {
       update_graphic(cluster, cluster_state)
       update_pb(pb, i/nclust)
+    }
+
+    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
+    {
+      log <- paste0(tempdir(), "/chunk", i, ".rds")
+      saveRDS(cluster, log)
+      cat("\n")
+      message(glue::glue("An error occurred when processing the chunk {i}. Try to load this chunk with:\n chunk <- readRDS(\"{log}\")\n las <- readLAS(chunk)"))
+      stop(cluster_msg)
     }
 
     if (cluster_state == CHUNK_WARNING)

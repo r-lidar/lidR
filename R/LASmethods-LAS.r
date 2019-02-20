@@ -67,10 +67,10 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     proj4string <- projection(header, asText = FALSE)
 
   las             <- new("LAS")
-  las@proj4string <- proj4string
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
   las@data        <- data
+  projection(las) <- proj4string
 
   return(las)
 }
@@ -230,6 +230,9 @@ setMethod("projection<-", "LAS", function(x, value)
 
   if (x@header@PHB[["Global Encoding"]][["WKT"]] == TRUE)
   {
+    if (is.na(proj4))
+      return(x)
+
     wkt <- rgdal::showWKT(proj4)
     wkt(x@header) <- wkt
     raster::projection(x) <- proj4
@@ -237,6 +240,9 @@ setMethod("projection<-", "LAS", function(x, value)
   }
   else
   {
+    if (is.na(proj4))
+      return(x)
+
     epsg <- rgdal::showEPSG(proj4)
 
     if (epsg == "OGRERR_UNSUPPORTED_SRS")
@@ -284,12 +290,12 @@ setMethod("wkt<-", "LAS", function(object, value)
 })
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, ...)
 })
 
-plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
 {
   if (is.empty(x)) stop("Cannot display an empty point cloud")
 
@@ -337,7 +343,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
     args$col[is.na(args$col)] <- "lightgray"
 
-    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, args))
+    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, axis, args))
   }
   else
   {
@@ -346,7 +352,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   }
 }
 
-.plot_with_rgl = function(x, bg, coldata, clear_artifacts, args)
+.plot_with_rgl = function(x, bg, coldata, clear_artifacts, axis, args)
 {
   if (clear_artifacts)
   {
@@ -362,6 +368,15 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   rgl::open3d()
   rgl::rgl.bg(color = bg)
   do.call(rgl::points3d, with)
+
+  if (axis)
+  {
+    col <- grDevices::col2rgb(bg)
+    col <- grDevices::rgb(t(255 - col)/255)
+    rgl::axis3d("x", col = col)
+    rgl::axis3d("y", col = col)
+    rgl::axis3d("z", col = col)
+  }
 
   if (clear_artifacts)
     return(invisible(c(minx, miny)))

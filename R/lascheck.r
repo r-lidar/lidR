@@ -131,6 +131,7 @@ lascheck.LAS = function(las)
   msg = c(msg, rlas::is_valid_EdgeOfFlightline(data, "vector"))
   msg = c(msg, rlas::is_valid_Classification(data, head, "vector"))
   msg = c(msg, rlas::is_valid_UserData(data, "vector"))
+  msg = c(msg, rlas::is_valid_ScanAngleRank(data, "vector"))
   msg = c(msg, rlas::is_valid_ScanAngle(data, "vector"))
   msg = c(msg, rlas::is_valid_PointSourceID(data, "vector"))
   msg = c(msg, rlas::is_valid_RGB(data, "vector"))
@@ -191,6 +192,7 @@ lascheck.LAS = function(las)
 
     if (s > 0)
     {
+      Classification <- NULL
       gnd = data[Classification == 2L]
 
       s1 = duplicated(gnd, by = c("X", "Y", "Z"))
@@ -278,7 +280,7 @@ lascheck.LAS = function(las)
     if (!failure)
       ok()
   }
-  else if (wkt != "")
+  else if (swkt != "")
   {
     codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
 

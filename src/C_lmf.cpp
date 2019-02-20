@@ -42,6 +42,7 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
   NumericVector Y = data["Y"];
   NumericVector Z = data["Z"];
 
+  bool abort = false;
   bool vws = ws.length() > 1;
   int n = X.length();
   LogicalVector seeds(n);
@@ -51,8 +52,7 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
   #pragma omp parallel for num_threads(ncpu)
   for (int i = 0 ; i < n ; i++)
   {
-    pb.check_abort();
-    pb.increment();
+    if (abort) continue;
 
     double hws = (vws) ? ws[i]/2 : ws[0]/2;
 
@@ -87,10 +87,15 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
     // The central pixel is the highest, it is a LM
     #pragma omp critical
     {
+      if (pb.check_interrupt()) abort = true;
+      pb.increment();
+
       if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
         seeds[i] = true;
     }
   }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
 
   return seeds;
 }

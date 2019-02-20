@@ -1,12 +1,45 @@
 ## lidR v2.1.0
 
-* Change:CRS LAS 1.4 WKT
-* New: function `projection`
-* New: function `wkt`
+#### NEW FEATURES
+
+1. [#204](https://github.com/Jean-Romain/lidR/issues/204) LAS 1.4 and point formats > 6 are now suported. `lascheck`, `print` were updated to work correctly with these formats.
+
+2. [#214](https://github.com/Jean-Romain/lidR/issues/214) `opt_cores()` is no longer supported. If used it generates a message. Former parallelisation was inneficient and worked by loading several chunks of LAscatalog at once implying to read/write several files at once (strong overhead) and used a lot of RAM. Many algorithms are now natively parallelised at the C++ level with OpenMP. This significantly speed-up processing of LAS objects. Consequently this also speed-up processing of LAScatalog objects without the need to overload the RAM and kill the read/write bottleneck.
+
+3. New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg` to store CRS. It updates the `proj4string`and the header of the LAS object.
+
+4. New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `prj4string`or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally. Vignette `LAS-class` has been updated in consequence
+
+5. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
+
+6. New functions `lasdetectshape()` for water and human made structure detection.
+
+7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
+
+8. `plot` for LAS object gained an options `axis = TRUE` to display axis.
+
+9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
+
+10. `tree_hull()` can compute metrics for each tree like `tree_metrics`
+
+11. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically.
+
+#### NOTE
+
+1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.
+
+2. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
+
+3. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
 
 ## lidR v2.0.2
 
-- Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*` function return always a `RasterLayer` instead of a `RasterStack` if there is a single layer. VRT were returned as `RasterStack` no matter the nuber of layers.
+- Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*()` function return always a `RasterLayer` instead of a `RasterStack` if there is a single layer. VRT were returned as `RasterStack` no matter the nuber of layers.
+- Fix: [#223](https://github.com/Jean-Romain/lidR/issues/223) `lasmergespatial()` wrongly copied shapefile attributes to each point when the paramter `attribute` was the name of an attribute of the shapefile.
+- Fix: [#225](https://github.com/Jean-Romain/lidR/issues/225) `laspulse()`, `lasflightline()`, `lasscanline()` were broken since v2.0.0.
+- Fix: [#227](https://github.com/Jean-Romain/lidR/issues/227) When processing a LAScatalog the chunks are better computed. In former version it was possible to have chunks that lie on tile only because of the buffer. These chunks are not build anymore.
+- Fix: [#227](https://github.com/Jean-Romain/lidR/issues/227) When processing a LAScatalog we can discover that some chunk belong on the tiles but when reading the point there are point only in the buffer of the chunk. In these case an empty point cloud is returned and the computation must be skipped.
+- Fix: [#228](https://github.com/Jean-Romain/lidR/issues/228) `lasmergespatial()` and `lasclip()` loose precision when extracting polygons due to missing digits in the WKT string used to build the polygons at C++ level.
 
 ## lidR v2.0.1 (Release date: 2010-02-02)
 

@@ -61,8 +61,8 @@ test_that("lastrees can store in a user defined column", {
 test_that("tree_metrics works", {
   las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
   expect_error(tree_metrics(las, max(Z)), "not segmented")
-  Y <- tree_metrics(las, max(Z), field = "plop")
-  expect_error(tree_metrics(las, max(Z), field = "abc"), "trees are not segmented")
+  Y <- tree_metrics(las, max(Z), attribute = "plop")
+  expect_error(tree_metrics(las, max(Z), attribute = "abc"), "trees are not segmented")
 })
 
 # Commented because CRAN doesn't like to call Bioconductor package

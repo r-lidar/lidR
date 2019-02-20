@@ -42,7 +42,9 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
   int nelem = elem.nrow();
   int np = xi.size();
 
-  Progress p(nelem, "Searching in TIN: ");
+  bool abort = false;
+
+  Progress pb(nelem, "Searching in TIN: ");
 
   IntegerVector output(np);
   std::fill(output.begin(), output.end(), NA_INTEGER);
@@ -51,6 +53,8 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
   #pragma omp parallel for num_threads(ncpu)
   for (int k = 0; k < nelem; k++)
   {
+    if (abort) continue;
+
     // Retrieve triangle A B C coordinates
     int iA = elem(k, 0) - 1;
     int iB = elem(k, 1) - 1;
@@ -67,16 +71,18 @@ IntegerVector C_tsearch(NumericVector x, NumericVector y, IntegerMatrix elem, Nu
     // Return the id of the triangle
     #pragma omp critical
     {
+      pb.increment();
+      if (pb.check_interrupt()) abort = true;
+
       for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
       {
         int id = (*it)->id;
         output(id) = k + 1;
       }
     }
-
-    p.check_abort();
-    p.update(k);
   }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
 
   return(output);
 }

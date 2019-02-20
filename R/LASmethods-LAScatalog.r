@@ -55,9 +55,6 @@
 #' \dontrun{
 #' ctg <- catalog("/path/to/a/folder/of/las/files")
 #'
-#' # Internal engine will compute in parallel using two cores
-#' opt_cores(ctg) <- 2L
-#'
 #' # Internal engine will sequentially process regions of interest of size 500 x 500 m (clusters)
 #' opt_chunk_size(ctg) <- 500
 #'

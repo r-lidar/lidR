@@ -5,7 +5,7 @@
 \title{Compute the hull of each tree.}
 \usage{
 tree_hulls(las, type = c("convex", "concave", "bbox"), concavity = 3,
-  length_threshold = 0, attribute = "treeID")
+  length_threshold = 0, func = NULL, attribute = "treeID")
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -17,6 +17,10 @@ in a relatively detailed shape, Infinity results in a convex hull.}
 
 \item{length_threshold}{numeric. If \code{type = "concave"}, when a segment length is below this
 threshold, no further detail is added. Higher values result in simpler shapes.}
+
+\item{func}{formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
+\link{grid_metrics3d} or \link{tree_metrics} and computes, in addition to the hulls a set of metrics
+for each tree.}
 
 \item{attribute}{character. The attribute where the ID of each tree is stored. In lidR, the default is
 "treeID".}
@@ -72,11 +76,20 @@ and cannot be changed.
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 
-convex_hulls = tree_hulls(las)
-sp::plot(convex_hulls)
+# NOTE: This dataset is already segmented
+# plot(las, color = "treeID", colorPalette = pastel.colors(200))
 
+# Only the hulls
+convex_hulls = tree_hulls(las)
+plot(convex_hulls)
+
+# The hulls + some user-defined metrics
+convex_hulls = tree_hulls(las, func = ~list(Zmax = max(Z)))
+spplot(convex_hulls, "Zmax")
+
+# The bounding box
 bbox_hulls = tree_hulls(las, "bbox")
-sp::plot(bbox_hulls)
+plot(bbox_hulls)
 
 \dontrun{
 concave_hulls = tree_hulls(las, "concave")

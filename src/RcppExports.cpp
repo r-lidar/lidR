@@ -66,6 +66,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_eigen_values
+SEXP fast_eigen_values(arma::mat A);
+RcppExport SEXP _lidR_fast_eigen_values(SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_eigen_values(A));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_dalponte2016
 IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
 RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
@@ -116,19 +127,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_lascoplanar
-LogicalVector C_lascoplanar(S4 las, int k, double th1, double th2, LogicalVector filter, int ncpu);
-RcppExport SEXP _lidR_C_lascoplanar(SEXP lasSEXP, SEXP kSEXP, SEXP th1SEXP, SEXP th2SEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
+// C_lasdetectshape
+LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_lasdetectshape(SEXP lasSEXP, SEXP methodSEXP, SEXP thSEXP, SEXP kSEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< int >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type th(thSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type th1(th1SEXP);
-    Rcpp::traits::input_parameter< double >::type th2(th2SEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lascoplanar(las, k, th1, th2, filter, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_lasdetectshape(las, method, th, k, filter, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -360,10 +371,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
+    {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
-    {"_lidR_C_lascoplanar", (DL_FUNC) &_lidR_C_lascoplanar, 6},
+    {"_lidR_C_lasdetectshape", (DL_FUNC) &_lidR_C_lasdetectshape, 6},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 6},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},

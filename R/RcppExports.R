@@ -21,6 +21,10 @@ roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
 }
 
+fast_eigen_values <- function(A) {
+    .Call(`_lidR_fast_eigen_values`, A)
+}
+
 C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
@@ -33,8 +37,8 @@ C_knnidw <- function(X, Y, Z, x, y, k, p, ncpu) {
     .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, ncpu)
 }
 
-C_lascoplanar <- function(las, k, th1, th2, filter, ncpu) {
-    .Call(`_lidR_C_lascoplanar`, las, k, th1, th2, filter, ncpu)
+C_lasdetectshape <- function(las, method, th, k, filter, ncpu) {
+    .Call(`_lidR_C_lasdetectshape`, las, method, th, k, filter, ncpu)
 }
 
 C_lassmooth <- function(las, size, method, shape, sigma, ncpu) {

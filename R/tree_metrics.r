@@ -44,8 +44,10 @@
 #' are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).
 #'
 #' @template param-las
-#' @param func The function to be applied to each tree.
-#' @param field character. The column name of the field containing tree IDs. Default is \code{"treeID"}
+#' @param func formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
+#' \link{grid_metrics3d} or \link{tree_hull} and computes, in addition to tree locations a set of metrics
+#' for each tree.
+#' @param attribute character. The column name of the attribute containing tree IDs. Default is \code{"treeID"}
 #'
 #' @return A \code{SpatialPoinsDataFrame} that references the xy-position with a table of attributes that
 #' associates the z-elevation (highest points) of the trees and the id of the trees, plus the metrics
@@ -58,8 +60,14 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile, filter = "-drop_z_below 0")
 #'
-#' # Mean height and mean intensity for each tree
-#' metrics = tree_metrics(las, list(`Mean Z` = mean(Z), `Mean I` = mean(Intensity)))
+#' # NOTE: This dataset is already segmented
+#' # plot(las, color = "treeID", colorPalette = pastel.colors(200))
+#'
+#' # Default computes only Z max
+#' metrics = tree_metrics(las)
+#'
+#' # User-defined metrics - mean height and mean intensity for each tree
+#' metrics = tree_metrics(las, ~list(Zmean = mean(Z), Imean = mean(Intensity)))
 #'
 #' # Define your own new metrics function
 #' myMetrics = function(z, i)
@@ -73,67 +81,56 @@
 #'    return(metrics)
 #' }
 #'
-#' metrics = tree_metrics(las, myMetrics(Z, Intensity))
+#' metrics = tree_metrics(las, ~myMetrics(Z, Intensity))
 #'
 #' # predefined metrics (see ?stdmetrics)
 #' metrics = tree_metrics(las, .stdtreemetrics)
 #' @export
-tree_metrics = function(las, func, field = "treeID")
+tree_metrics = function(las, func = ~max(Z), attribute = "treeID")
 {
-  assert_is_a_string(field)
+  assert_is_a_string(attribute)
 
   UseMethod("tree_metrics", las)
 }
 
 #' @export
-tree_metrics.LAS = function(las, func, field = "treeID")
+tree_metrics.LAS = function(las, func = ~list(Z = max(Z)), attribute = "treeID")
 {
-  . <- X <- Y <- Z <- x.pos.t <- y.pos.t <- NULL
-
-  if (!field %in% names(las@data))
+  if (!attribute %in% names(las@data))
     stop("The trees are not segmented yet. Please see function 'lastrees'.")
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
   call <- lazyeval::as_call(func)
 
-  find_apex <- function(x,y,z)
-  {
-    j <- which.max(z)
-    return(list(x.pos.t = x[j], y.pos.t = y[j], Z = z[j]))
-  }
+  X <- Y <- Z <- NULL
+  stats <- las@data[, if (!anyNA(.BY)) c(stdtreeapex(X,Y,Z), eval(call)), by = attribute]
 
-  stats <- las@data[, if (!anyNA(.BY)) c(find_apex(X,Y,Z), eval(call)), by = field]
-
-  if (nrow(stats) == 0)
-    stop(glue::glue("The attributes {field} exists but there is no tree segmented. Cannot compute any tree metric."))
-
-  coords <- stats[, .(x.pos.t, y.pos.t)]
-  stats[, c("x.pos.t", "y.pos.t") := NULL]
-
-  output <- sp::SpatialPointsDataFrame(coords, stats, proj4string = las@proj4string)
+  coords  <- stats[, 2:3]
+  metrics <- stats[, -(2:3)]
+  output  <- sp::SpatialPointsDataFrame(coords, metrics, proj4string = las@proj4string)
   return(output)
 }
 
 #' @export
-tree_metrics.LAScluster = function(las, func, field = "treeID")
+tree_metrics.LAScluster = function(las, func = ~max(Z), attribute = "treeID")
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  metrics <- tree_metrics(x, func, field)
+  metrics <- tree_metrics(x, func, attribute)
   bbox    <- raster::extent(las)
   metrics <- raster::crop(metrics, bbox)
   return(metrics)
 }
 
 #' @export
-tree_metrics.LAScatalog = function(las, func, field = "treeID")
+tree_metrics.LAScatalog = function(las, func = ~max(Z), attribute = "treeID")
 {
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
 
   options <- list(need_buffer = TRUE, drop_null = TRUE)
-  output  <- catalog_apply(las, tree_metrics, func = substitute(func), field = field, .options = options)
+  output  <- catalog_apply(las, tree_metrics, func = substitute(func), attribute = attribute, .options = options)
 
   if (opt_output_files(las) == "")
   {

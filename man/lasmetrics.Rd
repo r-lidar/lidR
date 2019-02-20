@@ -9,7 +9,7 @@ lasmetrics(obj, func)
 \arguments{
 \item{obj}{An object of class \code{LAS}}
 
-\item{func}{The function to be applied to a cloud of points. Function must return a \code{list} (see example)}
+\item{func}{formula. An expression to be applied to the point cloud (see example)}
 }
 \value{
 It returns a \code{list} containing the metrics
@@ -30,8 +30,8 @@ The following existing functions can serve as a guide to help users compute thei
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-lasmetrics(lidar, max(Z))
-lasmetrics(lidar, mean(Intensity))
+lasmetrics(lidar, ~max(Z))
+lasmetrics(lidar, ~mean(Intensity))
 
 # Define your own new metrics
 myMetrics = function(z, i)
@@ -45,7 +45,7 @@ myMetrics = function(z, i)
    return(metrics)
 }
 
-metrics = lasmetrics(lidar, myMetrics(Z, Intensity))
+metrics = lasmetrics(lidar, ~myMetrics(Z, Intensity))
 
 # Predefined metrics
 lasmetrics(lidar, .stdmetrics)

@@ -41,79 +41,6 @@ make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
   return(grid)
 }
 
-make_overlay_raster = function(las, res, start = c(0,0), subcircle = 0)
-{
-  if (is(res, "RasterLayer"))
-  {
-    resolution = raster::res(res)
-    if (resolution[1] !=  resolution[2]) stop("Rasters with different x y resolutions are not supported")
-    return(res)
-  }
-
-  bbox      <- raster::extent(las) + 2 * subcircle
-  bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
-  bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
-  bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
-  bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
-  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@proj4string))
-  return(layout)
-}
-
-merge_rasters = function(output)
-{
-  if (length(output) == 1)
-    return(output)
-
-  names    <- names(output[[1]])
-  factor   <- output[[1]]@data@isfactor
-  issingle <- sapply(output, function(x) { raster::nrow(x) == 1 & raster::ncol(x) == 1 })
-  single   <- list()
-
-  if (any(issingle))
-  {
-    single <- output[issingle]
-    output <- output[!issingle]
-  }
-
-  output <- do.call(raster::merge, output)
-  names(output) <- names
-
-  if (is(output, "RasterBrick") & raster::inMemory(output))
-    colnames(output@data@values) <- names
-
-  for (pixel in single)
-  {
-    pix = raster::rasterToPoints(pixel, spatial = TRUE)
-    output[pix] <- as.matrix(pix@data)
-  }
-
-  return(output)
-}
-
-build_vrt = function(output, vrt)
-{
-  if (!options("lidR.buildVRT")[[1]])
-    return(unlist(output))
-
-  if (!requireNamespace("gdalUtils", quietly = TRUE))
-  {
-    message("'gdalUtils' package is needed to build a virtual raster mosaic. Returns the list of written files instead.")
-    return(unlist(output))
-  }
-
-  output <- unlist(output)
-  folder <- dirname(output[1])
-  file   <- paste0("/", vrt, ".vrt")
-  vrt    <- paste0(folder, file)
-  gdalUtils::gdalbuildvrt(output, vrt)
-  output <- raster::stack(vrt)
-
-  if (dim(output)[3] == 1)
-    return(output[[1]])
-  else
-    return(output)
-}
-
 
 group_grid = function(x, y, res, start = c(0,0))
 {
@@ -143,13 +70,13 @@ verbose = function(...)
     cat(..., "\n")
 }
 
-dummy_las = function(n, seeds = c)
+dummy_las = function(n, seeds = 1)
 {
-  set.seed(1)
+  set.seed(seeds)
   X = stats::runif(n, 0, 100)
-  set.seed(2)
+  set.seed(seeds + 1)
   Y = stats::runif(n, 0, 100)
-  set.seed(3)
+  set.seed(seeds + 2)
   Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n))
   Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n)))
   Intensity = sample(10:50, n, TRUE)
@@ -189,8 +116,7 @@ coordinates = function(las)
   DT <- las@data
   X  <- DT[["X"]]
   Y  <- DT[["Y"]]
-  Z  <- DT[["Z"]]
-  DF <- data.frame(X,Y,Z)
+  DF <- data.frame(X,Y)
   data.table::setDT(DF)
   return(DF)
 }
