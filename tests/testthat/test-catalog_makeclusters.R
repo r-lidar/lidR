@@ -111,7 +111,7 @@ test_that("makecluster, tiling + buffer", {
   xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
   ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
 
-  expect_equal(length(cl), 197)
+  expect_equal(length(cl), 194)
   expect_true(all(width == 900))
   expect_true(all(xwidth == 800))
   expect_true(all(ywidth == 800))
@@ -252,7 +252,7 @@ test_that("makecluster, tiling + negative buffer", {
     xbuffer = sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
     ybuffer = sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
 
-    expect_equal(length(cl), 197)
+    expect_equal(length(cl), 194)
     expect_true(all(width == 900))
     expect_true(all(xwidth == 800))
     expect_true(all(ywidth == 800))

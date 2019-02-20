@@ -27,22 +27,32 @@
 
 catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, outside_catalog_is_null = TRUE)
 {
-  . <- filename <- Min.X <- Max.X <- Min.Y <- Max.Y <- NULL
-
   stopifnot(is.list(bboxes))
+
+  MinX <- catalog@data[["Min.X"]]
+  MaxX <- catalog@data[["Max.X"]]
+  MinY <- catalog@data[["Min.Y"]]
+  MaxY <- catalog@data[["Max.Y"]]
 
   queries <- lapply(bboxes, function(bbox)
   {
-    bbox  <- bbox + 2*buffer
-    is_in <- with(catalog@data, !(Min.X >= bbox@xmax | Max.X <= bbox@xmin | Min.Y >= bbox@ymax | Max.Y <= bbox@ymin))
-    files <- catalog@data$filename[is_in]
+    bbbox <- bbox + 2*buffer
+
+    tile_is_in_bbox          <- !(MinX >= bbox@xmax  | MaxX <= bbox@xmin  | MinY >= bbox@ymax  | MaxY <= bbox@ymin)
+    tile_is_in_buffered_bbox <- !(MinX >= bbbox@xmax | MaxX <= bbbox@xmin | MinY >= bbbox@ymax | MaxY <= bbbox@ymin)
+
+    if (sum(tile_is_in_bbox) > 0)
+      select <- tile_is_in_buffered_bbox
+    else
+      select <- FALSE
+
+    files  <- catalog@data$filename[select]
 
     if (length(files) == 0 & outside_catalog_is_null)
       return(NULL)
     else if (length(files) == 0 & !outside_catalog_is_null)
       files <- ""
 
-    bbox    <- bbox - 2*buffer
     center  <- list(x = (bbox@xmax + bbox@xmin)/2, y = (bbox@ymax + bbox@ymin)/2)
     width   <- (bbox@xmax - bbox@xmin)
     height  <- (bbox@ymax - bbox@ymin)
