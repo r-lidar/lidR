@@ -123,8 +123,6 @@ grid_metrics = function(las, func, res = 20, start = c(0,0))
 #' @export
 grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
 {
-  . <- X <- Y <- NULL
-
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
 
@@ -133,6 +131,9 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0))
   layout    <- make_overlay_raster(las, res, start)
   cells     <- raster::cellFromXY(layout, coordinates(las))
   metrics   <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
+
+  if (any(duplicated(metrics[["cells"]])))
+    stop("Duplicated pixel founds. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
 
   if (ncol(metrics) == 2L)
   {
