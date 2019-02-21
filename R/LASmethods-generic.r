@@ -60,6 +60,7 @@ setGeneric("summary", function(object, ...)
 #' in the LAS format specification. However, this is not always respected. If the colors are stored
 #' on 8 bits set this parameter to 8.
 #' @param axis logical. Display axis on XYZ coordinates.
+#' @param legend logical. Display a gradient color legend.
 #' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
 #' the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
 #' \code{PointCloudViewer} package, which is much more efficient and can handle million of points

@@ -16,7 +16,7 @@
 
 7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
 
-8. `plot` for LAS object gained an options `axis = TRUE` to display axis.
+8. [#224](https://github.com/Jean-Romain/lidR/issues/217) `plot` for LAS object gained an options `axis = TRUE` to display axis and `legend = TRUE` to display color gradient legend.
 
 9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
 

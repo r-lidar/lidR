@@ -290,79 +290,80 @@ setMethod("wkt<-", "LAS", function(object, value)
 })
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, ...)
 })
 
-plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, ...)
 {
-  if (is.empty(x)) stop("Cannot display an empty point cloud")
-
-  col <- lazyeval::expr_text(color)
-  if (substr(col, 1, 1) != "\"") color <- col
-
   backend <- match.arg(backend)
-  pcv     <- "PointCloudViewer" %in% rownames(utils::installed.packages())
+  use_pcv <- backend == "pcv"
+  use_rgl <- !use_pcv
+  has_pcv <- "PointCloudViewer" %in% rownames(utils::installed.packages())
+  has_col <- color %in% names(x@data)
+  use_rgb <- color == "RGB"
+  has_rgb <- all(c("R", "G", "B") %in% names(x@data))
+  maxcol  <- 2^nbits - 1
 
-  if (backend == "pcv" & !pcv)    stop("'PointCloudViewer' package is needed. Please read documentation.")
-  if (length(color) > 1)          stop("'color' should contain a single value.")
+  if (is.empty(x))         stop("Cannot display an empty point cloud")
+  if (use_pcv & !has_pcv)  stop("'PointCloudViewer' package is needed. Please read documentation.")
+  if (length(color) > 1)   stop("'color' should contain a single value.")
+  if (!use_rgb & !has_col) stop("'color' should refer to an attribute of the LAS data.")
+  if (use_rgb & !has_rgb)  stop("No 'RGB' attributes found.")
 
-  if (color != "RGB" & !color %in% names(x@data))
-    stop("'color' should refer to an attribute of the LAS data.")
-
-  if (color == "RGB")
-  {
-    if (backend == "pcv")
-    {
-      coldata  = "RGB"
-    }
-    else
-    {
-      if (!all(c("R", "G", "B") %in% names(x@data))) stop("No 'RGB' attributes found.")
-
-      maxcol  <- 2^nbits - 1
-      coldata <- grDevices::rgb(x@data$R/maxcol, x@data$G/maxcol, x@data$B/maxcol)
-    }
-  }
+  if (use_rgb & use_pcv)
+    col <- "RGB"
+  else if (use_rgb & use_rgl)
+    col <- grDevices::rgb(x@data[["R"]]/maxcol, x@data[["G"]]/maxcol, x@data[["B"]]/maxcol)
   else
-    coldata <- x@data[[color]]
+    col <- x@data[[color]]
 
   args <- list(...)
   if (is.null(args$size))
     args$size <- 1.5
 
-  if (backend == "rgl")
-  {
-    if (is.numeric(coldata))
-      args$col <- set.colors(coldata, colorPalette, trim)
-    else if (is.character(coldata))
-      args$col <- coldata
-    else if (is.logical(coldata))
-      args$col <- set.colors(as.numeric(coldata), colorPalette)
-
-    args$col[is.na(args$col)] <- "lightgray"
-
-    return(.plot_with_rgl(x, bg, coldata, clear_artifacts, axis, args))
-  }
+  if (use_rgl)
+    lasplot <- .plot_with_rgl
   else
-  {
-    if (!is.infinite(trim)) coldata[coldata > trim] <- trim
-    return(.plot_with_pcv(x, coldata, colorPalette, args))
-  }
+    lasplot <- .plot_with_pcv
+
+  return(lasplot(las, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args))
 }
 
-.plot_with_rgl = function(x, bg, coldata, clear_artifacts, axis, args)
+.plot_with_rgl = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args)
 {
+  fg   <- grDevices::col2rgb(bg)
+  fg   <- grDevices::rgb(t(255 - fg)/255)
+  minx <- min(las@data$X)
+  miny <- min(las@data$Y)
+
+  if (is.numeric(col))
+  {
+    mincol <- min(col)
+    maxcol <- min(max(col), trim)
+    col <- set.colors(col, pal, trim)
+  }
+  else if (is.character(col))
+  {
+    legend <- FALSE
+    col <- col
+  }
+  else if (is.logical(col))
+  {
+    mincol <- 0
+    maxcol <- 1
+    col <- set.colors(as.numeric(col), pal)
+  }
+
+  col[is.na(col)] <- "lightgray"
+
+  with <- c(list(x = las@data$X, y = las@data$Y, z = las@data$Z, col = col), args)
+
   if (clear_artifacts)
   {
-    minx = min(x@data$X)
-    miny = min(x@data$Y)
-    with = c(list(x = x@data$X - minx, y = x@data$Y - miny, z = x@data$Z), args)
-  }
-  else
-  {
-    with = c(list(x = x@data$X, y = x@data$Y, z = x@data$Z), args)
+    with$x <- with$x - minx
+    with$y <- with$y - miny
   }
 
   rgl::open3d()
@@ -371,11 +372,15 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
   if (axis)
   {
-    col <- grDevices::col2rgb(bg)
-    col <- grDevices::rgb(t(255 - col)/255)
-    rgl::axis3d("x", col = col)
-    rgl::axis3d("y", col = col)
-    rgl::axis3d("z", col = col)
+    rgl::axis3d("x", col = fg)
+    rgl::axis3d("y", col = fg)
+    rgl::axis3d("z", col = fg)
+  }
+
+  if (legend)
+  {
+    f <- .plot_scale_gradient(mincol, maxcol, fg, pal, bg)
+    rgl::bg3d(texture = f, col = "white")
   }
 
   if (clear_artifacts)
@@ -384,20 +389,43 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     return(invisible(c(0,0)))
 }
 
-.plot_with_pcv = function(x, coldata, colors, args)
+.plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args)
 {
-  if (is.character(coldata))
+  if (is.character(col))
   {
-    if (coldata == "RGB")
-      eval(parse(text = "PointCloudViewer::plot_xyzrgb(x@data$X, x@data$Y, x@data$Z, x@data$R, x@data$G, x@data$B, args$size)"))
+    if (col == "RGB")
+      eval(parse(text = "PointCloudViewer::plot_xyzrgb(las@data$X, las@data$Y, las@data$Z, las@data$R, las@data$G, las@data$B, args$size)"))
     else
-      stop("Unexpected error.")
+      stop("Unexpected error.", call. = FALSE)
   }
   else
   {
-    id = cut(coldata, length(colors), labels = FALSE)
-    eval(parse(text = "PointCloudViewer::plot_xyzcol(x@data$X, x@data$Y, x@data$Z, colors, id, args$size)"))
+    if (!is.infinite(trim)) col[col > trim] <- trim
+    id <- cut(col, length(pal), labels = FALSE)
+    eval(parse(text = "PointCloudViewer::plot_xyzcol(las@data$X, las@data$Y, las@data$Z, pal, id, args$size)"))
   }
 
-  return(invisible())
+  return(invisible(c(0,0)))
+}
+
+
+.plot_scale_gradient = function(min.col, max.col, text.col, scale.col, bg)
+{
+  f <- tempfile(fileext = ".png")
+
+  png(f, 1920, 1080, bg = bg)
+  layout(matrix(1:2, nrow = 1), widths = c(0.9,0.1))
+  par(mar = c(5.1, 4.1, 4.1, 2.1))
+  plot(0, ann = FALSE, type = "n", axes = FALSE)
+  xl <- 1 ; yb <- 1 ; xr <- 1.1 ; yt <- 2
+  labels <- pretty(c(min.col, max.col))
+  ncol   <- length(scale.col)
+  nlab   <- length(labels)
+  par(mar = c(5.1, 0.5, 4.1, 0))
+  plot(NA, type = "n", ann = FALSE, xlim = c(1,2), ylim = c(1,2), xaxt = "n", yaxt = "n", bty = "n")
+  rect(xl, head(seq(yb, yt, (yt - yb)/ncol), -1), xr, tail(seq(yb, yt, (yt - yb)/ncol), -1), col = scale.col, border = NA)
+  mtext(labels, side = 2, at = seq(yb, yt, length.out = nlab), las = 2, cex = 1.2, col = text.col)
+  dev.off()
+
+  return(f)
 }
