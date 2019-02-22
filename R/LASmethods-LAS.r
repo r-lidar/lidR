@@ -328,7 +328,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   else
     lasplot <- .plot_with_pcv
 
-  return(lasplot(las, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args))
+  return(lasplot(x, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args))
 }
 
 .plot_with_rgl = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args)
@@ -412,20 +412,18 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 .plot_scale_gradient = function(min.col, max.col, text.col, scale.col, bg)
 {
   f <- tempfile(fileext = ".png")
-
-  png(f, 1920, 1080, bg = bg)
-  layout(matrix(1:2, nrow = 1), widths = c(0.9,0.1))
-  par(mar = c(5.1, 4.1, 4.1, 2.1))
-  plot(0, ann = FALSE, type = "n", axes = FALSE)
-  xl <- 1 ; yb <- 1 ; xr <- 1.1 ; yt <- 2
   labels <- pretty(c(min.col, max.col))
   ncol   <- length(scale.col)
   nlab   <- length(labels)
-  par(mar = c(5.1, 0.5, 4.1, 0))
-  plot(NA, type = "n", ann = FALSE, xlim = c(1,2), ylim = c(1,2), xaxt = "n", yaxt = "n", bty = "n")
-  rect(xl, head(seq(yb, yt, (yt - yb)/ncol), -1), xr, tail(seq(yb, yt, (yt - yb)/ncol), -1), col = scale.col, border = NA)
-  mtext(labels, side = 2, at = seq(yb, yt, length.out = nlab), las = 2, cex = 1.2, col = text.col)
-  dev.off()
-
+  xl <- 1 ; yb <- 1 ; xr <- 1.1 ; yt <- 2
+  grDevices::png(f, 1920, 1080, bg = bg)
+  graphics::layout(matrix(1:2, nrow = 1), widths = c(0.9,0.1))
+  graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
+  graphics::plot(0, ann = FALSE, type = "n", axes = FALSE)
+  graphics::par(mar = c(5.1, 0.5, 4.1, 0))
+  graphics::plot(NA, type = "n", ann = FALSE, xlim = c(1,2), ylim = c(1,2), xaxt = "n", yaxt = "n", bty = "n")
+  graphics::rect(xl, utils::head(seq(yb, yt, (yt - yb)/ncol), -1), xr, utils::tail(seq(yb, yt, (yt - yb)/ncol), -1), col = scale.col, border = NA)
+  graphics::mtext(labels, side = 2, at = seq(yb, yt, length.out = nlab), las = 2, cex = 1.2, col = text.col)
+  grDevices::dev.off()
   return(f)
 }

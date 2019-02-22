@@ -76,8 +76,8 @@ setGeneric("summary", function(object, ...)
 #'
 #' # Outliers in intensity break the color range. Use the trim parameter.
 #' col <- heat.colors(50)
-#' plot(las, color = Intensity, colorPalette = col)
-#' plot(las, color = Intensity, colorPalette = col, trim = 70)
+#' plot(las, color = "Intensity", colorPalette = col)
+#' plot(las, color = "Intensity", colorPalette = col, trim = 70)
 #' @export
 #' @method plot LAS
 setGeneric("plot", function(x, y, ...)

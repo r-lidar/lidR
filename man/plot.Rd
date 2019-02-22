@@ -91,8 +91,8 @@ plot(las, clear_artifact = TRUE)
 
 # Outliers in intensity break the color range. Use the trim parameter.
 col <- heat.colors(50)
-plot(las, color = Intensity, colorPalette = col)
-plot(las, color = Intensity, colorPalette = col, trim = 70)
+plot(las, color = "Intensity", colorPalette = col)
+plot(las, color = "Intensity", colorPalette = col, trim = 70)
 
 \dontrun{
 
