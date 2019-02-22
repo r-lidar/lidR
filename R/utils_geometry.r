@@ -25,6 +25,42 @@
 #
 # ===============================================================================
 
+#' Surface covered by a LAS* object.
+#'
+#' Surface covered by a \code{LAS*} object. For \code{LAS} point clouds it is computed based on the
+#' convex hull of the points. For a \code{LAScatalog} it is computed as the sum of the bounding boxes
+#' of the files. For overlapping tiles the value may be larger than the total covered area because
+#' some regions are sampled twice.
+#'
+#' @param x An object of the class \code{LAS*}
+#' @param ... unused
+#'
+#' @return numeric. The area of the object computed in the same units as the coordinate reference system
+#' @export
+#' @importMethodsFrom raster area
+#' @rdname area
+setGeneric("area", function(x, ...)
+  standardGeneric("area"))
+
+#' @export
+#' @rdname area
+setMethod("area", "LAS", function(x, ...)
+{
+  if (nrow(x@data) == 0)
+    return(0)
+
+  return(area_convex_hull(x@data$X, x@data$Y))
+})
+
+#' @rdname area
+#' @export
+setMethod("area", "LAScatalog",  function(x, ...)
+{
+  x <- x@data
+  area <- sum((x$Max.X - x$Min.X) * (x$Max.Y - x$Min.Y))
+  return(area)
+})
+
 area_convex_hull = function(x, y)
 {
   stopifnot(length(x) == length(y))
@@ -48,16 +84,15 @@ polygon_area = function(x, y)
   if (!is.numeric(x) || !is.numeric(y) ) stop("Arguments 'x' and 'y' must be real")
   if (length(x) != length(y)) stop("Argument 'x' and 'y' must be of same size")
 
-	area = 0;
-	j = length(x)
+	area <- 0
+	j <- length(x)
 
 	for (i in 1:j)
 	{
-		area = area + (x[j]+x[i])*(y[j]-y[i]);
-		j = i;
+		area <- area + (x[j] + x[i])*(y[j] - y[i]);
+		j <- i;
 	}
 
-	area  = abs(area*0.5)
-
+	area <- abs(area*0.5)
 	return(area)
 }

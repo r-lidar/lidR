@@ -38,7 +38,6 @@
 #' @slot VLR list. Represents the Variable Length Records
 #'
 #' @exportClass LASheader
-#' @include LASmethods-generic.r
 setClass(
   Class = "LASheader",
   representation(PHB = "list", VLR = "list")
