@@ -56,7 +56,6 @@ ByteCompile: true
 VignetteBuilder: knitr
 biocViews: 
 Collate: 
-    'LASmethods-generic.r'
     'Class-LASheader.r'
     'Class-LAS.r'
     'Class-LAScatalog.r'
@@ -111,7 +110,10 @@ Collate:
     'lastrees.r'
     'lasupdateheader.r'
     'lasvoxelize.r'
+    'plot.r'
     'plot.s3.r'
+    'print.r'
+    'projection.r'
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
@@ -121,7 +123,6 @@ Collate:
     'utils_define_constant.R'
     'utils_geometry.r'
     'utils_is.r'
-    'utils_match_chm_and_seeds.r'
     'utils_metrics.r'
     'utils_misc.r'
     'utils_raster.r'

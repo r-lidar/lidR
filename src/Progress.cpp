@@ -100,7 +100,10 @@ void Progress::increment()
   if( ((float)dt)/CLOCKS_PER_SEC  < delay)
     return;
 
-  Rcpp::Rcout << prefix << percentage << "% (" << omp_get_num_threads() <<  " threads)\r";
+  int nchar = std::floor((float)(percentage)/2);
+  std::string completed = std::string(nchar, '=');
+  std::string remaining = std::string(50 - nchar, '-');
+  Rcpp::Rcout << prefix << "[" << completed << remaining << "] " << percentage << "% (" << omp_get_num_threads() <<  " threads)\r";
   Rcpp::Rcout.flush();
 
   return;

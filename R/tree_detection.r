@@ -73,10 +73,10 @@ tree_detection.LAS = function(las, algorithm)
 tree_detection.RasterLayer = function(las, algorithm)
 {
   lidR.context <- "tree_detection"
-  y = raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
+  y <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
   data.table::setDT(y)
   data.table::setnames(y, names(y), c("X", "Y", "Z"))
-  las = LAS(y, proj4string = las@crs, check = FALSE)
+  las <- LAS(y, proj4string = las@crs, check = FALSE)
   return(algorithm(las))
 }
 
@@ -85,9 +85,14 @@ tree_detection.LAScluster = function(las, algorithm)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
+
   ttops <- tree_detection(x, algorithm)
   bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
+
+  ttops@data$treeID <- 1:nrow(ttops) + INTERNALTREEID$ID
+  INTERNALTREEID$ID <- nrow(ttops)   + INTERNALTREEID$ID
+
   return(ttops)
 }
 
@@ -95,6 +100,7 @@ tree_detection.LAScluster = function(las, algorithm)
 tree_detection.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "xyz"
+  on.exit(INTERNALTREEID$ID <- 0L)
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
   output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
@@ -103,7 +109,6 @@ tree_detection.LAScatalog = function(las, algorithm)
   {
     output  <- do.call(rbind, output)
     output@proj4string <- las@proj4string
-    output@data$treeID <- 1:length(output@data$treeID)
   }
   else
   {
@@ -112,4 +117,8 @@ tree_detection.LAScatalog = function(las, algorithm)
 
   return(output)
 }
+
+INTERNALTREEID    <- new.env()
+INTERNALTREEID$ID <- 0L
+
 

@@ -7,7 +7,7 @@ jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
 
 COPYRIGHT:
 
-Copyright 2018 Jean-Romain Roussel
+Copyright 2019 Jean-Romain Roussel
 
 This file is part of lidR R package.
 
@@ -73,6 +73,8 @@ LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, Logi
   for (unsigned int i = 0 ; i < n ; i++)
   {
     if (abort) continue;
+    if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
+    pb.increment();
     if (use_filter && !f[i]) continue;
 
     arma::mat A(k,3);
@@ -96,8 +98,6 @@ LogicalVector C_lasdetectshape(S4 las, int method, NumericVector th, int k, Logi
 
     #pragma omp critical
     {
-      pb.increment();
-      if (pb.check_interrupt()) abort = true;
       output[i] = predicate(latent, coeff, th);
     }
   }
