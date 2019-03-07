@@ -176,7 +176,7 @@ setMethod("projection<-", "LAS", function(x, value)
     epsg <- rgdal::showEPSG(proj4)
 
     if (epsg == "OGRERR_UNSUPPORTED_SRS")
-      stop("EPSG not found. Try to use the function epsg() manually.", call. = FALSE)
+      stop("EPSG code not found. Try to use the function epsg() manually.", call. = FALSE)
 
     epsg(x@header) <- epsg
     raster::projection(x) <- proj4

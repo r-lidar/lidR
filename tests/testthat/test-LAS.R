@@ -88,7 +88,7 @@ test_that("LAS builds a LAS object with a CRS", {
   las2 <- LAS(data, proj4string = las@proj4string)
 
   expect_equal(projection(las2), "+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
-  expect_equal(epsg(las2), 26917)
+  #expect_equal(epsg(las2), 26917)
 })
 
 test_that("LAS throws a warning/error if building an invalid LAS", {
