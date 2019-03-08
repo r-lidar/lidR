@@ -69,7 +69,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
   las@data        <- data
-  projection(las) <- proj4string
+  las@proj4string <- proj4string
 
   return(las)
 }
