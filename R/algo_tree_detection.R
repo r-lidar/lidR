@@ -291,7 +291,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    lidR:::stopif_wrong_context(context, "tree_detection", "lmfauto")
+    stopif_wrong_context(context, "tree_detection", "lmfauto")
 
     # Step 1: detection with a fixe 5 m windows size
 
@@ -321,6 +321,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
 
     # Step 3: estimate the windows size of a variable windows size LMF as a function
     # of the numbers of trees in the local neighboorhood.
+    . <- X <- Y <- Z <- treeID <- NULL
 
     ws <- lmfauto_ws(las@data$Z, ntop5)
     lm <- C_lmf(las@data, ws, hmin, TRUE, getThread())
