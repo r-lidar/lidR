@@ -71,7 +71,7 @@ IntegerVector C_li2012(S4 las, double dt1, double dt2, double Zu, double R, doub
 
   // Find if a point is a local maxima within an R windows
   LogicalVector is_lm;
-  if (radius > 0)
+  if (R > 0)
     is_lm = C_lmf(data, wrap(R), 0, true);
   else
   {

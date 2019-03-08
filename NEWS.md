@@ -1,3 +1,8 @@
+## lidR v2.0.3 (Release date: 2019-03-02)
+
+- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
+local maxima and the search step is skipped (much faster)*. This is now true.
+
 ## lidR v2.0.2 (Release date: 2019-03-02)
 
 - Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*()` functions return consistently a `RasterLayer` if there is a single layer. virtual raster mosaic were returned as `RasterStack` no matter the number of layers.
