@@ -14,6 +14,17 @@ bool BoundingBox::contains(const Point& p)
     return false;
 }
 
+bool BoundingBox::contains(const Point& p, double buffer)
+{
+  if(p.x >= center.x - half_res.x - buffer &&
+     p.x <= center.x + half_res.x + buffer &&
+     p.y >= center.y - half_res.y - buffer &&
+     p.y <= center.y + half_res.y + buffer)
+    return true;
+  else
+    return false;
+}
+
 bool BoundingBox::intersects(const BoundingBox& b)
 {
 

@@ -75,6 +75,11 @@ Triangle::Triangle(Point& A, Point& B, Point& C) : Shape()
 
 bool Triangle::contains(const Point& p)
 {
+  #define buffer 0.001*0.001
+
+  if (!this->bbox.contains(p, buffer))
+    return false;
+
   double denominator = (A.x*(B.y - C.y) + A.y*(C.x - B.x) + B.x*C.y - B.y*C.x);
   double t1 = (p.x*(C.y - A.y) + p.y*(A.x - C.x) - A.x*C.y + A.y*C.x) / denominator;
   double t2 = (p.x*(B.y - A.y) + p.y*(A.x - B.x) - A.x*B.y + A.y*B.x) / -denominator;
@@ -85,11 +90,11 @@ bool Triangle::contains(const Point& p)
 
   // see http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 
-  if (distanceSquarePointToSegment(A, B, p) <= 0.001*0.001)
+  if (distanceSquarePointToSegment(A, B, p) <= buffer)
     return true;
-  if (distanceSquarePointToSegment(B, C, p) <= 0.001*0.001)
+  if (distanceSquarePointToSegment(B, C, p) <= buffer)
     return true;
-  if (distanceSquarePointToSegment(C, A, p) <= 0.001*0.001)
+  if (distanceSquarePointToSegment(C, A, p) <= buffer)
     return true;
 
   return false;

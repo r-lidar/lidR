@@ -2,6 +2,7 @@
 
 - Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
 local maxima and the search step is skipped (much faster)*. This is now true.
+- Change: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)
 
