@@ -134,21 +134,21 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
 }
 
 #' @export
-tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, attribute = "treeID")
+tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   x = readLAS(las)
   if (is.empty(x)) return(NULL)
-  metrics = tree_hulls(x, type, concavity, length_threshold, attribute)
+  metrics = tree_hulls(x, type, concavity, length_threshold, func, attribute)
   bbox = raster::extent(las)
   metrics = raster::crop(metrics, bbox)
   return(metrics)
 }
 
 #' @export
-tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, attribute = "treeID")
+tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
-  output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, attribute = attribute, .options = options)
+  output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, func = func, attribute = attribute, .options = options)
 
   if (opt_output_files(las) == "")
   {
