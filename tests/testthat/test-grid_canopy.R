@@ -87,6 +87,6 @@ test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
   expect_equal(raster::extent(x), raster::extent(481261,481349,3812922,3813010))
   expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "Z")
-  expect_equal(x, y, tolerance = 0.00075)
+  expect_equal(x, y, tolerance = 0.00079)
 })
 

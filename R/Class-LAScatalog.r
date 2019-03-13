@@ -253,8 +253,6 @@ setMethod("initialize", "LAScatalog", function(.Object)
   )
 
   .Object@processing_options <- list(
-    cores = 1L,
-    plan = "future::multiprocess",
     progress = TRUE,
     stop_early = TRUE,
     wall_to_wall = TRUE
