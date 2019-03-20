@@ -32,6 +32,10 @@
 
 3. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
 
+##### ENHANCEMENT
+
+1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non loaded extrabytes. This fix the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enable to write the LAS object without updating the header manually.
+
 
 ## lidR v2.0.3 (Release date: 2019-03-02)
 
