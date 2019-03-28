@@ -39,13 +39,13 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Select the first returns classified as ground
-#' firstground = lasfilter(lidar, Classification == 1 & ReturnNumber == 1)
+#' firstground = lasfilter(lidar, Classification == 2L & ReturnNumber == 1L)
 #'
 #' # Multiple arguments are equivalent to &
-#' firstground = lasfilter(lidar, Classification == 1, ReturnNumber == 1)
+#' firstground = lasfilter(lidar, Classification == 2L, ReturnNumber == 1L)
 #'
 #' # Multiple criteria
-#' first_or_ground = lasfilter(lidar, Classification == 1 | ReturnNumber == 1)
+#' first_or_ground = lasfilter(lidar, Classification == 2L | ReturnNumber == 1L)
 #' @export
 #' @family lasfilters
 lasfilter = function(las, ...)
