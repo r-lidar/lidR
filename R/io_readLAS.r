@@ -189,5 +189,26 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
       header <- rlas::header_update(header, data)
   }
 
+  # Remove extrabytes in the header if not loaded
+
+  extrabytes <- names(header[["Variable Length Records"]][["Extra_Bytes"]][["Extra Bytes Description"]])
+
+  if (!is.null(extrabytes))
+  {
+    for (extrabyte in extrabytes)
+    {
+      if (!extrabyte %in% names(data))
+      {
+        header[["Variable Length Records"]][["Extra_Bytes"]][["Extra Bytes Description"]][[extrabyte]] <- NULL
+        message(glue::glue("'{extrabyte}' extrabytes attribute has been removed from the header because it has not been loaded."))
+      }
+    }
+
+    if (length(header[["Variable Length Records"]][["Extra_Bytes"]][["Extra Bytes Description"]]) == 0)
+    {
+      header[["Variable Length Records"]][["Extra_Bytes"]] <- NULL
+    }
+  }
+
   return(LAS(data, header, check = FALSE))
 }
