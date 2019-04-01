@@ -189,12 +189,11 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   verbose("Testing whether points fall in a given polygon...")
 
   ids <- rep(0L, npoints)
-  for (i in 1:length(sfgeom$geometry))
+  for (i in seq_along(sfgeom$geometry))
   {
     wkt          <- sf::st_as_text(sfgeom$geometry[i], digits = 10)
     in_poly      <- C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt)
     ids[in_poly] <- i
-    print(i)
   }
 
   if (method == 1)
