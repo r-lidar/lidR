@@ -22,13 +22,13 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
 # Select the first returns classified as ground
-firstground = lasfilter(lidar, Classification == 1 & ReturnNumber == 1)
+firstground = lasfilter(lidar, Classification == 2L & ReturnNumber == 1L)
 
 # Multiple arguments are equivalent to &
-firstground = lasfilter(lidar, Classification == 1, ReturnNumber == 1)
+firstground = lasfilter(lidar, Classification == 2L, ReturnNumber == 1L)
 
 # Multiple criteria
-first_or_ground = lasfilter(lidar, Classification == 1 | ReturnNumber == 1)
+first_or_ground = lasfilter(lidar, Classification == 2L | ReturnNumber == 1L)
 }
 \seealso{
 Other lasfilters: \code{\link{lasfilterduplicates}},

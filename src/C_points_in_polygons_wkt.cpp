@@ -38,6 +38,7 @@ using namespace Rcpp;
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> Point;
 typedef boost::geometry::model::polygon<Point> Polygon;
 typedef boost::geometry::model::multi_polygon<Polygon> MultiPolygon;
+typedef boost::geometry::model::box<Point> Bbox;
 
 // [[Rcpp::export]]
 LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::string wkt, int ncpu)
@@ -50,8 +51,12 @@ LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::str
 
   if (wkt.find("MULTIPOLYGON") != std::string::npos)
   {
+    Point p;
+    Bbox bbox;
     MultiPolygon polygons;
+
     boost::geometry::read_wkt(wkt, polygons);
+    boost::geometry::envelope(polygons, bbox);
 
     #pragma omp parallel for num_threads(ncpu)
     for(int i = 0 ; i < npoints ; i++)
@@ -60,7 +65,13 @@ LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::str
       p.set<0>(x[i]);
       p.set<1>(y[i]);
 
-      bool isin = boost::geometry::covered_by(p, polygons);
+      bool isin = false;
+
+      if (boost::geometry::covered_by(p, bbox))
+      {
+        if (boost::geometry::covered_by(p, polygons))
+          isin = true;
+      }
 
       #pragma omp critical
       {
@@ -70,8 +81,12 @@ LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::str
   }
   else if (wkt.find("POLYGON") != std::string::npos)
   {
+    Point p;
+    Bbox bbox;
     Polygon polygon;
+
     boost::geometry::read_wkt(wkt, polygon);
+    boost::geometry::envelope(polygon, bbox);
 
     #pragma omp parallel for num_threads(ncpu)
     for(int i = 0 ; i < npoints ; i++)
@@ -80,7 +95,13 @@ LogicalVector C_points_in_polygon_wkt(NumericVector x, NumericVector y, std::str
       p.set<0>(x[i]);
       p.set<1>(y[i]);
 
-      bool isin = boost::geometry::covered_by(p, polygon);
+      bool isin = false;
+
+      if (boost::geometry::covered_by(p, bbox))
+      {
+        if (boost::geometry::covered_by(p, polygon))
+          isin = true;
+      }
 
       #pragma omp critical
       {

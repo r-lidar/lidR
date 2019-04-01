@@ -36,12 +36,13 @@
 
 1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non loaded extrabytes. This fix the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enable to write the LAS object without updating the header manually.
 
-
-## lidR v2.0.3 (Release date: 2019-03-02)
+## lidR v2.0.3 (Release date: )
 
 - Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
 local maxima and the search step is skipped (much faster)*. This is now true.
-- Change: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
+- Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
+- Enhance: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
+- Enhance: in `lasmergespatial` with a `SpatialPolygonDataFrame` the function checks the bounding box of the polygon to speed-up the computation with complex polygons.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)
 
