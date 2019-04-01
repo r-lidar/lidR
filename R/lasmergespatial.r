@@ -85,9 +85,9 @@ lasmergespatial.LAS = function(las, source, attribute = NULL)
     stop("No method for this source format.")
 
   if (is.null(attribute))
-    attribute = "id"
+    attribute <- "id"
 
-  las = lasadddata(las, values, attribute)
+  las <- lasadddata(las, values, attribute)
   return(las)
 }
 
@@ -145,6 +145,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   if (is.null(attribute))
   {
     method <- 0
+    values <- rep(NA_integer_, npoints)
   }
   # The attribute is the name of an attribute in the attribute table: assign the value of the attribute
   else if (attribute %in% names(shapefile@data))
@@ -163,31 +164,23 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
     else if (class(data) == "character")
       values = rep(NA_character_, npoints)
     else
-      stop(glue::glue("The attribute {attribute} the in the table of attribute is not of a supported type."))
+      stop(glue::glue("The attribute {attribute} in the table of attribute is not of a supported type."))
   }
-  # The attribute is not the name of an attribute in the attribute table: assign a boolean value if the point is in a polygon or
-  # not.
+  # The attribute is not the name of an attribute in the attribute table: assign a boolean value if
+  # the point is in a polygon or not.
   else
   {
     method <- 2
     values <- logical(npoints)
   }
 
-  # Crop the shapefile to minimize the computations removing out-of-bounds polygons
-  if (raster::extent(shapefile) >  2*raster::extent(las))
-  {
-    verbose("Croping the shapefile...")
-    polys <- raster::crop(shapefile, raster::extent(las)*1.01)
-  }
-  else
-    polys <- shapefile
+  verbose("Croping the shapefile...")
 
-  # No polygon? Return NA or false depending on the method used
+  bbox  <- extent(las)
+  polys <- raster::crop(shapefile, bbox*1.01)
+
   if (is.null(polys))
-  {
-    verbose("No polygon found within the data")
     return(values)
-  }
 
   verbose("Analysing the polygons...")
 
@@ -201,23 +194,15 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
     wkt          <- sf::st_as_text(sfgeom$geometry[i], digits = 10)
     in_poly      <- C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt)
     ids[in_poly] <- i
+    print(i)
   }
 
   if (method == 1)
-  {
     values[ids > 0L] <- polys@data[[attribute]][ids[ids > 0]]
-    verbose(glue::glue("Assigned the value of attribute {attribute} from the table of attibutes to the points"))
-  }
   else if (method == 2)
-  {
     values <- ids > 0
-    verbose("Assigned a boolean value to the points")
-  }
   else
-  {
     values <- ifelse(ids == 0L, NA_integer_, ids)
-    verbose("Assigned a number to each individual polygon")
-  }
 
   return(values)
 }
