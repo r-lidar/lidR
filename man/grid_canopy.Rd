@@ -21,7 +21,8 @@ are written on disk when running the function with a \code{LAScatalog}, a virtua
 returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
-Creates a digital surface model using several possible algorithms.
+Creates a digital surface model (DSM) using several possible algorithms. If the user provides a
+normalised point cloud, the output is indeed a canopy height model (CHM).
 }
 \section{Working with a \code{LAScatalog}}{
 

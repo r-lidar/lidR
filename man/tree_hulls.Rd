@@ -73,6 +73,9 @@ and cannot be changed.
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 
+# Note: the trees are already segmented in this file and the IDs
+# are stored in extrabytes 0.
+
 convex_hulls = tree_hulls(las)
 sp::plot(convex_hulls)
 
