@@ -110,6 +110,7 @@ Collate:
     'lastrees.r'
     'lasupdateheader.r'
     'lasvoxelize.r'
+    'lidR-package.r'
     'plot.r'
     'plot.s3.r'
     'print.r'

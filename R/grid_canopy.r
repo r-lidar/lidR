@@ -27,7 +27,8 @@
 
 #' Digital Surface Model
 #'
-#' Creates a digital surface model using several possible algorithms.
+#' Creates a digital surface model (DSM) using several possible algorithms. If the user provides a
+#' normalised point cloud, the output is indeed a canopy height model (CHM).
 #'
 #' @template param-las
 #'

@@ -67,13 +67,8 @@
 #' @slot header Object of class \link[lidR:LASheader-class]{LASheader}. las file header according to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #'
-#' @import data.table
-#' @import methods
-#' @importClassesFrom sp Spatial
-#'
 #' @include Class-LASheader.r
 #' @export
-#' @useDynLib lidR, .registration = TRUE
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
