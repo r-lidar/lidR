@@ -5,6 +5,7 @@ local maxima and the search step is skipped (much faster)*. This is now true.
 - Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
 - Enhance: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
 - Enhance: in `lasmergespatial` with a `SpatialPolygonDataFrame` the function checks the bounding box of the polygon to speed-up the computation with complex polygons.
+- Doc: add a `?lidR` page to the manual.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)
 
