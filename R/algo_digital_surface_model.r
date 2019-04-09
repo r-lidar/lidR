@@ -71,6 +71,9 @@ p2r = function(subcircle = 0, na.fill = NULL)
   assert_is_a_number(subcircle)
   assert_all_are_non_negative(subcircle)
 
+  subcircle <- lazyeval::uq(subcircle)
+  na.fill   <- lazyeval::uq(na.fill)
+
   if (!is.null(na.fill))
   {
     if (!is(na.fill, "SpatialInterpolation"))
@@ -168,6 +171,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' }
 dsmtin = function(max_edge = 0)
 {
+  max_edge <- lazyeval::uq(max_edge)
   return(pitfree(0, c(max_edge, 0), 0))
 }
 
@@ -243,6 +247,10 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
 
   if (length(thresholds) > 1L & length(max_edge) < 2L)
     stop("'max_edge' should contain 2 numbers")
+
+  thresholds <- lazyeval::uq(thresholds)
+  max_edge   <- lazyeval::uq(max_edge)
+  subcircle  <- lazyeval::uq(subcircle)
 
   f = function(las, layout)
   {

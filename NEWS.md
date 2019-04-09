@@ -3,8 +3,11 @@
 - Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
 local maxima and the search step is skipped (much faster)*. This is now true.
 - Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
+- Fix: [#242](https://github.com/Jean-Romain/lidR/issues/242) on Windows when using multicore options to process a LAScatalog the parameter of the algorithms were not exported to each session.
+
 - Enhance: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
 - Enhance: in `lasmergespatial` with a `SpatialPolygonDataFrame` the function checks the bounding box of the polygon to speed-up the computation with complex polygons.
+
 - Doc: add a `?lidR` page to the manual.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)

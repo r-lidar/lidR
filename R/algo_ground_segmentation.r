@@ -63,6 +63,9 @@
 #' plot(las, color = "Classification")
 pmf = function(ws, th)
 {
+  ws <- lazyeval::uq(ws)
+  th <- lazyeval::uq(th)
+
   f = function(cloud)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -133,6 +136,13 @@ pmf = function(ws, th)
 #' plot(las, color = "Classification")
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {
+  sloop_smooth     <- lazyeval::uq(sloop_smooth)
+  class_threshold  <- lazyeval::uq(class_threshold)
+  cloth_resolution <- lazyeval::uq(cloth_resolution)
+  rigidness        <- lazyeval::uq(rigidness)
+  iterations       <- lazyeval::uq(iterations)
+  time_step        <- lazyeval::uq(time_step)
+
   f = function(cloud)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -217,10 +227,10 @@ util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws =
       th = dh0
     else
     {
-      if(exp)
+      if (exp)
         th = s * (ws - wk[k]) * c + dh0
       else
-        th = s*2*b*c+dh0
+        th = s*2*b*c + dh0
     }
 
     # Enforce max distance on height threshold

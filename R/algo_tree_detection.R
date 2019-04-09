@@ -96,8 +96,10 @@
 #' sp::plot(ttops, add = TRUE)
 lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 {
-  shape = match.arg(shape)
-  circular = shape == "circular"
+  shape <- match.arg(shape)
+  circ  <- shape == "circular"
+  ws    <- lazyeval::uq(ws)
+  hmin  <- lazyeval::uq(hmin)
 
   f = function(las)
   {
@@ -124,7 +126,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
 
     . <- X <- Y <- Z <- treeID <- NULL
-    is_maxima = C_lmf(las@data, ws, hmin, circular)
+    is_maxima = C_lmf(las@data, ws, hmin, circ)
     maxima = las@data[is_maxima, .(X,Y,Z)]
     maxima[, treeID := 1:.N]
 
