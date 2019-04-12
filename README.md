@@ -1,5 +1,6 @@
-![](https://raw.githubusercontent.com/Jean-Romain/storage/master/README/lidr-ban.png)<br/>
 
+lidR <img src="man/figures/logo.png" align="right"/>
+======================================================================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications

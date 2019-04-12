@@ -101,6 +101,14 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   assert_all_are_in_closed_range(th_seed, 0, 1)
   assert_all_are_in_closed_range(th_cr, 0, 1)
 
+  chm      <- lazyeval::uq(chm)
+  treetops <- lazyeval::uq(treetops)
+  th_tree  <- lazyeval::uq(th_tree)
+  th_seed  <- lazyeval::uq(th_seed)
+  th_cr    <- lazyeval::uq(th_cr)
+  max_cr   <- lazyeval::uq(max_cr)
+  ID       <- lazyeval::uq(ID)
+
   f = function()
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -196,6 +204,13 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
   assert_all_are_positive(hmin)
   assert_all_are_positive(speed_up)
 
+  dt1      <- lazyeval::uq(dt1)
+  dt2      <- lazyeval::uq(dt2)
+  R        <- lazyeval::uq(R)
+  Zu       <- lazyeval::uq(Zu)
+  hmin     <- lazyeval::uq(hmin)
+  speed_up <- lazyeval::uq(speed_up)
+
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -283,6 +298,12 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   assert_is_a_number(exclusion)
   assert_all_are_in_open_range(max_cr_factor, 0, 1)
   assert_all_are_in_open_range(exclusion, 0, 1)
+
+  chm            <- lazyeval::uq(chm)
+  treetops       <- lazyeval::uq(treetops)
+  max_cr_factor  <- lazyeval::uq(max_cr_factor)
+  exclusion      <- lazyeval::uq(exclusion)
+  ID             <- lazyeval::uq(ID)
 
   f = function()
   {
@@ -380,6 +401,11 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' add_treetops3d(x, ttops)
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
+  chm     <- lazyeval::uq(chm)
+  th_tree <- lazyeval::uq(th_tree)
+  tol     <- lazyeval::uq(tol)
+  ext     <- lazyeval::uq(ext)
+
   ws_generic(chm, th_tree = th_tree, tol = tol, ext = ext)
 }
 
@@ -387,6 +413,11 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #' @export
 mcwatershed = function(chm, treetops, th_tree = 2, ID = "treeID")
 {
+  chm      <- lazyeval::uq(chm)
+  treetops <- lazyeval::uq(treetops)
+  th_tree  <- lazyeval::uq(th_tree)
+  ID       <- lazyeval::uq(ID)
+
   ws_generic(chm, th_tree = th_tree, treetops = treetops, ID = ID)
 }
 
@@ -455,21 +486,3 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
   class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
   return(f)
 }
-
-
-
-# plot(disc@data$X, disc@data$Y, col = lidR:::set.colors(disc@data$Z, height.colors(50)), asp = 1)
-
-# x = numeric(64)
-# y = numeric(64)
-# a = numeric(64)
-# for(i in 1:64)
-# {
-#   x[i] = GMX$X + l$profile[[i]]$extremityPoint[5] * cos(l$profile[[i]]$angle*pi/180)
-#   y[i] = GMX$Y + l$profile[[i]]$extremityPoint[5] * sin(l$profile[[i]]$angle*pi/180)
-#   a[i] = l$profile[[i]]$angle
-#   points(l$profile[[i]]$extremityPoint[1], l$profile[[i]]$extremityPoint[2], col = "red", pch = 19)
-# }
-
-#lines(l$polygon[,1 ], l$polygon[,2], col = "red")
-#lines(p$x, p$y)

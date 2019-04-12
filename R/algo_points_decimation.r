@@ -56,6 +56,9 @@ random = function(density, use_pulse = FALSE)
   assert_all_are_positive(density)
   assert_is_a_bool(use_pulse)
 
+  density   <- lazyeval::uq(density)
+  use_pulse <- lazyeval::uq(use_pulse)
+
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -122,6 +125,10 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
   assert_is_a_number(res)
   assert_all_are_positive(res)
 
+  density   <- lazyeval::uq(density)
+  res       <- lazyeval::uq(res)
+  use_pulse <- lazyeval::uq(use_pulse)
+
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
@@ -170,6 +177,11 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' plot(thinned)
 highest = function(res = 1)
 {
+  assert_is_a_number(res)
+  assert_all_are_positive(res)
+
+  res <- lazyeval::uq(res)
+
   f = function(las)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
