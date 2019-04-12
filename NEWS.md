@@ -26,6 +26,8 @@
 
 12. New function `readLASheader` to read the header of a file in a `LASheader` object.
 
+13. New functions `npoints` and `density` available for `LAS`, `LASheader` and `LAScatalog` object that return what users may expect. The function `area` has also been extended to `LASheader` objects.
+
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.

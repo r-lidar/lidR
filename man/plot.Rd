@@ -18,7 +18,7 @@ plot(x, y, ...)
 \S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE,
   chunk_pattern = FALSE, ...)
 
-\S4method{plot}{LASheader,missing}(x, y, mapview = TRUE, ...)
+\S4method{plot}{LASheader,missing}(x, y, mapview = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{LAS*} object}

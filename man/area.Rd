@@ -4,14 +4,41 @@
 \name{area}
 \alias{area}
 \alias{area,LAS-method}
+\alias{area,LASheader-method}
 \alias{area,LAScatalog-method}
+\alias{npoints}
+\alias{npoints,LAS-method}
+\alias{npoints,LASheader-method}
+\alias{npoints,LAScatalog-method}
+\alias{density}
+\alias{density,LAS-method}
+\alias{density,LASheader-method}
+\alias{density,LAScatalog-method}
 \title{Surface covered by a LAS* object.}
 \usage{
 area(x, ...)
 
 \S4method{area}{LAS}(x, ...)
 
+\S4method{area}{LASheader}(x, ...)
+
 \S4method{area}{LAScatalog}(x, ...)
+
+npoints(x, ...)
+
+\S4method{npoints}{LAS}(x, ...)
+
+\S4method{npoints}{LASheader}(x, ...)
+
+\S4method{npoints}{LAScatalog}(x, ...)
+
+density(x, ...)
+
+\S4method{density}{LAS}(x, ...)
+
+\S4method{density}{LASheader}(x, ...)
+
+\S4method{density}{LAScatalog}(x, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{LAS*}}
@@ -19,11 +46,15 @@ area(x, ...)
 \item{...}{unused}
 }
 \value{
-numeric. The area of the object computed in the same units as the coordinate reference system
+numeric. A number. Notice that for area the measure is in the same units as the coordinate
+reference system.
 }
 \description{
 Surface covered by a \code{LAS*} object. For \code{LAS} point clouds it is computed based on the
 convex hull of the points. For a \code{LAScatalog} it is computed as the sum of the bounding boxes
 of the files. For overlapping tiles the value may be larger than the total covered area because
-some regions are sampled twice.
+some regions are sampled twice. For a \code{LASheader} it is computed with the bounding box. The
+function \code{npoints} does what user may expect it to do and the function \code{density} is
+equivalent to \code{npoints(x)/area(x)}. As a consequence for the same file \code{area} applied on
+a LASheader or on a LAS can returns slighly different values.
 }
