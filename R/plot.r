@@ -103,23 +103,37 @@ setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, map
 
 #' @export
 #' @rdname plot
-setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapview = TRUE, ...)
+setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapview = FALSE, ...)
 {
   epsg <- epsg(x)
+  PHB  <- x@PHB
   crs  <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
-  xmin <- x@PHB$`Min X`
-  xmax <- x@PHB$`Max X`
-  ymin <- x@PHB$`Min Y`
-  ymax <- x@PHB$`Max Y`
+  xmin <- PHB[["Min X"]]
+  xmax <- PHB[["Max X"]]
+  ymin <- PHB[["Min Y"]]
+  ymax <- PHB[["Max Y"]]
   mtx  <- matrix(c(xmin, xmax, ymin, ymax)[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
   Sr   <- sp::Polygons(list(sp::Polygon(mtx)), "1")
   Sr   <- sp::SpatialPolygons(list(Sr), proj4string = crs)
+
+  names(PHB) <- make.names(names(PHB))
+
+  if (!is.null(PHB[["Number.of.points.by.return"]]))
+  {
+    PHB[["Number.of.1st.return"]] <- PHB[["Number.of.points.by.return"]][1]
+    PHB[["Number.of.2nd.return"]] <- PHB[["Number.of.points.by.return"]][2]
+    PHB[["Number.of.3rd.return"]] <- PHB[["Number.of.points.by.return"]][3]
+    PHB[["Number.of.4th.return"]] <- PHB[["Number.of.points.by.return"]][4]
+    PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
+    PHB[["Number.of.points.by.return"]] <- NULL
+    PHB[["Global.Encoding"]] <- NULL
+  }
 
   res <- new("LAScatalog")
   res@bbox <- Sr@bbox
   res@proj4string <- Sr@proj4string
   res@plotOrder <- Sr@plotOrder
-  res@data <- data.table::as.data.table(x@PHB)
+  res@data <- data.table::as.data.table(PHB)
   res@polygons <- Sr@polygons
 
   plot.LAScatalog(res, mapview = mapview, ...)

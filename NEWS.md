@@ -24,6 +24,8 @@
 
 11. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically.
 
+12. New function `readLASheader` to read the header of a file in a `LASheader` object.
+
 #### NOTE
 
 1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.

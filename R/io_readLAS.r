@@ -29,7 +29,7 @@
 
 #' Read .las or .laz files
 #'
-#' Reads .las or .laz files  object of class \link[lidR:LAS-class]{LAS}. If several files are read at
+#' Reads .las or .laz files into object of class \link[lidR:LAS-class]{LAS}. If several files are read at
 #' once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 #' to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 #' The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.
@@ -74,7 +74,31 @@ readLAS = function(files, select = "*", filter = "")
   UseMethod("readLAS", files)
 }
 
+
+#' Read a .las or .laz file header
+#'
+#' Reads a .las or .laz file header into an object of class \link[lidR:LASheader-class]{LASheader}.
+#' This function strictly reads the header while the function \link{readLAS} can alter the header to
+#' fit the actual data loaded.
+#'
+#' @param file characters. Path to one file.
+#' @return A LASheader object
 #' @export
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' header = readLASheader(LASfile)
+#'
+#' print(header)
+#' plot(header)
+#'
+#' \dontrun{
+#' plot(header, mapview = TRUE)}
+readLASheader = function(file)
+{
+  header <- rlas::read.lasheader(file)
+  return(LASheader(header))
+}
+
 readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
   assert_is_a_string(select)
@@ -200,7 +224,6 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
       if (!extrabyte %in% names(data))
       {
         header[["Variable Length Records"]][["Extra_Bytes"]][["Extra Bytes Description"]][[extrabyte]] <- NULL
-        message(glue::glue("'{extrabyte}' extrabytes attribute has been removed from the header because it has not been loaded."))
       }
     }
 
