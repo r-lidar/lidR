@@ -139,6 +139,18 @@ assert_all_are_same_crs = function(x)
     stop("Different CRS.", call. = FALSE)
 }
 
+assert_is_algorithm = function(x)
+{
+  if (!is.algorithm(x))
+    stop("Invalid function provided as algorithm.", call. = FALSE)
+}
+
+assert_is_algorithm_its = function(x)
+{
+  if (!is(x, "IndividualTreeDetection"))
+    stop("The algorithm used is not an algorithm for individual tree detection.", call. = FALSE)
+}
+
 
 stopifnotlas = function(x)
 {

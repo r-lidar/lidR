@@ -1,40 +1,91 @@
 ## lidR v2.1.0
 
+#### VISIBLE CHANGES
+
+`opt_cores()` is no longer supported. If used it generates a message. For more details see `help("lidR-parallelism")`. The LAScatalog processing engine works the same way than in versions `2.0.y` but the strategy used to process the tiles in parallel must be explicitely declared by users. In versions `2.0.y` the following was correct:
+
+```r
+library(lidR)
+ctg <- catalog("folder/")
+opt_cores(ctg) <- 4L
+hmean <- grid_metrics(ctg, mean(Z))
+```
+
+Now this must be explicitely declared with the `future` package. A strategy applies to all catalogs all along an R session:
+
+```r
+library(lidR)
+library(future)
+plan(multisession, workers = 4L)
+ctg <- catalog("folder/")
+hmean <- grid_metrics(ctg, mean(Z))
+```
+
 #### NEW FEATURES
 
-1. [#204](https://github.com/Jean-Romain/lidR/issues/204) LAS 1.4 and point formats > 6 are now suported. `lascheck`, `print` were updated to work correctly with these formats.
+1. [#204](https://github.com/Jean-Romain/lidR/issues/204) LAS 1.4 and point formats > 6 are now better suported. `lascheck()` and `print()` were updated to work correctly with these formats.
 
-2. [#214](https://github.com/Jean-Romain/lidR/issues/214) `opt_cores()` is no longer supported. If used it generates a message. Former parallelisation was inneficient and worked by loading several chunks of LAscatalog at once implying to read/write several files at once (strong overhead) and used a lot of RAM. Many algorithms are now natively parallelised at the C++ level with OpenMP. This significantly speed-up processing of LAS objects. Consequently this also speed-up processing of LAScatalog objects without the need to overload the RAM and kill the read/write bottleneck.
+2. New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. User must prefer the new function `projection()` instead.
 
-3. New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg` to store CRS. It updates the `proj4string`and the header of the LAS object.
+3. New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally and in specific cases. Vignette `LAS-class` has been updated in consequence.
 
-4. New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `prj4string`or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally. Vignette `LAS-class` has been updated in consequence
+```r
+projection(las) <- projection(raster)
+```
 
-5. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
+4. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
 
-6. New functions `lasdetectshape()` for water and human made structure detection.
+```r
+hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
+```
 
-7. LAScatalog progress estimation displayed as graphic on a map now handle warnings by coloring the chunks in orange.
+5. New functions `lasdetectshape()` for water and human made structure detection.
 
-8. [#224](https://github.com/Jean-Romain/lidR/issues/217) `plot` for LAS object gained an options `axis = TRUE` to display axis and `legend = TRUE` to display color gradient legend.
+6. LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
 
-9. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
+7. [#224](https://github.com/Jean-Romain/lidR/issues/217) `plot` for LAS object gained an options `axis = TRUE` to display axis and `legend = TRUE` to display color gradient legend.
 
-10. `tree_hull()` can compute metrics for each tree like `tree_metrics`
+8. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
 
-11. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically.
+9. `tree_hull()` can compute metrics for each tree like `tree_metrics`
 
-12. New function `readLASheader` to read the header of a file in a `LASheader` object.
+```r
+convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
+```
 
-13. New functions `npoints` and `density` available for `LAS`, `LASheader` and `LAScatalog` object that return what users may expect. The function `area` has also been extended to `LASheader` objects.
+10. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
+
+```
+An error occurred when processing the chunk 190. Try to load this chunk with:
+chunk <- readRDS("/tmp/RtmpAlHUux/chunk190.rds")
+las <- readLAS(chunk)
+```
+
+11. New function `readLASheader` to read the header of a file in a `LASheader` object.
+
+13. New functions `npoints` and `density` available for `LAS`, `LASheader` and `LAScatalog` objects that return what users may expect. The function `area` has also been extended to `LASheader` objects.
+
+```r
+las    <- readLAS("file.las", filter = "-keep_first")
+header <- readLASheader(file)
+ctg    <- catalog("folder/")
+
+npoints(las)    #> [1] 55756
+npoints(header) #> [1] 81590
+npoints(ctg)    #> [1] 1257691
+
+density(las)    #> [1] 1.0483
+density(header) #> [1] 1.5355
+density(ctg)    #> [1] 1.5123
+```
+
+14. The LAScatalog processing engine now returns the partial result in case of a fail
 
 #### NOTE
 
-1. Because the function `catalog_apply` has been unparallelised to move parallelisation to algorithms themselve the code of `catalog_apply` has been drastically simplified which will simplify future development.
+1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
 
-2. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
-
-3. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
+2. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
 
 ##### ENHANCEMENT
 
@@ -42,8 +93,7 @@
 
 ## lidR v2.0.3 (Release date: )
 
-- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
-local maxima and the search step is skipped (much faster)*. This is now true.
+- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as local maxima and the search step is skipped (much faster)*. This is now true.
 - Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
 - Fix: [#242](https://github.com/Jean-Romain/lidR/issues/242) on Windows when using multicore options to process a LAScatalog the parameter of the algorithms were not exported to each session.
 

@@ -9,11 +9,7 @@ LIDRTHREADS$n = 1L
 #' by internally calling \link[data.table:setDTthreads]{setDTthreads} because several functions  of
 #' lidR rely on \code{data.table} but it does not change R itself or other packages using OpenMP.
 #'
-#' This option come in replacement of the former \code{LAScatalog} processing option \code{opt_cores}.
-#' The former options enabled to process several chunks at once by loading more data in RAM
-#' with a strong overhead but point-cloud processing was not actually parallelised. lidR becomes more
-#' parallel internally and thus multithreading is natively used both when processing a point-cloud (LAS
-#' objects) or a catalog (LAScatalog objects).
+#' @seealso \link{lidR-parallelism}
 #'
 #' @param threads An integer >= 0. Default 0 means use all CPU available and leave the operating system
 #' to multi task.
@@ -53,5 +49,19 @@ get_lidr_threads = function()
   return(LIDRTHREADS$n)
 }
 
-getThread = get_lidr_threads
+get_future_workers = function()
+{
+  n <- formals(future::plan())$workers
+  if (is.null(n))
+    return(1L)
+  else if (is.call(n))
+    return(future::availableCores())
+  else
+    return(n)
+}
+
+getThread <- get_lidr_threads
+getThreads <- get_lidr_threads
+getWorkers <- get_future_workers
+setThreads <- set_lidr_threads
 

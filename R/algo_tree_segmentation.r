@@ -338,7 +338,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     return(crown)
   }
 
-  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "OpenMP", "Algorithm", "lidR")
   return(f)
 }
 

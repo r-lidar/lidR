@@ -32,6 +32,9 @@
 #' This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
 #' It allows the application of a user-defined routine over an entire catalog. The LAScatalog
 #' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
+#' This function is the core of the lidR package. It drives every single function that can process a
+#' \code{LAScatalog}. It is flexible and powerful but also complex and reserved to users that are
+#' confortable with the lidR package.\cr\cr.
 #' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 #' this task is specific to each process. In other \code{lidR} functions this task is performed
@@ -41,7 +44,7 @@
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
 #' @param FUN A user-defined function that respects a given template (see section function template)
 #' @param ... Optional arguments to FUN.
-#' @param .options See dedicated section and example.
+#' @param .options See dedicated section and examples.
 #'
 #' @section Edge artifacts:
 #'
@@ -88,16 +91,17 @@
 #' function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
 #'
 #' @section .options:
-#' User may have noticed that some lidR functions throw an errors when the processing options are inappropriate.
-#' For example, some functions need a buffer and thus \code{buffer = 0} is forbidden. User can add the same
-#' constrains to protect against inappropriate options. The \code{.options} argument can be a \code{list} of
-#' options.
+#' User may have noticed that some lidR functions throw an errors when the processing options are
+#' inappropriate. For example, some functions need a buffer and thus \code{buffer = 0} is forbidden.
+#' User can add the same constrains to protect against inappropriate options. The \code{.options}
+#' argument is a \code{list} that allows to tune the behavior of the function.
 #' \itemize{
 #' \item \code{need_buffer = TRUE} the function complains if the buffer is 0
 #' \item \code{need_output_file = TRUE} the function complains if no output file template is provided
-#' \item \code{drop_null = FALSE} the NULL outputs are not automatically removed (useful in very
-#' specific internal cases)
-#' \item \code{raster_alignment = ...} very important option, see below.
+#' \item \code{raster_alignment = ...} the function checks the aligmnent of the chunks. This option is
+#' important if the output is a raster. See below for more details.
+#' \item \code{drop_null = FALSE} Not intended to be used by regular users. The function doed not
+#' remove the NULL outputs.
 #' }
 #'
 #' When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
@@ -170,7 +174,7 @@
 #' plot(project)
 #'
 #' # 3. Set some catalog options.
-#' # For this dummy example, the chunk size is 80 m and the buffer is 10 m using a single core.
+#' # For this dummy example, the chunk size is 80 m and the buffer is 10 m
 #' opt_chunk_buffer(project) <- 10
 #' opt_chunk_size(project)   <- 80            # small because this is a dummy example.
 #' opt_select(project)       <- "xyz"         # read only the coordinates.
@@ -210,55 +214,84 @@
 #' opt_select(project)       <- "xyz"   # read only the coordinates.
 #'
 #' opt     <- list(raster_alignment = 20)  # catalog_apply will adjust the chunks if required
-#' output  <-  catalog_apply(project, rumple_index_surface, res = 20, .options = opt)
+#' output  <- catalog_apply(project, rumple_index_surface, res = 20, .options = opt)
 #' output  <- do.call(raster::merge, output)
 #' plot(output, col = height.colors(50))
 #' @export
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 {
+  # ==== INITIALISATONS ====
+
+  # Assert correctness of inputs
   assert_is_all_of(ctg, "LAScatalog")
   assert_is_function(FUN)
-  assert_FUN_is_NULL_with_empty_cluster(ctg, FUN, ...)
 
-  options          <- parse_options(.options)
-  raster_alignment <- options$raster_alignment
-  need_buffer      <- options$need_buffer
-  check_alignment  <- options$check_alignment
-  drop_null        <- options$drop_null
-  need_output_file <- options$need_output_file
-  resolution       <- raster_alignment$res
-  start            <- raster_alignment$start
+  # Store stuff in 3 letters variable to reduce width of next lines
+  opt <- engine_parse_options(.options)
+  ral <- opt[["raster_alignment"]]
+  nbu <- opt[["need_buffer"]]
+  cal <- opt[["check_alignment"]]
+  dnu <- opt[["drop_null"]]
+  nof <- opt[["need_output_file"]]
+  glo <- opt[["global"]]
+  res <- ral[["res"]]
+  sta <- ral[["start"]]
+  pop <- ctg@processing_options
+  oop <- ctg@output_options
 
-  ctg              <- check_and_fix_options(ctg, need_buffer, check_alignment, need_output_file, resolution, start)
+  # Assert correctness and check aligment
+  assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
+  assert_processing_constraints_are_repected(ctg, nbu, nof)
+  ctg <- engine_realign_chunks_options(ctg, cal, res, sta)
 
-  clusters         <- catalog_makecluster(ctg)
-  clusters         <- check_and_fix_clusters(ctg, clusters, check_alignment, resolution, start)
+  # Produce the chunks
+  clusters <- catalog_makecluster(ctg)
+  clusters <- engine_realign_chunks(ctg, clusters, cal, res, sta)
 
-  oldstate <- options("lidR.progress")[[1]]
+  # Disable the progress bar of the functions but ensure to restore user's options
+  oldstate <- getOption("lidR.progress")
   options(lidR.progress = FALSE)
   on.exit(options(lidR.progress = oldstate), add = TRUE)
 
-  output <- cluster_apply(clusters, FUN, processing_options = ctg@processing_options, output_options = ctg@output_options, drop_null = drop_null, ...)
+  # Process
+  output <- cluster_apply(clusters, FUN, pop, oop, glo, ...)
+
+  # Filter NULLs and return
+  if (dnu) output <- Filter(Negate(is.null), output)
   return(output)
 }
 
-check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_file, res, start)
+assert_fun_is_null_with_empty_cluster = function(ctg, FUN, ...)
+{
+  if (opt_wall_to_wall(ctg) == TRUE)
+  {
+    cl <- LAScluster(list(x = 0, y = 0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package = "rlas"), "noname")
+    cl@select <- "*"
+
+    if (!is.null(FUN(cl, ...)))
+      stop("User's function does not return NULL for empty chunks. Please see the documentation of catalog_apply.", call. = FALSE)
+  }
+}
+
+assert_processing_constraints_are_repected <- function(ctg, need_buffer, need_output_file)
 {
   # The function expects a buffer to guarantee a strict wall-to-wall output
-
-  if (need_buffer & opt_chunk_buffer(ctg) <= 0 & opt_wall_to_wall(ctg))
+  if (need_buffer & opt_chunk_buffer(ctg) <= 0 && opt_wall_to_wall(ctg))
     stop("A buffer greater than 0 is required to process the catalog.", call. = FALSE)
 
-  # The function require outputs to be written in files (because the output is likely to be too big to be returned in R)
-
+  # The function require outputs file patterm to be written in files
+  # (because the output is likely to be too big to be returned in R)
   if (need_output_file & opt_output_files(ctg) == "")
     stop("This function requires that the LAScatalog provides an output file template.", call. = FALSE)
+}
 
+engine_realign_chunks_options <- function(ctg, check_alignment, res, start)
+{
   # The function requires that the chunks are aligned with a raster (typically the function returns a Raster*).
   # To ensure a strict wall-to-wall output, check if the chunks are aligned with the pixels. In case
   # of chunk_size > 0 this is easy to check before making the clusters
 
-  if (check_alignment & !opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
+  if (check_alignment && !opt_chunk_is_file(ctg) && opt_wall_to_wall(ctg))
   {
     # If the chunk_size option does not match with the resolution
     chunk_size     <- opt_chunk_size(ctg)
@@ -283,12 +316,12 @@ check_and_fix_options = function(ctg, need_buffer, check_alignment, need_output_
   return(ctg)
 }
 
-check_and_fix_clusters = function(ctg, clusters, check_alignment, res, start)
+engine_realign_chunks = function(ctg, clusters, check_alignment, res, start)
 {
   # The function requires that the chunks are aligned with a raster (typically the function returns a Raster*).
   # In case of chunk_size = 0 (processed by file) the chunks must be checked after being created..
 
-  if (check_alignment & opt_chunk_is_file(ctg) & opt_wall_to_wall(ctg))
+  if (check_alignment && opt_chunk_is_file(ctg) && opt_wall_to_wall(ctg))
   {
     for (i in 1:length(clusters))
     {
@@ -317,21 +350,11 @@ check_and_fix_clusters = function(ctg, clusters, check_alignment, res, start)
   return(clusters)
 }
 
-assert_FUN_is_NULL_with_empty_cluster = function(ctg, FUN, ...)
-{
-  if (opt_wall_to_wall(ctg) == TRUE)
-  {
-    cl <- LAScluster(list(x = 0, y = 0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package = "rlas"), "noname")
-    cl@select <- "*"
-
-    if (!is.null(FUN(cl, ...)))
-      stop("User's function does not return NULL for empty chunks. Please see the documentation of catalog_apply.", call. = FALSE)
-  }
-}
-
-parse_options = function(.option)
+engine_parse_options = function(.option)
 {
   output <- list()
+
+  # Alignment
 
   raster_alignment <- .option$raster_alignment
 
@@ -362,6 +385,8 @@ parse_options = function(.option)
   output$raster_alignment <- raster_alignment
   output$check_alignment  <- check_alignment
 
+  # output file
+
   if (is.null(.option$need_output_file))
   {
     need_output_file <- FALSE
@@ -373,6 +398,8 @@ parse_options = function(.option)
   }
 
   output$need_output_file <- need_output_file
+
+  # drop null
 
   if (is.null(.option$drop_null))
   {
@@ -386,6 +413,8 @@ parse_options = function(.option)
 
   output$drop_null <- drop_null
 
+  # need buffer
+
   if (is.null(.option$need_buffer))
   {
     need_buffer <- FALSE
@@ -398,10 +427,12 @@ parse_options = function(.option)
 
   output$need_buffer <- need_buffer
 
+  # export globals
+
   if (is.null(.option$globals))
     output$globals <- NULL
   else
-    output$globals <- .option$globals
+    output$globals <- .option$globalsp
 
   return(output)
 }

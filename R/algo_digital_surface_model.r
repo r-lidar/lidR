@@ -320,6 +320,6 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
     return(z)
   }
 
-  class(f) <- c("function", "DigitalSurfaceModel", "Algorithm", "lidR")
+  class(f) <- c("function", "DigitalSurfaceModel", "OpenMP", "Algorithm", "lidR")
   return(f)
 }

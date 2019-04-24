@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-#' Surface covered by a LAS* object.
+#' Surface covered by a LAS* object
 #'
 #' Surface covered by a \code{LAS*} object. For \code{LAS} point clouds it is computed based on the
 #' convex hull of the points. For a \code{LAScatalog} it is computed as the sum of the bounding boxes
@@ -43,6 +43,10 @@
 #'
 #' @export
 #' @importMethodsFrom raster area
+#' @name area
+NULL
+
+#' @export
 #' @rdname area
 setGeneric("area", function(x, ...)
   standardGeneric("area"))

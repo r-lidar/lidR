@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2016-2018 Jean-Romain Roussel
+# Copyright 2016-2019 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -25,121 +25,211 @@
 #
 # ===============================================================================
 
-cluster_apply = function(clusters, FUN, processing_options, output_options, drop_null = TRUE, ...)
+cluster_apply = function(clusters, FUN, processing_options, output_options, globals = NULL, ...)
 {
-  stopifnot(is.list(clusters))
-  assert_is_function(FUN)
-  assert_is_a_bool(drop_null)
+  # Parse ellipsis
+  params  <- list(...)
+  first_p <- names(formals(FUN))[1]
 
-  nclust <- length(clusters)
-  output <- vector("list", nclust)
-  params <- list(...)
-  prgrss <- processing_options$progress
+  # Initialize output
+  nclusters  <- length(clusters)
+  futures    <- vector("list", nclusters)
+  output     <- vector("list", nclusters)
+  writemode  <- clusters[[1]]@save != ""
+  drivers    <- output_options$drivers
 
-  # Progress estimation
-  if (prgrss)
+  # Initialize progress bar
+  prgrss     <- processing_options$progress
+  abort      <- processing_options$stop_early
+  states     <- rep(CHUNK_WAINTING, nclusters)
+  pb         <- engine_progress_bar(nclusters, prgrss)
+
+  # Intitalize parallelism
+  workers    <- getWorkers()
+  threads    <- getThreads()
+  cores      <- future::availableCores()
+  manual     <- getOption("lidR.threads.manual")
+
+  if (!manual && workers * threads > cores)
   {
-    if (requireNamespace("progress", quietly = TRUE))
-      pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = nclust, clear = FALSE)
-    else
-      pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
-
-    graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Error"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
+    verbose(glue::glue("Cannot nest {workers} future threads and {threads} OpenMP threads. Precedence given to future: OpenMP threads set to 1."))
+    threads <- 1L
   }
 
-  # Find the name of the first paramter of FUN
-  # (it can be anything because FUN might be a user-defined function)
-  formal_f <- formals(FUN)
-  first_p  <- names(formal_f)[1]
+  # ==== PROCESSING ====
 
   for (i in seq_along(clusters))
   {
-    cluster <- clusters[[i]]
-    params[[first_p]] <- cluster
-    cluster_state <- CHUNK_OK
-    cluster_msg   <- ""
+    params[[first_p]] <- clusters[[i]]
+    save <- clusters[[i]]@save
 
-    y <- tryCatch(
+    # Asynchronous computation of FUN on the chunk
+    futures[[i]] <- future::future(
     {
-      withCallingHandlers(
+      setThreads(threads)
+      y <- do.call(FUN, params)
+      if (is.null(y)) return(NULL)
+      if (!writemode) return(y)
+      return(writeANY(y, save, drivers))
+    }, substitute = TRUE, globals = structure(TRUE, add = globals))
+
+    # Evaluation of the state of the futures
+    for (j in 1:i)
+    {
+      # Skip chunks that were already evaluated and for which the state is known
+      if (states[j] != CHUNK_WAINTING) next
+
+      # Evaluate the state of the chunk
+      states[j] <- engine_eval_state(futures[[j]])
+
+      # The state is unchanged: the chunk is still processing
+      if (states[j] == CHUNK_WAINTING) next
+
+      # The state changed: the chunk was processed. Update the progress
+      engine_update_progress(pb, clusters[[j]], states[j], sum(states != CHUNK_WAINTING)/nclusters)
+
+      # The state is ERROR: abort the process nicely
+      if (states[j] == CHUNK_ERROR & abort)
       {
-        do.call(FUN, params)
-      },
-      warning = function(w)
-      {
-        cluster_state <<- CHUNK_WARNING
-        cluster_msg   <<- w
-      })
-    },
-    error = function(e)
-    {
-      cluster_state <<- CHUNK_ERROR
-      cluster_msg   <<- e
-      0
-    })
+        # If it fails in first chunk it is likely to be an error in code.
+        # Stop and display the error message
+        if (j == 1)
+        {
+          future::value(futures[[j]])
+        }
+        # If it fails somewhere else it is likely to be an error in a specific point cloud.
+        # Return a partial output and display the logs
+        else
+        {
+          engine_save_logs(clusters[[j]], j)
+          return(output)
+        }
+      }
 
-    if (is.null(y) & cluster_state != CHUNK_ERROR)
-      cluster_state <- CHUNK_NULL
+      # The state is NULL: do nothing
+      if (states[j] == CHUNK_NULL) next
 
-    if (prgrss)
-    {
-      update_graphic(cluster, cluster_state)
-      update_pb(pb, i/nclust)
+      # The state is OK or WARNING: get the value
+      output[[j]] <- suppressWarnings(future::value(futures[[j]]))
     }
-
-    if (cluster_state == CHUNK_ERROR & processing_options$stop_early)
-    {
-      log <- paste0(tempdir(), "/chunk", i, ".rds")
-      saveRDS(cluster, log)
-      cat("\n")
-      message(glue::glue("An error occurred when processing the chunk {i}. Try to load this chunk with:\n chunk <- readRDS(\"{log}\")\n las <- readLAS(chunk)"))
-      stop(cluster_msg)
-    }
-
-    if (cluster_state == CHUNK_WARNING)
-      warning(cluster_msg)
-
-    if (cluster_state == CHUNK_NULL | cluster_state == CHUNK_ERROR)
-      output[i]   <- list(NULL)
-    else if (cluster@save == "")
-      output[[i]] <- y
-    else
-      output[[i]] <- writeANY(y, cluster@save, output_options$drivers)
   }
 
-  if (drop_null)
-    output <- Filter(Negate(is.null), output)
+  # ==== PROGRESS ENDING ====
+
+  # Because of asynchronous computation, the loop may be ended
+  # but not the computations. Wait until the end & check states.
+
+  while (any(states == CHUNK_WAINTING))
+  {
+    i <- which(states == CHUNK_WAINTING)
+
+    for (j in i)
+    {
+      if (states[j] != CHUNK_WAINTING) next
+
+      states[j] <- engine_eval_state(output[[j]])
+
+      if (states[j] == CHUNK_WAINTING) next
+
+      engine_update_progress(pb, clusters[[j]], states[j], sum(states != CHUNK_WAINTING)/nclusters)
+
+      if (states[j] == CHUNK_ERROR & abort)
+      {
+        if (j == 1)
+        {
+          future::value(futures[[j]])
+        }
+        else
+        {
+          engine_save_logs(clusters[[j]], j)
+          return(output)
+        }
+      }
+
+      if (states[j] == CHUNK_NULL) next
+
+      output[[j]] <- suppressWarnings(future::value(futures[[j]]))
+    }
+
+    Sys.sleep(0.5)
+  }
 
   return(output)
 }
 
-update_graphic = function(cluster, code)
+engine_eval_state <- function(future)
 {
-  if (is.null(cluster))
-    return(NULL)
+  cluster_state <- CHUNK_WAINTING
 
-  bbox = cluster@bbox
+  if (future::resolved(future))
+  {
+    cluster_state <- CHUNK_OK
 
-  if (code == CHUNK_OK)
-    col = "forestgreen"
-  else if (code == CHUNK_NULL)
-    col = "gray"
-  else if (code == CHUNK_WARNING)
-    col = "orange"
-  else if (code == CHUNK_ERROR)
-    col = "red"
+    tryCatch(
+      {
+        withCallingHandlers(
+          {
+            y <- future::value(future)
+            if (is.null(y)) cluster_state <- CHUNK_NULL
+          },
+          warning = function(w)
+          {
+            cluster_state <<- CHUNK_WARNING
+          })
+      },
+      error = function(e)
+      {
+        cluster_state <<- CHUNK_ERROR
+      })
+  }
 
-  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+  return(cluster_state)
 }
 
-update_pb = function(pb, ratio)
+engine_progress_bar <- function(n, prgss = FALSE)
 {
-  pb_type = class(pb)[1]
+  pb <- NULL
 
-  if (pb_type == "txtProgressBar")
-    utils::setTxtProgressBar(pb, ratio)
+  if (!prgss)
+    return(pb)
+
+  if (requireNamespace("progress", quietly = TRUE))
+    pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = n, clear = FALSE)
   else
+    pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
+
+  graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Error"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
+
+  return(pb)
+}
+
+engine_update_progress <- function(pb, cluster, state, p)
+{
+  if (!is.null(pb))
   {
-    if (!pb$finished) pb$update(ratio)
+    bbox <- cluster@bbox
+
+    if (state == CHUNK_OK)
+      col <- "forestgreen"
+    else if (state == CHUNK_NULL)
+      col <- "gray"
+    else if (state == CHUNK_WARNING)
+      col <- "orange"
+    else if (state == CHUNK_ERROR)
+      col <- "red"
+
+    graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+
+    if (is(pb, "txtProgressBar"))
+      utils::setTxtProgressBar(pb, p)
+    else
+      pb$update(p)
   }
+}
+
+engine_save_logs <- function(cluster, index)
+{
+  log <- glue::glue("{tempdir()}/chunk{index}.rds")
+  saveRDS(cluster, log)
+  message(glue::glue("\nAn error occurred when processing the chunk {index}. Try to load this chunk with:\n chunk <- readRDS(\"{log}\")\n las <- readLAS(chunk)"))
 }

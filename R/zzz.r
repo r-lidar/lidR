@@ -17,7 +17,8 @@ lidR version ", v, ". Ask for help on <https://gis.stackexchange.com/>. Report b
     lidR.verbose = FALSE,
     lidR.interactive = TRUE,
     lidR.debug = FALSE,
-    lidR.buildVRT = TRUE
+    lidR.buildVRT = TRUE,
+    lidR.threads.manual = FALSE
   )
 
   max <- R_omp_get_max_threads()

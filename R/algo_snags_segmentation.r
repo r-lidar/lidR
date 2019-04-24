@@ -138,7 +138,7 @@ wing2015 = function(neigh_radii = c(1.5,1,2),
     return(id)
   }
 
-  class(f) <- c("function", "SnagsSegmentation", "Algorithm", "lidR")
+  class(f) <- c("function", "SnagsSegmentation", "OpenMP", "Algorithm", "lidR")
 
   return(f)
 }

@@ -59,25 +59,25 @@ tree_detection = function(las, algorithm)
 #' @export
 tree_detection.LAS = function(las, algorithm)
 {
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "IndividualTreeDetection"))
-    stop("The algorithm used is not an algorithm for individual tree detection.")
-
-  lidR.context = "tree_detection"
-  return(algorithm(las))
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_its(algorithm)
+  lidR.context <- "tree_detection"
+  is_lm  <- algorithm(las)
+  maxima <- las@data[is_lm, .(X,Y,Z)]
+  coords <- cbind(maxima[["X"]], maxima[["Y"]])
+  data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
+  output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
+  output@bbox <- sp::bbox(las)
+  return(output)
 }
 
 #' @export
 tree_detection.RasterLayer = function(las, algorithm)
 {
-  lidR.context <- "tree_detection"
-  y <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
-  data.table::setDT(y)
-  data.table::setnames(y, names(y), c("X", "Y", "Z"))
-  las <- LAS(y, proj4string = las@crs, check = FALSE)
-  return(algorithm(las))
+  data <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
+  names(data) <- c("X", "Y", "Z")
+  las <- LAS(data, proj4string = las@crs, check = FALSE)
+  return(tree_detection(las, algorithm))
 }
 
 #' @export
@@ -89,20 +89,13 @@ tree_detection.LAScluster = function(las, algorithm)
   ttops <- tree_detection(x, algorithm)
   bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
-
-  ttops@data$treeID <- 1:nrow(ttops) + INTERNALTREEID$ID
-  INTERNALTREEID$ID <- nrow(ttops)   + INTERNALTREEID$ID
-
   return(ttops)
 }
 
 #' @export
 tree_detection.LAScatalog = function(las, algorithm)
 {
-  opt_select(las) <- "xyz"
-  on.exit(INTERNALTREEID$ID <- 0L)
-
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
+  options <- list(need_buffer = TRUE)
   output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
 
   if (opt_output_files(las) == "")
@@ -117,8 +110,5 @@ tree_detection.LAScatalog = function(las, algorithm)
 
   return(output)
 }
-
-INTERNALTREEID    <- new.env()
-INTERNALTREEID$ID <- 0L
 
 

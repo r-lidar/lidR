@@ -66,7 +66,7 @@ f_grid = function(x, res, start)
 
 verbose = function(...)
 {
-  if (getOption("lidR.verbose"))
+  if (getOption("lidR.verbose") || getOption("lidR.debug"))
     cat(..., "\n")
 }
 

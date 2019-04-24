@@ -115,24 +115,24 @@ opt_chunk_is_file = function(ctg)
   return(ctg@chunk_options$size == 0)
 }
 
-
 # ========= Processing Options ===============
 
 #' @rdname catalog_options_tools
 #' @export
 opt_cores = function(ctg)
 {
-  warning("Option no longer supported. Algorithms are now parallelized internally.", call. = FALSE)
-  return(0L)
+  warning("Option no longer supported. See ?`lidR-parallelism`.", call. = FALSE)
+  return(NULL)
 }
 
 #' @rdname catalog_options_tools
 #' @export
 `opt_cores<-` = function(ctg, value)
 {
-  warning("Option no longer supported. Algorithms are now parallelized internally.", call. = FALSE)
+  warning("Option no longer supported. See ?`lidR-parallelism`.", call. = FALSE)
   return(ctg)
 }
+
 
 #' @rdname catalog_options_tools
 #' @export

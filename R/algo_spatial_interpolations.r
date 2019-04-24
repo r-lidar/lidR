@@ -64,7 +64,7 @@ tin = function()
     return(z)
   }
 
-  class(f) <- c("function", "SpatialInterpolation", "Algorithm", "lidR")
+  class(f) <- c("function", "SpatialInterpolation", "OpenMP",  "Algorithm", "lidR")
   return(f)
 }
 
@@ -103,7 +103,7 @@ knnidw = function(k = 10, p = 2)
     return(z)
   }
 
-  class(f) <- c("SpatialInterpolation", "Algorithm", "lidR", "function")
+  class(f) <- c("SpatialInterpolation", "Algorithm", "OpenMP", "lidR", "function")
   return(f)
 }
 

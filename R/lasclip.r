@@ -467,7 +467,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   }
 
   # Process the cluster using LAScatalog internal engine
-  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options, drop_null = FALSE)
+  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options)
 
   # output should contain nothing because everything has been streamed into files
   if (opt_output_files(ctg) != "")
@@ -500,9 +500,6 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
       {
         # Transfer the CRS of the catalog.
         output[[i]]@proj4string <- ctg@proj4string
-
-        # Patch to solve issue #73 waiting for a better solution in issue #2333 in data.table
-        # if (opt_cores(ctg) > 1) output[[i]]@data <- data.table::alloc.col(output[[i]]@data)
       }
       else
       {

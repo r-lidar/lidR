@@ -20,10 +20,6 @@ of threads that will be used. This affects \code{lidR} package but also the \cod
 by internally calling \link[data.table:setDTthreads]{setDTthreads} because several functions  of
 lidR rely on \code{data.table} but it does not change R itself or other packages using OpenMP.
 }
-\details{
-This option come in replacement of the former \code{LAScatalog} processing option \code{opt_cores}.
-The former options enabled to process several chunks at once by loading more data in RAM
-with a strong overhead but point-cloud processing was not actually parallelised. lidR becomes more
-parallel internally and thus multithreading is natively used both when processing a point-cloud (LAS
-objects) or a catalog (LAScatalog objects).
+\seealso{
+\link{lidR-parallelism}
 }

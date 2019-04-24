@@ -19,6 +19,7 @@ LASLOWPOINT           <- 7L
 LASKEYPOINT           <- 8L
 LASWATER              <- 9L
 
+CHUNK_WAINTING        <- 0L
 CHUNK_OK              <- 1L
 CHUNK_NULL            <- 2L
 CHUNK_ERROR           <- 3L

@@ -14,7 +14,7 @@
 \alias{density,LAS-method}
 \alias{density,LASheader-method}
 \alias{density,LAScatalog-method}
-\title{Surface covered by a LAS* object.}
+\title{Surface covered by a LAS* object}
 \usage{
 area(x, ...)
 

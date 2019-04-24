@@ -105,7 +105,7 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   error <- error[error > 0.01]
 
   # skip unreprodutible error on CRAN with 32 bits arch and Solaris
-  if (!is.na(mean(error) & !is.null(error))
+  if (!is.na(mean(error) & !is.null(error)))
   {
     expect_lt(length(error), raster::ncell(cdtm1)*0.002)
     expect_equal(mean(error, na.rm = TRUE), 0.048, tolerance = 0.0055)
