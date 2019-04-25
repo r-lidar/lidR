@@ -145,10 +145,28 @@ assert_is_algorithm = function(x)
     stop("Invalid function provided as algorithm.", call. = FALSE)
 }
 
-assert_is_algorithm_its = function(x)
+assert_is_algorithm_itd = function(x)
 {
   if (!is(x, "IndividualTreeDetection"))
     stop("The algorithm used is not an algorithm for individual tree detection.", call. = FALSE)
+}
+
+assert_is_algorithm_shp = function(x)
+{
+  if (!is(x, "ShapeDetection"))
+    stop("The algorithm used is not an algorithm for shape detection.", call. = FALSE)
+}
+
+assert_is_algorithm_spi = function(x)
+{
+  if (!is(x, "SpatialInterpolation"))
+    stop("The algorithm used is not an algorithm for spatial interpolation.", call. = FALSE)
+}
+
+assert_is_algorithm_its = function(x)
+{
+  if (!is(x, "IndividualTreeSegmentation"))
+    stop("The algorithm used is not an algorithm for individual tree segmentation.", call. = FALSE)
 }
 
 
@@ -169,7 +187,7 @@ stopif_wrong_context = function(received_context, expected_contexts, func_name)
   str = paste0(expected_contexts, collapse  = "' or '")
 
   if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
   if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' function has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
+    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
 }

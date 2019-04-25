@@ -89,11 +89,8 @@ grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
 #' @export
 grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 {
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "SpatialInterpolation"))
-    stop("The algorithm is not an algorithm for spatial interpolation")
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_spi(algorithm)
 
   . <- X <- Y <- Z <- Classification <- NULL
 

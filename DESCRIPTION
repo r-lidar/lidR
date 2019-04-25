@@ -69,6 +69,7 @@ Collate:
     'algo_digital_surface_model.r'
     'algo_ground_segmentation.r'
     'algo_points_decimation.r'
+    'algo_shp_detection.r'
     'algo_snags_segmentation.r'
     'algo_spatial_interpolations.r'
     'algo_tree_detection.R'

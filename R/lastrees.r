@@ -27,13 +27,8 @@
 lastrees = function(las, algorithm, attribute = "treeID")
 {
   stopif_forbidden_name(attribute)
-
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "IndividualTreeSegmentation"))
-    stop("The algorithm is not an algorithm for individual tree segmentation")
-
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_its(algorithm)
   lidR.context <- "lastrees"
 
   if (is(algorithm, "RasterBased"))

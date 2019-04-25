@@ -39,7 +39,7 @@ projection(las) <- projection(raster)
 hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
 ```
 
-5. New functions `lasdetectshape()` for water and human made structure detection.
+5. New functions `lasdetectshape()` for water and human made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line`.
 
 6. LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
 

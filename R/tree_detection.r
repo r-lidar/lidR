@@ -60,7 +60,7 @@ tree_detection = function(las, algorithm)
 tree_detection.LAS = function(las, algorithm)
 {
   assert_is_algorithm(algorithm)
-  assert_is_algorithm_its(algorithm)
+  assert_is_algorithm_itd(algorithm)
   lidR.context <- "tree_detection"
   is_lm  <- algorithm(las)
   maxima <- las@data[is_lm, .(X,Y,Z)]
