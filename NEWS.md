@@ -2,7 +2,9 @@
 
 #### VISIBLE CHANGES
 
-`opt_cores()` is no longer supported. If used it generates a message. For more details see `help("lidR-parallelism")`. The LAScatalog processing engine works the same way than in versions `2.0.y` but the strategy used to process the tiles in parallel must be explicitely declared by users. In versions `2.0.y` the following was correct:
+Several algorithms are now natively parallelised at C++ level with `OpenMP`. This has for consequences to speed-up some computation by default. The catalog processing engine in lidR versions `< 2.1.0` also have parallelism capabilities but based on the `future` package. To prevent against nested parallelism an give the user the ability to use either a future-based or a openmp-based parallelism (or a mix of the two) the code has been modified. For more details see `help("lidR-parallelism")`. The visible part of those modification is the function `opt_cores()` that is no longer supported. If used it generates a message and does nothing. The LAScatalog processing engine works the same way than in versions `< 2.1.0` but the strategy used to process the tiles in parallel must be explicitely declared by users. For users this implies only one change.
+
+In versions `< 2.1.0` the following was correct:
 
 ```r
 library(lidR)
@@ -11,7 +13,7 @@ opt_cores(ctg) <- 4L
 hmean <- grid_metrics(ctg, mean(Z))
 ```
 
-Now this must be explicitely declared with the `future` package. A strategy applies to all catalogs all along an R session:
+Now this must be explicitely declared with the `future` package:
 
 ```r
 library(lidR)
