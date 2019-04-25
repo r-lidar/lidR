@@ -63,7 +63,7 @@ tree_detection.LAS = function(las, algorithm)
   assert_is_algorithm_itd(algorithm)
   lidR.context <- "tree_detection"
   is_lm  <- algorithm(las)
-  maxima <- las@data[is_lm, .(X,Y,Z)]
+  maxima <- las@data[is_lm, c("X", "Y", "Z")]
   coords <- cbind(maxima[["X"]], maxima[["Y"]])
   data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
   output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)

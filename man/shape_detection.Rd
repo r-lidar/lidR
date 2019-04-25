@@ -31,8 +31,8 @@ points in ascending order. \eqn{th1, th2, th3} denote a set of threshold values.
 A point is labelled TRUE if the neighborhood is approximatly planar that is: \deqn{a2 > (th1*a1) and (th2*a2) > a3}}
 \item{shp_hplane}{The same than 'plane' but with an extra test on the orientation of the Z vector
 of the principal components to test the horizontality of the surface.  \deqn{a2 > (th1*a1) and (th2*a2) > a3 and |Z| > th3 }
-In therory |Z| should be exactly equal to 1. In practice 0.98 or 0.99 should be good.}
-\item{shp_line}{Detection of lines inspired by Limberger & Oliveira (2015) criterion. A points is
+In theorry |Z| should be exactly equal to 1. In practice 0.98 or 0.99 should be good.}
+\item{shp_line}{Detection of lines inspired by Limberger & Oliveira (2015) criterion. A point is
 labelled TRUE if the neighborhood is approximatly linear that is: \deqn{th1*a2 < a3 and th1*a1 < a3}}
 }
 }

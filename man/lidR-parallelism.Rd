@@ -32,7 +32,7 @@ las <- readLAS("file.las")
 dtm <- lastrees(las, li2012())
 }
 To know which algorithm is or is not paralellized user can refer to the documentation or used the
-function \link{is.parallel}.
+function \link{is.parallelised}.
 \preformatted{
 is.parallel(lmf(2))   #> TRUE
 is.parallel(li2012()) #> FALSE
