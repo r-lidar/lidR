@@ -172,7 +172,7 @@ setMethod("projection<-", "LAS", function(x, value)
 
     wkt <- rgdal::showWKT(proj4)
     wkt(x@header) <- wkt
-
+    x@proj4string <- sp::CRS(proj4)
     return(x)
   }
   else
