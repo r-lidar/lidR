@@ -113,6 +113,8 @@ setMethod("projection", "LASheader", function(x, asText = TRUE)
     return(proj4)
 })
 
+# ==== LASheader ====
+
 #' @export
 #' @rdname projection
 setMethod("epsg", "LASheader", function(object, ...)
@@ -145,6 +147,9 @@ setMethod("wkt<-", "LASheader", function(object, value)
   return(LASheader(header))
 })
 
+
+# ==== LAS ====
+
 #' @export
 #' @rdname projection
 setMethod("projection<-", "LAS", function(x, value)
@@ -156,7 +161,9 @@ setMethod("projection<-", "LAS", function(x, value)
   else
     stop("'value' is not a CRS or a string.")
 
-  proj4 <- gsub("\\+init=epsg:\\d+\\s", "", proj4)
+  epsg  <- sub("\\+init=epsg:(\\d+).*",  "\\1", proj4)
+  epsg  <- suppressWarnings(as.integer(epsg))
+  proj4 <- sub("\\+init=epsg:\\d+\\s", "", proj4)
 
   if (x@header@PHB[["Global Encoding"]][["WKT"]] == TRUE)
   {
@@ -165,7 +172,7 @@ setMethod("projection<-", "LAS", function(x, value)
 
     wkt <- rgdal::showWKT(proj4)
     wkt(x@header) <- wkt
-    raster::projection(x) <- proj4
+
     return(x)
   }
   else
@@ -173,13 +180,21 @@ setMethod("projection<-", "LAS", function(x, value)
     if (is.na(proj4))
       return(x)
 
-    epsg <- rgdal::showEPSG(proj4)
+    if (is.na(epsg))
+      epsg <- rgdal::showEPSG(proj4)
 
     if (epsg == "OGRERR_UNSUPPORTED_SRS")
-      stop("EPSG code not found. Try to use the function epsg() manually.", call. = FALSE)
+    {
+      warning("EPSG code not found: header not updated. Try to use the function epsg() manually to ensure CRS will be written in file.", call. = FALSE)
+      pos <- rlas:::where_is_epsg(as.list(x@header))
+      if (pos != 0)  x@header@VLR[["GeoKeyDirectoryTag"]][["tags"]][[pos]] <- NULL
+    }
+    else
+    {
+      epsg(x@header) <- epsg
+    }
 
-    epsg(x@header) <- epsg
-    raster::projection(x) <- proj4
+    x@proj4string <- sp::CRS(proj4)
     return(x)
   }
 })
