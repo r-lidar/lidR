@@ -62,13 +62,22 @@ tree_detection.LAS = function(las, algorithm)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_itd(algorithm)
   lidR.context <- "tree_detection"
-  is_lm  <- algorithm(las)
-  maxima <- las@data[is_lm, c("X", "Y", "Z")]
-  coords <- cbind(maxima[["X"]], maxima[["Y"]])
-  data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
-  output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
-  output@bbox <- sp::bbox(las)
-  return(output)
+  res <- algorithm(las)
+
+  if (is(res, "SpatialPointsDataFrame"))
+    return(res)
+
+  if (is.logical(res))
+  {
+    maxima <- las@data[res, c("X", "Y", "Z")]
+    coords <- cbind(maxima[["X"]], maxima[["Y"]])
+    data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
+    output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
+    output@bbox <- sp::bbox(las)
+    return(output)
+  }
+
+  stop("The output of the algorithm is incorrect")
 }
 
 #' @export

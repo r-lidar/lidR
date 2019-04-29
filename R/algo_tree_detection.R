@@ -6,7 +6,7 @@
 #
 # COPYRIGHT:
 #
-# Copyright 2017 Jean-Romain Roussel
+# Copyright 2019 Jean-Romain Roussel
 #
 # This file is part of lidR R package.
 #
@@ -167,7 +167,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, "tree_detection", "manual")
 
-    . <- X <- Y <- Z <- treeID <- NULL
+    . <- X <- Y <- Z <- NULL
 
     stopifnotlas(las)
     crs = sp::CRS()
@@ -211,26 +211,32 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 
     repeat
     {
+      # Select a region
       f <- rgl::select3d(button = c("right"))
 
+      # Get the apices in the selected region
       i <- f(apice)
 
+      # There are some apices in the selected region: remove them
       if (sum(i) > 0)
       {
         ii <- which(i == TRUE)[1]
         rgl::rgl.pop(id = apice[ii]$id)
         apice <- apice[-ii]
       }
+      # There is no apex in the selected region: find an apex
       else
       {
+        # Get the points in the selected region
         i <- f(las@data)
 
+        # There is points is the region: exit the function
         if (sum(i) == 0)
           break;
 
+        # There are some points: find the highest one and add it in the list of apices
         pts     <- las@data[i, .(X,Y,Z)]
         apex    <- unique(pts[pts$Z == max(pts$Z)])[1]
-        ii      <- which(apice$X == apex$X & apice$Y == apex$Y & apice$Z == apex$Z)
         apex$id <- as.numeric(rgl::spheres3d(apex$X, apex$Y, apex$Z, radius = radius, color = color))
         apice   <- rbind(apice, apex)
       }
