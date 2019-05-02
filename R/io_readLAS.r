@@ -164,7 +164,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 {
   assert_all_are_existing_files(x)
 
-  islas <- tools::file_ext(x) %in% c("las", "laz", "LAS", "LAZ")
+  islas <- tools::file_ext(x) %in% c("las", "laz", "ply", "LAS", "LAZ", "PLY")
 
   if (any(!islas)) stop("File(s) are not las or laz")
 
