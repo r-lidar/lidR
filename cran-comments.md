@@ -1,11 +1,7 @@
-## Release summary
-
-Minor update in previons of a future break caused by the update of a dependence + fix few minor bugs
-
 ## Test environments
 
-* Linux Mint 19 (Ubuntu 16.04), R 3.5.1 with gcc
-* Linux Mint 19 (Ubuntu 16.04), R 3.5.1 with clang
+* Linux Mint 19 (Ubuntu 16.04), R 3.6.0 with gcc
+* Linux Mint 19 (Ubuntu 16.04), R 3.6.0 with clang
 * win-builder (oldrel, release, devel)
 
 ## R CMD check results
