@@ -18,54 +18,62 @@ Now this must be explicitely declared with the `future` package:
 ```r
 library(lidR)
 library(future)
-plan(multisession, workers = 4L)
+plan(multisession)
 ctg <- catalog("folder/")
 hmean <- grid_metrics(ctg, mean(Z))
 ```
 
 #### NEW FEATURES
 
-1. [#204](https://github.com/Jean-Romain/lidR/issues/204) LAS 1.4 and point formats > 6 are now better suported. `lascheck()` and `print()` were updated to work correctly with these formats.
-
-2. New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. User must prefer the new function `projection()` instead.
-
-3. New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally and in specific cases. Vignette `LAS-class` has been updated in consequence.
+1. `readLAS()`:
+    * LAS 1.4 and point formats > 6 are now better suported. `lascheck()` and `print()` were updated to work correctly with these formats ([#204](https://github.com/Jean-Romain/lidR/issues/204))
+    * New function `readLASheader()` to read the header of a file in a `LASheader` object.
+   
+2. Coordinate Reference System:
+    * New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. User must prefer the new function `projection()` instead.
+    * New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally and in specific cases. Vignette `LAS-class` has been updated in consequence.
 
 ```r
 projection(las) <- projection(raster)
 ```
 
-4. New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
-
-```r
-hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
-```
-
-5. New functions `lasdetectshape()` for water and human made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line`.
-
-6. LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
-
-7. [#224](https://github.com/Jean-Romain/lidR/issues/217) `plot` for LAS object gained an options `axis = TRUE` to display axis and `legend = TRUE` to display color gradient legend.
-
-8. [#217](https://github.com/Jean-Romain/lidR/issues/217) New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features.
-
-9. `tree_hull()` can compute metrics for each tree like `tree_metrics`
-
-```r
-convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
-```
-
-10. The LAScatalog processing engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
+3. LAScatalog processing engine:
+    * LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
+    * The engine now returns the partial result in case of a fail.
+    * The engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
 
 ```
 An error occurred when processing the chunk 190. Try to load this chunk with:
 chunk <- readRDS("/tmp/RtmpAlHUux/chunk190.rds")
 las <- readLAS(chunk)
 ```
+    
+4. `grid_metrics()`:
+    * New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features ([#217](https://github.com/Jean-Romain/lidR/issues/217)).
+    * New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
 
-11. New function `readLASheader` to read the header of a file in a `LASheader` object.
+```r
+hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
+```
 
-13. New functions `npoints` and `density` available for `LAS`, `LASheader` and `LAScatalog` objects that return what users may expect. The function `area` has also been extended to `LASheader` objects.
+5. New functions `lasdetectshape()` for water and human made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line()`.
+
+
+6. `plot()`:
+    * For LAS objects `plot()` gained an argument `axis = TRUE` to display axis.
+    * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/217))
+
+7. `tree_hull()`: 
+
+   * Gained an argument `func` to compute metrics for each tree like `tree_metrics()`
+
+```r
+convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
+```
+
+8. Miscellaneous tools:
+    * The function `area()` has also been extended to `LASheader` objects.
+    * New functions `npoints()` and `density()` available for `LAS`, `LASheader` and `LAScatalog` objects that return what users may expect.
 
 ```r
 las    <- readLAS("file.las", filter = "-keep_first")
@@ -80,8 +88,6 @@ density(las)    #> [1] 1.0483
 density(header) #> [1] 1.5355
 density(ctg)    #> [1] 1.5123
 ```
-
-14. The LAScatalog processing engine now returns the partial result in case of a fail
 
 #### NOTE
 
