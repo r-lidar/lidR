@@ -46,7 +46,7 @@
 #' consequence for the memory usage because the memory is shared between the workers. In short
 #' algorithm-based parallelism provides a significant gain without any cost for your R session and
 #' your system (but obviously there is a greater workload for the processors). By default lidR uses
-#' all your cores but you can control this with \link{set_lidr_threads}. For example the \link{lmf}
+#' the half of your cores but you can control this with \link{set_lidr_threads}. For example the \link{lmf}
 #' algorithm is a natively parallel algorithm. The following code is computed in parallel:
 #' \preformatted{
 #' las  <- readLAS("file.las")
@@ -102,7 +102,7 @@
 #' out <- tree_detection(ctg, lmf(2))
 #' }
 #' Here the catalog will be split into chunks that will be process in parallel. And each computation
-#' implies itself a paralleized task. This is a nested parallism task and it is bad! Hopefully the lidR
+#' implies itself a parallelized task. This is a nested parallism task and it is bad! Hopefully the lidR
 #' package handle such case and chose by default to give precedence to chunk-based paralellism. In this
 #' case chunks will be processed in parallel and the points will be processed serially. The question
 #' of nested parallel loop does not matter. The catalog processing engine has precedence rules that
@@ -128,13 +128,13 @@
 #' }
 #' This function used two algorithms, one is partially parallelized (\code{tin}) and one is fully
 #' parallelized \code{lmf}. The user can manually use both OpenMP and future. By default the engine
-#' will give the future to chunk-based parallelism because it works in all cases but the user can
+#' will give precedence to chunk-based parallelism because it works in all cases but the user can
 #' impose somethingelse. In the following 2 workers are attributed to future and 2 workers are
 #' attributed to OpenMP.
 #' \preformatted{
 #' plan(multisession, workers = 2L)
 #' set_lidr_threads(2L)
-#' catalog_apply(ctg, mtfun, ws = 5)
+#' catalog_apply(ctg, myfun, ws = 5)
 #' }
 #' The rule is simple. If the number of the workers needed is greater than the number of
 #' available workers then OpenMP is disabled. Let suppose we have a quadcore machine:
@@ -145,7 +145,7 @@
 #'
 #' # 4 chunks 1 threads: OK
 #' plan(multisession, workers = 4L)
-#' set_lidr_threads(2L)
+#' set_lidr_threads(1L)
 #'
 #' # 1 chunks 4 threads: OK
 #' plan(sequential)

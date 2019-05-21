@@ -22,7 +22,7 @@ lidR version ", v, ". Ask for help on <https://gis.stackexchange.com/>. Report b
   )
 
   max <- R_omp_get_max_threads()
-  if (max > 0) LIDRTHREADS$n <- max
+  if (max > 0) LIDRTHREADS$n <- as.integer(max/2)
 
   toset <- !(names(op.lidR) %in% names(op))
   if (any(toset)) options(op.lidR[toset])
