@@ -1,15 +1,16 @@
 #' @importFrom data.table :=
-.onAttach <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname)
+{
   # Runs when attached to search() path such as by library() or require()
   if (interactive())
   {
     v = utils::packageVersion("lidR")
-    packageStartupMessage("
-lidR version ", v, ". Ask for help on <https://gis.stackexchange.com/>. Report bugs on <https://github.com/Jean-Romain/lidR>.")
+    packageStartupMessage("lidR ", v, " using ", getThreads(), " threads (see ?get_lidr_threads).")
   }
 }
 
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname)
+{
   op <- options()
   op.lidR <- list(
     lidR.progress = TRUE,
@@ -18,8 +19,7 @@ lidR version ", v, ". Ask for help on <https://gis.stackexchange.com/>. Report b
     lidR.interactive = TRUE,
     lidR.debug = FALSE,
     lidR.buildVRT = TRUE,
-    lidR.threads.manual = FALSE
-  )
+    lidR.threads.manual = FALSE)
 
   max <- R_omp_get_max_threads()
   if (max > 0) LIDRTHREADS$n <- as.integer(max/2)
@@ -30,7 +30,8 @@ lidR version ", v, ". Ask for help on <https://gis.stackexchange.com/>. Report b
   invisible()
 }
 
-.onUnload <- function(libpath) {
+.onUnload <- function(libpath)
+{
   library.dynam.unload("lidR", libpath)
 }
 
