@@ -75,23 +75,22 @@ LogicalVector C_lmf(DataFrame data, NumericVector ws, double min_height, bool ci
       tree.lookup(circ, pts);
     }
 
-    // The central point is the highest it is considered as local maximam
-    // Then we check if is true
-    double Zmax = Z[i];
-    bool ismaxima = true;
+    // Get the highest Z in the windows
+    double Zmax = std::numeric_limits<double>::min();
+    Point *p;
     for(size_t j = 0 ; j < pts.size() ; j++)
     {
       if(Z[pts[j]->id] > Zmax)
       {
-        ismaxima = false;
-        break;
+        p = pts[j];
+        Zmax = Z[p->id];
       }
     }
 
-    // The central point is a LM, update the output
+    // The central pixel is the highest, it is a LM
     #pragma omp critical
     {
-      if (ismaxima)
+      if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
         seeds[i] = true;
     }
   }
