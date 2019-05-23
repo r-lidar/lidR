@@ -42,6 +42,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
   prgrss     <- processing_options$progress
   abort      <- processing_options$stop_early
   states     <- rep(CHUNK_WAINTING, nclusters)
+  messages   <- rep("", nclusters)
   pb         <- engine_progress_bar(nclusters, prgrss)
 
   # Intitalize parallelism
@@ -56,6 +57,9 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
     threads <- 1L
   }
 
+  verbose(glue::glue("Start processing {nclusters} chunks..."))
+  verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))
+
   # ==== PROCESSING ====
 
   for (i in seq_along(clusters))
@@ -67,6 +71,8 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
     futures[[i]] <- future::future(
     {
       setThreads(threads)
+      options(lidR.progress = FALSE)
+      options(lidR.verbose = FALSE)
       y <- do.call(FUN, params)
       if (is.null(y)) return(NULL)
       if (!writemode) return(y)
@@ -80,7 +86,9 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
       if (states[j] != CHUNK_WAINTING) next
 
       # Evaluate the state of the chunk
-      states[j] <- engine_eval_state(futures[[j]])
+      state       <- engine_eval_state(futures[[j]])
+      states[j]   <- state[["state"]]
+      messages[j] <- state[["msg"]]
 
       # The state is unchanged: the chunk is still processing
       if (states[j] == CHUNK_WAINTING) next
@@ -95,13 +103,14 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
         # Stop and display the error message
         if (j == 1)
         {
-          future::value(futures[[j]])
+          stop(messages[j], call. = FALSE)
         }
         # If it fails somewhere else it is likely to be an error in a specific point cloud.
         # Return a partial output and display the logs
         else
         {
           engine_save_logs(clusters[[j]], j)
+          message(messages[j])
           return(output)
         }
       }
@@ -127,7 +136,9 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
     {
       if (states[j] != CHUNK_WAINTING) next
 
-      states[j] <- engine_eval_state(output[[j]])
+      state       <- engine_eval_state(futures[[j]])
+      states[j]   <- state[["state"]]
+      messages[j] <- state[["msg"]]
 
       if (states[j] == CHUNK_WAINTING) next
 
@@ -137,11 +148,12 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
       {
         if (j == 1)
         {
-          future::value(futures[[j]])
+          stop(messages[j], call. = FALSE)
         }
         else
         {
           engine_save_logs(clusters[[j]], j)
+          message(messages[j])
           return(output)
         }
       }
@@ -159,28 +171,33 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
 
 engine_eval_state <- function(future)
 {
-  cluster_state <- CHUNK_WAINTING
+  cluster_state <- list(state = CHUNK_WAINTING, msg = "")
+
+  if (is.null(future))
+  {
+    stop("Unexpected internal error: NULL received instead of a future. Please report this bug.", call. = FALSE)
+  }
 
   if (future::resolved(future))
   {
-    cluster_state <- CHUNK_OK
+    cluster_state <- list(state = CHUNK_OK, msg = "")
 
     tryCatch(
-      {
+    {
         withCallingHandlers(
-          {
-            y <- future::value(future)
-            if (is.null(y)) cluster_state <- CHUNK_NULL
-          },
-          warning = function(w)
-          {
-            cluster_state <<- CHUNK_WARNING
-          })
-      },
-      error = function(e)
-      {
-        cluster_state <<- CHUNK_ERROR
-      })
+        {
+          y <- future::value(future)
+          if (is.null(y)) cluster_state <- list(state = CHUNK_NULL, msg = "")
+        },
+        warning = function(w)
+        {
+          cluster_state <<- list(state = CHUNK_WARNING, msg = w)
+        })
+    },
+    error = function(e)
+    {
+        cluster_state <<- list(state = CHUNK_ERROR, msg = e)
+    })
   }
 
   return(cluster_state)
