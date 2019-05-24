@@ -40,7 +40,8 @@ hmean <- grid_metrics(ctg, mean(Z))
     ```
 
 3. LAScatalog processing engine:
-    * LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
+    * Progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
+    * Progression estimation displayed on a map now colors in blue the chunks that are processing.
     * The engine now returns the partial result in case of a fail.
     * The engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
 

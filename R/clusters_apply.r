@@ -44,8 +44,9 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
   states     <- rep(CHUNK_WAINTING, nclusters)
   messages   <- rep("", nclusters)
   pb         <- engine_progress_bar(nclusters, prgrss)
+  percentage <- 0
 
-  # Intitalize parallelism
+  # Inititalize parallelism
   workers    <- getWorkers()
   threads    <- getThreads()
   cores      <- future::availableCores()
@@ -67,6 +68,9 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
     params[[first_p]] <- clusters[[i]]
     save <- clusters[[i]]@save
 
+    states[i] <- CHUNK_PROCESSING
+    engine_update_progress(pb, clusters[[i]], states[i], percentage)
+
     # Asynchronous computation of FUN on the chunk
     futures[[i]] <- future::future(
     {
@@ -83,7 +87,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
     for (j in 1:i)
     {
       # Skip chunks that were already evaluated and for which the state is known
-      if (states[j] != CHUNK_WAINTING) next
+      if (states[j] != CHUNK_PROCESSING) next
 
       # Evaluate the state of the chunk
       state       <- engine_eval_state(futures[[j]])
@@ -91,10 +95,11 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
       messages[j] <- state[["msg"]]
 
       # The state is unchanged: the chunk is still processing
-      if (states[j] == CHUNK_WAINTING) next
+      if (states[j] == CHUNK_PROCESSING) next
 
       # The state changed: the chunk was processed. Update the progress
-      engine_update_progress(pb, clusters[[j]], states[j], sum(states != CHUNK_WAINTING)/nclusters)
+      percentage <-  engine_compute_progress(states)
+      engine_update_progress(pb, clusters[[j]], states[j], percentage)
 
       # The state is ERROR: abort the process nicely
       if (states[j] == CHUNK_ERROR & abort)
@@ -128,21 +133,22 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
   # Because of asynchronous computation, the loop may be ended
   # but not the computations. Wait until the end & check states.
 
-  while (any(states == CHUNK_WAINTING))
+  while (any(states == CHUNK_PROCESSING))
   {
-    i <- which(states == CHUNK_WAINTING)
+    i <- which(states == CHUNK_PROCESSING)
 
     for (j in i)
     {
-      if (states[j] != CHUNK_WAINTING) next
+      if (states[j] != CHUNK_PROCESSING) next
 
       state       <- engine_eval_state(futures[[j]])
       states[j]   <- state[["state"]]
       messages[j] <- state[["msg"]]
 
-      if (states[j] == CHUNK_WAINTING) next
+      if (states[j] == CHUNK_PROCESSING) next
 
-      engine_update_progress(pb, clusters[[j]], states[j], sum(states != CHUNK_WAINTING)/nclusters)
+      percentage <-  engine_compute_progress(states)
+      engine_update_progress(pb, clusters[[j]], states[j], percentage)
 
       if (states[j] == CHUNK_ERROR & abort)
       {
@@ -171,7 +177,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
 
 engine_eval_state <- function(future)
 {
-  cluster_state <- list(state = CHUNK_WAINTING, msg = "")
+  cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
 
   if (is.null(future))
   {
@@ -215,7 +221,7 @@ engine_progress_bar <- function(n, prgss = FALSE)
   else
     pb <- utils::txtProgressBar(min = 0, max = 1, style = 3)
 
-  graphics::legend("topright", title = "Colors", legend = c("Empty","Ok","Warning", "Error"), fill = c("gray","forestgreen", "orange", "red"), cex = 0.8)
+  graphics::legend("topright", title = "Colors", legend = c("Processing", "Empty","Ok","Warning", "Error"), fill = c("cornflowerblue", "gray","green3", "orange", "red"), cex = 0.8)
 
   return(pb)
 }
@@ -227,13 +233,15 @@ engine_update_progress <- function(pb, cluster, state, p)
     bbox <- cluster@bbox
 
     if (state == CHUNK_OK)
-      col <- "forestgreen"
+      col <- "green3"
     else if (state == CHUNK_NULL)
       col <- "gray"
     else if (state == CHUNK_WARNING)
       col <- "orange"
     else if (state == CHUNK_ERROR)
       col <- "red"
+    else if (state == CHUNK_PROCESSING)
+      col <- "cornflowerblue"
 
     graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
 
@@ -249,4 +257,9 @@ engine_save_logs <- function(cluster, index)
   log <- glue::glue("{tempdir()}/chunk{index}.rds")
   saveRDS(cluster, log)
   message(glue::glue("\nAn error occurred when processing the chunk {index}. Try to load this chunk with:\n chunk <- readRDS(\"{log}\")\n las <- readLAS(chunk)"))
+}
+
+engine_compute_progress = function(states)
+{
+  sum(states != CHUNK_WAINTING & states != CHUNK_PROCESSING)/length(states)
 }

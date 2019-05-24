@@ -24,6 +24,7 @@ CHUNK_OK              <- 1L
 CHUNK_NULL            <- 2L
 CHUNK_ERROR           <- 3L
 CHUNK_WARNING         <- 4L
+CHUNK_PROCESSING      <- 5L
 
 LASFIELDS             <- c("X", "Y", "Z", "Intensity",
                            "ReturnNumber", "NumberOfReturns",
