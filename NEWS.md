@@ -2,7 +2,9 @@
 
 #### VISIBLE CHANGES
 
-Several algorithms are now natively parallelised at C++ level with `OpenMP`. This has for consequences to speed-up some computation by default. The catalog processing engine in lidR versions `< 2.1.0` also have parallelism capabilities but based on the `future` package. To prevent against nested parallelism an give the user the ability to use either a future-based or a openmp-based parallelism (or a mix of the two) the code has been modified. For more details see `help("lidR-parallelism")`. The visible part of those modification is the function `opt_cores()` that is no longer supported. If used it generates a message and does nothing. The LAScatalog processing engine works the same way than in versions `< 2.1.0` but the strategy used to process the tiles in parallel must be explicitely declared by users. For users this implies only one change.
+Several algorithms are now natively parallelised at C++ level with `OpenMP`. This has for consequences to speed-up some computation by default but implies visible change for users. For more details see `help("lidR-parallelism")`. The following only explains how modify code to get back the exact former behavior.
+
+In versions `< 2.1.0` the catalog processing engine have R-based parallelism capabilities using the `future` package. The addition of C++-based parallelism introduced additionnal complexity. To prevent against nested parallelism an give the user the ability to use either a R-based or an C++-based parallelism (or a mix of the two) the function `opt_cores()` is no longer supported. If used it generates a message and does nothing. The strategy used to process the tiles in parallel must now be explicitely declared by users. This is anyway how it should have been design at the begining! For user, restoring the exact former behavior implies only one change.
 
 In versions `< 2.1.0` the following was correct:
 
@@ -13,7 +15,7 @@ opt_cores(ctg) <- 4L
 hmean <- grid_metrics(ctg, mean(Z))
 ```
 
-Now this must be explicitely declared with the `future` package:
+In versions `>= 2.1.0` this must be explicitely declared with the `future` package:
 
 ```r
 library(lidR)
@@ -33,28 +35,28 @@ hmean <- grid_metrics(ctg, mean(Z))
     * New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. User must prefer the new function `projection()` instead.
     * New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally and in specific cases. Vignette `LAS-class` has been updated in consequence.
 
-```r
-projection(las) <- projection(raster)
-```
+    ```r
+    projection(las) <- projection(raster)
+    ```
 
 3. LAScatalog processing engine:
     * LAScatalog progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
     * The engine now returns the partial result in case of a fail.
     * The engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
 
-```
-An error occurred when processing the chunk 190. Try to load this chunk with:
-chunk <- readRDS("/tmp/RtmpAlHUux/chunk190.rds")
-las <- readLAS(chunk)
-```
+    ```
+    An error occurred when processing the chunk 190. Try to load this chunk with:
+    chunk <- readRDS("/tmp/RtmpAlHUux/chunk190.rds")
+    las <- readLAS(chunk)
+    ```
     
 4. `grid_metrics()`:
     * New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features ([#217](https://github.com/Jean-Romain/lidR/issues/217)).
     * New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
 
-```r
-hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
-```
+    ```r
+    hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
+    ```
 
 5. New functions `lasdetectshape()` for water and human made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line()`.
 
@@ -64,36 +66,35 @@ hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
     * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/217))
 
 7. `tree_hull()`: 
+    * Gained an argument `func` to compute metrics for each tree like `tree_metrics()`
 
-   * Gained an argument `func` to compute metrics for each tree like `tree_metrics()`
-
-```r
-convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
-```
+    ```r
+    convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
+    ```
 
 8. Miscellaneous tools:
-    * The function `area()` has also been extended to `LASheader` objects.
+    * The function `area()` has been extended to `LASheader` objects.
     * New functions `npoints()` and `density()` available for `LAS`, `LASheader` and `LAScatalog` objects that return what users may expect.
 
-```r
-las    <- readLAS("file.las", filter = "-keep_first")
-header <- readLASheader(file)
-ctg    <- catalog("folder/")
-
-npoints(las)    #> [1] 55756
-npoints(header) #> [1] 81590
-npoints(ctg)    #> [1] 1257691
-
-density(las)    #> [1] 1.0483
-density(header) #> [1] 1.5355
-density(ctg)    #> [1] 1.5123
-```
+    ```r
+    las    <- readLAS("file.las", filter = "-keep_first")
+    header <- readLASheader(file)
+    ctg    <- catalog("folder/")
+    
+    npoints(las)    #> [1] 55756
+    npoints(header) #> [1] 81590
+    npoints(ctg)    #> [1] 1257691
+    
+    density(las)    #> [1] 1.0483
+    density(header) #> [1] 1.5355
+    density(ctg)    #> [1] 1.5123
+    ```
 
 #### NOTE
 
 1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
 
-2. The argument `field` in `tree_metrics()` is now `attribute` for consistency with all other functions.
+2. The argument named `field` in `tree_metrics()` is now  named `attribute` for consistency with all other functions.
 
 ##### ENHANCEMENT
 
