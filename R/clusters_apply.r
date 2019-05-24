@@ -191,12 +191,12 @@ engine_eval_state <- function(future)
         },
         warning = function(w)
         {
-          cluster_state <<- list(state = CHUNK_WARNING, msg = w)
+          cluster_state <<- list(state = CHUNK_WARNING, msg = w["message"])
         })
     },
     error = function(e)
     {
-        cluster_state <<- list(state = CHUNK_ERROR, msg = e)
+        cluster_state <<- list(state = CHUNK_ERROR, msg = e["message"])
     })
   }
 
