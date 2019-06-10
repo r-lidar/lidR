@@ -38,7 +38,6 @@ ttops = tree_detection(las, manual(ttops))
 }
 }
 \seealso{
-Other individual tree detection algorithms: \code{\link{lmfauto}},
-  \code{\link{lmf}}
+Other individual tree detection algorithms: \code{\link{lmf}}
 }
 \concept{individual tree detection algorithms}
