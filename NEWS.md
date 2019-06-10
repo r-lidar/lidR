@@ -97,6 +97,8 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 2. The argument named `field` in `tree_metrics()` is now  named `attribute` for consistency with all other functions.
 
+3. The documentation of supported options in `tree_*()` function was inccorect and has been fixed.
+
 ##### ENHANCEMENT
 
 1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non loaded extrabytes. This fix the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enable to write the LAS object without updating the header manually.
