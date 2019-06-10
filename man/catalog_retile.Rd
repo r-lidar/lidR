@@ -60,7 +60,7 @@ loaded at th R level). The maximum number of cores can be safely used.
 
 \examples{
 \dontrun{
-ctg = catalog("path/to/catalog")
+ctg = readLAScatalog("path/to/catalog")
 
 # Create a new set of .las files 500 x 500 wide in the folder
 # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las

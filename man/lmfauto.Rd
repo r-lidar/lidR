@@ -23,16 +23,13 @@ parameters. This way this algorithm is parameter-free and properly parametrized 
 This algorithm is made to process wide areas not small plots. See references for more details.
 }
 \examples{
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+\dontrun{
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile)
 ttops <- tree_detection(las, lmfauto())
+}
 }
 \references{
 Roussel Jean-Romain, Development of a parameter-free algorithm for automatic tree
 detection on wide territories (in prep.)
 }
-\seealso{
-Other individual tree detection algorithms: \code{\link{lmf}},
-  \code{\link{manual}}
-}
-\concept{individual tree detection algorithms}

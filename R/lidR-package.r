@@ -71,14 +71,14 @@
 #' in parallel by registering an evaluation strategy. For example the following code is evaluated
 #' sequentially:
 #' \preformatted{
-#' ctg <- catalog("folder/")
+#' ctg <- readLAScatalog("folder/")
 #' out <- grid_metrics(ctg, mean(Z))
 #' }
 #' But this one is evaluated in parallel with two cores:
 #' \preformatted{
 #' library(future)
 #' plan(multisession, workers = 2L)
-#' ctg <- catalog("folder/")
+#' ctg <- readLAScatalog("folder/")
 #' out <- grid_metrics(ctg, mean(Z))
 #' }
 #' With a chunk-based parallelism any algorithm can be parallelised by processing several subsets of
@@ -98,7 +98,7 @@
 #' library(future)
 #' plan(multisession, workers = 4L)
 #' set_lidr_threads(4L)
-#' ctg <- catalog("folder/")
+#' ctg <- readLAScatalog("folder/")
 #' out <- tree_detection(ctg, lmf(2))
 #' }
 #' Here the catalog will be split into chunks that will be process in parallel. And each computation

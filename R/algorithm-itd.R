@@ -167,7 +167,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, "tree_detection", "manual")
 
-    . <- X <- Y <- Z <- NULL
+    . <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
     crs = sp::CRS()
@@ -275,12 +275,14 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 #' @references Roussel Jean-Romain, Development of a parameter-free algorithm for automatic tree
 #' detection on wide territories (in prep.)
 #'
-#' @family individual tree detection algorithms
+# @family individual tree detection algorithms
 #'
 #' @examples
-#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' \dontrun{
+#' #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #' ttops <- tree_detection(las, lmfauto())
+#' }
 lmfauto = function(plot = FALSE, hmin = 2)
 {
   f = function(las)

@@ -104,6 +104,7 @@ tree_detection.LAScluster = function(las, algorithm)
 #' @export
 tree_detection.LAScatalog = function(las, algorithm)
 {
+  opt_select(las) <- "xyz"
   options <- list(need_buffer = TRUE)
   output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
 

@@ -40,7 +40,7 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' ctg = catalog(LASfile)
+#' ctg = readLAScatalog(LASfile)
 #'
 #' plot(ctg, chunk_pattern = TRUE)
 #'

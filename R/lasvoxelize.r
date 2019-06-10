@@ -104,7 +104,7 @@ lasvoxelize.LAScatalog = function(las, res)
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasvoxelize, res = res, .options = options)
   output  <- unlist(output)
-  ctg     <- suppressMessages(suppressWarnings(catalog(output)))
+  ctg     <- suppressMessages(suppressWarnings(readLAScatalog(output)))
 
   opt_copy(ctg) <- las
   return(ctg)

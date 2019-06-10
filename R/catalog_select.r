@@ -41,7 +41,7 @@
 #
 # @examples
 # \dontrun{
-# ctg = catalog("<Path to a folder containing a set of .las files>")
+# ctg = readLAScatalog("<Path to a folder containing a set of .las files>")
 # new_ctg = catalog_select(ctg)
 # }
 # catalog_select = function(ctg, mapview = TRUE)

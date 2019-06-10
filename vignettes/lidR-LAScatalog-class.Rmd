@@ -106,9 +106,9 @@ A LAScatalog class is a representation in R of a file or a set of las files not 
 ## Build a LAScatalog object reading a folder of las files
 
 ```r
-ctg <- catalog("path/to/las/files/")
+ctg <- readLAScatalog("path/to/las/files/")
 # or
-ctg <- catalog("path/to/las/files/big_file.las")
+ctg <- readLAScatalog("path/to/las/files/big_file.las")
 ```
 
 ```{r}

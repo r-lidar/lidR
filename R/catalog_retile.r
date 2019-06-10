@@ -66,7 +66,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' ctg = catalog("path/to/catalog")
+#' ctg = readLAScatalog("path/to/catalog")
 #'
 #' # Create a new set of .las files 500 x 500 wide in the folder
 #' # path/to/new/catalog/ and iteratively named Forest_1.las, Forest_2.las
@@ -114,5 +114,5 @@ catalog_retile = function(ctg)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   catalog_apply(ctg, reshape_func, .options = options)
-  return(suppressWarnings(suppressMessages(catalog(path))))
+  return(suppressWarnings(suppressMessages(readLAScatalog(path))))
 }

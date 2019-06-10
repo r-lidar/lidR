@@ -85,7 +85,7 @@ plot(las, color = "Intensity", colorPalette = col)
 plot(las, color = "Intensity", colorPalette = col, trim = 70)
 
 # single file catalog using data provided in lidR
-ctg = catalog(LASfile)
+ctg = readLAScatalog(LASfile)
 plot(ctg)
 
 }

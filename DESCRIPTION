@@ -86,6 +86,7 @@ Collate:
     'grid_metrics3d.r'
     'grid_terrain.r'
     'io_readLAS.r'
+    'io_readLAScatalog.r'
     'io_writeANY.r'
     'io_writeLAS.r'
     'lascheck.r'

@@ -170,7 +170,7 @@
 #'
 #' # 2. Build a project (here, a single file catalog for the purposes of this dummmy example).
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' project <- catalog(LASfile)
+#' project <- readLAScatalog(LASfile)
 #' plot(project)
 #'
 #' # 3. Set some catalog options.
@@ -207,7 +207,7 @@
 #' }
 #'
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' project <- catalog(LASfile)
+#' project <- readLAScatalog(LASfile)
 #'
 #' opt_chunk_buffer(project) <- 1
 #' opt_chunk_size(project)   <- 120     # small because this is a dummy example.
