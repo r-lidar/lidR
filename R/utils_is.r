@@ -56,7 +56,7 @@
 #' g <- pitfree()
 #' is.parallelised(g)
 #'
-#' ctg <- catalog(LASfile)
+#' ctg <- readLAScatalog(LASfile)
 #' is.indexed(ctg)
 #' @export
 #' @rdname is

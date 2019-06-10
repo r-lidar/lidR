@@ -155,7 +155,7 @@ lasground.LAScatalog = function(las, algorithm, filter = ~ReturnNumber == Number
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasground, algorithm = algorithm, filter = filter, .options = options)
   output  <- unlist(output)
-  ctg     <- catalog(output)
+  ctg     <- readLAScatalog(output)
 
   opt_copy(ctg) <- las
   return(ctg)

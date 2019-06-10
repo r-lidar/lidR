@@ -190,7 +190,7 @@ lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE)
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, .options = options)
   output  <- unlist(output)
-  ctg     <- catalog(output)
+  ctg     <- readLAScatalog(output)
 
   opt_copy(ctg) <- las
   return(ctg)

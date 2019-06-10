@@ -81,7 +81,7 @@ The options are used by all the functions that support a \code{LAScatalog} as in
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-ctg = catalog(LASfile)
+ctg = readLAScatalog(LASfile)
 
 plot(ctg, chunk_pattern = TRUE)
 

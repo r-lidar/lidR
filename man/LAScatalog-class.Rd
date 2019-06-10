@@ -130,7 +130,7 @@ each function knows which data must be loaded or not. This is documented in each
 \examples{
 \dontrun{
 # Build a catalog
-ctg <- catalog("filder/to/las/files/")
+ctg <- readLAScatalog("filder/to/las/files/")
 
 # Set some options
 opt_filter(ctg) <- "-keep_first"

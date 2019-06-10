@@ -120,7 +120,7 @@ las = readLAS(LASfile)
 subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 
 # Do not load the file(s), extract only the region of interest from a bigger dataset
-ctg = catalog(LASfile)
+ctg = readLAScatalog(LASfile)
 subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
 # Extract all the polygons from a shapefile
