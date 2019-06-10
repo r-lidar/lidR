@@ -1,3 +1,9 @@
+## lidR v2.2.0
+
+#### NEW FEATURES
+
+1. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
+
 ## lidR v2.1.0
 
 #### VISIBLE CHANGES

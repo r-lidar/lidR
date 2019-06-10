@@ -117,6 +117,7 @@ Collate:
     'plot.s3.r'
     'print.r'
     'projection.r'
+    'sensor_tracking.R'
     'tree_detection.r'
     'tree_hulls.r'
     'tree_metrics.r'
