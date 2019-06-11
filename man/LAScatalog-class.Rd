@@ -8,7 +8,7 @@
 A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
 a way to manage and process an entire dataset. It allows the user to process a large area, or to
 selectively clip data from a large area without loading all the data into computer memory.
-A \code{LAScatalog} can be built with the function \link{catalog} and is formally an extension of
+A \code{LAScatalog} can be built with the function \link{readLAScatalog} and is formally an extension of
 a \code{SpatialPolygonsDataFrame} containing extra data to allow users greater control over
 how the dataset is processed (see details).
 }
@@ -110,7 +110,8 @@ the following file names are possible:
 This option will generate as many filenames as needed with custom names for each file. The list of
 allowed templates is described in the documentation for each function.
 \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
-Spatial*, LAS objects. It is recommended that only advanced users change this option.
+Spatial*, LAS objects. It is recommended that only advanced users change this option. A dedicated
+page describes the drivers in \link{lidR-LAScatalog-drivers}.
 }
 }
 

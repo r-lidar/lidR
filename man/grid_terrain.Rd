@@ -68,7 +68,6 @@ internally to ensure a strict continuous wall-to-wall output.
 \item \strong{output_files}: Return the output in R or write each cluster's output in a file. Supported
 templates are \code{XLEFT}, \code{XRIGHT}, \code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER}
 \code{ID} and, if chunk size is equal to 0 (processing by file), \code{ORIGINALFILENAME}.
-\item laz_compression: is not supported because this function will never write \code{las/laz} files.
 \item \strong{\emph{select}}: The \code{grid_*} functions usually 'know' what should be loaded
 and this option is not considered. In \link{grid_metrics} this option is respected.
 \item \strong{filter}: Read only the points of interest.
