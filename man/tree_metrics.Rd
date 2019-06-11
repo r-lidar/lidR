@@ -64,7 +64,6 @@ always removed once processed and will never be returned either in R or in files
 \item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
 \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and,
 if chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
-\item laz_compression:  is not supported because this function will never write las/laz files.
 \item \strong{select}: Load only attributes of interest.
 \item \strong{filter}: Read only points of interest.
 }
