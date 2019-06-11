@@ -4,6 +4,8 @@
 
 1. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
 
+2. New function `lasrangecorrection()` to normalized intensity using the sensor position (range correction)
+
 ## lidR v2.1.0
 
 #### VISIBLE CHANGES

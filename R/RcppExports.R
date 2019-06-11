@@ -29,6 +29,10 @@ C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
+C_lasrangecorrection <- function(data, flightlines, Rs, f) {
+    .Call(`_lidR_C_lasrangecorrection`, data, flightlines, Rs, f)
+}
+
 C_knn <- function(X, Y, x, y, k, ncpu) {
     .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
