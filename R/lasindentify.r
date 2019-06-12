@@ -73,7 +73,7 @@ laspulse = function(las)
 
   if (all(las@data[["gpstime"]] == 0))
   {
-    warning("'gpstime' attribute is populated with 0 only. A single ID has been return for each point.")
+    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.")
     las@data[["pulseID"]] <- 1L
     return(las)
   }
@@ -98,7 +98,7 @@ lasflightline = function(las, dt = 30)
 
   if (all(las@data[["gpstime"]] == 0))
   {
-    warning("'gpstime' attribute is populated with 0 only. A single ID has been return for each point.")
+    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.")
     las@data[["flightlineID"]] <- 1L
     return(las)
   }
