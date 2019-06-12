@@ -46,6 +46,10 @@
 #' For the pre-processing tests the function only makes an estimation and may not be correct.
 #'
 #' @template param-las
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile)
+#' lascheck(las)
 #' @export
 lascheck = function(las)
 {
@@ -217,6 +221,45 @@ lascheck.LAS = function(las)
   }
   else
     skip()
+
+  h2("Checking attribute population...")
+
+  msg = character(0)
+
+  if (!is.null(data[["gpstime"]]))
+  {
+    s = all(data[["gpstime"]] == 0)
+
+    if (s == nrow(data))
+      msg = c(msg, g("'gpstime' attribute is not populated."))
+  }
+
+  if (!is.null(data[["PointSourceID"]]))
+  {
+    s = fast_countequal(data[["PointSourceID"]], 0L)
+
+    if (s == nrow(data))
+      msg = c(msg, g("'PointSourceID' attribute is not populated."))
+  }
+
+  if (!is.null(data[["ScanDirectionFlag"]]))
+  {
+    s = fast_countequal(data[["ScanDirectionFlag"]], 0L)
+
+    if (s == nrow(data))
+      msg = c(msg, g("'ScanDirectionFlag' attribute is not populated."))
+  }
+
+  if (!is.null(data[["EdgeOfFlightline"]]))
+  {
+    s = fast_countequal(data[["EdgeOfFlightline"]], 0L)
+
+    if (s == nrow(data))
+      msg = c(msg, g("'EdgeOfFlightline' attribute is not populated."))
+  }
+
+  warn(msg)
+
 
   # ==== header ====
 
@@ -396,7 +439,7 @@ lascheck.LAS = function(las)
   else
     skip()
 
-  return(invisible())
+  return(invisible(las))
 }
 
 #' @export
@@ -556,4 +599,6 @@ lascheck.LAScatalog = function(las)
     yes()
   else
     no()
+
+  return(invisible(las))
 }

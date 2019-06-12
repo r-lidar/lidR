@@ -5,7 +5,7 @@
   if (interactive())
   {
     v = utils::packageVersion("lidR")
-    packageStartupMessage("lidR ", v, " using ", getThreads(), " threads (see ?get_lidr_threads).")
+    packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/Jean-Romain/lidR>.")
   }
 }
 

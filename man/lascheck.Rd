@@ -28,3 +28,8 @@ For a LAScatalog object it checks:
 }
 For the pre-processing tests the function only makes an estimation and may not be correct.
 }
+\examples{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+las = readLAS(LASfile)
+lascheck(las)
+}

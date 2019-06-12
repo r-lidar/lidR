@@ -44,6 +44,7 @@ setMethod("summary", "LAS", function(object, ...)
 {
   print(object)
   print(object@header)
+  return(invisible(object))
 })
 
 #' @rdname print
@@ -51,6 +52,7 @@ setMethod("summary", "LAS", function(object, ...)
 setMethod("print", "LAS", function(x)
 {
   show(x)
+  return(invisible(x))
 })
 
 setMethod("show", "LAS", function(object)
@@ -75,6 +77,8 @@ setMethod("show", "LAS", function(object)
   cat("points       :", npts, "points\n")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
   cat("names        :", attr, "\n")
+
+  return(invisible(object))
 })
 
 setMethod("show", "LAScatalog", function(object)
@@ -118,6 +122,8 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
+
+  return(invisible(object))
 })
 
 #' @rdname print
@@ -151,6 +157,8 @@ setMethod("summary", "LAScatalog", function(object, ...)
 
   cat("  - readLAS will be called with the following select option:", opt_select(object), "\n")
   cat("  - readLAS will be called with the following filter option:", opt_filter(object), "\n")
+
+  return(invisible(object))
 })
 
 setMethod("show", "LASheader",  function(object)
@@ -245,7 +253,7 @@ setMethod("show", "LASheader",  function(object)
     }
   }
 
-  return(invisible())
+  return(invisible(object))
 })
 
 setMethod("show", "LAScluster", function(object)
@@ -258,4 +266,6 @@ setMethod("show", "LAScluster", function(object)
   cat("size    :", object@width, "x", object@height, "\n")
   cat("files   :", basename(object@files), "\n")
   cat("filter  :", object@filter, "\n")
+
+  return(invisible(object))
 })
