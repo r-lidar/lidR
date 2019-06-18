@@ -99,6 +99,7 @@ readLASheader = function(file)
   return(LASheader(header))
 }
 
+#' @export
 readLAS.LAScatalog = function(files, select = "*", filter = "")
 {
   assert_is_a_string(select)
