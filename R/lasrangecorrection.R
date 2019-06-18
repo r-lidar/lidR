@@ -48,6 +48,13 @@ lasrangecorrection.LAS <- function(las, flightlines, Rs = 1000, f = 2.3)
   fl     <- cbind(data, coords)
   data.table::setDT(fl)
   data.table::setorder(fl, gpstime)
+  dup <- duplicated(fl, by = "gpstime")
+
+  if (any(dup))
+  {
+    warning("Duplicated gpstime found. Duplicated sensor position were removed.", call. = FALSE)
+    fl <- fl[!dup]
+  }
 
   intensity <- C_lasrangecorrection(las, fl, Rs, f)
   invalid   <- fast_countequal(intensity, 65535)

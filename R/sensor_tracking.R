@@ -109,6 +109,18 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 200, extra_check = T
 
   # Find the position P of the sensor in each interval
   P  <- data[, if (.N > 2*pmin) sensor_positions(X,Y,Z, ReturnNumber), by = .(gpstime = bins, PointSourceID = PointSourceID)]
+
+  if (nrow(P) == 0)
+  {
+    i <- integer(1)
+    n <- numeric(1)
+    coord <- matrix(i, ncol = 2)
+    data  <- data.frame(Z = i, gpstime = i, PointSourceID = n, npulses = n)
+    zero  <- sp::SpatialPointsDataFrame(coord, data)
+    zero  <- zero[-1,]
+    return(zero)
+  }
+
   na <- is.na(P[["X"]])
   P  <- P[!na]
   P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)])

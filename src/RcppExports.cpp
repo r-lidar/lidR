@@ -93,20 +93,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_lasrangecorrection
-IntegerVector C_lasrangecorrection(DataFrame data, DataFrame flightlines, double Rs, double f);
-RcppExport SEXP _lidR_C_lasrangecorrection(SEXP dataSEXP, SEXP flightlinesSEXP, SEXP RsSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type flightlines(flightlinesSEXP);
-    Rcpp::traits::input_parameter< double >::type Rs(RsSEXP);
-    Rcpp::traits::input_parameter< double >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lasrangecorrection(data, flightlines, Rs, f));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_knn
 Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu);
 RcppExport SEXP _lidR_C_knn(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP ncpuSEXP) {
@@ -154,6 +140,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
     rcpp_result_gen = Rcpp::wrap(C_lasdetectshape(las, method, th, k, filter, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_lasrangecorrection
+IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f);
+RcppExport SEXP _lidR_C_lasrangecorrection(SEXP lasSEXP, SEXP flightlinesSEXP, SEXP RsSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type flightlines(flightlinesSEXP);
+    Rcpp::traits::input_parameter< double >::type Rs(RsSEXP);
+    Rcpp::traits::input_parameter< double >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lasrangecorrection(las, flightlines, Rs, f));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -387,10 +387,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
-    {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
     {"_lidR_C_lasdetectshape", (DL_FUNC) &_lidR_C_lasdetectshape, 6},
+    {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lassmooth", (DL_FUNC) &_lidR_C_lassmooth, 6},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},

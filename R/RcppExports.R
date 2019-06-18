@@ -29,10 +29,6 @@ C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
-C_lasrangecorrection <- function(data, flightlines, Rs, f) {
-    .Call(`_lidR_C_lasrangecorrection`, data, flightlines, Rs, f)
-}
-
 C_knn <- function(X, Y, x, y, k, ncpu) {
     .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
@@ -43,6 +39,10 @@ C_knnidw <- function(X, Y, Z, x, y, k, p, ncpu) {
 
 C_lasdetectshape <- function(las, method, th, k, filter, ncpu) {
     .Call(`_lidR_C_lasdetectshape`, las, method, th, k, filter, ncpu)
+}
+
+C_lasrangecorrection <- function(las, flightlines, Rs, f) {
+    .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }
 
 C_lassmooth <- function(las, size, method, shape, sigma, ncpu) {
