@@ -11,6 +11,7 @@
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
 #' file paths.
+#' @param progress boolean. Display a progress bar.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #'
 #' @return A \code{LAScatalog} object
@@ -26,10 +27,10 @@
 #' \dontrun{
 #' ctg <- readLAScatalog("/path/to/a/folder/of/las/files")
 #'
-#' # Internal engine will sequentially process regions of interest of size 500 x 500 m (clusters)
+#' # Internal engine will sequentially process chunks of size 500 x 500 m (clusters)
 #' opt_chunk_size(ctg) <- 500
 #'
-#' # Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
+#' # Internal engine will align the 500 x 500 m chunks on x = 250 and y = 300
 #' opt_alignment(ctg) <- c(250, 300)
 #'
 #' # Internal engine will not display a progress estimation
@@ -42,7 +43,7 @@
 #' help("LAScatalog-class", "lidR")
 #' help("catalog_options_tools", "lidR")
 #' }
-readLAScatalog <- function(folder, ...)
+readLAScatalog <- function(folder, progress = FALSE, ...)
 {
   assert_is_character(folder)
 
@@ -59,6 +60,12 @@ readLAScatalog <- function(folder, ...)
 
   header <- LASheader(rlas::read.lasheader(files[1]))
   crs    <- projection(header, asText = FALSE)
+
+  if (progress)
+  {
+    pb <- txtProgressBar(min = 0, max = length(files), style = 3)
+    i  <- 0
+  }
 
   headers <- lapply(files, function(x)
   {
@@ -79,6 +86,12 @@ readLAScatalog <- function(folder, ...)
       PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
       PHB[["Number.of.points.by.return"]] <- NULL
       PHB[["Global.Encoding"]] <- NULL
+    }
+
+    if (progress)
+    {
+      i <<- i + 1
+      setTxtProgressBar(pb, i)
     }
 
     return(PHB)
@@ -121,4 +134,4 @@ readLAScatalog <- function(folder, ...)
 
 #' @export
 #' @name readLAScatalog
-catalog <- function(folder, ...) { readLAScatalog(folder, ...) }
+catalog <- function(folder, ...) { readLAScatalog(folder, FALSE, ...) }

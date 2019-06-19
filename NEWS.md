@@ -101,6 +101,8 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 9. Several functions are natively parallelized at C++ level with OpenMP. See `help("lidR-parallelism")` for more details.
 
+10. New function `catalog_select` for interactive tile selection.
+
 #### NOTE
 
 1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
