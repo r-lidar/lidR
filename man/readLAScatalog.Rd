@@ -5,13 +5,15 @@
 \alias{catalog}
 \title{Create an object of class LAScatalog}
 \usage{
-readLAScatalog(folder, ...)
+readLAScatalog(folder, progress = FALSE, ...)
 
 catalog(folder, ...)
 }
 \arguments{
 \item{folder}{string. The path of a folder containing a set of las/laz files. Can also be a vector of
 file paths.}
+
+\item{progress}{boolean. Display a progress bar.}
 
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
 }
@@ -37,10 +39,10 @@ plot(ctg)
 \dontrun{
 ctg <- readLAScatalog("/path/to/a/folder/of/las/files")
 
-# Internal engine will sequentially process regions of interest of size 500 x 500 m (clusters)
+# Internal engine will sequentially process chunks of size 500 x 500 m (clusters)
 opt_chunk_size(ctg) <- 500
 
-# Internal engine will align the 500 x 500 m clusters on x = 250 and y = 300
+# Internal engine will align the 500 x 500 m chunks on x = 250 and y = 300
 opt_alignment(ctg) <- c(250, 300)
 
 # Internal engine will not display a progress estimation
