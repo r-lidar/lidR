@@ -57,24 +57,51 @@ setMethod("print", "LAS", function(x)
 
 setMethod("show", "LAS", function(object)
 {
-  size <- format(utils::object.size(object), units = "auto")
-  surf <- area(object)
-  npts <- nrow(object@data)
-  dpts <- if (surf > 0) npts/surf else 0
-  attr <- names(object@data)
-  ext  <- sp::bbox(object)
-  phb  <- object@header@PHB
+  size      <- format(utils::object.size(object), units = "auto")
+  area      <- area(object)
+  area.h    <- area
+  npoints   <- nrow(object@data)
+  npoints.h <- npoints
+  dpts      <- if (area > 0) npoints/area else 0
+  attr      <- names(object@data)
+  ext       <- sp::bbox(object)
+  phb       <- object@header@PHB
 
   units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
   units <- if (length(units) == 0) "units" else units
+
+  areaprefix  <- ""
+  pointprefix <- ""
+
+  if (area > 1000*1000/2)
+  {
+    areaprefix <- if (length(units) == 0) "thoushand " else "k"
+    area.h     <- round(area/(1000*1000), 2)
+  }
+
+  if (npoints > 1000 & npoints < 1000^2)
+  {
+    pointprefix <- "thoushand"
+    npoints.h   <- round(npoints/1000, 1)
+  }
+  else if (npoints >= 1000^2 & npoints < 1000^3)
+  {
+    pointprefix <- "million"
+    npoints.h   <- round(npoints/(1000^2), 2)
+  }
+  else if (npoints >= 1000^3)
+  {
+    pointprefix <- "billion"
+    npoints.h   <- round(npoints/(1000^3), 2)
+  }
 
   cat("class        : LAS (", phb$`File Signature`, " v", phb$`Version Major`, ".", phb$`Version Minor`, ")\n", sep = "")
   cat("point format : ", phb$`Point Data Format ID`, "\n", sep = "")
   cat("memory       :", size, "\n")
   cat("extent       :", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
   cat("coord. ref.  :", object@proj4string@projargs, "\n")
-  cat("area         : ", surf, " ", units, "\u00B2 (convex hull)\n", sep = "")
-  cat("points       :", npts, "points\n")
+  cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
+  cat("points       :", npoints.h, pointprefix, "points\n")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
   cat("names        :", attr, "\n")
 
