@@ -59,9 +59,7 @@ catalog_select = function(ctg, mapview = TRUE)
 
   if (mapview)
   {
-    mapview::mapview()
-    map   <- mapview::mapview(ctg)
-    index <- mapedit::selectFeatures(ctg, map = map, index = TRUE)
+    index <- mapedit::selectFeatures(as.spatial(ctg),index = TRUE)
   }
   else
   {
