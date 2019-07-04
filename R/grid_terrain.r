@@ -103,7 +103,8 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
   if (fast_countequal(las@data$Classification, 2L) == 0)
     stop("No ground points found. Impossible to compute a DTM.")
 
-  ground = las@data[Classification == LASGROUND, .(X,Y,Z)]
+  ground <- las@data[Classification == LASGROUND, .(X,Y,Z)]
+  ground <- check_degenerated_points(ground)
 
   # Find where to interpolate the DTM
   # =================================
