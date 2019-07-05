@@ -31,12 +31,12 @@
 #' convex hull of the points. For a \code{LAScatalog} it is computed as the sum of the bounding boxes
 #' of the files. For overlapping tiles the value may be larger than the total covered area because
 #' some regions are sampled twice. For a \code{LASheader} it is computed with the bounding box. The
-#' function \code{npoints} does what user may expect it to do and the function \code{density} is
+#' function \code{npoints} does what the user may expect it to do and the function \code{density} is
 #' equivalent to \code{npoints(x)/area(x)}. As a consequence for the same file \code{area} applied on
-#' a LASheader or on a LAS can returns slighly different values.
+#' a LASheader or on a LAS can return slighly different values.
 #'
-#' @param x An object of the class \code{LAS*}
-#' @param ... unused
+#' @param x An object of the class \code{LAS*}.
+#' @param ... unused.
 #'
 #' @return numeric. A number. Notice that for area the measure is in the same units as the coordinate
 #' reference system.

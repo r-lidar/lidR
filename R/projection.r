@@ -27,10 +27,10 @@
 
 #' Get or set the projection of a LAS* object
 #'
-#' Get or set the projection of a LAS* object with the function \code{projection}. Fonctions \code{epsg}
-#' and \code{wkt} are reserved to advanced users (see details).
+#' Get or set the projection of a LAS* object with the function \code{projection}. Functions \code{epsg}
+#' and \code{wkt} are reserved for advanced users (see details).
 #'
-#' There are two ways to store the CRS of a point cloud in a las file:
+#' There are two ways to store the CRS of a point cloud in a LAS file:
 #' \itemize{
 #' \item Store an EPSG code (for LAS 1.0 to 1.4)
 #' \item Store a WTK string (for LAS 1.4)
@@ -40,22 +40,22 @@
 #' can be written in a LAS file and in the slot \code{proj4string} in a format that can be understood
 #' by R packages.
 #' \itemize{
-#' \item \code{projection<-}: updates the CRS from a \code{proj4string} It updates the header either
+#' \item \code{projection<-}: updates the CRS from a \code{proj4string}. It updates the header either
 #' with the EPSG code for LAS formats < 1.4 or with a WKT string for LAS format 1.4 and updates the
-#' \code{proj4string} slot. This function should always be prefered.
-#' \item \code{epsg<-}: updates the CRS from an EPSG code. It adds the epsg code in the header and updates
-#' the \code{proj4string} slot
+#' \code{proj4string} slot. This function should always be preferred.
+#' \item \code{epsg<-}: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
+#' the \code{proj4string} slot.
 #' \item \code{wkt<-}: updates the CRS from a WKT string. It adds the WKT string in the header and updates
-#' the \code{proj4string} slot
+#' the \code{proj4string} slot.
 #' \item \code{projection}: reads the \code{proj4string} from the \code{proj4string} slot.
 #' \item \code{epsg}: reads the epsg code from the header.
 #' \item \code{wkt}: reads the WKT string from the header.
 #' }
 #'
 #' @param object,x An object of class LAS or eventually LASheader (regular users don't need to manipulate
-#' LASheader objects)
-#' @param ... Unused
-#' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned
+#' LASheader objects).
+#' @param ... Unused.
+#' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
 #' @param value A \code{CRS} object or a \code{proj4string} string for function\code{projection}.
 #' An EPSG code as integer for function \code{epsg}. A \code{WKT} string for function \code{wkt}.
 #'

@@ -2,9 +2,9 @@
 
 #### VISIBLE CHANGES
 
-Several algorithms are now natively parallelised at C++ level with `OpenMP`. This has for consequences to speed-up some computation by default but implies visible change for users. For more details see `help("lidR-parallelism")`. The following only explains how modify code to get back the exact former behavior.
+Several algorithms are now natively parallelized at the C++ level with `OpenMP`. This has for consequences for speed-up of some computations by default but implies visible changes for users. For more details see `help("lidR-parallelism")`. The following only explains how to modify code to restore the exact former behavior.
 
-In versions `< 2.1.0` the catalog processing engine have R-based parallelism capabilities using the `future` package. The addition of C++-based parallelism introduced additionnal complexity. To prevent against nested parallelism an give the user the ability to use either a R-based or an C++-based parallelism (or a mix of the two) the function `opt_cores()` is no longer supported. If used it generates a message and does nothing. The strategy used to process the tiles in parallel must now be explicitely declared by users. This is anyway how it should have been design at the begining! For user, restoring the exact former behavior implies only one change.
+In versions `< 2.1.0` the catalog processing engine has R-based parallelism capabilities using the `future` package. The addition of C++-based parallelism introduced additional complexity. To prevent against nested parallelism and give the user the ability to use either R-based or C++-based parallelism (or a mix of the two), the function `opt_cores()` is no longer supported. If used it generates a message and does nothing. The strategy used to process the tiles in parallel must now be explicitly declared by users. This is anyway how it should have been designed from the begining! For users, restoring the exact former behavior implies only one change.
 
 In versions `< 2.1.0` the following was correct:
 
@@ -32,18 +32,18 @@ hmean <- grid_metrics(ctg, mean(Z))
     * New function `readLASheader()` to read the header of a file in a `LASheader` object.
    
 2. Coordinate Reference System:
-    * New function `wkt()` to store a WKT CRS in a LAS 1.4 files. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. User must prefer the new function `projection()` instead.
-    * New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually useful only internally and in specific cases. Vignette `LAS-class` has been updated in consequence.
+    * New function `wkt()` to store a WKT CRS in a LAS 1.4 file. This function is the twin of `epsg()` to store CRS. It updates the `proj4string` and the header of the LAS object. This function is not expected to be used by users. Users must prefer the new function `projection()` instead.
+    * New function `projection<-` that updates both the slot `proj4string` and the header with an EPSG code or a WKT string from a `proj4string` or a `sp:CRS` object. This function supersedes `epsg()`and `wkt()` that are actually only useful internally and in specific cases. The vignette `LAS-class` has been updated accordingly.
 
     ```r
     projection(las) <- projection(raster)
     ```
 
 3. LAScatalog processing engine:
-    * Progression estimation displayed on a map now handle warnings by coloring the chunks in orange.
+    * Progression estimation displayed on a map now handles warnings by coloring the chunks in orange.
     * Progression estimation displayed on a map now colors in blue the chunks that are processing.
     * The engine now returns the partial result in case of a fail.
-    * The engine now has a system of log to help users to reload the chunk that throw an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
+    * The engine now has a log system to help users reload the chunk that throws an error and try to understand what going wrong with this cluster specifically. If something went wrong a message like the following is displayed:
 
     ```
     An error occurred when processing the chunk 190. Try to load this chunk with:
@@ -52,22 +52,22 @@ hmean <- grid_metrics(ctg, mean(Z))
     ```
     
 4. `grid_metrics()`:
-    * New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue releated features ([#217](https://github.com/Jean-Romain/lidR/issues/217)).
-    * New argument `filter` in `grid_metrics()`. This argument enables to compute the metrics on a subset of selected points such as "first returns" for exemple without creating any copy of the point cloud. Such argument is expected to be added in several other functions later.
+    * New function `stdshapemetrics()` and lazy coding `.stdshapemetrics` to compute eigenvalue-related features ([#217](https://github.com/Jean-Romain/lidR/issues/217)).
+    * New argument `filter` in `grid_metrics()`. This argument enables users to compute metrics on a subset of selected points such as "first returns", for example, without creating a copy of the point cloud. Such an argument is expected to be added later in several other functions.
 
     ```r
     hmean <- grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
     ```
 
-5. New functions `lasdetectshape()` for water and human made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line()`.
+5. New functions `lasdetectshape()` for water and human-made structure detection with three algorithms `shp_plane()`, `shp_hplane()`, `shp_line()`.
 
 
 6. `plot()`:
     * For LAS objects `plot()` gained an argument `axis = TRUE` to display axis.
-    * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/217))
+    * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/217)).
 
 7. `tree_hull()`: 
-    * Gained an argument `func` to compute metrics for each tree like `tree_metrics()`
+    * Gained an argument `func` to compute metrics for each tree, like `tree_metrics()`
 
     ```r
     convhulls <- tree_hulls(las, func = ~list(imean = mean(Intensity)))
@@ -91,23 +91,23 @@ hmean <- grid_metrics(ctg, mean(Z))
     density(ctg)    #> [1] 1.5123
     ```
 
-9. Several functions are natively parallelized at C++ level with OpenMP. See `help("lidR-parallelism")` for more details.
+9. Several functions are natively parallelized at the C++ level with OpenMP. See `help("lidR-parallelism")` for more details.
 
 10. New function `catalog_select` for interactive tile selection.
 
 #### NOTE
 
-1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. User should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid anyway.
+1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. Users should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid, for now.
 
-2. The argument named `field` in `tree_metrics()` is now  named `attribute` for consistency with all other functions.
+2. The argument named `field` in `tree_metrics()` is now named `attribute` for consistency with all other functions.
 
-3. The documentation of supported options in `tree_*()` function was inccorect and has been fixed.
+3. The documentation of supported options in `tree_*()` functions was inccorect and has been fixed.
 
-4. `readLAScatalog()` replace `catalog()`. `catalog()` is softly deprecated.
+4. `readLAScatalog()` replaces `catalog()`. `catalog()` is soft-deprecated.
 
 ##### ENHANCEMENT
 
-1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non loaded extrabytes. This fix the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enable to write the LAS object without updating the header manually.
+1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non-loaded extrabytes. This fixes the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enables LAS objects to be written without updating the header manually.
 
 ## lidR v2.0.3 (Release date: )
 

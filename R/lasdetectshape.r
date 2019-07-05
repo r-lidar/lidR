@@ -12,7 +12,7 @@
 #' @param algorithm An algorithm for shape detection. lidR has: \link{shp_plane}, \link{shp_hplane}
 #' and \link{shp_line}.
 #' @param attribute character. The name of the new column to add into the LAS object.
-#' @param filter formula of logical predicates. Enable to run the function only on points of interest
+#' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See also examples.
 #'
 #' @examples
