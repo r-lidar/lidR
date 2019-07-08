@@ -14,11 +14,11 @@ grid_metrics(las, func, res = 20, start = c(0, 0), filter = NULL)
 \item{res}{numeric. The resolution of the output \code{Raster}. Can optionally be a \code{RasterLayer}.
 In that case the \code{RasterLayer} is used as the layout.}
 
-\item{start}{vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+\item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0).}
 
-\item{filter}{formula of logical predicates. Enable to run the function only on points of interest
-in an optimized way. See also examples.}
+\item{filter}{formula of logical predicates. Enables the function to run only on points of interest
+in an optimized way. See examples.}
 }
 \value{
 A \code{RasterLayer} or a \code{RasterBrick} containing a numeric value in each cell. If the
@@ -41,7 +41,7 @@ returns a labeled list of metrics. For example, the following function \code{f} 
 \preformatted{
 f = function(x) {list(mean = mean(x), max = max(x))}
 }
-And could be applied either on the \code{Z} coordinates or the intensities. These two
+And could be applied either on the \code{Z} coordinates or on the intensities. These two
 statements are valid:
 \preformatted{
 grid_metrics(las, ~f(Z), res = 20)

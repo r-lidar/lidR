@@ -39,10 +39,10 @@
 #' @template param-las
 #' @param func formula. An expression to be applied to each cell (see section "Parameter func").
 #' @template param-res-grid
-#' @param start vector x and y coordinates for the reference raster. Default is (0,0) meaning that the
+#' @param start vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0).
-#' @param filter formula of logical predicates. Enable to run the function only on points of interest
-#' in an optimized way. See also examples.
+#' @param filter formula of logical predicates. Enables the function to run only on points of interest
+#' in an optimized way. See examples.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -50,7 +50,7 @@
 #' \preformatted{
 #' f = function(x) {list(mean = mean(x), max = max(x))}
 #' }
-#' And could be applied either on the \code{Z} coordinates or the intensities. These two
+#' And could be applied either on the \code{Z} coordinates or on the intensities. These two
 #' statements are valid:
 #' \preformatted{
 #' grid_metrics(las, ~f(Z), res = 20)

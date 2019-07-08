@@ -28,17 +28,17 @@
 #' A set of boolean tests on objects
 #'
 #' \code{is.empty} tests if a \code{LAS} object is a point cloud with 0 points.\cr
-#' \code{is.overlapping} tests if a \code{LAScatalog} have overlapping tiles.\cr
+#' \code{is.overlapping} tests if a \code{LAScatalog} has overlapping tiles.\cr
 #' \code{is.indexed} tests if the points of a \code{LAScatalog} are indexed with \code{.lax} files.\cr
 #' \code{is.algorithm} tests if an object is an algorithm of the lidR package.\cr
 #' \code{is.parallelised} tests if an algorithm of the lidR package is natively parallelised with OpenMP.
-#' Returns TRUE if the algorithm is at least partially parallelised i.e. if some portion of the code are
+#' Returns TRUE if the algorithm is at least partially parallelised i.e. if some portion of the code is
 #' computed in parallel.
 #'
-#' @param las A \code{LAS} object
+#' @param las A \code{LAS} object.
 #' @param x Any R object.
-#' @param catalog A \code{LAScatalog} object
-#' @param algorithm An \code{algorithm} object
+#' @param catalog A \code{LAScatalog} object.
+#' @param algorithm An \code{algorithm} object.
 #'
 #' @return TRUE or FALSE
 #'
@@ -101,7 +101,7 @@ is.algorithm = function(x)
 is.parallelised = function(algorithm)
 {
   if (!is.algorithm(algorithm))
-    stop("This function only applies to algorithms from lidR package")
+    stop("This function only applies to algorithms from the lidR package")
 
   return(is(algorithm, "OpenMP"))
 }

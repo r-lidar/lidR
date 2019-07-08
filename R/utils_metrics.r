@@ -323,7 +323,8 @@ stdtreemetrics = function(x, y, z)
 stdshapemetrics = function(x,y,z)
 {
   xyz     <- cbind(x,y,z)
-  eigen_m <- fast_eigen_values(xyz)
+  eigen   <- fast_eigen_values(xyz)
+  eigen_m <- eigen[[1]]
   eigen_m <- as.numeric(eigen_m)
 
   shapemetrics = list(
@@ -334,7 +335,8 @@ stdshapemetrics = function(x,y,z)
     linearity      = (eigen_m[1] - eigen_m[2])/eigen_m[1],
     planarity      = (eigen_m[2] - eigen_m[3])/eigen_m[1],
     sphericity     = eigen_m[3]/eigen_m[1],
-    anisotrophy    = (eigen_m[1] - eigen_m[3])/eigen_m[1]
+    anisotropy     = (eigen_m[1] - eigen_m[3])/eigen_m[1],
+    horizontality  = abs(eigen[[2]][3,3])
   )
   return(shapemetrics)
 }

@@ -7,8 +7,8 @@
 lmfauto(plot = FALSE, hmin = 2)
 }
 \arguments{
-\item{plot}{logical set it to \code{TRUE} is processing a plot instead of a large area. What change
-is the estimation of the local number of trees. It should be based the local neighborhood for general
+\item{plot}{logical set it to \code{TRUE} if processing a plot instead of a large area. What changes
+is the estimation of the local number of trees. It should be based on the local neighborhood for the general
 case but this does not make sense for a plot.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a point cannot be a local
@@ -16,11 +16,11 @@ maxima. Default is 2.}
 }
 \description{
 This function is made to be used in \link{tree_detection}. It implements a fast and parameter-free
-algorithm for individual tree detection on wide coverage. It is based on two local maximum filters
-(LMF). The first pass performs a very raw estimation of the number of trees with a fixed windows
-size. Based on this raw estimation it automatically compute a variable windows size LMF with workable
-parameters. This way this algorithm is parameter-free and properly parametrized for many contexts.
-This algorithm is made to process wide areas not small plots. See references for more details.
+algorithm for individual tree detection with wide coverage. It is based on two local maximum filters
+(LMF). The first pass performs a very rough estimation of the number of trees with a fixed window
+size. Based on this rough estimate it automatically computes a variable windows size LMF with workable
+parameters. This algorithm is made to process wide areas rather than small plots. See references
+for more details.
 }
 \examples{
 \dontrun{

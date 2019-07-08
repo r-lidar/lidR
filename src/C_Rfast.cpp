@@ -84,6 +84,8 @@ SEXP fast_eigen_values(arma::mat A)
   arma::mat score;
   arma::vec latent;
   arma::princomp(coeff, score, latent, A);
-  return(Rcpp::wrap(latent));
+  NumericMatrix eigenvalues = Rcpp::wrap(latent);
+  NumericMatrix eigencoeff = Rcpp::wrap(coeff);
+  return(List::create(_["eigen"] = eigenvalues, _["coeff"] = eigencoeff));
 }
 

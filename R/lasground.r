@@ -35,8 +35,8 @@
 #' @template param-las
 #'
 #' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
-#' @param filter formula of logical predicates. Enable to run the function only on points of interest
-#' in an optimized way. See also examples. A pertinent conditionnal statement in \code{lasground}
+#' @param filter formula of logical predicates. Enable the functon to run only on points of interest
+#' in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
 #' is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.
 #'
 #' @template LAScatalog
@@ -77,7 +77,7 @@
 #' las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
 #' plot(las, color = "Classification")
 #'
-#' # Use only returns with an intensity above a threshold (why not)
+#' # Use only returns with an intensity above a threshold (why not?)
 #' las <- lasground(las, csf(), filter = ~Intensity > 250L)
 #' }
 lasground = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
@@ -105,7 +105,7 @@ lasground.LAS = function(las, algorithm, filter = ~ReturnNumber == NumberOfRetur
 
     if (sum(filter) == 0)
     {
-      warning("Zero point found with the filter predicates: all points were used.")
+      warning("Zero points found with the filter predicates: all points were used.")
       filter = NULL
     }
   }

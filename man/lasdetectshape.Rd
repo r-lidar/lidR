@@ -14,7 +14,7 @@ and \link{shp_line}.}
 
 \item{attribute}{character. The name of the new column to add into the LAS object.}
 
-\item{filter}{formula of logical predicates. Enable to run the function only on points of interest
+\item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See also examples.}
 }
 \value{
