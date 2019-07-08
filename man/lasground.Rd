@@ -11,8 +11,8 @@ lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 
 \item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.}
 
-\item{filter}{formula of logical predicates. Enable to run the function only on points of interest
-in an optimized way. See also examples. A pertinent conditionnal statement in \code{lasground}
+\item{filter}{formula of logical predicates. Enable the functon to run only on points of interest
+in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
 is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.}
 }
 \value{
@@ -89,7 +89,7 @@ las <- lasground(las, csf(), filter = NULL)
 las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
 plot(las, color = "Classification")
 
-# Use only returns with an intensity above a threshold (why not)
+# Use only returns with an intensity above a threshold (why not?)
 las <- lasground(las, csf(), filter = ~Intensity > 250L)
 }
 }

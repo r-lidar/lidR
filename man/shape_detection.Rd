@@ -5,7 +5,7 @@
 \alias{shp_plane}
 \alias{shp_hplane}
 \alias{shp_line}
-\title{Algorithms for detection shape of the local point neighborhood}
+\title{Algorithms for shape detection of the local point neighborhood}
 \usage{
 shp_plane(th1 = 25, th2 = 6, k = 8)
 
@@ -19,21 +19,21 @@ shp_line(th1 = 10, k = 8)
 \item{k}{integer. Number of neighbours used to estimate the neigborhood.}
 }
 \description{
-These functions are made to be used in \link{lasdetectshape}. They implements algorithms for local
+These functions are made to be used in \link{lasdetectshape}. They implement algorithms for local
 neighborhood shape estimation.
 }
 \details{
-In the following \eqn{a1, a2, a3} denote the eigenvalues of the covariance matrix of the neighbouring
+In the following, \eqn{a1, a2, a3} denote the eigenvalues of the covariance matrix of the neighbouring
 points in ascending order. \eqn{th1, th2, th3} denote a set of threshold values. Points are labelled
 \code{TRUE} if they meet the following criteria. \code{FALSE} otherwise.\cr
 \describe{
 \item{shp_plane}{Detection of plans based on criteria defined by Limberger & Oliveira (2015) (see references).
-A point is labelled TRUE if the neighborhood is approximatly planar that is: \deqn{a2 > (th1*a1) and (th2*a2) > a3}}
-\item{shp_hplane}{The same than 'plane' but with an extra test on the orientation of the Z vector
-of the principal components to test the horizontality of the surface.  \deqn{a2 > (th1*a1) and (th2*a2) > a3 and |Z| > th3 }
-In theorry |Z| should be exactly equal to 1. In practice 0.98 or 0.99 should be good.}
-\item{shp_line}{Detection of lines inspired by Limberger & Oliveira (2015) criterion. A point is
-labelled TRUE if the neighborhood is approximatly linear that is: \deqn{th1*a2 < a3 and th1*a1 < a3}}
+A point is labelled TRUE if the neighborhood is approximately planar, that is: \deqn{a2 > (th1*a1) and (th2*a2) > a3}}
+\item{shp_hplane}{The same as 'plane' but with an extra test on the orientation of the Z vector
+of the principal components to test the horizontality of the surface.  \deqn{a2 > (th1*a1) and (th2*a2) > a3 and |Z| > th3}
+In theory |Z| should be exactly equal to 1. In practice 0.98 or 0.99 should be fine}
+\item{shp_line}{Detection of lines inspired by the Limberger & Oliveira (2015) criterion. A point is
+labelled TRUE if the neighborhood is approximately linear, that is: \deqn{th1*a2 < a3 and th1*a1 < a3}}
 }
 }
 \references{

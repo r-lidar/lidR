@@ -7,23 +7,23 @@
 lmf(ws, hmin = 2, shape = c("circular", "square"))
 }
 \arguments{
-\item{ws}{numeric or function. Length or diameter of the moving window used to the detect the local
-maxima in the unit of the input data (usually meters). If it is numeric a fixed window size is used.
+\item{ws}{numeric or function. Length or diameter of the moving window used to detect the local
+maxima in the units of the input data (usually meters). If it is numeric a fixed window size is used.
 If it is a function, the function determines the size of the window at any given location on the canopy.
-The function should take the height of a given pixel or points as its only argument and return the
+The function should take the height of a given pixel or point as its only argument and return the
 desired size of the search window when centered on that pixel/point.}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default is 2.}
 
-\item{shape}{character. Shape of the moving windows used to find the local maxima. Can be "square"
+\item{shape}{character. Shape of the moving window used to find the local maxima. Can be "square"
 or "circular".}
 }
 \description{
 This function is made to be used in \link{tree_detection}. It implements an algorithm for tree
 detection based on a local maximum filter. The windows size can be fixed or variable and its
 shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
-It is deeply inspired from Popescu & Wynne (2004) (see references).
+It is deeply inspired by Popescu & Wynne (2004) (see references).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -32,7 +32,7 @@ las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 # point-cloud-based
 # =================
 
-# 5x5 m fixed windows size
+# 5x5 m fixed window size
 ttops <- tree_detection(las, lmf(5))
 
 x <- plot(las)
@@ -48,7 +48,7 @@ add_treetops3d(x, ttops)
 # raster-based
 # ============
 
-# 5x5 m fixed windows size
+# 5x5 m fixed window size
 chm <- grid_canopy(las, res = 1, p2r(0.15))
 kernel <- matrix(1,3,3)
 chm <- raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
@@ -58,7 +58,7 @@ ttops <- tree_detection(chm, lmf(5))
 plot(chm, col = height.colors(30))
 plot(ttops, add = TRUE)
 
-# variable windows size
+# variable window size
 f <- function(x) { x * 0.07 + 3 }
 ttops <- tree_detection(chm, lmf(f))
 

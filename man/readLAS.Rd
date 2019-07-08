@@ -18,7 +18,7 @@ readLAS(files, select = "*", filter = "")
 A LAS object
 }
 \description{
-Reads .las or .laz files into object of class \link[lidR:LAS-class]{LAS}. If several files are read at
+Reads .las or .laz files into an object of class \link[lidR:LAS-class]{LAS}. If several files are read at
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.
@@ -47,6 +47,6 @@ las = readLAS(LASfile, select = "xyz")
 las = readLAS(LASfile, select = "xyzi", filter = "-keep_first")
 las = readLAS(LASfile, select = "xyziar", filter = "-keep_first -drop_z_below 0")
 
-# Negation of attribute is also possible (all except intensity and angle)
+# Negation of attributes is also possible (all except intensity and angle)
 las = readLAS(LASfile, select = "* -i -a")
 }

@@ -35,7 +35,7 @@
 #' @template param-las
 #'
 #' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
-#' @param filter formula of logical predicates. Enable tthe functon to run only on points of interest
+#' @param filter formula of logical predicates. Enable the functon to run only on points of interest
 #' in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
 #' is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.
 #'

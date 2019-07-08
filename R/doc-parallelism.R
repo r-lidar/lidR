@@ -52,7 +52,7 @@
 #' With chunk-based parallelism any algorithm can be parallelized by processing several subsets of
 #' a dataset.  However, there is a strong cost associated with this type of parallelism. When processing several
 #' chunks at a time, the computer needs to load the corresponding point clouds. Assuming the user processes
-#' one square kilometer chunks in parallel with 4 cores, ithen 4 chunks are loaded in the computer
+#' one square kilometer chunks in parallel with 4 cores, then 4 chunks are loaded in the computer
 #' memory. This may be too much and the speed-up is not guaranteed since there is some overhead involved in
 #' reading several files at a time. Once this point is understood, chunk-based parallelism is very
 #' powerful since all the algorithms can be parallelized whether or not they are natively parallel.
