@@ -45,6 +45,7 @@ Suggests:
     crayon,
     hexbin,
     mapview,
+    mapedit,
     progress,
     testthat,
     knitr,

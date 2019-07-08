@@ -63,7 +63,7 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
 
   if (progress)
   {
-    pb <- txtProgressBar(min = 0, max = length(files), style = 3)
+    pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
     i  <- 0
   }
 
@@ -91,7 +91,7 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
     if (progress)
     {
       i <<- i + 1
-      setTxtProgressBar(pb, i)
+      utils::setTxtProgressBar(pb, i)
     }
 
     return(PHB)

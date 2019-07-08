@@ -9,7 +9,7 @@ in \link{LAScatalog-class}, users can set a templated filename to store the outp
 of in R memory. By defaut \code{LAS} objects are stored in .las files with \link{writeLAS},
 \code{Raster*} objects are stored in .tif files with \link[raster:writeRaster]{writeRaster},
 \code{Spatial*} objects are stored in .shp files with \link[rgdal:writeOGR]{writeOGR},
-\code{data.frame} objects are stored in .csv files with \link[data.table::fwrite]{fwrite}, and other
+\code{data.frame} objects are stored in .csv files with \link[data.table:fwrite]{fwrite}, and other
 objects are not supported. However, users can modify all these default settings and even add new drivers.
 This manual page explain how. One may also refer to some unofficial documentation
 \href{https://github.com/Jean-Romain/lidR/wiki/Modify-the-LAScatalog-drivers}{here} or

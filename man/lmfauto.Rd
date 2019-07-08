@@ -19,8 +19,8 @@ This function is made to be used in \link{tree_detection}. It implements a fast 
 algorithm for individual tree detection with wide coverage. It is based on two local maximum filters
 (LMF). The first pass performs a very rough estimation of the number of trees with a fixed window
 size. Based on this rough estimate it automatically computes a variable windows size LMF with workable
-parameters. This way the algorithm is parameter-free and properly parameterized for many contexts.
-This algorithm is made to process wide areas rather than small plots. See references for more details.
+parameters. This algorithm is made to process wide areas rather than small plots. See references
+for more details.
 }
 \examples{
 \dontrun{

@@ -263,8 +263,8 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 #' algorithm for individual tree detection with wide coverage. It is based on two local maximum filters
 #' (LMF). The first pass performs a very rough estimation of the number of trees with a fixed window
 #' size. Based on this rough estimate it automatically computes a variable windows size LMF with workable
-#' parameters. This way the algorithm is parameter-free and properly parameterized for many contexts.
-#' This algorithm is made to process wide areas rather than small plots. See references for more details.
+#' parameters. This algorithm is made to process wide areas rather than small plots. See references
+#' for more details.
 #'
 #' @param plot logical set it to \code{TRUE} if processing a plot instead of a large area. What changes
 #' is the estimation of the local number of trees. It should be based on the local neighborhood for the general
