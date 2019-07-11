@@ -65,13 +65,10 @@ pmf = function(ws, th)
   ws <- lazyeval::uq(ws)
   th <- lazyeval::uq(th)
 
-  f = function(cloud, filter)
+  f = function(cloud)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lasground"), "pmf")
-
-    if (!is.null(filter))
-      cloud <- cloud[filter]
 
     for (i in 1:length(ws))
     {
@@ -140,13 +137,10 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   iterations       <- lazyeval::uq(iterations)
   time_step        <- lazyeval::uq(time_step)
 
-  f = function(cloud, filter)
+  f = function(cloud)
   {
     context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
     stopif_wrong_context(context, c("lasground"), "csf")
-
-    if (!is.null(filter))
-      cloud <- cloud[filter]
 
     gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
     idx <- cloud$idx[gnd]

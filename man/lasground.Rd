@@ -4,18 +4,17 @@
 \alias{lasground}
 \title{Classify points as 'ground' or 'not ground'}
 \usage{
-lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
+lasground(las, algorithm, last_returns = TRUE)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.}
 
-\item{filter}{formula of logical predicates. Enable the functon to run only on points of interest
-in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
-is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.}
-
-\item{...}{unused}
+\item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
+in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+\code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
+to \code{FALSE} automatically.}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
@@ -79,19 +78,4 @@ th  <- seq(0.1, 1.5, length.out = length(ws))
 
 las <- lasground(las, pmf(ws, th))
 plot(las, color = "Classification")
-
-\dontrun{
-# Some examples with the filter argument
-# --------------------------------------
-
-# Use all returns instead of last returns by default
-las <- lasground(las, csf(), filter = NULL)
-
-# Use only first returns. This is technically possible but meaningless
-las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
-plot(las, color = "Classification")
-
-# Use only returns with an intensity above a threshold (why not?)
-las <- lasground(las, csf(), filter = ~Intensity > 250L)
-}
 }

@@ -35,10 +35,10 @@
 #' @template param-las
 #'
 #' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
-#' @param filter formula of logical predicates. Enable the functon to run only on points of interest
-#' in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
-#' is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.
-#' @param ... unused
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
 #'
 #' @template LAScatalog
 #'
@@ -66,31 +66,14 @@
 #'
 #' las <- lasground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
-#'
-#' \dontrun{
-#' # Some examples with the filter argument
-#' # --------------------------------------
-#'
-#' # Use all returns instead of last returns by default
-#' las <- lasground(las, csf(), filter = NULL)
-#'
-#' # Use only first returns. This is technically possible but meaningless
-#' las <- lasground(las, csf(), filter = ~ReturnNumber == 1L)
-#' plot(las, color = "Classification")
-#'
-#' # Use only returns with an intensity above a threshold (why not?)
-#' las <- lasground(las, csf(), filter = ~Intensity > 250L)
-#' }
-lasground = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
+lasground = function(las, algorithm, last_returns = TRUE)
 {
   UseMethod("lasground", las)
 }
 
 #' @export
-lasground.LAS = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
+lasground.LAS = function(las, algorithm, last_returns = TRUE)
 {
-  filter <- .last_returns_retro_compatibility(filter, ...)
-
   if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
     stop("Invalid function provided as algorithm.")
 
@@ -102,19 +85,25 @@ lasground.LAS = function(las, algorithm, filter = ~ReturnNumber == NumberOfRetur
   cloud   <- coordinates3D(las)
   cloud[, idx := pointID]
 
-  if (!is.null(filter))
+  if (last_returns)
   {
-    filter <- lasfilter_(las, list(filter))
-
-    if (sum(filter) == 0)
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data)))
     {
-      warning("Zero points found with the filter predicates: all points were used.")
-      filter = NULL
+      warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.", call. = FALSE)
+    }
+    else
+    {
+      filter <- las@data[["ReturnNumber"]] == las@data[["NumberOfReturns"]]
+
+      if (sum(filter) == 0)
+        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
+      else
+        cloud <- cloud[filter]
     }
   }
 
   lidR.context <- "lasground"
-  idx <- algorithm(cloud, filter)
+  idx <- algorithm(cloud)
 
   if ("Classification" %in% names(las@data))
   {
@@ -140,46 +129,25 @@ lasground.LAS = function(las, algorithm, filter = ~ReturnNumber == NumberOfRetur
 }
 
 #' @export
-lasground.LAScluster = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
+lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasground(x, algorithm, filter)
+  x <- lasground(x, algorithm, last_returns)
   x <- lasfilter(x, buffer == LIDRNOBUFFER)
   return(x)
 }
 
 #' @export
-lasground.LAScatalog = function(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
+lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
-  filter <- .last_returns_retro_compatibility(filter, ...)
-
   opt_select(las) <- "*"
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_apply(las, lasground, algorithm = algorithm, filter = filter, .options = options)
+  output  <- catalog_apply(las, lasground, algorithm = algorithm,  last_returns = last_returns, .options = options)
   output  <- unlist(output)
   ctg     <- readLAScatalog(output)
 
   opt_copy(ctg) <- las
   return(ctg)
-}
-
-# Retro compatibility with lidR 2.0.y
-.last_returns_retro_compatibility = function(filter, ...)
-{
-  dots <- list(...)
-
-  if (is.logical(filter))
-  {
-    if (filter)
-      return(~ReturnNumber == NumberOfReturns)
-
-    return(NULL)
-  }
-
-  if (!is.null(dots$last_returns) && dots$last_returns == TRUE)
-    return(~ReturnNumber == NumberOfReturns)
-
-  return(filter)
 }
