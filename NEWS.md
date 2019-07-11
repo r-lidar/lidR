@@ -72,7 +72,7 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 6. `plot()`:
     * For LAS objects `plot()` gained an argument `axis = TRUE` to display axis.
-    * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/217)).
+    * For LAS objects `plot()` gained an argument `legend = TRUE` to display color gradient legend ([#224](https://github.com/Jean-Romain/lidR/issues/224)).
 
 7. `tree_hull()`: 
     * Gained an argument `func` to compute metrics for each tree, like `tree_metrics()`
@@ -103,6 +103,8 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 10. New function `catalog_select` for interactive tile selection.
 
+11. `lasground` have lost the argument `last_returns` for a mor generic argument `filter`. Retro-compatibility as been preserved by interpreting adding an ellipsis.
+
 #### NOTE
 
 1. `grid_metrics()`, `grid_metrics3d()`, `tree_metrics()`, `tree_hull()`, `grid_hexametrics()` and `lasmetrics()` expect a formula as input. Users should not write `grid_metrics(las, mean(Z))` but `grid_metrics(las, ~mean(Z))`. The first syntax is still valid, for now.
@@ -112,6 +114,10 @@ hmean <- grid_metrics(ctg, mean(Z))
 3. The documentation of supported options in `tree_*()` functions was inccorect and has been fixed.
 
 4. `readLAScatalog()` replaces `catalog()`. `catalog()` is soft-deprecated.
+
+#### FIX
+
+1. [#264](https://github.com/Jean-Romain/lidR/issues/264) `grid_terrain` now filter degenerated ground points.
 
 ##### ENHANCEMENT
 
