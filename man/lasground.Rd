@@ -4,7 +4,7 @@
 \alias{lasground}
 \title{Classify points as 'ground' or 'not ground'}
 \usage{
-lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
+lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns, ...)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -14,6 +14,8 @@ lasground(las, algorithm, filter = ~ReturnNumber == NumberOfReturns)
 \item{filter}{formula of logical predicates. Enable the functon to run only on points of interest
 in an optimized way. See also examples. A pertinent conditional statement in \code{lasground}
 is \code{~ReturnNumber == NumberOfReturns} to compute only on last returns.}
+
+\item{...}{unused}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
