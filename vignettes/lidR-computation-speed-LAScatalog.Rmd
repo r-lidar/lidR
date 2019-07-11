@@ -216,10 +216,6 @@ lidR:::catalog_laxindex(ctg)
 
 The gain is really significant and allows an additional 2- to 3-fold saving in terms of read time, which significantly speeds up the computation time. Changing from laz to las format has a cost because it implies storing more data. However, using lax files provides a significant gain for free, so there is no incentive not to create lax files.
 
-## Changing the hardware
-
-We demonstrated the importance of decreasing the time taken to read files to improve the overall computation time. The faster you read the files the faster you perform the computation because the read time is non-negligible. Opting for a fast SSD disk instead of a slow HDD disk may significantly speed-up the computation time independently of the power of your processor. Hardware matters!
-
 ## Benchmarks
 
 The following are benchmarks for some functions
