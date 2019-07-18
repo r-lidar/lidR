@@ -3,6 +3,7 @@
 #### ENHANCEMENT
 
 1. `lastrees` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
+2. Internal code has been modifiy to drastically reduce probability of name intersection in `catalog_apply()`. For example, the use of a function that have a parameter `p` in  `catalog_apply()` failed because of partial matching between the true argument `p` and the internal argument `processing_option`.
 
 ## lidR v2.1.0
 
