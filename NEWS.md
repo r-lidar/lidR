@@ -1,3 +1,9 @@
+## lidR v2.1.1
+
+#### ENHANCEMENT
+
+1. `lastrees` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
+
 ## lidR v2.1.0
 
 #### VISIBLE CHANGES

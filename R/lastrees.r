@@ -26,6 +26,12 @@
 #' plot(las, color = "treeID", colorPalette = col)
 lastrees = function(las, algorithm, attribute = "treeID")
 {
+  UseMethod("lastrees", las)
+}
+
+#'@export
+lastrees.LAS = function(las, algorithm, attribute = "treeID")
+{
   stopif_forbidden_name(attribute)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_its(algorithm)
