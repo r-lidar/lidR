@@ -1,5 +1,5 @@
 
-lidR <img src="man/figures/logo.png" align="right"/>
+lidR <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/man/figures/logo200x231.png" align="right"/>
 ======================================================================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 

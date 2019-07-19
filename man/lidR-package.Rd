@@ -6,11 +6,10 @@
 \alias{lidR-package}
 \title{lidR: airborne LiDAR for forestry applications}
 \description{
-\if{html}{\figure{logo.png}{options: align='right'}} lidR provides a set of tools to manipulate
-airborne LiDAR data in forestry contexts. The package works essentially with .las or .laz files.
-The toolbox includes algorithms for DSM, CHM, DTM, ABA, normalisation, tree detection, tree
-segmentation and other tools, as well as an engine to process wide LiDAR coverages split into many
-files.
+lidR provides a set of tools to manipulate airborne LiDAR data in forestry contexts. The package
+works essentially with .las or .laz files. The toolbox includes algorithms for DSM, CHM, DTM, ABA,
+normalisation, tree detection, tree segmentation and other tools, as well as an engine to process
+wide LiDAR coverages split into many files.
 }
 \details{
 To learn more about lidR, start with the vignettes: browseVignettes(package = "lidR"). Users can also
