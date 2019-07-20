@@ -67,8 +67,7 @@ pmf = function(ws, th)
 
   f = function(cloud)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasground"), "pmf")
+    assert_is_valid_context(LIDRCONTEXTGND, "pmf")
 
     for (i in 1:length(ws))
     {
@@ -87,6 +86,7 @@ pmf = function(ws, th)
     }
 
     idx <- cloud$idx
+    return(idx)
   }
 
   class(f) <- c("GroundSegmentation", "Algorithm", "lidR")
@@ -139,11 +139,10 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 
   f = function(cloud)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasground"), "csf")
-
+    assert_is_valid_context(LIDRCONTEXTGND, "csf")
     gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
     idx <- cloud$idx[gnd]
+    return(idx)
   }
 
   class(f) <- c("GroundSegmentation", "Algorithm", "lidR")

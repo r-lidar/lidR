@@ -101,8 +101,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "lmf")
+    assert_is_valid_context(LIDRCONTEXTITD, "lmf")
 
     if (is.function(ws))
     {
@@ -164,8 +163,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 {
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "manual")
+    assert_is_valid_context(LIDRCONTEXTITD, "manual")
 
     . <- X <- Y <- Z <- treeID <- NULL
 
@@ -287,8 +285,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
 {
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "lmfauto")
+    assert_is_valid_context(LIDRCONTEXTITD, "lmfauto")
 
     # Step 1: detection with a fixed 5 m windows size
 

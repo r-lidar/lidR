@@ -51,16 +51,11 @@ tin = function()
 {
   f = function(what, where)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "tin")
-
+    assert_is_valid_context(LIDRCONTEXTSPI, "tin")
     z    <- interpolate_delaunay(what, where)
     isna <- is.na(z)
     nnas <- sum(isna)
-
-    if (nnas > 0)
-      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
-
+    if (nnas > 0) z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
     return(z)
   }
 
@@ -96,11 +91,8 @@ knnidw = function(k = 10, p = 2)
 {
   f = function(what, where)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "knnidw")
-
-    z <- interpolate_knnidw(what, where, k, p)
-    return(z)
+    assert_is_valid_context(LIDRCONTEXTSPI, "knnidw")
+    return(interpolate_knnidw(what, where, k, p))
   }
 
   class(f) <- c("SpatialInterpolation", "Algorithm", "OpenMP", "lidR", "function")
@@ -138,11 +130,8 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
   f = function(what, where)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasnormalize", "grid_terrain", "spatial_interpolation"), "kriging")
-
-    z <- interpolate_kriging(what, where, model, k)
-    return(z)
+    assert_is_valid_context(LIDRCONTEXTSPI, "kriging")
+    return(interpolate_kriging(what, where, model, k))
   }
 
   class(f) <- c( "function", "SpatialInterpolation", "Algorithm", "lidR")

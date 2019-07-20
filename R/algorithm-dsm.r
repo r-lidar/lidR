@@ -82,8 +82,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 
   f = function(las, layout)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("grid_canopy"), "p2r")
+    assert_is_valid_context(LIDRCONTEXTDSM, "p2r")
 
     bbox <- raster::extent(layout)
     dsm  <- R_p2r(las, raster::as.matrix(bbox), raster::res(layout)[1], subcircle)
@@ -254,8 +253,7 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
 
   f = function(las, layout)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("grid_canopy"), "pitfree")
+    assert_is_valid_context(LIDRCONTEXTDSM, "pitfree")
 
     if (!"ReturnNumber" %in% names(las@data))
       stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns")

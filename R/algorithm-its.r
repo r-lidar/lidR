@@ -111,10 +111,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 
   f = function()
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-
-    if (!is.null(context))
-      stopif_wrong_context(context, c("lastrees"), "dalponte2016")
+    assert_is_valid_context(LIDRCONTEXTITS, "dalponte2016", null_allowed = TRUE)
 
     X     <- match_chm_and_seeds(chm, treetops, ID)
     cells <- X$cells
@@ -213,8 +210,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lastrees"), "li2012")
+    assert_is_valid_context(LIDRCONTEXTITS, "li2012")
 
     if (las@header@PHB$`Max Z` < hmin)
     {
@@ -307,10 +303,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
   f = function()
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-
-    if (!is.null(context))
-      stopif_wrong_context(context, c("lastrees"), "silva2016")
+    assert_is_valid_context(LIDRCONTEXTITS, "silva2016", null_allowed = TRUE)
 
     . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
@@ -430,10 +423,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
 
   f = function()
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-
-    if (!is.null(context))
-      stopif_wrong_context(context, c("lastrees"), "watershed")
+    assert_is_valid_context(LIDRCONTEXTITS, "watershed", null_allowed = TRUE)
 
     # Test if requiered packages are installed
     if (is.null(treetops))

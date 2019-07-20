@@ -68,8 +68,7 @@ shp_plane = function(th1 = 25, th2 = 6, k = 8)
 
   f = function(las, filter)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "lasdetectshape", "shp_plane")
+    assert_is_valid_context(LIDRCONTEXTDEC, "shp_plane")
     return(C_lasdetectshape(las, 1L , c(th1, th2), k, filter, getThread()))
   }
 
@@ -93,8 +92,7 @@ shp_hplane = function(th1 = 25, th2 = 6, th3 = 0.98, k = 8)
 
   f = function(las, filter)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "lasdetectshape", "shp_hplane")
+    assert_is_valid_context(LIDRCONTEXTDEC, "shp_hplane")
     return(C_lasdetectshape(las, 2L , c(th1, th2, th3), k, filter, getThread()))
   }
 
@@ -114,8 +112,7 @@ shp_line = function(th1 = 10, k = 8)
 
   f = function(las, filter)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "lasdetectshape", "shp_line")
+    assert_is_valid_context(LIDRCONTEXTDEC, "shp_line")
     return(C_lasdetectshape(las, 3L , th1, k, filter, getThread()))
   }
 

@@ -169,6 +169,21 @@ assert_is_algorithm_its = function(x)
     stop("The algorithm used is not an algorithm for individual tree segmentation.", call. = FALSE)
 }
 
+assert_is_valid_context = function(expected_contexts, name = "", null_allowed = FALSE)
+{
+  received_context <- tryCatch({get("lidR.context", envir = parent.frame(n = 2L))}, error = function(e) {return(NULL)})
+
+  if (is.null(received_context) && !null_allowed)
+    stop(glue::glue("The '{name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+  else
+    return(NULL)
+
+  if (!received_context %in% expected_contexts)
+    stop(glue::glue("The '{name}' algorithm has not been called in the correct context."), call. = FALSE)
+
+  return(NULL)
+}
+
 
 stopifnotlas = function(x)
 {
@@ -180,14 +195,4 @@ stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
     stop(glue::glue("{name} is part of the core attributes and is a forbidden name."), call. = FALSE)
-}
-
-stopif_wrong_context = function(received_context, expected_contexts, func_name)
-{
-  str = paste0(expected_contexts, collapse  = "' or '")
-
-  if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
-  if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
 }
