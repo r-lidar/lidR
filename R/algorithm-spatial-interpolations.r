@@ -169,44 +169,11 @@ interpolate_kriging = function(points, coord, model, k)
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord, th = 0)
+interpolate_delaunay <- function(points, coord, trim = 0)
 {
-  pitfree <- th > 0  # specific case if using Khosravipour algorithm in grid_tincanopy
-
-  verbose("Delaunay triangulation...")
-
-  X <- as.matrix(points)
-  Y <- as.matrix(coord)
-
-  dn   <- suppressMessages(geometry::delaunayn(X[,1:2], options = "QbB"))
-
-  # geometry::trimesh(dn, X, asp = 1)
-
-  verbose("Searching for the enclosing Delaunay convex hull...")
-
-  idx  <- C_tsearch(points$X, points$Y, dn, coord$X, coord$Y, getThread())
-
-  #uidx <- unique(idx)
-  #uidx <- uidx[!is.na(uidx)]
-
-  #active <- dn[uidx,]
-  #active <- cbind(active, uidx)
-
-  verbose("Rasterizing the triangulation...")
-
-  N = C_tinfo(dn, X)
-  N = N[idx,]
-
-  z = -(Y[,1] * N[,1] + Y[,2] * N[,2] + N[,4]) / N[,3]
-
-  if (pitfree)
-  {
-    verbose("Removing triangles larger than threshold...")
-
-    delete = N[,7] > th
-    delete[is.na(delete)] = FALSE
-    z[delete] = NA
-  }
-
-  return(z)
+  P <- as.matrix(points)
+  X <- as.matrix(coord)
+  D <- tDelaunay(P, trim = trim)
+  Z <- tInterpolate(D, P, X, getThreads())
+  return(Z)
 }
