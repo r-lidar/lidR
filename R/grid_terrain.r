@@ -111,7 +111,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 
   verbose("Generating interpolation coordinates...")
 
-  layout <- make_overlay_raster(las, res)
+  layout <- rOverlay(las, res)
 
   names(layout) <- "Z"
   grid <- raster::as.data.frame(layout, xy = TRUE)
@@ -183,7 +183,7 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
   output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(build_vrt(output, "grid_terrain"))
+    return(rBuildVRT(output, "grid_terrain"))
   else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(merge_rasters(output))
+    return(rMergeList(output))
 }

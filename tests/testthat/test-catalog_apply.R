@@ -49,7 +49,7 @@ test_that("catalog_apply options fix alignment", {
   {
     las <- readLAS(cluster)
     if (is.empty(las)) return(NULL)
-    r <- lidR:::make_overlay_raster(las, res)
+    r <- lidR:::rOverlay(las, res)
     return(r)
   }
 

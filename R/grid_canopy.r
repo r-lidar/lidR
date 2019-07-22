@@ -87,12 +87,10 @@ grid_canopy.LAS = function(las, res, algorithm)
   if (!is(algorithm, "DigitalSurfaceModel"))
     stop("The algorithm is not an algorithm for a digital surface model.")
 
-  . <- X <- Y <- Z <- NULL
-
   subcircle <- as.list(environment(algorithm))$subcircle
   subcircle <- if (is.null(subcircle)) 0 else subcircle
 
-  layout <- make_overlay_raster(las, res, subcircle = subcircle)
+  layout <- rOverlay(las, res, buffer = subcircle)
   names(layout) <- "Z"
 
   lidR.context <- "grid_canopy"
@@ -135,7 +133,7 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
   output  <- catalog_apply(las, grid_canopy, res = res, algorithm = algorithm, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(build_vrt(output, "grid_canopy"))
+    return(rBuildVRT(output, "grid_canopy"))
   else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(merge_rasters(output))
+    return(rMergeList(output))
 }

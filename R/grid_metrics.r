@@ -141,7 +141,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 
   func   <- lazyeval::f_interp(func)
   call   <- lazyeval::as_call(func)
-  layout <- make_overlay_raster(las, res, start)
+  layout <- rOverlay(las, res, start)
   cells  <- raster::cellFromXY(layout, coordinates(las))
   data   <- las@data
   grp    <- "grp"
@@ -216,9 +216,9 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter =
   output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, filter = filter, .options = options)
 
   if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(build_vrt(output, "grid_metrics"))
+    return(rBuildVRT(output, "grid_metrics"))
   else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(merge_rasters(output))
+    return(rMergeList(output))
 }
 
 

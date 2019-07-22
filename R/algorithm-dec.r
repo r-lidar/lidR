@@ -141,7 +141,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
     pulseID <- NULL
 
     n       <- round(density*res^2)
-    layout  <- make_overlay_raster(las, res)
+    layout  <- rOverlay(las, res)
     cells   <- raster::cellFromXY(layout, coordinates(las))
 
     if (use_pulse)
@@ -185,7 +185,7 @@ highest = function(res = 1)
     assert_is_valid_context(LIDRCONTEXTDEC, "highest")
 
     Z       <- NULL
-    layout  <- make_overlay_raster(las, res)
+    layout  <- rOverlay(las, res)
     cells   <- raster::cellFromXY(layout, coordinates(las))
     return(las@data[, .I[which.max(Z)], by = cells]$V1)
   }
