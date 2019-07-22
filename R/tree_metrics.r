@@ -25,8 +25,6 @@
 #
 # ===============================================================================
 
-
-
 #' Compute metrics for each tree
 #'
 #' Once the trees are segmented, i.e. attributes exist in the point cloud that reference each
@@ -88,16 +86,15 @@
 #' @export
 tree_metrics = function(las, func = ~max(Z), attribute = "treeID")
 {
-  assert_is_a_string(attribute)
-
   UseMethod("tree_metrics", las)
 }
 
 #' @export
 tree_metrics.LAS = function(las, func = ~list(Z = max(Z)), attribute = "treeID")
 {
-  if (!attribute %in% names(las@data))
-    stop("The trees are not segmented yet. Please see function 'lastrees'.")
+  assert_is_a_string(attribute)
+
+  if (!attribute %in% names(las@data)) stop("The trees are not segmented yet. Please see function 'lastrees'.")
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
@@ -126,22 +123,14 @@ tree_metrics.LAScluster = function(las, func = ~max(Z), attribute = "treeID")
 #' @export
 tree_metrics.LAScatalog = function(las, func = ~max(Z), attribute = "treeID")
 {
+  assert_is_a_string(attribute)
+
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
 
   globals <- future::getGlobalsAndPackages(func)
   options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals))
   output  <- catalog_apply(las, tree_metrics, func = substitute(func), attribute = attribute, .options = options)
-
-  if (opt_output_files(las) == "")
-  {
-    output <- do.call(rbind, output)
-    output@proj4string <- las@proj4string
-  }
-  else
-  {
-    output <- unlist(output)
-  }
-
+  output  <- catalog_merge_results(las, output, "spatial")
   return(output)
 }

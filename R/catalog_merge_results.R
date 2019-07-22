@@ -25,6 +25,19 @@ catalog_merge_results = function(ctg, any_list, any_type, ...)
       return(do.call(rbind, any_list))
     }
   }
+  else if (any_type == "spatial")
+  {
+    if (opt_output_files(ctg) != "")
+    {
+      return(unlist(output))
+    }
+    else
+    {
+      output <- do.call(rbind, any_list)
+      output@proj4string <- ctg@proj4string
+      return(output)
+    }
+  }
   else
   {
     stop("Type not supported.")

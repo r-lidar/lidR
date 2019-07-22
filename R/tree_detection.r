@@ -94,7 +94,6 @@ tree_detection.LAScluster = function(las, algorithm)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-
   ttops <- tree_detection(x, algorithm)
   bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
@@ -107,17 +106,7 @@ tree_detection.LAScatalog = function(las, algorithm)
   opt_select(las) <- "xyz"
   options <- list(need_buffer = TRUE)
   output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
-
-  if (opt_output_files(las) == "")
-  {
-    output  <- do.call(rbind, output)
-    output@proj4string <- las@proj4string
-  }
-  else
-  {
-    output <- unlist(output)
-  }
-
+  output  <- catalog_merge_results(las, output, "spatial")
   return(output)
 }
 
