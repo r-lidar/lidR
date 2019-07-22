@@ -81,12 +81,8 @@ lassnags = function(las, algorithm, attribute = "snagCls")
 #' @export
 lassnags.LAS = function(las, algorithm, attribute = "snagCls")
 {
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "SnagsSegmentation"))
-    stop("The algorithm is not an algorithm for snags segmentation.")
-
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_sng(algorithm)
   stopif_forbidden_name(attribute)
 
   lidR.context <- "lassnags"
@@ -110,13 +106,14 @@ lassnags.LAScluster = function(las, algorithm, attribute = "snagCls")
 #' @export
 lassnags.LAScatalog = function(las, algorithm, attribute = "snagCls")
 {
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_sng(algorithm)
+  stopif_forbidden_name(attribute)
+
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lassnags,  algorithm = algorithm, .options = options)
-  output  <- unlist(output)
-  ctg     <- readLAScatalog(output)
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }

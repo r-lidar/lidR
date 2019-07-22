@@ -60,7 +60,7 @@ lasfiltersurfacepoints.LAS = function(las, res)
 lasfiltersurfacepoints.LAScluster = function(las, res)
 {
   buffer <- NULL
-  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- lasfiltersurfacepoints(x, res)
   x <- lasfilter(x, buffer == 0)
@@ -75,9 +75,6 @@ lasfiltersurfacepoints.LAScatalog = function(las, res)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasfiltersurfacepoints, res = res, .options = options)
-  output  <- unlist(output)
-  ctg     <- suppressMessages(suppressWarnings(readLAScatalog(output)))
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }

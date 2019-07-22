@@ -170,6 +170,25 @@ assert_is_algorithm_its = function(x)
     stop("The algorithm used is not an algorithm for individual tree segmentation.", call. = FALSE)
 }
 
+assert_is_algorithm_dec = function(x)
+{
+  if (!is(x, "PointCloudDecimation"))
+    stop("The algorithm used is not an algorithm for point cloud decimation.", call. = FALSE)
+}
+
+assert_is_algorithm_gnd = function(x)
+{
+  if (!is(x, "GroundSegmentation"))
+    stop("The algorithm used is not an algorithm for ground segmentation.", call. = FALSE)
+}
+
+assert_is_algorithm_sng = function(x)
+{
+  if (!is(x, "SnagsSegmentation"))
+    stop("The algorithm used is not an algorithm for snags segmentation.", call. = FALSE)
+}
+
+
 assert_is_valid_context = function(expected_contexts, name = "", null_allowed = FALSE)
 {
   received_context <- tryCatch({get("lidR.context", envir = parent.frame(n = 2L))}, error = function(e) {return(NULL)})

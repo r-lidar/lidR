@@ -66,17 +66,10 @@ lasfilterdecimate = function(las, algorithm)
 #' @export
 lasfilterdecimate.LAS = function(las, algorithm)
 {
-  pulseID <- gpstime <- NULL
-
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "PointCloudDecimation"))
-    stop("The algorithm is not an algorithm for point cloud decimation.")
-
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_dec(algorithm)
   lidR.context <- "lasfilterdecimate"
   selected <- algorithm(las)
-
   return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE))
 }
 
@@ -94,20 +87,20 @@ lasfilterdecimate.LAScluster = function(las, algorithm)
 #' @export
 lasfilterdecimate.LAScatalog = function(las, algorithm)
 {
+  # Defensive programming
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_dec(algorithm)
+
+  # Enforce some options
   opt_select(las) <- "*"
+  opt_chunk_buffer(las) <- 0
 
   e <- environment(algorithm)
+  if (!is.null(e[["res"]])) opt_chunk_buffer(las) <- e[["res"]]
 
-  if (!is.null(e$res))
-    opt_chunk_buffer(las) <- e$res
-  else
-    opt_chunk_buffer(las) <- 0
-
+  # Processing
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasfilterdecimate, algorithm = algorithm, .options = options)
-  output  <- unlist(output)
-  ctg     <- suppressMessages(suppressWarnings(readLAScatalog(output)))
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }

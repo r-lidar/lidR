@@ -74,11 +74,8 @@ lasground = function(las, algorithm, last_returns = TRUE)
 #' @export
 lasground.LAS = function(las, algorithm, last_returns = TRUE)
 {
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "GroundSegmentation"))
-    stop("The algorithm is not an algorithm for ground segmentation")
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_gnd(algorithm)
 
   npoints <- nrow(las@data)
   pointID <- 1:npoints
@@ -145,9 +142,6 @@ lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
   opt_select(las) <- "*"
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasground, algorithm = algorithm,  last_returns = last_returns, .options = options)
-  output  <- unlist(output)
-  ctg     <- readLAScatalog(output)
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }

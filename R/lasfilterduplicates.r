@@ -57,7 +57,7 @@ lasfilterduplicates.LAS = function(las)
 lasfilterduplicates.LAScluster = function(las)
 {
   buffer <- NULL
-  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- lasfilterduplicates(x)
   x <- lasfilter(x, buffer == 0)
@@ -71,9 +71,6 @@ lasfilterduplicates.LAScatalog = function(las)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasfilterduplicates, .options = options)
-  output  <- unlist(output)
-  ctg     <- suppressMessages(suppressWarnings(readLAScatalog(output)))
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }

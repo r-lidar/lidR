@@ -108,48 +108,45 @@
 #' @export
 lasnormalize = function(las, algorithm, na.rm = FALSE)
 {
-  assert_is_a_bool(na.rm)
+
   UseMethod("lasnormalize", las)
 }
 
 #' @export
 lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
 {
+  assert_is_a_bool(na.rm)
+
+
   if (is(algorithm, "RasterLayer"))
   {
     Zground <- raster::extract(algorithm, coordinates(las))
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
-    if (nnas > 0 & na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."), call. = FALSE)
+    if (nnas > 0 && na.rm == FALSE)
+      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
   }
   else if (is.function(algorithm))
   {
-    if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-      stop("Invalid function provided as algorithm.", call. = FALSE)
+    assert_is_algorithm(algorithm)
+    assert_is_algorithm_spi(algorithm)
 
-    if (!is(algorithm, "SpatialInterpolation"))
-      stop("The algorithm is not an algorithm for spatial interpolation.", call. = FALSE)
+    if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
+    if (fast_countequal(las@data$Classification, LASGROUND) == 0) stop("No ground point found in the point cloud.")
 
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-    if (!"Classification" %in% names(las@data))
-      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
-
-    if (fast_countequal(las@data$Classification, LASGROUND) == 0)
-      stop("No ground point found in the point cloud.", call. = FALSE)
-
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "lasnormalize"
-    ground  <- las@data[Classification == 2, .(X,Y,Z)]
+    ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
     ground  <- check_degenerated_points(ground)
     Zground <- algorithm(ground, las@data)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
     if (nnas > 0 & na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
   }
   else
   {
@@ -161,9 +158,9 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
 
   las@data[["Z"]] <- round(las@data[["Z"]] - Zground, 3)
 
-  if (nnas > 0 & na.rm == TRUE)
+  if (nnas > 0 && na.rm == TRUE)
   {
-    las = lasfilter(las, !isna)
+    las <- lasfilter(las, !isna)
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
 
@@ -189,11 +186,8 @@ lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE)
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, .options = options)
-  output  <- unlist(output)
-  ctg     <- readLAScatalog(output)
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  output  <- catalog_merge_results(las, output, "las")
+  return(output)
 }
 
 #' @rdname lasnormalize
