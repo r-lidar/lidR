@@ -146,6 +146,7 @@ interpolate_knnidw = function(points, coord, k, p)
 
 interpolate_kriging = function(points, coord, model, k)
 {
+  requireNamespace("gstat")
   X <- Y <- Z <- NULL
 
   if (!getOption("lidR.verbose"))
