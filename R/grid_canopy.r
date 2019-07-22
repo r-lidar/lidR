@@ -68,34 +68,30 @@
 #' plot(chm, col = col)
 grid_canopy = function(las, res, algorithm)
 {
-  if (!is_a_number(res) & !is(res, "RasterLayer"))
-    stop("res is not a number or a RasterLayer")
-
-  if (is_a_number(res))
-    assert_all_are_non_negative(res)
-
   UseMethod("grid_canopy", las)
 }
 
 #' @export
 grid_canopy.LAS = function(las, res, algorithm)
 {
+  # Defensive programming
+  if (!is_a_number(res) && !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_dsm(algorithm)
 
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
-
-  if (!is(algorithm, "DigitalSurfaceModel"))
-    stop("The algorithm is not an algorithm for a digital surface model.")
-
+  # Some algorithm have an extra option 'subscircle' that need to buffer the layout
+  # Must be rewritten because it is a hack !
   subcircle <- as.list(environment(algorithm))$subcircle
   subcircle <- if (is.null(subcircle)) 0 else subcircle
 
+  # Compute the RasterLayer that encompass the point cloud
   layout <- rOverlay(las, res, buffer = subcircle)
   names(layout) <- "Z"
 
+  # Compute the elevation for each cells
   lidR.context <- "grid_canopy"
-  z = algorithm(las, layout)
-
+  z <- algorithm(las, layout)
   suppressWarnings(layout[] <- z)
   return(layout)
 }
@@ -103,37 +99,41 @@ grid_canopy.LAS = function(las, res, algorithm)
 #' @export
 grid_canopy.LAScluster = function(las, res, algorithm)
 {
-  x = readLAS(las)
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  bbox = raster::extent(las)
-  metrics = grid_canopy(x, res, algorithm)
-  metrics = raster::crop(metrics, bbox)
-  return(metrics)
+  bbox <- raster::extent(las)
+  dsm  <- grid_canopy(x, res, algorithm)
+  dsm  <- raster::crop(dsm, bbox)
+  return(dsm)
 }
 
 #' @export
 grid_canopy.LAScatalog = function(las, res, algorithm)
 {
+  # Defensive programming
+  if (!is_a_number(res) && !is(res, "RasterLayer"))  stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_dsm(algorithm)
+
+  # Enforce some options
   opt_select(las)       <- "xyzr"
   opt_chunk_buffer(las) <- 2
 
+  # Compute the alignment option including the case when res is a RasterLayer
+  alignment   <- list(res = res, start = c(0,0))
   if (is(res, "RasterLayer"))
   {
     ext       <- raster::extent(res)
     r         <- raster::res(res)[1]
-    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
-    las       <- las[keep,]
+    las       <- catalog_intersect(las, res)
     start     <- c(ext@xmin, ext@ymin)
     alignment <- list(res = r, start = start)
   }
-  else
-    alignment <- list(res = res, start = c(0,0))
 
+  # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
   output  <- catalog_apply(las, grid_canopy, res = res, algorithm = algorithm, .options = options)
-
-  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(rBuildVRT(output, "grid_canopy"))
-  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(rMergeList(output))
+  output  <- catalog_merge_results(las, output, "raster", "grid_canopy")
+  return(output)
 }

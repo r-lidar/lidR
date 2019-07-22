@@ -125,6 +125,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
 
   r <- raster::raster(round(extent(las) - 80))
   raster::res(r) <- 15
+  raster::projection(r) <- raster::projection(las)
 
   m1 <- grid_metrics(ctg, length(Z), r)
   m2 <- grid_metrics(las, length(Z), r)

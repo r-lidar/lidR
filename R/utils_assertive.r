@@ -1,8 +1,3 @@
-# All that stuff aims to replace the functions needed by lidR that come from the assertive package.
-# On 2018-11-20 I received an email from Kurt Hornik to announce that assertive will be removed
-# from cran and consequently lidR as well because it has a strong dependency to assertive. This file
-# is quick fix that removes the dependency to assertive.
-
 assert_all_are_non_negative = function(x)
 {
   x. <- lazyeval::expr_text(x)
@@ -143,6 +138,12 @@ assert_is_algorithm = function(x)
 {
   if (!is.algorithm(x))
     stop("Invalid function provided as algorithm.", call. = FALSE)
+}
+
+assert_is_algorithm_dsm = function(x)
+{
+  if (!is(x, "DigitalSurfaceModel"))
+    stop("The algorithm used is not an algorithm for digital surface model.", call. = FALSE)
 }
 
 assert_is_algorithm_itd = function(x)

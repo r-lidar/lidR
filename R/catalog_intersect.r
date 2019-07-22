@@ -44,6 +44,9 @@ catalog_intersect = function(ctg, y)
   assert_is_all_of(ctg, "LAScatalog")
   spdf <- as.spatial(ctg)
   spdf$PolygonID <- 1:nrow(spdf@data)
+  if (!sp::identicalCRS(spdf, y)) warning("Non identical CRS")
+  projection(spdf) <- sp::CRS()
+  projection(y) <- sp::CRS()
   i <- raster::intersect(spdf, y)$PolygonID
   return(ctg[i,])
 }
