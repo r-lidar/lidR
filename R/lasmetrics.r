@@ -39,7 +39,7 @@
 #' \item{\link[lidR:VCI]{VCI}}
 #' \item{\link[lidR:LAD]{LAD}}
 #' }
-#' @param obj An object of class \code{LAS}
+#' @param las An object of class \code{LAS}
 #' @param func formula. An expression to be applied to the point cloud (see example)
 #' @return It returns a \code{list} containing the metrics
 #' @export

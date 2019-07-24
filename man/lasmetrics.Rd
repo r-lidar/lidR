@@ -7,9 +7,9 @@
 lasmetrics(las, func)
 }
 \arguments{
-\item{func}{formula. An expression to be applied to the point cloud (see example)}
+\item{las}{An object of class \code{LAS}}
 
-\item{obj}{An object of class \code{LAS}}
+\item{func}{formula. An expression to be applied to the point cloud (see example)}
 }
 \value{
 It returns a \code{list} containing the metrics
