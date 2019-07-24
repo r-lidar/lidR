@@ -72,7 +72,13 @@
 #'
 #' # Predefined metrics
 #' lasmetrics(lidar, .stdmetrics)
-lasmetrics = function(obj, func)
+lasmetrics = function(las, func)
+{
+  UseMethod("lasmetrics", las)
+}
+
+#' @export
+lasmetrics.LAS = function(obj, func)
 {
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
@@ -80,5 +86,15 @@ lasmetrics = function(obj, func)
   call      <- lazyeval::as_call(func)
   metric    <- with(obj@data, eval(call))
   return(metric)
+}
+
+#' @export
+lasmetrics.LAScluster = function(las, func)
+{
+  las <- readLAS(las)
+  if (is.empty(las)) return(NULL)
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+  return(lasmetrics(las, func))
 }
 
