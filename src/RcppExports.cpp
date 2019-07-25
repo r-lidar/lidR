@@ -77,6 +77,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_highest
+IntegerVector C_highest(S4 las, IntegerVector cells, int n);
+RcppExport SEXP _lidR_C_highest(SEXP lasSEXP, SEXP cellsSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_highest(las, cells, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_dalponte2016
 IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
 RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
@@ -372,6 +385,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
+    {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 3},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},

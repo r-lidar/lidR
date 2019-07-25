@@ -2,7 +2,7 @@
 
 #### NEW FEATURES
 
-1. [#266](https://github.com/Jean-Romain/lidR/issues/266) `lasmetrics` has now a dispatch to  `LAS` and `LAScluster` cluster objects. It mean that `lasmetrics` can be used with `catalog_apply` in some specific cases where it has a meaning (see also [#266](https://github.com/Jean-Romain/lidR/issues/266)):
+1. [#266](https://github.com/Jean-Romain/lidR/issues/266) `lasmetrics` has now a dispatch to  `LAS` and `LAScluster` cluster objects. It means that `lasmetrics` can be used with `catalog_apply` in some specific cases where it has a meaning (see also [#266](https://github.com/Jean-Romain/lidR/issues/266)):
 
 ```r
 opt_chunk_buffer(ctg) <- 0
@@ -18,6 +18,8 @@ output <- data.table::rbindlist(output)
 1. `lastrees` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
 
 2. Internal code has been modifiy to drastically reduce probability of name intersection in `catalog_apply()`. For example, the use of a function that have a parameter `p` in  `catalog_apply()` failed because of partial matching between the true argument `p` and the internal argument `processing_option`.
+
+3. `lasfilterdecimate` with algorithm `highest` is now more than 20 times faster. `lasfiltersurfacepoints`, being a proxy of this algorithm, had the same speed-up
 
 ## lidR v2.1.0
 

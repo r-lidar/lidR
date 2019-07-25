@@ -187,7 +187,10 @@ highest = function(res = 1)
     Z       <- NULL
     layout  <- rOverlay(las, res)
     cells   <- raster::cellFromXY(layout, coordinates(las))
-    return(las@data[, .I[which.max(Z)], by = cells]$V1)
+
+    x <- lidR:::C_highest(las, cells, raster::ncell(layout))
+
+    return(x)
   }
 
   class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
