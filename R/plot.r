@@ -285,6 +285,8 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     rgl::bg3d(texture = f, col = "white")
   }
 
+  .pan3d(2)
+
   if (clear_artifacts)
     return(invisible(c(minx, miny)))
   else
@@ -328,4 +330,35 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   graphics::mtext(labels, side = 2, at = seq(yb, yt, length.out = nlab), las = 2, cex = 1.2, col = text.col)
   grDevices::dev.off()
   return(f)
+}
+
+# From rgl.setMouseCallbacks man page
+.pan3d <- function(button, dev = rgl::rgl.cur(), subscene = rgl::currentSubscene3d(dev))
+{
+  start <- list()
+
+  begin <- function(x, y)
+  {
+    activeSubscene <- rgl::par3d("activeSubscene", dev = dev)
+    start$listeners <<- rgl::par3d("listeners", dev = dev, subscene = activeSubscene)
+
+    for (sub in start$listeners)
+    {
+      init <- rgl::par3d(c("userProjection","viewport"), dev = dev, subscene = sub)
+      init$pos <- c(x/init$viewport[3], 1 - y/init$viewport[4], 0.5)
+      start[[as.character(sub)]] <<- init
+    }
+  }
+
+  update <- function(x, y)
+  {
+    for (sub in start$listeners)
+    {
+      init <- start[[as.character(sub)]]
+      xlat <- 2*(c(x/init$viewport[3], 1 - y/init$viewport[4], 0.5) - init$pos)
+      mouseMatrix <- rgl::translationMatrix(xlat[1], xlat[2], xlat[3])
+      rgl::par3d(userProjection = mouseMatrix %*% init$userProjection, dev = dev, subscene = sub )
+    }
+  }
+  rgl::rgl.setMouseCallbacks(button, begin, update, dev = dev, subscene = subscene)
 }

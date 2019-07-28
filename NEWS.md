@@ -21,6 +21,8 @@ output <- data.table::rbindlist(output)
 
 3. `lasfilterdecimate` with algorithm `highest` is now more than 20 times faster. `lasfiltersurfacepoints`, being a proxy of this algorithm, had the same speed-up
 
+4. `plot` for `LAS` objects gained the pan capability.
+
 ## lidR v2.1.0
 
 #### VISIBLE CHANGES
