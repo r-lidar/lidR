@@ -23,6 +23,11 @@ output <- data.table::rbindlist(output)
 
 4. `plot` for `LAS` objects gained the pan capability.
 
+#### FIXES
+
+1. [#267](https://github.com/Jean-Romain/lidR/issues/267). A dummy character was introduced by mistake in a variable name breaking the automatic exportation of user object in `grid_metrics` when used with a parallelized plan (`tree_metrics` was also affected).
+
+
 ## lidR v2.1.0
 
 #### VISIBLE CHANGES

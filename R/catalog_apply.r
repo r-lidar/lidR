@@ -432,7 +432,7 @@ engine_parse_options = function(.option)
   if (is.null(.option$globals))
     output$globals <- NULL
   else
-    output$globals <- .option$globalsp
+    output$globals <- .option$globals
 
   return(output)
 }
