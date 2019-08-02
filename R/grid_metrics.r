@@ -140,6 +140,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
   call   <- lazyeval::as_call(func)
   layout <- rOverlay(las, res, start)
   cells  <- raster::cellFromXY(layout, coordinates(las))
+  las@data[["cells"]] <- cells
 
   if (is.null(filter))
   {
