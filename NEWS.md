@@ -141,6 +141,8 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 1. [#264](https://github.com/Jean-Romain/lidR/issues/264) `grid_terrain` now filter degenerated ground points.
 
+2. [#238](https://github.com/Jean-Romain/lidR/issues/228) fix a floating point precision error in `p2r` algorithm.
+
 ##### ENHANCEMENT
 
 1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non-loaded extrabytes. This fixes the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enables LAS objects to be written without updating the header manually.
