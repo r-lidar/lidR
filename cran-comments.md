@@ -1,3 +1,5 @@
+This is an early release to fix a bug introduced by the new release of `rgeos v0.5-1`. 
+
 ## Test environments
 
 * Linux Mint 19 (Ubuntu 16.04), R 3.6.0 with gcc

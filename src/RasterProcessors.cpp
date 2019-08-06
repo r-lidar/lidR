@@ -28,6 +28,7 @@
  */
 
 #include "RasterProcessors.h"
+#include <cmath>
 
 /*********************
  *  RASTER PROCESSOR *

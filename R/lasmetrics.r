@@ -78,13 +78,13 @@ lasmetrics = function(las, func)
 }
 
 #' @export
-lasmetrics.LAS = function(obj, func)
+lasmetrics.LAS = function(las, func)
 {
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
   func      <- lazyeval::f_interp(func)
   call      <- lazyeval::as_call(func)
-  metric    <- with(obj@data, eval(call))
+  metric    <- with(las@data, eval(call))
   return(metric)
 }
 

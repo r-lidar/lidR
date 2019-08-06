@@ -188,7 +188,7 @@ highest = function(res = 1)
     layout  <- rOverlay(las, res)
     cells   <- raster::cellFromXY(layout, coordinates(las))
 
-    x <- lidR:::C_highest(las, cells, raster::ncell(layout))
+    x <- C_highest(las, cells, raster::ncell(layout))
 
     return(x)
   }

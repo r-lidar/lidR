@@ -75,8 +75,8 @@ is.empty <- function(las)
 #' @export
 is.overlapping = function(catalog)
 {
-  catalog       <- as.spatial(catalog)
-  contour       <- rgeos::gUnaryUnion(catalog)
+  spdf          <- as.spatial(catalog)
+  contour       <- rgeos::gUnaryUnion(spdf)
   actual_area   <- round(contour@polygons[[1]]@area, 4)
   measured_area <- round(area(catalog), 4)
   return(actual_area < measured_area)
