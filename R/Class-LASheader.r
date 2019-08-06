@@ -45,7 +45,7 @@ setClass(
 
 setMethod("initialize", "LASheader", function(.Object, data = list())
 {
-  assert_is_list(data)
+  stopifnot(is.list(data))
 
   vlr <- list()
   if (!is.null(data$`Variable Length Records`))

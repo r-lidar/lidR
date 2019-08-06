@@ -60,6 +60,8 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
 
   header <- LASheader(rlas::read.lasheader(files[1]))
   crs    <- projection(header, asText = FALSE)
+  phblab <- make.names(names(header@PHB))
+  phblab[4] <- "GUID"
 
   if (progress)
   {
@@ -69,12 +71,13 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
 
   headers <- lapply(files, function(x)
   {
-    header        <- LASheader(rlas::read.lasheader(x))
+    header        <- rlas:::lasheaderreader(x)
+    header        <- LASheader(header)
     epsg          <- epsg(header)
     PHB           <- header@PHB
+    names(PHB)    <- phblab
     PHB$EPSG      <- epsg
-    names(PHB)    <- make.names(names(PHB))
-    names(PHB)[4] <- "GUID"
+
 
     # Compatibility with rlas 1.3.0
     if (!is.null( PHB[["Number.of.points.by.return"]]))

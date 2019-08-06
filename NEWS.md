@@ -1,4 +1,10 @@
-## lidR v2.1.1
+## lidR v2.2.0 (in development)
+
+#### ENHANCEMENT
+
+1. `readLAScatalog()` is 60% faster
+
+## lidR v2.1.1  (Release date: 2019-08-08)
 
 #### NEW FEATURES
 
@@ -28,7 +34,7 @@ output <- data.table::rbindlist(output)
 1. [#267](https://github.com/Jean-Romain/lidR/issues/267). A dummy character was introduced by mistake in a variable name breaking the automatic exportation of user object in `grid_metrics` when used with a parallelized plan (`tree_metrics` was also affected).
 
 
-## lidR v2.1.0
+## lidR v2.1.0 (Release date: 2019-07-13)
 
 #### VISIBLE CHANGES
 
