@@ -1,4 +1,4 @@
-This is an early release to fix a bug introduced by the new release of `rgeos v0.5-1`. 
+This is an early release to fix the additionnal issues with ASAN USBAN and valgrind caused by unitialized values.
 
 ## Test environments
 

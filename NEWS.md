@@ -1,10 +1,22 @@
-## lidR v2.2.0 (in development)
+## lidR v2.2.0 (Release date: )
 
 #### ENHANCEMENT
 
 1. `readLAScatalog()` is 60% faster
 
-## lidR v2.1.1  (Release date: 2019-08-08)
+## lidR v2.1.3 (Release date: )
+
+#### FIXES
+
+1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other function that rely on a knn search.
+
+## lidR v2.1.2 (Release date: 2019-08-07)
+
+#### FIXES
+
+1. Fix a serious issue of unitialized values in an internal C++ function but this issue is consequentless for the package.
+
+## lidR v2.1.1 (Release date: 2019-08-06)
 
 #### NEW FEATURES
 
@@ -153,11 +165,6 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non-loaded extrabytes. This fixes the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enables LAS objects to be written without updating the header manually.
 
-## lidR v2.0.3 (Release date: )
-
-- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as local maxima and the search step is skipped (much faster)*. This is now true.
-- Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
-
 ## lidR v2.0.3 (Release date: 2019-05-02)
 
 - Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as 
@@ -167,6 +174,8 @@ local maxima and the search step is skipped (much faster)*. This is now true.
 - Enhance: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
 - Enhance: in `lasmergespatial` used with a `SpatialPolygonDataFrame` the function checks the bounding box of the polygon to speed-up the computation with complex polygons.
 - Doc: add a `?lidR` page to the manual.
+- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as local maxima and the search step is skipped (much faster)*. This is now true.
+- Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)
 

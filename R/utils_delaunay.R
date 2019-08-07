@@ -29,10 +29,11 @@ tDelaunay = function(P, trim = 0, option = "QbB")
 {
   stopifnot(is.numeric(trim), length(trim) == 1L)
 
+  Q <- P
   if (ncol(P) > 2)
-    P <- P[,1:2]
+    Q <- P[,1:2]
 
-  D <- suppressMessages(geometry::delaunayn(P, options = option))
+  D <- suppressMessages(geometry::delaunayn(Q, options = option))
 
   if (trim != 0)
   {
