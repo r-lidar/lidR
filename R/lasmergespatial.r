@@ -192,7 +192,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   for (i in seq_along(sfgeom$geometry))
   {
     wkt          <- sf::st_as_text(sfgeom$geometry[i], digits = 10)
-    in_poly      <- C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt, getThread())
+    in_poly      <- C_in_polygon(las, wkt, getThread())
     ids[in_poly] <- i
   }
 

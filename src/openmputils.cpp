@@ -1,6 +1,6 @@
 #include "myomp.h"
 
-//[[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 int R_omp_get_max_threads()
 {
   #ifdef _OPENMP

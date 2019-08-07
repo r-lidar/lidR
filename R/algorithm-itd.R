@@ -120,7 +120,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
     }
 
-    return(C_lmf(las@data, ws, hmin, circ, getThread()))
+    return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
   class(f) <- c("PointCloudBased", "IndividualTreeDetection", "OpenMP", "Algorithm", "lidR")

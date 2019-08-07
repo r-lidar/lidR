@@ -87,12 +87,13 @@ grid_canopy.LAS = function(las, res, algorithm)
 
   # Compute the RasterLayer that encompass the point cloud
   layout <- rOverlay(las, res, buffer = subcircle)
-  names(layout) <- "Z"
 
   # Compute the elevation for each cells
   lidR.context <- "grid_canopy"
   z <- algorithm(las, layout)
+
   suppressWarnings(layout[] <- z)
+  names(layout) <- "Z"
   return(layout)
 }
 

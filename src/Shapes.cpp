@@ -100,21 +100,6 @@ bool Triangle::contains(const Point& p)
   return false;
 }
 
-Cuboid::Cuboid(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax) : Shape(xmin, xmax, ymin, ymax)
-{
-  A.x = xmin;
-  A.y = ymin;
-  A.z = zmin;
-  B.x = xmax;
-  B.y = ymax;
-  B.z = zmax;
-}
-
-bool Cuboid::contains(const PointXYZ& p)
-{
-  return(p.x >= A.x && p.x <= B.x && p.y >= A.y && p.y <= B.y && p.z >= A.z && p.z <= B.z);
-}
-
 Sphere::Sphere(double xcenter, double ycenter, double zcenter, double radius) : Shape(xcenter, ycenter, radius)
 {
   center.x = xcenter;

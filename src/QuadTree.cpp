@@ -1,10 +1,5 @@
 #include "QuadTree.h"
 
-QuadTree::QuadTree()
-{
-  init();
-}
-
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
   use3D = false;
@@ -28,29 +23,21 @@ QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y)
   init(x,y);
 }
 
+QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>& f)
+{
+  use3D = false;
+  init(x,y, f);
+}
+
+
 QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z)
 {
   use3D = true;
   init(x,y,z);
 }
 
-QuadTree::QuadTree(Rcpp::S4 las)
+QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z, std::vector<bool>& f)
 {
-  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
-  Rcpp::NumericVector x = data["X"];
-  Rcpp::NumericVector y = data["Y"];
-  Rcpp::NumericVector z = data["Z"];
-  use3D = true;
-  init(x,y,z);
-}
-
-QuadTree::QuadTree(Rcpp::S4 las, std::vector<bool>& f)
-
-{
-  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
-  Rcpp::NumericVector x = data["X"];
-  Rcpp::NumericVector y = data["Y"];
-  Rcpp::NumericVector z = data["Z"];
   use3D = true;
   init(x,y,z,f);
 }

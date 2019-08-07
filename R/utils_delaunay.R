@@ -57,13 +57,7 @@ tInterpolate = function(D, P, X, threads = 1L)
 }
 
 # @rdname tDelaunay
-tSearch = function(D, P, X, threads = 1L)
-{
-  C_tsearch(P[,1], P[,2], D, X[,1], X[,2], threads)
-}
+tSearch = C_tsearch
 
 # @rdname tDelaunay
-tInfo = function(D, P)
-{
-  C_tinfo(D, P)
-}
+tInfo =  C_tinfo

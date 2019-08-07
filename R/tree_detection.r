@@ -67,7 +67,7 @@ tree_detection.LAS = function(las, algorithm)
   if (is(res, "SpatialPointsDataFrame"))
     return(res)
 
-  if (is.logical(res))
+  if (is.logical(res) || is.integer(res))
   {
     maxima <- las@data[res, c("X", "Y", "Z")]
     coords <- cbind(maxima[["X"]], maxima[["Y"]])

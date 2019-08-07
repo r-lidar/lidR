@@ -46,7 +46,7 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
   if (method == "average") method <- 1  else method <- 2
   if (method == "circle") shape   <- 1  else shape  <- 2
 
-  Zs <- C_lassmooth(las, size, method, shape, sigma, getThread())
+  Zs <- C_smooth(las, size, method, shape, sigma, getThread())
 
   if (!"Zraw" %in% names(las@data))
     las@data[["Zraw"]] <- las@data[["Z"]]

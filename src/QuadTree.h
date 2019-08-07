@@ -9,11 +9,10 @@
 class QuadTree
 {
 	public:
-	  QuadTree();
 	  QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y);
+	  QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>&);
 	  QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z);
-	  QuadTree(Rcpp::S4 las);
-	  QuadTree(Rcpp::S4 las, std::vector<bool>&);
+	  QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z, std::vector<bool>&);
 	  ~QuadTree();
 		bool insert(const Point&);
 		template<typename T> void lookup(T& shape, std::vector<Point*>&); // solve issue with const correctness
@@ -45,7 +44,7 @@ private:
   void init(Rcpp::NumericVector x, Rcpp::NumericVector y);
   void init(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>&);
   void init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z);
-  void init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z,std::vector<bool>&);
+  void init(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector z, std::vector<bool>&);
 };
 
 template<typename T> void QuadTree::lookup(T& shape, std::vector<Point*>& res)

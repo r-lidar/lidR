@@ -183,14 +183,8 @@ highest = function(res = 1)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "highest")
-
-    Z       <- NULL
     layout  <- rOverlay(las, res)
-    cells   <- raster::cellFromXY(layout, coordinates(las))
-
-    x <- C_highest(las, cells, raster::ncell(layout))
-
-    return(x)
+    return(C_highest(las, layout))
   }
 
   class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")

@@ -38,14 +38,6 @@ struct Triangle: public Shape
   Point C;
 };
 
-struct Cuboid: public Shape
-{
-  Cuboid(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax);
-  bool contains(const PointXYZ&);
-  PointXYZ A;
-  PointXYZ B;
-};
-
 struct Sphere: public Shape
 {
   Sphere(double xcenter, double ycenter, double zcenter, double radius);

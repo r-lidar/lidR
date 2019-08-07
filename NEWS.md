@@ -3,6 +3,7 @@
 #### ENHANCEMENT
 
 1. `readLAScatalog()` is 60% faster
+2. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will be possible to build in future.
 
 ## lidR v2.1.3 (Release date: )
 

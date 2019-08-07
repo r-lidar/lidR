@@ -53,7 +53,7 @@ IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th
   IntegerMatrix Regiontemp = clone(Seeds);
 
   std::map<int, Pixeli> seeds;                                     // Stores all the seed as Pixel object
-  std::map<int, double> sum_height;                                     // Stores the sum of the elevation of each pixel of a tree (to compute mean height)
+  std::map<int, double> sum_height;                                // Stores the sum of the elevation of each pixel of a tree (to compute mean height)
   std::map<int, int> npixel;
 
   for (int i = 0 ; i < nrow ; i++)

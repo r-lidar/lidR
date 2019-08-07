@@ -74,29 +74,22 @@ p2r = function(subcircle = 0, na.fill = NULL)
   subcircle <- lazyeval::uq(subcircle)
   na.fill   <- lazyeval::uq(na.fill)
 
-  if (!is.null(na.fill))
-  {
-    if (!is(na.fill, "SpatialInterpolation"))
-      stop("'na.fill' is not an algorithm for spatial interpolation")
-  }
+  if (!is.null(na.fill) && !is(na.fill, "SpatialInterpolation"))
+    stop("'na.fill' is not an algorithm for spatial interpolation")
 
   f = function(las, layout)
   {
     assert_is_valid_context(LIDRCONTEXTDSM, "p2r")
 
-    bbox <- raster::extent(layout)
-    dsm  <- R_p2r(las, raster::as.matrix(bbox), raster::res(layout)[1], subcircle)
-    dsm  <- t(dsm)
+    dsm <- C_rasterize(las, layout, subcircle, 1L)
 
-    if (!all(dim(layout)[1:2] == dim(dsm)))
-      stop("Internal error: matrix returned at the C++ level does not match with the layout. Please report this bug.")
 
     if (!is.null(na.fill))
     {
       verbose("Interpolating empty cells...")
 
       layout[] <- dsm
-      hull = convex_hull(las@data$X, las@data$Y)
+      hull <- convex_hull(las@data$X, las@data$Y)
 
       # buffer around convex hull
       sphull <- sp::Polygon(hull)
@@ -110,7 +103,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
       where  <- as.data.frame(where)
       data.table::setDT(where)
       data.table::setnames(where, names(where), c("X", "Y"))
-      where  <- where[C_points_in_polygon(hull[,1], hull[,2], where$X, where$Y)]
+      where  <- where[sp::point.in.polygon(where$X, where$Y, hull[,1], hull[,2], TRUE) > 0]
 
       lidR.context <- "spatial_interpolation"
       cells <- raster::cellFromXY(layout, where)

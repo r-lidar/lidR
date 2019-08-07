@@ -342,7 +342,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
   {
-    roi = lasfilter(las, C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt[i], getThread()))
+    roi = lasfilter(las, C_in_polygon(las, wkt[i], getThread()))
     if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."))
     output[[i]] = roi
   }
