@@ -1,4 +1,12 @@
+## lidR v2.1.3 (Release date: )
+
+#### FIXES
+
+1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other function that rely on a knn search.
+
 ## lidR v2.1.2 (Release date: 2019-08-07)
+
+#### FIXES
 
 1. Fix a serious issue of unitialized values in an internal C++ function but this issue is consequentless for the package.
 

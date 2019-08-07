@@ -117,7 +117,7 @@ void QuadTree::knn(const Point& p, const unsigned int k, std::vector<Point*>& re
 
   // Get at least k point within a circle
   std::vector<Point*> pts;
-  while (pts.size() < k)
+  while (pts.size() < k && pts.size() < npoints)
   {
     pts.clear();
     Circle circ(p.x, p.y, radius);
@@ -143,7 +143,7 @@ void QuadTree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ
 
   // Get at least k point within a sphere
   std::vector<PointXYZ> pts;
-  while (pts.size() < k)
+  while (pts.size() < k && pts.size() < npoints)
   {
     pts.clear();
     Sphere sphere(p.x, p.y, p.z, radius);
