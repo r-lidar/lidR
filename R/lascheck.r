@@ -77,7 +77,7 @@ lascheck.LAS = function(las)
 
   h1    <- function(x)   {cat("\n", x)}
   h2    <- function(x)   {cat("\n  -", x)}
-  ok    <- function()    {cat(green(" ok"))}
+  ok    <- function()    {cat(green(" \u2713"))}
   skip  <- function()    {cat(silver(g(" skipped")))}
   no    <- function()    {cat(red(g(" no")))}
   yes   <- function()    {cat(green(g(" yes")))}
@@ -93,7 +93,7 @@ lascheck.LAS = function(las)
     {
       for (x in msg)
       {
-        cat("\n", red(g("   {x}")))
+        cat("\n", red(g("   \u2717 {x}")))
       }
     }
   }
@@ -108,7 +108,7 @@ lascheck.LAS = function(las)
     {
       for (x in msg)
       {
-        cat("\n", orange(g("   {x}")))
+        cat("\n", orange(g("  \u26A0 {x}")))
       }
     }
   }
@@ -462,9 +462,9 @@ lascheck.LAScatalog = function(las)
 
   h1    <- function(x) {cat("\n", x)}
   h2    <- function(x) {cat("\n  -", x)}
-  ok    <- function()  {cat(green(" ok"))}
-  fail  <- function(x) {cat("\n", red(g("   error: {x}")))}
-  warn  <- function(x) {cat("\n", orange(g("   warning: {x}")))}
+  ok    <- function()  {cat(green(" \u2713"))}
+  fail  <- function(x) {cat("\n", red(g("   \u2717 {x}")))}
+  warn  <- function(x) {cat("\n", orange(g("   \u26A0 {x}")))}
   skip  <- function()  {cat(silver(g(" skipped")))}
   no    <- function()  {cat(red(g(" no")))}
   yes   <- function()  {cat(green(g(" yes")))}
