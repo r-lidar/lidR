@@ -9,7 +9,6 @@ struct BoundingBox
 
 	BoundingBox();
 	BoundingBox(const Point,const Point);
-	bool contains(const Point&);
 	bool contains(const Point&, double);
 	bool intersects(const BoundingBox&);
 };

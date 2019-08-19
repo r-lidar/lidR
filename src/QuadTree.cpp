@@ -21,6 +21,8 @@ QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y)
 {
   use3D = false;
   init(x,y);
+  boundary.half_res.x += 1e-9;
+  boundary.half_res.y += 1e-9;
 }
 
 QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>& f)
@@ -52,7 +54,7 @@ QuadTree::~QuadTree()
 
 bool QuadTree::insert(const Point& p)
 {
-  if(!boundary.contains(p))
+  if(!boundary.contains(p, 1e-9))
     return false;
 
   npoints++;
@@ -82,7 +84,7 @@ void QuadTree::subdivide()
 {
   double half_res_half = boundary.half_res.x * 0.5;
 
-  Point p(half_res_half+0.0001, half_res_half+0.0001);
+  Point p(half_res_half, half_res_half);
   Point pNE(boundary.center.x + half_res_half, boundary.center.y + half_res_half);
   Point pNW(boundary.center.x - half_res_half, boundary.center.y + half_res_half);
   Point pSE(boundary.center.x + half_res_half, boundary.center.y - half_res_half);
@@ -172,7 +174,8 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
   double xrange = xmax - xmin;
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
-  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
+
+  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range, range));
 
   int computed_depth = std::floor(std::log(n)/std::log(4));
   computed_depth = (computed_depth >= 1) ? computed_depth : 1;
@@ -182,7 +185,7 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y)
   for(int i = 0 ; i < x.size() ; i++)
   {
     Point p(x[i], y[i], i);
-    insert(p);
+    if(!insert(p)) Rcpp::stop("Internal error in QuadTree. Point not inserted.");
   }
 }
 
@@ -199,14 +202,15 @@ void QuadTree::init(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bo
   double xrange = xmax - xmin;
   double yrange = ymax - ymin;
   double range = xrange > yrange ? xrange/2 : yrange/2;
-  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range+0.001, range+0.001));
+
+  boundary = BoundingBox(Point((xmin+xmax)/2, (ymin+ymax)/2), Point(range, range));
 
   for(int i = 0 ; i < x.size() ; i++)
   {
     if (f[i])
     {
       Point p(x[i], y[i], i);
-      insert(p);
+      if(!insert(p)) Rcpp::stop("Internal error in QuadTree. Point not inserted.");
     }
   }
 }
