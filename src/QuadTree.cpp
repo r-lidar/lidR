@@ -1,5 +1,7 @@
 #include "QuadTree.h"
 
+#define EPSILON 1e-9
+
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
 {
   use3D = false;
@@ -21,8 +23,6 @@ QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y)
 {
   use3D = false;
   init(x,y);
-  boundary.half_res.x += 1e-9;
-  boundary.half_res.y += 1e-9;
 }
 
 QuadTree::QuadTree(Rcpp::NumericVector x, Rcpp::NumericVector y, std::vector<bool>& f)
@@ -54,7 +54,7 @@ QuadTree::~QuadTree()
 
 bool QuadTree::insert(const Point& p)
 {
-  if(!boundary.contains(p, 1e-9))
+  if(!boundary.contains(p, EPSILON))
     return false;
 
   npoints++;
