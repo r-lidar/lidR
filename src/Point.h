@@ -176,6 +176,16 @@ static inline double min (double a, double b, double c)
     return (a > c ? c : a);
 }
 
+static inline double max (double a, double b)
+{
+  return (a < b ? b : a);
+}
+
+static inline double min (double a, double b)
+{
+  return (a > b ? b : a);
+}
+
 static inline double distanceSquarePointToSegment(const Point& p1, const Point& p2, const Point& p)
 {
   double p1_p2_squareLength = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y);
