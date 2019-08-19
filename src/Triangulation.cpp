@@ -19,8 +19,7 @@ Triangulator::Triangulator(IntegerMatrix D, NumericMatrix P, int ncpu)
 
 NumericMatrix Triangulator::info()
 {
-  if (P.nrow() < 3)
-    Rcpp::stop("Internal error in 'info");
+  if (P.nrow() < 3)  Rcpp::stop("Internal error in 'info()': wrong dimension for P");
 
   NumericMatrix N(D.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);

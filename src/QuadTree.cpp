@@ -114,7 +114,7 @@ void QuadTree::knn(const Point& p, const unsigned int k, std::vector<Point*>& re
 
   std::sort(pts.begin(), pts.end(), DSort2D<Point>(p));
 
-  for (unsigned int i = 0 ; i < k ; i++)
+  for (unsigned int i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++)
     res.push_back(pts[i]);
 
   return;
@@ -140,7 +140,7 @@ void QuadTree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ
 
   std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
 
-  for (unsigned int i = 0 ; i < k ; i++)
+  for (unsigned int i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++)
     res.push_back(pts[i]);
 
   return;
