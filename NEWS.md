@@ -3,13 +3,13 @@
 #### ENHANCEMENT
 
 1. `readLAScatalog()` is 60% faster
-2. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will be possible to build in future.
 
 ## lidR v2.1.3 (Release date: )
 
 #### FIXES
 
 1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other function that rely on a knn search.
+2. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will be possible to build in future.
 
 ## lidR v2.1.2 (Release date: 2019-08-07)
 
