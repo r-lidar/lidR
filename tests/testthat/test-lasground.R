@@ -20,7 +20,7 @@ test_that("lasground pmf works", {
 
   expect_true("Classification" %in% n)
   expect_equal(unique(las@data$Classification), c(1L, 2L))
-  expect_equal(sum(las@data$Classification == 2L), 13276L)
+  expect_equal(sum(las@data$Classification == 2L), 13421L)
 
   expect_error(lasground(ctg, f), "buffer")
 
@@ -33,7 +33,7 @@ test_that("lasground pmf works", {
   ctg2 = lasground(ctg, f)
   las2 = readLAS(ctg2)
 
-  expect_equal(sum(las2@data$Classification == 2L), 13276L)
+  expect_equal(sum(las2@data$Classification == 2L), 13421L)
   expect_equal(nrow(las2@data), nrow(las@data))
 
   las@data[, Classification := NULL]

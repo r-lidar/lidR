@@ -160,6 +160,8 @@ void LAS::z_open(double resolution)
   // Dilate
   for (unsigned int i = 0 ; i < npoints ; i++)
   {
+    p.check_abort();
+    p.update(i);
     if (!filter[i]) continue;
 
     std::vector<Point*> pts;
@@ -177,9 +179,6 @@ void LAS::z_open(double resolution)
     }
 
     Z_out[i] = min_pt;
-
-    p.check_abort();
-    p.update(i);
   }
 
   NumericVector Z_temp = clone(Z_out);
@@ -187,6 +186,8 @@ void LAS::z_open(double resolution)
   // erode
   for (unsigned int i = 0 ; i < npoints ; i++)
   {
+    p.check_abort();
+    p.update(i+npoints);
     if (!filter[i]) continue;
 
     std::vector<Point*> pts;
@@ -204,9 +205,6 @@ void LAS::z_open(double resolution)
     }
 
     Z_out[i] = max_pt;
-
-    p.check_abort();
-    p.update(i+npoints);
   }
 
   Z = Z_out;
@@ -291,6 +289,8 @@ void LAS::filter_with_grid(S4 layout)
 
   for (int i = 0 ; i < npoints ; i++)
   {
+    if (filter[i]) continue;
+
     double x = X[i];
     double y = Y[i];
     double z = Z[i];
@@ -344,6 +344,8 @@ void LAS::filter_in_polygon(std::string wkt)
     #pragma omp parallel for num_threads(ncpu)
     for(int i = 0 ; i < npoints ; i++)
     {
+      if (filter[i]) continue;
+
       Point p;
       p.set<0>(X[i]);
       p.set<1>(Y[i]);
@@ -374,6 +376,8 @@ void LAS::filter_in_polygon(std::string wkt)
     #pragma omp parallel for num_threads(ncpu)
     for(int i = 0 ; i < npoints ; i++)
     {
+      if (filter[i]) continue;
+
       Point p;
       p.set<0>(X[i]);
       p.set<1>(Y[i]);
@@ -420,7 +424,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
     if (abort) continue;
     if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
     pb.increment();
-    if (!filter[i]) continue;
+    if (filter[i]) continue;
 
     arma::mat A(k,3);
     arma::mat coeff;  // Principle component matrix
