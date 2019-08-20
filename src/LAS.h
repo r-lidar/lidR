@@ -1,7 +1,9 @@
 #ifndef LAS_H
 #define LAS_H
 
+
 #include <RcppArmadillo.h>
+#define NDEBUG 1
 using namespace Rcpp;
 
 class LAS
