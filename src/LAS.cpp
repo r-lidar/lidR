@@ -424,7 +424,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
     if (abort) continue;
     if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
     pb.increment();
-    if (filter[i]) continue;
+    if (!filter[i]) continue;
 
     arma::mat A(k,3);
     arma::mat coeff;  // Principle component matrix
