@@ -44,7 +44,7 @@ LAS::~LAS()
 void LAS::new_filter(LogicalVector b)
 {
   if (b.size() == 1)
-    std:fill(filter.begin(), filter.end(), b[1]);
+    std:fill(filter.begin(), filter.end(), b[0]);
   else if (b.size() == npoints)
     this->filter = Rcpp::as< std::vector<bool> >(b);
   else
