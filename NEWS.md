@@ -1,9 +1,14 @@
-## lidR v2.1.3 (Release date: )
+# lidR v2.1.3 (Release date: )
 
 #### ENHANCEMENT
 
 1. `readLAScatalog()` is 60% faster
 2. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will be possible to build in future.
+3. The progress bar of the LAScatalog processing engine has been removed in non interactive sessions and replaced by regular but more informative prints. This allows to track the state of the computation with a stream redirection to a file when running a script remotely for example.
+
+```
+R -f script.R &> log.txt &
+```
 
 #### FIXES
 

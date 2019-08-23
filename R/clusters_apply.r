@@ -69,7 +69,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
     save <- .CLUSTER[[i]]@save
 
     states[i] <- CHUNK_PROCESSING
-    engine_update_progress(pb, .CLUSTER[[i]], states[i], percentage)
+    engine_update_progress(pb, .CLUSTER[[i]], states[i], percentage, i)
 
     # Asynchronous computation of .FUN on the chunk
     futures[[i]] <- future::future(
@@ -99,7 +99,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
       # The state changed: the chunk was processed. Update the progress
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage)
+      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
       # The state is ERROR: abort the process nicely
       if (states[j] == CHUNK_ERROR & abort)
@@ -148,7 +148,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       if (states[j] == CHUNK_PROCESSING) next
 
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage)
+      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
       if (states[j] == CHUNK_ERROR & abort)
       {
@@ -215,6 +215,9 @@ engine_progress_bar <- function(n, prgss = FALSE)
   if (!prgss)
     return(pb)
 
+  if (!interactive())
+    return(n)
+
   if (requireNamespace("progress", quietly = TRUE))
     pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = n, clear = FALSE)
   else
@@ -225,30 +228,37 @@ engine_progress_bar <- function(n, prgss = FALSE)
   return(pb)
 }
 
-engine_update_progress <- function(pb, cluster, state, p)
+engine_update_progress <- function(pb, cluster, state, p, j)
 {
-  if (!is.null(pb))
+  if (is.null(pb))
+    return(invisible(NULL))
+
+  if (state == CHUNK_OK) { col <- "green3" ; sym <- "\u2713" }
+  else if (state == CHUNK_NULL) { col <- "gray" ; sym <- "\u2205" }
+  else if (state == CHUNK_WARNING) { col <- "orange" ; sym <- "\u26A0" }
+  else if (state == CHUNK_ERROR) { col <- "red" ; sym <- "\u2717" }
+  else if (state == CHUNK_PROCESSING) { col <- "cornflowerblue" ; sym <- "\u21BB" }
+
+  if (!interactive())
   {
-    bbox <- cluster@bbox
+    if (state == CHUNK_PROCESSING)
+      return(invisible())
 
-    if (state == CHUNK_OK)
-      col <- "green3"
-    else if (state == CHUNK_NULL)
-      col <- "gray"
-    else if (state == CHUNK_WARNING)
-      col <- "orange"
-    else if (state == CHUNK_ERROR)
-      col <- "red"
-    else if (state == CHUNK_PROCESSING)
-      col <- "cornflowerblue"
-
-    graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
-
-    if (is(pb, "txtProgressBar"))
-      utils::setTxtProgressBar(pb, p)
-    else
-      pb$update(p)
+    cat(glue::glue("Chunk {j} of {pb} ({round(p*100,1)}%): state {sym}"))
+    cat("\n")
+    return(invisible())
   }
+
+  bbox <- cluster@bbox
+
+  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+
+  if (is(pb, "txtProgressBar"))
+    utils::setTxtProgressBar(pb, p)
+  else
+    pb$update(p)
+
+  return(invisible())
 }
 
 engine_save_logs <- function(cluster, index)
