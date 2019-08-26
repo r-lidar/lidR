@@ -73,15 +73,15 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
     # Asynchronous computation of .FUN on the chunk
     futures[[i]] <- future::future(
-      {
-        setThreads(threads)
-        options(lidR.progress = FALSE)
-        options(lidR.verbose = FALSE)
-        y <- do.call(.FUN, params)
-        if (is.null(y)) return(NULL)
-        if (!writemode) return(y)
-        return(writeANY(y, save, drivers))
-      }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS))
+    {
+      setThreads(threads)
+      options(lidR.progress = FALSE)
+      options(lidR.verbose = FALSE)
+      y <- do.call(.FUN, params)
+      if (is.null(y)) y <- NULL
+      if (!is.null(y) && writemode) y <- writeANY(y, save, drivers)
+      y
+    }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS))
 
     # Evaluation of the state of the futures
     for (j in 1:i)
