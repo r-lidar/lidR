@@ -75,7 +75,7 @@ lasmergespatial = function(las, source, attribute = NULL)
 #' @export
 lasmergespatial.LAS = function(las, source, attribute = NULL)
 {
-  if (is(source, "SpatialPolygons"))
+  if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
   {
     attribute <- NULL
     source <- as(source, "SpatialPolygonsDataFrame")
