@@ -198,6 +198,10 @@ lasupdateheader = function(las)
   new_header <- rlas::header_update(header, las@data)
   new_header <- LASheader(new_header)
   las@header <- new_header
+  las@bbox[1,1] <- new_header@PHB[["Min X"]]
+  las@bbox[1,2] <- new_header@PHB[["Max X"]]
+  las@bbox[2,1] <- new_header@PHB[["Min Y"]]
+  las@bbox[2,2] <- new_header@PHB[["Max Y"]]
   return(las)
 }
 

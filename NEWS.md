@@ -13,7 +13,13 @@ R -f script.R &> log.txt &
 #### FIXES
 
 1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other function that rely on a knn search.
-2. Fix a bug related to this issue [future#333](https://github.com/HenrikBengtsson/future/issues/333) to enable remote evaluation.
+2. Fix a bug related to this issue [future#333](https://github.com/HenrikBengtsson/future/issues/333) to enable remote evaluation. This now works for any function that supports a `LAScatalog` input.
+
+```r
+plan(remote, workers = "132.203.41.25")
+```
+
+3. Fix [#270](https://github.com/Jean-Romain/lidR/issues/270) the bounding box is updated after `lastransform()`.
 
 ## lidR v2.1.2 (Release date: 2019-08-07)
 
