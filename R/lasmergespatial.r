@@ -75,6 +75,12 @@ lasmergespatial = function(las, source, attribute = NULL)
 #' @export
 lasmergespatial.LAS = function(las, source, attribute = NULL)
 {
+  if (is(source, "SpatialPolygons"))
+  {
+    attribute <- NULL
+    source <- as(source, "SpatialPolygonsDataFrame")
+  }
+
   if (is(source, "SpatialPolygonsDataFrame"))
     values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
   else if (is(source, "RasterLayer"))
