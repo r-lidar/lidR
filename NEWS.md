@@ -1,3 +1,9 @@
+# lidR v2.2.0 (Release date: )
+
+#### NEW FEATURES
+
+1. New functions `lasrescale()` and ` lasreoffset()`.
+
 # lidR v2.1.3 (Release date: )
 
 #### ENHANCEMENT

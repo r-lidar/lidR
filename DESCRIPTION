@@ -107,6 +107,7 @@ Collate:
     'lasmergespatial.r'
     'lasmetrics.r'
     'lasnormalize.r'
+    'lasrescale.R'
     'lasroi.r'
     'lassmooth.r'
     'lassnags.r'
