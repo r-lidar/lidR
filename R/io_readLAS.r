@@ -210,7 +210,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   if (nrow(data) > 0)
   {
     # If the number of files read is > 1 header bbox will not be in accordance with the data. Update the header.
-    if (length(ifiles) > 1)
+    if (length(ifiles) > 1 || filter != "")
       header <- rlas::header_update(header, data)
   }
 
@@ -234,5 +234,5 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  return(LAS(data, header, check = FALSE))
+  return(LAS(data, header, check = TRUE))
 }

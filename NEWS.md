@@ -3,6 +3,7 @@
 #### NEW FEATURES
 
 1. New functions `lasrescale()` and ` lasreoffset()`.
+2. Reintroduction in `readLAS` of former behavior: throw warnings for invalid files
 
 #### ENHANCEMENT
 
@@ -16,7 +17,7 @@ R -f script.R &> log.txt &
 
 #### FIXES
 
-1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other function that rely on a knn search.
+1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other functions that rely on a knn search.
 2. Fix a bug related to this issue [future#333](https://github.com/HenrikBengtsson/future/issues/333) to enable remote evaluation. This now works for any function that supports a `LAScatalog` input.
 
 ```r
