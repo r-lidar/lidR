@@ -45,6 +45,7 @@ test_that("LAScatalog conversion to SpatialPolygonsDataFrame works", {
   spctg <- as.spatial(ctg)
 
   expect_true(is(spctg, "SpatialPolygonsDataFrame"))
+  expect_reference(ctg@data, spctg@data)
 })
 
 

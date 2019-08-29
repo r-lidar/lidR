@@ -1,3 +1,5 @@
+context("lastransform")
+
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las <- readLAS(LASfile, select = "xyz")
 crs <- sp::CRS("+init=epsg:26918")

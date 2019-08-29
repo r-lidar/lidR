@@ -1,4 +1,4 @@
-context("utilis_colors")
+context("utils_colors")
 
 test_that("set.colors attribute the proper color", {
   x = 1:10

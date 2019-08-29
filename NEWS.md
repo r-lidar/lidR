@@ -19,6 +19,7 @@ R -f script.R &> log.txt &
 
 1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other functions that rely on a knn search.
 2. Fix a bug related to this issue [future#333](https://github.com/HenrikBengtsson/future/issues/333) to enable remote evaluation. This now works for any function that supports a `LAScatalog` input.
+3. `lasclipCircle()` behaves identically for a `LAS` and a `LAScatalog`. It returns the points that are strictly inside the circle. Previously for `LAS` objects it also returned the point belonging on the disc.
 
 ```r
 plan(remote, workers = "132.203.41.25")

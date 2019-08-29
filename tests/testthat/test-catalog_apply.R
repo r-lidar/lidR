@@ -1,14 +1,19 @@
 context("catalog_apply")
 
+# Convert laz to las for faster testing
 LASfile  <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg      <- catalog(LASfile)
-ctg@data <- ctg@data[1,]
-las      <- readLAS(ctg)
+opt_output_files(ctg) <- paste0(tempdir(), "/Megaplot")
+opt_progress(ctg)     <- FALSE
+ctg <- catalog_retile(ctg)
+opt_progress(ctg)     <- FALSE
+lidR:::catalog_laxindex(ctg)
 
 opt_chunk_buffer(ctg)    <- 0
 opt_chunk_size(ctg)      <- 150
 opt_chunk_alignment(ctg) <- c(0, 90)
 opt_progress(ctg)        <- FALSE
+opt_output_files(ctg)    <- ""
 
 test_that("catalog_apply makes strict non-overlaping chunks", {
 

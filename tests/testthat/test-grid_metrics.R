@@ -5,7 +5,7 @@ projection(las) <- sp::CRS("+init=epsg:4326")
 
 test_that("grid_metrics returns a named RasterLayer", {
 
-  x <- grid_metrics(las, list(Zmean = mean(Z)))
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)))
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(20,20))
@@ -17,7 +17,7 @@ test_that("grid_metrics returns a named RasterLayer", {
 
 test_that("grid_metrics returns a RasterLayer aligned with the start option", {
 
-  x <- grid_metrics(las, length(Z), start = c(10,10))
+  x <- grid_metrics(las, ~length(Z), start = c(10,10))
 
   expect_true(is(x, "RasterLayer"))
   expect_equal(raster::res(x), c(20,20))
@@ -29,7 +29,7 @@ test_that("grid_metrics returns a RasterLayer aligned with the start option", {
 
 test_that("grid_metrics returns a named multilayers RasterBrick", {
 
-  x <- grid_metrics(las, list(meanZ = mean(Z), maxZ = max(Z)))
+  x <- grid_metrics(las, ~list(meanZ = mean(Z), maxZ = max(Z)))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
@@ -41,7 +41,7 @@ test_that("grid_metrics returns a named multilayers RasterBrick", {
 
 test_that("grid_metrics returns a named multilayers RasterBrick aligned with the start option", {
 
-  x <- grid_metrics(las, list(meanZ = mean(Z), maxZ = max(Z)), start = c(10,10))
+  x <- grid_metrics(las, ~list(meanZ = mean(Z), maxZ = max(Z)), start = c(10,10))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
@@ -54,13 +54,13 @@ test_that("grid_metrics returns a named multilayers RasterBrick aligned with the
 test_that("grid_metrics returns a RasterLayer -- tricky case", {
 
   las2 <- lasfilter(las, X < 20 | X > 70)
-  out  <- grid_metrics(las2, max(Z))
+  out  <- grid_metrics(las2, ~max(Z))
 
   expect_equal(dim(out), c(5, 5, 1))
   expect_equal(raster::res(out), c(20, 20))
 
   las2 <- lasfilter(las, (X < 20 | X > 70) & (Y < 20 | Y > 70))
-  out  <- grid_metrics(las2, max(Z), 10)
+  out  <- grid_metrics(las2, ~max(Z), 10)
 
   expect_equal(dim(out), c(10, 10, 1))
   expect_equal(raster::res(out), c(10, 10))
@@ -69,7 +69,7 @@ test_that("grid_metrics returns a RasterLayer -- tricky case", {
 test_that("grid_metrics return a RasterBrick -- tricky case", {
 
   las2 <- lasfilter(las, (X < 20 | X > 80) & (Y < 20 | Y > 80))
-  out  <- suppressWarnings(grid_metrics(las2, list(mean(Z), max(Z)), 10))
+  out  <- suppressWarnings(grid_metrics(las2, ~list(mean(Z), max(Z)), 10))
 
   expect_true(is(out, "RasterBrick"))
   expect_equal(dim(out), c(10, 10, 2))
@@ -84,10 +84,16 @@ test_that("grid_metrics accepts both an expression or a formula", {
   expect_equal(x, y)
 })
 
+# Convert laz to las for faster testing
+LASfile  <- system.file("extdata", "Megaplot.laz", package="lidR")
+ctg      <- catalog(LASfile)
+opt_output_files(ctg) <- paste0(tempdir(), "/Megaplot")
+opt_progress(ctg)     <- FALSE
+ctg <- catalog_retile(ctg)
+opt_progress(ctg)     <- FALSE
+lidR:::catalog_laxindex(ctg)
 
-file <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg  <- catalog(file)
-las  <- readLAS(file, select = "xyz", filter = "-keep_first")
+las  <- readLAS(ctg, select = "xyz", filter = "-keep_first")
 
 opt_chunk_size(ctg)      <- 140
 opt_chunk_alignment(ctg) <- c(684760, 5017760)
@@ -104,20 +110,20 @@ test_that("grid_metric throw an error for missing attributes", {
 
 test_that("grid_metric returns the same both with LAScatalog and LAS", {
 
-  m1 <- grid_metrics(ctg, length(Z), 20)
-  m2 <- grid_metrics(las, length(Z), 20)
+  m1 <- grid_metrics(ctg, ~length(Z), 20)
+  m2 <- grid_metrics(las, ~length(Z), 20)
   expect_equal(m1, m2)
 
-  m1 <- grid_metrics(ctg, list(length(Z), mean(Z)), 20)
-  m2 <- grid_metrics(las, list(length(Z), mean(Z)), 20)
+  m1 <- grid_metrics(ctg, ~list(length(Z), mean(Z)), 20)
+  m2 <- grid_metrics(las, ~list(length(Z), mean(Z)), 20)
   m1@data@isfactor <- m2@data@isfactor
   expect_equal(m1, m2)
 })
 
 test_that("grid_metric return the same both with catalog and las + grid alignment", {
 
-  m1 <- grid_metrics(ctg, length(Z), 20, start = c(10,10))
-  m2 <- grid_metrics(las, length(Z), 20, start = c(10,10))
+  m1 <- grid_metrics(ctg, ~length(Z), 20, start = c(10,10))
+  m2 <- grid_metrics(las, ~length(Z), 20, start = c(10,10))
   expect_equal(m1, m2)
 })
 
@@ -127,8 +133,8 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
   raster::res(r) <- 15
   raster::projection(r) <- raster::projection(las)
 
-  m1 <- grid_metrics(ctg, length(Z), r)
-  m2 <- grid_metrics(las, length(Z), r)
+  m1 <- grid_metrics(ctg, ~length(Z), r)
+  m2 <- grid_metrics(las, ~length(Z), r)
   expect_equal(m1, m2)
 })
 
