@@ -211,9 +211,8 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter =
 
   # Processing
   globals <- future::getGlobalsAndPackages(func)
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, filter = filter, .options = options)
-  output  <- catalog_merge_results(las, output, "raster", "grid_metrics")
   return(output)
 }
 

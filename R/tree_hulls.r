@@ -147,9 +147,8 @@ tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), con
 #' @export
 tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE, automerge = TRUE)
   output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, func = func, attribute = attribute, .options = options)
-  output  <- catalog_merge_results(las, output, "spatial")
   return(output)
 }
 

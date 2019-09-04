@@ -137,8 +137,7 @@ lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
 lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
   opt_select(las) <- "*"
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasground, algorithm = algorithm,  last_returns = last_returns, .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

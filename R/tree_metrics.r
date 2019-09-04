@@ -129,8 +129,7 @@ tree_metrics.LAScatalog = function(las, func = ~max(Z), attribute = "treeID")
   if (!is_formula) func <- lazyeval::f_capture(func)
 
   globals <- future::getGlobalsAndPackages(func)
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals))
+  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), automerge = TRUE)
   output  <- catalog_apply(las, tree_metrics, func = substitute(func), attribute = attribute, .options = options)
-  output  <- catalog_merge_results(las, output, "spatial")
   return(output)
 }

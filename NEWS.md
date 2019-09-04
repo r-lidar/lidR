@@ -1,3 +1,9 @@
+# lidR v2.2.0 (Release date: )
+
+#### NEW FEATURES
+
+1. `catalog_apply()` gained an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for auto merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. return a `list`. Thus there is no danger at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility.
+
 # lidR v2.1.3 (Release date: )
 
 #### NEW FEATURES

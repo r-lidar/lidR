@@ -27,7 +27,7 @@ return the expected output.
 (wall-to-wall) output.
 }
 So basically, a \code{LAScatalog} is an object that allows for batch processing but with the specificity
-that \code{lidR} does not loop through las files, but loops seamlessly through chunks that do not not
+that \code{lidR} does not loop through las files, but loops seamlessly through chunks that do not
 necessarily match with the file pattern. This way \code{lidR} can sequentially process tiny ROIs even if
 each file may be individually too big to fit in memory. This is also why point cloud indexation
 with \code{lax} files may significantly speed-up the processing.\cr\cr
@@ -57,15 +57,16 @@ The slot \code{@processing_options} contains a \code{list} of options that deter
 (the sub-areas that are sequentially processed) are processed.
 \itemize{
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
-Progress estimation can be enhanced by installing the package \code{progress}.
+Progress estimation can be enhanced by installing the package \code{progress}. See \link{opt_progress}.
 \item \strong{stop_early}: boolean. Stop the processing if an error occurs in a chunk. If \code{FALSE}
 the process can run until the end removing chunks that failed. Default is TRUE and the user should
-have no reason to change this.
+have no reason to change this. See \link{opt_stop_early}.
 \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a
 continuous output without edge effects, assuming that the catalog is a wall-to-wall catalog. To do
 so, some options are checked internally to guard against bad settings, such as buffer = 0 for an
 algorithm that requires a buffer. In rare cases it might be useful to disable these controls. If
 \code{wall.to.wall = FALSE} controls are disabled and wall-to-wall outputs cannot be guaranteed.
+See \link{opt_wall_to_wall}
 }
 }
 
@@ -78,14 +79,14 @@ The slot \code{@clustering_options} contains a \code{list} of options that deter
 A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa.
 The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
 catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
-the processing engine respects the existing tiling pattern.
+the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
 no edge effect between two independent chunks and that the output is continuous. This is mandatory for
-some algorithms. Default is 30.
+some algorithms. Default is 30. See \link{opt_chunk_buffer}.
 \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
 will belong on x = 0 and y = 0 and all the the other chunks will be multiples of the chunk size.
-Not relevant if \code{chunk_size = 0}.
+Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 }
 }
 
@@ -108,7 +109,7 @@ the following file names are possible:
 "C:/user/document/als/{ORIGINALFILNAME}_normalized"
 }
 This option will generate as many filenames as needed with custom names for each file. The list of
-allowed templates is described in the documentation for each function.
+allowed templates is described in the documentation for each function. See \link{opt_output_files}.
 \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
 Spatial*, LAS objects. It is recommended that only advanced users change this option. A dedicated
 page describes the drivers in \link{lidR-LAScatalog-drivers}.
@@ -123,8 +124,9 @@ internal processing engine. Users can propagate these options through the \code{
 
 \itemize{
 \item \strong{select}: string. The \code{select} option. Usually this option is not respected because
-each function knows which data must be loaded or not. This is documented in each function.
-\item \strong{filter}: string. The \code{filter} option.
+each function knows which data must be loaded or not. This is documented in each function. See
+\link{opt_select}.
+\item \strong{filter}: string. The \code{filter} option. See \link{opt_filter}.
 }
 }
 
@@ -147,11 +149,8 @@ ttops <- tree_detection(ctg, lmf(5))
 # and process chunks instead
 opt_chunk_size(ctg) <- 500
 
-# Outputs are expected to be strictly identical
-hmean <- grid_metrics(ctg, mean(Z), 20)
-ttops <- tree_detection(ctg, lmf(5))
-
 # Sometimes the output is likely to be very large
+# e.g. large coverage and small resolution
 dtm <- grid_terrain(ctg, 1, tin())
 
 # In that case it is advisable to write the output(s) to files

@@ -69,8 +69,7 @@ lasfilterduplicates.LAScatalog = function(las)
 {
   opt_select(las) <- "*"
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasfilterduplicates, .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

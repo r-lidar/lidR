@@ -99,8 +99,7 @@ lasfilterdecimate.LAScatalog = function(las, algorithm)
   if (!is.null(e[["res"]])) opt_chunk_buffer(las) <- e[["res"]]
 
   # Processing
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasfilterdecimate, algorithm = algorithm, .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

@@ -112,8 +112,7 @@ lassnags.LAScatalog = function(las, algorithm, attribute = "snagCls")
 
   opt_select(las) <- "*"
 
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lassnags,  algorithm = algorithm, .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

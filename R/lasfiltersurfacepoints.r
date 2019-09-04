@@ -73,8 +73,7 @@ lasfiltersurfacepoints.LAScatalog = function(las, res)
   opt_select(las)       <- "*"
   opt_chunk_buffer(las) <- res
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasfiltersurfacepoints, res = res, .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

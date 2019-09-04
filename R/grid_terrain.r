@@ -166,8 +166,7 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
   }
 
   # Processing
-  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, .options = options)
-  output  <- catalog_merge_results(las, output, "raster", "grid_terrain")
   return(output)
 }

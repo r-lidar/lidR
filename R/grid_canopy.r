@@ -133,8 +133,7 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
   }
 
   # Processing
-  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, grid_canopy, res = res, algorithm = algorithm, .options = options)
-  output  <- catalog_merge_results(las, output, "raster", "grid_canopy")
   return(output)
 }

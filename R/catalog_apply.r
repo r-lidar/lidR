@@ -34,7 +34,7 @@
 #' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
 #' This function is the core of the lidR package. It drives every single function that can process a
 #' \code{LAScatalog}. It is flexible and powerful but also complex and reserved to users that are
-#' confortable with the lidR package.\cr\cr.
+#' confortable with the lidR package.\cr\cr
 #' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 #' edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 #' this task is specific to each process. In other \code{lidR} functions this task is performed
@@ -94,13 +94,17 @@
 #' User may have noticed that some lidR functions throw an errors when the processing options are
 #' inappropriate. For example, some functions need a buffer and thus \code{buffer = 0} is forbidden.
 #' User can add the same constrains to protect against inappropriate options. The \code{.options}
-#' argument is a \code{list} that allows to tune the behavior of the function.
+#' argument is a \code{list} that allows to tune the behavior of the processing engine.
 #' \itemize{
-#' \item \code{need_buffer = TRUE} the function complains if the buffer is 0
-#' \item \code{need_output_file = TRUE} the function complains if no output file template is provided
-#' \item \code{raster_alignment = ...} the function checks the aligmnent of the chunks. This option is
+#' \item \code{need_buffer = TRUE} the engine complains if the buffer is 0
+#' \item \code{need_output_file = TRUE} the engine complains if no output file template is provided
+#' \item \code{raster_alignment = ...} the engine checks the aligmnent of the chunks. This option is
 #' important if the output is a raster. See below for more details.
-#' \item \code{drop_null = FALSE} Not intended to be used by regular users. The function doed not
+#' \item \code{automerge = TRUE} by defaut the engine returns a \code{list} with one item per chunk. If
+#' \code{automerge = TRUE}, it tries to merge the outputs into a single object: a \code{Raster*}, a
+#' \code{Spatial*}, a \code{LAS*} similarly to other functions of the package. This is a non failure
+#' option so in the worst case, if the merge fails, the \code{list} is returned.
+#' \item \code{drop_null = FALSE} Not intended to be used by regular users. The engine does not
 #' remove the NULL outputs.
 #' }
 #'
@@ -181,12 +185,10 @@
 #' opt_filter(project)       <- "-keep_first" # read only first returns.
 #'
 #' # 4. Apply a user-defined function to take advantage of the internal engine
-#' opt    <- list(need_buffer = TRUE)   # catalog_apply will throw an error if buffer = 0
+#' opt    <- list(need_buffer = TRUE,   # catalog_apply will throw an error if buffer = 0
+#'                automerge   = TRUE)   # catalog_apply will try to return a single object
 #' output <- catalog_apply(project, my_tree_detection_method, ws = 5, .options = opt)
 #'
-#' # 5. Post-process the output to merge the results (depending on the output computed).
-#' # Here, each value of the list is a SpatialPointsDataFrame, so rbind does the job:
-#' output <- do.call(rbind, output)
 #' spplot(output)
 #'
 #' ## ===================================================
@@ -213,9 +215,10 @@
 #' opt_chunk_size(project)   <- 120     # small because this is a dummy example.
 #' opt_select(project)       <- "xyz"   # read only the coordinates.
 #'
-#' opt     <- list(raster_alignment = 20)  # catalog_apply will adjust the chunks if required
+#' opt     <- list(raster_alignment = 20,  # catalog_apply will adjust the chunks if required
+#'                 automerge = TRUE)       # catalog_apply will try to return a single obje
 #' output  <- catalog_apply(project, rumple_index_surface, res = 20, .options = opt)
-#' output  <- do.call(raster::merge, output)
+#'
 #' plot(output, col = height.colors(50))
 #' @export
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
@@ -230,12 +233,14 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   opt <- engine_parse_options(.options)
   ral <- opt[["raster_alignment"]]
   nbu <- opt[["need_buffer"]]
+  mer <- opt[["automerge"]]
   cal <- opt[["check_alignment"]]
   dnu <- opt[["drop_null"]]
   nof <- opt[["need_output_file"]]
   glo <- opt[["globals"]]
   res <- ral[["res"]]
   sta <- ral[["start"]]
+
   pop <- ctg@processing_options
   oop <- ctg@output_options
 
@@ -257,7 +262,11 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   output <- cluster_apply(clusters, FUN, pop, oop, glo, ...)
 
   # Filter NULLs and return
-  if (dnu) output <- Filter(Negate(is.null), output)
+  if (isTRUE(dnu))  output <- Filter(Negate(is.null), output)
+
+  # Automerge
+  if (!isFALSE(mer)) output <- catalog_merge_results(ctg, output, mer, as.character(substitute(FUN)))
+
   return(output)
 }
 
@@ -412,6 +421,22 @@ engine_parse_options = function(.option)
   }
 
   output$drop_null <- drop_null
+
+  # automerge
+
+  if (is.null(.option$automerge))
+  {
+    automerge <- FALSE
+  }
+  else
+  {
+    automerge <- .option$automerge
+
+    if (isTRUE(automerge))
+      automerge <- "auto"
+  }
+
+  output$automerge <- automerge
 
   # need buffer
 

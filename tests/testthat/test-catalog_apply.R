@@ -1,17 +1,22 @@
 context("catalog_apply")
 
-# Convert laz to las for faster testing
-LASfile  <- system.file("extdata", "Megaplot.laz", package="lidR")
-ctg      <- catalog(LASfile)
-opt_output_files(ctg) <- paste0(tempdir(), "/Megaplot")
-opt_progress(ctg)     <- FALSE
-ctg <- catalog_retile(ctg)
-opt_progress(ctg)     <- FALSE
-lidR:::catalog_laxindex(ctg)
+# Generate a catalog
+xshift <- c(0, 100, 0, 100)
+yshift <- c(0, 0, 100, 100)
+shift  <- cbind(xshift, yshift)
+temp   <- sapply(1:nrow(shift), function(x) tempfile(fileext = ".las"))
 
+for (i in 1:nrow(shift))
+{
+  las <- lidR:::dummy_las(500, seeds = i)
+  las@data[, X := X + shift[i,1]]
+  las@data[, Y := Y + shift[i,2]]
+  writeLAS(las, temp[i])
+}
+
+ctg <- readLAScatalog(temp)
 opt_chunk_buffer(ctg)    <- 0
 opt_chunk_size(ctg)      <- 150
-opt_chunk_alignment(ctg) <- c(0, 90)
 opt_progress(ctg)        <- FALSE
 opt_output_files(ctg)    <- ""
 
@@ -59,25 +64,25 @@ test_that("catalog_apply options fix alignment", {
   }
 
   # Without option
-  L      <- catalog_apply(ctg, test, res = 18)
+  L      <- catalog_apply(ctg, test, res = 8)
   bboxes <- lapply(L, raster::extent)
   bbox   <- do.call(raster::merge, bboxes)
   area1  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
   areas1 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
 
   # With option
-  option <- list(raster_alignment = 18)
-  L      <- catalog_apply(ctg, test, res = 18, .options = option)
+  option <- list(raster_alignment = 8)
+  L      <- catalog_apply(ctg, test, res = 8, .options = option)
   bboxes <- lapply(L, raster::extent)
   bbox   <- do.call(raster::merge, bboxes)
   area2  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
   areas2 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
 
-  expect_equal(area1, 63504)
+  expect_equal(area1, 40000)
   expect_equal(area1, area2)
   expect_gt(areas1, area1)
   expect_equal(area2, areas2)
-  expect_message(catalog_apply(ctg, test, res = 18, .options = option), "Chunk size changed")
+  expect_message(catalog_apply(ctg, test, res = 8, .options = option), "Chunk size changed")
 })
 
 test_that("catalog_apply generates errors if function does not return NULL for empty chunks", {
@@ -154,5 +159,86 @@ test_that("catalog_apply can write with custom drivers", {
 
   expect_equal(basename(req), paste0(1:4, ".rds"))
   expect_true(all(file.exists(req)))
+})
+
+test_that("catalog_apply automerge works with raster", {
+
+  test <- function(cluster)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    r = lidR:::rOverlay(las, 2)
+    r[] <- 1L
+    return(r)
+  }
+
+  opt_chunk_size(ctg) <- 0
+
+  option <- list(automerge = TRUE)
+  req1 <- catalog_apply(ctg, test)
+  req2 <- catalog_apply(ctg, test, .options = option)
+
+  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  req3 <- catalog_apply(ctg, test, .options = option)
+
+  expect_is(req2, "RasterLayer")
+  expect_equal(raster::extent(req2), raster::extent(0,200,0,200))
+  expect_is(req3, "RasterLayer")
+})
+
+test_that("catalog_apply automerge works with spatial points", {
+
+  test <- function(cluster)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    return(sp::SpatialPoints(head(lidR:::coordinates(las))))
+  }
+
+  opt_chunk_size(ctg)      <- 0
+
+  option <- list(automerge = TRUE)
+  req2 <- catalog_apply(ctg, test, .options = option)
+
+  expect_is(req2, "SpatialPoints")
+
+  test <- function(cluster)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    return(sp::SpatialPointsDataFrame(head(lidR:::coordinates(las)), data.frame(u = runif(6))))
+  }
+
+  option <- list(automerge = TRUE)
+  req2 <- catalog_apply(ctg, test, .options = option)
+
+  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  req3 <- catalog_apply(ctg, test, .options = option)
+
+  expect_is(req2, "SpatialPointsDataFrame")
+  expect_equal(dim(req2), c(24,1))
+  expect_true(is.character(unlist(req3)))
+})
+
+test_that("catalog_apply automerge works with LAS", {
+
+  test <- function(cluster)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    LAS(head(lidR:::coordinates3D(las)))
+  }
+
+  opt_chunk_size(ctg) <- 0
+
+  option <- list(automerge = TRUE)
+  req2 <- catalog_apply(ctg, test, .options = option)
+
+  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  req3 <- catalog_apply(ctg, test, .options = option)
+
+  expect_is(req2, "LAS")
+  expect_equal(npoints(req2), 24L)
+  expect_is(req3, "LAScatalog")
 })
 
