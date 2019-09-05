@@ -202,6 +202,7 @@ opt_output_files = function(ctg)
   if (ext != "")
     warning(glue::glue("{value} contains a file extension. Users don't need to provide a file extension. It will be added automaticaly as a function of the output."))
 
+  value <- gsub("\\{?\\*\\}?", "{ORGINALFILENAME}", value)
   ctg@output_options$output_files <- value
   return(ctg)
 }
