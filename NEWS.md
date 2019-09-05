@@ -1,33 +1,42 @@
-# lidR v2.1.3 (Release date: )
+## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
 
-1. New functions `lasrescale()` and ` lasreoffset()`.
-2. Reintroduction in `readLAS` of former behavior: throw warnings for invalid files
+1. New functions `lasrescale()` and ` lasreoffset()` to modify the scale factors and the offsets. The functions update the header and recompute the coordinates to get the proper rounded values in accordance with the new header.
+
+2. `readLAS()` throw (again) warnings for invalid files such as files with invalid scale factors, invalid bounding box, invalid attributes ReturnNumber and so on.
 
 #### ENHANCEMENT
 
 1. `readLAScatalog()` is 60% faster
-2. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will be possible to build in future.
-3. The progress bar of the LAScatalog processing engine has been removed in non interactive sessions and replaced by regular but more informative prints. This allows to track the state of the computation with a stream redirection to a file when running a script remotely for example.
 
-```
-R -f script.R &> log.txt &
-```
+2. The progress bar of the LAScatalog processing engine has been removed in non interactive sessions and replaced by regular but more informative prints. This allows to track the state of the computation with a stream redirection to a file when running a script remotely for example.
+
+    ```
+    R -f script.R &> log.txt &
+    ```
 
 #### FIXES
 
 1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other functions that rely on a knn search.
-2. Fix a bug related to this issue [future#333](https://github.com/HenrikBengtsson/future/issues/333) to enable remote evaluation. This now works for any function that supports a `LAScatalog` input.
 
-```r
-plan(remote, workers = "132.203.41.25")
-```
+2. Using remote futures now works for any function that supports a `LAScatalog` input. Previously remote evaluation of futures failed because of the presence of `return()` statement in the code [future#333](https://github.com/HenrikBengtsson/future/issues/333)
 
-3. `lasclipCircle()` behaves identically for a `LAS` and a `LAScatalog`. It returns the points that are strictly inside the circle. Previously for `LAS` objects it also returned the point belonging on the disc.
+    ```r
+    plan(remote, workers = "132.203.41.25")
+    ```
 
-4. Fix [#270](https://github.com/Jean-Romain/lidR/issues/270) the bounding box is updated after `lastransform()`.
-5. Fix [#272](https://github.com/Jean-Romain/lidR/issues/272) the scale factors are updated after `lastransform()` to prevent integer overflow.
+3. `lasclipCircle()` behaves identically for `LAS` and `LAScatalog` object. It now returns the points that are strictly inside the circle. Previously for `LAS` objects it also returned the point belonging on the disc.
+
+4. The bounding box is updated after `lastransform()` [#270](https://github.com/Jean-Romain/lidR/issues/270)
+
+5. The offsets are updated after `lastransform()` to prevent integer overflow when writting the point cloud in `.las` files [#272](https://github.com/Jean-Romain/lidR/issues/272)
+
+6. Removed deprecated C++ functions `std::bind2nd` as requested by CRAN.
+
+#### NOTE
+
+1. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will now be possible to build.
 
 ## lidR v2.1.2 (Release date: 2019-08-07)
 
@@ -41,28 +50,28 @@ plan(remote, workers = "132.203.41.25")
 
 1. [#266](https://github.com/Jean-Romain/lidR/issues/266) `lasmetrics` has now a dispatch to  `LAS` and `LAScluster` cluster objects. It means that `lasmetrics` can be used with `catalog_apply` in some specific cases where it has a meaning (see also [#266](https://github.com/Jean-Romain/lidR/issues/266)):
 
-```r
-opt_chunk_buffer(ctg) <- 0
-opt_chunk_size(ctg) <- 0
-opt_filter(ctg) <- "-keep_first"
-opt_output_files(new_ctg) <- ""
-output <- catalog_apply(new_ctg, lasmetrics, func = .stdmetrics)
-output <- data.table::rbindlist(output)
-```
+    ```r
+    opt_chunk_buffer(ctg) <- 0
+    opt_chunk_size(ctg) <- 0
+    opt_filter(ctg) <- "-keep_first"
+    opt_output_files(new_ctg) <- ""
+    output <- catalog_apply(new_ctg, lasmetrics, func = .stdmetrics)
+    output <- data.table::rbindlist(output)
+    ```
 
 #### ENHANCEMENT
 
-1. `lastrees` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
+1. `lastrees()` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
 
 2. Internal code has been modifiy to drastically reduce probability of name intersection in `catalog_apply()`. For example, the use of a function that have a parameter `p` in  `catalog_apply()` failed because of partial matching between the true argument `p` and the internal argument `processing_option`.
 
-3. `lasfilterdecimate` with algorithm `highest` is now more than 20 times faster. `lasfiltersurfacepoints`, being a proxy of this algorithm, had the same speed-up
+3. `lasfilterdecimate()` with algorithm `highest()` is now more than 20 times faster. `lasfiltersurfacepoints()`, being a proxy of this algorithm, had the same speed-up
 
 4. `plot` for `LAS` objects gained the pan capability.
 
 #### FIXES
 
-1. [#267](https://github.com/Jean-Romain/lidR/issues/267). A dummy character was introduced by mistake in a variable name breaking the automatic exportation of user object in `grid_metrics` when used with a parallelized plan (`tree_metrics` was also affected).
+1. [#267](https://github.com/Jean-Romain/lidR/issues/267). A dummy character was introduced by mistake in a variable name breaking the automatic exportation of user object in `grid_metrics` when used with a parallelized plan (`tree_metrics()` was also affected).
 
 
 ## lidR v2.1.0 (Release date: 2019-07-13)
