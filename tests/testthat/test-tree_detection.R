@@ -14,7 +14,7 @@ test_that("tree_detection LMF works with a LAS", {
   ttops = tree_detection(las, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(175,2))
+  expect_equal(dim(ttops@data), c(177,2))
   expect_equal(ttops@proj4string, las@proj4string)
 
   f = function(x) { x * 0.07 + 3}
@@ -32,7 +32,7 @@ test_that("tree_detection LMF works with a RasterLayer", {
   ttops = tree_detection(chm, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(158,2))
+  expect_equal(dim(ttops@data), c(160,2))
   expect_equal(ttops@proj4string, chm@crs)
 
   # variable windows size
@@ -40,7 +40,7 @@ test_that("tree_detection LMF works with a RasterLayer", {
   ttops = tree_detection(chm, lmf(f))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(185,2))
+  expect_equal(dim(ttops@data), c(186,2))
   expect_equal(ttops@proj4string, chm@crs)
 })
 
@@ -49,6 +49,6 @@ test_that("tree_detection LMF works with a LAScatalog", {
   ttops = tree_detection(ctg, lmf(5))
 
   expect_is(ttops, "SpatialPointsDataFrame")
-  expect_equal(dim(ttops@data), c(175,2))
+  expect_equal(dim(ttops@data), c(177,2))
   expect_equal(ttops@proj4string, ctg@proj4string)
 })

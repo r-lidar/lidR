@@ -1,4 +1,4 @@
-context("QuadTree")
+context("spatial_index")
 
 X = c(0, 1, 1, 0, 0.5)
 Y = c(0, 0, 1, 1, 0.5)
@@ -83,7 +83,7 @@ test_that("QuandTree knn works even with npoints < k", {
 
   nn = lidR:::C_knn(X,Y, c(0,2), c(1,2), 8, 1)
 
-  expect <- matrix(c(4,5,1,3,2,0,0,0,3,5,2,4,1,0,0,0), ncol = 8, byrow = T)
+  expect <- matrix(c(4,5,1,3,2,0,0,0,3,5,4,2,1,0,0,0), ncol = 8, byrow = T)
 
   expect_equal(nn$nn.idx, expect)
 })

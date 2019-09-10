@@ -40,7 +40,7 @@ test_that("grid_terrain works with delaunay", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(error[], na.rm = TRUE), 0.0739201, tolerance = 0.00001)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0739, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -58,7 +58,7 @@ test_that("grid_terrain works with kriging", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(error[], na.rm = TRUE), 0.0603822, tolerance = 0.00001)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0603822, tolerance = 0.000015)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -76,7 +76,7 @@ test_that("grid_terrain returns a circular dtm ", {
   expect_equal(names(dtm), "Z")
 
   error <- suppressWarnings(abs(dtm - tdtm))
-  expect_equal(mean(error[], na.rm = TRUE), 0.06584327, tolerance = 0.00001)
+  expect_equal(mean(error[], na.rm = TRUE), 0.065, tolerance = 0.0005)
 
   z <- raster::extract(dtm, las2@data[, .(X,Y)])
   expect_true(!anyNA(z))
