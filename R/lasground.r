@@ -77,22 +77,13 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_gnd(algorithm)
 
-  if (last_returns)
-  {
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data)))
-    {
+  filter <- TRUE
+  if (last_returns) {
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data))) {
       warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.", call. = FALSE)
-      filter <- TRUE
-    }
-    else
-    {
+    } else {
       filter <- parse_filter(las, ~ReturnNumber == NumberOfReturns)
-
-      if (sum(filter) == 0)
-      {
-        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
-        filter <- TRUE
-      }
+      if (sum(filter) == 0) warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
     }
   }
 
