@@ -76,15 +76,9 @@
 
 6. Removed deprecated C++ functions `std::bind2nd` as requested by CRAN.
 
-<<<<<<< HEAD
-3. `lasclipCircle()` behaves identically for a `LAS` and a `LAScatalog`. It returns the points that are strictly inside the circle. Previously for `LAS` objects it also returned the point belonging on the disc.
-4. Fix [#270](https://github.com/Jean-Romain/lidR/issues/270) the bounding box is updated after `lastransform()`.
-5. Fix [#272](https://github.com/Jean-Romain/lidR/issues/272) the scale factors are updated after `lastransform()` to prevent integer overflow.
-=======
 #### NOTE
 
 1. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will now be possible to build.
->>>>>>> master
 
 ## lidR v2.1.2 (Release date: 2019-08-07)
 
