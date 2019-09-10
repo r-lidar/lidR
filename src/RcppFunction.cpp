@@ -199,7 +199,10 @@ SEXP fast_eigen_values(arma::mat A)
  */
 
 #include "QuadTree.h"
+#include "GridPartition.h"
 #include "Progress.h"
+
+typedef GridPartition SpatialIndex;
 
 // [[Rcpp::export(rng = false)]]
 Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu)
@@ -208,7 +211,7 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
   IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
 
   #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
@@ -240,7 +243,7 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   unsigned int n = x.length();
   NumericVector iZ(n);
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
   Progress pb(n, "Inverse distance weighting: ");
 
   bool abort = false;
@@ -298,7 +301,7 @@ IntegerVector C_count_in_disc(NumericVector X, NumericVector Y, NumericVector x,
   unsigned int n = x.length();
   IntegerVector output(n);
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
 
   #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
@@ -324,7 +327,7 @@ IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double
 {
   std::vector<int> id;
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
   std::vector<Point*> pts;
   Circle circ(x,y,r);
   tree.lookup(circ, pts);
@@ -340,8 +343,8 @@ IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, 
 {
   std::vector<int> id;
 
-  // Creation of a QuadTree
-  QuadTree tree(X, Y, Z);
+  // Creation of a SpatialIndex
+  SpatialIndex tree(X, Y, Z);
 
   PointXYZ p(x,y,z);
   std::vector<PointXYZ> pts;

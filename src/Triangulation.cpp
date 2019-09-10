@@ -1,7 +1,10 @@
 #include "Triangulation.h"
 #include "QuadTree.h"
+#include "GridPartition.h"
 #include "Progress.h"
 #include "myomp.h"
+
+typedef GridPartition SpatialIndex;
 
 Triangulator::Triangulator(IntegerMatrix D, NumericMatrix P)
 {
@@ -72,7 +75,7 @@ IntegerVector Triangulator::search(NumericMatrix X)
 {
   NumericVector x = X(_, 0);
   NumericVector y = X(_, 1);
-  QuadTree tree(x, y);
+  SpatialIndex tree(x, y);
 
   int nelem = D.nrow();
   int np = X.nrow();

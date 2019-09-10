@@ -2,8 +2,11 @@
 #include <boost/geometry.hpp>
 #include <limits>
 #include "QuadTree.h"
+#include "GridPartition.h"
 #include "Progress.h"
 #include "myomp.h"
+
+typedef GridPartition SpatialIndex;
 
 LAS::LAS(S4 las)
 {
@@ -88,7 +91,7 @@ void LAS::z_smooth(double size, int method, int shape, double sigma)
 
   NumericVector Zsmooth = clone(Z);
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
 
   Progress pb(npoints, "Point cloud smoothing: ");
 
@@ -153,7 +156,7 @@ void LAS::z_open(double resolution)
 
   NumericVector Z_out(npoints);
 
-  QuadTree tree(X, Y, filter);
+  SpatialIndex tree(X, Y, filter);
 
   Progress p(2*npoints, "Morphological filter: ");
 
@@ -216,7 +219,7 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
   bool abort = false;
   bool vws = ws.length() > 1;
 
-  QuadTree tree(X,Y);
+  SpatialIndex tree(X,Y);
   Progress pb(npoints, "Local maximum filter: ");
 
   #pragma omp parallel for num_threads(ncpu)
@@ -408,7 +411,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
 
   bool abort = false;
 
-  QuadTree qtree(X,Y,Z, filter);
+  SpatialIndex qtree(X,Y,Z, filter);
 
   bool (*predicate)(arma::vec&, arma::mat&, NumericVector&);
   switch(method)
@@ -490,7 +493,7 @@ IntegerVector LAS::segment_snags(NumericVector neigh_radii, double low_int_thrsh
   IntegerVector ptDen_bigcyl(npoints);      // the big cylinder neighborhood point density for each focal point
   NumericVector meanBBPr_bigcyl(npoints);   // the mean BBPr for each focal point in its corresponding big cylinder neighborhood
 
-  QuadTree qtree(X,Y,Z);                    // the quadtree for the las object
+  SpatialIndex qtree(X,Y,Z);                // the SpatialIndex for the las object
 
   // Step 1 - First we have to build neighborhood objects (sphere, small and large cylinders) around each focal point and get
   // the BBPr counts, then we have to calculate the actual ratio of BBPr to neighborhood points for each focal point

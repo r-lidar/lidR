@@ -13,6 +13,32 @@
     # instead of
     opt_output_file(ctg) <- "/home/user/data/norm/{ORIGINALFILENAME}_norm"
     ```
+    
+#### ENHANCEMENT
+
+1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewriten and changed for a grid partion which is twice faster than the former QuadTree. This change provides a significant boost (up to twice faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+
+    ```r
+    # 1 x 1 km, 13 pts/m², 13.1 million points
+    set_lidr_threads(n)
+    tree_detection(las, lmf(3))
+    #> v2.1: 1 core: 80s - 4 cores: 38s
+    #> v2.2: 1 core: 38s - 4 cores: 20s
+    ```
+    
+    ```r
+    # 500 x 500 m, 12 pt/m², 3.2 million points
+    lassnags(las, wing2015(neigh_radii = nr, BBPRthrsh_mat = bbpr_th))
+    #> v2.1: 1 core: 66s - 4 cores: 33s
+    #> v2.2: 1 core: 43s - 4 cores: 21s
+    ```
+    
+    ```r
+    # 250 x 250 m, 12 pt/m², 717.6 thoushand points
+    lasdetectshape(las3, shp_plane())
+    #> v2.1 - 1 cores: 12s - 4 cores: 7s
+    #> v2.2 - 1 cores:  6s - 4 cores: 3s
+    ```
 
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
