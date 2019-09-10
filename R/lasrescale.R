@@ -1,8 +1,8 @@
 #' Rescale and reoffset a LAS object
 #'
 #' Modify the scale factor and the offset of a LAS object. This function modify the header and
-#' recompute the coordinates. Coordinates might be moved by few tenth of millimiters or few
-#' millimiters depending of the accuracy imposed by the user.
+#' recompute the coordinates. Coordinates might be moved by few tenth of millimeters or few
+#' millimeters depending of the accuracy imposed by the user.
 #'
 #' @param las An object of class LAS
 #' @param xscale,yscale,zscale scalar. Can be missing if not relevant.

@@ -43,9 +43,10 @@
 #' than the point cloud
 #' @param raster_list list. List of \code{Raster*} objects
 #' @param file_list list. List of path to \code{Raster*} file
-#' @param vrt charcter. Name of the VRT that must be written
+#' @param vrt character. Name of the VRT that must be written
 #'
 #' @keywords internal
+#' @noRd
 rOverlay = function(las, res, start = c(0,0), buffer = 0)
 {
   if (is(res, "RasterLayer"))

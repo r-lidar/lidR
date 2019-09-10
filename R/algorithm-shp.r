@@ -44,7 +44,7 @@
 #' }
 #'
 #' @param th1,th2,th3 numeric. Threshold values (see details)
-#' @param k integer. Number of neighbours used to estimate the neigborhood.
+#' @param k integer. Number of neighbours used to estimate the neighborhood.
 #'
 #' @references
 #' Limberger, F. A., & Oliveira, M. M. (2015). Real-time detection of planar regions in unorganized

@@ -18,8 +18,8 @@ lasreoffset(las, xoffset, yoffset, zoffset)
 }
 \description{
 Modify the scale factor and the offset of a LAS object. This function modify the header and
-recompute the coordinates. Coordinates might be moved by few tenth of millimiters or few
-millimiters depending of the accuracy imposed by the user.
+recompute the coordinates. Coordinates might be moved by few tenth of millimeters or few
+millimeters depending of the accuracy imposed by the user.
 }
 \examples{
 LASfile <- system.file("extdata", "example.laz", package = "rlas")

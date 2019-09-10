@@ -21,7 +21,6 @@ It allows the application of a user-defined routine over an entire catalog. The 
 processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
 This function is the core of the lidR package. It drives every single function that can process a
 \code{LAScatalog}. It is flexible and powerful but also complex and reserved to users that are
-confortable with the lidR package.\cr\cr.
 \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data to avoid
 edge artifacts, but no mechanism to remove the buffer after applying user-defined functions, since
 this task is specific to each process. In other \code{lidR} functions this task is performed
@@ -87,9 +86,9 @@ argument is a \code{list} that allows to tune the behavior of the function.
 \itemize{
 \item \code{need_buffer = TRUE} the function complains if the buffer is 0
 \item \code{need_output_file = TRUE} the function complains if no output file template is provided
-\item \code{raster_alignment = ...} the function checks the aligmnent of the chunks. This option is
+\item \code{raster_alignment = ...} the function checks the alignment of the chunks. This option is
 important if the output is a raster. See below for more details.
-\item \code{drop_null = FALSE} Not intended to be used by regular users. The function doed not
+\item \code{drop_null = FALSE} Not intended to be used by regular users. The function does not
 remove the NULL outputs.
 }
 
