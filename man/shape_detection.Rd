@@ -16,7 +16,7 @@ shp_line(th1 = 10, k = 8)
 \arguments{
 \item{th1, th2, th3}{numeric. Threshold values (see details)}
 
-\item{k}{integer. Number of neighbours used to estimate the neigborhood.}
+\item{k}{integer. Number of neighbours used to estimate the neighborhood.}
 }
 \description{
 These functions are made to be used in \link{lasdetectshape}. They implement algorithms for local

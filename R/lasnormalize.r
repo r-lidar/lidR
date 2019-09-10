@@ -44,9 +44,9 @@
 #' @param algorithm a spatial interpolation function. \code{lidR} have \link{tin},
 #' \link{kriging}, \link{knnidw} or a \link[raster:raster]{RasterLayer} representing a digital terrain
 #' model (can be computed with \link{grid_terrain})
-#' @param na.rm logical. When using a \code{RasterLayer} as DTM, by defaut the function fails if a point
+#' @param na.rm logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
 #' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
-#' elvation of NA are filtered. Becareful this creates a copy of the point cloud.
+#' elevation of NA are filtered. Be careful this creates a copy of the point cloud.
 #'
 #' @template LAScatalog
 #'

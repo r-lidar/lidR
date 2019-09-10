@@ -58,3 +58,14 @@ test_that("lasground csf works", {
   expect_equal(nrow(las2@data), nrow(las@data))
 })
 
+test_that("lasground csf works with last_returns = FALSE", {
+  las <- lidR:::dummy_las(500)
+  las <- lasground(las, csf(), last_returns = FALSE)
+
+  n = names(las@data)
+
+  expect_true("Classification" %in% n)
+  expect_equal(unique(las@data$Classification), c(1L, 2L))
+  expect_equal(sum(las@data$Classification == 2L), 105L)
+})
+
