@@ -69,3 +69,16 @@ test_that("lasground csf works with last_returns = FALSE", {
   expect_equal(sum(las@data$Classification == 2L), 105L)
 })
 
+test_that("lasground works with last_returns = TRUE but attribute not properly populated", {
+  las <- lidR:::dummy_las(500)
+  las@data$ReturnNumber <- 0
+  las@data$Classification <- NULL
+  las <- lasground(las, csf(), last_returns = TRUE)
+
+  n = names(las@data)
+
+  expect_true("Classification" %in% n)
+  expect_equal(unique(las@data$Classification), c(1L, 2L))
+  expect_equal(sum(las@data$Classification == 2L), 105L)
+})
+

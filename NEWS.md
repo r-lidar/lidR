@@ -1,4 +1,4 @@
-# lidR v2.2.0 (Release date: )
+## lidR v2.2.0 (Release date: )
 
 #### NEW FEATURES
 
@@ -39,6 +39,12 @@
     #> v2.1 - 1 cores: 12s - 4 cores: 7s
     #> v2.2 - 1 cores:  6s - 4 cores: 3s
     ```
+    
+## lidR v2.1.4 (Release date: )
+
+#### FIXES
+
+1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return false, the classification was not actually computed. The expected behavior was to use all the points.
 
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
@@ -267,7 +273,7 @@ local maxima and the search step is skipped (much faster)*. This is now true.
 - Fix: bug when merging rasters when some of then only have one cell
 - Fix: bug when printing a 0 point LAS object
 
-# lidR v2.0.0 (Release date: 2019-01-02)
+## lidR v2.0.0 (Release date: 2019-01-02)
 
 ### Why versions `> 2.0` are incompatible with versions `1.x.y`?
 
