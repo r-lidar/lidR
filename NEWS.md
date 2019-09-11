@@ -1,3 +1,9 @@
+## lidR v2.1.4 (Release date: )
+
+#### FIXES
+
+1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return false, the classification was not actually computed. The expected behavior was to use all the points.
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
