@@ -127,7 +127,9 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   assert_is_a_string(type)
   stopif_forbidden_name(name)
 
-  type = match.arg(type, c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"))
+  types = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")
+  type = match.arg(type, types)
+  type = which(type == types)
 
   if (missing(x))
   {

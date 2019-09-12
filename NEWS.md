@@ -48,6 +48,8 @@
 
 2. `lasclip()` was not able to clip into a `LAS` object using `SpatialPoints` or `sf POINT`. It worked only into `LAScatalog`
 
+3. `lasaddextrabyte_manual()` was not actually working because the `type` was not converted to a numeric value according to the LAS specifications
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
