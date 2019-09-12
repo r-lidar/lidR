@@ -218,6 +218,7 @@ engine_progress_bar <- function(n, prgss = FALSE)
   if (!interactive())
     return(n)
 
+  # nocov start
   if (requireNamespace("progress", quietly = TRUE))
     pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = n, clear = FALSE)
   else
@@ -225,7 +226,7 @@ engine_progress_bar <- function(n, prgss = FALSE)
 
   graphics::legend("topright", title = "Colors", legend = c("Processing", "Empty","Ok","Warning", "Error"), fill = c("cornflowerblue", "gray","green3", "orange", "red"), cex = 0.8)
 
-  return(pb)
+  return(pb) # nocov end
 }
 
 engine_update_progress <- function(pb, cluster, state, p, j)
@@ -233,6 +234,7 @@ engine_update_progress <- function(pb, cluster, state, p, j)
   if (is.null(pb))
     return(invisible(NULL))
 
+  # nocov start
   if (state == CHUNK_OK) { col <- "green3" ; sym <- "\u2713" }
   else if (state == CHUNK_NULL) { col <- "gray" ; sym <- "\u2205" }
   else if (state == CHUNK_WARNING) { col <- "orange" ; sym <- "\u26A0" }
@@ -258,7 +260,7 @@ engine_update_progress <- function(pb, cluster, state, p, j)
   else
     pb$update(p)
 
-  return(invisible())
+  return(invisible()) # nocov end
 }
 
 engine_save_logs <- function(cluster, index)

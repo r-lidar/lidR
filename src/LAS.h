@@ -23,8 +23,8 @@ class LAS
     ~LAS();
 
     void new_filter(LogicalVector b);
-    void apply_filter();
-    IntegerVector index_filter();
+    //void apply_filter();
+    //IntegerVector index_filter();
 
     void filter_in_polygon(std::string wkt);
     void filter_local_maxima(NumericVector ws, double min_height, bool circular);

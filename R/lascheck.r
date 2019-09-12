@@ -72,7 +72,7 @@ lascheck.LAS = function(las)
   }
   else
   {
-    green <- red <- orange <- silver <- function(x) { return(x) }
+    green <- red <- orange <- silver <- function(x) { return(x) } # nocov
   }
 
   h1    <- function(x)   {cat("\n", x)}
@@ -168,12 +168,12 @@ lascheck.LAS = function(las)
   nas = data[, lapply(.SD, anyNA)]
   nas = unlist(as.list(nas))
   nas = nas[nas == TRUE]
+  whichnas = names(nas)
+  whichnas = paste(whichnas, collapse = ", ")
 
   if (length(nas) > 0)
   {
-    which  = names(nas)
-    which  = paste(nas, collapse = ", ")
-    string = paste("The following attributes contain NAs:", which)
+    string = paste("The following attributes contain NAs:", whichnas)
     fail(string)
   }
   else
@@ -230,7 +230,7 @@ lascheck.LAS = function(las)
   {
     s = all(data[["gpstime"]] == 0)
 
-    if (s == nrow(data))
+    if (s)
       msg = c(msg, g("'gpstime' attribute is not populated."))
   }
 
@@ -369,12 +369,16 @@ lascheck.LAS = function(las)
 
   h2("Checking header bbox vs. actual content...")
 
-  msg = character(0)
-  msg = c(msg, rlas::is_XY_larger_than_bbox(head, data, "vector"))
-  msg = c(msg, rlas::is_XY_smaller_than_bbox(head, data, "vector"))
-  msg = c(msg, rlas::is_Z_in_bbox(head, data, "vector"))
-
-  warn(msg)
+  if (any(c("X", "Y", "Z") %in% whichnas)) {
+    skip()
+  }
+  else {
+    msg = character(0)
+    msg = c(msg, rlas::is_XY_larger_than_bbox(head, data, "vector"))
+    msg = c(msg, rlas::is_XY_smaller_than_bbox(head, data, "vector"))
+    msg = c(msg, rlas::is_Z_in_bbox(head, data, "vector"))
+    warn(msg)
+  }
 
   h2("Checking header number of points vs. actual content...")
 
@@ -404,15 +408,21 @@ lascheck.LAS = function(las)
 
   h2("Checking normalization...")
 
-  min = grid_metrics(las, ~min(Z), res = 20)
-  mean_min = mean(abs(min[]), na.rm = TRUE)
-
-  if (mean_min <= 0.1)
-    yes()
-  else if (mean_min > 0.1 & mean_min < 1)
-    maybe()
+  if (any(c("X", "Y", "Z") %in% whichnas)) {
+    skip()
+  }
   else
-    no()
+  {
+    min = grid_metrics(las, ~min(Z), res = 20)
+    mean_min = mean(abs(min[]), na.rm = TRUE)
+
+    if (mean_min <= 0.1)
+      yes()
+    else if (mean_min > 0.1 & mean_min < 1)
+      maybe()
+    else
+      no()
+  }
 
   h2("Checking negative outliers...")
 
@@ -457,7 +467,7 @@ lascheck.LAScatalog = function(las)
   }
   else
   {
-    green <- red <- orange <- silver <- function(x) { return(x) }
+    green <- red <- orange <- silver <- function(x) { return(x) } # nocov
   }
 
   h1    <- function(x) {cat("\n", x)}

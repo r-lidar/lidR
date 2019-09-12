@@ -24,21 +24,23 @@
     tree_detection(las, lmf(3))
     #> v2.1: 1 core: 80s - 4 cores: 38s
     #> v2.2: 1 core: 38s - 4 cores: 20s
-    ```
-    
-    ```r
+   
     # 500 x 500 m, 12 pt/m², 3.2 million points
     lassnags(las, wing2015(neigh_radii = nr, BBPRthrsh_mat = bbpr_th))
     #> v2.1: 1 core: 66s - 4 cores: 33s
     #> v2.2: 1 core: 43s - 4 cores: 21s
-    ```
-    
-    ```r
+
     # 250 x 250 m, 12 pt/m², 717.6 thoushand points
     lasdetectshape(las3, shp_plane())
     #> v2.1 - 1 cores: 12s - 4 cores: 7s
     #> v2.2 - 1 cores:  6s - 4 cores: 3s
     ```
+    
+2. There are more than 100 new unit tests in `testthat`. The coverage increased from 68% to 87%
+
+#### FIXES
+
+1. Several minor fixes in `lascheck()`  for very unpropable cases of `LAS` objects likely to have been modified by hand.
     
 ## lidR v2.1.4 (Release date: )
 

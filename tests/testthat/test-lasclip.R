@@ -117,9 +117,8 @@ test_that("lasclip clips polygon works from sp polygons both on a LAS and LAScat
   expect_equal(poly1, poly2)
 })
 
-test_that("lasclip clips disc from sp points both on a LAS and LAScatalog", {
+test_that("lasclip clips point with SpatialPoints on LAS and LAScatalog", {
 
-  # Multiple disc
   xc <- c(684800, 684850)
   yc <- c(5017850, 5017900)
   r  <- 10

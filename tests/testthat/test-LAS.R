@@ -178,12 +178,6 @@ test_that("LAS redefined behavior of $, [, and [[", {
   expect_error(las[["U"]] <- 1:10, "Addition of a new column")
 })
 
-test_that("lascheck works without error", {
-  sink(tempfile())
-  expect_error(lascheck(las), NA)
-  sink(NULL)
-})
-
 test_that("LAS conversion to SpatialPointsDataFrame works", {
   las <- lidR:::dummy_las(10)
   splas <- as.spatial(las)

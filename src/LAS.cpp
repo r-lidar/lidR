@@ -54,7 +54,7 @@ void LAS::new_filter(LogicalVector b)
     Rcpp::stop("Internal error in 'new_filter");
 }
 
-void LAS::apply_filter()
+/*void LAS::apply_filter()
 {
   LogicalVector keep = wrap(filter);
 
@@ -68,9 +68,9 @@ void LAS::apply_filter()
   npoints = X.size();
   filter = std::vector<bool>(npoints);
   std::fill(filter.begin(), filter.end(), false);
-}
+}*/
 
-IntegerVector LAS::index_filter()
+/*IntegerVector LAS::index_filter()
 {
   std::vector<int> index;
   for (int i = 0 ; i < npoints ; i++)
@@ -79,7 +79,7 @@ IntegerVector LAS::index_filter()
   }
 
   return Rcpp::wrap(index);
-}
+}*/
 
 void LAS::z_smooth(double size, int method, int shape, double sigma)
 {

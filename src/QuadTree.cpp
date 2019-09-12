@@ -1,5 +1,6 @@
-#include "QuadTree.h"
+// # nocov start
 
+#include "QuadTree.h"
 #define EPSILON 1e-9
 
 QuadTree::QuadTree(const double xcenter, const double ycenter, const double range)
@@ -244,3 +245,6 @@ int QuadTree::count()
 {
   return this->npoints;
 }
+
+// # nocov end
+

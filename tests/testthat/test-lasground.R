@@ -82,3 +82,7 @@ test_that("lasground works with last_returns = TRUE but attribute not properly p
   expect_equal(sum(las@data$Classification == 2L), 105L)
 })
 
+test_that("makeZhangParam works", {
+  expect_error(util_makeZhangParam(), NA)
+})
+

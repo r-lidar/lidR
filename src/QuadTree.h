@@ -1,3 +1,4 @@
+// # nocov start
 #ifndef QT_H
 #define QT_H
 
@@ -106,4 +107,5 @@ template<typename T> void QuadTree::lookup(T& shape, std::vector<PointXYZ>& res)
 }
 
 #endif //QT_H
+// # nocov end
 

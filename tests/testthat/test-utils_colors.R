@@ -11,3 +11,10 @@ test_that("set.colors attribute the proper color", {
 
   expect_equal(c, "#0000FF")
 })
+
+test_that("colors palette works", {
+  expect_error(random.colors(10), NA)
+  expect_error(forest.colors(10), NA)
+  expect_error(pastel.colors(10), NA)
+  expect_error(height.colors(10), NA)
+})

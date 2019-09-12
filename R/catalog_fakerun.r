@@ -1,3 +1,4 @@
+# nocov start
 catalog_fakerun = function(ctg, sleep = 0.05, pwarning = 0.05, perror = 0.01)
 {
   opt_wall_to_wall(ctg) <- FALSE
@@ -13,3 +14,4 @@ catalog_fakerun = function(ctg, sleep = 0.05, pwarning = 0.05, perror = 0.01)
 
   return(catalog_apply(ctg, fake, .options = options))
 }
+# nocov end

@@ -159,7 +159,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = tree_detection(las, lmf(5))
 #' ttops = tree_detection(las, manual(ttops))
 #' }
-manual = function(detected = NULL, radius = 0.5, color = "red", ...)
+manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov start
 {
   f = function(las)
   {
@@ -251,7 +251,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
-}
+} # nocov end
 
 # ===== LMFAUTO ======
 
@@ -318,7 +318,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
     . <- X <- Y <- Z <- treeID <- NULL
 
     ws <- lmfauto_ws(las@data$Z, ntop5)
-    lm <- C_lmf(las@data, ws, hmin, TRUE, getThread())
+    lm <- C_lmf(las, ws, hmin, TRUE, getThread())
     return(lm)
   }
 

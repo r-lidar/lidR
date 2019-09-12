@@ -30,26 +30,6 @@ round_any <- function(x, accuracy)
   roundc(x / accuracy) * accuracy
 }
 
-make_grid = function(xmin, xmax, ymin, ymax, res, start = c(0,0))
-{
-  xo = seq(f_grid(xmin, res, start[1]), f_grid(xmax, res, start[1]), res)
-  yo = seq(f_grid(ymin, res, start[2]), f_grid(ymax, res, start[2]), res)
-
-  grid = expand.grid(X = xo, Y = yo)
-  data.table::setDT(grid)
-
-  return(grid)
-}
-
-
-group_grid = function(x, y, res, start = c(0,0))
-{
-  xgrid = f_grid(x, res, start[1])
-  ygrid = f_grid(y, res, start[2])
-
-  return(list(Xgrid = xgrid, Ygrid = ygrid))
-}
-
 group_grid_3d = function(x, y, z, res, start = c(0,0,0))
 {
   xgrid = f_grid(x, res[1], start[1])

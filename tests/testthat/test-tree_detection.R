@@ -52,3 +52,12 @@ test_that("tree_detection LMF works with a LAScatalog", {
   expect_equal(dim(ttops@data), c(177,2))
   expect_equal(ttops@proj4string, ctg@proj4string)
 })
+
+test_that("tree_detection LMFauto works with a LAS", {
+
+  ttops = tree_detection(las, lidR:::lmfauto())
+
+  expect_is(ttops, "SpatialPointsDataFrame")
+  expect_equal(dim(ttops@data), c(231,2))
+  expect_equal(ttops@proj4string, ctg@proj4string)
+})

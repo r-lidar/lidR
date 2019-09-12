@@ -52,7 +52,7 @@ test_that("lasmergespatial works with SpatialPolygons", {
   expect_equivalent(as.numeric(table(lidar$id)), c(1843))
 })
 
-test_that("las classifies works with raster", {
+test_that("lasmergespatial works with raster", {
   r = grid_metrics(lidar, mean(Z))
 
   lidar <- lasmergespatial(lidar, r, "Zmean")
@@ -62,4 +62,28 @@ test_that("las classifies works with raster", {
   expect_true("Zmean" %in% cn)
   expect_true(is.numeric(lidar@data$Zmean))
   expect_equal(mean(lidar@data$Zmean), 14.51, tol = 0.01)
+})
+
+
+test_that("lasmergespatial works a RGB RasterBrick", {
+  layout = raster::raster(extent(lidar))
+  raster::res(layout) <- 5
+  R = sample(0:(2^16-1), raster::ncell(layout))
+  G = sample(0:(2^16-1), raster::ncell(layout))
+  B = sample(0:(2^16-1), raster::ncell(layout))
+
+  r = layout
+  r[] <- R
+  layout[] <- G
+  r = addLayer(r, layout)
+  layout[] <- B
+  r = addLayer(r, layout)
+
+  lidar <- lasmergespatial(lidar, r)
+
+  cn <- names(lidar@data)
+
+  expect_true(all(c("R", "G", "B") %in% cn))
+  expect_true(is.integer(lidar@data$R))
+  expect_equal(lidar@header@PHB$`Point Data Format ID`, 2L)
 })

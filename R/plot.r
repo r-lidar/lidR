@@ -293,6 +293,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
     return(invisible(c(0,0)))
 }
 
+# nocov start
 .plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args)
 {
   if (is.character(col))
@@ -311,6 +312,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
   return(invisible(c(0,0)))
 }
+# nocov end
 
 
 .plot_scale_gradient = function(min.col, max.col, text.col, scale.col, bg)
@@ -333,6 +335,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 }
 
 # From rgl.setMouseCallbacks man page
+# nocov start
 .pan3d <- function(button, dev = rgl::rgl.cur(), subscene = rgl::currentSubscene3d(dev))
 {
   start <- list()
@@ -362,3 +365,4 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
   }
   rgl::rgl.setMouseCallbacks(button, begin, update, dev = dev, subscene = subscene)
 }
+# nocov end
