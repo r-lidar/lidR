@@ -117,6 +117,22 @@ test_that("lasclip clips polygon works from sp polygons both on a LAS and LAScat
   expect_equal(poly1, poly2)
 })
 
+test_that("lasclip clips disc from sp points both on a LAS and LAScatalog", {
+
+  # Multiple disc
+  xc <- c(684800, 684850)
+  yc <- c(5017850, 5017900)
+  r  <- 10
+
+  p = sp::SpatialPoints(cbind(xc, yc))
+
+  discs1 <- lasclip(las, p, radius = 5)
+  discs2 <- lasclip(ctg, p, radius = 5)
+
+  expect_is(discs1, "list")
+  expect_equal(discs1, discs2)
+})
+
 test_that("lasclip clips a rectangle from a bounding box both on a LAS and LAScatalog", {
 
   # Extent

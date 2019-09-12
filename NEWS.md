@@ -4,6 +4,8 @@
 
 1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return false, the classification was not actually computed. The expected behavior was to use all the points.
 
+2. `lasclip()` was not able to clip into a `LAS` object using `SpatialPoints` or `sf POINT`. It worked only into `LAScatalog`
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
