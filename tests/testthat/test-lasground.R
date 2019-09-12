@@ -73,7 +73,7 @@ test_that("lasground works with last_returns = TRUE but attribute not properly p
   las <- lidR:::dummy_las(500)
   las@data$ReturnNumber <- 0
   las@data$Classification <- NULL
-  las <- lasground(las, csf(), last_returns = TRUE)
+  las <- suppressWarnings(lasground(las, csf(), last_returns = TRUE))
 
   n = names(las@data)
 
