@@ -155,15 +155,7 @@ lasclip = function(las, geometry, ...)
       ycenter <- centers[,2]
       xcenter <- centers[,1]
       radius  <- p$radius
-      bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
-      output  <- catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry)
-
-      if (length(output) == 0)
-        return(NULL)
-      else if (length(output) == 1)
-        return(output[[1]])
-      else
-        return(output)
+      return(lasclipCircle(las, xcenter, ycenter, radius))
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
