@@ -2,13 +2,15 @@
 
 #### FIXES
 
-1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return false, the classification was not actually computed. The expected behavior was to use all the points.
+1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return, the classification was not actually computed. The expected behavior was to use all the points. This is now the case.
 
-2. `lasclip()` was not able to clip into a `LAS` object using `SpatialPoints` or `sf POINT`. It worked only into `LAScatalog`
+2. `lasclip()` is now able to clip into a `LAS` object using `SpatialPoints` or `sf POINT`. It previously to worked only into `LAScatalog`.
 
 3. `lasaddextrabyte_manual()` was not actually working because the `type` was not converted to a numeric value according to the LAS specifications
 
 4. Fix double precision floating point error in `grid_*` function in some specific cases. This fix affect also `highest()` and other raster-based algorithms [#273](https://github.com/Jean-Romain/lidR/issues/273).
+
+5. `lasreoffset()` now checks for integer overflow and throws an error in case of invalid user request [#274](https://github.com/Jean-Romain/lidR/issues/274).
 
 ## lidR v2.1.3 (Release date: 2019-09-10)
 

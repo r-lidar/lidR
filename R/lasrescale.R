@@ -65,9 +65,17 @@ lasreoffset = function(las, xoffset, yoffset, zoffset)
   yscale  <- las@header@PHB[["Y scale factor"]]
   zscale  <- las@header@PHB[["Z scale factor"]]
 
+  xrange  <- c(las@header@PHB[["Min X"]], las@header@PHB[["Max X"]])
+  yrange  <- c(las@header@PHB[["Min Y"]], las@header@PHB[["Max Y"]])
+  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max z"]])
+
   if (!missing(xoffset))
   {
     assert_is_a_number(xoffset)
+
+    newX <- suppressWarnings(as.integer((xrange - xoffset)/xscale) * xscale + xoffset)
+    if (anyNA(newX)) stop("Incorrect xoffset: integer overflow.", call. = FALSE)
+
     newX <- as.integer((las@data[["X"]] - xoffset)/xscale) * xscale + xoffset
     diff <- round(mean(abs(las@data[["X"]] - newX)), 4)
     las@data[["X"]] <- newX
@@ -78,6 +86,10 @@ lasreoffset = function(las, xoffset, yoffset, zoffset)
   if (!missing(yoffset))
   {
     assert_is_a_number(yoffset)
+
+    newY <- suppressWarnings(as.integer((yrange - yoffset)/yscale) * yscale + yoffset)
+    if (anyNA(newY)) stop("Incorrect yoffset: integer overflow.", call. = FALSE)
+
     newY <- as.integer((las@data[["Y"]] - yoffset)/yscale) * yscale + yoffset
     diff <- round(mean(abs(las@data[["Y"]] - newY)), 4)
     las@data[["Y"]] <- newY
@@ -88,6 +100,10 @@ lasreoffset = function(las, xoffset, yoffset, zoffset)
   if (!missing(zoffset))
   {
     assert_is_a_number(zoffset)
+
+    newZX <- suppressWarnings(as.integer((zrange - zoffset)/zscale) * zscale + zoffset)
+    if (anyNA(newZ)) stop("Incorrect zoffset: integer overflow.", call. = FALSE)
+
     newZ <- as.integer((las@data[["Z"]] - zoffset)/zscale) * zscale + zoffset
     diff <- round(mean(abs(las@data[["Z"]] - newZ)), 4)
     las@data[["Z"]] <- newZ
