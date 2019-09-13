@@ -52,6 +52,8 @@
 
 3. `lasaddextrabyte_manual()` was not actually working because the `type` was not converted to a numeric value according to the LAS specifications
 
+4. Fix double precision floating point error in `grid_*` function in some specific cases. This fix affect also `highest()` and other raster-based algorithms [#273](https://github.com/Jean-Romain/lidR/issues/273).
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
