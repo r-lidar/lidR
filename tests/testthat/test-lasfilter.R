@@ -1,6 +1,5 @@
 context("lasfilter")
 
-set.seed(42)
 las = lidR:::dummy_las(500)
 
 test_that("filter works", {
