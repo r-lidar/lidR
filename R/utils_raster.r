@@ -52,7 +52,7 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
   if (is(res, "RasterLayer"))
   {
     resolution <- raster::res(res)
-    if (resolution[1] !=  resolution[2])
+    if (round(resolution[1], 4) != round(resolution[2], 4))
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
     return(res)
   }

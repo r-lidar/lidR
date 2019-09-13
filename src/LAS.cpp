@@ -281,9 +281,6 @@ void LAS::filter_with_grid(S4 layout)
   double xres = (xmax - xmin) / ncols;
   double yres = (ymax - ymin) / nrows;
 
-  if (xres != yres)
-    Rcpp::stop("Rasters with different xy resolutions are not supported");
-
   std::vector<int> output(ncols*nrows);
   std::fill(output.begin(), output.end(), std::numeric_limits<int>::min());
 
@@ -301,7 +298,7 @@ void LAS::filter_with_grid(S4 layout)
     if (x == xmax) col = ncols-1;
 
     if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-      Rcpp::stop("Internal error in 'filter_with_grid'");
+      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point of raster.");
 
     int cell = row * ncols + col;
 
@@ -868,18 +865,15 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
   double xres = (xmax - xmin) / ncols;
   double yres = (ymax - ymin) / nrows;
 
-  if (xres != yres)
-    Rcpp::stop("Rasters with different xy resolutions are not supported");
-
   NumericVector raster(ncols*nrows);
   std::fill(raster.begin(), raster.end(), NA_REAL);
 
   double (*f)(double x, double y);
   switch(method)
   {
-    case 1: f = &LAS::rmax; break;
-    case 2: f = &LAS::rmin; break;
-    case 3: f = &LAS::rcount; break;
+  case 1: f = &LAS::rmax; break;
+  case 2: f = &LAS::rmin; break;
+  case 3: f = &LAS::rcount; break;
   }
 
   if (subcircle > 0)
@@ -902,7 +896,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
         if (x == xmax) col = ncols-1;
 
         if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-          Rcpp::stop("Internal error in 'rasterize_max'");
+          Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster.");
 
         int cell = row * ncols + col;
         raster(cell) = f(raster(cell), z);
@@ -923,7 +917,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
       if (x == xmax) col = ncols-1;
 
       if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-        Rcpp::stop("Internal error in 'rasterize_max'");
+        Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster.");
 
       int cell = row * ncols + col;
       raster(cell) = f(raster(cell), z);
@@ -932,4 +926,3 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
 
   return raster;
 }
-
