@@ -78,7 +78,6 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile)
 
 plot(las)
-.
 plot(las, color = "Intensity")
 
 # If outliers break the color range, use the trim parameter

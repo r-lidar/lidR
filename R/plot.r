@@ -73,7 +73,6 @@
 #' las <- readLAS(LASfile)
 #'
 #' plot(las)
-#'.
 #' plot(las, color = "Intensity")
 #'
 #' # If outliers break the color range, use the trim parameter
@@ -226,10 +225,10 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
     if (color == "Z")
       colorPalette = height.colors(50)
     else if (color == "Intensity")
-      colorPalette = heat.colors(50)
+      colorPalette = grDevices::heat.colors(50)
     else if (color  == "Classification")
     {
-      colorPalette = lidR:::lasclass.colors()
+      colorPalette = lasclass.colors()
       clmin = min(x@data[["Classification"]])
       clmax = max(x@data[["Classification"]])
       trim  = min(length(colorPalette), clmax+1)
@@ -244,8 +243,6 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
     else
       colorPalette = height.colors(50)
   }
-
-  if (autocol)
 
   if (use_rgb & use_pcv)
     col <- "RGB"
