@@ -2,16 +2,25 @@
 
 #### NEW FEATURES
 
-1. `catalog_apply()` 
-    * gains an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for automatic merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. return a `list`. Thus there is no danger at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility but will be switched to `TRUE` in next releases.
-
-2. `opt_output_file()`
-    * now interprets `*` as `{ORIGINALFILENAME}` for shorter syntax. The following is now correct 
+1. LAScatalog processing engine:
+    *  `catalog_apply()` gains an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for automatic merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. return a `list`. Thus there is no danger at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility but will be switched to `TRUE` in next releases.
+    
+    * `opt_output_file()` now interprets `*` as `{ORIGINALFILENAME}` for shorter syntax. The following is now correct 
     
     ```R
     opt_output_file(ctg) <- "/home/user/data/norm/*_norm"  # {*} is valid as well
     # instead of
     opt_output_file(ctg) <- "/home/user/data/norm/{ORIGINALFILENAME}_norm"
+    ```
+    
+2. 3D rendering:
+    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows do not specify this argument event when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
+    
+    ```R
+    plot(las)
+    plot(las, color = "Intensity")
+    plot(las, color = "ReturnNumber")
+    plot(las, color = "Classification")
     ```
     
 #### ENHANCEMENT
