@@ -245,8 +245,6 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
       colorPalette = height.colors(50)
   }
 
-  if (autocol)
-
   if (use_rgb & use_pcv)
     col <- "RGB"
   else if (use_rgb & use_rgl)
