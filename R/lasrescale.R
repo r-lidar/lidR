@@ -101,7 +101,7 @@ lasreoffset = function(las, xoffset, yoffset, zoffset)
   {
     assert_is_a_number(zoffset)
 
-    newZX <- suppressWarnings(as.integer((zrange - zoffset)/zscale) * zscale + zoffset)
+    newZ <- suppressWarnings(as.integer((zrange - zoffset)/zscale) * zscale + zoffset)
     if (anyNA(newZ)) stop("Incorrect zoffset: integer overflow.", call. = FALSE)
 
     newZ <- as.integer((las@data[["Z"]] - zoffset)/zscale) * zscale + zoffset
