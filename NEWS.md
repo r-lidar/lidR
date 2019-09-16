@@ -14,7 +14,7 @@
     ```
     
 2. 3D rendering:
-    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows do not specify this argument event when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
+    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows to do not specify this argument even when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
     
     ```R
     plot(las)
@@ -48,6 +48,8 @@
     ```
     
 2. There are more than 100 new unit tests in `testthat`. The coverage increased from 68% to 87%
+
+3. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
 
 #### FIXES
 
