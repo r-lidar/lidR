@@ -147,6 +147,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_point_metrics
+List C_point_metrics(S4 las, unsigned int k, DataFrame sub, SEXP call, SEXP env);
+RcppExport SEXP _lidR_C_point_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP subSEXP, SEXP callSEXP, SEXP envSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type sub(subSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type call(callSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, sub, call, env));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_tsearch
 IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int ncpu);
 RcppExport SEXP _lidR_C_tsearch(SEXP DSEXP, SEXP PSEXP, SEXP XSEXP, SEXP ncpuSEXP) {
@@ -334,6 +348,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
+    {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 5},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},

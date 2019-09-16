@@ -23,6 +23,8 @@
     plot(las, color = "Classification")
     ```
     
+3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `lasmetrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
+    
 #### ENHANCEMENT
 
 1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewriten and changed for a grid partion which is twice faster than the former QuadTree. This change provides a significant boost (up to twice faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.

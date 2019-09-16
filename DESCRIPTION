@@ -121,6 +121,7 @@ Collate:
     'methods-LASheader.r'
     'plot.r'
     'plot.s3.r'
+    'point_metrics.R'
     'print.r'
     'projection.r'
     'tree_detection.r'

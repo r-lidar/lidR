@@ -104,6 +104,14 @@ NumericVector C_rasterize(S4 las, S4 layout, double subcircle = 0, int method = 
   return pt.rasterize(layout, subcircle, method);
 }
 
+// [[Rcpp::export(rng = false)]]
+List C_point_metrics(S4 las, unsigned int k, DataFrame sub, SEXP call, SEXP env)
+{
+  LAS pt(las);
+  DataFrame data = as<DataFrame>(las.slot("data"));
+  return pt.knn_metrics(k, data, sub, call, env);
+}
+
 /*
  * ======= TRIANGULATION FUNCTIONS =========
  */
