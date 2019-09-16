@@ -1,6 +1,6 @@
 #include "GridPartition.h"
 
-GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y)
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
 {
   if (x.size() != x.size()) Rcpp::stop("Internal error in GridPartition. x and y have different sizes.");
 
@@ -46,7 +46,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVe
   }
 }
 
-GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const std::vector<bool>& f)
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const std::vector<bool>& f)
 {
   if (x.size() != y.size()) Rcpp::stop("Internal error in GridPartition. x and y have different sizes.");
   if (x.size() != f.size()) Rcpp::stop("Internal error in GridPartition. x and f have different sizes.");
@@ -103,14 +103,14 @@ GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVe
   }
 }
 
-GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericVector& z) : GridPartition(x,y)
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z) : GridPartition(x,y)
 {
   if (x.size() != z.size()) Rcpp::stop("Internal error in GridPartition. x and z have different sizes.");
   this->use3D = true;
   this->Z = z;
 }
 
-GridPartition::GridPartition(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericVector& z, const std::vector<bool>& f) : GridPartition(x,y,f)
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z, const std::vector<bool>& f) : GridPartition(x,y,f)
 {
   if (x.size() != z.size()) Rcpp::stop("Internal error in GridPartition. x and z have different sizes.");
   this->use3D = true;

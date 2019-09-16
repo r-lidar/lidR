@@ -25,10 +25,10 @@ class GridPartition
     Rcpp::NumericVector Z;
 
   public:
-    GridPartition(const Rcpp::NumericVector&, const Rcpp::NumericVector&);
-    GridPartition(const Rcpp::NumericVector&, const Rcpp::NumericVector&, const std::vector<bool>&);
-    GridPartition(const Rcpp::NumericVector&, const Rcpp::NumericVector&, const Rcpp::NumericVector&);
-    GridPartition(const Rcpp::NumericVector&, const Rcpp::NumericVector&, const Rcpp::NumericVector&, const std::vector<bool>&);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const std::vector<bool>&);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector, const std::vector<bool>&);
     bool insert(const Point&);
     template<typename T> void lookup(T& shape, std::vector<Point*>&);
     template<typename T> void lookup(T& shape, std::vector<PointXYZ>&);

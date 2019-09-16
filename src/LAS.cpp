@@ -929,3 +929,53 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
 
   return raster;
 }
+
+List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, SEXP env)
+{
+  List output(npoints);
+  SpatialIndex tree(X,Y,Z);
+  Progress pb(npoints, "Metrics computation: ");
+  bool abort = false;
+
+  for(auto i = 0 ; i < npoints ; ++i) {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+
+    PointXYZ p(X[i], Y[i], Z[i]);
+    std::vector<PointXYZ> pts;
+    tree.knn(p, k, pts);
+
+    Rcpp::DataFrame::iterator it2 = sub.begin();
+    for(Rcpp::DataFrame::iterator it1 = data.begin() ; it1 != data.end() ; ++it1) {
+      switch( TYPEOF(*it1) ) {
+        case REALSXP: {
+          Rcpp::NumericVector tmp1 = Rcpp::as<Rcpp::NumericVector>(*it1);
+          Rcpp::NumericVector tmp2 = Rcpp::as<Rcpp::NumericVector>(*it2);
+          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          break;
+        }
+        case INTSXP: {
+          Rcpp::IntegerVector tmp1 = Rcpp::as<Rcpp::IntegerVector>(*it1);
+          Rcpp::IntegerVector tmp2 = Rcpp::as<Rcpp::IntegerVector>(*it2);
+          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          break;
+        }
+        case LGLSXP: {
+          Rcpp::LogicalVector tmp1 = Rcpp::as<Rcpp::LogicalVector>(*it1);
+          Rcpp::LogicalVector tmp2 = Rcpp::as<Rcpp::LogicalVector>(*it2);
+          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          break;
+        }
+        default: {
+          Rcpp::stop("Incompatible SEXP encountered; only accepts DataFrame with REALSXPs, INTSXPs and LGLSXPs");
+        }
+      }
+      ++it2;
+    }
+
+    output[i] = Rf_eval(call, env);
+  }
+
+  return output;
+}
