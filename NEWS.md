@@ -23,7 +23,11 @@
     plot(las, color = "Classification")
     ```
     
-3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `lasmetrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
+3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
+
+#### CHANGES
+
+1. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.
     
 #### ENHANCEMENT
 

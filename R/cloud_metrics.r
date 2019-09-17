@@ -29,7 +29,7 @@
 
 #' Compute metrics for a cloud of points
 #'
-#' \code{lasmetrics} computes a series of user-defined descriptive statistics for a LiDAR dataset.
+#' \code{cloud_metrics} computes a series of user-defined descriptive statistics for a LiDAR dataset.
 #' See \link[lidR:grid_metrics]{grid_metrics} to compute metrics on a grid. Basically there are
 #' no predefined metrics. Users must write their own functions to create metrics (see example).
 #' The following existing functions can serve as a guide to help users compute their own metrics:
@@ -53,8 +53,8 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' lasmetrics(lidar, ~max(Z))
-#' lasmetrics(lidar, ~mean(Intensity))
+#' cloud_metrics(lidar, ~max(Z))
+#' cloud_metrics(lidar, ~mean(Intensity))
 #'
 #' # Define your own new metrics
 #' myMetrics = function(z, i)
@@ -68,17 +68,17 @@
 #'    return(metrics)
 #' }
 #'
-#' metrics = lasmetrics(lidar, ~myMetrics(Z, Intensity))
+#' metrics = cloud_metrics(lidar, ~myMetrics(Z, Intensity))
 #'
 #' # Predefined metrics
-#' lasmetrics(lidar, .stdmetrics)
-lasmetrics = function(las, func)
+#' cloud_metrics(lidar, .stdmetrics)
+cloud_metrics = function(las, func)
 {
-  UseMethod("lasmetrics", las)
+  UseMethod("cloud_metrics", las)
 }
 
 #' @export
-lasmetrics.LAS = function(las, func)
+cloud_metrics.LAS = function(las, func)
 {
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
@@ -89,12 +89,12 @@ lasmetrics.LAS = function(las, func)
 }
 
 #' @export
-lasmetrics.LAScluster = function(las, func)
+cloud_metrics.LAScluster = function(las, func)
 {
   las <- readLAS(las)
   if (is.empty(las)) return(NULL)
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
-  return(lasmetrics(las, func))
+  return(cloud_metrics(las, func))
 }
 
