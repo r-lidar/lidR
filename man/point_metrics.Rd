@@ -52,3 +52,62 @@ Everything that works in \link{grid_metrics} should work as well in \code{point_
 be meaningless. For example computing the quantile of elevation does not really makes sense here.
 }
 
+\examples{
+\dontrun{
+LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+
+# Read only 0.5 points/m^2 for the purpose of this example
+las = readLAS(LASfile, filter = "-thin_with_grid 2")
+
+# Computes the eigenvalues of the covariance matrix of the neighbouring
+# points and applies a test on these values. This function simulates the
+# 'shp_plane()' algorithm from 'lasdetectshape()'
+plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
+  xyz <- cbind(x,y,z)
+  cov_m <- cov(xyz)
+  eigen_m <- eigen(cov_m)
+  is_planar <- eigen_m$values[2] > (th1*eigen_m$values[3]) && (th2*eigen_m$values[2]) > eigen_m$values[1]
+  return(list(planar = is_planar))
+}
+
+# Apply user-defined function
+M <- point_metrics(las, plane_metrics1(X,Y,Z), k = 8)
+#> Computed in 3.8 seconds
+
+# We can verify that it returns the same as 'shp_plane'
+system.time(las <- lasdetectshape(las, shp_plane(), "planar"))
+#> Computed in 0.05 second
+
+all.equal(M$planar, las$planar)
+
+# At this stage we can be clever and find that the bottleneck is
+# the eigen value computation. Let write a C++ version of it with
+# Rcpp and RcppArmadillo
+Rcpp::sourceCpp(code = "
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+
+// [[Rcpp::export]]
+SEXP eigen_values(arma::mat A) {
+arma::mat coeff;
+arma::mat score;
+arma::vec latent;
+arma::princomp(coeff, score, latent, A);
+return(Rcpp::wrap(latent));
+}")
+
+plane_metrics2 = function(x,y,z, th1 = 25, th2 = 6) {
+  xyz <- cbind(x,y,z)
+  eigen_m <- eigen_values(xyz)
+  is_planar <- eigen_m[2] > (th1*eigen_m[3]) && (th2*eigen_m[2]) > eigen_m[1]
+return(list(planar = is_planar))
+}
+
+M <- point_metrics(las, plane_metrics2(X,Y,Z), k = 8)
+#> Computed in 0.25 seconds
+
+all.equal(M$planar, las$planar)
+# Here we can see that the optimized version is way better but we is still far 5 times slower
+# because of the overhead of calling R functions and making back and forth from R to C++.
+}
+}

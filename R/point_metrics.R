@@ -38,7 +38,6 @@
 #' }
 #' Everything that works in \link{grid_metrics} should work as well in \code{point_metrics} but might
 #' be meaningless. For example computing the quantile of elevation does not really makes sense here.
-#'
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -96,7 +95,7 @@
 #' all.equal(M$planar, las$planar)
 #' # Here we can see that the optimized version is way better but we is still far 5 times slower
 #' # because of the overhead of calling R functions and making back and forth from R to C++.
-#'
+#' }
 #' @export
 point_metrics <- function(las, func, k = 8) {
   UseMethod("point_metrics", las)
