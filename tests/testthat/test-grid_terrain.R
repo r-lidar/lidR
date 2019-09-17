@@ -40,6 +40,7 @@ test_that("grid_terrain works with delaunay", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
+
   expect_equal(mean(error[], na.rm = TRUE), 0.0739, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])

@@ -459,6 +459,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
       seeds[cells] = ids
       treetops = raster::as.matrix(seeds)
 
+      Canopy <- Canopy/max(Canopy)
       Canopy <- imager::as.cimg(Canopy)
       treetops  <- imager::as.cimg(treetops)
       Crowns <- imager::watershed(treetops, Canopy)
