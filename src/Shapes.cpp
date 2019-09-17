@@ -1,6 +1,6 @@
 #include "Shapes.h"
 
-#define EPSILON 1e-9
+#define EPSILON 2e-6
 
 Shape::Shape()
 {
