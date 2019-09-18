@@ -134,6 +134,27 @@ test_that("catalog_apply writes in file if option is set", {
   expect_true(all(file.exists(req)))
 })
 
+test_that("catalog_apply use alternative directories", {
+
+  test <- function(cluster)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    return(0)
+  }
+
+  realdir <- paste0(dirname(ctg$filename[1]), "/")
+  falsedir <- "/home/user/data/"
+
+  ctg@data$filename <- paste0(falsedir,basename(ctg$filename))
+
+  expect_error(catalog_apply(ctg, test))
+
+  ctg@input_options$alt_dir = c(falsedir,realdir)
+
+  expect_error(catalog_apply(ctg, test), NA)
+})
+
 test_that("catalog_apply can write with custom drivers", {
 
   test <- function(cluster)

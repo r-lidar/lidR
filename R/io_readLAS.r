@@ -113,6 +113,16 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
   assert_is_a_string(select)
   assert_is_a_string(filter)
 
+  if (!all(file.exists(files@files)) && files@alt_dir != "") {
+    for (alt_dir in files@alt_dir) {
+      paths <- paste0(alt_dir, basename(files@files))
+      if (all(file.exists(paths))) break
+    }
+    files@files <- paths
+  }
+
+  if (!all(file.exists(files@files))) stop("File not found", call. = FALSE)
+
   buffer <- X <- Y <- NULL
 
   las <- readLAS(files@files, files@select,files@filter)

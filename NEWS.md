@@ -12,6 +12,12 @@
     # instead of
     opt_output_file(ctg) <- "/home/user/data/norm/{ORIGINALFILENAME}_norm"
     ```
+    * The engine now supports "alternative directories". This is a very specific and undocumented feature useful in a single case of remote computing. More details in the [wiki page](https://github.com/Jean-Romain/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets).
+    
+    ```r
+    ctg = readLAScatalog("~/folder/LASfiles/")
+    ctg@input_options$alt_dir = c("/home/Alice/data/", "/home/Bob/remote/project1/data/")
+    ```
     
 2. 3D rendering:
     * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows to do not specify this argument even when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).

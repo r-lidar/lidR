@@ -265,7 +265,8 @@ setMethod("initialize", "LAScatalog", function(.Object)
 
   .Object@input_options <- list(
     select = "*",
-    filter = ""
+    filter = "",
+    alt_dir = ""
   )
 
   return(.Object)
