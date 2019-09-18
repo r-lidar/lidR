@@ -120,6 +120,7 @@
 #' # ~50% faster and uses ~10x less memory
 #' las = readLAS(LASfile, filter = "-keep_first")
 #' metrics = grid_metrics(las, ~mean(Z), 20)
+#' @family metrics
 grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
   UseMethod("grid_metrics", las)

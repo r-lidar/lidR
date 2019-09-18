@@ -73,6 +73,7 @@
 #' plot(voxels, color = "imean")
 #' #etc.
 #' }
+#' @family metrics
 grid_metrics3d = function(las, func, res = 1)
 {
   stopifnotlas(las)

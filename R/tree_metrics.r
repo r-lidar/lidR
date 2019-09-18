@@ -84,6 +84,7 @@
 #' # predefined metrics (see ?stdmetrics)
 #' metrics = tree_metrics(las, .stdtreemetrics)
 #' @export
+#' @family metrics
 tree_metrics = function(las, func = ~max(Z), attribute = "treeID")
 {
   UseMethod("tree_metrics", las)

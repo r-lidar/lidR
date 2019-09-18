@@ -56,4 +56,9 @@ cloud_metrics(lidar, .stdmetrics)
 \link[lidR:entropy]{entropy}
 \link[lidR:VCI]{VCI}
 \link[lidR:LAD]{LAD}
+
+Other metrics: \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics3d}}, \code{\link{grid_metrics}},
+  \code{\link{point_metrics}}, \code{\link{tree_metrics}}
 }
+\concept{metrics}

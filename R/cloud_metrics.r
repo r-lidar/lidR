@@ -72,6 +72,7 @@
 #'
 #' # Predefined metrics
 #' cloud_metrics(lidar, .stdmetrics)
+#' @family metrics
 cloud_metrics = function(las, func)
 {
   UseMethod("cloud_metrics", las)

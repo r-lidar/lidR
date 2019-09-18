@@ -99,3 +99,10 @@ metrics = tree_metrics(las, ~myMetrics(Z, Intensity))
 # predefined metrics (see ?stdmetrics)
 metrics = tree_metrics(las, .stdtreemetrics)
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics3d}}, \code{\link{grid_metrics}},
+  \code{\link{point_metrics}}
+}
+\concept{metrics}

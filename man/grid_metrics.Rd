@@ -148,3 +148,10 @@ metrics = grid_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
 las = readLAS(LASfile, filter = "-keep_first")
 metrics = grid_metrics(las, ~mean(Z), 20)
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics3d}},
+  \code{\link{point_metrics}}, \code{\link{tree_metrics}}
+}
+\concept{metrics}

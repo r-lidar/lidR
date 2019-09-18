@@ -97,6 +97,7 @@
 #' # because of the overhead of calling R functions and making back and forth from R to C++.
 #' }
 #' @export
+#' @family metrics
 point_metrics <- function(las, func, k = 8) {
   UseMethod("point_metrics", las)
 }

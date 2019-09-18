@@ -54,3 +54,10 @@ plot(voxels, color = "imean")
 #etc.
 }
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics}}, \code{\link{point_metrics}},
+  \code{\link{tree_metrics}}
+}
+\concept{metrics}

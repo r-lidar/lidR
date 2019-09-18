@@ -111,3 +111,10 @@ all.equal(M$planar, las$planar)
 # because of the overhead of calling R functions and making back and forth from R to C++.
 }
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics3d}}, \code{\link{grid_metrics}},
+  \code{\link{tree_metrics}}
+}
+\concept{metrics}

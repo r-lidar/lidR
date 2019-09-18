@@ -77,6 +77,7 @@
 #' hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
 #' hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
 #' hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
+#' @family metrics
 grid_hexametrics = function(las, func, res = 20)
 {
   stopifnotlas(las)
