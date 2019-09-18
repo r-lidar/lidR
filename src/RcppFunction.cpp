@@ -113,27 +113,6 @@ List C_point_metrics(S4 las, unsigned int k, DataFrame sub, SEXP call, SEXP env)
 }
 
 /*
- * ======= TRIANGULATION FUNCTIONS =========
- */
-
-
-#include "Triangulation.h"
-
-// [[Rcpp::export(rng = false)]]
-IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int ncpu)
-{
-  Triangulator tri(D, P, ncpu);
-  return tri.search(X);
-}
-
-// [[Rcpp::export(rng = false)]]
-NumericMatrix C_tinfo(IntegerMatrix D, NumericMatrix X)
-{
-  Triangulator tri(D, X);
-  return tri.info();
-}
-
-/*
  * ======= FAST BASE FUNCTIONS =========
  */
 

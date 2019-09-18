@@ -55,6 +55,26 @@
 
 3. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
 
+4. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation is now 100% written C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+
+    ```r
+    # 1.7 million ground points
+    set_lidr_threads(n)
+    grid_terrain(las, 0.5, tin())
+    #> v2.1: 1 core: 48s - 4 cores: 37s
+    #> v2.2: 1 core: 22s - 4 cores: 20s
+    
+    # 560 thoushand first returns (1.6 pts/m²)
+    grid_canopy(las, res = 0.5, dsmtin())
+    #> v2.1: 1 core: 8s - 4 cores: 7s
+    #> v2.2: 1 core: 3s - 4 cores: 3s
+    
+    # 560 thoushand first returns (1.6 pts/m²)
+    grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+    #> v2.1: 1 core: 30s - 4 cores: 28s
+    #> v2.2: 1 core: 11s - 4 cores: 9s
+    ```
+
 #### FIXES
 
 1. Several minor fixes in `lascheck()`  for very unpropable cases of `LAS` objects likely to have been modified by hand.

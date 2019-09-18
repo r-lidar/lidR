@@ -2,13 +2,13 @@ context("grid_terrain")
 
 las <- lidR:::dummy_las(5000)
 projection(las) <- sp::CRS("+init=epsg:4326")
-las@data[, Z := Z + 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y)]
+las@data[, Z := round(Z + 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)]
 
 tdtm   <- lidR:::rOverlay(las, 1)
 xy     <- raster::xyFromCell(tdtm, 1:raster::ncell(tdtm))
 X      <- xy[,1]
 Y      <- xy[,2]
-tdtm[] <- 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y)
+tdtm[] <- round(0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)
 
 test_that("grid_terrain works with knnidw", {
 
@@ -22,7 +22,7 @@ test_that("grid_terrain works with knnidw", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(error[], na.rm = TRUE), 0.155768, tolerance = 0.00001)
+  expect_equal(mean(error[], na.rm = TRUE), 0.1557, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -59,7 +59,7 @@ test_that("grid_terrain works with kriging", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(error[], na.rm = TRUE), 0.0603822, tolerance = 0.000015)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0604, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))

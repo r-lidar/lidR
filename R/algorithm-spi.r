@@ -49,10 +49,10 @@
 #' plot_dtm3d(dtm)
 tin = function()
 {
-  f = function(what, where)
+  f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z    <- interpolate_delaunay(what, where)
+    z    <- C_interpolate_delaunay(what, where, scales, offsets, -Inf, -Inf, getThreads())
     isna <- is.na(z)
     nnas <- sum(isna)
     if (nnas > 0) z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
@@ -89,7 +89,7 @@ tin = function()
 #' plot_dtm3d(dtm)
 knnidw = function(k = 10, p = 2)
 {
-  f = function(what, where)
+  f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "knnidw")
     return(interpolate_knnidw(what, where, k, p))
@@ -128,7 +128,7 @@ knnidw = function(k = 10, p = 2)
 #' plot_dtm3d(dtm)
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
-  f = function(what, where)
+  f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "kriging")
     return(interpolate_kriging(what, where, model, k))
@@ -146,7 +146,6 @@ interpolate_knnidw = function(points, coord, k, p)
 
 interpolate_kriging = function(points, coord, model, k)
 {
-  requireNamespace("gstat")
   X <- Y <- Z <- NULL
 
   if (!getOption("lidR.verbose"))
@@ -157,13 +156,4 @@ interpolate_kriging = function(points, coord, model, k)
   sink()
 
   return(x$var1.pred)
-}
-
-interpolate_delaunay <- function(points, coord, trim = 0)
-{
-  P <- as.matrix(points)
-  X <- as.matrix(coord)
-  D <- tDelaunay(P, trim = trim)
-  Z <- tInterpolate(D, P, X, getThreads())
-  return(Z)
 }
