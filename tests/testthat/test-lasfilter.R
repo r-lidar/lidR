@@ -1,6 +1,5 @@
 context("lasfilter")
 
-set.seed(42)
 las = lidR:::dummy_las(500)
 
 test_that("filter works", {
@@ -8,7 +7,7 @@ test_that("filter works", {
   expect_equal(npoints(las2), 230)
 
   las2 = lasfilter(las, Intensity > 25)
-  expect_equal(npoints(las2), 304)
+  expect_equal(npoints(las2), 294)
 
   expect_error(lasfilter(las, plop > 25), "'plop'")
 })
