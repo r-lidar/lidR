@@ -323,7 +323,8 @@ lascheck.LAS = function(las)
     if (!failure)
       ok()
   }
-  else if (swkt != "")
+
+  if (swkt != "")
   {
     codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
 
@@ -345,7 +346,8 @@ lascheck.LAS = function(las)
     if (!failure)
       ok()
   }
-  else
+
+  if (code == 0 | swkt == "")
   {
     if (!is.na(lasproj@projargs))
     { warn("A proj4string found but no CRS in the header") ; failure = TRUE }

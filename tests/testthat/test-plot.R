@@ -10,6 +10,39 @@ test_that("plot LAS works", {
   rgl::rgl.close()
 })
 
+test_that("plot LAS works with attributes", {
+
+  las@data$treeID <- sample(1:3, npoints(las), T)
+  las@data$R <- 255
+  las@data$G <- 125
+  las@data$B <- 125
+
+  expect_error(plot(las, color = "Intensity"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "Classification"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "ScanAngleRank"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "ReturnNumber"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "Synthetic_flag"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "treeID"), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(las, color = "RGB", nbits = 8), NA)
+  rgl::rgl.close()
+})
+
+test_that("plot LAS does not work with missing attributes", {
+  expect_error(plot(las, color = "Plop"), "color' should refer to an attribute")
+})
+
 test_that("plot LAS works with legend", {
   expect_error(plot(las, legend = TRUE, axis = TRUE), NA)
   rgl::rgl.close()
@@ -18,6 +51,10 @@ test_that("plot LAS works with legend", {
 test_that("plot LAS works with artifact", {
   expect_error(plot(las, clear_artifact = FALSE), NA)
   rgl::rgl.close()
+})
+
+test_that("plot LAS does not works with 0 points", {
+  expect_error(plot(lasfilter(las, Z > 1000)), "Cannot display an empty point cloud")
 })
 
 test_that("plot LASheader works", {

@@ -3,7 +3,9 @@ context("point_metrics")
 X = c(0,1,0,1,0,1)
 Y = c(0,0,0.5,0.5,1,1)
 Z = c(0,1,0.5,1.5,1,2)
-D = data.table::data.table(X,Y,Z)
+I = 1:6
+J = rep(TRUE, 6)
+D = data.table::data.table(X,Y,Z,I,J)
 las = LAS(D)
 
 test_that("points_metrics works with a single metric", {

@@ -8,6 +8,11 @@ las1@data[5, Classification := 2L]
 las1@data[6, Classification := 2L]
 las1@data$gpstime <- 0
 las1@proj4string <- sp::CRS("+init=epsg:26917")
+las1@header@PHB[["X scale factor"]] <- 0.123
+las1@header@PHB[["Y scale factor"]] <- 0.123
+las1@header@PHB[["Z scale factor"]] <- 0.123
+las1@header@PHB[["Point Data Format ID"]] <- 25
+
 
 LASfile <- system.file("extdata", "extra_byte.laz", package = "rlas")
 las2     <- readLAS(LASfile)

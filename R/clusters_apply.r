@@ -215,10 +215,10 @@ engine_progress_bar <- function(n, prgss = FALSE)
   if (!prgss)
     return(pb)
 
+  # nocov start
   if (!interactive())
     return(n)
 
-  # nocov start
   if (requireNamespace("progress", quietly = TRUE))
     pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = n, clear = FALSE)
   else

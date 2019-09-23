@@ -373,7 +373,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 {
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
-  if (opt_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE)
+  if (opt_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE) # nocov
 
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)

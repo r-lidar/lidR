@@ -51,7 +51,7 @@ void LAS::new_filter(LogicalVector b)
   else if (b.size() == npoints)
     this->filter = Rcpp::as< std::vector<bool> >(b);
   else
-    Rcpp::stop("Internal error in 'new_filter");
+    Rcpp::stop("Internal error in 'new_filter"); // nocov
 }
 
 /*void LAS::apply_filter()
@@ -301,7 +301,7 @@ void LAS::filter_with_grid(S4 layout)
     if (x == xmax) col = ncols-1;
 
     if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point of raster.");
+      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point of raster."); // nocov
 
     int cell = row * ncols + col;
 
@@ -397,7 +397,7 @@ void LAS::filter_in_polygon(std::string wkt)
     }
   }
   else
-    Rcpp::stop("Unexpected error in point in polygon: WKT is not a POLYGON or MULTIPOLYGON");
+    Rcpp::stop("Unexpected error in point in polygon: WKT is not a POLYGON or MULTIPOLYGON"); // nocov
 
   return;
 }
@@ -459,7 +459,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
 void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
 {
   if (ws.size() != th.size())
-    Rcpp::stop("Internal error in 'filter_progressive_morphology'");
+    Rcpp::stop("Internal error in 'filter_progressive_morphology'"); // nocov
 
   for (int i = 0 ; i < ws.size() ; i++)
   {
@@ -760,9 +760,9 @@ IntegerVector LAS::segment_trees(double dt1, double dt2, double Zu, double R, do
     {
       if (p.check_interrupt())
       {
-        for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i];
-        delete dummy;
-        p.exit();
+        for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i]; // nocov
+        delete dummy; // nocov
+        p.exit(); // nocov
       }
 
       p.update(ni-n);
@@ -899,7 +899,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
         if (x == xmax) col = ncols-1;
 
         if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-          Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster.");
+          Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); // nocov
 
         int cell = row * ncols + col;
         raster(cell) = f(raster(cell), z);
@@ -920,7 +920,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
       if (x == xmax) col = ncols-1;
 
       if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-        Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster.");
+        Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); // nocov
 
       int cell = row * ncols + col;
       raster(cell) = f(raster(cell), z);

@@ -263,3 +263,24 @@ test_that("catalog_apply automerge works with LAS", {
   expect_is(req3, "LAScatalog")
 })
 
+test_that("catalog_apply return partial ouptut generates logs", {
+
+  test <- function(cluster)
+  {
+    if (raster::extent(cluster)@ymin > 80)
+      stop("Test error")
+
+    return(0)
+  }
+
+  opt_chunk_size(ctg) <- 0
+  opt_wall_to_wall(ctg) <- FALSE
+
+  req = suppressMessages(catalog_apply(ctg, test))
+
+  expect_is(req, "list")
+  expect_equal(length(req), 2)
+  expect_message(catalog_apply(ctg, test), "chunk3.rds")
+  expect_message(catalog_apply(ctg, test), "Test error")
+})
+

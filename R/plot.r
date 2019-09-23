@@ -215,7 +215,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   value_index <- FALSE
 
   if (is.empty(x))         stop("Cannot display an empty point cloud", call. = FALSE)
-  if (use_pcv & !has_pcv)  stop("'PointCloudViewer' package is needed. Please read documentation.", call. = FALSE)
+  if (use_pcv & !has_pcv)  stop("'PointCloudViewer' package is needed. Please read documentation.", call. = FALSE) # nocov
   if (length(color) > 1)   stop("'color' should contain a single value.", call. = FALSE)
   if (!use_rgb & !has_col) stop("'color' should refer to an attribute of the LAS data.", call. = FALSE)
   if (use_rgb & !has_rgb)  stop("No 'RGB' attributes found.", call. = FALSE)
@@ -258,7 +258,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   if (use_rgl)
     lasplot <- .plot_with_rgl
   else
-    lasplot <- .plot_with_pcv
+    lasplot <- .plot_with_pcv # nocov
 
   return(lasplot(x, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args, value_index))
 }

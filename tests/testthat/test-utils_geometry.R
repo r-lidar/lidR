@@ -181,4 +181,18 @@ test_that("tinfo works", {
   expect_equal(I[6], 1/2)
 })
 
+test_that("delaunay produces the correct output", {
+
+  ps <- data.frame(
+    X = c(0, -1, 1, -1, 1, -1, 1, -1, 1),
+    Y = c(0, -1, -1, 1, 1, -1, -1, 1, 1),
+    Z = c(0, -1, -1, -1, -1, 1, 1, 1, 1))
+
+  expected = structure(c(4L, 1L, 4L, 5L, 2L, 2L, 1L, 1L, 1L, 3L, 5L, 3L), .Dim = 4:3)
+
+  ts <- lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0))
+
+  expect_is(ts, "matrix")
+  expect_equal(ts, expected)
+})
 
