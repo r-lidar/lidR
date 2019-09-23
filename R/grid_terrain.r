@@ -91,7 +91,17 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
   if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' data")
   if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.")
 
+  # Non standart evaluation (R CMD check)
   . <- X <- Y <- Z <- Classification <- NULL
+
+  # Delaunay triangulation with boost requiere to
+  # compute back integer coordinates
+  xscale  <- las@header@PHB[["X scale factor"]]
+  yscale  <- las@header@PHB[["Y scale factor"]]
+  xoffset <- las@header@PHB[["X offset"]]
+  yoffset <- las@header@PHB[["Y offset"]]
+  scales  <- c(xscale, yscale)
+  offsets <- c(xoffset, yoffset)
 
   # Select the ground points
   ground <- las@data[Classification == LASGROUND, .(X,Y,Z)]
@@ -116,7 +126,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
   # Interpolate the terrain
   verbose("Interpolating ground points...")
   lidR.context <- "grid_terrain"
-  Zg <- algorithm(ground, grid)
+  Zg <- algorithm(ground, grid, scales, offsets)
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
   suppressWarnings(layout[cells] <- Zg)
 

@@ -117,7 +117,6 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
 {
   assert_is_a_bool(na.rm)
 
-
   if (is(algorithm, "RasterLayer"))
   {
     Zground <- raster::extract(algorithm, coordinates(las))
@@ -135,13 +134,26 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
     if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
     if (fast_countequal(las@data$Classification, LASGROUND) == 0) stop("No ground point found in the point cloud.")
 
+    # Non standart evaluation (R CMD check)
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
+
+    # Delaunay triangulation with boost requiere to
+    # compute back integer coordinates
+    xscale  <- las@header@PHB[["X scale factor"]]
+    yscale  <- las@header@PHB[["Y scale factor"]]
+    zscale  <- las@header@PHB[["Z scale factor"]]
+    xoffset <- las@header@PHB[["X offset"]]
+    yoffset <- las@header@PHB[["Y offset"]]
+    scales  <- c(xscale, yscale)
+    offsets <- c(xoffset, yoffset)
+
+    # Select the ground points
+    ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
+    ground  <- check_degenerated_points(ground)
 
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "lasnormalize"
-    ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
-    ground  <- check_degenerated_points(ground)
-    Zground <- algorithm(ground, las@data)
+    Zground <- algorithm(ground, las@data, scales, offsets)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
@@ -156,7 +168,9 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
   if (!"Zref" %in% names(las@data))
     las@data[["Zref"]] <- las@data[["Z"]]
 
-  las@data[["Z"]] <- round(las@data[["Z"]] - Zground, 3)
+  accuracy <- floor(log10(1/zscale))
+  Zground <- round(Zground, accuracy)
+  las@data[["Z"]] <- round(las@data[["Z"]] - Zground, accuracy)
 
   if (nnas > 0 && na.rm == TRUE)
   {

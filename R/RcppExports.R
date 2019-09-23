@@ -5,6 +5,18 @@ C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
 
+C_delaunay <- function(P, scales, offsets) {
+    .Call(`_lidR_C_delaunay`, P, scales, offsets)
+}
+
+C_interpolate_delaunay <- function(P, L, scales, offsets, drop_z_below = 0, drop_triangle_over = 0, ncpu = 1L) {
+    .Call(`_lidR_C_interpolate_delaunay`, P, L, scales, offsets, drop_z_below, drop_triangle_over, ncpu)
+}
+
+C_tinfo <- function(D, P) {
+    .Call(`_lidR_C_tinfo`, D, P)
+}
+
 C_lmf <- function(las, ws, min_height, circular, ncpu) {
     .Call(`_lidR_C_lmf`, las, ws, min_height, circular, ncpu)
 }
@@ -43,14 +55,6 @@ C_rasterize <- function(las, layout, subcircle = 0, method = 1L) {
 
 C_point_metrics <- function(las, k, sub, call, env) {
     .Call(`_lidR_C_point_metrics`, las, k, sub, call, env)
-}
-
-C_tsearch <- function(D, P, X, ncpu) {
-    .Call(`_lidR_C_tsearch`, D, P, X, ncpu)
-}
-
-C_tinfo <- function(D, X) {
-    .Call(`_lidR_C_tinfo`, D, X)
 }
 
 fast_table <- function(x, size = 5L) {

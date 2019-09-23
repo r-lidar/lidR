@@ -22,6 +22,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_delaunay
+IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets);
+RcppExport SEXP _lidR_C_delaunay(SEXP PSEXP, SEXP scalesSEXP, SEXP offsetsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type P(PSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type offsets(offsetsSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_delaunay(P, scales, offsets));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_interpolate_delaunay
+NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double drop_z_below, double drop_triangle_over, int ncpu);
+RcppExport SEXP _lidR_C_interpolate_delaunay(SEXP PSEXP, SEXP LSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP drop_z_belowSEXP, SEXP drop_triangle_overSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type P(PSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type L(LSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type offsets(offsetsSEXP);
+    Rcpp::traits::input_parameter< double >::type drop_z_below(drop_z_belowSEXP);
+    Rcpp::traits::input_parameter< double >::type drop_triangle_over(drop_triangle_overSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_interpolate_delaunay(P, L, scales, offsets, drop_z_below, drop_triangle_over, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_tinfo
+NumericMatrix C_tinfo(IntegerMatrix D, NumericMatrix P);
+RcppExport SEXP _lidR_C_tinfo(SEXP DSEXP, SEXP PSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type D(DSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tinfo(D, P));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lmf
 LogicalVector C_lmf(S4 las, NumericVector ws, double min_height, bool circular, int ncpu);
 RcppExport SEXP _lidR_C_lmf(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP, SEXP ncpuSEXP) {
@@ -158,30 +197,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type call(callSEXP);
     Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
     rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, sub, call, env));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_tsearch
-IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int ncpu);
-RcppExport SEXP _lidR_C_tsearch(SEXP DSEXP, SEXP PSEXP, SEXP XSEXP, SEXP ncpuSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type D(DSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tsearch(D, P, X, ncpu));
-    return rcpp_result_gen;
-END_RCPP
-}
-// C_tinfo
-NumericMatrix C_tinfo(IntegerMatrix D, NumericMatrix X);
-RcppExport SEXP _lidR_C_tinfo(SEXP DSEXP, SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type D(DSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_tinfo(D, X));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -339,6 +354,9 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
+    {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 3},
+    {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
+    {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},
@@ -349,8 +367,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 5},
-    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
-    {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

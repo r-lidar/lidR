@@ -228,8 +228,7 @@ dsmtin = function(max_edge = 0)
 #' plot(chm, col = col)
 #' }
 #' @export
-pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
-{
+pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0) {
   assert_is_numeric(thresholds)
   assert_all_are_non_negative(thresholds)
   assert_is_numeric(max_edge)
@@ -237,23 +236,26 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
   assert_is_a_number(subcircle)
   assert_all_are_non_negative(subcircle)
 
-  if (length(thresholds) > 1L & length(max_edge) < 2L)
+  if (length(thresholds) > 1L & length(max_edge) < 2L) {
     stop("'max_edge' should contain 2 numbers")
+  }
 
   thresholds <- lazyeval::uq(thresholds)
-  max_edge   <- lazyeval::uq(max_edge)
-  subcircle  <- lazyeval::uq(subcircle)
+  max_edge <- lazyeval::uq(max_edge)
+  subcircle <- lazyeval::uq(subcircle)
 
-  f = function(las, layout)
-  {
+  f <- function(las, layout) {
     assert_is_valid_context(LIDRCONTEXTDSM, "pitfree")
 
-    if (!"ReturnNumber" %in% names(las@data))
-      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns")
+    if (!"ReturnNumber" %in% names(las@data)) {
+      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns", call. = FALSE)
+    }
 
-    if (fast_countequal(las@data$ReturnNumber, 1L) == 0)
-      stop("No first returns found. Operation aborted.")
+    if (fast_countequal(las@data$ReturnNumber, 1L) == 0) {
+      stop("No first returns found. Operation aborted.", call. = FALSE)
+    }
 
+    # Non standart evaluation (R CMD check)
     . <- X <- Y <- Z <- ReturnNumber <- NULL
 
     # Initialize the interpolated values with NAs
@@ -261,52 +263,51 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
 
     # Get only first returns and coordinates (nothing else needed)
     verbose("Selecting first returns...")
-
     cloud <- las@data
-    if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data))
-      cloud <- las@data[ReturnNumber == 1L, .(X,Y,Z)]
+    if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data)) {
+      cloud <- las@data[ReturnNumber == 1L, .(X, Y, Z)]
+    }
 
     # subcircle the data
-    if (subcircle > 0)
-    {
+    if (subcircle > 0) {
       verbose("Subcircling points...")
-
-      bbox  <- raster::extent(las)
+      bbox <- raster::extent(las)
       cloud <- subcircled(cloud, subcircle, 8L)
       cloud <- cloud[between(X, bbox@xmin, bbox@xmax) & between(Y, bbox@ymin, bbox@ymax)]
     }
 
+    # TODO: use C++ tools for that.
     verbose("Selecting only the highest points within the grid cells...")
-
-    cells <- raster::cellFromXY(layout, cloud[, .(X,Y)])
-    grid  <- raster::xyFromCell(layout, 1:raster::ncell(layout))
-    grid  <- data.table::as.data.table(grid)
+    cells <- raster::cellFromXY(layout, cloud[, .(X, Y)])
+    grid <- raster::xyFromCell(layout, 1:raster::ncell(layout))
+    grid <- data.table::as.data.table(grid)
     data.table::setnames(grid, c("x", "y"), c("X", "Y"))
     cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
+    # Delaunay triangulation with boost requiere to
+    # compute back integer coordinates
+    xscale <- las@header@PHB[["X scale factor"]]
+    yscale <- las@header@PHB[["Y scale factor"]]
+    xoffset <- las@header@PHB[["X offset"]]
+    yoffset <- las@header@PHB[["Y offset"]]
+    scales <- c(xscale, yscale)
+    offsets <- c(xoffset, yoffset)
+
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
-    i <- 1
-    for (th in thresholds)
-    {
+    for (i in seq_along(thresholds)) {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
-      i <- i + 1
+      th <- thresholds[i]
+      edge <- if (th == 0) max_edge[1] else max_edge[2]
 
-      if (th == 0)
-        edge <- max_edge[1]
-      else
-        edge <- max_edge[2]
-
-      cloud <- cloud[Z >= th]
-
-      if (nrow(cloud) >= 3)
-      {
-        Ztemp <- interpolate_delaunay(cloud, grid, edge)
-        z     <- pmax(z, Ztemp, na.rm = T)
+      if (fast_countover(cloud$Z, th) > 3) {
+        Ztemp <- C_interpolate_delaunay(cloud, grid, scales, offsets, th, edge, getThreads())
+        z <- pmax(z, Ztemp, na.rm = T)
       }
     }
 
-    if (all(is.na(z)))
+    if (all(is.na(z))) {
       stop("Interpolation failed. Input parameters might be wrong.")
+    }
 
     return(z)
   }

@@ -53,11 +53,11 @@ verbose = function(...)
 dummy_las = function(n, seeds = 1)
 {
   set.seed(seeds)
-  X = stats::runif(n, 0, 100)
+  X = round(stats::runif(n, 0, 100), 3)
   set.seed(seeds + 1)
-  Y = stats::runif(n, 0, 100)
+  Y = round(stats::runif(n, 0, 100), 3)
   set.seed(seeds + 2)
-  Z = c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n))
+  Z = round(c(stats::runif(0.8*n, 0, 25), rep(0, 0.2*n)), 3)
   Classification = as.integer(c(rep(1, 0.8*n), rep(2, 0.2*n)))
   set.seed(seeds + 3)
   Intensity = as.integer(stats::runif(n, 10, 50))
@@ -66,7 +66,12 @@ dummy_las = function(n, seeds = 1)
 
   dt = data.table::data.table(X, Y, Z, Classification, Intensity, ReturnNumber, NumberOfReturns)
   las = suppressWarnings(LAS(dt, check = FALSE))
-
+  las@header@PHB[["X scale factor"]] <- 0.001
+  las@header@PHB[["Y scale factor"]] <- 0.001
+  las@header@PHB[["Z scale factor"]] <- 0.001
+  las@header@PHB[["X offset"]] <- 0
+  las@header@PHB[["Y offset"]] <- 0
+  las@header@PHB[["Z offset"]] <- 0
   return(las)
 }
 
