@@ -168,9 +168,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
     las@data[["Zref"]] <- las@data[["Z"]]
 
   zscale  <- las@header@PHB[["Z scale factor"]]
-  accuracy <- floor(log10(1/zscale))
-  Zground <- round(Zground, accuracy)
-  las@data[["Z"]] <- round(las@data[["Z"]] - Zground, accuracy)
+  las@data[["Z"]] <- round_any(las@data[["Z"]] - Zground, zscale)
 
   if (nnas > 0 && na.rm == TRUE)
   {

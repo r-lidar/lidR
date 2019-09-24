@@ -166,8 +166,11 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
     ix = std::round(dx);
     iy = std::round(dy);
 
-    if (std::abs(dx - ix) > 1e-5 || std::abs(dy - iy) > 1e-5)
-      throw Rcpp::exception("Internal error in C_delaunay: xy coordinates were not converted to integer. Scale factors are likely to be invalid.", false);
+    if (std::abs(dx - ix) > 1e-5 || std::abs(dy - iy) > 1e-5) {
+      //Rprintf("%.10f, %d, %.10f \n", dx, ix, dx-ix);
+      //Rprintf("%.10f, %d, %.10f \n", dy, iy, dy-iy);
+      throw Rcpp::exception("Internal error in C_interpolate_delaunay: xy coordinates were not converted to integer. Scale factors are likely to be invalid.", false);
+    }
 
     point_int p(ix, iy, i);
     points.push_back(p);
@@ -230,7 +233,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
         double edge_max = max(edge_AB, edge_AC, edge_BC);
 
         // Interpolate in this triangle if the longest edge fullfil requirements
-        if (trim == 0 || edge_max <= trim)
+        if (trim == 0 || edge_max < trim)
         {
           Triangle tri(A,B,C);
 

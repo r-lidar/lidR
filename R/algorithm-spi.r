@@ -189,7 +189,7 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   # We fall back to the old behavior (v2.1 and above) using the geometry package
 
   message("The rasterization of the delaunay triangulation fall back to the old slow method.")
-  message("This probably means that the xy scale factors are differens and that the fast method cannot be applied.")
+  message("This probably means that the xy scale factors are different and that the fast method cannot be applied.")
 
   P <- as.matrix(points)
   X <- as.matrix(coord)

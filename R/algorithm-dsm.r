@@ -258,9 +258,6 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     # Non standart evaluation (R CMD check)
     . <- .N <- X <- Y <- Z <- ReturnNumber <- NULL
 
-    # Initialize the interpolated values with NAs
-    z <- rep(NA_real_, raster::ncell(layout))
-
     # Get only first returns and coordinates (nothing else needed)
     verbose("Selecting first returns...")
     cloud <- las@data
@@ -282,8 +279,9 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       verbose("Subcircling points...")
       bbox <- raster::extent(las)
       cloud <- subcircled(cloud, subcircle, 8L)
-      cloud <- cloud[between(X, bbox@xmin, bbox@xmax) & between(Y, bbox@ymin, bbox@ymax)]
-      cloud <- cloud[1:.N, `:=`(X = round_any(X, xscale), Y = round_any(Y, yscale))]
+      cloud <- cloud[data.table::between(X, bbox@xmin, bbox@xmax) & data.table::between(Y, bbox@ymin, bbox@ymax)]
+      cloud[1:.N, `:=`(X = round_any(X - xoffset, xscale) + xoffset,
+                       Y = round_any(Y - yoffset, yscale) + yoffset)]
     }
 
     # TODO: use C++ tools for that.
@@ -294,6 +292,9 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     data.table::setnames(grid, c("x", "y"), c("X", "Y"))
     cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
+    # Initialize the interpolated values with NAs
+    z <- rep(NA_real_, raster::ncell(layout))
+
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
     for (i in seq_along(thresholds)) {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
@@ -301,8 +302,8 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       edge <- if (th == 0) max_edge[1] else max_edge[2]
 
       if (fast_countover(cloud$Z, th) > 3) {
-        cloud <- cloud[Z > th]
-        Ztemp <- interpolate_delaunay(cloud, grid, edge, scales, offsets)
+        cloud <- cloud[Z >= th]
+        Ztemp <- lidR:::interpolate_delaunay(cloud, grid, edge, scales, offsets)
         z <- pmax(z, Ztemp, na.rm = T)
       }
     }
