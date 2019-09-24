@@ -22,7 +22,7 @@ test_that("grid_terrain works with knnidw", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(error[], na.rm = TRUE), 0.1557, tolerance = 0.0001)
+  expect_equal(mean(error[], na.rm = TRUE), 0.1558, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -40,7 +40,6 @@ test_that("grid_terrain works with delaunay", {
   expect_equal(names(dtm), "Z")
 
   error <- abs(dtm - tdtm)
-
   expect_equal(mean(error[], na.rm = TRUE), 0.0739, tolerance = 0.0001)
 
   z <- raster::extract(dtm, las@data[, .(X,Y)])
@@ -114,4 +113,22 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
 
   z <- raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
+})
+
+test_that("grid_terrain fails in some specific case", {
+
+  las@header@PHB$`X scale factor` <- 0.002
+  las@header@PHB$`Y scale factor` <- 0.002
+
+  expect_error(grid_terrain(las, 1, tin()))
+
+  las = data.frame(
+    X = runif(10, 0,10),
+    Y = runif(10, 0,10),
+    Z = 1,
+    Classification = 2L)
+
+  las = LAS(las)
+
+  expect_error(grid_terrain(las, 1, tin()), NA)
 })

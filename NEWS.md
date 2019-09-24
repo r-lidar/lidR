@@ -1,5 +1,14 @@
 ## lidR v2.2.0 (Release date: )
 
+#### CHANGES
+
+1. `LAS()` now rounds the values to 2 digits if no header is provided to fits with the default header automatically generated. This ensure to build a perfectly valid  `LAS` object out of external data. This change is made by reference meaning that the original dataset is rounded as well.
+
+```r
+pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copy
+```
+
 #### NEW FEATURES
 
 1. LAScatalog processing engine:
@@ -61,7 +70,7 @@
 
 3. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
 
-4. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation is now 100% written C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+4. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation are now written in C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. However to work, the point cloud must be converted to integers. This implies that the scale factors and offset in the header must be properly populated which might not be the case if user modified these value by hand or if using a point cloud coming from another format than las/laz. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
 
     ```r
     # 1.7 million ground points

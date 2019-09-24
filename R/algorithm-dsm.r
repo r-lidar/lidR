@@ -256,7 +256,7 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     }
 
     # Non standart evaluation (R CMD check)
-    . <- X <- Y <- Z <- ReturnNumber <- NULL
+    . <- .N <- X <- Y <- Z <- ReturnNumber <- NULL
 
     # Initialize the interpolated values with NAs
     z <- rep(NA_real_, raster::ncell(layout))
@@ -268,12 +268,22 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       cloud <- las@data[ReturnNumber == 1L, .(X, Y, Z)]
     }
 
+    # Delaunay triangulation with boost requiere to
+    # compute back integer coordinates
+    xscale <- las@header@PHB[["X scale factor"]]
+    yscale <- las@header@PHB[["Y scale factor"]]
+    xoffset <- las@header@PHB[["X offset"]]
+    yoffset <- las@header@PHB[["Y offset"]]
+    scales <- c(xscale, yscale)
+    offsets <- c(xoffset, yoffset)
+
     # subcircle the data
     if (subcircle > 0) {
       verbose("Subcircling points...")
       bbox <- raster::extent(las)
       cloud <- subcircled(cloud, subcircle, 8L)
       cloud <- cloud[between(X, bbox@xmin, bbox@xmax) & between(Y, bbox@ymin, bbox@ymax)]
+      cloud <- cloud[1:.N, `:=`(X = round_any(X, xscale), Y = round_any(Y, yscale))]
     }
 
     # TODO: use C++ tools for that.
@@ -284,15 +294,6 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     data.table::setnames(grid, c("x", "y"), c("X", "Y"))
     cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
-    # Delaunay triangulation with boost requiere to
-    # compute back integer coordinates
-    xscale <- las@header@PHB[["X scale factor"]]
-    yscale <- las@header@PHB[["Y scale factor"]]
-    xoffset <- las@header@PHB[["X offset"]]
-    yoffset <- las@header@PHB[["Y offset"]]
-    scales <- c(xscale, yscale)
-    offsets <- c(xoffset, yoffset)
-
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
     for (i in seq_along(thresholds)) {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
@@ -300,7 +301,8 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       edge <- if (th == 0) max_edge[1] else max_edge[2]
 
       if (fast_countover(cloud$Z, th) > 3) {
-        Ztemp <- C_interpolate_delaunay(cloud, grid, scales, offsets, th, edge, getThreads())
+        cloud <- cloud[Z > th]
+        Ztemp <- interpolate_delaunay(cloud, grid, edge, scales, offsets)
         z <- pmax(z, Ztemp, na.rm = T)
       }
     }

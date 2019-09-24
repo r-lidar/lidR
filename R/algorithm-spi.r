@@ -52,7 +52,7 @@ tin = function()
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z    <- C_interpolate_delaunay(what, where, scales, offsets, -Inf, -Inf, getThreads())
+    z    <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets)
     isna <- is.na(z)
     nnas <- sum(isna)
     if (nnas > 0) z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
@@ -156,4 +156,43 @@ interpolate_kriging = function(points, coord, model, k)
   sink()
 
   return(x$var1.pred)
+}
+
+interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offsets = c(0,0), options = "QbB")
+{
+  stopifnot(is.numeric(trim), length(trim) == 1L)
+  stopifnot(is.numeric(scales), length(scales) == 2L)
+  stopifnot(is.numeric(offsets), length(offsets) == 2L)
+
+  # It is a LAS object: use fast boost delaunay triangulation
+  if (inherits(points, "LAS")) {
+    xscale  <- points@header@PHB[["X scale factor"]]
+    yscale  <- points@header@PHB[["Y scale factor"]]
+    xoffset <- points@header@PHB[["X offset"]]
+    yoffset <- points@header@PHB[["Y offset"]]
+    scales  <- c(xscale, yscale)
+    offsets <- c(xoffset, yoffset)
+    if (xscale == yscale) {
+      return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
+    }
+  }
+
+  # It is a data.frame with valid scales and offset: use fast boost delaunay triangulation
+  if (is.data.frame(points))
+  {
+    if (scales[1] == scales[2]) {
+      return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
+    }
+  }
+
+  # If we reach such section it means that the LAS object have bad scale factors
+  # We fall back to the old behavior (v2.1 and above) using the geometry package
+
+  message("The rasterization of the delaunay triangulation fall back to the old slow method.")
+  message("This probably means that the xy scale factors are differens and that the fast method cannot be applied.")
+
+  P <- as.matrix(points)
+  X <- as.matrix(coord)
+  D <- tDelaunay(P, trim = trim)
+  return(tInterpolate(D, P, X, getThreads()))
 }

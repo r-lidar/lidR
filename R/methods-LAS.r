@@ -35,6 +35,8 @@
 #' @describeIn LAS-class Create objects of class LAS
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
+  .N <- X <- Y <- Z <- NULL
+
   if (is.data.frame(data))
     data.table::setDT(data)
 
@@ -42,6 +44,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     stop("Invalid parameter data in constructor.")
 
   rlas::is_defined_coordinates(data, "stop")
+  rlas::is_valid_XYZ(data, "stop")
 
   if (is(header, "LASheader"))
     header <- as.list(header)
@@ -49,8 +52,16 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   if (!is.list(header))
     stop("Wrong header object provided.")
 
-  if (length(header) == 0)
+  if (length(header) == 0) {
     header <- rlas::header_create(data)
+    header[["X offset"]] <- round_any(header[["X offset"]], header[["X scale factor"]])
+    header[["Y offset"]] <- round_any(header[["Y offset"]], header[["Y scale factor"]])
+    header[["Z offset"]] <- round_any(header[["Z offset"]], header[["Z scale factor"]])
+    data[1:.N, `:=`(X = round_any(X, header[["X scale factor"]]),
+                    Y = round_any(Y, header[["Y scale factor"]]),
+                    Z = round_any(Z, header[["Z scale factor"]]))]
+    message("Creation of a LAS object from data but without a header. Scale factors were set to 0.01 and XYZ coordinates were rounded to fit the scale factors.")
+  }
 
   header <- rlas::header_update(header, data)
 
@@ -71,7 +82,6 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     rlas::is_valid_pointformat(header, "stop")
     rlas::is_valid_extrabytes(header, "stop")
 
-    rlas::is_valid_XYZ(data, "stop")
     rlas::is_valid_Intensity(data, "stop")
     rlas::is_valid_ReturnNumber(header, data, "stop")
     rlas::is_valid_NumberOfReturns(header, data, "stop")

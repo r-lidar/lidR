@@ -85,7 +85,8 @@ tree_detection.RasterLayer = function(las, algorithm)
 {
   data <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
   names(data) <- c("X", "Y", "Z")
-  las <- LAS(data, proj4string = las@crs, check = FALSE)
+  header <- rlas::header_create(data)
+  las <- LAS(data, header, proj4string = las@crs, check = FALSE)
   return(tree_detection(las, algorithm))
 }
 

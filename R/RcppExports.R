@@ -9,12 +9,16 @@ C_delaunay <- function(P, scales, offsets) {
     .Call(`_lidR_C_delaunay`, P, scales, offsets)
 }
 
-C_interpolate_delaunay <- function(P, L, scales, offsets, drop_z_below = 0, drop_triangle_over = 0, ncpu = 1L) {
-    .Call(`_lidR_C_interpolate_delaunay`, P, L, scales, offsets, drop_z_below, drop_triangle_over, ncpu)
+C_interpolate_delaunay <- function(P, L, scales, offsets, trim = 0, ncpu = 1L) {
+    .Call(`_lidR_C_interpolate_delaunay`, P, L, scales, offsets, trim, ncpu)
 }
 
 C_tinfo <- function(D, P) {
     .Call(`_lidR_C_tinfo`, D, P)
+}
+
+C_tsearch <- function(D, P, X, ncpu) {
+    .Call(`_lidR_C_tsearch`, D, P, X, ncpu)
 }
 
 C_lmf <- function(las, ws, min_height, circular, ncpu) {

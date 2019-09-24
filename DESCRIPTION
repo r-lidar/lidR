@@ -23,7 +23,6 @@ Imports:
     data.table (>= 1.12.0),
     future,
     gdalUtils,
-    geometry,
     glue,
     grDevices,
     lazyeval,
@@ -42,6 +41,7 @@ Suggests:
     EBImage,
     concaveman,
     crayon,
+    geometry,
     gstat,
     hexbin,
     mapview,
@@ -132,6 +132,7 @@ Collate:
     'utils_catalog_options.r'
     'utils_colors.r'
     'utils_define_constant.R'
+    'utils_delaunay.R'
     'utils_geometry.r'
     'utils_is.r'
     'utils_metrics.r'

@@ -64,3 +64,4 @@ test_that("points_metrics fails with non atomic output", {
 
   expect_error(point_metrics(las, ~c(1,2), k = 3L))
 })
+

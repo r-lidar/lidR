@@ -35,18 +35,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_interpolate_delaunay
-NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double drop_z_below, double drop_triangle_over, int ncpu);
-RcppExport SEXP _lidR_C_interpolate_delaunay(SEXP PSEXP, SEXP LSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP drop_z_belowSEXP, SEXP drop_triangle_overSEXP, SEXP ncpuSEXP) {
+NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim, int ncpu);
+RcppExport SEXP _lidR_C_interpolate_delaunay(SEXP PSEXP, SEXP LSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP trimSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< DataFrame >::type P(PSEXP);
     Rcpp::traits::input_parameter< DataFrame >::type L(LSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type offsets(offsetsSEXP);
-    Rcpp::traits::input_parameter< double >::type drop_z_below(drop_z_belowSEXP);
-    Rcpp::traits::input_parameter< double >::type drop_triangle_over(drop_triangle_overSEXP);
+    Rcpp::traits::input_parameter< double >::type trim(trimSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_interpolate_delaunay(P, L, scales, offsets, drop_z_below, drop_triangle_over, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_interpolate_delaunay(P, L, scales, offsets, trim, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -58,6 +57,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type D(DSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP);
     rcpp_result_gen = Rcpp::wrap(C_tinfo(D, P));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_tsearch
+IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int ncpu);
+RcppExport SEXP _lidR_C_tsearch(SEXP DSEXP, SEXP PSEXP, SEXP XSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type D(DSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_tsearch(D, P, X, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -355,8 +367,9 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 3},
-    {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
+    {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 6},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
+    {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},

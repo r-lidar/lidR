@@ -46,10 +46,12 @@ typedef GridPartition SpatialIndex;
 // [[Rcpp::export(rng = false)]]
 IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets)
 {
+  if (!P.containsElementNamed("X") || !P.containsElementNamed("Y"))
+    throw Rcpp::exception("Internal error: columns are not named XY.", false);
+
   // The point cloud
   NumericVector X = P["X"];
   NumericVector Y = P["Y"];
-  NumericVector Z = P["Z"];
 
   // Need scale and offset to convert to integral numbers
   double scale_x = scales[0];
@@ -58,12 +60,28 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
   double offset_x = offsets[0];
   double offset_y = offsets[1];
 
+  if (X.size() < 3)
+    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate less than 3 points.", false);
+  if (scale_x != scale_y)
+    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate points with different xy scale factors.", false);
+
   // Convert to boost point concept.
   // Coordinates are unscaled unoffseted for integer-based computation
+  double dx,dy;
+  int ix,iy;
   std::vector<point_int> points;
   for (int i = 0 ; i < X.size() ; i++)
   {
-    points.push_back(point_int(std::round((X[i]-offset_x)/scale_x), std::round((Y[i]-offset_y)/scale_y), i));
+    dx = (X[i]-offset_x)/scale_x;
+    dy = (Y[i]-offset_y)/scale_y;
+    ix = std::round(dx);
+    iy = std::round(dy);
+
+    if (std::abs(dx - ix) > 1e-5 || std::abs(dy - iy) > 1e-5)
+      throw Rcpp::exception("Internal error in C_delaunay: xy coordinates were not converted to integer. Scale factors are likely to be invalid.", false);
+
+    point_int p(ix, iy, i);
+    points.push_back(p);
   }
 
   // Construction of the Voronoi Diagram (this step is fast).
@@ -104,8 +122,14 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
 }
 
 // [[Rcpp::export(rng = false)]]
-NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double drop_z_below = 0, double drop_triangle_over = 0, int ncpu = 1)
+NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim = 0, int ncpu = 1)
 {
+  if (!P.containsElementNamed("X") || !P.containsElementNamed("Y") || !P.containsElementNamed("Z"))
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: columns are not named XYZ.", false); // # nocov
+
+  if (!L.containsElementNamed("X") || !L.containsElementNamed("Y"))
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: columns are not named XY.", false); // # nocov
+
   // The point cloud
   NumericVector X = P["X"];
   NumericVector Y = P["Y"];
@@ -115,11 +139,8 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   NumericVector x = L["X"];
   NumericVector y = L["Y"];
 
-  // The output
-  NumericVector z_out(x.size(), NA_REAL);
-
   // Use comparable distance instead of true distance (save the cost of sqrt)
-  drop_triangle_over = drop_triangle_over * drop_triangle_over;
+  trim = trim * trim;
 
   // Need scale and offset to convert to integral numbers
   double scale_x = scales[0];
@@ -128,13 +149,28 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   double offset_x = offsets[0];
   double offset_y = offsets[1];
 
+  if (X.size() < 3)
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate less than 3 points.", false); // # nocov
+  if (scale_x != scale_y)
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate points with different xy scale factors.", false); // # nocov
+
   // Convert to boost point concept.
   // Coordinates are unscaled unoffseted for integer-based computation
+  double dx,dy;
+  int ix,iy;
   std::vector<point_int> points;
   for (int i = 0 ; i < X.size() ; i++)
   {
-    if (drop_z_below == 0 || Z[i] >= drop_z_below)
-      points.push_back(point_int(std::round((X[i]-offset_x)/scale_x), std::round((Y[i]-offset_y)/scale_y), i));
+    dx = (X[i]-offset_x)/scale_x;
+    dy = (Y[i]-offset_y)/scale_y;
+    ix = std::round(dx);
+    iy = std::round(dy);
+
+    if (std::abs(dx - ix) > 1e-5 || std::abs(dy - iy) > 1e-5)
+      throw Rcpp::exception("Internal error in C_delaunay: xy coordinates were not converted to integer. Scale factors are likely to be invalid.", false);
+
+    point_int p(ix, iy, i);
+    points.push_back(p);
   }
 
   // Construction of the Voronoi Diagram (this step is fast).
@@ -147,6 +183,9 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   // Progressbar and user interruption.
   bool abort = false;
   Progress pb(vd.num_vertices(), "Delaunay rasterization");
+
+  // The output
+  NumericVector z_out(x.size(), NA_REAL);
 
   // Loop over vertice of the tessellation, build the delaunay triangle and interpolate
   #pragma omp parallel for num_threads(ncpu)
@@ -191,7 +230,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
         double edge_max = max(edge_AB, edge_AC, edge_BC);
 
         // Interpolate in this triangle if the longest edge fullfil requirements
-        if (drop_triangle_over == 0 || edge_max <= drop_triangle_over)
+        if (trim == 0 || edge_max <= trim)
         {
           Triangle tri(A,B,C);
 
@@ -236,7 +275,8 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
 // [[Rcpp::export(rng = false)]]
 NumericMatrix  C_tinfo(IntegerMatrix D, NumericMatrix P)
 {
-  if (P.nrow() < 3)  Rcpp::stop("Internal error in 'info()': wrong dimension for P");
+  if (P.nrow() < 3)
+    throw Rcpp::exception("Internal error in 'C_tinfo()': wrong dimension for P", false);
 
   NumericMatrix N(D.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);
@@ -283,4 +323,61 @@ NumericMatrix  C_tinfo(IntegerMatrix D, NumericMatrix P)
 
   colnames(N) = CharacterVector::create("nx", "ny", "nz", "intercept", "xyzarea", "xyarea", "maxedge");
   return N;
+}
+
+// [[Rcpp::export(rng = false)]]
+IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int ncpu)
+{
+  if (P.nrow() < 3)
+    throw Rcpp::exception("Internal error in 'C_tsearch()': wrong dimension for P", false);
+
+  NumericVector x = X(_, 0);
+  NumericVector y = X(_, 1);
+  SpatialIndex tree(x, y);
+
+  int nelem = D.nrow();
+  int np = X.nrow();
+
+  bool abort = false;
+
+  Progress pb(nelem, "Searching in TIN: ");
+
+  IntegerVector output(np);
+  std::fill(output.begin(), output.end(), NA_INTEGER);
+
+  // Loop over each triangle
+  #pragma omp parallel for num_threads(ncpu)
+  for (int k = 0; k < nelem; k++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+
+    // Retrieve triangle A B C coordinates
+    int iA = D(k, 0) - 1;
+    int iB = D(k, 1) - 1;
+    int iC = D(k, 2) - 1;
+
+    Point A(P(iA, 0), P(iA, 1));
+    Point B(P(iB, 0), P(iB, 1));
+    Point C(P(iC, 0), P(iC, 1));
+
+    Triangle triangle(A,B,C);
+    std::vector<Point*> points;
+    tree.lookup(triangle, points);
+
+    // Return the id of the triangle
+    #pragma omp critical
+    {
+      for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
+      {
+        int id = (*it)->id;
+        output(id) = k + 1;
+      }
+    }
+  }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
+
+  return(output);
 }
