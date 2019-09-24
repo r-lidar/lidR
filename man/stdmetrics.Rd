@@ -66,11 +66,11 @@ stdshapemetrics(x, y, z)
 }
 \description{
 Predefined functions computable at pixel level (\link{grid_metrics}), hexagonal cell level
-(\link{grid_hexametrics}), point cloud level (\link{lasmetrics}), tree level (\link{tree_metrics})
-and voxel level (\link{grid_metrics3d}). Each function comes with a convenient shortcuts for lazy
-coding. The \code{lidR} package aims to provide an easy way to compute user-defined metrics rather
-than to provide them. However, for efficiency and to save time, a set of standard metrics has been
-predefined (see details.
+(\link{grid_hexametrics}), point cloud level (\link{cloud_metrics}), tree level (\link{tree_metrics})
+voxel level (\link{grid_metrics3d}) and point level  (\link{point_metrics}). Each function comes
+with a convenient shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way
+to compute user-defined metrics rather than to provide them. However, for efficiency and to save
+time, a set of standard metrics has been predefined (see details).
 }
 \details{
 The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
@@ -132,7 +132,7 @@ over2 = lasfilter(las, Z > 2)
 m7 = grid_metrics(over2, .stdmetrics_z)
 
 # Works also with lasmetrics and grid_hexametrics
-m8 = lasmetrics(las, .stdmetrics)
+m8 = cloud_metrics(las, .stdmetrics)
 m9 = grid_hexametrics(las, .stdmetrics)
 
 # Combine some predefined function with your own new metrics
@@ -169,10 +169,11 @@ Lucas, C., Bouten, W., Koma, Z., Kissling, W. D., & Seijmonsbergen, A. C. (2019)
 of Linear Vegetation Elements in a Rural Landscape Using LiDAR Point Clouds. Remote Sensing, 11(3), 292.
 }
 \seealso{
+\link{cloud_metrics}
 \link{grid_metrics}
-\link{lasmetrics}
 \link{grid_hexametrics}
 \link{grid_metrics3d}
 \link{tree_metrics}
+\link{point_metrics}
 }
 \keyword{datasets}

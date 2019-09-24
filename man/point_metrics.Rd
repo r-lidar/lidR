@@ -65,8 +65,8 @@ las = readLAS(LASfile, filter = "-thin_with_grid 2")
 plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
   xyz <- cbind(x,y,z)
   cov_m <- cov(xyz)
-  eigen_m <- eigen(cov_m)
-  is_planar <- eigen_m$values[2] > (th1*eigen_m$values[3]) && (th2*eigen_m$values[2]) > eigen_m$values[1]
+  eigen_m <- eigen(cov_m)$value
+  is_planar <- eigen_m[2] > (th1*eigen_m[3]) && (th2*eigen_m[2]) > eigen_m[1]
   return(list(planar = is_planar))
 }
 
