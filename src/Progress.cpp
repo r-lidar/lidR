@@ -34,7 +34,7 @@ void Progress::check_abort()
 bool Progress::check_interrupt()
 {
   if(omp_get_thread_num() != 0)
-    return false; // nocov
+    return false; // # nocov
 
   j++;
 
@@ -60,7 +60,7 @@ void Progress::update(unsigned int iter)
   if (!display)
     return;
 
-  // nocov start
+  // # nocov start
   unsigned int p = ((float)iter*omp_get_num_threads())/(float)iter_max*100;
 
   if (p == percentage)
@@ -77,7 +77,7 @@ void Progress::update(unsigned int iter)
   Rcpp::Rcout.flush();
 
   return;
-  // nocov end
+  // # nocov end
 }
 
 void Progress::increment()
@@ -99,7 +99,7 @@ void Progress::increment()
 
   clock_t dt = clock() - ti;
   if( ((float)dt)/CLOCKS_PER_SEC  < delay)
-    return; // nocov
+    return; // # nocov
 
   int nchar = std::floor((float)(percentage)/2);
   std::string completed = std::string(nchar, '=');
@@ -110,7 +110,7 @@ void Progress::increment()
   return;
 }
 
-// nocov start
+// # nocov start
 unsigned int Progress::get_iter()
 {
   return iter;
@@ -120,4 +120,4 @@ void Progress::exit()
 {
   throw Rcpp::internal::InterruptedException();
 }
-// nocov end
+// # nocov end
