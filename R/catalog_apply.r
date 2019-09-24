@@ -198,7 +198,7 @@
 #'   if (is.empty(las)) return(NULL)
 #'
 #'   las    <- lasfiltersurfacepoints(las, 1)
-#'   rumple <- grid_metrics(las, rumple_index(X,Y,Z), res)
+#'   rumple <- grid_metrics(las, ~rumple_index(X,Y,Z), res)
 #'   bbox   <- raster::extent(cluster)
 #'   rumple <- raster::crop(rumple, bbox)
 #'
