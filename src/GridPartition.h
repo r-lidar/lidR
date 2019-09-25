@@ -9,10 +9,10 @@
 class GridPartition
 {
   private:
-    int npoints;
-    int ncols;
-    int nrows;
-    int depth;
+    unsigned int npoints;
+    unsigned int ncols;
+    unsigned int nrows;
+    unsigned int depth;
     bool use3D;
     double xmin;
     double xmax;
@@ -54,8 +54,8 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<Point*>& r
   int cell;
 
   res.clear();
-  for (int col = std::max(colmin,0) ; col <= std::min(colmax, ncols-1) ; col++) {
-    for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, nrows-1) ; row++) {
+  for (int col = std::max(colmin,0) ; col <= std::min(colmax, (int)ncols-1) ; col++) {
+    for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, (int)nrows-1) ; row++) {
       cell = row * ncols + col;
       for (std::vector<Point>::iterator it = registry[cell].begin() ; it != registry[cell].end() ; it++) {
         if (shape.contains(*it)) res.emplace_back(&(*it));
@@ -82,8 +82,8 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ>&
   int cell;
 
   res.clear();
-  for (int col = std::max(colmin,0) ; col <= std::min(colmax, ncols-1) ; col++) {
-    for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, nrows-1) ; row++) {
+  for (int col = std::max(colmin,0) ; col <= std::min(colmax, (int)ncols-1) ; col++) {
+    for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, (int)nrows-1) ; row++) {
       cell = row * ncols + col;
       for (std::vector<Point>::iterator it = registry[cell].begin() ; it != registry[cell].end() ; it++) {
         PointXYZ p(it->x, it->y, Z[it->id], it->id);

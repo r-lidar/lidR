@@ -1,7 +1,7 @@
 #include "LAS.h"
 #include <boost/geometry.hpp>
 #include <limits>
-#include "QuadTree.h"
+//#include "QuadTree.h"
 #include "GridPartition.h"
 #include "Progress.h"
 #include "myomp.h"
@@ -47,8 +47,8 @@ LAS::~LAS()
 void LAS::new_filter(LogicalVector b)
 {
   if (b.size() == 1)
-    std:fill(filter.begin(), filter.end(), b[0]);
-  else if (b.size() == npoints)
+    std::fill(filter.begin(), filter.end(), b[0]);
+  else if (b.size() == (int)npoints)
     this->filter = Rcpp::as< std::vector<bool> >(b);
   else
     Rcpp::stop("Internal error in 'new_filter"); // nocov
@@ -223,7 +223,7 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
   Progress pb(npoints, "Local maximum filter: ");
 
   #pragma omp parallel for num_threads(ncpu)
-  for (int i = 0 ; i < npoints ; i++)
+  for (unsigned int i = 0 ; i < npoints ; i++)
   {
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
@@ -249,8 +249,8 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
 
     // Get the highest Z in the windows
     double Zmax = std::numeric_limits<double>::min();
-    Point *p;
-    for(size_t j = 0 ; j < pts.size() ; j++)
+    Point* p;
+    for (unsigned int j = 0 ; j < pts.size() ; j++)
     {
       if(Z[pts[j]->id] > Zmax)
       {
@@ -287,7 +287,7 @@ void LAS::filter_with_grid(S4 layout)
   std::vector<int> output(ncols*nrows);
   std::fill(output.begin(), output.end(), std::numeric_limits<int>::min());
 
-  for (int i = 0 ; i < npoints ; i++)
+  for (unsigned int i = 0 ; i < npoints ; i++)
   {
     if (filter[i]) continue;
 
@@ -316,7 +316,7 @@ void LAS::filter_with_grid(S4 layout)
     }
   }
 
-  for (int i = 0 ; i < output.size() ; i++)
+  for (unsigned int i = 0 ; i < output.size() ; i++)
   {
     if (output[i] > std::numeric_limits<int>::min())
       filter[output[i]] = true;
@@ -342,7 +342,7 @@ void LAS::filter_in_polygon(std::string wkt)
     boost::geometry::envelope(polygons, bbox);
 
     #pragma omp parallel for num_threads(ncpu)
-    for(int i = 0 ; i < npoints ; i++)
+    for(unsigned int i = 0 ; i < npoints ; i++)
     {
       if (filter[i]) continue;
 
@@ -374,7 +374,7 @@ void LAS::filter_in_polygon(std::string wkt)
     boost::geometry::envelope(polygon, bbox);
 
     #pragma omp parallel for num_threads(ncpu)
-    for(int i = 0 ; i < npoints ; i++)
+    for(unsigned int i = 0 ; i < npoints ; i++)
     {
       if (filter[i]) continue;
 
@@ -461,12 +461,12 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
   if (ws.size() != th.size())
     Rcpp::stop("Internal error in 'filter_progressive_morphology'"); // nocov
 
-  for (int i = 0 ; i < ws.size() ; i++)
+  for (unsigned int i = 0 ; i < ws.size() ; i++)
   {
     NumericVector oldZ = clone(Z);
     z_open(ws[i]);
 
-    for (int j = 0 ; j < npoints ; j++)
+    for (unsigned int j = 0 ; j < npoints ; j++)
     {
       if (!filter[j]) continue;
       filter[j] = (oldZ[j] - Z[j]) < th[i];
@@ -582,7 +582,7 @@ IntegerVector LAS::segment_snags(NumericVector neigh_radii, double low_int_thrsh
     qtree.lookup(sphere, sphpts);
 
     sum_of_elements = 0;
-    for(unsigned int j = 0; j < sphpts.size(); j++)
+    for (unsigned int j = 0; j < sphpts.size(); j++)
     {
       sum_of_elements += BBPr_sph[sphpts[j].id];
     }
@@ -620,7 +620,7 @@ IntegerVector LAS::segment_snags(NumericVector neigh_radii, double low_int_thrsh
     qtree.lookup(bigcircle, bigcylpts);
 
     sum_of_elements = 0;
-    for(unsigned int j = 0 ; j < bigcylpts.size() ; j++)
+    for (unsigned int j = 0 ; j < bigcylpts.size() ; j++)
     {
       sum_of_elements += BBPr_bigcyl[bigcylpts[j]->id];
     }
@@ -838,7 +838,7 @@ IntegerVector LAS::segment_trees(double dt1, double dt2, double Zu, double R, do
     std::vector<PointXYZ*> temp;
     temp.reserve(N.size()-1);
 
-    for(unsigned int i = 0 ; i < n ; i++)
+    for (unsigned int i = 0 ; i < n ; i++)
     {
       if(inN[i])
         temp.push_back(U[i]);
@@ -884,11 +884,11 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
     double cs[8] = {cos(0.0), cos(2*M_PI/8), cos(4*M_PI/8), cos(6*M_PI/8), cos(M_PI), cos(10*M_PI/8), cos(12*M_PI/8), cos(14*M_PI/8)};
     double ss[8] = {sin(0.0), sin(2*M_PI/8), sin(4*M_PI/8), sin(6*M_PI/8), sin(M_PI), sin(10*M_PI/8), sin(12*M_PI/8), sin(14*M_PI/8)};
 
-    for (int i = 0 ; i < npoints ; i++)
+    for (unsigned int i = 0 ; i < npoints ; i++)
     {
       double z = Z[i];
 
-      for (int j = 0 ; j < 8 ; j++)
+      for (unsigned int j = 0 ; j < 8 ; j++)
       {
         double x = X[i] + subcircle * cs[j];
         double y = Y[i] + subcircle * ss[j];
@@ -937,7 +937,7 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
   Progress pb(npoints, "Metrics computation: ");
   bool abort = false;
 
-  for(auto i = 0 ; i < npoints ; ++i) {
+  for(unsigned int i = 0 ; i < npoints ; ++i) {
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
@@ -947,24 +947,24 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
     tree.knn(p, k, pts);
 
     Rcpp::DataFrame::iterator it2 = sub.begin();
-    for(Rcpp::DataFrame::iterator it1 = data.begin() ; it1 != data.end() ; ++it1) {
+    for (Rcpp::DataFrame::iterator it1 = data.begin() ; it1 != data.end() ; ++it1) {
       switch( TYPEOF(*it1) ) {
         case REALSXP: {
           Rcpp::NumericVector tmp1 = Rcpp::as<Rcpp::NumericVector>(*it1);
           Rcpp::NumericVector tmp2 = Rcpp::as<Rcpp::NumericVector>(*it2);
-          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
           break;
         }
         case INTSXP: {
           Rcpp::IntegerVector tmp1 = Rcpp::as<Rcpp::IntegerVector>(*it1);
           Rcpp::IntegerVector tmp2 = Rcpp::as<Rcpp::IntegerVector>(*it2);
-          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
           break;
         }
         case LGLSXP: {
           Rcpp::LogicalVector tmp1 = Rcpp::as<Rcpp::LogicalVector>(*it1);
           Rcpp::LogicalVector tmp2 = Rcpp::as<Rcpp::LogicalVector>(*it2);
-          for(auto i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
+          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
           break;
         }
         default: {

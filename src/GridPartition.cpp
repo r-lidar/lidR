@@ -2,7 +2,7 @@
 
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
 {
-  if (x.size() != x.size()) Rcpp::stop("Internal error in GridPartition. x and y have different sizes.");
+  if (x.size() != y.size()) Rcpp::stop("Internal error in GridPartition. x and y have different sizes.");
 
   npoints = x.size();
 
@@ -40,7 +40,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   registry.resize((ncols+1)*(nrows+1));
 
-  for (auto i = 0 ; i < x.size() ; i++) {
+  for (int i = 0 ; i < x.size() ; i++) {
     Point p(x[i],y[i], i);
     if (!insert(p)) Rcpp::stop("Internal error in GridPartition. Point not inserted.");
   }
@@ -49,7 +49,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const std::vector<bool>& f)
 {
   if (x.size() != y.size()) Rcpp::stop("Internal error in GridPartition. x and y have different sizes.");
-  if (x.size() != f.size()) Rcpp::stop("Internal error in GridPartition. x and f have different sizes.");
+  if (x.size() != (int)f.size()) Rcpp::stop("Internal error in GridPartition. x and f have different sizes.");
 
   npoints = std::count(f.begin(), f.end(), true);
 
@@ -95,7 +95,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   registry.resize((ncols+1)*(nrows+1));
 
-  for(int i = 0 ; i < x.size() ; i++) {
+  for (auto i = 0 ; i < x.size() ; i++) {
     if (f[i]) {
       Point p(x[i], y[i], i);
       if(!insert(p)) Rcpp::stop("Internal error in GridPartition. Point not inserted.");
@@ -120,7 +120,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 inline bool GridPartition::insert(const Point& p)
 {
   int key = getCell(p.x, p.y);
-  if (key < 0 || key >= registry.size()) return false;
+  if (key < 0 || key >= (int)registry.size()) return false;
   registry[key].emplace_back(p);
   return true;
 }
@@ -131,7 +131,7 @@ inline int GridPartition::getCell(const double x, const double y)
   int row = std::floor((ymax - y) / yres);
   if (y == ymin) row = nrows-1;
   if (x == xmax) col = ncols-1;
-  if (row < 0 || row > nrows-1 || col < 0 || col > ncols-1) Rcpp::stop("Internal error");
+  if (row < 0 || row > (int)nrows-1 || col < 0 || col > (int)ncols-1) Rcpp::stop("Internal error");
   int cell = row * ncols + col;
   return cell;
 }

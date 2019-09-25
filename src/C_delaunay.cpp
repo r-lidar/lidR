@@ -56,7 +56,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
   // Need scale and offset to convert to integral numbers
   double scale_x = scales[0];
   double scale_y = scales[1];
-  double scale_z = scales[2];
+  //double scale_z = scales[2];
   double offset_x = offsets[0];
   double offset_y = offsets[1];
 
@@ -90,7 +90,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
 
   IntegerMatrix output(vd.num_vertices(), 3);
 
-  for (int i = 0 ; i < vd.num_vertices() ; ++i)
+  for (unsigned int i = 0 ; i < vd.num_vertices() ; ++i)
   {
     std::vector<point_int> triangle;
     const voronoi_diagram<double>::const_vertex_iterator it = vd.vertices().begin() + i;
@@ -145,7 +145,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   // Need scale and offset to convert to integral numbers
   double scale_x = scales[0];
   double scale_y = scales[1];
-  double scale_z = scales[2];
+  //double scale_z = scales[2];
   double offset_x = offsets[0];
   double offset_y = offsets[1];
 
@@ -192,7 +192,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
 
   // Loop over vertice of the tessellation, build the delaunay triangle and interpolate
   #pragma omp parallel for num_threads(ncpu)
-  for (int i = 0 ; i < vd.num_vertices() ; ++i)
+  for (unsigned int i = 0 ; i < vd.num_vertices() ; ++i)
   {
     // Progress an check interrupt
     if (abort) continue;
@@ -244,7 +244,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
           if (pts.size() > 0)
           {
             // For each point, linear interpolation
-            for (int j = 0 ; j < pts.size() ; j++)
+            for (unsigned int j = 0 ; j < pts.size() ; j++)
             {
               Point *p = pts[j];
 
@@ -284,7 +284,7 @@ NumericMatrix  C_tinfo(IntegerMatrix D, NumericMatrix P)
   NumericMatrix N(D.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);
 
-  for (int i = 0, end = D.nrow() ; i < end ; i++)
+  for (unsigned int i = 0, end = D.nrow() ; i < end ; i++)
   {
     int p1 = D(i,0)-1;
     int p2 = D(i,1)-1;
