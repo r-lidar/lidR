@@ -185,7 +185,7 @@ SEXP fast_eigen_values(arma::mat A)
  * ======= BINARY SEARCH TREE FUNCTIONS =========
  */
 
-#include "QuadTree.h"
+//#include "QuadTree.h"
 #include "GridPartition.h"
 #include "Progress.h"
 
