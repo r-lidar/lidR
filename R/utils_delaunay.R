@@ -49,20 +49,22 @@ tDelaunay = function(P, trim = 0, scales = c(1,1), offsets = c(0,0), option = "Q
   }
 
   if (boosted_triangulation) {
-    D <- C_interpolate_delaunay(P, scales, offsets, getThreads())
+    D <- C_delaunay(P, scales, offsets, trim)
+    if (trim != 0) D <- D[!is.na(D[,1]),]
+    return(D)
   }
   else {
     D <- suppressMessages(geometry::delaunayn(Q, options = option))
-  }
 
-  if (trim != 0) {
-    N <- tInfo(D, P)
-    K <- N[,7] < abs(trim)
-    if (trim < 0) K <- !K
-    D <- D[K,]
-  }
+    if (trim != 0) {
+      N <- tInfo(D, P)
+      K <- N[,7] < abs(trim)
+      if (trim < 0) K <- !K
+      D <- D[K,]
+    }
 
-  return(D)
+    return(D)
+  }
 }
 
 # @rdname tDelaunay

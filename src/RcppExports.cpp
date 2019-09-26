@@ -23,14 +23,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_delaunay
-IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets);
-RcppExport SEXP _lidR_C_delaunay(SEXP PSEXP, SEXP scalesSEXP, SEXP offsetsSEXP) {
+IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets, double trim);
+RcppExport SEXP _lidR_C_delaunay(SEXP PSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP trimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< DataFrame >::type P(PSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type offsets(offsetsSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_delaunay(P, scales, offsets));
+    Rcpp::traits::input_parameter< double >::type trim(trimSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_delaunay(P, scales, offsets, trim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -366,7 +367,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
-    {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 3},
+    {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 4},
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 6},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},

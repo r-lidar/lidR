@@ -44,26 +44,32 @@ namespace boost
 typedef GridPartition SpatialIndex;
 
 // [[Rcpp::export(rng = false)]]
-IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets)
+IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets, double trim = 0)
 {
   if (!P.containsElementNamed("X") || !P.containsElementNamed("Y"))
-    throw Rcpp::exception("Internal error: columns are not named XY.", false);
+    throw Rcpp::exception("Internal error in C_delaunay: columns are not named XY.", false);
+
+  if (scales.size() != 2 | offsets.size() != 2)
+    throw Rcpp::exception("Internal error in C_delaunay: scales and/or offset are not of size 2.", false);
+
+  if (scales[0] != scales[1])
+    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate points with different xy scale factors.", false);
 
   // The point cloud
   NumericVector X = P["X"];
   NumericVector Y = P["Y"];
 
+  if (X.size() < 3)
+    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate less than 3 points.", false);
+
+  bool partial_triangulation = trim != 0;
+  double atrim = trim * trim;
+
   // Need scale and offset to convert to integral numbers
   double scale_x = scales[0];
   double scale_y = scales[1];
-  //double scale_z = scales[2];
   double offset_x = offsets[0];
   double offset_y = offsets[1];
-
-  if (X.size() < 3)
-    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate less than 3 points.", false);
-  if (scale_x != scale_y)
-    throw Rcpp::exception("Internal error in C_delaunay: cannot triangulate points with different xy scale factors.", false);
 
   // Convert to boost point concept.
   // Coordinates are unscaled unoffseted for integer-based computation
@@ -89,6 +95,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
   construct_voronoi(points.begin(), points.end(), &vd);
 
   IntegerMatrix output(vd.num_vertices(), 3);
+  std::fill(output.begin(), output.end(), IntegerVector::get_na() ) ;
 
   for (unsigned int i = 0 ; i < vd.num_vertices() ; ++i)
   {
@@ -106,9 +113,42 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
 
       if (triangle.size() == 3)
       {
-        output(i, 0) = triangle[0].id;
-        output(i, 1) = triangle[1].id;
-        output(i, 2) = triangle[2].id;
+        if (partial_triangulation)
+        {
+          // Current triangle is ABC. Scale and offset back for double precision computation
+          point_int &A_ = triangle[0];
+          Point A(A_.x*scale_x+offset_x, A_.y*scale_y+offset_y, A_.id);
+          point_int &B_ = triangle[1];
+          Point B(B_.x*scale_y+offset_x, B_.y*scale_y+offset_y, B_.id);
+          point_int &C_ = triangle[2];
+          Point C(C_.x*scale_x+offset_x, C_.y*scale_y+offset_y, C_.id);
+
+          // ABC is represented by vector u,v and w
+          Point u(A.x - B.x, A.y - B.y);
+          Point v(A.x - C.x, A.y - C.y);
+          Point w(B.x - C.x, B.y - C.y);
+
+          // Compute the AB, AC, BC edge comparable length
+          double edge_AB = u.x * u.x + u.y * u.y;
+          double edge_AC = v.x * v.x + v.y * v.y;
+          double edge_BC = w.x * w.x + w.y * w.y;
+          double edge_max = max(edge_AB, edge_AC, edge_BC);
+
+          bool skip = (trim > 0) ? edge_max > atrim : edge_max < atrim;
+
+          if (!skip)
+          {
+            output(i, 0) = triangle[0].id;
+            output(i, 1) = triangle[1].id;
+            output(i, 2) = triangle[2].id;
+          }
+        }
+        else
+        {
+          output(i, 0) = triangle[0].id;
+          output(i, 1) = triangle[1].id;
+          output(i, 2) = triangle[2].id;
+        }
 
         triangle.erase(triangle.begin() + 1);
       }
@@ -118,7 +158,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
     } while (edge != vertex.incident_edge());
   }
 
-  return output+1;
+  return output + 1;
 }
 
 // [[Rcpp::export(rng = false)]]
@@ -130,6 +170,12 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   if (!L.containsElementNamed("X") || !L.containsElementNamed("Y"))
     throw Rcpp::exception("Internal error in C_interpolate_delaunay: columns are not named XY.", false); // # nocov
 
+  if (scales.size() != 2 | offsets.size() != 2)
+    throw Rcpp::exception("Internal error in C_delaunay: scales and/or offset are not of size 2.", false);
+
+  if (scales[0] != scales[1])
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate points with different xy scale factors.", false); // # nocov
+
   // The point cloud
   NumericVector X = P["X"];
   NumericVector Y = P["Y"];
@@ -138,6 +184,9 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   // The location where to interpolate
   NumericVector x = L["X"];
   NumericVector y = L["Y"];
+
+  if (X.size() < 3)
+    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate less than 3 points.", false); // # nocov
 
   // Use comparable distance instead of true distance (save the cost of sqrt)
   trim = trim * trim;
@@ -148,11 +197,6 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   //double scale_z = scales[2];
   double offset_x = offsets[0];
   double offset_y = offsets[1];
-
-  if (X.size() < 3)
-    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate less than 3 points.", false); // # nocov
-  if (scale_x != scale_y)
-    throw Rcpp::exception("Internal error in C_interpolate_delaunay: cannot triangulate points with different xy scale factors.", false); // # nocov
 
   // Convert to boost point concept.
   // Coordinates are unscaled unoffseted for integer-based computation
