@@ -53,14 +53,17 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     stop("Wrong header object provided.")
 
   if (length(header) == 0) {
+    factor <- 0.001
     header <- rlas::header_create(data)
-    header[["X offset"]] <- round_any(header[["X offset"]], header[["X scale factor"]])
-    header[["Y offset"]] <- round_any(header[["Y offset"]], header[["Y scale factor"]])
-    header[["Z offset"]] <- round_any(header[["Z offset"]], header[["Z scale factor"]])
-    data[1:.N, `:=`(X = round_any(X, header[["X scale factor"]]),
-                    Y = round_any(Y, header[["Y scale factor"]]),
-                    Z = round_any(Z, header[["Z scale factor"]]))]
-    message("Creation of a LAS object from data but without a header. Scale factors were set to 0.01 and XYZ coordinates were rounded to fit the scale factors.")
+    header[["X scale factor"]] <- factor
+    header[["Y scale factor"]] <- factor
+    header[["Z scale factor"]] <- factor
+    header[["X offset"]] <- round_any(header[["X offset"]], factor)
+    header[["Y offset"]] <- round_any(header[["Y offset"]], factor)
+    header[["Z offset"]] <- round_any(header[["Z offset"]], factor)
+    data[1:.N, `:=`(X = round_any(X, factor), Y = round_any(Y, factor), Z = round_any(Z, factor))]
+    message(glue::glue("Creation of a LAS object from data but without a header:
+    Scale factors were set to {factor} and XYZ coordinates were clamped to fit the scale factors."))
   }
 
   header <- rlas::header_update(header, data)
