@@ -120,7 +120,7 @@ test_that("grid_terrain fails in some specific case", {
   las@header@PHB$`X scale factor` <- 0.002
   las@header@PHB$`Y scale factor` <- 0.002
 
-  expect_error(grid_terrain(las, 1, tin()))
+  expect_message(grid_terrain(las, 1, tin()), "fall back to the old slow method")
 
   las = data.frame(
     X = runif(10, 0,10),

@@ -163,8 +163,10 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   stopifnot(is.numeric(trim), length(trim) == 1L)
   stopifnot(is.numeric(scales), length(scales) == 2L)
   stopifnot(is.numeric(offsets), length(offsets) == 2L)
+  stopifnot(is.data.frame(coord))
 
-  # It is a LAS object: use fast boost delaunay triangulation
+  boosted_triangulation <- TRUE
+
   if (inherits(points, "LAS")) {
     xscale  <- points@header@PHB[["X scale factor"]]
     yscale  <- points@header@PHB[["Y scale factor"]]
@@ -172,27 +174,33 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
     yoffset <- points@header@PHB[["Y offset"]]
     scales  <- c(xscale, yscale)
     offsets <- c(xoffset, yoffset)
-    if (xscale == yscale) {
-      return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
-    }
+    points  <- points@data
   }
 
-  # It is a data.frame with valid scales and offset: use fast boost delaunay triangulation
-  if (is.data.frame(points))
-  {
-    if (scales[1] == scales[2]) {
-      return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
-    }
+  stopifnot(is.data.frame(points))
+
+  if (scales[1] != scales[2]) {
+    message("The delaunay triangulation fall back to the old slow method because xy scale factors are different and that the fast method cannot be applied.")
+    boosted_triangulation <- FALSE
   }
 
-  # If we reach such section it means that the LAS object have bad scale factors
-  # We fall back to the old behavior (v2.1 and above) using the geometry package
+  X <- points$X[1]
+  Y <- points$Y[1]
+  x <- (X - offsets[1]) / scales[1]
+  y <- (Y - offsets[2]) / scales[2]
 
-  message("The rasterization of the delaunay triangulation fall back to the old slow method.")
-  message("This probably means that the xy scale factors are different and that the fast method cannot be applied.")
+  if (abs(x - round(x)) > 1e-5 | abs(y - round(y)) > 1e-5) {
+    message("The delaunay triangulation fall back to the old slow method because xy coordinates were not convertible to integer. xy scale factors and offsets are likely to be invalid")
+    boosted_triangulation <- FALSE
+  }
 
-  P <- as.matrix(points)
-  X <- as.matrix(coord)
-  D <- tDelaunay(P, trim = trim)
-  return(tInterpolate(D, P, X, getThreads()))
+  if (boosted_triangulation) {
+    return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
+  }
+  else {
+    P <- as.matrix(points)
+    X <- as.matrix(coord)
+    D <- tDelaunay(P, trim = trim)
+    return(tInterpolate(D, P, X, getThreads()))
+  }
 }
