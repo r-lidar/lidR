@@ -43,11 +43,6 @@ test_that("plot LAS does not work with missing attributes", {
   expect_error(plot(las, color = "Plop"), "color' should refer to an attribute")
 })
 
-test_that("plot LAS works with legend", {
-  expect_error(plot(las, legend = TRUE, axis = TRUE), NA)
-  rgl::rgl.close()
-})
-
 test_that("plot LAS works with artifact", {
   expect_error(plot(las, clear_artifact = FALSE), NA)
   rgl::rgl.close()
