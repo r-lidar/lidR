@@ -1,5 +1,9 @@
 ## lidR v2.1.4 (Release date: )
 
+#### NEW FEATURES
+
+1. `grid_terrain()` gains an option `full_raster = FALSE`
+
 #### FIXES
 
 1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return, the classification was not actually computed. The expected behavior was to use all the points. This is now the case.

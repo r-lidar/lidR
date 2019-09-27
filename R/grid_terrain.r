@@ -45,6 +45,9 @@
 #'
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
+#' @param full_raster logical. By default the interpolation is made only within the convex hull of
+#' the point cloud. This prevent against meaningless interpolations where there is no data. If TRUE
+#' each pixel of the raster is interpolated.
 #'
 #' @template LAScatalog
 #'
@@ -75,19 +78,21 @@
 #' plot_dtm3d(dtm2)
 #' plot_dtm3d(dtm3)
 #' }
-grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
   UseMethod("grid_terrain", las)
 }
 
 #' @export
-grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
   if (is_a_number(res)) assert_all_are_non_negative(res)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
+  assert_is_a_bool(keep_lowest)
+  assert_is_a_bool(full_raster)
   if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' data")
   if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.")
 
@@ -105,13 +110,16 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
   data.table::setDT(grid)
   grid[, Z := NULL]
   data.table::setnames(grid, names(grid), c("X", "Y"))
-  hull <- convex_hull(las@data$X, las@data$Y)
-  hull <- sp::Polygon(hull)
-  hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-  hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
-  hull <- hull@polygons[[1]]@Polygons[[1]]@coords
-  keep <- sp::point.in.polygon(grid$X, grid$Y, hull[,1], hull[,2], TRUE) > 0
-  if (!all(keep)) grid = grid[keep]
+
+  if (!full_raster) {
+    hull <- convex_hull(las@data$X, las@data$Y)
+    hull <- sp::Polygon(hull)
+    hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+    hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
+    hull <- hull@polygons[[1]]@Polygons[[1]]@coords
+    keep <- sp::point.in.polygon(grid$X, grid$Y, hull[,1], hull[,2], TRUE) > 0
+    if (!all(keep)) grid = grid[keep]
+  }
 
   # Interpolate the terrain
   verbose("Interpolating ground points...")
@@ -132,18 +140,18 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 }
 
 #' @export
-grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain(x, res, algorithm, keep_lowest)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
@@ -167,7 +175,7 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
-  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, .options = options)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, .options = options)
   output  <- catalog_merge_results(las, output, "raster", "grid_terrain")
   return(output)
 }
