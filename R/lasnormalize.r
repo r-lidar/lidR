@@ -47,6 +47,8 @@
 #' @param na.rm logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
 #' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
 #' elevation of NA are filtered. Be careful this creates a copy of the point cloud.
+#' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
+#' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.
 #'
 #' @template LAScatalog
 #'
@@ -106,21 +108,21 @@
 #' @export
 #' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm, na.rm = FALSE)
+lasnormalize = function(las, algorithm, na.rm = FALSE, ...)
 {
 
   UseMethod("lasnormalize", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
+lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, ...)
 {
   assert_is_a_bool(na.rm)
 
 
   if (is(algorithm, "RasterLayer"))
   {
-    Zground <- raster::extract(algorithm, coordinates(las))
+    Zground <- raster::extract(algorithm, coordinates(las), ...)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
@@ -169,23 +171,23 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE)
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE)
+lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, ...)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasnormalize(x, algorithm, na.rm)
+  x <- lasnormalize(x, algorithm, na.rm, ...)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE)
+lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, ...)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, ..., .options = options)
   output  <- catalog_merge_results(las, output, "las")
   return(output)
 }

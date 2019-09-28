@@ -2,7 +2,9 @@
 
 #### NEW FEATURES
 
-1. `grid_terrain()` gains an option `full_raster = FALSE`
+1. `grid_terrain()` gains an argument `full_raster = FALSE`.
+
+2. `lasnormalize()` gains an argument `...` to tune `raster::extract()` and use, for example, `method = "bilinear"`.
 
 #### FIXES
 
