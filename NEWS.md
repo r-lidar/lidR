@@ -96,6 +96,12 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     
 ## lidR v2.1.4 (Release date: )
 
+#### NEW FEATURES
+
+1. `grid_terrain()` gains an argument `full_raster = FALSE`.
+
+2. `lasnormalize()` gains an argument `...` to tune `raster::extract()` and use, for example, `method = "bilinear"`.
+
 #### FIXES
 
 1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return, the classification was not actually computed. The expected behavior was to use all the points. This is now the case.
@@ -109,6 +115,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 5. `lasreoffset()` now checks for integer overflow and throws an error in case of invalid user request [#274](https://github.com/Jean-Romain/lidR/issues/274).
 
 6. Tolerance for internal `point_in_triangle()` have been increased to fix double precision error in rasterization of a triangulation. This fixes some rare `NA`s in `pitfree()`, `dsmtin()` and `tin()`.
+
+7. The NAs are now correctly interpreted when writing a GDAL virtual raster [#283](https://github.com/Jean-Romain/lidR/issues/283).
 
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
