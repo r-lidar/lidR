@@ -118,6 +118,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 7. The NAs are now correctly interpreted when writing a GDAL virtual raster [#283](https://github.com/Jean-Romain/lidR/issues/283).
 
+8. Fix `lasmergespatial()` with on disk raster [#285](https://github.com/Jean-Romain/lidR/issues/285).
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
