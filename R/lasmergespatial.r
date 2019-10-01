@@ -215,6 +215,6 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 lasmergeRasterLayer = function(las, raster)
 {
   cells <- raster::cellFromXY(raster, coordinates(las))
-  return(raster@data@values[cells])
+  return(raster[cells])
 }
 
