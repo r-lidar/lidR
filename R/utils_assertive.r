@@ -204,6 +204,12 @@ assert_is_valid_context = function(expected_contexts, name = "", null_allowed = 
   return(NULL)
 }
 
+assert_las_is_not_empty = function(x)
+{
+  if (is.empty(x))
+    stop("The point cloud contains 0 point", call. = FALSE)
+}
+
 
 stopifnotlas = function(x)
 {

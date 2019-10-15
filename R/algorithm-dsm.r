@@ -292,10 +292,15 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     data.table::setnames(grid, c("x", "y"), c("X", "Y"))
     cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
 
+    if (nrow(cloud) < 3) {
+      stop("There are not enought points to triangulate.", call. = FALSE)
+    }
+
     # Initialize the interpolated values with NAs
     z <- rep(NA_real_, raster::ncell(layout))
 
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
+    thresholds <- sort(thresholds)
     for (i in seq_along(thresholds)) {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
       th <- thresholds[i]
@@ -304,13 +309,17 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       if (fast_countover(cloud$Z, th) > 3) {
         cloud <- cloud[Z >= th]
         Ztemp <- interpolate_delaunay(cloud, grid, edge, scales, offsets)
+
+        if (i == 1 && all(is.na(Ztemp))) {
+          stop("Interpolation failed in the first layer (NAs everywhere). Maybe there are too few points.", call. = FALSE)
+        }
+
         z <- pmax(z, Ztemp, na.rm = T)
       }
     }
 
-    if (all(is.na(z))) {
-      stop("Interpolation failed. Input parameters might be wrong.")
-    }
+    if (all(is.na(z)))
+      stop("Interpolation failed (NAs everywhere). Input parameters might be wrong.", call. = FALSE)
 
     return(z)
   }

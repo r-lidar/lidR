@@ -79,6 +79,7 @@ grid_canopy.LAS = function(las, res, algorithm)
   if (is_a_number(res)) assert_all_are_non_negative(res)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_dsm(algorithm)
+  assert_las_is_not_empty(las)
 
   # Some algorithm have an extra option 'subscircle' that need to buffer the layout
   # Must be rewritten because it is a hack !

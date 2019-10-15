@@ -215,6 +215,11 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 lasmergeRasterLayer = function(las, raster)
 {
   cells <- raster::cellFromXY(raster, coordinates(las))
-  return(raster[cells])
+
+  # This will respect data type when in memory (data type lost if written in file)
+  if (raster::inMemory(raster))
+    return(raster@data@values[cells])
+  else
+    return(raster[cells])
 }
 

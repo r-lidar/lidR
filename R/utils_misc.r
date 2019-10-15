@@ -94,7 +94,7 @@ subcircled = function(dt, r, n)
   px = r*cos(alpha)
   py = r*sin(alpha)
 
-  return(dt[, f(X, Y, Z, px, py), by = rownames(dt)][, rownames := NULL][])
+  return(dt[, f(X, Y, Z, px, py), by = 1:nrow(dt)][, nrow := NULL][])
 }
 
 coordinates = function(las)

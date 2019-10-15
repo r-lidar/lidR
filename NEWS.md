@@ -120,6 +120,10 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 8. Fix `lasmergespatial()` with on disk raster [#285](https://github.com/Jean-Romain/lidR/issues/285).
 
+### ENHANCEMENTS
+
+1. `pitfree()` handle more errors and fails more nicely in some cases [#286](https://github.com/Jean-Romain/lidR/issues/286).
+
 ## lidR v2.1.3 (Release date: 2019-09-10)
 
 #### NEW FEATURES
