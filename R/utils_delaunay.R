@@ -40,7 +40,7 @@ tDelaunay = function(P, trim = 0, option = "QbB")
     N <- tInfo(D, P)
     K <- N[,7] < abs(trim)
     if (trim < 0) K <- !K
-    D <- D[K,]
+    D <- D[K, , drop = FALSE]
   }
 
   return(D)
