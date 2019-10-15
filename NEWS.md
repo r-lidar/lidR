@@ -24,6 +24,8 @@
 
 8. Fix `lasmergespatial()` with on disk raster [#285](https://github.com/Jean-Romain/lidR/issues/285).
 
+9. Fix `pitfree()` with a single triangle case [#288](https://github.com/Jean-Romain/lidR/issues/288).
+
 ### ENHANCEMENTS
 
 1. `pitfree()` handle more errors and fails more nicely in some cases [#286](https://github.com/Jean-Romain/lidR/issues/286).
