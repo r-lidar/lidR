@@ -54,25 +54,30 @@
 #' \link[grDevices:colorRamp]{colorRampPalette}
 #' @export
 #' @method plot lasmetrics3d
-plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = 1, ...)
+plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, ...)
 {
   inargs <- list(...)
-
-  inargs$col = color
+  inargs$col <- color
 
   if (length(color) == 1)
   {
     if (color %in% names(x))
     {
-      data = unlist(x[,color, with = FALSE])
+      data <- x[[color]]
 
-      if (is.numeric(data))
+      if (is.numeric(data) | is.logical(data))
       {
-        inargs$col = set.colors(data, colorPalette, trim)
-        inargs$col[is.na(inargs$col)] = "lightgray"
+        inargs$col <- set.colors(data, colorPalette, trim)
+        inargs$col[is.na(inargs$col)] <- "lightgray"
       }
       else if (is.character(data))
-        inargs$col = data
+      {
+        inargs$col <- data
+      }
+      else
+      {
+        stop("Internal error: type not supported to color the voxels", call. = FALSE)
+      }
     }
   }
 

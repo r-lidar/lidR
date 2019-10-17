@@ -1,4 +1,14 @@
-## lidR v2.1.4 (Release date: )
+## lidR v2.1.5 (Release date: in development)
+
+#### FIXES
+
+1. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `grid_metrics3d()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
+
+#### NOTE
+
+1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
+
+## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES
 
