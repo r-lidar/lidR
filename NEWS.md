@@ -8,6 +8,8 @@
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
 
+2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES
