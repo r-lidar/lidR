@@ -200,7 +200,6 @@ lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, ...)
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, ..., .options = options)
-  output  <- catalog_merge_results(las, output, "las")
   return(output)
 }
 
