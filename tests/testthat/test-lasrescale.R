@@ -5,7 +5,7 @@ las     <- readLAS(LASfile, "xyz")
 
 test_that("lasrescale works", {
   las2 = suppressMessages(lasrescale(las, xscale = 1, yscale = 1, zscale = 1))
-  expect_equal(las2@data[,1:2], ceiling(las@data[,1:2]))
+  expect_equal(las2@data[,1:2], round(las@data[,1:2]))
 })
 
 test_that("lasroffset works", {
