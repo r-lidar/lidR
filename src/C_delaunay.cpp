@@ -49,7 +49,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
   if (!P.containsElementNamed("X") || !P.containsElementNamed("Y"))
     throw Rcpp::exception("Internal error in C_delaunay: columns are not named XY.", false);
 
-  if (scales.size() != 2 | offsets.size() != 2)
+  if (scales.size() != 2 || offsets.size() != 2)
     throw Rcpp::exception("Internal error in C_delaunay: scales and/or offset are not of size 2.", false);
 
   if (scales[0] != scales[1])
@@ -170,7 +170,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   if (!L.containsElementNamed("X") || !L.containsElementNamed("Y"))
     throw Rcpp::exception("Internal error in C_interpolate_delaunay: columns are not named XY.", false); // # nocov
 
-  if (scales.size() != 2 | offsets.size() != 2)
+  if (scales.size() != 2 || offsets.size() != 2)
     throw Rcpp::exception("Internal error in C_delaunay: scales and/or offset are not of size 2.", false);
 
   if (scales[0] != scales[1])
