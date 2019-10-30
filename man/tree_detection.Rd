@@ -31,7 +31,7 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 always removed once processed and will never be returned either in R or in files.
 \item \strong{chunk alignment}: Align the processed chunks.
 \item \strong{progress}: Displays a progression estimation.
-\item \strong{output_files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\item \strong{output files}: Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
 \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and,
 if chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{select}: Load only attributes of interest.
