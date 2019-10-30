@@ -4,6 +4,8 @@
 
 1. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `grid_metrics3d()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
 
+2. When a VRT is writen on disk the default NA value (`vrtnodota` in `gdalUtils::gdalbuildvrt`) is set to `-.Machine$double.xmax` instead of `-Inf` that seems to be an invalid value on 32 bits arch.
+
 #### NOTE
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
