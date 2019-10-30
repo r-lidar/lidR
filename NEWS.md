@@ -4,6 +4,8 @@
 
 1. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `grid_metrics3d()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
 
+2. The LAScatalog engine now call `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
+
 #### NOTE
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
