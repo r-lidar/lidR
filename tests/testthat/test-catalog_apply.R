@@ -190,21 +190,34 @@ test_that("catalog_apply automerge works with raster", {
     if (is.empty(las)) return(NULL)
     r = lidR:::rOverlay(las, 2)
     r[] <- 1L
+    r[55:56] <- NA
     return(r)
   }
 
   opt_chunk_size(ctg) <- 0
 
-  option <- list(automerge = TRUE)
+  # No automerge option
   req1 <- catalog_apply(ctg, test)
+  req1 <- lidR:::rMergeList(req1)
+
+  # automerge option
+  option <- list(automerge = TRUE)
   req2 <- catalog_apply(ctg, test, .options = option)
 
+  # automerge + vrt
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
   req3 <- catalog_apply(ctg, test, .options = option)
 
+  expect_is(req1, "RasterLayer")
   expect_is(req2, "RasterLayer")
+  expect_equal(req1, req2)
   expect_equal(raster::extent(req2), raster::extent(0,200,0,200))
   expect_is(req3, "RasterLayer")
+  expect_equal(raster::extent(req3), raster::extent(0,200,0,200))
+
+  req3 <- raster::readAll(req3)
+  expect_equal(req2[], req3[])
+  expect_equal(sum(is.na(req3[])), 8L)
 })
 
 test_that("catalog_apply automerge works with spatial points", {
