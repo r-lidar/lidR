@@ -214,7 +214,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
       extension = ".tif",
       object = "x",
       path = "filename",
-      param = list(format = "GTiff")
+      param = list(format = "GTiff", NAflag = -999999)
     ),
     LAS = list(
       write = lidR::writeLAS,
