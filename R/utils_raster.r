@@ -115,7 +115,7 @@ rBuildVRT = function(file_list, vrt)
   folder    <- dirname(file_list[1])
   file      <- paste0("/", vrt, ".vrt")
   vrt       <- paste0(folder, file)
-  gdalUtils::gdalbuildvrt(file_list, vrt, vrtnodata = -Inf)
+  gdalUtils::gdalbuildvrt(file_list, vrt)
   file_list <- raster::stack(vrt)
 
   if (dim(file_list)[3] == 1)
