@@ -55,7 +55,10 @@ tin = function()
     z    <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets)
     isna <- is.na(z)
     nnas <- sum(isna)
-    if (nnas > 0) z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
+    if (nnas > 0) {
+      verbose("Interpolating the points ouside the covex hull of the ground points using knnidw()")
+      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
+    }
     return(z)
   }
 

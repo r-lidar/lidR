@@ -239,6 +239,8 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   for(unsigned int i = 0 ; i < n ; i++)
   {
     if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
 
     Point pt(x[i], y[i]);
     std::vector<Point*> pts;
@@ -271,8 +273,6 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
     #pragma omp critical
     {
-      pb.increment();
-      if (pb.check_interrupt()) abort = true;
       iZ(i) = sum_zw/sum_w;
     }
   }
