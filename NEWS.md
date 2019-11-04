@@ -40,6 +40,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     
 3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
 
+4. `lasnormalize()` gains and argument `add_class` to include e.g. points classified as water into ground points. This might be useful in region with a lot of water because in this case `lasnormalize()` can take forever to run (see [#295](https://github.com/Jean-Romain/lidR/issues/295))).
+
 #### CHANGES
 
 1. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.

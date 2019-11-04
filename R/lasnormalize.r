@@ -47,6 +47,9 @@
 #' @param na.rm logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
 #' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
 #' elevation of NA are filtered. Be careful this creates a copy of the point cloud.
+#' @param add_class integer vector. By default the normalization is made by interpolating ground points
+#' i.e. points classified "2". It might be useful to consider other points as ground such as points
+#' classified as water. In this case use \code{add_class = 9}.
 #' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
 #' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.
 #'
@@ -108,14 +111,14 @@
 #' @export
 #' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm, na.rm = FALSE, ...)
+lasnormalize = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
 {
 
   UseMethod("lasnormalize", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, ...)
+lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
 {
   assert_is_a_bool(na.rm)
 
@@ -133,6 +136,13 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, ...)
     assert_is_algorithm(algorithm)
     assert_is_algorithm_spi(algorithm)
 
+    if (!is.null(add_class)) {
+      if (any(as.integer(add_class) != add_class))
+        stop("'add_class' is not a vector of integers'", call. = FALSE)
+
+      add_class <- as.integer(add_class)
+    }
+
     if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
     if (fast_countequal(las@data$Classification, LASGROUND) == 0) stop("No ground point found in the point cloud.")
 
@@ -149,7 +159,11 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, ...)
     offsets <- c(xoffset, yoffset)
 
     # Select the ground points
-    ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
+    if (is.null(add_class))
+      ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
+    else
+      ground  <- las@data[Classification %in% c(LASGROUND, add_class), .(X,Y,Z)]
+
     ground  <- check_degenerated_points(ground)
 
     # wbuffer = !"buffer" %in% names(las@data)
@@ -183,7 +197,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, ...)
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, ...)
+lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
 {
   buffer <- NULL
   x <- readLAS(las)
@@ -194,12 +208,12 @@ lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, ...)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, ...)
+lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, ..., .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, add_class = add_class, ..., .options = options)
   return(output)
 }
 
