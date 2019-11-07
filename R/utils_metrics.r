@@ -30,8 +30,8 @@
 #' Predefined standard metrics functions
 #'
 #' Predefined functions computable at pixel level (\link{grid_metrics}), hexagonal cell level
-#' (\link{grid_hexametrics}), point cloud level (\link{cloud_metrics}), tree level (\link{tree_metrics})
-#' voxel level (\link{grid_metrics3d}) and point level  (\link{point_metrics}). Each function comes
+#' (\link{hexbin_metrics}), point cloud level (\link{cloud_metrics}), tree level (\link{tree_metrics})
+#' voxel level (\link{voxel_metrics}) and point level  (\link{point_metrics}). Each function comes
 #' with a convenient shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way
 #' to compute user-defined metrics rather than to provide them. However, for efficiency and to save
 #' time, a set of standard metrics has been predefined (see details).
@@ -99,9 +99,9 @@
 #' over2 = lasfilter(las, Z > 2)
 #' m7 = grid_metrics(over2, .stdmetrics_z)
 #'
-#' # Works also with lasmetrics and grid_hexametrics
+#' # Works also with cloud_metrics and hexbin_metrics
 #' m8 = cloud_metrics(las, .stdmetrics)
-#' m9 = grid_hexametrics(las, .stdmetrics)
+#' m9 = hexbin_metrics(las, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.

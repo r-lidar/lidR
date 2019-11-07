@@ -53,7 +53,7 @@
 #' col = grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
 #'
 #' # Maximum elevation with a resolution of 8 m
-#' hm = grid_hexametrics(lidar, ~max(Z), 8)
+#' hm = hexbin_metrics(lidar, ~max(Z), 8)
 #' hexbin::plot(hm, colramp = col, main = "Max Z")
 #'
 #' # Mean height with a resolution of 20 m

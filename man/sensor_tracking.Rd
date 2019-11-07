@@ -102,27 +102,32 @@ and "-thin_pulses_with_time" to reduce the number of points loaded.
 }
 
 \examples{
-# Note: lidR does not embed a dataset that enable to test this function
-# either because the point cloud were normalized or because the gpstime
-# and PointSourceID attributes have been zeroed to gain memory.
+# A valid file properly populated
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile)
+plot(las)
 
-\dontrun{
-# With a valid file properly populated
-las <- readLAS("files.las")
-flightlines <- sensor_tracking(las)
+# pmin = 15 because it is an extremely tiny file
+# hardly decimated to reduce its size. There are
+# few multiple returns
+flightlines <- sensor_tracking(las, pmin = 15)
+
+plot(las@header)
+plot(flightlines, add = TRUE)
 
 x <- plot(las)
-add_flightlines3d(x, p, radius = 10)
+add_flightlines3d(x, flightlines, radius = 10)
 
 # Load only the data actually useful
-las <- readLAS("files.las",
+las <- readLAS(LASfile,
                select = "xyzrntp",
                filter = "-drop_single -thin_pulses_with_time 0.001")
 flightlines <- sensor_tracking(las)
 
 x <- plot(las)
-add_flightlines3d(x, p)
+add_flightlines3d(x, flightlines, radius = 10)
 
+\dontrun{
 # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
 # are used by default
 ctg = readLAScatalog("folder/")

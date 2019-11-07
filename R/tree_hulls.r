@@ -44,7 +44,7 @@
 #' @param attribute character. The attribute where the ID of each tree is stored. In lidR, the default is
 #' "treeID".
 #' @param func formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
-#' \link{grid_metrics3d} or \link{tree_metrics} and computes, in addition to the hulls a set of metrics
+#' \link{voxel_metrics} or \link{tree_metrics} and computes, in addition to the hulls a set of metrics
 #' for each tree.
 #'
 #' @return A \code{SpatialPolygonsDataFrame}. If a tree has less than 4 points it is not considered.

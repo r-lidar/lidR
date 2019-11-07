@@ -37,7 +37,7 @@ test_that("Each ground point is at 0 a RasterLayer", {
   dtm = grid_terrain(las, 1, tin())
   las <- lasnormalize(las, dtm)
   Z0 = las@data[Classification == 2]$Z
-  expect_equal(mean(abs(Z0)), 0.076, tol = 0.001)
+  expect_equal(mean(abs(Z0)), 0.06, tol = 0.001)
 })
 
 test_that("Error if NAs in DTM", {
@@ -45,11 +45,11 @@ test_that("Error if NAs in DTM", {
   dtm[1500] <- NA
 
   expect_error(lasnormalize(las, dtm), "not normalizable")
-  expect_message(lasnormalize(las, dtm, na.rm = TRUE), "14 points were not normalizable and removed")
+  expect_message(lasnormalize(las, dtm, na.rm = TRUE), "6 points were not normalizable and removed")
 
   las2 = suppressMessages(lasnormalize(las, dtm, na.rm = TRUE))
 
-  expect_equal(npoints(las2), npoints(las) -14 )
+  expect_equal(npoints(las2), npoints(las) - 6 )
 })
 
 test_that("lasnormalize work with a catalog", {

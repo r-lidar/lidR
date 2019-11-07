@@ -108,7 +108,8 @@ pmf = function(ws, th)
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
-#' las <- lasground(las, csf())
+#' mycsf <- csf(TRUE, 1, 1, time_step = 1)
+#' las <- lasground(las, mycsf)
 #' plot(las, color = "Classification")
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {

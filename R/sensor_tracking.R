@@ -55,27 +55,32 @@
 #' @author Jean-Francois Bourdon & Jean-Romain Roussel
 #' @export
 #' @examples
-#' # Note: lidR does not embed a dataset that enable to test this function
-#' # either because the point cloud were normalized or because the gpstime
-#' # and PointSourceID attributes have been zeroed to gain memory.
+#' # A valid file properly populated
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las = readLAS(LASfile)
+#' plot(las)
 #'
-#' \dontrun{
-#' # With a valid file properly populated
-#' las <- readLAS("files.las")
-#' flightlines <- sensor_tracking(las)
+#' # pmin = 15 because it is an extremely tiny file
+#' # hardly decimated to reduce its size. There are
+#' # few multiple returns
+#' flightlines <- sensor_tracking(las, pmin = 15)
+#'
+#' plot(las@header)
+#' plot(flightlines, add = TRUE)
 #'
 #' x <- plot(las)
-#' add_flightlines3d(x, p, radius = 10)
+#' add_flightlines3d(x, flightlines, radius = 10)
 #'
 #' # Load only the data actually useful
-#' las <- readLAS("files.las",
+#' las <- readLAS(LASfile,
 #'                select = "xyzrntp",
 #'                filter = "-drop_single -thin_pulses_with_time 0.001")
 #' flightlines <- sensor_tracking(las)
 #'
 #' x <- plot(las)
-#' add_flightlines3d(x, p)
+#' add_flightlines3d(x, flightlines, radius = 10)
 #'
+#' \dontrun{
 #' # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
 #' # are used by default
 #' ctg = readLAScatalog("folder/")
@@ -104,7 +109,7 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
   assert_is_a_bool(extra_check)
   assert_is_a_number(thin_pulse_with_time)
 
-  ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- NULL
+  . <- X <- Y <- Z <- ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- gpstime <-  NULL
 
   data <- las@data
 
@@ -203,6 +208,7 @@ sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 50, extra_che
   output@proj4string <- las@proj4string
 
   # Post processing to remove duplicated positions selecting the one computed with the more pulses
+  npulses <- gpstime <- NULL
   data <- as.data.frame(output)
   data.table::setDT(data)
   i <- data[, .I[which.max(npulses)], by = gpstime]$V1

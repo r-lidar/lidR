@@ -99,7 +99,7 @@ plot(las)
 # First option: use a RasterLayer as DTM
 # =======================================================
 
-dtm <- grid_terrain(las, 1, kriging(k = 10L))
+dtm <- grid_terrain(las, 1, knnidw(k = 6L, p = 2))
 las <- lasnormalize(las, dtm)
 
 plot(dtm)

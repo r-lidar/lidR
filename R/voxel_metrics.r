@@ -50,11 +50,11 @@
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the number of points is computed.
-#' grid_metrics3d(las, ~length(Z), 3)
+#' voxel_metrics(las, ~length(Z), 3)
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the mean scan angle of points is computed.
-#' grid_metrics3d(las, ~mean(Intensity), 3)
+#' voxel_metrics(las, ~mean(Intensity), 3)
 #'
 #' \dontrun{
 #' # Define your own metric function

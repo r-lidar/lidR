@@ -32,11 +32,11 @@ This function implements a 3D plot method for 'lasmetrics3d' objects
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
+voxels = voxel_metrics(lidar, list(Imean = mean(Intensity)))
 plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
 }
 \seealso{
-\link[lidR:grid_metrics3d]{grid_metrics3d}
+\link[lidR:voxel_metrics]{voxel_metrics}
 \link[rgl:points3d]{points3d}
 \link[lidR:height.colors]{height.colors}
 \link[lidR:forest.colors]{forest.colors}

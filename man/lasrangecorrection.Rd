@@ -33,6 +33,20 @@ To achieve the range correction the position of the sensor must be known at diff
 Using the 'gpstime' of each point, the position of the sensor is interpolated from the reference
 and a range correction is applied.
 }
+\examples{
+# A valid file properly populated
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile)
+
+# pmin = 15 because it is an extremely tiny file
+# hardly decimated to reduce its size. There are
+# few multiple returns
+sensor <- sensor_tracking(las, pmin = 15)
+
+# Here the effect is virtually null because the size of
+# the sample is too tiny to notice any effect of range
+las = lasrangecorrection(las, sensor, Rs = 2000)
+}
 \references{
 Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
 Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.

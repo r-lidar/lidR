@@ -49,6 +49,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 2. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.
 
 3. `grid_metrics3d()` and `grid_hexametrics()`  are deprecated. They are renamed `voxel_metrics()` and `hexbin_metrics()` for name consistancy.
+
+4. The example dataset names `Topography.laz` changes for a larger one that include attributes gpstime, PointSourceID and some classified lakes.
     
 #### ENHANCEMENT
 

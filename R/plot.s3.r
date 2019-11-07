@@ -43,10 +43,10 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
-#' voxels = grid_metrics3d(lidar, list(Imean = mean(Intensity)))
+#' voxels = voxel_metrics(lidar, list(Imean = mean(Intensity)))
 #' plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
 #' @seealso
-#' \link[lidR:grid_metrics3d]{grid_metrics3d}
+#' \link[lidR:voxel_metrics]{voxel_metrics}
 #' \link[rgl:points3d]{points3d}
 #' \link[lidR:height.colors]{height.colors}
 #' \link[lidR:forest.colors]{forest.colors}
@@ -205,9 +205,9 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
 
 #' @rdname plot_3d
 #' @export
-add_flightlines3d = function(x, flightline, z = "Z", ...)
+add_flightlines3d = function(x, flightlines, z = "Z", ...)
 {
-  return(add_treetops3d(x,flightline, z = "Z", ...))
+  return(add_treetops3d(x,flightlines, z = "Z", ...))
 }
 
 

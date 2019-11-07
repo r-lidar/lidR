@@ -14,7 +14,7 @@ add_dtm3d(x, dtm, ...)
 
 add_treetops3d(x, ttops, z = "Z", ...)
 
-add_flightlines3d(x, flightline, z = "Z", ...)
+add_flightlines3d(x, flightlines, z = "Z", ...)
 }
 \arguments{
 \item{dtm}{An object of the class \code{RasterLayer}}
