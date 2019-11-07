@@ -21,10 +21,6 @@ C_tsearch <- function(D, P, X, ncpu) {
     .Call(`_lidR_C_tsearch`, D, P, X, ncpu)
 }
 
-C_lasrangecorrection <- function(las, flightlines, Rs, f) {
-    .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
-}
-
 C_lmf <- function(las, ws, min_height, circular, ncpu) {
     .Call(`_lidR_C_lmf`, las, ws, min_height, circular, ncpu)
 }
@@ -63,6 +59,10 @@ C_rasterize <- function(las, layout, subcircle = 0, method = 1L) {
 
 C_point_metrics <- function(las, k, sub, call, env) {
     .Call(`_lidR_C_point_metrics`, las, k, sub, call, env)
+}
+
+C_lasrangecorrection <- function(las, flightlines, Rs, f) {
+    .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }
 
 fast_table <- function(x, size = 5L) {

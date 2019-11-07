@@ -1,20 +1,22 @@
 #' Normalize intensity with a range correction
 #'
 #' Normalize intensity with a range correction according to the formula (see references):
-#' \deqn{I_{norm} = I_{obs} (\frac{R}{Rs})^f)}
-#' To achieve the range correction the position of the sensor must be known at different descrete times.
+#' \deqn{I_{norm} = I_{obs} (\frac{R}{Rs})^f)}{Inorm = Iobs * (R/Rs)^f}
+#' To achieve the range correction the position of the sensor must be known at different discrete times.
 #' Using the 'gpstime' of each point, the position of the sensor is interpolated from the reference
 #' and a range correction is applied.
 #'
 #' @template param-las
-#' @param flightlines SpatialPointsDataDrame containing the coordinates of the sensor at different
-#' instant t. The time is stored in the 'gpstime' attribute and the elevation is stored into 'Z'
-#' attribute. Can be computed with \link{sensor_tracking}.
+#' @param sensor SpatialPointsDataDrame object containing the coordinates of
+#' the sensor at different instants t. The time and elevation are stored as attributes
+#' (default names are  'gpstime' and 'Z'). It can be computed with \link{sensor_tracking}.
 #' @param Rs numeric. Range of reference.
 #' @param f numeric. Exponent. Usually between 2 and 3 in vegetation context.
-#'
-#' @return An object of class LAS. The attribute 'Intensity' records the normalised intensity. A extra
-#' attribute 'RawIntensity' records the original intensities.
+#' @param gpstime,elevation character. The name of the attributes that store the gpstime of the position and the
+#' elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates is searched in
+#' the third column of coordinates. This is useful if read from a format that support 3 coordinates points.
+#' @return An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra
+#' attribute named 'RawIntensity' records the original intensities.
 #'
 #' @export
 #'
@@ -22,37 +24,66 @@
 #' Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
 #' Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.
 #' https://doi.org/10.14358/pers.77.3.251
-lasrangecorrection <- function(las, flightlines, Rs = 1000, f = 2.3)
+lasrangecorrection <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   UseMethod("lasrangecorrection", las)
 }
 
 #' @export
-lasrangecorrection.LAS <- function(las, flightlines, Rs = 1000, f = 2.3)
+lasrangecorrection.LAS <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
-  stopifnot(is(flightlines, "SpatialPointsDataFrame"))
+  stopifnot(is(sensor, "SpatialPointsDataFrame"))
   assert_is_a_number(Rs)
   assert_all_are_positive(Rs)
   assert_is_a_number(f)
   assert_all_are_positive(f)
 
-  if (!"gpstime"   %in% names(las@data))             stop("No 'gpstime' attribute found",   call. = FALSE)
-  if (!"gpstime"   %in% names(flightlines@data))     stop("No 'gpstime' attribute found",   call. = FALSE)
-  if (!"Z"         %in% names(flightlines@data))     stop("No 'Z' attribute found",         call. = FALSE)
-  if (!"Intensity" %in% names(las@data))             stop("No 'Intensity' attribute found", call. = FALSE)
+  if (!"gpstime"   %in% names(las@data))
+    stop("No 'gpstime' attribute found in las",   call. = FALSE)
 
-  coords <- flightlines@coords
-  coords <- data.table::data.table(coords)
-  data.table::setnames(coords, c("X", "Y"))
-  data   <- data.table::copy(flightlines@data)
-  fl     <- cbind(data, coords)
+  if (!"Intensity" %in% names(las@data))
+    stop("No 'Intensity' attribute found", call. = FALSE)
+
+  if (is.null(raster::intersect(raster::extent(las), raster::extent(sensor))))
+    stop("Point-cloud and sensor positions do not overlap.", call. = FALSE)
+
+  if (!gpstime %in% names(sensor@data))
+    stop(glue::glue("No '{gpstime}' attribute found in sensor."), call. = FALSE)
+
+  if (ncol(sensor@coords) == 3 && !is.null(elevation))
+  {
+    elevation = NULL
+    message("3 coordinates detected in the sensor positions, parameter 'elevation' was not considered.")
+  }
+
+  fl <- sensor@coords
+  fl <- data.table::data.table(fl)
+
+  trange.las <- range(las@data[["gpstime"]])
+  trange.sensor <- range(sensor@data[[gpstime]])
+
+  if ((trange.las[1] < trange.sensor[1] - 2) || (trange.las[2] > trange.sensor[2] + 2))
+    stop("'gpstime range from the sensor does not contain gpstime range from the point-cloud", call. = FALSE)
+
+  if (!is.null(elevation)) {
+    if (!elevation %in% names(sensor@data))
+      stop(glue::glue("No '{elevation}' attribute found in sensor."), call. = FALSE)
+
+    fl[["Z"]] <- sensor@data[[elevation]]
+  } else {
+    if (ncol(sensor@coords) != 3)
+      stop("There are only two dimensions in the coordinates of the sensor.", call. = FALSE)
+  }
+
+  fl[["gpstime"]] <- sensor@data[[gpstime]]
+
   data.table::setDT(fl)
   data.table::setorder(fl, gpstime)
+  data.table::setnames(fl, c("X", "Y", "Z", "gpstime"))
   dup <- duplicated(fl, by = "gpstime")
 
-  if (any(dup))
-  {
-    warning("Duplicated gpstime found. Duplicated sensor position were removed.", call. = FALSE)
+  if (any(dup)) {
+    warning("Duplicated gpstime found. Duplicated sensor positions were removed.", call. = FALSE)
     fl <- fl[!dup]
   }
 

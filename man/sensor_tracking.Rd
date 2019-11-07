@@ -4,12 +4,14 @@
 \alias{sensor_tracking}
 \title{Reconstruct the trajectory of the LiDAR sensor using multiple returns}
 \usage{
-sensor_tracking(las, interval = 0.5, pmin = 200, extra_check = TRUE)
+sensor_tracking(las, interval = 0.5, pmin = 50, extra_check = TRUE,
+  thin_pulse_with_time = 0.001)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{interval}{numeric. Tight interval used to bin the gps times and group the pulses.}
+\item{interval}{numeric. Tight interval used to bin the gps times and group the pulses to compute
+a position at a given instant t.}
 
 \item{pmin}{integer. Minimum number of pulses needed to estimate a sensor position.
 For a given interval, the sensor position is not computed if the number of pulse is lower than
@@ -18,6 +20,11 @@ For a given interval, the sensor position is not computed if the number of pulse
 \item{extra_check}{boolean. Datasets are rarely perfectly populated leading to unexpected errors.
 Time consuming checks of data integrity are performed. These checks can be skipped as they account
 for an important proportion of the computation time. See also section 'Tests of data integrity'.}
+
+\item{thin_pulse_with_time}{numeric. In practice it is useless to compute the position using every
+multiple returns. It is more computationnaly demanding but not necessarily more accurate. This keeps
+only one pulse every x seconds. Set 0 to use every multiple returns. Use 0 if the file has already
+bee read with \code{filter = "-thin_pulses_with_time 0.001"}.}
 }
 \value{
 A SpatialPointDataFrame with the Z elevation stored in the table of attribute. Informations
@@ -29,7 +36,8 @@ Use multiple returns to estimate the positionning of the sensor by computing the
 space of the line passing througt the first and last returns. To work this function requieres a
 dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceID' attributes are
 properly populated otherwise the output may be incorrect or weird. For LAScatalog processing
-it is recommanded to use large chunks and large buffer (e.g. a swath width).
+it is recommanded to use large chunks and large buffer (e.g. a swath width). The point cloud must
+not be normalized.
 }
 \details{
 When multiple returns from a single pulse are detected, the sensor compute their positions as being
@@ -37,7 +45,7 @@ in the center of the footprint and thus being all aligned. Because of that behea
 drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
 emitted in a tight interval (e.g. 0.5 second) can be used to approximate an intersection
 point in the sky that correspond to the sensor position given that the sensor carrier hasn't
-moved much during this interval. A weighed least squares method gives an  approximation of the
+moved much during this interval. A weighed least squares method gives an approximation of the
 intersection by minimising the squared sum of the distances between the intersection point and all
 the lines.
 }
@@ -59,6 +67,21 @@ For a given time interval, when weird points are not filtered, the position is n
 interval.
 }
 
+\section{Working with a \code{LAScatalog}}{
+
+This section appears in each function that supports a LAScatalog as input.\cr
+
+In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
+function uses the LAScatalog processing engine. The user can modify the engine options using
+the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
+\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
+\code{lidR} function should come with a section that documents the supported engine options.\cr
+
+The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
+speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
+but this is not mandatory.\cr
+}
+
 \section{Supported processing options}{
 
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
@@ -73,12 +96,40 @@ always removed once processed and will never be returned either in R or in files
 must be post-processed as a whole.
 \item laz_compression: write \code{las} or \code{laz} files
 \item select: is not supported. It is set by default to "xyzrntp"
-\item \strong{filter}: Read only points of interest. By default it uses "-drop_single" but user can
-add filters such as "-thin_pulses_with_time 0.001" to reduce the number of points loaded. There is
-no gain at computing the sensor position with too many pulses.
+\item \strong{filter}: Read only points of interest. By default it uses "-drop_single"
+and "-thin_pulses_with_time" to reduce the number of points loaded.
 }
 }
 
+\examples{
+# Note: lidR does not embed a dataset that enable to test this function
+# either because the point cloud were normalized or because the gpstime
+# and PointSourceID attributes have been zeroed to gain memory.
+
+\dontrun{
+# With a valid file properly populated
+las <- readLAS("files.las")
+flightlines <- sensor_tracking(las)
+
+x <- plot(las)
+add_flightlines3d(x, p, radius = 10)
+
+# Load only the data actually useful
+las <- readLAS("files.las",
+               select = "xyzrntp",
+               filter = "-drop_single -thin_pulses_with_time 0.001")
+flightlines <- sensor_tracking(las)
+
+x <- plot(las)
+add_flightlines3d(x, p)
+
+# With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
+# are used by default
+ctg = readLAScatalog("folder/")
+flightlines <- sensor_tracking(ctg)
+plot(flightlines)
+}
+}
 \author{
 Jean-Francois Bourdon & Jean-Romain Roussel
 }

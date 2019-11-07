@@ -12,6 +12,7 @@ class LAS
     NumericVector X;
     NumericVector Y;
     NumericVector Z;
+    NumericVector T;
     IntegerVector I;
     unsigned int ncpu;
     unsigned int npoints;
@@ -34,6 +35,7 @@ class LAS
 
     void z_open(double resolution);
     void z_smooth(double size, int method, int shape, double sigma);
+    void i_range_correction(DataFrame flightlines, double Rs, double f);
 
     NumericVector rasterize(S4 layout, double subcircle, int method);
 

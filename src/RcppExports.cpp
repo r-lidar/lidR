@@ -74,20 +74,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_lasrangecorrection
-IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f);
-RcppExport SEXP _lidR_C_lasrangecorrection(SEXP lasSEXP, SEXP flightlinesSEXP, SEXP RsSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type flightlines(flightlinesSEXP);
-    Rcpp::traits::input_parameter< double >::type Rs(RsSEXP);
-    Rcpp::traits::input_parameter< double >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_lasrangecorrection(las, flightlines, Rs, f));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_lmf
 LogicalVector C_lmf(S4 las, NumericVector ws, double min_height, bool circular, int ncpu);
 RcppExport SEXP _lidR_C_lmf(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP, SEXP ncpuSEXP) {
@@ -224,6 +210,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type call(callSEXP);
     Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
     rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, sub, call, env));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_lasrangecorrection
+IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f);
+RcppExport SEXP _lidR_C_lasrangecorrection(SEXP lasSEXP, SEXP flightlinesSEXP, SEXP RsSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type flightlines(flightlinesSEXP);
+    Rcpp::traits::input_parameter< double >::type Rs(RsSEXP);
+    Rcpp::traits::input_parameter< double >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lasrangecorrection(las, flightlines, Rs, f));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -385,7 +384,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 6},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
-    {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},
@@ -396,6 +394,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 5},
+    {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

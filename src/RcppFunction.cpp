@@ -112,6 +112,15 @@ List C_point_metrics(S4 las, unsigned int k, DataFrame sub, SEXP call, SEXP env)
   return pt.knn_metrics(k, data, sub, call, env);
 }
 
+// [[Rcpp::export(rng = false)]]
+IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f)
+{
+  LAS pt(las);
+  pt.i_range_correction(flightlines, Rs, f);
+  return Rcpp::wrap(pt.I);
+}
+
+
 /*
  * ======= FAST BASE FUNCTIONS =========
  */

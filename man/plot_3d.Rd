@@ -5,6 +5,7 @@
 \alias{plot_dtm3d}
 \alias{add_dtm3d}
 \alias{add_treetops3d}
+\alias{add_flightlines3d}
 \title{Add a spatial object to a point cloud scene}
 \usage{
 plot_dtm3d(dtm, bg = "black", clear_artifacts = TRUE, ...)
@@ -12,6 +13,8 @@ plot_dtm3d(dtm, bg = "black", clear_artifacts = TRUE, ...)
 add_dtm3d(x, dtm, ...)
 
 add_treetops3d(x, ttops, z = "Z", ...)
+
+add_flightlines3d(x, flightline, z = "Z", ...)
 }
 \arguments{
 \item{dtm}{An object of the class \code{RasterLayer}}
@@ -31,7 +34,9 @@ their coordinates. The drawback is that the objects are not plotted at their act
 
 \item{ttops}{A SpatialPointsDataFrame that contains tree tops coordinates.}
 
-\item{z}{character. The name of the attribute that contains the height of the tree tops.}
+\item{z}{character. The name of the attribute that contains the height of the tree tops or of the flightlines.}
+
+\item{flightlines}{A SpatialPointsDataFrame that contains flightlines coordinates.}
 }
 \description{
 Add a \code{RasterLayer} object that represents a digital terrain model or a

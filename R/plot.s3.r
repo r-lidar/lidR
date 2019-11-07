@@ -101,7 +101,8 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' \link[rgl:spheres3d]{spheres3d}.
 #' @param x The output of the function plot used with a LAS object.
 #' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates.
-#' @param z character. The name of the attribute that contains the height of the tree tops.
+#' @param flightlines A SpatialPointsDataFrame that contains flightlines coordinates.
+#' @param z character. The name of the attribute that contains the height of the tree tops or of the flightlines.
 #' @param clear_artifacts logical. It is a known and documented issue that 3D visualisation with
 #' \code{rgl} displays artifacts. The points and lines are inaccurately positioned in the space and thus
 #' the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}.
@@ -201,4 +202,12 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
   do.call(rgl::spheres3d, args)
   return(invisible(x))
 }
+
+#' @rdname plot_3d
+#' @export
+add_flightlines3d = function(x, flightline, z = "Z", ...)
+{
+  return(add_treetops3d(x,flightline, z = "Z", ...))
+}
+
 

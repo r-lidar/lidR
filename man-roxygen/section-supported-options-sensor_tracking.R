@@ -11,7 +11,6 @@
 #' must be post-processed as a whole.
 #' \item laz_compression: write \code{las} or \code{laz} files
 #' \item select: is not supported. It is set by default to "xyzrntp"
-#' \item \strong{filter}: Read only points of interest. By default it uses "-drop_single" but user can
-#' add filters such as "-thin_pulses_with_time 0.001" to reduce the number of points loaded. There is
-#' no gain at computing the sensor position with too many pulses.
+#' \item \strong{filter}: Read only points of interest. By default it uses "-drop_single"
+#' and "-thin_pulses_with_time" to reduce the number of points loaded.
 #' }

@@ -4,14 +4,15 @@
 #' space of the line passing througt the first and last returns. To work this function requieres a
 #' dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceID' attributes are
 #' properly populated otherwise the output may be incorrect or weird. For LAScatalog processing
-#' it is recommanded to use large chunks and large buffer (e.g. a swath width).
+#' it is recommanded to use large chunks and large buffer (e.g. a swath width). The point cloud must
+#' not be normalized.
 #'
 #' When multiple returns from a single pulse are detected, the sensor compute their positions as being
 #' in the center of the footprint and thus being all aligned. Because of that beheaviour, a line
 #' drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
 #' emitted in a tight interval (e.g. 0.5 second) can be used to approximate an intersection
 #' point in the sky that correspond to the sensor position given that the sensor carrier hasn't
-#' moved much during this interval. A weighed least squares method gives an  approximation of the
+#' moved much during this interval. A weighed least squares method gives an approximation of the
 #' intersection by minimising the squared sum of the distances between the intersection point and all
 #' the lines.
 #'
@@ -31,30 +32,63 @@
 #' For a given time interval, when weird points are not filtered, the position is not computed for this
 #' interval.
 #'
+#' @template LAScatalog
 #' @template section-supported-options-sensor_tracking
 #'
 #' @template param-las
-#' @param interval numeric. Tight interval used to bin the gps times and group the pulses.
+#' @param interval numeric. Tight interval used to bin the gps times and group the pulses to compute
+#' a position at a given instant t.
 #' @param pmin integer. Minimum number of pulses needed to estimate a sensor position.
 #' For a given interval, the sensor position is not computed if the number of pulse is lower than
 #' \code{pmin}.
 #' @param extra_check boolean. Datasets are rarely perfectly populated leading to unexpected errors.
 #' Time consuming checks of data integrity are performed. These checks can be skipped as they account
 #' for an important proportion of the computation time. See also section 'Tests of data integrity'.
-#'
+#' @param thin_pulse_with_time numeric. In practice it is useless to compute the position using every
+#' multiple returns. It is more computationnaly demanding but not necessarily more accurate. This keeps
+#' only one pulse every x seconds. Set 0 to use every multiple returns. Use 0 if the file has already
+#' bee read with \code{filter = "-thin_pulses_with_time 0.001"}.
 #' @return A SpatialPointDataFrame with the Z elevation stored in the table of attribute. Informations
 #' about the time interval and the number of pulses used to find the points are also in the table of
 #' attributes.
 #'
 #' @author Jean-Francois Bourdon & Jean-Romain Roussel
 #' @export
-sensor_tracking <- function(las, interval = 0.5, pmin = 200, extra_check = TRUE)
+#' @examples
+#' # Note: lidR does not embed a dataset that enable to test this function
+#' # either because the point cloud were normalized or because the gpstime
+#' # and PointSourceID attributes have been zeroed to gain memory.
+#'
+#' \dontrun{
+#' # With a valid file properly populated
+#' las <- readLAS("files.las")
+#' flightlines <- sensor_tracking(las)
+#'
+#' x <- plot(las)
+#' add_flightlines3d(x, p, radius = 10)
+#'
+#' # Load only the data actually useful
+#' las <- readLAS("files.las",
+#'                select = "xyzrntp",
+#'                filter = "-drop_single -thin_pulses_with_time 0.001")
+#' flightlines <- sensor_tracking(las)
+#'
+#' x <- plot(las)
+#' add_flightlines3d(x, p)
+#'
+#' # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
+#' # are used by default
+#' ctg = readLAScatalog("folder/")
+#' flightlines <- sensor_tracking(ctg)
+#' plot(flightlines)
+#' }
+sensor_tracking <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   UseMethod("sensor_tracking", las)
 }
 
 #' @export
-sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 200, extra_check = TRUE)
+sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   if (!"PointSourceID" %in% names(las@data))     stop("No 'PointSourceID' attribute found", call. = FALSE)
   if (!"gpstime" %in% names(las@data))           stop("No 'gpstime' attribute found", call. = FALSE)
@@ -68,17 +102,26 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 200, extra_check = T
   assert_is_a_number(interval)
   assert_is_a_number(pmin)
   assert_is_a_bool(extra_check)
+  assert_is_a_number(thin_pulse_with_time)
+
+  ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- NULL
 
   data <- las@data
 
-  # Reordering of input data by gpstime and ReturnNumber
-  data.table::setorder(data, gpstime, ReturnNumber)
-
-  # Compute an ID for each pulse
-  data$pulseID <- .lagisdiff(data[["gpstime"]])
-
   # Get only the first and last returns of multiple returns
   data <- data[(ReturnNumber == NumberOfReturns | ReturnNumber == 1) & NumberOfReturns > 1]
+
+  # Decimate the dataset by gpstime
+  if (thin_pulse_with_time > 0)
+  {
+    ftime <- round_any(data$gpstime, thin_pulse_with_time)
+    times <- data[, first(gpstime), by = ftime]$V1
+    data <- data[gpstime %in% times]
+  }
+
+  # Compute an ID for each pulse
+  data.table::setorder(data, gpstime, ReturnNumber)
+  data$pulseID <- .lagisdiff(data[["gpstime"]])
 
   # Filter some edge points that may not be paired in a pulse
   count <- fast_table(data$pulseID,  max(data$pulseID))
@@ -126,13 +169,13 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 200, extra_check = T
   P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)])
 
   if (sum(na) > 0)
-    warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be wrongly populated in a way not tested internally. Positions had not been computed everywere"), call. = FALSE)
+    warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be wrongly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)
 
   return(P)
 }
 
 #' @export
-sensor_tracking.LAScluster <- function(las, interval = 0.5, pmin = 200, extra_check = TRUE)
+sensor_tracking.LAScluster <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
@@ -141,10 +184,12 @@ sensor_tracking.LAScluster <- function(las, interval = 0.5, pmin = 200, extra_ch
 }
 
 #' @export
-sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 200, extra_check = TRUE)
+sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
+  assert_is_a_number(thin_pulse_with_time)
+
   opt_select(las) <- "xyzrntp"
-  opt_filter(las) <- paste("-drop_single", opt_filter(las))
+  opt_filter(las) <- paste("-drop_single -thin_pulses_with_time", format(thin_pulse_with_time, scientific =  FALSE), opt_filter(las))
 
   if (opt_output_files(las) != "")
   {
@@ -153,7 +198,7 @@ sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 200, extra_ch
   }
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
-  output  <- catalog_apply(las, sensor_tracking, interval = interval, pmin = pmin, extra_check = extra_check, .options = options)
+  output  <- catalog_apply(las, sensor_tracking, interval = interval, pmin = pmin, extra_check = extra_check, thin_pulse_with_time = 0, .options = options)
   output  <- do.call(rbind, output)
   output@proj4string <- las@proj4string
 

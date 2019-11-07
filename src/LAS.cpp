@@ -18,6 +18,9 @@ LAS::LAS(S4 las)
   if (data.containsElementNamed("Intensity"))
     this->I = data["Intensity"];
 
+  if (data.containsElementNamed("gpstime"))
+    this->T = data["gpstime"];
+
   this->npoints = X.size();
   this->ncpu = 1;
   this->filter.resize(npoints);
@@ -211,6 +214,87 @@ void LAS::z_open(double resolution)
   }
 
   Z = Z_out;
+  return;
+}
+
+void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
+{
+  NumericVector x = flightlines["X"];
+  NumericVector y = flightlines["Y"];
+  NumericVector z = flightlines["Z"];
+  NumericVector t = flightlines["gpstime"];
+
+  double average_z_sensor = Rcpp::mean(z);
+  double R_control = mean(average_z_sensor - Z);
+
+  NumericVector::iterator it;
+  double dx, dy, dz, dt, r, R, k, range;
+  double i;
+  int j;
+
+  IntegerVector Inorm(X.size());
+
+  Progress pbar(npoints, "Range computation");
+
+  for (int k = 0 ; k < npoints ; k++)
+  {
+    pbar.increment();
+    pbar.check_abort();
+
+    it = std::lower_bound(t.begin(), t.end(), T[k]);
+
+    // If the gpstime is the last one: no interpolation with the next one (edge of data)
+    if (it == t.begin())
+    {
+      j  = 0;
+      dx = X[k] - x[j];
+      dy = Y[k] - y[j];
+      dz = Z[k] - z[j];
+    }
+    // If t2-t1 is too big it is two differents lines: no interpolation with the next one (edge of data)
+    else if (*it - *(it-1) > 30)
+    {
+      j  = it - t.begin() - 1;
+      dx = X[k] - x[j];
+      dy = Y[k] - y[j];
+      dz = Z[k] - z[j];
+    }
+    // General case with t2 > t > t1
+    else
+    {
+      j  = it - t.begin() - 1;
+      r  = 1 - (t[j+1]-T[k])/(t[j+1]-t[j]);
+
+      dx = X[k] - (x[j] + (x[j+1] - x[j])*r);
+      dy = Y[k] - (y[j] + (y[j+1] - y[j])*r);
+      dz = Z[k] - (z[j] + (z[j+1] - z[j])*r);
+    }
+
+    R = std::sqrt(dx*dx + dy*dy + dz*dz);
+
+    if (R > 3 * R_control)
+    {
+      Rprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
+      Rprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
+      Rprintf("Matched with sensor at (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j], y[j], z[j], t[j]);
+      Rprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
+      Rprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
+      throw Rcpp::exception("Unrealistic range: see message above", false);
+    }
+
+    i = I[k] * std::pow((R/Rs),f);
+
+    if (i > 65535)
+    {
+      Rf_warningcall(R_NilValue, "Normalized intensity does not fit in 16 bit. Value clamped to 2^16.");
+      i = 65535;
+    }
+
+    Inorm[k]  = i;
+  }
+
+  I = Inorm;
+
   return;
 }
 
