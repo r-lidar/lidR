@@ -39,7 +39,8 @@ setClass(
     wkt    = "character",
     files  = "character",
     name   = "character",
-    save   = "character"
+    save   = "character",
+    alt_dir = "character"
   )
 )
 

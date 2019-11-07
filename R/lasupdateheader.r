@@ -127,7 +127,9 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   assert_is_a_string(type)
   stopif_forbidden_name(name)
 
-  type = match.arg(type, c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"))
+  types = c("uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double")
+  type = match.arg(type, types)
+  type = which(type == types)
 
   if (missing(x))
   {
@@ -198,6 +200,10 @@ lasupdateheader = function(las)
   new_header <- rlas::header_update(header, las@data)
   new_header <- LASheader(new_header)
   las@header <- new_header
+  las@bbox[1,1] <- new_header@PHB[["Min X"]]
+  las@bbox[1,2] <- new_header@PHB[["Max X"]]
+  las@bbox[2,1] <- new_header@PHB[["Min Y"]]
+  las@bbox[2,2] <- new_header@PHB[["Max Y"]]
   return(las)
 }
 

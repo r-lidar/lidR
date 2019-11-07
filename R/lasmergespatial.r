@@ -75,6 +75,12 @@ lasmergespatial = function(las, source, attribute = NULL)
 #' @export
 lasmergespatial.LAS = function(las, source, attribute = NULL)
 {
+  if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
+  {
+    attribute <- NULL
+    source <- as(source, "SpatialPolygonsDataFrame")
+  }
+
   if (is(source, "SpatialPolygonsDataFrame"))
     values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
   else if (is(source, "RasterLayer"))
@@ -192,7 +198,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   for (i in seq_along(sfgeom$geometry))
   {
     wkt          <- sf::st_as_text(sfgeom$geometry[i], digits = 10)
-    in_poly      <- C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt, getThread())
+    in_poly      <- C_in_polygon(las, wkt, getThread())
     ids[in_poly] <- i
   }
 
@@ -209,6 +215,11 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
 lasmergeRasterLayer = function(las, raster)
 {
   cells <- raster::cellFromXY(raster, coordinates(las))
-  return(raster@data@values[cells])
+
+  # This will respect data type when in memory (data type lost if written in file)
+  if (raster::inMemory(raster))
+    return(raster@data@values[cells])
+  else
+    return(raster[cells])
 }
 

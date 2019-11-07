@@ -25,22 +25,22 @@
 #
 # ===============================================================================
 
-cluster_apply = function(clusters, FUN, processing_options, output_options, globals = NULL, ...)
+cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, ...)
 {
   # Parse ellipsis
   params  <- list(...)
-  first_p <- names(formals(FUN))[1]
+  first_p <- names(formals(.FUN))[1]
 
   # Initialize output
-  nclusters  <- length(clusters)
+  nclusters  <- length(.CLUSTER)
   futures    <- vector("list", nclusters)
   output     <- vector("list", nclusters)
-  writemode  <- clusters[[1]]@save != ""
-  drivers    <- output_options$drivers
+  writemode  <- .CLUSTER[[1]]@save != ""
+  drivers    <- .OUTPUTOPT$drivers
 
   # Initialize progress bar
-  prgrss     <- processing_options$progress
-  abort      <- processing_options$stop_early
+  prgrss     <- .PROCESSOPT$progress
+  abort      <- .PROCESSOPT$stop_early
   states     <- rep(CHUNK_WAINTING, nclusters)
   messages   <- rep("", nclusters)
   pb         <- engine_progress_bar(nclusters, prgrss)
@@ -63,25 +63,25 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
 
   # ==== PROCESSING ====
 
-  for (i in seq_along(clusters))
+  for (i in seq_along(.CLUSTER))
   {
-    params[[first_p]] <- clusters[[i]]
-    save <- clusters[[i]]@save
+    params[[first_p]] <- .CLUSTER[[i]]
+    save <- .CLUSTER[[i]]@save
 
     states[i] <- CHUNK_PROCESSING
-    engine_update_progress(pb, clusters[[i]], states[i], percentage)
+    engine_update_progress(pb, .CLUSTER[[i]], states[i], percentage, i)
 
-    # Asynchronous computation of FUN on the chunk
+    # Asynchronous computation of .FUN on the chunk
     futures[[i]] <- future::future(
     {
       setThreads(threads)
       options(lidR.progress = FALSE)
       options(lidR.verbose = FALSE)
-      y <- do.call(FUN, params)
-      if (is.null(y)) return(NULL)
-      if (!writemode) return(y)
-      return(writeANY(y, save, drivers))
-    }, substitute = TRUE, globals = structure(TRUE, add = globals))
+      y <- do.call(.FUN, params)
+      if (is.null(y)) y <- NULL
+      if (!is.null(y) && writemode) y <- writeANY(y, save, drivers)
+      y
+    }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS))
 
     # Evaluation of the state of the futures
     for (j in 1:i)
@@ -99,7 +99,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
 
       # The state changed: the chunk was processed. Update the progress
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, clusters[[j]], states[j], percentage)
+      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
       # The state is ERROR: abort the process nicely
       if (states[j] == CHUNK_ERROR & abort)
@@ -114,7 +114,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
         # Return a partial output and display the logs
         else
         {
-          engine_save_logs(clusters[[j]], j)
+          engine_save_logs(.CLUSTER[[j]], j)
           message(messages[j])
           return(output)
         }
@@ -148,7 +148,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
       if (states[j] == CHUNK_PROCESSING) next
 
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, clusters[[j]], states[j], percentage)
+      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
       if (states[j] == CHUNK_ERROR & abort)
       {
@@ -158,7 +158,7 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
         }
         else
         {
-          engine_save_logs(clusters[[j]], j)
+          engine_save_logs(.CLUSTER[[j]], j)
           message(messages[j])
           return(output)
         }
@@ -174,7 +174,6 @@ cluster_apply = function(clusters, FUN, processing_options, output_options, glob
 
   return(output)
 }
-
 engine_eval_state <- function(future)
 {
   cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
@@ -216,6 +215,10 @@ engine_progress_bar <- function(n, prgss = FALSE)
   if (!prgss)
     return(pb)
 
+  # nocov start
+  if (!interactive())
+    return(n)
+
   if (requireNamespace("progress", quietly = TRUE))
     pb <- progress::progress_bar$new(format = glue::glue("Processing [:bar] :percent (:current/:total) eta: :eta"), total = n, clear = FALSE)
   else
@@ -223,33 +226,41 @@ engine_progress_bar <- function(n, prgss = FALSE)
 
   graphics::legend("topright", title = "Colors", legend = c("Processing", "Empty","Ok","Warning", "Error"), fill = c("cornflowerblue", "gray","green3", "orange", "red"), cex = 0.8)
 
-  return(pb)
+  return(pb) # nocov end
 }
 
-engine_update_progress <- function(pb, cluster, state, p)
+engine_update_progress <- function(pb, cluster, state, p, j)
 {
-  if (!is.null(pb))
+  if (is.null(pb))
+    return(invisible(NULL))
+
+  # nocov start
+  if (state == CHUNK_OK) { col <- "green3" ; sym <- "\u2713" }
+  else if (state == CHUNK_NULL) { col <- "gray" ; sym <- "\u2205" }
+  else if (state == CHUNK_WARNING) { col <- "orange" ; sym <- "\u26A0" }
+  else if (state == CHUNK_ERROR) { col <- "red" ; sym <- "\u2717" }
+  else if (state == CHUNK_PROCESSING) { col <- "cornflowerblue" ; sym <- "\u21BB" }
+
+  if (!interactive())
   {
-    bbox <- cluster@bbox
+    if (state == CHUNK_PROCESSING)
+      return(invisible())
 
-    if (state == CHUNK_OK)
-      col <- "green3"
-    else if (state == CHUNK_NULL)
-      col <- "gray"
-    else if (state == CHUNK_WARNING)
-      col <- "orange"
-    else if (state == CHUNK_ERROR)
-      col <- "red"
-    else if (state == CHUNK_PROCESSING)
-      col <- "cornflowerblue"
-
-    graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
-
-    if (is(pb, "txtProgressBar"))
-      utils::setTxtProgressBar(pb, p)
-    else
-      pb$update(p)
+    cat(glue::glue("Chunk {j} of {pb} ({round(p*100,1)}%): state {sym}"))
+    cat("\n")
+    return(invisible())
   }
+
+  bbox <- cluster@bbox
+
+  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+
+  if (is(pb, "txtProgressBar"))
+    utils::setTxtProgressBar(pb, p)
+  else
+    pb$update(p)
+
+  return(invisible()) # nocov end
 }
 
 engine_save_logs <- function(cluster, index)

@@ -5,7 +5,7 @@
 \title{Plot voxelized LiDAR data}
 \usage{
 \method{plot}{lasmetrics3d}(x, y, color = "Z",
-  colorPalette = height.colors(50), bg = "black", trim = 1, ...)
+  colorPalette = height.colors(50), bg = "black", trim = Inf, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{'lasmetrics3d'}}

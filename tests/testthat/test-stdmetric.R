@@ -47,3 +47,9 @@ test_that("stdmetric_rn return the same result than stdmetric", {
   expect_identical(x,y)
 })
 
+
+test_that("stdmetric_pulse works", {
+  las = laspulse(las)
+  expect_error(grid_metrics(las, .stdmetrics_pulse, 20), NA)
+})
+

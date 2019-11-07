@@ -37,3 +37,12 @@ LASFIELDS             <- c("X", "Y", "Z", "Intensity",
                            "UserData", "gpstime", "PointSourceID",
                            "R", "G", "B")
 
+LIDRCONTEXTDSM <- "grid_canopy"
+LIDRCONTEXTSPI <- c("lasnormalize", "grid_terrain", "spatial_interpolation")
+LIDRCONTEXTGND <- "lasground"
+LIDRCONTEXTITD <- "tree_detection"
+LIDRCONTEXTDEC <- "lasfilterdecimate"
+LIDRCONTEXTSHP <- "lasdetectshape"
+LIDRCONTEXTSNG <- "lassnags"
+LIDRCONTEXTITS <- "lastrees"
+

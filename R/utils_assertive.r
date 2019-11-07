@@ -1,8 +1,3 @@
-# All that stuff aims to replace the functions needed by lidR that come from the assertive package.
-# On 2018-11-20 I received an email from Kurt Hornik to announce that assertive will be removed
-# from cran and consequently lidR as well because it has a strong dependency to assertive. This file
-# is quick fix that removes the dependency to assertive.
-
 assert_all_are_non_negative = function(x)
 {
   x. <- lazyeval::expr_text(x)
@@ -145,6 +140,12 @@ assert_is_algorithm = function(x)
     stop("Invalid function provided as algorithm.", call. = FALSE)
 }
 
+assert_is_algorithm_dsm = function(x)
+{
+  if (!is(x, "DigitalSurfaceModel"))
+    stop("The algorithm used is not an algorithm for digital surface model.", call. = FALSE)
+}
+
 assert_is_algorithm_itd = function(x)
 {
   if (!is(x, "IndividualTreeDetection"))
@@ -169,6 +170,46 @@ assert_is_algorithm_its = function(x)
     stop("The algorithm used is not an algorithm for individual tree segmentation.", call. = FALSE)
 }
 
+assert_is_algorithm_dec = function(x)
+{
+  if (!is(x, "PointCloudDecimation"))
+    stop("The algorithm used is not an algorithm for point cloud decimation.", call. = FALSE)
+}
+
+assert_is_algorithm_gnd = function(x)
+{
+  if (!is(x, "GroundSegmentation"))
+    stop("The algorithm used is not an algorithm for ground segmentation.", call. = FALSE)
+}
+
+assert_is_algorithm_sng = function(x)
+{
+  if (!is(x, "SnagsSegmentation"))
+    stop("The algorithm used is not an algorithm for snags segmentation.", call. = FALSE)
+}
+
+
+assert_is_valid_context = function(expected_contexts, name = "", null_allowed = FALSE)
+{
+  received_context <- tryCatch({get("lidR.context", envir = parent.frame(n = 2L))}, error = function(e) {return(NULL)})
+
+  if (is.null(received_context) && !null_allowed)
+    stop(glue::glue("The '{name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
+  else
+    return(NULL)
+
+  if (!received_context %in% expected_contexts)
+    stop(glue::glue("The '{name}' algorithm has not been called in the correct context."), call. = FALSE)
+
+  return(NULL)
+}
+
+assert_las_is_not_empty = function(x)
+{
+  if (is.empty(x))
+    stop("The point cloud contains 0 point", call. = FALSE)
+}
+
 
 stopifnotlas = function(x)
 {
@@ -180,14 +221,4 @@ stopif_forbidden_name = function(name)
 {
   if (name %in% LASFIELDS)
     stop(glue::glue("{name} is part of the core attributes and is a forbidden name."), call. = FALSE)
-}
-
-stopif_wrong_context = function(received_context, expected_contexts, func_name)
-{
-  str = paste0(expected_contexts, collapse  = "' or '")
-
-  if (is.null(received_context))
-    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
-  if (!received_context %in% expected_contexts)
-    stop(glue::glue("The '{func_name}' algorithm has not been called in the correct context. It is expected to be used in '{str}'"), call. = FALSE)
 }

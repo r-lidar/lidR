@@ -65,28 +65,10 @@ pmf = function(ws, th)
   ws <- lazyeval::uq(ws)
   th <- lazyeval::uq(th)
 
-  f = function(cloud)
+  f = function(las, filter)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasground"), "pmf")
-
-    for (i in 1:length(ws))
-    {
-      verbose(glue::glue("Pass {i} of {length(ws)}..."))
-      verbose(glue::glue("Windows size = {ws[i]} ; height_threshold = {th[i]}"))
-
-      Z_f = C_MorphologicalOpening(cloud$X, cloud$Y, cloud$Z, ws[i])
-
-      # Find indices of the points for which the difference between the source
-      # and filtered point clouds is less than the current height threshold
-      diff = cloud$Z - Z_f
-      indices = diff < th[i]
-
-      # Limit filtering to those points currently considered ground returns
-      cloud = cloud[indices]
-    }
-
-    idx <- cloud$idx
+    assert_is_valid_context(LIDRCONTEXTGND, "pmf")
+    return(C_pmf(las, ws, th, filter))
   }
 
   class(f) <- c("GroundSegmentation", "Algorithm", "lidR")
@@ -137,13 +119,15 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   iterations       <- lazyeval::uq(iterations)
   time_step        <- lazyeval::uq(time_step)
 
-  f = function(cloud)
+  f = function(las, filter)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lasground"), "csf")
-
+    . <- X <- Y <- Z <- NULL
+    assert_is_valid_context(LIDRCONTEXTGND, "csf")
+    las@data[["idx"]] <- 1:npoints(las)
+    cloud <- las@data[filter, .(X,Y,Z, idx)]
     gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
     idx <- cloud$idx[gnd]
+    return(idx)
   }
 
   class(f) <- c("GroundSegmentation", "Algorithm", "lidR")

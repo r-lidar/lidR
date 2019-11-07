@@ -6,7 +6,7 @@ ctg     <-  catalog(LASfile)
 
 test_that("lasfiltersurfacepoints works", {
 
-  opt_progress(ctg) <- TRUE
+  opt_progress(ctg) <- FALSE
   opt_chunk_size(ctg) <- 180
   opt_output_files(ctg) <- paste0(tempdir(), "/file_{ID}")
   ctgdec <-  lasfiltersurfacepoints(ctg, 1)

@@ -45,6 +45,9 @@
 #'
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
+#' @param full_raster logical. By default the interpolation is made only within the convex hull of
+#' the point cloud. This prevent against meaningless interpolations where there is no data. If TRUE
+#' each pixel of the raster is interpolated.
 #'
 #' @template LAScatalog
 #'
@@ -75,72 +78,67 @@
 #' plot_dtm3d(dtm2)
 #' plot_dtm3d(dtm3)
 #' }
-grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
-  if (!is_a_number(res) & !is(res, "RasterLayer"))
-    stop("res is not a number or a RasterLayer")
-
-  if (is_a_number(res))
-    assert_all_are_non_negative(res)
-
   UseMethod("grid_terrain", las)
 }
 
 #' @export
-grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
+  # Defensive programming
+  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
+  assert_is_a_bool(keep_lowest)
+  assert_is_a_bool(full_raster)
+  if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' data")
+  if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.")
 
+  # Non standart evaluation (R CMD check)
   . <- X <- Y <- Z <- Classification <- NULL
 
+  # Delaunay triangulation with boost requiere to
+  # compute back integer coordinates
+  xscale  <- las@header@PHB[["X scale factor"]]
+  yscale  <- las@header@PHB[["Y scale factor"]]
+  xoffset <- las@header@PHB[["X offset"]]
+  yoffset <- las@header@PHB[["Y offset"]]
+  scales  <- c(xscale, yscale)
+  offsets <- c(xoffset, yoffset)
+
   # Select the ground points
-  # ========================
-
-  if (!"Classification" %in% names(las@data))
-    stop("LAS object does not contain 'Classification' data")
-
-  if (fast_countequal(las@data$Classification, 2L) == 0)
-    stop("No ground points found. Impossible to compute a DTM.")
-
   ground <- las@data[Classification == LASGROUND, .(X,Y,Z)]
   ground <- check_degenerated_points(ground)
 
-  # Find where to interpolate the DTM
-  # =================================
-
+  # Find where to interpolate the DTM (interpolation into the convex hull + buffer only).
   verbose("Generating interpolation coordinates...")
-
-  layout <- make_overlay_raster(las, res)
-
+  layout <- rOverlay(las, res)
   names(layout) <- "Z"
   grid <- raster::as.data.frame(layout, xy = TRUE)
   data.table::setDT(grid)
   grid[, Z := NULL]
   data.table::setnames(grid, names(grid), c("X", "Y"))
 
-  hull <- convex_hull(las@data$X, las@data$Y)
-  hull <- sp::Polygon(hull)
-  hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-  hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
-  hull <- hull@polygons[[1]]@Polygons[[1]]@coords
-  keep <- C_points_in_polygon(hull[,1], hull[,2], grid$X, grid$Y)
-  if (!all(keep)) grid = grid[keep]
-
+  if (!full_raster) {
+    hull <- convex_hull(las@data$X, las@data$Y)
+    hull <- sp::Polygon(hull)
+    hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
+    hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
+    hull <- hull@polygons[[1]]@Polygons[[1]]@coords
+    keep <- sp::point.in.polygon(grid$X, grid$Y, hull[,1], hull[,2], TRUE) > 0
+    if (!all(keep)) grid = grid[keep]
+  }
 
   # Interpolate the terrain
-  # =======================
-
-  has_buffer <- "buffer" %in% names(las@data)
-
   verbose("Interpolating ground points...")
-
   lidR.context <- "grid_terrain"
-  Zg <- algorithm(ground, grid)
-
+  Zg <- algorithm(ground, grid, scales, offsets)
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
   suppressWarnings(layout[cells] <- Zg)
 
+  # Replace the interpolated value by the lowest point
   if (keep_lowest)
   {
     verbose("Forcing the lowest ground points to be retained...")
@@ -152,38 +150,41 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE)
 }
 
 #' @export
-grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
-  x = readLAS(las)
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain(x, res, algorithm, keep_lowest)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE)
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
 {
+  # Defensive programming
+  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_spi(algorithm)
+
+  # Enforce some options
   opt_select(las) <- "xyzc"
 
+  # Compute the alignment option including the case when res is a RasterLayer
+  alignment   <- list(res = res, start = c(0,0))
   if (is(res, "RasterLayer"))
   {
     ext       <- raster::extent(res)
     r         <- raster::res(res)[1]
-    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
-    las       <- las[keep,]
+    las       <- catalog_intersect(las, res)
     start     <- c(ext@xmin, ext@ymin)
     alignment <- list(res = r, start = start)
   }
-  else
-    alignment <- list(res = res, start = c(0,0))
 
-  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
-  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, .options = options)
-
-  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(build_vrt(output, "grid_terrain"))
-  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(merge_rasters(output))
+  # Processing
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, .options = options)
+  return(output)
 }

@@ -33,6 +33,25 @@ test_that("Each ground point is at 0 with kriging", {
   lasunnormalize(las)
 })
 
+test_that("Each ground point is at 0 a RasterLayer", {
+  dtm = grid_terrain(las, 1, tin())
+  las <- lasnormalize(las, dtm)
+  Z0 = las@data[Classification == 2]$Z
+  expect_equal(mean(abs(Z0)), 0.076, tol = 0.001)
+})
+
+test_that("Error if NAs in DTM", {
+  dtm = grid_terrain(las, 2, tin())
+  dtm[1500] <- NA
+
+  expect_error(lasnormalize(las, dtm), "not normalizable")
+  expect_message(lasnormalize(las, dtm, na.rm = TRUE), "14 points were not normalizable and removed")
+
+  las2 = suppressMessages(lasnormalize(las, dtm, na.rm = TRUE))
+
+  expect_equal(npoints(las2), npoints(las) -14 )
+})
+
 test_that("lasnormalize work with a catalog", {
   expect_error(lasnormalize(ctg, tin()), "buffer")
 
@@ -47,3 +66,10 @@ test_that("lasnormalize work with a catalog", {
 
   expect_equal(nrow(las2@data), nrow(las@data))
 })
+
+test_that("lasnormalize works with minus symbol", {
+  dtm = grid_terrain(las, 2, tin())
+  expect_error(las-dtm, NA)
+  expect_error(las-tin(), NA)
+})
+

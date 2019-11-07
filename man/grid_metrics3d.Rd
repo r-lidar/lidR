@@ -50,7 +50,14 @@ myMetrics = function(i)
 
 voxels = grid_metrics3d(las, ~myMetrics(Intensity), 3)
 
-plot(voxels, color = "imean")
+plot(voxels, color = "imean", trim = 100)
 #etc.
 }
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_hexametrics}},
+  \code{\link{grid_metrics}}, \code{\link{point_metrics}},
+  \code{\link{tree_metrics}}
+}
+\concept{metrics}

@@ -120,46 +120,44 @@
 #' # ~50% faster and uses ~10x less memory
 #' las = readLAS(LASfile, filter = "-keep_first")
 #' metrics = grid_metrics(las, ~mean(Z), 20)
+#' @family metrics
 grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
-  if (!is_a_number(res) & !is(res, "RasterLayer"))
-     stop("res is not a number or a RasterLayer")
-
-  if (is_a_number(res))
-    assert_all_are_non_negative(res)
-
-  assert_is_numeric(start)
-
   UseMethod("grid_metrics", las)
 }
 
 #' @export
 grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
+  # Defensive programming
+  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+  assert_is_numeric(start)
   formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!formula) func <- lazyeval::f_capture(func)
 
+  # Aggregation of the point cloud
   func   <- lazyeval::f_interp(func)
   call   <- lazyeval::as_call(func)
-  layout <- make_overlay_raster(las, res, start)
+  layout <- rOverlay(las, res, start)
   cells  <- raster::cellFromXY(layout, coordinates(las))
-  data   <- las@data
-  grp    <- "grp"
-  data[[grp]] <- cells
+  las@data[["cells"]] <- cells
 
   if (is.null(filter))
   {
-    metrics <- data[, if (!anyNA(.BY)) c(eval(call)), by = grp]
+    metrics <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = cells]
   }
   else
   {
     filter  <- lasfilter_(las, list(filter))
-    metrics <- data[filter, if (!anyNA(.BY)) c(eval(call)), by = grp]
+    metrics <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = cells]
   }
 
+  # This may append because new versions of data.table are more flexible than before
   if (any(duplicated(metrics[[1]])))
     stop("Duplicated pixels found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
 
+  # Convert the data.table to RasterLayer or RasterBrick
   if (ncol(metrics) == 2L)
   {
     suppressWarnings(layout[metrics[[1]]] <- metrics[[2]])
@@ -169,7 +167,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
   else
   {
     xy_coords <- raster::xyFromCell(layout, metrics[[1]])
-    metrics[, grp := NULL]
+    metrics[[1]] <- NULL
     output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@proj4string)
     names(output) <- names(metrics)
     return(raster::brick(output))
@@ -179,12 +177,11 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
 #' @export
 grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
-  x = readLAS(las)
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-
-  bbox        <- raster::extent(las)
-  metrics     <- grid_metrics(x, func, res, start, filter)
-  metrics     <- raster::crop(metrics, bbox)
+  bbox    <- raster::extent(las)
+  metrics <- grid_metrics(x, func, res, start, filter)
+  metrics <- raster::crop(metrics, bbox)
 
   return(metrics)
 }
@@ -192,33 +189,32 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter =
 #' @export
 grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter = NULL)
 {
+  # Defensive programming
+  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+  assert_is_numeric(start)
+  formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!formula) func <- lazyeval::f_capture(func)
+
+  # Compute the alignment option including the case when res is a RasterLayer
+  alignment   <- list(res = res, start = start)
   if (is(res, "RasterLayer"))
   {
     ext       <- raster::extent(res)
     r         <- raster::res(res)[1]
-    keep      <- with(las@data, !(Min.X >= ext@xmax | Max.X <= ext@xmin | Min.Y >= ext@ymax | Max.Y <= ext@ymin))
-    las       <- las[keep,]
+    las       <- catalog_intersect(las, res)
     start     <- c(ext@xmin, ext@ymin)
     alignment <- list(res = r, start = start)
   }
-  else
-  {
-    alignment <- list(res = res, start = start)
-  }
 
-  opt_chunk_buffer(las) <- 0.1*alignment$res
+  # Enforce some options
+  opt_chunk_buffer(las) <- 0.1*alignment[["res"]]
 
-  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
-  if (!is_formula) func <- lazyeval::f_capture(func)
-
+  # Processing
   globals <- future::getGlobalsAndPackages(func)
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, grid_metrics, func = func, res = res, start = start, filter = filter, .options = options)
-
-  if (opt_output_files(las) != "")                # Outputs have been written in files. Return a virtual raster mosaic
-    return(build_vrt(output, "grid_metrics"))
-  else                                            # Outputs have been returned in R objects. Merge the outputs in a single object
-    return(merge_rasters(output))
+  return(output)
 }
 
 

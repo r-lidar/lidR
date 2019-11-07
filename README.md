@@ -1,5 +1,5 @@
 
-lidR <img src="man/figures/logo.png" align="right"/>
+lidR <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/man/figures/logo200x231.png" align="right"/>
 ======================================================================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
@@ -112,7 +112,9 @@ To install the package from github make sure you have a working development envi
 * **Linux**: Install the following libraries:
 
 ```
-sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx11-dev libgl-dev libglu-dev libfreetype6-dev libv8-3.14-dev libcairo2-dev 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt-get update
+sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx11-dev libgl-dev libglu-dev libfreetype6-dev libv8-3.14-dev libcairo2-dev libtiff5-dev libxt-dev
 ```
 
 # Changelog

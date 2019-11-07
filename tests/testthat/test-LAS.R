@@ -107,7 +107,7 @@ test_that("LAS throws a warning/error if building an invalid LAS", {
   header@PHB$`Point Data Format ID` <- 3L
   header@PHB$`X scale factor` <- 0.412
 
-  expect_error(LAS(data, header), "X scale factor")
+  expect_warning(LAS(data, header), "X scale factor")
 
   # Invalid RGB
 
@@ -176,12 +176,6 @@ test_that("LAS redefined behavior of $, [, and [[", {
 
   expect_error(las[["Z"]] <- 1:10, "replace data of type double")
   expect_error(las[["U"]] <- 1:10, "Addition of a new column")
-})
-
-test_that("lascheck works without error", {
-  sink(tempfile())
-  expect_error(lascheck(las), NA)
-  sink(NULL)
 })
 
 test_that("LAS conversion to SpatialPointsDataFrame works", {

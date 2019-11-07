@@ -13,7 +13,7 @@ of multicore processing even if they are not comfortable with the parallelism co
 
 When processing a point cloud we are applying an algorithm on data. This algorithm may or may not be
 natively parallel. In lidR some algorithms are fully computed in parallel, but some are not because they are
-not parallelizable, while some are only partially parallized. It means that some portions of the code
+not parallelizable, while some are only partially parallelized. It means that some portions of the code
 are computed in parallel and some are not. When an algorithm is natively parallel in lidR it is always
 a C++ based parallelization with OpenMP. The advantage is that the computation is faster without any
 consequence for memory usage because the memory is shared between the processors In short,
@@ -31,7 +31,7 @@ However, as stated above, not all algorithms are parallelized or even paralleliz
 las <- readLAS("file.las")
 dtm <- lastrees(las, li2012())
 }
-To know which algorithms are paralellized users can refer to the documentation or use the
+To know which algorithms are parallelized users can refer to the documentation or use the
 function \link{is.parallelised}.
 \preformatted{
 is.parallel(lmf(2))   #> TRUE
@@ -84,14 +84,14 @@ itself implies a parallelized task. This is a nested parallelism task and it is 
 package handles such cases and chooses by default to give precedence to chunk-based parallelism. In this
 case chunks will be processed in parallel and the points will be processed serially. The question
 of nested parallel loops is irrelevant. The catalog processing engine has precedence rules that are
-guaranteed to avoid nested paralellism. This precedence rule aims to (1) alway work (2) preserve
+guaranteed to avoid nested parallelism. This precedence rule aims to (1) always work (2) preserve
 behaviors of lidR version 2.0.y.
 }
 
 \section{Nested parallelism - part 2}{
 
-We explained rules of precedence. But actually the user can tune the engine more accuratley. Let's
-define the folllowing function:
+We explained rules of precedence. But actually the user can tune the engine more accurately. Let's
+define the following function:
 \preformatted{
 myfun = function(cluster, ...)
 {

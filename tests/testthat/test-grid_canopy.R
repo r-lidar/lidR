@@ -46,6 +46,18 @@ test_that("grid_canopy with p2r() works with subcircle option", {
   expect_equal(raster::extent(x), raster::extent(-10.5,20.5,-10.5,30.5))
 })
 
+test_that("grid_canopy with p2r() works with na.fill", {
+
+  las <- lidR:::dummy_las(1000)
+  x   <- grid_canopy(las, 4, p2r())
+
+  expect_equal(sum(is.na(x[])), 118L)
+
+  x   <- grid_canopy(las, 4, p2r(na.fill = knnidw(3)))
+
+  expect_equal(sum(is.na(x[])), 0L)
+})
+
 LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
 las <- readLAS(LASfile, select = "xyzr", filter = "-thin_with_grid 1")
 ctg <- catalog(LASfile)

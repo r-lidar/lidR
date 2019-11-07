@@ -8,7 +8,7 @@
 \alias{-,LAS,function-method}
 \title{Remove the topography from a point cloud}
 \usage{
-lasnormalize(las, algorithm, na.rm = FALSE)
+lasnormalize(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
 
 lasunnormalize(las)
 
@@ -23,9 +23,16 @@ lasunnormalize(las)
 \link{kriging}, \link{knnidw} or a \link[raster:raster]{RasterLayer} representing a digital terrain
 model (can be computed with \link{grid_terrain})}
 
-\item{na.rm}{logical. When using a \code{RasterLayer} as DTM, by defaut the function fails if a point
+\item{na.rm}{logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
 fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
-elvation of NA are filtered. Becareful this creates a copy of the point cloud.}
+elevation of NA are filtered. Be careful this creates a copy of the point cloud.}
+
+\item{add_class}{integer vector. By default the normalization is made by interpolating ground points
+i.e. points classified "2". It might be useful to consider other points as ground such as points
+classified as water. In this case use \code{add_class = 9}.}
+
+\item{...}{If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
+\link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.}
 
 \item{e1}{a LAS object}
 
@@ -73,8 +80,8 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 is always removed once processed and will never be returned either in R or in files.
 \item \strong{chunk alignment}: Align the processed chunks.
 \item \strong{progress}: Displays a progression estimation.
-\item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
- in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\item \strong{output files*}: Mandatory because the output is likely to be too big to be returned
+in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
 \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
 chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
 \item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}

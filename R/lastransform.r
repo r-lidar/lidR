@@ -59,14 +59,28 @@ lastransform.LAS = function(las, CRSobj)
   if (is.na(sp::proj4string(las)))
     stop("No transformation possible from NA reference system")
 
+  # Tranform the point coordinates
   spts <- sp::SpatialPoints(coordinates(las))
   sp::proj4string(spts) <- sp::proj4string(las)
   spts <- sp::spTransform(spts, CRSobj)
 
+  # Update the LAS object
   las@data[["X"]] <- spts@coords[,1]
   las@data[["Y"]] <- spts@coords[,2]
-
   las <- lasupdateheader(las)
+
+  # Check for integer overflow
+  #bbox    <- sp::bbox(las)
+  #offsets <- rbind(las@header@PHB[["X offset"]], las@header@PHB[["Y offset"]])
+  #scales  <- rbind(las@header@PHB[["X scale factor"]], las@header@PHB[["Y scale factor"]])
+  #bbox    <- (bbox - cbind(offsets, offsets)) / cbind(scales, scales)
+  #if (any(bbox > .Machine$integer.max) | any(bbox < -.Machine$integer.max))<
+  #  warning("Integer overflow detected")
+
+  # Update the offsets
+  las@header@PHB[["X offset"]] <- min(las$X)
+  las@header@PHB[["Y offset"]] <- min(las$Y)
+
   projection(las) <- CRSobj
   return(las)
 }

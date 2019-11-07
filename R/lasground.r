@@ -74,36 +74,24 @@ lasground = function(las, algorithm, last_returns = TRUE)
 #' @export
 lasground.LAS = function(las, algorithm, last_returns = TRUE)
 {
-  if (!is(algorithm, "lidR") | !is(algorithm, "Algorithm"))
-    stop("Invalid function provided as algorithm.")
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_gnd(algorithm)
 
-  if (!is(algorithm, "GroundSegmentation"))
-    stop("The algorithm is not an algorithm for ground segmentation")
-
-  npoints <- nrow(las@data)
-  pointID <- 1:npoints
-  cloud   <- coordinates3D(las)
-  cloud[, idx := pointID]
-
-  if (last_returns)
-  {
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data)))
-    {
+  filter <- TRUE
+  if (last_returns) {
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data))) {
       warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.", call. = FALSE)
-    }
-    else
-    {
-      filter <- las@data[["ReturnNumber"]] == las@data[["NumberOfReturns"]]
-
-      if (sum(filter) == 0)
-        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.")
-      else
-        cloud <- cloud[filter]
+    } else {
+      filter <- parse_filter(las, ~ReturnNumber == NumberOfReturns)
+      if (sum(filter) == 0) {
+        warning("Zero last return found. Cannot use the option 'last_returns', all the points will be used.", call. = FALSE)
+        filter <- TRUE
+      }
     }
   }
 
   lidR.context <- "lasground"
-  idx <- algorithm(cloud)
+  idx <- algorithm(las, filter)
 
   if ("Classification" %in% names(las@data))
   {
@@ -117,11 +105,11 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
     }
     else
     {
-      new_classes <- rep(LASUNCLASSIFIED, npoints)
+      new_classes <- rep(LASUNCLASSIFIED, npoints(las))
     }
   }
   else
-    new_classes <- rep(LASUNCLASSIFIED, npoints)
+    new_classes <- rep(LASUNCLASSIFIED, npoints(las))
 
   new_classes[idx] <- LASGROUND
   las@data[["Classification"]] <- new_classes
@@ -143,11 +131,7 @@ lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
 lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
   opt_select(las) <- "*"
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
   output  <- catalog_apply(las, lasground, algorithm = algorithm,  last_returns = last_returns, .options = options)
-  output  <- unlist(output)
-  ctg     <- readLAScatalog(output)
-
-  opt_copy(ctg) <- las
-  return(ctg)
+  return(output)
 }

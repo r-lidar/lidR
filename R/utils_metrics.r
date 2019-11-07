@@ -30,11 +30,11 @@
 #' Predefined standard metrics functions
 #'
 #' Predefined functions computable at pixel level (\link{grid_metrics}), hexagonal cell level
-#' (\link{grid_hexametrics}), point cloud level (\link{lasmetrics}), tree level (\link{tree_metrics})
-#' and voxel level (\link{grid_metrics3d}). Each function comes with a convenient shortcuts for lazy
-#' coding. The \code{lidR} package aims to provide an easy way to compute user-defined metrics rather
-#' than to provide them. However, for efficiency and to save time, a set of standard metrics has been
-#' predefined (see details.
+#' (\link{grid_hexametrics}), point cloud level (\link{cloud_metrics}), tree level (\link{tree_metrics})
+#' voxel level (\link{grid_metrics3d}) and point level  (\link{point_metrics}). Each function comes
+#' with a convenient shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way
+#' to compute user-defined metrics rather than to provide them. However, for efficiency and to save
+#' time, a set of standard metrics has been predefined (see details).
 #'
 #' The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
 #' \itemize{
@@ -58,12 +58,12 @@
 #' dot before the name. This enables the function to be used without writing parameters. The cost
 #' of such a feature is inflexibility. It corresponds to a predefined behavior (see examples)\cr
 #' \describe{
-#' \item{\code{stdmetrics}}{is a combinaison of \code{stdmetrics_ctrl} + \code{stdmetrics_z} +
+#' \item{\code{stdmetrics}}{is a combination of \code{stdmetrics_ctrl} + \code{stdmetrics_z} +
 #' \code{stdmetrics_i} +  \code{stdmetrics_rn}}
 #' \item{\code{stdtreemetrics}}{is a special function that works with \link{tree_metrics}. Actually,
 #' it won't fail with other functions but the output makes more sense if computed at the
 #' individual tree level.}
-#' \item{\code{stdshapemetrics}}{is a set of eigenvalue based feature decribed in Lucas et al, 2019
+#' \item{\code{stdshapemetrics}}{is a set of eigenvalue based feature described in Lucas et al, 2019
 #' (see references).}
 #' }
 #'
@@ -100,7 +100,7 @@
 #' m7 = grid_metrics(over2, .stdmetrics_z)
 #'
 #' # Works also with lasmetrics and grid_hexametrics
-#' m8 = lasmetrics(las, .stdmetrics)
+#' m8 = cloud_metrics(las, .stdmetrics)
 #' m9 = grid_hexametrics(las, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
@@ -133,11 +133,12 @@
 #'
 #' m11 = grid_metrics(las, .myMetrics)
 #' @seealso
+#' \link{cloud_metrics}
 #' \link{grid_metrics}
-#' \link{lasmetrics}
 #' \link{grid_hexametrics}
 #' \link{grid_metrics3d}
 #' \link{tree_metrics}
+#' \link{point_metrics}
 #' @rdname stdmetrics
 #' @export
 stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2)

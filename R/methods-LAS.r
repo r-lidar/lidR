@@ -35,6 +35,8 @@
 #' @describeIn LAS-class Create objects of class LAS
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
+  .N <- X <- Y <- Z <- NULL
+
   if (is.data.frame(data))
     data.table::setDT(data)
 
@@ -42,6 +44,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     stop("Invalid parameter data in constructor.")
 
   rlas::is_defined_coordinates(data, "stop")
+  rlas::is_valid_XYZ(data, "stop")
 
   if (is(header, "LASheader"))
     header <- as.list(header)
@@ -49,15 +52,79 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   if (!is.list(header))
     stop("Wrong header object provided.")
 
-  if (length(header) == 0)
+  if (length(header) == 0) {
+    factor <- 0.001
     header <- rlas::header_create(data)
+    header[["X scale factor"]] <- factor
+    header[["Y scale factor"]] <- factor
+    header[["Z scale factor"]] <- factor
+    header[["X offset"]] <- round_any(header[["X offset"]], factor)
+    header[["Y offset"]] <- round_any(header[["Y offset"]], factor)
+    header[["Z offset"]] <- round_any(header[["Z offset"]], factor)
+    data[1:.N, `:=`(X = round_any(X, factor), Y = round_any(Y, factor), Z = round_any(Z, factor))]
+    message(glue::glue("Creation of a LAS object from data but without a header:
+    Scale factors were set to {factor} and XYZ coordinates were clamped to fit the scale factors."))
+  }
 
   header <- rlas::header_update(header, data)
 
   if (check & nrow(data) > 0)
   {
-    rlas::check_las_validity(header, data)
-    rlas::check_las_compliance(header, data)
+    rlas::is_defined_offsets(header, "stop")
+    rlas::is_defined_scalefactors(header, "stop")
+    rlas::is_defined_filesourceid(header, "stop")
+    rlas::is_defined_version(header, "stop")
+    rlas::is_defined_globalencoding(header, "stop")
+    rlas::is_defined_date(header, "stop")
+
+    rlas::is_defined_coordinates(data, "stop")
+
+    rlas::is_valid_scalefactors(header, "warning")
+    rlas::is_valid_globalencoding(header, "stop")
+    rlas::is_valid_date(header, "stop")
+    rlas::is_valid_pointformat(header, "stop")
+    rlas::is_valid_extrabytes(header, "stop")
+
+    rlas::is_valid_Intensity(data, "stop")
+    rlas::is_valid_ReturnNumber(header, data, "stop")
+    rlas::is_valid_NumberOfReturns(header, data, "stop")
+    rlas::is_valid_ScanDirectionFlag(data, "stop")
+    rlas::is_valid_EdgeOfFlightline(data, "stop")
+    rlas::is_valid_Classification(data, header, "stop")
+    rlas::is_valid_ScannerChannel(data, "stop")
+    rlas::is_valid_SyntheticFlag(data, "stop")
+    rlas::is_valid_KeypointFlag(data, "stop")
+    rlas::is_valid_WithheldFlag(data, "stop")
+    rlas::is_valid_OverlapFlag(data, "stop")
+    rlas::is_valid_ScanAngleRank(data, "stop")
+    rlas::is_valid_ScanAngle(data, "stop")
+    rlas::is_valid_UserData(data, "stop")
+    rlas::is_valid_gpstime(data, "stop")
+    rlas::is_valid_PointSourceID(data, "stop")
+    rlas::is_valid_RGB(data, "stop")
+    rlas::is_valid_NIR(data, "stop")
+
+    rlas::is_NIR_in_valid_format(header, data, "warning")
+    rlas::is_gpstime_in_valid_format(header, data, "warning")
+    rlas::is_RGB_in_valid_format(header, data, "warning")
+    rlas::is_ScanAngle_in_valid_format(header, data, "warning")
+    rlas::is_ScannerChannel_in_valid_format(header, data, "warning")
+    rlas::is_extrabytes_in_accordance_with_data(header, data, "warning")
+
+    rlas::is_compliant_ReturnNumber(data, "warning")
+    rlas::is_compliant_NumberOfReturns(data, "warning")
+    rlas::is_compliant_RGB(data, "warning")
+    rlas::is_compliant_ScanAngleRank(data, "warning")
+    rlas::is_compliant_ReturnNumber_vs_NumberOfReturns(data, "warning")
+    rlas::is_XY_larger_than_bbox(header, data, "warning")
+    rlas::is_number_of_points_in_accordance_with_header(header, data, "warning")
+    rlas::is_number_of_points_by_return_in_accordance_with_header(header, data, "warning")
+    rlas::is_XY_smaller_than_bbox(header, data, "warning")
+    rlas::is_Z_in_bbox(header, data, "warning")
+    rlas::is_RGB_in_valid_format(header, data, "warning")
+    rlas::is_NIR_in_valid_format(header, data, "warning")
+    rlas::is_gpstime_in_valid_format(header, data, "warning")
+    rlas::is_ScanAngle_in_valid_format(header, data, "warning")
   }
 
   header <- LASheader(header)

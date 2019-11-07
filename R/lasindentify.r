@@ -69,11 +69,11 @@ laspulse = function(las)
   stopifnotlas(las)
 
   if (!"gpstime" %in% names(las@data))
-    stop("No 'gpstime' attribute found. Pulse IDs cannot be computed from this object")
+    stop("No 'gpstime' attribute found. Pulse IDs cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
   {
-    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.")
+    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.", call. = FALSE)
     las@data[["pulseID"]] <- 1L
     return(las)
   }
@@ -94,11 +94,11 @@ lasflightline = function(las, dt = 30)
   assert_all_are_non_negative(dt)
 
   if (!"gpstime" %in% names(las@data))
-    stop("No gpstime attribute found. Flightlines cannot be computed from this object")
+    stop("No gpstime attribute found. Flightlines cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
   {
-    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.")
+    warning("'gpstime' attribute is populated with 0 only. A single ID has been returned for each point.", call. = FALSE)
     las@data[["flightlineID"]] <- 1L
     return(las)
   }
@@ -117,15 +117,15 @@ lasscanline = function(las)
   stopifnotlas(las)
 
   if (!"gpstime" %in% names(las@data))
-    stop("No 'gpstime' attribute found. Scanlines IDs cannot be computed from this object")
+    stop("No 'gpstime' attribute found. Scanlines IDs cannot be computed from this object", call. = FALSE)
 
   if (!"ScanDirectionFlag" %in% names(las@data))
-    stop("No 'ScanDirectionFlag' attribute found. Scanlines cannot be computed from this object")
+    stop("No 'ScanDirectionFlag' attribute found. Scanlines cannot be computed from this object", call. = FALSE)
 
   values <- unique(las@data[["ScanDirectionFlag"]])
 
   if (!all(sort(values) == c(0L,1L)))
-    stop("'ScanDirectionFlag' attribute is not properly populated according to LAS specifications. Scanlines IDs cannot be computed from this object'")
+    stop("'ScanDirectionFlag' attribute is not properly populated according to LAS specifications. Scanlines IDs cannot be computed from this object'", call. = FALSE)
 
   gpstime <- NULL
   data.table::setorder(las@data, gpstime)

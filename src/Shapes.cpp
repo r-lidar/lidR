@@ -1,5 +1,7 @@
 #include "Shapes.h"
 
+#define EPSILON 2e-6
+
 Shape::Shape()
 {
   this->bbox = BoundingBox();
@@ -29,7 +31,10 @@ Shape::Shape(double xcenter, double ycenter, double radius)
 
 bool Shape::contains(const Point& p)
 {
-  return(p.x >= bbox.center.x - bbox.half_res.x && p.x <= bbox.center.x + bbox.half_res.x && p.y >= bbox.center.y - bbox.half_res.y && p.y <= bbox.center.y + bbox.half_res.y);
+  return(p.x >= bbox.center.x - bbox.half_res.x - EPSILON &&
+         p.x <= bbox.center.x + bbox.half_res.x + EPSILON &&
+         p.y >= bbox.center.y - bbox.half_res.y - EPSILON &&
+         p.y <= bbox.center.y + bbox.half_res.y + EPSILON);
 }
 
 Rectangle::Rectangle(double xmin, double xmax, double ymin, double ymax) : Shape(xmin, xmax, ymin, ymax)
@@ -42,7 +47,10 @@ Rectangle::Rectangle(double xmin, double xmax, double ymin, double ymax) : Shape
 
 bool Rectangle::contains(const Point& p)
 {
-  return(p.x >= A.x && p.x <= B.x && p.y >= A.y && p.y <= B.y);
+  return(p.x >= A.x - EPSILON &&
+         p.x <= B.x + EPSILON &&
+         p.y >= A.y - EPSILON &&
+         p.y <= B.y + EPSILON);
 }
 
 Circle::Circle(double xcenter, double ycenter, double radius) : Shape(xcenter, ycenter, radius)
@@ -57,7 +65,7 @@ bool Circle::contains(const Point& p)
   double A = center.x - p.x;
   double B = center.y - p.y;
   double d = A*A + B*B;
-  return d <= radius*radius;
+  return d <= radius*radius + EPSILON;
 }
 
 Triangle::Triangle(Point& A, Point& B, Point& C) : Shape()
@@ -75,9 +83,7 @@ Triangle::Triangle(Point& A, Point& B, Point& C) : Shape()
 
 bool Triangle::contains(const Point& p)
 {
-  #define buffer 0.001*0.001
-
-  if (!this->bbox.contains(p, buffer))
+  if (!this->bbox.contains(p, EPSILON))
     return false;
 
   double denominator = (A.x*(B.y - C.y) + A.y*(C.x - B.x) + B.x*C.y - B.y*C.x);
@@ -90,29 +96,14 @@ bool Triangle::contains(const Point& p)
 
   // see http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 
-  if (distanceSquarePointToSegment(A, B, p) <= buffer)
+  if (distanceSquarePointToSegment(A, B, p) <= EPSILON)
     return true;
-  if (distanceSquarePointToSegment(B, C, p) <= buffer)
+  if (distanceSquarePointToSegment(B, C, p) <= EPSILON)
     return true;
-  if (distanceSquarePointToSegment(C, A, p) <= buffer)
+  if (distanceSquarePointToSegment(C, A, p) <= EPSILON)
     return true;
 
   return false;
-}
-
-Cuboid::Cuboid(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax) : Shape(xmin, xmax, ymin, ymax)
-{
-  A.x = xmin;
-  A.y = ymin;
-  A.z = zmin;
-  B.x = xmax;
-  B.y = ymax;
-  B.z = zmax;
-}
-
-bool Cuboid::contains(const PointXYZ& p)
-{
-  return(p.x >= A.x && p.x <= B.x && p.y >= A.y && p.y <= B.y && p.z >= A.z && p.z <= B.z);
 }
 
 Sphere::Sphere(double xcenter, double ycenter, double zcenter, double radius) : Shape(xcenter, ycenter, radius)
@@ -129,5 +120,5 @@ bool Sphere::contains(const PointXYZ& p)
   double B = center.y - p.y;
   double C = center.z - p.z;
   double d = A*A + B*B + C*C;
-  return(d <= radius*radius);
+  return(d <= radius*radius + EPSILON);
 }

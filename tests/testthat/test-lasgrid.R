@@ -1,6 +1,6 @@
 context("lasgrid")
 
-las = lidR:::dummy_las(5000)
+las = lidR:::dummy_las(5000, seeds = 10)
 
 test_that("grid in grid_metric is appropriated", {
   x = grid_metrics(las, length(Z), 20)

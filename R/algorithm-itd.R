@@ -101,8 +101,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "lmf")
+    assert_is_valid_context(LIDRCONTEXTITD, "lmf")
 
     if (is.function(ws))
     {
@@ -121,7 +120,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
     }
 
-    return(C_lmf(las@data, ws, hmin, circ, getThread()))
+    return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
   class(f) <- c("PointCloudBased", "IndividualTreeDetection", "OpenMP", "Algorithm", "lidR")
@@ -160,12 +159,11 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = tree_detection(las, lmf(5))
 #' ttops = tree_detection(las, manual(ttops))
 #' }
-manual = function(detected = NULL, radius = 0.5, color = "red", ...)
+manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov start
 {
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "manual")
+    assert_is_valid_context(LIDRCONTEXTITD, "manual")
 
     . <- X <- Y <- Z <- treeID <- NULL
 
@@ -253,42 +251,41 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...)
 
   class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
   return(f)
-}
+} # nocov end
 
 # ===== LMFAUTO ======
 
-#' Individual Tree Detection Algorithm
-#'
-#' This function is made to be used in \link{tree_detection}. It implements a fast and parameter-free
-#' algorithm for individual tree detection with wide coverage. It is based on two local maximum filters
-#' (LMF). The first pass performs a very rough estimation of the number of trees with a fixed window
-#' size. Based on this rough estimate it automatically computes a variable windows size LMF with workable
-#' parameters. This algorithm is made to process wide areas rather than small plots. See references
-#' for more details.
-#'
-#' @param plot logical set it to \code{TRUE} if processing a plot instead of a large area. What changes
-#' is the estimation of the local number of trees. It should be based on the local neighborhood for the general
-#' case but this does not make sense for a plot.
-#' @param hmin numeric. Minimum height of a tree. Threshold below which a point cannot be a local
-#' maxima. Default is 2.
-#'
-#' @references Roussel Jean-Romain, Development of a parameter-free algorithm for automatic tree
-#' detection on wide territories (in prep.)
-#'
+# Individual Tree Detection Algorithm
+#
+# This function is made to be used in \link{tree_detection}. It implements a fast and parameter-free
+# algorithm for individual tree detection with wide coverage. It is based on two local maximum filters
+# (LMF). The first pass performs a very rough estimation of the number of trees with a fixed window
+# size. Based on this rough estimate it automatically computes a variable windows size LMF with workable
+# parameters. This algorithm is made to process wide areas rather than small plots. See references
+# for more details.
+#
+# @param plot logical set it to \code{TRUE} if processing a plot instead of a large area. What changes
+# is the estimation of the local number of trees. It should be based on the local neighborhood for the general
+# case but this does not make sense for a plot.
+# @param hmin numeric. Minimum height of a tree. Threshold below which a point cannot be a local
+# maxima. Default is 2.
+#
+# @references Roussel Jean-Romain, Development of a parameter-free algorithm for automatic tree
+# detection on wide territories (in prep.)
+#
 # @family individual tree detection algorithms
-#'
-#' @examples
-#' \dontrun{
-#' #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile)
-#' ttops <- tree_detection(las, lmfauto())
-#' }
+#
+# @examples
+# \dontrun{
+# #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+# las <- readLAS(LASfile)
+# ttops <- tree_detection(las, lmfauto())
+# }
 lmfauto = function(plot = FALSE, hmin = 2)
 {
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, "tree_detection", "lmfauto")
+    assert_is_valid_context(LIDRCONTEXTITD, "lmfauto")
 
     # Step 1: detection with a fixed 5 m windows size
 
@@ -321,7 +318,7 @@ lmfauto = function(plot = FALSE, hmin = 2)
     . <- X <- Y <- Z <- treeID <- NULL
 
     ws <- lmfauto_ws(las@data$Z, ntop5)
-    lm <- C_lmf(las@data, ws, hmin, TRUE, getThread())
+    lm <- C_lmf(las, ws, hmin, TRUE, getThread())
     return(lm)
   }
 

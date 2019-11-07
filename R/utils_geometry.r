@@ -33,7 +33,7 @@
 #' some regions are sampled twice. For a \code{LASheader} it is computed with the bounding box. The
 #' function \code{npoints} does what the user may expect it to do and the function \code{density} is
 #' equivalent to \code{npoints(x)/area(x)}. As a consequence for the same file \code{area} applied on
-#' a LASheader or on a LAS can return slighly different values.
+#' a LASheader or on a LAS can return slightly different values.
 #'
 #' @param x An object of the class \code{LAS*}.
 #' @param ... unused.

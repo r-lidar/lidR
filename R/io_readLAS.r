@@ -113,6 +113,16 @@ readLAS.LAScluster = function(files, select = "*", filter = "")
   assert_is_a_string(select)
   assert_is_a_string(filter)
 
+  if (!all(file.exists(files@files)) && all(files@alt_dir != "")) {
+    for (alt_dir in files@alt_dir) {
+      paths <- paste0(alt_dir, basename(files@files))
+      if (all(file.exists(paths))) break
+    }
+    files@files <- paths
+  }
+
+  if (!all(file.exists(files@files))) stop("File not found", call. = FALSE)
+
   buffer <- X <- Y <- NULL
 
   las <- readLAS(files@files, files@select,files@filter)
@@ -210,7 +220,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   if (nrow(data) > 0)
   {
     # If the number of files read is > 1 header bbox will not be in accordance with the data. Update the header.
-    if (length(ifiles) > 1)
+    if (length(ifiles) > 1 || filter != "")
       header <- rlas::header_update(header, data)
   }
 
@@ -234,5 +244,5 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  return(LAS(data, header, check = FALSE))
+  return(LAS(data, header, check = TRUE))
 }

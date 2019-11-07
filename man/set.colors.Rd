@@ -4,7 +4,7 @@
 \alias{set.colors}
 \title{Automatic colorization}
 \usage{
-set.colors(x, palette, trim = Inf)
+set.colors(x, palette, trim = Inf, value_index = FALSE)
 }
 \arguments{
 \item{x}{A vector.}

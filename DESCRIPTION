@@ -2,8 +2,8 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 2.1.0
-Date: 2019-03-13
+Version: 2.2.0
+Date: 2019-10-22
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -23,10 +23,8 @@ Imports:
     data.table (>= 1.12.0),
     future,
     gdalUtils,
-    geometry,
     glue,
     grDevices,
-    gstat,
     lazyeval,
     imager,
     Rcpp (>= 0.11.0),
@@ -43,11 +41,13 @@ Suggests:
     EBImage,
     concaveman,
     crayon,
+    geometry,
+    gstat,
     hexbin,
     mapview,
     mapedit,
     progress,
-    testthat,
+    testthat (>= 2.1.0),
     knitr,
     rmarkdown
 LazyData: true
@@ -63,23 +63,26 @@ Collate:
     'Class-LAScatalog.r'
     'Class-LAScluster.r'
     'RcppExports.R'
+    'algorithm-dec.r'
     'algorithm-dsm.r'
     'algorithm-gnd.r'
     'algorithm-itd.R'
     'algorithm-its.r'
-    'algorithm-points-decimation.r'
     'algorithm-shp.r'
     'algorithm-snag.r'
-    'algorithm-spatial-interpolations.r'
+    'algorithm-spi.r'
     'catalog_apply.r'
     'catalog_fakerun.r'
     'catalog_index.r'
     'catalog_intersect.r'
     'catalog_laxindex.r'
     'catalog_makecluster.r'
+    'catalog_merge_results.R'
     'catalog_retile.r'
     'catalog_select.r'
+    'cloud_metrics.r'
     'clusters_apply.r'
+    'deprecated.R'
     'doc-drivers.R'
     'doc-lidR.R'
     'doc-parallelism.R'
@@ -104,9 +107,9 @@ Collate:
     'lasindentify.r'
     'lasmergelas.r'
     'lasmergespatial.r'
-    'lasmetrics.r'
     'lasnormalize.r'
     'lasrangecorrection.R'
+    'lasrescale.R'
     'lasroi.r'
     'lassmooth.r'
     'lassnags.r'
@@ -120,6 +123,7 @@ Collate:
     'methods-LASheader.r'
     'plot.r'
     'plot.s3.r'
+    'point_metrics.R'
     'print.r'
     'projection.r'
     'sensor_tracking.R'
@@ -130,6 +134,7 @@ Collate:
     'utils_catalog_options.r'
     'utils_colors.r'
     'utils_define_constant.R'
+    'utils_delaunay.R'
     'utils_geometry.r'
     'utils_is.r'
     'utils_metrics.r'

@@ -44,10 +44,10 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 option is not considered.
 \item \strong{chunk alignment}: Align the processed chunks.
 \item \strong{progress}: Displays a progression estimation.
-\item \strong{output_files*}: Mandatory because the output is likely to be too big to be returned
-in R and needs to be written in las/laz files. Supported templates are \code{XLEFT}, \code{XRIGHT},
-\code{YBOTTOM}, \code{YTOP}, \code{XCENTER}, \code{YCENTER} \code{ID} and, if chunk is size equal
-to 0 (processing by file), \code{ORIGINALFILENAME}.
+\item \strong{output files*}: Mandatory because the output is likely to be too big to be returned
+in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
+chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
 \item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
 and cannot be changed.
 \item \strong{filter}: Read only points of interest.

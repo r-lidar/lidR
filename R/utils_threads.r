@@ -52,7 +52,7 @@ get_lidr_threads = function()
 get_future_workers = function()
 {
   n <- formals(future::plan())$workers
-  if (is.null(n))
+  if (is.null(n) || is.character(n))
     return(1L)
   else if (is.call(n))
     return(future::availableCores())

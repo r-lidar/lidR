@@ -53,8 +53,6 @@
 #' plot(d)
 grid_density = function(las, res = 4)
 {
-  pulseID <- density <- X <- NULL
-
   if (!"pulseID" %in% names(las@data))
     return(grid_metrics(las, ~list(point_density = .N/res^2), res))
   else

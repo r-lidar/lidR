@@ -1,12 +1,12 @@
 context("lasclip")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-keep_first")
+las <- readLAS(LASfile, select = "xyz", filter = "-keep_class 2")
 ctg <- catalog(LASfile)
 
 opt_progress(ctg) <- FALSE
 opt_select(ctg)   <- "xyz"
-opt_filter(ctg)   <- "-keep_first"
+opt_filter(ctg)   <- "-keep_class 2"
 
 shapefile_dir <- system.file("extdata", package = "lidR")
 lakes <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
@@ -18,7 +18,7 @@ test_that("lasclip clips a rectangle both on a LAS and a LAScatalog", {
 
   expect_true(extent(rect1) <= raster::extent(684850, 5017850, 684900, 5017900))
   expect_equal(rect1@proj4string, las@proj4string)
-  expect_equal(nrow(rect1@data), 2789)
+  expect_equal(nrow(rect1@data), 168L)
   expect_true(extent(rect2) <= raster::extent(684850, 5017850, 684900, 5017900))
   expect_equal(rect2@proj4string, ctg@proj4string)
   expect_equal(rect1, rect2)
@@ -31,7 +31,7 @@ test_that("lasclip clips a circle both on a LAS and a LAScatalog", {
 
   expect_true(extent(circ1) <= raster::extent(684850 - 10, 5017850 - 10,684850 + 10, 5017850 + 10))
   expect_equal(circ1@proj4string, las@proj4string)
-  expect_equal(nrow(circ1@data), 361L)
+  expect_equal(nrow(circ1@data), 7L)
   expect_true(extent(circ2) <= raster::extent(684850 - 10, 5017850 - 10, 684850 + 10, 5017850 + 10))
   expect_equal(circ2@proj4string, ctg@proj4string)
   expect_equal(circ1, circ2)
@@ -44,10 +44,19 @@ test_that("lasclip clips a polygon both on a LAS and a LAScatalog", {
 
   expect_true(extent(tri1) <= raster::extent(684850, 5017800, 684975, 5017900))
   expect_equal(tri1@proj4string, las@proj4string)
-  expect_equal(nrow(tri1@data), 4784L)
+  expect_equal(nrow(tri1@data), 268L)
   expect_true(extent(tri2) <= raster::extent(684850, 5017800, 684975, 5017900))
   expect_equal(tri2@proj4string, ctg@proj4string)
   expect_equal(tri1, tri2)
+})
+
+test_that("lasclip memory optimization works", {
+
+  las2 <- lasclipPolygon(las, c(0, 8e6, 8e6, 0), c(0, 5e8, 0, 0))
+  las3 <- lasclipCircle(las, 684850, 5017850, 1000)
+
+  expect_reference(las@data, las2@data)
+  expect_reference(las@data, las3@data)
 })
 
 test_that("lasclip clips polygon works from WTK both on a LAS and LAScatalog", {
@@ -61,8 +70,8 @@ test_that("lasclip clips polygon works from WTK both on a LAS and LAScatalog", {
   poly2   <- lasclip(ctg, wkt2)
 
   expect_is(mpoly1, "LAS")
-  expect_equal(nrow(mpoly1@data), 22520L)
-  expect_equal(nrow(poly1@data), 4473L)
+  expect_equal(nrow(mpoly1@data), 1564L)
+  expect_equal(nrow(poly1@data), 230L)
   expect_equal(mpoly1, mpoly2)
   expect_equal(poly1, poly2)
   expect_equal(mpoly1@proj4string, las@proj4string)
@@ -83,7 +92,7 @@ test_that("lasclip clips polygon works from sp polygons both on a LAS and LAScat
   poly2    <- lasclip(ctg, polygon1)
 
   expect_is(poly1, "LAS")
-  expect_equal(nrow(poly1@data), 2117L)
+  expect_equal(nrow(poly1@data), 176L)
   expect_equal(poly1@proj4string, las@proj4string)
   expect_equal(poly2@proj4string, ctg@proj4string)
   expect_equal(poly1, poly2)
@@ -94,7 +103,7 @@ test_that("lasclip clips polygon works from sp polygons both on a LAS and LAScat
   poly2     <- lasclip(ctg, polygons1)
 
   expect_is(poly1, "LAS")
-  expect_equal(nrow(poly1@data), 22520L)
+  expect_equal(nrow(poly1@data), 1564L)
   expect_equal(poly1@proj4string, las@proj4string)
   expect_equal(poly2@proj4string, ctg@proj4string)
   expect_equal(poly1, poly2)
@@ -104,9 +113,51 @@ test_that("lasclip clips polygon works from sp polygons both on a LAS and LAScat
   poly2 <- lasclip(ctg, lakes)
 
   expect_is(poly1, "LAS")
-  expect_equal(nrow(poly1@data), 6800L)
+  expect_equal(nrow(poly1@data), 4790L)
   expect_equal(poly1, poly2)
 })
+
+test_that("lasclip clips point with SpatialPoints on LAS and LAScatalog", {
+
+  xc <- c(684800, 684850)
+  yc <- c(5017850, 5017900)
+  r  <- 10
+
+  p = sp::SpatialPoints(cbind(xc, yc))
+
+  discs1 <- lasclip(las, p, radius = 5)
+  discs2 <- lasclip(ctg, p, radius = 5)
+  discs3 <- lasclip(ctg, p, radius = c(5,10))
+
+  expect_is(discs1, "list")
+  expect_equal(discs1, discs2)
+})
+
+test_that("lasclip throw error with points and no radius", {
+
+  xc <- c(684800, 684850)
+  yc <- c(5017850, 5017900)
+  r  <- 10
+
+  p = sp::SpatialPoints(cbind(xc, yc))
+
+  expect_error(lasclip(las, p), "requires addition of parameter 'radius'")
+})
+
+test_that("lasclip throw error with lines", {
+
+  l1 = cbind(c(1,2,3),c(3,2,2))
+  l2 = cbind(c(1,2,3),c(1,1.5,1))
+  Sl1 = Line(l1)
+  Sl2 = Line(l2)
+  S1 = Lines(list(Sl1), ID="a")
+  S2 = Lines(list(Sl2), ID="b")
+  Sl = SpatialLines(list(S1,S2))
+
+  expect_error(lasclip(las, S2), "Geometry type Lines not supported")
+  expect_error(lasclip(las, Sl), "Geometry type SpatialLines not supported")
+})
+
 
 test_that("lasclip clips a rectangle from a bounding box both on a LAS and LAScatalog", {
 
@@ -179,8 +230,8 @@ test_that("lasclip supports multiple queries", {
 
   expect_is(polys1, "list")
   expect_equal(length(polys1), 2L)
-  expect_equal(nrow(polys1[[1]]@data), 22520L)
-  expect_equal(nrow(polys1[[2]]@data), 4473L)
+  expect_equal(nrow(polys1[[1]]@data), 1564L)
+  expect_equal(nrow(polys1[[2]]@data), 230L)
   expect_equal(polys1[[1]]@proj4string, las@proj4string)
   expect_equal(polys1, polys2)
 })
@@ -291,3 +342,4 @@ test_that("clip writes file following LAScatalog options", {
 
   file.remove(paste0(tmp, "/file_Havelock Lake.las"))
 })
+

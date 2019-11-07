@@ -58,3 +58,9 @@ hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
 hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
 hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
 }
+\seealso{
+Other metrics: \code{\link{cloud_metrics}},
+  \code{\link{grid_metrics3d}}, \code{\link{grid_metrics}},
+  \code{\link{point_metrics}}, \code{\link{tree_metrics}}
+}
+\concept{metrics}

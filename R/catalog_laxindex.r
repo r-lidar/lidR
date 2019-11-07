@@ -5,6 +5,7 @@ catalog_laxindex = function(ctg)
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 0
   opt_wall_to_wall(ctg) <- FALSE
+  opt_output_files(ctg) <- ""
 
   create_lax_file = function(cluster)
   {

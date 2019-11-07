@@ -74,30 +74,22 @@ p2r = function(subcircle = 0, na.fill = NULL)
   subcircle <- lazyeval::uq(subcircle)
   na.fill   <- lazyeval::uq(na.fill)
 
-  if (!is.null(na.fill))
-  {
-    if (!is(na.fill, "SpatialInterpolation"))
-      stop("'na.fill' is not an algorithm for spatial interpolation")
-  }
+  if (!is.null(na.fill) && !is(na.fill, "SpatialInterpolation"))
+    stop("'na.fill' is not an algorithm for spatial interpolation")
 
   f = function(las, layout)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("grid_canopy"), "p2r")
+    assert_is_valid_context(LIDRCONTEXTDSM, "p2r")
 
-    bbox <- raster::extent(layout)
-    dsm  <- R_p2r(las, raster::as.matrix(bbox), raster::res(layout)[1], subcircle)
-    dsm  <- t(dsm)
+    dsm <- C_rasterize(las, layout, subcircle, 1L)
 
-    if (!all(dim(layout)[1:2] == dim(dsm)))
-      stop("Internal error: matrix returned at the C++ level does not match with the layout. Please report this bug.")
 
     if (!is.null(na.fill))
     {
       verbose("Interpolating empty cells...")
 
       layout[] <- dsm
-      hull = convex_hull(las@data$X, las@data$Y)
+      hull <- convex_hull(las@data$X, las@data$Y)
 
       # buffer around convex hull
       sphull <- sp::Polygon(hull)
@@ -111,7 +103,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
       where  <- as.data.frame(where)
       data.table::setDT(where)
       data.table::setnames(where, names(where), c("X", "Y"))
-      where  <- where[C_points_in_polygon(hull[,1], hull[,2], where$X, where$Y)]
+      where  <- where[sp::point.in.polygon(where$X, where$Y, hull[,1], hull[,2], TRUE) > 0]
 
       lidR.context <- "spatial_interpolation"
       cells <- raster::cellFromXY(layout, where)
@@ -236,8 +228,7 @@ dsmtin = function(max_edge = 0)
 #' plot(chm, col = col)
 #' }
 #' @export
-pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0)
-{
+pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0) {
   assert_is_numeric(thresholds)
   assert_all_are_non_negative(thresholds)
   assert_is_numeric(max_edge)
@@ -245,77 +236,90 @@ pitfree = function(thresholds = c(0,2,5,10,15), max_edge = c(0,1), subcircle = 0
   assert_is_a_number(subcircle)
   assert_all_are_non_negative(subcircle)
 
-  if (length(thresholds) > 1L & length(max_edge) < 2L)
+  if (length(thresholds) > 1L & length(max_edge) < 2L) {
     stop("'max_edge' should contain 2 numbers")
+  }
 
   thresholds <- lazyeval::uq(thresholds)
-  max_edge   <- lazyeval::uq(max_edge)
-  subcircle  <- lazyeval::uq(subcircle)
+  max_edge <- lazyeval::uq(max_edge)
+  subcircle <- lazyeval::uq(subcircle)
 
-  f = function(las, layout)
-  {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("grid_canopy"), "pitfree")
+  f <- function(las, layout) {
+    assert_is_valid_context(LIDRCONTEXTDSM, "pitfree")
 
-    if (!"ReturnNumber" %in% names(las@data))
-      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns")
+    if (!"ReturnNumber" %in% names(las@data)) {
+      stop("No attribute 'ReturnNumber' found. This attribute is needed to extract first returns", call. = FALSE)
+    }
 
-    if (fast_countequal(las@data$ReturnNumber, 1L) == 0)
-      stop("No first returns found. Operation aborted.")
+    if (fast_countequal(las@data$ReturnNumber, 1L) == 0) {
+      stop("No first returns found. Operation aborted.", call. = FALSE)
+    }
 
-    . <- X <- Y <- Z <- ReturnNumber <- NULL
+    # Non standart evaluation (R CMD check)
+    . <- .N <- X <- Y <- Z <- ReturnNumber <- NULL
+
+    # Get only first returns and coordinates (nothing else needed)
+    verbose("Selecting first returns...")
+    cloud <- las@data
+    if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data)) {
+      cloud <- las@data[ReturnNumber == 1L, .(X, Y, Z)]
+    }
+
+    # Delaunay triangulation with boost requiere to
+    # compute back integer coordinates
+    xscale <- las@header@PHB[["X scale factor"]]
+    yscale <- las@header@PHB[["Y scale factor"]]
+    xoffset <- las@header@PHB[["X offset"]]
+    yoffset <- las@header@PHB[["Y offset"]]
+    scales <- c(xscale, yscale)
+    offsets <- c(xoffset, yoffset)
+
+    # subcircle the data
+    if (subcircle > 0) {
+      verbose("Subcircling points...")
+      bbox <- raster::extent(las)
+      cloud <- subcircled(cloud, subcircle, 8L)
+      cloud <- cloud[data.table::between(X, bbox@xmin, bbox@xmax) & data.table::between(Y, bbox@ymin, bbox@ymax)]
+      cloud[1:.N, `:=`(X = round_any(X - xoffset, xscale) + xoffset,
+                       Y = round_any(Y - yoffset, yscale) + yoffset)]
+    }
+
+    # TODO: use C++ tools for that.
+    verbose("Selecting only the highest points within the grid cells...")
+    cells <- raster::cellFromXY(layout, cloud[, .(X, Y)])
+    grid <- raster::xyFromCell(layout, 1:raster::ncell(layout))
+    grid <- data.table::as.data.table(grid)
+    data.table::setnames(grid, c("x", "y"), c("X", "Y"))
+    cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
+
+    if (nrow(cloud) < 3) {
+      stop("There are not enought points to triangulate.", call. = FALSE)
+    }
 
     # Initialize the interpolated values with NAs
     z <- rep(NA_real_, raster::ncell(layout))
 
-    # Get only first returns and coordinates (nothing else needed)
-    verbose("Selecting first returns...")
-
-    cloud <- las@data
-    if (fast_countequal(las@data$ReturnNumber, 1) < nrow(las@data))
-      cloud <- las@data[ReturnNumber == 1L, .(X,Y,Z)]
-
-    # subcircle the data
-    if (subcircle > 0)
-    {
-      verbose("Subcircling points...")
-
-      bbox  <- raster::extent(las)
-      cloud <- subcircled(cloud, subcircle, 8L)
-      cloud <- cloud[between(X, bbox@xmin, bbox@xmax) & between(Y, bbox@ymin, bbox@ymax)]
-    }
-
-    verbose("Selecting only the highest points within the grid cells...")
-
-    cells <- raster::cellFromXY(layout, cloud[, .(X,Y)])
-    grid  <- raster::xyFromCell(layout, 1:raster::ncell(layout))
-    grid  <- data.table::as.data.table(grid)
-    data.table::setnames(grid, c("x", "y"), c("X", "Y"))
-    cloud <- cloud[cloud[, .I[which.max(Z)], by = cells]$V1]
-
     # Perform the triangulation and the rasterization (1 loop for classical triangulation, several for Khosravipour et al.)
-    i <- 1
-    for (th in thresholds)
-    {
+    thresholds <- sort(thresholds)
+    for (i in seq_along(thresholds)) {
       verbose(glue::glue("Triangulation pass {i} of {length(thresholds)}..."))
-      i <- i + 1
+      th <- thresholds[i]
+      edge <- if (th == 0) max_edge[1] else max_edge[2]
 
-      if (th == 0)
-        edge <- max_edge[1]
-      else
-        edge <- max_edge[2]
+      if (fast_countover(cloud$Z, th) > 3) {
+        cloud <- cloud[Z >= th]
+        Ztemp <- interpolate_delaunay(cloud, grid, edge, scales, offsets)
 
-      cloud <- cloud[Z >= th]
+        if (i == 1 && all(is.na(Ztemp))) {
+          stop("Interpolation failed in the first layer (NAs everywhere). Maybe there are too few points.", call. = FALSE)
+        }
 
-      if (nrow(cloud) >= 3)
-      {
-        Ztemp <- interpolate_delaunay(cloud, grid, edge)
-        z     <- pmax(z, Ztemp, na.rm = T)
+        z <- pmax(z, Ztemp, na.rm = T)
       }
     }
 
     if (all(is.na(z)))
-      stop("Interpolation failed. Input parameters might be wrong.")
+      stop("Interpolation failed (NAs everywhere). Input parameters might be wrong.", call. = FALSE)
 
     return(z)
   }

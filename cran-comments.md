@@ -15,7 +15,5 @@ This is all compiled code in the libs/ directory.
 ## Downstream dependencies
 
 We checked 2 reverse dependencies by running R CMD check with this version installed. 
-We did not see any new problems. However for TreeLS one example (at least) of the documentation
-should raise a warning because one of a function that is now less tolerant with invalid data given
-as input. The developper is aware of this fact.
+We did not see any new problems.
 

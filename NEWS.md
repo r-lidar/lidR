@@ -1,18 +1,235 @@
-## lidR v2.2.0
+## lidR v2.2.0 (Release date: )
+
+#### CHANGES
+
+1. `LAS()` now rounds the values to 2 digits if no header is provided to fits with the default header automatically generated. This ensure to build a perfectly valid  `LAS` object out of external data. This change is made by reference meaning that the original dataset is rounded as well.
+
+```r
+pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copy
+```
 
 #### NEW FEATURES
 
-1. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
+1. LAScatalog processing engine:
+    *  `catalog_apply()` gains an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for automatic merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. return a `list`. Thus there is no danger at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility but will be switched to `TRUE` in next releases.
+    
+    * `opt_output_file()` now interprets `*` as `{ORIGINALFILENAME}` for shorter syntax. The following is now correct 
+    
+    ```R
+    opt_output_file(ctg) <- "/home/user/data/norm/*_norm"  # {*} is valid as well
+    # instead of
+    opt_output_file(ctg) <- "/home/user/data/norm/{ORIGINALFILENAME}_norm"
+    ```
+    * The engine now supports "alternative directories". This is a very specific and undocumented feature useful in a single case of remote computing. More details in the [wiki page](https://github.com/Jean-Romain/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets).
+    
+    ```r
+    ctg = readLAScatalog("~/folder/LASfiles/")
+    ctg@input_options$alt_dir = c("/home/Alice/data/", "/home/Bob/remote/project1/data/")
+    ```
+    
+2. 3D rendering:
+    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows to do not specify this argument even when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
+    
+    ```R
+    plot(las)
+    plot(las, color = "Intensity")
+    plot(las, color = "ReturnNumber")
+    plot(las, color = "Classification")
+    ```
+    
+3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
 
-2. New function `lasrangecorrection()` to normalized intensity using the sensor position (range correction)
+4. `lasnormalize()` gains and argument `add_class` to include e.g. points classified as water into ground points. This might be useful in region with a lot of water because in this case `lasnormalize()` can take forever to run (see [#295](https://github.com/Jean-Romain/lidR/issues/295))).
 
-## lidR v2.1.0
+5. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
+
+6. New function `lasrangecorrection()` to normalized intensity using the sensor position (range correction)
+
+#### CHANGES
+
+1. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.
+    
+#### ENHANCEMENT
+
+1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewriten and changed for a grid partion which is twice faster than the former QuadTree. This change provides a significant boost (up to twice faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+
+    ```r
+    # 1 x 1 km, 13 pts/m², 13.1 million points
+    set_lidr_threads(n)
+    tree_detection(las, lmf(3))
+    #> v2.1: 1 core: 80s - 4 cores: 38s
+    #> v2.2: 1 core: 38s - 4 cores: 20s
+   
+    # 500 x 500 m, 12 pt/m², 3.2 million points
+    lassnags(las, wing2015(neigh_radii = nr, BBPRthrsh_mat = bbpr_th))
+    #> v2.1: 1 core: 66s - 4 cores: 33s
+    #> v2.2: 1 core: 43s - 4 cores: 21s
+
+    # 250 x 250 m, 12 pt/m², 717.6 thoushand points
+    lasdetectshape(las3, shp_plane())
+    #> v2.1 - 1 cores: 12s - 4 cores: 7s
+    #> v2.2 - 1 cores:  6s - 4 cores: 3s
+    ```
+    
+2. There are more than 100 new unit tests in `testthat`. The coverage increased from 68% to 87%
+
+3. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
+
+4. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation are now written in C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. However to work, the point cloud must be converted to integers. This implies that the scale factors and offset in the header must be properly populated which might not be the case if user modified these value by hand or if using a point cloud coming from another format than las/laz. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+
+    ```r
+    # 1.7 million ground points
+    set_lidr_threads(n)
+    grid_terrain(las, 0.5, tin())
+    #> v2.1: 1 core: 48s - 4 cores: 37s
+    #> v2.2: 1 core: 22s - 4 cores: 20s
+    
+    # 560 thoushand first returns (1.6 pts/m²)
+    grid_canopy(las, res = 0.5, dsmtin())
+    #> v2.1: 1 core: 8s - 4 cores: 7s
+    #> v2.2: 1 core: 3s - 4 cores: 3s
+    
+    # 560 thoushand first returns (1.6 pts/m²)
+    grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+    #> v2.1: 1 core: 30s - 4 cores: 28s
+    #> v2.2: 1 core: 11s - 4 cores: 9s
+    ```
+
+#### FIXES
+
+1. Several minor fixes in `lascheck()`  for very unpropable cases of `LAS` objects likely to have been modified by hand.
+
+## lidR v2.1.5 (Release date: in development)
+
+#### FIXES
+
+1. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `grid_metrics3d()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
+
+2. The LAScatalog engine now call `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
+
+#### NOTE
+
+1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
+
+2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
+
+## lidR v2.1.4 (Release date: 2019-10-15)
+
+#### NEW FEATURES
+
+1. `grid_terrain()` gains an argument `full_raster = FALSE`.
+
+2. `lasnormalize()` gains an argument `...` to tune `raster::extract()` and use, for example, `method = "bilinear"`.
+
+#### FIXES
+
+1. In `lasground()` if `last_returns = TRUE` and the `LAS` is not properly populated i.e. no last return, the classification was not actually computed. The expected behavior was to use all the points. This is now the case.
+
+2. `lasclip()` is now able to clip into a `LAS` objects using `SpatialPoints` or `sf POINT`. It previously worked only into `LAScatalog` objects.
+
+3. `lasaddextrabyte_manual()` was not actually working because the `type` was not converted to a numeric value according to the LAS specifications.
+
+4. Fix double precision floating point error in `grid_*` function in some specific cases. This fix affect also `highest()` and other raster-based algorithms [#273](https://github.com/Jean-Romain/lidR/issues/273).
+
+5. `lasreoffset()` now checks for integer overflow and throws an error in case of invalid user request [#274](https://github.com/Jean-Romain/lidR/issues/274).
+
+6. Tolerance for internal `point_in_triangle()` have been increased to fix double precision error in rasterization of a triangulation. This fixes some rare `NA`s in `pitfree()`, `dsmtin()` and `tin()`.
+
+7. The NAs are now correctly interpreted when writing a GDAL virtual raster [#283](https://github.com/Jean-Romain/lidR/issues/283).
+
+8. Fix `lasmergespatial()` with 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285).
+
+9. Fix `pitfree()` with a single triangle case [#288](https://github.com/Jean-Romain/lidR/issues/288).
+
+### ENHANCEMENTS
+
+1. `pitfree()` handles more errors and fails more nicely in some specific cases [#286](https://github.com/Jean-Romain/lidR/issues/286).
+
+## lidR v2.1.3 (Release date: 2019-09-10)
+
+#### NEW FEATURES
+
+1. New functions `lasrescale()` and ` lasreoffset()` to modify the scale factors and the offsets. The functions update the header and recompute the coordinates to get the proper rounded values in accordance with the new header.
+
+2. `readLAS()` throw (again) warnings for invalid files such as files with invalid scale factors, invalid bounding box, invalid attributes ReturnNumber and so on.
+
+#### ENHANCEMENT
+
+1. `readLAScatalog()` is 60% faster
+
+2. The progress bar of the LAScatalog processing engine has been removed in non interactive sessions and replaced by regular but more informative prints. This allows to track the state of the computation with a stream redirection to a file when running a script remotely for example.
+
+    ```
+    R -f script.R &> log.txt &
+    ```
+
+#### FIXES
+
+1. Fix an infinite loop in the knn search when k > number of points. This bug may affect `lasdetectectshape()`, `wing2012()` and other functions that rely on a knn search.
+
+2. Using remote futures now works for any function that supports a `LAScatalog` input. Previously remote evaluation of futures failed because of the presence of `return()` statement in the code [future#333](https://github.com/HenrikBengtsson/future/issues/333)
+
+    ```r
+    plan(remote, workers = "132.203.41.25")
+    ```
+
+3. `lasclipCircle()` behaves identically for `LAS` and `LAScatalog` object. It now returns the points that are strictly inside the circle. Previously for `LAS` objects it also returned the point belonging on the disc.
+
+4. The bounding box is updated after `lastransform()` [#270](https://github.com/Jean-Romain/lidR/issues/270)
+
+5. The offsets are updated after `lastransform()` to prevent integer overflow when writing the point cloud in `.las` files [#272](https://github.com/Jean-Romain/lidR/issues/272)
+
+6. Removed deprecated C++ functions `std::bind2nd` as requested by CRAN.
+
+#### NOTE
+
+1. All C++ source code has been reworked in a tidy framework to clean-up 4 years of mess. It is almost invisible for regular users but the size of the package has been reduced of several MB and many new tools will now be possible to build.
+
+## lidR v2.1.2 (Release date: 2019-08-07)
+
+#### FIXES
+
+1. Fix a serious issue of uninitialized values in an internal C++ function but this issue is consequentless for the package.
+
+## lidR v2.1.1 (Release date: 2019-08-06)
+
+#### NEW FEATURES
+
+1. [#266](https://github.com/Jean-Romain/lidR/issues/266) `lasmetrics` has now a dispatch to  `LAS` and `LAScluster` cluster objects. It means that `lasmetrics` can be used with `catalog_apply` in some specific cases where it has a meaning (see also [#266](https://github.com/Jean-Romain/lidR/issues/266)):
+
+    ```r
+    opt_chunk_buffer(ctg) <- 0
+    opt_chunk_size(ctg) <- 0
+    opt_filter(ctg) <- "-keep_first"
+    opt_output_files(new_ctg) <- ""
+    output <- catalog_apply(new_ctg, lasmetrics, func = .stdmetrics)
+    output <- data.table::rbindlist(output)
+    ```
+
+#### ENHANCEMENT
+
+1. `lastrees()` now uses S3 dispatcher system. When trying to use it with a `LAScatalog` object, user will have a standard R message to state that `LAScatalog` is not supported instead of an uninformative message that state that 'no slot of name "header" for this object of class "LAScatalog"'
+
+2. Internal code has been modified to drastically reduce probability of name intersection in `catalog_apply()`. For example, the use of a function that have a parameter `p` in  `catalog_apply()` failed because of partial matching between the true argument `p` and the internal argument `processing_option`.
+
+3. `lasfilterdecimate()` with algorithm `highest()` is now more than 20 times faster. `lasfiltersurfacepoints()`, being a proxy of this algorithm, had the same speed-up
+
+4. `plot` for `LAS` objects gained the pan capability.
+
+#### FIXES
+
+1. [#267](https://github.com/Jean-Romain/lidR/issues/267). A dummy character was introduced by mistake in a variable name breaking the automatic exportation of user object in `grid_metrics` when used with a parallelized plan (`tree_metrics()` was also affected).
+
+
+## lidR v2.1.0 (Release date: 2019-07-13)
+>>>>>>> devel
 
 #### VISIBLE CHANGES
 
 Several algorithms are now natively parallelized at the C++ level with `OpenMP`. This has for consequences for speed-up of some computations by default but implies visible changes for users. For more details see `help("lidR-parallelism")`. The following only explains how to modify code to restore the exact former behavior.
 
-In versions `< 2.1.0` the catalog processing engine has R-based parallelism capabilities using the `future` package. The addition of C++-based parallelism introduced additional complexity. To prevent against nested parallelism and give the user the ability to use either R-based or C++-based parallelism (or a mix of the two), the function `opt_cores()` is no longer supported. If used it generates a message and does nothing. The strategy used to process the tiles in parallel must now be explicitly declared by users. This is anyway how it should have been designed from the begining! For users, restoring the exact former behavior implies only one change.
+In versions `< 2.1.0` the catalog processing engine has R-based parallelism capabilities using the `future` package. The addition of C++-based parallelism introduced additional complexity. To prevent against nested parallelism and give the user the ability to use either R-based or C++-based parallelism (or a mix of the two), the function `opt_cores()` is no longer supported. If used it generates a message and does nothing. The strategy used to process the tiles in parallel must now be explicitly declared by users. This is anyway how it should have been designed from the beginning! For users, restoring the exact former behavior implies only one change.
 
 In versions `< 2.1.0` the following was correct:
 
@@ -23,7 +240,7 @@ opt_cores(ctg) <- 4L
 hmean <- grid_metrics(ctg, mean(Z))
 ```
 
-In versions `>= 2.1.0` this must be explicitely declared with the `future` package:
+In versions `>= 2.1.0` this must be explicitly declared with the `future` package:
 
 ```r
 library(lidR)
@@ -36,7 +253,7 @@ hmean <- grid_metrics(ctg, mean(Z))
 #### NEW FEATURES
 
 1. `readLAS()`:
-    * LAS 1.4 and point formats > 6 are now better suported. `lascheck()` and `print()` were updated to work correctly with these formats ([#204](https://github.com/Jean-Romain/lidR/issues/204))
+    * LAS 1.4 and point formats > 6 are now better supported. `lascheck()` and `print()` were updated to work correctly with these formats ([#204](https://github.com/Jean-Romain/lidR/issues/204))
     * New function `readLASheader()` to read the header of a file in a `LASheader` object.
    
 2. Coordinate Reference System:
@@ -103,7 +320,7 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 10. New function `catalog_select` for interactive tile selection.
 
-11. `lasground` have lost the argument `last_returns` for a mor generic argument `filter`. Retro-compatibility as been preserved by interpreting adding an ellipsis.
+11. `lasground` have lost the argument `last_returns` for a more generic argument `filter`. Retro-compatibility as been preserved by interpreting adding an ellipsis.
 
 #### NOTE
 
@@ -111,7 +328,7 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 2. The argument named `field` in `tree_metrics()` is now named `attribute` for consistency with all other functions.
 
-3. The documentation of supported options in `tree_*()` functions was inccorect and has been fixed.
+3. The documentation of supported options in `tree_*()` functions was incorrect and has been fixed.
 
 4. `readLAScatalog()` replaces `catalog()`. `catalog()` is soft-deprecated.
 
@@ -119,14 +336,11 @@ hmean <- grid_metrics(ctg, mean(Z))
 
 1. [#264](https://github.com/Jean-Romain/lidR/issues/264) `grid_terrain` now filter degenerated ground points.
 
+2. [#238](https://github.com/Jean-Romain/lidR/issues/228) fix a floating point precision error in `p2r` algorithm.
+
 ##### ENHANCEMENT
 
 1. When reading a file that contains extrabytes attributes and these data are not loaded (e.g. `readLAS(f, select = "xyzi")`) the header is updated to remove the non-loaded extrabytes. This fixes the issue [#234](https://github.com/Jean-Romain/lidR/issues/234) and enables LAS objects to be written without updating the header manually.
-
-## lidR v2.0.3 (Release date: )
-
-- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as local maxima and the search step is skipped (much faster)*. This is now true.
-- Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
 
 ## lidR v2.0.3 (Release date: 2019-05-02)
 
@@ -137,11 +351,13 @@ local maxima and the search step is skipped (much faster)*. This is now true.
 - Enhance: internally the function `tsearch` that searches in a triangulation is 25% faster giving a small speed-up to `pitfree()` and `tin()` algorithms.
 - Enhance: in `lasmergespatial` used with a `SpatialPolygonDataFrame` the function checks the bounding box of the polygon to speed-up the computation with complex polygons.
 - Doc: add a `?lidR` page to the manual.
+- Fix: in `li2012()` the doc states that *If R = 0 all the points are automatically considered as local maxima and the search step is skipped (much faster)*. This is now true.
+- Fix: in `lasmergespatial` with a `SpatialPolygonDataFrame` when the bounding boxes do not match instead of exiting early without searching anything the full search was performed uselessly.
 
 ## lidR v2.0.2 (Release date: 2019-03-02)
 
 - Fix: [#222](https://github.com/Jean-Romain/lidR/issues/222) `grid_*()` functions return consistently a `RasterLayer` if there is a single layer. virtual raster mosaic were returned as `RasterStack` no matter the number of layers.
-- Fix: [#223](https://github.com/Jean-Romain/lidR/issues/223) `lasmergespatial()` wrongly copied shapefile attributes to each point when the paramter `attribute` was the name of an attribute of the shapefile.
+- Fix: [#223](https://github.com/Jean-Romain/lidR/issues/223) `lasmergespatial()` wrongly copied shapefile attributes to each point when the parameter `attribute` was the name of an attribute of the shapefile.
 - Fix: [#225](https://github.com/Jean-Romain/lidR/issues/225) `laspulse()`, `lasflightline()`, `lasscanline()` were broken since v2.0.0.
 - Fix: [#227](https://github.com/Jean-Romain/lidR/issues/227) When processing a LAScatalog the chunks are better computed. In former version it was possible to have chunks that lie on tile only because of the buffer. These chunks are not build anymore.
 - Fix: [#227](https://github.com/Jean-Romain/lidR/issues/227) When processing a LAScatalog some chunks may belong in a file/tile but when actually reading the points in the file the chunks could be empty with points only in the buffer region. In these case an empty point cloud is returned and the computation is be skipped.
@@ -151,14 +367,14 @@ local maxima and the search step is skipped (much faster)*. This is now true.
 
 - Change: the function `catalog` has been slightly modified in prevision of the release of the package `rlas 1.3.0` to preserve future compatibility. This is invisible for the users.
 - New: `lasnormalize` gained a parameter `na.rm = TRUE`
-- Fix: an error occurend when plotting a LAScatalog with the option `chunk_pattern = TRUE`: objet 'ctg' introuvable.
+- Fix: an error occured when plotting a LAScatalog with the option `chunk_pattern = TRUE`: object 'ctg' not found.
 - Fix: examples in documentation of `tin()` and `knnidw()` were inverted.
 - Fix: [#213](https://github.com/Jean-Romain/lidR/issues/213) bug when using option `keep_lowest` in `grid_terrain`.
-- Fix: [#212](https://github.com/Jean-Romain/lidR/issues/212) bug when merging big rasters that exeed the memory allowed by the raster package
+- Fix: [#212](https://github.com/Jean-Romain/lidR/issues/212) bug when merging big rasters that exceed the memory allowed by the raster package
 - Fix: bug when merging rasters when some of then only have one cell
 - Fix: bug when printing a 0 point LAS object
 
-# lidR v2.0.0 (Release date: 2019-01-02)
+## lidR v2.0.0 (Release date: 2019-01-02)
 
 ### Why versions `> 2.0` are incompatible with versions `1.x.y`?
 

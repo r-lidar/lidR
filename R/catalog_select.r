@@ -44,6 +44,7 @@
 #' ctg = readLAScatalog("<Path to a folder containing a set of .las files>")
 #' new_ctg = catalog_select(ctg)
 #' }
+# nocov start
 catalog_select = function(ctg, mapview = TRUE)
 {
   assert_is_all_of(ctg, "LAScatalog")
@@ -69,6 +70,7 @@ catalog_select = function(ctg, mapview = TRUE)
 
   return(ctg[index,])
 }
+# nocov end
 
 identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
 {
@@ -94,3 +96,4 @@ identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
 
   return(which(sel))
 }
+

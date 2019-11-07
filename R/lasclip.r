@@ -155,15 +155,7 @@ lasclip = function(las, geometry, ...)
       ycenter <- centers[,2]
       xcenter <- centers[,1]
       radius  <- p$radius
-      bboxes  <- mapply(raster::extent, xcenter - radius, xcenter + radius, ycenter - radius, ycenter + radius)
-      output  <- catalog_extract(las, bboxes, LIDRCIRCLE, data = geometry)
-
-      if (length(output) == 0)
-        return(NULL)
-      else if (length(output) == 1)
-        return(output[[1]])
-      else
-        return(output)
+      return(lasclipCircle(las, xcenter, ycenter, radius))
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
@@ -342,7 +334,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
   {
-    roi = lasfilter(las, C_points_in_polygon_wkt(las@data$X, las@data$Y, wkt[i], getThread()))
+    roi = lasfilter(las, C_in_polygon(las, wkt[i], getThread()))
     if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."))
     output[[i]] = roi
   }
@@ -381,7 +373,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 {
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)
 
-  if (opt_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE)
+  if (opt_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE) # nocov
 
   # Define a function to be passed in cluster_apply
   extract_query = function(cluster)

@@ -99,7 +99,7 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   if (type == "concave")
   {
     if (!requireNamespace("concaveman", quietly = TRUE))
-      stop("'concaveman' packagthe hullse is needed to compute concave hull.", call. = FALSE)
+      stop("'concaveman' package is needed to compute concave hull.", call. = FALSE)
   }
 
   # Pointeur on function C style coding
@@ -136,30 +136,19 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
 #' @export
 tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
-  x = readLAS(las)
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  metrics = tree_hulls(x, type, concavity, length_threshold, func, attribute)
-  bbox = raster::extent(las)
-  metrics = raster::crop(metrics, bbox)
+  metrics <- tree_hulls(x, type, concavity, length_threshold, func, attribute)
+  bbox    <- raster::extent(las)
+  metrics <- raster::crop(metrics, bbox)
   return(metrics)
 }
 
 #' @export
 tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE, automerge = TRUE)
   output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, func = func, attribute = attribute, .options = options)
-
-  if (opt_output_files(las) == "")
-  {
-    output <- do.call(rbind, output)
-    output@proj4string = las@proj4string
-  }
-  else
-  {
-    output <- unlist(output)
-  }
-
   return(output)
 }
 

@@ -112,9 +112,7 @@
 #' @export
 #'
 #' @family snags segmentation algorithms
-wing2015 = function(neigh_radii = c(1.5,1,2),
-                    low_int_thrsh = 50, uppr_int_thrsh = 170,
-                    pt_den_req = 3, BBPRthrsh_mat = NULL)
+wing2015 = function(neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, BBPRthrsh_mat = NULL)
 {
   assert_is_numeric(neigh_radii)
   assert_all_are_in_closed_range(neigh_radii, 0, 10)
@@ -131,11 +129,8 @@ wing2015 = function(neigh_radii = c(1.5,1,2),
 
   f = function(las)
   {
-    context <- tryCatch({get("lidR.context", envir = parent.frame())}, error = function(e) {return(NULL)})
-    stopif_wrong_context(context, c("lassnags"), "wing2015")
-
-    id = C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, getThread())
-    return(id)
+    assert_is_valid_context(LIDRCONTEXTSNG, "wing2015")
+    return(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, getThread()))
   }
 
   class(f) <- c("function", "SnagsSegmentation", "OpenMP", "Algorithm", "lidR")
