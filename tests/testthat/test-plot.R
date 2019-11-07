@@ -61,7 +61,7 @@ test_that("plot LAScatalog works", {
 })
 
 test_that("plot lasmetrics3d works", {
-  x = grid_metrics3d(las, ~length(Z), 5)
+  x = voxel_metrics(las, ~length(Z), 5)
   expect_error(plot(x), NA)
   rgl::rgl.close()
 })

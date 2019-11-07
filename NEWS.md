@@ -1,14 +1,5 @@
 ## lidR v2.2.0 (Release date: )
 
-#### CHANGES
-
-1. `LAS()` now rounds the values to 2 digits if no header is provided to fits with the default header automatically generated. This ensure to build a perfectly valid  `LAS` object out of external data. This change is made by reference meaning that the original dataset is rounded as well.
-
-```r
-pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
-las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copy
-```
-
 #### NEW FEATURES
 
 1. LAScatalog processing engine:
@@ -38,7 +29,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     plot(las, color = "Classification")
     ```
     
-3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `grid_hexametrics()` computes user-defined at the pixel level. `grid_metrics3d` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
+3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `hexbin_metrics()` computes user-defined at the pixel level. `voxel_metrics` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
 
 4. `lasnormalize()` gains and argument `add_class` to include e.g. points classified as water into ground points. This might be useful in region with a lot of water because in this case `lasnormalize()` can take forever to run (see [#295](https://github.com/Jean-Romain/lidR/issues/295))).
 
@@ -48,7 +39,16 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 #### CHANGES
 
-1. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.
+1. `LAS()` now rounds the values to 2 digits if no header is provided to fits with the default header automatically generated. This ensure to build a perfectly valid  `LAS` object out of external data. This change is made by reference meaning that the original dataset is rounded as well.
+
+```r
+pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copy
+```
+
+2. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects but `lasmetrics()`. For consistency accross the package `lasmetrics()` becomes `cloud_metrics()`.
+
+3. `grid_metrics3d()` and `grid_hexametrics()`  are deprecated. They are renamed `voxel_metrics()` and `hexbin_metrics()` for name consistancy.
     
 #### ENHANCEMENT
 

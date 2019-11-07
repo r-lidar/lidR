@@ -3,9 +3,15 @@
 \name{deprecated}
 \alias{deprecated}
 \alias{lasmetrics}
+\alias{grid_metrics3d}
+\alias{grid_hexametrics}
 \title{Deprecated functions in lidR}
 \usage{
 lasmetrics(...)
+
+grid_metrics3d(...)
+
+grid_hexametrics(...)
 }
 \arguments{
 \item{...}{parameters}

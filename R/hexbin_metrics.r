@@ -30,7 +30,7 @@
 #' Computes a series of descriptive statistics for a LiDAR dataset within hexagonal cells.
 #' This function is identical to \link{grid_metrics} but with hexagonal cells instead of
 #' square pixels. After all, we conduct circular plot inventories and we map models on pixel-based maps.
-#' \code{grid_hexametrics} provides the opportunity to test something else. Refer to \link{grid_metrics}
+#' \code{hexbin_metrics} provides the opportunity to test something else. Refer to \link{grid_metrics}
 #' for more information.
 #'
 #' @param las An object of class \code{LAS}.
@@ -57,7 +57,7 @@
 #' hexbin::plot(hm, colramp = col, main = "Max Z")
 #'
 #' # Mean height with a resolution of 20 m
-#' hm = grid_hexametrics(lidar, ~mean(Z), 20)
+#' hm = hexbin_metrics(lidar, ~mean(Z), 20)
 #' hexbin::plot(hm, colramp = col, main = "Mean Z")
 #'
 #' # Define your own new metrics
@@ -72,13 +72,13 @@
 #'   return(metrics)
 #' }
 #'
-#' metrics = grid_hexametrics(lidar, ~myMetrics(Z, Intensity), 10)
+#' metrics = hexbin_metrics(lidar, ~myMetrics(Z, Intensity), 10)
 #'
 #' hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
 #' hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
 #' hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
 #' @family metrics
-grid_hexametrics = function(las, func, res = 20)
+hexbin_metrics = function(las, func, res = 20)
 {
   stopifnotlas(las)
 

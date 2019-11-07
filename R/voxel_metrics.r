@@ -68,13 +68,13 @@
 #'    return(ret)
 #' }
 #'
-#' voxels = grid_metrics3d(las, ~myMetrics(Intensity), 3)
+#' voxels = voxel_metrics(las, ~myMetrics(Intensity), 3)
 #'
 #' plot(voxels, color = "imean", trim = 100)
 #' #etc.
 #' }
 #' @family metrics
-grid_metrics3d = function(las, func, res = 1)
+voxel_metrics = function(las, func, res = 1)
 {
   stopifnotlas(las)
   assert_all_are_non_negative(res)
