@@ -1016,8 +1016,10 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
 
 List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, SEXP env)
 {
-  List output(npoints);
-  SpatialIndex tree(X,Y,Z);
+  int nprocessed = std::count(filter.begin(), filter.end(), true);
+  int j = 0;
+  List output(nprocessed);
+  SpatialIndex tree(X,Y,Z,filter);
   Progress pb(npoints, "Metrics computation: ");
   bool abort = false;
 
@@ -1025,6 +1027,8 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
+    if (!filter[i]) continue;
+
 
     PointXYZ p(X[i], Y[i], Z[i]);
     std::vector<PointXYZ> pts;
@@ -1058,7 +1062,8 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
       ++it2;
     }
 
-    output[i] = Rf_eval(call, env);
+    output[j] = Rf_eval(call, env);
+    j++;
   }
 
   return output;

@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k = 8)
+point_metrics(las, func, k = 8L, xyz = TRUE, filter = NULL)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -12,11 +12,18 @@ point_metrics(las, func, k = 8)
 \item{func}{formula. An expression to be applied to each cell (see section "Parameter func").}
 
 \item{k}{integer. k-nearest neighbours}
+
+\item{xyz}{logical. Coordinates of each point are returned in addition to each metric. If
+\code{filter = NULL} coordinates are reference to the original coordinate and do not occupy more
+memory. If \code{filter != NULL} it obviouly takes memory.}
+
+\item{filter}{formula of logical predicates. Enables the function to run only on points of interest
+in an optimized way. See also examples.}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This
 function is very similar to \link{grid_metrics} but compute metrics \bold{for each point} based on
-its k-nearest neighbours.\cr\cr
+its k-nearest neighbours.
 }
 \details{
 It is important to bare in mind that this function is very fast for the feature it provides i.e.
@@ -54,7 +61,7 @@ be meaningless. For example computing the quantile of elevation does not really 
 
 \examples{
 \dontrun{
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 
 # Read only 0.5 points/m^2 for the purpose of this example
 las = readLAS(LASfile, filter = "-thin_with_grid 2")
@@ -71,12 +78,12 @@ plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
 }
 
 # Apply user-defined function
-M <- point_metrics(las, plane_metrics1(X,Y,Z), k = 8)
-#> Computed in 3.8 seconds
+M <- point_metrics(las, ~plane_metrics1(X,Y,Z), k = 25)
+#> Computed in 6.3 seconds
 
 # We can verify that it returns the same as 'shp_plane'
-system.time(las <- lasdetectshape(las, shp_plane(), "planar"))
-#> Computed in 0.05 second
+las <- lasdetectshape(las, shp_plane(k = 25), "planar")
+#> Computed in 0.1 second
 
 all.equal(M$planar, las$planar)
 
@@ -100,15 +107,25 @@ plane_metrics2 = function(x,y,z, th1 = 25, th2 = 6) {
   xyz <- cbind(x,y,z)
   eigen_m <- eigen_values(xyz)
   is_planar <- eigen_m[2] > (th1*eigen_m[3]) && (th2*eigen_m[2]) > eigen_m[1]
-return(list(planar = is_planar))
+  return(list(planar = is_planar))
 }
 
-M <- point_metrics(las, plane_metrics2(X,Y,Z), k = 8)
-#> Computed in 0.25 seconds
+M <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25)
+#> Computed in 0.5 seconds
 
 all.equal(M$planar, las$planar)
 # Here we can see that the optimized version is way better but we is still far 5 times slower
 # because of the overhead of calling R functions and making back and forth from R to C++.
+
+
+# Use the filter argument to process only first return
+M1 <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25, filter = ~ReturnNumber == 1)
+dim(M1) # 13894 instead of 17182 previously.
+
+# is a memory optimized equivalent to:
+first = lasfilterfirst(las)
+M2 <- point_metrics(first, ~plane_metrics2(X,Y,Z), k = 25)
+all.equal(M1, M2)
 }
 }
 \seealso{
