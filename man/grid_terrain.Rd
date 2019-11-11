@@ -5,7 +5,7 @@
 \title{Digital Terrain Model}
 \usage{
 grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE,
-  full_raster = FALSE)
+  full_raster = FALSE, use_class = c(2L, 9L))
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -22,6 +22,9 @@ cell (if it exists) to be chosen instead of the interpolated values.}
 \item{full_raster}{logical. By default the interpolation is made only within the convex hull of
 the point cloud. This prevent against meaningless interpolations where there is no data. If TRUE
 each pixel of the raster is interpolated.}
+
+\item{use_class}{integer vector. By default the terrain is computed by using ground points
+(class 2) and water points (class 9).}
 }
 \value{
 A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s

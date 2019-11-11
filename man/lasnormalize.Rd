@@ -8,7 +8,7 @@
 \alias{-,LAS,function-method}
 \title{Remove the topography from a point cloud}
 \usage{
-lasnormalize(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
+lasnormalize(las, algorithm, na.rm = FALSE, use_class = c(2L, 9L), ...)
 
 lasunnormalize(las)
 
@@ -27,9 +27,8 @@ model (can be computed with \link{grid_terrain})}
 fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
 elevation of NA are filtered. Be careful this creates a copy of the point cloud.}
 
-\item{add_class}{integer vector. By default the normalization is made by interpolating ground points
-i.e. points classified "2". It might be useful to consider other points as ground such as points
-classified as water. In this case use \code{add_class = 9}.}
+\item{use_class}{integer vector. By default the terrain is computed by using ground points
+(class 2) and water points (class 9). Relevant only for a normalisation without a raster DTM.}
 
 \item{...}{If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
 \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.}

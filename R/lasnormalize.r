@@ -47,9 +47,8 @@
 #' @param na.rm logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
 #' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
 #' elevation of NA are filtered. Be careful this creates a copy of the point cloud.
-#' @param add_class integer vector. By default the normalization is made by interpolating ground points
-#' i.e. points classified "2". It might be useful to consider other points as ground such as points
-#' classified as water. In this case use \code{add_class = 9}.
+#' @param use_class integer vector. By default the terrain is computed by using ground points
+#' (class 2) and water points (class 9). Relevant only for a normalisation without a raster DTM.
 #' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
 #' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.
 #'
@@ -111,37 +110,32 @@
 #' @export
 #' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
+lasnormalize = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
 {
 
   UseMethod("lasnormalize", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
+lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
 {
   assert_is_a_bool(na.rm)
 
-  if (is(algorithm, "RasterLayer"))
-  {
+  if (is(algorithm, "RasterLayer")) {
     Zground <- raster::extract(algorithm, coordinates(las), ...)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
     if (nnas > 0 && na.rm == FALSE)
       stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
-  }
-  else if (is.function(algorithm))
-  {
+  } else if (is.function(algorithm)) {
     assert_is_algorithm(algorithm)
     assert_is_algorithm_spi(algorithm)
 
-    if (!is.null(add_class)) {
-      if (any(as.integer(add_class) != add_class))
-        stop("'add_class' is not a vector of integers'", call. = FALSE)
+    if (any(as.integer(use_class) != use_class))
+      stop("'add_class' is not a vector of integers'", call. = FALSE)
 
-      add_class <- as.integer(add_class)
-    }
+    use_class <- as.integer(use_class)
 
     if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
     if (fast_countequal(las@data$Classification, LASGROUND) == 0) stop("No ground point found in the point cloud.")
@@ -159,11 +153,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...
     offsets <- c(xoffset, yoffset)
 
     # Select the ground points
-    if (is.null(add_class))
-      ground  <- las@data[Classification == LASGROUND, .(X,Y,Z)]
-    else
-      ground  <- las@data[Classification %in% c(LASGROUND, add_class), .(X,Y,Z)]
-
+    ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
     ground  <- check_degenerated_points(ground)
 
     # wbuffer = !"buffer" %in% names(las@data)
@@ -174,9 +164,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...
 
     if (nnas > 0 & na.rm == FALSE)
       stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
-  }
-  else
-  {
+  } else {
     stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
   }
 
@@ -186,8 +174,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...
   zscale  <- las@header@PHB[["Z scale factor"]]
   las@data[["Z"]] <- round_any(las@data[["Z"]] - Zground, zscale)
 
-  if (nnas > 0 && na.rm == TRUE)
-  {
+  if (nnas > 0 && na.rm == TRUE) {
     las <- lasfilter(las, !isna)
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
@@ -197,23 +184,23 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
+lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasnormalize(x, algorithm, na.rm, ...)
+  x <- lasnormalize(x, algorithm, na.rm, use_class, ...)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, add_class = NULL, ...)
+lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, add_class = add_class, ..., .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., .options = options)
   return(output)
 }
 

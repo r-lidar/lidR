@@ -48,6 +48,8 @@
 #' @param full_raster logical. By default the interpolation is made only within the convex hull of
 #' the point cloud. This prevent against meaningless interpolations where there is no data. If TRUE
 #' each pixel of the raster is interpolated.
+#' @param use_class integer vector. By default the terrain is computed by using ground points
+#' (class 2) and water points (class 9).
 #'
 #' @template LAScatalog
 #'
@@ -78,13 +80,13 @@
 #' plot_dtm3d(dtm2)
 #' plot_dtm3d(dtm3)
 #' }
-grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
+grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
 {
   UseMethod("grid_terrain", las)
 }
 
 #' @export
-grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
+grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
@@ -95,11 +97,13 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   assert_is_a_bool(full_raster)
   if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' data")
   if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.")
+  if (any(as.integer(use_class) != use_class)) stop("'add_class' is not a vector of integers'", call. = FALSE)
+  use_class <- as.integer(use_class)
 
   # Non standart evaluation (R CMD check)
-  . <- X <- Y <- Z <- Classification <- NULL
+  . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-  # Delaunay triangulation with boost requiere to
+  # Delaunay triangulation with boost requires to
   # compute back integer coordinates
   xscale  <- las@header@PHB[["X scale factor"]]
   yscale  <- las@header@PHB[["Y scale factor"]]
@@ -109,8 +113,8 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   offsets <- c(xoffset, yoffset)
 
   # Select the ground points
-  ground <- las@data[Classification == LASGROUND, .(X,Y,Z)]
-  ground <- check_degenerated_points(ground)
+  ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
+  ground  <- check_degenerated_points(ground)
 
   # Find where to interpolate the DTM (interpolation into the convex hull + buffer only).
   verbose("Generating interpolation coordinates...")
@@ -139,29 +143,30 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   suppressWarnings(layout[cells] <- Zg)
 
   # Replace the interpolated value by the lowest point
-  if (keep_lowest)
-  {
+  if (keep_lowest) {
     verbose("Forcing the lowest ground points to be retained...")
-    rmin <- grid_metrics(lasfilterground(las), ~list(Z = min(Z)), raster::res(layout)[1])
-    layout[] <- pmin(layout[], rmin[])
+    reso <- raster::res(layout)[1]
+    lasg <- lasfilter(las, Classification %in% c(use_class))
+    rmin <- grid_metrics(lasg, ~list(Z = min(Z)), reso)
+    suppressWarnings(layout[] <- pmin(layout[], rmin[]))
   }
 
   return(layout)
 }
 
 #' @export
-grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
+grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster, use_class)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE)
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
@@ -185,6 +190,6 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE,
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, .options = options)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, .options = options)
   return(output)
 }
