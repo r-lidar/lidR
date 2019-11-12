@@ -8,7 +8,8 @@ Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
     person("Florian", "De Boissieu", email = "", role = ("ctb"), comment = "Fixed bugs and improved catalog features"),
-    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented lassnags"))
+    person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented wing2015 for lassnags"),
+    person("Bourdon", "Jean-François", email = "", role = ("ctb"), comment = "Implemented sensor_tracking"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
