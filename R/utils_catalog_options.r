@@ -91,11 +91,9 @@ opt_chunk_size = function(ctg)
   assert_all_are_non_negative(value)
 
   if (value > 0) {
-    if (value > 20 && value < 250)
-      message("Be careful, a chunk size smaller than 250 is likely to be irrelevant.")
-
-    if (value <= 20)
-      warning("Be careful, a chunk size smaller than 20 is likely to be irrelevant.", call. = FALSE)
+     if (value < 250) {
+       message("Be careful, a chunk size smaller than 250 is likely to be irrelevant.")
+    }
   }
 
   ctg@chunk_options$size <- value
