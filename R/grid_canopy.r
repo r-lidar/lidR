@@ -80,8 +80,6 @@ grid_canopy.LAS = function(las, res, algorithm)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_dsm(algorithm)
   assert_las_is_not_empty(las)
-  chsi <- opt_chunk_size(ctg)
-  if (chsi > 0 && chsi < 2*res) stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
   # Some algorithm have an extra option 'subscircle' that need to buffer the layout
   # Must be rewritten because it is a hack !
