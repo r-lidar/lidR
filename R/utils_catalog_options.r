@@ -89,6 +89,13 @@ opt_chunk_size = function(ctg)
 {
   assert_is_a_number(value)
   assert_all_are_non_negative(value)
+
+  if (value > 0) {
+     if (value < 250) {
+       message("Be careful, a chunk size smaller than 250 is likely to be irrelevant.")
+    }
+  }
+
   ctg@chunk_options$size <- value
   return(ctg)
 }
