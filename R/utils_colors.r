@@ -36,7 +36,7 @@
 set.colors = function(x, palette, trim = Inf, value_index = FALSE)
 {
   if (all(is.na(x)))
-    return(rep("lightgrey", length(x)))
+    return()
 
   # Classification case
   if (value_index)
@@ -50,10 +50,14 @@ set.colors = function(x, palette, trim = Inf, value_index = FALSE)
   minx <- min(x, na.rm = T)
   maxx <- max(x, na.rm = T)
 
-  if (maxx - minx == 0)
-    colors <- palette[1]
-  else
-  {
+  if (maxx - minx == 0) {
+    if (!anyNA(x)) {
+      colors <- palette[1]
+    } else {
+      colors <- rep(NA_character_, length(x))
+      colors[!is.na(x)] <- palette[1]
+    }
+  } else {
     idx <- findInterval(x, seq(minx, maxx, length.out = ncolors))
     colors <- palette[idx]
   }
@@ -113,6 +117,7 @@ pastel.colors = function(n)
 
   return(grDevices::hcl(h,c,l))
 }
+<<<<<<< HEAD
 
 lasclass.colors = function()
 {
@@ -136,3 +141,5 @@ lasclass.colors = function()
            "orange",      # 17 bridge deck
            "yellow"))     # +
 }
+=======
+>>>>>>> master

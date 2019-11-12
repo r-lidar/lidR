@@ -110,6 +110,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 2. The LAScatalog engine now call `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
 
+3. `plot.LAS()` better handle the case when coloring with an attibute that have only two values: `NA` and another value.
+
 #### NOTE
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
