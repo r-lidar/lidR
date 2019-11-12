@@ -158,6 +158,8 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE,
   if (is_a_number(res)) assert_all_are_non_negative(res)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
+  chsi <- opt_chunk_size(ctg)
+  if (chsi > 0 && chsi < 2*res) stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
   # Enforce some options
   opt_select(las) <- "xyzc"

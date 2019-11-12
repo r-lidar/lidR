@@ -16,6 +16,10 @@
 
 2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
 
+####  ENHANCEMENT
+
+1. `grid_*()` functions and `opt_chunk_size()` now warn when the chunk size is small at a point it is irrelevant.
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES
