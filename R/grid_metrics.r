@@ -195,9 +195,6 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter =
   assert_is_numeric(start)
   formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!formula) func <- lazyeval::f_capture(func)
-  chsi <- opt_chunk_size(ctg)
-  if (chsi > 0 && chsi < 2*res) stop("The chunk size is too small. Process aborted.", call. = FALSE)
-
 
   # Compute the alignment option including the case when res is a RasterLayer
   alignment   <- list(res = res, start = start)
@@ -209,6 +206,9 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter =
     start     <- c(ext@xmin, ext@ymin)
     alignment <- list(res = r, start = start)
   }
+
+  if (opt_chunk_size(las) > 0 && opt_chunk_size(las) < 2*alignment$res)
+    stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
   # Enforce some options
   opt_chunk_buffer(las) <- 0.1*alignment[["res"]]
