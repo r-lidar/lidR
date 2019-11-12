@@ -36,17 +36,21 @@
 set.colors = function(x, palette, trim = Inf)
 {
   if (all(is.na(x)))
-    return(rep("lightgrey", length(x)))
+    return()
 
   ncolors <- length(palette)
-  if(!is.infinite(trim)) x[x > trim] <- trim
+  if (!is.infinite(trim)) x[x > trim] <- trim
   minx <- min(x, na.rm = T)
   maxx <- max(x, na.rm = T)
 
-  if (maxx-minx == 0)
-    colors <- palette[1]
-  else
-  {
+  if (maxx - minx == 0) {
+    if (!anyNA(x)) {
+      colors <- palette[1]
+    } else {
+      colors <- rep(NA_character_, length(x))
+      colors[!is.na(x)] <- palette[1]
+    }
+  } else {
     idx <- findInterval(x, seq(minx, maxx, length.out = ncolors))
     colors <- palette[idx]
   }

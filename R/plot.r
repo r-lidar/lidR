@@ -242,8 +242,8 @@ plot.LAS = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "b
 
   if (is.numeric(col))
   {
-    mincol <- min(col)
-    maxcol <- min(max(col), trim)
+    mincol <- min(col, na.rm = TRUE)
+    maxcol <- min(max(col, na.rm = TRUE), trim)
     col <- set.colors(col, pal, trim)
   }
   else if (is.character(col))
