@@ -7,14 +7,14 @@
 \alias{grid_hexametrics}
 \title{Deprecated functions in lidR}
 \usage{
-lasmetrics(...)
+lasmetrics(las, func)
 
 grid_metrics3d(...)
 
 grid_hexametrics(...)
 }
 \arguments{
-\item{...}{parameters}
+\item{las, func, ...}{parameters}
 }
 \description{
 These functions are provided for compatibility with older versions of lidR only, and may be
