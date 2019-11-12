@@ -9,18 +9,19 @@
 \usage{
 lasclip(las, geometry, ...)
 
-lasclipRectangle(las, xleft, ybottom, xright, ytop)
+lasclipRectangle(las, xleft, ybottom, xright, ytop, ...)
 
-lasclipPolygon(las, xpoly, ypoly)
+lasclipPolygon(las, xpoly, ypoly, ...)
 
-lasclipCircle(las, xcenter, ycenter, radius)
+lasclipCircle(las, xcenter, ycenter, radius, ...)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
 
-\item{...}{optional supplementary options (see supported geometries)}
+\item{...}{in \code{lasclip}: optional supplementary options (see supported geometries). Unused in
+other functions}
 
 \item{xleft}{numeric. left x coordinates of rectangles.}
 
@@ -58,13 +59,13 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 
 \itemize{
  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
- a MULTIPOLYGON.
+ a MULTIPOLYGON. If points a parameter 'radius' must be passed in \code{...}
  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
- in that case a parameter 'radius' must be passed in '...'
+ in that case a parameter 'radius' must be passed in \code{...}
  \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
- In case of \code{POINT} a parameter 'radius' must be passed in '...'
+ In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
  \item \link[raster:Extent-class]{Extent}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
  \preformatted{
@@ -119,7 +120,8 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile)
 subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 
-# Do not load the file(s), extract only the region of interest from a bigger dataset
+# Do not load the file(s), extract only the region of interest
+# from a bigger dataset
 ctg = readLAScatalog(LASfile)
 subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
@@ -128,7 +130,8 @@ shapefile_dir <- system.file("extdata", package = "lidR")
 lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
 subset3 = lasclip(ctg, lakes)
 
-# Extract the polygons, write them in files named after the lake names, do not load anything in R
+# Extract the polygons, write them in files named after the lake names,
+# do not load anything in R
 opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = lasclip(ctg, lakes)
 

@@ -315,5 +315,16 @@ test_that("clip writes file following LAScatalog options", {
   expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/file_Havelock Lake.las")))
 
   file.remove(paste0(tmp, "/file_Havelock Lake.las"))
+
+  xc <- c(684800, 684900)
+  yc <- c(5017850, 5017900)
+  X = cbind(xc, yc)
+  D = data.frame(PlotID = paste0("plot", 1:2))
+  P = sp::SpatialPointsDataFrame(X, D)
+
+  opt_output_files(ctg2) <- paste0(tmp, "/{PlotID}")
+  ctg3 = lasclip(ctg2, P, radius = 10)
+
+  expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/plot", 1:2, ".las")))
 })
 
