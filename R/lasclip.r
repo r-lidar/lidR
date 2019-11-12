@@ -46,18 +46,19 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radius or radii.
-#' @param ... optional supplementary options (see supported geometries)
+#' @param ... in \code{lasclip}: optional supplementary options (see supported geometries). Unused in
+#' other functions
 #'
 #' @section Supported geometries:
 #' \itemize{
 #'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
-#'  a MULTIPOLYGON.
+#'  a MULTIPOLYGON. If points a parameter 'radius' must be passed in \code{...}
 #'  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
 #'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
 #'  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
-#'  in that case a parameter 'radius' must be passed in '...'
+#'  in that case a parameter 'radius' must be passed in \code{...}
 #'  \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
-#'  In case of \code{POINT} a parameter 'radius' must be passed in '...'
+#'  In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
 #'  \item \link[raster:Extent-class]{Extent}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
 #'  \preformatted{
@@ -102,7 +103,8 @@
 #' las = readLAS(LASfile)
 #' subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
 #'
-#' # Do not load the file(s), extract only the region of interest from a bigger dataset
+#' # Do not load the file(s), extract only the region of interest
+#' # from a bigger dataset
 #' ctg = readLAScatalog(LASfile)
 #' subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 #'
@@ -111,7 +113,8 @@
 #' lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
 #' subset3 = lasclip(ctg, lakes)
 #'
-#' # Extract the polygons, write them in files named after the lake names, do not load anything in R
+#' # Extract the polygons, write them in files named after the lake names,
+#' # do not load anything in R
 #' opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 #' new_ctg = lasclip(ctg, lakes)
 #'
@@ -149,13 +152,13 @@ lasclip = function(las, geometry, ...)
     {
       p <- list(...)
       if (is.null(p$radius))
-        stop("Clipping using sfc_POINT or SpatialPoints* requires addition of parameter 'radius'.")
+        stop("Clipping using sfc_POINT or SpatialPoints* requires addition of parameter 'radius'.", call. = FALSE)
 
       centers <- sf::st_coordinates(geometry)
       ycenter <- centers[,2]
       xcenter <- centers[,1]
       radius  <- p$radius
-      return(lasclipCircle(las, xcenter, ycenter, radius))
+      return(lasclipCircle(las, xcenter, ycenter, radius, data = geometry))
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
@@ -198,7 +201,7 @@ lasclip = function(las, geometry, ...)
 
 #' @export
 #' @rdname lasclip
-lasclipRectangle = function(las, xleft, ybottom, xright, ytop)
+lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
 {
   assert_is_numeric(xleft)
   assert_is_numeric(ybottom)
@@ -212,7 +215,7 @@ lasclipRectangle = function(las, xleft, ybottom, xright, ytop)
 }
 
 #' @export
-lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
+lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
 {
   X <- Y <- NULL
 
@@ -233,7 +236,7 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop)
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
+lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
 {
   bboxes  <- mapply(raster::extent, xleft, xright, ybottom, ytop)
   output  <- catalog_extract(las, bboxes, LIDRRECTANGLE)
@@ -250,7 +253,7 @@ lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop)
 
 #' @export lasclipPolygon
 #' @rdname lasclip
-lasclipPolygon = function(las, xpoly, ypoly)
+lasclipPolygon = function(las, xpoly, ypoly, ...)
 {
   assert_is_numeric(xpoly)
   assert_is_numeric(ypoly)
@@ -264,7 +267,7 @@ lasclipPolygon = function(las, xpoly, ypoly)
 
 #' @export lasclipCircle
 #' @rdname lasclip
-lasclipCircle = function(las, xcenter, ycenter, radius)
+lasclipCircle = function(las, xcenter, ycenter, radius, ...)
 {
   assert_is_numeric(xcenter)
   assert_is_numeric(ycenter)
@@ -274,7 +277,7 @@ lasclipCircle = function(las, xcenter, ycenter, radius)
 }
 
 #' @export
-lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
+lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)
@@ -300,7 +303,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius)
 }
 
 #' @export
-lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
+lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)
@@ -312,7 +315,7 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius)
   ymin   <- ycenter - radius
   ymax   <- ycenter + radius
   bboxes <- mapply(raster::extent, xmin, xmax, ymin, ymax)
-  output <- catalog_extract(las, bboxes, LIDRCIRCLE)
+  output <- catalog_extract(las, bboxes, LIDRCIRCLE, ...)
 
   if (length(output) == 1)
     return(output[[1]])

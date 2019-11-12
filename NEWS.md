@@ -112,6 +112,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 3. `plot.LAS()` better handle the case when coloring with an attibute that have only two values: `NA` and another value.
 
+4. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
+
 #### NOTE
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
