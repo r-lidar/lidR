@@ -25,6 +25,12 @@
     ctg$GUID <- TRUE # is still forbidden
     #> Erreur : LAScatalog data read from standard files cannot be modified 
     ```
+    * The engine supports partial processing. It is possible to flag some files that will, or will not be processed. These files are not removed from the LAScatalog. They are used to load a buffer if required for the files that are actually processed. To activate this option a new boolean attribute named `processed` can be added in the catalog. 
+    
+    ```r
+    ctg$processed <- TRUE
+    ctg$processed[3:5] <- FALSE
+    ```
     
 2. 3D rendering:
     * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows to do not specify this argument even when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
@@ -43,6 +49,14 @@
 5. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
 
 6. New function `lasrangecorrection()` to normalized intensity using the sensor position (range correction)
+
+7. `catalog_select` now also allows to interactively flag the files to process
+
+    ```r
+    ctg <- catalog_select(ctg, method = "flag_processed")
+    ctg <- catalog_select(ctg, method = "flag_unprocessed")
+    ```
+
 
 #### CHANGES
 

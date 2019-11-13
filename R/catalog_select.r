@@ -53,7 +53,7 @@ catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unproc
 {
   assert_is_all_of(ctg, "LAScatalog")
   assert_is_a_bool(mapview)
-  match.arg(method)
+  method <- match.arg(method)
 
   Min.X <- Min.Y <- Max.X <- Max.Y <- NULL
 
@@ -76,11 +76,11 @@ catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unproc
   if (method == "subset") {
     ctg <- ctg[index,]
   } else if (method == "flag_unprocessed") {
-    ctg$process <- TRUE
-    ctg$process[index] <- FALSE
+    ctg$processed <- TRUE
+    ctg$processed[index] <- FALSE
   } else {
-    ctg$process <- FALSE
-    ctg$process[index] <- TRUE
+    ctg$processed <- FALSE
+    ctg$processed[index] <- TRUE
   }
 
   return(ctg)

@@ -37,9 +37,9 @@ catalog_makecluster = function(ctg)
   width   <- opt_chunk_size(ctg)
 
   # New feature from v2.2.0 to do not process some tiles
-  process <- ctg@data$process
-  if (is.null(process)) process <- rep(TRUE, nrow(ctg@data))
-  if (!is.logical(process)) stop("The attribute 'process' of the catalog is not logical.", call. = FALSE)
+  processed <- ctg@data$processed
+  if (is.null(processed)) processed <- rep(TRUE, nrow(ctg@data))
+  if (!is.logical(processed)) stop("The attribute 'processed' of the catalog is not logical.", call. = FALSE)
 
   # Creation of a set of rectangles that encompasses the whole catalog
   if (by_file)
@@ -49,10 +49,10 @@ catalog_makecluster = function(ctg)
     ymin <- ctg@data[["Min.Y"]]
     ymax <- ctg@data[["Max.Y"]]
 
-    xmin <- xmin[process]
-    xmax <- xmax[process]
-    ymin <- ymin[process]
-    ymax <- ymax[process]
+    xmin <- xmin[processed]
+    xmax <- xmax[processed]
+    ymin <- ymin[processed]
+    ymax <- ymax[processed]
   }
   else
   {
@@ -99,7 +99,7 @@ catalog_makecluster = function(ctg)
   else
   {
     bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
-    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, process))
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, processed))
     clusters = clusters[!sapply(clusters, is.null)]
   }
 
