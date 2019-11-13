@@ -170,6 +170,15 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
   }
   else
   {
+    # New feature from v2.2.0 to do not process some tiles
+    process <- x@data$process
+    if (is.null(process)) process <- rep(TRUE, nrow(x@data))
+    if (!is.logical(process)) {
+      warning("The attribute 'process' of the catalog is not logical.", call. = FALSE)
+      process <- rep(TRUE, nrow(x@data))
+    }
+
+    alpha   <- ifelse(process, 0.15, 0.03)
     param   <- list(...)
     xmin    <- min(x@data$Min.X)
     xmax    <- max(x@data$Max.X)
@@ -177,7 +186,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
     ymax    <- max(x@data$Max.Y)
     xcenter <- (xmin + xmax)/2
     ycenter <- (ymin + ymax)/2
-    col    <- grDevices::rgb(0, 0, 1, alpha = 0.1)
+    col    <- grDevices::rgb(0, 0, 1, alpha = alpha)
 
     if (is.null(param$xlim)) param$xlim <- c(xmin, xmax)
     if (is.null(param$ylim)) param$ylim <- c(ymin, ymax)
