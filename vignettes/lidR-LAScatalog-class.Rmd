@@ -112,7 +112,7 @@ ctg <- readLAScatalog("path/to/las/files/big_file.las")
 ```
 
 ```{r}
-print(ctg)
+ctg
 ```
 
 ## Basic structure of a LAScatalog object
@@ -207,6 +207,17 @@ plot(ctg, chunk = TRUE)
 
 opt_chunk_size(ctg) <- 900
 plot(ctg, chunk = TRUE)
+```
+
+## Partial processing
+
+From lidR v2.2.0 is it possible to flag some file that will not be processed but that will be used to load a buffer if required. In the following example only
+the central files will be processed but the others one were not removed and they will be used to buffer the processed files.
+
+```{r}
+ctg$processed <- FALSE
+ctg$processed[c(19:20, 41:44, 49:50)] <- TRUE
+plot(ctg)
 ```
 
 ## Some practical examples
