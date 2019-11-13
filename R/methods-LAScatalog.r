@@ -79,12 +79,20 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
 #' @export
 setMethod("[[<-", "LAScatalog",  function(x, i, j, value)
 {
-  stop("LAScatalog data are read from standard files and cannot be modified", call. = FALSE)
+  if (i %in% LASCATALOGATTRIBUTES)
+    stop("LAScatalog data read from standard files cannot be modified", call. = FALSE)
+
+  x@data[[i]] = value
+  return(x)
 })
 
 #' @rdname redefined_behaviors
 #' @export
 setMethod("$<-", "LAScatalog", function(x, name, value)
 {
-  stop("LAScatalog data are read from standard files and cannot be modified", call. = FALSE)
+  if (name %in% LASCATALOGATTRIBUTES)
+    stop("LAScatalog data read from standard files cannot be modified", call. = FALSE)
+
+  x@data[[name]] = value
+  return(x)
 })

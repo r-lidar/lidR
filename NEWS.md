@@ -18,6 +18,13 @@
     ctg = readLAScatalog("~/folder/LASfiles/")
     ctg@input_options$alt_dir = c("/home/Alice/data/", "/home/Bob/remote/project1/data/")
     ```
+    * LAScatalog modification constrains are now relaxed. It is now possible to add or modify an attribute if this attribute has a name that is not reserved.
+    
+    ```r
+    ctg$newattr <- 1 # is now allowed
+    ctg$GUID <- TRUE # is still forbidden
+    #> Erreur : LAScatalog data read from standard files cannot be modified 
+    ```
     
 2. 3D rendering:
     * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows to do not specify this argument even when plotting another attribute than Z and having an appropiated color palette by default. More interstingly it allows to get automatically a nice coloration of the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).

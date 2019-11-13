@@ -133,6 +133,12 @@ ctg$Min.Z <- 0
 
 Obviously it is always possible to modify an R object by bypassing such simple restrictions. In this case the user will break something internally and a correct output is not guaranteed.
 
+However it is possible to add and modify the attributes using a name that is nor reseved. The following is allowed:
+
+```{r}
+ctg$newattribute <- 0
+```
+
 ## Validation of LAScatalog object
 
 Users commonly report bugs arising from the fact that the point cloud is invalid. This is why we introduced the function `lascheck` to perform an inspection of the LAScatalog objects. This function checks if a LAScatalog object is consistent (files are all of the same type for example). For example, it may happen that a catalog mixes files of type 1 with files of type 3 or files with different scale factors.
