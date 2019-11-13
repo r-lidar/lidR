@@ -4,13 +4,19 @@
 \alias{catalog_select}
 \title{Select LAS files manually from a LAScatalog}
 \usage{
-catalog_select(ctg, mapview = TRUE)
+catalog_select(ctg, mapview = TRUE, method = c("subset",
+  "flag_unprocessed", "flag_processed"))
 }
 \arguments{
 \item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object}
 
 \item{mapview}{logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
 also \link[lidR:plot]{plot})}
+
+\item{method}{character. By default selecting tiles subset the catalog. It is also possible to flag
+the files to maintain the catalog as a whole but process only a subset its content.
+\code{flag_unprocessed} enable to point and click on files that will not be processed.
+\code{flag_processed} enable to point and click on files that will be processed.}
 }
 \value{
 A LAScatalog object

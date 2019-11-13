@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, outside_catalog_is_null = TRUE)
+catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, process = TRUE, outside_catalog_is_null = TRUE)
 {
   stopifnot(is.list(bboxes))
 
@@ -34,6 +34,9 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, out
   MinY <- catalog@data[["Min.Y"]]
   MaxY <- catalog@data[["Max.Y"]]
 
+  if (length(process) == 1L)
+    process <- rep(process, nrow(catalog@data))
+
   queries <- lapply(bboxes, function(bbox)
   {
     bbbox <- bbox + 2*buffer
@@ -41,7 +44,9 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, out
     tile_is_in_bbox          <- !(MinX >= bbox@xmax  | MaxX <= bbox@xmin  | MinY >= bbox@ymax  | MaxY <= bbox@ymin)
     tile_is_in_buffered_bbox <- !(MinX >= bbbox@xmax | MaxX <= bbbox@xmin | MinY >= bbbox@ymax | MaxY <= bbbox@ymin)
 
-    if (sum(tile_is_in_bbox) > 0)
+    if (all(!process[tile_is_in_bbox]))
+      select <- FALSE
+    else if (sum(tile_is_in_bbox) > 0)
       select <- tile_is_in_buffered_bbox
     else
       select <- FALSE
@@ -52,6 +57,16 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, out
       return(NULL)
     else if (length(files) == 0 & !outside_catalog_is_null)
       files <- ""
+
+    # If one file that emcompasses the bbox is set to 'non processing' resize the chunk
+    if (any(!process[tile_is_in_bbox])) {
+      k <- process & tile_is_in_bbox
+      bbox@xmin <- max(min(MinX[k]), bbox@xmin)
+      bbox@ymin <- max(min(MinY[k]), bbox@ymin)
+      bbox@xmax <- min(max(MaxX[k]), bbox@xmax)
+      bbox@ymax <- min(max(MaxY[k]), bbox@ymax)
+      bbbox <- bbox + 2*buffer
+    }
 
     center  <- list(x = (bbox@xmax + bbox@xmin)/2, y = (bbox@ymax + bbox@ymin)/2)
     width   <- (bbox@xmax - bbox@xmin)

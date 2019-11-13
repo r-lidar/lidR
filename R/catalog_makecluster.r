@@ -36,6 +36,11 @@ catalog_makecluster = function(ctg)
   start   <- opt_chunk_alignment(ctg)
   width   <- opt_chunk_size(ctg)
 
+  # New feature from v2.2.0 to do not process some tiles
+  process <- ctg@data$process
+  if (is.null(process)) process <- rep(TRUE, nrow(ctg@data))
+  if (!is.logical(process)) stop("The attribute 'process' of the catalog is not logical.", call. = FALSE)
+
   # Creation of a set of rectangles that encompasses the whole catalog
   if (by_file)
   {
@@ -43,6 +48,11 @@ catalog_makecluster = function(ctg)
     xmax <- ctg@data[["Max.X"]]
     ymin <- ctg@data[["Min.Y"]]
     ymax <- ctg@data[["Max.Y"]]
+
+    xmin <- xmin[process]
+    xmax <- xmax[process]
+    ymin <- ymin[process]
+    ymax <- ymax[process]
   }
   else
   {
@@ -89,7 +99,7 @@ catalog_makecluster = function(ctg)
   else
   {
     bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
-    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer))
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, process))
     clusters = clusters[!sapply(clusters, is.null)]
   }
 
@@ -146,8 +156,8 @@ catalog_makecluster = function(ctg)
   # Plot the catalog and the clusters if progress
   if (opt_progress(ctg))
   {
-    xrange = c(min(xmin), max(xmax))
-    yrange = c(min(ymin), max(ymax))
+    xrange = c(min(xmin, ctg@data[["Min.X"]]), max(xmax, ctg@data[["Max.X"]]))
+    yrange = c(min(ymin, ctg@data[["Min.Y"]]), max(ymax, ctg@data[["Max.Y"]]))
     title  = "Pattern of chunks"
     plot.LAScatalog(ctg, mapview = FALSE, chunk_pattern = FALSE, main = title, xlim = xrange, ylim = yrange)
 

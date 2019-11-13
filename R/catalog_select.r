@@ -34,6 +34,10 @@
 #'
 #' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
 #' also \link[lidR:plot]{plot})
+#' @param method character. By default selecting tiles subset the catalog. It is also possible to flag
+#' the files to maintain the catalog as a whole but process only a subset its content.
+#' \code{flag_unprocessed} enable to point and click on files that will not be processed.
+#' \code{flag_processed} enable to point and click on files that will be processed.
 #'
 #' @return A LAScatalog object
 #'
@@ -45,10 +49,11 @@
 #' new_ctg = catalog_select(ctg)
 #' }
 # nocov start
-catalog_select = function(ctg, mapview = TRUE)
+catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unprocessed", "flag_processed"))
 {
   assert_is_all_of(ctg, "LAScatalog")
   assert_is_a_bool(mapview)
+  match.arg(method)
 
   Min.X <- Min.Y <- Max.X <- Max.Y <- NULL
 
@@ -68,7 +73,17 @@ catalog_select = function(ctg, mapview = TRUE)
     index <- with(ctg@data, identify_tile(Min.X, Max.X, Min.Y, Max.Y))
   }
 
-  return(ctg[index,])
+  if (method == "subset") {
+    ctg <- ctg[index,]
+  } else if (method == "flag_unprocessed") {
+    ctg$process <- TRUE
+    ctg$process[index] <- FALSE
+  } else {
+    ctg$process <- FALSE
+    ctg$process[index] <- TRUE
+  }
+
+  return(ctg)
 }
 # nocov end
 
