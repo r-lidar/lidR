@@ -4,8 +4,13 @@
 \alias{sensor_tracking}
 \title{Reconstruct the trajectory of the LiDAR sensor using multiple returns}
 \usage{
-sensor_tracking(las, interval = 0.5, pmin = 50, extra_check = TRUE,
-  thin_pulse_with_time = 0.001)
+sensor_tracking(
+  las,
+  interval = 0.5,
+  pmin = 50,
+  extra_check = TRUE,
+  thin_pulse_with_time = 0.001
+)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -24,7 +29,7 @@ for an important proportion of the computation time. See also section 'Tests of 
 \item{thin_pulse_with_time}{numeric. In practice it is useless to compute the position using every
 multiple returns. It is more computationnaly demanding but not necessarily more accurate. This keeps
 only one pulse every x seconds. Set 0 to use every multiple returns. Use 0 if the file has already
-bee read with \code{filter = "-thin_pulses_with_time 0.001"}.}
+been read with \code{filter = "-thin_pulses_with_time 0.001"}.}
 }
 \value{
 A SpatialPointDataFrame with the Z elevation stored in the table of attribute. Informations
@@ -108,8 +113,8 @@ las = readLAS(LASfile)
 plot(las)
 
 # pmin = 15 because it is an extremely tiny file
-# hardly decimated to reduce its size. There are
-# few multiple returns
+# strongly decimated to reduce its size. There are
+# actually few multiple returns
 flightlines <- sensor_tracking(las, pmin = 15)
 
 plot(las@header)

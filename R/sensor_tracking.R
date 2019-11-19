@@ -47,7 +47,7 @@
 #' @param thin_pulse_with_time numeric. In practice it is useless to compute the position using every
 #' multiple returns. It is more computationnaly demanding but not necessarily more accurate. This keeps
 #' only one pulse every x seconds. Set 0 to use every multiple returns. Use 0 if the file has already
-#' bee read with \code{filter = "-thin_pulses_with_time 0.001"}.
+#' been read with \code{filter = "-thin_pulses_with_time 0.001"}.
 #' @return A SpatialPointDataFrame with the Z elevation stored in the table of attribute. Informations
 #' about the time interval and the number of pulses used to find the points are also in the table of
 #' attributes.
@@ -61,8 +61,8 @@
 #' plot(las)
 #'
 #' # pmin = 15 because it is an extremely tiny file
-#' # hardly decimated to reduce its size. There are
-#' # few multiple returns
+#' # strongly decimated to reduce its size. There are
+#' # actually few multiple returns
 #' flightlines <- sensor_tracking(las, pmin = 15)
 #'
 #' plot(las@header)

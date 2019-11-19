@@ -4,8 +4,7 @@
 \alias{li2012}
 \title{Individual Tree Segmentation Algorithm}
 \usage{
-li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2,
-  speed_up = 10)
+li2012(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 }
 \arguments{
 \item{dt1}{numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default is 1.5.}
@@ -45,8 +44,10 @@ Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segment
 trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 }
 \seealso{
-Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{silva2016}}, \code{\link{watershed}}
+Other individual tree segmentation algorithms: 
+\code{\link{dalponte2016}()},
+\code{\link{silva2016}()},
+\code{\link{watershed}()}
 }
 \concept{individual tree segmentation algorithms}
 \concept{point-cloud based tree segmentation algorithms}

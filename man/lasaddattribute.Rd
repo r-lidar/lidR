@@ -12,8 +12,16 @@ lasadddata(las, x, name)
 
 lasaddextrabytes(las, x, name, desc)
 
-lasaddextrabytes_manual(las, x, name, desc, type, offset = NULL,
-  scale = NULL, NA_value = NULL)
+lasaddextrabytes_manual(
+  las,
+  x,
+  name,
+  desc,
+  type,
+  offset = NULL,
+  scale = NULL,
+  NA_value = NULL
+)
 
 lasremoveextrabytes(las, name)
 }

@@ -42,7 +42,8 @@ plot(chm, col = col)
 }
 }
 \seealso{
-Other digital surface model algorithms: \code{\link{dsmtin}},
-  \code{\link{pitfree}}
+Other digital surface model algorithms: 
+\code{\link{dsmtin}()},
+\code{\link{pitfree}()}
 }
 \concept{digital surface model algorithms}

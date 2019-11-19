@@ -40,6 +40,7 @@ morphological filter for removing nonground measurements from airborne LIDAR dat
 Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 }
 \seealso{
-Other ground segmentation algorithms: \code{\link{csf}}
+Other ground segmentation algorithms: 
+\code{\link{csf}()}
 }
 \concept{ground segmentation algorithms}

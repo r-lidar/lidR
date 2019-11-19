@@ -4,8 +4,13 @@
 \alias{wing2015}
 \title{Snags Segmentation Algorithm}
 \usage{
-wing2015(neigh_radii = c(1.5, 1, 2), low_int_thrsh = 50,
-  uppr_int_thrsh = 170, pt_den_req = 3, BBPRthrsh_mat = NULL)
+wing2015(
+  neigh_radii = c(1.5, 1, 2),
+  low_int_thrsh = 50,
+  uppr_int_thrsh = 170,
+  pt_den_req = 3,
+  BBPRthrsh_mat = NULL
+)
 }
 \arguments{
 \item{neigh_radii}{numeric. A vector of three radii used in quantifying local-area centered

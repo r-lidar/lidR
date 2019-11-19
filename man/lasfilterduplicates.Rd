@@ -52,7 +52,9 @@ and cannot be changed.
 }
 
 \seealso{
-Other lasfilters: \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilters}}, \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilters}},
+\code{\link{lasfilter}()}
 }
 \concept{lasfilters}

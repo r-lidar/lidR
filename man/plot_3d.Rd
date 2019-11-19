@@ -61,6 +61,6 @@ add_treetops3d(x, ttops)
 
 \dontrun{
 library(magrittr)
-plot(las) \%>\% add_dtm3d(dtm) \%>\% add_treetops3d(ttops)
+plot(las) %>% add_dtm3d(dtm) %>% add_treetops3d(ttops)
 }
 }

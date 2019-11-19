@@ -3,9 +3,9 @@
 #### NEW FEATURES
 
 1. LAScatalog processing engine:
-    *  `catalog_apply()` gains an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for automatic merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. return a `list`. Thus there is no danger at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility but will be switched to `TRUE` in next releases.
+    *  `catalog_apply()` gains an option `automerge = TRUE`. `catalog_apply()` used to return a `list` that requiered to be merged by the user. This new option allows for automatic merging. This is a non failure feature. In the worst case if the user-defined function returns a non supported list of objects that cannot be merged it fall back into the former behavior i.e. it returns a `list`. Thus there is no risk at adding the option `automerge = TRUE` but by defaut it is set to `FALSE` for retrocompatibility. This might be switched to `TRUE` in next releases.
     
-    * `opt_output_file()` now interprets `*` as `{ORIGINALFILENAME}` for shorter syntax. The following is now correct 
+    * `opt_output_file()` now interprets `*` as `{ORIGINALFILENAME}` for shorter syntax. The following is now accepted: 
     
     ```R
     opt_output_file(ctg) <- "/home/user/data/norm/*_norm"  # {*} is valid as well
@@ -41,22 +41,24 @@
     plot(las, color = "ReturnNumber")
     plot(las, color = "Classification")
     ```
+    * In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
     
 3. New function `point_metrics()` very smilar to `grid_metrics()` but at the point level. The 'metrics' family is now completed. `cloud_metrics()` computes user-defined metrics at the point cloud level. `grid_metrics()` and `hexbin_metrics()` computes user-defined at the pixel level. `voxel_metrics` computes user-defined metrics at the voxel level. `point_metrics()` computes user-defined metrics at the point level.
 
-4. `lasnormalize()` gains and argument `add_class` to include e.g. points classified as water into ground points. This might be useful in region with a lot of water because in this case `lasnormalize()` can take forever to run (see [#295](https://github.com/Jean-Romain/lidR/issues/295))).
+4. `lasnormalize()`:
+    * Gains and argument `use_class` to control the points used as ground.
+    * By default 'ground point' now includes points classified as water by default. This might be useful in region with a lot of water because in this case `lasnormalize()` can take forever to run (see [#295](https://github.com/Jean-Romain/lidR/issues/295))).
 
-5. New function `sensor_tracking()` to retrieve the position of the sensor in the sky
+5. New function `sensor_tracking()` to retrieve the position of the sensor in the sky.
 
-6. New function `lasrangecorrection()` to normalized intensity using the sensor position (range correction)
+6. New function `lasrangecorrection()` to normalize intensity using the sensor position (range correction)
 
-7. `catalog_select` now also allows to interactively flag the files to process
+7. `catalog_select` now also allows to interactively flag the files to process:
 
     ```r
     ctg <- catalog_select(ctg, method = "flag_processed")
     ctg <- catalog_select(ctg, method = "flag_unprocessed")
     ```
-
 
 #### CHANGES
 
@@ -95,11 +97,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     #> v2.2 - 1 cores:  6s - 4 cores: 3s
     ```
     
-2. There are more than 100 new unit tests in `testthat`. The coverage increased from 68% to 87%
-
-3. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
-
-4. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation are now written in C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. However to work, the point cloud must be converted to integers. This implies that the scale factors and offset in the header must be properly populated which might not be the case if user modified these value by hand or if using a point cloud coming from another format than las/laz. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+2. Internally the delaunay triangulation has been rewritten with `boost` instead of relying on the `geometry` package. The Delaunay triangulation and the rasterization of the Delaunay triangulation are now written in C++ providing an important speed-up  (up to three times faster) to `tin()`, `dsmtin()` and `pitfree()`. However to work, the point cloud must be converted to integers. This implies that the scale factors and offset in the header must be properly populated which might not be the case if user modified these value by hand or if using a point cloud coming from another format than las/laz. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
 
     ```r
     # 1.7 million ground points
@@ -118,28 +116,26 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     #> v2.1: 1 core: 30s - 4 cores: 28s
     #> v2.2: 1 core: 11s - 4 cores: 9s
     ```
+    
+3. There are more than 100 new unit tests in `testthat`. The coverage increased from 68% to 87%
+
+4. The vignette named *Speed-up the computations on a LAScatalog* gains a section about the possible additionnal speed-up using the argument `select` from `readLAS()`.
+
+5. The vignette named *LAScatalog formal class* gains a section about partial processing.
+
+6. Harmonisation and review of the sections 'Supported processing options' in the man pages.
 
 #### FIXES
 
 1. Several minor fixes in `lascheck()`  for very unpropable cases of `LAS` objects likely to have been modified by hand.
 
-## lidR v2.1.5 (Release date: in development)
+2. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `voxel_metrics()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
 
-#### FIXES
+3. The LAScatalog engine now call `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
 
-1. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `grid_metrics3d()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
+4. `plot.LAS()` better handle the case when coloring with an attibute that have only two values: `NA` and another value.
 
-2. The LAScatalog engine now call `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
-
-3. `plot.LAS()` better handle the case when coloring with an attibute that have only two values: `NA` and another value.
-
-4. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
-
-#### NOTE
-
-1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
-
-2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
+5. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
@@ -250,7 +246,6 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 
 ## lidR v2.1.0 (Release date: 2019-07-13)
->>>>>>> devel
 
 #### VISIBLE CHANGES
 

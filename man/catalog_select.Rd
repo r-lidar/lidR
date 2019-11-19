@@ -4,8 +4,11 @@
 \alias{catalog_select}
 \title{Select LAS files manually from a LAScatalog}
 \usage{
-catalog_select(ctg, mapview = TRUE, method = c("subset",
-  "flag_unprocessed", "flag_processed"))
+catalog_select(
+  ctg,
+  mapview = TRUE,
+  method = c("subset", "flag_unprocessed", "flag_processed")
+)
 }
 \arguments{
 \item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object}

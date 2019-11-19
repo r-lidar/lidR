@@ -4,8 +4,14 @@
 \alias{tree_hulls}
 \title{Compute the hull of each tree.}
 \usage{
-tree_hulls(las, type = c("convex", "concave", "bbox"), concavity = 3,
-  length_threshold = 0, func = NULL, attribute = "treeID")
+tree_hulls(
+  las,
+  type = c("convex", "concave", "bbox"),
+  concavity = 3,
+  length_threshold = 0,
+  func = NULL,
+  attribute = "treeID"
+)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}

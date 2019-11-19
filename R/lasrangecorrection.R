@@ -12,9 +12,10 @@
 #' (default names are  'gpstime' and 'Z'). It can be computed with \link{sensor_tracking}.
 #' @param Rs numeric. Range of reference.
 #' @param f numeric. Exponent. Usually between 2 and 3 in vegetation context.
-#' @param gpstime,elevation character. The name of the attributes that store the gpstime of the position and the
-#' elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates is searched in
-#' the third column of coordinates. This is useful if read from a format that support 3 coordinates points.
+#' @param gpstime,elevation character. The name of the attributes that store the gpstime of the
+#' position and the elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates
+#' are searched in the third column of coordinates matrix of the SpatialPointsDataFrame. This is
+#' useful if read from a format that support 3 coordinates points.
 #' @return An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra
 #' attribute named 'RawIntensity' records the original intensities.
 #'
@@ -28,16 +29,16 @@
 #' @examples
 #' # A valid file properly populated
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #'
 #' # pmin = 15 because it is an extremely tiny file
-#' # hardly decimated to reduce its size. There are
-#' # few multiple returns
+#' # strongly decimated to reduce its size. There are
+#' # actually few multiple returns
 #' sensor <- sensor_tracking(las, pmin = 15)
 #'
 #' # Here the effect is virtually null because the size of
 #' # the sample is too tiny to notice any effect of range
-#' las = lasrangecorrection(las, sensor, Rs = 2000)
+#' las <- lasrangecorrection(las, sensor, Rs = 2000)
 lasrangecorrection <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   UseMethod("lasrangecorrection", las)

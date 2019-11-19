@@ -52,7 +52,9 @@ is also standardized. Columns are named:
 }
 \section{Functions}{
 \itemize{
-\item \code{LAS}: Create objects of class LAS
+\item \code{LAS}: Create objects of class LAS. The original data is updated by reference to
+clamp the coordinates with respect to the scale factor of the header. If not header is provided scale
+factor are set to 0.001
 }}
 
 \section{Slots}{
@@ -75,9 +77,21 @@ Class  \link[sp:Spatial-class]{Spatial}, directly.
 }
 
 \examples{
+# Read a las/laz file
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
+las
 
+# Creation of a LAS object out of external data
+data <- data.frame(X = runif(100, 0, 100),
+                   Y = runif(100, 0, 100),
+                   Z = runif(100, 0, 20))
+data
+
+las <- LAS(data) # /!\\ data is updated by reference
+
+data
+las
 }
 \seealso{
 \link{readLAS}

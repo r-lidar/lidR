@@ -31,7 +31,8 @@ plot(dtm, col = terrain.colors(50))
 plot_dtm3d(dtm)
 }
 \seealso{
-Other spatial interpolation algorithms: \code{\link{knnidw}},
-  \code{\link{tin}}
+Other spatial interpolation algorithms: 
+\code{\link{knnidw}()},
+\code{\link{tin}()}
 }
 \concept{spatial interpolation algorithms}

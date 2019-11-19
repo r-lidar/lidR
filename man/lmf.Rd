@@ -71,6 +71,7 @@ Multispectral Data Fusion with Local Filtering and Variable Window Size for Esti
 Photogrammetric Engineering and Remote Sensing. 70. 589-604. 10.14358/PERS.70.5.589.
 }
 \seealso{
-Other individual tree detection algorithms: \code{\link{manual}}
+Other individual tree detection algorithms: 
+\code{\link{manual}()}
 }
 \concept{individual tree detection algorithms}

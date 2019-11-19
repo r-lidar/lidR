@@ -4,9 +4,14 @@
 \alias{csf}
 \title{Ground Segmentation Algorithm}
 \usage{
-csf(sloop_smooth = FALSE, class_threshold = 0.5,
-  cloth_resolution = 0.5, rigidness = 1L, iterations = 500L,
-  time_step = 0.65)
+csf(
+  sloop_smooth = FALSE,
+  class_threshold = 0.5,
+  cloth_resolution = 0.5,
+  rigidness = 1L,
+  iterations = 500L,
+  time_step = 0.65
+)
 }
 \arguments{
 \item{sloop_smooth}{logical. When steep slopes exist, set this parameter to TRUE to reduce
@@ -47,6 +52,7 @@ Filtering Method Based on Cloth Simulation,” Remote Sens., vol. 8, no. 6, p. 5
 (http://www.mdpi.com/2072-4292/8/6/501/htm)
 }
 \seealso{
-Other ground segmentation algorithms: \code{\link{pmf}}
+Other ground segmentation algorithms: 
+\code{\link{pmf}()}
 }
 \concept{ground segmentation algorithms}

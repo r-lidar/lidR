@@ -4,8 +4,15 @@
 \alias{dalponte2016}
 \title{Individual Tree Segmentation Algorithm}
 \usage{
-dalponte2016(chm, treetops, th_tree = 2, th_seed = 0.45,
-  th_cr = 0.55, max_cr = 10, ID = "treeID")
+dalponte2016(
+  chm,
+  treetops,
+  th_tree = 2,
+  th_seed = 0.45,
+  th_cr = 0.55,
+  max_cr = 10,
+  ID = "treeID"
+)
 }
 \arguments{
 \item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
@@ -69,11 +76,14 @@ Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon den
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other individual tree segmentation algorithms: \code{\link{li2012}},
-  \code{\link{silva2016}}, \code{\link{watershed}}
+Other individual tree segmentation algorithms: 
+\code{\link{li2012}()},
+\code{\link{silva2016}()},
+\code{\link{watershed}()}
 
-Other raster based tree segmentation algorithms: \code{\link{silva2016}},
-  \code{\link{watershed}}
+Other raster based tree segmentation algorithms: 
+\code{\link{silva2016}()},
+\code{\link{watershed}()}
 }
 \concept{individual tree segmentation algorithms}
 \concept{raster based tree segmentation algorithms}

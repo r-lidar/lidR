@@ -4,8 +4,14 @@
 \alias{util_makeZhangParam}
 \title{Parameters for progressive morphological filter}
 \usage{
-util_makeZhangParam(b = 2, dh0 = 0.5, dhmax = 3, s = 1,
-  max_ws = 20, exp = FALSE)
+util_makeZhangParam(
+  b = 2,
+  dh0 = 0.5,
+  dhmax = 3,
+  s = 1,
+  max_ws = 20,
+  exp = FALSE
+)
 }
 \arguments{
 \item{b}{numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).}

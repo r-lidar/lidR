@@ -44,7 +44,8 @@ plot(chm, col = col)
 }
 }
 \seealso{
-Other digital surface model algorithms: \code{\link{p2r}},
-  \code{\link{pitfree}}
+Other digital surface model algorithms: 
+\code{\link{p2r}()},
+\code{\link{pitfree}()}
 }
 \concept{digital surface model algorithms}

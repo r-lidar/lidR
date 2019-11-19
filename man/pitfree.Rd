@@ -4,8 +4,7 @@
 \alias{pitfree}
 \title{Digital Surface Model Algorithm}
 \usage{
-pitfree(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1),
-  subcircle = 0)
+pitfree(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0)
 }
 \arguments{
 \item{thresholds}{numeric. Set of height thresholds according to the Khosravipour et al. (2014) algorithm
@@ -64,7 +63,8 @@ Generating pit-free canopy height models from airborne lidar. Photogrammetric En
 Remote Sensing, 80(9), 863-872.
 }
 \seealso{
-Other digital surface model algorithms: \code{\link{dsmtin}},
-  \code{\link{p2r}}
+Other digital surface model algorithms: 
+\code{\link{dsmtin}()},
+\code{\link{p2r}()}
 }
 \concept{digital surface model algorithms}

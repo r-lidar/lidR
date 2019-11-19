@@ -64,11 +64,14 @@ x = plot(las, color = "treeID", colorPalette = col)
 add_treetops3d(x, ttops)
 }
 \seealso{
-Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{li2012}}, \code{\link{silva2016}}
+Other individual tree segmentation algorithms: 
+\code{\link{dalponte2016}()},
+\code{\link{li2012}()},
+\code{\link{silva2016}()}
 
-Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{silva2016}}
+Other raster based tree segmentation algorithms: 
+\code{\link{dalponte2016}()},
+\code{\link{silva2016}()}
 }
 \concept{individual tree segmentation algorithms}
 \concept{raster based tree segmentation algorithms}

@@ -4,8 +4,14 @@
 \alias{grid_terrain}
 \title{Digital Terrain Model}
 \usage{
-grid_terrain(las, res = 1, algorithm, keep_lowest = FALSE,
-  full_raster = FALSE, use_class = c(2L, 9L))
+grid_terrain(
+  las,
+  res = 1,
+  algorithm,
+  keep_lowest = FALSE,
+  full_raster = FALSE,
+  use_class = c(2L, 9L)
+)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}

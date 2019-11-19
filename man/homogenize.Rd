@@ -34,7 +34,8 @@ thinned = lasfilterdecimate(las, homogenize(1,5))
 plot(grid_density(thinned))
 }
 \seealso{
-Other point cloud decimation algorithms: \code{\link{highest}},
-  \code{\link{random}}
+Other point cloud decimation algorithms: 
+\code{\link{highest}()},
+\code{\link{random}()}
 }
 \concept{point cloud decimation algorithms}

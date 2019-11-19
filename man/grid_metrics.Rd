@@ -144,9 +144,11 @@ las = readLAS(LASfile, filter = "-keep_first")
 metrics = grid_metrics(las, ~mean(Z), 20)
 }
 \seealso{
-Other metrics: \code{\link{cloud_metrics}},
-  \code{\link{hexbin_metrics}},
-  \code{\link{point_metrics}}, \code{\link{tree_metrics}},
-  \code{\link{voxel_metrics}}
+Other metrics: 
+\code{\link{cloud_metrics}()},
+\code{\link{hexbin_metrics}()},
+\code{\link{point_metrics}()},
+\code{\link{tree_metrics}()},
+\code{\link{voxel_metrics}()}
 }
 \concept{metrics}

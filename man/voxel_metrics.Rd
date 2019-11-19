@@ -55,8 +55,11 @@ plot(voxels, color = "imean", trim = 100)
 }
 }
 \seealso{
-Other metrics: \code{\link{cloud_metrics}},
-  \code{\link{grid_metrics}}, \code{\link{hexbin_metrics}},
-  \code{\link{point_metrics}}, \code{\link{tree_metrics}}
+Other metrics: 
+\code{\link{cloud_metrics}()},
+\code{\link{grid_metrics}()},
+\code{\link{hexbin_metrics}()},
+\code{\link{point_metrics}()},
+\code{\link{tree_metrics}()}
 }
 \concept{metrics}

@@ -4,8 +4,7 @@
 \alias{silva2016}
 \title{Individual Tree Segmentation Algorithm}
 \usage{
-silva2016(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3,
-  ID = "treeID")
+silva2016(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 }
 \arguments{
 \item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
@@ -63,11 +62,14 @@ Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 4
 https://doi.org/10.1080/07038992.2016.1196582.
 }
 \seealso{
-Other individual tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{li2012}}, \code{\link{watershed}}
+Other individual tree segmentation algorithms: 
+\code{\link{dalponte2016}()},
+\code{\link{li2012}()},
+\code{\link{watershed}()}
 
-Other raster based tree segmentation algorithms: \code{\link{dalponte2016}},
-  \code{\link{watershed}}
+Other raster based tree segmentation algorithms: 
+\code{\link{dalponte2016}()},
+\code{\link{watershed}()}
 }
 \concept{individual tree segmentation algorithms}
 \concept{raster based tree segmentation algorithms}

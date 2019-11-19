@@ -46,7 +46,9 @@ plot(subset)
 
 }
 \seealso{
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfilters}}, \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfilters}},
+\code{\link{lasfilter}()}
 }
 \concept{lasfilters}

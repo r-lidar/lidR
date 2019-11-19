@@ -23,7 +23,8 @@ thinned = lasfilterdecimate(las, highest(4))
 plot(thinned)
 }
 \seealso{
-Other point cloud decimation algorithms: \code{\link{homogenize}},
-  \code{\link{random}}
+Other point cloud decimation algorithms: 
+\code{\link{homogenize}()},
+\code{\link{random}()}
 }
 \concept{point cloud decimation algorithms}

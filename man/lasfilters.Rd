@@ -57,40 +57,49 @@ firstReturns  = lasfilterfirst(lidar)
 groundReturns = lasfilterground(lidar)
 }
 \seealso{
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilter}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilter}()}
 }
 \concept{lasfilters}

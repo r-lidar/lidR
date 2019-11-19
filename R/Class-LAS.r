@@ -70,9 +70,21 @@
 #' @include Class-LASheader.r
 #' @export
 #' @examples
+#' # Read a las/laz file
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
+#' las
 #'
+#' # Creation of a LAS object out of external data
+#' data <- data.frame(X = runif(100, 0, 100),
+#'                    Y = runif(100, 0, 100),
+#'                    Z = runif(100, 0, 20))
+#' data
+#'
+#' las <- LAS(data) # /!\ data is updated by reference
+#'
+#' data
+#' las
 #' @seealso
 #' \link{readLAS}
 setClass(

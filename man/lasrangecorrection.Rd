@@ -4,8 +4,14 @@
 \alias{lasrangecorrection}
 \title{Normalize intensity with a range correction}
 \usage{
-lasrangecorrection(las, sensor, Rs, f = 2.3, gpstime = "gpstime",
-  elevation = "Z")
+lasrangecorrection(
+  las,
+  sensor,
+  Rs,
+  f = 2.3,
+  gpstime = "gpstime",
+  elevation = "Z"
+)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -18,9 +24,10 @@ the sensor at different instants t. The time and elevation are stored as attribu
 
 \item{f}{numeric. Exponent. Usually between 2 and 3 in vegetation context.}
 
-\item{gpstime, elevation}{character. The name of the attributes that store the gpstime of the position and the
-elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates is searched in
-the third column of coordinates. This is useful if read from a format that support 3 coordinates points.}
+\item{gpstime, elevation}{character. The name of the attributes that store the gpstime of the
+position and the elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates
+are searched in the third column of coordinates matrix of the SpatialPointsDataFrame. This is
+useful if read from a format that support 3 coordinates points.}
 }
 \value{
 An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra
@@ -36,16 +43,16 @@ and a range correction is applied.
 \examples{
 # A valid file properly populated
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
 
 # pmin = 15 because it is an extremely tiny file
-# hardly decimated to reduce its size. There are
-# few multiple returns
+# strongly decimated to reduce its size. There are
+# actually few multiple returns
 sensor <- sensor_tracking(las, pmin = 15)
 
 # Here the effect is virtually null because the size of
 # the sample is too tiny to notice any effect of range
-las = lasrangecorrection(las, sensor, Rs = 2000)
+las <- lasrangecorrection(las, sensor, Rs = 2000)
 }
 \references{
 Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return

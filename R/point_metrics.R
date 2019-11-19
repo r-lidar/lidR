@@ -7,11 +7,11 @@
 #' It is important to bare in mind that this function is very fast for the feature it provides i.e.
 #' mapping a user-defined function at the point level using optimized memory management. However it
 #' is computationnaly demanding anyway.\cr\cr
-#' To help user to get an idea of how compuation demanding this function is let compare to
+#' To help user to get an idea of how compuationnally demanding this function is, let compare to
 #' \link{grid_metrics}. Assuming we want to apply \code{mean(Z)} on a 1 km² tile with 1 points/m²
 #' with a resolution of 20 m (400 m² cells), then the function \code{mean} is called roughtly 2500
 #' times (once  per cell). On the contrary with \code{point_metrics},  \code{mean} is called 1000000
-#' times (once per point). So the function is expected to be roughly 400 times slower in this specific
+#' times (once per point). So the function is expected to be more than 400 times slower in this specific
 #' case (but it does not provide the same feature).\cr\cr
 #' This is why the user-defined function is expected to be well optimized otherwise it might drastically
 #' slow down this already heavy computation. See examples.\cr\cr
@@ -98,7 +98,7 @@
 #' #> Computed in 0.5 seconds
 #'
 #' all.equal(M$planar, las$planar)
-#' # Here we can see that the optimized version is way better but we is still far 5 times slower
+#' # Here we can see that the optimized version is way better but we is still 5 times slower
 #' # because of the overhead of calling R functions and making back and forth from R to C++.
 #'
 #'

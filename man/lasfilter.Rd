@@ -31,8 +31,9 @@ firstground = lasfilter(lidar, Classification == 2L, ReturnNumber == 1L)
 first_or_ground = lasfilter(lidar, Classification == 2L | ReturnNumber == 1L)
 }
 \seealso{
-Other lasfilters: \code{\link{lasfilterduplicates}},
-  \code{\link{lasfiltersurfacepoints}},
-  \code{\link{lasfilters}}
+Other lasfilters: 
+\code{\link{lasfilterduplicates}()},
+\code{\link{lasfiltersurfacepoints}()},
+\code{\link{lasfilters}}
 }
 \concept{lasfilters}
