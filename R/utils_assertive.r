@@ -219,6 +219,6 @@ stopifnotlas = function(x)
 
 stopif_forbidden_name = function(name)
 {
-  if (name %in% LASFIELDS)
+  if (name %in% LASATTRIBUTES)
     stop(glue::glue("{name} is part of the core attributes and is a forbidden name."), call. = FALSE)
 }

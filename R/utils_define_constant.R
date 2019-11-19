@@ -18,6 +18,13 @@ LASBUILDING           <- 6L
 LASLOWPOINT           <- 7L
 LASKEYPOINT           <- 8L
 LASWATER              <- 9L
+LASRAIL               <- 10L
+LASROADSURFACE        <- 11L
+LASWIREGUARD          <- 13L
+LASWIRECONDUCTOR      <- 14L
+LASTRANSMISSIONTOWER  <- 15L
+LASBRIGDE             <- 17L
+LASNOISE              <- 18L
 
 CHUNK_WAINTING        <- 0L
 CHUNK_OK              <- 1L
@@ -26,7 +33,7 @@ CHUNK_ERROR           <- 3L
 CHUNK_WARNING         <- 4L
 CHUNK_PROCESSING      <- 5L
 
-LASFIELDS             <- c("X", "Y", "Z", "Intensity",
+LASATTRIBUTES         <- c("X", "Y", "Z", "Intensity",
                            "ReturnNumber", "NumberOfReturns",
                            "ScanDirectionFlag", "EdgeOfFlightline",
                            "Classification",

@@ -186,7 +186,7 @@ setMethod("$<-", "LAS", function(x, name, value)
   if (!name %in% names(x@data))
     stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
-  if (name %in% LASFIELDS)
+  if (name %in% LASATTRIBUTES)
   {
     type1 <- storage.mode(x@data[[name]])
     type2 <- storage.mode(value)
@@ -208,7 +208,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
   if (!i %in% names(x@data))
     stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
 
-  if (i %in% LASFIELDS)
+  if (i %in% LASATTRIBUTES)
   {
     type1 <- storage.mode(x@data[[i]])
     type2 <- storage.mode(value)
