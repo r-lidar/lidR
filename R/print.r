@@ -75,13 +75,13 @@ setMethod("show", "LAS", function(object)
 
   if (area > 1000*1000/2)
   {
-    areaprefix <- if (length(units) == 0) "thoushand " else "k"
+    areaprefix <- if (length(units) == 0) "thousand " else "k"
     area.h     <- round(area/(1000*1000), 2)
   }
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thoushand"
+    pointprefix <- "thousand"
     npoints.h   <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
@@ -122,13 +122,13 @@ setMethod("show", "LAScatalog", function(object)
 
   if (area > 1000*1000/2)
   {
-    areaprefix <- if (length(units) == 0) "thoushand " else "k"
+    areaprefix <- if (length(units) == 0) "thousand " else "k"
     area.h     <- round(area/(1000*1000), 2)
   }
 
   if (npoints > 1000 & npoints < 1000^2)
   {
-    pointprefix <- "thoushand"
+    pointprefix <- "thousand"
     npoints.h   <- round(npoints/1000, 1)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
