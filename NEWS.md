@@ -59,6 +59,10 @@
     ctg <- catalog_select(ctg, method = "flag_processed")
     ctg <- catalog_select(ctg, method = "flag_unprocessed")
     ```
+    
+8. `grid_terrain()`
+    * Have a new argument `use_class` to control which points are considered as ground points
+    * With a `LAScatalog` it now uses the filter `-keep_class` by default respecting the classes given in `use_class`.
 
 #### CHANGES
 
@@ -124,6 +128,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 5. The vignette named *LAScatalog formal class* gains a section about partial processing.
 
 6. Harmonisation and review of the sections 'Supported processing options' in the man pages.
+
 
 #### FIXES
 
