@@ -34,10 +34,10 @@
 #'
 #' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
 #' also \link[lidR:plot]{plot})
-#' @param method character. By default selecting tiles subset the catalog. It is also possible to flag
-#' the files to maintain the catalog as a whole but process only a subset its content.
-#' \code{flag_unprocessed} enable to point and click on files that will not be processed.
-#' \code{flag_processed} enable to point and click on files that will be processed.
+#' @param method character. By default selecting tiles that are a subset of the catalog. It is also possible to flag
+#' the files to maintain the catalog as a whole but process only a subset of its content.
+#' \code{flag_unprocessed} enables users to point and click on files that will not be processed.
+#' \code{flag_processed} enables users to point and click on files that will be processed.
 #'
 #' @return A LAScatalog object
 #'

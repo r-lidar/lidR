@@ -31,7 +31,7 @@
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
 #'
 #' A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
-#' a \code{Spatial} object plus a \code{data.table} with the data read from  a \code{las/laz} file and
+#' a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
 #' a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #' for more information). Because las files are standardized the table of attributes read from the las/laz file

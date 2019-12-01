@@ -19,7 +19,7 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
       return(any_list)
     }
 
-    # The case with string is special. String should be returned 'as is' but in some cases we can be
+    # The case with strings is special. Strings should be returned 'as is' but in some cases we can be
     # clever and merge the strings into a LAScatalog or a VRT
     if (opt_output_files(ctg) != "")
     {
@@ -97,7 +97,7 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
     }
     else
     {
-      warning("The list returned by 'catalog_apply' contains not supported objects. Merging is impossible. A list has been returned.", call. = FALSE)
+      warning("The list returned by 'catalog_apply' contains unsupported objects. Merging is impossible. A list has been returned.", call. = FALSE)
       return(any_list)
     }
   },
