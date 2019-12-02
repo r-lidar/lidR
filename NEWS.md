@@ -77,7 +77,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 3. `grid_metrics3d()` and `grid_hexametrics()` are deprecated. They are renamed `voxel_metrics()` and `hexbin_metrics()` for naming consistency.
 
-4. The example dataset `Topography.laz` is not larger and include attributes gpstime, PointSourceID and some classified lakes.
+4. The example dataset `Topography.laz` is now larger and include attributes gpstime, PointSourceID and some classified lakes.
     
 #### ENHANCEMENTS
 

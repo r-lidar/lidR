@@ -27,7 +27,7 @@ Class LAS is the representation of a las/laz file according to the
 }
 \details{
 A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
-a \code{Spatial} object plus a \code{data.table} with the data read from  a \code{las/laz} file and
+a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
 a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 for more information). Because las files are standardized the table of attributes read from the las/laz file
@@ -52,9 +52,9 @@ is also standardized. Columns are named:
 }
 \section{Functions}{
 \itemize{
-\item \code{LAS}: Create objects of class LAS. The original data is updated by reference to
-clamp the coordinates with respect to the scale factor of the header. If not header is provided scale
-factor are set to 0.001
+\item \code{LAS}: creates objects of class LAS. The original data is updated by reference to
+clamp the coordinates with respect to the scale factor of the header. If header is not provided scale
+factor is set to 0.001
 }}
 
 \section{Slots}{
@@ -88,7 +88,7 @@ data <- data.frame(X = runif(100, 0, 100),
                    Z = runif(100, 0, 20))
 data
 
-las <- LAS(data) # /!\\ data is updated by reference
+las <- LAS(data) # /!\ data is updated by reference
 
 data
 las

@@ -246,7 +246,7 @@ test_that("delaunay rasterization fall back to geometry", {
     X = c(0.2, 0.2),
     Y = c(0.8, -0.4))
 
-  expect_message(lidR:::interpolate_delaunay(ps, rs, 0, scales = c(1,2), offsets = c(0,0)),  "fall back to the old slow method")
+  expect_message(lidR:::interpolate_delaunay(ps, rs, 0, scales = c(1,2), offsets = c(0,0)),  "reverted to the old slow method")
   ts <- suppressMessages(lidR:::interpolate_delaunay(ps, rs, 0, scales = c(1,2), offsets = c(0,0)))
 
   expect_equal(ts, c(-0.3, 0.4), tol = 1e-5)

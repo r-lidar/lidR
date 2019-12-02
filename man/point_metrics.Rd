@@ -14,33 +14,33 @@ point_metrics(las, func, k = 8L, xyz = TRUE, filter = NULL)
 \item{k}{integer. k-nearest neighbours}
 
 \item{xyz}{logical. Coordinates of each point are returned in addition to each metric. If
-\code{filter = NULL} coordinates are reference to the original coordinate and do not occupy more
-memory. If \code{filter != NULL} it obviouly takes memory.}
+\code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
+memory. If \code{filter != NULL} it obviously takes memory.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See also examples.}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This
-function is very similar to \link{grid_metrics} but compute metrics \bold{for each point} based on
+function is very similar to \link{grid_metrics} but computes metrics \bold{for each point} based on
 its k-nearest neighbours.
 }
 \details{
-It is important to bare in mind that this function is very fast for the feature it provides i.e.
-mapping a user-defined function at the point level using optimized memory management. However it
-is computationnaly demanding anyway.\cr\cr
-To help user to get an idea of how compuationnally demanding this function is, let compare to
-\link{grid_metrics}. Assuming we want to apply \code{mean(Z)} on a 1 km² tile with 1 points/m²
-with a resolution of 20 m (400 m² cells), then the function \code{mean} is called roughtly 2500
-times (once  per cell). On the contrary with \code{point_metrics},  \code{mean} is called 1000000
+It is important to bear in mind that this function is very fast for the feature it provides i.e.
+mapping a user-defined function at the point level using optimized memory management. However, it
+is still computationally demanding.\cr\cr
+To help users to get an idea of how computationally demanding this function is, let's compare it to
+\link{grid_metrics}. Assuming we want to apply \code{mean(Z)} on a 1 km² tile with 1 point/m²
+with a resolution of 20 m (400 m² cells), then the function \code{mean} is called roughly 2500
+times (once  per cell). On the contrary, with \code{point_metrics}, \code{mean} is called 1000000
 times (once per point). So the function is expected to be more than 400 times slower in this specific
 case (but it does not provide the same feature).\cr\cr
-This is why the user-defined function is expected to be well optimized otherwise it might drastically
+This is why the user-defined function is expected to be well optimized, otherwise it might drastically
 slow down this already heavy computation. See examples.\cr\cr
-Last but not least, \code{grid_metrics()} relies on the \code{data.table} package to compute
+Last but not least, \code{grid_metrics()} relies on the \code{data.table} package to compute a
 user-defined function in each pixel. \code{point_metrics()} relies on a similar method but with a
-major difference: is does not relies on \code{data.table} and thus has not been tested for years
-by thoushand of people. Please report bugs if any.
+major difference: is does not rely on \code{data.table} and thus has not been tested over many years
+by thousands of people. Please report bugs, if any.
 }
 \section{Parameter \code{func}}{
 
@@ -55,15 +55,15 @@ statements are valid:
 point_metrics(las, ~f(Z), k = 8)
 point_metrics(las, ~f(Intensity), k = 5)
 }
-Everything that works in \link{grid_metrics} should work as well in \code{point_metrics} but might
-be meaningless. For example computing the quantile of elevation does not really makes sense here.
+Everything that works in \link{grid_metrics} should also work in \code{point_metrics} but might
+be meaningless. For example, computing the quantile of elevation does not really makes sense here.
 }
 
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 
-# Read only 0.5 points/m^2 for the purpose of this example
+# Read only 0.5 points/m^2 for the purposes of this example
 las = readLAS(LASfile, filter = "-thin_with_grid 2")
 
 # Computes the eigenvalues of the covariance matrix of the neighbouring
@@ -77,7 +77,7 @@ plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
   return(list(planar = is_planar))
 }
 
-# Apply user-defined function
+# Apply a user-defined function
 M <- point_metrics(las, ~plane_metrics1(X,Y,Z), k = 25)
 #> Computed in 6.3 seconds
 
@@ -88,7 +88,7 @@ las <- lasdetectshape(las, shp_plane(k = 25), "planar")
 all.equal(M$planar, las$planar)
 
 # At this stage we can be clever and find that the bottleneck is
-# the eigen value computation. Let write a C++ version of it with
+# the eigenvalue computation. Let's write a C++ version of it with
 # Rcpp and RcppArmadillo
 Rcpp::sourceCpp(code = "
 #include <RcppArmadillo.h>
@@ -114,15 +114,15 @@ M <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25)
 #> Computed in 0.5 seconds
 
 all.equal(M$planar, las$planar)
-# Here we can see that the optimized version is way better but we is still 5 times slower
-# because of the overhead of calling R functions and making back and forth from R to C++.
+# Here we can see that the optimized version is way better but is still 5 times slower
+# because of the overhead of calling R functions and switching back and forth from R to C++.
 
 
-# Use the filter argument to process only first return
+# Use the filter argument to process only first returns
 M1 <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25, filter = ~ReturnNumber == 1)
 dim(M1) # 13894 instead of 17182 previously.
 
-# is a memory optimized equivalent to:
+# is a memory-optimized equivalent to:
 first = lasfilterfirst(las)
 M2 <- point_metrics(first, ~plane_metrics2(X,Y,Z), k = 25)
 all.equal(M1, M2)

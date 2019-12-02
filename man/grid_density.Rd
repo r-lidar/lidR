@@ -55,8 +55,7 @@ Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}}, \code{\{YBOTTOM\}},
 by file), \code{\{ORIGINALFILENAME\}}.
 \item \strong{\emph{select}}: The \code{grid_*} functions usually 'know' what should be loaded
 and this option is not considered. In \link{grid_metrics} this option is respected.
-\item \strong{filter}: Read only the points of interest. \link{grid_terrain} used \code{-keep_class}
-by default with the class mentionned in \code{use_class}.
+\item \strong{filter}: Read only the points of interest.
 }
 }
 

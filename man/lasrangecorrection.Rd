@@ -17,17 +17,17 @@ lasrangecorrection(
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{sensor}{SpatialPointsDataDrame object containing the coordinates of
-the sensor at different instants t. The time and elevation are stored as attributes
+the sensor at different timepoints t. The time and elevation are stored as attributes
 (default names are  'gpstime' and 'Z'). It can be computed with \link{sensor_tracking}.}
 
 \item{Rs}{numeric. Range of reference.}
 
-\item{f}{numeric. Exponent. Usually between 2 and 3 in vegetation context.}
+\item{f}{numeric. Exponent. Usually between 2 and 3 in vegetation contexts.}
 
 \item{gpstime, elevation}{character. The name of the attributes that store the gpstime of the
 position and the elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates
-are searched in the third column of coordinates matrix of the SpatialPointsDataFrame. This is
-useful if read from a format that support 3 coordinates points.}
+are searched in the third column of the coordinates matrix of the SpatialPointsDataFrame. This is
+useful if read from a format that supports 3 coordinates points.}
 }
 \value{
 An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra

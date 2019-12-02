@@ -24,7 +24,7 @@
 #' @param func formula. An expression to be applied to each cell (see section "Parameter func").
 #' @param k integer. k-nearest neighbours
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
-#' \code{filter = NULL} coordinates are referenced to the original coordinate and do not occupy additional
+#' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
 #' memory. If \code{filter != NULL} it obviously takes memory.
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See also examples.

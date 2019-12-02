@@ -176,7 +176,7 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE,
 
   # Enforce some options
   opt_select(las) <- "xyzc"
-  opt_filter(las) <-  paste("-keep_class", paste(use_class, collapse = " "), opt_filter(las))
+  #opt_filter(las) <-  paste("-keep_class", paste(use_class, collapse = " "), opt_filter(las))
 
   # Compute the alignment option including the case when res is a RasterLayer
   alignment   <- list(res = res, start = c(0,0))

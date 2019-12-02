@@ -104,12 +104,7 @@ test_that("grid_terrain return the same both with LAScatalog and LAS", {
   error <- abs(cdtm1 - cdtm2)
   error <- error[error > 0.01]
 
-  # skip unreprodutible error on CRAN with 32 bits arch and Solaris
-  #if (!is.na(mean(error) & !is.null(error)))
-  #{
-  #  expect_lt(length(error), raster::ncell(cdtm1)*0.002)
-  #  expect_equal(mean(error, na.rm = TRUE), 0.048, tolerance = 0.0055)
-  #}
+  expect_equal(mean(error), 0.0195, tolerance = 0.001)
 
   z <- raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -120,7 +115,7 @@ test_that("grid_terrain fails in some specific case", {
   las@header@PHB$`X scale factor` <- 0.002
   las@header@PHB$`Y scale factor` <- 0.002
 
-  expect_message(grid_terrain(las, 1, tin()), "fall back to the old slow method")
+  expect_message(grid_terrain(las, 1, tin()), "reverted to the old slow method")
 
   las = data.frame(
     X = runif(10, 0,10),
@@ -132,3 +127,4 @@ test_that("grid_terrain fails in some specific case", {
 
   expect_error(grid_terrain(las, 1, tin()), NA)
 })
+

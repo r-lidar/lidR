@@ -15,55 +15,55 @@ sensor_tracking(
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{interval}{numeric. Tight interval used to bin the gps times and group the pulses to compute
-a position at a given instant t.}
+\item{interval}{numeric. Interval used to bin the gps times and group the pulses to compute
+a position at a given timepoint t.}
 
 \item{pmin}{integer. Minimum number of pulses needed to estimate a sensor position.
-For a given interval, the sensor position is not computed if the number of pulse is lower than
+For a given interval, the sensor position is not computed if the number of pulses is lower than
 \code{pmin}.}
 
-\item{extra_check}{boolean. Datasets are rarely perfectly populated leading to unexpected errors.
-Time consuming checks of data integrity are performed. These checks can be skipped as they account
+\item{extra_check}{boolean. Datasets are rarely perfectly populated, leading to unexpected errors.
+Time-consuming checks of data integrity are performed. These checks can be skipped as they account
 for an important proportion of the computation time. See also section 'Tests of data integrity'.}
 
-\item{thin_pulse_with_time}{numeric. In practice it is useless to compute the position using every
-multiple returns. It is more computationnaly demanding but not necessarily more accurate. This keeps
-only one pulse every x seconds. Set 0 to use every multiple returns. Use 0 if the file has already
+\item{thin_pulse_with_time}{numeric. In practice, it is useless to compute the position using all
+multiple returns. It is more computationally demanding but not necessarily more accurate. This keeps
+only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if the file has already
 been read with \code{filter = "-thin_pulses_with_time 0.001"}.}
 }
 \value{
-A SpatialPointDataFrame with the Z elevation stored in the table of attribute. Informations
-about the time interval and the number of pulses used to find the points are also in the table of
+A SpatialPointDataFrame with the Z elevation stored in the table of attributes. Information
+about the time interval and the number of pulses used to find the points is also in the table of
 attributes.
 }
 \description{
-Use multiple returns to estimate the positionning of the sensor by computing the intersection in
-space of the line passing througt the first and last returns. To work this function requieres a
+Use multiple returns to estimate the positioning of the sensor by computing the intersection in
+space of the line passing through the first and last returns. To work, this function requires a
 dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceID' attributes are
-properly populated otherwise the output may be incorrect or weird. For LAScatalog processing
-it is recommanded to use large chunks and large buffer (e.g. a swath width). The point cloud must
+properly populated, otherwise the output may be incorrect or weird. For LAScatalog processing
+it is recommanded to use large chunks and large buffers (e.g. a swath width). The point cloud must
 not be normalized.
 }
 \details{
-When multiple returns from a single pulse are detected, the sensor compute their positions as being
-in the center of the footprint and thus being all aligned. Because of that beheaviour, a line
+When multiple returns from a single pulse are detected, the sensor computes their positions as being
+in the center of the footprint and thus all aligned. Because of that beheaviour, a line
 drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
-emitted in a tight interval (e.g. 0.5 second) can be used to approximate an intersection
-point in the sky that correspond to the sensor position given that the sensor carrier hasn't
-moved much during this interval. A weighed least squares method gives an approximation of the
+emitted in a tight interval (e.g. 0.5 seconds) can be used to approximate an intersection
+point in the sky that corresponds to the sensor position given that the sensor carrier hasn't
+moved much during this interval. A weighted least squares method gives an approximation of the
 intersection by minimising the squared sum of the distances between the intersection point and all
 the lines.
 }
 \section{Test of data integrity}{
 
-In theory the sensor tracking is a simple problem to solve as long as each pulse is properly
-identified from a well populated dataset. In practice many problems may arise from wrongly populated
-datasets. Here a list of problem that may happens. Those with a * denote already encountered problem and
+In theory, sensor tracking is a simple problem to solve as long as each pulse is properly
+identified from a well-populated dataset. In practice, many problems may arise from datasets that are populated
+incorrectly. Here is a list of problem that may happen. Those with a * denote problems already encountered and
 internally checked to remove weird points:
 \itemize{
-\item 'gpstime' do not record the time at with pulses were emitted and thus pulses are not idenfiable
+\item 'gpstime' does not record the time at which pulses were emitted and thus pulses are not identifiable
 \item *A pulse (two or more points that share the same gpstime) is made of points from different
-flightlines (different PointSourceID). This is impossible and denote wrongly populated PointSourceID
+flightlines (different PointSourceID). This is impossible and denotes an improperly populated PointSourceID
 attribute.
 \item 'ReturnNumber' and 'NumberOfReturns' are wrongly populated with either some ReturnNumber > NumberOfReturn
  or several first returns by pulses
