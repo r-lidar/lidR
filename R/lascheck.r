@@ -281,7 +281,7 @@ lascheck.LAS = function(las)
 
   fail(rlas::is_valid_scalefactors(head, "vector"))
 
-  h2("Checking Point Data Format ID validity...")
+  h2("Checking point data format ID validity...")
 
   fail(rlas::is_valid_pointformat(head, "vector"))
 

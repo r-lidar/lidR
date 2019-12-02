@@ -56,7 +56,7 @@ tin = function()
     isna <- is.na(z)
     nnas <- sum(isna)
     if (nnas > 0) {
-      verbose("Interpolating the points ouside the covex hull of the ground points using knnidw()")
+      verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
       z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
     }
     return(z)
@@ -183,7 +183,7 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   stopifnot(is.data.frame(points))
 
   if (scales[1] != scales[2]) {
-    message("The delaunay triangulation fall back to the old slow method because xy scale factors are different and that the fast method cannot be applied.")
+    message("The Delaunay triangulation reverted to the old slow method because xy scale factors are different so the fast method cannot be applied.")
     boosted_triangulation <- FALSE
   }
 
@@ -193,7 +193,7 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   y <- (Y - offsets[2]) / scales[2]
 
   if (abs(x - round(x)) > 1e-5 | abs(y - round(y)) > 1e-5) {
-    message("The delaunay triangulation fall back to the old slow method because xy coordinates were not convertible to integer. xy scale factors and offsets are likely to be invalid")
+    message("The Delaunay triangulation reverted to the old slow method because xy coordinates were not convertible to integer values. xy scale factors and offsets are likely to be invalid")
     boosted_triangulation <- FALSE
   }
 

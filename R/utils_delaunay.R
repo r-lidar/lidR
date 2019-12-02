@@ -27,7 +27,7 @@ tDelaunay = function(P, trim = 0, scales = c(1,1), offsets = c(0,0), option = "Q
 
   if (boosted_triangulation) {
     if (scales[1] != scales[2]) {
-      message("The delaunay triangulation fall back to the old slow method because xy scale factors are different and that the fast method cannot be applied.")
+      message("The Delaunay triangulation reverted to the old slow method because xy scale factors are different, so the fast method cannot be applied.")
       boosted_triangulation <- FALSE
       P <- as.matrix(P)
       Q <- as.matrix(P[,1:2])
@@ -41,7 +41,7 @@ tDelaunay = function(P, trim = 0, scales = c(1,1), offsets = c(0,0), option = "Q
     y <- (Y - offsets[2]) / scales[2]
 
     if (abs(x - round(x)) > 1e-5 | abs(y - round(y)) > 1e-5) {
-      message("The delaunay triangulation fall back to the old slow method because xy coordinates were not converted to integer. xy scale factors and offsets are likely to be invalid")
+      message("The Delaunay triangulation reverted to the old slow method because xy coordinates were not converted to integer. xy scale factors and offsets are likely to be invalid")
       boosted_triangulation <- FALSE
       P <- as.matrix(P)
       Q <- as.matrix(P[,1:2])

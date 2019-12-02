@@ -32,9 +32,9 @@
 #' @param check logical. Conformity tests while building the object.
 #' @return An object of class \code{LAS}
 #' @export
-#' @describeIn LAS-class Create objects of class LAS. The original data is updated by reference to
-#' clamp the coordinates with respect to the scale factor of the header. If not header is provided scale
-#' factor are set to 0.001
+#' @describeIn LAS-class creates objects of class LAS. The original data is updated by reference to
+#' clamp the coordinates with respect to the scale factor of the header. If header is not provided scale
+#' factor is set to 0.001
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 {
   .N <- X <- Y <- Z <- NULL
