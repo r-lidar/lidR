@@ -40,6 +40,7 @@ catalog_makecluster = function(ctg)
   processed <- ctg@data$processed
   if (is.null(processed)) processed <- rep(TRUE, nrow(ctg@data))
   if (!is.logical(processed)) stop("The attribute 'processed' of the catalog is not logical.", call. = FALSE)
+  files <- ctg@data$filename[processed]
 
   # Creation of a set of rectangles that encompasses the whole catalog
   if (by_file)
@@ -130,7 +131,7 @@ catalog_makecluster = function(ctg)
       X$YTOP    <- format(clusters[[i]]@bbox[4], scientific = F)
 
       if (by_file)
-        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(ctg@data$filename[i]))
+        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(files))
 
       filepath  <- paste0(glue::glue_data(X, opt_output_files(ctg)))
       n         <- length(filepath)
