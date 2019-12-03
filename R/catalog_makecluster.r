@@ -131,7 +131,7 @@ catalog_makecluster = function(ctg)
       X$YTOP    <- format(clusters[[i]]@bbox[4], scientific = F)
 
       if (by_file)
-        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(files))
+        X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(files[i]))
 
       filepath  <- paste0(glue::glue_data(X, opt_output_files(ctg)))
       n         <- length(filepath)
