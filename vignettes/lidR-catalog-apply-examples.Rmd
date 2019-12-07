@@ -56,7 +56,7 @@ lasfilternoise.LAScluster = function(las, sensitivity)
   las <- readLAS(las)                          # Read the LAScluster
   if (is.empty(las)) return(NULL)              # Exit early (see documentation)
   
-  las <- lasfilternoise(las, sensitivity)        # Filter the noise
+  las <- lasfilternoise(las, sensitivity)      # Filter the noise
   las <- lasfilter(las, buffer == 0)           # Don't forget to remove the buffer
   return(las)                                  # Return the filtered point cloud
 }
@@ -96,20 +96,16 @@ In lidR the functions usually look like this:
 
 
 ```r
-lasfilternoise.LAScatalog = function(las, sensitivity, res)
+lasfilternoise.LAScatalog = function(las, sensitivity)
 {
-   # Force some options
-   opt_select(las) <-  "*"          # Do not respect the select argument
-   opt_chunk_buffer(las) <- res    # Force the buffer to be greater than 0.
-   
-   # Add this option to throw an error if no output template is provided
-   options <- list(need_output_file = TRUE)
+   opt_select(las) <-  "*"         # Do not respect the select argument by overwriting it
+
+   options <- list(
+       need_output_file = TRUE,    # Throw an error if no output template is provided
+       need_buffer = TRUE,         # Throw an error if buffer is 0
+       automerge = TRUE)           # Automatically merge the output list (here into a LAScatalog)
    
    output  <- catalog_apply(las, lasfilternoise, sensitivity = sensitivity, .options = options)
-   output  <- unlist(output)
-   
-   # Build a LAScatalog from the written las files
-   output  <- catalog(output)
    return(output)
 }
 ```

@@ -101,7 +101,7 @@ ctg@polygons <- Sr@polygons
 ```
 
 
-A LAScatalog class is a representation in R of a file or a set of las files not loaded in memory. Indeed, a regular computer cannot load the entire point cloud in R if it covers a wide area. For very high density datasets it can even fail loading a single file (see also the "LAS formal class"" vignette). In lidR, we use a LAScatalog to process datasets that cannot fit in memory.
+A LAScatalog class is a representation in R of a file or a set of las files not loaded in memory. Indeed, a regular computer cannot load the entire point cloud in R if it covers a broad area. For very high density datasets it can even fail loading a single file (see also the "LAS formal class"" vignette). In lidR, we use a LAScatalog to process datasets that cannot fit in memory.
 
 ## Build a LAScatalog object reading a folder of las files
 
