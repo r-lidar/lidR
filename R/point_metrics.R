@@ -140,7 +140,7 @@ point_metrics.LAS <- function(las, func, k = 8L, xyz = TRUE, filter = NULL) {
   for (n in names(query)) assign(n, query[[n]], envir = env)
 
   filter <- parse_filter(las, filter)
-  output <- lidR:::C_point_metrics(las, k, query, call, env, filter)
+  output <- C_point_metrics(las, k, query, call, env, filter)
 
   if (length(output[[1]]) == 1) {
     name <- names(output[[1]])
