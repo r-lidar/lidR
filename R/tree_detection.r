@@ -70,9 +70,17 @@ tree_detection.LAS = function(las, algorithm)
   if (is.logical(res) || is.integer(res))
   {
     maxima <- las@data[res, c("X", "Y", "Z")]
-    coords <- cbind(maxima[["X"]], maxima[["Y"]])
-    data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
-    output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
+
+    if (nrow(maxima) == 0) {
+      coords <- matrix(0, ncol = 2)
+      data   <- data.frame(treeID = integer(1), Z = numeric(1))
+      output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
+      output <- output[0,]
+    } else {
+      coords <- cbind(maxima[["X"]], maxima[["Y"]])
+      data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
+    }
+
     output@bbox <- sp::bbox(las)
     return(output)
   }

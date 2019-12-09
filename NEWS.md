@@ -142,6 +142,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 5. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
+6. In `tree_detection()` if no local maximum is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES
