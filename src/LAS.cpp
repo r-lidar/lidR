@@ -228,7 +228,7 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
   double R_control = mean(average_z_sensor - Z);
 
   NumericVector::iterator it;
-  double dx, dy, dz, dt, r, R, k, range;
+  double dx, dy, dz, r, R;
   double i;
   int j;
 
@@ -236,7 +236,7 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
 
   Progress pbar(npoints, "Range computation");
 
-  for (int k = 0 ; k < npoints ; k++)
+  for (unsigned int k = 0 ; k < npoints ; k++)
   {
     pbar.increment();
     pbar.check_abort();
@@ -333,7 +333,7 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
 
     // Get the highest Z in the windows
     double Zmax = std::numeric_limits<double>::min();
-    Point* p;
+    Point* p = pts[0];
     for (unsigned int j = 0 ; j < pts.size() ; j++)
     {
       if(Z[pts[j]->id] > Zmax)
@@ -385,7 +385,7 @@ void LAS::filter_with_grid(S4 layout)
     if (x == xmax) col = ncols-1;
 
     if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point of raster."); // nocov
+      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point out of raster."); // nocov
 
     int cell = row * ncols + col;
 
@@ -545,7 +545,7 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
   if (ws.size() != th.size())
     Rcpp::stop("Internal error in 'filter_progressive_morphology'"); // nocov
 
-  for (unsigned int i = 0 ; i < ws.size() ; i++)
+  for (int i = 0 ; i < ws.size() ; i++)
   {
     NumericVector oldZ = clone(Z);
     z_open(ws[i]);
@@ -961,6 +961,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
   case 1: f = &LAS::rmax; break;
   case 2: f = &LAS::rmin; break;
   case 3: f = &LAS::rcount; break;
+  default: Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); break; // # nocov;
   }
 
   if (subcircle > 0)
@@ -983,7 +984,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
         if (x == xmax) col = ncols-1;
 
         if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-          Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); // nocov
+          Rcpp::stop("C++ unexpected internal error in 'rasterize': point out of raster."); // # nocov
 
         int cell = row * ncols + col;
         raster(cell) = f(raster(cell), z);
@@ -1004,7 +1005,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
       if (x == xmax) col = ncols-1;
 
       if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-        Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); // nocov
+        Rcpp::stop("C++ unexpected internal error in 'rasterize': point out of raster."); // # nocov
 
       int cell = row * ncols + col;
       raster(cell) = f(raster(cell), z);
