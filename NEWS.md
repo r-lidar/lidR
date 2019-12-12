@@ -16,6 +16,8 @@
 
 2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
 
+7. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES
