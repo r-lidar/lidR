@@ -144,6 +144,8 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 6. In `tree_detection()` if no local maximum is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
 
+7. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES

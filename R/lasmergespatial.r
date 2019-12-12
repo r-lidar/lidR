@@ -101,9 +101,9 @@ lasmergergb = function(las, source)
 {
   . <- X <- Y <- NULL
 
-  R <- source[[1]]@data@values
-  G <- source[[2]]@data@values
-  B <- source[[3]]@data@values
+  R <- source[[1]][]
+  G <- source[[2]][]
+  B <- source[[3]][]
 
   maxr <- max(R, na.rm = TRUE)
   maxg <- max(G, na.rm = TRUE)
