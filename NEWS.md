@@ -10,13 +10,17 @@
 
 4. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
+5. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
+
+6. `opt_stop_early()` was not actually working as expected. The processing was aborted without logs instead. It now prevent the catalog processing engine to stop
+even when an error occurs.
+
+
 #### NOTE
 
 1. In `plot.lasmetrics3d()` the parameter `trim` is now set to `Inf` by default.
 
 2. Harmonisation and review of the sections 'Supported processing options' in the man pages.
-
-7. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
 
 ## lidR v2.1.4 (Release date: 2019-10-15)
 

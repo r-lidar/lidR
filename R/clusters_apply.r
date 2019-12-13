@@ -120,6 +120,11 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
         }
       }
 
+      if (states[j] == CHUNK_ERROR & !abort) {
+        output[[j]] <- NULL
+        next
+      }
+
       # The state is NULL: do nothing
       if (states[j] == CHUNK_NULL) next
 
@@ -174,6 +179,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   return(output)
 }
+
 engine_eval_state <- function(future)
 {
   cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
