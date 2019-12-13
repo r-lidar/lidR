@@ -142,9 +142,12 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 5. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
-6. In `tree_detection()` if no local maximum is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
+6. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
 
-7. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
+7. `opt_stop_early()` was not actually working as expected. The processing was aborted without logs. It now prevent the catalog processing engine to stop
+even when an error occurs.
+
+8. In `tree_detection()` if no tree is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
 
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
