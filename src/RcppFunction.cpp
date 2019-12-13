@@ -121,6 +121,15 @@ IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, dou
   return Rcpp::wrap(pt.I);
 }
 
+//[[Rcpp::export(rng = false)]]
+LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu)
+{
+  LAS pt(las, ncpu);
+  pt.filter_local_maxima(ws);
+  return Rcpp::wrap(pt.filter);
+}
+
+
 
 /*
  * ======= FAST BASE FUNCTIONS =========
@@ -334,6 +343,28 @@ IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double
 
   return wrap(id);
 }
+
+// [[Rcpp::export(rng = false)]]
+IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, double y, double w, double h, double angle)
+{
+  std::vector<int> id;
+
+  double xmax = x+w/2;
+  double ymax = y+h/2;
+  double xmin = x-w/2;
+  double ymin = y-h/2;
+
+  SpatialIndex tree(X,Y);
+  std::vector<Point*> pts;
+  OrientedRectangle orect(xmin, xmax, ymin, ymax, angle);
+  tree.lookup(orect, pts);
+
+  for (size_t j = 0 ; j < pts.size() ; j++)
+    id.push_back(pts[j]->id + 1);
+
+  return wrap(id);
+}
+
 
 // [[Rcpp::export(rng = false)]]
 IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, double x, double y, double z, int k)

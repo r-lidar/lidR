@@ -356,6 +356,95 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
   return;
 }
 
+void LAS::filter_local_maxima(NumericVector ws)
+{
+  bool abort = false;
+  int mode;
+  double radius = 0;
+  double hwidth = 0;
+  double hheight = 0;
+  double orientation = 0;
+
+  if (ws.length() == 1)
+  {
+    mode = 1; // circular windows
+    radius = ws[0]/2;
+  }
+  else if (ws.length() == 2)
+  {
+    mode = 2;  // rectangular windows
+    hwidth = ws[0]/2;
+    hheight = ws[1]/2;
+  }
+  else if (ws.length() == 3)
+  {
+    mode = 3;  // rectangular oriented windows
+    hwidth = ws[0]/2;
+    hheight = ws[1]/2;
+    orientation = ws[2];
+  }
+  else
+    Rcpp::stop("C++ unexpected internal error in 'filter_local_maxima': invalid windows."); // # nocov
+
+  SpatialIndex tree(X,Y);
+  Progress pb(npoints, "Local maximum filter: ");
+
+  #pragma omp parallel for num_threads(ncpu)
+  for (unsigned int i = 0 ; i < npoints ; i++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+
+    // Get the points within a windows centered on the current point
+    std::vector<Point*> pts;
+    switch(mode)
+    {
+      case 1: {
+        Circle circ(X[i], Y[i], radius);
+        tree.lookup(circ, pts);
+        break;
+      }
+      case 2: {
+        Rectangle rect(X[i] - hwidth, X[i] + hwidth, Y[i] - hheight, Y[i] + hheight);
+        tree.lookup(rect, pts);
+        break;
+      }
+      case 3: {
+        double hwidth = ws[0]/2;
+        double hheight = ws[1]/2;
+        double orientation = ws[2];
+        OrientedRectangle orect(X[i] - hwidth, X[i] + hwidth, Y[i] - hheight, Y[i] + hheight, orientation);
+        tree.lookup(orect, pts);
+        break;
+      }
+    }
+
+    // Get the highest Z in the windows
+    double Zmax = std::numeric_limits<double>::min();
+    Point* p = pts[0];
+    for (unsigned int j = 0 ; j < pts.size() ; j++)
+    {
+      if(Z[pts[j]->id] > Zmax)
+      {
+        p = pts[j];
+        Zmax = Z[p->id];
+      }
+    }
+
+    // The central pixel is the highest, it is a LM
+    #pragma omp critical
+    {
+      if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
+        filter[i] = true;
+    }
+  }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
+
+  return;
+}
+
 void LAS::filter_with_grid(S4 layout)
 {
   S4 extent   = layout.slot("extent");

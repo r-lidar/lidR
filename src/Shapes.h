@@ -13,12 +13,22 @@ struct Shape
   BoundingBox bbox;
 };
 
-struct Rectangle:  public Shape
+struct Rectangle: public Shape
 {
   Rectangle(double xmin, double xmax, double ymin, double ymax);
   bool contains(const Point&);
   Point A;
   Point B;
+};
+
+struct OrientedRectangle: public Shape
+{
+  OrientedRectangle(double xmin, double xmax, double ymin, double ymax, double angle);
+  bool contains(const Point&);
+  Point A;
+  Point B;
+  Point C;
+  Point D;
 };
 
 struct Circle: public Shape

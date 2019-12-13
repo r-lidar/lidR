@@ -65,6 +65,10 @@ C_lasrangecorrection <- function(las, flightlines, Rs, f) {
     .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }
 
+C_local_maximum <- function(las, ws, ncpu) {
+    .Call(`_lidR_C_local_maximum`, las, ws, ncpu)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
@@ -103,6 +107,10 @@ C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {
 
 C_circle_lookup <- function(X, Y, x, y, r) {
     .Call(`_lidR_C_circle_lookup`, X, Y, x, y, r)
+}
+
+C_orectangle_lookup <- function(X, Y, x, y, w, h, angle) {
+    .Call(`_lidR_C_orectangle_lookup`, X, Y, x, y, w, h, angle)
 }
 
 C_knn3d_lookup <- function(X, Y, Z, x, y, z, k) {

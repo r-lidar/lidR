@@ -1,4 +1,5 @@
 #include "Shapes.h"
+#include <algorithm>
 
 #define EPSILON 2e-6
 
@@ -51,6 +52,79 @@ bool Rectangle::contains(const Point& p)
          p.x <= B.x + EPSILON &&
          p.y >= A.y - EPSILON &&
          p.y <= B.y + EPSILON);
+}
+
+#include <stdio.h>
+
+OrientedRectangle::OrientedRectangle(double xmin, double xmax, double ymin, double ymax, double angle)
+{
+  // Rectangle center
+  double cx = (xmax + xmin)/2;
+  double cy = (ymax + ymin)/2;
+
+  // translate points to origin
+  A.x = xmin - cx;
+  B.x = xmax - cx;
+  C.x = xmax - cx;
+  D.x = xmin - cx;
+  A.y = ymin - cy;
+  B.y = ymin - cy;
+  C.y = ymax - cy;
+  D.y = ymax - cy;
+
+  // apply rotation
+  double rAx = A.x*cos(angle) - A.y*sin(angle);
+  double rAy = A.x*sin(angle) + A.y*cos(angle);
+  double rBx = B.x*cos(angle) - B.y*sin(angle);
+  double rBy = B.x*sin(angle) + B.y*cos(angle);
+  double rCx = C.x*cos(angle) - C.y*sin(angle);
+  double rCy = C.x*sin(angle) + C.y*cos(angle);
+  double rDx = D.x*cos(angle) - D.y*sin(angle);
+  double rDy = D.x*sin(angle) + D.y*cos(angle);
+
+  // translate back
+  A.x = rAx + cx;
+  A.y = rAy + cy;
+  B.x = rBx + cx;
+  B.y = rBy + cy;
+  C.x = rCx + cx;
+  C.y = rCy + cy;
+  D.x = rDx + cx;
+  D.y = rDy + cy;
+
+  // Update the bounding box
+  std::vector<double> x = {A.x, B.x, C.x, D.x};
+  std::vector<double> y = {A.y, B.y, C.y, D.y};
+  xmin = *std::min_element(std::begin(x), std::end(x));
+  ymin = *std::min_element(std::begin(y), std::end(y));
+  xmax = *std::max_element(std::begin(x), std::end(x));
+  ymax = *std::max_element(std::begin(y), std::end(y));
+  Point center;
+  Point half_res;
+  center.x = cx;
+  center.y = cy;
+  half_res.x = (xmax-xmin)/2;
+  half_res.y = (ymax-ymin)/2;
+  this->bbox = BoundingBox(center, half_res);
+
+  //printf("(%lf %lf) (%lf %lf) (%lf %lf) (%lf %lf)", A.x, A.y, B.x, B.y, C.x, C.y, D.x, D.y);
+}
+
+bool OrientedRectangle::contains(const Point& p)
+{
+  if ( (B.x - A.x) * (p.y - A.y) - (p.x - A.x) * (B.y - A.y) < 0)
+    return false;
+
+  if ( (C.x - B.x) * (p.y - B.y) - (p.x - B.x) * (C.y - B.y) < 0)
+    return false;
+
+  if ( (D.x - C.x) * (p.y - C.y) - (p.x - C.x) * (D.y - C.y) < 0)
+    return false;
+
+  if ( (A.x - D.x) * (p.y - D.y) - (p.x - D.x) * (A.y - D.y) < 0)
+    return false;
+
+  return true;
 }
 
 Circle::Circle(double xcenter, double ycenter, double radius) : Shape(xcenter, ycenter, radius)

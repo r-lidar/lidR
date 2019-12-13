@@ -227,6 +227,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_local_maximum
+LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu);
+RcppExport SEXP _lidR_C_local_maximum(SEXP lasSEXP, SEXP wsSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_local_maximum(las, ws, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -353,6 +365,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_orectangle_lookup
+IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, double y, double w, double h, double angle);
+RcppExport SEXP _lidR_C_orectangle_lookup(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP wSEXP, SEXP hSEXP, SEXP angleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type y(ySEXP);
+    Rcpp::traits::input_parameter< double >::type w(wSEXP);
+    Rcpp::traits::input_parameter< double >::type h(hSEXP);
+    Rcpp::traits::input_parameter< double >::type angle(angleSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_orectangle_lookup(X, Y, x, y, w, h, angle));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_knn3d_lookup
 IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, double x, double y, double z, int k);
 RcppExport SEXP _lidR_C_knn3d_lookup(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP kSEXP) {
@@ -396,6 +424,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 6},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
+    {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
@@ -406,6 +435,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
     {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 6},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
+    {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 7},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}

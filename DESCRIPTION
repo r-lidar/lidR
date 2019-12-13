@@ -117,6 +117,7 @@ Collate:
     'lastrees.r'
     'lasupdateheader.r'
     'lasvoxelize.r'
+    'local_maximum.R'
     'methods-LAS.r'
     'methods-LAScatalog.r'
     'methods-LAScluster.r'
