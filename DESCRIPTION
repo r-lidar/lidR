@@ -52,8 +52,8 @@ Suggests:
     knitr,
     rmarkdown
 LazyData: true
-RoxygenNote: 7.0.1
-LinkingTo: BH,Rcpp,RcppArmadillo
+RoxygenNote: 7.0.2
+LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr
