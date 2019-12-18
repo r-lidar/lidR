@@ -961,7 +961,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
   case 1: f = &LAS::rmax; break;
   case 2: f = &LAS::rmin; break;
   case 3: f = &LAS::rcount; break;
-  default: Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); break; // # nocov;
+  default: Rcpp::stop("C++ unexpected internal error in 'rasterize': invalid method."); break; // # nocov;
   }
 
   if (subcircle > 0)
