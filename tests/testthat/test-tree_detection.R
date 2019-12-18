@@ -53,6 +53,18 @@ test_that("tree_detection LMF works with a LAScatalog", {
   expect_equal(ttops@proj4string, ctg@proj4string)
 })
 
+test_that("Special test for R-devel with gcc8", {
+
+  layout <- lidR:::rOverlay(las, 1, buffer = 0.15)
+  lidR.context <- "grid_canopy"
+
+  i  = c(38, 228,545)
+  expected = c(NA, 17, 14.87)
+  z <- p2r(0.15)(las, layout)
+
+  expect_equal(z[i], expected)
+})
+
 #test_that("tree_detection LMFauto works with a LAS", {
 #
 #  ttops = tree_detection(las, lidR:::lmfauto())
