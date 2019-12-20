@@ -1036,6 +1036,7 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
   SpatialIndex tree(X,Y,Z,filter);
   Progress pb(npoints, "Metrics computation: ");
   bool abort = false;
+  int pOutError = 0;
 
   for(unsigned int i = 0 ; i < npoints ; ++i) {
     if (abort) continue;
@@ -1076,7 +1077,11 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
       ++it2;
     }
 
-    output[j] = Rf_eval(call, env);
+    output[j] = R_tryEvalSilent(call, env, &pOutError);
+
+    if (pOutError == 1)
+      throw Rcpp::exception(R_curErrorBuf(), false);
+
     j++;
   }
 
