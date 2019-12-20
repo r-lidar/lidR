@@ -32,7 +32,7 @@ only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if t
 been read with \code{filter = "-thin_pulses_with_time 0.001"}.}
 }
 \value{
-A SpatialPointDataFrame with the Z elevation stored in the table of attributes. Information
+A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
 about the time interval and the number of pulses used to find the points is also in the table of
 attributes.
 }
@@ -41,17 +41,17 @@ Use multiple returns to estimate the positioning of the sensor by computing the 
 space of the line passing through the first and last returns. To work, this function requires a
 dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceID' attributes are
 properly populated, otherwise the output may be incorrect or weird. For LAScatalog processing
-it is recommanded to use large chunks and large buffers (e.g. a swath width). The point cloud must
+it is recommended to use large chunks and large buffers (e.g. a swath width). The point cloud must
 not be normalized.
 }
 \details{
 When multiple returns from a single pulse are detected, the sensor computes their positions as being
-in the center of the footprint and thus all aligned. Because of that beheaviour, a line
+in the center of the footprint and thus all aligned. Because of that behavior, a line
 drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
 emitted in a tight interval (e.g. 0.5 seconds) can be used to approximate an intersection
 point in the sky that corresponds to the sensor position given that the sensor carrier hasn't
 moved much during this interval. A weighted least squares method gives an approximation of the
-intersection by minimising the squared sum of the distances between the intersection point and all
+intersection by minimizing the squared sum of the distances between the intersection point and all
 the lines.
 }
 \section{Test of data integrity}{

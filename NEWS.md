@@ -1,4 +1,4 @@
-## lidR v2.2.0 (Release date: )
+## lidR v2.2.0 (Release date: 2020-01-06)
 
 #### NEW FEATURES
 
@@ -33,7 +33,7 @@
     ```
     
 2. 3D rendering:
-    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows for this argument to not be specified even when plotting an attribute other than Z, and having an appropriate color palette by default. More interestingly, it will automatically apply a nice color scheme to the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
+    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows for this argument to not be specified even when plotting an attribute other than Z, and having an appropriate color palette by default. More interestingly, it will automatically apply a nice color scheme to the point cloud with the attribute 'Classification' following the ASPRS specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
     
     ```R
     plot(las)
@@ -68,10 +68,10 @@
 
 1. `LAS()` now rounds the values to 2 digits if no header is provided to fit with the default header automatically generated. This ensures that a perfectly valid  `LAS` object is built out of external data. This change is made by reference, meaning that the original dataset is also rounded.
 
-```r
-pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
-las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copying
-```
+    ```r
+    pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+    las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copying
+    ```
 
 2. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects except `lasmetrics()`. For consistency across the package `lasmetrics()` becomes `cloud_metrics()`.
 
@@ -81,7 +81,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     
 #### ENHANCEMENTS
 
-1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewriten and changed for a grid partion which is twice as fast as the former QuadTree. This change provides a significant boost (i.e. up to two times faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewritten and changed for a grid partition which is twice as fast as the former QuadTree. This change provides a significant boost (i.e. up to two times faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
 
     ```r
     # 1 x 1 km, 13 pts/m², 13.1 million points
@@ -127,18 +127,17 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 5. The vignette named *LAScatalog formal class* gains a section about partial processing.
 
-6. Harmonisation and review of the sections 'Supported processing options' in the man pages.
-
+6. Harmonization and review of the sections 'Supported processing options' in the man pages.
 
 #### FIXES
 
 1. Several minor fixes in `lascheck()` for very improbable cases of `LAS` objects likely to have been modified manually.
 
-2. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `voxel_metrics()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
+2. Fix colorization of boolean data when plotting an object of class `lasmetrics3d` (returned by `voxel_metrics()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
 
 3. The LAScatalog engine now calls `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
 
-4. `plot.LAS()` better handles the case when coloring with an attibute that has only two values: `NA` and one other value.
+4. `plot.LAS()` better handles the case when coloring with an attribute that has only two values: `NA` and one other value.
 
 5. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
