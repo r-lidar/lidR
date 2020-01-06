@@ -2,3 +2,24 @@
 
 language: R
 cache: packages
+
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
+      - libgeos++-dev
+      - libudunits2-dev
+      - libproj-dev
+      - libx11-dev
+      - libgl-dev
+      - libglu-dev
+      - libfreetype6-dev
+      - libv8-3.14-dev
+      - libcairo2-dev
+      - libtiff5-dev
+      - libxt-dev
+      - libfftw3-dev

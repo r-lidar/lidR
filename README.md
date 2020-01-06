@@ -2,6 +2,8 @@
 lidR <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/man/figures/logo200x231.png" align="right"/>
 ======================================================================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+[![Travis build status](https://travis-ci.org/Jean-Romain/lidR.svg?branch=master)](https://travis-ci.org/Jean-Romain/lidR)
+[![Codecov test coverage](https://codecov.io/gh/Jean-Romain/lidR/branch/master/graph/badge.svg)](https://codecov.io/gh/Jean-Romain/lidR?branch=master)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
