@@ -4,7 +4,6 @@ language: R
 cache: packages
 
 sudo: required
-dist: trusty
 
 addons:
   apt:
