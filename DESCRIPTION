@@ -50,7 +50,8 @@ Suggests:
     progress,
     testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 LazyData: true
 RoxygenNote: 7.0.2
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
