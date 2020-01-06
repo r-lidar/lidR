@@ -85,7 +85,6 @@ catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unproc
 
   return(ctg)
 }
-# nocov end
 
 identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
 {
@@ -111,4 +110,5 @@ identify_tile <- function(minx, maxx, miny, maxy, plot = FALSE, ...)
 
   return(which(sel))
 }
+# nocov end
 

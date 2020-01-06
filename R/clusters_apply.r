@@ -54,8 +54,9 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   if (!manual && workers * threads > cores)
   {
-    verbose(glue::glue("Cannot nest {workers} future threads and {threads} OpenMP threads. Precedence given to future: OpenMP threads set to 1."))
-    threads <- 1L
+    # nocov because tested with a single core on CRAN
+    verbose(glue::glue("Cannot nest {workers} future threads and {threads} OpenMP threads. Precedence given to future: OpenMP threads set to 1.")) # nocov
+    threads <- 1L # nocov
   }
 
   verbose(glue::glue("Start processing {nclusters} chunks..."))
@@ -95,7 +96,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       messages[j] <- state[["msg"]]
 
       # The state is unchanged: the chunk is still processing
-      if (states[j] == CHUNK_PROCESSING) next
+      if (states[j] == CHUNK_PROCESSING) next # nocov
 
       # The state changed: the chunk was processed. Update the progress
       percentage <-  engine_compute_progress(states)
@@ -137,7 +138,9 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   # Because of asynchronous computation, the loop may be ended
   # but not the computations. Wait until the end & check states.
+  # no cov because tested with a single core on CRAN
 
+  # nocov start
   while (any(states == CHUNK_PROCESSING))
   {
     i <- which(states == CHUNK_PROCESSING)
@@ -179,6 +182,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   return(output)
 }
+# nocov end
 
 engine_eval_state <- function(future)
 {

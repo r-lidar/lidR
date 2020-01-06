@@ -6,7 +6,7 @@ LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
 ctg     <- readLAScatalog(LASfile)
 
 test_that("plot LAS works", {
-  expect_error(plot(las), NA)
+  expect_error(plot(las, axis = TRUE), NA)
   rgl::rgl.close()
 })
 
@@ -45,11 +45,16 @@ test_that("plot LAS does not work with missing attributes", {
 
 test_that("plot LAS works with artifact", {
   expect_error(plot(las, clear_artifact = FALSE), NA)
-  rgl::rgl.close()
 })
 
 test_that("plot LAS does not works with 0 points", {
   expect_error(plot(lasfilter(las, Z > 1000)), "Cannot display an empty point cloud")
+})
+
+test_that("plot LAS checks the arguments", {
+  expect_error(plot(las, color = c("Z", "Intensity")), "'color' should contain a single value")
+
+  expect_error(plot(las, color = "RGB"), "No 'RGB' attributes found")
 })
 
 test_that("plot LASheader works", {
@@ -58,6 +63,9 @@ test_that("plot LASheader works", {
 
 test_that("plot LAScatalog works", {
   expect_error(plot(ctg), NA)
+
+  ctg$process <- 1
+  expect_warning(plot(ctg))
 })
 
 test_that("plot lasmetrics3d works", {

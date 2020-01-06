@@ -93,19 +93,19 @@ lasaddextrabytes = function(las, x, name, desc)
   if (missing(x))
   {
     if (!name %in% names(las@data))
-      stop(glue::glue("{name} is not an attribute of the LAS object."))
+      stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
 
     x <- las@data[[name]]
 
     if (!is.numeric(x))
-      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."), call. = FALSE)
   }
   else
   {
     assert_is_vector(x)
 
     if (!is.numeric(x))
-      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."), call. = FALSE)
 
     las <- lasadddata(las, x, name)
   }
@@ -134,19 +134,19 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   if (missing(x))
   {
     if (!name %in% names(las@data))
-      stop(glue::glue("{name} is not an attribute of the LAS object."))
+      stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
 
     x <- las@data[[name]]
 
     if (!is.numeric(x))
-      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."))
+      stop(glue::glue("'{name}' must be numeric. LAS format specifications do not allow storing of '{class(las@data[[name]])}' extra bytes."), call. = FALSE)
   }
   else
   {
     assert_is_vector(x)
 
     if (!is.numeric(x))
-      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."))
+      stop(glue::glue("'x' must be numeric. LAS format specifications do not allow storing of '{class(x)}' extra bytes."), call. = FALSE)
 
     las <- lasadddata(las, x, name)
   }

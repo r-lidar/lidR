@@ -148,6 +148,8 @@ even when an error occurs.
 
 8. In `tree_detection()` if no tree is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
 
+9. The argument `keep_lowest` in `grid_terrain` returned dummy output full of NAs because NAs have the precedence on actual numbers.
+
 ## lidR v2.1.4 (Release date: 2019-10-15)
 
 #### NEW FEATURES

@@ -94,7 +94,7 @@ lasflightline = function(las, dt = 30)
   assert_all_are_non_negative(dt)
 
   if (!"gpstime" %in% names(las@data))
-    stop("No gpstime attribute found. Flightlines cannot be computed from this object", call. = FALSE)
+    stop("No 'gpstime' attribute found. Flightlines cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
   {

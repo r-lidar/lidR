@@ -142,7 +142,7 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
 
     # Does this really happen?
     if (any(unpaired_pulse))
-      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE)
+      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE) # nocov
 
     # This happens if two points share the same 'gpstime' but different 'PointSourceID'
     if (any(multiple_source))
@@ -158,6 +158,7 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
   # Find the position P of the sensor in each interval
   P  <- data[, if (.N > 2*pmin) sensor_positions(X,Y,Z, ReturnNumber), by = .(gpstime = bins, PointSourceID = PointSourceID)]
 
+  # If no position found return an empty SpatialPointsDataFrame
   if (nrow(P) == 0)
   {
     i <- integer(1)
