@@ -14,7 +14,7 @@ addons:
       - libudunits2-dev
       - libproj-dev
       - libx11-dev
-      - libgl-dev
+      - libgl1-mesa-dev
       - libglu-dev
       - libfreetype6-dev
       - libv8-3.14-dev
