@@ -22,3 +22,9 @@ addons:
       - libtiff5-dev
       - libxt-dev
       - libfftw3-dev
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
