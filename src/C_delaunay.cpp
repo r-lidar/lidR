@@ -323,7 +323,13 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
 NumericMatrix  C_tinfo(IntegerMatrix D, NumericMatrix P)
 {
   if (P.nrow() < 3)
-    throw Rcpp::exception("Internal error in 'C_tinfo()': wrong dimension for P", false);
+    throw Rcpp::exception("Internal error in 'C_tinfo()': wrong number of rows for P", false); // # no cov
+
+  if (P.ncol() < 3)
+    throw Rcpp::exception("Internal error in 'C_tinfo()': wrong number of columns for P", false); // # no cov
+
+  if (D.ncol() < 3)
+    throw Rcpp::exception("Internal error in 'C_tinfo()': wrong number of columns for D", false); // # no cov
 
   NumericMatrix N(D.nrow(), 7);
   std::fill(N.begin(), N.end(), NA_REAL);

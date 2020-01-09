@@ -67,7 +67,7 @@ test_that("Old Delaunay trimming option works", {
   X <- round(runif(50,0,10),2)
   set.seed(123)
   Y <- round(runif(50,0,10),2)
-  ps <- as.matrix(data.frame(X,Y))
+  ps <- as.matrix(data.frame(X, Y, 0))
 
   ts <- lidR:::tDelaunay(ps, trim = 0)
   expect_is(ts, "matrix")

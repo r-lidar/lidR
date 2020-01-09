@@ -1,3 +1,9 @@
+## lidR v2.2.1
+
+### BUG FIXES
+
+1. Fix access to not mapped memory in one unit test (consequentless for users)
+
 ## lidR v2.2.0 (Release date: 2020-01-06)
 
 #### NEW FEATURES
