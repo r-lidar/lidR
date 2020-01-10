@@ -1,5 +1,14 @@
 ## lidR v2.3.0
 
+#### NEW FEATURES
+
+1. LAScatalog processing engine:
+    * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
+    
+#### CHANGES
+
+1. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`
+
 ## lidR v2.2.1
 
 ### BUG FIXES
