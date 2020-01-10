@@ -104,6 +104,7 @@ Collate:
     'lasfilterdecimate.r'
     'lasfilterduplicates.r'
     'lasfiltersurfacepoints.r'
+    'lasgenerator.R'
     'lasground.r'
     'lasindentify.r'
     'lasmergelas.r'
