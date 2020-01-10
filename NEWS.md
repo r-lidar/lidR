@@ -4,6 +4,10 @@
 
 1. Fix access to not mapped memory in one unit test (consequentless for users)
 
+### ENHANCEMENTS
+
+2. `grid_` functions now try to preserve the layer names when returning a VRT built from files written on disk. This works only with file formats that support to store layer name (e.g. not `GTiff`)
+
 ## lidR v2.2.0 (Release date: 2020-01-06)
 
 #### NEW FEATURES
