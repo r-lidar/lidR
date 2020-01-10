@@ -1,3 +1,5 @@
+## lidR v2.3.0
+
 ## lidR v2.2.1
 
 ### BUG FIXES
