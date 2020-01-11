@@ -49,6 +49,9 @@ dftest <- function(cluster) {
   head(lidR:::coordinates3D(las))
 }
 
+gdalUtils::gdal_setInstallation()
+valid_gdalbin_install <- !is.null(getOption("gdalUtils_gdalPath"))
+
 test_that("catalog_apply automerge works with in memory RastersLayer", {
   # No automerge option
   req1 <- catalog_apply(ctg, rtest)
@@ -90,34 +93,40 @@ test_that("catalog_apply automerge works with in memory RastersBrick", {
 
 test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
 
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  if (valid_gdalbin_install)
+  {
+    opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
-  # automerge option
-  option <- list(automerge = TRUE)
-  req1 <- catalog_apply(ctg, rtest, .options = option)
+    # automerge option
+    option <- list(automerge = TRUE)
+    req1 <- catalog_apply(ctg, rtest, .options = option)
 
-  expect_true(!raster::inMemory(req1))
-  expect_equal(names(req1), "layername1")
-  expect_equal(projection(req1), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
-  expect_is(req1, "RasterLayer")
-  expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-  expect_equal(sum(is.na(req1[])), 8L)
+    expect_true(!raster::inMemory(req1))
+    expect_equal(names(req1), "layername1")
+    expect_equal(projection(req1), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
+    expect_is(req1, "RasterLayer")
+    expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
+    expect_equal(sum(is.na(req1[])), 8L)
+  }
 })
 
 test_that("catalog_apply automerge works with on disk RastersBrick (VRT)", {
 
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  if (valid_gdalbin_install)
+  {
+    opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
-  # automerge option
-  option <- list(automerge = TRUE)
-  req1 <- catalog_apply(ctg, rtest, layers = 2, .options = option)
+    # automerge option
+    option <- list(automerge = TRUE)
+    req1 <- catalog_apply(ctg, rtest, layers = 2, .options = option)
 
-  expect_true(!raster::inMemory(req1))
-  expect_equal(names(req1), c("layername1", "layername2"))
-  expect_equal(projection(req1), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
-  expect_is(req1, "RasterBrick")
-  expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-  expect_equal(sum(is.na(req1[])), 16L)
+    expect_true(!raster::inMemory(req1))
+    expect_equal(names(req1), c("layername1", "layername2"))
+    expect_equal(projection(req1), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
+    expect_is(req1, "RasterBrick")
+    expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
+    expect_equal(sum(is.na(req1[])), 16L)
+  }
 })
 
 test_that("catalog_apply automerge works with in memory SpatialPoints*", {
