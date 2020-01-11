@@ -49,8 +49,13 @@ dftest <- function(cluster) {
   head(lidR:::coordinates3D(las))
 }
 
-gdalUtils::gdal_setInstallation()
-valid_gdalbin_install <- !is.null(getOption("gdalUtils_gdalPath"))
+vrt_supported <- FALSE
+if (requireNamespace("gdalUtils", quietly = TRUE)) {
+  gdalUtils::gdal_setInstallation()
+  if (!is.null(getOption("gdalUtils_gdalPath")))
+    vrt_supported <- TRUE
+}
+
 
 test_that("catalog_apply automerge works with in memory RastersLayer", {
   # No automerge option
@@ -93,7 +98,7 @@ test_that("catalog_apply automerge works with in memory RastersBrick", {
 
 test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
 
-  if (valid_gdalbin_install)
+  if (vrt_supported)
   {
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
@@ -112,7 +117,7 @@ test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
 
 test_that("catalog_apply automerge works with on disk RastersBrick (VRT)", {
 
-  if (valid_gdalbin_install)
+  if (vrt_supported)
   {
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
