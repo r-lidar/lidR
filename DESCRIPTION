@@ -3,7 +3,7 @@ Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
 Version: 2.2.1
-Date: 2020-01-09
+Date: 2020-01-11
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -23,7 +23,6 @@ Depends:
 Imports:
     data.table (>= 1.12.0),
     future,
-    gdalUtils,
     glue,
     grDevices,
     lazyeval,
@@ -42,6 +41,7 @@ Suggests:
     EBImage,
     concaveman,
     crayon,
+    gdalUtils,
     geometry,
     gstat,
     hexbin,
