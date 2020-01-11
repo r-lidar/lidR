@@ -4,6 +4,7 @@
 
 1. LAScatalog processing engine:
     * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
+    * New function `catalog_sapply()` strictly equivalent to `catalog_apply()` but with the option `automerge = TRUE` enforced to simplify the output whenever it is possible.
     
 #### CHANGES
 

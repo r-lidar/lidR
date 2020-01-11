@@ -1,6 +1,6 @@
 context("catalog_apply automerge")
 
-ctg <- lidR:::catalog_generator(500)
+ctg <- lidR:::catalog_generator(250)
 ctg@output_options$drivers$Raster$param$overwrite = TRUE
 ctg@output_options$drivers$Spatial$param$overwrite = TRUE
 ctg@output_options$drivers$SimpleFeature$param$delete_dsn = TRUE
@@ -217,5 +217,16 @@ test_that("catalog_apply automerge works with on disk data.frame", {
 
   expect_true(is.character(unlist(req3)))
   expect_true(all(tools::file_ext(req3) == "txt"))
+})
+
+test_that("catalog_sapply is the same than apply with automerge", {
+
+  option <- list(automerge = FALSE)
+  req1 <- catalog_sapply(ctg, rtest)
+  req2 <- catalog_sapply(ctg, rtest, .options = option)
+
+  expect_true(raster::inMemory(req1))
+  expect_equal(names(req1), "layername1")
+  expect_equal(req1, req2)
 })
 
