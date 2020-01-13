@@ -25,6 +25,8 @@ lasgenerator <- function(n, seeds = 1) {
 }
 
 catalog_generator <- function(n, size = 100, seed = 1) {
+  X <- Y <- NULL
+
   # Generate a catalog
   xshift <- c(0, size, 0, size)
   yshift <- c(0, 0, size, size)

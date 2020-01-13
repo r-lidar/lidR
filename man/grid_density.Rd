@@ -61,10 +61,14 @@ and this option is not considered. In \link{grid_metrics} this option is respect
 
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+las <- readLAS(LASfile)
 
-d = grid_density(lidar, 5)
+d <- grid_density(las, 5)
 plot(d)
-d = grid_density(lidar, 10)
+d <- grid_density(las, 10)
+plot(d)
+
+las <- laspulse(las)
+d <- grid_density(las)
 plot(d)
 }

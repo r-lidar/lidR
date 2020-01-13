@@ -1,4 +1,4 @@
-context("catalog_apply")
+context("catalog_apply generic")
 
 ctg <- lidR:::catalog_generator(500)
 opt_chunk_size(ctg) <- 150
@@ -36,7 +36,7 @@ test_that("catalog_apply makes strict non-overlaping chunks", {
   expect_equal(s1, s2)
 })
 
-test_that("catalog_apply options fix alignment", {
+test_that("catalog_apply fixes chunk alignment", {
 
   test <- function(cluster, res)
   {
@@ -79,43 +79,6 @@ test_that("catalog_apply generates errors if function does not return NULL for e
   expect_error(catalog_apply(ctg, test), "not return NULL for empty chunks")
 })
 
-test_that("catalog_apply writes in file if option is set", {
-
-  # Write a data.frame
-  test <- function(cluster)
-  {
-    las <- readLAS(cluster)
-    if (is.empty(las)) return(NULL)
-    return(head(las@data))
-  }
-
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ID}")
-
-  req <- catalog_apply(ctg, test)
-  req <- unlist(req)
-
-  expect_equal(basename(req), paste0(1:4, ".txt"))
-  expect_true(all(file.exists(req)))
-
-  # Write a Spatial object
-  test <- function(cluster)
-  {
-    las <- readLAS(cluster)
-    if (is.empty(las)) return(NULL)
-    las <- lasfilterground(las)
-    las <- as.spatial(las)
-    return(las)
-  }
-
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ID}")
-
-  req <- suppressWarnings(catalog_apply(ctg, test))
-  req <- unlist(req)
-
-  expect_equal(basename(req), paste0(1:4, ".shp"))
-  expect_true(all(file.exists(req)))
-})
-
 test_that("catalog_apply use alternative directories", {
 
   test <- function(cluster)
@@ -137,51 +100,40 @@ test_that("catalog_apply use alternative directories", {
   expect_error(catalog_apply(ctg, test), NA)
 })
 
-test_that("catalog_apply can write with custom drivers", {
+test_that("catalog_apply return a partial ouptut and generates logs", {
 
-  test <- function(cluster)
-  {
-    las <- readLAS(cluster)
-    if (is.empty(las)) return(NULL)
-    return(list(0))
-  }
-
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ID}")
-
-  expect_error(catalog_apply(ctg, test), "write an object of class list")
-
-  ctg@output_options$drivers$list <- list(
-    write     = base::saveRDS,
-    object    = "object",
-    path      = "file",
-    extension = ".rds",
-    param     = list(compress = TRUE))
-
-  req <- catalog_apply(ctg, test)
-  req <- unlist(req)
-
-  expect_equal(basename(req), paste0(1:4, ".rds"))
-  expect_true(all(file.exists(req)))
-})
-
-test_that("catalog_apply return partial ouptut generates logs", {
-
-  test <- function(cluster)
-  {
-    if (raster::extent(cluster)@ymin > 80)
-      stop("Test error")
-
-    return(0)
+  test <- function(cluster) {
+    if (raster::extent(cluster)@ymin > 80) stop("Test error")
+    return(data.frame(X = 1:3))
   }
 
   opt_chunk_size(ctg) <- 0
   opt_wall_to_wall(ctg) <- FALSE
 
-  req = suppressMessages(catalog_apply(ctg, test))
+  option <- list(automerge = TRUE)
+  req1 <- suppressMessages(catalog_apply(ctg, test))
+  req2 <- suppressMessages(catalog_apply(ctg, test, .options = option))
 
-  expect_is(req, "list")
-  expect_equal(length(req), 2)
+  expect_is(req1, "list")
+  expect_equal(length(req1), 2L)
   expect_message(catalog_apply(ctg, test), "chunk3.rds")
   expect_message(catalog_apply(ctg, test), "Test error")
+
+  expect_is(req2, "data.frame")
+  expect_equal(nrow(req2), 6L)
+})
+
+test_that("catalog_apply can bypass errors", {
+
+  test <- function(cluster) {
+    if (raster::extent(cluster)@ymin > 80) stop("Test error")
+    return(data.frame(X = 1:3))
+  }
+
+  opt_chunk_size(ctg) <- 0
+  opt_wall_to_wall(ctg) <- FALSE
+  opt_stop_early(ctg) <- FALSE
+
+  expect_message(catalog_apply(ctg, test), NA)
 })
 
