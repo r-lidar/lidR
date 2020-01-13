@@ -33,7 +33,7 @@ writeANY = function(x, path, drivers)
   if (class(x)[1] %in% names(drivers))
     driver <- drivers[[class(x)[1]]]
   else if (inherits(x, "LAS"))
-    driver <- drivers$LAS
+    driver <- drivers$LAS # nocov
   else if (inherits(x, "Raster"))
     driver <- drivers$Raster
   else if (inherits(x, "SpatialPoints") | inherits(x, "SpatialPolygons") | inherits(x, "SpatialLines"))
@@ -65,10 +65,10 @@ writeSpatial = function(x, filename, overwrite = FALSE, ...)
     stop('file exists, use overwrite=TRUE to overwrite it')
 
   if (!inherits(x, 'Spatial'))
-    stop('To write a shapefile you need to provide an object of class Spatial*')
+    stop('To write a shapefile you need to provide an object of class Spatial*') # nocov
 
   if (inherits(x, 'SpatialGrid'))
-    stop('These data cannot be written to a shapefile')
+    stop('These data cannot be written to a shapefile') # nocov
 
   if (inherits(x, 'SpatialPixels'))
   {
@@ -89,13 +89,14 @@ writeSpatial = function(x, filename, overwrite = FALSE, ...)
     else if (inherits(x, 'SpatialPoints'))
       x <- sp::SpatialPointsDataFrame(  x, data.frame(ID = 1:length(x)), match.ID = FALSE)
     else
-      stop('These data cannot be written to a shapefile')
+      stop('These data cannot be written to a shapefile') # no cov
   }
 
   rgdal::writeOGR(x, filename, layer, driver = driver, overwrite_layer = overwrite, ...)
 }
 
 # Function non exported from sf and build from sf source code because CRAN does not accept to use operator :::
+# nocov start
 guess_driver_can_write = function(dsn)
 {
   assert_is_a_string(dsn)
@@ -136,3 +137,4 @@ guess_driver_can_write = function(dsn)
 
   return(drv)
 }
+# nocov end

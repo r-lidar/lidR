@@ -45,11 +45,15 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' lidar = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #'
-#' d = grid_density(lidar, 5)
+#' d <- grid_density(las, 5)
 #' plot(d)
-#' d = grid_density(lidar, 10)
+#' d <- grid_density(las, 10)
+#' plot(d)
+#'
+#' las <- laspulse(las)
+#' d <- grid_density(las)
 #' plot(d)
 grid_density = function(las, res = 4)
 {

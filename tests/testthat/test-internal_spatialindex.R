@@ -1,4 +1,4 @@
-context("spatial_index")
+context("spatial index")
 
 X = c(0, 1, 1, 0, 0.5)
 Y = c(0, 0, 1, 1, 0.5)
@@ -58,6 +58,9 @@ test_that("QuandTree circle lookup works", {
 
   id = lidR:::C_circle_lookup(X,Y, 6,6,2)
   expect_equal(length(id), 0)
+
+  n <- lidR:::C_count_in_disc(X, Y, c(3, 10), c(2, 5), 2.1, 1L)
+  expect_equal(n, c(2,1))
 })
 
 

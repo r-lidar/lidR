@@ -99,7 +99,7 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   if (type == "concave")
   {
     if (!requireNamespace("concaveman", quietly = TRUE))
-      stop("'concaveman' package is needed to compute concave hull.", call. = FALSE)
+      stop("'concaveman' package is needed to compute concave hull.", call. = FALSE) # nocov
   }
 
   # Pointeur on function C style coding

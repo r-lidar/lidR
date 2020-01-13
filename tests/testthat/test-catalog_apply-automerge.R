@@ -49,6 +49,8 @@ dftest <- function(cluster) {
   head(lidR:::coordinates3D(las))
 }
 
+
+
 vrt_supported <- FALSE
 if (requireNamespace("gdalUtils", quietly = TRUE)) {
   gdalUtils::gdal_setInstallation()
@@ -224,6 +226,40 @@ test_that("catalog_apply automerge works with on disk data.frame", {
   expect_true(all(tools::file_ext(req3) == "txt"))
 })
 
+test_that("catalog_apply automerge do not fails with heterogeneous outputs", {
+
+  test <- function(cluster) {
+    if (raster::extent(cluster)@ymin > 80) return(list(0))
+    return(data.frame(X = 1:3))
+  }
+
+  opt_wall_to_wall(ctg) <- FALSE
+  option <- list(automerge = FALSE)
+  req <- suppressWarnings(catalog_sapply(ctg, test, .options = option))
+
+  expect_warning(catalog_sapply(ctg, test, .options = option), "heterogeneous objects")
+  expect_is(req, "list")
+  expect_is(req[[1]], "data.frame")
+  expect_is(req[[3]], "list")
+})
+
+test_that("catalog_apply automerge do not fails with unsupported objects outputs", {
+
+  test <- function(cluster) {
+    x = runif(5)
+    y = runif(5)
+    stats::lm(y~x)
+  }
+
+  opt_wall_to_wall(ctg) <- FALSE
+  option <- list(automerge = FALSE)
+  req <- suppressWarnings(catalog_sapply(ctg, test, .options = option))
+
+  expect_warning(catalog_sapply(ctg, test, .options = option), "unsupported objects")
+  expect_is(req, "list")
+  expect_is(req[[1]], "lm")
+})
+
 test_that("catalog_sapply is the same than apply with automerge", {
 
   option <- list(automerge = FALSE)
@@ -234,4 +270,3 @@ test_that("catalog_sapply is the same than apply with automerge", {
   expect_equal(names(req1), "layername1")
   expect_equal(req1, req2)
 })
-

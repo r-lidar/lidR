@@ -25,11 +25,6 @@
 #
 # ===============================================================================
 
-Cluster <- function(center, width, height, buffer, shape, files, name)
-{
-  return(new("LAScluster", center, width, height, buffer, shape, files, name, ""))
-}
-
 LAScluster <- function(center, width, height, buffer, shape, files, name, proj4string = sp::CRS())
 {
   return(new("LAScluster", center, width, height, buffer, shape, files, name, "", proj4string))

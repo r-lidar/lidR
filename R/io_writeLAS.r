@@ -49,12 +49,12 @@ writeLAS = function(las, file)
   stopifnotlas(las)
   assert_is_a_string(file)
 
-  if (is.empty(las)) stop("Cannot write a file with 0 points")
+  if (is.empty(las)) stop("Cannot write a file with 0 point", call. = FALSE)
 
   file  = path.expand(file)
   islas = tools::file_ext(file) %in% c("las", "laz")
 
-  if (!islas) stop(glue::glue("File(s) {file} not supported"))
+  if (!islas) stop(glue::glue("File(s) {file} not supported"), call. = FALSE)
 
   rlas::write.las(file, as.list(las@header), las@data)
   return(invisible())

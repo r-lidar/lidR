@@ -6,14 +6,41 @@ y = c(0,0,1,1,0.1,0.5,0.8,0.3,0.1,0.4,0.7)
 vertx = c(0,1,0)
 verty = c(0,0,1)
 
+las <- lidR:::lasgenerator(500)
+ctg <- lidR:::catalog_generator(500)
+
 test_that("convex hull works", {
   expect_equal(lidR:::convex_hull(x,y), data.frame(x = c(1,0,0,1,1), y = c(0,0,1,1,0)))
 })
 
-test_that("area works", {
+test_that("area_convex_hull works", {
   expect_equal(lidR:::area_convex_hull(x,y), 1)
-  expect_equal(lidR:::area_convex_hull(vertx,verty), 0.5)
+  expect_equal(lidR:::area_convex_hull(vertx, verty), 0.5)
 })
+
+test_that("area works with a LAS*", {
+  expect_equal(area(las), 10000, tolerance = 300)
+  expect_equal(area(ctg), 40000, tolerance = 400)
+  expect_equal(area(las@header), 1000, tolerance = 100)
+})
+
+test_that("area works with a 0 points", {
+  las <- lasfilter(las, Z > 100)
+  expect_equal(area(las), 0)
+})
+
+test_that("npoints works with a LAS*", {
+  expect_equal(npoints(las), 500)
+  expect_equal(npoints(ctg), 2000)
+  expect_equal(npoints(las@header), 500)
+})
+
+test_that("density works with a LAS*", {
+  expect_equal(density(las), 0.05, tolerance = 0.002)
+  expect_equal(density(ctg), 0.05, tolerance = 0.001)
+  expect_equal(density(las@header), 0.05, tolerance = 0.001)
+})
+
 
 test_that("tsearch works", {
   x <- c(-1, -1, 1)

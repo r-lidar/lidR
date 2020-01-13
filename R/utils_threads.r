@@ -22,10 +22,10 @@ set_lidr_threads = function(threads)
 
   if (max < 0)
   {
-    message("This installation of lidR has not been compiled with OpenMP support")
-    LIDRTHREADS$n <- 1L
-    data.table::setDTthreads(1L)
-    return(invisible())
+    message("This installation of lidR has not been compiled with OpenMP support") # nocov
+    LIDRTHREADS$n <- 1L # nocov
+    data.table::setDTthreads(1L) # nocov
+    return(invisible()) # nocov
   }
 
   if (threads == 0 | threads > max)
@@ -52,12 +52,12 @@ get_lidr_threads = function()
 get_future_workers = function()
 {
   n <- formals(future::plan())$workers
-  if (is.null(n) || is.character(n))
-    return(1L)
-  else if (is.call(n))
+  if (is.null(n) || is.character(n)) # e.g. future::plan(future::remote(), workers = "localhost")
+    return(1L) # nocov
+  else if (is.call(n))               # e.g. future::plan(future::multisession())
     return(future::availableCores())
-  else
-    return(n)
+  else                               # e.g. future::plan(future::multisession(), workers = 2L)
+    return(n)  # nocov
 }
 
 getThread <- get_lidr_threads
