@@ -1,20 +1,8 @@
-## lidR v2.3.0
-
-#### NEW FEATURES
-
-1. LAScatalog processing engine:
-    * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
-    * New function `catalog_sapply()` strictly equivalent to `catalog_apply()` but with the option `automerge = TRUE` enforced to simplify the output whenever it is possible.
-    
-#### CHANGES
-
-1. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`
-
 ## lidR v2.2.1
 
 ### CHANGES
 
-The following changes will create a deep backward incompatibility in future versions of `lidR`.
+The following change will create a deep backward incompatibility in future versions of `lidR`.
 
 The package `gdalUtils` has been, or will be, removed from CRAN. In order to maintain `lidR` on CRAN the support of virtual raster layer has to be removed and `gdalUtils` is no longer a `lidR` dependency. This concerns the functions `grid_metrics()`, `grid_canopy()`, `grid_density()` and `grid_terain()` when the outputs are writen on disk. It also affects the behavior of the `automerge` option in `catalog_apply()` that has been added in 2.2.0 and that is unlikely to be widely used yet.
 
@@ -34,9 +22,21 @@ m <- grid_metrics(ctg, ~mean(Z), 10)
 
 For users with a fresh installation without `gdalUtils` the feature is lost. The abovementionned functions will return a `list` or a `vector` of written files. It was already the case by the way for users without `gdalUtils`.
 
+#### NEW FEATURES
+
+1. LAScatalog processing engine:
+    * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
+    * New function `catalog_sapply()` strictly equivalent to `catalog_apply()` but with the option `automerge = TRUE` enforced to simplify the output whenever it is possible.
+    
+### ENHANCEMENTS
+
+1. In the catalog processing engine, the graphical progression map is now able to plot the actual shape of the chunks. In the case of `lasclip` it means that discs and polygons are displayed instead of bounding boxes.
+
 ### BUG FIXES
 
 1. Fix access to not mapped memory in one unit test (consequentless for users)
+
+2. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`
 
 ## lidR v2.2.0 (Release date: 2020-01-06)
 

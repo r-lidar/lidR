@@ -261,9 +261,20 @@ engine_update_progress <- function(pb, cluster, state, p, j)
     return(invisible())
   }
 
-  bbox <- cluster@bbox
-
-  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+  if (cluster@shape == LIDRRECTANGLE) {
+    if (cluster@wkt == "") {
+      bbox <- cluster@bbox
+      graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
+    } else {
+      poly <- rgeos::readWKT(cluster@wkt)
+      plot(poly, add = TRUE, col = col)
+    }
+  } else if (cluster@shape == LIDRCIRCLE) {
+    center <- cluster@center
+    width  <- cluster@width
+    theta <- seq(0, 2 * pi, length = 32)
+    graphics::polygon(x = center$x + width/2 * cos(theta), y = center$y + width/2 * sin(theta), col = col)
+  }
 
   if (is(pb, "txtProgressBar"))
     utils::setTxtProgressBar(pb, p)
