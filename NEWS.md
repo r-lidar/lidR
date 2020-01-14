@@ -27,6 +27,10 @@ For users with a fresh installation without `gdalUtils` the feature is lost. The
 1. LAScatalog processing engine:
     * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
     * New function `catalog_sapply()` strictly equivalent to `catalog_apply()` but with the option `automerge = TRUE` enforced to simplify the output whenever it is possible.
+    
+### ENHANCEMENTS
+
+1. In the catalog processing engine, the graphical progression map is now able to plot the actual shape of the chunks. In the case of `lasclip` it means that discs and polygons are displayed instead of bounding boxes.
 
 ### BUG FIXES
 
