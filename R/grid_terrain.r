@@ -89,14 +89,14 @@ grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raste
 grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
 {
   # Defensive programming
-  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
+  if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer", call. = FALSE)
   if (is_a_number(res)) assert_all_are_non_negative(res)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
   assert_is_a_bool(keep_lowest)
   assert_is_a_bool(full_raster)
-  if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' data")
-  if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.")
+  if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
+  if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
   if (any(as.integer(use_class) != use_class)) stop("'add_class' is not a vector of integers'", call. = FALSE)
   use_class <- as.integer(use_class)
 
@@ -148,7 +148,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
     reso <- raster::res(layout)[1]
     lasg <- lasfilter(las, Classification %in% c(use_class))
     rmin <- grid_metrics(lasg, ~list(Z = min(Z)), reso)
-    suppressWarnings(layout[] <- pmin(layout[], rmin[]))
+    suppressWarnings(layout[] <- pmin(layout[], rmin[], na.rm = TRUE))
   }
 
   return(layout)

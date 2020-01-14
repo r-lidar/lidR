@@ -1,4 +1,44 @@
-## lidR v2.2.0 (Release date: )
+## lidR v2.2.1
+
+### CHANGES
+
+The following change will create a deep backward incompatibility in future versions of `lidR`.
+
+The package `gdalUtils` has been, or will be, removed from CRAN. In order to maintain `lidR` on CRAN the support of virtual raster layer has to be removed and `gdalUtils` is no longer a `lidR` dependency. This concerns the functions `grid_metrics()`, `grid_canopy()`, `grid_density()` and `grid_terain()` when the outputs are writen on disk. It also affects the behavior of the `automerge` option in `catalog_apply()` that has been added in 2.2.0 and that is unlikely to be widely used yet.
+
+For users who already have an old valid installation of `gdalUtils` the backward compatibility is maintained with a message that asks to desactivate this feature in order to anticipate its full deletion. This message is going to be a warning then an error in next releases.
+
+
+```r
+ctg <- readLAScatalog("folder/")
+opt_output_files(ctg) <- "/path/to/output_{ID}"
+m <- grid_metrics(ctg, ~mean(Z), 10)
+#> Processing [==================] 100% (6/6) eta:  0s
+#> The package 'gdalUtils' is needed to build a virtual raster but this package is no longer avaible on CRAN.
+#> The functionnality is still available on your computer because you have 'gdalUtils' installed but this might change with future R updates.
+#> In order to anticipate the lost of this feature please turn off the virtual raster mosaic option with 'options(lidR.buildVRT = FALSE)'.
+#> This message will turn into a warning then into an error in next releases.
+```
+
+For users with a fresh installation without `gdalUtils` the feature is lost. The abovementionned functions will return a `list` or a `vector` of written files. It was already the case by the way for users without `gdalUtils`.
+
+#### NEW FEATURES
+
+1. LAScatalog processing engine:
+    * In `catalog_apply()` the options `automerge` now supports automerging of `sf` and `data.frame` objects.
+    * New function `catalog_sapply()` strictly equivalent to `catalog_apply()` but with the option `automerge = TRUE` enforced to simplify the output whenever it is possible.
+    
+### ENHANCEMENTS
+
+1. In the catalog processing engine, the graphical progression map is now able to plot the actual shape of the chunks. In the case of `lasclip` it means that discs and polygons are displayed instead of bounding boxes.
+
+### BUG FIXES
+
+1. Fix access to not mapped memory in one unit test (consequentless for users)
+
+2. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`
+
+## lidR v2.2.0 (Release date: 2020-01-06)
 
 #### NEW FEATURES
 
@@ -33,7 +73,7 @@
     ```
     
 2. 3D rendering:
-    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows for this argument to not be specified even when plotting an attribute other than Z, and having an appropriate color palette by default. More interestingly, it will automatically apply a nice color scheme to the point cloud with the attribute 'Classification' following the ASPR specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
+    * The argument `colorPalette` of the function `plot()` for `LAS` objects is now set to `"auto"` by default. This allows for this argument to not be specified even when plotting an attribute other than Z, and having an appropriate color palette by default. More interestingly, it will automatically apply a nice color scheme to the point cloud with the attribute 'Classification' following the ASPRS specifications. See [#275](https://github.com/Jean-Romain/lidR/issues/275).
     
     ```R
     plot(las)
@@ -68,10 +108,10 @@
 
 1. `LAS()` now rounds the values to 2 digits if no header is provided to fit with the default header automatically generated. This ensures that a perfectly valid  `LAS` object is built out of external data. This change is made by reference, meaning that the original dataset is also rounded.
 
-```r
-pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
-las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copying
-```
+    ```r
+    pts <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+    las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data copying
+    ```
 
 2. `lasmetrics()` is deprecated. All `las*` functions return `LAS` objects except `lasmetrics()`. For consistency across the package `lasmetrics()` becomes `cloud_metrics()`.
 
@@ -81,7 +121,7 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
     
 #### ENHANCEMENTS
 
-1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewriten and changed for a grid partion which is twice as fast as the former QuadTree. This change provides a significant boost (i.e. up to two times faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
+1. Internally the package used a QuadTree as spatial index in versions <= 2.1.3. Spatial index has been rewritten and changed for a grid partition which is twice as fast as the former QuadTree. This change provides a significant boost (i.e. up to two times faster) to many algorithms of the package that rely on a spatial index. This includes `lmf()`, `shp_*()`, `wing2015()`, `pmf()`, `lassmooth()`, `tin()`, `pitfree()`. Benchmark on a Intel Core i7-5600U CPU @ 2.60GHz × 2.
 
     ```r
     # 1 x 1 km, 13 pts/m², 13.1 million points
@@ -127,22 +167,28 @@ las <- LAS(pts) # 'las' contains rounded values but 'pts' as well to avoid data 
 
 5. The vignette named *LAScatalog formal class* gains a section about partial processing.
 
-6. Harmonisation and review of the sections 'Supported processing options' in the man pages.
-
+6. Harmonization and review of the sections 'Supported processing options' in the man pages.
 
 #### FIXES
 
 1. Several minor fixes in `lascheck()` for very improbable cases of `LAS` objects likely to have been modified manually.
 
-2. Fix colorisation of boolean data when ploting an object of class `lasmetrics3d` (returned by `voxel_metrics()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
+2. Fix colorization of boolean data when plotting an object of class `lasmetrics3d` (returned by `voxel_metrics()`) [#289](https://github.com/Jean-Romain/lidR/issues/289)
 
 3. The LAScatalog engine now calls `raster::writeRaster()` with `NAflag = -999999` because it seems that the default `-Inf` generates a lot of trouble on windows when building a virtual raster mosaic with `gdalUtils::gdalbuildvrt()`.
 
-4. `plot.LAS()` better handles the case when coloring with an attibute that has only two values: `NA` and one other value.
+4. `plot.LAS()` better handles the case when coloring with an attribute that has only two values: `NA` and one other value.
 
 5. `lasclip()` was not actually able to retrieve the attributes of the `Spatial*DataFrame` or `sf` equivalent when using `opt_output_file(ctg) <- "/dir/{PLOTID}"`.
 
-6. In `tree_detection()` if no local maximum is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
+6. `lasmergespatial()` supports 'on disk' rasters [#285](https://github.com/Jean-Romain/lidR/issues/285) [#306](https://github.com/Jean-Romain/lidR/issues/306)
+
+7. `opt_stop_early()` was not actually working as expected. The processing was aborted without logs. It now prevent the catalog processing engine to stop
+even when an error occurs.
+
+8. In `tree_detection()` if no tree is found (e.g. in a lake) the function crashed. It now returns an empty `SpatialPointDataFrame`.
+
+9. The argument `keep_lowest` in `grid_terrain` returned dummy output full of NAs because NAs have the precedence on actual numbers.
 
 ## lidR v2.1.4 (Release date: 2019-10-15)
 

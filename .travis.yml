@@ -1,0 +1,31 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
+      - libgeos++-dev
+      - libudunits2-dev
+      - libproj-dev
+      - libx11-dev
+      - libgl1-mesa-dev
+      - libglu-dev
+      - libfreetype6-dev
+      - libv8-3.14-dev
+      - libcairo2-dev
+      - libtiff5-dev
+      - libxt-dev
+      - libfftw3-dev
+      - gdal-bin
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'

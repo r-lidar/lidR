@@ -105,18 +105,24 @@ rBuildVRT = function(file_list, vrt)
   if (!options("lidR.buildVRT")[[1]])
     return(unlist(file_list))
 
-  if (!requireNamespace("gdalUtils", quietly = TRUE))
-  {
-    message("'gdalUtils' package is needed to build a virtual raster mosaic. Returns the list of written files instead.")
+  if (!requireNamespace("gdalUtils", quietly = TRUE))  {
     return(unlist(file_list))
+  } else {
+    message("The package 'gdalUtils' is needed to build a virtual raster but this package is no longer avaible on CRAN.
+The functionnality is still available on your computer because you have 'gdalUtils' installed but this might change with future R updates.
+In order to anticipate the lost of this feature please turn off the virtual raster mosaic option with 'options(lidR.buildVRT = FALSE)'.
+This message will turn into a warning then into an error in next releases.")
   }
 
   file_list <- unlist(file_list)
+  layers    <- names(raster::stack(file_list[1]))
   folder    <- dirname(file_list[1])
   file      <- paste0("/", vrt, ".vrt")
   vrt       <- paste0(folder, file)
   gdalUtils::gdalbuildvrt(file_list, vrt)
-  file_list <- raster::stack(vrt)
+  if (!file.exists(vrt)) return(unlist(file_list))
+  file_list <- raster::brick(vrt)
+  names(file_list) <- layers
 
   if (dim(file_list)[3] == 1)
     return(file_list[[1]])

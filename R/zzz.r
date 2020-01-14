@@ -3,13 +3,13 @@
 .onAttach <- function(libname, pkgname)
 {
   # Runs when attached to search() path such as by library() or require()
-  if (interactive())
-  {
-    v = utils::packageVersion("lidR")
-    packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/Jean-Romain/lidR>.")
-  }
+  if (!interactive()) return(invisible())
+
+  v = utils::packageVersion("lidR") # nocov
+  packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/Jean-Romain/lidR>.") # nocov
 }
 
+# nocov start
 .onLoad <- function(libname, pkgname)
 {
   op <- options()
@@ -35,6 +35,7 @@
 {
   library.dynam.unload("lidR", libpath)
 }
+# nocov end
 
 # ,@@@
 #  @@@@@@.@                                                           ,#*

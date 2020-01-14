@@ -14,3 +14,12 @@ test_that("grid_density returns the same both with LAScatalog and LAS", {
   d2 <- grid_density(las)
   expect_equal(d1, d2)
 })
+
+
+test_that("grid_density returns pulse density", {
+  las <- laspulse(las)
+  d1 <- grid_density(las)
+
+  expect_is(d1, "RasterBrick")
+  expect_equal(names(d1), c("point_density", "pulse_density"))
+})

@@ -4,16 +4,16 @@
 #' space of the line passing through the first and last returns. To work, this function requires a
 #' dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceID' attributes are
 #' properly populated, otherwise the output may be incorrect or weird. For LAScatalog processing
-#' it is recommanded to use large chunks and large buffers (e.g. a swath width). The point cloud must
+#' it is recommended to use large chunks and large buffers (e.g. a swath width). The point cloud must
 #' not be normalized.
 #'
 #' When multiple returns from a single pulse are detected, the sensor computes their positions as being
-#' in the center of the footprint and thus all aligned. Because of that beheaviour, a line
+#' in the center of the footprint and thus all aligned. Because of that behavior, a line
 #' drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
 #' emitted in a tight interval (e.g. 0.5 seconds) can be used to approximate an intersection
 #' point in the sky that corresponds to the sensor position given that the sensor carrier hasn't
 #' moved much during this interval. A weighted least squares method gives an approximation of the
-#' intersection by minimising the squared sum of the distances between the intersection point and all
+#' intersection by minimizing the squared sum of the distances between the intersection point and all
 #' the lines.
 #'
 #' @section Test of data integrity:
@@ -48,7 +48,7 @@
 #' multiple returns. It is more computationally demanding but not necessarily more accurate. This keeps
 #' only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if the file has already
 #' been read with \code{filter = "-thin_pulses_with_time 0.001"}.
-#' @return A SpatialPointDataFrame with the Z elevation stored in the table of attributes. Information
+#' @return A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
 #' about the time interval and the number of pulses used to find the points is also in the table of
 #' attributes.
 #'
@@ -142,7 +142,7 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
 
     # Does this really happen?
     if (any(unpaired_pulse))
-      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE)
+      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE) # nocov
 
     # This happens if two points share the same 'gpstime' but different 'PointSourceID'
     if (any(multiple_source))
@@ -158,6 +158,7 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
   # Find the position P of the sensor in each interval
   P  <- data[, if (.N > 2*pmin) sensor_positions(X,Y,Z, ReturnNumber), by = .(gpstime = bins, PointSourceID = PointSourceID)]
 
+  # If no position found return an empty SpatialPointsDataFrame
   if (nrow(P) == 0)
   {
     i <- integer(1)

@@ -54,7 +54,7 @@ void LAS::new_filter(LogicalVector b)
   else if (b.size() == (int)npoints)
     this->filter = Rcpp::as< std::vector<bool> >(b);
   else
-    Rcpp::stop("Internal error in 'new_filter"); // nocov
+    Rcpp::stop("Internal error in 'new_filter"); // # nocov
 }
 
 /*void LAS::apply_filter()
@@ -224,8 +224,8 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
   NumericVector z = flightlines["Z"];
   NumericVector t = flightlines["gpstime"];
 
-  double average_z_sensor = Rcpp::mean(z);
-  double R_control = mean(average_z_sensor - Z);
+  double median_z_sensor = Rcpp::median(z);
+  double R_control = mean(median_z_sensor - Z);
 
   NumericVector::iterator it;
   double dx, dy, dz, r, R;
@@ -274,11 +274,11 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
 
     if (R > 3 * R_control)
     {
-      Rprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
-      Rprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
-      Rprintf("Matched with sensor at (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j], y[j], z[j], t[j]);
-      Rprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
-      Rprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
+      REprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
+      REprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
+      REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j], y[j], z[j], t[j], x[j+1], y[j+1], z[j+1], t[j+1]);
+      REprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
+      REprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
       throw Rcpp::exception("Unrealistic range: see message above", false);
     }
 
@@ -474,7 +474,7 @@ void LAS::filter_with_grid(S4 layout)
     if (x == xmax) col = ncols-1;
 
     if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point out of raster."); // nocov
+      Rcpp::stop("C++ unexpected internal error in 'filter_with_grid': point out of raster."); // # nocov
 
     int cell = row * ncols + col;
 
@@ -570,7 +570,7 @@ void LAS::filter_in_polygon(std::string wkt)
     }
   }
   else
-    Rcpp::stop("Unexpected error in point in polygon: WKT is not a POLYGON or MULTIPOLYGON"); // nocov
+    Rcpp::stop("Unexpected error in point in polygon: WKT is not a POLYGON or MULTIPOLYGON"); // # nocov
 
   return;
 }
@@ -632,7 +632,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
 void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
 {
   if (ws.size() != th.size())
-    Rcpp::stop("Internal error in 'filter_progressive_morphology'"); // nocov
+    Rcpp::stop("Internal error in 'filter_progressive_morphology'"); // # nocov
 
   for (int i = 0 ; i < ws.size() ; i++)
   {
@@ -933,9 +933,9 @@ IntegerVector LAS::segment_trees(double dt1, double dt2, double Zu, double R, do
     {
       if (p.check_interrupt())
       {
-        for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i]; // nocov
-        delete dummy; // nocov
-        p.exit(); // nocov
+        for (unsigned int i = 0 ; i < U.size() ; i++) delete U[i]; // # nocov
+        delete dummy; // # nocov
+        p.exit(); // # nocov
       }
 
       p.update(ni-n);
@@ -1050,7 +1050,7 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
   case 1: f = &LAS::rmax; break;
   case 2: f = &LAS::rmin; break;
   case 3: f = &LAS::rcount; break;
-  default: Rcpp::stop("C++ unexpected internal error in 'rasterize': point of raster."); break; // # nocov;
+  default: Rcpp::stop("C++ unexpected internal error in 'rasterize': invalid method."); break; // # nocov;
   }
 
   if (subcircle > 0)
@@ -1077,6 +1077,19 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
 
         int cell = row * ncols + col;
         raster(cell) = f(raster(cell), z);
+
+        // This is a hack for R 4.0.0 with alternative compiler toolchain (gcc8 32 bits)
+        // I'm not able to understant why adding a print line fixes the problem
+        // and I don't even know what is the problem.
+        #ifdef _WIN32
+        #ifdef __MINGW32__
+        #ifdef __GNUC__
+        #if __GNUC__ >= 8
+                if (cell == raster.size() + 1) Rprintf("x = %lf, y = %lf\n", x, y);
+        #endif
+        #endif
+        #endif
+        #endif
       }
     }
   }
@@ -1112,6 +1125,7 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
   SpatialIndex tree(X,Y,Z,filter);
   Progress pb(npoints, "Metrics computation: ");
   bool abort = false;
+  int pOutError = 0;
 
   for(unsigned int i = 0 ; i < npoints ; ++i) {
     if (abort) continue;
@@ -1152,7 +1166,11 @@ List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, 
       ++it2;
     }
 
-    output[j] = Rf_eval(call, env);
+    output[j] = R_tryEvalSilent(call, env, &pOutError);
+
+    if (pOutError == 1)
+      throw Rcpp::exception(R_curErrorBuf(), false);
+
     j++;
   }
 

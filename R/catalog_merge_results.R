@@ -10,7 +10,7 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
   # Automerge: determine the merging type to apply
   if (any_type == "auto")
   {
-    data_types <- sapply(any_list, class)
+    data_types <- sapply(any_list, function(x) { class(x)[1] })
     data_type  <- unique(data_types)
 
     if (length(data_type) > 1)
@@ -43,14 +43,19 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
     {
       x <- any_list[[1]]
 
-      if (inherits(x, "Raster"))
+      if (inherits(x, "Raster")) {
         any_type <- "raster"
-      else if (inherits(x, "LAS"))
+      } else if (inherits(x, "LAS")) {
         any_type <- "las"
-      else if (inherits(x, "SpatialPolygons") | inherits(x, "SpatialPoints"))
+      } else if (inherits(x, "SpatialPolygons") | inherits(x, "SpatialPoints")) {
         any_type <- "spatial"
-      else
+      } else if (inherits(x, "sf")) {
+        any_type <- "SimpleFeature"
+      } else if  (inherits(x, "data.frame")) {
+        any_type <- "dataframe"
+      } else {
         any_type <- "unknown"
+      }
     }
   }
 
@@ -92,6 +97,31 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
       {
         output <- do.call(rbind, any_list)
         output@proj4string <- ctg@proj4string
+        return(output)
+      }
+    }
+    else if (any_type == "SimpleFeature")
+    {
+      if (opt_output_files(ctg) != "")
+      {
+        return(unlist(output))
+      }
+      else
+      {
+        output <- do.call(rbind, any_list)
+        sf::st_crs(output) <- ctg@proj4string
+        return(output)
+      }
+    }
+    else if (any_type == "dataframe")
+    {
+      if (opt_output_files(ctg) != "")
+      {
+        return(unlist(output))
+      }
+      else
+      {
+        output <- data.table::rbindlist(any_list)
         return(output)
       }
     }

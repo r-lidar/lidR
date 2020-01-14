@@ -6,14 +6,41 @@ y = c(0,0,1,1,0.1,0.5,0.8,0.3,0.1,0.4,0.7)
 vertx = c(0,1,0)
 verty = c(0,0,1)
 
+las <- lidR:::lasgenerator(500)
+ctg <- lidR:::catalog_generator(500)
+
 test_that("convex hull works", {
   expect_equal(lidR:::convex_hull(x,y), data.frame(x = c(1,0,0,1,1), y = c(0,0,1,1,0)))
 })
 
-test_that("area works", {
+test_that("area_convex_hull works", {
   expect_equal(lidR:::area_convex_hull(x,y), 1)
-  expect_equal(lidR:::area_convex_hull(vertx,verty), 0.5)
+  expect_equal(lidR:::area_convex_hull(vertx, verty), 0.5)
 })
+
+test_that("area works with a LAS*", {
+  expect_equal(area(las), 10000, tolerance = 300)
+  expect_equal(area(ctg), 40000, tolerance = 400)
+  expect_equal(area(las@header), 1000, tolerance = 100)
+})
+
+test_that("area works with a 0 points", {
+  las <- lasfilter(las, Z > 100)
+  expect_equal(area(las), 0)
+})
+
+test_that("npoints works with a LAS*", {
+  expect_equal(npoints(las), 500)
+  expect_equal(npoints(ctg), 2000)
+  expect_equal(npoints(las@header), 500)
+})
+
+test_that("density works with a LAS*", {
+  expect_equal(density(las), 0.05, tolerance = 0.002)
+  expect_equal(density(ctg), 0.05, tolerance = 0.001)
+  expect_equal(density(las@header), 0.05, tolerance = 0.001)
+})
+
 
 test_that("tsearch works", {
   x <- c(-1, -1, 1)
@@ -177,78 +204,5 @@ test_that("tinfo works", {
 
   expect_equal(I[5], sqrt(5)/2)
   expect_equal(I[6], 1/2)
-})
-
-test_that("delaunay produces the correct output", {
-
-  ps <- data.frame(
-    X = c(0,  1, -1, 1, -1),
-    Y = c(0, -1, 1, 1, -1))
-
-  expected = structure(c(3L, 1L, 3L, 4L, 5L, 5L, 1L, 1L, 1L, 2L, 4L, 2L), .Dim = 4:3)
-
-  ts <- lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0))
-
-  expect_is(ts, "matrix")
-  expect_equal(ts, expected)
-})
-
-test_that("delaunay fails where necessary", {
-
-  ps <- data.frame(
-    X = c(0, -1),
-    Y = c(0, -1))
-
-  expect_error(lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0)), "cannot triangulate less than 3 points")
-
-  ps <- data.frame(
-    A = c(0, 1, 1),
-    B = c(0, 0, 1))
-
-  expect_error(lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0)), "columns are not named XY")
-
-  ps <- data.frame(
-    X = c(0, 1, 1),
-    Y = c(0, 0, 1))
-
-  expect_error(lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0.25,0)), "Scale factors are likely to be invalid")
-
-  ps <- data.frame(
-    X = runif(5, 0, 10),
-    Y = runif(5, 0, 10))
-
-  expect_error(lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0)), "Scale factors are likely to be invalid")
-  expect_error(lidR:::C_delaunay(ps, scales = c(1,2), offsets = c(0,0)), "cannot triangulate points with different xy scale factors")
-})
-
-test_that("delaunay works with degenerated points", {
-
-  ps <- data.frame(
-    X = c(0, -1, 1, -1, 1, -1, 1, -1, 1, 0),
-    Y = c(0, -1, -1, 1, 1, -1, -1, 1, 1, 0))
-
-  expected = structure(c(4L, 1L, 4L, 5L, 2L, 2L, 1L, 1L, 1L, 3L, 5L, 3L), .Dim = 4:3)
-
-  ts <- lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0))
-
-  expect_is(ts, "matrix")
-  expect_equal(ts, expected)
-})
-
-test_that("delaunay rasterization fall back to geometry", {
-
-  ps <- data.frame(
-    X = c(0,  1, -1, 1, -1),
-    Y = c(0, -1, 1, 1, -1),
-    Z = c(0, 1, -1, 0, 1))
-
-  rs <- data.frame(
-    X = c(0.2, 0.2),
-    Y = c(0.8, -0.4))
-
-  expect_message(lidR:::interpolate_delaunay(ps, rs, 0, scales = c(1,2), offsets = c(0,0)),  "reverted to the old slow method")
-  ts <- suppressMessages(lidR:::interpolate_delaunay(ps, rs, 0, scales = c(1,2), offsets = c(0,0)))
-
-  expect_equal(ts, c(-0.3, 0.4), tol = 1e-5)
 })
 

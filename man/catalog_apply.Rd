@@ -2,9 +2,12 @@
 % Please edit documentation in R/catalog_apply.r
 \name{catalog_apply}
 \alias{catalog_apply}
+\alias{catalog_sapply}
 \title{LAScatalog processing engine}
 \usage{
 catalog_apply(ctg, FUN, ..., .options = NULL)
+
+catalog_sapply(ctg, FUN, ..., .options = NULL)
 }
 \arguments{
 \item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object.}
@@ -19,8 +22,9 @@ catalog_apply(ctg, FUN, ..., .options = NULL)
 This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
 It allows the application of a user-defined routine over an entire catalog. The LAScatalog
 processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
-This function is the core of the lidR package. It drives every single function that can process a
-\code{LAScatalog}. It is flexible and powerful but also complex.\cr\cr
+\code{catalog_apply} is the core of the lidR package. It drives every single function that can process a
+\code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_sapply} is the same
+with the option \code{automerge = TRUE} enforced to simplify the output.\cr\cr
 \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data 'on-the-fly'
 to avoid edge artifacts, but no mechanism to remove the buffer after applying user-defined functions,
 since this task is specific to each process. In other \code{lidR} functions this task is performed

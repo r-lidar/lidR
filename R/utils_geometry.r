@@ -160,8 +160,8 @@ convex_hull = function(x, y)
 polygon_area = function(x, y)
 {
   if (length(x) == 0 && length(y) == 0) return(0)
-  if (!is.numeric(x) || !is.numeric(y) ) stop("Arguments 'x' and 'y' must be real")
-  if (length(x) != length(y)) stop("Argument 'x' and 'y' must be of same size")
+  if (!is.numeric(x) || !is.numeric(y) ) stop("Arguments 'x' and 'y' must be real")  # nocov
+  if (length(x) != length(y)) stop("Argument 'x' and 'y' must be of same size") # nocov
 
 	area <- 0
 	j <- length(x)

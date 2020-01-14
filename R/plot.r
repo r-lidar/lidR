@@ -152,8 +152,8 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
   {
     if (!requireNamespace("mapview", quietly = TRUE))
     {
-      message("'mapview' is required to display the LAScatalog interactively.")
-      mapview <- FALSE
+      message("'mapview' is required to display the LAScatalog interactively.") # nocov
+      mapview <- FALSE # nocov
     }
   }
 
@@ -320,8 +320,9 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 
   if (legend)
   {
-    f <- .plot_scale_gradient(mincol, maxcol, fg, pal, bg)
-    rgl::bg3d(texture = f, col = "white")
+    # nocov because this fails on some flavor on CRAN
+    f <- .plot_scale_gradient(mincol, maxcol, fg, pal, bg) # nocov
+    rgl::bg3d(texture = f, col = "white") # nocov
   }
 
   .pan3d(2)
@@ -359,7 +360,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 }
 # nocov end
 
-
+# nocov start
 .plot_scale_gradient = function(min.col, max.col, text.col, scale.col, bg)
 {
   f <- tempfile(fileext = ".png")
@@ -378,6 +379,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   grDevices::dev.off()
   return(f)
 }
+# nocov end
 
 # From rgl.setMouseCallbacks man page
 # nocov start

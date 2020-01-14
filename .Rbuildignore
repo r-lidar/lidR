@@ -13,3 +13,4 @@
 ^others$
 ^revdep$
 ^man/figures$
+^codecov\.yml$

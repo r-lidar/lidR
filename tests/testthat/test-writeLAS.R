@@ -25,3 +25,12 @@ test_that("Test if I/O are equal", {
   expect_equal(i@header@PHB, o@header@PHB)
 })
 
+test_that("writeLAS does not write empty point cloud", {
+  o <- lasfilter(i, Z > 1000)
+  expect_error(writeLAS(o, ofile), "Cannot write a file with 0 point")
+})
+
+test_that("writeLAS fails nicely with no LAS", {
+  expect_error(writeLAS(1, ofile), "Argument is not a LAS object")
+})
+
