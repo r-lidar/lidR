@@ -1,3 +1,9 @@
+## lidR v2.3.0
+
+#### NEW FEATURES
+
+1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
+
 ## lidR v2.2.1
 
 ### CHANGES

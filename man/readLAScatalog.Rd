@@ -5,7 +5,15 @@
 \alias{catalog}
 \title{Create an object of class LAScatalog}
 \usage{
-readLAScatalog(folder, progress = FALSE, ...)
+readLAScatalog(
+  folder,
+  progress = TRUE,
+  select = "*",
+  filter = "",
+  chunk_size = 0,
+  chunk_buffer = 30,
+  ...
+)
 
 catalog(folder, ...)
 }
@@ -13,7 +21,8 @@ catalog(folder, ...)
 \item{folder}{string. The path of a folder containing a set of las/laz files. Can also be a vector of
 file paths.}
 
-\item{progress}{boolean. Display a progress bar.}
+\item{progress, select, filter, chunk_size, chunk_buffer}{Easily accessible processing options tuning.
+See \link{LAScatalog-class} and \link{catalog_options_tools}.}
 
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
 }
