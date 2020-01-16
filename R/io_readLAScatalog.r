@@ -11,7 +11,8 @@
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files. Can also be a vector of
 #' file paths.
-#' @param progress boolean. Display a progress bar.
+#' @param progress,select,filter,chunk_size,chunk_buffer Easily accessible processing options tuning.
+#' See \link{LAScatalog-class} and \link{catalog_options_tools}.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.
 #'
 #' @return A \code{LAScatalog} object
@@ -43,7 +44,7 @@
 #' help("LAScatalog-class", "lidR")
 #' help("catalog_options_tools", "lidR")
 #' }
-readLAScatalog <- function(folder, progress = FALSE, ...)
+readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   assert_is_character(folder)
 
@@ -63,11 +64,10 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
   phblab <- make.names(names(header@PHB))
   phblab[4] <- "GUID"
 
-  if (progress)
-  {
-    pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
-    i  <- 0
-  }
+  # Delayed progress bar
+  t0 <- Sys.time()
+  pb <- NULL
+  i  <- 0
 
   headers <- lapply(files, function(x)
   {
@@ -77,7 +77,6 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
     PHB           <- header@PHB
     names(PHB)    <- phblab
     PHB$EPSG      <- epsg
-
 
     # Compatibility with rlas 1.3.0
     if (!is.null( PHB[["Number.of.points.by.return"]]))
@@ -91,11 +90,14 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
       PHB[["Global.Encoding"]] <- NULL
     }
 
-    if (progress)
-    {
-      i <<- i + 1
+    if (progress && Sys.time() - t0 > getOption("lidR.progress.delay")) {
+      if (is.null(pb))
+        pb <<- utils::txtProgressBar(min = 0, max = length(files), initial = i, style = 3)
+
       utils::setTxtProgressBar(pb, i)
     }
+
+    i <<- i + 1
 
     return(PHB)
   })
@@ -125,6 +127,12 @@ readLAScatalog <- function(folder, progress = FALSE, ...)
   res@plotOrder <- Sr@plotOrder
   res@data <- headers
   res@polygons <- Sr@polygons
+
+  opt_filter(res) <- filter
+  opt_select(res) <- select
+  opt_chunk_size(res) <- chunk_size
+  opt_chunk_buffer(res) <- chunk_buffer
+  opt_progress(res) <- progress
 
   if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")

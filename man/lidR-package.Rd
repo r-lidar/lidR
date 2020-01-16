@@ -25,6 +25,9 @@ Should lengthy operations show a progress bar? Default: TRUE}
 \item{\code{lidR.progress.delay}}{The progress bar appears only for long operations. After how many seconds
 of computation does the progress bar appear? Default: 2}
 \item{\code{lidR.verbose}}{Make the package verbose. Default: FALSE}
+\item{\code{lidR.buildVRT}}{The functions \code{grid_*} can write the rasters sequentially on the
+disk and load back a virtual raster mosaic (VRT) instead of the list of written files. Should
+a VRT be built? Default: TRUE}
 }
 }
 
