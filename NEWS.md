@@ -1,27 +1,5 @@
 ## lidR v2.2.1
 
-### CHANGES
-
-The following change will create a deep backward incompatibility in future versions of `lidR`.
-
-The package `gdalUtils` has been, or will be, removed from CRAN. In order to maintain `lidR` on CRAN the support of virtual raster layer has to be removed and `gdalUtils` is no longer a `lidR` dependency. This concerns the functions `grid_metrics()`, `grid_canopy()`, `grid_density()` and `grid_terain()` when the outputs are writen on disk. It also affects the behavior of the `automerge` option in `catalog_apply()` that has been added in 2.2.0 and that is unlikely to be widely used yet.
-
-For users who already have an old valid installation of `gdalUtils` the backward compatibility is maintained with a message that asks to desactivate this feature in order to anticipate its full deletion. This message is going to be a warning then an error in next releases.
-
-
-```r
-ctg <- readLAScatalog("folder/")
-opt_output_files(ctg) <- "/path/to/output_{ID}"
-m <- grid_metrics(ctg, ~mean(Z), 10)
-#> Processing [==================] 100% (6/6) eta:  0s
-#> The package 'gdalUtils' is needed to build a virtual raster but this package is no longer avaible on CRAN.
-#> The functionnality is still available on your computer because you have 'gdalUtils' installed but this might change with future R updates.
-#> In order to anticipate the lost of this feature please turn off the virtual raster mosaic option with 'options(lidR.buildVRT = FALSE)'.
-#> This message will turn into a warning then into an error in next releases.
-```
-
-For users with a fresh installation without `gdalUtils` the feature is lost. The abovementionned functions will return a `list` or a `vector` of written files. It was already the case by the way for users without `gdalUtils`.
-
 #### NEW FEATURES
 
 1. LAScatalog processing engine:
@@ -32,11 +10,15 @@ For users with a fresh installation without `gdalUtils` the feature is lost. The
 
 1. In the catalog processing engine, the graphical progression map is now able to plot the actual shape of the chunks. In the case of `lasclip` it means that discs and polygons are displayed instead of bounding boxes.
 
-### BUG FIXES
+2. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`.
 
-1. Fix access to not mapped memory in one unit test (consequentless for users)
+3. `grid_` functions now try to preserve the layer names when returning a VRT built from files written on disk. This works only with file formats that support to store layer name (e.g. not `GTiff`).
 
-2. Multi-layers VRTs are returned as `RasterBrick` instead of `RasterStack` for consistency with in memory raster that are returns as `RasterBrick`
+4. There are now more than 900 unit tests for a coverage of 91%.
+
+### FIXES
+
+1. Fix access to not mapped memory in one unit test (consequentless for users).
 
 ## lidR v2.2.0 (Release date: 2020-01-06)
 
