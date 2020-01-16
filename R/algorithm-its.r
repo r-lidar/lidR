@@ -345,8 +345,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
 #' this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
 #' Internally, the function EBImage::watershed is called.
-#' \item \strong{Marker-controlled watershed} is based on the \code{imager} package. Internally, the
-#' function \link[imager:watershed]{imager::watershed} is called using the tree tops as a priority map.
+#' \item \strong{Marker-controlled watershed} is based on the \code{imager} package and has been removed
+#' because \code{imager} is an orphaned package.
 #' }
 #'
 #' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
@@ -386,12 +386,9 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.3))
 #' ker <- matrix(1,3,3)
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
+#' las <- lastrees(las, watershed(chm))
 #'
-#' ttops <- tree_detection(chm, lmf(4, 2))
-#' las   <- lastrees(las, mcwatershed(chm, ttops))
-#'
-#' x = plot(las, color = "treeID", colorPalette = col)
-#' add_treetops3d(x, ttops)
+#' plot(las, color = "treeID", colorPalette = col)
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
   chm     <- lazyeval::uq(chm)
@@ -406,6 +403,8 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #' @export
 mcwatershed = function(chm, treetops, th_tree = 2, ID = "treeID")
 {
+  stop("The mcwatershed algorithm has been removed because it relied on the 'imager' package that is now an orphaned package on CRAN.", call. = FALSE)
+
   chm      <- lazyeval::uq(chm)
   treetops <- lazyeval::uq(treetops)
   th_tree  <- lazyeval::uq(th_tree)
@@ -429,13 +428,13 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     if (is.null(treetops))
     {
       if (!requireNamespace("EBImage", quietly = TRUE))
-        stop("'EBImage' package is needed for this function to work. Please read documentation.")
+        stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = FALSE)
     }
-    else
-    {
-      if (!requireNamespace("imager", quietly = TRUE))
-        stop("'imager' package is needed for this function to work. Please read documentation.")
-    }
+    #else
+    #{
+    #  if (!requireNamespace("imager", quietly = TRUE))
+    #    stop("'imager' package is needed for this function to work. Please read documentation.", call. = FALSE)
+    #}
 
     # Convert the CHM to a matrix
     Canopy <- raster::as.matrix(chm)
@@ -450,21 +449,22 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     # Marker-controlled watershed
     else
     {
-      X = match_chm_and_seeds(chm, treetops, ID)
-      cells = X$cells
-      ids = X$ids
-
-      seeds = chm
-      seeds[] = 0L
-      seeds[cells] = ids
-      treetops = raster::as.matrix(seeds)
-
-      Canopy <- Canopy/max(Canopy)
-      Canopy <- imager::as.cimg(Canopy)
-      treetops  <- imager::as.cimg(treetops)
-      Crowns <- imager::watershed(treetops, Canopy)
-      Crowns <- Crowns[,,1,1]
-      storage.mode(Crowns) = "integer"
+      stop("Internal error, you should not have reach this line of code", call. = FALSE)
+      # X = match_chm_and_seeds(chm, treetops, ID)
+      # cells = X$cells
+      # ids = X$ids
+      #
+      # seeds = chm
+      # seeds[] = 0L
+      # seeds[cells] = ids
+      # treetops = raster::as.matrix(seeds)
+      #
+      # Canopy <- Canopy/max(Canopy)
+      # Canopy <- imager::as.cimg(Canopy)
+      # treetops  <- imager::as.cimg(treetops)
+      # Crowns <- imager::watershed(treetops, Canopy)
+      # Crowns <- Crowns[,,1,1]
+      # storage.mode(Crowns) = "integer"
     }
 
     Crowns[mask] <- NA_integer_

@@ -45,13 +45,13 @@ test_that("Silvas's methods works", {
   expect_true(is.integer(las@data$treeID))
 })
 
-test_that("MC watershed methods works", {
-  ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
-  las <- lastrees(las, mcwatershed(chm, ttops))
-
-  expect_true("treeID" %in% names(las@data))
-  expect_true(is.integer(las@data$treeID))
-})
+# test_that("MC watershed methods works", {
+#   ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
+#   las <- lastrees(las, mcwatershed(chm, ttops))
+#
+#   expect_true("treeID" %in% names(las@data))
+#   expect_true(is.integer(las@data$treeID))
+# })
 
 test_that("lastrees can store in a user defined column", {
   las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")

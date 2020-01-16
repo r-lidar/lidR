@@ -18,10 +18,7 @@ addons:
       - libglu-dev
       - libfreetype6-dev
       - libv8-3.14-dev
-      - libcairo2-dev
-      - libtiff5-dev
       - libxt-dev
-      - libfftw3-dev
       - gdal-bin
 
 r_packages:
