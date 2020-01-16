@@ -1,5 +1,9 @@
 ## lidR v2.2.1
 
+#### BREAKING CHANGE
+
+`imager` was used to drive the `mcwatershed()` algorithm. `imager` is an orphaned package that generated a warning on CRAN. Consequently `mcwatershed()` has been removed. In attempt to provide an informative message to users, the function still exists but generates an error. Anyway this method was weak and buggy and it was a good reason to remove it...
+
 #### NEW FEATURES
 
 1. LAScatalog processing engine:

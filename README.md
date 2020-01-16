@@ -117,10 +117,10 @@ To install the package from github make sure you have a working development envi
 # Ubuntu
 sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 sudo apt-get update
-sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx11-dev libgl-dev libglu-dev libfreetype6-dev libv8-3.14-dev libcairo2-dev libtiff5-dev libxt-dev
+sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx11-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libv8-3.14-dev libxt-dev
 
 # Fedora
-sudo dnf install gdal-devel geos-devel udunits2-devel proj-devel  mesa-libGL-devel mesa-libGLU-devel freetype-devel libjpeg-turbo-devel v8-devel cairo-devel libtiff-devel
+sudo dnf install gdal-devel geos-devel udunits2-devel proj-devel mesa-libGL-devel mesa-libGLU-devel freetype-devel libjpeg-turbo-devel v8-devel
 ```
 
 # Changelog

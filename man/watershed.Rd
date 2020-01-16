@@ -33,8 +33,8 @@ segmentation based on a watershed or a marker-controlled watershed.
 \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
 this package to run this method (see its \href{https://github.com/aoles/EBImage}{github page}).
 Internally, the function EBImage::watershed is called.
-\item \strong{Marker-controlled watershed} is based on the \code{imager} package. Internally, the
-function \link[imager:watershed]{imager::watershed} is called using the tree tops as a priority map.
+\item \strong{Marker-controlled watershed} is based on the \code{imager} package and has been removed
+because \code{imager} is an orphaned package.
 }
 }
 \details{
@@ -56,12 +56,9 @@ col <- pastel.colors(250)
 chm <- grid_canopy(las, res = 0.5, p2r(0.3))
 ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
+las <- lastrees(las, watershed(chm))
 
-ttops <- tree_detection(chm, lmf(4, 2))
-las   <- lastrees(las, mcwatershed(chm, ttops))
-
-x = plot(las, color = "treeID", colorPalette = col)
-add_treetops3d(x, ttops)
+plot(las, color = "treeID", colorPalette = col)
 }
 \seealso{
 Other individual tree segmentation algorithms: 
