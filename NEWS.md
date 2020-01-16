@@ -4,6 +4,8 @@
 
 1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
 
+2. New function `lasclipTransect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
+
 ## lidR v2.2.1
 
 #### BREAKING CHANGE

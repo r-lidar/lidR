@@ -109,14 +109,25 @@
 #' subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 #'
 #' # Extract all the polygons from a shapefile
-#' shapefile_dir <- system.file("extdata", package = "lidR")
-#' lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
-#' subset3 = lasclip(ctg, lakes)
+#' f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
+#' lakes <- shapefile(f)
+#' subset3 <- lasclip(ctg, lakes)
 #'
 #' # Extract the polygons, write them in files named after the lake names,
 #' # do not load anything in R
 #' opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 #' new_ctg = lasclip(ctg, lakes)
+#' #plot(mew_ctg)
+#'
+#' # Extract a transect
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' ctg <- readLAScatalog(LASfile)
+#' p1 <- c(273357, y = 5274357)
+#' p2 <- c(273642, y = 5274642)
+#' tr1 <- lasclipTransect(ctg, p1, p2, width = 3)
+#' tr2 <- lasclipTransect(ctg, p1, p2, width = 3, xz = TRUE)
+#' plot(tr1, axis = TRUE, clear_artifacts = FALSE)
+#' plot(tr2, axis = TRUE, clear_artifacts = FALSE)
 #'
 #' \dontrun{
 #' plot(subset1)
@@ -321,6 +332,52 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
     return(output[[1]])
   else
     return(output)
+}
+
+# ======= TRANSECT ========
+
+#' @export
+#' @rdname lasclip
+#' @param p1,p2 numeric vectors of length 2 that give the coordinates of two points that define a
+#' transect
+#' @param width numeric. width of the transect.
+#' @param xz bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates
+lasclipTransect = function(las, p1, p2, width, xz = FALSE, ...)
+{
+  assert_is_a_bool(xz)
+  assert_is_numeric(p1)
+  assert_is_numeric(p2)
+  assert_are_same_length(p1, p2)
+  assert_is_of_length(p1, 2L)
+
+  if (is(las, "LAScatalog")) {
+    if (xz && opt_output_files(las) != "")
+      stop("Reorientation is not available yet with a LAScatalog", call. = FALSE)
+  }
+
+  dx <- p1[1] - p2[1]
+  dy <- p1[2] - p2[2]
+  a  <- atan(dy/dx)
+  rot <- matrix(c(cos(a), sin(a), -sin(a), cos(a)), ncol = 2)
+  coords <- rbind(p1, p2)
+  line <- sp::SpatialLines(list(sp::Lines(sp::Line(coords), ID = "1")))
+  raster::projection(line) <- raster::projection(las)
+  poly <- rgeos::gBuffer(line, width = width/2, capStyle = "SQUARE")
+  las <- lasclip(las, poly)
+
+  if (!xz) { return(las) }
+
+  zero <- sp::bbox(las)[,1]
+  coords <- as.matrix(coordinates(las))
+  coords[,1] <- coords[,1] - zero[1]
+  coords[,2] <- coords[,2] - zero[2]
+  coords <- coords %*% rot
+  X <- round_any(coords[,1], las@header@PHB[["X scale factor"]])
+  Y <- round_any(coords[,2], las@header@PHB[["Y scale factor"]])
+  las@data[["X"]] <- X
+  las@data[["Y"]] <- Y
+  las <- lasupdateheader(las)
+  return(las)
 }
 
 # ======== WKT ========
