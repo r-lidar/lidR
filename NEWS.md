@@ -1,3 +1,11 @@
+## lidR v2.2.2
+
+### FIXES
+
+1. In `lasclip()` the template `XCENTER` actually gave the Y coordinate. It is not the correct X coordinate of the center of the clipped region
+
+2. In `lasclip()` the template `YCENTER` was not actually defined. It is not the correct Y coordinate of the center of the clipped region
+
 ## lidR v2.2.1
 
 #### BREAKING CHANGE

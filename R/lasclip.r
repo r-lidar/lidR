@@ -444,7 +444,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 
       X$ID      <- i
       X$XCENTER <- format(clusters[[i]]@center$x, scientific = F)
-      X$XCENTER <- format(clusters[[i]]@center$y, scientific = F)
+      X$YCENTER <- format(clusters[[i]]@center$y, scientific = F)
       X$XLEFT   <- format(clusters[[i]]@bbox[1], scientific = F)
       X$XRIGHT  <- format(clusters[[i]]@bbox[3], scientific = F)
       X$YBOTTOM <- format(clusters[[i]]@bbox[2], scientific = F)
