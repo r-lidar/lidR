@@ -133,6 +133,30 @@ test_that("lasclip clips point with SpatialPoints on LAS and LAScatalog", {
   expect_equal(discs1, discs2)
 })
 
+test_that("lasclip clips a transect on LAS and LAScatalog", {
+
+  p1 = bbox(las)[,1]
+  p2 = bbox(las)[,2]
+  tr1 = lasclipTransect(las, p1, p2, 2, xz = FALSE)
+  tr2 = lasclipTransect(ctg, p1, p2, 2, xz = FALSE)
+
+  expect_equal(tr1, tr2)
+})
+
+test_that("lasclip clips a reorients the point cloud on LAS and LAScatalog", {
+
+  p1 = bbox(las)[,1]
+  p2 = bbox(las)[,2]
+  tr1 = lasclipTransect(las, p1, p2, 2, xz = TRUE)
+  tr2 = lasclipTransect(ctg, p1, p2, 2, xz = TRUE)
+
+  expect_equal(tr1, tr2)
+  expect_equal(mean(tr1$Y), 0, tol = 0.5)
+
+  opt_output_files(ctg) <- tempfile()
+  expect_error(lasclipTransect(ctg, p1, p2, 2, xz = TRUE), " not available yet")
+})
+
 test_that("lasclip throw error with points and no radius", {
 
   xc <- c(684800, 684850)

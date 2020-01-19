@@ -219,11 +219,15 @@ void LAS::z_open(double resolution)
 
 void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
 {
+  // Coordinates of the sensors
   NumericVector x = flightlines["X"];
   NumericVector y = flightlines["Y"];
   NumericVector z = flightlines["Z"];
   NumericVector t = flightlines["gpstime"];
 
+  // Compute the median sensor elevation then average range for this sensor
+  // elevation. This gives a rough idea of the expected range and allows for
+  // detecting failure and bad computations
   double median_z_sensor = Rcpp::median(z);
   double R_control = mean(median_z_sensor - Z);
 
@@ -236,41 +240,48 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
 
   Progress pbar(npoints, "Range computation");
 
+  // Loop on each point
   for (unsigned int k = 0 ; k < npoints ; k++)
   {
     pbar.increment();
     pbar.check_abort();
 
+    // The sensor positions were already sorted a R level
+    // For each point find the first element that is not less than the time t of the points
+    // This give the closest position of the sensor after (t1) the aqcuisition of the points (t)
     it = std::lower_bound(t.begin(), t.end(), T[k]);
 
-    // If the gpstime is the last one: no interpolation with the next one (edge of data)
+    // We now need the sensor position before (t0) the aqcuisition.
+
+    // If the sensor position is the first one: no sensor position exists before this one
+    // thus no interpolation possible. We use the next one.
     if (it == t.begin())
     {
-      j  = 0;
-      dx = X[k] - x[j];
-      dy = Y[k] - y[j];
-      dz = Z[k] - z[j];
+      j = 1;
     }
-    // If t2-t1 is too big it is two differents lines: no interpolation with the next one (edge of data)
+    // If t1-t0 is too big it is two differents flightlines. We are actually in the same case than
+    // above but in a new flightline. No interpolation with the previous one (edge of data).
+    // We use the next one
     else if (*it - *(it-1) > 30)
     {
-      j  = it - t.begin() - 1;
-      dx = X[k] - x[j];
-      dy = Y[k] - y[j];
-      dz = Z[k] - z[j];
+      j = it - t.begin();
     }
-    // General case with t2 > t > t1
+    // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
+    // and it is not the first one. So we necessarily have a previous one. We can make the
+    // interpolation
     else
     {
-      j  = it - t.begin() - 1;
-      r  = 1 - (t[j+1]-T[k])/(t[j+1]-t[j]);
-
-      dx = X[k] - (x[j] + (x[j+1] - x[j])*r);
-      dy = Y[k] - (y[j] + (y[j+1] - y[j])*r);
-      dz = Z[k] - (z[j] + (z[j+1] - z[j])*r);
+      j = it - t.begin() - 1;
     }
 
-    R = std::sqrt(dx*dx + dy*dy + dz*dz);
+    if (j >= x.size()) throw Rcpp::exception("Internal error: access to coordinates beyond the limits of the array. Please report this bug.", false);
+    if (j < 0)         throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
+
+    r  = 1 - (t[j]-T[k])/(t[j]-t[j-1]);
+    dx = X[k] - (x[j-1] + (x[j] - x[j-1])*r);
+    dy = Y[k] - (y[j-1] + (y[j] - y[j-1])*r);
+    dz = Z[k] - (z[j-1] + (z[j] - z[j-1])*r);
+    R  = std::sqrt(dx*dx + dy*dy + dz*dz);
 
     if (R > 3 * R_control)
     {

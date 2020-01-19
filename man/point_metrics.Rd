@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k = 8L, xyz = TRUE, filter = NULL)
+point_metrics(las, func, k, r, xyz = TRUE, filter = NULL)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -12,6 +12,8 @@ point_metrics(las, func, k = 8L, xyz = TRUE, filter = NULL)
 \item{func}{formula. An expression to be applied to each cell (see section "Parameter func").}
 
 \item{k}{integer. k-nearest neighbours}
+
+\item{r}{numeric. radius of the neighborhood sphere (not supported yet).}
 
 \item{xyz}{logical. Coordinates of each point are returned in addition to each metric. If
 \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
@@ -23,7 +25,7 @@ in an optimized way. See also examples.}
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This
 function is very similar to \link{grid_metrics} but computes metrics \bold{for each point} based on
-its k-nearest neighbours.
+its k-nearest neighbours or its sphere neighbourhood.
 }
 \details{
 It is important to bear in mind that this function is very fast for the feature it provides i.e.

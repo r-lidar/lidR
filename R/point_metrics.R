@@ -2,7 +2,7 @@
 #'
 #' Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This
 #' function is very similar to \link{grid_metrics} but computes metrics \bold{for each point} based on
-#' its k-nearest neighbours.
+#' its k-nearest neighbours or its sphere neighbourhood.
 #'
 #' It is important to bear in mind that this function is very fast for the feature it provides i.e.
 #' mapping a user-defined function at the point level using optimized memory management. However, it
@@ -23,6 +23,7 @@
 #' @param las An object of class LAS
 #' @param func formula. An expression to be applied to each cell (see section "Parameter func").
 #' @param k integer. k-nearest neighbours
+#' @param r numeric. radius of the neighborhood sphere (not supported yet).
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
 #' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
 #' memory. If \code{filter != NULL} it obviously takes memory.
@@ -113,14 +114,19 @@
 #' }
 #' @export
 #' @family metrics
-point_metrics <- function(las, func, k = 8L, xyz = TRUE, filter = NULL) {
+point_metrics <- function(las, func, k, r,  xyz = TRUE, filter = NULL) {
   UseMethod("point_metrics", las)
 }
 
 #' @export
-point_metrics.LAS <- function(las, func, k = 8L, xyz = TRUE, filter = NULL) {
+point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL) {
   # Defensive programming
-  assert_is_a_number(k)
+  if (!missing(k)) assert_is_a_number(k)
+  if (!missing(r)) assert_is_a_number(r)
+  if (!missing(k) && !missing(r))  stop("'k' and 'r' cannot be defined in the same time. It should be k or r.", call. = FALSE)
+  if (!missing(r)) stop("Radius search is not supported yet.", call. = FALSE)
+  if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
+
   assert_is_a_bool(xyz)
   k <- as.integer(k)
   stopifnot(k > 1)

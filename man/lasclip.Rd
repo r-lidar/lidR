@@ -5,6 +5,7 @@
 \alias{lasclipRectangle}
 \alias{lasclipPolygon}
 \alias{lasclipCircle}
+\alias{lasclipTransect}
 \title{Clip LiDAR points}
 \usage{
 lasclip(las, geometry, ...)
@@ -14,6 +15,8 @@ lasclipRectangle(las, xleft, ybottom, xright, ytop, ...)
 lasclipPolygon(las, xpoly, ypoly, ...)
 
 lasclipCircle(las, xcenter, ycenter, radius, ...)
+
+lasclipTransect(las, p1, p2, width, xz = FALSE, ...)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -40,6 +43,13 @@ other functions}
 \item{ycenter}{numeric. y coordinates of discs centers.}
 
 \item{radius}{numeric. disc radius or radii.}
+
+\item{p1, p2}{numeric vectors of length 2 that give the coordinates of two points that define a
+transect}
+
+\item{width}{numeric. width of the transect.}
+
+\item{xz}{bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates}
 }
 \value{
 If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
@@ -126,14 +136,25 @@ ctg = readLAScatalog(LASfile)
 subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
 
 # Extract all the polygons from a shapefile
-shapefile_dir <- system.file("extdata", package = "lidR")
-lakes = shapefile(paste0(shapefile_dir, "/lake_polygons_UTM17.shp"))
-subset3 = lasclip(ctg, lakes)
+f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
+lakes <- shapefile(f)
+subset3 <- lasclip(ctg, lakes)
 
 # Extract the polygons, write them in files named after the lake names,
 # do not load anything in R
 opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = lasclip(ctg, lakes)
+#plot(mew_ctg)
+
+# Extract a transect
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+ctg <- readLAScatalog(LASfile)
+p1 <- c(273357, y = 5274357)
+p2 <- c(273642, y = 5274642)
+tr1 <- lasclipTransect(ctg, p1, p2, width = 3)
+tr2 <- lasclipTransect(ctg, p1, p2, width = 3, xz = TRUE)
+plot(tr1, axis = TRUE, clear_artifacts = FALSE)
+plot(tr2, axis = TRUE, clear_artifacts = FALSE)
 
 \dontrun{
 plot(subset1)
