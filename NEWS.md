@@ -2,7 +2,9 @@
 
 #### BREAKING CHANGE
 
-`imager` was used to drive the `mcwatershed()` algorithm. `imager` is an orphaned package that generated a warning on CRAN. Consequently `mcwatershed()` has been removed. In attempt to provide an informative message to users, the function still exists but generates an error. Anyway this method was weak and buggy and it was a good reason to remove it...
+1. `imager` was used to drive the `mcwatershed()` algorithm. `imager` is an orphaned package that generated a warning on CRAN. Consequently `mcwatershed()` has been removed. In attempt to provide an informative message to users, the function still exists but generates an error. Anyway this method was weak and buggy and it was a good reason to remove it...
+
+2. In version 2.2.0 we missed to put the parameter `r` in `point_metrics()`. It is not yet supported but will be.
 
 #### NEW FEATURES
 
