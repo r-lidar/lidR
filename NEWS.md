@@ -1,11 +1,3 @@
-## lidR v2.2.2
-
-### FIXES
-
-1. In `lasclip()` the template `XCENTER` actually gave the Y coordinate. It is not the correct X coordinate of the center of the clipped region
-
-2. In `lasclip()` the template `YCENTER` was not actually defined. It is not the correct Y coordinate of the center of the clipped region
-
 ## lidR v2.2.1
 
 #### BREAKING CHANGE
@@ -31,6 +23,12 @@
 ### FIXES
 
 1. Fix access to not mapped memory in one unit test (consequentless for users).
+
+2. In `lasclip()` the template `XCENTER` actually gave the Y coordinate. It is now the correct X coordinate of the center of the clipped region.
+
+3. In `lasclip()` the template `YCENTER` was not actually defined. It is now the correct Y coordinate of the center of the clipped region.
+
+4. Fix heap-buffer-overflow in `lasrangecorrection()`. The range was likely to be badly computed for points that have a gpstime later than the last sensor position
 
 ## lidR v2.2.0 (Release date: 2020-01-06)
 
