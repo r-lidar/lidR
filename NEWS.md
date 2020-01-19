@@ -10,7 +10,9 @@
 
 #### BREAKING CHANGE
 
-`imager` was used to drive the `mcwatershed()` algorithm. `imager` is an orphaned package that generated a warning on CRAN. Consequently `mcwatershed()` has been removed. In attempt to provide an informative message to users, the function still exists but generates an error. Anyway this method was weak and buggy and it was a good reason to remove it...
+1. `imager` was used to drive the `mcwatershed()` algorithm. `imager` is an orphaned package that generated a warning on CRAN. Consequently `mcwatershed()` has been removed. In attempt to provide an informative message to users, the function still exists but generates an error. Anyway this method was weak and buggy and it was a good reason to remove it...
+
+2. In version 2.2.0 we missed to put the parameter `r` in `point_metrics()`. It is not yet supported but will be.
 
 #### NEW FEATURES
 
@@ -31,6 +33,12 @@
 ### FIXES
 
 1. Fix access to not mapped memory in one unit test (consequentless for users).
+
+2. In `lasclip()` the template `XCENTER` actually gave the Y coordinate. It is now the correct X coordinate of the center of the clipped region.
+
+3. In `lasclip()` the template `YCENTER` was not actually defined. It is now the correct Y coordinate of the center of the clipped region.
+
+4. Fix heap-buffer-overflow in `lasrangecorrection()`. The range was likely to be badly computed for points that have a gpstime later than the last sensor position
 
 ## lidR v2.2.0 (Release date: 2020-01-06)
 

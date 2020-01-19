@@ -81,6 +81,13 @@ test_that("points_metrics fails with non atomic output", {
   expect_error(point_metrics(las, ~c(1,2), k = 3L))
 })
 
+test_that("points_metrics failst", {
+
+  expect_error(point_metrics(las, ~mean(Z), r = 3), "Radius search is not supported yet")
+  expect_error(point_metrics(las, ~mean(Z), k = 3, r = 3), "cannot be defined in the same time")
+})
+
+
 test_that("points_metrics return references on coordinates", {
 
   m = point_metrics(las, ~list(mean(Z), max(Z), Z[1]), k = 3L)
@@ -89,5 +96,4 @@ test_that("points_metrics return references on coordinates", {
   expect_reference(m$Y, las$Y)
   expect_reference(m$Z, las$Z)
 })
-
 
