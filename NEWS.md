@@ -8,6 +8,13 @@
 
 3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
 
+## lidR v2.2.2
+
+### FIXES
+
+1. We introduced a bug in v2.2.0 in the catalog processing engine. Empty chunks triggered and error  `i[1] is 1 which is out of range [1,nrow=0]` internally. It now works again.
+
+
 ## lidR v2.2.1
 
 #### BREAKING CHANGE
