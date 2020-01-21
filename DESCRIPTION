@@ -94,6 +94,7 @@ Collate:
     'hexbin_metrics.r'
     'io_readLAS.r'
     'io_readLAScatalog.r'
+    'io_readMSLAS.r'
     'io_writeANY.r'
     'io_writeLAS.r'
     'lascheck.r'
