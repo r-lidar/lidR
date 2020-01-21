@@ -259,23 +259,29 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
     {
       j = 1;
     }
+    // If the sensor position not found: no sensor position exists after this one
+    // thus no interpolation possible. We use the last one.
+    else if (it == t.end())
+    {
+      j = x.size() - 1;
+    }
     // If t1-t0 is too big it is two differents flightlines. We are actually in the same case than
     // above but in a new flightline. No interpolation with the previous one (edge of data).
     // We use the next one
     else if (*it - *(it-1) > 30)
     {
-      j = it - t.begin();
+      j = it - t.begin() + 1;
     }
     // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
     // and it is not the first one. So we necessarily have a previous one. We can make the
     // interpolation
     else
     {
-      j = it - t.begin() - 1;
+      j = it - t.begin();
     }
 
     if (j >= x.size()) throw Rcpp::exception("Internal error: access to coordinates beyond the limits of the array. Please report this bug.", false);
-    if (j < 0)         throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
+    if (j <= 0)        throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
 
     r  = 1 - (t[j]-T[k])/(t[j]-t[j-1]);
     dx = X[k] - (x[j-1] + (x[j] - x[j-1])*r);
@@ -287,7 +293,7 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
     {
       REprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
       REprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
-      REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j], y[j], z[j], t[j], x[j+1], y[j+1], z[j+1], t[j+1]);
+      REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
       REprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
       REprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
       throw Rcpp::exception("Unrealistic range: see message above", false);
