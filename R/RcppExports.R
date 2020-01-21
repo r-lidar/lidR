@@ -57,8 +57,8 @@ C_rasterize <- function(las, layout, subcircle = 0, method = 1L) {
     .Call(`_lidR_C_rasterize`, las, layout, subcircle, method)
 }
 
-C_point_metrics <- function(las, k, sub, call, env, filter) {
-    .Call(`_lidR_C_point_metrics`, las, k, sub, call, env, filter)
+C_point_metrics <- function(las, k, r, sub, call, env, filter) {
+    .Call(`_lidR_C_point_metrics`, las, k, r, sub, call, env, filter)
 }
 
 C_lasrangecorrection <- function(las, flightlines, Rs, f) {

@@ -6,6 +6,8 @@
 
 2. New function `lasclipTransect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
 
+3. `point_metrics()` supports a spherical neighborhood search.
+
 ## lidR v2.2.1
 
 #### BREAKING CHANGE

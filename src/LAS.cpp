@@ -1039,61 +1039,145 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
   return raster;
 }
 
-List LAS::knn_metrics(unsigned int k, DataFrame data, DataFrame sub, SEXP call, SEXP env)
+List LAS::point_metrics(unsigned int k, double r, DataFrame data, DataFrame sub, SEXP call, SEXP env)
 {
+  // @k is the k of knn
+  // @r is the radius
+  // @data contains all the attributes of the LAS object so we are capable
+  //       of copying the value in temporary memory
+  // @sub contains a subset of data. each column is a reference to objects in env. When we modify
+  //      sub we also modify env.
+  // @call is the user-defined expression to apply on each neighborhood
+  // @env is the environnement where Rf_eval eval call
+
+  // Are we searching the k nearest neiborhood or a sphere neighborhood 1. knn 2. sphere
+  bool knn = true;
+  if (k == 0 && r > 0)
+    knn = false;
+  else if (k > 0 && r == 0)
+    knn = true;
+  else
+    Rcpp::stop("Internal error: invalid argument k or r");
+
+  // Number of points actally processed considering the filter.
+  // The output is allocated using this number
   int nprocessed = std::count(filter.begin(), filter.end(), true);
-  int j = 0;
   List output(nprocessed);
+
+  // Current index in the output
+  int j = 0;
+
+  // Construction of a spatial index to make the queries
   SpatialIndex tree(X,Y,Z,filter);
   Progress pb(npoints, "Metrics computation: ");
+
+  // Error handling variables
   bool abort = false;
   int pOutError = 0;
 
-  for(unsigned int i = 0 ; i < npoints ; ++i) {
+  // This is the size of memory used to store the neighborhood
+  int si = LENGTH(*sub.begin()); // initially allocated
+  int sc = si;                   // current
+  int sn = si;                   // new
+
+  if (knn && si != k)
+    Rcpp::stop("Internal error: k elements should have been allocated.");
+
+  //Rprintf("Memory allocated to store the neighborhood: %d\n", si);
+
+  // Loop through each points
+  for(unsigned int i = 0 ; i < npoints ; ++i)
+  {
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
     if (!filter[i]) continue;
 
-
-    PointXYZ p(X[i], Y[i], Z[i]);
     std::vector<PointXYZ> pts;
-    tree.knn(p, k, pts);
+
+    if (knn)
+    {
+      // Query the knn neighborhood
+      PointXYZ p(X[i], Y[i], Z[i]);
+      tree.knn(p, k, pts);
+    }
+    else
+    {
+      // Query the sphere neighborhood
+      Sphere sp(X[i], Y[i], Z[i], r);
+      tree.lookup(sp, pts);
+
+      // This is the new size of the memory used to store the neighborhood
+      sn = pts.size();
+
+      // If we have found more points in the neighborhood than we have memory allocated: fail temporarily
+      if (sn >= si)
+      {
+        REprintf("Memory allocated was %d but memory required is %d. Try to force memory allocation with point_metrics(..., alloc = %d)\n", si, sn, sn);
+        throw Rcpp::exception("Internal error: point_metrics require to increase initial memory allocated but this case is not yet supported", false);
+      }
+
+      // If we have found less points in the neighborhood than we have memory allocated: resize memory
+      if (sn <= si) {
+        sc = sn;
+        for (Rcpp::DataFrame::iterator it1 = sub.begin() ; it1 != sub.end() ; ++it1) {
+          SETLENGTH(*it1, sc);
+        }
+      }
+    }
+
+
+    // At this stage the environnment env should contains vectors named like into the LAS
+    // object and these vector are longer or equal to the number of points of the neihborhood.
+    // But at the R level they are of the good lenght we used SETLENGTH
 
     Rcpp::DataFrame::iterator it2 = sub.begin();
     for (Rcpp::DataFrame::iterator it1 = data.begin() ; it1 != data.end() ; ++it1) {
       switch( TYPEOF(*it1) ) {
-        case REALSXP: {
-          Rcpp::NumericVector tmp1 = Rcpp::as<Rcpp::NumericVector>(*it1);
-          Rcpp::NumericVector tmp2 = Rcpp::as<Rcpp::NumericVector>(*it2);
-          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
-          break;
-        }
-        case INTSXP: {
-          Rcpp::IntegerVector tmp1 = Rcpp::as<Rcpp::IntegerVector>(*it1);
-          Rcpp::IntegerVector tmp2 = Rcpp::as<Rcpp::IntegerVector>(*it2);
-          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
-          break;
-        }
-        case LGLSXP: {
-          Rcpp::LogicalVector tmp1 = Rcpp::as<Rcpp::LogicalVector>(*it1);
-          Rcpp::LogicalVector tmp2 = Rcpp::as<Rcpp::LogicalVector>(*it2);
-          for(unsigned int i = 0 ; i < k ; ++i) tmp2[i] = tmp1[pts[i].id];
-          break;
-        }
-        default: {
-          Rcpp::stop("Incompatible SEXP encountered; only accepts DataFrame with REALSXPs, INTSXPs and LGLSXPs");
-        }
+      case REALSXP: {
+        Rcpp::NumericVector tmp1 = Rcpp::as<Rcpp::NumericVector>(*it1);
+        Rcpp::NumericVector tmp2 = Rcpp::as<Rcpp::NumericVector>(*it2);
+        for(unsigned int i = 0 ; i < sc ; ++i) tmp2[i] = tmp1[pts[i].id];
+        break;
+      }
+      case INTSXP: {
+        Rcpp::IntegerVector tmp1 = Rcpp::as<Rcpp::IntegerVector>(*it1);
+        Rcpp::IntegerVector tmp2 = Rcpp::as<Rcpp::IntegerVector>(*it2);
+        for(unsigned int i = 0 ; i < sc ; ++i) tmp2[i] = tmp1[pts[i].id];
+        break;
+      }
+      case LGLSXP: {
+        Rcpp::LogicalVector tmp1 = Rcpp::as<Rcpp::LogicalVector>(*it1);
+        Rcpp::LogicalVector tmp2 = Rcpp::as<Rcpp::LogicalVector>(*it2);
+        for(unsigned int i = 0 ; i < sc ; ++i) tmp2[i] = tmp1[pts[i].id];
+        break;
+      }
+      default: {
+        Rcpp::stop("Incompatible SEXP encountered; only accepts DataFrame with REALSXPs, INTSXPs and LGLSXPs");
+      }
       }
       ++it2;
     }
 
     output[j] = R_tryEvalSilent(call, env, &pOutError);
 
-    if (pOutError == 1)
+    if (pOutError == 1) {
+      // Restore the TRUELENGTH ortherwise memory leak
+      if (!knn) {
+        for (Rcpp::DataFrame::iterator it1 = sub.begin() ; it1 != sub.end() ; ++it1)
+          SETLENGTH(*it1, si);
+      }
+
       throw Rcpp::exception(R_curErrorBuf(), false);
+    }
 
     j++;
+  }
+
+  // Restore the TRUELENGTH ortherwise memory leak
+  if (!knn) {
+    for (Rcpp::DataFrame::iterator it1 = sub.begin() ; it1 != sub.end() ; ++it1)
+      SETLENGTH(*it1, si);
   }
 
   return output;

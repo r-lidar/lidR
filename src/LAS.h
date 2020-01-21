@@ -41,7 +41,7 @@ class LAS
 
     IntegerVector segment_snags(NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
     IntegerVector segment_trees(double dt1, double dt2, double Zu, double R, double th_tree, double radius);
-    List knn_metrics(unsigned int k, DataFrame, DataFrame, SEXP call, SEXP env);
+    List point_metrics(unsigned int k, double r, DataFrame, DataFrame, SEXP call, SEXP env);
 
   private:
     static bool coplanar (arma::vec& latent, arma::mat& coeff, NumericVector& th) { return latent[1] > th[0]*latent[2] && th[1]*latent[1] > latent[0]; }

@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k, r, xyz = TRUE, filter = NULL)
+point_metrics(las, func, k, r, xyz = TRUE, filter = NULL, ...)
 }
 \arguments{
 \item{las}{An object of class LAS}
