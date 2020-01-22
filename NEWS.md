@@ -14,6 +14,7 @@
 
 1. We introduced a bug in v2.2.0 in the catalog processing engine. Empty chunks triggered and error  `i[1] is 1 which is out of range [1,nrow=0]` internally. It now works again.
 
+2. Fix heap-buffer-overflow in `lasrangecorrection()` when throwing an error about invalid range.
 
 ## lidR v2.2.1
 
