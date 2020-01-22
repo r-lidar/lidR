@@ -8,6 +8,13 @@
 
 3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
 
+4. `tree_hulls` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
+
+### FIXES
+
+1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed> The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and
+the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+
 ## lidR v2.2.2
 
 ### FIXES

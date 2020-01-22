@@ -86,10 +86,11 @@ las = readLAS(LASfile, select = "xyz0", filter = "-drop_z_below 0")
 # Only the hulls
 convex_hulls = tree_hulls(las)
 plot(convex_hulls)
+spplot(convex_hulls, "ZTOP")
 
 # The hulls + some user-defined metrics
-convex_hulls = tree_hulls(las, func = ~list(Zmax = max(Z)))
-spplot(convex_hulls, "Zmax")
+convex_hulls = tree_hulls(las, func = ~list(Zmean = mean(Z)))
+spplot(convex_hulls, "Zmean")
 
 # The bounding box
 bbox_hulls = tree_hulls(las, "bbox")
