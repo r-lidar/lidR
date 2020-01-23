@@ -20,8 +20,7 @@ lasaddextrabytes_manual(
   type,
   offset = NULL,
   scale = NULL,
-  NA_value = NULL,
-  minmax = TRUE
+  NA_value = NULL
 )
 
 lasremoveextrabytes(las, name)

@@ -33,7 +33,7 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
   }
   else
   {
-    n <- lidR:::fast_countequal(las@data[["ScannerChannel"]], 0L)
+    n <- fast_countequal(las@data[["ScannerChannel"]], 0L)
 
     if (n > 0 && n < npoints(las))
       warning("Some points have a ScannerChannel of 0 meaning they come from single source sensor.", call. = FALSE)
