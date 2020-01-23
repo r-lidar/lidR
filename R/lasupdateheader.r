@@ -119,7 +119,7 @@ lasaddextrabytes = function(las, x, name, desc)
 
 #' @export
 #' @rdname lasaddattribute
-lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL, minmax = TRUE)
+lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scale = NULL, NA_value = NULL)
 {
   stopifnotlas(las)
   assert_is_a_string(name)

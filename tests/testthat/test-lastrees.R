@@ -2,7 +2,7 @@ context("lastrees")
 
 LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
 las = readLAS(LASfile, select = "xyzrt", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
-ctg = readLAScatalog(LASfile, chunk_size = 100, chunk_buffer = 20)
+ctg = readLAScatalog(LASfile, progress = FALSE, chunk_size = 100, chunk_buffer = 20)
 opt_chunk_alignment(ctg) <- c(0, 20)
 
 chm = grid_canopy(las, 0.5, pitfree())

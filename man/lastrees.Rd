@@ -17,7 +17,7 @@ More experimental algorithms may be found in the package \href{https://github.co
 This parameter controls the name of the new attribute. Default is \code{"treeID"}.}
 
 \item{uniqueness}{character. A method to compute a unique ID. Can be 'incremental', 'gpstime' or
-'bitmerge'. See section 'Uniqueness'}
+'bitmerge'. See section 'Uniqueness'. This feature must be considered as 'experimental'.}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
