@@ -21,6 +21,14 @@ test_that("read multiple files works", {
   expect_equal(3*dim(las@data)[1], dim(las2@data)[1])
 })
 
+test_that("read multiple files warn about incompatibilities", {
+
+  LASfile1 <- system.file("extdata", "Megaplot.laz", package="lidR")
+  LASfile2 <- system.file("extdata", "Topography.laz", package="lidR")
+
+  expect_warning(readLAS(c(LASfile1, LASfile2)), " scale factors and are incompatible")
+})
+
 test_that("readLAS throw warning for invalid files", {
   las@header@PHB$`X scale factor` <- 0.01234
   las@header@PHB$`Y scale factor` <- 0.01234
