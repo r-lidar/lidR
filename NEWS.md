@@ -8,6 +8,12 @@
 
 3. `point_metrics()` supports a spherical neighborhood search.
 
+4. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+
+### FIXES
+
+1. `lasunormalize()` now update the header.
+
 ## lidR v2.2.1
 
 #### BREAKING CHANGE

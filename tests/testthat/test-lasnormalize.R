@@ -3,6 +3,7 @@ context("lasnormalize")
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 ctg = catalog(LASfile)
+dtm = grid_terrain(las, 1, tin())
 
 opt_chunk_size(ctg) <- 160
 ctg@chunk_options$alignment = c(332550, 5238450)
@@ -29,15 +30,26 @@ test_that("Each ground point is at 0 with kriging", {
   las <- lasnormalize(las, kriging(k = 10L))
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
-
   lasunnormalize(las)
 })
 
 test_that("Each ground point is at 0 a RasterLayer", {
-  dtm = grid_terrain(las, 1, tin())
   las <- lasnormalize(las, dtm)
   Z0 = las@data[Classification == 2]$Z
   expect_equal(mean(abs(Z0)), 0.06, tol = 0.001)
+})
+
+test_that("Absolute elevation is extrabytes(ed)", {
+
+  las <- lasnormalize(las, dtm)
+
+  expect_true(is.null(las@header@VLR$Extra_Bytes))
+
+  las <- lasnormalize(las, dtm, add_extrabytes = TRUE)
+
+  expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$Zref$data_type, 6L)
+  expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$Zref$scale, las@header@PHB$`Z scale factor`)
+  expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$Zref$offset, las@header@PHB$`Z offset`)
 })
 
 test_that("Error if NAs in DTM", {
