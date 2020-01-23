@@ -214,7 +214,7 @@ lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_extrabytes = add_extrabyte, .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_extrabytes = add_extrabytes, .options = options)
   return(output)
 }
 
