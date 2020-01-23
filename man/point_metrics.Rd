@@ -21,8 +21,6 @@ memory. If \code{filter != NULL} it obviously takes memory.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See also examples.}
-
-\item{...}{unused.}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This

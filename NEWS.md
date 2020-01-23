@@ -10,6 +10,8 @@
 
 4. `tree_hulls` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
 
+5. `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
+
 ### FIXES
 
 1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed> The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and
