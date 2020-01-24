@@ -37,7 +37,7 @@ catalog_merge_results = function(ctg, any_list, any_type = "auto", ...)
       else if (ext %in% c("grd", "asc", "sdat", "rst", "nc", "tif", "tiff", "envi", "bil", "img"))
         any_type = "raster"
       else
-        return(any_list)
+        return(unlist(any_list))
     }
     else
     {

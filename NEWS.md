@@ -17,6 +17,20 @@
 1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed> The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and
 the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
 
+## lidR v2.2.3
+
+#### BREAKING CHANGE
+
+This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the outputs contains a `list` of string the list was expected to be merged into a `characters` vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affect a lot of people.
+
+```r
+opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+option <- list(automerge = TRUE)
+ret <- catalog_apply(ctg, sptest, .options = option) # now returns a vector
+print(ret) 
+#> "/tmp/RtmpV4CQll/file38f1.txt" "/tmp/RtmpV4CQll/file38g.txt"  "/tmp/RtmpV4CQll/file38h.txt" "/tmp/RtmpV4CQll/file38i.txt"
+```
+
 ## lidR v2.2.2
 
 ### FIXES

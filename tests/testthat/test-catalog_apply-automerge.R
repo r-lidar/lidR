@@ -158,7 +158,7 @@ test_that("catalog_apply automerge works with on disk SpatialPoints*", {
   option <- list(automerge = TRUE)
   req3 <- catalog_apply(ctg, sptest, .options = option)
 
-  expect_true(is.character(unlist(req3)))
+  expect_true(is.character(req3))
   expect_true(all(tools::file_ext(req3) == "shp"))
 })
 
@@ -220,7 +220,7 @@ test_that("catalog_apply automerge works with on disk data.frame", {
   option <- list(automerge = TRUE)
   req3 <- catalog_apply(ctg, dftest, .options = option)
 
-  expect_true(is.character(unlist(req3)))
+  expect_true(is.character(req3))
   expect_true(all(tools::file_ext(req3) == "txt"))
 })
 
