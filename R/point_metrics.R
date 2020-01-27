@@ -23,7 +23,7 @@
 #' @param las An object of class LAS
 #' @param func formula. An expression to be applied to each cell (see section "Parameter func").
 #' @param k integer. k-nearest neighbours
-#' @param r numeric. radius of the neighborhood sphere (not supported yet).
+#' @param r numeric. radius of the neighborhood sphere..
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
 #' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
 #' memory. If \code{filter != NULL} it obviously takes memory.
