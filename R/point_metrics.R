@@ -149,7 +149,6 @@ point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
   # Preparation of the objects
   func <- lazyeval::f_interp(func)
   call <- lazyeval::as_call(func)
-  data <- las@data
 
   # Memory allocation for the query. This memory will be recycled in each iteration
   p <- list(...)
@@ -158,15 +157,12 @@ point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
   else
     n <- as.integer(p$alloc)
 
-  query <- data[1:n]
-
   # Creation of a call environment
   env <- new.env(parent = parent.frame())
-  for (n in names(query)) assign(n, query[[n]], envir = env)
 
   filter <- parse_filter(las, filter)
 
-  output <- C_point_metrics(las, k, r, query, call, env, filter)
+  output <- C_point_metrics(las, k, r, n, call, env, filter)
 
   if (length(output[[1]]) == 1) {
     name <- names(output[[1]])

@@ -8,7 +8,7 @@ J = rep(TRUE, 6)
 D = data.table::data.table(X,Y,Z,I,J)
 las = LAS(D)
 
-test_that("points_metrics works with a single metric", {
+test_that("points_metrics works with a single metric (knn)", {
 
   m = point_metrics(las, ~mean(Z), k = 3L)
 
@@ -28,7 +28,27 @@ test_that("points_metrics works with a single metric", {
   expect_equal(names(m), c("M"))
 })
 
-test_that("points_metrics restpect the filter argument", {
+test_that("points_metrics works with a single metric (shpere)", {
+
+  m = point_metrics(las, ~length(Z), r = 0.8)
+
+  expect_is(m, "data.table")
+  expect_equal(dim(m), c(npoints(las), 4))
+  expect_equal(m$V1, c(2,2,3,3,2,2))
+  expect_equal(names(m), c("X", "Y", "Z", "V1"))
+
+  m = point_metrics(las, ~list(M = mean(Z)), r = 0.8)
+
+  expect_equal(dim(m), c(npoints(las), 4))
+  expect_equal(m$M, c(0.25, 1.25, 0.5, 1.5, 0.75, 1.75))
+  expect_equal(names(m), c("X", "Y", "Z", "M"))
+
+  m = point_metrics(las, ~list(M = mean(Z)), r = 3L, xyz = FALSE)
+
+  expect_equal(names(m), c("M"))
+})
+
+test_that("points_metrics restpect the filter argument (knn)", {
 
   m = point_metrics(las, ~mean(Z), k = 3L, filter = ~I>2)
 
@@ -37,7 +57,16 @@ test_that("points_metrics restpect the filter argument", {
   expect_equal(m$V1, c(1, 1.5, 1, 1.5))
 })
 
-test_that("points_metrics works with a multiple metrics", {
+test_that("points_metrics restpect the filter argument (shpere)", {
+
+  m = point_metrics(las, ~mean(Z), r = 0.8, filter = ~I>2)
+
+  expect_is(m, "data.table")
+  expect_equal(dim(m), c(npoints(las)-2, 4))
+  expect_equal(m$V1, c(0.75, 1.75, 0.75, 1.75))
+})
+
+test_that("points_metrics works with a multiple metrics (knn)", {
 
   m = point_metrics(las, ~list(mean(Z), max(Z), Z[1]), k = 3L)
 
@@ -50,9 +79,28 @@ test_that("points_metrics works with a multiple metrics", {
   expect_equal(names(m), c("A", "B", "C"))
 })
 
+test_that("points_metrics works with a multiple metrics (sphere)", {
+
+  m = point_metrics(las, ~list(mean(Z), max(Z), Z[1]), r = 0.8)
+
+  expect_is(m, "data.table")
+  expect_equal(dim(m), c(npoints(las), 6))
+  expect_equal(m$V1, c(0.25, 1.25, 0.5, 1.5, 0.75, 1.75))
+
+  m = point_metrics(las, ~list(A = mean(Z), B = max(Z), C = Z[1]), r = 0.8, xyz = FALSE)
+
+  expect_equal(names(m), c("A", "B", "C"))
+})
+
+
 test_that("points_metrics works with lidR metrics", {
 
   m = point_metrics(las, .stdmetrics_z, k = 3L, xyz = FALSE)
+
+  expect_is(m, "data.table")
+  expect_equal(dim(m), c(npoints(las), 36))
+
+  m = point_metrics(las, .stdmetrics_z, r = 0.8, xyz = FALSE)
 
   expect_is(m, "data.table")
   expect_equal(dim(m), c(npoints(las), 36))
@@ -67,6 +115,14 @@ test_that("points_metrics works with nested function", {
   expect_is(m, "data.table")
   expect_equal(dim(m), c(npoints(las), 1))
   expect_equal(m$V1, c(1, 1.5, 1, 2, 1.5, 2))
+
+  f <- function(x, y, z) {  return(max(c(x,y,z))) }
+  g <- function(las) { point_metrics(las, ~f(X,Y,Z), r = 0.8, xyz = FALSE) }
+  m <- g(las)
+
+  expect_is(m, "data.table")
+  expect_equal(dim(m), c(npoints(las), 1))
+  expect_equal(m$V1, c(0.5, 1.5, 1, 2, 1, 2))
 })
 
 test_that("points_metrics fails nicely if error in func", {
@@ -74,17 +130,22 @@ test_that("points_metrics fails nicely if error in func", {
   f <- function(x) {  stop("Dummy error") }
 
   expect_error(point_metrics(las, ~f(Z), k = 3L), "Dummy")
+  expect_error(point_metrics(las, ~f(Z), r = 3L), "Dummy")
 })
 
 test_that("points_metrics fails with non atomic output", {
 
   expect_error(point_metrics(las, ~c(1,2), k = 3L))
+  expect_error(point_metrics(las, ~c(1,2), r = 0.8))
 })
 
-test_that("points_metrics failst", {
+test_that("points_metrics fails", {
 
-  expect_error(point_metrics(las, ~mean(Z), r = 3), "Radius search is not supported yet")
+  expect_error(point_metrics(las, ~mean(Z)), "'k' or 'r' is missing")
   expect_error(point_metrics(las, ~mean(Z), k = 3, r = 3), "cannot be defined in the same time")
+
+  las@data$test = letters[1:6]
+  expect_error(point_metrics(las, ~mean(Z), k = 3), "Incompatible type encountered")
 })
 
 

@@ -200,19 +200,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_point_metrics
-List C_point_metrics(S4 las, unsigned int k, double r, DataFrame sub, SEXP call, SEXP env, LogicalVector filter);
-RcppExport SEXP _lidR_C_point_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP subSEXP, SEXP callSEXP, SEXP envSEXP, SEXP filterSEXP) {
+List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter);
+RcppExport SEXP _lidR_C_point_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP nallocSEXP, SEXP callSEXP, SEXP envSEXP, SEXP filterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type sub(subSEXP);
+    Rcpp::traits::input_parameter< int >::type nalloc(nallocSEXP);
     Rcpp::traits::input_parameter< SEXP >::type call(callSEXP);
     Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, r, sub, call, env, filter));
+    rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, r, nalloc, call, env, filter));
     return rcpp_result_gen;
 END_RCPP
 }
