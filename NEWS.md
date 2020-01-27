@@ -12,6 +12,10 @@
 
 5. `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
+6. `point_metrics()` supports a spherical neighborhood search.
+
+7. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+
 ### FIXES
 
 1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed> The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and
@@ -38,8 +42,6 @@ print(ret)
 1. We introduced a bug in v2.2.0 in the catalog processing engine. Empty chunks triggered and error  `i[1] is 1 which is out of range [1,nrow=0]` internally. It now works again.
 
 2. Fix heap-buffer-overflow in `lasrangecorrection()` when throwing an error about invalid range.
-
-4. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
 
 ### FIXES
 

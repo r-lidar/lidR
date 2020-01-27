@@ -29,6 +29,7 @@
 #' memory. If \code{filter != NULL} it obviously takes memory.
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See also examples.
+#' @param ... unused.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -114,39 +115,54 @@
 #' }
 #' @export
 #' @family metrics
-point_metrics <- function(las, func, k, r,  xyz = TRUE, filter = NULL) {
+point_metrics <- function(las, func, k, r,  xyz = TRUE, filter = NULL, ...) {
   UseMethod("point_metrics", las)
 }
 
 #' @export
-point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL) {
-  # Defensive programming
-  if (!missing(k)) assert_is_a_number(k)
-  if (!missing(r)) assert_is_a_number(r)
+point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
+
+  if (!missing(k)) {
+    assert_is_a_number(k)
+    knn <- TRUE
+    k <- as.integer(k)
+    stopifnot(k > 1)
+  }
+
+  if (!missing(r)) {
+    assert_is_a_number(r)
+    knn <- FALSE
+  }
+
   if (!missing(k) && !missing(r))  stop("'k' and 'r' cannot be defined in the same time. It should be k or r.", call. = FALSE)
-  if (!missing(r)) stop("Radius search is not supported yet.", call. = FALSE)
   if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
 
+  if (knn)
+    r <- 0
+  else
+    k <- 0
+
   assert_is_a_bool(xyz)
-  k <- as.integer(k)
-  stopifnot(k > 1)
   formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!formula) func <- lazyeval::f_capture(func)
 
   # Preparation of the objects
   func <- lazyeval::f_interp(func)
   call <- lazyeval::as_call(func)
-  data <- las@data
 
   # Memory allocation for the query. This memory will be recycled in each iteration
-  query <- data[1:k]
+  p <- list(...)
+  if (is.null(p$alloc))
+    n <- if (knn) k else as.integer(density(las) * pi * r^3)
+  else
+    n <- as.integer(p$alloc)
 
   # Creation of a call environment
   env <- new.env(parent = parent.frame())
-  for (n in names(query)) assign(n, query[[n]], envir = env)
 
   filter <- parse_filter(las, filter)
-  output <- C_point_metrics(las, k, query, call, env, filter)
+
+  output <- C_point_metrics(las, k, r, n, call, env, filter)
 
   if (length(output[[1]]) == 1) {
     name <- names(output[[1]])

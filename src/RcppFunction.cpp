@@ -104,13 +104,13 @@ NumericVector C_rasterize(S4 las, S4 layout, double subcircle = 0, int method = 
   return pt.rasterize(layout, subcircle, method);
 }
 
-// [[Rcpp::export(rng = false)]]
-List C_point_metrics(S4 las, unsigned int k, DataFrame sub, SEXP call, SEXP env, LogicalVector filter)
+// [[Rcpp::export]]
+List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter)
 {
   LAS pt(las);
   pt.new_filter(filter);
   DataFrame data = as<DataFrame>(las.slot("data"));
-  return pt.knn_metrics(k, data, sub, call, env);
+  return pt.point_metrics(k, r, data, nalloc, call, env);
 }
 
 // [[Rcpp::export(rng = false)]]

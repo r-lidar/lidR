@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k, r, xyz = TRUE, filter = NULL)
+point_metrics(las, func, k, r, xyz = TRUE, filter = NULL, ...)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -21,6 +21,8 @@ memory. If \code{filter != NULL} it obviously takes memory.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See also examples.}
+
+\item{...}{unused.}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This
