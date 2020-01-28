@@ -125,6 +125,13 @@ test_that("points_metrics works with nested function", {
   expect_equal(m$V1, c(0.5, 1.5, 1, 2, 1, 2))
 })
 
+test_that("points_metrics realloc memory", {
+
+  m1 <- point_metrics(las, ~list(mean(Z), length(Z)), r = 2, alloc = 1)
+  m2 <- point_metrics(las, ~list(mean(Z), length(Z)), r = 2)
+  expect_equal(m1, m2)
+})
+
 test_that("points_metrics fails nicely if error in func", {
 
   f <- function(x) {  stop("Dummy error") }

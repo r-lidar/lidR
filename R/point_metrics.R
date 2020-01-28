@@ -126,11 +126,12 @@ point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
     assert_is_a_number(k)
     knn <- TRUE
     k <- as.integer(k)
-    stopifnot(k > 1)
+    assert_all_are_positive(k)
   }
 
   if (!missing(r)) {
     assert_is_a_number(r)
+    assert_all_are_positive(r)
     knn <- FALSE
   }
 
@@ -156,6 +157,8 @@ point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
     n <- if (knn) k else as.integer(density(las) * pi * r^3)
   else
     n <- as.integer(p$alloc)
+
+  if (n < 1) n <- 1
 
   # Creation of a call environment
   env <- new.env(parent = parent.frame())
