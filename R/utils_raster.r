@@ -54,6 +54,8 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
     resolution <- raster::res(res)
     if (round(resolution[1], 4) != round(resolution[2], 4))
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+
+    res@data@values <- logical(0)
     return(res)
   }
 

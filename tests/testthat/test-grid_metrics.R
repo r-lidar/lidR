@@ -145,5 +145,15 @@ test_that("predefined metric set work both with a LAS and LAScatalog", {
   expect_error(grid_metrics(ctg, .stdshapemetrics), NA)
 })
 
+test_that("Using a non empty layout return correct output (#318)", {
+
+  LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+  ldr = readLAS(LASfile, filter = "-keep_scan_angle -3 3")
+  ref = lidR:::rOverlay(ldr, 20)
+  suppressWarnings(ref[] <- 10)
+  m = grid_metrics(ldr, mean(Z), ref)
+
+  expect_equal(sum(is.na(m[])), 52L)
+})
 
 
