@@ -1,6 +1,6 @@
 ## lidR v2.3.0
 
-#### NEW FEATURES
+### NEW FEATURES
 
 1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
 
@@ -16,10 +16,13 @@
 
 7. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
 
+### ENHANCEMENT
+
+1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
+
 ### FIXES
 
-1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed> The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and
-the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
 
 ## lidR v2.2.3
 
