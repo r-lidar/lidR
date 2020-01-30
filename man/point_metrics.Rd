@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k, r, xyz = TRUE, filter = NULL)
+point_metrics(las, func, k, r, xyz = TRUE, filter = NULL, ...)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -13,7 +13,7 @@ point_metrics(las, func, k, r, xyz = TRUE, filter = NULL)
 
 \item{k}{integer. k-nearest neighbours}
 
-\item{r}{numeric. radius of the neighborhood sphere (not supported yet).}
+\item{r}{numeric. radius of the neighborhood sphere..}
 
 \item{xyz}{logical. Coordinates of each point are returned in addition to each metric. If
 \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
@@ -21,6 +21,8 @@ memory. If \code{filter != NULL} it obviously takes memory.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See also examples.}
+
+\item{...}{unused.}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point. This

@@ -152,7 +152,8 @@ lasaddextrabytes_manual = function(las, x, name, desc, type, offset = NULL, scal
   }
 
   header     <- as.list(las@header)
-  new_header <- rlas::header_add_extrabytes_manual(header, name, desc, type, offset, scale, min(x, na.rm = TRUE), max(x, na.rm = TRUE), NA_value)
+
+  new_header <- rlas::header_add_extrabytes_manual(header, name, desc, type, offset, scale, NULL, NULL, NA_value)
   new_header <- LASheader(new_header)
   las@header <- new_header
   return(las)

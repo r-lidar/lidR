@@ -1,7 +1,9 @@
 context("lastrees")
 
 LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
-las = readLAS(LASfile, select = "xyzr", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
+las = readLAS(LASfile, select = "xyzrt", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
+ctg = readLAScatalog(LASfile, progress = FALSE, chunk_size = 100, chunk_buffer = 20)
+opt_chunk_alignment(ctg) <- c(0, 20)
 
 chm = grid_canopy(las, 0.5, pitfree())
 kernel = matrix(1,3,3)
@@ -54,14 +56,40 @@ test_that("Silvas's methods works", {
 # })
 
 test_that("lastrees can store in a user defined column", {
+
   las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
   expect_true("plop" %in% names(las@data))
 })
 
+test_that("lastrees supports different unicity srategies", {
+
+  las <- lastrees(las, li2012(speed_up = 5), uniqueness = "gpstime")
+
+  expect_equal(length(na.omit(unique(las@data$treeID))), 48L)
+
+  las <- lastrees(las, li2012(speed_up = 5), uniqueness = "bitmerge")
+
+  expect_equal(length(na.omit(unique(las@data$treeID))), 48L)
+})
+
+
+test_that("lastrees supports a LAScatalog", {
+
+  opt_output_files(ctg) <- "{tempdir()}/{ID}"
+  new_ctg <- lastrees(ctg, li2012(speed_up = 5), uniqueness = 'bitmerge')
+  las = readLAS(new_ctg)
+
+  expect_equal(length(na.omit(unique(las@data$treeID))), 274)
+})
+
 test_that("tree_metrics works", {
+
   las <- lastrees(las, li2012(speed_up = 5), attribute = "plop")
+
   expect_error(tree_metrics(las, max(Z)), "not segmented")
+
   Y <- tree_metrics(las, max(Z), attribute = "plop")
+
   expect_error(tree_metrics(las, max(Z), attribute = "abc"), "trees are not segmented")
 })
 
@@ -72,3 +100,5 @@ test_that("tree_metrics works", {
 #   lastrees_watershed(las, chm)
 #   expect_true("treeID" %in% names(las@data))
 # })
+
+

@@ -7,7 +7,14 @@
 \alias{-,LAS,function-method}
 \title{Remove the topography from a point cloud}
 \usage{
-lasnormalize(las, algorithm, na.rm = FALSE, use_class = c(2L, 9L), ...)
+lasnormalize(
+  las,
+  algorithm,
+  na.rm = FALSE,
+  use_class = c(2L, 9L),
+  ...,
+  add_extrabytes = FALSE
+)
 
 lasunnormalize(las)
 
@@ -32,6 +39,10 @@ elevation of NA are filtered. Be careful this creates a copy of the point cloud.
 \item{...}{If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
 \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.}
 
+\item{add_extrabytes}{logical. By default the above see level elevation is retained in a new attribute.
+However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
+extrabytes attribute. See also \link{lasaddextrabytes} .}
+
 \item{e1}{a LAS object}
 
 \item{e2}{\link[raster:raster]{RasterLayer} representing a digital terrain model (can be
@@ -50,8 +61,9 @@ is interpolated. There is no inaccuracy due to the discretization of the terrain
 of the terrain is virtually infinite.\cr\cr
 How well the edges of the dataset are interpolated depends on the interpolation method used.
 Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
-The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref' records
-the former elevation values, which enables the use of \code{lasunormalize} to restore original point elevations.\cr\cr
+The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref'
+records the former elevation values, which enables the use of \code{lasunormalize} to restore
+original point elevations.\cr\cr
 }
 \section{Working with a \code{LAScatalog}}{
 

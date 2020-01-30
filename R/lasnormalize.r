@@ -36,8 +36,9 @@
 #' of the terrain is virtually infinite.\cr\cr
 #' How well the edges of the dataset are interpolated depends on the interpolation method used.
 #' Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
-#' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref' records
-#' the former elevation values, which enables the use of \code{lasunormalize} to restore original point elevations.\cr\cr
+#' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref'
+#' records the former elevation values, which enables the use of \code{lasunormalize} to restore
+#' original point elevations.\cr\cr
 #'
 #' @template param-las
 #'
@@ -51,7 +52,9 @@
 #' (class 2) and water points (class 9). Relevant only for a normalisation without a raster DTM.
 #' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
 #' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.
-#'
+#' @param add_extrabytes logical. By default the above see level elevation is retained in a new attribute.
+#' However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
+#' extrabytes attribute. See also \link{lasaddextrabytes} .
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
@@ -110,25 +113,28 @@
 #' @export
 #' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
+lasnormalize = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
 {
 
   UseMethod("lasnormalize", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
+lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
 {
   assert_is_a_bool(na.rm)
 
-  if (is(algorithm, "RasterLayer")) {
+  if (is(algorithm, "RasterLayer"))
+  {
     Zground <- raster::extract(algorithm, coordinates(las), ...)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 
     if (nnas > 0 && na.rm == FALSE)
       stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
-  } else if (is.function(algorithm)) {
+  }
+  else if (is.function(algorithm))
+  {
     assert_is_algorithm(algorithm)
     assert_is_algorithm_spi(algorithm)
 
@@ -164,17 +170,25 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L),
 
     if (nnas > 0 & na.rm == FALSE)
       stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
-  } else {
+  }
+  else
+  {
     stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
   }
+
+  zoffset <- las@header@PHB[["Z offset"]]
+  zscale  <- las@header@PHB[["Z scale factor"]]
 
   if (!"Zref" %in% names(las@data))
     las@data[["Zref"]] <- las@data[["Z"]]
 
-  zscale  <- las@header@PHB[["Z scale factor"]]
   las@data[["Z"]] <- round_any(las@data[["Z"]] - Zground, zscale)
 
-  if (nnas > 0 && na.rm == TRUE) {
+  if (add_extrabytes && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
+    las <- lasaddextrabytes_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
+
+  if (nnas > 0 && na.rm == TRUE)
+  {
     las <- lasfilter(las, !isna)
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
@@ -184,23 +198,23 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L),
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
+lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasnormalize(x, algorithm, na.rm, use_class, ...)
+  x <- lasnormalize(x, algorithm, na.rm, use_class, ..., add_extrabytes = add_extrabytes)
   x <- lasfilter(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ...)
+lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., .options = options)
+  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_extrabytes = add_extrabytes, .options = options)
   return(output)
 }
 
@@ -214,6 +228,7 @@ lasunnormalize = function(las)
   {
     las@data[["Z"]] <- las@data[["Zref"]]
     las@data[["Zref"]] <- NULL
+    las <- lasupdateheader(las)
   }
   else
     message("No attribute 'Zref' found. Un-normalizisation is impossible.")

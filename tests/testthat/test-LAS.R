@@ -185,3 +185,8 @@ test_that("LAS conversion to SpatialPointsDataFrame works", {
   expect_true(is(splas, "SpatialPointsDataFrame"))
 })
 
+test_that("LAS build an empty point cloud with no header (#314)", {
+  las = LAS(data.frame(X = numeric(0), Y = numeric(0), Z = numeric(0)))
+  expect_equal(npoints(las), 0L)
+  expect_equal(names(las@data), c("X", "Y", "Z"))
+})

@@ -67,10 +67,11 @@
 #' # Only the hulls
 #' convex_hulls = tree_hulls(las)
 #' plot(convex_hulls)
+#' spplot(convex_hulls, "ZTOP")
 #'
 #' # The hulls + some user-defined metrics
-#' convex_hulls = tree_hulls(las, func = ~list(Zmax = max(Z)))
-#' spplot(convex_hulls, "Zmax")
+#' convex_hulls = tree_hulls(las, func = ~list(Zmean = mean(Z)))
+#' spplot(convex_hulls, "Zmean")
 #'
 #' # The bounding box
 #' bbox_hulls = tree_hulls(las, "bbox")
@@ -109,14 +110,14 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
 
   # Hulls computation -- aggregation by tree
   X <- Y <- NULL
-  hulls <- las@data[, if (!anyNA(.BY)) fhull(X,Y, .GRP, concavity, length_threshold), by = attribute]
+  hulls <- las@data[, if (!anyNA(.BY)) fhull(X,Y,Z,.GRP, concavity, length_threshold), by = attribute]
 
   # Convert to SpatialPolygons
   spoly <- sp::SpatialPolygons(hulls[["poly"]])
   for (i in 1:length(spoly)) spoly@polygons[[i]]@ID <- as.character(i)
 
   # Compute metrics
-  data = hulls[,1]
+  data = hulls[,1:4]
   if (!is.null(func))
   {
     func    <- lazyeval::f_interp(func)
@@ -140,8 +141,12 @@ tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), con
   if (is.empty(x)) return(NULL)
   metrics <- tree_hulls(x, type, concavity, length_threshold, func, attribute)
   bbox    <- raster::extent(las)
-  metrics <- raster::crop(metrics, bbox)
-  return(metrics)
+
+  coords = metrics@data[,c("XTOP", "YTOP")]
+  coords$ID = 1:length(metrics)
+  sp::coordinates(coords) <- ~XTOP+YTOP
+  coords <- raster::crop(coords, bbox)
+  return(metrics[coords$ID,])
 }
 
 #' @export

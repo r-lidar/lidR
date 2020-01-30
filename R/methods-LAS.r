@@ -63,9 +63,11 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
     header[["X offset"]] <- round_any(header[["X offset"]], factor)
     header[["Y offset"]] <- round_any(header[["Y offset"]], factor)
     header[["Z offset"]] <- round_any(header[["Z offset"]], factor)
-    data[1:.N, `:=`(X = round_any(X, factor), Y = round_any(Y, factor), Z = round_any(Z, factor))]
-    message(glue::glue("Creation of a LAS object from data but without a header:
-    Scale factors were set to {factor} and XYZ coordinates were clamped to fit the scale factors."))
+    if (nrow(data) > 0) {
+      data[1:.N, `:=`(X = round_any(X, factor), Y = round_any(Y, factor), Z = round_any(Z, factor))]
+      message(glue::glue("Creation of a LAS object from data but without a header:
+      Scale factors were set to {factor} and XYZ coordinates were clamped to fit the scale factors."))
+    }
   }
 
   header <- rlas::header_update(header, data)

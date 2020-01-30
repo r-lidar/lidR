@@ -1,10 +1,55 @@
 ## lidR v2.3.0
 
-#### NEW FEATURES
+### NEW FEATURES
 
 1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
 
 2. New function `lasclipTransect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
+
+3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
+
+4. `tree_hulls` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
+
+5. `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
+
+6. `point_metrics()` supports a spherical neighborhood search.
+
+7. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+
+### ENHANCEMENT
+
+1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
+
+### FIXES
+
+1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+
+## lidR v2.2.3
+
+#### FIXES
+
+1. This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the outputs contains a `list` of string the list was expected to be merged into a `characters` vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affect a lot of people.
+
+    ```r
+    opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+    option <- list(automerge = TRUE)
+    ret <- catalog_apply(ctg, sptest, .options = option) # now returns a vector
+    print(ret) 
+    #> "/tmp/RtmpV4CQll/file38f1.txt" "/tmp/RtmpV4CQll/file38g.txt"  "/tmp/RtmpV4CQll/file38h.txt" "/tmp/RtmpV4CQll/file38i.txt"
+    ```
+2. When using a `grid_*` function with a `RasterLayer` used as layout, if the layout were not empty or full of NAs, the values of the layout were transferted to the NA cells of the output [#318](https://github.com/Jean-Romain/lidR/issues/318).
+
+## lidR v2.2.2
+
+### FIXES
+
+1. We introduced a bug in v2.2.0 in the catalog processing engine. Empty chunks triggered and error  `i[1] is 1 which is out of range [1,nrow=0]` internally. It now works again.
+
+2. Fix heap-buffer-overflow in `lasrangecorrection()` when throwing an error about invalid range.
+
+### FIXES
+
+1. `lasunormalize()` now update the header.
 
 ## lidR v2.2.1
 

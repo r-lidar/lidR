@@ -349,7 +349,7 @@ stdtreeapex <- function(x,y,z)
 }
 
 
-stdtreehullconvex = function(x,y, grp, ...)
+stdtreehullconvex = function(x,y,z,grp, ...)
 {
   if (length(x) < 4)
     return(NULL)
@@ -360,10 +360,12 @@ stdtreehullconvex = function(x,y, grp, ...)
   poly = sp::Polygon(P)
   poly = sp::Polygons(list(poly), ID = grp)
 
-  list(poly = list(poly))
+  j <- which.max(z)
+
+  list(XTOP = x[j], YTOP = y[j], ZTOP = z[j], poly = list(poly))
 }
 
-stdtreehullconcave = function(x,y, grp, concavity, length_threshold)
+stdtreehullconcave = function(x,y,z,grp, concavity, length_threshold)
 {
   if (length(x) < 4)
     return(NULL)
@@ -372,10 +374,12 @@ stdtreehullconcave = function(x,y, grp, concavity, length_threshold)
   poly = sp::Polygon(P)
   poly = sp::Polygons(list(poly), ID = grp)
 
-  list(poly = list(poly))
+  j <- which.max(z)
+
+  list(XTOP = x[j], YTOP = y[j], ZTOP = z[j], poly = list(poly))
 }
 
-stdtreehullbbox = function(x,y, grp, ...)
+stdtreehullbbox = function(x,y,z, grp, ...)
 {
   if (length(x) < 4)
     return(NULL)
@@ -391,7 +395,9 @@ stdtreehullbbox = function(x,y, grp, ...)
   poly = sp::Polygon(P)
   poly = sp::Polygons(list(poly), ID = grp)
 
-  list(poly = list(poly))
+  j <- which.max(z)
+
+  list(XTOP = x[j], YTOP = y[j], ZTOP = z[j], poly = list(poly))
 }
 
 #' @rdname stdmetrics
