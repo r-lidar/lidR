@@ -12,6 +12,9 @@ local_maximum(las, w, filter = NULL)
 \item{w}{numeric. Window shape. 1 number for the diameter of a disc, 2 numbers for a rectangle
 (width, height), 3 numbers for an oriented rectangle (width, height, angle). The angle must be
 in radian.}
+
+\item{filter}{formula. Memory efficient way to work only with a subset of the data without creating a copy
+of the data.}
 }
 \value{
 \code{SpatialPointsDataFrame} with attribute from the corresponding point in the LAS object,

@@ -109,7 +109,7 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
   else if (type == "bbox")    fhull <- stdtreehullbbox
 
   # Hulls computation -- aggregation by tree
-  X <- Y <- NULL
+  X <- Y <- Z <- NULL
   hulls <- las@data[, if (!anyNA(.BY)) fhull(X,Y,Z,.GRP, concavity, length_threshold), by = attribute]
 
   # Convert to SpatialPolygons
