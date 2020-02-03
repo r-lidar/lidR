@@ -2,7 +2,7 @@
 #'
 #' Generic local maximum filter. For individual tree detection use \link{tree_detection} with the
 #' \link{lmf} algorithm that is more adequate for ITD. This function is a more generic method for
-#' multiple purpose.
+#' multiple purpose other than tree segmentation. This function is natively parallelized with OpenMP
 #'
 #' @param las An object of class LAS
 #' @param w numeric. Window shape. 1 number for the diameter of a disc, 2 numbers for a rectangle
@@ -10,13 +10,22 @@
 #' in radian.
 #' @filter formula. Memory efficient way to work only with a subset of the data without creating a copy
 #' of the data.
-#' @noRd
+#' @return \code{SpatialPointsDataFrame} with attribute from the corresponding point in the LAS object,
+#' @example
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' las <- readLAS(LASfile, select = "xyzi", filter = "-drop_z_below 0")
+#'
+#' # Using a 20x5 rectangle with a 45 degrees angle, This won't find the tree properly in general case
+#' but may find some oriented structure.
+#' lm = local_maximum(las, c(20, 5, pi/4))
 #' @export
 local_maximum = function(las, w, filter = NULL)
 {
   # 1 circular
   # 2 rectangular
   # 3 custom (not supported yet)
+  assert_all_are_positive(w[1])
+  if (!is.na(w[2])) assert_all_are_positive(w[2])
   if (!is.na(w[3])) assert_all_are_in_open_range(w[3], -pi/2, pi/2)
   if (length(w) == 0 || length(w) > 3) stop("Invalid window.", call. = FALSE)
 
@@ -32,7 +41,7 @@ local_maximum = function(las, w, filter = NULL)
 
   if (nrow(maxima) == 0) {
     coords <- matrix(0, ncol = 2)
-    data   <- data.frame(treeID = integer(1), Z = numeric(1))
+    data   <- las@data[1, -c("X", "Y")]
     output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
     output <- output[0,]
   } else {

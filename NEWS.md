@@ -16,6 +16,8 @@
 
 7. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
 
+8. New function `local_maximum()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `tree_detection()`. Instead `local_maximum()` may help at findind other human made structures.
+
 ### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
