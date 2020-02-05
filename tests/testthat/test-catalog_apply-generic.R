@@ -137,3 +137,9 @@ test_that("catalog_apply can bypass errors", {
   expect_message(catalog_apply(ctg, test), NA)
 })
 
+test_that("User get a warning/error when using ORIGINALFILENAME", {
+
+  expect_message({opt_output_files(ctg) <- "{*}"}, "makes sense only when processing by file")
+  expect_message({opt_output_files(ctg) <- "{ID}"}, NA)
+})
+
