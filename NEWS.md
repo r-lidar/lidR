@@ -41,6 +41,12 @@
     ```
 2. When using a `grid_*` function with a `RasterLayer` used as layout, if the layout were not empty or full of NAs, the values of the layout were transferted to the NA cells of the output [#318](https://github.com/Jean-Romain/lidR/issues/318).
 
+### ENHANCEMENTS
+
+1. `opt_output_files()` now prints a message when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not makes sense.
+
+2. Internally when building the chunks an informative error is now thrown when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not makes sense instead of the former uninformative error `Error in eval(parse(text = text, keep.source = FALSE), envir) : objet 'ORIGINALFILENAME' not found`.
+
 ## lidR v2.2.2
 
 ### FIXES

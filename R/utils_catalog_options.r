@@ -210,6 +210,11 @@ opt_output_files = function(ctg)
     warning(glue::glue("{value} contains a file extension. Users don't need to provide a file extension. It will be added automaticaly as a function of the output."))
 
   value <- gsub("\\{?\\*\\}?", "{ORIGINALFILENAME}", value)
+  usefilename <- grepl("\\{ORIGINALFILENAME\\}", value)
+
+  if (usefilename & opt_chunk_size(ctg) > 0)
+    message("ORIGINALFILENAME template has been used but the chunk size is not 0. This template makes sense only when processing by file.")
+
   ctg@output_options$output_files <- value
   return(ctg)
 }

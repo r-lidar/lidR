@@ -232,3 +232,10 @@ test_that("catalog_makecluster makes correct clusters that do not overlap", {
   expect_equal(length(unique(y)), 4L)
 })
 
+test_that("catalog_makecluster throw error when using ORIGINALFILENAME", {
+
+  opt_output_files(ctg) <- "{*}"
+  opt_chunk_size(ctg) <- 1000
+
+  expect_error(lidR:::catalog_makecluster(ctg), "akes sense only when processing by file")
+})

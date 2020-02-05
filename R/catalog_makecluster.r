@@ -130,6 +130,11 @@ catalog_makecluster = function(ctg)
       X$YBOTTOM <- format(clusters[[i]]@bbox[2], scientific = F)
       X$YTOP    <- format(clusters[[i]]@bbox[4], scientific = F)
 
+      usefilename <- grepl("\\{ORIGINALFILENAME\\}",  opt_output_files(ctg))
+
+      if (usefilename && !by_file)
+        stop("The template {ORIGINALFILENAME} makes sense only when processing by file (chunk size = 0). It is undefined otherwise.", call. = FALSE)
+
       if (by_file)
         X$ORIGINALFILENAME <- tools::file_path_sans_ext(basename(files[i]))
 
@@ -137,7 +142,7 @@ catalog_makecluster = function(ctg)
       n         <- length(filepath)
 
       if (n > 1)
-        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each chunk"))
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each chunk"), call. = FALSE)
 
       clusters[[i]]@save <- filepath
       return(clusters[[i]])
