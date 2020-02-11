@@ -2,7 +2,7 @@
 title: "Create a function that can process a LAScatalog"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{3. Create a function to process a LAScatalog}
+  %\VignetteIndexEntry{5. Create a function to process a LAScatalog}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

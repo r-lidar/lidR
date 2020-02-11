@@ -2,13 +2,17 @@
 
 ### BREAKING CHANGES
 
-**Summary:** in lidR version 3.0.0, 80% of the functions were renamed. Old functions were softly deprecated meaning that they still exist so version 3 is fully compatible with version 2 at least for 1 year maybe more. Users should start to use the new names. See `?lidR::deprecated` for the list of deprecated functions and their new names. The plan is to remove these functions in 1 years so they will progressively print a message, then throw a warning, then throw an error until they will be definitively removed.
+#### Summary 
 
-**Full explanation**: At the very beginning of the development of lidR we started to name the functions that return a LAS object `lassomething()`. At the begining it was 5 functions and 10 users. As lidR grew up, we kept going with this name convention but now lidR is used worldwide this naming convention actually overlap with the LAStools software suite created by Martin Isenburg. This creates confusion for users which is problematic both for Martin and us. And it's gonna be worst because more tools will be released into LAStools. We discussed with Martin Isenburg an we took the decision to rename the functions of the lidR package so the overlaps in namespace will progressively fade out.
+In lidR version 3.0.0, 80% of the functions were renamed. Old functions were softly deprecated meaning that they still exist so version 3 is fully compatible with version 2 at least for 1 year maybe more. Users should start to use the new names. See `?lidR::deprecated` for the list of deprecated functions and their new names. The plan is to remove these functions in 1 years so they will progressively print a message, then throw a warning, then throw an error until they will be definitively removed.
 
-The new name convention follows the current trending initiated by the `tidyverse`. New functions are thus of the form `verb_noun`. `lasnormalize()` becomes `normalize_elevation()` while `lasground()` becomes `classify_ground()`. A the full list of change can be found in `?lidR::deprecated`.
+#### Full explanation
 
-In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite user to move on the new nane, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
+At the very beginning of the development of lidR we started to name the functions that return a LAS object `lassomething()`. At the begining it was 5 functions and 10 users. As lidR grew up, we kept going with this name convention but now lidR is used worldwide this naming convention actually overlap with the LAStools software suite created by Martin Isenburg. This creates confusion for users which is problematic both for Martin and us. And it's gonna be worst because more tools will be released into LAStools. We discussed with Martin Isenburg an we took the decision to rename the functions of the lidR package so the overlaps in namespace will progressively fade out.
+
+The new name convention follows the current trending `ǜerb_noun` initiated by the `tidyverse`. `lasnormalize()` becomes `normalize_elevation()` while `lasground()` becomes `classify_ground()`. The full list of changes can be found in `?lidR::deprecated`.
+
+In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite users to move on the new nane, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
 
 ### NEW FEATURES
 
@@ -31,6 +35,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 ### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
+
+2. An new vignette named "LAScatalog processing engine" has been added and documents in depth the `catalog_apply()` engine of lidR.
 
 ### FIXES
 
