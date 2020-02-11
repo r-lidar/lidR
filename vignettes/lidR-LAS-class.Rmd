@@ -122,13 +122,13 @@ This is not allowed because a LAS object should always be valid. By allowing the
 1. `R` is a reserved name of the core attributes and must be an integer. In the example above it is a decimal number.
 2. A LAS file with RGB attributes is of type 3, 7 or 8. As a result the header must be updated, but in the previous example it is not.
 
-In consequence, adding a column must be done via the functions `lasadddata` or `lasaddextrabytes`. This way users are forced to read the documentation of these two functions. And yet some restrictions are still in place. For example, the following is not allowed for the same reasons as above:
+In consequence, adding a column must be done via the functions `add_attribute` or `add_lasattribute`. This way users are forced to read the documentation of these two functions. And yet some restrictions are still in place. For example, the following is not allowed for the same reasons as above:
 
 ```{r, error = TRUE, purl = FALSE}
-las <- lasadddata(las, 0, "R")
+las <- add_attribute(las, 0, "R")
 ```
 
-But anyway, R being R there is no way to completely restrict editing of objects. Users can always by-pass the restrictions to make LAS objects that are not strictly valid:
+But anyway, R being R, there is no way to completely restrict editing of objects. Users can always by-pass the restrictions to make LAS objects that are not strictly valid:
 
 ```{r}
 las@data$R <- 0
@@ -146,37 +146,37 @@ As we have seen, a LAS object contains a core of attributes associated with rese
 
 ### Extra attributes
 
-Extra attributes are just like adding a column in a regular table in R. One can freely modify the data using the function `lasadddata`. It is thus possible to add an attribute to a LAS object. For example, it is possible to attribute an ID to each point and use this value in subsequent code:
+Extra attributes are just like adding a column in a regular table in R. One can freely modify the data using the function `add_attribute`. It is thus possible to add an attribute to a LAS object. For example, it is possible to attribute an ID to each point and use this value in subsequent code:
 
 ```{r}
-las  <- lasadddata(las, 1:81590, "ID")
-las2 <- lasfilter(las, ID > 50000)
+las  <- add_attribute(las, 1:81590, "ID")
+las2 <- filter_points(las, ID > 50000)
 ```
 
 But it is important to understand that this attribute is invalid with respect to the las specifications. Thus it can be used at the R level but will not be written in a las file and thus will be lost at write time. Depending on the purpose of this attribute it may or may not be useful to be able to write this extra data. Most of the time the information is only useful at the R level but sometimes it might be appropriate to store the data in a file.
 
 ### Extra bytes attributes
 
-The las specifications allow for storing extra attributes that are not part of the core attributes. but the way to do this is more complex. Basically it is called extra bytes attributes and it implies modification of the LAS object header to indicate that the contents of the file contains more than the core attributes. This is abstracted with the function `lasaddextrabytes`.
+The las specifications allow for storing extra attributes that are not part of the core attributes. but the way to do this is more complex. Basically it is called extra bytes attributes and it implies modification of the LAS object header to indicate that the contents of the file contains more than the core attributes. This is abstracted with the function `add_lasattribute`.
 
 ```{r}
-las  <- lasaddextrabytes(las, 1:81590, "ID", "An ID for each point")
+las  <- add_lasattribute(las, 1:81590, "ID", "An ID for each point")
 ```
 
 Using this function, the header is updated according to the las specification and thus the extra bytes attributes can be written in the file. lidR supports up to 10 extra bytes attributes. The extra bytes attributes are limited to being of type numeric. Indeed, the las specifications do not allow for storing extra bytes attributes of type string or type boolean. Thus the following fails:
 
 ```{r, error = TRUE, purl = FALSE}
 abc  <- sample(letters, 81590, replace = TRUE)
-las  <- lasaddextrabytes(las, abc, "ID", "An ID for each point")
+las  <- add_lasattribute(las, abc, "ID", "An ID for each point")
 ```
 
 
 ## Validation of LAS objects
 
-It is common that users report bugs arising from the fact that a point cloud is invalid. This is why we introduced the function `lascheck` to perform a deep inspection of LAS objects. This function checks if a LAS object is in accordance with the las specifications but also it checks for weird point clouds that could be valid with respect to the specifications but invalid for actual processing. For example, it often happens that a las file contains duplicated points for no valid reason. This may lead to trees being detected twice, to invalid metrics, or to errors in DTM generation, and so on...
+It is common that users report bugs arising from the fact that a point cloud is invalid. This is why we introduced the function `validate_las` to perform a deep inspection of LAS objects. This function checks if a LAS object is in accordance with the las specifications but also it checks for weird point clouds that could be valid with respect to the specifications but invalid for actual processing. For example, it often happens that a las file contains duplicated points for no valid reason. This may lead to trees being detected twice, to invalid metrics, or to errors in DTM generation, and so on...
 
 ```{r}
-lascheck(las)
+validate_las(las)
 ```
 
 ## Display a LAS object
@@ -233,7 +233,7 @@ las.original <- readLAS("big_file.las")
 Suppose we now want to remove a few outliers above 50 m. One can write the following:
 
 ```r
-las.denoised <- lasfilter(las.original, Z < 50)
+las.denoised <- filter_points(las.original, Z < 50)
 ```
 
 And the user now has two objects:
@@ -248,7 +248,7 @@ This uses 2 GB of memory. This is how R works. When a vector is subsetted it is 
 In the previous example we showed a deep copy. A deep copy means that the point cloud is actually copied into the memory. A deep copy occurs when the number of points of the output is different from the number of points of the input. But many functions return the same number of point as the input. In such cases only **shallow copies** are made. For example, when classifying points into ground and non-ground:
 
 ```r
-las.classified <- lasground(las.original, csf())
+las.classified <- classify_ground(las.original, csf())
 ```
 
 In this case the vectors that store the X Y Z coordinates as well as those that store the Intensity, ReturnNumber, NumberOfReturn and other attributes were not modified by the function. Only the contents of the 'Classification' attribute were modified. In this case `las.classified` and `las.original`, even though they are two different objects, share the same memory for X Y Z, and so on, but the attributes 'Classification' are different. In conclusion:
@@ -278,5 +278,3 @@ While `select` enables the user to select "columns" (or attributes) while readin
 las = readLAS("file", filter = "-keep_first")
 las = readLAS("file", select = "xyzi", filter = "-keep_first -drop_z_below 5 -drop_z_above 50")
 ```
-
-

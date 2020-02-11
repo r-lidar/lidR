@@ -100,11 +100,11 @@ ctg@data <- data
 ctg@polygons <- Sr@polygons
 ```
 
-What takes time when processing a LAScatalog is not necessarily the computation itself but the time required to read the files. In fact the read time (i.e the time needed to load the data in R) might be much longer than the actual computation time. This vignette explains why and how to speed-up the computation by a factor of 2 to 8 by carefully preparing the catalog.
+What takes time when processing a `LAScatalog` is not necessarily the computation itself but the time required to read the files. In fact the read time (i.e the time needed to load the data in R) might be much longer than the actual computation time. This vignette explains why and how to speed-up the computation by a factor of 2 to 8 by carefully preparing the catalog.
 
-## Generic considerations on LAScatalog processing
+## Generic considerations on `LAScatalog` processing
 
-When processing a LAScatalog the area covered is divided into chunks that are then processed sequentially. In the following examples we present the case where chunks are equal to tiles, i.e. when processing each file sequentially. This is the common way to process data but not the only one. In any case, the explanation remains valid even when chunks are not equal to tiles.
+When processing a `LAScatalog` the area covered is divided into chunks that are then processed sequentially. In the following examples we present the case where chunks are equal to tiles, i.e. when processing each file sequentially. This is the common way to process data but not the only one. In any case, the explanation remains valid even when chunks are not equal to tiles.
 
 So each file is processed sequentially. For a given processed file, the content is read and loaded into R. In the following figure chunk number 42 is currently read and processed (in blue):
 
@@ -139,7 +139,7 @@ for (i in 1:nrow(neighbourg))
 }
 ```
 
-To process a LAScatalog faster we need to read the files faster.
+To process a `LAScatalog` faster we need to read the files faster.
 
 ## Read a las file vs read a laz file
 
@@ -302,7 +302,7 @@ Here we found an almost 6-fold speed-up by changing only the file types.
 Extraction of 140 plots of 12 m radius from 1 x 1 km files with 3 pts/m² on a laptop with an SSD and an intel core i7 processor.
 
 ```r
-plots <- lasclip(ctg, shapefile, radius = 12)
+plots <- clip(ctg, shapefile, radius = 12)
 ```
 
 ```{r, echo = FALSE}

@@ -141,13 +141,13 @@ ctg$newattribute <- 0
 
 ## Validation of LAScatalog object
 
-Users commonly report bugs arising from the fact that the point cloud is invalid. This is why we introduced the function `lascheck` to perform an inspection of the LAScatalog objects. This function checks if a LAScatalog object is consistent (files are all of the same type for example). For example, it may happen that a catalog mixes files of type 1 with files of type 3 or files with different scale factors.
+Users commonly report bugs arising from the fact that the point cloud is invalid. This is why we introduced the function `validate_las` to perform an inspection of the LAScatalog objects. This function checks if a LAScatalog object is consistent (files are all of the same type for example). For example, it may happen that a catalog mixes files of type 1 with files of type 3 or files with different scale factors.
 
 ```{r}
-lascheck(ctg)
+validate_las(ctg)
 ```
 
-The function `lascheck` when applied to a catalog does not perform a deep inspection of the point cloud unlike when applied to a LAS object. Indeed the point cloud is not actually read.
+The function `validate_las` when applied to a catalog does not perform a deep inspection of the point cloud unlike when applied to a LAS object. Indeed the point cloud is not actually read.
 
 ## Display a LAScatalog object
 
@@ -179,17 +179,17 @@ Most of lidR functions are compatible with a LAScatalog and work almost like wit
 hmean <- grid_metrics(ctg, mean(Z), 20)
 ```
 
-However, processing a LAScatalog usually requires some tuning of the processing options to get better control of the computation. Indeed, if the catalog is huge the output is likely to be huge as well, and maybe the output cannot fit in the R memory. For example, `lasnormalize` throws an error if used 'as is' without tuning the processing options. Using `lasnormalize` like in the following example the expected `output` would be a huge point cloud loaded in memory. The lidR package forbids such a call:
+However, processing a LAScatalog usually requires some tuning of the processing options to get better control of the computation. Indeed, if the catalog is huge the output is likely to be huge as well, and maybe the output cannot fit in the R memory. For example, `normalize_elevation` throws an error if used 'as is' without tuning the processing options. Using `normalize_elevation` like in the following example the expected `output` would be a huge point cloud loaded in memory. The lidR package forbids such a call:
 
 ```{r, error = TRUE, purl = FALSE}
-output <- lasnormalize(ctg, tin())
+output <- normalize_elevation(ctg, tin())
 ```
 
 Instead, one can use the processing option `opt_output_files`. Processing options drive how the big files are split in small chunks and how the outputs are either returned into R or written on disk into files.
 
 ```r
 opt_output_files(ctg) <- "folder/where/to/store/outputs/{ORIGINALFILENAME}_normalized"
-output <- lasnormalize(ctg, tin())
+output <- normalize_elevation(ctg, tin())
 ```
 
 Here the output is not a point cloud but a LAScatalog pointing to the newly created files. The user can check how the catalog will be processed by calling `summary`
@@ -227,8 +227,8 @@ plot(ctg)
 Load a catalog. Process each file sequentially. Returns a RasterLayer into R.
 
 ```r
-ctg <- catalog("path/to/las/files/")
-hmean <- grid_metrics(ctg, mean(Z), 20)
+ctg <- readLAScatalog("path/to/las/files/")
+hmean <- grid_metrics(ctg, ~mean(Z), 20)
 ```
 
 #### Example 2 - Raster
@@ -248,7 +248,7 @@ Load a single big file too big to be actually loaded in memory. Process small ch
 
 
 ```r
-ctg <- catalog("path/to/las/files/bigfile.las")
+ctg <- readLAScatalog("path/to/las/files/bigfile.las")
 opt_chunk_size(ctg) <- 100
 chm <- grid_canopy(ctg, p2r())
 ```
@@ -259,11 +259,11 @@ Load a catalog. Process small chunks of 200 x 200 meters at a time. Each chunk i
 
 
 ```r
-ctg <- catalog("path/to/las/files/")
+ctg <- readLAScatalog("path/to/las/files/")
 opt_chunk_size(ctg) <- 200
 opt_chunk_buffer(ctg) <- 20
 opt_cores(ctg) <- 3
-ttops <- tree_detection(ctg, lmf(5))
+ttops <- find_trees(ctg, lmf(5))
 ```
 
 #### Example 5 - Decimate
@@ -272,8 +272,8 @@ This is forbidden. The output would be too big.
 
 
 ```r
-ctg <- catalog("path/to/las/files/")
-decimated <- lasfilterdecimate(ctg, homogenize(4))
+ctg <- readLAScatalog("path/to/las/files/")
+decimated <- decimate_points(ctg, homogenize(4))
 ```
 
 #### Example 6 - Decimate
@@ -282,11 +282,11 @@ Load a catalog. Process small chunks of 500 x 500 meter sequentially. For each c
 
 
 ```r
-ctg <- catalog("path/to/las/files/")
+ctg <- readLAScatalog("path/to/las/files/")
 opt_chunk_size(ctg) <- 500
 opt_output_files(ctg) <- "folder/where/to/store/outputs/project_{XLEFT}_{YBOTTOM}_decimated"
 opt_laz_compression(ctg) <- TRUE
-decimated <- lasfilterdecimate(ctg, homogenize(4))
+decimated <- decimate_points(ctg, homogenize(4))
 ```
 
 #### Example 7 - Clip
@@ -294,9 +294,9 @@ decimated <- lasfilterdecimate(ctg, homogenize(4))
 Load a catalog. Load a shapefile of plot centers. Extract the plots. Returns a list of extracted point clouds in R.
 
 ```r
-ctg <- catalog("path/to/las/files/")
+ctg <- readLAScatalog("path/to/las/files/")
 shp <- shapefile("plot_center.shp")
-plots <- lasclip(ctg, shp, radius = 11.2)
+plots <- clip(ctg, shp, radius = 11.2)
 ```
 
 #### Example 8 - Clip
@@ -305,8 +305,8 @@ plots <- lasclip(ctg, shp, radius = 11.2)
 Load a catalog. Load a shapefile of plot centers. Extract the plots and immediately write them into a file named after the coordinates of the plot and an attributes of the shapefile (here `PLOTID` if such an attribute exists in the shapefile). Returns a lightweight LAScatalog.
 
 ```r
-ctg <- catalog("path/to/las/files/")
+ctg <- readLAScatalog("path/to/las/files/")
 shp <- shapefile("plot_center.shp")
 opt_output_files(ctg) <- "folder/where/to/store/outputs/plot_{XCENTER}_{YCENTER}_{PLOTID}"
-plots <- lasclip(ctg, plot_centers, radius = 11.2)
+plots <- clip(ctg, plot_centers, radius = 11.2)
 ```
