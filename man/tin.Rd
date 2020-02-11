@@ -7,7 +7,7 @@
 tin()
 }
 \description{
-This function is made to be used in \link{grid_terrain} or \link{lasnormalize}. It implements an algorithm
+This function is made to be used in \link{grid_terrain} or \link{normalize_elevation}. It implements an algorithm
 for spatial interpolation. Spatial interpolation is based on a Delaunay triangulation, which performs
 a linear interpolation within each triangle. There are usually a few points outside the convex hull,
 determined by the ground points at the very edge of the dataset, that cannot be interpolated with

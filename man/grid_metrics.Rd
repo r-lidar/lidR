@@ -131,7 +131,7 @@ plot(metrics, "zimean", col = col)
 # === With point filters ===
 
 # Compute using only some points: basic
-first = lasfilter(las, ReturnNumber == 1)
+first = filter_points(las, ReturnNumber == 1)
 metrics = grid_metrics(first, ~mean(Z), 20)
 
 # Compute using only some points: optimized

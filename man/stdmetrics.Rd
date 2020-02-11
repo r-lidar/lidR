@@ -124,11 +124,11 @@ m4 = grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber)
 m5 = grid_metrics(las, .stdmetrics_i)
 
 # Compute the metrics only on first return
-first = lasfilterfirst(las)
+first = filter_first(las)
 m6 = grid_metrics(first, .stdmetrics_z)
 
 # Compute the metrics with a threshold at 2 meters
-over2 = lasfilter(las, Z > 2)
+over2 = filter_points(las, Z > 2)
 m7 = grid_metrics(over2, .stdmetrics_z)
 
 # Works also with cloud_metrics and hexbin_metrics
@@ -171,8 +171,8 @@ of Linear Vegetation Elements in a Rural Landscape Using LiDAR Point Clouds. Rem
 \seealso{
 \link{cloud_metrics}
 \link{grid_metrics}
-\link{grid_hexametrics}
-\link{grid_metrics3d}
+\link{hexbin_metrics}
+\link{voxel_metrics}
 \link{tree_metrics}
 \link{point_metrics}
 }

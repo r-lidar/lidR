@@ -33,7 +33,7 @@ there is no need to change this value.}
 is 0.65. Usually, there is no need to change this value. It is suitable for most cases.}
 }
 \description{
-This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 of ground points base on a Cloth Simulation Filter. This method is a strict implementation of
 the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the authors' original
 source code written and exposed to R via the the \code{RCSF} package.
@@ -43,7 +43,7 @@ LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn")
 
 mycsf <- csf(TRUE, 1, 1, time_step = 1)
-las <- lasground(las, mycsf)
+las <- classify_ground(las, mycsf)
 plot(las, color = "Classification")
 }
 \references{

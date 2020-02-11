@@ -27,7 +27,7 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on a watershed or a marker-controlled watershed.
 \itemize{
 \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
@@ -40,7 +40,7 @@ because \code{imager} is an orphaned package.
 \details{
 Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
@@ -56,7 +56,7 @@ col <- pastel.colors(250)
 chm <- grid_canopy(las, res = 0.5, p2r(0.3))
 ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
-las <- lastrees(las, watershed(chm))
+las <- segment_trees(las, watershed(chm))
 
 plot(las, color = "treeID", colorPalette = col)
 }

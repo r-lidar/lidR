@@ -45,7 +45,7 @@ test_that("Absolute elevation is extrabytes(ed)", {
 
   expect_true(is.null(las@header@VLR$Extra_Bytes))
 
-  las <- lasnormalize(las, dtm, add_extrabytes = TRUE)
+  las <- lasnormalize(las, dtm, add_lasattribute = TRUE)
 
   expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$Zref$data_type, 6L)
   expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$Zref$scale, las@header@PHB$`Z scale factor`)

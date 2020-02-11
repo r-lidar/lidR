@@ -29,7 +29,7 @@ However, as stated above, not all algorithms are parallelized or even paralleliz
 \link{li2012} is not parallelized. The following code is computed in serial:
 \preformatted{
 las <- readLAS("file.las")
-dtm <- lastrees(las, li2012())
+dtm <- segment_trees(las, li2012())
 }
 To know which algorithms are parallelized users can refer to the documentation or use the
 function \link{is.parallelised}.
@@ -97,7 +97,7 @@ myfun = function(cluster, ...)
 {
   las <- readLAS(cluster)
   if (is.empty(las)) return(NULL)
-  las  <- lasnormalize(las, tin())
+  las  <- normalize_elevation(las, tin())
   tops <- tree_detection(las, lmf(2))
   bbox <- extent(cluster)
   tops <- crop(tops, bbox)

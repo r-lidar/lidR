@@ -31,7 +31,7 @@ the number of windows created.}
 A list with two components: the windows size sequence and the threshold sequence.
 }
 \description{
-The function \link{lasground} with the progressive morphological filter allows for any
+The function \link{classify_ground} with the progressive morphological filter allows for any
 sequence of parameters. This function enables computation of the sequences using equations (4),
  (5) and (7) from Zhang et al. (see reference and details).
 }
@@ -44,7 +44,7 @@ or\cr\cr
 
 In the original paper the threshold sequence is given by eq. 7:\cr\cr
 \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-Because the function \link{lasground} applies the morphological operation at the point
+Because the function \link{classify_ground} applies the morphological operation at the point
 cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
 }
 \examples{

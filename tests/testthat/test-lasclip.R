@@ -137,8 +137,8 @@ test_that("lasclip clips a transect on LAS and LAScatalog", {
 
   p1 = bbox(las)[,1]
   p2 = bbox(las)[,2]
-  tr1 = lasclipTransect(las, p1, p2, 2, xz = FALSE)
-  tr2 = lasclipTransect(ctg, p1, p2, 2, xz = FALSE)
+  tr1 = clip_transect(las, p1, p2, 2, xz = FALSE)
+  tr2 = clip_transect(ctg, p1, p2, 2, xz = FALSE)
 
   expect_equal(tr1, tr2)
 })
@@ -147,14 +147,14 @@ test_that("lasclip clips a reorients the point cloud on LAS and LAScatalog", {
 
   p1 = bbox(las)[,1]
   p2 = bbox(las)[,2]
-  tr1 = lasclipTransect(las, p1, p2, 2, xz = TRUE)
-  tr2 = lasclipTransect(ctg, p1, p2, 2, xz = TRUE)
+  tr1 = clip_transect(las, p1, p2, 2, xz = TRUE)
+  tr2 = clip_transect(ctg, p1, p2, 2, xz = TRUE)
 
   expect_equal(tr1, tr2)
   expect_equal(mean(tr1$Y), 0, tol = 0.5)
 
   opt_output_files(ctg) <- tempfile()
-  expect_error(lasclipTransect(ctg, p1, p2, 2, xz = TRUE), " not available yet")
+  expect_error(clip_transect(ctg, p1, p2, 2, xz = TRUE), " not available yet")
 })
 
 test_that("lasclip throw error with points and no radius", {

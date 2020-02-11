@@ -27,7 +27,7 @@
 
 #' Filter the surface points
 #'
-#' This function is superseded by the algorithm \link{highest} usable in \code{lasfilterdecimate}
+#' This function is superseded by the algorithm \link{highest} usable in \link{decimate_points}
 #'
 #' @template param-las
 #' @param res numeric. The resolution of the grid used to filter the point cloud
@@ -41,39 +41,39 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' subset = lasfiltersurfacepoints(las, 2)
+#' subset = filter_surfacepoints(las, 2)
 #' plot(subset)
 #'
-#' @family lasfilters
-lasfiltersurfacepoints = function(las, res)
+#' @family filters
+filter_surfacepoints = function(las, res)
 {
-  UseMethod("lasfiltersurfacepoints", las)
+  UseMethod("filter_surfacepoints", las)
 }
 
 #' @export
-lasfiltersurfacepoints.LAS = function(las, res)
+filter_surfacepoints.LAS = function(las, res)
 {
-  return(lasfilterdecimate(las, highest(res)))
+  return(decimate_points(las, highest(res)))
 }
 
 #' @export
-lasfiltersurfacepoints.LAScluster = function(las, res)
+filter_surfacepoints.LAScluster = function(las, res)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasfiltersurfacepoints(x, res)
-  x <- lasfilter(x, buffer == 0)
+  x <- filter_surfacepoints(x, res)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasfiltersurfacepoints.LAScatalog = function(las, res)
+filter_surfacepoints.LAScatalog = function(las, res)
 {
   opt_select(las)       <- "*"
   opt_chunk_buffer(las) <- res
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasfiltersurfacepoints, res = res, .options = options)
+  output  <- catalog_apply(las, filter_surfacepoints, res = res, .options = options)
   return(output)
 }

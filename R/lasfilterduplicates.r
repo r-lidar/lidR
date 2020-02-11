@@ -40,36 +40,36 @@
 #'
 #' @export
 #'
-#' @family lasfilters
-lasfilterduplicates = function(las)
+#' @family filters
+filter_duplicates = function(las)
 {
-  UseMethod("lasfilterduplicates", las)
+  UseMethod("filter_duplicates", las)
 }
 
 #' @export
-lasfilterduplicates.LAS = function(las)
+filter_duplicates.LAS = function(las)
 {
   dup_xyz <- duplicated(las@data, by = c("X", "Y", "Z"))
-  return(lasfilter(las, dup_xyz == FALSE))
+  return(filter_points(las, dup_xyz == FALSE))
 }
 
 #' @export
-lasfilterduplicates.LAScluster = function(las)
+filter_duplicates.LAScluster = function(las)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasfilterduplicates(x)
-  x <- lasfilter(x, buffer == 0)
+  x <- filter_duplicates(x)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasfilterduplicates.LAScatalog = function(las)
+filter_duplicates.LAScatalog = function(las)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasfilterduplicates, .options = options)
+  output  <- catalog_apply(las, filter_duplicates, .options = options)
   return(output)
 }

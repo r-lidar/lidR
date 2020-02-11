@@ -34,7 +34,7 @@ cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be pro
 the user.}
 }
 \description{
-This function is made to be used in \link{lassnags}. It implements an algorithms for snags segmentation
+This function is made to be used in \link{segment_snags}. It implements an algorithms for snags segmentation
 based on Wing et al (2015) (see references). This is an automated filtering algorithm that utilizes
 three dimensional neighborhood lidar point-based intensity and density statistics to remove lidar
 points associated with live trees and retain lidar points associated with snags.
@@ -76,13 +76,13 @@ bbpr_thresholds <- matrix(c(0.80, 0.80, 0.70,
                           nrow =3, ncol = 4)
 
 # Run snag classification and assign classes to each point
-las <- lassnags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
+las <- segment_snags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
 
 # Plot it all, tree and snag points...
 plot(las, color="snagCls", colorPalette = rainbow(5))
 
 # Filter and plot snag points only
-snags <- lasfilter(las, snagCls > 0)
+snags <- filter_points(las, snagCls > 0)
 plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 
 # Wing et al's (2015) methods ended with performing tree segmentation on the

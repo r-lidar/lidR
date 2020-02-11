@@ -10,10 +10,10 @@ random(density, use_pulse = FALSE)
 \item{density}{numeric. The desired output density.}
 
 \item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requires running
-\link{laspulse} first)}
+\link{retrieve_pulses} first)}
 }
 \description{
-This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
+This function is made to be used in \link{decimate_points}. It implements an algorithm that
 randomly removes points or pulses to reach the desired density over the whole area (see
 \code{\link[lidR:area]{area}}).
 }
@@ -22,7 +22,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
 # Reach a pulse density of 1 on the overall dataset
-thinned1 = lasfilterdecimate(las, random(1))
+thinned1 = decimate_points(las, random(1))
 plot(grid_density(las))
 plot(grid_density(thinned1))
 }

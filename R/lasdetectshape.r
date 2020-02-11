@@ -20,28 +20,28 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' las <- lasdetectshape(las, shp_plane(k = 15), "Coplanar")
+#' las <- segment_shapes(las, shp_plane(k = 15), "Coplanar")
 #' plot(las, color = "Coplanar")
 #'
 #' # Drop ground point at runtime
-#' las <- lasdetectshape(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
+#' las <- segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
 #' plot(las, color = "Coplanar")
 #' }
 #'
 #' @export
-lasdetectshape = function(las, algorithm, attribute = "Shape", filter = NULL)
+segment_shapes = function(las, algorithm, attribute = "Shape", filter = NULL)
 {
-  UseMethod("lasdetectshape", las)
+  UseMethod("segment_shapes", las)
 }
 
 #' @export
-lasdetectshape.LAS = function(las, algorithm, attribute = "Shape", filter = NULL)
+segment_shapes.LAS = function(las, algorithm, attribute = "Shape", filter = NULL)
 {
   stopif_forbidden_name(attribute)
   assert_is_a_string(attribute)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_shp(algorithm)
-  lidR.context <- "lasdetectshape"
+  lidR.context <- "segment_shapes"
 
   filter    <- parse_filter(las, filter)
   output    <- algorithm(las, filter)

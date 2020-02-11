@@ -95,7 +95,7 @@ tree_metrics.LAS = function(las, func = ~list(Z = max(Z)), attribute = "treeID")
 {
   assert_is_a_string(attribute)
 
-  if (!attribute %in% names(las@data)) stop("The trees are not segmented yet. Please see function 'lastrees'.")
+  if (!attribute %in% names(las@data)) stop("The trees are not segmented yet. See function 'segment_trees'.")
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)

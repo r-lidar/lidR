@@ -127,7 +127,7 @@ M1 <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25, filter = ~ReturnNumber 
 dim(M1) # 13894 instead of 17182 previously.
 
 # is a memory-optimized equivalent to:
-first = lasfilterfirst(las)
+first = filter_first(las)
 M2 <- point_metrics(first, ~plane_metrics2(X,Y,Z), k = 25)
 all.equal(M1, M2)
 }

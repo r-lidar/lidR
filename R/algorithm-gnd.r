@@ -27,7 +27,7 @@
 
 #' Ground Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+#' This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 #' of ground points based on a progressive morphological filter. This method is an implementation of
 #' the Zhang et al. (2003) algorithm (see reference). Note that this is not a strict implementation
 #' of Zhang et al. This algorithm works at the point cloud level without any rasterization process.
@@ -58,7 +58,7 @@
 #' ws <- seq(3,12, 3)
 #' th <- seq(0.1, 1.5, length.out = length(ws))
 #'
-#' las <- lasground(las, pmf(ws, th))
+#' las <- classify_ground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
 pmf = function(ws, th)
 {
@@ -77,7 +77,7 @@ pmf = function(ws, th)
 
 #' Ground Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+#' This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 #' of ground points base on a Cloth Simulation Filter. This method is a strict implementation of
 #' the CSF algorithm made by Zhang et al. (2016) (see references) that relies on the authors' original
 #' source code written and exposed to R via the the \code{RCSF} package.
@@ -109,7 +109,7 @@ pmf = function(ws, th)
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
-#' las <- lasground(las, mycsf)
+#' las <- classify_ground(las, mycsf)
 #' plot(las, color = "Classification")
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {
@@ -138,7 +138,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 
 #' Parameters for progressive morphological filter
 #'
-#' The function \link{lasground} with the progressive morphological filter allows for any
+#' The function \link{classify_ground} with the progressive morphological filter allows for any
 #' sequence of parameters. This function enables computation of the sequences using equations (4),
 #'  (5) and (7) from Zhang et al. (see reference and details).
 #' @details
@@ -150,7 +150,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #'
 #' In the original paper the threshold sequence is given by eq. 7:\cr\cr
 #' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-#' Because the function \link{lasground} applies the morphological operation at the point
+#' Because the function \link{classify_ground} applies the morphological operation at the point
 #' cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
 #' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).
 #' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limits

@@ -3,11 +3,11 @@
 #' Point cloud-based smoothing algorithm. Two methods are available: average within a window and
 #' Gaussian smooth within a window. The attribute \code{Z} of the returned LAS object is the smoothed Z.
 #' A new attribute \code{Zraw} is added to store the original values and can be used to restore the
-#' point cloud with \code{lasunsmooth}.
+#' point cloud with \code{unsmooth_elevation}.
 #'
 #' This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
 #' smoothing. It is not really useful by itself but may be interesting in combination with filters such
-#' as \link{lasfiltersurfacepoints}, for example to develop new algorithms.
+#' as \link{filter_surfacepoints}, for example to develop new algorithms.
 #'
 #' @param las An object of class \code{LAS}
 #' @param size numeric. The size of the windows used to smooth.
@@ -19,21 +19,19 @@
 #'
 #' @export
 #'
-#' @seealso \link{lasfiltersurfacepoints}
-#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyz")
 #'
-#' las <- lasfiltersurfacepoints(las, 1)
+#' las <- filter_surfacepoints(las, 1)
 #' plot(las)
 #'
-#' las <- lassmooth(las, 5, "gaussian", "circle", sigma = 2)
+#' las <- smooth_elevation(las, 5, "gaussian", "circle", sigma = 2)
 #' plot(las)
 #'
-#' las <- lasunsmooth(las)
+#' las <- unsmooth_elevation(las)
 #' plot(las)
-lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
+smooth_elevation = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
 {
   stopifnotlas(las)
   assert_is_a_number(size)
@@ -56,8 +54,8 @@ lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("ci
 }
 
 #' @export
-#' @rdname lassmooth
-lasunsmooth = function(las)
+#' @rdname smooth_elevation
+unsmooth_elevation = function(las)
 {
   stopifnotlas(las)
   Z <- Zraw <- NULL

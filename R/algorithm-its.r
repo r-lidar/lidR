@@ -30,7 +30,7 @@
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on the Dalponte and Coomes (2016) algorithm (see reference).
 #' This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
 #' This version has been written from the paper in C++. Consequently it is hundreds to millions times
@@ -40,7 +40,7 @@
 #'
 #' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 #' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-#' library, which is why this algorithm must be used in \link{lastrees} to merge the result with the point
+#' library, which is why this algorithm must be used in \link{segment_trees} to merge the result with the point
 #' cloud. However the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
@@ -88,7 +88,7 @@
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
 #' ttops <- tree_detection(chm, lmf(4, 2))
-#' las   <- lastrees(las, dalponte2016(chm, ttops))
+#' las   <- segment_trees(las, dalponte2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
@@ -147,7 +147,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
 #' method working at the point cloud level. It is an implementation, as strict as possible, made by
 #' the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
@@ -184,7 +184,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #' col <- pastel.colors(200)
 #'
-#' las <- lastrees(las, li2012(dt1 = 1.4))
+#' las <- segment_trees(las, li2012(dt1 = 1.4))
 #' plot(las, color = "treeID", colorPalette = col)
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
@@ -232,7 +232,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
 #' based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
 #' in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
@@ -241,7 +241,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #'
 #' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 #' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-#' library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+#' library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
@@ -284,7 +284,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
 #' ttops <- tree_detection(chm, lmf(4, 2))
-#' las   <- lastrees(las, silva2016(chm, ttops))
+#' las   <- segment_trees(las, silva2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
@@ -339,7 +339,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
 #' Individual Tree Segmentation Algorithm
 #'
-#' This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+#' This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on a watershed or a marker-controlled watershed.
 #' \itemize{
 #' \item \strong{Simple watershed} is based on the bioconductor package \code{EBIimage}. You need to install
@@ -351,7 +351,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #'
 #' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 #' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-#' library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+#' library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
@@ -386,7 +386,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.3))
 #' ker <- matrix(1,3,3)
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
-#' las <- lastrees(las, watershed(chm))
+#' las <- segment_trees(las, watershed(chm))
 #'
 #' plot(las, color = "treeID", colorPalette = col)
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)

@@ -12,10 +12,10 @@ homogenize(density, res = 5, use_pulse = FALSE)
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 
 \item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requires running
-\link{laspulse} first)}
+\link{retrieve_pulses} first)}
 }
 \description{
-This function is made to be used in \link{lasfilterdecimate}. It implements an algorithm that
+This function is made to be used in \link{decimate_points}. It implements an algorithm that
 creates a grid with a given resolution and filters the point cloud by randomly selecting some
 points in each cell. It is designed to produce point clouds that have uniform densities throughout
 the coverage area. For each cell, the proportion of points or pulses that will be retained is computed
@@ -30,7 +30,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an homogeneous density of 1
-thinned = lasfilterdecimate(las, homogenize(1,5))
+thinned = decimate_points(las, homogenize(1,5))
 plot(grid_density(thinned))
 }
 \seealso{

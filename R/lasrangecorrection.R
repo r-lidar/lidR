@@ -7,7 +7,7 @@
 #' and a range correction is applied.
 #'
 #' @template param-las
-#' @param sensor SpatialPointsDataDrame object containing the coordinates of
+#' @param sensor \code{SpatialPointsDataDrame} object containing the coordinates of
 #' the sensor at different timepoints t. The time and elevation are stored as attributes
 #' (default names are  'gpstime' and 'Z'). It can be computed with \link{sensor_tracking}.
 #' @param Rs numeric. Range of reference.
@@ -38,14 +38,14 @@
 #'
 #' # Here the effect is virtually null because the size of
 #' # the sample is too tiny to notice any effect of range
-#' las <- lasrangecorrection(las, sensor, Rs = 2000)
-lasrangecorrection <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
+#' las <- normalize_intensity(las, sensor, Rs = 2000)
+normalize_intensity <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
-  UseMethod("lasrangecorrection", las)
+  UseMethod("normalize_intensity", las)
 }
 
 #' @export
-lasrangecorrection.LAS <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
+normalize_intensity.LAS <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   stopifnot(is(sensor, "SpatialPointsDataFrame"))
   assert_is_a_number(Rs)

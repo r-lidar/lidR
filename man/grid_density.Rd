@@ -68,7 +68,7 @@ plot(d)
 d <- grid_density(las, 10)
 plot(d)
 
-las <- laspulse(las)
+las <- retrieve_pulses(las)
 d <- grid_density(las)
 plot(d)
 }

@@ -39,7 +39,7 @@ each tree, the name of this attribute. This way, original IDs will be preserved.
 such data trees will be numbered sequentially.}
 }
 \description{
-This function is made to be used in \link{lastrees}. It implements an algorithm for tree
+This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on the Dalponte and Coomes (2016) algorithm (see reference).
 This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
 This version has been written from the paper in C++. Consequently it is hundreds to millions times
@@ -50,7 +50,7 @@ pre- and post-processing tasks. Here these tasks are expected to be done by the 
 \details{
 Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-library, which is why this algorithm must be used in \link{lastrees} to merge the result with the point
+library, which is why this algorithm must be used in \link{segment_trees} to merge the result with the point
 cloud. However the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
@@ -68,7 +68,7 @@ ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
 ttops <- tree_detection(chm, lmf(4, 2))
-las   <- lastrees(las, dalponte2016(chm, ttops))
+las   <- segment_trees(las, dalponte2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
 }
 \references{

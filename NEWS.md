@@ -1,22 +1,32 @@
-## lidR v2.3.0
+## lidR v3.0.0
+
+### BREAKING CHANGES
+
+**Summary:** in lidR version 3.0.0, 80% of the functions were renamed. Old functions were softly deprecated meaning that they still exist so version 3 is fully compatible with version 2 at least for 1 year maybe more. Users should start to use the new names. See `?lidR::deprecated` for the list of deprecated functions and their new names. The plan is to remove these functions in 1 years so they will progressively print a message, then throw a warning, then throw an error until they will be definitively removed.
+
+**Full explanation**: At the very beginning of the development of lidR we started to name the functions that return a LAS object `lassomething()`. At the begining it was 5 functions and 10 users. As lidR grew up, we kept going with this name convention but now lidR is used worldwide this naming convention actually overlap with the LAStools software suite created by Martin Isenburg. This creates confusion for users which is problematic both for Martin and us. And it's gonna be worst because more tools will be released into LAStools. We discussed with Martin Isenburg an we took the decision to rename the functions of the lidR package so the overlaps in namespace will progressively fade out.
+
+The new name convention follows the current trending initiated by the `tidyverse`. New functions are thus of the form `verb_noun`. `lasnormalize()` becomes `normalize_elevation()` while `lasground()` becomes `classify_ground()`. A the full list of change can be found in `?lidR::deprecated`.
+
+In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite user to move on the new nane, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
 
 ### NEW FEATURES
 
 1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
 
-2. New function `lasclipTransect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
+2. New function `clip_transect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
 
 3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
 
-4. `tree_hulls` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
+4. `delineate_crown()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
 
-5. `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
+5. `segment_trees()` formerly named `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
 6. `point_metrics()` supports a spherical neighborhood search.
 
-7. `lasnormalize()` has a new argument `add_extrabytes`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+7. `normalize_elevation()` formerly named `lasnormalize()` has a new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
 
-8. New function `local_maximum()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `tree_detection()`. Instead `local_maximum()` may help at findind other human made structures.
+8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `find_trees()` formerly called `tree_detection()`. Instead `find_localmaxima()` may help at findind other human made structures.
 
 ### ENHANCEMENT
 
@@ -24,7 +34,11 @@
 
 ### FIXES
 
-1. In `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+1. In `delineate_crowns()` formerly names `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+
+### CHANGES
+
+`lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
 ## lidR v2.2.3
 

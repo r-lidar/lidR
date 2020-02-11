@@ -15,7 +15,7 @@ feet).}
 considered a ground return. The values must be positive and in the same units as the point cloud.}
 }
 \description{
-This function is made to be used in \link{lasground}. It implements an algorithm for segmentation
+This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 of ground points based on a progressive morphological filter. This method is an implementation of
 the Zhang et al. (2003) algorithm (see reference). Note that this is not a strict implementation
 of Zhang et al. This algorithm works at the point cloud level without any rasterization process.
@@ -31,7 +31,7 @@ las <- readLAS(LASfile, select = "xyzrn")
 ws <- seq(3,12, 3)
 th <- seq(0.1, 1.5, length.out = length(ws))
 
-las <- lasground(las, pmf(ws, th))
+las <- classify_ground(las, pmf(ws, th))
 plot(las, color = "Classification")
 }
 \references{

@@ -58,7 +58,7 @@
 #' ws  <- seq(3,12, 3)
 #' th  <- seq(0.1, 1.5, length.out = length(ws))
 #'
-#' las <- lasground(las, pmf(ws, th))
+#' las <- classify_ground(las, pmf(ws, th))
 #' plot(las, color = "Classification")
 #'
 #' #' # Using the Cloth Simulation Filter
@@ -66,15 +66,15 @@
 #'
 #' # (Parameters chosen mainly for speed)
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
-#' las <- lasground(las, mycsf)
+#' las <- classify_ground(las, mycsf)
 #' plot(las, color = "Classification")
-lasground = function(las, algorithm, last_returns = TRUE)
+classify_ground = function(las, algorithm, last_returns = TRUE)
 {
-  UseMethod("lasground", las)
+  UseMethod("classify_ground", las)
 }
 
 #' @export
-lasground.LAS = function(las, algorithm, last_returns = TRUE)
+classify_ground.LAS = function(las, algorithm, last_returns = TRUE)
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_gnd(algorithm)
@@ -92,7 +92,7 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
     }
   }
 
-  lidR.context <- "lasground"
+  lidR.context <- "classify_ground"
   idx <- algorithm(las, filter)
 
   if ("Classification" %in% names(las@data))
@@ -119,21 +119,21 @@ lasground.LAS = function(las, algorithm, last_returns = TRUE)
 }
 
 #' @export
-lasground.LAScluster = function(las, algorithm, last_returns = TRUE)
+classify_ground.LAScluster = function(las, algorithm, last_returns = TRUE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasground(x, algorithm, last_returns)
-  x <- lasfilter(x, buffer == LIDRNOBUFFER)
+  x <- classify_ground(x, algorithm, last_returns)
+  x <- filter_points(x, buffer == LIDRNOBUFFER)
   return(x)
 }
 
 #' @export
-lasground.LAScatalog = function(las, algorithm, last_returns = TRUE)
+classify_ground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
   opt_select(las) <- "*"
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasground, algorithm = algorithm,  last_returns = last_returns, .options = options)
+  output  <- catalog_apply(las, classify_ground, algorithm = algorithm,  last_returns = last_returns, .options = options)
   return(output)
 }

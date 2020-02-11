@@ -2,21 +2,199 @@
 % Please edit documentation in R/deprecated.R
 \name{deprecated}
 \alias{deprecated}
-\alias{lasmetrics}
-\alias{grid_metrics3d}
-\alias{grid_hexametrics}
+\alias{lascheck}
+\alias{lasclip}
+\alias{lasclipRectangle}
+\alias{lasclipPolygon}
+\alias{lasclipCircle}
+\alias{lasdetectshape}
+\alias{lasfilter}
+\alias{lasfilterfirst}
+\alias{lasfilterfirstlast}
+\alias{lasfilterfirstofmany}
+\alias{lasfilterground}
+\alias{lasfilterlast}
+\alias{lasfilternth}
+\alias{lasfiltersingle}
+\alias{lasfilterdecimate}
+\alias{lasfilterduplicates}
+\alias{lasfiltersurfacepoints}
+\alias{lasground}
+\alias{laspulse}
+\alias{lasflightline}
+\alias{lasscanline}
+\alias{lasmergespatial}
+\alias{lasnormalize}
+\alias{lasunnormalize}
+\alias{lasrangecorrection}
+\alias{lasrescale}
+\alias{lasreoffset}
+\alias{lassmooth}
+\alias{lasunsmooth}
+\alias{lassnags}
+\alias{lastransform}
+\alias{lastrees}
+\alias{lasadddata}
+\alias{lasaddextrabytes}
+\alias{lasaddextrabytes_manual}
+\alias{lasremoveextrabytes}
+\alias{lasvoxelize}
 \title{Deprecated functions in lidR}
 \usage{
-lasmetrics(las, func)
+lascheck(las)
 
-grid_metrics3d(...)
+lasclip(las, geometry, ...)
 
-grid_hexametrics(...)
+lasclipRectangle(las, xleft, ybottom, xright, ytop, ...)
+
+lasclipPolygon(las, xpoly, ypoly, ...)
+
+lasclipCircle(las, xcenter, ycenter, radius, ...)
+
+lasdetectshape(las, algorithm, attribute = "Shape", filter = NULL)
+
+lasfilter(las, ...)
+
+lasfilterfirst(las)
+
+lasfilterfirstlast(las)
+
+lasfilterfirstofmany(las)
+
+lasfilterground(las)
+
+lasfilterlast(las)
+
+lasfilternth(las, n)
+
+lasfiltersingle(las)
+
+lasfilterdecimate(las, algorithm)
+
+lasfilterduplicates(las)
+
+lasfiltersurfacepoints(las, res)
+
+lasground(las, algorithm, last_returns = TRUE)
+
+laspulse(las)
+
+lasflightline(las, dt = 30)
+
+lasscanline(las)
+
+lasmergespatial(las, source, attribute = NULL)
+
+lasnormalize(
+  las,
+  algorithm,
+  na.rm = FALSE,
+  use_class = c(2L, 9L),
+  ...,
+  add_lasattribute = FALSE
+)
+
+lasunnormalize(las)
+
+lasrangecorrection(
+  las,
+  sensor,
+  Rs,
+  f = 2.3,
+  gpstime = "gpstime",
+  elevation = "Z"
+)
+
+lasrescale(las, xscale, yscale, zscale)
+
+lasreoffset(las, xoffset, yoffset, zoffset)
+
+lassmooth(
+  las,
+  size,
+  method = c("average", "gaussian"),
+  shape = c("circle", "square"),
+  sigma = size/6
+)
+
+lasunsmooth(las)
+
+lassnags(las, algorithm, attribute = "snagCls")
+
+lastransform(las, CRSobj)
+
+lastrees(las, algorithm, attribute = "treeID", uniqueness = "incremental")
+
+lasadddata(las, x, name)
+
+lasaddextrabytes(las, x, name, desc)
+
+lasaddextrabytes_manual(
+  las,
+  x,
+  name,
+  desc,
+  type,
+  offset = NULL,
+  scale = NULL,
+  NA_value = NULL
+)
+
+lasremoveextrabytes(las, name)
+
+lasvoxelize(las, res)
 }
 \arguments{
-\item{las, func, ...}{parameters}
+\item{las}{See the new functions that replace the old ones}
+
+\item{geometry}{See the new functions that replace the old ones}
+
+\item{...}{See the new functions that replace the old ones}
+
+\item{xleft, ybottom, xright, ytop}{See the new functions that replace the old ones}
+
+\item{xpoly, ypoly}{See the new functions that replace the old ones}
+
+\item{xcenter, ycenter, radius}{See the new functions that replace the old ones}
+
+\item{algorithm}{See the new functions that replace the old ones}
+
+\item{attribute}{See the new functions that replace the old ones}
+
+\item{filter}{See the new functions that replace the old ones}
+
+\item{n, res, dt}{See the new functions that replace the old ones}
+
+\item{last_returns}{See the new functions that replace the old ones}
+
+\item{source}{See the new functions that replace the old ones}
+
+\item{na.rm, use_class, add_lasattribute}{See the new functions that replace the old ones}
+
+\item{sensor, Rs, f, gpstime, elevation}{See the new functions that replace the old ones}
+
+\item{xscale, yscale, zscale, xoffset, yoffset, zoffset}{See the new functions that replace the old ones}
+
+\item{size, method, shape, sigma}{See the new functions that replace the old ones}
+
+\item{CRSobj}{See the new functions that replace the old ones}
+
+\item{uniqueness}{See the new functions that replace the old ones}
+
+\item{x, name, desc, type, offset, scale, NA_value}{See the new functions that replace the old ones}
 }
 \description{
-These functions are provided for compatibility with older versions of lidR only, and may be
-defunct as soon as the next release.
+These functions are provided for compatibility with older versions of lidR but are deprecated
+since lidR version 3. They will progressively print a message, throw a warning and eventually be
+removed. The links below point to the documentation of the new names \cr\cr
+\link[lidR:add_attribute]{lasadd} \link[lidR:validate_las]{lascheck} \link[lidR:clip]{lasclip}
+\link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_points]{lasfilter}
+\link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
+\link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
+\link[lidR:normalize_elevation]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
+\link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
+\link[lidR:reoffset_las]{lasreoffset} \link[lidR:rescale_las]{lasrescale}
+\link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
+\link[lidR:segment_snags]{lassnags} \link[lidR:reproject_las]{lastransform}
+\link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
 }

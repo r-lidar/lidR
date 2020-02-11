@@ -34,13 +34,13 @@
 #' users could find unexpected outputs.
 #'
 #' \describe{
-#' \item{\code{laspulse}}{Retrieves each individual pulse. It uses GPS time. An attribute
+#' \item{\code{retrieve_pulses}}{Retrieves each individual pulse. It uses GPS time. An attribute
 #' \code{pulseID} is added in the \code{LAS} object}
-#' \item{\code{lasscanline}}{Retrieves each individual scanline. When data are sampled according to a
+#' \item{\code{retrieve_scanlines}}{Retrieves each individual scanline. When data are sampled according to a
 #' saw-tooth pattern (oscillating mirror), a scanline is one line, or row of data. The function relies
 #' on the GPS field time to order the data. Then, the \code{ScanDirectionFlag} attribute is used to
 #' retrieve each scanline. An attribute \code{scanlineID} is added in the \code{LAS} object}
-#' \item{\code{lasflightline}}{Retrieves each individual flightline. It uses GPS time. In a
+#' \item{\code{retrieve_flightlines}}{Retrieves each individual flightline. It uses GPS time. In a
 #' continuous dataset, once points are ordered by GPS time, the time between two consecutive points
 #' does not exceed a few milliseconds. If the time between two consecutive points is too long it means
 #' that the second point is from a different flightline. The default threshold is 30 seconds.
@@ -53,18 +53,18 @@
 #' @return An object of class \code{LAS}
 #'
 #' @export
-#' @rdname lasidentify
+#' @rdname identify
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' las <- laspulse(las)
+#' las <- retrieve_pulses(las)
 #' las
 #'
-#' las <- lasflightline(las)
+#' las <- retrieve_flightlines(las)
 #' plot(las, color = "flightlineID")
-laspulse = function(las)
+retrieve_pulses = function(las)
 {
   stopifnotlas(las)
 
@@ -86,8 +86,8 @@ laspulse = function(las)
 }
 
 #' @export
-#' @rdname lasidentify
-lasflightline = function(las, dt = 30)
+#' @rdname identify
+retrieve_flightlines = function(las, dt = 30)
 {
   stopifnotlas(las)
   assert_is_a_number(dt)
@@ -111,8 +111,8 @@ lasflightline = function(las, dt = 30)
 }
 
 #' @export
-#' @rdname lasidentify
-lasscanline = function(las)
+#' @rdname identify
+retrieve_scanlines = function(las)
 {
   stopifnotlas(las)
 

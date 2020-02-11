@@ -46,7 +46,7 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radius or radii.
-#' @param ... in \code{lasclip}: optional supplementary options (see supported geometries). Unused in
+#' @param ... in \code{clip}: optional supplementary options (see supported geometries). Unused in
 #' other functions
 #'
 #' @section Supported geometries:
@@ -80,7 +80,7 @@
 #' \item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 #' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
 #' They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
-#' \code{lasclip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+#' \code{clip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
 #' {YCENTER}} or any names from the table of attributes of a spatial object given as
 #' input such as \code{{PLOT_ID}} or \code{{YEAR}}, for example, if these attributes exist. If empty everything
 #' is returned into R.
@@ -101,22 +101,22 @@
 #'
 #' # Load the file and clip the region of interest
 #' las = readLAS(LASfile)
-#' subset1 = lasclipRectangle(las, 684850, 5017850, 684900, 5017900)
+#' subset1 = clip_rectangle(las, 684850, 5017850, 684900, 5017900)
 #'
 #' # Do not load the file(s), extract only the region of interest
 #' # from a bigger dataset
 #' ctg = readLAScatalog(LASfile)
-#' subset2 = lasclipRectangle(ctg, 684850, 5017850, 684900, 5017900)
+#' subset2 = clip_rectangle(ctg, 684850, 5017850, 684900, 5017900)
 #'
 #' # Extract all the polygons from a shapefile
 #' f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 #' lakes <- shapefile(f)
-#' subset3 <- lasclip(ctg, lakes)
+#' subset3 <- clip(ctg, lakes)
 #'
 #' # Extract the polygons, write them in files named after the lake names,
 #' # do not load anything in R
 #' opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
-#' new_ctg = lasclip(ctg, lakes)
+#' new_ctg = clip(ctg, lakes)
 #' #plot(mew_ctg)
 #'
 #' # Extract a transect
@@ -124,8 +124,8 @@
 #' ctg <- readLAScatalog(LASfile)
 #' p1 <- c(273357, y = 5274357)
 #' p2 <- c(273642, y = 5274642)
-#' tr1 <- lasclipTransect(ctg, p1, p2, width = 3)
-#' tr2 <- lasclipTransect(ctg, p1, p2, width = 3, xz = TRUE)
+#' tr1 <- clip_transect(ctg, p1, p2, width = 3)
+#' tr2 <- clip_transect(ctg, p1, p2, width = 3, xz = TRUE)
 #' plot(tr1, axis = TRUE, clear_artifacts = FALSE)
 #' plot(tr2, axis = TRUE, clear_artifacts = FALSE)
 #'
@@ -134,9 +134,9 @@
 #' plot(subset2)
 #' plot(subset3)
 #' }
-#' @name lasclip
+#' @name clip
 #' @export
-lasclip = function(las, geometry, ...)
+clip = function(las, geometry, ...)
 {
   if (is.character(geometry))
     geometry <- rgeos::readWKT(geometry, p4s = las@proj4string)
@@ -157,7 +157,7 @@ lasclip = function(las, geometry, ...)
   {
     if (all(sf::st_is(geometry, "POLYGON") | sf::st_is(geometry, "MULTIPOLYGON")))
     {
-      return(lasclipSimpleFeature(las, geometry))
+      return(clip_sf(las, geometry))
     }
     else if (all(sf::st_is(geometry, "POINT")))
     {
@@ -169,7 +169,7 @@ lasclip = function(las, geometry, ...)
       ycenter <- centers[,2]
       xcenter <- centers[,1]
       radius  <- p$radius
-      return(lasclipCircle(las, xcenter, ycenter, radius, data = geometry))
+      return(clip_disc(las, xcenter, ycenter, radius, data = geometry))
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
@@ -180,7 +180,7 @@ lasclip = function(las, geometry, ...)
     xmax = geometry@xmax
     ymin = geometry@ymin
     ymax = geometry@ymax
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
+    return(clip_rectangle(las, xmin, ymin, xmax, ymax))
   }
   else if (is.matrix(geometry))
   {
@@ -191,7 +191,7 @@ lasclip = function(las, geometry, ...)
     xmax = geometry[3]
     ymin = geometry[2]
     ymax = geometry[4]
-    return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
+    return(clip_rectangle(las, xmin, ymin, xmax, ymax))
   }
   #else if (tryCatch(is(raster::extent(geometry), "Extent"), error = function(e) return(FALSE)))
   #{
@@ -200,7 +200,7 @@ lasclip = function(las, geometry, ...)
     #xmax = geometry@xmax
     #ymin = geometry@ymin
     #ymax = geometry@ymax
-    #return(lasclipRectangle(las, xmin, ymin, xmax, ymax))
+    #return(clip_rectangle(las, xmin, ymin, xmax, ymax))
   #}
   else
   {
@@ -211,8 +211,8 @@ lasclip = function(las, geometry, ...)
 # ========= RECTANGLE =========
 
 #' @export
-#' @rdname lasclip
-lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
+#' @rdname clip
+clip_rectangle = function(las, xleft, ybottom, xright, ytop, ...)
 {
   assert_is_numeric(xleft)
   assert_is_numeric(ybottom)
@@ -222,18 +222,18 @@ lasclipRectangle = function(las, xleft, ybottom, xright, ytop, ...)
   assert_are_same_length(xleft, xright)
   assert_are_same_length(xleft, ytop)
 
-  UseMethod("lasclipRectangle", las)
+  UseMethod("clip_rectangle", las)
 }
 
 #' @export
-lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
+clip_rectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
 {
   X <- Y <- NULL
 
   output <- vector(mode = "list", length(xleft))
   for (i in 1:length(xleft))
   {
-    roi <- lasfilter(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
+    roi <- filter_points(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."))
     output[[i]] = roi
   }
@@ -247,7 +247,7 @@ lasclipRectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
 }
 
 #' @export
-lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
+clip_rectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
 {
   bboxes  <- mapply(raster::extent, xleft, xright, ybottom, ytop)
   output  <- catalog_extract(las, bboxes, LIDRRECTANGLE)
@@ -262,33 +262,33 @@ lasclipRectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
 
 # ========  POLYGON ========
 
-#' @export lasclipPolygon
-#' @rdname lasclip
-lasclipPolygon = function(las, xpoly, ypoly, ...)
+#' @export clip_polygon
+#' @rdname clip
+clip_polygon = function(las, xpoly, ypoly, ...)
 {
   assert_is_numeric(xpoly)
   assert_is_numeric(ypoly)
   assert_are_same_length(xpoly, ypoly)
 
   poly <- sp::Polygon(cbind(xpoly, ypoly))
-  return(lasclip(las, poly))
+  return(clip(las, poly))
 }
 
 # ======== CIRCLE ========
 
-#' @export lasclipCircle
-#' @rdname lasclip
-lasclipCircle = function(las, xcenter, ycenter, radius, ...)
+#' @export clip_disc
+#' @rdname clip
+clip_disc = function(las, xcenter, ycenter, radius, ...)
 {
   assert_is_numeric(xcenter)
   assert_is_numeric(ycenter)
   assert_is_numeric(radius)
   assert_are_same_length(xcenter, ycenter)
-  UseMethod("lasclipCircle", las)
+  UseMethod("clip_disc", las)
 }
 
 #' @export
-lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
+clip_disc.LAS = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)
@@ -300,7 +300,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
   output <- vector(mode = "list", length(xcenter))
   for (i in 1:length(xcenter))
   {
-    roi <- lasfilter(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
+    roi <- filter_points(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."))
     output[[i]] <- roi
   }
@@ -314,7 +314,7 @@ lasclipCircle.LAS = function(las, xcenter, ycenter, radius, ...)
 }
 
 #' @export
-lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
+clip_disc.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)
@@ -337,12 +337,12 @@ lasclipCircle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 # ======= TRANSECT ========
 
 #' @export
-#' @rdname lasclip
+#' @rdname clip
 #' @param p1,p2 numeric vectors of length 2 that give the coordinates of two points that define a
 #' transect
 #' @param width numeric. width of the transect.
 #' @param xz bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates
-lasclipTransect = function(las, p1, p2, width, xz = FALSE, ...)
+clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
 {
   assert_is_a_bool(xz)
   assert_is_numeric(p1)
@@ -363,7 +363,7 @@ lasclipTransect = function(las, p1, p2, width, xz = FALSE, ...)
   line <- sp::SpatialLines(list(sp::Lines(sp::Line(coords), ID = "1")))
   raster::projection(line) <- raster::projection(las)
   poly <- rgeos::gBuffer(line, width = width/2, capStyle = "SQUARE")
-  las <- lasclip(las, poly)
+  las <- clip(las, poly)
 
   if (!xz) { return(las) }
 
@@ -382,19 +382,19 @@ lasclipTransect = function(las, p1, p2, width, xz = FALSE, ...)
 
 # ======== WKT ========
 
-lasclipSimpleFeature = function(las, sf)
+clip_sf = function(las, sf)
 {
-  UseMethod("lasclipSimpleFeature", las)
+  UseMethod("clip_sf", las)
 }
 
-lasclipSimpleFeature.LAS = function(las, sf)
+clip_sf.LAS = function(las, sf)
 {
   wkt <- sf::st_as_text(sf$geometry, digits = 10)
 
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
   {
-    roi = lasfilter(las, C_in_polygon(las, wkt[i], getThread()))
+    roi = filter_points(las, C_in_polygon(las, wkt[i], getThread()))
     if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."))
     output[[i]] = roi
   }
@@ -407,7 +407,7 @@ lasclipSimpleFeature.LAS = function(las, sf)
     return(output)
 }
 
-lasclipSimpleFeature.LAScatalog = function(las, sf)
+clip_sf.LAScatalog = function(las, sf)
 {
   wkt  <- sf::st_as_text(sf$geometry, digits = 10)
 

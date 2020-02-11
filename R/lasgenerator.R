@@ -1,4 +1,4 @@
-lasgenerator <- function(n, seeds = 1) {
+generate_las <- function(n, seeds = 1) {
   set.seed(seeds)
   X <- round_any(stats::runif(n, 0, 100), 0.001)
   set.seed(seeds + 1)

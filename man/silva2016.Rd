@@ -24,7 +24,7 @@ each tree, the name of this column. This way, original IDs will be preserved. If
 data trees will be numbered sequentially.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
+This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
 based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
 in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
@@ -34,7 +34,7 @@ and 1000 times) faster.
 \details{
 Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
 user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
-library, which is why this algorithm must be used in \link{lastrees} to merge the result into the point
+library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
@@ -52,7 +52,7 @@ ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
 ttops <- tree_detection(chm, lmf(4, 2))
-las   <- lastrees(las, silva2016(chm, ttops))
+las   <- segment_trees(las, silva2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
 }
 \references{

@@ -47,14 +47,14 @@
 #' las <- readLAS(LASfile, select = "xyzrn")
 #' crs <- sp::CRS("+init=epsg:26918")
 #'
-#' las <- lastransform(las, crs)
-lastransform = function(las, CRSobj)
+#' las <- reproject_las(las, crs)
+reproject_las = function(las, CRSobj)
 {
-  UseMethod("lastransform", las)
+  UseMethod("reproject_las", las)
 }
 
 #' @export
-lastransform.LAS = function(las, CRSobj)
+reproject_las.LAS = function(las, CRSobj)
 {
   if (is.na(sp::proj4string(las)))
     stop("No transformation possible from NA reference system")

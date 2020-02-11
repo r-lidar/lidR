@@ -25,7 +25,7 @@ good because this parameter does not affect the result. However, it greatly affe
 computation speed. The lower the value, the faster the method. Default is 10.}
 }
 \description{
-This functions is made to be used in \link{lastrees}. It implements an algorithm for tree
+This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
 method working at the point cloud level. It is an implementation, as strict as possible, made by
 the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
@@ -36,7 +36,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col <- pastel.colors(200)
 
-las <- lastrees(las, li2012(dt1 = 1.4))
+las <- segment_trees(las, li2012(dt1 = 1.4))
 plot(las, color = "treeID", colorPalette = col)
 }
 \references{

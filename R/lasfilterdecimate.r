@@ -47,45 +47,45 @@
 #' las = readLAS(LASfile, select = "xyz")
 #'
 #' # Select points randomly to reach an overall density of 1
-#' thinned1 = lasfilterdecimate(las, random(1))
+#' thinned1 = decimate_points(las, random(1))
 #' plot(grid_density(las))
 #' plot(grid_density(thinned1))
 #'
 #' # Select points randomly to reach an homogeneous density of 1
-#' thinned2 = lasfilterdecimate(las, homogenize(1,5))
+#' thinned2 = decimate_points(las, homogenize(1,5))
 #' plot(grid_density(thinned2))
 #'
 #' # Select the highest point within each pixel of an overlayed grid
-#' thinned3 = lasfilterdecimate(las, highest(5))
+#' thinned3 = decimate_points(las, highest(5))
 #' plot(thinned3)
-lasfilterdecimate = function(las, algorithm)
+decimate_points = function(las, algorithm)
 {
-  UseMethod("lasfilterdecimate", las)
+  UseMethod("decimate_points", las)
 }
 
 #' @export
-lasfilterdecimate.LAS = function(las, algorithm)
+decimate_points.LAS = function(las, algorithm)
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_dec(algorithm)
-  lidR.context <- "lasfilterdecimate"
+  lidR.context <- "decimate_points"
   selected <- algorithm(las)
   return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE))
 }
 
 #' @export
-lasfilterdecimate.LAScluster = function(las, algorithm)
+decimate_points.LAScluster = function(las, algorithm)
 {
   buffer <- NULL
   x <- suppressMessages(suppressWarnings(readLAS(las)))
   if (is.empty(x)) return(NULL)
-  x <- lasfilterdecimate(x, algorithm)
-  x <- lasfilter(x, buffer == 0)
+  x <- decimate_points(x, algorithm)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasfilterdecimate.LAScatalog = function(las, algorithm)
+decimate_points.LAScatalog = function(las, algorithm)
 {
   # Defensive programming
   assert_is_algorithm(algorithm)
@@ -100,6 +100,6 @@ lasfilterdecimate.LAScatalog = function(las, algorithm)
 
   # Processing
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasfilterdecimate, algorithm = algorithm, .options = options)
+  output  <- catalog_apply(las, decimate_points, algorithm = algorithm, .options = options)
   return(output)
 }

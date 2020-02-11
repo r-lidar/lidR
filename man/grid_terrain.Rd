@@ -102,6 +102,3 @@ plot_dtm3d(dtm2)
 plot_dtm3d(dtm3)
 }
 }
-\seealso{
-\link{lasnormalize}
-}

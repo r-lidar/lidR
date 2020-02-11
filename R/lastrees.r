@@ -21,7 +21,7 @@
 #' in parallel on different computers. Thus the index restart to 1 on each file or chunk. Worst, a
 #' tree that belongs exactly between 2 files will have two different IDs for its two halfs.
 #'
-#' This is why \code{lastrees} was not able to process a \code{LAScatalog} until v2.3.0.
+#' This is why \code{segment_trees} was not able to process a \code{LAScatalog} until v2.3.0.
 #'
 #' \describe{
 #' \item{incremental}{Number from 0 to n. This methods does not ensure unicity of the IDs.}
@@ -51,21 +51,21 @@
 #' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
 #' # Using Li et al. (2012)
-#' las <- lastrees(las, li2012(R = 3, speed_up = 5))
+#' las <- segment_trees(las, li2012(R = 3, speed_up = 5))
 #' plot(las, color = "treeID")
-lastrees = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
+segment_trees = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
 {
-  UseMethod("lastrees", las)
+  UseMethod("segment_trees", las)
 }
 
 #'@export
-lastrees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
+segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
 {
   stopif_forbidden_name(attribute)
   assert_is_algorithm(algorithm)
   assert_is_algorithm_its(algorithm)
   match.arg(uniqueness, c('incremental', 'gpstime', 'bitmerge'))
-  lidR.context <- "lastrees"
+  lidR.context <- "segment_trees"
 
   if (uniqueness == 'gpstime' && !"gpstime" %in% names(las@data))
     stop("Impossible to compute unique IDs using gpstime: no gpstime found.", call. = FALSE)
@@ -78,18 +78,18 @@ lastrees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 'incr
   else if (is(algorithm, "PointCloudBased"))
     output <- algorithm(las)
   else
-    stop("Invalid algorithm provided in lastrees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'")
+    stop("Invalid algorithm provided in segment_trees. The algorithm must have a class 'RasterBased' or 'PointCloudBased'")
 
   if (is(output, "RasterLayer"))
-    las <- lasmergespatial(las, output, attribute)
+    las <- merge_spatial(las, output, attribute)
   else if (is.integer(output))
-    las <- lasadddata(las, output, attribute)
+    las <- add_attribute(las, output, attribute)
   else
     stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"))
 
   if (uniqueness == 'incremental')
   {
-    las <- lasaddextrabytes(las, name = attribute, desc = "An ID for each segmented tree")
+    las <- add_lasattribute(las, name = attribute, desc = "An ID for each segmented tree")
     return(las)
   }
 
@@ -145,7 +145,7 @@ lastrees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 'incr
 
     las@data[[attribute]] <- matching[["IDs"]]
 
-    las <- lasaddextrabytes_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
+    las <- add_lasattribute_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
     return(las)
   }
   else
@@ -153,18 +153,18 @@ lastrees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 'incr
 }
 
 #' @export
-lastrees.LAScluster = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
+segment_trees.LAScluster = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
 {
   buffer <- NULL
   x <- suppressMessages(suppressWarnings(readLAS(las)))
   if (is.empty(x)) return(NULL)
-  x <- lastrees(x, algorithm, attribute, uniqueness)
-  x <- lasfilter(x, buffer == 0)
+  x <- segment_trees(x, algorithm, attribute, uniqueness)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lastrees.LAScatalog = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
+segment_trees.LAScatalog = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
 {
   # Defensive programming
   assert_is_algorithm(algorithm)
@@ -178,6 +178,6 @@ lastrees.LAScatalog = function(las, algorithm, attribute = "treeID", uniqueness 
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lastrees, algorithm = algorithm, attribute = attribute, uniqueness = uniqueness, .options = options)
+  output  <- catalog_apply(las, segment_trees, algorithm = algorithm, attribute = attribute, uniqueness = uniqueness, .options = options)
   return(output)
 }

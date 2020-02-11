@@ -37,7 +37,7 @@
 #' How well the edges of the dataset are interpolated depends on the interpolation method used.
 #' Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
 #' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref'
-#' records the former elevation values, which enables the use of \code{lasunormalize} to restore
+#' records the former elevation values, which enables the use of \link{unnormalize_elevation} to restore
 #' original point elevations.\cr\cr
 #'
 #' @template param-las
@@ -51,10 +51,10 @@
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9). Relevant only for a normalisation without a raster DTM.
 #' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
-#' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinerar"}.
-#' @param add_extrabytes logical. By default the above see level elevation is retained in a new attribute.
+#' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinear"}.
+#' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
 #' However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
-#' extrabytes attribute. See also \link{lasaddextrabytes} .
+#' extrabytes attribute. See also \link{add_lasattribute} .
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
@@ -71,13 +71,13 @@
 #' # =======================================================
 #'
 #' dtm <- grid_terrain(las, 1, knnidw(k = 6L, p = 2))
-#' las <- lasnormalize(las, dtm)
+#' las <- normalize_elevation(las, dtm)
 #'
 #' plot(dtm)
 #' plot(las)
 #'
 #' # restore original elevations
-#' las <- lasunnormalize(las)
+#' las <- unnormalize_elevation(las)
 #' plot(las)
 #'
 #' # operator - can be used. This is equivalent to the previous
@@ -85,25 +85,25 @@
 #' plot(las)
 #'
 #' # restore original elevations
-#' las <- lasunnormalize(las)
+#' las <- unnormalize_elevation(las)
 #'
 #' # Second option: interpolate each point (no discretization)
 #' # =========================================================
 #'
-#' las <- lasnormalize(las, tin())
+#' las <- normalize_elevation(las, tin())
 #' plot(las)
 #'
 #' # operator - can be used. This is equivalent to the previous
-#' las <- lasunnormalize(las)
+#' las <- unnormalize_elevation(las)
 #' las <- las - tin()
 #'
 #' \dontrun{
 #' # All the following syntaxes are correct
-#' las <- lasnormalize(las, knnidw())
-#' las <- lasnormalize(las, knnidw(k = 8, p = 2))
+#' las <- normalize_elevation(las, knnidw())
+#' las <- normalize_elevation(las, knnidw(k = 8, p = 2))
 #' las <- las - knnidw()
 #' las <- las - knnidw(k = 8)
-#' las <- lasnormalize(las, kriging())
+#' las <- normalize_elevation(las, kriging())
 #' las <- las - kriging(k = 8)
 #' }
 #'
@@ -111,16 +111,14 @@
 #' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
-#' @rdname lasnormalize
 #' @export
-lasnormalize = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
+normalize_elevation = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
 {
-
-  UseMethod("lasnormalize", las)
+  UseMethod("normalize_elevation", las)
 }
 
 #' @export
-lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
+normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
 {
   assert_is_a_bool(na.rm)
 
@@ -163,7 +161,7 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L),
     ground  <- check_degenerated_points(ground)
 
     # wbuffer = !"buffer" %in% names(las@data)
-    lidR.context <- "lasnormalize"
+    lidR.context <- "normalize_elevation"
     Zground <- algorithm(ground, las@data, scales, offsets)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
@@ -184,12 +182,12 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L),
 
   las@data[["Z"]] <- round_any(las@data[["Z"]] - Zground, zscale)
 
-  if (add_extrabytes && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
-    las <- lasaddextrabytes_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
+  if (add_lasattribute && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
+    las <- add_lasattribute_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
 
   if (nnas > 0 && na.rm == TRUE)
   {
-    las <- lasfilter(las, !isna)
+    las <- filter_points(las, !isna)
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
 
@@ -198,29 +196,29 @@ lasnormalize.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L),
 }
 
 #' @export
-lasnormalize.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
+normalize_elevation.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lasnormalize(x, algorithm, na.rm, use_class, ..., add_extrabytes = add_extrabytes)
-  x <- lasfilter(x, buffer == 0)
+  x <- normalize_elevation(x, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lasnormalize.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_extrabytes = FALSE)
+normalize_elevation.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lasnormalize, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_extrabytes = add_extrabytes, .options = options)
+  output  <- catalog_apply(las, normalize_elevation, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_lasattribute = add_lasattribute, .options = options)
   return(output)
 }
 
-#' @rdname lasnormalize
+#' @rdname normalize_elevation
 #' @export
-lasunnormalize = function(las)
+unnormalize_elevation = function(las)
 {
   stopifnotlas(las)
 
@@ -241,17 +239,17 @@ lasunnormalize = function(las)
 #' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} has \link{tin},
 #' \link{kriging}, and \link{knnidw}.
 #' @export
-#' @rdname lasnormalize
+#' @rdname normalize_elevation
 setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
 {
-  return(lasnormalize(e1,e2))
+  return(normalize_elevation(e1,e2))
 })
 
 #' @export
-#' @rdname lasnormalize
+#' @rdname normalize_elevation
 setMethod("-", c("LAS", "function"), function(e1, e2)
 {
-  return(lasnormalize(e1,e2))
+  return(normalize_elevation(e1,e2))
 })
 
 check_degenerated_points = function(points)

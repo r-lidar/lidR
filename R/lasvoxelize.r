@@ -47,17 +47,17 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile, select = "xyz")
 #'
-#' las2 = lasvoxelize(las, 2)
+#' las2 = voxelize_points(las, 2)
 #' plot(las2)
-lasvoxelize = function(las, res)
+voxelize_points = function(las, res)
 {
   assert_all_are_non_negative(res)
 
-  UseMethod("lasvoxelize", las)
+  UseMethod("voxelize_points", las)
 }
 
 #' @export
-lasvoxelize.LAS = function(las, res)
+voxelize_points.LAS = function(las, res)
 {
   Intensity <- NULL
 
@@ -85,24 +85,24 @@ lasvoxelize.LAS = function(las, res)
 }
 
 #' @export
-lasvoxelize.LAScluster = function(las, res)
+voxelize_points.LAScluster = function(las, res)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
 
-  output <- lasvoxelize(x, res)
-  output <- lasclip(output, raster::extent(las))
+  output <- voxelize_points(x, res)
+  output <- clip(output, raster::extent(las))
   return(output)
 }
 
 #' @export
-lasvoxelize.LAScatalog = function(las, res)
+voxelize_points.LAScatalog = function(las, res)
 {
   opt_select(las) <- "xyzi"
   opt_chunk_buffer(las) <- res[1]
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_apply(las, lasvoxelize, res = res, .options = options)
+  output  <- catalog_apply(las, voxelize_points, res = res, .options = options)
   output  <- unlist(output)
   ctg     <- suppressMessages(suppressWarnings(readLAScatalog(output)))
 

@@ -188,7 +188,7 @@ setMethod("extent", "LAS",
 setMethod("$<-", "LAS", function(x, name, value)
 {
   if (!name %in% names(x@data))
-    stop("Addition of a new column using $ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
+    stop("Addition of a new column using $ is forbidden for LAS objects. See ?add_attribute", call. = FALSE)
 
   if (name %in% LASATTRIBUTES)
   {
@@ -210,7 +210,7 @@ setMethod("$<-", "LAS", function(x, name, value)
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (!i %in% names(x@data))
-    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?lasadddata", call. = FALSE)
+    stop("Addition of a new column using [[ is forbidden for LAS objects. See ?add_attribute", call. = FALSE)
 
   if (i %in% LASATTRIBUTES)
   {

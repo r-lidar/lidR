@@ -52,7 +52,7 @@
 #' d <- grid_density(las, 10)
 #' plot(d)
 #'
-#' las <- laspulse(las)
+#' las <- retrieve_pulses(las)
 #' d <- grid_density(las)
 #' plot(d)
 grid_density = function(las, res = 4)

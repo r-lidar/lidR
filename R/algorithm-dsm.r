@@ -148,7 +148,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' # Potentially complex concave subset of point cloud
 #' x = c(481340, 481340, 481280, 481300, 481280, 481340)
 #' y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
-#' las2 = lasclipPolygon(las,x,y)
+#' las2 = clip_polygon(las,x,y)
 #' plot(las2)
 #'
 #' # Since the TIN interpolation is done within the convex hull of the point cloud
@@ -215,7 +215,7 @@ dsmtin = function(max_edge = 0)
 #' # Potentially complex concave subset of point cloud
 #' x = c(481340, 481340, 481280, 481300, 481280, 481340)
 #' y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
-#' las2 = lasclipPolygon(las,x,y)
+#' las2 = clip_polygon(las,x,y)
 #' plot(las2)
 #'
 #' # Since the TIN interpolation is done within the convex hull of the point cloud

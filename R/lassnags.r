@@ -61,31 +61,31 @@
 #'                           nrow =3, ncol = 4)
 #'
 #' # Run snag classification and assign classes to each point
-#' las <- lassnags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
+#' las <- segment_snags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
 #'
 #' # Plot it all, tree and snag points...
 #' plot(las, color="snagCls", colorPalette = rainbow(5))
 #'
 #' # Filter and plot snag points only
-#' snags <- lasfilter(las, snagCls > 0)
+#' snags <- filter_points(las, snagCls > 0)
 #' plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 #'
 #' # Wing et al's (2015) methods ended with performing tree segmentation on the
 #' # classified and filtered point cloud using the watershed method
 #' }
-lassnags = function(las, algorithm, attribute = "snagCls")
+segment_snags = function(las, algorithm, attribute = "snagCls")
 {
-  UseMethod("lassnags", las)
+  UseMethod("segment_snags", las)
 }
 
 #' @export
-lassnags.LAS = function(las, algorithm, attribute = "snagCls")
+segment_snags.LAS = function(las, algorithm, attribute = "snagCls")
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_sng(algorithm)
   stopif_forbidden_name(attribute)
 
-  lidR.context <- "lassnags"
+  lidR.context <- "segment_snags"
   snags <- algorithm(las)
 
   las <- lasaddextrabytes(las, snags, attribute, "Number identifying a snag class")
@@ -93,18 +93,18 @@ lassnags.LAS = function(las, algorithm, attribute = "snagCls")
 }
 
 #' @export
-lassnags.LAScluster = function(las, algorithm, attribute = "snagCls")
+segment_snags.LAScluster = function(las, algorithm, attribute = "snagCls")
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- lassnags(x, algorithm)
-  x <- lasfilter(x, buffer == 0)
+  x <- segment_snags(x, algorithm)
+  x <- filter_points(x, buffer == 0)
   return(x)
 }
 
 #' @export
-lassnags.LAScatalog = function(las, algorithm, attribute = "snagCls")
+segment_snags.LAScatalog = function(las, algorithm, attribute = "snagCls")
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_sng(algorithm)
@@ -113,6 +113,6 @@ lassnags.LAScatalog = function(las, algorithm, attribute = "snagCls")
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, lassnags,  algorithm = algorithm, .options = options)
+  output  <- catalog_apply(las, segment_snags,  algorithm = algorithm, .options = options)
   return(output)
 }

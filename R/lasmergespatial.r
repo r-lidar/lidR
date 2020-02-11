@@ -59,21 +59,21 @@
 #'
 #' # The attribute "inlake" does not exist in the shapefile.
 #' # Points are classified as TRUE if in a polygon
-#' las    <- lasmergespatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
-#' forest <- lasfilter(las, inlakes == FALSE)
+#' las    <- merge_spatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
+#' forest <- filter_points(las, inlakes == FALSE)
 #' plot(las)
 #' plot(forest)
 #'
 #' # The attribute "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the values of the polygons
-#' las <- lasmergespatial(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
-lasmergespatial = function(las, source, attribute = NULL)
+#' las <- merge_spatial(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
+merge_spatial = function(las, source, attribute = NULL)
 {
-  UseMethod("lasmergespatial", las)
+  UseMethod("merge_spatial", las)
 }
 
 #' @export
-lasmergespatial.LAS = function(las, source, attribute = NULL)
+merge_spatial.LAS = function(las, source, attribute = NULL)
 {
   if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
   {
@@ -82,22 +82,22 @@ lasmergespatial.LAS = function(las, source, attribute = NULL)
   }
 
   if (is(source, "SpatialPolygonsDataFrame"))
-    values = lasmergeSpatialPolygonDataFrame(las, source, attribute)
+    values = merge_spdf(las, source, attribute)
   else if (is(source, "RasterLayer"))
-    values = lasmergeRasterLayer(las, source)
+    values = merge_raster(las, source)
   else if (is(source, "RasterStack") | is(source, "RasterBrick"))
-    return(lasmergergb(las, source))
+    return(merge_rgb(las, source))
   else
     stop("No method for this source format.")
 
   if (is.null(attribute))
     attribute <- "id"
 
-  las <- lasadddata(las, values, attribute)
+  las <- add_attribute(las, values, attribute)
   return(las)
 }
 
-lasmergergb = function(las, source)
+merge_rgb = function(las, source)
 {
   . <- X <- Y <- NULL
 
@@ -143,7 +143,7 @@ lasmergergb = function(las, source)
   return(las)
 }
 
-lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
+merge_spdf = function(las, shapefile, attribute = NULL)
 {
   npoints <- nrow(las@data)
 
@@ -212,7 +212,7 @@ lasmergeSpatialPolygonDataFrame = function(las, shapefile, attribute = NULL)
   return(values)
 }
 
-lasmergeRasterLayer = function(las, raster)
+merge_raster = function(las, raster)
 {
   cells <- raster::cellFromXY(raster, coordinates(las))
 
