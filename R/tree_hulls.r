@@ -65,29 +65,29 @@
 #' # plot(las, color = "treeID", colorPalette = pastel.colors(200))
 #'
 #' # Only the hulls
-#' convex_hulls = tree_hulls(las)
+#' convex_hulls = delineate_crowns(las)
 #' plot(convex_hulls)
 #' spplot(convex_hulls, "ZTOP")
 #'
 #' # The hulls + some user-defined metrics
-#' convex_hulls = tree_hulls(las, func = ~list(Zmean = mean(Z)))
+#' convex_hulls = delineate_crowns(las, func = ~list(Zmean = mean(Z)))
 #' spplot(convex_hulls, "Zmean")
 #'
 #' # The bounding box
-#' bbox_hulls = tree_hulls(las, "bbox")
+#' bbox_hulls = delineate_crowns(las, "bbox")
 #' plot(bbox_hulls)
 #'
 #' \dontrun{
-#' concave_hulls = tree_hulls(las, "concave")
+#' concave_hulls = delineate_crowns(las, "concave")
 #' sp::plot(concave_hulls)
 #' }
-tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
+delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
-  UseMethod("tree_hulls", las)
+  UseMethod("delineate_crowns", las)
 }
 
 #' @export
-tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
+delineate_crowns.LAS = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   type <- match.arg(type)
   assert_is_a_number(concavity)
@@ -135,11 +135,11 @@ tree_hulls.LAS = function(las, type = c("convex", "concave", "bbox"), concavity 
 }
 
 #' @export
-tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
+delineate_crowns.LAScluster = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  metrics <- tree_hulls(x, type, concavity, length_threshold, func, attribute)
+  metrics <- delineate_crowns(x, type, concavity, length_threshold, func, attribute)
   bbox    <- raster::extent(las)
 
   coords = metrics@data[,c("XTOP", "YTOP")]
@@ -150,10 +150,10 @@ tree_hulls.LAScluster = function(las, type = c("convex", "concave", "bbox"), con
 }
 
 #' @export
-tree_hulls.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
+delineate_crowns.LAScatalog = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE, automerge = TRUE)
-  output  <- catalog_apply(las, tree_hulls, type = type, concavity = concavity, length_threshold = length_threshold, func = func, attribute = attribute, .options = options)
+  output  <- catalog_apply(las, delineate_crowns, type = type, concavity = concavity, length_threshold = length_threshold, func = func, attribute = attribute, .options = options)
   return(output)
 }
 

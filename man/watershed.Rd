@@ -20,7 +20,7 @@ an external file.}
 \item{ext}{numeric. see ?EBImage::watershed.}
 
 \item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
-\link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
+\link{find_trees} or read from an external shapefile.}
 
 \item{ID}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
 each tree, the name of this column. This way, original IDs will be preserved. If there is no such
@@ -44,7 +44,7 @@ library, which is why this algorithm must be used in \link{segment_trees} to mer
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
- ttops = tree_detection(chm, lmf(3))
+ ttops = find_trees(chm, lmf(3))
  crowns = watershed(chm)()
 }
 }

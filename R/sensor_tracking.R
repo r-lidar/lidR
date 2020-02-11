@@ -63,7 +63,7 @@
 #' # pmin = 15 because it is an extremely tiny file
 #' # strongly decimated to reduce its size. There are
 #' # actually few multiple returns
-#' flightlines <- sensor_tracking(las, pmin = 15)
+#' flightlines <- track_sensor(las, pmin = 15)
 #'
 #' plot(las@header)
 #' plot(flightlines, add = TRUE)
@@ -75,7 +75,7 @@
 #' las <- readLAS(LASfile,
 #'                select = "xyzrntp",
 #'                filter = "-drop_single -thin_pulses_with_time 0.001")
-#' flightlines <- sensor_tracking(las)
+#' flightlines <- track_sensor(las)
 #'
 #' x <- plot(las)
 #' add_flightlines3d(x, flightlines, radius = 10)
@@ -84,16 +84,16 @@
 #' # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
 #' # are used by default
 #' ctg = readLAScatalog("folder/")
-#' flightlines <- sensor_tracking(ctg)
+#' flightlines <- track_sensor(ctg)
 #' plot(flightlines)
 #' }
-sensor_tracking <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
+track_sensor <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
-  UseMethod("sensor_tracking", las)
+  UseMethod("track_sensor", las)
 }
 
 #' @export
-sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
+track_sensor.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   if (!"PointSourceID" %in% names(las@data))     stop("No 'PointSourceID' attribute found", call. = FALSE)
   if (!"gpstime" %in% names(las@data))           stop("No 'gpstime' attribute found", call. = FALSE)
@@ -181,16 +181,16 @@ sensor_tracking.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TR
 }
 
 #' @export
-sensor_tracking.LAScluster <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
+track_sensor.LAScluster <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  pos  <- sensor_tracking(x, interval, pmin, extra_check)
+  pos  <- track_sensor(x, interval, pmin, extra_check)
   return(pos)
 }
 
 #' @export
-sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
+track_sensor.LAScatalog <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   assert_is_a_number(thin_pulse_with_time)
 
@@ -200,11 +200,11 @@ sensor_tracking.LAScatalog <- function(las, interval = 0.5, pmin = 50, extra_che
   if (opt_output_files(las) != "")
   {
     opt_output_files(las) <- ""
-    warning("Saving intermediate results is disabled in 'sensor_tracking' because the output must be post-processed as a whole.", call. = F)
+    warning("Saving intermediate results is disabled in 'track_sensor' because the output must be post-processed as a whole.", call. = F)
   }
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
-  output  <- catalog_apply(las, sensor_tracking, interval = interval, pmin = pmin, extra_check = extra_check, thin_pulse_with_time = 0, .options = options)
+  output  <- catalog_apply(las, track_sensor, interval = interval, pmin = pmin, extra_check = extra_check, thin_pulse_with_time = 0, .options = options)
   output  <- do.call(rbind, output)
   output@proj4string <- las@proj4string
 

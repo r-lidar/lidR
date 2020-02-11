@@ -20,7 +20,7 @@ cannot be a local maxima. Default is 2.}
 or "circular".}
 }
 \description{
-This function is made to be used in \link{tree_detection}. It implements an algorithm for tree
+This function is made to be used in \link{find_trees}. It implements an algorithm for tree
 detection based on a local maximum filter. The windows size can be fixed or variable and its
 shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
 It is deeply inspired by Popescu & Wynne (2004) (see references).
@@ -33,14 +33,14 @@ las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 # =================
 
 # 5x5 m fixed window size
-ttops <- tree_detection(las, lmf(5))
+ttops <- find_trees(las, lmf(5))
 
 x <- plot(las)
 add_treetops3d(x, ttops)
 
 # variable windows size
 f <- function(x) { x * 0.07 + 3}
-ttops <- tree_detection(las, lmf(f))
+ttops <- find_trees(las, lmf(f))
 
 x <- plot(las)
 add_treetops3d(x, ttops)
@@ -53,14 +53,14 @@ chm <- grid_canopy(las, res = 1, p2r(0.15))
 kernel <- matrix(1,3,3)
 chm <- raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
 
-ttops <- tree_detection(chm, lmf(5))
+ttops <- find_trees(chm, lmf(5))
 
 plot(chm, col = height.colors(30))
 plot(ttops, add = TRUE)
 
 # variable window size
 f <- function(x) { x * 0.07 + 3 }
-ttops <- tree_detection(chm, lmf(f))
+ttops <- find_trees(chm, lmf(f))
 
 plot(chm, col = height.colors(30))
 plot(ttops, add = TRUE)

@@ -13,6 +13,8 @@
 #' \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
 #' \link[lidR:segment_snags]{lassnags} \link[lidR:reproject_las]{lastransform}
 #' \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
+#' \link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
+#' \link[lidR:delineate_crowns]{tree_hull}
 #'
 #' @param las See the new functions that replace the old ones
 #' @param geometry See the new functions that replace the old ones
@@ -33,6 +35,8 @@
 #' @param CRSobj See the new functions that replace the old ones
 #' @param size,method,shape,sigma See the new functions that replace the old ones
 #' @param uniqueness See the new functions that replace the old ones
+#' @param interval,pmin,extra_check,thin_pulse_with_time See the new functions that replace the old ones
+#' @param concavity,length_threshold,func See the new functions that replace the old ones
 #'
 #' @rdname deprecated
 #' @name deprecated
@@ -303,6 +307,27 @@ lasremoveextrabytes = function(las, name) {
 lasvoxelize = function(las, res) {
   .lidr3depreciation("voxelize_points")
   return(voxelize_points(las, res))
+}
+
+#' @export
+#' @rdname deprecated
+sensor_tracking <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001) {
+  .lidr3depreciation("track_sensor")
+  return(track_sensor(las, interval, pmin, extra_check, thin_pulse_with_time))
+}
+
+#' @export
+#' @rdname deprecated
+tree_detection = function(las, algorithm) {
+  .lidr3depreciation("find_trees")
+  return(find_trees(las, algorithm))
+}
+
+#' @export
+#' @rdname deprecated
+tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID") {
+  .lidr3depreciation("delineate_crowns")
+  return(delineate_crowns(las, type, concavity, length_threshold, func, attribute))
 }
 
 .lidr3depreciation <- function(name)

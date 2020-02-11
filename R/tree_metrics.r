@@ -43,7 +43,7 @@
 #'
 #' @template param-las
 #' @param func formula. An expression to be applied to each tree. It works like in \link{grid_metrics}
-#' \link{voxel_metrics} or \link{tree_hulls} and computes, in addition to tree locations a set of metrics
+#' \link{voxel_metrics} or \link{delineate_crowns} and computes, in addition to tree locations a set of metrics
 #' for each tree.
 #' @param attribute character. The column name of the attribute containing tree IDs. Default is \code{"treeID"}
 #'

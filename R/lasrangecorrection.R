@@ -9,7 +9,7 @@
 #' @template param-las
 #' @param sensor \code{SpatialPointsDataDrame} object containing the coordinates of
 #' the sensor at different timepoints t. The time and elevation are stored as attributes
-#' (default names are  'gpstime' and 'Z'). It can be computed with \link{sensor_tracking}.
+#' (default names are  'gpstime' and 'Z'). It can be computed with \link{track_sensor}.
 #' @param Rs numeric. Range of reference.
 #' @param f numeric. Exponent. Usually between 2 and 3 in vegetation contexts.
 #' @param gpstime,elevation character. The name of the attributes that store the gpstime of the
@@ -34,7 +34,7 @@
 #' # pmin = 15 because it is an extremely tiny file
 #' # strongly decimated to reduce its size. There are
 #' # actually few multiple returns
-#' sensor <- sensor_tracking(las, pmin = 15)
+#' sensor <- track_sensor(las, pmin = 15)
 #'
 #' # Here the effect is virtually null because the size of
 #' # the sample is too tiny to notice any effect of range

@@ -47,21 +47,21 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 #'
-#' ttops <- tree_detection(las, lmf(ws = 5))
+#' ttops <- find_trees(las, lmf(ws = 5))
 #'
 #' x = plot(las)
 #' add_treetops3d(x, ttops)
-tree_detection = function(las, algorithm)
+find_trees = function(las, algorithm)
 {
-  UseMethod("tree_detection", las)
+  UseMethod("find_trees", las)
 }
 
 #' @export
-tree_detection.LAS = function(las, algorithm)
+find_trees.LAS = function(las, algorithm)
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_itd(algorithm)
-  lidR.context <- "tree_detection"
+  lidR.context <- "find_trees"
   res <- algorithm(las)
 
   if (is(res, "SpatialPointsDataFrame"))
@@ -90,32 +90,32 @@ tree_detection.LAS = function(las, algorithm)
 }
 
 #' @export
-tree_detection.RasterLayer = function(las, algorithm)
+find_trees.RasterLayer = function(las, algorithm)
 {
   data <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
   names(data) <- c("X", "Y", "Z")
   header <- rlas::header_create(data)
   las <- LAS(data, header, proj4string = las@crs, check = FALSE)
-  return(tree_detection(las, algorithm))
+  return(find_trees(las, algorithm))
 }
 
 #' @export
-tree_detection.LAScluster = function(las, algorithm)
+find_trees.LAScluster = function(las, algorithm)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  ttops <- tree_detection(x, algorithm)
+  ttops <- find_trees(x, algorithm)
   bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
 
 #' @export
-tree_detection.LAScatalog = function(las, algorithm)
+find_trees.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "xyz"
   options <- list(need_buffer = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, tree_detection, algorithm = algorithm, .options = options)
+  output  <- catalog_apply(las, find_trees, algorithm = algorithm, .options = options)
   return(output)
 }
 

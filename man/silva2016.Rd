@@ -11,7 +11,7 @@ silva2016(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 an external file.}
 
 \item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
-\link[lidR:tree_detection]{tree_detection} or read from an external shapefile.}
+\link{find_trees} or read from an external shapefile.}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as a proportion of the
 tree height. Default is 0.6, meaning 60\% of the tree height.}
@@ -38,7 +38,7 @@ library, which is why this algorithm must be used in \link{segment_trees} to mer
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
- ttops = tree_detection(chm, lmf(3))
+ ttops = find_trees(chm, lmf(3))
  crowns = silva2016(chm, ttops)()
 }
 }
@@ -51,7 +51,7 @@ chm <- grid_canopy(las, res = 0.5, p2r(0.3))
 ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
-ttops <- tree_detection(chm, lmf(4, 2))
+ttops <- find_trees(chm, lmf(4, 2))
 las   <- segment_trees(las, silva2016(chm, ttops))
 plot(las, color = "treeID", colorPalette = col)
 }

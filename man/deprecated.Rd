@@ -39,6 +39,9 @@
 \alias{lasaddextrabytes_manual}
 \alias{lasremoveextrabytes}
 \alias{lasvoxelize}
+\alias{sensor_tracking}
+\alias{tree_detection}
+\alias{tree_hulls}
 \title{Deprecated functions in lidR}
 \usage{
 lascheck(las)
@@ -143,6 +146,25 @@ lasaddextrabytes_manual(
 lasremoveextrabytes(las, name)
 
 lasvoxelize(las, res)
+
+sensor_tracking(
+  las,
+  interval = 0.5,
+  pmin = 50,
+  extra_check = TRUE,
+  thin_pulse_with_time = 0.001
+)
+
+tree_detection(las, algorithm)
+
+tree_hulls(
+  las,
+  type = c("convex", "concave", "bbox"),
+  concavity = 3,
+  length_threshold = 0,
+  func = NULL,
+  attribute = "treeID"
+)
 }
 \arguments{
 \item{las}{See the new functions that replace the old ones}
@@ -182,6 +204,10 @@ lasvoxelize(las, res)
 \item{uniqueness}{See the new functions that replace the old ones}
 
 \item{x, name, desc, type, offset, scale, NA_value}{See the new functions that replace the old ones}
+
+\item{interval, pmin, extra_check, thin_pulse_with_time}{See the new functions that replace the old ones}
+
+\item{concavity, length_threshold, func}{See the new functions that replace the old ones}
 }
 \description{
 These functions are provided for compatibility with older versions of lidR but are deprecated
@@ -197,4 +223,6 @@ removed. The links below point to the documentation of the new names \cr\cr
 \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
 \link[lidR:segment_snags]{lassnags} \link[lidR:reproject_las]{lastransform}
 \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
+\link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
+\link[lidR:delineate_crowns]{tree_hull}
 }

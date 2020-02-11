@@ -10,51 +10,51 @@ las = LAS(df)
 epsg(las) <- 2008
 
 
-test_that("local maximum works with disk", {
+test_that("find_localmaxima works with disk", {
 
-  lm = local_maximum(las, 14)
+  lm = find_localmaxima(las, 14)
 
   expect_equal(length(lm), length(x))
   expect_equal(projection(lm), projection(las))
   expect_equal(names(lm), c("Z"))
 
-  lm = local_maximum(las, 14.2)
+  lm = find_localmaxima(las, 14.2)
 
   expect_equal(length(lm), 1)
 })
 
-test_that("local maximum works with rect", {
+test_that("find_localmaxima works with rect", {
 
-  lm = local_maximum(las, c(10, 8))
+  lm = find_localmaxima(las, c(10, 8))
 
   expect_equal(length(lm), length(x))
   expect_equal(projection(lm), projection(las))
 
-  lm = local_maximum(las, c(10, 10))
+  lm = find_localmaxima(las, c(10, 10))
 
   expect_equal(length(lm), 1)
 })
 
-test_that("local maximum works with oriented rect", {
+test_that("find_localmaxima works with oriented rect", {
 
-  lm = local_maximum(las, c(10, 10))
+  lm = find_localmaxima(las, c(10, 10))
 
   expect_equal(length(lm), 1)
 
-  lm = local_maximum(las, c(10, 10, pi/4))
+  lm = find_localmaxima(las, c(10, 10, pi/4))
 
   expect_equal(length(lm), length(x))
 
-  lm = local_maximum(las, c(20, 9))
+  lm = find_localmaxima(las, c(20, 9))
 
   expect_equal(length(lm), length(x))
 
-  lm = local_maximum(las, c(20, 9, pi/4))
+  lm = find_localmaxima(las, c(20, 9, pi/4))
 
   expect_equal(length(lm), 1L)
 })
 
-test_that("local maximum returns an empty SpatialPoinstDataFrame", {
+test_that("find_localmaxima returns an empty SpatialPoinstDataFrame", {
 
   X = runif(100, 0, 100)
   Y = runif(100, 0, 100)
@@ -63,15 +63,15 @@ test_that("local maximum returns an empty SpatialPoinstDataFrame", {
   df = data.frame(X, Y, Z, Intensity = I)
   las = LAS(df)
 
-  lm = local_maximum(las, 10)
+  lm = find_localmaxima(las, 10)
 
   expect_is(lm, "SpatialPointsDataFrame")
   expect_equal(length(lm), 0)
   expect_equal(names(lm), c("Z", "Intensity"))
 })
 
-test_that("local maximum throw errors", {
+test_that("find_localmaxima throw errors", {
 
-  expect_error(local_maximum(las, c(10, 20, 45)), "not all in range")
-  expect_error(local_maximum(las, -5), "not all positive")
+  expect_error(find_localmaxima(las, c(10, 20, 45)), "not all in range")
+  expect_error(find_localmaxima(las, -5), "not all positive")
 })

@@ -16,7 +16,7 @@ manual(detected = NULL, radius = 0.5, color = "red", ...)
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
 \description{
-This function is made to be used in \link{tree_detection}. It implements an algorithm for manual
+This function is made to be used in \link{find_trees}. It implements an algorithm for manual
 tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
 This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
 invited to select a rectangular region of interest in the scene using the right mouse button.
@@ -30,11 +30,11 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile)
 
 # Full manual tree detection
-ttops = tree_detection(las, manual())
+ttops = find_trees(las, manual())
 
 # Automatic detection with manual correction
-ttops = tree_detection(las, lmf(5))
-ttops = tree_detection(las, manual(ttops))
+ttops = find_trees(las, lmf(5))
+ttops = find_trees(las, manual(ttops))
 }
 }
 \seealso{

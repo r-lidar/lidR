@@ -44,7 +44,7 @@
 #' cloud. However the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
-#'  ttops = tree_detection(chm, lmf(3))
+#'  ttops = find_trees(chm, lmf(3))
 #'  crowns = dalponte2016(chm, ttops)()
 #' }
 #'
@@ -87,7 +87,7 @@
 #' ker <- matrix(1,3,3)
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
-#' ttops <- tree_detection(chm, lmf(4, 2))
+#' ttops <- find_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
@@ -245,7 +245,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
-#'  ttops = tree_detection(chm, lmf(3))
+#'  ttops = find_trees(chm, lmf(3))
 #'  crowns = silva2016(chm, ttops)()
 #' }
 #'
@@ -283,7 +283,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #' ker <- matrix(1,3,3)
 #' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
-#' ttops <- tree_detection(chm, lmf(4, 2))
+#' ttops <- find_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, silva2016(chm, ttops))
 #' plot(las, color = "treeID", colorPalette = col)
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
@@ -355,7 +355,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
 #'  chm = raster("file/to/a/chm/")
-#'  ttops = tree_detection(chm, lmf(3))
+#'  ttops = find_trees(chm, lmf(3))
 #'  crowns = watershed(chm)()
 #' }
 #'

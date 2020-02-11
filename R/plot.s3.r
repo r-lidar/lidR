@@ -115,7 +115,7 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' las = readLAS(LASfile)
 #'
 #' dtm = grid_terrain(las, algorithm = tin())
-#' ttops <- tree_detection(las, lmf(ws = 5))
+#' ttops <- find_trees(las, lmf(ws = 5))
 #'
 #' plot_dtm3d(dtm)
 #'
