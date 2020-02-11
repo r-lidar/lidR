@@ -67,7 +67,7 @@
 #' @slot header Object of class \link[lidR:LASheader-class]{LASheader}. las file header according to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #'
-#' @include Class-LASheader.r
+#' @include Class-LASheader.R
 #' @export
 #' @examples
 #' # Read a las/laz file
