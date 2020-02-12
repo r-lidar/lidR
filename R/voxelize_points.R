@@ -91,7 +91,7 @@ voxelize_points.LAScluster = function(las, res)
   if (is.empty(x)) return(NULL)
 
   output <- voxelize_points(x, res)
-  output <- clip(output, raster::extent(las))
+  output <- clip_roi(output, raster::extent(las))
   return(output)
 }
 

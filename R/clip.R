@@ -46,7 +46,7 @@
 #' @param xcenter numeric. x coordinates of discs centers.
 #' @param ycenter numeric. y coordinates of discs centers.
 #' @param radius numeric. disc radius or radii.
-#' @param ... in \code{clip}: optional supplementary options (see supported geometries). Unused in
+#' @param ... in \code{clip_roi}: optional supplementary options (see supported geometries). Unused in
 #' other functions
 #'
 #' @section Supported geometries:
@@ -80,7 +80,7 @@
 #' \item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 #' \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
 #' They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
-#' \code{clip} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+#' \code{clip_roi} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
 #' {YCENTER}} or any names from the table of attributes of a spatial object given as
 #' input such as \code{{PLOT_ID}} or \code{{YEAR}}, for example, if these attributes exist. If empty everything
 #' is returned into R.
@@ -111,12 +111,12 @@
 #' # Extract all the polygons from a shapefile
 #' f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 #' lakes <- shapefile(f)
-#' subset3 <- clip(ctg, lakes)
+#' subset3 <- clip_roi(ctg, lakes)
 #'
 #' # Extract the polygons, write them in files named after the lake names,
 #' # do not load anything in R
 #' opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
-#' new_ctg = clip(ctg, lakes)
+#' new_ctg = clip_roi(ctg, lakes)
 #' #plot(mew_ctg)
 #'
 #' # Extract a transect
@@ -136,7 +136,7 @@
 #' }
 #' @name clip
 #' @export
-clip = function(las, geometry, ...)
+clip_roi = function(las, geometry, ...)
 {
   if (is.character(geometry))
     geometry <- rgeos::readWKT(geometry, p4s = las@proj4string)
@@ -271,7 +271,7 @@ clip_polygon = function(las, xpoly, ypoly, ...)
   assert_are_same_length(xpoly, ypoly)
 
   poly <- sp::Polygon(cbind(xpoly, ypoly))
-  return(clip(las, poly))
+  return(clip_roi(las, poly))
 }
 
 # ======== CIRCLE ========
@@ -363,7 +363,7 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
   line <- sp::SpatialLines(list(sp::Lines(sp::Line(coords), ID = "1")))
   raster::projection(line) <- raster::projection(las)
   poly <- rgeos::gBuffer(line, width = width/2, capStyle = "SQUARE")
-  las <- clip(las, poly)
+  las <- clip_roi(las, poly)
 
   if (!xz) { return(las) }
 

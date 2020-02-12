@@ -302,7 +302,7 @@ Here we found an almost 6-fold speed-up by changing only the file types.
 Extraction of 140 plots of 12 m radius from 1 x 1 km files with 3 pts/m² on a laptop with an SSD and an intel core i7 processor.
 
 ```r
-plots <- clip(ctg, shapefile, radius = 12)
+plots <- clip_roi(ctg, shapefile, radius = 12)
 ```
 
 ```{r, echo = FALSE}

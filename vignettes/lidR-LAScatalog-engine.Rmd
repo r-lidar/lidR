@@ -102,7 +102,7 @@ ctg@data <- data
 ctg@polygons <- Sr@polygons
 ```
 
-In `lidR` the LAScatalog processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog` including `clip()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignettes documents how it works going deeper and deeper inside the engine. Users will need to read the vignette named [LAScatalog formal class](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-class.html) before to enter this one even if one may find some overlap between these two vignettes.
+In `lidR` the LAScatalog processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog` including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignettes documents how it works going deeper and deeper inside the engine. Users will need to read the vignette named [LAScatalog formal class](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-class.html) before to enter this one even if one may find some overlap between these two vignettes.
 
 ## Overview
 
@@ -178,7 +178,7 @@ plot(ctg, chunk = TRUE)
 
 ### Chunk pattern not respected: special cases
 
-`clip()` is the single case where the control of the chunk is not respected. `clip()` aims to extract a shape (rectangle, disc, polygon) as a single entity . The chunk pattern does not make sense here.
+`clip_roi()` is the single case where the control of the chunk is not respected. `clip_roi()` aims to extract a shape (rectangle, disc, polygon) as a single entity . The chunk pattern does not make sense here.
 
 ### Filter points
 
@@ -198,7 +198,7 @@ This works only when the `readLAS()` function is called explicitly. When using t
 opt_filter(ctg) <- "-keep_first -drop_z_below 2"
 ```
 
-Internally, for each chunk, `readLAS()` will be called with `filter = "-drop_first -drop_z_below 2` in every functions that is processing a `LAScatalog` unless the documentation explicitly mention something else. In the following examples `clip()` is used to extract a plot but only the points classified as ground or water will be read and `grid_metrics()` is used to compute metrics only on first returns above 2 meters. It does not mean other points do not exist, they are simply not read.
+Internally, for each chunk, `readLAS()` will be called with `filter = "-drop_first -drop_z_below 2` in every functions that is processing a `LAScatalog` unless the documentation explicitly mention something else. In the following examples `clip_roi()` is used to extract a plot but only the points classified as ground or water will be read and `grid_metrics()` is used to compute metrics only on first returns above 2 meters. It does not mean other points do not exist, they are simply not read.
 
 ```r
 opt_filter(ctg) <- "-keep_class 2 9"

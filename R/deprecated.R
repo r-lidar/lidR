@@ -54,7 +54,7 @@ lascheck <- function(las) {
 #' @rdname deprecated
 lasclip <- function(las, geometry, ...) {
   .lidr3depreciation("clip")
-  return(clip(las, geometry, ...))
+  return(clip_roi(las, geometry, ...))
 }
 
 #' @export

@@ -296,7 +296,7 @@ Load a catalog. Load a shapefile of plot centers. Extract the plots. Returns a l
 ```r
 ctg <- readLAScatalog("path/to/las/files/")
 shp <- shapefile("plot_center.shp")
-plots <- clip(ctg, shp, radius = 11.2)
+plots <- clip_roi(ctg, shp, radius = 11.2)
 ```
 
 #### Example 8 - Clip
@@ -308,5 +308,5 @@ Load a catalog. Load a shapefile of plot centers. Extract the plots and immediat
 ctg <- readLAScatalog("path/to/las/files/")
 shp <- shapefile("plot_center.shp")
 opt_output_files(ctg) <- "folder/where/to/store/outputs/plot_{XCENTER}_{YCENTER}_{PLOTID}"
-plots <- clip(ctg, plot_centers, radius = 11.2)
+plots <- clip_roi(ctg, plot_centers, radius = 11.2)
 ```
