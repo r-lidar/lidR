@@ -128,7 +128,7 @@ first = filter_first(las)
 m6 = grid_metrics(first, .stdmetrics_z)
 
 # Compute the metrics with a threshold at 2 meters
-over2 = filter_points(las, Z > 2)
+over2 = filter_poi(las, Z > 2)
 m7 = grid_metrics(over2, .stdmetrics_z)
 
 # Works also with cloud_metrics and hexbin_metrics

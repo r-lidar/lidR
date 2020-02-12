@@ -187,7 +187,7 @@ normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(
 
   if (nnas > 0 && na.rm == TRUE)
   {
-    las <- filter_points(las, !isna)
+    las <- filter_poi(las, !isna)
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
 
@@ -202,7 +202,7 @@ normalize_elevation.LAScluster = function(las, algorithm, na.rm = FALSE, use_cla
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- normalize_elevation(x, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 

@@ -53,7 +53,7 @@ and cannot be changed.
 
 \seealso{
 Other filters: 
-\code{\link{filter_points}()},
+\code{\link{filter_poi}()},
 \code{\link{filter_surfacepoints}()},
 \code{\link{filters}}
 }

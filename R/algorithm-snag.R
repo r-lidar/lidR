@@ -95,7 +95,7 @@
 #' plot(las, color="snagCls", colorPalette = rainbow(5))
 #'
 #' # Filter and plot snag points only
-#' snags <- filter_points(las, snagCls > 0)
+#' snags <- filter_poi(las, snagCls > 0)
 #' plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 #'
 #' # Wing et al's (2015) methods ended with performing tree segmentation on the

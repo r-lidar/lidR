@@ -213,15 +213,15 @@ tree_hulls(
 These functions are provided for compatibility with older versions of lidR but are deprecated
 since lidR version 3. They will progressively print a message, throw a warning and eventually be
 removed. The links below point to the documentation of the new names \cr\cr
-\link[lidR:add_attribute]{lasadd} \link[lidR:validate_las]{lascheck} \link[lidR:clip]{lasclip}
-\link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_points]{lasfilter}
+\link[lidR:add_attribute]{lasadd} \link[lidR:las_check]{lascheck} \link[lidR:clip_roi]{lasclip}
+\link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_poi]{lasfilter}
 \link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
 \link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
 \link[lidR:normalize_elevation]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
 \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
-\link[lidR:reoffset_las]{lasreoffset} \link[lidR:rescale_las]{lasrescale}
+\link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
 \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
-\link[lidR:segment_snags]{lassnags} \link[lidR:reproject_las]{lastransform}
+\link[lidR:segment_snags]{lassnags} \link[lidR:spTransform,LAS,CRS-method]{lastransform}
 \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
 \link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
 \link[lidR:delineate_crowns]{tree_hull}

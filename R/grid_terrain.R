@@ -143,7 +143,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   if (keep_lowest) {
     verbose("Forcing the lowest ground points to be retained...")
     reso <- raster::res(layout)[1]
-    lasg <- filter_points(las, Classification %in% c(use_class))
+    lasg <- filter_poi(las, Classification %in% c(use_class))
     rmin <- grid_metrics(lasg, ~list(Z = min(Z)), reso)
     suppressWarnings(layout[] <- pmin(layout[], rmin[], na.rm = TRUE))
   }

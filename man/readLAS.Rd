@@ -35,7 +35,7 @@ Also numbers from 1 to 9 for the extra bytes data numbers 1 to 9. 0 enables all 
 loaded and '*' is the wildcard that enables everything to be loaded from the LAS file. \cr
 Note that x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
 \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
-This is much more efficient than \link{filter_points} in many ways. If the desired filters are known
+This is much more efficient than \link{filter_poi} in many ways. If the desired filters are known
 before reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command: rlas:::lasfilterusage().
 (see also \link[rlas:read.las]{rlas::read.las})

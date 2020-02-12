@@ -27,11 +27,11 @@
 
 # ======== GENERIC =========
 
-#' Clip LiDAR points
+#' Clip points in regions of interest
 #'
-#' Clip LiDAR points within a given geometry from a point cloud (\code{LAS} object) or a catalog
+#' Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
 #' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
-#' into memory and then can clip it to get a subset within a region of interest (ROI). With a \code{LAScatalog}
+#' into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
 #' object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
 #' points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
 #'
@@ -233,7 +233,7 @@ clip_rectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
   output <- vector(mode = "list", length(xleft))
   for (i in 1:length(xleft))
   {
-    roi <- filter_points(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
+    roi <- filter_poi(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."))
     output[[i]] = roi
   }
@@ -300,7 +300,7 @@ clip_disc.LAS = function(las, xcenter, ycenter, radius, ...)
   output <- vector(mode = "list", length(xcenter))
   for (i in 1:length(xcenter))
   {
-    roi <- filter_points(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
+    roi <- filter_poi(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
     if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."))
     output[[i]] <- roi
   }
@@ -394,7 +394,7 @@ clip_sf.LAS = function(las, sf)
   output = vector(mode = "list", length(wkt))
   for (i in 1:length(wkt))
   {
-    roi = filter_points(las, C_in_polygon(las, wkt[i], getThread()))
+    roi = filter_poi(las, C_in_polygon(las, wkt[i], getThread()))
     if (is.empty(roi)) warning(glue::glue("No point found for within {wkt[i]}."))
     output[[i]] = roi
   }

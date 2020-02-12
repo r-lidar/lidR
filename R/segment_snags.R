@@ -67,7 +67,7 @@
 #' plot(las, color="snagCls", colorPalette = rainbow(5))
 #'
 #' # Filter and plot snag points only
-#' snags <- filter_points(las, snagCls > 0)
+#' snags <- filter_poi(las, snagCls > 0)
 #' plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 #'
 #' # Wing et al's (2015) methods ended with performing tree segmentation on the
@@ -99,7 +99,7 @@ segment_snags.LAScluster = function(las, algorithm, attribute = "snagCls")
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- segment_snags(x, algorithm)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 

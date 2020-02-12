@@ -150,7 +150,7 @@ Extra attributes are just like adding a column in a regular table in R. One can 
 
 ```{r}
 las  <- add_attribute(las, 1:81590, "ID")
-las2 <- filter_points(las, ID > 50000)
+las2 <- filter_poi(las, ID > 50000)
 ```
 
 But it is important to understand that this attribute is invalid with respect to the las specifications. Thus it can be used at the R level but will not be written in a las file and thus will be lost at write time. Depending on the purpose of this attribute it may or may not be useful to be able to write this extra data. Most of the time the information is only useful at the R level but sometimes it might be appropriate to store the data in a file.
@@ -173,10 +173,10 @@ las  <- add_lasattribute(las, abc, "ID", "An ID for each point")
 
 ## Validation of LAS objects
 
-It is common that users report bugs arising from the fact that a point cloud is invalid. This is why we introduced the function `validate_las` to perform a deep inspection of LAS objects. This function checks if a LAS object is in accordance with the las specifications but also it checks for weird point clouds that could be valid with respect to the specifications but invalid for actual processing. For example, it often happens that a las file contains duplicated points for no valid reason. This may lead to trees being detected twice, to invalid metrics, or to errors in DTM generation, and so on...
+It is common that users report bugs arising from the fact that a point cloud is invalid. This is why we introduced the function `las_check` to perform a deep inspection of LAS objects. This function checks if a LAS object is in accordance with the las specifications but also it checks for weird point clouds that could be valid with respect to the specifications but invalid for actual processing. For example, it often happens that a las file contains duplicated points for no valid reason. This may lead to trees being detected twice, to invalid metrics, or to errors in DTM generation, and so on...
 
 ```{r}
-validate_las(las)
+las_check(las)
 ```
 
 ## Display a LAS object
@@ -233,7 +233,7 @@ las.original <- readLAS("big_file.las")
 Suppose we now want to remove a few outliers above 50 m. One can write the following:
 
 ```r
-las.denoised <- filter_points(las.original, Z < 50)
+las.denoised <- filter_poi(las.original, Z < 50)
 ```
 
 And the user now has two objects:

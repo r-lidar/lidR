@@ -3,15 +3,15 @@
 #' These functions are provided for compatibility with older versions of lidR but are deprecated
 #' since lidR version 3. They will progressively print a message, throw a warning and eventually be
 #' removed. The links below point to the documentation of the new names \cr\cr
-#' \link[lidR:add_attribute]{lasadd} \link[lidR:validate_las]{lascheck} \link[lidR:clip]{lasclip}
-#' \link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_points]{lasfilter}
+#' \link[lidR:add_attribute]{lasadd} \link[lidR:las_check]{lascheck} \link[lidR:clip_roi]{lasclip}
+#' \link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_poi]{lasfilter}
 #' \link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
 #' \link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
 #' \link[lidR:normalize_elevation]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
 #' \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
-#' \link[lidR:reoffset_las]{lasreoffset} \link[lidR:rescale_las]{lasrescale}
+#' \link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
 #' \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
-#' \link[lidR:segment_snags]{lassnags} \link[lidR:reproject_las]{lastransform}
+#' \link[lidR:segment_snags]{lassnags} \link[lidR:spTransform,LAS,CRS-method]{lastransform}
 #' \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
 #' \link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
 #' \link[lidR:delineate_crowns]{tree_hull}
@@ -47,13 +47,14 @@ NULL
 #' @export
 #' @rdname deprecated
 lascheck <- function(las) {
-  .lidr3depreciation("validate_las")
-  return(validate_las(las))
+  .lidr3depreciation("las_check")
+  return(las_check(las))
 }
+
 #' @export
 #' @rdname deprecated
 lasclip <- function(las, geometry, ...) {
-  .lidr3depreciation("clip")
+  .lidr3depreciation("clip_roi")
   return(clip_roi(las, geometry, ...))
 }
 
@@ -88,8 +89,8 @@ lasdetectshape = function(las, algorithm, attribute = "Shape", filter = NULL) {
 #' @export
 #' @rdname deprecated
 lasfilter = function(las, ...) {
-  .lidr3depreciation("filter_points")
-  return(filter_points(las, ...))
+  .lidr3depreciation("filter_poi")
+  return(filter_poi(las, ...))
 }
 
 #' @export
@@ -227,15 +228,15 @@ lasrangecorrection <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", el
 #' @export
 #' @rdname deprecated
 lasrescale = function(las, xscale, yscale, zscale) {
-  .lidr3depreciation("rescale_las")
-  return(rescale_las(las, xscale, yscale, zscale))
+  .lidr3depreciation("las_rescale")
+  return(las_rescale(las, xscale, yscale, zscale))
 }
 
 #' @export
 #' @rdname deprecated
 lasreoffset = function(las, xoffset, yoffset, zoffset) {
-  .lidr3depreciation("reoffset_las")
-  return(reoffset_las(las, xoffset, yoffset, zoffset))
+  .lidr3depreciation("las_reoffset")
+  return(las_reoffset(las, xoffset, yoffset, zoffset))
 }
 
 #' @export
@@ -262,8 +263,8 @@ lassnags = function(las, algorithm, attribute = "snagCls") {
 #' @export
 #' @rdname deprecated
 lastransform = function(las, CRSobj) {
-  .lidr3depreciation("reproject_las")
-  return(reproject_las(las, CRSobj))
+  .lidr3depreciation("spTransform")
+  return(spTransform(las, CRSobj))
 }
 
 #' @export

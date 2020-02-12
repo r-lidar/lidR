@@ -49,15 +49,15 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' validate_las(las)
+#' las_check(las)
 #' @export
-validate_las = function(las)
+las_check = function(las)
 {
-  UseMethod("validate_las", las)
+  UseMethod("las_check", las)
 }
 
 #' @export
-validate_las.LAS = function(las)
+las_check.LAS = function(las)
 {
   data <- las@data
   head <- as.list(las@header)
@@ -455,7 +455,7 @@ validate_las.LAS = function(las)
 }
 
 #' @export
-validate_las.LAScatalog = function(las)
+las_check.LAScatalog = function(las)
 {
   data <- las@data
   g    <- glue::glue

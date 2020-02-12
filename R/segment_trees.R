@@ -159,7 +159,7 @@ segment_trees.LAScluster = function(las, algorithm, attribute = "treeID", unique
   x <- suppressMessages(suppressWarnings(readLAS(las)))
   if (is.empty(x)) return(NULL)
   x <- segment_trees(x, algorithm, attribute, uniqueness)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 

@@ -233,3 +233,51 @@ setMethod("wkt<-", "LAS", function(object, value)
   raster::projection(object)  <- proj4
   return(object)
 })
+
+#' Datum transformation for LAS objects
+#'
+#' A version of \link[rgdal:spTransform]{spTransform} for \link[lidR:LAS-class]{LAS} objects.
+#' Returns transformed coordinates of a \code{LAS} object from the projection of the object to the
+#' the projection given by arguments.
+#'
+#' @param x An object of class \link[lidR:LAS-class]{LAS}
+#' @param CRSobj logical. Object of class \link[sp:CRS-class]{CRS} or of class character, in which
+#' case it is converted to \link[sp:CRS-class]{CRS}.
+#' @param ... ignored
+#'
+#' @return An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to the new
+#' coordinate reference system. The header has been update by add the ESPG code or a WKT OGC CS string
+#' as a function of the defined Global Encoding WKT bit (see LAS specifications).
+#'
+#' @export
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las <- readLAS(LASfile, select = "xyzrn")
+#' crs <- sp::CRS("+init=epsg:26918")
+#'
+#' las <- spTransform(las, crs)
+#' @importMethodsFrom sp spTransform
+setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
+{
+  if (is.na(sp::proj4string(x)))
+    stop("No transformation possible from NA reference system")
+
+  # Tranform the point coordinates
+  spts <- sp::SpatialPoints(coordinates(x))
+  sp::proj4string(spts) <- sp::proj4string(x)
+  spts <- sp::spTransform(spts, CRSobj)
+
+  # Update the LAS object
+  x@data[["X"]] <- spts@coords[,1]
+  x@data[["Y"]] <- spts@coords[,2]
+  x <- lasupdateheader(x)
+
+  # Update the offsets
+  x@header@PHB[["X offset"]] <- min(x$X)
+  x@header@PHB[["Y offset"]] <- min(x$Y)
+
+  projection(x) <- CRSobj
+  return(x)
+})
+

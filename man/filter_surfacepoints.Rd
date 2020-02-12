@@ -48,7 +48,7 @@ plot(subset)
 \seealso{
 Other filters: 
 \code{\link{filter_duplicates}()},
-\code{\link{filter_points}()},
+\code{\link{filter_poi}()},
 \code{\link{filters}}
 }
 \concept{filters}

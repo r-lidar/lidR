@@ -15,9 +15,9 @@
 #' LASfile <- system.file("extdata", "example.laz", package = "rlas")
 #' las <- readLAS(LASfile)
 #'
-#' las <- rescale_las(las, xscale = 0.01, yscale = 0.01)
-#' las <- reoffset_las(las, xoffset = 300000, yoffset = 5248000)
-rescale_las = function(las, xscale, yscale, zscale)
+#' las <- las_rescale(las, xscale = 0.01, yscale = 0.01)
+#' las <- las_reoffset(las, xoffset = 300000, yoffset = 5248000)
+las_rescale = function(las, xscale, yscale, zscale)
 {
   xoffset <- las@header@PHB[["X offset"]]
   yoffset <- las@header@PHB[["Y offset"]]
@@ -57,9 +57,9 @@ rescale_las = function(las, xscale, yscale, zscale)
   return(las)
 }
 
-#' @rdname rescale_las
+#' @rdname las_rescale
 #' @export
-reoffset_las = function(las, xoffset, yoffset, zoffset)
+las_reoffset = function(las, xoffset, yoffset, zoffset)
 {
   xscale  <- las@header@PHB[["X scale factor"]]
   yscale  <- las@header@PHB[["Y scale factor"]]

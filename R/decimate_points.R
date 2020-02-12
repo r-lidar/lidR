@@ -80,7 +80,7 @@ decimate_points.LAScluster = function(las, algorithm)
   x <- suppressMessages(suppressWarnings(readLAS(las)))
   if (is.empty(x)) return(NULL)
   x <- decimate_points(x, algorithm)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 

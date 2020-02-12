@@ -125,7 +125,7 @@ classify_ground.LAScluster = function(las, algorithm, last_returns = TRUE)
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- classify_ground(x, algorithm, last_returns)
-  x <- filter_points(x, buffer == LIDRNOBUFFER)
+  x <- filter_poi(x, buffer == LIDRNOBUFFER)
   return(x)
 }
 

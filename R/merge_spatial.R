@@ -60,7 +60,7 @@
 #' # The attribute "inlake" does not exist in the shapefile.
 #' # Points are classified as TRUE if in a polygon
 #' las    <- merge_spatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
-#' forest <- filter_points(las, inlakes == FALSE)
+#' forest <- filter_poi(las, inlakes == FALSE)
 #' plot(las)
 #' plot(forest)
 #'

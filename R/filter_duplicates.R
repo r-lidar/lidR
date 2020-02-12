@@ -50,7 +50,7 @@ filter_duplicates = function(las)
 filter_duplicates.LAS = function(las)
 {
   dup_xyz <- duplicated(las@data, by = c("X", "Y", "Z"))
-  return(filter_points(las, dup_xyz == FALSE))
+  return(filter_poi(las, dup_xyz == FALSE))
 }
 
 #' @export
@@ -60,7 +60,7 @@ filter_duplicates.LAScluster = function(las)
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- filter_duplicates(x)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 

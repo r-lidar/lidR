@@ -27,7 +27,9 @@
 
 
 
-#' Return points with matching conditions
+#' Filter points of interest with matching conditions
+#'
+#' Filter points of interest (POI) from  a LAS object where conditions are true.
 #'
 #' @param las An object of class \code{\link[lidR:LAS-class]{LAS}}
 #' @param \dots Logical predicates. Multiple conditions are combined with '&' or ','
@@ -39,16 +41,16 @@
 #' lidar = readLAS(LASfile)
 #'
 #' # Select the first returns classified as ground
-#' firstground = filter_points(lidar, Classification == 2L & ReturnNumber == 1L)
+#' firstground = filter_poi(lidar, Classification == 2L & ReturnNumber == 1L)
 #'
 #' # Multiple arguments are equivalent to &
-#' firstground = filter_points(lidar, Classification == 2L, ReturnNumber == 1L)
+#' firstground = filter_poi(lidar, Classification == 2L, ReturnNumber == 1L)
 #'
 #' # Multiple criteria
-#' first_or_ground = filter_points(lidar, Classification == 2L | ReturnNumber == 1L)
+#' first_or_ground = filter_poi(lidar, Classification == 2L | ReturnNumber == 1L)
 #' @export
 #' @family filters
-filter_points = function(las, ...)
+filter_poi = function(las, ...)
 {
   stopifnotlas(las)
   keep <- lasfilter_(las, lazyeval::dots_capture(...))
@@ -79,7 +81,7 @@ lasfilter_ <- function(las, conditions)
   return(combined_bools)
 }
 
-#' Predefined filters
+#' Predefined point of interest filters
 #'
 #' Select only some returns
 #'
@@ -121,7 +123,7 @@ filter_first = function(las)
 filter_firstlast = function(las)
 {
   ReturnNumber <- NumberOfReturns <- NULL
-  return(filter_points(las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
+  return(filter_poi(las, ReturnNumber == NumberOfReturns | ReturnNumber == 1))
 }
 
 #' @export
@@ -130,7 +132,7 @@ filter_firstlast = function(las)
 filter_firstofmany = function(las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-  return(filter_points(las, NumberOfReturns > 1, ReturnNumber == 1))
+  return(filter_poi(las, NumberOfReturns > 1, ReturnNumber == 1))
 }
 
 #' @export
@@ -139,7 +141,7 @@ filter_firstofmany = function(las)
 filter_ground = function(las)
 {
   Classification <- NULL
-  return(filter_points(las, Classification == 2))
+  return(filter_poi(las, Classification == 2))
 }
 
 #' @family filters
@@ -148,7 +150,7 @@ filter_ground = function(las)
 filter_last = function(las)
 {
   NumberOfReturns <- ReturnNumber <- NULL
-  return(filter_points(las, ReturnNumber == NumberOfReturns))
+  return(filter_poi(las, ReturnNumber == NumberOfReturns))
 }
 
 #' @family filters
@@ -157,7 +159,7 @@ filter_last = function(las)
 filter_nth = function(las, n)
 {
   ReturnNumber <- NULL
-  return(filter_points(las, ReturnNumber == n))
+  return(filter_poi(las, ReturnNumber == n))
 }
 
 #' @family filters
@@ -166,6 +168,6 @@ filter_nth = function(las, n)
 filter_single = function(las)
 {
   NumberOfReturns <- NULL
-  return(filter_points(las, NumberOfReturns == 1))
+  return(filter_poi(las, NumberOfReturns == 1))
 }
 

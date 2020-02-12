@@ -63,7 +63,7 @@ filter_surfacepoints.LAScluster = function(las, res)
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- filter_surfacepoints(x, res)
-  x <- filter_points(x, buffer == 0)
+  x <- filter_poi(x, buffer == 0)
   return(x)
 }
 
