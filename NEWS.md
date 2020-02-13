@@ -50,7 +50,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 #### FIXES
 
-1. This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the outputs contains a `list` of string the list was expected to be merged into a `characters` vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affect a lot of people.
+1. This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the outputs contains a `list` of string the list was expected to be merged into a `characters` vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affected a lot of people.
 
     ```r
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
@@ -59,13 +59,13 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     print(ret) 
     #> "/tmp/RtmpV4CQll/file38f1.txt" "/tmp/RtmpV4CQll/file38g.txt"  "/tmp/RtmpV4CQll/file38h.txt" "/tmp/RtmpV4CQll/file38i.txt"
     ```
-2. When using a `grid_*` function with a `RasterLayer` used as layout, if the layout were not empty or full of NAs, the values of the layout were transferted to the NA cells of the output [#318](https://github.com/Jean-Romain/lidR/issues/318).
+2. When using a `grid_*` function with a `RasterLayer` used as layout, if the layout was not empty or full of NAs, the values of the layout were transferd to the NA cells of the output [#318](https://github.com/Jean-Romain/lidR/issues/318).
 
 ### ENHANCEMENTS
 
-1. `opt_output_files()` now prints a message when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not makes sense.
+1. `opt_output_files()` now prints a message when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not make sense.
 
-2. Internally when building the chunks an informative error is now thrown when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not makes sense instead of the former uninformative error `Error in eval(parse(text = text, keep.source = FALSE), envir) : objet 'ORIGINALFILENAME' not found`.
+2. Internally when building the chunks an informative error is now thrown when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not make sense instead of the former uninformative error `Error in eval(parse(text = text, keep.source = FALSE), envir) : objet 'ORIGINALFILENAME' not found`.
 
 ## lidR v2.2.2
 
