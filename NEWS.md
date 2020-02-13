@@ -8,11 +8,11 @@ In lidR version 3.0.0, 80% of the functions were renamed. Old functions were sof
 
 #### Full explanation
 
-At the very beginning of the development of lidR we started to name the functions that return a LAS object `lassomething()`. At the begining it was 5 functions and 10 users. As lidR grew up, we kept going with this name convention but now lidR is used worldwide this naming convention actually overlap with the LAStools software suite created by Martin Isenburg. This creates confusion for users which is problematic both for Martin and us. And it's gonna be worst because more tools will be released into LAStools. We discussed with Martin Isenburg an we took the decision to rename the functions of the lidR package so the overlaps in namespace will progressively fade out.
+At the very beginning of the development of lidR we started to name the functions that return a LAS object `lassomething()`. At the begining it was 5 functions and 10 users. As lidR grew up, we kept going with this name convention but now lidR is used worldwide and this naming convention actually overlaps with the LAStools software suite created by Martin Isenburg. This creates confusion for users which is problematic both for Martin and us. And it is going to be worst because more tools will be released into LAStools. We discussed with Martin Isenburg an we took the decision to rename the functions in the lidR package so the overlaps in namespace will progressively fade out.
 
-The new name convention follows the current trending `ǜerb_noun` initiated by the `tidyverse`. `lasnormalize()` becomes `normalize_elevation()` while `lasground()` becomes `classify_ground()`. The full list of changes can be found in `?lidR::deprecated`.
+The new name convention follows the current trending `verb_noun` initiated by the `tidyverse`. `lasnormalize()` becomes `normalize_elevation()` while `lasground()` becomes `classify_ground()`. The full list of changes can be found in `?lidR::deprecated`.
 
-In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite users to move on the new nane, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
+In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite users to move on the new names, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
 
 ### NEW FEATURES
 
@@ -22,7 +22,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
 
-4. `delineate_crown()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree
+4. `delineate_crowns()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree.
 
 5. `segment_trees()` formerly named `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
