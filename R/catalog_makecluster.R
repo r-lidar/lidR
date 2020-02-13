@@ -25,8 +25,22 @@
 #
 # ===============================================================================
 
-catalog_makecluster = function(ctg)
+#' Subdivide a LAScatalog into chunks
+#'
+#' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
+#' users in version 3.0.0 because it might be useful for some debugging. I might also be useful for
+#' some advanced developers. Regular users are not expected to use this function. The chunks are made
+#' according to the \link[lidR:catalog_options_tools]{catalog processing options}.
+#'
+#' @param ctg a object of class \code{LAScatalog}
+#'
+#' @return A list containing objects of class \code{LAScluster}.
+#'
+#' @export
+catalog_makechunks = function(ctg)
 {
+  assert_is_all_of(ctg, "LAScatalog")
+
   # Bounding box of the catalog
   xmin <- ymin <- xmax <- ymax <- 0
 
@@ -178,3 +192,5 @@ catalog_makecluster = function(ctg)
 
   return(clusters)
 }
+
+catalog_makecluster = catalog_makechunks

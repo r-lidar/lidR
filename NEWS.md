@@ -1,6 +1,6 @@
 ## lidR v3.0.0
 
-### BREAKING CHANGES
+### CHANGES
 
 #### Summary 
 
@@ -18,11 +18,19 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
 
-2. New function `clip_transect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2`
+    ```r
+    readLAScatalog("folder/", chunk_buffer = 60)
+    ```
+
+2. New function `clip_transect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2.`
 
 3. New function `readMSLAS()` to read multisprectral data when coming from 3 different files.
 
-4. `delineate_crowns()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apex of the tree.
+    ```r
+    readMSLAS("channel1.las", "channel2.las", "channel3.las", filter = "-keep_first")
+    ```
+
+4. `delineate_crowns()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apices of the trees.
 
 5. `segment_trees()` formerly named `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
@@ -31,6 +39,16 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 7. `normalize_elevation()` formerly named `lasnormalize()` has a new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
 
 8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `find_trees()` formerly called `tree_detection()`. Instead `find_localmaxima()` may help at findind other human made structures.
+
+9. Internal global variables were exported to help with ASPRS LAS classification standard. Instead of remembering the classification table of the specification it is now possible to use one of `LASNONCLASSIFIED`, `LASUNCLASSIFIED`, `LASGROUND`, `LASLOWVEGETATION`, `LASMEDIUMVEGETATION`, `LASHIGHVEGETATION`, `LASBUILDING`, `LASLOWPOINT`, `LASKEYPOINT`, `LASWATER`, `LASRAIL`, `LASROADSURFACE`, `LASWIREGUARD`, `LASWIRECONDUCTOR`, `LASTRANSMISSIONTOWER`, `LASBRIGDE`, `LASNOISE`. e.g.:
+
+    ```r
+    filter_poi(las, !Classification %in% c(LASWIRECONDUCTOR, LASTRANSMISSIONTOWER))
+    ```
+
+10. The internal function `catalog_makechunks()` has been exported. It is not actually intended to be used by regular users but might be useful in some specifc cases for debugging purposes.
+
+11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
 ### ENHANCEMENT
 
@@ -41,10 +59,6 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 ### FIXES
 
 1. In `delineate_crowns()` formerly names `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
-
-### CHANGES
-
-`lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
 ## lidR v2.2.3
 
