@@ -8,22 +8,40 @@ LIDRLEFTBUFFER        <- 2L
 LIDRTOPBUFFER         <- 3L
 LIDRRIGHTBUFFER       <- 4L
 
+
+#' @export
 LASNONCLASSIFIED      <- 0L
+#' @export
 LASUNCLASSIFIED       <- 1L
+#' @export
 LASGROUND             <- 2L
+#' @export
 LASLOWVEGETATION      <- 3L
+#' @export
 LASMEDIUMVEGETATION   <- 4L
+#' @export
 LASHIGHVEGETATION     <- 5L
+#' @export
 LASBUILDING           <- 6L
+#' @export
 LASLOWPOINT           <- 7L
+#' @export
 LASKEYPOINT           <- 8L
+#' @export
 LASWATER              <- 9L
+#' @export
 LASRAIL               <- 10L
+#' @export
 LASROADSURFACE        <- 11L
+#' @export
 LASWIREGUARD          <- 13L
+#' @export
 LASWIRECONDUCTOR      <- 14L
+#' @export
 LASTRANSMISSIONTOWER  <- 15L
+#' @export
 LASBRIGDE             <- 17L
+#' @export
 LASNOISE              <- 18L
 
 CHUNK_WAINTING        <- 0L
