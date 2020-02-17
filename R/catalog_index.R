@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, process = TRUE, outside_catalog_is_null = TRUE)
+catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, process = TRUE, outside_catalog_is_null = TRUE, by_file = FALSE)
 {
   stopifnot(is.list(bboxes))
 
@@ -37,8 +37,11 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
   if (length(process) == 1L)
     process <- rep(process, nrow(catalog@data))
 
-  queries <- lapply(bboxes, function(bbox)
+  queries <- vector("list", length(bboxes))
+
+  for (i in 1:length(bboxes))
   {
+    bbox <- bboxes[[i]]
     bbbox <- bbox + 2*buffer
 
     tile_is_in_bbox          <- !(MinX >= bbox@xmax  | MaxX <= bbox@xmin  | MinY >= bbox@ymax  | MaxY <= bbox@ymin)
@@ -54,9 +57,20 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     files  <- catalog@data$filename[select]
 
     if (length(files) == 0 & outside_catalog_is_null)
-      return(NULL)
+      next
     else if (length(files) == 0 & !outside_catalog_is_null)
       files <- ""
+
+    # If one file is considered the main one put it in first place so it get the header precedence
+    # when merged-reading the las files.
+    if (length(files) > 1 && by_file)
+    {
+      main <- catalog$filename[i]
+      j = which(files == main)
+      if (length(j) == 0) stop("Internal error: the indexation algorithm generated an incorrect list of files. Please report this error.")
+      sfiles <- c(main, files[-j[1]])
+      files <- sfiles
+    }
 
     # If one file that emcompasses the bbox is set to 'non processing' resize the chunk
     if (any(!process[tile_is_in_bbox])) {
@@ -75,8 +89,9 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
 
     cluster@select <- opt_select(catalog)
     cluster@filter <- paste(cluster@filter, opt_filter(catalog))
-    return(cluster)
-  })
+
+    queries[[i]] <- cluster
+  }
 
   return(queries)
 }

@@ -114,7 +114,7 @@ catalog_makechunks = function(ctg)
   else
   {
     bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
-    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, processed))
+    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, processed, TRUE, by_file))
     clusters = clusters[!sapply(clusters, is.null)]
   }
 

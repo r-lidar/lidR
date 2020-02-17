@@ -161,13 +161,22 @@ test_that("catalog_makecluster makes correct clusters by file with buffer", {
   xbuffer <- sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
   ybuffer <- sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
   nfiles  <- sapply(cl, function(x) length(x@files))
+  mainf   <- sapply(cl, function(x) x@files[1])
 
+  # Test the number of chunk
   expect_equal(length(cl), nrow(ctg@data))
+
+  # Test that the main file is the processed file and not the buffer files
+  expect_equal(mainf, ctg$filename)
+
+  # Test the bounding box
   expect_equivalent(width, (ctg@data$Max.X - ctg@data$Min.X) + 60)
   expect_equivalent(xwidth, ctg@data$Max.X - ctg@data$Min.X)
   expect_equivalent(ywidth, ctg@data$Max.Y - ctg@data$Min.Y)
   expect_equivalent(xbwidth, (ctg@data$Max.X - ctg@data$Min.X) + 60)
   expect_equivalent(ybwidth, (ctg@data$Max.Y - ctg@data$Min.Y) + 60)
+
+  # Test the buffer
   expect_true(all(buffer == 30))
   expect_true(all(xbuffer == 30))
   expect_true(all(ybuffer == 30))
