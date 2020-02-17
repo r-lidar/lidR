@@ -42,30 +42,27 @@ test_that("catalog_apply fixes chunk alignment", {
   {
     las <- readLAS(cluster)
     if (is.empty(las)) return(NULL)
-    r <- lidR:::rOverlay(las, res)
+    r = grid_metrics(las, ~max(Z), res)
     return(r)
   }
 
+  res = 8
+
+  las = readLAS(ctg)
+
+  # Reference
+  R0 = grid_metrics(las, ~max(Z), res = res)
+
   # Without option
-  L      <- catalog_apply(ctg, test, res = 8)
-  bboxes <- lapply(L, raster::extent)
-  bbox   <- do.call(raster::merge, bboxes)
-  area1  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
-  areas1 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+  R1 <- catalog_sapply(ctg, test, res = res)
 
   # With option
-  option <- list(raster_alignment = 8)
-  L      <- catalog_apply(ctg, test, res = 8, .options = option)
-  bboxes <- lapply(L, raster::extent)
-  bbox   <- do.call(raster::merge, bboxes)
-  area2  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
-  areas2 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+  option <- list(raster_alignment = res)
+  R2 <- catalog_sapply(ctg, test, res = res, .options = option)
 
-  expect_equal(area1, 40000)
-  expect_equal(area1, area2)
-  expect_gt(areas1, area1)
-  expect_equal(area2, areas2)
-  expect_message(catalog_apply(ctg, test, res = 8, .options = option), "Chunk size changed")
+  expect_equal(R0, R2)
+  expect_true(!identical(R0[], R1[]))
+  expect_message(catalog_apply(ctg, test, res = res, .options = option), "Chunk size changed to 152")
 })
 
 test_that("catalog_apply fixes chunk alignment even by file", {
@@ -74,31 +71,28 @@ test_that("catalog_apply fixes chunk alignment even by file", {
   {
     las <- readLAS(cluster)
     if (is.empty(las)) return(NULL)
-    r <- lidR:::rOverlay(las, res, align)
+    r = grid_metrics(las, ~max(Z), res, align)
     return(r)
   }
 
+  res = 8
+  sta = c(8,8)
+
   opt_chunk_size(ctg) <- 0
+  las = readLAS(ctg)
+
+  # Reference
+  R0 = grid_metrics(las, ~max(Z), res = res, start = sta)
 
   # Without option
-  L      <- catalog_apply(ctg, test, res = 8, align = c(12, 12))
-  bboxes <- lapply(L, raster::extent)
-  bbox   <- do.call(raster::merge, bboxes)
-  area1  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
-  areas1 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+  R1 <- catalog_sapply(ctg, test, res = res, align = sta)
 
   # With option
-  option <- list(raster_alignment = list(res = 8, start = c(12, 12)))
-  L      <- catalog_apply(ctg, test, res = 8, align = c(12, 12), .options = option)
-  bboxes <- lapply(L, raster::extent)
-  bbox   <- do.call(raster::merge, bboxes)
-  area2  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
-  areas2 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+  option <- list(raster_alignment = list(res = res, start = sta))
+  R2 <- catalog_sapply(ctg, test, res = res, align = sta, .options = option)
 
-  expect_equal(area1, 43264)
-  expect_equal(area1, area2)
-  expect_equal(areas1, area1)
-  expect_lt(area2, areas2)
+  expect_equal(R0, R2)
+  expect_true(!identical(R0[], R1[]))
   #expect_message(catalog_apply(ctg, test, res = 8, .options = option), "Chunk size changed")
 })
 
