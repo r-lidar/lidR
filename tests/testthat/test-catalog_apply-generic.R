@@ -68,6 +68,40 @@ test_that("catalog_apply fixes chunk alignment", {
   expect_message(catalog_apply(ctg, test, res = 8, .options = option), "Chunk size changed")
 })
 
+test_that("catalog_apply fixes chunk alignment even by file", {
+
+  test <- function(cluster, res, align)
+  {
+    las <- readLAS(cluster)
+    if (is.empty(las)) return(NULL)
+    r <- lidR:::rOverlay(las, res, align)
+    return(r)
+  }
+
+  opt_chunk_size(ctg) <- 0
+
+  # Without option
+  L      <- catalog_apply(ctg, test, res = 8, align = c(12, 12))
+  bboxes <- lapply(L, raster::extent)
+  bbox   <- do.call(raster::merge, bboxes)
+  area1  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
+  areas1 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+
+  # With option
+  option <- list(raster_alignment = list(res = 8, start = c(12, 12)))
+  L      <- catalog_apply(ctg, test, res = 8, align = c(12, 12), .options = option)
+  bboxes <- lapply(L, raster::extent)
+  bbox   <- do.call(raster::merge, bboxes)
+  area2  <- (bbox@xmax - bbox@xmin) * (bbox@ymax - bbox@ymin)
+  areas2 <- sum(sapply(bboxes, function(x)  (x@xmax - x@xmin) * (x@ymax - x@ymin)))
+
+  expect_equal(area1, 43264)
+  expect_equal(area1, area2)
+  expect_equal(areas1, area1)
+  expect_lt(area2, areas2)
+  #expect_message(catalog_apply(ctg, test, res = 8, .options = option), "Chunk size changed")
+})
+
 test_that("catalog_apply generates errors if function does not return NULL for empty chunks", {
 
   test <- function(cluster)
