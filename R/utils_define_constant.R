@@ -9,39 +9,69 @@ LIDRTOPBUFFER         <- 3L
 LIDRRIGHTBUFFER       <- 4L
 
 
+#' ASPRS LAS Classification
+#'
+#' A set of global variables corresponding to the point classification defined by the ASPRS for the
+#' LAS format. Instead of remembering the classification table of the specification it is possible
+#' to use one of these global variables.
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las = readLAS(LASfile)
+#' las2 = filter_poi(las, Classification %in% c(LASGROUND, LASWATER))
+#'
+#' print(LASGROUND)
+#' @rdname asprs
+#' @name asprs
 #' @export
 LASNONCLASSIFIED      <- 0L
 #' @export
+#' @rdname asprs
 LASUNCLASSIFIED       <- 1L
 #' @export
+#' @rdname asprs
 LASGROUND             <- 2L
 #' @export
+#' @rdname asprs
 LASLOWVEGETATION      <- 3L
 #' @export
+#' @rdname asprs
 LASMEDIUMVEGETATION   <- 4L
 #' @export
+#' @rdname asprs
 LASHIGHVEGETATION     <- 5L
 #' @export
+#' @rdname asprs
 LASBUILDING           <- 6L
 #' @export
+#' @rdname asprs
 LASLOWPOINT           <- 7L
 #' @export
+#' @rdname asprs
 LASKEYPOINT           <- 8L
 #' @export
+#' @rdname asprs
 LASWATER              <- 9L
 #' @export
+#' @rdname asprs
 LASRAIL               <- 10L
 #' @export
+#' @rdname asprs
 LASROADSURFACE        <- 11L
 #' @export
+#' @rdname asprs
 LASWIREGUARD          <- 13L
 #' @export
+#' @rdname asprs
 LASWIRECONDUCTOR      <- 14L
 #' @export
+#' @rdname asprs
 LASTRANSMISSIONTOWER  <- 15L
 #' @export
+#' @rdname asprs
 LASBRIGDE             <- 17L
 #' @export
+#' @rdname asprs
 LASNOISE              <- 18L
 
 CHUNK_WAINTING        <- 0L
