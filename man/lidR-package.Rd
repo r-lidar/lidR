@@ -50,8 +50,8 @@ Authors:
 Other contributors:
 \itemize{
   \item Florian De Boissieu (Fixed bugs and improved catalog features) [contributor]
-  \item Andrew Sánchez Meador (Implemented wing2015 for lassnags) [contributor]
-  \item Bourdon Jean-François (Implemented sensor_tracking) [contributor]
+  \item Andrew Sánchez Meador (Implemented wing2015() for segment_snags()) [contributor]
+  \item Bourdon Jean-François (Implemented track_sensor()) [contributor]
 }
 
 }
