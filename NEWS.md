@@ -19,6 +19,8 @@
 
 2. Internally when building the chunks an informative error is now thrown when using the `ORIGINALFILENAME` template with a chunk size that is not 0 to inform that it does not make sense instead of the former uninformative error `Error in eval(parse(text = text, keep.source = FALSE), envir) : objet 'ORIGINALFILENAME' not found`.
 
+3. When using a "by file" processing strategy + a buffer around each file, up to 9 files may be read. Internally the chunks (`LAScluster`) are now build in such a way that the first file read is the main one (and not one of the "buffer file"). This way the header, if the 9 files do not have the same scales and the same offsets, the main file has the precedence on the other ones when rescaling and reoffsetting one the fly. This reduce the risk of incompatibilities and preserve the original pattern when processing a LAScatalog.
+
 ## lidR v2.2.2
 
 ### FIXES
