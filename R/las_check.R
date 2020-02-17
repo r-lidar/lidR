@@ -296,7 +296,7 @@ las_check.LAS = function(las)
   lasproj = las@proj4string
   failure = FALSE
 
-  if (code != 0)
+  if (!head[["Global Encoding"]][["WKT"]] && code != 0)
   {
     codeproj = tryCatch(
     {
@@ -324,7 +324,7 @@ las_check.LAS = function(las)
       ok()
   }
 
-  if (swkt != "")
+  if (head[["Global Encoding"]][["WKT"]] && swkt != "")
   {
     codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
 
@@ -347,7 +347,7 @@ las_check.LAS = function(las)
       ok()
   }
 
-  if (code == 0 | swkt == "")
+  if (code == 0 & swkt == "")
   {
     if (!is.na(lasproj@projargs))
     { warn("A proj4string found but no CRS in the header") ; failure = TRUE }
@@ -406,7 +406,7 @@ las_check.LAS = function(las)
       no()
   }
   else
-    no()
+    skip()
 
   h2("Checking normalization...")
 
@@ -477,7 +477,7 @@ las_check.LAScatalog = function(las)
   ok    <- function()  {cat(green(" \u2713"))}
   fail  <- function(x) {cat("\n", red(g("   \u2717 {x}")))}
   warn  <- function(x) {cat("\n", orange(g("   \u26A0 {x}")))}
-  skip  <- function()  {cat(silver(g(" skipped")))}
+  #skip  <- function()  {cat(silver(g(" skipped")))}
   no    <- function()  {cat(red(g(" no")))}
   yes   <- function()  {cat(green(g(" yes")))}
   maybe <- function()  {cat(orange(g(" maybe")))}
