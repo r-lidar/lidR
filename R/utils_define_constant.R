@@ -103,11 +103,11 @@ LASCATALOGATTRIBUTES <- c("File.Signature", "File.Source.ID", "GUID", "Version.M
                           "Number.of.3rd.return", "Number.of.4th.return", "Number.of.5th.return")
 
 LIDRCONTEXTDSM <- "grid_canopy"
-LIDRCONTEXTSPI <- c("lasnormalize", "grid_terrain", "spatial_interpolation")
-LIDRCONTEXTGND <- "lasground"
-LIDRCONTEXTITD <- "tree_detection"
-LIDRCONTEXTDEC <- "lasfilterdecimate"
-LIDRCONTEXTSHP <- "lasdetectshape"
-LIDRCONTEXTSNG <- "lassnags"
-LIDRCONTEXTITS <- "lastrees"
+LIDRCONTEXTSPI <- c("normalize_elevation", "grid_terrain", "spatial_interpolation")
+LIDRCONTEXTGND <- "classify_ground"
+LIDRCONTEXTITD <- "find_trees"
+LIDRCONTEXTDEC <- "decimate_points"
+LIDRCONTEXTSHP <- "segment_shapes"
+LIDRCONTEXTSNG <- "segment_snags"
+LIDRCONTEXTITS <- "segment_trees"
 

@@ -195,8 +195,6 @@ assert_is_valid_context = function(expected_contexts, name = "", null_allowed = 
 
   if (is.null(received_context) && !null_allowed)
     stop(glue::glue("The '{name}' algorithm has not been called in the correct context. Maybe it has been called alone but it should be used within a lidR function."), call. = FALSE)
-  else
-    return(NULL)
 
   if (!received_context %in% expected_contexts)
     stop(glue::glue("The '{name}' algorithm has not been called in the correct context."), call. = FALSE)
