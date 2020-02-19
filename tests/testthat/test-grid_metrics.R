@@ -111,7 +111,7 @@ test_that("grid_metric returns the same both with LAScatalog and LAS", {
   m1 <- grid_metrics(ctg, ~list(length(Z), mean(Z)), 20)
   m2 <- grid_metrics(las, ~list(length(Z), mean(Z)), 20)
   m1@data@isfactor <- m2@data@isfactor
-  expect_equal(m1, m2)
+  expect_equivalent(m1, m2)
 })
 
 test_that("grid_metric return the same both with catalog and las + grid alignment", {
