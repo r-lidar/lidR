@@ -85,6 +85,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 3. When using a "by file" processing strategy + a buffer around each file, up to 9 files may be read. Internally the chunks (`LAScluster`) are now build in such a way that the first file read is the main one (and not one of the "buffer file"). This way the header, if the 9 files do not have the same scales and the same offsets, the main file has the precedence on the other ones when rescaling and reoffsetting one the fly. This reduce the risk of incompatibilities and preserve the original pattern when processing a LAScatalog.
 
+4. `grid_metrics()` now constructs a `RasterBrick` in a better way and this reduce the risk of bug with user's functions that sometime return 0 length objects. The `RasterBrick` will now be properly filled with `NAs`.
 
 ## lidR v2.2.2
 

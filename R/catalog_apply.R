@@ -362,7 +362,7 @@ engine_realign_chunks = function(ctg, clusters, check_alignment, res, start)
 
       if (!bbox1 == bbox2)
       {
-        new_cluster      <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg), TRUE, TRUE, TRUE)[[1]]
+        new_cluster      <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg), TRUE, TRUE, FALSE)[[1]]
         new_cluster@save <- cluster@save
         clusters[[i]]    <- new_cluster
         #message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the output."))

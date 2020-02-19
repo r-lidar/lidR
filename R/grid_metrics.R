@@ -166,11 +166,13 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
   }
   else
   {
-    xy_coords <- raster::xyFromCell(layout, metrics[[1]])
+    cells <- metrics[[1]]
     metrics[[1]] <- NULL
-    output <- sp::SpatialPixelsDataFrame(xy_coords, metrics, proj4string = las@proj4string)
+    nmetrics = ncol(metrics)
+    output = raster::brick(layout, nl = nmetrics)
+    for (i in 1:nmetrics) suppressWarnings(output[[i]][cells] <- metrics[[i]])
     names(output) <- names(metrics)
-    return(raster::brick(output))
+    return(output)
   }
 }
 
