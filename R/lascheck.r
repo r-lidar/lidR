@@ -260,6 +260,35 @@ lascheck.LAS = function(las)
 
   warn(msg)
 
+  h2("Checking flag attributes...")
+
+  msg = character(0)
+
+  if (!is.null(data[["Withheld_flag"]]))
+  {
+    s = sum(data[["Withheld_flag"]])
+
+    if (s > 0)
+      msg = c(msg, g("{s} points flagged 'withheld'."))
+  }
+
+  if (!is.null(data[["Synthetic_flag"]]))
+  {
+    s = sum(data[["Synthetic_flag"]])
+
+    if (s > 0)
+      msg = c(msg, g("{s} points flagged 'synthetic'."))
+  }
+
+  if (!is.null(data[["Keypoint_flag"]]))
+  {
+    s = sum(data[["Keypoint_flag"]])
+
+    if (s > 0)
+      msg = c(msg, g("{s} points flagged 'keypoint'."))
+  }
+
+  warn(msg)
 
   # ==== header ====
 

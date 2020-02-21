@@ -25,6 +25,8 @@
 
 4. `grid_metrics()` now constructs a `RasterBrick` in a better way and this reduce the risk of bug with user's functions that sometime return 0 length objects. The `RasterBrick` will now be properly filled with `NAs`.
 
+5. `lascheck()` now reports information if some points are flagged 'withheld', 'synthetic' or 'keypoint'
+
 ## lidR v2.2.2
 
 ### FIXES
