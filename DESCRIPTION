@@ -27,7 +27,7 @@ Imports:
     glue,
     grDevices,
     lazyeval,
-    Rcpp (>= 0.11.0),
+    Rcpp (>= 1.0.3),
     RCSF,
     rgeos,
     rgdal,

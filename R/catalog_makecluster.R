@@ -25,6 +25,7 @@
 #
 # ===============================================================================
 
+<<<<<<< HEAD:R/catalog_makecluster.R
 #' Subdivide a LAScatalog into chunks
 #'
 #' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
@@ -38,6 +39,9 @@
 #'
 #' @export
 catalog_makechunks = function(ctg)
+=======
+catalog_makecluster = function(ctg, realignment = FALSE, plot = opt_progress(ctg))
+>>>>>>> master:R/catalog_makecluster.r
 {
   assert_is_all_of(ctg, "LAScatalog")
 
@@ -45,10 +49,12 @@ catalog_makechunks = function(ctg)
   xmin <- ymin <- xmax <- ymax <- 0
 
   # Put some options in short named variables
-  buffer  <- opt_chunk_buffer(ctg)
+  buffer <- opt_chunk_buffer(ctg)
   by_file <- opt_chunk_is_file(ctg)
-  start   <- opt_chunk_alignment(ctg)
-  width   <- opt_chunk_size(ctg)
+  chunk_alignment <- opt_chunk_alignment(ctg)
+  width <- opt_chunk_size(ctg)
+  realign <- !isFALSE(realignment) && opt_wall_to_wall(ctg)
+  realigned <- FALSE
 
   # New feature from v2.2.0 to do not process some tiles
   processed <- ctg@data$processed
@@ -56,54 +62,120 @@ catalog_makechunks = function(ctg)
   if (!is.logical(processed)) stop("The attribute 'processed' of the catalog is not logical.", call. = FALSE)
   files <- ctg@data$filename[processed]
 
-  # Creation of a set of rectangles that encompasses the whole catalog
   if (by_file)
   {
+    # If processing by file the chunks are easy to make. It corresponds
+    # to the bounding boxes of the files
     xmin <- ctg@data[["Min.X"]]
     xmax <- ctg@data[["Max.X"]]
     ymin <- ctg@data[["Min.Y"]]
     ymax <- ctg@data[["Max.Y"]]
 
+    # Remove the files that a flagged for buffer only but no actual processing
     xmin <- xmin[processed]
     xmax <- xmax[processed]
     ymin <- ymin[processed]
     ymax <- ymax[processed]
+
+    # Realignment happens when the chunks need a specific alignment (e.g. with a raster)
+    # If a raster has a resolution of 16 m and the files are 1000 x 1000 meters
+    # the file pattern implies the edge pixels will be split in two equal part. A size of 1000 is
+    # thus not valid and must be increased to 1008 to fit with the grid.
+    if (realign)
+    {
+      res <- realignment$res
+      xscale <- ctg[["X.scale.factor"]]
+      yscale <- ctg[["Y.scale.factor"]]
+
+      new_xmin <- round_any(xmin, res)
+      new_ymin <- round_any(ymin, res)
+      new_xmax <- round_any(xmax, res)
+      new_ymax <- round_any(ymax, res)
+
+
+      resize_xmin = new_xmin < xmin - xscale | new_xmin > xmin + xscale
+      resize_ymin = new_ymin < ymin - yscale | new_ymin > ymin + yscale
+      resize_xmax = new_xmax < xmax - xscale | new_xmax > xmax + xscale
+      resize_ymax = new_ymax < ymax - yscale | new_ymax > ymax + yscale
+
+      if (any(resize_xmin) || any(resize_ymin) || any(resize_xmax) || any(resize_ymax))
+      {
+        xmin[resize_xmin] <- new_xmin[resize_xmin] - res
+        ymin[resize_ymin] <- new_ymin[resize_ymin] - res
+        xmax[resize_xmax] <- new_xmax[resize_xmax] + res
+        ymax[resize_ymax] <- new_ymax[resize_ymax] + res
+
+        message(glue::glue("The original tiling pattern does not match with the resolution {res}. Chunks were extended to avoid partial pixels."))
+        realigned <- TRUE
+      }
+    }
   }
   else
   {
+    # Realignment happens when the chunks need a specific alignment (e.g. with a raster)
+    # If a raster has a resolution of 16 m and the chunk are 500 x 500 meters
+    # the chunk pattern implies the edge pixels will be split in two non equal part.
+    # A size of 500 is thus not valid an must be resized to 512 to fit with the grid.
+    if (realign)
+    {
+      res <- realignment$res
+      start <- realignment$start
+
+      # If the chunk_size option does not match with the resolution
+      new_width <- round_any(width, res)
+
+      if (new_width != width)
+      {
+        message(glue::glue("Chunk size does not match with the resolution the raster. Chunk size changed to {new_width} instead of {width} to ensure the continuity of the output."))
+        width <- new_width
+        realigned <- TRUE
+      }
+
+      # If the alignment of the chunks does not match the start point of the raster
+      new_chunk_alignment <- abs((chunk_alignment - start)) %% res + chunk_alignment
+      if (any(new_chunk_alignment != chunk_alignment))
+      {
+        message(glue::glue("Alignment of the chunks does not match with the starting points of the raster. Alignment changed to ({new_chunk_alignment[1]}, {new_chunk_alignment[2]}) to ensure the continuity of the output."))
+        chunk_alignment <- new_chunk_alignment
+        realigned <- TRUE
+      }
+    }
+
     # Bounding box of the catalog
     bbox <- with(ctg@data, c(min(Min.X), min(Min.Y), max(Max.X), max(Max.Y)))
 
     # Shift to align the grid
     shift <- numeric(2)
-    shift[1] <- (bbox[1] - start[1]) %% width
-    shift[2] <- (bbox[2] - start[2]) %% width
+    shift[1] <- (bbox[1] - chunk_alignment[1]) %% width
+    shift[2] <- (bbox[2] - chunk_alignment[2]) %% width
 
     # Generate coordinates of bottom-left corner
     xmin <- seq(bbox[1] - shift[1], bbox[3], width)
     ymin <- seq(bbox[2] - shift[2], bbox[4], width)
     grid <- expand.grid(xmin = xmin, ymin = ymin)
+
     xmin <- grid$xmin
     ymin <- grid$ymin
     xmax <- xmin + width
     ymax <- ymin + width
   }
-
   verbose("Creating a set of clusters for the catalog...")
 
-  # Generate center and width of each cluster
+  # Generate center and width of each chunk
   xcenter <- (xmin + xmax)/2
   ycenter <- (ymin + ymax)/2
   width   <- xmax - xmin
   height  <- ymax - ymin
 
-  # Creation of a set of clusters from the rectangles
-  if (by_file && buffer <= 0)
+  # Creation of a set of LASclusters from the rectangles
+  if (by_file && buffer <= 0 && realigned == FALSE)
   {
+    filenames <- ctg@data$filename[processed]
+
     clusters = lapply(1:length(xcenter), function(i)
     {
       center  <- list(x = xcenter[i], y = ycenter[i])
-      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, ctg@data$filename[i], "noname", proj4string = ctg@proj4string)
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, filenames[i], "noname", proj4string = ctg@proj4string)
 
       cluster@select <- ctg@input_options$select
       cluster@filter <- paste(cluster@filter, ctg@input_options$filter)
@@ -120,9 +192,9 @@ catalog_makechunks = function(ctg)
 
   # Post-process the clusters
 
-  if (by_file & buffer == 0)
+  # Specific optimisation to remove the "-inside" filter
+  if (by_file && buffer == 0 && realigned == FALSE)
   {
-    # Specific optimisation to remove the "-inside" filter
     clusters <- lapply(clusters, function(x)
     {
       x@filter <- ctg@input_options$filter
@@ -174,7 +246,7 @@ catalog_makechunks = function(ctg)
   }
 
   # Plot the catalog and the clusters if progress
-  if (opt_progress(ctg))
+  if (plot)
   {
     xrange = c(min(xmin, ctg@data[["Min.X"]]), max(xmax, ctg@data[["Max.X"]]))
     yrange = c(min(ymin, ctg@data[["Min.Y"]]), max(ymax, ctg@data[["Max.Y"]]))

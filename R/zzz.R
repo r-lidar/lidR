@@ -37,6 +37,8 @@
 }
 # nocov end
 
+.datatable.aware = TRUE
+
 # ,@@@
 #  @@@@@@.@                                                           ,#*
 #   @@@@@....*&                                                 @(@@@@@@%

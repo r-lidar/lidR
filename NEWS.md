@@ -87,6 +87,9 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 4. `grid_metrics()` now constructs a `RasterBrick` in a better way and this reduce the risk of bug with user's functions that sometime return 0 length objects. The `RasterBrick` will now be properly filled with `NAs`.
 
+5. `lascheck()` now reports information if some points are flagged 'withheld', 'synthetic' or 'keypoint'
+
+6. We moved the internal logic of chunk realignment with a raster from `catalog_apply()` to the internal function `catalog_makecluster()`. This simplifies the source code, make it easier to maintain and test and will enable us to provide access, at the user level, to more internal functions in next releases.
 ## lidR v2.2.2
 
 ### FIXES

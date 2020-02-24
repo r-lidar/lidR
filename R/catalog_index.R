@@ -65,7 +65,7 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     # when merged-reading the las files.
     if (length(files) > 1 && by_file)
     {
-      main <- catalog$filename[i]
+      main <- catalog$filename[process][i]
       j = which(files == main)
       if (length(j) == 0) stop("Internal error: the indexation algorithm generated an incorrect list of files. Please report this error.")
       sfiles <- c(main, files[-j[1]])

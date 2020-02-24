@@ -10,6 +10,9 @@ las1@data[1, X := NA_real_]
 las1@data[5,] = las1@data[6,]
 las1@data[7,1:2] = las1@data[6, 1:2]
 las1@data[5:7, Classification := 2L]
+las1@data[1, Withheld_flag := TRUE]
+las1@data[1, Synthetic_flag := TRUE]
+las1@data[1, Keypoint_flag := TRUE]
 las1@data$gpstime <- 0
 las1@proj4string <- sp::CRS("+init=epsg:26917")
 las1@header@PHB[["X scale factor"]] <- 0.123
@@ -45,6 +48,7 @@ ctg2@data$Point.Data.Format.ID = 12L
 
 test_that("lascheck works without error with LAS", {
   sink(tempfile())
+  expect_error(lascheck(las0), NA)
   expect_error(lascheck(las1), NA)
   expect_error(lascheck(las2), NA)
   expect_error(lascheck(las3), NA)
