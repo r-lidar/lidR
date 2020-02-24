@@ -4,10 +4,18 @@
 \alias{catalog_makechunks}
 \title{Subdivide a LAScatalog into chunks}
 \usage{
-catalog_makechunks(ctg)
+catalog_makechunks(ctg, realignment = FALSE, plot = opt_progress(ctg))
 }
 \arguments{
 \item{ctg}{a object of class \code{LAScatalog}}
+
+\item{realignment}{\code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometime the chunk must
+be aligned with a raster for example to ensure the continuity of the output. If the chunk size is
+800 and the expected product is a raster with a resolution of 35, 800 and 35 are not compatibles
+and will create 2 different partial pixels on this edges. The realignment option force the
+chunk to fits the grid aligment.}
+
+\item{plot}{logical. Displays the chunk pattern.}
 }
 \value{
 A list containing objects of class \code{LAScluster}.
