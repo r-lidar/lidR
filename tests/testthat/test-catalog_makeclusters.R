@@ -21,6 +21,8 @@ data <- data.table::data.table(
               627274.01, 627251.36, 628665.04, 628628.01, 630135.08, 630095.02,
               631525.01, 631487.19, 630058.02, 630020.05, 631448.08, 631411.03,
               627506.32, 628612.41, 629999.84, 631390.38, 632996.06, 632956.04),
+  X.scale.factor = 0.01,
+  Y.scale.factor = 0.01,
   filename = paste0("abc", 1:30)
 )
 
@@ -132,6 +134,7 @@ test_that("catalog_makecluster makes correct clusters by file", {
   xbuffer <- sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
   ybuffer <- sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
   nfiles  <- sapply(cl, function(x) length(x@files))
+  mainf   <- sapply(cl, function(x) x@files[1])
 
   expect_equal(length(cl), nrow(ctg@data))
   expect_equal(width, ctg@data$Max.X - ctg@data$Min.X)
@@ -143,6 +146,7 @@ test_that("catalog_makecluster makes correct clusters by file", {
   expect_true(all(xbuffer == 0))
   expect_true(all(ybuffer == 0))
   expect_true(all(nfiles == 1))
+  expect_equal(mainf, ctg$filename)
 })
 
 test_that("catalog_makecluster makes correct clusters by file with buffer", {
@@ -212,8 +216,87 @@ test_that("catalog_makecluster makes correct clusters by file with negative buff
   expect_true(all(nfiles == 1))
 })
 
+test_that("catalog_makecluster realign the chunks with a raster", {
+  opt_chunk_size(ctg)   <- 1200
+  opt_chunk_buffer(ctg) <- 0
 
-test_that("catalog_makecluster makes not cluster that belong on a tile only with buffer", {
+  cl <- lidR:::catalog_makecluster(ctg, realignment = list(res = 55, start = c(0,0)))
+
+  width   <- sapply(cl, function(x) x@width)
+  buffer  <- sapply(cl, function(x) x@buffer)
+  xwidth  <- sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth  <- sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth <- sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth <- sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+
+  expect_true(all(width == 1210))
+  expect_true(all(xwidth == 1210))
+  expect_true(all(ywidth == 1210))
+  expect_true(all(buffer == 0))
+  expect_equal(length(cl), 54)
+})
+
+test_that("catalog_makecluster extend the chunks with a raster by file", {
+  opt_chunk_size(ctg)   <- 0
+  opt_chunk_buffer(ctg) <- 0
+
+  cl <- lidR:::catalog_makecluster(ctg, realignment = list(res = 55, start = c(0,0)))
+
+  width   <- sapply(cl, function(x) x@width)
+  buffer  <- sapply(cl, function(x) x@buffer)
+  xwidth  <- sapply(cl, function(x) x@bbox[3] - x@bbox[1])
+  ywidth  <- sapply(cl, function(x) x@bbox[4] - x@bbox[2])
+  xbwidth <- sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
+  ybwidth <- sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+
+  expect_equal(length(cl), nrow(ctg@data))
+  expect_equal(width, lidR:::round_any(width, 55))
+  expect_equal(xwidth, lidR:::round_any(xwidth, 55))
+  expect_equal(ywidth, lidR:::round_any(ywidth, 55))
+  expect_true(all(xwidth > ctg@data$Max.X - ctg@data$Min.X))
+  expect_true(all(ywidth > ctg@data$Max.Y - ctg@data$Min.Y))
+})
+
+test_that("catalog_makecluster works with partial processing", {
+  ctg$processed <- FALSE
+  ctg$processed[c(12,13,15,18,21)] <- TRUE
+  opt_chunk_size(ctg)   <- 0
+  opt_chunk_buffer(ctg) <- 0
+
+  cl <- lidR:::catalog_makecluster(ctg)
+
+  nfiles  <- sapply(cl, function(x) length(x@files))
+  mainf   <- sapply(cl, function(x) x@files[1])
+
+  expect_equal(length(cl), 5)
+  expect_equal(mainf, ctg$filename[c(12,13,15,18,21)])
+
+  ctg$processed <- FALSE
+  ctg$processed[c(12,13,15,18,21)] <- TRUE
+  opt_chunk_size(ctg)   <- 0
+  opt_chunk_buffer(ctg) <- 30
+
+  cl <- lidR:::catalog_makecluster(ctg)
+
+  nfiles  <- sapply(cl, function(x) length(x@files))
+  mainf   <- sapply(cl, function(x) x@files[1])
+
+  expect_equal(length(cl), 5)
+  expect_equal(mainf, ctg$filename[c(12,13,15,18,21)])
+
+  ctg$processed <- FALSE
+  ctg$processed[c(12,13,15,18,21)] <- TRUE
+  opt_chunk_size(ctg)   <- 1000
+  opt_chunk_buffer(ctg) <- 30
+
+  cl <- lidR:::catalog_makecluster(ctg)
+
+  nfiles  <- sapply(cl, function(x) length(x@files))
+
+  expect_equal(length(cl), 20)
+})
+
+test_that("catalog_makecluster makes no cluster that belong on a tile only with buffer", {
 
   opt_chunk_size(ctg)   <- 800
   opt_chunk_buffer(ctg) <- 150
@@ -246,5 +329,6 @@ test_that("catalog_makecluster throw error when using ORIGINALFILENAME", {
   opt_output_files(ctg) <- "{*}"
   opt_chunk_size(ctg) <- 1000
 
-  expect_error(lidR:::catalog_makecluster(ctg), "akes sense only when processing by file")
+  expect_error(lidR:::catalog_makecluster(ctg), "makes sense only when processing by file")
 })
+

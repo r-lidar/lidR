@@ -249,11 +249,13 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   # Assert correctness and check aligment
   assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
   assert_processing_constraints_are_repected(ctg, nbu, nof)
-  ctg <- engine_realign_chunks_options(ctg, cal, res, sta)
+
+  # Realignment
+  realigment = FALSE
+  if (cal) realigment = list(res = res, start = sta)
 
   # Produce the chunks
-  clusters <- catalog_makecluster(ctg)
-  clusters <- engine_realign_chunks(ctg, clusters, cal, res, sta)
+  clusters <- catalog_makecluster(ctg, realigment)
 
   # Disable the progress bar of the functions but ensure user options are restored
   oldstate <- getOption("lidR.progress")
@@ -264,7 +266,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   output <- cluster_apply(clusters, FUN, pop, oop, glo, ...)
 
   # Filter NULLs and return
-  if (isTRUE(dnu))  output <- Filter(Negate(is.null), output)
+  if (isTRUE(dnu)) output <- Filter(Negate(is.null), output)
 
   # Automerge
   if (!isFALSE(mer)) output <- catalog_merge_results(ctg, output, mer, as.character(substitute(FUN)))
@@ -306,71 +308,6 @@ assert_processing_constraints_are_repected <- function(ctg, need_buffer, need_ou
   # (because the output is likely to be too big to be returned in R)
   if (need_output_file & opt_output_files(ctg) == "")
     stop("This function requires that the LAScatalog provides an output file template.", call. = FALSE)
-}
-
-engine_realign_chunks_options <- function(ctg, check_alignment, res, start)
-{
-  # The function requires that the chunks are aligned with a raster (typically the function returns a Raster*).
-  # To ensure a strict wall-to-wall output, check if the chunks are aligned with the pixels. In case
-  # of chunk_size > 0 this is easy to check before making the clusters
-
-  if (check_alignment && !opt_chunk_is_file(ctg) && opt_wall_to_wall(ctg))
-  {
-    # If the chunk_size option does not match with the resolution
-    chunk_size     <- opt_chunk_size(ctg)
-    new_chunk_size <- round_any(chunk_size, res)
-
-    if (new_chunk_size != chunk_size)
-    {
-      opt_chunk_size(ctg) <- new_chunk_size
-      message(glue::glue("Chunk size does not match with the resolution of the raster. Chunk size changed to {new_chunk_size} to ensure the continuity of the output."))
-    }
-
-    # If the alignment of the chunks does not match the start point of the raster
-    chunk_alignment     <- opt_chunk_alignment(ctg)
-    new_chunk_alignment <- abs((chunk_alignment - start)) %% res + chunk_alignment
-    if (any(new_chunk_alignment != chunk_alignment))
-    {
-      opt_chunk_alignment(ctg) <- new_chunk_alignment
-      message(glue::glue("Alignment of the chunks does not match with the starting points of the raster. Alignment changed to ({new_chunk_alignment[1]}, {new_chunk_alignment[2]}) to ensure the continuity of the output."))
-    }
-  }
-
-  return(ctg)
-}
-
-engine_realign_chunks = function(ctg, clusters, check_alignment, res, start)
-{
-  # The function requires that the chunks are aligned with a raster (typically the function returns a Raster*).
-  # In case of chunk_size = 0 (processed by file) the chunks must be checked after being created..
-
-  if (check_alignment && opt_chunk_is_file(ctg) && opt_wall_to_wall(ctg))
-  {
-    for (i in 1:length(clusters))
-    {
-      cluster    <- clusters[[i]]
-      bbox1      <- raster::extent(cluster)
-      bbox2      <- bbox1
-      xmin       <- round_any(bbox1@xmin, res)
-      ymin       <- round_any(bbox1@ymin, res)
-      xmax       <- round_any(bbox1@xmax, res)
-      ymax       <- round_any(bbox1@ymax, res)
-      bbox2@xmin <- if (xmin >= bbox1@xmin) xmin - res else xmin
-      bbox2@ymin <- if (ymin >= bbox1@ymin) ymin - res else ymin
-      bbox2@xmax <- if (xmax <= bbox1@xmax) xmax + res else xmax
-      bbox2@ymax <- if (ymax <= bbox1@ymax) ymax + res else ymax
-
-      if (!bbox1 == bbox2)
-      {
-        new_cluster      <- catalog_index(ctg, list(bbox2), LIDRRECTANGLE, opt_chunk_buffer(ctg), TRUE, TRUE, FALSE)[[1]]
-        new_cluster@save <- cluster@save
-        clusters[[i]]    <- new_cluster
-        #message(glue::glue("Chunk {i} has been slighly extended compared to the original file to ensure the continuity of the output."))
-      }
-    }
-  }
-
-  return(clusters)
 }
 
 engine_parse_options = function(.option)
