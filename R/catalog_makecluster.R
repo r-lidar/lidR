@@ -25,7 +25,6 @@
 #
 # ===============================================================================
 
-<<<<<<< HEAD:R/catalog_makecluster.R
 #' Subdivide a LAScatalog into chunks
 #'
 #' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
@@ -34,14 +33,17 @@
 #' according to the \link[lidR:catalog_options_tools]{catalog processing options}.
 #'
 #' @param ctg a object of class \code{LAScatalog}
+#' @param realignment \code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometime the chunk must
+#' be aligned with a raster for example to ensure the continuity of the output. If the chunk size is
+#' 800 and the expected product is a raster with a resolution of 35, 800 and 35 are not compatibles
+#' and will create 2 different partial pixels on this edges. The realignment option force the
+#' chunk to fits the grid aligment.
+#' @param plot logical. Displays the chunk pattern.
 #'
 #' @return A list containing objects of class \code{LAScluster}.
 #'
 #' @export
-catalog_makechunks = function(ctg)
-=======
-catalog_makecluster = function(ctg, realignment = FALSE, plot = opt_progress(ctg))
->>>>>>> master:R/catalog_makecluster.r
+catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg))
 {
   assert_is_all_of(ctg, "LAScatalog")
 
