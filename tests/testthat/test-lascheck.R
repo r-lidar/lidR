@@ -75,3 +75,4 @@ test_that("las_check returns a list of troubleshooting", {
 
   expect_is(report, "list")
   expect_equal(names(report), c("warnings", "errors"))
+})
