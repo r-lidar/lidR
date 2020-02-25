@@ -90,59 +90,27 @@ las_check.LAS = function(las, print = TRUE)
   warnings <- character(0)
   errors <- character(0)
 
-  fail  <- function(msg)
-  {
-    if (print)
-    {
-      if (length(msg) == 0)
-      {
+  fail  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
         ok()
+      } else {
+        for (x in msg) cat("\n", red(g("   \u2717 {x}")))
       }
-      else
-      {
-        for (x in msg)
-        {
-          cat("\n", red(g("   \u2717 {x}")))
-        }
-      }
-    }
-    else
-    {
-      if (length(msg) > 0)
-      {
-        for (x in msg)
-        {
-          errors <<- append(errors, x)
-        }
-      }
+    } else {
+      if (length(msg) > 0) { for (x in msg) errors <<- append(errors, x) }
     }
   }
 
-  warn  <- function(msg)
-  {
-    if (print)
-    {
-      if (length(msg) == 0)
-      {
+  warn  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
         ok()
+      } else {
+        for (x in msg) cat("\n", orange(g("  \u26A0 {x}")))
       }
-      else
-      {
-        for (x in msg)
-        {
-          cat("\n", orange(g("  \u26A0 {x}")))
-        }
-      }
-    }
-    else
-    {
-      if (length(msg) > 0)
-      {
-        for (x in msg)
-        {
-          warnings <<- append(warnings, x)
-        }
-      }
+    } else {
+      if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
     }
   }
 

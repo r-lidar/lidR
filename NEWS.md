@@ -50,7 +50,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
-12. `las_check()` formerly names `lascheck()` gains an option `print = FALSE`. In this case the warnings and errors are returned in a `list` for further automatic processing.
+12. `las_check()` formerly named `lascheck()` gains an option `print = FALSE`. In this case the warnings and errors are returned in a `list` for further automatic processing.
 
     ```r
     las_check(las, FALSE)
@@ -72,7 +72,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 ### FIXES
 
-1. In `delineate_crowns()` formerly names `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the tree that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
+1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
 
 ## lidR v2.2.3
 
