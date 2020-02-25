@@ -172,7 +172,7 @@ clip_roi = function(las, geometry, ...)
       return(clip_disc(las, xcenter, ycenter, radius, data = geometry))
     }
     else
-      stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.")
+      stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
   }
   else if (is(geometry, "Extent"))
   {
@@ -512,7 +512,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
       n         <- length(filepath)
 
       if (n > 1)
-        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each region of interest"))
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each region of interest"), call. = FALSE)
 
       clusters[[i]]@save <- filepath
     }

@@ -177,9 +177,11 @@ test_that("lasclip throw error with lines", {
   S1 = Lines(list(Sl1), ID="a")
   S2 = Lines(list(Sl2), ID="b")
   Sl = SpatialLines(list(S1,S2))
+  sfline = sf::st_as_sf(Sl)
 
   expect_error(lasclip(las, S2), "Geometry type Lines not supported")
   expect_error(lasclip(las, Sl), "Geometry type SpatialLines not supported")
+  expect_error(lasclip(las, sfline), "Incorrect geometry type")
 })
 
 
@@ -378,3 +380,14 @@ test_that("clip writes file following LAScatalog options", {
   expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/plot", 1:2, ".las")))
 })
 
+
+test_that("clip throw an error with invalid template", {
+
+  tmp  <- tempdir()
+
+  ctg2 <- ctg
+  opt_output_files(ctg2)    <- paste0(tmp, "/file_{1:3}")
+  opt_laz_compression(ctg2) <- TRUE
+
+  expect_error(lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900), "Ill-formed template string in the catalog")
+})
