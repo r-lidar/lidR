@@ -37,6 +37,8 @@ test_that("Li's method works", {
   expect_true("TID" %in% names(las@data))
   expect_equal(sort(unique(las@data$TID)), 1:48L)
   expect_true(is.integer(las@data$TID))
+
+  expect_warning(lastrees(las, li2012(hmin =  100)), "No tree segmented")
 })
 
 test_that("Silvas's methods works", {
@@ -45,6 +47,17 @@ test_that("Silvas's methods works", {
 
   expect_true("treeID" %in% names(las@data))
   expect_true(is.integer(las@data$treeID))
+})
+
+test_that("Watershed's methods works", {
+
+  if (require("EBImage", quietly = T, warn.conflicts = FALSE))
+  {
+    las <- lastrees(las, lidR::watershed(chm))
+
+    expect_true("treeID" %in% names(las@data))
+    expect_true(is.integer(las@data$treeID))
+  }
 })
 
 # test_that("MC watershed methods works", {

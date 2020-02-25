@@ -214,7 +214,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 
     if (las@header@PHB$`Max Z` < hmin)
     {
-      warning("'hmin' is higher than the highest point. No tree segmented.")
+      warning("'hmin' is higher than the highest point. No tree segmented.", call. = FALSE)
       return(rep(NA_integer_, nrow(las@data)))
     }
     else
@@ -449,7 +449,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     # Marker-controlled watershed
     else
     {
-      stop("Internal error, you should not have reach this line of code", call. = FALSE)
+      stop("Internal error, you should not have reach this line of code", call. = FALSE) # nocov
       # X = match_chm_and_seeds(chm, treetops, ID)
       # cells = X$cells
       # ids = X$ids

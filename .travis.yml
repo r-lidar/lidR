@@ -5,6 +5,9 @@ cache: packages
 
 sudo: required
 
+bioc_required: yes
+use_bioc: yes
+
 addons:
   apt:
     packages:
@@ -25,4 +28,4 @@ r_packages:
   - covr
 
 after_success:
-  - Rscript -e 'library(covr); codecov()'
+  - Rscript -e 'library(covr); codecov(type = "all")'
