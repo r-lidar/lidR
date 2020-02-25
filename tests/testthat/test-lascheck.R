@@ -64,4 +64,14 @@ test_that("lascheck works without error with LAScatalog", {
   sink(NULL)
 })
 
+test_that("las_check returns a list of troubleshooting", {
 
+  report = las_check(las1, FALSE)
+
+  expect_is(report, "list")
+  expect_equal(names(report), c("warnings", "errors"))
+
+  report = las_check(ctg1, FALSE)
+
+  expect_is(report, "list")
+  expect_equal(names(report), c("warnings", "errors"))

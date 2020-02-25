@@ -4,10 +4,14 @@
 \alias{las_check}
 \title{Inspect a LAS object}
 \usage{
-las_check(las)
+las_check(las, print = TRUE)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
+
+\item{print}{logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
+the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
+vector with the reported warnings and errors.}
 }
 \description{
 Performs a deep inspection of a LAS or LAScatalog object and prints a report.\cr\cr

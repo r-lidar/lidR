@@ -46,18 +46,22 @@
 #' For the pre-processing tests the function only makes an estimation and may not be correct.
 #'
 #' @template param-las
+#' @param print logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
+#' the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
+#' vector with the reported warnings and errors.
+#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile)
 #' las_check(las)
 #' @export
-las_check = function(las)
+las_check = function(las, print = TRUE)
 {
   UseMethod("las_check", las)
 }
 
 #' @export
-las_check.LAS = function(las)
+las_check.LAS = function(las, print = TRUE)
 {
   data <- las@data
   head <- as.list(las@header)
@@ -75,40 +79,69 @@ las_check.LAS = function(las)
     green <- red <- orange <- silver <- function(x) { return(x) } # nocov
   }
 
-  h1    <- function(x)   {cat("\n", x)}
-  h2    <- function(x)   {cat("\n  -", x)}
-  ok    <- function()    {cat(green(" \u2713"))}
-  skip  <- function()    {cat(silver(g(" skipped")))}
-  no    <- function()    {cat(red(g(" no")))}
-  yes   <- function()    {cat(green(g(" yes")))}
-  maybe <- function()    {cat(orange(g(" maybe")))}
+  h1    <- function(x)   {if (print) cat("\n", x)}
+  h2    <- function(x)   {if (print) cat("\n  -", x)}
+  ok    <- function()    {if (print) cat(green(" \u2713"))}
+  skip  <- function()    {if (print) cat(silver(g(" skipped")))}
+  no    <- function()    {if (print) cat(red(g(" no")))}
+  yes   <- function()    {if (print) cat(green(g(" yes")))}
+  maybe <- function()    {if (print) cat(orange(g(" maybe")))}
+
+  warnings <- character(0)
+  errors <- character(0)
 
   fail  <- function(msg)
   {
-    if (length(msg) == 0)
+    if (print)
     {
-      ok()
+      if (length(msg) == 0)
+      {
+        ok()
+      }
+      else
+      {
+        for (x in msg)
+        {
+          cat("\n", red(g("   \u2717 {x}")))
+        }
+      }
     }
     else
     {
-      for (x in msg)
+      if (length(msg) > 0)
       {
-        cat("\n", red(g("   \u2717 {x}")))
+        for (x in msg)
+        {
+          errors <<- append(errors, x)
+        }
       }
     }
   }
 
   warn  <- function(msg)
   {
-    if (length(msg) == 0)
+    if (print)
     {
-      ok()
+      if (length(msg) == 0)
+      {
+        ok()
+      }
+      else
+      {
+        for (x in msg)
+        {
+          cat("\n", orange(g("  \u26A0 {x}")))
+        }
+      }
     }
     else
     {
-      for (x in msg)
+      if (length(msg) > 0)
       {
-        cat("\n", orange(g("  \u26A0 {x}")))
+        for (x in msg)
+        {
+          warnings <<- append(warnings, x)
+        }
       }
     }
   }
@@ -328,11 +361,11 @@ las_check.LAS = function(las)
   if (!head[["Global Encoding"]][["WKT"]] && code != 0)
   {
     codeproj = tryCatch(
-    {
-      proj <- sp::CRS(glue::glue("+init=epsg:{code}"))
-      proj <- gsub("\\+init=epsg:\\d+\\s", "", proj@projargs)
-      sp::CRS(proj)
-    }, error = function(e) return(sp::CRS()))
+      {
+        proj <- sp::CRS(glue::glue("+init=epsg:{code}"))
+        proj <- gsub("\\+init=epsg:\\d+\\s", "", proj@projargs)
+        sp::CRS(proj)
+      }, error = function(e) return(sp::CRS()))
 
     if (is.na(codeproj@projargs))
     { fail("EPSG code unknown.") ; failure = TRUE }
@@ -480,11 +513,21 @@ las_check.LAS = function(las)
   else
     skip()
 
-  return(invisible(las))
+  if (print)
+  {
+    return(invisible(las))
+  }
+  else
+  {
+    return(list(
+      warnings = warnings,
+      errors = errors
+    ))
+  }
 }
 
 #' @export
-las_check.LAScatalog = function(las)
+las_check.LAScatalog = function(las, print = TRUE)
 {
   data <- las@data
   g    <- glue::glue
@@ -501,15 +544,18 @@ las_check.LAScatalog = function(las)
     green <- red <- orange <- silver <- function(x) { return(x) } # nocov
   }
 
-  h1    <- function(x) {cat("\n", x)}
-  h2    <- function(x) {cat("\n  -", x)}
-  ok    <- function()  {cat(green(" \u2713"))}
-  fail  <- function(x) {cat("\n", red(g("   \u2717 {x}")))}
-  warn  <- function(x) {cat("\n", orange(g("   \u26A0 {x}")))}
+  warnings <- character(0)
+  errors <- character(0)
+
+  h1    <- function(x) {if (print) cat("\n", x)}
+  h2    <- function(x) {if (print) cat("\n  -", x)}
+  ok    <- function()  {if (print) cat(green(" \u2713"))}
+  fail  <- function(x) {if (print) cat("\n", red(g("   \u2717 {x}")))  else errors <<- append(errors, x)}
+  warn  <- function(x) {if (print) cat("\n", orange(g("   \u26A0 {x}"))) else warnings <<- append(warnings, x)}
   #skip  <- function()  {cat(silver(g(" skipped")))}
-  no    <- function()  {cat(red(g(" no")))}
-  yes   <- function()  {cat(green(g(" yes")))}
-  maybe <- function()  {cat(orange(g(" maybe")))}
+  no    <- function()  {if (print) cat(red(g(" no")))}
+  yes   <- function()  {if (print) cat(green(g(" yes")))}
+  maybe <- function()  {if (print) cat(orange(g(" maybe")))}
 
   # ==== data =====
 
@@ -641,5 +687,15 @@ las_check.LAScatalog = function(las)
   else
     no()
 
-  return(invisible(las))
+  if (print)
+  {
+    return(invisible(las))
+  }
+  else
+  {
+    return(list(
+      warnings = warnings,
+      errors = errors
+    ))
+  }
 }

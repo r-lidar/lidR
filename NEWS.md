@@ -50,6 +50,20 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
+12. `las_check()` formerly names `lascheck()` gains an option `print = FALSE`. In this case the warnings and errors are returned in a `list` for further automatic processing.
+
+    ```r
+    las_check(las, FALSE)
+    #> $warnings
+    #> [1] "1 points are duplicated and share XYZ coordinates with other points"                                         
+    #> [2] "There were 1 degenerated ground points. Some X Y Z coordinates were repeated."                               
+    #> [3] "There were 1 degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates."
+    #> 
+    #> $errors
+    #> [1] "Invalid header: X scale factors should be factor ten of 0.1 or 0.5 or 0.25 not 0.123"                      
+    #> [2] "Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8."
+    ```
+    
 ### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
