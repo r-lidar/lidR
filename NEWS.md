@@ -2,7 +2,7 @@
 
 #### FIXES
 
-1. This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the outputs contains a `list` of strings the list was expected to be merged into a character vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affected a lot of people.
+1. This fix breaks backward compatibiliy. In `catalog_apply()` if `automerge = TRUE` and the output contains a `list` of strings the list was expected to be merged into a character vector. But the raw list was actually returned. This was not the intended behavior. This appends with `Spatial*` and `sf` objects and with `data.frame`. This bug should not have affected a lot of people.
 
     ```r
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
@@ -32,7 +32,7 @@
     #>  Erreur : The template {ORIGINALFILENAME} makes sense only when processing by file (chunk size = 0). It is undefined otherwise.
     ```
 
-3. When using a "by file" processing strategy + a buffer around each file, up to 9 files may be read. Internally the chunks (`LAScluster`) are now build in such a way that the first file read is the main one (and not one of the "buffer file"). This way, if the 9 files do not have the same scales and the same offsets, the main file has the precedence on the other ones when rescaling and reoffsetting one-the-fly. This reduce the risk of incompatibilities and preserve the original pattern when processing a LAScatalog.
+3. When using a "by file" processing strategy + a buffer around each file, up to 9 files may be read. Internally the chunks (`LAScluster`) are now built in such a way that the first file read is the main one (and not one of the "buffer file"). This way, if the 9 files do not have the same scales and the same offsets, the main file has the precedence on the other ones when rescaling and reoffsetting one-the-fly. This reduce the risk of incompatibilities and preserve the original pattern when processing a LAScatalog.
 
 4. `grid_metrics()` now constructs a `RasterBrick` in a better way and this reduce the risk of bug with user's functions that sometime return 0 length objects. The `RasterBrick` will now be properly filled with `NAs`.
 
