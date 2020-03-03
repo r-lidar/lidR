@@ -76,3 +76,16 @@ test_that("las_check returns a list of troubleshooting", {
   expect_is(report, "list")
   expect_equal(names(report), c("warnings", "errors"))
 })
+
+test_that("las_check performs a deep inspection of a LAScatalog", {
+
+  sink(tempfile())
+
+  o1 = las_check(ctg1, print = FALSE, deep = TRUE)
+  o2 = las_check(ctg1, print = TRUE, deep = TRUE)
+
+  sink(NULL)
+
+  expect_equal(o1,o2)
+  expect_equal(length(o1), 3L)
+})

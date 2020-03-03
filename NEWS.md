@@ -50,7 +50,10 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
-12. `las_check()` formerly named `lascheck()` gains an option `print = FALSE`. In this case the warnings and errors are returned in a `list` for further automatic processing.
+12. `las_check()` formerly named `lascheck()` 
+
+    - gains an option `print = FALSE`. 
+    - now returns a `list` for further automatic processing/parsing. If `print = TRUE` the list is returned invisibly so the former behavior looks the same.
 
     ```r
     las_check(las, FALSE)
@@ -63,6 +66,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     #> [1] "Invalid header: X scale factors should be factor ten of 0.1 or 0.5 or 0.25 not 0.123"                      
     #> [2] "Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8."
     ```
+    
+    - gains an option `deep = TRUE` with a `LAScatalog` only. In this case it performs a deep inspection of each file reading each point cloud.
     
 ### ENHANCEMENT
 

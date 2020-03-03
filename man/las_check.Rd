@@ -4,7 +4,7 @@
 \alias{las_check}
 \title{Inspect a LAS object}
 \usage{
-las_check(las, print = TRUE)
+las_check(las, print = TRUE, ...)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -12,6 +12,14 @@ las_check(las, print = TRUE)
 \item{print}{logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
 the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
 vector with the reported warnings and errors.}
+
+\item{...}{Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
+all the files and performs a deep inspection.}
+}
+\value{
+A list with two elements named \code{warnings} and \code{errors}. This list is returned
+invisibly if \code{print = TRUE}. If \code{deep = TRUE} a nested list is returned with one element
+per file.
 }
 \description{
 Performs a deep inspection of a LAS or LAScatalog object and prints a report.\cr\cr
@@ -34,6 +42,6 @@ For the pre-processing tests the function only makes an estimation and may not b
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
 las_check(las)
 }

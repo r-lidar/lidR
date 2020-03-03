@@ -49,20 +49,28 @@
 #' @param print logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
 #' the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
 #' vector with the reported warnings and errors.
+#' @param ... Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
+#' all the files and performs a deep inspection.
+#'
+#' @return A list with two elements named \code{warnings} and \code{errors}. This list is returned
+#' invisibly if \code{print = TRUE}. If \code{deep = TRUE} a nested list is returned with one element
+#' per file.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #' las_check(las)
 #' @export
-las_check = function(las, print = TRUE)
+las_check = function(las, print = TRUE, ...)
 {
   UseMethod("las_check", las)
 }
 
 #' @export
-las_check.LAS = function(las, print = TRUE)
+las_check.LAS = function(las, print = TRUE, ...)
 {
+  assert_is_a_bool(print)
+
   data <- las@data
   head <- as.list(las@header)
   g    <- glue::glue
@@ -97,9 +105,9 @@ las_check.LAS = function(las, print = TRUE)
       } else {
         for (x in msg) cat("\n", red(g("   \u2717 {x}")))
       }
-    } else {
-      if (length(msg) > 0) { for (x in msg) errors <<- append(errors, x) }
     }
+
+    if (length(msg) > 0) { for (x in msg) errors <<- append(errors, x) }
   }
 
   warn  <- function(msg) {
@@ -109,9 +117,9 @@ las_check.LAS = function(las, print = TRUE)
       } else {
         for (x in msg) cat("\n", orange(g("  \u26A0 {x}")))
       }
-    } else {
-      if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
     }
+
+    if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
   }
 
 
@@ -481,22 +489,64 @@ las_check.LAS = function(las, print = TRUE)
   else
     skip()
 
+  warnerr = list(
+    warnings = warnings,
+    errors = errors)
+
+  if (print)
+    return(invisible(warnerr))
+  else
+    return(warnerr)
+}
+
+las_check.LAScluster = function(las, print = TRUE, ...)
+{
+  f <- basename(las@files)
+  if (length(f) > 1) stop("Internal error: several files in the LAScluster. Please this issue")
+
   if (print)
   {
-    return(invisible(las))
+    title <- glue::glue("Checking the file: {f}")
+    n = nchar(title)
+    header <- strrep("_", n)
+    cat("\n\n")
+    cat(header)
+    cat("\n")
+    cat(title)
+    cat("\n")
+    cat(header)
+    cat("\n")
   }
-  else
-  {
-    return(list(
-      warnings = warnings,
-      errors = errors
-    ))
-  }
+
+  x <- readLAS(las)
+  return(las_check(x, print))
 }
 
 #' @export
-las_check.LAScatalog = function(las, print = TRUE)
+las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
 {
+  assert_is_a_bool(print)
+  assert_is_a_bool(deep)
+
+  # Deep inspection of each file
+  if (deep)
+  {
+    opt_chunk_size(las) <- 0
+    opt_chunk_buffer(las) <- 0
+    opt_select(las) <- "*"
+    opt_filter(las) <- ""
+    opt_wall_to_wall(las) <- FALSE
+    if (print) opt_progress(las) <-  FALSE
+    out <- catalog_apply(las, las_check, print = print)
+    names(out) <- basename(las@data[["filename"]])
+
+    if (print)
+      return(invisible(out))
+    else
+      return(out)
+  }
+
+
   data <- las@data
   g    <- glue::glue
 
@@ -518,8 +568,8 @@ las_check.LAScatalog = function(las, print = TRUE)
   h1    <- function(x) {if (print) cat("\n", x)}
   h2    <- function(x) {if (print) cat("\n  -", x)}
   ok    <- function()  {if (print) cat(green(" \u2713"))}
-  fail  <- function(x) {if (print) cat("\n", red(g("   \u2717 {x}")))  else errors <<- append(errors, x)}
-  warn  <- function(x) {if (print) cat("\n", orange(g("   \u26A0 {x}"))) else warnings <<- append(warnings, x)}
+  fail  <- function(x) {if (print) { cat("\n", red(g("   \u2717 {x}"))) } ; errors <<- append(errors, x)}
+  warn  <- function(x) {if (print) { cat("\n", orange(g("   \u26A0 {x}"))) } ; warnings <<- append(warnings, x)}
   #skip  <- function()  {cat(silver(g(" skipped")))}
   no    <- function()  {if (print) cat(red(g(" no")))}
   yes   <- function()  {if (print) cat(green(g(" yes")))}
@@ -655,15 +705,12 @@ las_check.LAScatalog = function(las, print = TRUE)
   else
     no()
 
+  warnerr = list(
+    warnings = warnings,
+    errors = errors)
+
   if (print)
-  {
-    return(invisible(las))
-  }
+    return(invisible(warnerr))
   else
-  {
-    return(list(
-      warnings = warnings,
-      errors = errors
-    ))
-  }
+    return(warnerr)
 }
