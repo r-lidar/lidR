@@ -122,6 +122,12 @@ las_check.LAS = function(las, print = TRUE, ...)
     if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
   }
 
+  xscale <- las@header@PHB$`X scale factor`
+  xoffset <- las@header@PHB$`X offset`
+  yscale <- las@header@PHB$`Y scale factor`
+  yoffset <- las@header@PHB$`Y offset`
+  zscale <- las@header@PHB$`Z scale factor`
+  zoffset <- las@header@PHB$`Z offset`
 
   # ==== data =====
 
@@ -134,6 +140,23 @@ las_check.LAS = function(las, print = TRUE, ...)
   h2("Checking coordinates type...")
 
   fail(rlas::is_valid_XYZ(data, "vector"))
+
+  h2("Checking coordinates quantization...")
+
+  i <- fast_countunquantized(las$X, xscale, xoffset)
+  j <- fast_countunquantized(las$Y, yscale, yoffset)
+  k <- fast_countunquantized(las$Z, zscale, zoffset)
+
+  if (i + j + k > 0)
+  {
+    if (i > 0) fail(glue::glue("{i} X coordinates were not stored with a resolution compatible with scale factor {xscale} and offset {xoffset}"))
+    if (j > 0) fail(glue::glue("{j} Y coordinates were not stored with a resolution compatible with scale factor {yscale} and offset {yoffset}"))
+    if (k > 0) fail(glue::glue("{k} Z coordinates were not stored with a resolution compatible with scale factor {zscale} and offset {zoffset}"))
+  }
+  else
+  {
+    ok()
+  }
 
   h2("Checking attributes type...")
 
@@ -326,6 +349,27 @@ las_check.LAS = function(las, print = TRUE, ...)
   h2("Checking extra bytes attributes validity...")
 
   fail(rlas::is_valid_extrabytes(head, "vector"))
+
+  h2("Checking the bounding box validity...")
+
+  bbx = c(head[["Min X"]], head[["Max X"]])
+  bby = c(head[["Min Y"]], head[["Max Y"]])
+  bbz = c(head[["Min Z"]], head[["Max Z"]])
+
+  i <- fast_countunquantized(bbx, xscale, xoffset)
+  j <- fast_countunquantized(bby, yscale, yoffset)
+  k <- fast_countunquantized(bbz, zscale, zoffset)
+
+  if (i + j + k > 0)
+  {
+    if (i > 0) fail("Stored resolution of 'Min X' and/or 'Max X' not compatible with 'X offset' and 'X scale factor'")
+    if (j > 0) fail("Stored resolution of 'Min Y' and/or 'Max Y' not compatible with 'Y offset' and 'Y scale factor'")
+    if (k > 0) fail("Stored resolution of 'Min Z' and/or 'Max Z' not compatible with 'Z offset' and 'Z scale factor'")
+  }
+  else
+  {
+    ok()
+  }
 
   h2("Checking coordinate reference sytem...")
 

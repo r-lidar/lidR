@@ -45,6 +45,7 @@ smooth_elevation = function(las, size, method = c("average", "gaussian"), shape 
   if (method == "circle") shape   <- 1  else shape  <- 2
 
   Zs <- C_smooth(las, size, method, shape, sigma, getThread())
+  fast_quantization(Zs, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
 
   if (!"Zraw" %in% names(las@data))
     las@data[["Zraw"]] <- las@data[["Z"]]

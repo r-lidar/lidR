@@ -162,10 +162,42 @@ int fast_countbelow(NumericVector x, double t)
 }
 
 // [[Rcpp::export(rng=false)]]
+void fast_quantization(NumericVector x, double scale, double offset)
+{
+  int X = 0;
+
+  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
+  {
+    X = std::round((*it - offset)/scale);
+    *it = X * scale + offset;
+  }
+
+  return;
+}
+
+// [[Rcpp::export(rng=false)]]
+int fast_countunquantized(NumericVector x, double scale, double offset)
+{
+  int X = 0;
+  int k = 0;
+
+  for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
+  {
+    X = std::round((*it - offset)/scale);
+    if (*it != X * scale + offset)
+      k++;
+  }
+
+  return k;
+}
+
+// [[Rcpp::export(rng=false)]]
 int fast_countover(NumericVector x, double t)
 {
   return std::count_if(x.begin(), x.end(), std::bind(std::greater<double>(), std::placeholders::_1, t));
 }
+
+
 
 // [[Rcpp::export(rng=false)]]
 NumericVector roundc(NumericVector x, int digit = 0)

@@ -39,7 +39,9 @@ test_that("lassmooth works with gaussian", {
   w2 = 1/(20*pi)
   z1 = (w2*data$Z[1] + w1*data$Z[2])/(w1+w2)
   z3 = (w1*data$Z[2] + w2*data$Z[3])/(w1+w2)
-  expect_equal(las@data$Z, c(z1, 1, z3))
+  expected = c(z1, 1, z3)
+  lidR:::fast_quantization(expected, las@header@PHB$`Z scale factor`, las@header@PHB$`Z scale factor`)
+  expect_equal(las@data$Z, expected)
 
   las <- lasunsmooth(las)
 })
