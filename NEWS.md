@@ -4,6 +4,12 @@
 
 1. Fix segfault on Windows 64 bits when constructing a proj4 from some specific modern WTK strings using `doCheckCRSArgs =  FALSE`. [#323](https://github.com/Jean-Romain/lidR/issues/323) [sp #75](https://github.com/edzer/sp/issues/75)
 
+### ENHANCEMENTS
+
+1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
+
+2. `crs not found` message is no longer displayed when building a LAS object. This message appeared with an update of `rgdal` or `sp`. It is now gone.
+
 ## lidR v2.2.3
 
 #### FIXES

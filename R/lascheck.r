@@ -320,30 +320,25 @@ lascheck.LAS = function(las)
 
   h2("Checking coordinate reference sytem...")
 
-  code    = epsg(las)
-  swkt    = wkt(las)
-  lasproj = las@proj4string
-  failure = FALSE
+  code    <- epsg(las)
+  swkt    <- wkt(las)
+  lasproj <- las@proj4string
+  failure <- FALSE
 
-  if (!head[["Global Encoding"]][["WKT"]] && code != 0)
+  if (use_epsg(las) && code != 0)
   {
-    codeproj = tryCatch(
-    {
-      proj <- sp::CRS(glue::glue("+init=epsg:{code}"))
-      proj <- gsub("\\+init=epsg:\\d+\\s", "", proj@projargs)
-      sp::CRS(proj)
-    }, error = function(e) return(sp::CRS()))
+    codeproj <- epsg2CRS(code)
 
     if (is.na(codeproj@projargs))
-    { fail("EPSG code unknown.") ; failure = TRUE }
+    { fail(glue::glue("EPSG code {code} unknown.")) ; failure = TRUE }
 
-    if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
+    if (is.na(codeproj@projargs) && !is.na(lasproj@projargs))
+    { warn(glue::glue("EPSG code is unknown but a proj4string found.")) ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
-    { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
+    if (!is.na(codeproj@projargs) && is.na(lasproj@projargs))
+    { warn("ESPG code is valid but no proj4string found.") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
+    if (!is.na(codeproj@projargs) && !is.na(lasproj@projargs))
     {
       if (codeproj@projargs != lasproj@projargs)
       { fail("ESPG code and proj4string do not match.") ; failure = TRUE }
@@ -353,18 +348,18 @@ lascheck.LAS = function(las)
       ok()
   }
 
-  if (head[["Global Encoding"]][["WKT"]] && swkt != "")
+  if (use_wktcs(las) && swkt != "")
   {
-    codeproj = tryCatch(sp::CRS(rgdal::showP4(swkt)), error = function(e) return(sp::CRS()))
+    codeproj = wkt2CRS(swkt)
 
     if (is.na(codeproj@projargs))
     { fail("WKT OGC CS not understood by rgdal") ; failure = TRUE }
 
     if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { fail("WKT OGC CS and proj4string do not match.") ; failure = TRUE }
+    { warn("WKT OGC CS not understood by rgdal but a proj4string found.") ; failure = TRUE }
 
     if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
-    { fail("WKT OGC CS code and proj4string do not match.") ; failure = TRUE }
+    { warn("WKT OGC CS is valid but no proj4string found.") ; failure = TRUE }
 
     if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
     {
@@ -376,10 +371,16 @@ lascheck.LAS = function(las)
       ok()
   }
 
+  if (use_epsg(las) && swkt != "")
+  { fail("Global encoding WKT bits set to 0 but a WKT string found in the header.") ; failure = TRUE }
+
+  if (use_wktcs(las) && code != 0)
+  { fail("Global encoding WKT bits set to 1 but an epsg code found in the header.") ; failure = TRUE }
+
   if (code == 0 & swkt == "")
   {
     if (!is.na(lasproj@projargs))
-    { warn("A proj4string found but no CRS in the header") ; failure = TRUE }
+    { warn("A proj4string found but no CRS in the header.") ; failure = TRUE }
 
     if (!failure)
       ok()
