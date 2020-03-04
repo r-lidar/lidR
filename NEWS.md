@@ -141,15 +141,11 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 2. Fix heap-buffer-overflow in `lasrangecorrection()` when throwing an error about invalid range.
 
-<<<<<<< HEAD
 ### FIXES
 
 1. `lasunormalize()` now update the header.
 
-## lidR v2.2.1
-=======
 ## lidR v2.2.1  (Release date: 2020-01-21)
->>>>>>> master
 
 #### BREAKING CHANGE
 
