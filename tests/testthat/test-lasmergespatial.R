@@ -18,7 +18,7 @@ test_that("lasmergespatial works with SpatialPolygonsDataFrame", {
   cn <- names(lidar@data)
 
   expect_true("LAKENAME_1" %in% cn)
-  expect_true(is.factor(lidar@data$LAKENAME_1))
+  expect_equal(typeof(lidar@data$LAKENAME_1), typeof(lakes$LAKENAME_1))
   expect_equivalent(as.numeric(table(lidar$LAKENAME_1)), c(1843))
 
   lidar <- lasmergespatial(lidar, lakes)

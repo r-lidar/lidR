@@ -64,17 +64,36 @@ test_that("lascheck works without error with LAScatalog", {
   sink(NULL)
 })
 
-test_that("las_check returns a list of troubleshooting", {
+test_that("lascheck CRS specific test", {
 
-  report = las_check(las1, FALSE)
+  sink(tempfile())
 
-  expect_is(report, "list")
-  expect_equal(names(report), c("warnings", "errors"))
+  las1 <- las0
+  epsg(las1) <- 2008
+  las1@header@PHB$`Global Encoding`$WKT <- TRUE
 
-  report = las_check(ctg1, FALSE)
+  las2 <- las0
+  wkt(las2) <-  "COMPD_CS[\"Projected\", PROJCS[\"UTM_10N\", GEOGCS [ \"WGS84\", DATUM [ \"WGS84\", SPHEROID [\"WGS 84\", 6378137.000, 298.257223563 ], TOWGS84 [ 0.000, 0.000, 0.000, 0.0000000000, 0.0000000000, 0.0000000000, 0.0000000000 ] ], PRIMEM [ \"Greenwich\", 0.000000 ], UNIT [ \"metres\", 1.00000000] ], PROJECTION[\"Transverse_Mercator\"], PARAMETER[\"Latitude_of_Origin\",0.0000000000], PARAMETER[\"Central_Meridian\",-123.0000000000], PARAMETER[\"Scale_Factor\",0.9996000000], PARAMETER[\"False_Easting\",500000.000], PARAMETER[\"False_Northing\",0.000], UNIT [ \"metres\", 1.00000000]] ], VERT_CS[\"NAVD88 (Geoid03) ContUS\", VERT_DATUM[\"./Resources/CoordSysData/navd88_geo03_contus.bin\", 1 ], UNIT [ \"metres\", 1.00000000] ] ]"
+  las2@header@PHB$`Global Encoding`$WKT <- FALSE
 
-  expect_is(report, "list")
-  expect_equal(names(report), c("warnings", "errors"))
+  expect_error(lascheck(las1), NA)
+  expect_error(lascheck(las2), NA)
+
+  epsg(las0) <- 2008
+  las0@proj4string <- sp::CRS()
+
+  expect_error(lascheck(las0), NA)
+
+  las0@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset` <- 200800
+
+  expect_error(lascheck(las0), NA)
+
+  las2@header@VLR$`WKT OGC CS`$`WKT OGC COORDINATE SYSTEM` <- "INVALID"
+  las2@header@PHB$`Global Encoding`$WKT <- TRUE
+
+  expect_error(lascheck(las2), NA)
+
+  sink(NULL)
 })
 
 test_that("las_check performs a deep inspection of a LAScatalog", {
@@ -88,4 +107,17 @@ test_that("las_check performs a deep inspection of a LAScatalog", {
 
   expect_equal(o1,o2)
   expect_equal(length(o1), 3L)
+})
+
+test_that("las_check returns a list of troubleshooting", {
+
+  report = las_check(las1, FALSE)
+
+  expect_is(report, "list")
+  expect_equal(names(report), c("warnings", "errors"))
+
+  report = las_check(ctg1, FALSE)
+
+  expect_is(report, "list")
+  expect_equal(names(report), c("warnings", "errors"))
 })

@@ -111,7 +111,7 @@ setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapv
 {
   epsg <- epsg(x)
   PHB  <- x@PHB
-  crs  <- tryCatch({sp::CRS(glue::glue("+init=epsg:{epsg}"))}, error = function(e) return(sp::CRS()))
+  crs  <- epsg2CRS(epsg)
   xmin <- PHB[["Min X"]]
   xmax <- PHB[["Max X"]]
   ymin <- PHB[["Min Y"]]
