@@ -8,8 +8,8 @@ test_that("Internal projection conversion works", {
   expect_equal(lidR:::epsg2CRS(200800)@projargs, NA_character_)
   expect_error(lidR:::epsg2CRS(200800, fail = TRUE), "Invalid epsg code")
 
-  wkt = rgdal::showWKT("+init=epsg:28992")
-  expect_equal(lidR:::wkt2CRS(wkt)@projargs, "+proj=sterea +lat_0=52.1561605555556 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs")
+  wkt = rgdal::showWKT("+init=epsg:2008")
+  expect_equal(lidR:::wkt2CRS(wkt)@projargs, "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
   expect_equal(lidR:::wkt2CRS("INVALID")@projargs, NA_character_)
   expect_error(lidR:::wkt2CRS("INVALID", fail = TRUE), "Invalid WKT")
 })
