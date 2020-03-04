@@ -103,7 +103,7 @@ setMethod("projection", "LASheader", function(x, asText = TRUE)
     proj4@projargs <- gsub("\\+init=epsg:\\d+\\s", "", proj4@projargs)
   }
   else if (wkt(x) != "")
-    proj4 <- tryCatch(sp::CRS(rgdal::showP4(wkt(x))), error = function(e) sp::CRS())
+    proj4 <- tryCatch(sp::CRS(rgdal::showP4(wkt(x)), doCheckCRSArgs = FALSE), error = function(e) sp::CRS())
   else
     proj4 <- sp::CRS()
 

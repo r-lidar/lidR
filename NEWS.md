@@ -1,3 +1,9 @@
+## lidR v2.2.4
+
+#### FIXES
+
+1. Fix segfault on Windows 64 bits when constructing a proj4 from some specific modern WTK strings using `doCheckCRSArgs =  FALSE`. [#323](https://github.com/Jean-Romain/lidR/issues/323) [sp #75](https://github.com/edzer/sp/issues/75)
+
 ## lidR v2.2.3
 
 #### FIXES
