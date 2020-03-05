@@ -187,12 +187,17 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
     boosted_triangulation <- FALSE
   }
 
-  X <- points$X[1]
-  Y <- points$Y[1]
-  x <- (X - offsets[1]) / scales[1]
-  y <- (Y - offsets[2]) / scales[2]
+  # Check if coordinates actually match the resolution
+  # Check only 100 of them including the first one
+  n <- min(100, length(points$X)) - 1
+  s <- c(1, sample(2:length(points$X), n))
+  X <- points$X[s]
+  Y <- points$Y[s]
+  x <- fast_countunquantized(X, scales[1], offsets[1])
+  y <- fast_countunquantized(Y, scales[2], offsets[2])
 
-  if (abs(x - round(x)) > 1e-5 | abs(y - round(y)) > 1e-5) {
+  if (x > 0 | y > 0)
+  {
     message("The Delaunay triangulation reverted to the old slow method because xy coordinates were not convertible to integer values. xy scale factors and offsets are likely to be invalid")
     boosted_triangulation <- FALSE
   }

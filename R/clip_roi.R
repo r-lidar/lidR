@@ -372,8 +372,10 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
   coords[,1] <- coords[,1] - zero[1]
   coords[,2] <- coords[,2] - zero[2]
   coords <- coords %*% rot
-  X <- round_any(coords[,1], las@header@PHB[["X scale factor"]])
-  Y <- round_any(coords[,2], las@header@PHB[["Y scale factor"]])
+  X <- coords[,1]
+  Y <- coords[,2]
+  fast_quantization(X, las@header@PHB[["X scale factor"]], las@header@PHB[["X offset"]])
+  fast_quantization(Y, las@header@PHB[["Y scale factor"]], las@header@PHB[["Y offset"]])
   las@data[["X"]] <- X
   las@data[["Y"]] <- Y
   las <- lasupdateheader(las)

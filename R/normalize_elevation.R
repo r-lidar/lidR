@@ -175,12 +175,12 @@ normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(
   }
 
   zoffset <- las@header@PHB[["Z offset"]]
-  zscale  <- las@header@PHB[["Z scale factor"]]
+  zscale <- las@header@PHB[["Z scale factor"]]
 
   if (!"Zref" %in% names(las@data))
     las@data[["Zref"]] <- las@data[["Z"]]
 
-  las@data[["Z"]] <- round_any(las@data[["Z"]] - Zground, zscale)
+  las@data[["Z"]] <- las@data[["Z"]] - Zground
 
   if (add_lasattribute && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
     las <- add_lasattribute_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
@@ -191,6 +191,7 @@ normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(
     message(glue::glue("{nnas} points were not normalizable and removed."))
   }
 
+  fast_quantization(las@data[["Z"]], zscale, zoffset)
   las <- lasupdateheader(las)
   return(las)
 }

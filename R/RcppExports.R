@@ -81,6 +81,14 @@ fast_countbelow <- function(x, t) {
     .Call(`_lidR_fast_countbelow`, x, t)
 }
 
+fast_quantization <- function(x, scale, offset) {
+    invisible(.Call(`_lidR_fast_quantization`, x, scale, offset))
+}
+
+fast_countunquantized <- function(x, scale, offset) {
+    .Call(`_lidR_fast_countunquantized`, x, scale, offset)
+}
+
 fast_countover <- function(x, t) {
     .Call(`_lidR_fast_countover`, x, t)
 }

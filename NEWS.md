@@ -68,6 +68,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     ```
     
     - gains an option `deep = TRUE` with a `LAScatalog` only. In this case it performs a deep inspection of each file reading each point cloud.
+    - the coordinates of the points are expected to be given with an resolution e.g. 0.01 meaning a centimetrics accuracy. It means we are expecting values like 12345.67 and not like 12345.6712. This is always the case when read from a LAS file but users (or lidR itself) may transform the point cloud and generate LAS objects where this rule is no longer be respected. `lidR` always ensure to return `LAS` objects that are stricly valid with respect to ASPRS standard. If not valid this may lead to failure in `lidR` because some function such as `tin()`, `dsmtin()`, `pitfree()` work with the integer representation of the coordinates. This is why we introduced a quantization check in `las_check`.
+
     
 #### ENHANCEMENT
 

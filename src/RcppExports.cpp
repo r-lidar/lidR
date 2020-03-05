@@ -274,6 +274,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fast_quantization
+void fast_quantization(NumericVector x, double scale, double offset);
+RcppExport SEXP _lidR_fast_quantization(SEXP xSEXP, SEXP scaleSEXP, SEXP offsetSEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< double >::type offset(offsetSEXP);
+    fast_quantization(x, scale, offset);
+    return R_NilValue;
+END_RCPP
+}
+// fast_countunquantized
+int fast_countunquantized(NumericVector x, double scale, double offset);
+RcppExport SEXP _lidR_fast_countunquantized(SEXP xSEXP, SEXP scaleSEXP, SEXP offsetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< double >::type offset(offsetSEXP);
+    rcpp_result_gen = Rcpp::wrap(fast_countunquantized(x, scale, offset));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_countover
 int fast_countover(NumericVector x, double t);
 RcppExport SEXP _lidR_fast_countover(SEXP xSEXP, SEXP tSEXP) {
@@ -430,6 +453,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},
+    {"_lidR_fast_quantization", (DL_FUNC) &_lidR_fast_quantization, 3},
+    {"_lidR_fast_countunquantized", (DL_FUNC) &_lidR_fast_countunquantized, 3},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
