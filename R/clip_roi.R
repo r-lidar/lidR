@@ -238,9 +238,7 @@ clip_rectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
     output[[i]] = roi
   }
 
-  if (length(output) == 0)
-    return(NULL)
-  else if (length(output) == 1)
+  if (length(output) == 1)
     return(output[[1]])
   else
     return(output)
@@ -252,9 +250,7 @@ clip_rectangle.LAScatalog = function(las, xleft, ybottom, xright, ytop, ...)
   bboxes  <- mapply(raster::extent, xleft, xright, ybottom, ytop)
   output  <- catalog_extract(las, bboxes, LIDRRECTANGLE)
 
-  if (length(output) == 0)
-    return(NULL)
-  else if (length(output) == 1)
+  if (length(output) == 1)
     return(output[[1]])
   else
     return(output)
@@ -305,9 +301,7 @@ clip_disc.LAS = function(las, xcenter, ycenter, radius, ...)
     output[[i]] <- roi
   }
 
-  if (length(output) == 0)
-    return(NULL)
-  else if (length(output) == 1)
+  if (length(output) == 1)
     return(output[[1]])
   else
     return(output)
@@ -421,9 +415,7 @@ clip_sf.LAScatalog = function(las, sf)
 
   output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf = sf)
 
-  if (length(output) == 0)
-    return(NULL)
-  else if (length(output) == 1)
+  if (length(output) == 1)
     return(output[[1]])
   else
     return(output)
@@ -431,6 +423,12 @@ clip_sf.LAScatalog = function(las, sf)
 
 # ============= GENERIC QUERY  =============
 
+#' @param ctg LAScatalog
+#' @param bboxes a list of raster::extent
+#' @param shape shape of the query can be a rectangle or a disc
+#' @param sf an object of class sf that is used for extracting polygons carrying WKT strings
+#' @param data a data.frame carrying some attributes used to create fill the {TEMPLATE}
+#' @noRd
 catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data = NULL)
 {
   stopifnot(shape == LIDRRECTANGLE | shape == LIDRCIRCLE)

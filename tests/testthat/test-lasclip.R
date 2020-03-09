@@ -262,6 +262,16 @@ test_that("lasclip supports multiple queries", {
   expect_equal(polys1, polys2)
 })
 
+test_that("lasclip throw error for invalid multiple queries", {
+
+  # Multiple disc
+  xc <- c(684800, 684850)
+  yc <- c(5017850, 5017900)
+  r  <- 10:13
+
+  expect_error(lasclipCircle(las, xc, yc, r), "xcenter and radius have different lengths")
+})
+
 test_that("lasclip returns an empty point cloud for empty multiple queries", {
 
   # Multiple disc
@@ -376,8 +386,18 @@ test_that("clip writes file following LAScatalog options", {
 
   opt_output_files(ctg2) <- paste0(tmp, "/{PlotID}")
   ctg3 = lasclip(ctg2, P, radius = 10)
-
   expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/plot", 1:2, ".las")))
+
+  wkt1 <- "MULTIPOLYGON (((684950.8 5017989, 685003.3 5017962, 684938.5 5017905, 684950.8 5017989)), ((684796.2 5017963, 684921.6 5017977, 684899.2 5017806, 684780.7 5017795, 684796.2 5017963), (684899.4 5017924, 684851.7 5017945, 684863.7 5017857, 684899.4 5017924)))"
+  P <- rgeos::readWKT(wkt1)
+  P <- sp::disaggregate(P)
+  P <- sp::SpatialPolygonsDataFrame(P, data.frame(PlotID = 1:2))
+  P <- sf::st_as_sf(P)
+
+  opt_output_files(ctg2) <- paste0(tmp, "/{ID}_plot{PlotID}")
+  ctg4 = lasclip(ctg2, P, radius = 10)
+
+  expect_equal(normalizePath(ctg4@data$filename), normalizePath(paste0(tmp, "/", 1:2, "_plot", 1:2, ".las")))
 })
 
 
