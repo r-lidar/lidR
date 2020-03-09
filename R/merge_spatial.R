@@ -28,20 +28,21 @@
 #' Merge a point cloud with a source of spatial data
 #'
 #' Merge a point cloud with a source of spatial data. It adds an attribute along each point based on
-#' a value found in the spatial data. Sources of spatial data can be a \code{SpatialPolygonsDataFrame})
-#' or a \code{RasterLayer}.\cr
+#' a value found in the spatial data. Sources of spatial data can be a \code{SpatialPolygons*})
+#' , a \code{sf data.frame} or a \code{Raster*}.\cr
 #' \itemize{
-#' \item{\code{SpatialPolygonsDataFrame}: it checks if the points belongs within each polygon. If
-#' the parameter \code{attribute} is the name of an attribute in the table of attributes of the shapefile,
-#' it assigns to the points the values of that attribute. Otherwise it classifies the points as boolean.
+#' \item{\code{SpatialPolygons*, sf}: it checks if the points belongs within each polygon. If
+#' the parameter \code{attribute} is the name of an attribute in the table of attributes it assigns
+#' to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
-#' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the \code{RasterLayer}}.
+#' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the
+#' \code{RasterLayer}}.
 #' \item{\code{RasterStack} or \code{RasterBrick} must have 3 channels for RGB colors. It colorizes the
 #' point cloud with RGB values.}
 #' }
 #'
 #' @param las An object of class \code{LAS}
-#' @param source An object of class \code{SpatialPolygonsDataFrame} or \code{RasterLayer} or a
+#' @param source An object of class \code{SpatialPolygons*} or \code{sf} or \code{RasterLayer} or a
 #' \code{RasterStack} or \code{RasterBrick} with RGB colors.
 #' @param attribute character. The name of an attribute in the table of attributes of the shapefile or
 #' the name of a new column in the LAS object. Not relevant for RGB colorization.
@@ -75,16 +76,46 @@ merge_spatial = function(las, source, attribute = NULL)
 #' @export
 merge_spatial.LAS = function(las, source, attribute = NULL)
 {
-  if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
+  if (is(source, "sf"))
   {
-    attribute <- NULL
-    source <- as(source, "SpatialPolygonsDataFrame")
+    if (sf::st_geometry_type(source) != "POLYGON")
+      stop("Only POLYGON geometry types are supported for sf objects", call. = FALSE)
+
+    box <- sf::st_bbox(source)
+    width <- (box[3] - box[1])*0.01
+    height <- (box[4] - box[2])*0.01
+    box <- box + c(-width, -height, width, height)
+    sf::st_agr(source) = "constant"
+    source <- sf::st_crop(source, box)
   }
 
-  if (is(source, "SpatialPolygonsDataFrame"))
-    values = merge_spdf(las, source, attribute)
+  if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
+    attribute <- NULL
+
+  if (is(source, "Polygon"))
+    source <- sp::Polygons(list(source), ID = 1)
+
+  if (is(source, "Polygons"))
+    source <- sp::SpatialPolygons(list(source), proj4string = las@proj4string)
+
+  if (is(source, "SpatialPolygons") | is(source, "SpatialPolygonsDataFrame"))
+  {
+    bbox <- extent(las)
+    source2 <- raster::crop(source, bbox*1.01)
+
+    if (!is.null(source2))
+      source <- sf::st_as_sf(source2)
+    else
+    {
+      source <- sf::st_as_sf(source)
+      source <- source[0,]
+    }
+  }
+
+  if (is(source, "sf"))
+    values <- merge_sf(las, source, attribute)
   else if (is(source, "RasterLayer"))
-    values = merge_raster(las, source)
+    values <- merge_raster(las, source)
   else if (is(source, "RasterStack") | is(source, "RasterBrick"))
     return(merge_rgb(las, source))
   else
@@ -143,7 +174,7 @@ merge_rgb = function(las, source)
   return(las)
 }
 
-merge_spdf = function(las, shapefile, attribute = NULL)
+merge_sf = function(las, source, attribute = NULL)
 {
   npoints <- nrow(las@data)
 
@@ -154,10 +185,10 @@ merge_spdf = function(las, shapefile, attribute = NULL)
     values <- rep(NA_integer_, npoints)
   }
   # The attribute is the name of an attribute in the attribute table: assign the value of the attribute
-  else if (attribute %in% names(shapefile@data))
+  else if (attribute %in% names(source))
   {
     method <- 1
-    data   <- shapefile@data[[attribute]]
+    data   <- source[[attribute]]
 
     if (class(data) == "factor")
       values = factor(rep(NA_integer_, npoints), levels = levels(data))
@@ -180,30 +211,21 @@ merge_spdf = function(las, shapefile, attribute = NULL)
     values <- logical(npoints)
   }
 
-  verbose("Croping the shapefile...")
-
-  bbox  <- extent(las)
-  polys <- raster::crop(shapefile, bbox*1.01)
-
-  if (is.null(polys))
+  if (nrow(source) == 0)
     return(values)
-
-  verbose("Analysing the polygons...")
-
-  sfgeom <- sf::st_as_sf(polys)
 
   verbose("Testing whether points fall in a given polygon...")
 
   ids <- rep(0L, npoints)
-  for (i in seq_along(sfgeom$geometry))
+  for (i in seq_along(source$geometry))
   {
-    wkt          <- sf::st_as_text(sfgeom$geometry[i], digits = 10)
+    wkt          <- sf::st_as_text(source$geometry[i], digits = 10)
     in_poly      <- C_in_polygon(las, wkt, getThread())
     ids[in_poly] <- i
   }
 
   if (method == 1)
-    values[ids > 0L] <- polys@data[[attribute]][ids[ids > 0]]
+    values[ids > 0L] <- source[[attribute]][ids[ids > 0]]
   else if (method == 2)
     values <- ids > 0
   else
