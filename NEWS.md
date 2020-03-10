@@ -72,6 +72,10 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     
 13. `merge_spatial()` formerly named `lasmergespatial()` now supports `sf` POLYGON objects.
 
+14. `point_metrics()` 
+    - default setting is now `xyz = FALSE`
+    - if `xyz = FALSE` the output now contains a column (the first one) names `pointID` that reference the point of the original las object.
+
     
 #### ENHANCEMENT
 

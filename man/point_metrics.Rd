@@ -4,7 +4,7 @@
 \alias{point_metrics}
 \title{Point-based metrics}
 \usage{
-point_metrics(las, func, k, r, xyz = TRUE, filter = NULL, ...)
+point_metrics(las, func, k, r, xyz = FALSE, filter = NULL, ...)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -72,7 +72,7 @@ las = readLAS(LASfile, filter = "-thin_with_grid 2")
 
 # Computes the eigenvalues of the covariance matrix of the neighbouring
 # points and applies a test on these values. This function simulates the
-# 'shp_plane()' algorithm from 'lasdetectshape()'
+# 'shp_plane()' algorithm from 'segment_shape()'
 plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
   xyz <- cbind(x,y,z)
   cov_m <- cov(xyz)
@@ -86,7 +86,7 @@ M <- point_metrics(las, ~plane_metrics1(X,Y,Z), k = 25)
 #> Computed in 6.3 seconds
 
 # We can verify that it returns the same as 'shp_plane'
-las <- lasdetectshape(las, shp_plane(k = 25), "planar")
+las <- segment_shape(las, shp_plane(k = 25), "planar")
 #> Computed in 0.1 second
 
 all.equal(M$planar, las$planar)

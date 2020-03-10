@@ -54,7 +54,7 @@
 #'
 #' # Computes the eigenvalues of the covariance matrix of the neighbouring
 #' # points and applies a test on these values. This function simulates the
-#' # 'shp_plane()' algorithm from 'lasdetectshape()'
+#' # 'shp_plane()' algorithm from 'segment_shape()'
 #' plane_metrics1 = function(x,y,z, th1 = 25, th2 = 6) {
 #'   xyz <- cbind(x,y,z)
 #'   cov_m <- cov(xyz)
@@ -68,7 +68,7 @@
 #' #> Computed in 6.3 seconds
 #'
 #' # We can verify that it returns the same as 'shp_plane'
-#' las <- lasdetectshape(las, shp_plane(k = 25), "planar")
+#' las <- segment_shape(las, shp_plane(k = 25), "planar")
 #' #> Computed in 0.1 second
 #'
 #' all.equal(M$planar, las$planar)
@@ -115,12 +115,12 @@
 #' }
 #' @export
 #' @family metrics
-point_metrics <- function(las, func, k, r,  xyz = TRUE, filter = NULL, ...) {
+point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
   UseMethod("point_metrics", las)
 }
 
 #' @export
-point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
+point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) {
 
   if (!missing(k)) {
     assert_is_a_number(k)
@@ -186,6 +186,15 @@ point_metrics.LAS <- function(las, func, k, r, xyz = TRUE, filter = NULL, ...) {
     output[["Y"]] <- xyz$Y
     output[["Z"]] <- xyz$Z
     data.table::setcolorder(output, coln)
+    output[]
+  } else {
+    colnames <- data.table::copy(names(output))
+    if (length(filter) > 1)
+      output[, pointID := which(filter)]
+    else
+      output[, pointID := 1:npoints(las)]
+
+    data.table::setcolorder(output, c("pointID", colnames))
     output[]
   }
 
