@@ -21,6 +21,7 @@ plot(x, y, ...)
   nbits = 16,
   axis = FALSE,
   legend = FALSE,
+  add = FALSE,
   ...
 )
 
@@ -67,6 +68,9 @@ on 8 bits set this parameter to 8.}
 \item{axis}{logical. Display axis on XYZ coordinates.}
 
 \item{legend}{logical. Display a gradient color legend.}
+
+\item{add}{If \code{FALSE} normal behavior otherwise must be the output of a prior plot function
+to enable the alignment of a second point cloud.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
 

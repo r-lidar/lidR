@@ -188,6 +188,7 @@ point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) 
     data.table::setcolorder(output, coln)
     output[]
   } else {
+    pointID <- NULL
     colnames <- data.table::copy(names(output))
     if (length(filter) > 1)
       output[, pointID := which(filter)]
