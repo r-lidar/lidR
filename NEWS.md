@@ -74,9 +74,10 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 14. `point_metrics()` 
     - default setting is now `xyz = FALSE`
-    - if `xyz = FALSE` the output now contains a column (the first one) names `pointID` that reference the point of the original las object.
+    - if `xyz = FALSE` the output now contains a column (the first one) names `pointID` that reference the point of the original las object. See [#325](https://github.com/Jean-Romain/lidR/issues/325)
 
-    
+15. `plot` for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes.
+
 #### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.

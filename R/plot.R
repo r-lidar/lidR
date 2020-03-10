@@ -61,6 +61,8 @@
 #' \code{PointCloudViewer} package, which is much more efficient and can handle million of points
 #' using less memory. \code{PointCloudViewer} is not available on CRAN yet and should
 #' be installed from github (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).
+#' @param add If \code{FALSE} normal behavior otherwise must be the output of a prior plot function
+#' to enable the alignment of a second point cloud.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
@@ -93,9 +95,9 @@ setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, add, ...)
 })
 
 #' @export
@@ -210,7 +212,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
   }
 }
 
-plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
 {
   backend <- match.arg(backend)
   use_pcv <- backend == "pcv"
@@ -228,6 +230,12 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   if (length(color) > 1)   stop("'color' should contain a single value.", call. = FALSE)
   if (!use_rgb & !has_col) stop("'color' should refer to an attribute of the LAS data.", call. = FALSE)
   if (use_rgb & !has_rgb)  stop("No 'RGB' attributes found.", call. = FALSE)
+
+  if (!isFALSE(add))
+  {
+    assert_is_numeric(add)
+    assert_is_of_length(add, 2)
+  }
 
   if (autocol)
   {
@@ -269,15 +277,24 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   else
     lasplot <- .plot_with_pcv # nocov
 
-  return(lasplot(x, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args, value_index))
+  return(lasplot(x, bg, col, colorPalette, trim, clear_artifacts, axis, legend, args, value_index, add))
 }
 
-.plot_with_rgl = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_index)
+.plot_with_rgl = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_index, add)
 {
   fg   <- grDevices::col2rgb(bg)
   fg   <- grDevices::rgb(t(255 - fg)/255)
-  minx <- min(las@data$X)
-  miny <- min(las@data$Y)
+
+  if (isFALSE(add))
+  {
+    minx <- min(las@data$X)
+    miny <- min(las@data$Y)
+  }
+  else
+  {
+    minx <- add[1]
+    miny <- add[2]
+  }
 
   if (is.numeric(col))
   {
@@ -307,8 +324,12 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
     with$y <- with$y - miny
   }
 
-  rgl::open3d()
-  rgl::rgl.bg(color = bg)
+  if (isFALSE(add))
+  {
+    rgl::open3d()
+    rgl::rgl.bg(color = bg)
+  }
+
   do.call(rgl::points3d, with)
 
   if (axis)
@@ -334,8 +355,10 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 }
 
 # nocov start
-.plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_index)
+.plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_index, add)
 {
+  if (!isFALSE(add)) stop("Argument 'add = TRUE' is not supported with PointCloudViewer.")
+
   if (is.character(col))
   {
     if (col == "RGB")

@@ -91,3 +91,14 @@ test_that("add treetop3d works", {
   expect_error({y = plot(las) ; add_treetops3d(y, x)}, NA)
   rgl::rgl.close()
 })
+
+test_that("add = x overlay a second point cloud", {
+
+  gnd = filter_poi(las, Classification == LASGROUND)
+  ngnd = filter_poi(las, Classification != LASGROUND)
+
+  x = plot(ngnd)
+  expect_error(plot(gnd, color = "Classification", add = x), NA)
+  rgl::rgl.close()
+
+})
