@@ -130,48 +130,16 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
 
 merge_rgb = function(las, source)
 {
-  . <- X <- Y <- NULL
+  cells <- raster::cellFromXY(source[[1]], coordinates(las))
 
   R <- source[[1]][]
   G <- source[[2]][]
   B <- source[[3]][]
+  R <- as.integer(R[cells])
+  G <- as.integer(G[cells])
+  B <- as.integer(B[cells])
 
-  maxr <- max(R, na.rm = TRUE)
-  maxg <- max(G, na.rm = TRUE)
-  maxb <- max(B, na.rm = TRUE)
-
-  scale <- 1
-  if (maxr <= 255 & maxg <= 255 & maxb <= 255)
-    scale <- 257
-
-  cells <- raster::cellFromXY(source[[1]], coordinates(las))
-
-  las@data$R <- as.integer(R[cells]*scale)
-  las@data$G <- as.integer(G[cells]*scale)
-  las@data$B <- as.integer(B[cells]*scale)
-
-  format <- las@header@PHB$`Point Data Format ID`
-
-  if (format %in% c(2,3,8))
-  {
-    # nothing to do
-  }
-  else if ("NIR" %in% names(las@data))
-  {
-    format <- 8L
-  }
-  else if ("gpstime" %in% names(las@data))
-  {
-    format <- 3L
-  }
-  else
-  {
-    format <- 2L
-  }
-
-  las@header@PHB$`Point Data Format ID` <- format
-
-  return(las)
+  return(add_lasrgb(las, R, G, B))
 }
 
 merge_sf = function(las, source, attribute = NULL)

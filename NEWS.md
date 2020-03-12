@@ -78,6 +78,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 15. `plot` for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes.
 
+16. New function `add_lasrgb()` to add RGB attributes. The function updates the header in such a way the the LAS object has a valid point format that supports RGB.
+
 #### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
