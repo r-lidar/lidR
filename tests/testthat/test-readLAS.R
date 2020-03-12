@@ -62,3 +62,12 @@ test_that("read multispectral works", {
   expect_equal(las@header@PHB$`Point Data Format ID`, 6L)
 })
 
+test_that("readLAS LAScluster throw warning when select/filter is used", {
+
+  LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
+  ctg <- readLAScatalog(LASfile, chunk_size = 100)
+  cls = lidR:::catalog_makecluster(ctg)
+
+  expect_warning(readLAS(cls[[4]], select = "i"), "Argument 'select' is not used")
+  expect_warning(readLAS(cls[[4]], filter = "-drop_z_below 0"), "Argument 'filter' is not used")
+})

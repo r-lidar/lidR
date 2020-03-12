@@ -108,10 +108,10 @@ readLAS.LAScatalog = function(files, select = "*", filter = "")
 }
 
 #' @export
-readLAS.LAScluster = function(files, select = "*", filter = "")
+readLAS.LAScluster = function(files, select = NULL, filter = NULL)
 {
-  assert_is_a_string(select)
-  assert_is_a_string(filter)
+  if (!is.null(select)) warning("Argument 'select' is not used with a LAScluster. Use opt_select() with the LAScatalog instead.", call. = FALSE)
+  if (!is.null(filter)) warning("Argument 'filter' is not used with a LAScluster. Use opt_filter() with the LAScatalog instead.", call. = FALSE)
 
   if (!all(file.exists(files@files)) && all(files@alt_dir != "")) {
     for (alt_dir in files@alt_dir) {

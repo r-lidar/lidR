@@ -88,6 +88,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 3. In `clip_*()` several lines of codes were remove because they were not used. We suspected these lines to cover old cases from lidR v1.x.y that are no longer relevant. If a user encounter trouble please report.
 
+4. The arguments `select` and `filter` from `readLAS()` are not expected to be used with a `LAScluster` when processing a `LAScatalog`. The options are carried by the `LAScatalog` itself with `opt_select()` and `opt_filter()`. If used, a warning is now thrown.
+
 #### FIXES
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
