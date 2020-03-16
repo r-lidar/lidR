@@ -32,13 +32,13 @@
 #' This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
 #' It allows the application of a user-defined routine over an entire catalog. The LAScatalog
 #' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
-#' \code{catalog_apply} is the core of the lidR package. It drives every single function that can process a
-#' \code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_sapply} is the same
-#' with the option \code{automerge = TRUE} enforced to simplify the output.\cr\cr
-#' \strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data 'on-the-fly'
+#' `catalog_apply()` is the core of the lidR package. It drives every single function that can process a
+#' \code{LAScatalog}. It is flexible and powerful but also complex. `catalog_sapply` is the same
+#' with the option `automerge = TRUE` enforced to simplify the output.\cr\cr
+#' **Warning:** the LAScatalog processing engine has a mechanism to load buffered data 'on-the-fly'
 #' to avoid edge artifacts, but no mechanism to remove the buffer after applying user-defined functions,
-#' since this task is specific to each process. In other \code{lidR} functions this task is performed
-#' specifically for each function. In \code{catalog_apply} the user's function can return any output,
+#' since this task is specific to each process. In other `lidR` functions this task is performed
+#' specifically for each function. In `catalog_apply()` the user's function can return any output,
 #' thus users must take care of this task themselves (See section "Edge artifacts")
 #'
 #' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
@@ -67,55 +67,69 @@
 #'
 #' @section Function template:
 #'
-#' The parameter \code{FUN} expects a function with a first argument that will be supplied automatically
-#' by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
+#' The parameter `FUN` expects a function with a first argument that will be supplied automatically
+#' by the `LAScatalog` processing engine. This first argument is a `LAScluster`. A `LAScluster`
 #' is an internal undocumented class but the user needs to know only three things about this class:
-#' \itemize{
-#' \item It represents a chunk of the catalog
-#' \item The function \link{readLAS} can be used with a \code{LAScluster}
-#' \item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
+#'
+#' - It represents a chunk of the catalog
+#' - The function \link{readLAS} can be used with a `LAScluster`
+#' - The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a `LAScluster`
 #' and it returns the bounding box of the cluster without the buffer. It can be used to clip the output
 #' and remove the buffered region (see examples).
-#' }
+#'
 #' A user-defined function must be templated like this:
-#' \preformatted{
-#' myfun = function(cluster, ...)
-#' {
-#'    las = readLAS(cluster)
+#'
+#' ```
+#' myfun <- function(cluster, ...) {
+#'    las <- readLAS(cluster)
 #'    if (is.empty(las)) return(NULL)
 #'    # do something
 #'    # remove the buffer of the output
 #'    return(something)
-#' }}
-#' The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
+#' }
+#' ```
+#'
+#' The line `if(is.empty(las)) return(NULL)` is important because some clusters (chunks) may contain
 #' 0 points (we can't know this before reading the file). In this case an empty point cloud with 0 points
-#' is returned by \code{readLAS} and this may fail in subsequent code. Thus, exiting early from the user-defined
-#' function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
+#' is returned by `readLAS()` and this may fail in subsequent code. Thus, exiting early from the user-defined
+#' function by returning `NULL` indicates to the internal engine that the cluster was empty.
+#'
+#' From v3.0.0 if `autoread = TRUE` the following template is accepted because the engine takes care
+#' of the above mentionned steps:
+#'
+#' ```
+#' myfun <- function(las, bbox ...) {
+#'    # do something
+#' }
+#' ````
 #'
 #' @section .options:
 #' Users may have noticed that some lidR functions throw an error when the processing options are
-#' inappropriate. For example, some functions need a buffer and thus \code{buffer = 0} is forbidden.
-#' Users can add the same constraints to protect against inappropriate options. The \code{.options}
-#' argument is a \code{list} that allows users to tune the behavior of the processing engine.
-#' \itemize{
-#' \item \code{drop_null = FALSE} Not intended to be used by regular users. The engine does not remove
-#' NULL outputs
-#' \item \code{need_buffer = TRUE} the function complains if the buffer is 0.
-#' \item \code{need_output_file = TRUE} the function complains if no output file template is provided.
-#' \item \code{raster_alignment = ...} the function checks the alignment of the chunks. This option is
-#' important if the output is a raster. See below for more details.
-#'  \item \code{automerge = TRUE} by defaut the engine returns a \code{list} with one item per chunk. If
-#' \code{automerge = TRUE}, it tries to merge the outputs into a single object: a \code{Raster*}, a
-#' \code{Spatial*}, a \code{LAS*} similar to other functions of the package. This is a fail-safe
-#' option so in the worst case, if the merge fails, the \code{list} is returned.
-#' }
+#' inappropriate. For example, some functions need a buffer and thus `buffer = 0` is forbidden.
+#' Users can add the same constraints to protect against inappropriate options. The `.options`
+#' argument is a `list` that allows users to tune the behavior of the processing engine.
 #'
-#' When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
+#' - `drop_null = FALSE` Not intended to be used by regular users. The engine does not remove
+#' NULL outputs
+#' - `need_buffer = TRUE` the function complains if the buffer is 0.
+#' - `need_output_file = TRUE` the function complains if no output file template is provided.
+#' - `raster_alignment = ...` the function checks the alignment of the chunks. This option is
+#' important if the output is a raster. See below for more details.
+#' - `automerge = TRUE` by defaut the engine returns a `list`` with one item per chunk. If
+#' `automerge = TRUE`, it tries to merge the outputs into a single object: a `Raster*``, a
+#' `Spatial*`, a `LAS*` similar to other functions of the package. This is a fail-safe
+#' option so in the worst case, if the merge fails, the `list` is returned.
+#' - `autoread = TRUE`. Introduced in v3.0.0 this option enables to get rid of the first steps of the
+#' function i.e `readLAS()` and `if (is.empty())`. In this case the function must take two
+#' objects as input, first a `LAS` object and second a `Extent` from `raster`.
+#'
+#' When the function `FUN` returns a raster it is important to ensure that the chunks are aligned
 #' with the raster to avoid edge artifacts. Indeed, if the edge of a chunk does not correspond to the edge
 #' of the pixels, the output will not be strictly continuous and will have edge artifacts (that might
-#' not be visible). Users can check this with the options \code{raster_alignment}, that can take the
-#' resolution of the raster as input, as well as the starting point if needed. The following are accepted:\cr\cr
-#' \preformatted{
+#' not be visible). Users can check this with the options `raster_alignment`, that can take the
+#' resolution of the raster as input, as well as the starting point if needed. The following are accepted:
+#'
+#' ````
 #' # check if chunks are aligned with a raster of resolution 20
 #' raster_alignment = 20
 #' raster_alignment = list(res = 20)
@@ -123,24 +137,24 @@
 #' # check if chunks are aligned with a raster of resolution 20
 #' # that starts at (0,10)
 #' raster_alignment = list(res = 20, start = c(0,10))
-#' }
+#' ```
+#'
 #' See also \link{grid_metrics} for more details.
 #'
 #' @section Supported processing options:
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
 #' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-#' \itemize{
-#' \item \strong{chunk_size}: How much data is loaded at once.
-#' \item \strong{chunk_buffer}: Load chunks with a buffer.
-#' \item \strong{chunk_alignment}: Align the chunks.
-#' \item \strong{progress}: Displays a progress estimate.
-#' \item \strong{output_files}: The user-defined function outputs will be written to files instead of being
+#'
+#' - *chunk_size*: How much data is loaded at once.
+#' - *chunk_buffer*: Load chunks with a buffer.
+#' - *chunk_alignment*: Align the chunks.
+#' - *progress*: Displays a progress estimate.
+#' - *output_files*: The user-defined function outputs will be written to files instead of being
 #' returned into R.
-#' \item \strong{laz_compression}: write \code{las} or \code{laz} files only if the user-defined function
-#' returns a \code{LAS} object.
-#' \item \strong{select}: Select only the data of interest to save processing memory.
-#' \item \strong{filter}: Read only the points of interest.
-#' }
+#' - *laz_compression*: write `las` or `laz` files only if the user-defined function
+#' returns a `LAS`` object.
+#' - *select*: Select only the data of interest to save processing memory.
+#' - *filter*: Read only the points of interest.
 #'
 #' @examples
 #' # More examples might be avaible in the official lidR vignettes or
@@ -223,6 +237,7 @@
 #'
 #' plot(output, col = height.colors(50))
 #' @export
+#' @md
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 {
   # ==== INITIALISATONS ====
@@ -236,6 +251,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   ral <- opt[["raster_alignment"]]
   nbu <- opt[["need_buffer"]]
   mer <- opt[["automerge"]]
+  rea <- opt[["autoread"]]
   cal <- opt[["check_alignment"]]
   dnu <- opt[["drop_null"]]
   nof <- opt[["need_output_file"]]
@@ -247,7 +263,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   oop <- ctg@output_options
 
   # Assert correctness and check aligment
-  assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
+  if (rea == FALSE) assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
   assert_processing_constraints_are_repected(ctg, nbu, nof)
 
   # Realignment
@@ -263,7 +279,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   on.exit(options(lidR.progress = oldstate), add = TRUE)
 
   # Process
-  output <- cluster_apply(clusters, FUN, pop, oop, glo, ...)
+  output <- cluster_apply(clusters, FUN, pop, oop, glo, rea, ...)
 
   # Filter NULLs and return
   if (isTRUE(dnu)) output <- Filter(Negate(is.null), output)
@@ -388,6 +404,22 @@ engine_parse_options = function(.option)
   }
 
   output$automerge <- automerge
+
+  # autoread
+
+  if (is.null(.option$autoread))
+  {
+    autoread <- FALSE
+  }
+  else
+  {
+    autoread <- .option$autoread
+
+    if (isTRUE(autoread))
+      autoread <- TRUE
+  }
+
+  output$autoread <- autoread
 
   # need buffer
 

@@ -25,11 +25,14 @@
 #
 # ===============================================================================
 
-cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, ...)
+cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, ...)
 {
   # Parse ellipsis
   params  <- list(...)
+
+  # Retrieve the names of the param in user-defined function
   first_p <- names(formals(.FUN))[1]
+  second_p <- names(formals(.FUN))[2]
 
   # Initialize output
   nclusters  <- length(.CLUSTER)
@@ -66,8 +69,9 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   for (i in seq_along(.CLUSTER))
   {
-    params[[first_p]] <- .CLUSTER[[i]]
-    save <- .CLUSTER[[i]]@save
+    chunk <- .CLUSTER[[i]]
+    params[[first_p]] <- chunk
+    save <- chunk@save
 
     states[i] <- CHUNK_PROCESSING
     engine_update_progress(pb, .CLUSTER[[i]], states[i], percentage, i)
@@ -78,7 +82,23 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       setThreads(threads)
       options(lidR.progress = FALSE)
       options(lidR.verbose = FALSE)
-      y <- do.call(.FUN, params)
+      y <- NULL
+
+      # Regular behavior before v3.0.0
+      if (.AUTOREAD == FALSE)
+      {
+        y <- do.call(.FUN, params)
+      }
+      # New option autoread = TRUE from v3.0.0
+      else
+      {
+        bbox <- raster::extent(chunk)
+        las <- readLAS(chunk)
+        params[[first_p]] <- las
+        params[[second_p]] <- bbox
+        y <- do.call(.FUN, params)
+      }
+
       if (is.null(y)) y <- NULL
       if (!is.null(y) && writemode) y <- writeANY(y, save, drivers)
       y
