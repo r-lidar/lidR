@@ -309,7 +309,9 @@ assert_fun_is_null_with_empty_cluster = function(ctg, FUN, ...)
     cl <- LAScluster(list(x = 0, y = 0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package = "rlas"), "noname")
     cl@select <- "*"
 
-    if (!is.null(FUN(cl, ...)))
+    u <- tryCatch(FUN(cl, ...), error = function(e) {return(0)})
+
+    if (!is.null(u))
       stop("User's function does not return NULL for empty chunks. Please see the documentation of catalog_apply.", call. = FALSE)
   }
 }

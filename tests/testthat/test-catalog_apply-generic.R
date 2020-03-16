@@ -171,3 +171,18 @@ test_that("User get a warning/error when using ORIGINALFILENAME", {
   expect_message({opt_output_files(ctg) <- "{ID}"}, NA)
 })
 
+test_that("User get throw error if function do not return NULL for empty chun", {
+
+  test <- function(cluster) {
+    las <- readLAS(cluster)
+    return(nrow(las@data))
+  }
+
+  test2 <- function(cluster) {
+    stop("dummy error")
+  }
+
+  expect_error(catalog_apply(ctg, test), "User's function does not return NULL")
+  expect_error(catalog_apply(ctg, test2), "User's function does not return NULL")
+})
+
