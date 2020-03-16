@@ -102,32 +102,32 @@ ctg@data <- data
 ctg@polygons <- Sr@polygons
 ```
 
-In `lidR` the LAScatalog processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog` including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignettes documents how it works going deeper and deeper inside the engine. Users will need to read the vignette named [LAScatalog formal class](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-class.html) before to enter this one even if one may find some overlap between these two vignettes.
+In `lidR` the `LAScatalog` processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog` including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignettes documents how it works going deeper and deeper inside the engine. It is highly recommended to read the vignette named [LAScatalog formal class](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-class.html) before to enter this one even if one may find some overlap between these two vignettes.
 
 ## Overview
 
-When processing a `LAScatalog` the area covered is split into chunks that are then processed sequentially or in parallel. The collection of files is not physically split, the division is virtual. Then, chunks are processes one after the other and **independently**. To process each chunk, the corresponding point-cloud is extracted from the collection of files and loaded into memory. Any function can be applied on these independent point-clouds and the independent outputs are stored in a `list`. The `list` contains one output per chunk and once each chunk is processed the `list` is collapsed into a single continuous valid object such as a `RasterLayer` or a `SpatialPolygonsDataFrame`. The roles of the catalog engine are to:
+When processing a `LAScatalog` the area covered is split into chunks. A chunk can be seen as a square region of interest (ROI) and all together the chunks cover the collection of file. The collection of files is not physically split, the chunks correspond to a virtual splitting of the coverage. Then the chunk are processed sequentially (one after the other) or in parallel but always  **independently**. To process each chunk, the corresponding point-cloud is extracted from the collection of files and loaded into memory. Any function can be applied on these independent point-clouds and the independent outputs are stored in a `list`. The `list` contains one output per chunk and once each chunk is processed the `list` is collapsed into a single continuous valid object such as a `RasterLayer` or a `SpatialPolygonsDataFrame`. The roles of the catalog engine are to:
 
 - Create a set of chunk that encompass the collection of files
 - Load a buffer on-the-fly around each chunk
-- Apply any user-defined function on the loaded point-cloud
+- Apply any user-defined function on the loaded point clouds
 - Take care of parallelism by computing several chunks at a time sending computation on multiple cores or even on multiple machines
 - Take care of error handling including the management of logs in case of crash and the capability to return a partial output in case of crash at mid-computation
 - Provide a visual monitoring of the computation progress in real time including a feedback on successes, warnings and errors.
 - Merge the independent outputs into a single continuous object.
 
-Thus, users only need to think about what function they want to apply over their coverage, all the above mentioned features being managed internally. There are many possible processing tuning and this is why one may feel lost by all the options to consider. To simplify we can make two categories of tools:
+When using the `LAScatalog` engine, users only need to think about what function they want to apply over their coverage, all the above mentioned features being managed internally. There are many possible processing tuning and this is why one may feel lost by all the options to consider. To simplify we can make two categories of tools:
 
-1. **High level API** are functions that perform a given operation on a collection of files in a straightforward way. For examples `grid_metrics()`, `grid_terrain()`, `find_trees()` are high level API. If the function `catalog_apply()` is not directly used it is high level API. Processing options can be tuned with functions that start by `opt_` (for option).
-2. **Low level API** is the function `catalog_apply()`. This function is designed to build new high level applications and is used internally by all the `lidR` functions. Options can be tuned with the parameter `.options` of `catalog_apply()`.
+1. **High level API** are `lidR` functions that perform a given operation either on a `LAS` or `LAScatalog` object transparently in a straightforward way. For examples `grid_metrics()`, `grid_terrain()`, `find_trees()` are high level API. Rule of thumbs, if the function `catalog_apply()` is not directly used it is high level API. Processing options can be tuned with functions that start by `opt_` (for option).
+2. **Low level API** is the function `catalog_apply()` itself. This function is designed to build new high level applications and is used internally by all the `lidR` functions but can also be used by users to build their own tools. Options can be tuned with the parameter `.options` of `catalog_apply()`.
 
-In the following vignette we will discuss first of the hight level API then of the low level AP. The variable named `ctg` will refer to a `LAScatalog` object.
+In the following vignette we will discuss first of the hight level API then of the low level API. The variables named `ctg*` will refer to a `LAScatalog` object in subsequent codes.
 
 ## High level API
 
 ### Control of the chunk size
 
-The catalog takes care of making chunks and user can define the size of the chunks. By default this size is set to 0 meaning that a chunk is a file and thus files will be processed sequentially. The chunk size is not the most important option. It is mostly intended to be used mainly with small configuration computers to do not load too many points at once. Reducing or increasing the chunk size does not modify the output but it reduces the memory used. It is recommended to set 0 unless one think that loading the whole tiles is a bad idea considering the size and the density of the file.
+The catalog takes care of making chunks and user can define the size of the chunks. By default this size is set to 0 meaning that a chunk is a file and thus each files will be processed sequentially. The chunk size is not the most important option. It is mainly intended to be used with small configuration computers to do not load too many points at once. Reducing or increasing the chunk size does not modify the output but it reduces the memory used by reducing the quantity of points loaded. It is recommended to set this options to 0 but sometime it is a good idea to set a small size to process particularly big files.
 
 ```{r, echo = FALSE}
 opt_chunk_buffer(ctg) <- 0
@@ -135,16 +135,16 @@ opt_chunk_buffer(ctg) <- 0
 
 
 ```{r, fig.show='hold'}
-opt_chunk_size(ctg) <- 0
+opt_chunk_size(ctg) <- 0 # Processing by files
 plot(ctg, chunk = TRUE)
 
-opt_chunk_size(ctg) <- 900
+opt_chunk_size(ctg) <- 900 # Processing chunks of 900 x 900
 plot(ctg, chunk = TRUE)
 ```
 
 ### Control of the chunk buffer
 
-Each chunk is loaded with a buffer around it to ensure that independent clouds will not be affected by edge effects. For example when computing a digital terrain model if a buffer is not loaded, the terrain is miss computed at the edge of the point cloud because of the absence of context in the neighbourhood. The chunk buffer size is the most important option. A too small buffer can create incorrect outputs. The default is 30 m and is likely to be appropriated for most use cases.
+Each chunk is loaded with a buffer around it to ensure that independent clouds will not be affected by edge effects. For example when computing a digital terrain model if a buffer is not loaded, the terrain is weakly computed at the edge of the point cloud because of the absence of context in the neighbourhood. The chunk buffer size is the most important option. A too small buffer can create incorrect outputs. The default is 30 m and is likely to be appropriated for most use cases.
 
 
 ```{r, echo = FALSE}
@@ -153,16 +153,23 @@ opt_chunk_size(ctg) <- 0
 
 
 ```{r, fig.show='hold'}
-opt_chunk_buffer(ctg) <- 0
+opt_chunk_buffer(ctg) <- 0 # No buffer
 plot(ctg, chunk = TRUE)
 
-opt_chunk_buffer(ctg) <- 200
+opt_chunk_buffer(ctg) <- 200 # 200 m buffer
 plot(ctg, chunk = TRUE)
+```
+
+`lidR` functions always checks if an appropriate buffer is set. For example it is impossible to apply `grid_terrain()` with no buffer.
+
+```{r, error=TRUE}
+opt_chunk_buffer(ctg) <- 0
+grid_terrain(ctg, 1, tin())
 ```
 
 ### Control of the chunk alignment
 
-In some cases it might be suitable to control the alignment of the chunks to enforce a given pattern. This is rare but the engine supports such possibility. On particular useful case is the function `catalog_retile()`. This option is obviously skipped if the chunks are the files. The chunk alignment is not the most important option and does not modify the output but it may generate more or less chunks depending on the alignment.
+In some cases it might be suitable to control the alignment of the chunks to force a given pattern. This is a rare use case but the engine supports such possibility. This option is obviously meaningless when processing by file. The chunk alignment is not the most important option and does not modify the output but it may generate more or less chunks depending on the alignment. However it might be very useful is the particular case of the function `catalog_retile()` for example to control accurately the new tiling pattern.
 
 
 ```{r, fig.show='hold'}
@@ -175,8 +182,6 @@ opt_chunk_buffer(ctg) <- 0
 opt_chunk_alignment(ctg) <- c(1000, 1000)
 plot(ctg, chunk = TRUE)
 ```
-
-### Chunk pattern not respected: special cases
 
 `clip_roi()` is the single case where the control of the chunk is not respected. `clip_roi()` aims to extract a shape (rectangle, disc, polygon) as a single entity . The chunk pattern does not make sense here.
 
@@ -223,14 +228,14 @@ m <- grid_metrics(ctg, .stdmetrics, 20)
 All filters are not necessarily appropriated everywhere. For example the following is meaningless because it discards all the point that are used to compute a DTM.
 
 ```r
-opt_filter(ctg2) <- "-drop_class 2 9"
-grid_terrain(ctg2, 1, tin())
+opt_filter(ctg) <- "-drop_class 2 9"
+grid_terrain(ctg, 1, tin())
 #> Error: No ground points found. Impossible to compute a DTM.
 ```
 
 ### Select attributes
 
-When reading a single file with `readLAS()` the option `select` allows for discarding some attributes of the points. For example `ir` keeps only the intensity and the return number of each point and discards all the other attributes such as the scan angle, the flags or the classification. Its role is only to save processing memory by do not loading data that are not actually needed. Similarly to `opt_filter()` the function `opt_select()` allows to propagate the `select` information to `readLAS()`.
+When reading a single file with `readLAS()` the option `select` allows for discarding some attributes of the points. For example `select = "ir"` keeps only the intensity and the return number of each point and discards all the other attributes such as the scan angle, the flags or the classification. Its role is only to save processing memory by do not loading data that are not actually needed. Similarly to `opt_filter()` the function `opt_select()` allows to propagate the argument `select` to `readLAS()`.
 
 ```r
 # Load Intensity only
@@ -251,7 +256,7 @@ dtm <- grid_terrain(ctg, 1, tin())
 
 ### Write independent chunks on disk
 
-By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in a straightforward way. For example a `SpatialPointsDataFrame` for `find_trees()`.
+By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in the working environment in a straightforward way. For example a `SpatialPointsDataFrame` for `find_trees()`.
 
 ```{r echo = FALSE, rgl=TRUE, dev='png'}
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -274,7 +279,7 @@ However in some case this behaviour might not be suitable especially for big col
 opt_output_files(ctg) <- "/folder/to/save/filename_{TEMPLATE1}_{TEMPLATE2}...{TEMPLATEN}"
 ```
 
-The templates can be `XCENTER`, `YCENTER`, `XLEFT`, `YBOTTOM`, `XRIGHT`, `YTOP`, `ID` or `ORIGINALFILENAME`. The templated string does not contain the file extension. The engine guess the extension and it works no matter the output. For example:
+The templates can be `XCENTER`, `YCENTER`, `XLEFT`, `YBOTTOM`, `XRIGHT`, `YTOP`, `ID` or `ORIGINALFILENAME`. The templated string does not contain the file extension. The engine guesses the extension and it works no matter the output. For example:
 
 ```{r}
 # Force the results to be written on disk
@@ -286,9 +291,9 @@ trees <- find_trees(ctg2, lmf(3))
 trees
 ```
 
-### Special cases
+The is one file per chunk and thus processing by file with the template `{ORIGINALFILENAME}` or its shortcut `{*}` may be suitable to further match the output files with the point cloud files. However depending on the size of the file and the capacity of the computer it is not always possible (see section "Control of the chunk size").
 
-In the previous example, several shapefiles were written on disk and there is no way to combine them into a single light R object. But sometime it is possible to return a light object that aggregates all the files. For raster for example it is possible to build a virtual raster mosaic. The engine automatically do that when it is possible.
+In the previous example, several shapefiles were written on disk and there is no way to combine them into a single light R object. But sometime it is possible to return a light object that aggregates all the written files. For rasters for example it is possible to build a virtual raster mosaic. The engine automatically do that when it is possible.
 
 ```{r}
 # Force the results to be written on disk
@@ -300,7 +305,7 @@ chm <- grid_canopy(ctg2, 1, p2r())
 chm
 ```
 
-There are two special cases. The first on is when raster files are written. They are merged into a valid `RasterLayer` using a virtual mosaic. The second one is when LAS or LAZ files are written on disk. They are merged into a `LAScatalog`.
+There are two special cases. The first one is when raster files are written. They are merged into a valid `RasterLayer` using a virtual mosaic. The second one is when LAS or LAZ files are written on disk. They are merged into a `LAScatalog`.
 
 ```{r, echo=FALSE}
 ctg2 = lidR:::catalog_generator(600)
@@ -327,7 +332,7 @@ opt_laz_compression(ctg) <- TRUE
 
 ### Progress estimation
 
-The engine provides a real time display of the progression that serve two purposes: (a) see the progression and (b) monitor troubleshooting. It is enabled by default and when a `LAScatalog` is processing a chart is displayed. The chunks are progressively coloured. No colour, the chunk is pending. Blue, the chunk is processing. Green, the chunk has been processed. Orange, the chunk has been processed with a warning. Red, the chunk processing failed.
+The engine provides a real time display of the progression that serves two purposes: (a) see the progression and (b) monitor troubleshooting. It is enabled by default and when a `LAScatalog` is processing a chart is displayed. The chunks are progressively coloured. No colour, the chunk is pending. Blue, the chunk is processing. Green, the chunk has been processed. Orange, the chunk has been processed with a warning. Red, the chunk processing failed.
 
 
 ```{r, echo=FALSE}
@@ -352,6 +357,7 @@ This can be disabled with:
 ```r
 opt_progress(ctg) <- FALSE
 ```
+
 ### Error handling
 
 If a chunks produced a warning this is rendered in real time with an orange colouring. However the message(s) of the warning(s) are delayed and printed only at the end of the computation.
@@ -437,7 +443,7 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "red"
 
 ### Empty chunks
 
-Sometime some chunks are empty and we discover that only when processing. When the chunk pattern is different from the tiling pattern some chunks may have been created but they actually do not encompass any point. This is the case when the tile is only partially populated. The bounding box of the tile is bigger that its actual content. This often happens on the edge of the catalog. In this case the engine displays the chunk in gray. This may also happens if `filter` is set in such a way that a lot of points are discarded and in some chunks all the points appear to be discarded.
+Sometime some chunks are empty and we discover that only when loading the region of interest. This may happens when the chunk pattern is different from the tiling pattern because some chunks may have been created but they do not actually encompass any point. This is the case when the file is only partially populated because the bounding box of the file/tile is bigger than its actual content. This often happens on the edge of the collection. In this case the engine displays the chunks in gray. This may also happens if `filter` is set in such a way that a lot of points are discarded and in some chunks all the points appear to be discarded. Those chunk are displayed in gray.
 
 ```{r, echo=FALSE}
 opt_chunk_size(ctg) <- 500
@@ -469,14 +475,14 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray
 
 ### Parallel processing
 
-The engine takes care of processing the chunks one after the other sequentially or in parallel. The parallelisation can be done with a single machine or on multiple machines by sending the lightweight chunks to different workers. This task is performed using the framework given by the package `future`. Understanding the basic of this package is thus required. To activate a paralellization strategy users need to register a strategy with `future`. For example:
+The engine takes care of processing the chunks one after the other sequentially or in parallel. The parallelisation can be done with a single machine or on multiple machines by sending the chunks to different workers. The parallelization is performed using the framework given by the package [`future`](https://cran.r-project.org/web/packages/future/index.html). Understanding the basic of this package is thus required. To activate a paralellization strategy users need to register a strategy with `future`. For example:
 
 ```r
 library(future)
 plan(multissesion, workers = 4L)
 ```
 
-Now 4 chunks will be processed at a time and the engine monitoring displays in real time the processing chunk:
+Now 4 chunks will be processed at a time and the engine monitoring displays in real time the processing chunks:
 
 ```{r, echo=FALSE}
 opt_chunk_size(ctg) <- 0
@@ -495,14 +501,21 @@ for (i in 19:22) {
 }
 ```
 
-However parallel processing is not magic. First of all it loads several point-cloud a one time because several chunks are read at one time. Users must ensure they have enough RAM to support that. Second, there are strong overheads at parallelizing tasks. Putting all cores on a task does not always make it faster!
+However parallel processing is not magic. First of all it loads several point clouds at one time because several chunks are read at one time. Users must ensure they have enough RAM to support that. Second, there are strong overheads at parallelizing tasks. Putting all cores on a task does not always make it faster!
 
 
 ### Overlapping tiles
 
-In `lidR` a buffer is loaded on the fly when you process a collection of files by chunk. If some files are overlapping each other, a warning is thrown to alert about potential troubles. Overlapping is not an issue by itself. The problem is duplicated points. The reason users will encounter issues is because, in case of duplicated points, some points will be loaded twice. Below few classical cases of overlapping files:
+In `lidR` if some files are overlapping each other, a message is printing to alert about potential troubles. 
 
-- **The files are already buffered:** as said the engine is designed to work with a continuous dataset. If files are already buffered users have several options to process the collection but they all imply to drive without security belt. The first and best option is to skip the buffer at read time assuming that buffer points are flagged somehow. For example flagged as withheld:
+```r
+ctg <- readLAScatalog("path/to/folder/")
+#> Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.
+```
+
+Overlapping is not an issue by itself. The actual problem is duplicated points. Because `lidR` makes arbitrary chunks, users are likely to load twice the same points is some areas are duplicated in the original dataset. Below few classical cases of overlapping files:
+
+- **The files are already buffered:** the engine is designed to work with a continuous dataset. If files are already buffered users have several options to process the collection but they all imply to drive without security belt. The first and best option is to skip the buffer at read time assuming that buffer points are flagged somehow. For example flagged as withheld:
 
    ```r
    opt_filter(ctg) <- "-drop_withhelp"
@@ -528,7 +541,7 @@ In `lidR` a buffer is loaded on the fly when you process a collection of files b
    ```
 
 - **The files are flight-lines:** when a file records a single flight transect, files are overlapping, of course, but this does not create regions with duplicated points. You can process normally and ignore the message. The engine will take care of making independent and buffered chunks.
-- **There are some duplicated files:** a few tiles that appear more than once. When plotting the `LAScatlog`, the light blue being transparent, the overlapping regions should appears darker. You must remove these files.
+- **There are some duplicated files:** a few tiles that appear more than once. When plotting the `LAScatalog`, the light blue being transparent, the overlapping regions should appears darker. You must remove these files.
 - **Other:** there are certainly many other reasons to get overlaps.
 
 ### Partial processing
@@ -559,7 +572,7 @@ routine <- function(chunk){
 }
 ```
 
-The size of the chunks, the size of the buffer and the positioning of the chunks depend on the option carried by the `LAScatalog`. In addition the `select` and `filter` argument cannot be specified in `readLAS()`. They are controlled by `opt_filter()` and `opt_select()` as seen in previous sections. The problem with that is that if any size of chunk can be defined it is possible to create chunks that encompass a tile but that do not contain any points. So sometime `readLAS(chunk)` may return a point cloud with 0 point (see section 'empty chunks'). In that case subsequent code is likely to fail. As a consequence the function mapped by `catalog_apply()` must check for empty chunks and return `NULL`. When returning `NULL` the engine understand that the chunk was empty.
+The size of the chunks, the size of the buffer and the positioning of the chunks depend on the option carried by the `LAScatalog` and set with `opt_chunk_*()` functions. In addition the `select` and `filter` argument cannot be specified in `readLAS()`. They are controlled by `opt_filter()` and `opt_select()` as seen in previous sections. The problem with that is that if any size of chunk can be defined it is possible to create chunks that encompass a tile but that do not contain any points. So sometime `readLAS(chunk)` may return a point cloud with 0 point (see section 'empty chunks'). In that case subsequent code is likely to fail. As a consequence the function mapped by `catalog_apply()` must check for empty chunks and return `NULL`. When returning `NULL` the engine understand that the chunk was empty.
 
 The following code does not work because `catalog_apply()` checks internally if the function returns `NULL` for empty chunks
 
@@ -624,12 +637,13 @@ Being able to retrieve the true bounding box allow for removing the buffer. Inde
 
 ### Control the option provided by the catalog
 
-Sometime we need to control processing options carried by the `LAScatalog`. For example control that the buffer is not 0.
+Sometime we need to control processing options carried by the `LAScatalog` to ensures that users did not put invalid options. For example `grid_terrain()` control that the buffer is not 0.
 
 ```{r, error = TRUE}
 opt_chunk_buffer(ctg) <- 0
 grid_terrain(ctg, 1, tin())
 ```
+
 This can be reproduced with the option `need_buffer = TRUE`
 
 ```{r, error = TRUE}
@@ -642,7 +656,7 @@ options = list(need_buffer = TRUE)
 catalog_apply(ctg, routine, .options = options)
 ```
 
-Other options are documented in the manual. They serve to make safe new high level functions. When developer are programming from themselves using `catalog_apply()` they are expecting to know what they are doing. When providing new functions to thirds party users or to collaborators in a high level way we are never safe. This is why the catalog engine provides options to control the inputs so that the users won't use your tools badly.
+Other options are documented in the manual. They serve to make safe new high level functions. The main idea being that when developers are programming new tools using `catalog_apply()` they are expecting to know what they are doing. But when providing new functions to thirds party users or to collaborators in a high level way we are never safe. This is why the catalog engine provides options to control the inputs so that the users won't use your tools badly.
 
 ### Merge the outputs
 
@@ -661,7 +675,7 @@ opt_progress(ctg) <- FALSE
 routine <- function(chunk){ 
    las <- readLAS(chunk)               # read the chunk
    if (is.empty(las)) return(NULL)     # exit if empty
-   ttop <- find_trees(las, lmf(3)) # make any computation
+   ttop <- find_trees(las, lmf(3))     # make any computation
    ttop <- crop(ttop, extent(chunk))   # remove the buffer
    return(ttop)
 }
@@ -671,7 +685,7 @@ class(out)
 print(out[[1]])
 ```
 
-This `list` must be merged after `catalog_apply()`. The way to merge depends on the content of the `list`. Here the list contains `SpatialPointsDataFrame` so we can `rbind` the list.
+This `list` must be reduced after `catalog_apply()`. The way to merge depends on the content of the `list`. Here the list contains `SpatialPointsDataFrame` so we can `rbind` the list.
 
 ```{r}
 out <- do.call(rbind, out)
@@ -689,12 +703,12 @@ print(out)
 
 In the worst case the type is not supported an a list is returned anyway without failure.
 
-### Make an hight level function
+### Make an high level function
 
- `catalog_apply()` is not really intended to be used directly. It is intended to be used and hidden within more user-friendly functions referred as hight level API. Hight level API are functions indented to be used by third party users. Let assume we have designed a new application to identify dead tree. Let call this function `find_dead_trees()`. This function takes a point cloud as input and return a `SpatialPointsDataFrame` with the positioning of the dead trees + some attributes.
+ `catalog_apply()` is not really intended to be used directly. It is intended to be used and hidden within more user-friendly functions referred as high level API. Hight level API are functions intended to be used by third party users. Let assume we have designed a new application to identify dead tree. Let call this function `find_deadtrees()`. This function takes a point cloud as input and return a `SpatialPointsDataFrame` with the positioning of the dead trees + some attributes.
 
 ```r
-find_dead_tree <- function(las, param1, param2)
+find_deadtree <- function(las, param1, param2)
 {
    # make a complex computation
    return(dead_trees)
@@ -704,17 +718,17 @@ find_dead_tree <- function(las, param1, param2)
 We now want to make this function working with a `LAScatalog` in the sane fashion than all the `lidR` functions. One option is the following. First the function checks the input, if it is a `LAScatalog` it makes use of `catalog_apply()` to apply itself. Then the function will be fed with `LAScluster`s. We test if the input is a `LAScluster` and if it is we read the chunk and apply the function on the loaded point cloud. To finish, if the input is a `LAS` we perform the actual computation.
 
 ```{r}
-find_dead_trees <- function(las, param1, param2)
+find_deadtrees <- function(las, param1, param2)
 {
    if (is(las, "LAScatalog"))  {
       options <- list(automerge = TRUE, need_buffer = TRUE)
-      dead_trees <- catalog_apply(las, find_dead_trees, param1 = param1, param2 = param2, .options = options)
+      dead_trees <- catalog_apply(las, find_deadtrees, param1 = param1, param2 = param2, .options = options)
       return(dead_trees)
    }
    else if (is(las, "LAScluster")) {
       bbox <- extent(las)
       las <- readLAS(las)
-      dead_trees <- find_dead_trees(las, param1, param2)
+      dead_trees <- find_deadtrees(las, param1, param2)
       dead_trees <- raster::crop(dead_trees, bbox)
       return(dead_trees)
    }
@@ -728,25 +742,27 @@ find_dead_trees <- function(las, param1, param2)
 }
 ```
 
-The function now works seamlessly either on a `LAS` and a `LAScatalog`. We created a function `find_dead_trees()` that can be applied on a whole collection of files in parallel or not, on multiple machines or not, that returns a valid continuous shapefile, that handles errors nicely, that can optionally write the output of each chunk and so on...
+The function now works seamlessly either on a `LAS` and a `LAScatalog`. We created a function `find_deadtrees()` that can be applied on a whole collection of files in parallel or not, on multiple machines or not, that returns a valid continuous shapefile, that handles errors nicely, that can optionally write the output of each chunk and so on...
 
 ```r
 # This will works
-las = readLAS(...)
-deads = find_dead_trees(las, 0.5, 3)
+las <- readLAS(...)
+deads <- find_deadtrees(las, 0.5, 3)
 
 # And this too
 library(future)
-ctg = readLAScatalog(...)
+ctg <- readLAScatalog(...)
 opt_chunk_size(ctg) <- 800
 opt_chunk_buffer(ctg) <- 30
 plan(multissesion, workers = 4L)
-deads = find_dead_trees(ctg, 0.5, 3)
+deads <- find_deadtrees(ctg, 0.5, 3)
 ```
 
 In practice there is, in our opinion, a more elegant way to achieve the same task. This way is presented in [this vignette](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-catalog-apply-examples.html) an relies on S3 dispatch.
 
-## Advanced usages
+## Advanced usages of the engine
+
+The following sections concern both high level and low level APIs and present some advanced use cases.
 
 ### Modify the drivers
 
@@ -763,7 +779,7 @@ routine <- function(chunk){
 
 opt_output_files(ctg) <- "{tempdir()}/{ID}"
 catalog_apply(ctg, routine)
-#> Erreur : Trying to write an object of class list but this type is not supported.
+#> Erreur : Trying to write an object of class 'list' but this type is not supported.
 ```
 
 It is possible to create a new driver. We could for example write the list in a `.rds` file. This can be done by creating a new entry named after the name of the class of the object that need to be written. Here a `list`.
