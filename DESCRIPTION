@@ -52,7 +52,7 @@ Suggests:
     rmarkdown,
     covr
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true

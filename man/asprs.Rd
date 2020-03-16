@@ -21,7 +21,41 @@
 \alias{LASBRIGDE}
 \alias{LASNOISE}
 \title{ASPRS LAS Classification}
-\format{An object of class \code{integer} of length 1.}
+\format{
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+
+An object of class \code{integer} of length 1.
+}
 \usage{
 LASNONCLASSIFIED
 
