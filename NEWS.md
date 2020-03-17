@@ -41,7 +41,9 @@ In attempt to do not break users scripts the version 3 is fully backward compati
  - default setting is now `xyz = FALSE`
  - if `xyz = FALSE` the output now contains a column (the first one) named `pointID` that reference the point of the original las object. See [#325](https://github.com/Jean-Romain/lidR/issues/325)
 
-7. `normalize_elevation()` formerly named `lasnormalize()` has a new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+7. `normalize_elevation()` (formerly named `lasnormalize()`)
+  - new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+  - new argument `Wdegenerated`. If `FALSE` the function does not warn about degenerated points. Degenerated points are removed anyway.
 
 8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `find_trees()` formerly called `tree_detection()`. Instead `find_localmaxima()` may help at findind other human made structures.
 

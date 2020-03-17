@@ -54,7 +54,10 @@
 #' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinear"}.
 #' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
 #' However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
-#' extrabytes attribute. See also \link{add_lasattribute} .
+#' extrabytes attribute. See also \link{add_lasattribute}.
+#' @param Wdegenerated logical. The function always check and remove degenerated ground points. If
+#' any a warning in thrown.
+#'
 #' @template LAScatalog
 #'
 #' @template section-supported-option-lasupdater
@@ -112,15 +115,17 @@
 #' \link[lidR:grid_terrain]{grid_terrain}
 #' @export
 #' @export
-normalize_elevation = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
+normalize_elevation = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
 {
   UseMethod("normalize_elevation", las)
 }
 
 #' @export
-normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
+normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
 {
   assert_is_a_bool(na.rm)
+  assert_is_a_bool(add_lasattribute)
+  assert_is_a_bool(Wdegenerated)
 
   if (is(algorithm, "RasterLayer"))
   {
@@ -158,7 +163,7 @@ normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(
 
     # Select the ground points
     ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
-    ground  <- check_degenerated_points(ground)
+    ground  <- check_degenerated_points(ground, Wdegenerated)
 
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "normalize_elevation"
@@ -197,23 +202,23 @@ normalize_elevation.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(
 }
 
 #' @export
-normalize_elevation.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
+normalize_elevation.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
 {
   buffer <- NULL
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  x <- normalize_elevation(x, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute)
+  x <- normalize_elevation(x, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute, Wdegenerated = Wdegenerated)
   x <- filter_poi(x, buffer == 0)
   return(x)
 }
 
 #' @export
-normalize_elevation.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE)
+normalize_elevation.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, normalize_elevation, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_lasattribute = add_lasattribute, .options = options)
+  output  <- catalog_apply(las, normalize_elevation, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_lasattribute = add_lasattribute, Wdegenerated = Wdegenerated, .options = options)
   return(output)
 }
 
@@ -253,7 +258,7 @@ setMethod("-", c("LAS", "function"), function(e1, e2)
   return(normalize_elevation(e1,e2))
 })
 
-check_degenerated_points = function(points)
+check_degenerated_points = function(points, Wdegenerated = TRUE)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -263,10 +268,10 @@ check_degenerated_points = function(points)
   ndup_xyz = sum(dup_xyz)
   ndup_xy  = sum(dup_xy & !dup_xyz)
 
-  if (ndup_xyz > 0)
+  if (ndup_xyz > 0 && Wdegenerated)
     warning(glue::glue("There were {ndup_xyz} degenerated ground points. Some X Y Z coordinates were repeated. They were removed."), call. = FALSE)
 
-  if (ndup_xy > 0)
+  if (ndup_xy > 0 && Wdegenerated)
     warning(glue::glue("There were {ndup_xy} degenerated ground points. Some X Y coordinates were repeated but with different Z coordinates. min Z were retained."), call. = FALSE)
 
   if (ndup_xy > 0 | ndup_xyz > 0)

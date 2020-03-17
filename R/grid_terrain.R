@@ -77,13 +77,13 @@
 #' plot_dtm3d(dtm2)
 #' plot_dtm3d(dtm3)
 #' }
-grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
+grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
 {
   UseMethod("grid_terrain", las)
 }
 
 #' @export
-grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
+grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer", call. = FALSE)
@@ -112,7 +112,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
 
   # Select the ground points
   ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
-  ground  <- check_degenerated_points(ground)
+  ground  <- check_degenerated_points(ground, Wdegenerated)
 
   # Find where to interpolate the DTM (interpolation into the convex hull + buffer only).
   verbose("Generating interpolation coordinates...")
@@ -154,18 +154,18 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
 }
 
 #' @export
-grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
+grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster, use_class)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster, use_class, Wdegenerated)
   dtm  <- raster::crop(dtm, bbox)
   return(dtm)
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L))
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
@@ -193,6 +193,6 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE,
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, .options = options)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, Wdegenerated = Wdegenerated, .options = options)
   return(output)
 }
