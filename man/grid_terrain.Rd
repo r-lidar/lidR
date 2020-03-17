@@ -10,7 +10,8 @@ grid_terrain(
   algorithm,
   keep_lowest = FALSE,
   full_raster = FALSE,
-  use_class = c(2L, 9L)
+  use_class = c(2L, 9L),
+  Wdegenerated = TRUE
 )
 }
 \arguments{

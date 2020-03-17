@@ -13,7 +13,8 @@ normalize_elevation(
   na.rm = FALSE,
   use_class = c(2L, 9L),
   ...,
-  add_lasattribute = FALSE
+  add_lasattribute = FALSE,
+  Wdegenerated = TRUE
 )
 
 unnormalize_elevation(las)
@@ -41,7 +42,10 @@ elevation of NA are filtered. Be careful this creates a copy of the point cloud.
 
 \item{add_lasattribute}{logical. By default the above see level elevation is retained in a new attribute.
 However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
-extrabytes attribute. See also \link{add_lasattribute} .}
+extrabytes attribute. See also \link{add_lasattribute}.}
+
+\item{Wdegenerated}{logical. The function always check and remove degenerated ground points. If
+any a warning in thrown.}
 
 \item{e1}{a LAS object}
 
