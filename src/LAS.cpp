@@ -1144,14 +1144,19 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   // @call is the user-defined expression to apply on each neighborhood
   // @env is the environnement where Rf_eval eval the call
 
-  // Are we searching the k nearest neiborhood or a sphere neighborhood?
-  bool knn = true;
+  // Are we searching the k nearest neiborhood or a sphere neighborhood or both?
+  int mode = 0;
   if (k == 0 && r > 0)
-    knn = false;
+    mode = 1;
   else if (k > 0 && r == 0)
-    knn = true;
+    mode = 0;
+  else if (k > 0 && r > 0)
+    mode = 2;
   else
     Rcpp::stop("Internal error: invalid argument k or r");
+
+  // Do we need to manage dynamic memory? Yes if not pure knn
+  bool dynamic_memory_realloc = mode > 0;
 
   // Create an Rcpp object to handle the SEXP easily otherwise we have to use R's C API...
   Rcpp::Environment callenv = as<Rcpp::Environment>(env);
@@ -1222,7 +1227,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   int sc = si;     // current
   int sn = si;     // new
 
-  if (knn && si != k) Rcpp::stop("Internal error: k elements should have been allocated.");
+  if (!dynamic_memory_realloc && si != k) Rcpp::stop("Internal error: k elements should have been allocated.");
 
   //Rprintf("Memory allocated to store the neighborhood: %d\n", si);
 
@@ -1236,7 +1241,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 
     std::vector<PointXYZ> pts;
 
-    if (knn)
+    if (mode == 0)
     {
       // Query the knn neighborhood
       PointXYZ p(X[i], Y[i], Z[i]);
@@ -1246,9 +1251,18 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
     }
     else
     {
-      // Query the sphere neighborhood
-      Sphere sp(X[i], Y[i], Z[i], r);
-      tree.lookup(sp, pts);
+      if (mode == 1)
+      {
+        // Query the sphere neighborhood
+        Sphere sp(X[i], Y[i], Z[i], r);
+        tree.lookup(sp, pts);
+      }
+      else
+      {
+        // Query the knn + sphere limit
+        PointXYZ p(X[i], Y[i], Z[i]);
+        tree.knn(p, k, r, pts);
+      }
 
       // This is the new size of the memory used to store the neighborhood
       sn = pts.size();
@@ -1347,7 +1361,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
     if (pOutError == 1)
     {
       // Restore the TRUELENGTH otherwise memory leak
-      if (!knn)
+      if (dynamic_memory_realloc)
       {
         for (it1 = proxy.begin() ; it1 != proxy.end() ; ++it1)
           SETLENGTH(*it1, si);
@@ -1360,7 +1374,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   }
 
   // Restore the TRUELENGTH otherwise memory leak
-  if (!knn)
+  if (dynamic_memory_realloc)
   {
     for (it1 = proxy.begin() ; it1 != proxy.end() ; ++it1)
       SETLENGTH(*it1, si);

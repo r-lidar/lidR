@@ -18,7 +18,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 #### NEW FEATURES
 
-1. `readLAScatalog()` has new parameters to tune the processing options without using the functions `opt_*()`.
+1. `readLAScatalog()` has new parameters to tune the processing options at read time without using the functions `opt_*()`.
 
     ```r
     readLAScatalog("folder/", chunk_buffer = 60)
@@ -32,12 +32,14 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     readMSLAS("channel1.las", "channel2.las", "channel3.las", filter = "-keep_first")
     ```
 
-4. `delineate_crowns()` formerly named `tree_hulls()` now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apices of the trees.
+4. `delineate_crowns()` (formerly named `tree_hulls()`) now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apices of the trees.
 
-5. `segment_trees()` formerly named `lastrees()` can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
+5. `segment_trees()` (formerly named `lastrees()`) can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
 6. `point_metrics()` 
- - supports a spherical neighborhood search.
+ - supports a knn neighborhood search with missing `r` and given `k`
+ - supports a spherical neighborhood search with missing `k` and given `r`
+ - supports a knn neighborhood + a radius limit with `k` and `r` given
  - default setting is now `xyz = FALSE`
  - if `xyz = FALSE` the output now contains a column (the first one) named `pointID` that reference the point of the original las object. See [#325](https://github.com/Jean-Romain/lidR/issues/325)
 
@@ -45,7 +47,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
   - new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
   - new argument `Wdegenerated`. If `FALSE` the function does not warn about degenerated points. Degenerated points are removed anyway.
 
-8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is stil performed by `find_trees()` formerly called `tree_detection()`. Instead `find_localmaxima()` may help at findind other human made structures.
+8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is still performed by `find_trees()` (formerly called `tree_detection()`). Instead `find_localmaxima()` may help at findind other human made structures.
 
 9. Internal global variables were exported to help with ASPRS LAS classification standard. Instead of remembering the classification table of the specification it is now possible to use one of `LASNONCLASSIFIED`, `LASUNCLASSIFIED`, `LASGROUND`, `LASLOWVEGETATION`, `LASMEDIUMVEGETATION`, `LASHIGHVEGETATION`, `LASBUILDING`, `LASLOWPOINT`, `LASKEYPOINT`, `LASWATER`, `LASRAIL`, `LASROADSURFACE`, `LASWIREGUARD`, `LASWIRECONDUCTOR`, `LASTRANSMISSIONTOWER`, `LASBRIGDE`, `LASNOISE`. e.g.:
 
@@ -57,11 +59,9 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
-12. `las_check()` formerly named `lascheck()` 
-
+12. `las_check()` (formerly named `lascheck()`):
     - gains an option `print = FALSE`. 
     - now returns a `list` for further automatic processing/parsing. If `print = TRUE` the list is returned invisibly so the former behavior looks the same.
-
     ```r
     las_check(las, FALSE)
     #> $warnings
@@ -73,17 +73,24 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     #> [1] "Invalid header: X scale factors should be factor ten of 0.1 or 0.5 or 0.25 not 0.123"                      
     #> [2] "Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8."
     ```
-    
     - gains an option `deep = TRUE` with a `LAScatalog` only. In this case it performs a deep inspection of each file reading each point cloud.
-    - the coordinates of the points are expected to be given with an resolution e.g. 0.01 meaning a centimetrics accuracy. It means we are expecting values like 12345.67 and not like 12345.6712. This is always the case when read from a LAS file but users (or lidR itself) may transform the point cloud and generate LAS objects where this rule is no longer be respected. `lidR` always ensure to return `LAS` objects that are stricly valid with respect to ASPRS standard. If not valid this may lead to failure in `lidR` because some function such as `tin()`, `dsmtin()`, `pitfree()` work with the integer representation of the coordinates. This is why we introduced a quantization check in `las_check`.
+    - the coordinates of the points are expected to be given with an resolution e.g. 0.01 meaning a centimetrics accuracy. It means we are expecting values like 12345.67 and not like 12345.6712. This is always the case when read from a LAS file but users (or lidR itself) may transform the point cloud and generate LAS objects where this rule is no longer be respected. `lidR` always ensure to return `LAS` objects that are stricly valid with respect to ASPRS standard. If not valid this may lead to failure in `lidR` because some function such as `tin()`, `dsmtin()`, `pitfree()` work with the integer representation of the coordinates. This is why we introduced a quantization check in `las_check()`.
     
-13. `merge_spatial()` formerly named `lasmergespatial()` now supports `sf` POLYGON objects.
+13. `merge_spatial()` (formerly named `lasmergespatial()`) now supports `sf` POLYGON objects.
 
-14. `plot` for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes.
+14. `plot()` for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes [#325](https://github.com/Jean-Romain/lidR/issues/325).
 
-15. New function `add_lasrgb()` to add RGB attributes. The function updates the header in such a way the the LAS object has a valid point format that supports RGB.
+    ```r
+    las = readLAS("classified.las")
+    nonveg = filter_poi(las, Classification != LASHIGHVEGETATION)
+    veg = filter_poi(las, Classification == LASHIGHVEGETATION)
+    x = plot(nonveg, color = "Classification")
+    plot(veg, add = x)
+    ```
 
-16. New option `autoread = TRUE` in `catalog_apply()`.
+15. New function `add_lasrgb()` to add RGB attributes. The function updates the header in such a way that the LAS object has a valid point format that supports RGB.
+
+16. New option `autoread = TRUE` in `catalog_apply()`. Not actually intended to be used widely but might be convenient use cases.
 
 #### ENHANCEMENT
 

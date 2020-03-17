@@ -34,6 +34,7 @@ class GridPartition
     template<typename T> void lookup(T& shape, std::vector<PointXYZ>&);
     void knn(const Point&, const unsigned int, std::vector<Point*>&);
     void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ>&);
+    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ>&);
 
   private:
     int getCell(const double, const double);

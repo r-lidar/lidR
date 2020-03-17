@@ -11,9 +11,10 @@ point_metrics(las, func, k, r, xyz = FALSE, filter = NULL, ...)
 
 \item{func}{formula. An expression to be applied to each cell (see section "Parameter func").}
 
-\item{k}{integer. k-nearest neighbours}
-
-\item{r}{numeric. radius of the neighborhood sphere..}
+\item{k, r}{integer and numeric respectively for k-nearest neighbours and radius of the neighborhood
+sphere. If k is given and r is missing, compute the with the knn, if r is given and k is missing
+computes with a sphere neighborhood, if k and r are given computes with the knn and a limit on the
+search distance.}
 
 \item{xyz}{logical. Coordinates of each point are returned in addition to each metric. If
 \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional

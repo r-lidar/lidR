@@ -48,6 +48,15 @@ test_that("points_metrics works with a single metric (shpere)", {
   expect_equal(names(m), c("X", "Y", "Z", "M"))
 })
 
+test_that("points_metrics works with a single metric (knn + sphere)", {
+
+  m1 = point_metrics(las, ~length(Z), k = 2, r = 0.8)
+  m2 = point_metrics(las, ~length(Z), k = 3, r = 0.8)
+
+  expect_equal(m$V1, c(2,2,2,2,2,2))
+  expect_equal(m$V1, c(2,2,3,3,2,2))
+})
+
 test_that("points_metrics restpect the filter argument (knn)", {
 
   m = point_metrics(las, ~mean(Z), k = 3L, filter = ~I>2)
@@ -149,7 +158,6 @@ test_that("points_metrics fails with non atomic output", {
 test_that("points_metrics fails", {
 
   expect_error(point_metrics(las, ~mean(Z)), "'k' or 'r' is missing")
-  expect_error(point_metrics(las, ~mean(Z), k = 3, r = 3), "cannot be defined in the same time")
 
   las@data$test = letters[1:6]
   expect_error(point_metrics(las, ~mean(Z), k = 3), "Incompatible type encountered")

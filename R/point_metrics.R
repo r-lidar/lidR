@@ -22,8 +22,10 @@
 #'
 #' @param las An object of class LAS
 #' @param func formula. An expression to be applied to each cell (see section "Parameter func").
-#' @param k integer. k-nearest neighbours
-#' @param r numeric. radius of the neighborhood sphere..
+#' @param k,r integer and numeric respectively for k-nearest neighbours and radius of the neighborhood
+#' sphere. If k is given and r is missing, compute the with the knn, if r is given and k is missing
+#' computes with a sphere neighborhood, if k and r are given computes with the knn and a limit on the
+#' search distance.
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
 #' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
 #' memory. If \code{filter != NULL} it obviously takes memory.
@@ -122,28 +124,37 @@ point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
 #' @export
 point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) {
 
-  if (!missing(k)) {
-    assert_is_a_number(k)
-    knn <- TRUE
-    k <- as.integer(k)
-    assert_all_are_positive(k)
-  }
-
-  if (!missing(r)) {
-    assert_is_a_number(r)
-    assert_all_are_positive(r)
-    knn <- FALSE
-  }
-
-  if (!missing(k) && !missing(r))  stop("'k' and 'r' cannot be defined in the same time. It should be k or r.", call. = FALSE)
   if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
 
-  if (knn)
+  # knn + radius
+  if (!missing(r) && !missing(k)) {
+    assert_is_a_number(k)
+    assert_is_a_number(r)
+    assert_all_are_positive(k)
+    assert_all_are_positive(r)
+    k <- as.integer(k)
+    mode <- 3L
+  }
+
+  # knn
+  if (!missing(k) && missing(r)) {
+    assert_is_a_number(k)
+    assert_all_are_positive(k)
+    k <- as.integer(k)
     r <- 0
-  else
+    mode <- 0L
+  }
+
+  # radius
+  if (!missing(r) && missing(k)) {
+    assert_is_a_number(r)
+    assert_all_are_positive(r)
     k <- 0
+    mode <- 1L
+  }
 
   assert_is_a_bool(xyz)
+
   formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!formula) func <- lazyeval::f_capture(func)
 
@@ -154,7 +165,7 @@ point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) 
   # Memory allocation for the query. This memory will be recycled in each iteration
   p <- list(...)
   if (is.null(p$alloc))
-    n <- if (knn) k else as.integer(density(las) * pi * r^3)
+    n <- if (mode == 0L) k else as.integer(density(las) * pi * r^3)
   else
     n <- as.integer(p$alloc)
 
@@ -167,16 +178,19 @@ point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) 
 
   output <- C_point_metrics(las, k, r, n, call, env, filter)
 
-  if (length(output[[1]]) == 1) {
+  if (length(output[[1]]) == 1)
+  {
     name <- names(output[[1]])
     output <- data.table::data.table(unlist(output))
     if (!is.null(name)) data.table::setnames(output, name)
   }
-  else {
+  else
+  {
     output <- data.table::rbindlist(output)
   }
 
-  if (xyz) {
+  if (xyz)
+  {
     xyz <- coordinates3D(las)
     data.table::setDT(xyz)
     if (length(filter) > 1 && !all(filter)) xyz <- xyz[filter]
@@ -187,9 +201,12 @@ point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) 
     output[["Z"]] <- xyz$Z
     data.table::setcolorder(output, coln)
     output[]
-  } else {
+  }
+  else
+  {
     pointID <- NULL
     colnames <- data.table::copy(names(output))
+
     if (length(filter) > 1)
       output[, pointID := which(filter)]
     else
