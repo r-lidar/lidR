@@ -53,8 +53,8 @@ test_that("points_metrics works with a single metric (knn + sphere)", {
   m1 = point_metrics(las, ~length(Z), k = 2, r = 0.8)
   m2 = point_metrics(las, ~length(Z), k = 3, r = 0.8)
 
-  expect_equal(m$V1, c(2,2,2,2,2,2))
-  expect_equal(m$V1, c(2,2,3,3,2,2))
+  expect_equal(m1$V1, c(2,2,2,2,2,2))
+  expect_equal(m2$V1, c(2,2,3,3,2,2))
 })
 
 test_that("points_metrics restpect the filter argument (knn)", {
