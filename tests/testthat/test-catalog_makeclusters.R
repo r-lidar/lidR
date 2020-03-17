@@ -332,3 +332,9 @@ test_that("catalog_makecluster throw error when using ORIGINALFILENAME", {
   expect_error(lidR:::catalog_makecluster(ctg), "makes sense only when processing by file")
 })
 
+test_that("plot overlaps works", {
+
+  expect_error(plot(ctg, overlaps = TRUE), NA)
+})
+
+

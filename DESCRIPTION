@@ -80,6 +80,7 @@ Collate:
     'catalog_laxindex.R'
     'catalog_makecluster.R'
     'catalog_merge_results.R'
+    'catalog_overlaps.R'
     'catalog_retile.R'
     'catalog_select.R'
     'classify_ground.R'

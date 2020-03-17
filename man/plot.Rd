@@ -25,7 +25,7 @@ plot(x, y, ...)
   ...
 )
 
-\S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
+\S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE, chunk_pattern = FALSE, overlaps = FALSE, ...)
 
 \S4method{plot}{LASheader,missing}(x, y, mapview = FALSE, ...)
 }
@@ -75,6 +75,8 @@ to enable the alignment of a second point cloud.}
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
 
 \item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
+
+\item{overlaps}{logical. Highlight the overlaps between files.}
 }
 \description{
 Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr

@@ -66,6 +66,7 @@
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
+#' @param overlaps logical. Highlight the overlaps between files.
 #'
 #' @param ... Will be passed to \link[rgl:points3d]{points3d} (LAS) or \link[graphics:plot]{plot}
 #' if \code{mapview = FALSE} or to \link[mapview:mapView]{mapview} if \code{mapview = TRUE} (LAScatalog).
@@ -102,9 +103,9 @@ setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z
 
 #' @export
 #' @rdname plot
-setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
+setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlaps = FALSE, ...)
 {
-  plot.LAScatalog(x, y, mapview, chunk_pattern, ...)
+  plot.LAScatalog(x, y, mapview, chunk_pattern, overlaps, ...)
 })
 
 #' @export
@@ -145,10 +146,11 @@ setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapv
   plot.LAScatalog(res, mapview = mapview, ...)
 })
 
-plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
+plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlaps = FALSE, ...)
 {
   assert_is_a_bool(mapview)
   assert_is_a_bool(chunk_pattern)
+  assert_is_a_bool(overlaps)
 
   if (mapview)
   {
@@ -157,6 +159,9 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
       message("'mapview' is required to display the LAScatalog interactively.") # nocov
       mapview <- FALSE # nocov
     }
+
+    if (overlaps)
+      message("overlaps = TRUE is not supported yet with mapview") # nocov
   }
 
   if (mapview)
@@ -207,6 +212,10 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, ...)
 
     graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = col)
     graphics::par(op)
+
+    if (overlaps) {
+      plot(catalog_overlaps(x), add = T, col = "red", border = "red")
+    }
 
     return(invisible())
   }

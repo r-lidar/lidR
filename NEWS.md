@@ -78,8 +78,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     
 13. `merge_spatial()` (formerly named `lasmergespatial()`) now supports `sf` POLYGON objects.
 
-14. `plot()` for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes [#325](https://github.com/Jean-Romain/lidR/issues/325).
-
+14. `plot()` 
+    - for LAS object gains and argument `add` to overprint two point clouds with e.g. different color palettes [#325](https://github.com/Jean-Romain/lidR/issues/325).
     ```r
     las = readLAS("classified.las")
     nonveg = filter_poi(las, Classification != LASHIGHVEGETATION)
@@ -87,6 +87,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     x = plot(nonveg, color = "Classification")
     plot(veg, add = x)
     ```
+    - for LAScatalog objects gains an argument `overlaps = TRUE` to highlight the overlaps.
 
 15. New function `add_lasrgb()` to add RGB attributes. The function updates the header in such a way that the LAS object has a valid point format that supports RGB.
 
