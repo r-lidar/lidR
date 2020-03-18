@@ -50,6 +50,8 @@
 #' each pixel of the raster is interpolated.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).
+#' @param Wdegenerated logical. The function always check and remove degenerated ground points. If
+#' any a warning in thrown.
 #'
 #' @template LAScatalog
 #'

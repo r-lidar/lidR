@@ -32,6 +32,9 @@ each pixel of the raster is interpolated.}
 
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
+
+\item{Wdegenerated}{logical. The function always check and remove degenerated ground points. If
+any a warning in thrown.}
 }
 \value{
 A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s
