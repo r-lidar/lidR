@@ -12,7 +12,7 @@ test_that("lasfiltersurfacepoints works", {
   ctgdec <-  lasvoxelize(ctg, 2)
 
   vox  <- lasvoxelize(las, 2)
-  vox2 <- readLAS(ctgdec, select = "i")
+  vox2 <- readLAS(ctgdec)
 
   data.table::setorder(vox@data, X,Y,Z)
   data.table::setorder(vox2@data, X,Y,Z)

@@ -22,9 +22,10 @@ test_that("lassnags works with a LAScatalog", {
  opt_chunk_alignment(ctg) <- c(10, 15)
  opt_chunk_buffer(ctg) <- 10
  opt_output_files(ctg) <- "{tempfile()}/{ID}"
+ opt_select(ctg) <- "2"
 
  ctg2 <- lassnags(ctg, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = BBPRthrsh_mat))
- las2 <- readLAS(ctg2, select = "2")
+ las2 <- readLAS(ctg2)
 
  expect_is(ctg, "LAScatalog")
  expect_equal(sum(ctg2$Number.of.point.records), ctg$Number.of.point.records)

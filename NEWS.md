@@ -2,7 +2,7 @@ If you are viewing this file on CRAN, please check [latest news on GitHub](https
 
 ## lidR v3.0.0 (Release date: ...)
 
-#### CHANGES
+#### MAJOR CHANGES
 
 **Summary** 
 
@@ -16,12 +16,31 @@ The new name convention follows the current trending `verb_noun` initiated by th
 
 In attempt to do not break users scripts the version 3 is fully backward compatible. For example the function `lasground()` still exist and can be used without any message, warning or error. But this will progressively change with versions 3.1.0, 3.2.0 and 3.3.0. First a message will be displayed to invite users to move on the new names, then a warning, then an error. After a year maybe a year an a half the function will not longer exist. So users are invited to move on as soon as possible.
 
+#### SIGNIFICANT CHANGES
+
+1. `select` and `filter` are no longer supporting in `readLAS()` when used with a `LAScatalog`. For consitancy it uses the options of the `LAScatalog`.
+
+    ```r
+    # This is no longer valid
+    ctg <- readLAScatalog("folder/")
+    las <- readLAS(ctg, filter = "-drop_z_below 2")
+    
+    # This should be used instead
+    ctg <- readLAScatalog("folder/")
+    opt_filter(ctg) <- "-drop_z_below 2"
+    las <- readLAS(ctg)
+    
+    # The following is also valid
+    ctg <- readLAScatalog("folder/", filter = "-drop_z_below 2")
+    las <- readLAS(ctg)
+    ```
+
 #### NEW FEATURES
 
 1. `readLAScatalog()` has new parameters to tune the processing options at read time without using the functions `opt_*()`.
 
     ```r
-    readLAScatalog("folder/", chunk_buffer = 60)
+    readLAScatalog("folder/", chunk_buffer = 60, filter = "-drop_z_below 2")
     ```
 
 2. New function `clip_transect()` to extract a transect between two points. The function has the capability to reorient the point cloud to put it on XZ coordinates and create easily some 2D rendering of the transects in e.g. `ggplot2.`

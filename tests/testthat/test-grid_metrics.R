@@ -86,8 +86,8 @@ test_that("grid_metrics accepts both an expression or a formula", {
 
 # Convert laz to las for faster testing
 LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg      <- catalog(LASfile)
-las      <- readLAS(ctg, select = "xyz", filter = "-keep_first")
+ctg      <- readLAScatalog(LASfile, select = "xyz", filter = "-keep_first")
+las      <- readLAS(ctg)
 
 opt_chunk_size(ctg)      <- 140
 opt_chunk_alignment(ctg) <- c(684760, 5017760)
