@@ -18,7 +18,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 #### SIGNIFICANT CHANGES
 
-1. `select` and `filter` are no longer supporting in `readLAS()` when used with a `LAScatalog`. For consitancy it uses the options of the `LAScatalog`.
+1. `select` and `filter` are no longer supported in `readLAS()` when used with a `LAScatalog`. For consitancy it uses the options of the `LAScatalog`.
 
     ```r
     # This is no longer valid
@@ -56,15 +56,15 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 5. `segment_trees()` (formerly named `lastrees()`) can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
 6. `point_metrics()` 
- - supports a knn neighborhood search with missing `r` and given `k`
- - supports a spherical neighborhood search with missing `k` and given `r`
- - supports a knn neighborhood + a radius limit with `k` and `r` given
- - default setting is now `xyz = FALSE`
- - if `xyz = FALSE` the output now contains a column (the first one) named `pointID` that reference the point of the original las object. See [#325](https://github.com/Jean-Romain/lidR/issues/325)
+    - supports a knn neighborhood search with missing `r` and given `k`
+    - supports a spherical neighborhood search with missing `k` and given `r`
+    - supports a knn neighborhood + a radius limit with `k` and `r` given
+    - default setting is now `xyz = FALSE`
+    - if `xyz = FALSE` the output now contains a column (the first one) named `pointID` that reference the point of the original las object. See [#325](https://github.com/Jean-Romain/lidR/issues/325)
 
 7. `normalize_elevation()` (formerly named `lasnormalize()`)
-  - new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
-  - new argument `Wdegenerated`. If `FALSE` the function does not warn about degenerated points. Degenerated points are removed anyway.
+    - new argument `add_lasattribute`. If `TRUE` the absolute elevation (above sea level) is retained as before but the header is updated so the absolute elevation becomes an extrabyte attribute writable on a las file. Otherwise the information is discareded at write time.
+    - new argument `Wdegenerated`. If `FALSE` the function does not warn about degenerated points. Degenerated points are removed anyway.
 
 8. New function `find_localmaxima()` to find local maxima with different windows. This function is designed for programming purpose not to find individual trees. This later task is still performed by `find_trees()` (formerly called `tree_detection()`). Instead `find_localmaxima()` may help at findind other human made structures.
 
