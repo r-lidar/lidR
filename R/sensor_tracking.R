@@ -128,8 +128,15 @@ track_sensor.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE,
   data.table::setorder(data, gpstime, ReturnNumber)
   data$pulseID <- .lagisdiff(data[["gpstime"]])
 
-  # Filter some edge points that may not be paired in a pulse
+  # Count the point per pulse. We kept only first and last so it should be always 2
   count <- fast_table(data$pulseID,  max(data$pulseID))
+
+  # If some pulses still have more than 2 points (#327)
+  more_than_2 = fast_countover(count, 2L)
+  if (more_than_2 > 0)
+    stop(glue::glue("After keeping only first and last returns of multiple returns pulses, {more_than_2} pulses still have more than 2 points. This dataset is corrupted and gpstime is likely to be invalid."), call. = FALSE)
+
+  # Some edge point might no be paired. Removed them.
   ii    <- which(count == 1L)
   data  <- data[!pulseID %in% ii]
 
@@ -140,7 +147,7 @@ track_sensor.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE,
     unpaired_pulse  <- tests$test1
     multiple_source <- tests$test2
 
-    # Does this really happen?
+    # Does this really happen? #327 should have made this line obsolete
     if (any(unpaired_pulse))
       warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE) # nocov
 

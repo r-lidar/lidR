@@ -139,6 +139,10 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 2. `crs not found` message is no longer displayed when building a LAS object. This message appeared with an update of `rgdal` or `sp`. It is now gone.
 
+3. `sensor_tracking()` now throws an error for the invalid case reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
+
+4. `lascheck()` now reports trouble for invalid data reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
+
 ## lidR v2.2.3 (Release date: 2020-03-02)
 
 #### FIXES

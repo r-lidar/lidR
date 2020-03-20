@@ -292,6 +292,22 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   warn(msg)
 
+  h2("Checking gpstime incoherances")
+
+  if (!is.null(data[["gpstime"]]) && !is.null(data[["ReturnNumber"]]))
+  {
+    ReturnNumber <- gpstime <- NULL
+    res <- data[, any(tabulate(ReturnNumber) > 1L), by = gpstime]
+    s1 <- sum(res$V1)
+    if (s1 > 0)
+      fail(g("{s1} pulses (points with the same gpstime) have points with identical ReturnNumber"))
+    else
+      ok()
+  }
+  else
+    skip()
+
+
   h2("Checking flag attributes...")
 
   msg = character(0)
@@ -321,6 +337,24 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
 
   warn(msg)
+
+  h2("Checking user data attribute...")
+
+  msg = character(0)
+
+  if (!is.null(data[["UserData"]]))
+  {
+    s = sum(data[["UserData"]] != 0)
+
+    if (s > 0)
+      warn(g("{s} points have a non 0 UserData attribute. This probably has a meaning."))
+    else
+      ok()
+  }
+  else
+  {
+    skip()
+  }
 
   # ==== header ====
 
