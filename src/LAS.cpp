@@ -265,12 +265,15 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
     {
       j = x.size() - 1;
     }
-    // If t1-t0 is too big it is two differents flightlines. We are actually in the same case than
-    // above but in a new flightline. No interpolation with the previous one (edge of data).
-    // We use the next one
-    else if (*it - *(it-1) > 30)
+    // If t1-t0 is too big it is two differents flightlines. We must hold this case by chosing
+    // if we use the previous point or this one.
+    else if (std::abs(*it - *(it-1)) > 30)
     {
-      j = it - t.begin() + 1;
+      // If t is closer to the previous one
+      if (std::abs(T[k] - *(it-1)) < std::abs(T[k] - *(it+1)))
+        j = it - t.begin() - 1;
+      else
+        j = it - t.begin() + 1;
     }
     // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
     // and it is not the first one. So we necessarily have a previous one. We can make the

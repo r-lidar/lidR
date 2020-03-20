@@ -69,6 +69,10 @@ C_local_maximum <- function(las, ws, ncpu) {
     .Call(`_lidR_C_local_maximum`, las, ws, ncpu)
 }
 
+C_check_gpstime <- function(t, rn) {
+    .Call(`_lidR_C_check_gpstime`, t, rn)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }

@@ -296,9 +296,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data[["gpstime"]]) && !is.null(data[["ReturnNumber"]]))
   {
-    ReturnNumber <- gpstime <- NULL
-    res <- data[, any(tabulate(ReturnNumber) > 1L), by = gpstime]
-    s1 <- sum(res$V1)
+    s1 <- C_check_gpstime(data[["gpstime"]], data[["ReturnNumber"]])
     if (s1 > 0)
       fail(g("{s1} pulses (points with the same gpstime) have points with identical ReturnNumber"))
     else
