@@ -65,6 +65,10 @@ C_lasrangecorrection <- function(las, flightlines, Rs, f) {
     .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }
 
+C_check_gpstime <- function(t, rn) {
+    .Call(`_lidR_C_check_gpstime`, t, rn)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }

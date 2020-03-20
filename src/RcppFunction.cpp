@@ -121,6 +121,48 @@ IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, dou
   return Rcpp::wrap(pt.I);
 }
 
+// [[Rcpp::export(rng = false)]]
+int C_check_gpstime(NumericVector t, IntegerVector rn)
+{
+  // This function count looks at each pulse (point with same gpstime)
+  // and eval if some return number appear more than once. In theory this
+  // should never happen but we have seen in #327 that it might exist.
+
+  if (t.size() != rn.size()) stop("Internal error in C_check_gpstime: inputs of different sizes."); // # nocov
+
+  std::map<double, unsigned int> registry;
+  std::pair<std::map<double, unsigned int>::iterator, bool> ret;
+
+  for (int i = 0 ; i < t.size() ; i++)
+  {
+    ret = registry.insert(std::pair<double, unsigned int>(t[i],0));
+    if (ret.second == true) // gpstime first insertion
+    {
+      // We set the bit to 1
+      ret.first->second  = ret.first->second | (1 << rn[i]);
+    }
+    else
+    {
+      // Get the bit
+      bool bit = (ret.first->second >> rn[i]) & 1;
+
+      // If bit conflict set the bit 31 to 1
+      if (bit)
+        ret.first->second  = ret.first->second | (1 << 31);
+      else
+        ret.first->second  = ret.first->second | (1 << rn[i]);
+    }
+  }
+
+  int sum = 0;
+  for (auto it = registry.begin() ; it != registry.end() ; it++)
+  {
+    bool bit = (it->second >> 31) & 1;
+    if (bit) sum++;
+  }
+
+  return sum;
+}
 
 /*
  * ======= FAST BASE FUNCTIONS =========
