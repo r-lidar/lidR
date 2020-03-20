@@ -16,8 +16,10 @@
 #' position and the elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates
 #' are searched in the third column of the coordinates matrix of the SpatialPointsDataFrame. This is
 #' useful if read from a format that supports 3 coordinates points.
-#' @return An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra
-#' attribute named 'RawIntensity' records the original intensities.
+#' @return \code{normalize_intensity()} returns an object of class LAS. The attribute 'Intensity'
+#' records the normalised intensity. An extra attribute named 'RawIntensity' records the original
+#' intensities.\cr\cr
+#' \code{get_range()} returns a vector with the range of each point.
 #'
 #' @export
 #'
@@ -39,6 +41,10 @@
 #' # Here the effect is virtually null because the size of
 #' # the sample is too tiny to notice any effect of range
 #' las <- normalize_intensity(las, sensor, Rs = 2000)
+#'
+#' # This might be useful for some applications
+#' R = get_range(las, sensor)
+#' @family range
 normalize_intensity <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   UseMethod("normalize_intensity", las)
@@ -47,11 +53,38 @@ normalize_intensity <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", e
 #' @export
 normalize_intensity.LAS <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
-  stopifnot(is(sensor, "SpatialPointsDataFrame"))
   assert_is_a_number(Rs)
-  assert_all_are_positive(Rs)
   assert_is_a_number(f)
+  assert_all_are_positive(Rs)
   assert_all_are_positive(f)
+
+  fl = prepare_sensor(sensor, gpstime, elevation, las)
+
+  intensity <- C_lasrangecorrection(las, fl, Rs, f)
+  invalid   <- fast_countequal(intensity, 65535)
+
+  if (invalid > 0)
+    warning(glue::glue("{invalid} points have a normalized intensity greater than 65535. Intensity replaced by 65535"), call. = FALSE)
+
+  las@data[["RawIntensity"]] <- las@data[["Intensity"]]
+  las@data[["Intensity"]]    <- intensity
+
+  return(las)
+}
+
+#' @rdname normalize_intensity
+#' @export
+get_range = function(las, sensor, gpstime = "gpstime", elevation = "Z")
+{
+  stopifnotlas(las)
+  fl <- prepare_sensor(sensor, gpstime, elevation, las)
+  R <- C_lasrange(las, fl)
+  return(round(R, 3))
+}
+
+prepare_sensor = function(sensor, gpstime, elevation, las)
+{
+  stopifnot(is(sensor, "SpatialPointsDataFrame"))
 
   if (!"gpstime"   %in% names(las@data))
     stop("No 'gpstime' attribute found in las",   call. = FALSE)
@@ -102,14 +135,5 @@ normalize_intensity.LAS <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime
     fl <- fl[!dup]
   }
 
-  intensity <- C_lasrangecorrection(las, fl, Rs, f)
-  invalid   <- fast_countequal(intensity, 65535)
-
-  if (invalid > 0)
-    warning(glue::glue("{invalid} points have a normalized intensity greater than 65535. Intensity replaced by 65535"), call. = FALSE)
-
-  las@data[["RawIntensity"]] <- las@data[["Intensity"]]
-  las@data[["Intensity"]]    <- intensity
-
-  return(las)
+  return(fl)
 }

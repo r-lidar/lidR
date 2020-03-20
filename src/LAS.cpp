@@ -225,16 +225,13 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
   NumericVector z = flightlines["Z"];
   NumericVector t = flightlines["gpstime"];
 
+  double i;
+
   // Compute the median sensor elevation then average range for this sensor
   // elevation. This gives a rough idea of the expected range and allows for
   // detecting failure and bad computations
   double median_z_sensor = Rcpp::median(z);
   double R_control = mean(median_z_sensor - Z);
-
-  NumericVector::iterator it;
-  double dx, dy, dz, r, R;
-  double i;
-  int j;
 
   IntegerVector Inorm(X.size());
 
@@ -246,67 +243,13 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
     pbar.increment();
     pbar.check_abort();
 
-    // The sensor positions were already sorted a R level
-    // For each point find the first element that is not less than the time t of the points
-    // This give the closest position of the sensor after (t1) the aqcuisition of the points (t)
-    it = std::lower_bound(t.begin(), t.end(), T[k]);
-
-    // We now need the sensor position before (t0) the aqcuisition.
-
-    // If the sensor position is the first one: no sensor position exists before this one
-    // thus no interpolation possible. We use the next one.
-    if (it == t.begin())
-    {
-      j = 1;
-    }
-    // If the sensor position not found: no sensor position exists after this one
-    // thus no interpolation possible. We use the last one.
-    else if (it == t.end())
-    {
-      j = x.size() - 1;
-    }
-    // If t1-t0 is too big it is two differents flightlines. We must hold this case by chosing
-    // if we use the previous point or this one.
-    else if (std::abs(*it - *(it-1)) > 30)
-    {
-      // If t is closer to the previous one
-      if (std::abs(T[k] - *(it-1)) < std::abs(T[k] - *(it+1)))
-        j = it - t.begin() - 1;
-      else
-        j = it - t.begin() + 1;
-    }
-    // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
-    // and it is not the first one. So we necessarily have a previous one. We can make the
-    // interpolation
-    else
-    {
-      j = it - t.begin();
-    }
-
-    if (j >= x.size()) throw Rcpp::exception("Internal error: access to coordinates beyond the limits of the array. Please report this bug.", false);
-    if (j <= 0)        throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
-
-    r  = 1 - (t[j]-T[k])/(t[j]-t[j-1]);
-    dx = X[k] - (x[j-1] + (x[j] - x[j-1])*r);
-    dy = Y[k] - (y[j-1] + (y[j] - y[j-1])*r);
-    dz = Z[k] - (z[j-1] + (z[j] - z[j-1])*r);
-    R  = std::sqrt(dx*dx + dy*dy + dz*dz);
-
-    if (R > 3 * R_control)
-    {
-      REprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
-      REprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
-      REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
-      REprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
-      REprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
-      throw Rcpp::exception("Unrealistic range: see message above", false);
-    }
+    double R = range(x, y, z, t, k, R_control);
 
     i = I[k] * std::pow((R/Rs),f);
 
     if (i > 65535)
     {
-      Rf_warningcall(R_NilValue, "Normalized intensity does not fit in 16 bit. Value clamped to 2^16.");
+      Rf_warningcall(R_NilValue, "Normalized intensity does not fit in 16 bits. Value clamped to 2^16.");
       i = 65535;
     }
 
@@ -316,6 +259,102 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
   I = Inorm;
 
   return;
+}
+
+double LAS::range(NumericVector &x, NumericVector &y , NumericVector &z, NumericVector &t,  int k, double R_control)
+{
+  NumericVector::iterator it;
+  double dx, dy, dz, r, R;
+  double i;
+  int j = 0;
+
+  // The sensor positions were already sorted a R level
+  // For each point find the first element that is not less than the time t of the points
+  // This give the closest position of the sensor after (t1) the aqcuisition of the points (t)
+  it = std::lower_bound(t.begin(), t.end(), T[k]);
+
+  // We now need the sensor position before (t0) the aqcuisition.
+
+  // If the sensor position is the first one: no sensor position exists before this one
+  // thus no interpolation possible. We use the next one.
+  if (it == t.begin())
+  {
+    j = 1;
+  }
+  // If the sensor position not found: no sensor position exists after this one
+  // thus no interpolation possible. We use the last one.
+  else if (it == t.end())
+  {
+    j = x.size() - 1;
+  }
+  // If t1-t0 is too big it is two differents flightlines. We must hold this case by chosing
+  // if we use the previous point or this one.
+  else if (std::abs(*it - *(it-1)) > 30)
+  {
+    // If t is closer to the previous one
+    if (std::abs(T[k] - *(it-1)) < std::abs(T[k] - *(it+1)))
+      j = it - t.begin() - 1;
+    else
+      j = it - t.begin() + 1;
+  }
+  // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
+  // and it is not the first one. So we necessarily have a previous one. We can make the
+  // interpolation
+  else
+  {
+    j = it - t.begin();
+  }
+
+  if (j >= x.size()) throw Rcpp::exception("Internal error: access to coordinates beyond the limits of the array. Please report this bug.", false);
+  if (j <= 0)        throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
+
+  r  = 1 - (t[j]-T[k])/(t[j]-t[j-1]);
+  dx = X[k] - (x[j-1] + (x[j] - x[j-1])*r);
+  dy = Y[k] - (y[j-1] + (y[j] - y[j-1])*r);
+  dz = Z[k] - (z[j-1] + (z[j] - z[j-1])*r);
+
+  R  = std::sqrt(dx*dx + dy*dy + dz*dz);
+
+  if (R > 3 * R_control)
+  {
+    REprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
+    REprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
+    REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
+    REprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
+    REprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
+    throw Rcpp::exception("Unrealistic range: see message above", false);
+  }
+
+  return R;
+}
+
+NumericVector LAS::compute_range(DataFrame flightlines)
+{
+  // Coordinates of the sensors
+  NumericVector x = flightlines["X"];
+  NumericVector y = flightlines["Y"];
+  NumericVector z = flightlines["Z"];
+  NumericVector t = flightlines["gpstime"];
+
+  // Compute the median sensor elevation then average range for this sensor
+  // elevation. This gives a rough idea of the expected range and allows for
+  // detecting failure and bad computations
+  double median_z_sensor = Rcpp::median(z);
+  double R_control = mean(median_z_sensor - Z);
+
+  NumericVector R(npoints);
+
+  Progress pbar(npoints, "Range computation");
+
+  // Loop on each point
+  for (unsigned int k = 0 ; k < npoints ; k++)
+  {
+    pbar.increment();
+    pbar.check_abort();
+    R[k] = range(x, y, z, t, k, R_control);
+  }
+
+  return R;
 }
 
 void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular)

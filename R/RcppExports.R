@@ -65,6 +65,10 @@ C_lasrangecorrection <- function(las, flightlines, Rs, f) {
     .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }
 
+C_lasrange <- function(las, flightlines) {
+    .Call(`_lidR_C_lasrange`, las, flightlines)
+}
+
 C_local_maximum <- function(las, ws, ncpu) {
     .Call(`_lidR_C_local_maximum`, las, ws, ncpu)
 }

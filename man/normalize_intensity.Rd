@@ -2,6 +2,7 @@
 % Please edit documentation in R/normalize_intensity.R
 \name{normalize_intensity}
 \alias{normalize_intensity}
+\alias{get_range}
 \title{Normalize intensity with a range correction}
 \usage{
 normalize_intensity(
@@ -12,6 +13,8 @@ normalize_intensity(
   gpstime = "gpstime",
   elevation = "Z"
 )
+
+get_range(las, sensor, gpstime = "gpstime", elevation = "Z")
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
@@ -30,8 +33,10 @@ are searched in the third column of the coordinates matrix of the SpatialPointsD
 useful if read from a format that supports 3 coordinates points.}
 }
 \value{
-An object of class LAS. The attribute 'Intensity' records the normalised intensity. An extra
-attribute named 'RawIntensity' records the original intensities.
+\code{normalize_intensity()} returns an object of class LAS. The attribute 'Intensity'
+records the normalised intensity. An extra attribute named 'RawIntensity' records the original
+intensities.\cr\cr
+\code{get_range()} returns a vector with the range of each point.
 }
 \description{
 Normalize intensity with a range correction according to the formula (see references):
@@ -53,9 +58,17 @@ sensor <- track_sensor(las, pmin = 15)
 # Here the effect is virtually null because the size of
 # the sample is too tiny to notice any effect of range
 las <- normalize_intensity(las, sensor, Rs = 2000)
+
+# This might be useful for some applications
+R = get_range(las, sensor)
 }
 \references{
 Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
 Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.
 https://doi.org/10.14358/pers.77.3.251
 }
+\seealso{
+Other range: 
+\code{\link{track_sensor}()}
+}
+\concept{range}

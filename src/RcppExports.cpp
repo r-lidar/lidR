@@ -229,6 +229,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_lasrange
+NumericVector C_lasrange(S4 las, DataFrame flightlines);
+RcppExport SEXP _lidR_C_lasrange(SEXP lasSEXP, SEXP flightlinesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type flightlines(flightlinesSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lasrange(las, flightlines));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_local_maximum
 LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu);
 RcppExport SEXP _lidR_C_local_maximum(SEXP lasSEXP, SEXP wsSEXP, SEXP ncpuSEXP) {
@@ -460,6 +471,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 7},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
+    {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},

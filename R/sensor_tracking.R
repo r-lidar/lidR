@@ -87,6 +87,7 @@
 #' flightlines <- track_sensor(ctg)
 #' plot(flightlines)
 #' }
+#' @family range
 track_sensor <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001)
 {
   UseMethod("track_sensor", las)
@@ -275,6 +276,7 @@ sensor_positions <- function(x, y, z, rn)
   C  <- matrix(c(Cx,Cy,Cz))
 
   M  <- t(solve(S,C))
+  M  <- round(M, 3)
 
   return(list(X = M[1], Y = M[2], Z = M[3], npulses = nrow(A)))
 }

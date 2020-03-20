@@ -121,6 +121,13 @@ IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, dou
   return Rcpp::wrap(pt.I);
 }
 
+// [[Rcpp::export(rng = false)]]
+NumericVector C_lasrange(S4 las, DataFrame flightlines)
+{
+  LAS pt(las);
+  return pt.compute_range(flightlines);
+}
+
 //[[Rcpp::export(rng = false)]]
 LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu)
 {
