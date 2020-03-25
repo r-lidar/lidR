@@ -74,7 +74,7 @@ tin = function()
 #'
 #' @param k integer. Number of k-nearest neighbours. Default 10.
 #' @param p numeric. Power for inverse-distance weighting. Default 2.
-#' @param rmax numeric. Maximum radius where to search for knn. Default 25.
+#' @param rmax numeric. Maximum radius where to search for knn. Default 50.
 #'
 #' @export
 #'
@@ -90,7 +90,7 @@ tin = function()
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
-knnidw = function(k = 10, p = 2, rmax = 25)
+knnidw = function(k = 10, p = 2, rmax = 50)
 {
   k <- lazyeval::uq(k)
   p <- lazyeval::uq(p)

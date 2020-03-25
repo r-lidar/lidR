@@ -4,12 +4,14 @@
 \alias{knnidw}
 \title{Spatial Interpolation Algorithm}
 \usage{
-knnidw(k = 10, p = 2)
+knnidw(k = 10, p = 2, rmax = 50)
 }
 \arguments{
-\item{k}{numeric. Number of k-nearest neighbours. Default 10.}
+\item{k}{integer. Number of k-nearest neighbours. Default 10.}
 
 \item{p}{numeric. Power for inverse-distance weighting. Default 2.}
+
+\item{rmax}{numeric. Maximum radius where to search for knn. Default 50.}
 }
 \description{
 This function is made to be used in \link{grid_terrain} or \link{normalize_elevation}. It implements an algorithm
