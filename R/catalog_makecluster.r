@@ -66,8 +66,8 @@ catalog_makecluster = function(ctg, realignment = FALSE, plot = opt_progress(ctg
     if (realign)
     {
       res <- realignment$res
-      xscale <- ctg[["X.scale.factor"]]
-      yscale <- ctg[["Y.scale.factor"]]
+      xscale <- ctg[["X.scale.factor"]][processed]
+      yscale <- ctg[["Y.scale.factor"]][processed]
 
       new_xmin <- round_any(xmin, res)
       new_ymin <- round_any(ymin, res)

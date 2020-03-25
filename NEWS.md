@@ -6,6 +6,8 @@
 
 2. Fix wrong gpstime matching in `lasrangecorrection()` at the edge of flightlines [#327](https://github.com/Jean-Romain/lidR/issues/327).
 
+3. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
+
 #### ENHANCEMENTS
 
 1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
