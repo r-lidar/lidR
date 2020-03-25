@@ -74,7 +74,7 @@ test_that("lascheck CRS specific test", {
   las1@header@PHB$`Global Encoding`$WKT <- TRUE
 
   las2 <- las0
-  wkt(las2) <-  "COMPD_CS[\"Projected\", PROJCS[\"UTM_10N\", GEOGCS [ \"WGS84\", DATUM [ \"WGS84\", SPHEROID [\"WGS 84\", 6378137.000, 298.257223563 ], TOWGS84 [ 0.000, 0.000, 0.000, 0.0000000000, 0.0000000000, 0.0000000000, 0.0000000000 ] ], PRIMEM [ \"Greenwich\", 0.000000 ], UNIT [ \"metres\", 1.00000000] ], PROJECTION[\"Transverse_Mercator\"], PARAMETER[\"Latitude_of_Origin\",0.0000000000], PARAMETER[\"Central_Meridian\",-123.0000000000], PARAMETER[\"Scale_Factor\",0.9996000000], PARAMETER[\"False_Easting\",500000.000], PARAMETER[\"False_Northing\",0.000], UNIT [ \"metres\", 1.00000000]] ], VERT_CS[\"NAVD88 (Geoid03) ContUS\", VERT_DATUM[\"./Resources/CoordSysData/navd88_geo03_contus.bin\", 1 ], UNIT [ \"metres\", 1.00000000] ] ]"
+  wkt(las2) <- "PROJCS[\"RD_New\",GEOGCS[\"GCS_Amersfoort\",DATUM[\"D_Amersfoort\",SPHEROID[\"Bessel_1841\",6377397.155,299.1528128]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Double_Stereographic\"],PARAMETER[\"False_Easting\",155000.0],PARAMETER[\"False_Northing\",463000.0],PARAMETER[\"Central_Meridian\",5.38763888888889],PARAMETER[\"Scale_Factor\",0.9999079],PARAMETER[\"Latitude_Of_Origin\",52.1561605555556],UNIT[\"Meter\",1.0]]"
   las2@header@PHB$`Global Encoding`$WKT <- FALSE
 
   expect_error(lascheck(las1), NA)
