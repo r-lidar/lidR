@@ -325,10 +325,10 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
 }
 
 // [[Rcpp::export(rng = false)]]
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, int ncpu)
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, double rmax, int ncpu)
 {
   unsigned int n = x.length();
-  NumericVector iZ(n);
+  NumericVector iZ(n, NA_REAL);
 
   SpatialIndex tree(X,Y);
   Progress pb(n, "Inverse distance weighting: ");
@@ -344,7 +344,7 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
 
     Point pt(x[i], y[i]);
     std::vector<Point*> pts;
-    tree.knn(pt, k, pts);
+    tree.knn(pt, k, rmax, pts);
 
     double sum_zw = 0;
     double sum_w  = 0;

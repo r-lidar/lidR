@@ -57,7 +57,7 @@ tin = function()
     nnas <- sum(isna)
     if (nnas > 0) {
       verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
-      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, getThread())
+      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, 25, getThread())
     }
     return(z)
   }
@@ -72,9 +72,9 @@ tin = function()
 #' for spatial interpolation. Interpolation is done using a k-nearest neighbour (KNN) approach with
 #' an inverse-distance weighting (IDW).
 #'
-#' @param k numeric. Number of k-nearest neighbours. Default 10.
-#'
+#' @param k integer. Number of k-nearest neighbours. Default 10.
 #' @param p numeric. Power for inverse-distance weighting. Default 2.
+#' @param rmax numeric. Maximum radius where to search for knn. Default 25.
 #'
 #' @export
 #'
@@ -90,12 +90,16 @@ tin = function()
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
-knnidw = function(k = 10, p = 2)
+knnidw = function(k = 10, p = 2, rmax = 25)
 {
+  k <- lazyeval::uq(k)
+  p <- lazyeval::uq(p)
+  rmax <- lazyeval::uq(rmax)
+
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "knnidw")
-    return(interpolate_knnidw(what, where, k, p))
+    return(interpolate_knnidw(what, where, k, p, rmax))
   }
 
   class(f) <- c("SpatialInterpolation", "Algorithm", "OpenMP", "lidR", "function")
@@ -141,9 +145,9 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
   return(f)
 }
 
-interpolate_knnidw = function(points, coord, k, p)
+interpolate_knnidw = function(points, coord, k, p, rmax = 50)
 {
-  z <- C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p, getThread())
+  z <- C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p, rmax, getThread())
   return(z)
 }
 

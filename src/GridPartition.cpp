@@ -155,6 +155,35 @@ void GridPartition::knn(const Point& p, const unsigned int k, std::vector<Point*
   return;
 }
 
+void GridPartition::knn(const Point& p, const unsigned int k, const double maxradius, std::vector<Point*>& res)
+{
+  double density = npoints / area;
+  double radius  = std::sqrt((double)k / (density * 3.14));
+
+  std::vector<Point*> pts;
+
+  if (radius < maxradius)
+  {
+    while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
+      pts.clear();
+      Circle circ(p.x, p.y, radius);
+      this->lookup(circ, pts);
+      radius *= 1.5;
+    }
+  }
+
+  if (radius >= maxradius)
+  {
+    Circle circ(p.x, p.y, maxradius);
+    this->lookup(circ, pts);
+  }
+
+  std::sort(pts.begin(), pts.end(), DSort2D<Point>(p));
+  res.clear();
+  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
+  return;
+}
+
 void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   double density = npoints / area;

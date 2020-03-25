@@ -113,8 +113,8 @@ C_knn <- function(X, Y, x, y, k, ncpu) {
     .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
 
-C_knnidw <- function(X, Y, Z, x, y, k, p, ncpu) {
-    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, ncpu)
+C_knnidw <- function(X, Y, Z, x, y, k, p, rmax, ncpu) {
+    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, rmax, ncpu)
 }
 
 C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {

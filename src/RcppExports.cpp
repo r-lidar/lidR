@@ -367,8 +367,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_knnidw
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, int ncpu);
-RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP ncpuSEXP) {
+NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, double rmax, int ncpu);
+RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP rmaxSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
@@ -378,8 +378,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< double >::type rmax(rmaxSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p, rmax, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -483,7 +484,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
-    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 8},
+    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 9},
     {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 6},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
     {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 7},
