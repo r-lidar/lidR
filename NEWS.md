@@ -8,6 +8,8 @@
 
 3. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
 
+5. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
+
 #### ENHANCEMENTS
 
 1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
