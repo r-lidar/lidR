@@ -185,9 +185,10 @@ merge_sf = function(las, source, attribute = NULL)
   verbose("Testing whether points fall in a given polygon...")
 
   ids <- rep(0L, npoints)
-  for (i in seq_along(source$geometry))
+
+  for (i in seq_along(sf::st_geometry(source)))
   {
-    wkt          <- sf::st_as_text(source$geometry[i], digits = 10)
+    wkt          <- sf::st_as_text(sf::st_geometry(source)[i], digits = 10)
     in_poly      <- C_in_polygon(las, wkt, getThread())
     ids[in_poly] <- i
   }

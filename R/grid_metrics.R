@@ -141,6 +141,13 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
   call   <- lazyeval::as_call(func)
   layout <- rOverlay(las, res, start)
   cells  <- raster::cellFromXY(layout, coordinates(las))
+
+  if (is(res, "RasterLayer") && all(is.na(cells)))
+  {
+    warning("No point fall in the raster. Bounding boxes are not intersecting.", call. = FALSE)
+    return(layout)
+  }
+
   las@data[["cells"]] <- cells
 
   if (is.null(filter))

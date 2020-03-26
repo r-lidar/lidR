@@ -123,6 +123,8 @@ test_that("grid_metric return the same both with catalog and las + grid alignmen
 
 test_that("grid_metric works with a RasterLayer as input instead of a resolution", {
 
+  # --- partialy matching bbox
+
   r <- raster::raster(round(extent(las) - 80))
   raster::res(r) <- 15
   raster::projection(r) <- raster::projection(las)
@@ -130,6 +132,35 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
   m1 <- grid_metrics(ctg, ~length(Z), r)
   m2 <- grid_metrics(las, ~length(Z), r)
   expect_equal(m1, m2)
+
+  # --- partialy matching bbox
+
+  bb = round(extent(las))
+  bb@xmin = bb@xmin - 160
+  bb@xmax = bb@xmax - 160
+  r <- raster::raster(bb)
+  raster::res(r) <- 15
+  raster::projection(r) <- raster::projection(las)
+
+  m1 <- grid_metrics(las, ~length(Z), r)
+
+  expect_equal(raster::extent(m1), raster::extent(r))
+  expect_equal(sum(!is.na(m1[])), 80L)
+
+  # --- no matching bbox
+
+  bb = round(extent(las))
+  bb@xmin = bb@xmin - 360
+  bb@xmax = bb@xmax - 360
+  r <- raster::raster(bb)
+  raster::res(r) <- 15
+  raster::projection(r) <- raster::projection(las)
+
+  m1 <- suppressWarnings(grid_metrics(las, ~length(Z), r))
+
+  expect_equal(raster::extent(m1), raster::extent(r))
+  expect_equal(sum(is.na(m1[])), raster::ncell(r))
+  expect_warning(grid_metrics(las, ~length(Z), r), "Bounding boxes are not intersecting")
 })
 
 

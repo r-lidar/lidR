@@ -141,6 +141,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 3. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
 
+4. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
+
 #### ENHANCEMENTS
 
 1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
@@ -150,6 +152,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 3. `sensor_tracking()` now throws an error for the invalid case reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
 
 4. `lascheck()` now reports trouble for invalid data reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
+
+5. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
 
 ## lidR v2.2.3 (Release date: 2020-03-02)
 
