@@ -125,7 +125,7 @@ prepare_sensor = function(sensor, gpstime, elevation, las)
 
   fl[["gpstime"]] <- sensor@data[[gpstime]]
 
-  data.table::setDT(fl)
+  fl <- data.table::data.table(fl)
   data.table::setorder(fl, gpstime)
   data.table::setnames(fl, c("X", "Y", "Z", "gpstime"))
   dup <- duplicated(fl, by = "gpstime")
