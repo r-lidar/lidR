@@ -10,6 +10,8 @@
 
 4. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
 
+5. `lasrangecorrection()` no longer mess-up the original sensor data. See [#336](https://github.com/Jean-Romain/lidR/issues/336)
+
 #### ENHANCEMENTS
 
 1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
