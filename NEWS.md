@@ -22,6 +22,8 @@
 
 5. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
 
+6. `opt_output_file()` now normalizes the path.
+
 ## lidR v2.2.3 (Release date: 2020-03-02)
 
 #### FIXES
