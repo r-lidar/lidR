@@ -55,7 +55,7 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
     if (round(resolution[1], 4) != round(resolution[2], 4))
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
 
-    res@data@values <- logical(0)
+    suppressWarnings(layout[] <- NA)
     return(res)
   }
 
@@ -65,6 +65,7 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
   bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
   bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
   layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@proj4string))
+  suppressWarnings(layout[] <- NA)
   raster::projection(layout) <- raster::projection(las)
   return(layout)
 }
