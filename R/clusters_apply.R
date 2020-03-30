@@ -94,9 +94,16 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       {
         bbox <- raster::extent(chunk)
         las <- readLAS(chunk)
-        params[[first_p]] <- las
-        params[[second_p]] <- bbox
-        y <- do.call(.FUN, params)
+        if (!is.empty(las))
+        {
+          params[[first_p]] <- las
+          params[[second_p]] <- bbox
+          y <- do.call(.FUN, params)
+        }
+        else
+        {
+          y <- NULL
+        }
       }
 
       if (is.null(y)) y <- NULL
