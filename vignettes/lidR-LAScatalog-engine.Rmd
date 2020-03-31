@@ -475,7 +475,7 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray
 
 ### Parallel processing
 
-The engine takes care of processing the chunks one after the other sequentially or in parallel. The parallelisation can be done with a single machine or on multiple machines by sending the chunks to different workers. The parallelization is performed using the framework given by the package [`future`](https://cran.r-project.org/web/packages/future/index.html). Understanding the basic of this package is thus required. To activate a paralellization strategy users need to register a strategy with `future`. For example:
+The engine takes care of processing the chunks one after the other sequentially or in parallel. The parallelisation can be done with a single machine or on multiple machines by sending the chunks to different workers. The parallelization is performed using the framework given by the package [`future`](https://CRAN.R-project.org/package=future). Understanding the basic of this package is thus required. To activate a paralellization strategy users need to register a strategy with `future`. For example:
 
 ```r
 library(future)
