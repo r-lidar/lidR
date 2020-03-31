@@ -8,6 +8,25 @@
 #' records the normalised intensity. An extra attribute named 'RawIntensity' records the original
 #' intensities.
 #'
+#' @template LAScatalog
+#'
+#' @section Supported processing options:
+#' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
+#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \itemize{
+#' \item \strong{chunk size}: How much data is loaded at once.
+#' \item chunk buffer: No buffer needed. A buffer of 0 is used and cannot be changed
+#' \item \strong{chunk alignment}: Align the processed chunks.
+#' \item \strong{progress}: Displays a progression estimation.
+#' \item \strong{output files*}: Mandatory because the output is likely to be too big to be returned
+#' in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
+#' \code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
+#' chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
+#' \item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
+#' and cannot be changed.
+#' \item \strong{filter}: Read only points of interest.
+#' }
+#'
 #' @export
 #'
 #' @examples
@@ -32,7 +51,7 @@ normalize_intensity <- function(las, algorithm)
 #' @export
 normalize_intensity.LAS <- function(las, algorithm)
 {
-  lidR.context = "normalize_intensity"
+  lidR.context <- "normalize_intensity"
   intensity <- algorithm(las)
   invalid   <- fast_countequal(intensity, 65535)
 
@@ -43,4 +62,15 @@ normalize_intensity.LAS <- function(las, algorithm)
   las@data[["Intensity"]]    <- intensity
 
   return(las)
+}
+
+#' @export
+normalize_intensity.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+{
+  opt_select(las) <- "*"
+  opt_chunk_buffer(las) <- 0
+
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, autoread = TRUE)
+  output  <- catalog_sapply(las, normalize_intensity, algorithm = algorithm, .options = options)
+  return(output)
 }
