@@ -159,6 +159,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 6. `opt_output_file()` now normalizes the path.
 
+7. When processing by file with an raster output, uutomatic chunk extension to match with a raster resolution now perform a tighter extension.
+
 ## lidR v2.2.3 (Release date: 2020-03-02)
 
 #### FIXES
