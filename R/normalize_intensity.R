@@ -65,6 +65,15 @@ normalize_intensity.LAS <- function(las, algorithm)
 }
 
 #' @export
+normalize_intensity.LAScluster = function(las, algorithm)
+{
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+  x <- normalize_intensity(x, algorithm)
+  return(x)
+}
+
+#' @export
 normalize_intensity.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "*"
