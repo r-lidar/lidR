@@ -65,7 +65,7 @@ normalize_intensity.LAS <- function(las, algorithm)
 }
 
 #' @export
-normalize_intensity.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_intensity.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "*"
   opt_chunk_buffer(las) <- 0
