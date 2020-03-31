@@ -70,6 +70,7 @@ Collate:
     'algorithm-gnd.R'
     'algorithm-itd.R'
     'algorithm-its.R'
+    'algorithm-noi.R'
     'algorithm-shp.R'
     'algorithm-snag.R'
     'algorithm-spi.R'

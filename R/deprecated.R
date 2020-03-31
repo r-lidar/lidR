@@ -222,7 +222,7 @@ lasunnormalize = function(las) {
 #' @rdname deprecated
 lasrangecorrection <- function(las, sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z") {
   .lidr3depreciation("normalize_intensity")
-  return(normalize_intensity(las, sensor, Rs, f, gpstime, elevation))
+  return(normalize_intensity(las, range_correction(sensor, Rs, f, gpstime, elevation)))
 }
 
 #' @export

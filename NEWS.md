@@ -93,7 +93,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     #> [2] "Invalid file: the data contains a 'gpstime' attribute but point data format is not set to 1, 3, 6, 7 or 8."
     ```
     - gains an option `deep = TRUE` with a `LAScatalog` only. In this case it performs a deep inspection of each file reading each point cloud.
-    - the coordinates of the points are expected to be given with an resolution e.g. 0.01 meaning a centimetrics accuracy. It means we are expecting values like 12345.67 and not like 12345.6712. This is always the case when read from a LAS file but users (or lidR itself) may transform the point cloud and generate LAS objects where this rule is no longer be respected. `lidR` always ensure to return `LAS` objects that are stricly valid with respect to ASPRS standard. If not valid this may lead to failure in `lidR` because some function such as `tin()`, `dsmtin()`, `pitfree()` work with the integer representation of the coordinates. This is why we introduced a quantization check in `las_check()`.
+    - the coordinates of the points are expected to be given with a resolution e.g. 0.01 meaning a centimetrics accuracy. It means we are expecting values like 12345.67 and not like 12345.6712. This is always the case when read from a LAS file but users (or lidR itself) may transform the point cloud and generate LAS objects where this rule is no longer be respected. `lidR` always ensure to return `LAS` objects that are stricly valid with respect to ASPRS standard. If not valid this may lead to failure in `lidR` because some function such as `tin()`, `dsmtin()`, `pitfree()` work with the integer representation of the coordinates. This is why we introduced a quantization check in `las_check()`.
+    - now reports trouble for invalid data reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
     
 13. `merge_spatial()` (formerly named `lasmergespatial()`) now supports `sf` POLYGON objects.
 
@@ -110,7 +111,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 15. New function `add_lasrgb()` to add RGB attributes. The function updates the header in such a way that the LAS object has a valid point format that supports RGB.
 
-16. New option `autoread = TRUE` in `catalog_apply()`. Not actually intended to be used widely but might be convenient use cases.
+16. New option `autoread = TRUE` in `catalog_apply()`. Not actually intended to be used widely but might be convenient for some use cases.
 
 17. New function `get_range()`.
 
@@ -120,46 +121,37 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.
 
-2. An new vignette named "LAScatalog processing engine" has been added and documents in depth the `catalog_apply()` engine of lidR.
+2. An new vignette named **LAScatalog processing engine** has been added and documents in depth the `catalog_apply()` engine of lidR.
 
-3. In `clip_*()` several lines of codes were remove because they were not used. We suspected these lines to cover old cases from lidR v1.x.y that are no longer relevant. If a user encounter trouble please report.
+3. In `clip_*()` several lines of codes were remove because they were not used. We suspected these lines to cover old cases from lidR v1.x.y that are no longer relevant. If a user encounter troubles please report.
 
 4. The arguments `select` and `filter` from `readLAS()` are not expected to be used with a `LAScluster` when processing a `LAScatalog`. The options are carried by the `LAScatalog` itself with `opt_select()` and `opt_filter()`. If used, a warning is now thrown.
+
+5. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
+
+6. `crs not found` message is no longer displayed when building a LAS object. This message appeared with an update of `rgdal` or `sp`. It is now gone.
+
+7. `track_sensor()` (formerly `sensor_tracking()`) now throws an error for the invalid case reported in [#327](https://github.com/Jean-Romain/lidR/issues/327).
+
+8. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
+
+9. `opt_output_file()` now normalizes the path.
+
+10. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
 
 #### FIXES
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
 
+2. Fix segfault on Windows 64 bits when constructing a proj4 from some specific modern WTK strings using `doCheckCRSArgs =  FALSE`. [#323](https://github.com/Jean-Romain/lidR/issues/323) [sp #75](https://github.com/edzer/sp/issues/75)
 
-## lidR v2.2.4 (Release date: ...)
+3. Fix wrong gpstime matching in `lasrangecorrection()` at the edge of flightlines [#327](https://github.com/Jean-Romain/lidR/issues/327).
 
-#### FIXES
+4. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
 
-1. Fix segfault on Windows 64 bits when constructing a proj4 from some specific modern WTK strings using `doCheckCRSArgs =  FALSE`. [#323](https://github.com/Jean-Romain/lidR/issues/323) [sp #75](https://github.com/edzer/sp/issues/75)
+5. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
 
-2. Fix wrong gpstime matching in `lasrangecorrection()` at the edge of flightlines [#327](https://github.com/Jean-Romain/lidR/issues/327).
-
-3. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
-
-4. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
-
-5. `lasrangecorrection()` no longer mess-up the original sensor data. See [#336](https://github.com/Jean-Romain/lidR/issues/336)
-
-#### ENHANCEMENTS
-
-1. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
-
-2. `crs not found` message is no longer displayed when building a LAS object. This message appeared with an update of `rgdal` or `sp`. It is now gone.
-
-3. `sensor_tracking()` now throws an error for the invalid case reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
-
-4. `lascheck()` now reports trouble for invalid data reported in [#327](https://github.com/Jean-Romain/lidR/issues/327)
-
-5. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
-
-6. `opt_output_file()` now normalizes the path.
-
-7. When processing by file with an raster output, uutomatic chunk extension to match with a raster resolution now perform a tighter extension.
+6. `lasrangecorrection()` no longer mess-up the original sensor data. See [#336](https://github.com/Jean-Romain/lidR/issues/336)
 
 ## lidR v2.2.3 (Release date: 2020-03-02)
 

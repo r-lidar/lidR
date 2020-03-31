@@ -110,4 +110,4 @@ LIDRCONTEXTDEC <- "decimate_points"
 LIDRCONTEXTSHP <- "segment_shapes"
 LIDRCONTEXTSNG <- "segment_snags"
 LIDRCONTEXTITS <- "segment_trees"
-
+LIDRCONTEXTNIT <- "normalize_intensity"

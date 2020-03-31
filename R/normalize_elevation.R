@@ -111,10 +111,10 @@
 #' }
 #'
 #' @seealso
-#' \link[raster:raster]{raster}
 #' \link[lidR:grid_terrain]{grid_terrain}
+#' @family normalize
 #' @export
-#' @export
+#' @rdname normalize_elevation
 normalize_elevation = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
 {
   UseMethod("normalize_elevation", las)

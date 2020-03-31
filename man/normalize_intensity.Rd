@@ -2,48 +2,22 @@
 % Please edit documentation in R/normalize_intensity.R
 \name{normalize_intensity}
 \alias{normalize_intensity}
-\alias{get_range}
-\title{Normalize intensity with a range correction}
+\title{Normalize intensity}
 \usage{
-normalize_intensity(
-  las,
-  sensor,
-  Rs,
-  f = 2.3,
-  gpstime = "gpstime",
-  elevation = "Z"
-)
-
-get_range(las, sensor, gpstime = "gpstime", elevation = "Z")
+normalize_intensity(las, algorithm)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{sensor}{\code{SpatialPointsDataDrame} object containing the coordinates of
-the sensor at different timepoints t. The time and elevation are stored as attributes
-(default names are  'gpstime' and 'Z'). It can be computed with \link{track_sensor}.}
-
-\item{Rs}{numeric. Range of reference.}
-
-\item{f}{numeric. Exponent. Usually between 2 and 3 in vegetation contexts.}
-
-\item{gpstime, elevation}{character. The name of the attributes that store the gpstime of the
-position and the elevation of the sensor respectively. If \code{elevation = NULL} the Z coordinates
-are searched in the third column of the coordinates matrix of the SpatialPointsDataFrame. This is
-useful if read from a format that supports 3 coordinates points.}
+\item{algorithm}{an intensity normalizaton algorithm. \code{lidR} currently have \link{range_correction}.}
 }
 \value{
-\code{normalize_intensity()} returns an object of class LAS. The attribute 'Intensity'
+Returns an object of class LAS. The attribute 'Intensity'
 records the normalised intensity. An extra attribute named 'RawIntensity' records the original
-intensities.\cr\cr
-\code{get_range()} returns a vector with the range of each point.
+intensities.
 }
 \description{
-Normalize intensity with a range correction according to the formula (see references):
-\deqn{I_{norm} = I_{obs} (\frac{R}{Rs})^f)}{Inorm = Iobs * (R/Rs)^f}
-To achieve the range correction the position of the sensor must be known at different discrete times.
-Using the 'gpstime' of each point, the position of the sensor is interpolated from the reference
-and a range correction is applied.
+Normalize intensity value using multiple methods.
 }
 \examples{
 # A valid file properly populated
@@ -57,18 +31,10 @@ sensor <- track_sensor(las, pmin = 15)
 
 # Here the effect is virtually null because the size of
 # the sample is too tiny to notice any effect of range
-las <- normalize_intensity(las, sensor, Rs = 2000)
-
-# This might be useful for some applications
-R = get_range(las, sensor)
-}
-\references{
-Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
-Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.
-https://doi.org/10.14358/pers.77.3.251
+las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 }
 \seealso{
-Other range: 
-\code{\link{track_sensor}()}
+Other normalize: 
+\code{\link{normalize_elevation}()}
 }
-\concept{range}
+\concept{normalize}

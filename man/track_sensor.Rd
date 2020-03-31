@@ -140,10 +140,6 @@ flightlines <- track_sensor(ctg)
 plot(flightlines)
 }
 }
-\seealso{
-Other range: 
-\code{\link{normalize_intensity}()}
-}
 \author{
 Jean-Francois Bourdon & Jean-Romain Roussel
 }

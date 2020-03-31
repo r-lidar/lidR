@@ -152,6 +152,9 @@ las <- las - kriging(k = 8)
 
 }
 \seealso{
-\link[raster:raster]{raster}
 \link[lidR:grid_terrain]{grid_terrain}
+
+Other normalize: 
+\code{\link{normalize_intensity}()}
 }
+\concept{normalize}
