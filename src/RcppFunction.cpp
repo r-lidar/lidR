@@ -233,8 +233,11 @@ int fast_countunquantized(NumericVector x, double scale, double offset)
   for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
   {
     X = std::round((*it - offset)/scale);
-    if (*it != X * scale + offset)
-      k++;
+#ifdef _WIN32
+    if (std::abs(*it - (X * scale + offset)) > 1e-9) k++;
+#else
+    if (*it != X * scale + offset) k++;
+#endif
   }
 
   return k;
