@@ -82,12 +82,12 @@ test_that("LAS builds a LAS object with a CRS", {
 
   las2 <- LAS(data, las@header)
 
-  expect_equal(projection(las2), "+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
+  expect_equal(projection(las2), projection(las))
   expect_equal(epsg(las2), 26917)
 
   las2 <- LAS(data, proj4string = las@proj4string)
 
-  expect_equal(projection(las2), "+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
+  expect_equal(projection(las2), projection(las))
   #expect_equal(epsg(las2), 26917)
 })
 
