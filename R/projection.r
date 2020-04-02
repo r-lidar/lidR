@@ -31,31 +31,33 @@
 #' and `wkt` are reserved for advanced users (see details).
 #'
 #' There are two ways to store the CRS of a point cloud in a LAS file:
-#' - Store an EPSG code (for LAS 1.0 to 1.4)
-#' - Store a WTK string (for LAS 1.4)
+#'
+#'    - Store an EPSG code (for LAS 1.0 to 1.4)
+#'    - Store a WTK string (for LAS 1.4)
+#'
 #' On the other hand, all spatial R packages use a `proj4string` to store the CRS. This is why
 #' the CRS is duplicated in a LAS object. The information belongs within the header in a format that
 #' can be written in a LAS file and in the slot `proj4string` in a format that can be understood
 #' by R packages.
-#' - `projection<-`: updates the CRS from a `proj4string`. It updates the header either
+#'
+#'    - `projection<-`: updates the CRS from a `proj4string`. It updates the header either
 #' with the EPSG code for LAS formats < 1.4 or with a WKT string for LAS format 1.4 and updates the
 #' `proj4string` slot. This function should always be preferred.
-#' - `epsg<-`: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
+#'    - `epsg<-`: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
 #' the `proj4string` slot.
-#' - `wkt<-`: updates the CRS from a WKT string. It adds the WKT string in the header and updates
+#'    - `wkt<-`: updates the CRS from a WKT string. It adds the WKT string in the header and updates
 #' the `proj4string` slot.
-#' - `projection`: reads the `proj4string` from the `proj4string` slot.
-#' - `epsg`: reads the epsg code from the header.
-#' - `wkt`: reads the WKT string from the header.
-#' - `crs` and `rs<-` are equivalent to `projection``
-#' }
+#'    - `projection`: reads the `proj4string` from the `proj4string` slot.
+#'    - `epsg`: reads the epsg code from the header.
+#'    - `wkt`: reads the WKT string from the header.
+#'    - `crs` and `crs<-` are equivalent to `projection`
 #'
 #' @param object,x An object of class LAS or eventually LASheader (regular users don't need to manipulate
 #' LASheader objects).
 #' @param ... Unused.
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
-#' @param value A `CRS} object or a `proj4string} string for function`projection}.
-#' An EPSG code as integer for function `epsg}. A `WKT} string for function `wkt}.
+#' @param value A `CRS` object or a `proj4string` string for function`projection`.
+#' An EPSG code as integer for function `epsg`. A `WKT` string for function `wkt`.
 #'
 #' @export
 #' @examples
