@@ -221,7 +221,7 @@ removed. The links below point to the documentation of the new names \cr\cr
 \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
 \link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
 \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
-\link[lidR:segment_snags]{lassnags} \link[lidR:spTransform,LAS,CRS-method]{lastransform}
+\link[lidR:segment_snags]{lassnags}
 \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
 \link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
 \link[lidR:delineate_crowns]{tree_hull}
