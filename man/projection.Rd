@@ -7,11 +7,13 @@
 \alias{wkt}
 \alias{wkt<-}
 \alias{projection,LASheader-method}
+\alias{crs,LASheader-method}
 \alias{epsg,LASheader-method}
 \alias{epsg<-,LASheader-method}
 \alias{wkt,LASheader-method}
 \alias{wkt<-,LASheader-method}
 \alias{projection<-,LAS-method}
+\alias{crs<-,LAS-method}
 \alias{epsg,LAS-method}
 \alias{epsg<-,LAS-method}
 \alias{wkt,LAS-method}
@@ -28,6 +30,8 @@ wkt(object) <- value
 
 \S4method{projection}{LASheader}(x, asText = TRUE)
 
+\S4method{crs}{LASheader}(x, asText = FALSE)
+
 \S4method{epsg}{LASheader}(object, ...)
 
 \S4method{epsg}{LASheader}(object) <- value
@@ -37,6 +41,8 @@ wkt(object) <- value
 \S4method{wkt}{LASheader}(object) <- value
 
 \S4method{projection}{LAS}(x) <- value
+
+\S4method{crs}{LAS}(x, ...) <- value
 
 \S4method{epsg}{LAS}(object)
 

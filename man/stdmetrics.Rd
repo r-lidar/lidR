@@ -19,7 +19,23 @@
 \alias{.stdtreemetrics}
 \alias{.stdshapemetrics}
 \title{Predefined standard metrics functions}
-\format{An object of class \code{formula} of length 2.}
+\format{
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+
+An object of class \code{formula} of length 2.
+}
 \usage{
 stdmetrics(x, y, z, i, rn, class, dz = 1, th = 2)
 

@@ -135,7 +135,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE)
   header <- LASheader(header)
 
   if (is.na(proj4string@projargs))
-    proj4string <- projection(header, asText = FALSE)
+    proj4string <- crs(header)
 
   las             <- new("LAS")
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))

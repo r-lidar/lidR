@@ -27,37 +27,35 @@
 
 #' Get or set the projection of a LAS* object
 #'
-#' Get or set the projection of a LAS* object with the function \code{projection}. Functions \code{epsg}
-#' and \code{wkt} are reserved for advanced users (see details).
+#' Get or set the projection of a LAS* object with the function `projection`. Functions `epsg`
+#' and `wkt` are reserved for advanced users (see details).
 #'
 #' There are two ways to store the CRS of a point cloud in a LAS file:
-#' \itemize{
-#' \item Store an EPSG code (for LAS 1.0 to 1.4)
-#' \item Store a WTK string (for LAS 1.4)
-#' }
-#' On the other hand, all spatial R packages use a \code{proj4string} to store the CRS. This is why
+#' - Store an EPSG code (for LAS 1.0 to 1.4)
+#' - Store a WTK string (for LAS 1.4)
+#' On the other hand, all spatial R packages use a `proj4string` to store the CRS. This is why
 #' the CRS is duplicated in a LAS object. The information belongs within the header in a format that
-#' can be written in a LAS file and in the slot \code{proj4string} in a format that can be understood
+#' can be written in a LAS file and in the slot `proj4string` in a format that can be understood
 #' by R packages.
-#' \itemize{
-#' \item \code{projection<-}: updates the CRS from a \code{proj4string}. It updates the header either
+#' - `projection<-`: updates the CRS from a `proj4string`. It updates the header either
 #' with the EPSG code for LAS formats < 1.4 or with a WKT string for LAS format 1.4 and updates the
-#' \code{proj4string} slot. This function should always be preferred.
-#' \item \code{epsg<-}: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
-#' the \code{proj4string} slot.
-#' \item \code{wkt<-}: updates the CRS from a WKT string. It adds the WKT string in the header and updates
-#' the \code{proj4string} slot.
-#' \item \code{projection}: reads the \code{proj4string} from the \code{proj4string} slot.
-#' \item \code{epsg}: reads the epsg code from the header.
-#' \item \code{wkt}: reads the WKT string from the header.
+#' `proj4string` slot. This function should always be preferred.
+#' - `epsg<-`: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
+#' the `proj4string` slot.
+#' - `wkt<-`: updates the CRS from a WKT string. It adds the WKT string in the header and updates
+#' the `proj4string` slot.
+#' - `projection`: reads the `proj4string` from the `proj4string` slot.
+#' - `epsg`: reads the epsg code from the header.
+#' - `wkt`: reads the WKT string from the header.
+#' - `crs` and `rs<-` are equivalent to `projection``
 #' }
 #'
 #' @param object,x An object of class LAS or eventually LASheader (regular users don't need to manipulate
 #' LASheader objects).
 #' @param ... Unused.
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
-#' @param value A \code{CRS} object or a \code{proj4string} string for function\code{projection}.
-#' An EPSG code as integer for function \code{epsg}. A \code{WKT} string for function \code{wkt}.
+#' @param value A `CRS} object or a `proj4string} string for function`projection}.
+#' An EPSG code as integer for function `epsg}. A `WKT} string for function `wkt}.
 #'
 #' @export
 #' @examples
@@ -69,8 +67,11 @@
 #' projection(las) <- crs
 #' @importFrom raster projection<-
 #' @importFrom raster projection
+#' @importFrom raster crs<-
+#' @importFrom raster crs
 #' @name projection
 #' @rdname projection
+#' @md
 NULL
 
 #' @export
@@ -108,6 +109,13 @@ setMethod("projection", "LASheader", function(x, asText = TRUE)
     return(proj4@projargs)
   else
     return(proj4)
+})
+
+#' @export
+#' @rdname projection
+setMethod("crs", "LASheader", function(x, asText = FALSE)
+{
+  return(projection(x, asText))
 })
 
 # ==== LASheader ====
@@ -202,6 +210,14 @@ setMethod("projection<-", "LAS", function(x, value)
 
 #' @export
 #' @rdname projection
+setMethod("crs<-", "LAS", function(x, ..., value)
+{
+  projection(x) <- value
+  return(x)
+})
+
+#' @export
+#' @rdname projection
 setMethod("epsg", "LAS", function(object)
 {
   return(epsg(object@header))
@@ -213,7 +229,7 @@ setMethod("epsg<-", "LAS", function(object, value)
 {
   proj4 <- epsg2CRS(value, fail = TRUE)
   epsg(object@header) <- value
-  raster::projection(object)  <- proj4
+  object@proj4string <- proj4
   return(object)
 })
 
@@ -230,7 +246,7 @@ setMethod("wkt<-", "LAS", function(object, value)
 {
   proj4 <- wkt2CRS(value, fail = TRUE)
   wkt(object@header) <- value
-  raster::projection(object)  <- proj4
+  object@proj4string <- proj4
   return(object)
 })
 
@@ -297,5 +313,5 @@ wkt2proj <- function(wkt, fail = FALSE)
 wkt2CRS <- function(wkt, fail = FALSE)
 {
   proj <- wkt2proj(wkt, fail)
-  sp::CRS(proj, doCheckCRSArgs = FALSE) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
+  return(sp::CRS(proj, doCheckCRSArgs = FALSE)) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
 }
