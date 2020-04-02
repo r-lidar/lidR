@@ -47,15 +47,14 @@
 #' - `projection`: reads the `proj4string` from the `proj4string` slot.
 #' - `epsg`: reads the epsg code from the header.
 #' - `wkt`: reads the WKT string from the header.
-#' - `crs` and `rs<-` are equivalent to `projection``
-#' }
+#' - `crs` and `rs<-` are equivalent to `projection`
 #'
 #' @param object,x An object of class LAS or eventually LASheader (regular users don't need to manipulate
 #' LASheader objects).
 #' @param ... Unused.
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
-#' @param value A `CRS} object or a `proj4string} string for function`projection}.
-#' An EPSG code as integer for function `epsg}. A `WKT} string for function `wkt}.
+#' @param value A `CRS` object or a `proj4string` string for function`projection`.
+#' An EPSG code as integer for function `epsg`. A `WKT` string for function `wkt`.
 #'
 #' @export
 #' @examples
@@ -265,8 +264,6 @@ setMethod("wkt<-", "LAS", function(object, value)
 #' coordinate reference system. The header has been update by add the ESPG code or a WKT OGC CS string
 #' as a function of the defined Global Encoding WKT bit (see LAS specifications).
 #'
-#' @export
-#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
@@ -274,6 +271,7 @@ setMethod("wkt<-", "LAS", function(object, value)
 #'
 #' las <- spTransform(las, crs)
 #' @importMethodsFrom sp spTransform
+#' @noRd
 setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
 {
   if (is.na(sp::proj4string(x)))
