@@ -4,52 +4,70 @@ las = lidR:::dummy_las(10)
 
 test_that("Internal projection conversion works", {
 
-  expect_equal(lidR:::epsg2CRS(2008)@projargs, "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
-  expect_equal(lidR:::epsg2CRS(200800)@projargs, NA_character_)
+  wkt <- rgdal::showWKT("+init=epsg:2008")
+  expected <- sp::CRS("+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
+
+  expect_equal(lidR:::epsg2CRS(2008), expected)
+  expect_equal(lidR:::epsg2CRS(200800), sp::CRS())
   expect_error(lidR:::epsg2CRS(200800, fail = TRUE), "Invalid epsg code")
 
-  wkt = rgdal::showWKT("+init=epsg:2008")
-  expect_equal(lidR:::wkt2CRS(wkt)@projargs, "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
+  expect_equivalent(lidR:::wkt2CRS(wkt), expected)
   expect_equal(lidR:::wkt2CRS("INVALID")@projargs, NA_character_)
   expect_error(lidR:::wkt2CRS("INVALID", fail = TRUE), "Invalid WKT")
 })
 
-test_that("projection with epsg code works", {
-
-  expect_equal(projection(las), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
+test_that("projection<- with epsg code works", {
 
   projection(las) <- sp::CRS("+init=epsg:26917")
 
-  expect_equal(las@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset`, 26917)
+  expect_equal(epsg(las), 26917)
 
   projection(las) <- sp::CRS("+init=epsg:26918")
 
-  expect_equal(las@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset`, 26918)
+  expect_equal(epsg(las), 26918)
 })
 
-las = lidR:::dummy_las(10)
+test_that("crs<- with epsg code works", {
 
-test_that("projection with wkt code works", {
+  crs(las) <- sp::CRS("+init=epsg:26917")
 
-  las@header@PHB$`Global Encoding`$WKT = TRUE
+  expect_equal(epsg(las), 26917)
+
+  crs(las) <- sp::CRS("+init=epsg:26918")
+
+  expect_equal(epsg(las), 26918)
+})
+
+test_that("projection<- with wkt code works", {
+
+  las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
 
   projection(las) <- sp::CRS("+init=epsg:26917")
 
-  #expect_equal(las@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset`, NULL)
-  expect_match(las@header@VLR$`WKT OGC CS`$`WKT OGC COORDINATE SYSTEM`, "PROJCS")
+  expect_match(wkt(las), "PROJCS")
 
   projection(las) <- sp::CRS("+init=epsg:26918")
 
-  #expect_equal(las@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset`, NULL)
-  expect_match(las@header@VLR$`WKT OGC CS`$`WKT OGC COORDINATE SYSTEM`, "PROJCS")
+  expect_match(wkt(las), "PROJCS")
 })
 
-las = lidR:::dummy_las(10)
+test_that("crs<- with wkt code works", {
 
-test_that("epsg works", {
+  las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
+
+  crs(las) <- sp::CRS("+init=epsg:26917")
+
+  expect_match(wkt(las), "PROJCS")
+
+  crs(las) <- sp::CRS("+init=epsg:26918")
+
+  expect_match(wkt(las), "PROJCS")
+})
+
+test_that("epsg<- works", {
 
   epsg(las) <- 26917
-  expect_equal(las@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset`, 26917)
+  expect_equal(epsg(las), 26917)
 })
 
 test_that("Set an invalid code or WKT fails", {

@@ -173,14 +173,14 @@ track_sensor.LAS <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE,
     n <- numeric(1)
     coord <- matrix(i, ncol = 2)
     data  <- data.frame(Z = i, gpstime = i, PointSourceID = n, npulses = n)
-    zero  <- sp::SpatialPointsDataFrame(coord, data)
+    zero  <- sp::SpatialPointsDataFrame(coord, data, proj4string = las@proj4string)
     zero  <- zero[-1,]
     return(zero)
   }
 
   na <- is.na(P[["X"]])
   P  <- P[!na]
-  P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)])
+  P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)], proj4string = las@proj4string)
 
   if (sum(na) > 0)
     warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be wrongly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)
