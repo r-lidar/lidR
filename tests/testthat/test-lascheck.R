@@ -23,6 +23,7 @@ las1@header@PHB[["Point Data Format ID"]] <- 25
 
 LASfile <- system.file("extdata", "extra_byte.laz", package = "rlas")
 las2     <- readLAS(LASfile, select = "xyz")
+las2@header@PHB$`Global Encoding`$WKT = TRUE
 wkt(las2) <- rgdal::showWKT(sp::CRS("+init=epsg:26917")@projargs)
 las2@proj4string <- sp::CRS()
 
@@ -73,6 +74,7 @@ test_that("lascheck CRS specific test", {
   las1@header@PHB$`Global Encoding`$WKT <- TRUE
 
   las2 <- las0
+  las2@header@PHB$`Global Encoding`$WKT = TRUE
   wkt(las2) <- "PROJCS[\"RD_New\",GEOGCS[\"GCS_Amersfoort\",DATUM[\"D_Amersfoort\",SPHEROID[\"Bessel_1841\",6377397.155,299.1528128]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Double_Stereographic\"],PARAMETER[\"False_Easting\",155000.0],PARAMETER[\"False_Northing\",463000.0],PARAMETER[\"Central_Meridian\",5.38763888888889],PARAMETER[\"Scale_Factor\",0.9999079],PARAMETER[\"Latitude_Of_Origin\",52.1561605555556],UNIT[\"Meter\",1.0]]"
   las2@header@PHB$`Global Encoding`$WKT <- FALSE
 

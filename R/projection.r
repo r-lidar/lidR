@@ -123,6 +123,7 @@ setMethod("epsg", "LASheader", function(object, ...)
 #' @rdname projection
 setMethod("epsg<-", "LASheader", function(object, value)
 {
+  if (use_wktcs(object)) stop("This object is not in a format that supports EPSG code. Use a WKT string.", call. = FALSE)
   header <- as.list(object)
   header <- rlas::header_set_epsg(header, value)
   return(LASheader(header))
@@ -139,6 +140,7 @@ setMethod("wkt", "LASheader", function(object, ...)
 #' @rdname projection
 setMethod("wkt<-", "LASheader", function(object, value)
 {
+  if (!use_wktcs(object)) stop("This object is not in a format that supports WKT CRS. Use an EPSG code.", call. = FALSE)
   header <- as.list(object)
   header <- rlas::header_set_wktcs(header, value)
   return(LASheader(header))
