@@ -139,6 +139,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 10. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
 
+11. Minor modification of `print()` methods to enhance informations displayed.
+
 #### FIXES
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.

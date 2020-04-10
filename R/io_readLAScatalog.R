@@ -1,7 +1,7 @@
 #' Create an object of class LAScatalog
 #'
-#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a set of filenames.
-#' A LAScatalog is a representation of a set of las/laz files. A computer cannot load all the data at
+#' Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a co of filenames.
+#' A LAScatalog is a representation of a collection of las/laz files. A computer cannot load all the data at
 #' once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most functions from
 #' \code{lidR} can be used seamlessly with a LAScatalog using the internal \code{LAScatalog} processing
 #' engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
