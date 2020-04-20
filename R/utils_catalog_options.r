@@ -215,7 +215,7 @@ opt_output_files = function(ctg)
   if (usefilename & opt_chunk_size(ctg) > 0)
     message("ORIGINALFILENAME template has been used but the chunk size is not 0. This template makes sense only when processing by file.")
 
-  value <- normalizePath(value, mustWork = FALSE)
+  value <- path.expand(value)
   ctg@output_options$output_files <- value
   return(ctg)
 }
