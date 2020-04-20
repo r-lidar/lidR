@@ -135,7 +135,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 8. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
 
-9. `opt_output_file()` now normalizes the path.
+9. `opt_output_file()` now applies tilde-expansion to the path.
 
 10. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
 
