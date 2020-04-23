@@ -1,4 +1,4 @@
-## lidR v2.2.4 (Release date: ...)
+## lidR v2.2.4 (Release date: 2020-04-24)
 
 #### FIXES
 
@@ -27,6 +27,8 @@
 6. `opt_output_file()` now applies tilde-expansion to the path.
 
 7. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
+
+## lidR v2.2.3 (Release date: 2020-03-02)
 
 #### FIXES
 
