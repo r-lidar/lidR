@@ -339,10 +339,32 @@ clip_disc.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
 {
   assert_is_a_bool(xz)
-  assert_is_numeric(p1)
-  assert_is_numeric(p2)
-  assert_are_same_length(p1, p2)
-  assert_is_of_length(p1, 2L)
+
+  # Not documented but if p1 and p2 are missing it switches
+  # to interactive selection (personal use only)
+  if (!missing(p1) && !missing(p2))
+  {
+    assert_is_numeric(p1)
+    assert_is_numeric(p2)
+    assert_are_same_length(p1, p2)
+    assert_is_of_length(p1, 2L)
+  }
+  else
+  {
+    # nocov start
+    p <- list(...)
+    plot <- isTRUE(p$plot)
+    if (plot)
+    {
+      dsm <- grid_canopy(las, 2, p2r())
+      plot(las@header)
+      raster::plot(dsm, col = height.colors(50))
+    }
+    tr <- locator(2L, type = "o")
+    p1 <- c(tr$x[1L], tr$y[1L])
+    p2 <- c(tr$x[2L], tr$y[2L])
+    # nocov end
+  }
 
   if (is(las, "LAScatalog")) {
     if (xz && opt_output_files(las) != "")
@@ -368,11 +390,15 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
   coords <- coords %*% rot
   X <- coords[,1]
   Y <- coords[,2]
-  fast_quantization(X, las@header@PHB[["X scale factor"]], las@header@PHB[["X offset"]])
-  fast_quantization(Y, las@header@PHB[["Y scale factor"]], las@header@PHB[["Y offset"]])
+  fast_quantization(X, las@header@PHB[["X scale factor"]], 0)
+  fast_quantization(Y, las@header@PHB[["Y scale factor"]], 0)
   las@data[["X"]] <- X
   las@data[["Y"]] <- Y
+  las@header@PHB[["X offset"]] <- 0
+  las@header@PHB[["Y offset"]] <- 0
   las <- lasupdateheader(las)
+  data.table::setattr(las, "rotation", rot)
+  data.table::setattr(las, "offset", zero)
   return(las)
 }
 
