@@ -1,3 +1,9 @@
+## lidR v2.2.5 (Release date: 2020-05-07)
+
+#### ENHANCEMENTS
+
+1. Clear unrelevant message about OpenMP support when using the LAScatalog processing engine with a version of `lidR` not compiled with OpenMP support (i.e. on MacOS)
+
 ## lidR v2.2.4 (Release date: 2020-04-24)
 
 #### FIXES
