@@ -21,6 +21,6 @@ This is compiled code in the libs/ directory.
 
 ## Downstream dependencies
 
-We checked 3 reverse dependencies by running R CMD check with this version installed. 
+We checked 4 reverse dependencies by running R CMD check with this version installed. 
 We did not see any new problems.
 
