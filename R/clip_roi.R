@@ -360,7 +360,7 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
       plot(las@header)
       raster::plot(dsm, col = height.colors(50))
     }
-    tr <- locator(2L, type = "o")
+    tr <- graphics::locator(2L, type = "o")
     p1 <- c(tr$x[1L], tr$y[1L])
     p2 <- c(tr$x[2L], tr$y[2L])
     # nocov end
