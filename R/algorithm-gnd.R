@@ -71,7 +71,7 @@ pmf = function(ws, th)
     return(C_pmf(las, ws, th, filter))
   }
 
-  class(f) <- c("GroundSegmentation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMGND
   return(f)
 }
 
@@ -131,7 +131,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
     return(idx)
   }
 
-  class(f) <- c("GroundSegmentation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMGND
   return(f)
 }
 

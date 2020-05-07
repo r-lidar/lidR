@@ -51,6 +51,8 @@ normalize_intensity <- function(las, algorithm)
 #' @export
 normalize_intensity.LAS <- function(las, algorithm)
 {
+  assert_is_algorithm(algorithm)
+  assert_is_algorithm_nit(algorithm)
   lidR.context <- "normalize_intensity"
   intensity <- algorithm(las)
   invalid   <- fast_countequal(intensity, 65535)

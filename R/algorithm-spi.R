@@ -62,7 +62,7 @@ tin = function()
     return(z)
   }
 
-  class(f) <- c("function", "SpatialInterpolation", "OpenMP",  "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMSPI, LIDRALGORITHMOPENMP)
   return(f)
 }
 
@@ -102,7 +102,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
     return(interpolate_knnidw(what, where, k, p, rmax))
   }
 
-  class(f) <- c("SpatialInterpolation", "Algorithm", "OpenMP", "lidR", "function")
+  class(f) <- c(LIDRALGORITHMSPI, LIDRALGORITHMOPENMP)
   return(f)
 }
 
@@ -141,7 +141,7 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
     return(interpolate_kriging(what, where, model, k))
   }
 
-  class(f) <- c( "function", "SpatialInterpolation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMSPI
   return(f)
 }
 

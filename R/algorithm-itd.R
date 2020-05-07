@@ -123,7 +123,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
     return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
-  class(f) <- c("PointCloudBased", "IndividualTreeDetection", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITD, LIDRALGORITHMOPENMP, LIDRALGORITHMPOINTCLOUDBASED)
   return(f)
 }
 
@@ -249,6 +249,6 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov sta
     return(output)
   }
 
-  class(f) <- c("function", "PointCloudBased", "IndividualTreeDetection", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITD, LIDRALGORITHMPOINTCLOUDBASED)
   return(f)
 } # nocov end

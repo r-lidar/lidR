@@ -102,6 +102,17 @@ LASCATALOGATTRIBUTES <- c("File.Signature", "File.Source.ID", "GUID", "Version.M
                           "Min.Z", "EPSG", "Number.of.1st.return", "Number.of.2nd.return",
                           "Number.of.3rd.return", "Number.of.4th.return", "Number.of.5th.return")
 
+LIDRDSM <- "DigitalSurfaceModel"
+LIDRSPI <- "SpatialInterpolation"
+LIDRGND <- "GroundSegmentation"
+LIDRITD <- "IndividualTreeDetection"
+LIDRDEC <- "PointCloudDecimation"
+LIDRSHP <- "ShapeDetection"
+LIDRSNG <- "SnagsSegmentation"
+LIDRITS <- "IndividualTreeSegmentation"
+LIDRNIT <- "normalize_intensity"
+LIDRTRK <- "SensorTracking"
+
 LIDRCONTEXTDSM <- "grid_canopy"
 LIDRCONTEXTSPI <- c("normalize_elevation", "grid_terrain", "spatial_interpolation")
 LIDRCONTEXTGND <- "classify_ground"
@@ -111,3 +122,19 @@ LIDRCONTEXTSHP <- "segment_shapes"
 LIDRCONTEXTSNG <- "segment_snags"
 LIDRCONTEXTITS <- "segment_trees"
 LIDRCONTEXTNIT <- "normalize_intensity"
+
+LIDRALGORITHM <- c("function", "ANY", "Algorithm", "lidR")
+LIDRALGORITHMOPENMP <- "OpenMP"
+LIDRALGORITHMPOINTCLOUDBASED <- "PointCloudBased"
+LIDRALGORITHMRASTERBASED <- "RasterBased"
+LIDRALGORITHMDEC <- LIDRALGORITHMDSM <- LIDRALGORITHMGND <- LIDRALGORITHMITD <- LIDRALGORITHMITS <- LIDRALGORITHMNIT <- LIDRALGORITHMSNG <- LIDRALGORITHMTRK <- LIDRALGORITHMSHP <- LIDRALGORITHMSPI <- LIDRALGORITHM
+LIDRALGORITHMDEC[2] <- LIDRDEC
+LIDRALGORITHMDSM[2] <- LIDRDSM
+LIDRALGORITHMGND[2] <- LIDRGND
+LIDRALGORITHMITD[2] <- LIDRITD
+LIDRALGORITHMITS[2] <- LIDRITS
+LIDRALGORITHMNIT[2] <- LIDRNIT
+LIDRALGORITHMSNG[2] <- LIDRSNG
+LIDRALGORITHMTRK[2] <- LIDRTRK
+LIDRALGORITHMSHP[2] <- LIDRSHP
+LIDRALGORITHMSPI[2] <- LIDRSPI

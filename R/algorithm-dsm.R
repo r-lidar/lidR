@@ -115,7 +115,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
     return(dsm)
   }
 
-  class(f) <- c("function", "DigitalSurfaceModel", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMDSM
   return(f)
 }
 
@@ -324,6 +324,6 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     return(z)
   }
 
-  class(f) <- c("function", "DigitalSurfaceModel", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMDSM, LIDRALGORITHMOPENMP)
   return(f)
 }

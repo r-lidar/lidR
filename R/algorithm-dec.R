@@ -82,7 +82,7 @@ random = function(density, use_pulse = FALSE)
     }
   }
 
-  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMDEC
   return(f)
 }
 
@@ -150,7 +150,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
       return(las@data[, .I[.selected_pulses(1:.N, n)], by = cells]$V1)
   }
 
-  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMDEC
   return(f)
 }
 
@@ -187,7 +187,7 @@ highest = function(res = 1)
     return(C_highest(las, layout))
   }
 
-  class(f) <- c("function", "PointCloudDecimation", "Algorithm", "lidR")
+  class(f) <- LIDRALGORITHMDEC
   return(f)
 }
 

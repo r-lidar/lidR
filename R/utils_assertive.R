@@ -142,52 +142,63 @@ assert_is_algorithm = function(x)
 
 assert_is_algorithm_dsm = function(x)
 {
-  if (!is(x, "DigitalSurfaceModel"))
+  if (!is(x, LIDRDSM))
     stop("The algorithm used is not an algorithm for digital surface model.", call. = FALSE)
 }
 
 assert_is_algorithm_itd = function(x)
 {
-  if (!is(x, "IndividualTreeDetection"))
+  if (!is(x, LIDRITD))
     stop("The algorithm used is not an algorithm for individual tree detection.", call. = FALSE)
 }
 
 assert_is_algorithm_shp = function(x)
 {
-  if (!is(x, "ShapeDetection"))
+  if (!is(x, LIDRSHP))
     stop("The algorithm used is not an algorithm for shape detection.", call. = FALSE)
 }
 
 assert_is_algorithm_spi = function(x)
 {
-  if (!is(x, "SpatialInterpolation"))
+  if (!is(x, LIDRSPI))
     stop("The algorithm used is not an algorithm for spatial interpolation.", call. = FALSE)
 }
 
 assert_is_algorithm_its = function(x)
 {
-  if (!is(x, "IndividualTreeSegmentation"))
+  if (!is(x, LIDRITS))
     stop("The algorithm used is not an algorithm for individual tree segmentation.", call. = FALSE)
 }
 
 assert_is_algorithm_dec = function(x)
 {
-  if (!is(x, "PointCloudDecimation"))
+  if (!is(x, LIDRDEC))
     stop("The algorithm used is not an algorithm for point cloud decimation.", call. = FALSE)
 }
 
 assert_is_algorithm_gnd = function(x)
 {
-  if (!is(x, "GroundSegmentation"))
+  if (!is(x, LIDRGND))
     stop("The algorithm used is not an algorithm for ground segmentation.", call. = FALSE)
 }
 
 assert_is_algorithm_sng = function(x)
 {
-  if (!is(x, "SnagsSegmentation"))
+  if (!is(x, LIDRSNG))
     stop("The algorithm used is not an algorithm for snags segmentation.", call. = FALSE)
 }
 
+assert_is_algorithm_nit = function(x)
+{
+  if (!is(x, LIDRNIT))
+    stop("The algorithm used is not an algorithm for intensity normalization.", call. = FALSE)
+}
+
+assert_is_algorithm_trk = function(x)
+{
+  if (!is(x, LIDRTRK))
+    stop("The algorithm used is not an algorithm for sensor tracking.", call. = FALSE)
+}
 
 assert_is_valid_context = function(expected_contexts, name = "", null_allowed = FALSE)
 {

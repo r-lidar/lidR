@@ -59,7 +59,7 @@ range_correction = function(sensor, Rs, f = 2.3, gpstime = "gpstime", elevation 
     return(C_lasrangecorrection(las, fl, Rs, f))
   }
 
-  class(fun) <- c("function", "IntensityCorrection",  "Algorithm", "lidR")
+  class(fun) <- LIDRALGORITHMNIT
   return(fun)
 }
 

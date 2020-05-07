@@ -96,7 +96,7 @@ shp_hplane = function(th1 = 25, th2 = 6, th3 = 0.98, k = 8)
     return(C_lasdetectshape(las, 2L , c(th1, th2, th3), k, filter, getThread()))
   }
 
-  class(f) <- c("PointCloudBased", "ShapeDetection", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
   return(f)
 }
 
@@ -116,6 +116,6 @@ shp_line = function(th1 = 10, k = 8)
     return(C_lasdetectshape(las, 3L , th1, k, filter, getThread()))
   }
 
-  class(f) <- c("PointCloudBased", "ShapeDetection", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
   return(f)
 }

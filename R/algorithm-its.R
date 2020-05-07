@@ -138,7 +138,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     return(Crowns)
   }
 
-  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED)
   return(f)
 }
 
@@ -223,7 +223,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
     }
   }
 
-  class(f) <- c("function", "PointCloudBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMPOINTCLOUDBASED)
 
   return(f)
 }
@@ -331,7 +331,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     return(crown)
   }
 
-  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED, LIDRALGORITHMOPENMP)
   return(f)
 }
 
@@ -474,6 +474,6 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     return(Crowns)
   }
 
-  class(f) <- c("function", "RasterBased", "IndividualTreeSegmentation", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED)
   return(f)
 }
