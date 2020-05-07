@@ -6,21 +6,17 @@
 \usage{
 track_sensor(
   las,
-  interval = 0.5,
-  pmin = 50,
+  algorithm,
   extra_check = TRUE,
-  thin_pulse_with_time = 0.001
+  thin_pulse_with_time = 0.001,
+  multi_pulse = FALSE
 )
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{interval}{numeric. Interval used to bin the gps times and group the pulses to compute
-a position at a given timepoint t.}
-
-\item{pmin}{integer. Minimum number of pulses needed to estimate a sensor position.
-For a given interval, the sensor position is not computed if the number of pulses is lower than
-\code{pmin}.}
+\item{algorithm}{function. An algorithm to compute sensor tracking. \code{lidR} implements
+\link{Roussel2020} and  \link{Gatziolis2019} (see respective documentation and examples).}
 
 \item{extra_check}{boolean. Datasets are rarely perfectly populated, leading to unexpected errors.
 Time-consuming checks of data integrity are performed. These checks can be skipped as they account
@@ -30,11 +26,14 @@ for an important proportion of the computation time. See also section 'Tests of 
 multiple returns. It is more computationally demanding but not necessarily more accurate. This keeps
 only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if the file has already
 been read with \code{filter = "-thin_pulses_with_time 0.001"}.}
+
+\item{multi_pulse}{logical. TRUE only for systems with multiple pulses. Pulse ID must be recorded
+in the UserData attribute.}
 }
 \value{
 A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
-about the time interval and the number of pulses used to find the points is also in the table of
-attributes.
+about the time interval and the score of the positionning (according the the method used) are also
+in the table of attributes.
 }
 \description{
 Use multiple returns to estimate the positioning of the sensor by computing the intersection in
@@ -43,16 +42,6 @@ dataset where the 'gpstime', 'ReturnNumber', 'NumberOfReturns' and 'PointSourceI
 properly populated, otherwise the output may be incorrect or weird. For LAScatalog processing
 it is recommended to use large chunks and large buffers (e.g. a swath width). The point cloud must
 not be normalized.
-}
-\details{
-When multiple returns from a single pulse are detected, the sensor computes their positions as being
-in the center of the footprint and thus all aligned. Because of that behavior, a line
-drawn between and beyond those returns must cross the sensor. Thus, several consecutive pulses
-emitted in a tight interval (e.g. 0.5 seconds) can be used to approximate an intersection
-point in the sky that corresponds to the sensor position given that the sensor carrier hasn't
-moved much during this interval. A weighted least squares method gives an approximation of the
-intersection by minimizing the squared sum of the distances between the intersection point and all
-the lines.
 }
 \section{Test of data integrity}{
 
@@ -115,7 +104,7 @@ plot(las)
 # pmin = 15 because it is an extremely tiny file
 # strongly decimated to reduce its size. There are
 # actually few multiple returns
-flightlines <- track_sensor(las, pmin = 15)
+flightlines <- track_sensor(las, Roussel2020(pmin = 15))
 
 plot(las@header)
 plot(flightlines, add = TRUE)
@@ -127,7 +116,7 @@ add_flightlines3d(x, flightlines, radius = 10)
 las <- readLAS(LASfile,
                select = "xyzrntp",
                filter = "-drop_single -thin_pulses_with_time 0.001")
-flightlines <- track_sensor(las)
+flightlines <- track_sensor(las,  Roussel2020(pmin = 15))
 
 x <- plot(las)
 add_flightlines3d(x, flightlines, radius = 10)
@@ -136,7 +125,7 @@ add_flightlines3d(x, flightlines, radius = 10)
 # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"
 # are used by default
 ctg = readLAScatalog("folder/")
-flightlines <- track_sensor(ctg)
+flightlines <- track_sensor(ctg,  Roussel2020(pmin = 15))
 plot(flightlines)
 }
 }

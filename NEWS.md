@@ -117,6 +117,10 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 18. `knnidw()` gains an argument `rmax` to set a maximum radius search where to find the knn. This fixes computation time issues with non convex point clouds.
 
+19. `track_sensor()` (formerly `sensor_tracking()`) 
+    - now have two available algorithms.
+    - supports systems with multiple pulses emission which formerly failed
+
 #### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.

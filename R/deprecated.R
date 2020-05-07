@@ -314,7 +314,7 @@ lasvoxelize = function(las, res) {
 #' @rdname deprecated
 sensor_tracking <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, thin_pulse_with_time = 0.001) {
   .lidr3depreciation("track_sensor")
-  return(track_sensor(las, interval, pmin, extra_check, thin_pulse_with_time))
+  return(track_sensor(las, Roussel2020(interval, pmin), extra_check, thin_pulse_with_time))
 }
 
 #' @export

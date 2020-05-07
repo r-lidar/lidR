@@ -6,6 +6,28 @@
 
 using namespace Rcpp;
 
+// filterTimeBlockPulses
+IntegerVector filterTimeBlockPulses(DataFrame pulsedt);
+RcppExport SEXP _lidR_filterTimeBlockPulses(SEXP pulsedtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type pulsedt(pulsedtSEXP);
+    rcpp_result_gen = Rcpp::wrap(filterTimeBlockPulses(pulsedt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cmpCPA
+DataFrame cmpCPA(DataFrame pulsedt);
+RcppExport SEXP _lidR_cmpCPA(SEXP pulsedtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type pulsedt(pulsedtSEXP);
+    rcpp_result_gen = Rcpp::wrap(cmpCPA(pulsedt));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_dalponte2016
 IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
 RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
@@ -456,6 +478,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_lidR_filterTimeBlockPulses", (DL_FUNC) &_lidR_filterTimeBlockPulses, 1},
+    {"_lidR_cmpCPA", (DL_FUNC) &_lidR_cmpCPA, 1},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 4},
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 6},

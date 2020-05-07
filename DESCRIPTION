@@ -3,13 +3,14 @@ Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
 Version: 3.0.0
-Date: 2020-05-05
+Date: 2020-05-07
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
     person("Florian", "De Boissieu", email = "", role = ("ctb"), comment = "Fixed bugs and improved catalog features"),
     person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented wing2015() for segment_snags()"),
-    person("Bourdon", "Jean-François", email = "", role = ("ctb"), comment = "Implemented track_sensor()"))
+    person("Bourdon", "Jean-François", email = "", role = ("ctb"), comment = "Contributed to Roussel2020() for track_sensor()"),
+    person("Gatziolis", "Demetrios", email = "", role = ("ctb"), comment = "Implemented Gatziolis2019() for track_sensor()"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
@@ -74,6 +75,7 @@ Collate:
     'algorithm-shp.R'
     'algorithm-snag.R'
     'algorithm-spi.R'
+    'algorithm-trk.R'
     'catalog_apply.R'
     'catalog_fakerun.R'
     'catalog_index.R'

@@ -122,6 +122,7 @@ LIDRCONTEXTSHP <- "segment_shapes"
 LIDRCONTEXTSNG <- "segment_snags"
 LIDRCONTEXTITS <- "segment_trees"
 LIDRCONTEXTNIT <- "normalize_intensity"
+LIDRCONTEXTTRK <- "track_sensor"
 
 LIDRALGORITHM <- c("function", "ANY", "Algorithm", "lidR")
 LIDRALGORITHMOPENMP <- "OpenMP"
