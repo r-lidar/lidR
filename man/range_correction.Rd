@@ -42,7 +42,7 @@ las <- readLAS(LASfile)
 # pmin = 15 because it is an extremely tiny file
 # strongly decimated to reduce its size. There are
 # actually few multiple returns
-sensor <- track_sensor(las, pmin = 15)
+sensor <- track_sensor(las, Roussel2020(pmin = 15))
 
 # Here the effect is virtually null because the size of
 # the sample is too tiny to notice any effect of range
