@@ -346,7 +346,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   else
   {
     if (value_index)
-      id <- col + 1
+      id <- col + 1L
     else
     {
       if (!is.infinite(trim)) col[col > trim] <- trim
