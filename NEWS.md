@@ -133,19 +133,11 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 5. Enhancements made here and there to improve the support of the CRS when reading and checking a LAS file.
 
-6. `crs not found` message is no longer displayed when building a LAS object. This message appeared with an update of `rgdal` or `sp`. It is now gone.
+6. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
 
-7. `track_sensor()` (formerly `sensor_tracking()`) now throws an error for the invalid case reported in [#327](https://github.com/Jean-Romain/lidR/issues/327).
+7. Minor modification of `print()` methods to enhance informations displayed.
 
-8. `grid_metrics()` returns a raster full of NAs instead of failing if a `RasterLayer` is given as a layout but this layer does not encompase the point cloud
-
-9. `opt_output_file()` now applies tilde-expansion to the path.
-
-10. When processing by file with an raster output, automatic chunk extension to match with a raster resolution now perform a tighter extension.
-
-11. Minor modification of `print()` methods to enhance informations displayed.
-
-12. All algorithms such as `tin()`, `p2r()`, `knnidw()`, `li2012()` and so on now have the classes `c("lidRAlgorithm", "something")` and a dedicated print function. The source code is no longer diplayed when printing these objects
+8. All algorithms such as `tin()`, `p2r()`, `knnidw()`, `li2012()` and so on now have the classes `c("lidRAlgorithm", "something")` and a dedicated print function. The source code is no longer diplayed when printing these objects
     
     ```r
     f = lmf(2)
@@ -164,16 +156,6 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 #### FIXES
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
-
-2. Fix segfault on Windows 64 bits when constructing a proj4 from some specific modern WTK strings using `doCheckCRSArgs =  FALSE`. [#323](https://github.com/Jean-Romain/lidR/issues/323) [sp #75](https://github.com/edzer/sp/issues/75)
-
-3. Fix wrong gpstime matching in `lasrangecorrection()` at the edge of flightlines [#327](https://github.com/Jean-Romain/lidR/issues/327).
-
-4. Fix error when building the clusters with a partial processing and a realignment [#332](https://github.com/Jean-Romain/lidR/issues/332).
-
-5. Fix error in `lasclip()` and `lasmergespatial()` with `sf` objects when the coordinates are not stored in a column named `geometry`. Thank to Michael Koontz in [#335](https://github.com/Jean-Romain/lidR/issues/335).
-
-6. `lasrangecorrection()` no longer mess-up the original sensor data. See [#336](https://github.com/Jean-Romain/lidR/issues/336)
 
 ## lidR v2.2.5 (Release date: 2020-05-07)
 
