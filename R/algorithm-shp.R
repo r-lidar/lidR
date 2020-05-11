@@ -72,7 +72,7 @@ shp_plane = function(th1 = 25, th2 = 6, k = 8)
     return(C_lasdetectshape(las, 1L , c(th1, th2), k, filter, getThread()))
   }
 
-  class(f) <- c("PointCloudBased", "ShapeDetection", "OpenMP", "Algorithm", "lidR")
+  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
   return(f)
 }
 

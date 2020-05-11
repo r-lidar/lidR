@@ -6,6 +6,7 @@
 \alias{summary}
 \alias{print,LAS-method}
 \alias{summary,LAScatalog-method}
+\alias{print.lidRAlgorithm}
 \title{Summary and Print for \code{LAS*} objects}
 \usage{
 print(x, ...)
@@ -15,14 +16,13 @@ print(x, ...)
 \S4method{print}{LAS}(x)
 
 \S4method{summary}{LAScatalog}(object, ...)
+
+\method{print}{lidRAlgorithm}(x, ...)
 }
 \arguments{
 \item{...}{Unused}
 
-\item{object, x}{A \code{LAS*} object}
-}
-\value{
-NULL, used for its side-effect of printing information
+\item{object, x}{A \code{LAS*} object or other lidR related objects.}
 }
 \description{
 Summary and Print for \code{LAS*} objects

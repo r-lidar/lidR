@@ -105,7 +105,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
       data.table::setnames(where, names(where), c("X", "Y"))
       where  <- where[sp::point.in.polygon(where$X, where$Y, hull[,1], hull[,2], TRUE) > 0]
 
-      lidR.context <- "spatial_interpolation"
+      lidR.context <- "p2r"
       cells <- raster::cellFromXY(layout, where)
       layout[cells] <- na.fill(grid, where)
 

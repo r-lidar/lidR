@@ -145,6 +145,22 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 11. Minor modification of `print()` methods to enhance informations displayed.
 
+12. All algorithms such as `tin()`, `p2r()`, `knnidw()`, `li2012()` and so on now have the classes `c("lidRAlgorithm", "something")` and a dedicated print function. The source code is no longer diplayed when printing these objects
+    
+    ```r
+    f = lmf(2)
+    f
+    #> Object of class lidR algorithm
+    #> Algorithm for: individual tree detection 
+    #> Designed to be used with: find_trees 
+    #> Native C++ parallelization: yes 
+    #> Parameters: 
+    #>  - circ = TRUE <logical>
+    #>  - hmin = 2 <numeric>
+    #>  - shape = circular <character>
+    #>  - ws = 2 <numeric>
+    ```
+
 #### FIXES
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.

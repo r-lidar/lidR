@@ -4,7 +4,7 @@
 \alias{normalize_elevation}
 \alias{unnormalize_elevation}
 \alias{-,LAS,RasterLayer-method}
-\alias{-,LAS,function-method}
+\alias{-,LAS,lidRAlgorithm-method}
 \title{Remove the topography from a point cloud}
 \usage{
 normalize_elevation(
@@ -21,7 +21,7 @@ unnormalize_elevation(las)
 
 \S4method{-}{LAS,RasterLayer}(e1, e2)
 
-\S4method{-}{LAS,`function`}(e1, e2)
+\S4method{-}{LAS,lidRAlgorithm}(e1, e2)
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}

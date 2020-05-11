@@ -96,7 +96,7 @@ is.indexed = function(catalog)
 #' @export
 is.algorithm = function(x)
 {
-  return(is(x, "lidR") && is(x, "Algorithm"))
+  return(is(x, LIDRALGORITHM))
 }
 
 #' @rdname is
@@ -106,5 +106,5 @@ is.parallelised = function(algorithm)
   if (!is.algorithm(algorithm))
     stop("This function only applies to algorithms from the lidR package")
 
-  return(is(algorithm, "OpenMP"))
+  return(is(algorithm, LIDRALGORITHMOPENMP))
 }

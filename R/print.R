@@ -27,10 +27,8 @@
 
 #' Summary and Print for \code{LAS*} objects
 #'
-#' @param object,x A \code{LAS*} object
+#' @param object,x A \code{LAS*} object or other lidR related objects.
 #' @param ... Unused
-#'
-#' @return NULL, used for its side-effect of printing information
 setGeneric("print", function(x, ...)
   standardGeneric("print"))
 
@@ -303,3 +301,67 @@ setMethod("show", "LAScluster", function(object)
 
   return(invisible(object))
 })
+
+
+#' @export
+#' @method print lidRAlgorithm
+#' @rdname print
+print.lidRAlgorithm = function(x, ...)
+{
+  e <- environment(x)
+  params <- ls(e)
+  params <- Filter(function(i) !is.algorithm(get(i,e)), params)
+  omp <- if (is.parallelised(x)) "yes" else "no"
+
+  if (is(x, LIDRDSM))
+  { use = "digital surface model" ; with = LIDRCONTEXTDSM }
+  else if (is (x, LIDRDEC))
+  { use = "point cloud thinning" ; with = LIDRCONTEXTDEC }
+  else if (is (x, LIDRGND))
+  { use = "ground classification" ; with = LIDRCONTEXTGND }
+  else if (is (x, LIDRITD))
+  { use = "individual tree detection" ; with = LIDRCONTEXTITD }
+  else if (is (x, LIDRITS))
+  { use = "individual tree segmentation" ; with = LIDRCONTEXTITS }
+  else if (is (x, LIDRNIT))
+  { use = "intensity normalisation" ; with = LIDRCONTEXTNIT }
+  else if (is (x, LIDRSNG))
+  { use = "snag segmentation" ; with = LIDRCONTEXTSNG }
+  else if (is (x, LIDRTRK))
+  { use = "sensor tracking" ; with = LIDRCONTEXTTRK }
+  else if (is (x, LIDRSHP))
+  { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
+  else if (is (x, LIDRSPI))
+  {  use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
+  else
+  { use = "unknown" ; with = "unknown" }
+
+  with = paste(with, collapse = " or ")
+
+  cat("Object of class lidR algorithm\n")
+  cat("Algorithm for:", use, "\n")
+  cat("Designed to be used with:", with, "\n")
+  cat("Native C++ parallelization:", omp, "\n")
+  cat("Parameters: ")
+
+  if (length(params) == 0L)
+  {
+    cat("none\n")
+    return(invisible(x))
+  }
+  else
+    cat("\n")
+
+  for (param in params)
+  {
+    v = get(param, e)
+    if (is.numeric(v) | is.complex(v) | is.logical(v) | is.character(v))
+      cat(" - ", param, " = " , v, " <", class(v), ">\n", sep = "")
+    else if (is.null(v))
+      cat(" - ", param, " = NULL <NULL>\n", sep = "")
+    else
+      cat(" - ", param, " <", class(v), ">\n", sep = "")
+  }
+
+  return(invisible(x))
+}

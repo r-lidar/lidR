@@ -251,9 +251,11 @@ setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
   return(normalize_elevation(e1,e2))
 })
 
+setOldClass("lidRAlgorithm")
+
 #' @export
 #' @rdname normalize_elevation
-setMethod("-", c("LAS", "function"), function(e1, e2)
+  setMethod("-", c("LAS", "lidRAlgorithm"), function(e1, e2)
 {
   return(normalize_elevation(e1,e2))
 })

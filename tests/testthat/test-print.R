@@ -57,3 +57,19 @@ test_that("print works with LAScluster", {
   sink(NULL)
 })
 
+test_that("print works with lidR algorithms ", {
+
+  f <- lmf(2)
+  g <- shp_plane()
+  h <- li2012()
+  k <- tin()
+
+  sink(tempfile())
+  expect_error(print(f), NA)
+  expect_error(print(g), NA)
+  expect_error(print(h), NA)
+  expect_error(print(k), NA)
+  sink(NULL)
+
+})
+
