@@ -224,7 +224,7 @@ test_that("catalog_apply automerge works with on disk data.frame", {
   expect_true(all(tools::file_ext(req3) == "txt"))
 })
 
-test_that("catalog_apply automerge do not fails with heterogeneous outputs", {
+test_that("catalog_apply automerge does not fail with heterogeneous outputs", {
 
   test <- function(cluster) {
     if (raster::extent(cluster)@ymin > 80) return(list(0))
@@ -241,7 +241,7 @@ test_that("catalog_apply automerge do not fails with heterogeneous outputs", {
   expect_is(req[[3]], "list")
 })
 
-test_that("catalog_apply automerge do not fails with unsupported objects outputs", {
+test_that("catalog_apply automerge does not fail with unsupported objects outputs", {
 
   test <- function(cluster) {
     x = runif(5)
@@ -267,4 +267,22 @@ test_that("catalog_sapply is the same than apply with automerge", {
   expect_true(raster::inMemory(req1))
   expect_equal(names(req1), "layername1")
   expect_equal(req1, req2)
+})
+
+test_that("catalog_apply automerge disabled with opt_merge = FALSE", {
+
+    opt_merge(ctg) <- FALSE
+
+    # automerge option
+    option <- list(automerge = TRUE)
+    req1 <- catalog_apply(ctg, rtest, .options = option)
+
+    expect_true(is.list(req1))
+    expect_true(is(req1[[1]], "RasterLayer"))
+
+    opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+    req2 <- catalog_apply(ctg, rtest, .options = option)
+
+    expect_true(is.list(req2))
+    expect_true(is.character(req2[[1]]))
 })

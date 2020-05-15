@@ -16,10 +16,14 @@
 \alias{opt_stop_early<-}
 \alias{opt_wall_to_wall}
 \alias{opt_wall_to_wall<-}
+\alias{opt_independent_files}
+\alias{opt_independent_files<-}
 \alias{opt_output_files}
 \alias{opt_output_files<-}
 \alias{opt_laz_compression}
 \alias{opt_laz_compression<-}
+\alias{opt_merge}
+\alias{opt_merge<-}
 \alias{opt_select}
 \alias{opt_select<-}
 \alias{opt_filter}
@@ -54,6 +58,10 @@ opt_wall_to_wall(ctg)
 
 opt_wall_to_wall(ctg) <- value
 
+opt_independent_files(ctg)
+
+opt_independent_files(ctg) <- value
+
 opt_output_files(ctg)
 
 opt_output_files(ctg) <- value
@@ -61,6 +69,10 @@ opt_output_files(ctg) <- value
 opt_laz_compression(ctg)
 
 opt_laz_compression(ctg) <- value
+
+opt_merge(ctg)
+
+opt_merge(ctg) <- value
 
 opt_select(ctg)
 

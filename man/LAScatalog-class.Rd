@@ -113,6 +113,7 @@ allowed templates is described in the documentation for each function. See \link
 \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
 Spatial*, LAS objects. It is recommended that only advanced users change this option. A dedicated
 page describes the drivers in \link{lidR-LAScatalog-drivers}.
+\iten \strong{merge}: boolean. Multiple objects are merged into a single one at the end of the processing.
 }
 }
 

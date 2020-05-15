@@ -125,6 +125,7 @@
 #' \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
 #' Spatial*, LAS objects. It is recommended that only advanced users change this option. A dedicated
 #' page describes the drivers in \link{lidR-LAScatalog-drivers}.
+#' \iten \strong{merge}: boolean. Multiple objects are merged into a single one at the end of the processing.
 #' }
 #'
 #' @section Input options:
@@ -260,7 +261,8 @@ setMethod("initialize", "LAScatalog", function(.Object)
 
   .Object@output_options <- list(
     output_files = "",
-    drivers = drivers
+    drivers = drivers,
+    merge = TRUE
   )
 
   .Object@input_options <- list(

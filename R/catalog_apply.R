@@ -282,10 +282,12 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   output <- cluster_apply(clusters, FUN, pop, oop, glo, rea, ...)
 
   # Filter NULLs and return
-  if (isTRUE(dnu)) output <- Filter(Negate(is.null), output)
+  if (isTRUE(dnu))
+    output <- Filter(Negate(is.null), output)
 
   # Automerge
-  if (!isFALSE(mer)) output <- catalog_merge_results(ctg, output, mer, as.character(substitute(FUN)))
+  if (!isFALSE(mer) && opt_merge(ctg))
+    output <- catalog_merge_results(ctg, output, mer, as.character(substitute(FUN)))
 
   return(output)
 }

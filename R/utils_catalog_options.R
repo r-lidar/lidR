@@ -189,6 +189,36 @@ opt_wall_to_wall = function(ctg)
   return(ctg)
 }
 
+#' @rdname catalog_options_tools
+#' @export
+opt_independent_files = function(ctg)
+{
+  return(!opt_wall_to_wall(ctg) & opt_chunk_buffer(ctg) == 0 & opt_chunk_size(ctg) == 0 & !opt_merge(ctg))
+}
+
+#' @rdname catalog_options_tools
+#' @export
+`opt_independent_files<-` = function(ctg, value)
+{
+  assert_is_a_bool(value)
+
+  if (isTRUE(value))
+  {
+    opt_wall_to_wall(ctg) <- FALSE
+    opt_chunk_buffer(ctg) <- 0
+    opt_chunk_size(ctg) <- 0
+    opt_merge(ctg) <- FALSE
+  }
+  else
+  {
+    opt_wall_to_wall(ctg) <- TRUE
+    opt_chunk_buffer(ctg) <- 30
+    opt_chunk_size(ctg) <- 0
+    opt_merge(ctg) <- TRUE
+  }
+
+  return(ctg)
+}
 
 # =========   Output Options   ===============
 
@@ -241,6 +271,25 @@ opt_laz_compression = function(ctg)
   return(ctg)
 }
 
+#' @rdname catalog_options_tools
+#' @export
+opt_merge = function(ctg)
+{
+  if (is.null(ctg@output_options$merge))
+    return(TRUE)
+
+  return(ctg@output_options$merge)
+}
+
+#' @rdname catalog_options_tools
+#' @export
+`opt_merge<-` = function(ctg, value)
+{
+  assert_is_a_bool(value)
+  ctg@output_options$merge <- value
+  return(ctg)
+}
+
 # =========   Input Options    ===============
 
 #' @rdname catalog_options_tools
@@ -274,6 +323,7 @@ opt_filter = function(ctg)
   ctg@input_options$filter <- value
   return(ctg)
 }
+
 
 # ========= Unexported ===============
 
