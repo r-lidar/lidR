@@ -17,12 +17,12 @@ test_that("opt_independent_files set adequate option for plot inventories", {
   expect_equal(opt_chunk_buffer(rois), 0)
   expect_equal(opt_chunk_size(rois), 0)
   expect_equal(opt_wall_to_wall(rois), FALSE)
-  expect_equal(opt_merge(rois), FALSE)
   expect_equal(opt_independent_files(rois), TRUE)
 })
 
 test_that("opt_independent_files built several DTMs without error", {
   opt_independent_files(rois) <- TRUE
+  opt_merge(rois) <- FALSE
   opt_output_files(rois) <- ""
 
   dtms = grid_terrain(rois, 1, tin())

@@ -43,7 +43,7 @@ writeANY = function(x, path, drivers)
   else if (inherits(x, "data.frame"))
     driver <- drivers$DataFrame
   else if (is(x, "lidr_internal_skip_write"))
-    return(0)
+    return(x)
   else
     stop(glue::glue("Trying to write an object of class {class(x)} but this type is not supported."))
 

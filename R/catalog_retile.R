@@ -106,13 +106,12 @@ catalog_retile = function(ctg)
   reshape_func = function(cluster)
   {
     streamLAS(cluster, cluster@save)
-    ret <- structure(0, class = "lidr_internal_skip_write")
+    ret <- structure(cluster@save, class = "lidr_internal_skip_write")
     return(ret)
   }
 
   opt_wall_to_wall(ctg) <- FALSE
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
-  catalog_apply(ctg, reshape_func, .options = options)
-  return(suppressWarnings(suppressMessages(readLAScatalog(path))))
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
+  return(catalog_apply(ctg, reshape_func, .options = options))
 }

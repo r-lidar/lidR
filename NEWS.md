@@ -160,6 +160,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 1. In `delineate_crowns()` formerly named `tree_hull()` when applied to a `LAScatalog` the buffer was unproperly removed. The polygons were simply clipped using the bounding box of the chunk. Now the trees that have an apex in the buffer are removed and the trees that have an apex outside the buffer are maintained. Thus when merging everything is fine and continuous.
 
+2. `catalog_retile()` returns a `LAScatalog` with only the newly created files even if the folder contains other las files. It formerly read every las file in the folder leading to invalid catalog if the folder already contained las files.
+
 ## lidR v2.2.5 (Release date: 2020-05-07)
 
 #### ENHANCEMENTS
