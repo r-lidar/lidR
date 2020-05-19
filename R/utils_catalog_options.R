@@ -193,7 +193,7 @@ opt_wall_to_wall = function(ctg)
 #' @export
 opt_independent_files = function(ctg)
 {
-  return(!opt_wall_to_wall(ctg) & opt_chunk_buffer(ctg) == 0 & opt_chunk_size(ctg) == 0 & !opt_merge(ctg))
+  return(!opt_wall_to_wall(ctg) & opt_chunk_buffer(ctg) == 0 & opt_chunk_size(ctg) == 0)
 }
 
 #' @rdname catalog_options_tools
@@ -207,14 +207,12 @@ opt_independent_files = function(ctg)
     opt_wall_to_wall(ctg) <- FALSE
     opt_chunk_buffer(ctg) <- 0
     opt_chunk_size(ctg) <- 0
-    opt_merge(ctg) <- FALSE
   }
   else
   {
     opt_wall_to_wall(ctg) <- TRUE
     opt_chunk_buffer(ctg) <- 30
     opt_chunk_size(ctg) <- 0
-    opt_merge(ctg) <- TRUE
   }
 
   return(ctg)

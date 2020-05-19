@@ -113,7 +113,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 16. `LAScatalog` processing engine
     - gains a generic option `opt_merge(ctg) <- FALSE` to disable final merging and force the engine to return a list
-    - gains a generic option `opt_independent_files(ctg) <- TRUE` to set adequate options to a collection of independent files for example a set of circular ground inventory. It is equivalent to set no buffer, processing by file, no final merging and no wall to wall guarantee.
+    - gains a generic option `opt_independent_files(ctg) <- TRUE` to set adequate options to a collection of independent files for example a set of circular ground inventory. It is equivalent to set no buffer, processing by file and no wall-to-wall guarantee.
     - gains an option `autoread = TRUE` in `catalog_apply()`. Not actually intended to be used widely but might be convenient for some use cases.
 
 17. New function `get_range()`.
