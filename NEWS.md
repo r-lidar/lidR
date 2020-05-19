@@ -124,6 +124,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
     - now have two available algorithms.
     - supports systems with multiple pulses emission which formerly failed
 
+20. `writeLAS()` gains a parameter `index = TRUE` to automatically write a lax file along with the las/laz file.
+
 #### ENHANCEMENT
 
 1. `readLAS()` now warns when reading incompatible files. Point coordinates are recomputed on-the-fly as it has always been done but now the user is aware of potential trouble or precision loss.

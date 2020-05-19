@@ -4,12 +4,14 @@
 \alias{writeLAS}
 \title{Write a .las or .laz file}
 \usage{
-writeLAS(las, file)
+writeLAS(las, file, index = FALSE)
 }
 \arguments{
 \item{las}{an object of class LAS.}
 
 \item{file}{character. A character string naming an output file.}
+
+\item{index}{boolean. Also write a lax file to index the points in the files}
 }
 \value{
 Nothing. This function is used for its side-effect of writing a file.
