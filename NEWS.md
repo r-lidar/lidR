@@ -164,6 +164,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 2. `catalog_retile()` returns a `LAScatalog` with only the newly created files even if the folder contains other las files. It formerly read every las file in the folder leading to invalid catalog if the folder already contained las files.
 
+3. The template `YCENTER` was not actually existing an `XCENTER` was actually the Y center. It was working for `lasclip()` thank to a previous fixe but was still invalid in other functions when processing chunks.
+
 ## lidR v2.2.5 (Release date: 2020-05-07)
 
 #### ENHANCEMENTS
