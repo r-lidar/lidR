@@ -53,7 +53,7 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 4. `delineate_crowns()` (formerly named `tree_hulls()`) now returns 3 metrics `XTOP`, `YTOP` and `ZTOP` containing the coordinates of the apices of the trees.
 
-5. `segment_trees()` (formerly named `lastrees()`) can now performs the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
+5. `segment_trees()` (formerly named `lastrees()`) and `find_trees()` (formerly `tree_dectection()`) can now perform the computation on a `LAScatalog` using two strategies to ensure that tree IDs are always unique on a coverage and that trees that belong on the edge of two tiles will get independently the same IDs.
 
 6. `point_metrics()` 
     - supports a knn neighborhood search with missing `r` and given `k`

@@ -32,9 +32,12 @@
 #'
 #' @param las An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer}
 #' representing a canopy height model, in which case it is processed like a regularly-spaced point cloud.
-#'
 #' @param algorithm An algorithm for individual tree detection. lidR has: \link{lmf} and \link{manual}.
 #' More experimental algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
+#' @param uniqueness character. A method to compute a unique ID. Can be 'incremental', 'gpstime' or
+#' 'bitmerge'. See section 'Uniqueness'. This feature must be considered as 'experimental'.
+#'
+#' @template section-uniqueness
 #'
 #' @template section-supported-option-tree_detection
 #'
@@ -51,16 +54,24 @@
 #'
 #' x = plot(las)
 #' add_treetops3d(x, ttops)
-find_trees = function(las, algorithm)
+find_trees = function(las, algorithm, uniqueness = 'incremental')
 {
   UseMethod("find_trees", las)
 }
 
 #' @export
-find_trees.LAS = function(las, algorithm)
+find_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_itd(algorithm)
+  match.arg(uniqueness, c('incremental', 'gpstime', 'bitmerge'))
+
+  if (uniqueness == 'gpstime' && !"gpstime" %in% names(las@data))
+    stop("Impossible to compute unique IDs using gpstime: no gpstime found.", call. = FALSE)
+
+  if (uniqueness == 'gpstime' &&  fast_countequal(las@data[["gpstime"]], 0L) == npoints(las))
+    stop("Impossible to compute unique IDs using gpstime: gpstime is not populated.", call. = FALSE)
+
   lidR.context <- "find_trees"
   res <- algorithm(las)
 
@@ -71,14 +82,42 @@ find_trees.LAS = function(las, algorithm)
   {
     maxima <- las@data[res, c("X", "Y", "Z")]
 
-    if (nrow(maxima) == 0) {
+    if (nrow(maxima) == 0)
+    {
       coords <- matrix(0, ncol = 2)
       data   <- data.frame(treeID = integer(1), Z = numeric(1))
       output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
       output <- output[0,]
-    } else {
+    }
+    else
+    {
       coords <- cbind(maxima[["X"]], maxima[["Y"]])
-      data   <- data.frame(treeID = 1:nrow(maxima), Z = maxima[["Z"]])
+
+      if (uniqueness == "incremental")
+      {
+        ids <- 1:nrow(maxima)
+      }
+      else if (uniqueness == "gpstime")
+      {
+        ids <- las@data[["gpstime"]][res]
+      }
+      else
+      {
+        xoffset <- las@header@PHB[["X offset"]]
+        yoffset <- las@header@PHB[["Y offset"]]
+        zoffset <- las@header@PHB[["Z offset"]]
+
+        xscale  <- las@header@PHB[["X scale factor"]]
+        yscale  <- las@header@PHB[["Y scale factor"]]
+        zscale  <- las@header@PHB[["Z scale factor"]]
+
+        xscaled <- as.integer((maxima[["X"]] - xoffset)/xscale)
+        yscaled <- as.integer((maxima[["Y"]] - yoffset)/yscale)
+
+        ids <- xscaled * 2^32 + yscaled
+      }
+
+      data   <- data.frame(treeID = ids, Z = maxima[["Z"]])
       output <- sp::SpatialPointsDataFrame(coords, data, proj4string = las@proj4string)
     }
 
@@ -90,7 +129,7 @@ find_trees.LAS = function(las, algorithm)
 }
 
 #' @export
-find_trees.RasterLayer = function(las, algorithm)
+find_trees.RasterLayer = function(las, algorithm, uniqueness = 'incremental')
 {
   data <- raster::as.data.frame(las, xy = TRUE, na.rm = TRUE)
   names(data) <- c("X", "Y", "Z")
@@ -100,22 +139,26 @@ find_trees.RasterLayer = function(las, algorithm)
 }
 
 #' @export
-find_trees.LAScluster = function(las, algorithm)
+find_trees.LAScluster = function(las, algorithm, uniqueness = 'incremental')
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
-  ttops <- find_trees(x, algorithm)
+  ttops <- find_trees(x, algorithm, uniqueness)
   bbox  <- raster::extent(las)
   ttops <- raster::crop(ttops, bbox)
   return(ttops)
 }
 
 #' @export
-find_trees.LAScatalog = function(las, algorithm)
+find_trees.LAScatalog = function(las, algorithm, uniqueness = 'incremental')
 {
-  opt_select(las) <- "xyz"
+  if (uniqueness == "gpstime")
+    opt_select(las) <- "xyzt"
+  else
+    opt_select(las) <- "xyz"
+
   options <- list(need_buffer = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, find_trees, algorithm = algorithm, .options = options)
+  output  <- catalog_apply(las, find_trees, algorithm = algorithm, uniqueness = uniqueness, .options = options)
   return(output)
 }
 
