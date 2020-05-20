@@ -147,10 +147,6 @@ setMethod("show", "LAScatalog", function(object)
     npoints.h   <- round(npoints/(1000^3), 2)
   }
 
-  inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
-  w2w  <- if (opt_wall_to_wall(object)) "guaranteed" else "not guaranteed"
-  merging <- if (opt_merge(object)) "enabled" else "disable"
-
   cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
   cat("extent      : ", ext@xmin, ", ", ext@xmax, ", ", ext@ymin, ", ", ext@ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
   cat("coord. ref. :", object@proj4string@projargs, "\n")
@@ -158,21 +154,42 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
-  cat("\u2014\u2014\u2014 Processing options \u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\n")
-  cat("proc. opt.  : buffer: ", opt_chunk_buffer(object), " | chunk: ", opt_chunk_size(object), "\n", sep = "")
-  cat("input opt.  : select: ", opt_select(object), " | filter: ", opt_filter(object), "\n", sep = "")
-  cat("output opt. : ", inmemory, " | w2w ", w2w, " | merging ", merging, "\n", sep = "")
-
   return(invisible(object))
 })
 
 #' @rdname print
 setMethod("summary", "LAScatalog", function(object, ...)
 {
+  inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
+  w2w  <- if (opt_wall_to_wall(object)) "guaranteed" else "not guaranteed"
+  merging <- if (opt_merge(object)) "enabled" else "disable"
+
   show(object)
-  byfile <- opt_chunk_is_file(object)
-  save   <- opt_output_files(object) != ""
-  laz    <- opt_laz_compression(object)
+  cat("proc. opt.  : buffer: ", opt_chunk_buffer(object), " | chunk: ", opt_chunk_size(object), "\n", sep = "")
+  cat("input opt.  : select: ", opt_select(object), " | filter: ", opt_filter(object), "\n", sep = "")
+  cat("output opt. : ", inmemory, " | w2w ", w2w, " | merging ", merging, "\n", sep = "")
+  cat("drivers     :\n")
+
+  drivers <- object@output_options$drivers
+  dnames <- names(drivers)
+  for (i in 1:length(drivers))
+  {
+    driver <- drivers[[i]]
+    params <- driver$param
+    pnames <- names(params)
+    cat(" -", dnames[i], ": ")
+    if (length(params) > 0)
+    {
+      for (j in 1:length(params))
+        cat(pnames[j], "=", params[[j]], " ")
+    }
+    else
+    {
+      cat("no parameter")
+    }
+    cat("\n")
+
+  }
   return(invisible(object))
 })
 

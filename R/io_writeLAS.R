@@ -60,7 +60,7 @@ writeLAS = function(las, file, index = FALSE)
 
   rlas::write.las(file, as.list(las@header), las@data)
 
-  if (index) rlas:::writelax(file)
+  if (index) rlas::writelax(file)
 
   return(invisible(file))
 }
