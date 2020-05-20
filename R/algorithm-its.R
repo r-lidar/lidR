@@ -109,13 +109,27 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   max_cr   <- lazyeval::uq(max_cr)
   ID       <- lazyeval::uq(ID)
 
-  f = function()
+  f = function(extent)
   {
     assert_is_valid_context(LIDRCONTEXTITS, "dalponte2016", null_allowed = TRUE)
 
+    if (!missing(extent))
+    {
+      assert_is_all_of(extent, "Extent")
+      chm <- raster::crop(chm, extent)
+      treetops <- raster::crop(treetops, extent)
+
+      if (is.null(treetops))
+      {
+        crown <- chm
+        suppressWarnings(crown[] <- NA)
+        return(crown)
+      }
+    }
+
     X     <- match_chm_and_seeds(chm, treetops, ID)
     cells <- X$cells
-    ids   <- X$ids
+    ids   <- 1:length(X$ids)
 
     rtreetops   <- raster::raster(chm)
     rtreetops[] <- 0L
@@ -129,9 +143,10 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     Maxima <- t(apply(Maxima, 2, rev))
 
     Crowns <- C_dalponte2016(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
+
     Maxima[Maxima == 0L] <- NA_integer_
     Crowns[Crowns == 0L] <- NA_integer_
-
+    suppressWarnings(Crowns[] <- X$ids[Crowns[]])
     Crowns <- raster::raster(apply(Crowns,1,rev))
     raster::extent(Crowns) <- raster::extent(chm)
 
@@ -301,15 +316,29 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   exclusion      <- lazyeval::uq(exclusion)
   ID             <- lazyeval::uq(ID)
 
-  f = function()
+  f = function(extent)
   {
     assert_is_valid_context(LIDRCONTEXTITS, "silva2016", null_allowed = TRUE)
 
     . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
+    if (!missing(extent))
+    {
+      assert_is_all_of(extent, "Extent")
+      chm <- raster::crop(chm, extent)
+      treetops <- raster::crop(treetops, extent)
+
+      if (is.null(treetops))
+      {
+        crown <- chm
+        suppressWarnings(crown[] <- NA)
+        return(crown)
+      }
+    }
+
     X     <- match_chm_and_seeds(chm, treetops, ID)
     cells <- X$cells
-    ids   <- X$ids
+    ids   <- 1:length(X$ids)
 
     chmdt <- data.table::setDT(raster::as.data.frame(chm, xy = TRUE, na.rm = T))
     data.table::setnames(chmdt, names(chmdt), c("X", "Y", "Z"))
@@ -327,7 +356,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     suppressWarnings(crown[] <- NA_integer_)
     cells   <- raster::cellFromXY(crown, chmdt[, .(X,Y)])
     suppressWarnings(crown[cells] <- chmdt[["id"]])
-
+    suppressWarnings(crown[] <- X$ids[crown[]])
     return(crown)
   }
 
@@ -420,7 +449,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
   assert_is_a_number(tol)
   assert_is_a_number(ext)
 
-  f = function()
+  f = function(extent)
   {
     assert_is_valid_context(LIDRCONTEXTITS, "watershed", null_allowed = TRUE)
 
@@ -435,6 +464,12 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     #  if (!requireNamespace("imager", quietly = TRUE))
     #    stop("'imager' package is needed for this function to work. Please read documentation.", call. = FALSE)
     #}
+
+    if (!missing(extent))
+    {
+      assert_is_all_of(extent, "Extent")
+      chm <- raster::crop(chm, extent)
+    }
 
     # Convert the CHM to a matrix
     Canopy <- raster::as.matrix(chm)

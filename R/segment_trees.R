@@ -51,7 +51,7 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
     stop("Impossible to compute unique IDs using gpstime: gpstime is not populated.", call. = FALSE)
 
   if (is(algorithm, "RasterBased"))
-    output <- algorithm()
+    output <- algorithm(extent(las))
   else if (is(algorithm, "PointCloudBased"))
     output <- algorithm(las)
   else
@@ -133,7 +133,7 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
 segment_trees.LAScluster = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental')
 {
   buffer <- NULL
-  x <- suppressMessages(suppressWarnings(readLAS(las)))
+  x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   x <- segment_trees(x, algorithm, attribute, uniqueness)
   x <- filter_poi(x, buffer == 0)
@@ -146,9 +146,6 @@ segment_trees.LAScatalog = function(las, algorithm, attribute = "treeID", unique
   # Defensive programming
   assert_is_algorithm(algorithm)
   assert_is_algorithm_its(algorithm)
-
-  if (!uniqueness %in% c('gpstime', 'bitmerge'))
-    stop("When processing a LAScatalog 'uniqueness' must be a method that garantees unicity of the IDs.", call. = FALSE)
 
   # Enforce some options
   opt_select(las) <- "*"

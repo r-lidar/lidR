@@ -108,7 +108,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
 
         ns <- sum(resize_xmin | resize_ymin | resize_xmax | resize_ymax)
         nt <- length(resize_xmin)
-        message(glue::glue("The tiling pattern does not match with the resolution {res}. {ns}/{nt} chunks were extended to avoid partial pixels."))
+        #message(glue::glue("The tiling pattern does not match with the resolution {res}. {ns}/{nt} chunks were extended to avoid partial pixels."))
         realigned <- TRUE
       }
     }
