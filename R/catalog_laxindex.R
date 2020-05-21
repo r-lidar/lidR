@@ -15,6 +15,6 @@ catalog_laxindex = function(ctg)
 
   options <- list(need_buffer = FALSE, drop_null = FALSE)
 
-  catalog_apply(ctg, create_lax_file,.options = options())
+  catalog_apply(ctg, create_lax_file,.options = options)
   return(invisible())
 }
