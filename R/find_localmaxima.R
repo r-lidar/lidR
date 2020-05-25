@@ -2,20 +2,20 @@
 #'
 #' Generic local maximum filter. For individual tree detection use \link{find_trees} with the
 #' \link{lmf} algorithm that is more adequate for ITD. This function is a more generic method for
-#' multiple purpose other than tree segmentation. This function is natively parallelized with OpenMP
+#' multiple purposes other than tree segmentation. This function is natively parallelized with OpenMP.
 #'
 #' @param las An object of class LAS
 #' @param w numeric. Window shape. 1 number for the diameter of a disc, 2 numbers for a rectangle
 #' (width, height), 3 numbers for an oriented rectangle (width, height, angle). The angle must be
-#' in radian.
+#' in radians.
 #' @param filter formula. Memory efficient way to work only with a subset of the data without creating a copy
 #' of the data.
-#' @return \code{SpatialPointsDataFrame} with attribute from the corresponding point in the LAS object,
+#' @return \code{SpatialPointsDataFrame} with attributes from the corresponding point in the LAS object,
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzi", filter = "-drop_z_below 0")
 #'
-#' # Using a 20x5 rectangle with a 45 degrees angle, This won't find the tree properly in general case
+#' # Using a 20x5 rectangle with a 45 degrees angle, This won't find the tree properly in the general case
 #' # but may find some oriented structure.
 #' lm = find_localmaxima(las, c(20, 5, pi/4))
 #' @export

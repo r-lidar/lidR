@@ -28,16 +28,16 @@
 #' Subdivide a LAScatalog into chunks
 #'
 #' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
-#' users in version 3.0.0 because it might be useful for some debugging. I might also be useful for
+#' users in version 3.0.0 because it might be useful for some debugging purposes. It might also be useful for
 #' some advanced developers. Regular users are not expected to use this function. The chunks are made
 #' according to the \link[lidR:catalog_options_tools]{catalog processing options}.
 #'
-#' @param ctg a object of class \code{LAScatalog}
-#' @param realignment \code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometime the chunk must
-#' be aligned with a raster for example to ensure the continuity of the output. If the chunk size is
-#' 800 and the expected product is a raster with a resolution of 35, 800 and 35 are not compatibles
-#' and will create 2 different partial pixels on this edges. The realignment option force the
-#' chunk to fits the grid aligment.
+#' @param ctg an object of class \code{LAScatalog}
+#' @param realignment \code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometimes the chunk must
+#' be aligned with a raster, for example to ensure the continuity of the output. If the chunk size is
+#' 800 and the expected product is a raster with a resolution of 35, 800 and 35 are not compatible
+#' and will create 2 different partial pixels on the edges. The realignment option forces the
+#' chunk to fit the grid aligment.
 #' @param plot logical. Displays the chunk pattern.
 #'
 #' @return A list containing objects of class \code{LAScluster}.
@@ -50,7 +50,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   # Bounding box of the catalog
   xmin <- ymin <- xmax <- ymax <- 0
 
-  # Put some options in short named variables
+  # Put some options in variables with short names
   buffer <- opt_chunk_buffer(ctg)
   by_file <- opt_chunk_is_file(ctg)
   chunk_alignment <- opt_chunk_alignment(ctg)
@@ -58,7 +58,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   realign <- !isFALSE(realignment) && opt_wall_to_wall(ctg)
   realigned <- FALSE
 
-  # New feature from v2.2.0 to do not process some tiles
+  # New feature from v2.2.0 to not process some tiles
   processed <- ctg@data$processed
   if (is.null(processed)) processed <- rep(TRUE, nrow(ctg@data))
   if (!is.logical(processed)) stop("The attribute 'processed' of the catalog is not logical.", call. = FALSE)
@@ -73,7 +73,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
     ymin <- ctg@data[["Min.Y"]]
     ymax <- ctg@data[["Max.Y"]]
 
-    # Remove the files that a flagged for buffer only but no actual processing
+    # Remove the files that are flagged for buffer only but no actual processing
     xmin <- xmin[processed]
     xmax <- xmax[processed]
     ymin <- ymin[processed]
@@ -81,8 +81,8 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
 
     # Realignment happens when the chunks need a specific alignment (e.g. with a raster)
     # If a raster has a resolution of 16 m and the files are 1000 x 1000 meters
-    # the file pattern implies the edge pixels will be split in two equal part. A size of 1000 is
-    # thus not valid and must be increased to 1008 to fit with the grid.
+    # the file pattern implies the edge pixels will be split into two equal parts. A size of 1000 is
+    # thus not valid and must be resized to 1008 to fit with the grid.
     if (realign)
     {
       res <- realignment$res
@@ -108,7 +108,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
 
         ns <- sum(resize_xmin | resize_ymin | resize_xmax | resize_ymax)
         nt <- length(resize_xmin)
-        #message(glue::glue("The tiling pattern does not match with the resolution {res}. {ns}/{nt} chunks were extended to avoid partial pixels."))
+        # message(glue::glue("The tiling pattern does not match with the resolution {res}. {ns}/{nt} chunks were extended to avoid partial pixels."))
         realigned <- TRUE
       }
     }
@@ -117,8 +117,8 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   {
     # Realignment happens when the chunks need a specific alignment (e.g. with a raster)
     # If a raster has a resolution of 16 m and the chunk are 500 x 500 meters
-    # the chunk pattern implies the edge pixels will be split in two non equal part.
-    # A size of 500 is thus not valid an must be resized to 512 to fit with the grid.
+    # the chunk pattern implies the edge pixels will be split into two unequal parts.
+    # A size of 500 is thus not valid and must be resized to 512 to fit with the grid.
     if (realign)
     {
       res <- realignment$res
@@ -129,7 +129,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
 
       if (new_width != width)
       {
-        message(glue::glue("Chunk size does not match with the resolution the raster. Chunk size changed to {new_width} instead of {width} to ensure the continuity of the output."))
+        message(glue::glue("Chunk size does not match with the resolution of the raster. Chunk size changed to {new_width} instead of {width} to ensure continuity of the output."))
         width <- new_width
         realigned <- TRUE
       }
@@ -138,7 +138,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
       new_chunk_alignment <- abs((chunk_alignment - start)) %% res + chunk_alignment
       if (any(new_chunk_alignment != chunk_alignment))
       {
-        message(glue::glue("Alignment of the chunks does not match with the starting points of the raster. Alignment changed to ({new_chunk_alignment[1]}, {new_chunk_alignment[2]}) to ensure the continuity of the output."))
+        message(glue::glue("Alignment of the chunks does not match with the starting points of the raster. Alignment changed to ({new_chunk_alignment[1]}, {new_chunk_alignment[2]}) to ensure continuity of the output."))
         chunk_alignment <- new_chunk_alignment
         realigned <- TRUE
       }
@@ -205,7 +205,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
     })
   }
 
-  # Record the path where to write the raster if requested
+  # Record the path indicating where to write the raster if requested
   if (opt_output_files(ctg) != "")
   {
     clusters <- lapply(seq_along(clusters), function(i)
@@ -231,7 +231,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
       n         <- length(filepath)
 
       if (n > 1)
-        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each chunk"), call. = FALSE)
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generated for each chunk"), call. = FALSE)
 
       clusters[[i]]@save <- filepath
       return(clusters[[i]])

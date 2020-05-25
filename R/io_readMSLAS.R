@@ -1,10 +1,10 @@
 #' Read multispectral .las or .laz files
 #'
-#' Multispectral laser data are often stored in 3 differents files. If it is the case this function
-#' reads the .las or .laz files of each channel and merge them into an object of class
+#' Multispectral laser data are often stored in 3 differents files. If this is the case this function
+#' reads the .las or .laz files of each channel and merges them into an object of class
 #' \link[lidR:LAS-class]{LAS} and takes care of attributing an ID to each channel. If the
-#' multisprectral point-cloud is already stored in a single file, use \link{readLAS}. This function
-#' is somehow experimental and its names could change.
+#' multisprectral point cloud is already stored in a single file, use \link{readLAS}. This function
+#' is somewhat experimental and its names could change.
 #'
 #' @param files1,files2,files3 characters. Path(s) to one or several a file(s). Each argument being
 #' one channel.

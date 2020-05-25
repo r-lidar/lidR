@@ -10,7 +10,7 @@
 #' @section Test of data integrity:
 #' In theory, sensor tracking is a simple problem to solve as long as each pulse is properly
 #' identified from a well-populated dataset. In practice, many problems may arise from datasets that are populated
-#' incorrectly. Here is a list of problem that may happen. Those with a * denote problems already encountered and
+#' incorrectly. Here is a list of problems that may happen. Those with a * denote problems already encountered and
 #' internally checked to remove weird points:
 #' \itemize{
 #' \item 'gpstime' does not record the time at which pulses were emitted and thus pulses are not identifiable
@@ -31,15 +31,15 @@
 #' \link{Roussel2020} and  \link{Gatziolis2019} (see respective documentation and examples).
 #' @param extra_check boolean. Datasets are rarely perfectly populated, leading to unexpected errors.
 #' Time-consuming checks of data integrity are performed. These checks can be skipped as they account
-#' for an important proportion of the computation time. See also section 'Tests of data integrity'.
-#' @param thin_pulse_with_time numeric. In practice, it is useless to compute the position using all
+#' for an significant proportion of the computation time. See also section 'Tests of data integrity'.
+#' @param thin_pulse_with_time numeric. In practice, it is not useful to compute the position using all
 #' multiple returns. It is more computationally demanding but not necessarily more accurate. This keeps
 #' only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if the file has already
 #' been read with \code{filter = "-thin_pulses_with_time 0.001"}.
 #' @param multi_pulse logical. TRUE only for systems with multiple pulses. Pulse ID must be recorded
 #' in the UserData attribute.
 #' @return A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
-#' about the time interval and the score of the positionning (according the the method used) are also
+#' about the time interval and the score of the positioning (according the the method used) are also
 #' in the table of attributes.
 #'
 #' @author Jean-Francois Bourdon & Jean-Romain Roussel
@@ -50,7 +50,7 @@
 #' las = readLAS(LASfile)
 #' plot(las)
 #'
-#' # pmin = 15 because it is an extremely tiny file
+#' # pmin = 15 because it is an extremely small file
 #' # strongly decimated to reduce its size. There are
 #' # actually few multiple returns
 #' flightlines <- track_sensor(las, Roussel2020(pmin = 15))
@@ -132,7 +132,7 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
   data$pulseID <- .lagisdiff(data[["gpstime"]])
 
-  # Count the point per pulse. We kept only first and last so it should be always 2
+  # Count the points per pulse. We kept only first and last so it should be always 2
   count <- fast_table(data$pulseID,  max(data$pulseID))
 
   # If some pulses still have more than 2 points (#327)
@@ -140,7 +140,7 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
   if (more_than_2 > 0)
     stop(glue::glue("After keeping only first and last returns of multiple returns pulses, {more_than_2} pulses still have more than 2 points. This dataset is corrupted and gpstime is likely to be invalid."), call. = FALSE)
 
-  # Some edge point might not be paired. Removed them.
+  # Some edge points might not be paired. Removed them.
   ii    <- which(count == 1L)
   data  <- data[!pulseID %in% ii]
 
@@ -153,11 +153,11 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
     # Does this really happen? #327 should have made this line obsolete
     if (any(unpaired_pulse))
-      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE) # nocov
+      warning(glue::glue("{sum(unpaired_pulse)} pulses with multiple returns were not actually paired. The point cloud is likely to be incorrectly populated. These pulses were removed"), call. = FALSE) # nocov
 
     # This happens if two points share the same 'gpstime' but different 'PointSourceID'
     if (any(multiple_source))
-      warning(glue::glue("{sum(multiple_source)} pulses (points with same gpstime) come from different flightlines. The point cloud is likely to be wrongly populated. These pulses were removed"), call. = FALSE)
+      warning(glue::glue("{sum(multiple_source)} pulses (points with same gpstime) come from different flightlines. The point cloud is likely to be incorrectly populated. These pulses were removed"), call. = FALSE)
 
     ii    <- tests$pulseID[unpaired_pulse | multiple_source]
     data  <- data[!pulseID %in% ii]
@@ -182,7 +182,7 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
   P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)], proj4string = las@proj4string)
 
   if (sum(na) > 0)
-    warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be wrongly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)
+    warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be incorrectly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)
 
   return(P)
 }

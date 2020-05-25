@@ -30,7 +30,7 @@
 #' Clip points in regions of interest
 #'
 #' Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
-#' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
+#' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point cloud
 #' into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
 #' object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
 #' points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
@@ -43,8 +43,8 @@
 #' @param ytop numeric. top y coordinates of rectangles.
 #' @param xpoly numeric. x coordinates of a polygon.
 #' @param ypoly numeric. y coordinates of a polygon.
-#' @param xcenter numeric. x coordinates of discs centers.
-#' @param ycenter numeric. y coordinates of discs centers.
+#' @param xcenter numeric. x coordinates of disc centers.
+#' @param ycenter numeric. y coordinates of disc centers.
 #' @param radius numeric. disc radius or radii.
 #' @param ... in \code{clip_roi}: optional supplementary options (see supported geometries). Unused in
 #' other functions
@@ -52,7 +52,7 @@
 #' @section Supported geometries:
 #' \itemize{
 #'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
-#'  a MULTIPOLYGON. If points a parameter 'radius' must be passed in \code{...}
+#'  a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
 #'  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
 #'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
 #'  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
@@ -90,11 +90,10 @@
 #' \item \strong{filter}: Read only the points of interest.
 #' }
 #'
-#' @return If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
-#' implies several regions of interest will be returned.\cr\cr
-#' If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
-#' implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
-#' without loading anything in R.
+#' @return If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query implies several regions of interest will be returned.\cr\cr
+#' If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS}
+#' objects if the query implies several regions of interest will be returned, or a \code{LAScatalog} if the
+#' queries are immediately written into files without loading anything in R.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -332,7 +331,7 @@ clip_disc.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 
 #' @export
 #' @rdname clip
-#' @param p1,p2 numeric vectors of length 2 that give the coordinates of two points that define a
+#' @param p1,p2 numeric vectors of length 2 that gives the coordinates of two points that define a
 #' transect
 #' @param width numeric. width of the transect.
 #' @param xz bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates
@@ -538,7 +537,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
       n         <- length(filepath)
 
       if (n > 1)
-        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generate for each region of interest"), call. = FALSE)
+        stop(glue::glue("Ill-formed template string in the catalog: {n} filenames were generated for each region of interest"), call. = FALSE)
 
       clusters[[i]]@save <- filepath
     }

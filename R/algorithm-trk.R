@@ -66,8 +66,8 @@ Roussel2020 = function(interval = 0.5, pmin = 50)
 #' last returns.
 #'
 #' In the original paper, two steps are described: (1) closest point approach (CPA) and (2) cubic
-#' spline fitting. Technically, the cubic spline fitting step is a post processing step and is not
-#' included in this algorithm. Instead it is decoupled in an separate and standalone function so it
+#' spline fitting. Technically, the cubic spline fitting step is a post-processing step and is not
+#' included in this algorithm. Instead it is decoupled in a separate and standalone function so it
 #' can be used with other algorithms.\cr\cr
 #' The source code of the algorithm is a slight modification of the original source code provided
 #' with the paper to fit with the lidR package.

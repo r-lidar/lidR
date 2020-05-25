@@ -1,11 +1,11 @@
 #' Normalize intensity
 #'
-#' Normalize intensity value using multiple methods.
+#' Normalize intensity values using multiple methods.
 #'
 #' @template param-las
-#' @param algorithm an intensity normalizaton algorithm. \code{lidR} currently have \link{range_correction}.
+#' @param algorithm an intensity normalizaton algorithm. \code{lidR} currently has \link{range_correction}.
 #' @return Returns an object of class LAS. The attribute 'Intensity'
-#' records the normalised intensity. An extra attribute named 'RawIntensity' records the original
+#' records the normalized intensity. An extra attribute named 'RawIntensity' records the original
 #' intensities.
 #'
 #' @template LAScatalog
@@ -34,13 +34,13 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' # pmin = 15 because it is an extremely tiny file
+#' # pmin = 15 because it is an extremely small file
 #' # strongly decimated to reduce its size. There are
 #' # actually few multiple returns
 #' sensor <- track_sensor(las, Roussel2020(pmin = 15))
 #'
 #' # Here the effect is virtually null because the size of
-#' # the sample is too tiny to notice any effect of range
+#' # the sample is too small to notice any effect of range
 #' las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 #' @family normalize
 normalize_intensity <- function(las, algorithm)

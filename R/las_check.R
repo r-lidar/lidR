@@ -47,7 +47,7 @@
 #'
 #' @template param-las
 #' @param print logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
-#' the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
+#' the functions returns a \code{list} with two elements named 'warnings' and 'errors' containing a
 #' vector with the reported warnings and errors.
 #' @param ... Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
 #' all the files and performs a deep inspection.
@@ -579,7 +579,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 las_check.LAScluster = function(las, print = TRUE, ...)
 {
   f <- basename(las@files)
-  if (length(f) > 1) stop("Internal error: several files in the LAScluster. Please this issue")
+  if (length(f) > 1) stop("Internal error: several files in the LAScluster. Please report this issue")
 
   if (print)
   {

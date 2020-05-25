@@ -226,13 +226,13 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
         stop("Different files have different Point Data Format ID and are incompatible.", call. = FALSE)
 
       if (temp.header[["X scale factor"]] != header[["X scale factor"]] )
-        warning("Different files have different X scale factors and are incompatible. The first file has the precedence and data were rescaled.", call. = FALSE)
+        warning("Different files have different X scale factors and are incompatible. The first file has precedence and data were rescaled.", call. = FALSE)
 
       if (temp.header[["Y scale factor"]] != header[["Y scale factor"]] )
-        warning("Different files have different Y scale factors and are incompatible. The first file has the precedence and data were rescaled.", call. = FALSE)
+        warning("Different files have different Y scale factors and are incompatible. The first file has precedence and data were rescaled.", call. = FALSE)
 
       if (temp.header[["Z scale factor"]] != header[["Z scale factor"]] )
-        warning("Different files have different Z scale factors and are incompatible. The first file has the precedence and data were rescaled.", call. = FALSE)
+        warning("Different files have different Z scale factors and are incompatible. The first file has precedence and data were rescaled.", call. = FALSE)
 
       if (rlas::header_get_epsg(header) != rlas::header_get_epsg(temp.header))
         warning("Different files have diferent CRS and are incompatible. The CRS of the first file has been retained.", call. = FALSE)
