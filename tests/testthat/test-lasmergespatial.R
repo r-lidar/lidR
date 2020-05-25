@@ -113,8 +113,7 @@ test_that("lasmergespatial works with raster", {
 
 test_that("lasmergespatial works a RGB RasterBrick", {
 
-  layout = raster::raster(extent(lidar))
-  raster::res(layout) <- 5
+  layout = lidR:::rOverlay(lidar, 5)
   R = sample(0:(2^16-1), raster::ncell(layout))
   G = sample(0:(2^16-1), raster::ncell(layout))
   B = sample(0:(2^16-1), raster::ncell(layout))
