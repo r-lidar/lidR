@@ -66,8 +66,22 @@ test_that("readLAS LAScluster throw warning when select/filter is used", {
 
   expect_warning(readLAS(cls[[1]], select = "i"), "Argument 'select' is not used")
   expect_warning(readLAS(cls[[1]], filter = "-drop_z_below 0"), "Argument 'filter' is not used")
-  expect_warning(readLAS(ctg, select = "i"), "Argument 'select' is not used")
-  expect_warning(readLAS(ctg, filter = "-drop_z_below 0"), "Argument 'filter' is not used")
+})
+
+test_that("readLAS LAScatalog gives precedence to argument select and filter", {
+
+  opt_select(ctg) <- "xyz"
+  opt_filter(ctg) <- "-keep_class 2"
+
+  las = readLAS(ctg)
+
+  expect_equal(names(las@data), c("X", "Y", "Z"))
+  expect_equal(npoints(las), 3)
+
+  las = readLAS(ctg, select = "i",  filter = "-drop_z_below 975")
+
+  expect_equal(names(las@data), c("X", "Y", "Z", "Intensity"))
+  expect_equal(npoints(las), 19)
 })
 
 test_that("readMSLAS reads multispectral data", {
