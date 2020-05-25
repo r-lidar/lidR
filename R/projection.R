@@ -86,10 +86,10 @@ setGeneric("epsg", function(object, ...)
 setGeneric("epsg<-", function(object, value)
   standardGeneric("epsg<-"))
 
-#' @export
-#' @rdname projection
-setGeneric("wkt", function(object, ...)
-  standardGeneric("wkt"))
+# @export
+# @rdname projection
+#setGeneric("wkt", function(object, ...)
+#  standardGeneric("wkt"))
 
 #' @export
 #' @rdname projection
@@ -140,10 +140,11 @@ setMethod("epsg<-", "LASheader", function(object, value)
 })
 
 #' @export
+#' @importFrom sp wkt
 #' @rdname projection
-setMethod("wkt", "LASheader", function(object, ...)
+setMethod("wkt", "LASheader", function(obj)
 {
-  return(rlas::header_get_wktcs(as.list(object)))
+  return(rlas::header_get_wktcs(as.list(obj)))
 })
 
 #' @export
@@ -236,10 +237,11 @@ setMethod("epsg<-", "LAS", function(object, value)
 })
 
 #' @export
+#' @importFrom sp wkt
 #' @rdname projection
-setMethod("wkt", "LAS", function(object)
+setMethod("wkt", "LAS", function(obj)
 {
-  return(wkt(object@header))
+  return(wkt(obj@header))
 })
 
 #' @export

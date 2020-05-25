@@ -166,6 +166,8 @@ In attempt to do not break users scripts the version 3 is fully backward compati
 
 3. The template `YCENTER` was not actually existing an `XCENTER` was actually the Y center. It was working for `lasclip()` thank to a previous fixe but was still invalid in other functions when processing chunks.
 
+4. Function `wkt()` no longer masks the new function `wkt()` in `sp`.
+
 ## lidR v2.2.5 (Release date: 2020-05-07)
 
 #### ENHANCEMENTS

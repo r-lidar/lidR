@@ -4,7 +4,6 @@
 \alias{projection}
 \alias{epsg}
 \alias{epsg<-}
-\alias{wkt}
 \alias{wkt<-}
 \alias{projection,LASheader-method}
 \alias{crs,LASheader-method}
@@ -24,8 +23,6 @@ epsg(object, ...)
 
 epsg(object) <- value
 
-wkt(object, ...)
-
 wkt(object) <- value
 
 \S4method{projection}{LASheader}(x, asText = TRUE)
@@ -36,7 +33,7 @@ wkt(object) <- value
 
 \S4method{epsg}{LASheader}(object) <- value
 
-\S4method{wkt}{LASheader}(object, ...)
+\S4method{wkt}{LASheader}(obj)
 
 \S4method{wkt}{LASheader}(object) <- value
 
@@ -48,7 +45,7 @@ wkt(object) <- value
 
 \S4method{epsg}{LAS}(object) <- value
 
-\S4method{wkt}{LAS}(object)
+\S4method{wkt}{LAS}(obj)
 
 \S4method{wkt}{LAS}(object) <- value
 }

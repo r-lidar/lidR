@@ -139,6 +139,9 @@ merge_rgb = function(las, source)
   G <- as.integer(G[cells])
   B <- as.integer(B[cells])
 
+  if (anyNA(R) | anyNA(G) | anyNA(B))
+    stop("Some points were associated with an RGB color of NA. RGB cannot be NA in a LAS object. Colorization aborted.", call. = FALSE)
+
   return(add_lasrgb(las, R, G, B))
 }
 
