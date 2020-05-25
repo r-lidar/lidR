@@ -50,7 +50,7 @@ wkt(object) <- value
 \S4method{wkt}{LAS}(object) <- value
 }
 \arguments{
-\item{object, x}{An object of class LAS or eventually LASheader (regular users don't need to manipulate
+\item{object, x, obj}{An object of class LAS or eventually LASheader (regular users don't need to manipulate
 LASheader objects).}
 
 \item{...}{Unused.}

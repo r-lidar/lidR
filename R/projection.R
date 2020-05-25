@@ -52,7 +52,7 @@
 #'    - `wkt`: reads the WKT string from the header.
 #'    - `crs` and `crs<-` are equivalent to `projection`
 #'
-#' @param object,x An object of class LAS or eventually LASheader (regular users don't need to manipulate
+#' @param object,x,obj An object of class LAS or eventually LASheader (regular users don't need to manipulate
 #' LASheader objects).
 #' @param ... Unused.
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
