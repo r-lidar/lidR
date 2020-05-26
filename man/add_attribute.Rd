@@ -37,7 +37,8 @@ be missing (see details).}
 
 \item{desc}{character. A short description of the extra bytes attribute to add in the file (32 characters).}
 
-\item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", "short", "uint", "int", "uint64", "int64", "float", "double"}.}
+\item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", 
+"short", "uint", "int", "uint64", "int64", "float", "double"}.}
 
 \item{scale, offset}{numeric. The scale and offset of the data. NULL if not relevant.}
 
@@ -50,32 +51,31 @@ be replaced by this value that will be considered as NA. NULL if not relevant.}
 An object of class \link[lidR:LAS-class]{LAS}
 }
 \description{
-A \link[lidR:LAS-class]{LAS} object represents a .las file in R. According to the
+A \link[lidR:LAS-class]{LAS} object represents a las file in R. According to the
 \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
 a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
-and so on for each point. It is possible to add supplementary attributes.
+and so on, for each point. It is possible to add supplementary attributes.
 }
 \details{
-Users cannot assign names that are the same as the names of the core attributes. These functions are dedicated
-to adding data not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")}
-will fail because \code{R} is a name reserved for the red channel of las file that contains RGB attributes.
-Use \code{add_lasrgb} instead.
+Users cannot assign names that are the same as the names of the core attributes. These functions are 
+dedicated to adding data that are not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")} will fail because \code{R} is a name reserved for the red channel of a .las file that contains RGB
+attributes. Use \code{add_lasrgb} instead.
 \describe{
 \item{\code{add_attribute}}{Simply adds a new column in the data but does not update the header. Thus the LAS
 object is not strictly valid. These data will be temporarily usable at the R level but will not
 be written in a las file with \link{writeLAS}.}
 
-\item{ \code{add_lasattribute}}{Does the same as \code{add_attribute} but automatically updates the header of the
-LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
+\item{ \code{add_lasattribute}}{Does the same as \code{add_attribute} but automatically updates the header of
+the LAS object. Thus, the LAS object is valid and the new data is considered as "extra bytes". This new
 data will be written in a las file with \link{writeLAS}.}
 
 \item{\code{add_lasattribute_manual}}{Allows the user to manually write all the extra bytes metadata.
 This function is reserved for experienced users with a good knowledge of the LAS specifications.
 The function does not perform tests to check the validity of the information.
-When using \code{add_lasattribute} and \code{add_lasattribute_manual}, \code{x} can only be of type numeric
-(\code{integer} or \code{double}). It cannot be of types \code{character} or \code{logical} as these are
-not supported by the las specifications. The types that are supported in lidR are types 0 to 10
-(table 24 page 25 of the specification). Types greater than 10 are not supported.}
+When using \code{add_lasattribute} and \code{add_lasattribute_manual}, \code{x} can only be of type numeric,
+(\code{integer} or \code{double}). It cannot be of type \code{character} or \code{logical} as these are
+not supported by the LAS specifications. The types that are supported in lidR are types 0 to 10
+(Table 24 on page 25 of the specification). Types greater than 10 are not supported.}
 
 \item{\code{add_lasrgb}}{Adds 3 columns named RGB and updates the point format of the LAS object
 for a format that supports RGB attributes. If the RGB values are ranging from 0 to 255 they are

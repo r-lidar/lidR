@@ -20,9 +20,9 @@ track_sensor(
 
 \item{extra_check}{boolean. Datasets are rarely perfectly populated, leading to unexpected errors.
 Time-consuming checks of data integrity are performed. These checks can be skipped as they account
-for an important proportion of the computation time. See also section 'Tests of data integrity'.}
+for an significant proportion of the computation time. See also section 'Tests of data integrity'.}
 
-\item{thin_pulse_with_time}{numeric. In practice, it is useless to compute the position using all
+\item{thin_pulse_with_time}{numeric. In practice, it is not useful to compute the position using all
 multiple returns. It is more computationally demanding but not necessarily more accurate. This keeps
 only one pulse every x seconds. Set to 0 to use all multiple returns. Use 0 if the file has already
 been read with \code{filter = "-thin_pulses_with_time 0.001"}.}
@@ -32,7 +32,7 @@ in the UserData attribute.}
 }
 \value{
 A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
-about the time interval and the score of the positionning (according the the method used) are also
+about the time interval and the score of the positioning (according the the method used) are also
 in the table of attributes.
 }
 \description{
@@ -47,7 +47,7 @@ not be normalized.
 
 In theory, sensor tracking is a simple problem to solve as long as each pulse is properly
 identified from a well-populated dataset. In practice, many problems may arise from datasets that are populated
-incorrectly. Here is a list of problem that may happen. Those with a * denote problems already encountered and
+incorrectly. Here is a list of problems that may happen. Those with a * denote problems already encountered and
 internally checked to remove weird points:
 \itemize{
 \item 'gpstime' does not record the time at which pulses were emitted and thus pulses are not identifiable
@@ -101,7 +101,7 @@ LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 plot(las)
 
-# pmin = 15 because it is an extremely tiny file
+# pmin = 15 because it is an extremely small file
 # strongly decimated to reduce its size. There are
 # actually few multiple returns
 flightlines <- track_sensor(las, Roussel2020(pmin = 15))

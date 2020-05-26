@@ -39,7 +39,7 @@
 #' @param multi_pulse logical. TRUE only for systems with multiple pulses. Pulse ID must be recorded
 #' in the UserData attribute.
 #' @return A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
-#' about the time interval and the score of the positioning (according the the method used) are also
+#' about the time interval and the score of the positioning (according to the method used) are also
 #' in the table of attributes.
 #'
 #' @author Jean-Francois Bourdon & Jean-Romain Roussel

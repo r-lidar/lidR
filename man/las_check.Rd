@@ -10,7 +10,7 @@ las_check(las, print = TRUE, ...)
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{print}{logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
-the functions returns a \code{list} with two elements names 'warnings' and 'errors' containing a
+the functions returns a \code{list} with two elements named 'warnings' and 'errors' containing a
 vector with the reported warnings and errors.}
 
 \item{...}{Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads

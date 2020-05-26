@@ -18,10 +18,10 @@
 #' is the legacy method.}
 #' \item{gpstime}{This method uses the gpstime of the highest point of a tree (apex) to create a
 #' unique ID. This ID is not an integer but a 64-bit decimal number which is suboptimal but at
-#' least it is exepected to be unique **if the gpstime attribute is consistent across files**.}
+#' least it is exepected to be unique **if the gpstime attribute is consistent across files**.
 #' If inconsistencies with gpstime are reported (for example gpstime records the week time and was
 #' reset to 0 in a coverage that takes more than a week to complete), there is a (low) probability to get
-#' ID attribution errors.
+#' ID attribution errors.}
 #' \item{bitmerge}{This method uses the XY coordinates of the highest point (apex) of a tree to
 #' create a single number with a bitwise operation. First, XY coordinates are converted to integers using the
 #' scales and offsets of the point-cloud. Then the ID is computed with X * 2^32 + Y to combine twice the 32-bits
@@ -35,3 +35,4 @@
 #' All the proposed options are suboptimal because they either do not guarantee uniqueness in all cases
 #' (inconsistencies in the collection of files), or they imply that IDs are based on non-integers or
 #' meaningless numbers. But at the very least we expect this to work for simple cases.
+#' @md

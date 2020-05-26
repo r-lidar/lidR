@@ -30,7 +30,7 @@
 #' Individual tree detection function that find the position of the trees using several possible
 #' algorithms.
 #'
-#' @param las An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer}
+#' @param las An object of class `LAS` or `LAScatalog`. Can also be a `RasterLayer`
 #' representing a canopy height model, in which case it is processed like a regularly-spaced point cloud.
 #' @param algorithm An algorithm for individual tree detection. lidR has: \link{lmf} and \link{manual}.
 #' More experimental algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
@@ -54,6 +54,7 @@
 #'
 #' x = plot(las)
 #' add_treetops3d(x, ttops)
+#' @md
 find_trees = function(las, algorithm, uniqueness = 'incremental')
 {
   UseMethod("find_trees", las)

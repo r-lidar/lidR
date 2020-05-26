@@ -12,7 +12,7 @@ get_range(las, sensor, gpstime = "gpstime", elevation = "Z")
 \arguments{
 \item{sensor}{\code{SpatialPointsDataDrame} object containing the coordinates of
 the sensor at different timepoints t. The time and elevation are stored as attributes
-(default names are  'gpstime' and 'Z'). It can be computed with \link{track_sensor}.}
+(default names are 'gpstime' and 'Z'). It can be computed with \link{track_sensor}.}
 
 \item{Rs}{numeric. Range of reference.}
 
@@ -45,7 +45,7 @@ las <- readLAS(LASfile)
 sensor <- track_sensor(las, Roussel2020(pmin = 15))
 
 # Here the effect is virtually null because the size of
-# the sample is too tiny to notice any effect of range
+# the sample is too small to notice any effect of range
 las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 
 # This might be useful for some applications

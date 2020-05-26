@@ -39,13 +39,13 @@ other functions}
 
 \item{ypoly}{numeric. y coordinates of a polygon.}
 
-\item{xcenter}{numeric. x coordinates of discs centers.}
+\item{xcenter}{numeric. x coordinates of disc centers.}
 
-\item{ycenter}{numeric. y coordinates of discs centers.}
+\item{ycenter}{numeric. y coordinates of disc centers.}
 
 \item{radius}{numeric. disc radius or radii.}
 
-\item{p1, p2}{numeric vectors of length 2 that give the coordinates of two points that define a
+\item{p1, p2}{numeric vectors of length 2 that gives the coordinates of two points that define a
 transect}
 
 \item{width}{numeric. width of the transect.}
@@ -53,15 +53,14 @@ transect}
 \item{xz}{bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates}
 }
 \value{
-If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
-implies several regions of interest will be returned.\cr\cr
-If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query
-implies several regions of interest will be returned, or a \code{LAScatalog} if the queries are immediately written into files
-without loading anything in R.
+If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query implies several regions of interest will be returned.\cr\cr
+If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS}
+objects if the query implies several regions of interest will be returned, or a \code{LAScatalog} if the
+queries are immediately written into files without loading anything in R.
 }
 \description{
 Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
-(\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point-cloud
+(\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point cloud
 into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
 object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
 points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
@@ -70,7 +69,7 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 
 \itemize{
  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
- a MULTIPOLYGON. If points a parameter 'radius' must be passed in \code{...}
+ a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}

@@ -380,7 +380,7 @@ bbox <- cl[[24]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "cornflowerblue")
 ```
 
-If a chunk produced an error this is also rendered in real time. The computation stops as usual but the error is handled in such a way that the code does not actually fail. The functions returned a partial output i.e. the output of the tiles that were computed successfully. A message is printed telling the userwhat the error was and where it occurred, and suggests to load this specific section of the catalog to test what was wrong with it. In the following case one tile was not classified so it failed.
+If a chunk produced an error this is also rendered in real time. The computation stops as usual but the error is handled in such a way that the code does not actually fail. The functions returned a partial output i.e. the output of the tiles that were computed successfully. A message is printed telling the user what the error was and where it occurred, and suggests to load this specific section of the catalog to test what was wrong with it. In the following case one tile was not classified so it failed.
 
 ```r
 #> An error occurred when processing the chunk 30. Try to load this chunk with:
@@ -692,7 +692,7 @@ out <- do.call(rbind, out)
 print(out)
 ```
 
-But in practice a safe merging is not always trivial and it is annoying to do it manually. The engine supports automerging of `Spatial*`, `sf`, `Raster*`, `data.frame` and `LAS` objects
+But in practice a safe merging is not always trivial and it is annoying to do it manually. The engine supports automerging of `Spatial*`, `sf`, `Raster*`, `data.frame` and `LAS` objects.
 
 ```{r}
 options <- list(automerge = TRUE)
