@@ -28,7 +28,8 @@ multiple purposes other than tree segmentation. This function is natively parall
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzi", filter = "-drop_z_below 0")
 
-# Using a 20x5 rectangle with a 45 degrees angle, This won't find the tree properly in the general case
+# Using a 20x5 rectangle with a 45 degrees angle.
+# This won't find the tree properly in the general case
 # but may find some oriented structure.
 lm = find_localmaxima(las, c(20, 5, pi/4))
 }

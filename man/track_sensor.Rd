@@ -32,7 +32,7 @@ in the UserData attribute.}
 }
 \value{
 A SpatialPointsDataFrame with the Z elevation stored in the table of attributes. Information
-about the time interval and the score of the positioning (according the the method used) are also
+about the time interval and the score of the positioning (according to the method used) are also
 in the table of attributes.
 }
 \description{
