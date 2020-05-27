@@ -14,7 +14,7 @@ knnidw(k = 10, p = 2, rmax = 50)
 \item{rmax}{numeric. Maximum radius where to search for knn. Default 50.}
 }
 \description{
-This function is made to be used in \link{grid_terrain} or \link{normalize_elevation}. It implements an algorithm
+This function is made to be used in \link{grid_terrain} or \link{normalize_height}. It implements an algorithm
 for spatial interpolation. Interpolation is done using a k-nearest neighbour (KNN) approach with
 an inverse-distance weighting (IDW).
 }

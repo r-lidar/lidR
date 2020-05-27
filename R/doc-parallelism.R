@@ -85,7 +85,7 @@
 #' {
 #'   las <- readLAS(cluster)
 #'   if (is.empty(las)) return(NULL)
-#'   las  <- normalize_elevation(las, tin())
+#'   las  <- normalize_height(las, tin())
 #'   tops <- tree_detection(las, lmf(2))
 #'   bbox <- extent(cluster)
 #'   tops <- crop(tops, bbox)

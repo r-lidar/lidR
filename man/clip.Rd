@@ -5,7 +5,7 @@
 \alias{clip_roi}
 \alias{clip_rectangle}
 \alias{clip_polygon}
-\alias{clip_disc}
+\alias{clip_circle}
 \alias{clip_transect}
 \title{Clip points in regions of interest}
 \usage{
@@ -15,7 +15,7 @@ clip_rectangle(las, xleft, ybottom, xright, ytop, ...)
 
 clip_polygon(las, xpoly, ypoly, ...)
 
-clip_disc(las, xcenter, ycenter, radius, ...)
+clip_circle(las, xcenter, ycenter, radius, ...)
 
 clip_transect(las, p1, p2, width, xz = FALSE, ...)
 }

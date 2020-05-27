@@ -9,7 +9,7 @@ y = runif(4, 20, 180)
 
 opt_output_files(ctg) <- "{tempfile()}"
 opt_progress(ctg) <- FALSE
-rois = clip_disc(ctg, x, y, 20)
+rois = clip_circle(ctg, x, y, 20)
 
 test_that("opt_independent_files set adequate option for plot inventories", {
   opt_independent_files(rois) <- TRUE

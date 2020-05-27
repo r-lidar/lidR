@@ -7,7 +7,7 @@
 #' \link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_poi]{lasfilter}
 #' \link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
 #' \link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
-#' \link[lidR:normalize_elevation]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
+#' \link[lidR:normalize_height]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
 #' \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
 #' \link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
 #' \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
@@ -75,8 +75,8 @@ lasclipPolygon = function(las, xpoly, ypoly, ...) {
 #' @export
 #' @rdname deprecated
 lasclipCircle = function(las, xcenter, ycenter, radius, ...) {
-  .lidr3depreciation("clip_disc")
-  return(clip_disc(las, xcenter, ycenter, radius, ...))
+  .lidr3depreciation("clip_circle")
+  return(clip_circle(las, xcenter, ycenter, radius, ...))
 }
 
 #' @export
@@ -207,15 +207,15 @@ lasmergespatial = function(las, source, attribute = NULL) {
 #' @export
 #' @rdname deprecated
 lasnormalize = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE) {
-  .lidr3depreciation("normalize_elevation")
-  return(normalize_elevation(las, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute))
+  .lidr3depreciation("normalize_height")
+  return(normalize_height(las, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute))
 }
 
 #' @export
 #' @rdname deprecated
 lasunnormalize = function(las) {
-  .lidr3depreciation("unnormalize_elevation")
-  return(unnormalize_elevation(las))
+  .lidr3depreciation("unnormalize_height")
+  return(unnormalize_height(las))
 }
 
 #' @export

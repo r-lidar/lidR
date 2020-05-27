@@ -69,6 +69,6 @@ las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 }
 \seealso{
 Other normalize: 
-\code{\link{normalize_elevation}()}
+\code{\link{normalize_height}()}
 }
 \concept{normalize}

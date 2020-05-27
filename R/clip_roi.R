@@ -168,7 +168,7 @@ clip_roi = function(las, geometry, ...)
       ycenter <- centers[,2]
       xcenter <- centers[,1]
       radius  <- p$radius
-      return(clip_disc(las, xcenter, ycenter, radius, data = geometry))
+      return(clip_circle(las, xcenter, ycenter, radius, data = geometry))
     }
     else
       stop("Incorrect geometry type. POINT, POLYGON and MULTIPOLYGON are supported.", call. = FALSE)
@@ -271,19 +271,19 @@ clip_polygon = function(las, xpoly, ypoly, ...)
 
 # ======== CIRCLE ========
 
-#' @export clip_disc
+#' @export clip_circle
 #' @rdname clip
-clip_disc = function(las, xcenter, ycenter, radius, ...)
+clip_circle = function(las, xcenter, ycenter, radius, ...)
 {
   assert_is_numeric(xcenter)
   assert_is_numeric(ycenter)
   assert_is_numeric(radius)
   assert_are_same_length(xcenter, ycenter)
-  UseMethod("clip_disc", las)
+  UseMethod("clip_circle", las)
 }
 
 #' @export
-clip_disc.LAS = function(las, xcenter, ycenter, radius, ...)
+clip_circle.LAS = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)
@@ -307,7 +307,7 @@ clip_disc.LAS = function(las, xcenter, ycenter, radius, ...)
 }
 
 #' @export
-clip_disc.LAScatalog = function(las, xcenter, ycenter, radius, ...)
+clip_circle.LAScatalog = function(las, xcenter, ycenter, radius, ...)
 {
   if (length(radius) > 1)
     assert_are_same_length(xcenter, radius)

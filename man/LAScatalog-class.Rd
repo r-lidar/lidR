@@ -171,7 +171,7 @@ dtm <- grid_terrain(ctg, 1, tin())
 opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
 opt_laz_compression(ctg) <- TRUE
-new_ctg <- normalize_elevation(ctg, tin())
+new_ctg <- normalize_height(ctg, tin())
 
 # The user has access to the catalog engine through the function catalog_apply
 output <- catalog_apply(ctg, FUN, ...)

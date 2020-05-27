@@ -217,7 +217,7 @@ removed. The links below point to the documentation of the new names \cr\cr
 \link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_poi]{lasfilter}
 \link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
 \link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
-\link[lidR:normalize_elevation]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
+\link[lidR:normalize_height]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
 \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
 \link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
 \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}

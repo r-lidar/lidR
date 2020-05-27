@@ -207,7 +207,7 @@ Internally, for each chunk, `readLAS()` will be called with `filter = "-drop_fir
 
 ```r
 opt_filter(ctg) <- "-keep_class 2 9"
-las <- clip_disc(ctg, 273400, 5274500, 20)
+las <- clip_circle(ctg, 273400, 5274500, 20)
 
 opt_filter(ctg) <- "-keep_first -drop_z_below 2"
 m <- grid_metrics(ctg, .stdmetrics, 20)
@@ -218,7 +218,7 @@ m <- grid_metrics(ctg, .stdmetrics, 20)
 #ctg = readLAScatalog(LASfile)
 #opt_progress(ctg) <- FALSE
 #opt_filter(ctg) <- "-keep_class 2 9"
-#las = clip_disc(ctg, 273500, 5274500, 40)
+#las = clip_circle(ctg, 273500, 5274500, 40)
 #m = structure(c(0.921, -0.146, 0.362, 0, 0.386, 0.482, -0.787, 0, 
 #-0.06, 0.864, 0.5, 0, 0, 0, 0, 1), .Dim = c(4L, 4L))
 #plot(las)
@@ -240,11 +240,11 @@ When reading a single file with `readLAS()` the option `select` allows for disca
 ```r
 # Load Intensity only
 opt_select(ctg) <- "i"
-las <- clip_disc(ctg, 273500, 5274500, 10)
+las <- clip_circle(ctg, 273500, 5274500, 10)
 
 # Load Intensity + Classification + ReturnNumber + NumberOfReturns
 opt_select(ctg) <- "icrn"
-las <- clip_disc(ctg, 273500, 5274500, 10)
+las <- clip_circle(ctg, 273500, 5274500, 10)
 ```
 
 However, this option is not always respected because many `lidR` functions already know which optimization they should apply. In the following example the 'classification' attribute is explicitly discarded, yet the creation of a DTM works because the function overwrites the user settings for something better (in this specific case `xyzc`).
@@ -316,7 +316,7 @@ y = c(55, 75, 80, 180)
 
 ```{r, fig.show='hold'}
 opt_output_files(ctg2) <- "{tempdir()}/plot_{ID}"
-new_ctg <- clip_disc(ctg2, x, y, 20)
+new_ctg <- clip_circle(ctg2, x, y, 20)
 plot(ctg2)
 points(x,y)
 plot(new_ctg)
