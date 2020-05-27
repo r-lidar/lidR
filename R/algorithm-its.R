@@ -113,21 +113,46 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   {
     assert_is_valid_context(LIDRCONTEXTITS, "dalponte2016", null_allowed = TRUE)
 
+    if (nrow(treetops) == 0)
+    {
+      warning("No tree found", call. = FALSE)
+      crown <- chm
+      suppressWarnings(crown[] <- NA_integer_)
+      return(crown)
+    }
+
+    # If an extent is given we crop the CHM and the seed to this extent (LAScatalog processing)
     if (!missing(extent))
     {
       assert_is_all_of(extent, "Extent")
       chm <- raster::crop(chm, extent)
       treetops <- raster::crop(treetops, extent)
 
+      # If no remaining seed, exit with with warning
       if (is.null(treetops))
       {
+        warning("No tree can be used as seed: all tree tops are outside the CHM", call. = FALSE)
         crown <- chm
-        suppressWarnings(crown[] <- NA)
+        suppressWarnings(crown[] <- NA_integer_)
         return(crown)
       }
     }
 
-    X     <- match_chm_and_seeds(chm, treetops, ID)
+    # Check if the seeds actually match with the CHM
+    X <- match_chm_and_seeds(chm, treetops, ID)
+
+    # If X contains 0 lengh results it means that CHM and seed do not match.
+    # an appropriated warning has been sent by match_chm_and_seeds and we return
+    # NAs so the function does not fail
+    if (length(X$cells) == 0L & length(X$ids) == 0L)
+    {
+      crown <- chm
+      suppressWarnings(crown[] <- NA_integer_)
+      return(crown)
+    }
+
+    # We are now sure we can perform the computation with seeds matching the CHM
+
     cells <- X$cells
     ids   <- 1:length(X$ids)
 
@@ -322,6 +347,14 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
     . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
 
+    if (nrow(treetops) == 0)
+    {
+      warning("No tree found", call. = FALSE)
+      crown <- chm
+      suppressWarnings(crown[] <- NA_integer_)
+      return(crown)
+    }
+
     if (!missing(extent))
     {
       assert_is_all_of(extent, "Extent")
@@ -330,13 +363,25 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 
       if (is.null(treetops))
       {
+        warning("No tree can be used as seed: all tree tops are outside the CHM", call. = FALSE)
         crown <- chm
-        suppressWarnings(crown[] <- NA)
+        suppressWarnings(crown[] <- NA_integer_)
         return(crown)
       }
     }
 
     X     <- match_chm_and_seeds(chm, treetops, ID)
+
+    # If X contains 0 lengh results it means that CHM and seed do not match.
+    # an appropriated warning has been sent by match_chm_and_seeds and we return
+    # NAs so the function does not fail
+    if (length(X$cells) == 0L & length(X$ids) == 0L)
+    {
+      crown <- chm
+      suppressWarnings(crown[] <- NA_integer_)
+      return(crown)
+    }
+
     cells <- X$cells
     ids   <- 1:length(X$ids)
 
@@ -430,8 +475,9 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 
 #' @rdname watershed
 #' @export
+
 mcwatershed = function(chm, treetops, th_tree = 2, ID = "treeID")
-{
+{ # nocov start
   stop("The mcwatershed algorithm has been removed because it relied on the 'imager' package that is now an orphaned package on CRAN.", call. = FALSE)
 
   chm      <- lazyeval::uq(chm)
@@ -441,6 +487,7 @@ mcwatershed = function(chm, treetops, th_tree = 2, ID = "treeID")
 
   ws_generic(chm, th_tree = th_tree, treetops = treetops, ID = ID)
 }
+# nocov end
 
 ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = "treeID")
 {
@@ -457,7 +504,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     if (is.null(treetops))
     {
       if (!requireNamespace("EBImage", quietly = TRUE))
-        stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = FALSE)
+        stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = FALSE) # nocov
     }
     #else
     #{

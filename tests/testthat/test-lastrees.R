@@ -11,6 +11,7 @@ chm = raster::focal(chm, w = kernel, fun = mean)
 
 
 test_that("Dalponte's methods works", {
+
   ttops = suppressWarnings(tree_detection(chm, lmf(3, 2)))
   las <- lastrees(las, dalponte2016(chm, ttops))
 
@@ -28,6 +29,56 @@ test_that("Dalponte's methods works", {
 
   las <- lastrees(las, dalponte2016(chm, ttops))
   expect_equal(sort(unique(las@data$treeID)), 1:40L*2L)
+
+  ttops$treeID[2:3] <- 1L
+
+  expect_error(lastrees(las, dalponte2016(chm, ttops), "Duplicated tree IDs found"))
+})
+
+test_that("Dalponte's return NAs if no seed", {
+
+  ttops <- suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  ttops@coords <- ttops@coords + 500
+
+  expect_warning(lastrees(las, dalponte2016(chm, ttops)), "No tree can be used as seed")
+
+  suppressWarnings(las <- lastrees(las, dalponte2016(chm, ttops)))
+
+  expect_true("treeID" %in% names(las@data))
+  expect_true(all(is.na(las$treeID)))
+  expect_true(is.integer(las@data$treeID))
+
+  # test is 0 seed
+  ttops <- ttops[0,]
+  expect_warning(lastrees(las, dalponte2016(chm, ttops)), "No tree found")
+})
+
+test_that("Dalponte's works standalone", {
+
+  ttops <- suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  trees <- dalponte2016(chm, ttops)()
+
+  expect_true(is(trees, "RasterLayer"))
+  expect_equal(sort(unique(trees[])), 1:40L)
+
+
+  ttops@coords <- ttops@coords + 500
+
+  expect_warning(dalponte2016(chm, ttops)(), "No tree can be used as seed")
+
+  suppressWarnings(trees <- dalponte2016(chm, ttops)())
+
+  expect_true(is(trees, "RasterLayer"))
+  expect_equal(sort(unique(trees[])), numeric(0))
+
+  ttops@coords <- ttops@coords - 480
+
+  expect_warning(dalponte2016(chm, ttops)(), "Some trees are outside the canopy height model")
+
+  suppressWarnings(trees <- dalponte2016(chm, ttops)())
+
+  expect_true(is(trees, "RasterLayer"))
+  expect_equal(sort(unique(trees[])), 1:5L)
 })
 
 test_that("Li's method works", {
@@ -46,6 +97,36 @@ test_that("Silvas's methods works", {
 
   expect_true("treeID" %in% names(las@data))
   expect_true(is.integer(las@data$treeID))
+})
+
+test_that("Silva's return NAs if no seed", {
+
+  ttops <- suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  ttops@coords <- ttops@coords + 500
+
+  expect_warning(lastrees(las, silva2016(chm, ttops)), "No tree can be used as seed")
+
+  suppressWarnings(las <- lastrees(las, silva2016(chm, ttops)))
+
+  expect_true("treeID" %in% names(las@data))
+  expect_true(all(is.na(las$treeID)))
+  expect_true(is.integer(las@data$treeID))
+
+  # test is 0 seed
+  ttops <- ttops[0,]
+  expect_warning(lastrees(las, dalponte2016(chm, ttops)), "No tree found")
+})
+
+test_that("Silva's works standalone", {
+  ttops <- suppressWarnings(tree_detection(chm, lmf(3, 2)))
+  trees <- silva2016(chm, ttops)()
+
+  expect_true(is(trees, "RasterLayer"))
+  expect_equal(sort(unique(trees[])), 1:40L)
+
+  ttops@coords <- ttops@coords + 500
+
+  expect_warning(silva2016(chm, ttops)(), "No tree can be used as seed")
 })
 
 test_that("Watershed's methods works", {

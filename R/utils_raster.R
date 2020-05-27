@@ -136,30 +136,42 @@ match_chm_and_seeds = function(chm, seeds, field)
   assert_is_all_of(seeds, "SpatialPointsDataFrame")
   stopif_forbidden_name(field)
 
-  if (is.null(raster::intersect(raster::extent(chm), raster::extent(seeds))))
-    stop("No seed matches with the canopy height model" )
+  null = list(cells = integer(), ids = numeric())
 
+  # Check if the CHM and the seeds overlap. If not exit
+  if (is.null(raster::intersect(raster::extent(chm), raster::extent(seeds))))
+  {
+    warning("No tree can be used as seed: canopy height model and tree tops extents do not overlap.", call. = FALSE)
+    return(null)
+  }
+
+  # Check if seed IDs are valid or generate IDs
   if (field %in% names(seeds@data))
   {
-    ids = seeds@data[[field]]
+    ids <- seeds@data[[field]]
 
     if (!is.numeric(ids))
-      stop("Tree IDs much be of numeric type.",  call. = FALSE)
+      stop("Tree IDs much be of a numeric type",  call. = FALSE)
 
     if (length(unique(ids)) < length(ids))
-      stop("Duplicated tree IDs found.")
+      stop("Duplicated tree IDs found.", call. = FALSE)
   }
   else
-    ids = 1:nrow(seeds@data)
+    ids <- 1:nrow(seeds@data)
 
-  cells = raster::cellFromXY(chm, seeds)
+  cells <- raster::cellFromXY(chm, seeds)
 
   if (anyNA(cells))
   {
     if (all(is.na(cells)))
-      stop("No seed found")
+    {
+      warning("No tree can be used as seed: all tree tops are outside the CHM", call. = FALSE)
+      return(null)
+    }
     else
-      warning("Some seeds are outside the canopy height model. They were removed.")
+    {
+      warning("Some trees are outside the canopy height model: they can't be used as seeds", call. = FALSE)
+    }
 
     no_na = !is.na(cells)
     seeds = seeds[no_na,]

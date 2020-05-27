@@ -334,7 +334,7 @@ print.lidRAlgorithm = function(x, ...)
   else if (is (x, LIDRSPI))
   {  use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
   else
-  { use = "unknown" ; with = "unknown" }
+  { use = "unknown" ; with = "unknown" } # nocov
 
   with = paste(with, collapse = " or ")
 
