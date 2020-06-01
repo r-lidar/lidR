@@ -81,9 +81,9 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
     if (sf::st_geometry_type(source) != "POLYGON")
       stop("Only POLYGON geometry types are supported for sf objects", call. = FALSE)
 
-    box <- sf::st_bbox(source)
-    width <- (box[3] - box[1])*0.01
-    height <- (box[4] - box[2])*0.01
+    box <- sf::st_bbox(las)
+    width <- (box[3] - box[1])*0.01 + las@header@PHB[["X scale factor"]]
+    height <- (box[4] - box[2])*0.01 + las@header@PHB[["Y scale factor"]]
     box <- box + c(-width, -height, width, height)
     sf::st_agr(source) = "constant"
     source <- sf::st_crop(source, box)
@@ -101,7 +101,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
   if (is(source, "SpatialPolygons") | is(source, "SpatialPolygonsDataFrame"))
   {
     bbox <- extent(las)
-    source2 <- raster::crop(source, bbox*1.01)
+    source2 <- raster::crop(source, bbox*1.01 + las@header@PHB[["X scale factor"]])
 
     if (!is.null(source2))
       source <- sf::st_as_sf(source2)

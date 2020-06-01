@@ -149,6 +149,8 @@ In efforts to avoid breaking users' scripts version 3 is fully backwards-compati
 
 4. Function `wkt()` no longer masks the new function `wkt()` in `sp`.
 
+5.  `merge_spatial()` (formerly named `lasmergespatial()`) no longer fails with a LAS object containing a single point.
+
 ## lidR v2.2.5 (Release date: 2020-05-07)
 
 #### ENHANCEMENTS
