@@ -14,6 +14,14 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 
 :book: Read the [Wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
 
+# Citation
+
+To cite the package use `citation()` from within R:
+
+```r
+citation("lidR")
+```     
+
 # Key features
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/point-cloud-rotating.gif">

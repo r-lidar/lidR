@@ -102,7 +102,7 @@ ctg@data <- data
 ctg@polygons <- Sr@polygons
 ```
 
-In `lidR` the `LAScatalog` processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog`, including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignette documents how it works by going deeper and deeper inside the engine. It is highly recommended to read the vignette named [LAScatalog formal class](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-class.html) before this one even if one may find some overlap between these two vignettes.
+In `lidR` the `LAScatalog` processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog`, including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignette documents how it works by going deeper and deeper inside the engine. It is highly recommended to read the vignette named [LAScatalog formal class](lidR-LAScatalog-class.html) before this one even if one may find some overlap between these two vignettes.
 
 ## Overview
 
@@ -633,7 +633,7 @@ extent(chunk)
 bbox(chunk)
 ```
 
-Being able to retrieve the true bounding box allows for removal of the buffer. Indeed, the point cloud is loaded with a buffer and all subsequent computation will provide an output with the buffer included in the results. At the end the engine will merge everything and the buffered region will appear twice or more. So the final output must be unbuffered by any means. One can find examples in the documentation of `catalog_apply()`, in [this vignette](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-catalog-apply-examples.html) or in the source code of `lidR`.
+Being able to retrieve the true bounding box allows for removal of the buffer. Indeed, the point cloud is loaded with a buffer and all subsequent computation will provide an output with the buffer included in the results. At the end the engine will merge everything and the buffered region will appear twice or more. So the final output must be unbuffered by any means. One can find examples in the documentation of `catalog_apply()`, in [this vignette](lidR-catalog-apply-examples.html) or in the source code of `lidR`.
 
 ### Control the option provided by the catalog
 
@@ -758,7 +758,7 @@ plan(multissesion, workers = 4L)
 deads <- find_deadtrees(ctg, 0.5, 3)
 ```
 
-In practice there is, in our opinion, a more elegant way to achieve the same task. This way is presented in [this vignette](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-catalog-apply-examples.html) an relies on S3 dispatch.
+In practice there is, in our opinion, a more elegant way to achieve the same task. This way is presented in [this vignette](lidR-catalog-apply-examples.html) an relies on S3 dispatch.
 
 ## Advanced usages of the engine
 
