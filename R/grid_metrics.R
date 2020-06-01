@@ -177,7 +177,13 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
     metrics[[1]] <- NULL
     nmetrics = ncol(metrics)
     output = raster::brick(layout, nl = nmetrics)
-    for (i in 1:nmetrics) suppressWarnings(output[[i]][cells] <- metrics[[i]])
+    ncells <- raster::ncell(layout)
+    for (i in 1:nmetrics)
+    {
+      values <- vector(mode = class(metrics[[i]]), length = ncells)
+      values[cells] <- metrics[[i]]
+      output <- raster::setValues(output, values, layer = i)
+    }
     names(output) <- names(metrics)
     return(output)
   }

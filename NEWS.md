@@ -1,6 +1,6 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better.
 
-## lidR v3.0.0 (Release date: ...)
+## lidR v3.0.0 (Release date: 2020-06-08)
 
 #### MAJOR CHANGES
 
@@ -138,6 +138,8 @@ In efforts to avoid breaking users' scripts version 3 is fully backwards-compati
     #>  - shape = circular <character>
     #>  - ws = 2 <numeric>
     ```
+
+9. In `grid_metrics()` the `RasterBrick` is built much faster.
 
 #### FIXES
 
