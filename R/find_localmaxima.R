@@ -48,7 +48,7 @@ find_localmaxima = function(las, w, filter = NULL)
   } else {
     output <- maxima
     sp::coordinates(output) <- ~X+Y
-    raster::projection(output) <- raster::projection(las)
+    raster::crs(output) <- crs(las)
   }
 
   output@bbox <- sp::bbox(las)

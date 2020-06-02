@@ -177,6 +177,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
     metrics[[1]] <- NULL
     nmetrics = ncol(metrics)
     output = raster::brick(layout, nl = nmetrics)
+    raster::crs(output) <- crs(las) # patch for raster not updated with rgal 1.5-8
     ncells <- raster::ncell(layout)
     for (i in 1:nmetrics)
     {
@@ -197,7 +198,7 @@ grid_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), filter =
   bbox    <- raster::extent(las)
   metrics <- grid_metrics(x, func, res, start, filter)
   metrics <- raster::crop(metrics, bbox)
-
+  raster::crs(metrics) <- crs(x) # patch for raster not updated with rgal 1.5-8
   return(metrics)
 }
 

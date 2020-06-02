@@ -99,6 +99,7 @@ rMergeList = function(raster_list)
     raster[pix] <- as.matrix(pix@data)
   }
 
+  raster::crs(raster) <- raster::crs(raster_list[[1]]) # patch for raster not updated with rgal 1.5-8
   return(raster)
 }
 

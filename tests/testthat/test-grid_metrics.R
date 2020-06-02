@@ -127,7 +127,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
 
   r <- raster::raster(round(extent(las) - 80))
   raster::res(r) <- 15
-  raster::projection(r) <- raster::projection(las)
+  raster::crs(r) <- crs(las)
 
   m1 <- grid_metrics(ctg, ~length(Z), r)
   m2 <- grid_metrics(las, ~length(Z), r)
@@ -140,7 +140,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
   bb@xmax = bb@xmax - 160
   r <- raster::raster(bb)
   raster::res(r) <- 15
-  raster::projection(r) <- raster::projection(las)
+  raster::crs(r) <- crs(las)
 
   m1 <- grid_metrics(las, ~length(Z), r)
 
@@ -154,7 +154,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
   bb@xmax = bb@xmax - 360
   r <- raster::raster(bb)
   raster::res(r) <- 15
-  raster::projection(r) <- raster::projection(las)
+  raster::crs(r) <- crs(las)
 
   m1 <- suppressWarnings(grid_metrics(las, ~length(Z), r))
 

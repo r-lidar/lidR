@@ -11,12 +11,16 @@
 \alias{epsg<-,LASheader-method}
 \alias{wkt,LASheader-method}
 \alias{wkt<-,LASheader-method}
+\alias{projection,LAS-method}
 \alias{projection<-,LAS-method}
+\alias{crs,LAS-method}
 \alias{crs<-,LAS-method}
 \alias{epsg,LAS-method}
 \alias{epsg<-,LAS-method}
 \alias{wkt,LAS-method}
 \alias{wkt<-,LAS-method}
+\alias{projection,LAScatalog-method}
+\alias{crs,LAScatalog-method}
 \title{Get or set the projection of a LAS* object}
 \usage{
 epsg(object, ...)
@@ -37,7 +41,11 @@ wkt(object) <- value
 
 \S4method{wkt}{LASheader}(object) <- value
 
+\S4method{projection}{LAS}(x, asText = TRUE)
+
 \S4method{projection}{LAS}(x) <- value
+
+\S4method{crs}{LAS}(x, asText = FALSE)
 
 \S4method{crs}{LAS}(x, ...) <- value
 
@@ -48,6 +56,10 @@ wkt(object) <- value
 \S4method{wkt}{LAS}(obj)
 
 \S4method{wkt}{LAS}(object) <- value
+
+\S4method{projection}{LAScatalog}(x, asText = TRUE)
+
+\S4method{crs}{LAScatalog}(x, asText = FALSE)
 }
 \arguments{
 \item{object, x, obj}{An object of class LAS or eventually LASheader (regular users don't need to manipulate

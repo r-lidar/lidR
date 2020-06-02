@@ -162,6 +162,18 @@ setMethod("wkt<-", "LASheader", function(object, value)
 
 #' @export
 #' @rdname projection
+setMethod("projection", "LAS", function(x, asText = TRUE)
+{
+  proj4 <- x@proj4string
+
+  if (asText)
+    return(proj4@projargs)
+  else
+    return(proj4)
+})
+
+#' @export
+#' @rdname projection
 setMethod("projection<-", "LAS", function(x, value)
 {
   # The input is a proj4string or a CRS from sp
@@ -213,6 +225,13 @@ setMethod("projection<-", "LAS", function(x, value)
 
 #' @export
 #' @rdname projection
+setMethod("crs", "LAS", function(x, asText = FALSE)
+{
+  return(projection(x, asText))
+})
+
+#' @export
+#' @rdname projection
 setMethod("crs<-", "LAS", function(x, ..., value)
 {
   projection(x) <- value
@@ -254,6 +273,29 @@ setMethod("wkt<-", "LAS", function(object, value)
   return(object)
 })
 
+# ===== LAScatalog =======
+
+#' @export
+#' @rdname projection
+setMethod("projection", "LAScatalog", function(x, asText = TRUE)
+{
+  proj4 <- x@proj4string
+
+  if (asText)
+    return(proj4@projargs)
+  else
+    return(proj4)
+})
+
+#' @export
+#' @rdname projection
+setMethod("crs", "LAScatalog", function(x, asText = FALSE)
+{
+  return(projection(x, asText))
+})
+
+# ===== INTERNAL TOOLS =======
+
 #' Datum transformation for LAS objects
 #'
 #' A version of \link[rgdal:spTransform]{spTransform} for \link[lidR:LAS-class]{LAS} objects.
@@ -284,7 +326,7 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
 
   # Tranform the point coordinates
   spts <- sp::SpatialPoints(coordinates(x))
-  sp::proj4string(spts) <- sp::proj4string(x)
+  spts@proj4string <- crs(x)
   spts <- sp::spTransform(spts, CRSobj)
 
   # Update the LAS object
@@ -296,7 +338,7 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   x@header@PHB[["X offset"]] <- min(x$X)
   x@header@PHB[["Y offset"]] <- min(x$Y)
 
-  projection(x) <- CRSobj
+  crs(x) <- CRSobj
   return(x)
 })
 
@@ -326,7 +368,8 @@ use_epsg.LASheader <- function(x) {
 
 epsg2proj <- function(epsg, fail = FALSE)
 {
-  tryCatch({
+  tryCatch(
+  {
     wkt <- rgdal::showWKT(glue::glue("+init=epsg:{epsg}"))
     rgdal::showP4(wkt)
   },
@@ -341,13 +384,38 @@ epsg2proj <- function(epsg, fail = FALSE)
 
 epsg2CRS <- function(epsg, fail = FALSE)
 {
-  proj <- epsg2proj(epsg, fail)
-  return(sp::CRS(proj))
+  # patch starting from rgdal 1.5-8
+  if (rgdal::new_proj_and_gdal())
+  {
+    SRS_string = paste0("EPSG:", epsg)
+
+    crs <- tryCatch(
+    {
+      sp::CRS(SRS_string = SRS_string)
+    },
+    error = function(e)
+    {
+      if (!fail)
+        return(sp::CRS(NA_character_))
+      else
+        stop("Invalid epsg code", call. = FALSE)
+    })
+
+    return(crs)
+  }
+  else
+  {
+    proj <- epsg2proj(epsg, fail)
+    crs <- sp::CRS(proj)
+  }
+
+  return(crs)
 }
 
 wkt2proj <- function(wkt, fail = FALSE)
 {
-  tryCatch({
+  tryCatch(
+  {
     rgdal::showP4(wkt)
   },
   error = function(e)
@@ -361,6 +429,28 @@ wkt2proj <- function(wkt, fail = FALSE)
 
 wkt2CRS <- function(wkt, fail = FALSE)
 {
-  proj <- wkt2proj(wkt, fail)
-  return(sp::CRS(proj, doCheckCRSArgs = FALSE)) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
+  # patch starting from rgdal 1.5-8
+  if (rgdal::new_proj_and_gdal())
+  {
+    crs <- tryCatch(
+    {
+        sp::CRS(SRS_string = wkt)
+    },
+    error = function(e)
+    {
+      if (!fail)
+        return(sp::CRS(NA_character_))
+      else
+        stop("Invalid WKT string", call. = FALSE)
+    })
+
+    return(crs)
+  }
+  else
+  {
+    proj <- wkt2proj(wkt, fail)
+    crs <- sp::CRS(proj, doCheckCRSArgs = FALSE) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
+  }
+
+  return(crs)
 }

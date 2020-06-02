@@ -163,6 +163,7 @@ grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE,
   bbox <- raster::extent(las)
   dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster, use_class, Wdegenerated)
   dtm  <- raster::crop(dtm, bbox)
+  raster::crs(dtm) <- crs(x) # patch for raster not updated with rgal 1.5-8
   return(dtm)
 }
 

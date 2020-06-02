@@ -9,7 +9,7 @@ opt_chunk_buffer(ctg)    <- 3
 
 test_that("Print LAScatalog object works", {
   sink(tempfile())
-  expect_error(print(ctg), NA)
+  expect_error(show(ctg), NA)
   expect_error(summary(ctg), NA)
   sink(NULL)
 })

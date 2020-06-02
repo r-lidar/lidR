@@ -376,7 +376,7 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
   rot <- matrix(c(cos(a), sin(a), -sin(a), cos(a)), ncol = 2)
   coords <- rbind(p1, p2)
   line <- sp::SpatialLines(list(sp::Lines(sp::Line(coords), ID = "1")))
-  raster::projection(line) <- raster::projection(las)
+  raster::crs(line) <- crs(las)
   poly <- rgeos::gBuffer(line, width = width/2, capStyle = "SQUARE")
   las <- clip_roi(las, poly)
 

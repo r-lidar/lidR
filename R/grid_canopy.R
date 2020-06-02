@@ -106,6 +106,7 @@ grid_canopy.LAScluster = function(las, res, algorithm)
   bbox <- raster::extent(las)
   dsm  <- grid_canopy(x, res, algorithm)
   dsm  <- raster::crop(dsm, bbox)
+  raster::crs(dsm) <- crs(x) # patch for raster not updated with rgal 1.5-8
   return(dsm)
 }
 
