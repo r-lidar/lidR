@@ -9,12 +9,7 @@ R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Ap
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-* Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
-* Development of the `lidR` package between 2018 and 2019 was made possible thanks to the financial support of the Ministère des Forêts, de la Faune et des Parcs of Québec.
-
 :book: Read the [Wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
-
-# Citation
 
 To cite the package use `citation()` from within R:
 
@@ -59,22 +54,22 @@ plot(chm)
 `lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` builds a `LAScatalog` object from a folder. The function `plot` displays this catalog on an interactive map using the `mapview` package (if installed).
 
 ```r
-ctg <- catalog("<folder/>")
+ctg <- readLAScatalog("<folder/>")
 plot(ctg, map = TRUE)
 ```
 
-From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `lasclip`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that can be done with multicore processing, where possible.
+From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `clip_roi()`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that can be done with multicore processing, where possible.
 
 ### Individual tree segmentation
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/its-rotating-tree-segmented.gif" margin-right="5px">
 
-The `lastrees` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviewed papers. Our goal is to make published algorithms usable, testable and comparable.
+The `segment_trees()` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviewed papers. Our goal is to make published algorithms usable, testable and comparable.
 
 ```r
 las <- readLAS("<file.las>")
 
-las <- lastrees(las, li2012())
+las <- segment_trees(las, li2012())
 col <- random.colors(200)
 plot(las, color = "treeID", colorPalette = col)
 ```
@@ -83,11 +78,11 @@ plot(las, color = "treeID", colorPalette = col)
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-processing.gif">
 
-Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the LAScatalog processing engine via the `catalog_apply` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
+Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the `LAScatalog` processing engine via the `catalog_apply()` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
 
 ```r
 # Load a LAScatalog instead of a LAS file
-ctg <- catalog("<path/to/folder/>")
+ctg <- readLAScatalog("<path/to/folder/>")
 
 # Process it like a LAS file
 chm <- grid_canopy(ctg, 2, p2r())
@@ -99,20 +94,23 @@ plot(chm, col = col)
 
 `lidR` has many other tools and is a continuously improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasibility we will be glad to implement your requested feature.
 
+# About
+
+**lidR** is developed openly at [Laval University](https://www.ulaval.ca/en/).
+
+* Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
+* Development of the `lidR` package between 2018 and 2020 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://mffp.gouv.qc.ca/).
+
+![](https://raw.githubusercontent.com/Jean-Romain/storage/master/README/logos.svg)
+
 # Install `lidR`
 
-* The latest released version from CRAN with
-
 ```r
+# The latest released version from CRAN with
 install.packages("lidR")
-```
 
-* The latest stable development version from github with
-
-
-```r
-devtools::install_github("Jean-Romain/rlas")
-devtools::install_github("Jean-Romain/lidR")
+# The latest stable development version from github with
+remotes::install_github("Jean-Romain/lidR")
 ```
 
 To install the package from github make sure you have a working development environment.
