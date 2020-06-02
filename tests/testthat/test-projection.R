@@ -7,6 +7,7 @@ test_that("Internal projection conversion works", {
 
   wkt <- rgdal::showWKT("+init=epsg:2008")
   expected <- sp::CRS("+init=epsg:2008")
+  expected@projargs <- sub("\\+init=epsg:\\d+\\s", "", expected@projargs)
 
   expect_equal(lidR:::epsg2CRS(2008), expected)
   expect_equal(lidR:::epsg2CRS(200800), sp::CRS())

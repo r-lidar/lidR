@@ -385,7 +385,7 @@ epsg2proj <- function(epsg, fail = FALSE)
 epsg2CRS <- function(epsg, fail = FALSE)
 {
   # patch starting from rgdal 1.5-8
-  if (rgdal::new_proj_and_gdal())
+  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
   {
     SRS_string = paste0("EPSG:", epsg)
 
@@ -430,7 +430,7 @@ wkt2proj <- function(wkt, fail = FALSE)
 wkt2CRS <- function(wkt, fail = FALSE)
 {
   # patch starting from rgdal 1.5-8
-  if (rgdal::new_proj_and_gdal())
+  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
   {
     crs <- tryCatch(
     {
