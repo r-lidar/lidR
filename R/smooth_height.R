@@ -3,7 +3,7 @@
 #' Point cloud-based smoothing algorithm. Two methods are available: average within a window and
 #' Gaussian smooth within a window. The attribute \code{Z} of the returned LAS object is the smoothed Z.
 #' A new attribute \code{Zraw} is added to store the original values and can be used to restore the
-#' point cloud with \code{unsmooth_elevation}.
+#' point cloud with \code{unsmooth_height}.
 #'
 #' This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
 #' smoothing. It is not really useful by itself but may be interesting in combination with filters such
@@ -26,12 +26,12 @@
 #' las <- filter_surfacepoints(las, 1)
 #' plot(las)
 #'
-#' las <- smooth_elevation(las, 5, "gaussian", "circle", sigma = 2)
+#' las <- smooth_height(las, 5, "gaussian", "circle", sigma = 2)
 #' plot(las)
 #'
-#' las <- unsmooth_elevation(las)
+#' las <- unsmooth_height(las)
 #' plot(las)
-smooth_elevation = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
+smooth_height = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
 {
   stopifnotlas(las)
   assert_is_a_number(size)
@@ -55,8 +55,8 @@ smooth_elevation = function(las, size, method = c("average", "gaussian"), shape 
 }
 
 #' @export
-#' @rdname smooth_elevation
-unsmooth_elevation = function(las)
+#' @rdname smooth_height
+unsmooth_height = function(las)
 {
   stopifnotlas(las)
   Z <- Zraw <- NULL

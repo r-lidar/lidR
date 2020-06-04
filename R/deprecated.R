@@ -10,7 +10,7 @@
 #' \link[lidR:normalize_height]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
 #' \link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
 #' \link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
-#' \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_elevation]{lassmooth}
+#' \link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_height]{lassmooth}
 #' \link[lidR:segment_snags]{lassnags}
 #' \link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
 #' \link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
@@ -242,15 +242,15 @@ lasreoffset = function(las, xoffset, yoffset, zoffset) {
 #' @export
 #' @rdname deprecated
 lassmooth = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6) {
-  .lidr3depreciation("smooth_elevation")
-  return(smooth_elevation(las, size, method, shape, sigma))
+  .lidr3depreciation("smooth_height")
+  return(smooth_height(las, size, method, shape, sigma))
 }
 
 #' @export
 #' @rdname deprecated
 lasunsmooth = function(las) {
-  .lidr3depreciation("unsmooth_elevation")
-  return(unsmooth_elevation(las))
+  .lidr3depreciation("unsmooth_height")
+  return(unsmooth_height(las))
 }
 
 #' @export
