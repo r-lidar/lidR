@@ -144,4 +144,3 @@ test_that("lasmergespatial works a RGB RasterBrick", {
   expect_true(is.integer(lidar@data$R))
   expect_equal(lidar@header@PHB$`Point Data Format ID`, 2L)
 })
-
