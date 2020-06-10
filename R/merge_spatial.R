@@ -85,6 +85,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
     width <- (box[3] - box[1])*0.01 + las@header@PHB[["X scale factor"]]
     height <- (box[4] - box[2])*0.01 + las@header@PHB[["Y scale factor"]]
     box <- box + c(-width, -height, width, height)
+    attr(box, "crs") <- sf::st_crs(source) # fix for code before rgdal 1.5-8 (probably)
     sf::st_agr(source) = "constant"
     source <- sf::st_crop(source, box)
   }

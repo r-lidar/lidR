@@ -144,20 +144,3 @@ test_that("lasmergespatial works a RGB RasterBrick", {
   expect_true(is.integer(lidar@data$R))
   expect_equal(lidar@header@PHB$`Point Data Format ID`, 2L)
 })
-
-test_that("reproduce CRAN error", {
-
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-shapefile_dir <- system.file("extdata", package = "lidR")
-
-las <- readLAS(LASfile, select = "xyzi", filter = "-thin_with_grid 2")
-source <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = FALSE)
-source <- sf::st_as_sf(source)
-
-box <- sf::st_bbox(las)
-width <- (box[3] - box[1])*0.01 + las@header@PHB[["X scale factor"]]
-height <- (box[4] - box[2])*0.01 + las@header@PHB[["Y scale factor"]]
-box <- box + c(-width, -height, width, height)
-sf::st_agr(source) = "constant"
-source <- sf::st_crop(source, box)
-})
