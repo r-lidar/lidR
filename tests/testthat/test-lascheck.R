@@ -6,7 +6,7 @@ las0    <- readLAS(LASfile)
 las1 <- las0
 las1@data <- data.table::copy(las0@data)
 
-las1@data[1, X := NA_real_]
+#las1@data[1, X := NA_real_]
 las1@data[1, Z := -5]
 las1@data[5,] = las1@data[6,]
 las1@data[7,1:2] = las1@data[6, 1:2]
