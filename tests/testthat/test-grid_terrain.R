@@ -152,7 +152,11 @@ test_that("grid_terrain fails in some specific case", {
   las@data$Classification <- 1L
   expect_error(grid_terrain(las, 1, tin()), "No ground points found")
 
+  expect_error(grid_terrain(las, 1, tin(), use_class = 1), NA)
+
   las@data$Classification <- NULL
   expect_error(grid_terrain(las, 1, tin()), "LAS object does not contain 'Classification' attribute")
+
+
 })
 

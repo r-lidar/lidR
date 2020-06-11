@@ -95,7 +95,6 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   assert_is_a_bool(keep_lowest)
   assert_is_a_bool(full_raster)
   if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
-  if (fast_countequal(las@data$Classification, 2L) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
   if (any(as.integer(use_class) != use_class)) stop("'add_class' is not a vector of integers'", call. = FALSE)
   use_class <- as.integer(use_class)
 
@@ -114,6 +113,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
 
   # Select the ground points
   ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
+  if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
   ground  <- check_degenerated_points(ground, Wdegenerated)
 
   # Find where to interpolate the DTM (interpolation into the convex hull + buffer only).

@@ -147,7 +147,6 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
     use_class <- as.integer(use_class)
 
     if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
-    if (fast_countequal(las@data$Classification, LASGROUND) == 0) stop("No ground point found in the point cloud.")
 
     # Non standart evaluation (R CMD check)
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
@@ -163,6 +162,7 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
     # Select the ground points
     ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
+    if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
     ground  <- check_degenerated_points(ground, Wdegenerated)
 
     # wbuffer = !"buffer" %in% names(las@data)
