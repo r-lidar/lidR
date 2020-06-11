@@ -33,7 +33,7 @@
 #' plot(flightlines, add = TRUE)
 #' @references Roussel Jean-Romain, Bourdon Jean-Francois, Achim Alexis, Range-based intensity
 #' normalization of ALS data over forested areas using a sensor tracking method from multiple returns
-#' ISPRS Photogrametry and Remote Sensing (submitted)
+#' (submitted)
 #' @export
 Roussel2020 = function(interval = 0.5, pmin = 50)
 {
