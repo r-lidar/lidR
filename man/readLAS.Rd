@@ -38,7 +38,7 @@ Note that x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia'.
 This is much more efficient than \link{filter_poi} in many ways. If the desired filters are known
 before reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command: \code{readLAS(filter = "-help")}.
-(see also \link[rlas:read.las]{rlas::read.las}). From \code{rlas} v1.4.0 the transformation commands
+(see also \link[rlas:read.las]{rlas::read.las}). From \code{rlas} v1.3.6 the transformation commands
 can also be passed via the argument filter.
 }
 \examples{

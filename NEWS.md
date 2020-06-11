@@ -4,6 +4,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 * Fix: in `grid_terrain()` and `normalize_height()` we introduced few releases ago an option `use_class` but we did not removed an internal test constiting in failling in absance of point classified 2. This invalidated the possibility to use e.g. `use_class = 1` in files that do not respect ASPRS standards [#350](https://github.com/Jean-Romain/lidR/issues/350).
 * Fix: many troubles introduced in v3.0.0 on CRAN
+* Fix: package explicitly depends on sp >= 1.4.2
+* Fix: `readLAS(filter = "-help")` was not working but was suggested in the documentation.
 
 ## lidR v3.0.0 (Release date: 2020-06-08)
 
