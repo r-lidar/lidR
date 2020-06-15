@@ -28,7 +28,7 @@ To fix this, the objects are shifted to (0,0) to reduce the number of digits nee
 their coordinates. The drawback is that the objects are not plotted at their actual coordinates.}
 
 \item{\dots}{Supplementary parameters for \link[rgl]{surface3d} or
-\link[rgl]{spheres3d}.}
+\link[rgl:spheres]{spheres3d}.}
 
 \item{x}{The output of the function plot used with a LAS object.}
 

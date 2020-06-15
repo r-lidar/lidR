@@ -38,7 +38,7 @@
 #' Default is 1 meaning that the whole range of the values is used for the color palette.
 #' 0.9 means that 10% of the highest values are not used to define the color palette.
 #' In this case the values higher than the 90th percentile are set to the highest color. They are not removed.
-#' @param \dots Supplementary parameters for \link[rgl]{points3d} if the display method is "points".
+#' @param \dots Supplementary parameters for \link[rgl:3dobjects]{points3d} if the display method is "points".
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -92,7 +92,7 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' @param dtm An object of the class \code{RasterLayer}
 #' @param bg The color for the background. Default is black.
 #' @param \dots Supplementary parameters for \link[rgl]{surface3d} or
-#' \link[rgl]{spheres3d}.
+#' \link[rgl:spheres]{spheres3d}.
 #' @param x The output of the function plot used with a LAS object.
 #' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates.
 #' @param flightlines A SpatialPointsDataFrame that contains flightlines coordinates.

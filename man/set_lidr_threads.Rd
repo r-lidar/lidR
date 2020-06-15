@@ -17,7 +17,7 @@ to multi task.}
 Set and get number of threads to be used in lidR functions that are parallelized with OpenMP.
 Default value 0 means to utilize all CPU available. \code{get_lidr_threads()} returns the number
 of threads that will be used. This affects \code{lidR} package but also the \code{data.table} package
-by internally calling \link[data.table]{setDTthreads} because several functions  of
+by internally calling \link[data.table:openmp-utils]{setDTthreads} because several functions  of
 lidR rely on \code{data.table} but it does not change R itself or other packages using OpenMP.
 }
 \seealso{

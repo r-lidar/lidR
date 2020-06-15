@@ -68,7 +68,7 @@
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @param overlaps logical. Highlight the overlaps between files.
 #'
-#' @param ... Will be passed to \link[rgl]{points3d} (LAS) or \link[graphics:plot.default]{plot}
+#' @param ... Will be passed to \link[rgl:3dobjects]{points3d} (LAS) or \link[graphics:plot.default]{plot}
 #' if \code{mapview = FALSE} or to \link[mapview:mapView]{mapview} if \code{mapview = TRUE} (LAScatalog).
 #'
 #' @examples

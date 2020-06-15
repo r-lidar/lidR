@@ -34,7 +34,7 @@ plot(x, y, ...)
 
 \item{y}{Unused (inherited from R base)}
 
-\item{...}{Will be passed to \link[rgl]{points3d} (LAS) or \link[graphics:plot.default]{plot}
+\item{...}{Will be passed to \link[rgl:3dobjects]{points3d} (LAS) or \link[graphics:plot.default]{plot}
 if \code{mapview = FALSE} or to \link[mapview:mapView]{mapview} if \code{mapview = TRUE} (LAScatalog).}
 
 \item{color}{characters. The attribute used to color the point cloud. Default is Z coordinates. RGB
