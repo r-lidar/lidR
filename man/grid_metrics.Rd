@@ -50,10 +50,10 @@ grid_metrics(las, ~f(Intensity), res = 20)
 The following existing functions allow the user to
 compute some predefined metrics:
 \itemize{
-\item{\link[lidR:stdmetrics]{stdmetrics}}
-\item{\link[lidR:entropy]{entropy}}
-\item{\link[lidR:VCI]{VCI}}
-\item{\link[lidR:LAD]{LAD}}
+\item{\link[=stdmetrics]{stdmetrics}}
+\item{\link[=entropy]{entropy}}
+\item{\link[=VCI]{VCI}}
+\item{\link[=LAD]{LAD}}
 }
 But usually users must write their own functions to create metrics. \code{grid_metrics} will
 dispatch the point cloud in the user's function.

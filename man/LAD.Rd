@@ -23,7 +23,7 @@ Computes a leaf area density profile based on the method of Bouvier et al. (see 
 }
 \details{
 The function assesses the number of laser points that actually reached the layer
-z+dz and those that passed through the layer [z, z+dz] (see \link[lidR:gap_fraction_profile]{gap_fraction_profile}).
+z+dz and those that passed through the layer [z, z+dz] (see \link[=gap_fraction_profile]{gap_fraction_profile}).
 Then it computes the log of this quantity and divides it by the extinction coefficient k as described in Bouvier
 et al. By definition the layer 0 will always return infinity because no returns pass through
 the ground. Therefore, the layer 0 is removed from the returned results.
@@ -40,5 +40,5 @@ plot(lad, type="l", xlab="Elevation", ylab="Leaf area density")
 Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 }
 \seealso{
-\link[lidR:gap_fraction_profile]{gap_fraction_profile}
+\link[=gap_fraction_profile]{gap_fraction_profile}
 }

@@ -30,10 +30,10 @@
 #' Select a set of LAS tiles from a LAScatalog interactively using the mouse. This function
 #' allows users to subset a LAScatalog by clicking on a map of the file.
 #'
-#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
+#' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'
 #' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
-#' also \link[lidR:plot]{plot})
+#' also \link[=plot]{plot})
 #' @param method character. By default selecting tiles that are a subset of the catalog. It is also possible to flag
 #' the files to maintain the catalog as a whole but process only a subset of its content.
 #' \code{flag_unprocessed} enables users to point and click on files that will not be processed.

@@ -213,16 +213,16 @@ tree_hulls(
 These functions are provided for compatibility with older versions of lidR but are deprecated
 since lidR version 3. They will progressively print a message, throw a warning and eventually be
 removed. The links below point to the documentation of the new names \cr\cr
-\link[lidR:add_attribute]{lasadd} \link[lidR:las_check]{lascheck} \link[lidR:clip_roi]{lasclip}
-\link[lidR:segment_shapes]{lasdetectshape} \link[lidR:filter_poi]{lasfilter}
-\link[lidR:filter_surfacepoints]{lasfiltersurfacepoints} \link[lidR:retrieve_flightlines]{lasflightline}
-\link[lidR:classify_ground]{lasground} \link[lidR:merge_spatial]{lasmergespatial}
-\link[lidR:normalize_height]{lasnormalize} \link[lidR:retrieve_pulses]{laspulse}
-\link[lidR:normalize_intensity]{lasrangecorrection} \link[lidR:retrieve_flightlines]{lasflightline}
-\link[lidR:las_reoffset]{lasreoffset} \link[lidR:las_rescale]{lasrescale}
-\link[lidR:retrieve_scanlines]{lasscanlines} \link[lidR:smooth_height]{lassmooth}
-\link[lidR:segment_snags]{lassnags}
-\link[lidR:segment_trees]{lastrees} \link[lidR:voxelize_points]{lasvoxelize}
-\link[lidR:track_sensor]{sensor_tracking} \link[lidR:find_trees]{tree_detection}
-\link[lidR:delineate_crowns]{tree_hull}
+\link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
+\link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
+\link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
+\link[=classify_ground]{lasground} \link[=merge_spatial]{lasmergespatial}
+\link[=normalize_height]{lasnormalize} \link[=retrieve_pulses]{laspulse}
+\link[=normalize_intensity]{lasrangecorrection} \link[=retrieve_flightlines]{lasflightline}
+\link[=las_reoffset]{lasreoffset} \link[=las_rescale]{lasrescale}
+\link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
+\link[=segment_snags]{lassnags}
+\link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
+\link[=track_sensor]{sensor_tracking} \link[=find_trees]{tree_detection}
+\link[=delineate_crowns]{tree_hull}
 }

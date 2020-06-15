@@ -10,7 +10,7 @@ catalog_apply(ctg, FUN, ..., .options = NULL)
 catalog_sapply(ctg, FUN, ..., .options = NULL)
 }
 \arguments{
-\item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object.}
+\item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object.}
 
 \item{FUN}{A user-defined function that respects a given template (see section function template)}
 
@@ -19,9 +19,9 @@ catalog_sapply(ctg, FUN, ..., .options = NULL)
 \item{.options}{See dedicated section and examples.}
 }
 \description{
-This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
+This function gives users access to the \link[=LAScatalog-class]{LAScatalog} processing engine.
 It allows the application of a user-defined routine over an entire catalog. The LAScatalog
-processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
+processing engine tool is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 \code{catalog_apply()} is the core of the lidR package. It drives every single function that can process a
 \code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_sapply} is the same
 with the option \code{automerge = TRUE} enforced to simplify the output.\cr\cr
@@ -130,7 +130,7 @@ See also \link{grid_metrics} for more details.
 \section{Supported processing options}{
 
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\link[=LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \emph{chunk_size}: How much data is loaded at once.
 \item \emph{chunk_buffer}: Load chunks with a buffer.

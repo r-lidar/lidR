@@ -30,10 +30,10 @@
 
 #' Get or set LAScatalog processing engine options
 #'
-#' The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
+#' The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
 #' The options are used by all the functions that support a \code{LAScatalog} as input.
 #'
-#' @param ctg An object of class \link[lidR:LAScatalog-class]{LAScatalog}
+#' @param ctg An object of class \link[=LAScatalog-class]{LAScatalog}
 #' @param value An appropriate value depending on the expected input.
 #'
 #' @name catalog_options_tools

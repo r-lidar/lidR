@@ -32,7 +32,7 @@
 #' with a LAScatalog. It can be used to select tiles of interest that encompass Spatial* objects such
 #' as SpatialPoints, SpatialPolygons or SpatialLines.
 #'
-#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object
+#' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'
 #' @param y Extent, Raster*, SpatialPolygons*, SpatialLines* or SpatialPoints* object
 #'

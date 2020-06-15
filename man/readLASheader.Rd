@@ -13,7 +13,7 @@ readLASheader(file)
 A LASheader object
 }
 \description{
-Reads a .las or .laz file header into an object of class \link[lidR:LASheader-class]{LASheader}.
+Reads a .las or .laz file header into an object of class \link[=LASheader-class]{LASheader}.
 This function strictly reads the header while the function \link{readLAS} can alter the header to
 fit the actual data loaded.
 }

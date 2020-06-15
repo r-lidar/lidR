@@ -30,7 +30,7 @@
 #' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
 #' users in version 3.0.0 because it might be useful for some debugging purposes. It might also be useful for
 #' some advanced developers. Regular users are not expected to use this function. The chunks are made
-#' according to the \link[lidR:catalog_options_tools]{catalog processing options}.
+#' according to the \link[=catalog_options_tools]{catalog processing options}.
 #'
 #' @param ctg an object of class \code{LAScatalog}
 #' @param realignment \code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometimes the chunk must

@@ -31,7 +31,7 @@ xy as tree coordinates in \code{SpatialPoinsDataFrame}. z is stored in the table
 along with the id of each tree. All the other attributes are user-defined attributes:\cr\cr
 The following existing functions contain a small set of pre-defined metrics:
 \itemize{
-\item{\link[lidR:stdmetrics]{stdmetrics_tree}}
+\item{\link[=stdmetrics]{stdmetrics_tree}}
 } Users must write their own functions to create their own metrics. \code{tree_metrics} will
 dispatch the LiDAR data for each segmented tree in the user-defined function. Functions
 are defined without the need to consider each segmented tree i.e. only the point cloud (see examples).

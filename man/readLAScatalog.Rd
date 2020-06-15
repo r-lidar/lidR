@@ -30,13 +30,13 @@ See \link{LAScatalog-class} and \link{catalog_options_tools}.}
 A \code{LAScatalog} object
 }
 \description{
-Create an object of class \link[lidR:LAScatalog-class]{LAScatalog} from a folder or a collection of filenames.
+Create an object of class \link[=LAScatalog-class]{LAScatalog} from a folder or a collection of filenames.
 A LAScatalog is a representation of a collection of las/laz files. A computer cannot load all the data at
 once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most functions from
 \code{lidR} can be used seamlessly with a LAScatalog using the internal \code{LAScatalog} processing
 engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
-processing options using the \link[lidR:catalog_options_tools]{appropriated functions}. Careful
-reading of the \link[lidR:LAScatalog-class]{LAScatalog class documentation} is required to use the
+processing options using the \link[=catalog_options_tools]{appropriated functions}. Careful
+reading of the \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 \code{LAScatalog} class correctly.\cr\cr \code{catalog()} is softly deprecated for \code{readLAScatalog()}.
 }
 \examples{

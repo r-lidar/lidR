@@ -71,7 +71,7 @@
 #'
 #' @section Supported processing options:
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \link[=LAScatalog-class]{LAScatalog engine documentation}:
 #' \itemize{
 #' \item chunk_size: Does not make sense here.
 #' \item buffer: Not supported yet.

@@ -28,7 +28,7 @@ add_lasrgb(las, R, G, B)
 remove_lasattribute(las, name)
 }
 \arguments{
-\item{las}{An object of class \link[lidR:LAS-class]{LAS}}
+\item{las}{An object of class \link[=LAS-class]{LAS}}
 
 \item{x}{a vector that needs to be added in the LAS object. For \code{add_lasattribute*} it can
 be missing (see details).}
@@ -48,10 +48,10 @@ be replaced by this value that will be considered as NA. NULL if not relevant.}
 \item{R, G, B}{integer. RGB values}
 }
 \value{
-An object of class \link[lidR:LAS-class]{LAS}
+An object of class \link[=LAS-class]{LAS}
 }
 \description{
-A \link[lidR:LAS-class]{LAS} object represents a las file in R. According to the
+A \link[=LAS-class]{LAS} object represents a las file in R. According to the
 \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
 a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
 and so on, for each point. It is possible to add supplementary attributes.

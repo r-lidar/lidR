@@ -32,7 +32,7 @@
 #'
 #' A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
 #' a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
-#' a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
+#' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #' for more information). Because las files are standardized the table of attributes read from the las/laz file
 #' is also standardized. Columns are named:
@@ -64,7 +64,7 @@
 #' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #'
-#' @slot header Object of class \link[lidR:LASheader-class]{LASheader}. las file header according to the
+#' @slot header Object of class \link[=LASheader-class]{LASheader}. las file header according to the
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #'
 #' @include Class-LASheader.R

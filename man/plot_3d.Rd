@@ -27,8 +27,8 @@ the rendering may look false or weird. This is because \code{rgl} computes with 
 To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
 their coordinates. The drawback is that the objects are not plotted at their actual coordinates.}
 
-\item{\dots}{Supplementary parameters for \link[rgl:surface3d]{surface3d} or
-\link[rgl:spheres3d]{spheres3d}.}
+\item{\dots}{Supplementary parameters for \link[rgl]{surface3d} or
+\link[rgl]{spheres3d}.}
 
 \item{x}{The output of the function plot used with a LAS object.}
 
@@ -44,7 +44,7 @@ Add a \code{RasterLayer} object that represents a digital terrain model or a
 to a scene with a point cloud plotted with the function plot from lidR, the functions \code{add_*}
 take as first argument the output of the plot function (see examples), because the plot function
 does not plot the actual coordinates of the point cloud, but offsetted values. See function
-\link[lidR:plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
+\link[=plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
 with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
 }
 \examples{

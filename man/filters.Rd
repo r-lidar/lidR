@@ -26,12 +26,12 @@ filter_nth(las, n)
 filter_single(las)
 }
 \arguments{
-\item{las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
+\item{las}{An object of class \code{\link[=LAS-class]{LAS}}}
 
 \item{n}{the position in the return sequence}
 }
 \value{
-An object of class \code{\link[lidR:LAS-class]{LAS}}
+An object of class \code{\link[=LAS-class]{LAS}}
 }
 \description{
 Select only some returns

@@ -39,5 +39,5 @@ plot(gapFraction, type="l", xlab="Elevation", ylab="Gap fraction")
 Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
 }
 \seealso{
-\link[lidR:LAD]{LAD}
+\link[=LAD]{LAD}
 }

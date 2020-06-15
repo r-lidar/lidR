@@ -28,11 +28,11 @@
 #' Plot a LAS* object
 #'
 #' Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr
-#' Plot displays an interactive view for \link[lidR:LAScatalog-class]{LAScatalog} objects with pan and
+#' Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and
 #' zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
 #' system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps
 #' (satellite data, elevation, street, and so on).\cr\cr
-#' Plot displays a \link[lidR:LASheader-class]{LASheader} object exactly like it displays a LAScatalog
+#' Plot displays a \link[=LASheader-class]{LASheader} object exactly like it displays a LAScatalog
 #' object.
 #'
 #'
@@ -68,7 +68,7 @@
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @param overlaps logical. Highlight the overlaps between files.
 #'
-#' @param ... Will be passed to \link[rgl:points3d]{points3d} (LAS) or \link[graphics:plot]{plot}
+#' @param ... Will be passed to \link[rgl]{points3d} (LAS) or \link[graphics:plot.default]{plot}
 #' if \code{mapview = FALSE} or to \link[mapview:mapView]{mapview} if \code{mapview = TRUE} (LAScatalog).
 #'
 #' @examples

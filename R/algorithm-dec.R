@@ -31,7 +31,7 @@
 #'
 #' This function is made to be used in \link{decimate_points}. It implements an algorithm that
 #' randomly removes points or pulses to reach the desired density over the whole area (see
-#' \code{\link[lidR:area]{area}}).
+#' \code{\link[=area]{area}}).
 #'
 #' @param density numeric. The desired output density.
 #'

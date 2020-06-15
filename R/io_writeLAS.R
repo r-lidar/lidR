@@ -29,7 +29,7 @@
 
 #' Write a .las or .laz file
 #'
-#' Write a \link[lidR:LAS-class]{LAS} object into a binary .las or .laz file (compression
+#' Write a \link[=LAS-class]{LAS} object into a binary .las or .laz file (compression
 #' specified in filename)
 #'
 #' @param las an object of class LAS.

@@ -38,20 +38,13 @@
 #' Default is 1 meaning that the whole range of the values is used for the color palette.
 #' 0.9 means that 10% of the highest values are not used to define the color palette.
 #' In this case the values higher than the 90th percentile are set to the highest color. They are not removed.
-#' @param \dots Supplementary parameters for \link[rgl:points3d]{points3d} if the display method is "points".
+#' @param \dots Supplementary parameters for \link[rgl]{points3d} if the display method is "points".
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
 #'
 #' voxels = voxel_metrics(lidar, list(Imean = mean(Intensity)))
 #' plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
-#' @seealso
-#' \link[lidR:voxel_metrics]{voxel_metrics}
-#' \link[rgl:points3d]{points3d}
-#' \link[lidR:height.colors]{height.colors}
-#' \link[lidR:forest.colors]{forest.colors}
-#' \link[grDevices:heat.colors]{heat.colors}
-#' \link[grDevices:colorRamp]{colorRampPalette}
 #' @export
 #' @method plot lasmetrics3d
 plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, ...)
@@ -93,13 +86,13 @@ plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50)
 #' to a scene with a point cloud plotted with the function plot from lidR, the functions \code{add_*}
 #' take as first argument the output of the plot function (see examples), because the plot function
 #' does not plot the actual coordinates of the point cloud, but offsetted values. See function
-#' \link[lidR:plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
+#' \link[=plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
 #' with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
 #'
 #' @param dtm An object of the class \code{RasterLayer}
 #' @param bg The color for the background. Default is black.
-#' @param \dots Supplementary parameters for \link[rgl:surface3d]{surface3d} or
-#' \link[rgl:spheres3d]{spheres3d}.
+#' @param \dots Supplementary parameters for \link[rgl]{surface3d} or
+#' \link[rgl]{spheres3d}.
 #' @param x The output of the function plot used with a LAS object.
 #' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates.
 #' @param flightlines A SpatialPointsDataFrame that contains flightlines coordinates.

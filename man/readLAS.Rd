@@ -8,7 +8,7 @@ readLAS(files, select = "*", filter = "")
 }
 \arguments{
 \item{files}{characters. Path(s) to one or several a file(s). Can also be a
-\link[lidR:LAScatalog-class]{LAScatalog} object.}
+\link[=LAScatalog-class]{LAScatalog} object.}
 
 \item{select}{character. Read only attributes of interest to save memory (see details).}
 
@@ -18,7 +18,7 @@ readLAS(files, select = "*", filter = "")
 A LAS object
 }
 \description{
-Reads .las or .laz files into an object of class \link[lidR:LAS-class]{LAS}. If several files are read at
+Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If several files are read at
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.

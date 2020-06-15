@@ -26,7 +26,7 @@
 # ===============================================================================
 
 #' @param data a \link[data.table:data.table]{data.table} containing the data of a las or laz file.
-#' @param header a \code{list} or a \link[lidR:LASheader-class]{LASheader} containing the header of
+#' @param header a \code{list} or a \link[=LASheader-class]{LASheader} containing the header of
 #' a las or laz file.
 #' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
 #' @param check logical. Conformity tests while building the object.

@@ -111,7 +111,7 @@
 #' }
 #'
 #' @seealso
-#' \link[lidR:grid_terrain]{grid_terrain}
+#' \link[=grid_terrain]{grid_terrain}
 #' @family normalize
 #' @export
 #' @rdname normalize_height

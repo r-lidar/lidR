@@ -17,7 +17,7 @@ writeLAS(las, file, index = FALSE)
 Nothing. This function is used for its side-effect of writing a file.
 }
 \description{
-Write a \link[lidR:LAS-class]{LAS} object into a binary .las or .laz file (compression
+Write a \link[=LAS-class]{LAS} object into a binary .las or .laz file (compression
 specified in filename)
 }
 \examples{

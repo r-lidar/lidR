@@ -7,7 +7,7 @@
 catalog_intersect(ctg, y)
 }
 \arguments{
-\item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object}
+\item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object}
 
 \item{y}{Extent, Raster*, SpatialPolygons*, SpatialLines* or SpatialPoints* object}
 }

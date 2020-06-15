@@ -83,12 +83,12 @@ opt_filter(ctg)
 opt_filter(ctg) <- value
 }
 \arguments{
-\item{ctg}{An object of class \link[lidR:LAScatalog-class]{LAScatalog}}
+\item{ctg}{An object of class \link[=LAScatalog-class]{LAScatalog}}
 
 \item{value}{An appropriate value depending on the expected input.}
 }
 \description{
-The names of the options and their roles are documented in \link[lidR:LAScatalog-class]{LAScatalog}.
+The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
 The options are used by all the functions that support a \code{LAScatalog} as input.
 }
 \examples{

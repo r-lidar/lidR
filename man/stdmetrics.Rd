@@ -74,7 +74,7 @@ stdshapemetrics(x, y, z)
 
 \item{rn, class}{ReturnNumber, Classification}
 
-\item{dz}{numeric. Layer thickness  metric \link[lidR:entropy]{entropy}}
+\item{dz}{numeric. Layer thickness  metric \link[=entropy]{entropy}}
 
 \item{th}{numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.}
 

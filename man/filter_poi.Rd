@@ -7,12 +7,12 @@
 filter_poi(las, ...)
 }
 \arguments{
-\item{las}{An object of class \code{\link[lidR:LAS-class]{LAS}}}
+\item{las}{An object of class \code{\link[=LAS-class]{LAS}}}
 
 \item{\dots}{Logical predicates. Multiple conditions are combined with '&' or ','}
 }
 \value{
-An object of class \code{\link[lidR:LAS-class]{LAS}}
+An object of class \code{\link[=LAS-class]{LAS}}
 }
 \description{
 Filter points of interest (POI) from  a LAS object where conditions are true.

@@ -11,7 +11,7 @@ LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE)
 \arguments{
 \item{data}{a \link[data.table:data.table]{data.table} containing the data of a las or laz file.}
 
-\item{header}{a \code{list} or a \link[lidR:LASheader-class]{LASheader} containing the header of
+\item{header}{a \code{list} or a \link[=LASheader-class]{LASheader} containing the header of
 a las or laz file.}
 
 \item{proj4string}{projection string of class \link[sp:CRS-class]{CRS-class}.}
@@ -28,7 +28,7 @@ Class LAS is the representation of a las/laz file according to the
 \details{
 A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
 a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
-a \link[lidR:LASheader-class]{LASheader} (see the ASPRS documentation for the
+a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 for more information). Because las files are standardized the table of attributes read from the las/laz file
 is also standardized. Columns are named:
@@ -67,7 +67,7 @@ factor is set to 0.001
 \item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
 
-\item{\code{header}}{Object of class \link[lidR:LASheader-class]{LASheader}. las file header according to the
+\item{\code{header}}{Object of class \link[=LASheader-class]{LASheader}. las file header according to the
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
 }}
 

@@ -41,7 +41,7 @@
 #' of the hexagonal cells, like in \code{grid_metrics}. The difference being the fact that for square pixels this
 #' is obvious. Here \code{res = 20} gives 400-square-meter hexagonal cells.
 #'
-#' @return A \link[hexbin:hexbin-class]{hexbin} object from package \code{hexbin} or a \code{list} of
+#' @return A \link[hexbin]{hexbin} object from package \code{hexbin} or a \code{list} of
 #' \code{hexbin} objects if several metrics are returned.
 #'
 #' @export

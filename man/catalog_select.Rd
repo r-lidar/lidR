@@ -11,10 +11,10 @@ catalog_select(
 )
 }
 \arguments{
-\item{ctg}{A \link[lidR:LAScatalog-class]{LAScatalog} object}
+\item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object}
 
 \item{mapview}{logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
-also \link[lidR:plot]{plot})}
+also \link[=plot]{plot})}
 
 \item{method}{character. By default selecting tiles that are a subset of the catalog. It is also possible to flag
 the files to maintain the catalog as a whole but process only a subset of its content.

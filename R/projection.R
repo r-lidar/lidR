@@ -298,16 +298,16 @@ setMethod("crs", "LAScatalog", function(x, asText = FALSE)
 
 #' Datum transformation for LAS objects
 #'
-#' A version of \link[rgdal:spTransform]{spTransform} for \link[lidR:LAS-class]{LAS} objects.
+#' A version of \link[rgdal:spTransform]{spTransform} for \link[=LAS-class]{LAS} objects.
 #' Returns transformed coordinates of a \code{LAS} object from the projection of the object to the
 #' the projection given by arguments.
 #'
-#' @param x An object of class \link[lidR:LAS-class]{LAS}
+#' @param x An object of class \link[=LAS-class]{LAS}
 #' @param CRSobj logical. Object of class \link[sp:CRS-class]{CRS} or of class character, in which
 #' case it is converted to \link[sp:CRS-class]{CRS}.
 #' @param ... ignored
 #'
-#' @return An object of class \link[lidR:LAS-class]{LAS} with coordinates XY transformed to the new
+#' @return An object of class \link[=LAS-class]{LAS} with coordinates XY transformed to the new
 #' coordinate reference system. The header has been update by add the ESPG code or a WKT OGC CS string
 #' as a function of the defined Global Encoding WKT bit (see LAS specifications).
 #'

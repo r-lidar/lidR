@@ -37,7 +37,7 @@ but this is not mandatory.\cr
 \section{Supported processing options}{
 
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\link[=LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{chunk size}: How much data is loaded at once.
 \item chunk buffer: No buffer needed. A buffer of 0 is used and cannot be changed

@@ -16,14 +16,14 @@ It returns a \code{list} containing the metrics
 }
 \description{
 \code{cloud_metrics} computes a series of user-defined descriptive statistics for a LiDAR dataset.
-See \link[lidR:grid_metrics]{grid_metrics} to compute metrics on a grid. Basically there are
+See \link[=grid_metrics]{grid_metrics} to compute metrics on a grid. Basically there are
 no predefined metrics. Users must write their own functions to create metrics (see example).
 The following existing functions can serve as a guide to help users compute their own metrics:
 \itemize{
-\item{\link[lidR:stdmetrics]{stdmetrics}}
-\item{\link[lidR:entropy]{entropy}}
-\item{\link[lidR:VCI]{VCI}}
-\item{\link[lidR:LAD]{LAD}}
+\item{\link[=stdmetrics]{stdmetrics}}
+\item{\link[=entropy]{entropy}}
+\item{\link[=VCI]{VCI}}
+\item{\link[=LAD]{LAD}}
 }
 }
 \examples{
@@ -51,11 +51,11 @@ metrics = cloud_metrics(lidar, ~myMetrics(Z, Intensity))
 cloud_metrics(lidar, .stdmetrics)
 }
 \seealso{
-\link[lidR:grid_metrics]{grid_metrics}
-\link[lidR:stdmetrics]{stdmetrics}
-\link[lidR:entropy]{entropy}
-\link[lidR:VCI]{VCI}
-\link[lidR:LAD]{LAD}
+\link[=grid_metrics]{grid_metrics}
+\link[=stdmetrics]{stdmetrics}
+\link[=entropy]{entropy}
+\link[=VCI]{VCI}
+\link[=LAD]{LAD}
 
 Other metrics: 
 \code{\link{grid_metrics}()},

@@ -7,7 +7,7 @@
 catalog_retile(ctg)
 }
 \arguments{
-\item{ctg}{A \link[lidR:catalog]{LAScatalog} object}
+\item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object}
 }
 \value{
 A new \code{LAScatalog} object
@@ -17,7 +17,7 @@ Splits or merges files to reshape the original catalog files (.las or .laz) into
 files. It also enables the addition or removal of a buffer around the tiles. The function first
 displays the layout of the new tiling pattern and then asks the user to validate the command.\cr
 Internally, the function reads and writes the clusters defined by the internal processing options
-of a \link[lidR:LAScatalog-class]{LAScatalog} processing engine. Thus, the function is flexible and
+of a \link[=LAScatalog-class]{LAScatalog} processing engine. Thus, the function is flexible and
 enables the user to retile the dataset, retile while adding or removing a buffer (negative buffers are
 allowed), or optionally to compress the data by retiling without changing the pattern but by changing
 the format (las/laz).\cr\cr
@@ -43,7 +43,7 @@ but this is not mandatory.\cr
 \section{Supported processing options}{
 
 Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+\link[=LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
 \item \strong{chunk_size}: Size of the new tiles.
 \item \strong{buffer}: Load new tiles with a buffer. The expected value is usually 0.

@@ -72,7 +72,6 @@ set.colors = function(x, palette, trim = Inf, value_index = FALSE)
 #' @param n The number of colors (> 1) to be in the palette
 #' @family lidrpalettes
 #' @name lidrpalettes
-#' @seealso \link[grDevices:heat.colors]{grDevices::Palettes}
 NULL
 
 #' @export

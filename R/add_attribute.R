@@ -1,6 +1,6 @@
 #' Add attributes into a LAS object
 #'
-#' A \link[lidR:LAS-class]{LAS} object represents a las file in R. According to the
+#' A \link[=LAS-class]{LAS} object represents a las file in R. According to the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
 #' a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
 #' and so on, for each point. It is possible to add supplementary attributes.
@@ -30,7 +30,7 @@
 #' automatically scaled on 16 bits.}
 #' }
 #'
-#' @param las An object of class \link[lidR:LAS-class]{LAS}
+#' @param las An object of class \link[=LAS-class]{LAS}
 #' @param x a vector that needs to be added in the LAS object. For \code{add_lasattribute*} it can
 #' be missing (see details).
 #' @param name character. The name of the extra bytes attribute to add in the file.
@@ -42,7 +42,7 @@
 #' be replaced by this value that will be considered as NA. NULL if not relevant.
 #' @param R,G,B integer. RGB values
 #'
-#' @return An object of class \link[lidR:LAS-class]{LAS}
+#' @return An object of class \link[=LAS-class]{LAS}
 #'
 #' @name add_attribute
 #'

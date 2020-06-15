@@ -29,9 +29,9 @@
 
 #' LAScatalog processing engine
 #'
-#' This function gives users access to the \link[lidR:LAScatalog-class]{LAScatalog} processing engine.
+#' This function gives users access to the \link[=LAScatalog-class]{LAScatalog} processing engine.
 #' It allows the application of a user-defined routine over an entire catalog. The LAScatalog
-#' processing engine tool is explained in the \link[lidR:LAScatalog-class]{LAScatalog class}\cr\cr
+#' processing engine tool is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 #' `catalog_apply()` is the core of the lidR package. It drives every single function that can process a
 #' \code{LAScatalog}. It is flexible and powerful but also complex. `catalog_sapply` is the same
 #' with the option `automerge = TRUE` enforced to simplify the output.\cr\cr
@@ -41,7 +41,7 @@
 #' specifically for each function. In `catalog_apply()` the user's function can return any output,
 #' thus users must take care of this task themselves (See section "Edge artifacts")
 #'
-#' @param ctg A \link[lidR:LAScatalog-class]{LAScatalog} object.
+#' @param ctg A \link[=LAScatalog-class]{LAScatalog} object.
 #' @param FUN A user-defined function that respects a given template (see section function template)
 #' @param ... Optional arguments to FUN.
 #' @param .options See dedicated section and examples.
@@ -143,7 +143,7 @@
 #'
 #' @section Supported processing options:
 #' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
+#' \link[=LAScatalog-class]{LAScatalog engine documentation}:
 #'
 #' - *chunk_size*: How much data is loaded at once.
 #' - *chunk_buffer*: Load chunks with a buffer.

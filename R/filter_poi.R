@@ -31,10 +31,10 @@
 #'
 #' Filter points of interest (POI) from  a LAS object where conditions are true.
 #'
-#' @param las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param las An object of class \code{\link[=LAS-class]{LAS}}
 #' @param \dots Logical predicates. Multiple conditions are combined with '&' or ','
 #'
-#' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @return An object of class \code{\link[=LAS-class]{LAS}}
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -94,10 +94,10 @@ lasfilter_ <- function(las, conditions)
 #' \item{\code{filter_firstofmany} Select only the first returns from pulses which returned multiple points.}
 #' \item{\code{filter_single} Select only the returns that return only one point.}
 #' }
-#' @param las An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @param las An object of class \code{\link[=LAS-class]{LAS}}
 #' @param n the position in the return sequence
 #'
-#' @return An object of class \code{\link[lidR:LAS-class]{LAS}}
+#' @return An object of class \code{\link[=LAS-class]{LAS}}
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
