@@ -18,10 +18,16 @@ test_that("delineate_crowns works with bbox hulls", {
 })
 
 test_that("delineate_crowns works with concave hulls", {
-  hulls = delineate_crowns(las, "concave")
 
-  expect_is(hulls, "SpatialPolygonsDataFrame")
-  expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
+  # Added if in 3.0.1 because of some flavour misteriously
+  # no longer have the package
+  if (requireNamespace("concaveman", quietly = TRUE))
+  {
+    hulls = delineate_crowns(las, "concave")
+
+    expect_is(hulls, "SpatialPolygonsDataFrame")
+    expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
+  }
 })
 
 test_that("delineate_crowns supports custom metrics", {
