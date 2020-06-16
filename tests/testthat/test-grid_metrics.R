@@ -1,6 +1,6 @@
 context("grid_metrics")
 
-las <- lidR:::dummy_las(2000)
+las <- lidR:::generate_las(2000)
 projection(las) <- sp::CRS("+init=epsg:4326")
 
 test_that("grid_metrics returns a named RasterLayer", {
@@ -53,13 +53,13 @@ test_that("grid_metrics returns a named multilayers RasterBrick aligned with the
 
 test_that("grid_metrics returns a RasterLayer -- tricky case", {
 
-  las2 <- lasfilter(las, X < 20 | X > 70)
+  las2 <- filter_poi(las, X < 20 | X > 70)
   out  <- grid_metrics(las2, ~max(Z))
 
   expect_equal(dim(out), c(5, 5, 1))
   expect_equal(raster::res(out), c(20, 20))
 
-  las2 <- lasfilter(las, (X < 20 | X > 70) & (Y < 20 | Y > 70))
+  las2 <- filter_poi(las, (X < 20 | X > 70) & (Y < 20 | Y > 70))
   out  <- grid_metrics(las2, ~max(Z), 10)
 
   expect_equal(dim(out), c(10, 10, 1))
@@ -68,7 +68,7 @@ test_that("grid_metrics returns a RasterLayer -- tricky case", {
 
 test_that("grid_metrics return a RasterBrick -- tricky case", {
 
-  las2 <- lasfilter(las, (X < 20 | X > 80) & (Y < 20 | Y > 80))
+  las2 <- filter_poi(las, (X < 20 | X > 80) & (Y < 20 | Y > 80))
   out  <- suppressWarnings(grid_metrics(las2, ~list(mean(Z), max(Z)), 10))
 
   expect_true(is(out, "RasterBrick"))
@@ -166,7 +166,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
 
 test_that("predefined metric set work both with a LAS and LAScatalog", {
 
-  las <- lidR:::dummy_las(500)
+  las <- lidR:::generate_las(500)
 
   expect_error(grid_metrics(las, .stdmetrics_z), NA)
   expect_error(grid_metrics(las, .stdmetrics_i), NA)

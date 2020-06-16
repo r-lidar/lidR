@@ -1,6 +1,6 @@
 context("hexbin_metrics")
 
-las <- lidR:::dummy_las(4000)
+las <- lidR:::generate_las(4000)
 
 test_that("hexbin_metrics space cells properly", {
 

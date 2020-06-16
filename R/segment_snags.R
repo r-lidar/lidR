@@ -88,7 +88,7 @@ segment_snags.LAS = function(las, algorithm, attribute = "snagCls")
   lidR.context <- "segment_snags"
   snags <- algorithm(las)
 
-  las <- lasaddextrabytes(las, snags, attribute, "Number identifying a snag class")
+  las <- add_lasattribute(las, snags, attribute, "Number identifying a snag class")
   return(las)
 }
 

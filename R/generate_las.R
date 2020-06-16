@@ -35,7 +35,7 @@ catalog_generator <- function(n, size = 100, seed = 1) {
 
   for (i in 1:nrow(shift))
   {
-    las <- lasgenerator(n, seeds = i + seed)
+    las <- generate_las(n, seeds = i + seed)
     las@data[, X := X + shift[i,1]]
     las@data[, Y := Y + shift[i,2]]
     writeLAS(las, temp[i])

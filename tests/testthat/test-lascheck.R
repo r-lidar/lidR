@@ -1,4 +1,4 @@
-context("lascheck")
+context("las_check")
 
 LASfile <- system.file("extdata", "example.laz", package = "rlas")
 las0    <- readLAS(LASfile)
@@ -48,25 +48,25 @@ ctg2@data$Z.scale.factor <- 0.012
 ctg2@data$Min.Z <- -1
 ctg2@data$Point.Data.Format.ID = 12L
 
-test_that("lascheck works without error with LAS", {
+test_that("las_check works without error with LAS", {
   sink(tempfile())
-  expect_error(lascheck(las0), NA)
-  expect_error(lascheck(las1), NA)
-  expect_error(lascheck(las2), NA)
-  expect_error(lascheck(las3), NA)
-  expect_error(lascheck(las4), NA)
+  expect_error(las_check(las0), NA)
+  expect_error(las_check(las1), NA)
+  expect_error(las_check(las2), NA)
+  expect_error(las_check(las3), NA)
+  expect_error(las_check(las4), NA)
   sink(NULL)
 })
 
-test_that("lascheck works without error with LAScatalog", {
+test_that("las_check works without error with LAScatalog", {
   sink(tempfile())
-  expect_error(lascheck(ctg0), NA)
-  expect_error(lascheck(ctg1), NA)
-  expect_error(lascheck(ctg2), NA)
+  expect_error(las_check(ctg0), NA)
+  expect_error(las_check(ctg1), NA)
+  expect_error(las_check(ctg2), NA)
   sink(NULL)
 })
 
-test_that("lascheck CRS specific test", {
+test_that("las_check CRS specific test", {
 
   sink(tempfile())
 
@@ -79,27 +79,27 @@ test_that("lascheck CRS specific test", {
   wkt(las2) <- "PROJCS[\"RD_New\",GEOGCS[\"GCS_Amersfoort\",DATUM[\"D_Amersfoort\",SPHEROID[\"Bessel_1841\",6377397.155,299.1528128]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Double_Stereographic\"],PARAMETER[\"False_Easting\",155000.0],PARAMETER[\"False_Northing\",463000.0],PARAMETER[\"Central_Meridian\",5.38763888888889],PARAMETER[\"Scale_Factor\",0.9999079],PARAMETER[\"Latitude_Of_Origin\",52.1561605555556],UNIT[\"Meter\",1.0]]"
   las2@header@PHB$`Global Encoding`$WKT <- FALSE
 
-  expect_error(lascheck(las1), NA)
-  expect_error(lascheck(las2), NA)
+  expect_error(las_check(las1), NA)
+  expect_error(las_check(las2), NA)
 
   epsg(las0) <- 2008
   las0@proj4string <- sp::CRS()
 
-  expect_error(lascheck(las0), NA)
+  expect_error(las_check(las0), NA)
 
   las0@header@VLR$GeoKeyDirectoryTag$tags[[1]]$`value offset` <- 200800
 
-  expect_error(lascheck(las0), NA)
+  expect_error(las_check(las0), NA)
 
   las2@header@VLR$`WKT OGC CS`$`WKT OGC COORDINATE SYSTEM` <- "INVALID"
   las2@header@PHB$`Global Encoding`$WKT <- TRUE
 
-  expect_error(lascheck(las2), NA)
+  expect_error(las_check(las2), NA)
 
   sink(NULL)
 })
 
-test_that("lascheck quantization specific test", {
+test_that("las_check quantization specific test", {
 
   sink(tempfile())
 

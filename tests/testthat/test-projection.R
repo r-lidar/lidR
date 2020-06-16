@@ -1,6 +1,6 @@
 context("projection")
 
-las = lidR:::dummy_las(10)
+las = lidR:::generate_las(10)
 
 
 test_that("Internal projection conversion works", {

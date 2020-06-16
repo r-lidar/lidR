@@ -86,9 +86,9 @@ test_that("readLAS LAScatalog gives precedence to argument select and filter", {
 
 test_that("readMSLAS reads multispectral data", {
 
-  las1 = lidR:::lasgenerator(10, 1)
-  las2 = lidR:::lasgenerator(10, 2)
-  las3 = lidR:::lasgenerator(10, 3)
+  las1 = lidR:::generate_las(10, 1)
+  las2 = lidR:::generate_las(10, 2)
+  las3 = lidR:::generate_las(10, 3)
   f1 = tempfile(fileext = ".las")
   f2 = tempfile(fileext = ".las")
   f3 = tempfile(fileext = ".las")

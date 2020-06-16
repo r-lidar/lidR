@@ -1,31 +1,31 @@
-context("tree_hulls")
+context("delineate_crowns")
 
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile, "0", filter = "-keep_xy 481270 3812930 481310 3812970")
 
-test_that("tree_hulls works with convex hulls", {
-  hulls = tree_hulls(las)
+test_that("delineate_crowns works with convex hulls", {
+  hulls = delineate_crowns(las)
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
 })
 
-test_that("tree_hulls works with bbox hulls", {
-  hulls = tree_hulls(las, "bbox")
+test_that("delineate_crowns works with bbox hulls", {
+  hulls = delineate_crowns(las, "bbox")
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
 })
 
-test_that("tree_hulls works with concave hulls", {
-  hulls = tree_hulls(las, "concave")
+test_that("delineate_crowns works with concave hulls", {
+  hulls = delineate_crowns(las, "concave")
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
 })
 
-test_that("tree_hulls supports custom metrics", {
-  hulls = tree_hulls(las, "bbox", func = ~max(Z))
+test_that("delineate_crowns supports custom metrics", {
+  hulls = delineate_crowns(las, "bbox", func = ~max(Z))
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(length(unique(las$treeID))-1,5))
@@ -38,8 +38,8 @@ opt_chunk_size(ctg) = 100
 opt_chunk_alignment(ctg)  <- c(0,20)
 opt_progress(ctg) <- FALSE
 
-test_that("tree_hulls works with a custom metrics", {
-  hulls = tree_hulls(ctg, func = ~max(Z))
+test_that("delineate_crowns works with a custom metrics", {
+  hulls = delineate_crowns(ctg, func = ~max(Z))
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(200,5))

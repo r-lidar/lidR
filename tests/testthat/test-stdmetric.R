@@ -49,7 +49,7 @@ test_that("stdmetric_rn return the same result than stdmetric", {
 
 
 test_that("stdmetric_pulse works", {
-  las = laspulse(las)
+  las = retrieve_pulses(las)
   expect_error(grid_metrics(las, .stdmetrics_pulse, 20), NA)
 })
 

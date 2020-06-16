@@ -6,7 +6,7 @@ y = c(0,0,1,1,0.1,0.5,0.8,0.3,0.1,0.4,0.7)
 vertx = c(0,1,0)
 verty = c(0,0,1)
 
-las <- lidR:::lasgenerator(500)
+las <- lidR:::generate_las(500)
 ctg <- lidR:::catalog_generator(500)
 
 test_that("convex hull works", {
@@ -25,7 +25,7 @@ test_that("area works with a LAS*", {
 })
 
 test_that("area works with a 0 points", {
-  las <- lasfilter(las, Z > 100)
+  las <- filter_poi(las, Z > 100)
   expect_equal(area(las), 0)
 })
 

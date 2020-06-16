@@ -159,7 +159,7 @@ test_that("LAS throws a warning/error if building an invalid LAS", {
 
 test_that("LAS redefined behavior of $, [, and [[", {
 
-  las <- lidR:::dummy_las(10)
+  las <- lidR:::generate_las(10)
 
   expect_true(is.numeric(las$Z))
   expect_equal(length(las$Z), 10)
@@ -179,7 +179,7 @@ test_that("LAS redefined behavior of $, [, and [[", {
 })
 
 test_that("LAS conversion to SpatialPointsDataFrame works", {
-  las <- lidR:::dummy_las(10)
+  las <- lidR:::generate_las(10)
   splas <- as.spatial(las)
 
   expect_true(is(splas, "SpatialPointsDataFrame"))

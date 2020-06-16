@@ -1,10 +1,10 @@
-context("lastransform")
+context("spTransform")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las <- readLAS(LASfile, select = "xyz")
 crs <- sp::CRS("+init=epsg:26918")
 
-las2 <- lastransform(las, crs)
+las2 <- spTransform(las, crs)
 
 test_that("Datum tranformation works", {
   expect_equal(mean(las$X), 684879,  tol = 1)

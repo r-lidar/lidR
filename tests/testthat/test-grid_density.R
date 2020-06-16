@@ -17,7 +17,7 @@ test_that("grid_density returns the same both with LAScatalog and LAS", {
 
 
 test_that("grid_density returns pulse density", {
-  las <- laspulse(las)
+  las <- retrieve_pulses(las)
   d1 <- grid_density(las)
 
   expect_is(d1, "RasterBrick")

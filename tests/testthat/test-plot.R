@@ -48,7 +48,7 @@ test_that("plot LAS works with artifact", {
 })
 
 test_that("plot LAS does not works with 0 points", {
-  expect_error(plot(lasfilter(las, Z > 1000)), "Cannot display an empty point cloud")
+  expect_error(plot(filter_poi(las, Z > 1000)), "Cannot display an empty point cloud")
 })
 
 test_that("plot LAS checks the arguments", {
@@ -87,7 +87,7 @@ test_that("add dtm3d works", {
 })
 
 test_that("add treetop3d works", {
-  x = tree_detection(las, lmf(3))
+  x = find_trees(las, lmf(3))
   expect_error({y = plot(las) ; add_treetops3d(y, x)}, NA)
   rgl::rgl.close()
 })

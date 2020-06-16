@@ -2,7 +2,7 @@ context("grid_canopy")
 
 test_that("grid_canopy with p2r() returns a georeferenced RasterLayer", {
 
-  las <- lidR:::dummy_las(2000)
+  las <- lidR:::generate_las(2000)
   x   <- grid_canopy(las, 4, p2r())
 
   expect_true(is(x, "RasterLayer"))
@@ -48,7 +48,7 @@ test_that("grid_canopy with p2r() works with subcircle option", {
 
 test_that("grid_canopy with p2r() works with na.fill", {
 
-  las <- lidR:::dummy_las(1000)
+  las <- lidR:::generate_las(1000)
   x   <- grid_canopy(las, 4, p2r())
 
   expect_equal(sum(is.na(x[])), 118L)

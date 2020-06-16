@@ -1,6 +1,6 @@
 context("grid_terrain")
 
-las <- lidR:::dummy_las(5000)
+las <- lidR:::generate_las(5000)
 projection(las) <- sp::CRS("+init=epsg:4326")
 las@data[, Z := round(Z + 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)]
 
@@ -86,7 +86,7 @@ test_that("grid_terrain option keep_lowest works", {
   expect_true(!anyNA(z))
 })
 
-las2 <- lasclipCircle(las, 50, 50, 40)
+las2 <- clip_circle(las, 50, 50, 40)
 
 test_that("grid_terrain returns a circular dtm ", {
 

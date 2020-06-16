@@ -1,4 +1,4 @@
-context("lasadddata")
+context("add_attribute")
 
 LASfile <- system.file("extdata", "example.laz", package = "rlas")
 las     <- readLAS(LASfile, "xyz")
@@ -9,16 +9,16 @@ R = sample(1:255, n, TRUE)
 G = sample(1:255, n, TRUE)
 B = sample(1:255, n, TRUE)
 
-test_that("lasadddata works", {
-   las2 = lasadddata(las, x, "plop")
+test_that("add_attribute works", {
+   las2 = add_attribute(las, x, "plop")
    n = names(las2@data)
 
    expect_true("plop" %in% n)
    expect_equal(las@header, las2@header)
 })
 
-test_that("lasaddextrabytes works", {
-  las2 = lasaddextrabytes(las, x, "plop", "extra attr")
+test_that("add_lasattribute works", {
+  las2 = add_lasattribute(las, x, "plop", "extra attr")
   n = names(las2@data)
 
   expect_true("plop" %in% n)
@@ -26,8 +26,8 @@ test_that("lasaddextrabytes works", {
   expect_true(!is.null(las2@header@VLR$Extra_Bytes$`Extra Bytes Description`$plop))
 })
 
-test_that("lasaddextrabytes manual works", {
-  las2 = lasaddextrabytes_manual(las, x, "plop", "extra attr", "float")
+test_that("add_lasattribute manual works", {
+  las2 = add_lasattribute_manual(las, x, "plop", "extra attr", "float")
   n = names(las2@data)
 
   expect_true("plop" %in% n)
@@ -36,8 +36,8 @@ test_that("lasaddextrabytes manual works", {
 })
 
 test_that("lasremoveextrabyes works", {
-  las2 = lasaddextrabytes(las, x, "plop", "extra attr")
-  las3 = lasremoveextrabytes(las2, "plop")
+  las2 = add_lasattribute(las, x, "plop", "extra attr")
+  las3 = remove_lasattribute(las2, "plop")
 
   expect_equal(las3@header, las@header)
 })

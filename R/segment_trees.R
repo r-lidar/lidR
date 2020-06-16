@@ -97,7 +97,7 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
 
     las@data[[attribute]] <- matching[["t.pos.t"]]
 
-    las <- lasaddextrabytes_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
+    las <- add_lasattribute_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
     return(las)
   }
   else if (uniqueness == 'bitmerge')

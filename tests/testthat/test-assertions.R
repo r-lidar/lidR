@@ -39,7 +39,7 @@ test_that("assertions work", {
 
   lazfile <- system.file("extdata", "example.laz", package="rlas")
   las <- readLAS(lazfile)
-  las <- lasfilter(las, Z > 1000)
+  las <- filter_poi(las, Z > 1000)
   expect_error(lidR:::stopifnotlas(g))
   expect_error(lidR:::assert_las_is_not_empty(las))
   expect_error(lidR:::stopif_forbidden_name("X"))

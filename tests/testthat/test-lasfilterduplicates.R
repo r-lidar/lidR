@@ -1,15 +1,15 @@
-context("lasfilterduplicates")
+context("filter_duplicates")
 
 LASfile <- system.file("extdata", "example.laz", package = "rlas")
 las     <- readLAS(LASfile)
 
-test_that("lasfilterduplicates works with LAS", {
+test_that("filter_duplicates works with LAS", {
    las@data <- rbind(las@data, las@data)
    las = lidR:::lasupdateheader(las)
-   las = lasfilterduplicates(las)
+   las = filter_duplicates(las)
    expect_equal(npoints(las), 30L)
 })
 
-#test_that("lasfilterduplicates works with LAScatalog", {
+#test_that("filter_duplicates works with LAScatalog", {
 #
 #})

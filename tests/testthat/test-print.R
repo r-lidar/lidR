@@ -6,7 +6,7 @@ las     <- readLAS(LASfile)
 LASfile <- system.file("extdata", "extra_byte.laz", package = "rlas")
 las2     <- readLAS(LASfile)
 
-las3 <- lidR:::dummy_las(50)
+las3 <- lidR:::generate_las(50)
 las3@data$X <- las3@data$X * 1000
 las3@data$Y <- las3@data$Y * 1000
 

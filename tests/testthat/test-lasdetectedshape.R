@@ -1,10 +1,10 @@
-context("lasdetectshape")
+context("segment_shapes")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile, filter = "-thin_with_grid 2", select = "c")
 
-test_that("lasdetectshape works with shp_coplanar", {
-  las <- lasdetectshape(las, shp_plane(k = 15), "Coplanar")
+test_that("segment_shapes works with shp_coplanar", {
+  las <- segment_shapes(las, shp_plane(k = 15), "Coplanar")
 
   cn <- names(las@data)
 
@@ -13,8 +13,8 @@ test_that("lasdetectshape works with shp_coplanar", {
   expect_equivalent(as.numeric(table(las$Coplanar)), c(11230, 1664))
 })
 
-test_that("lasdetectshape works with shp_hcoplanar", {
-  las <- lasdetectshape(las, shp_hplane(k = 15), "Hcoplanar")
+test_that("segment_shapes works with shp_hcoplanar", {
+  las <- segment_shapes(las, shp_hplane(k = 15), "Hcoplanar")
 
   cn <- names(las@data)
 
@@ -24,8 +24,8 @@ test_that("lasdetectshape works with shp_hcoplanar", {
 })
 
 
-test_that("lasdetectshape works with shp_hline", {
-  las <- lasdetectshape(las, shp_line(k = 15), "line")
+test_that("segment_shapes works with shp_hline", {
+  las <- segment_shapes(las, shp_line(k = 15), "line")
 
   cn <- names(las@data)
 
@@ -35,13 +35,13 @@ test_that("lasdetectshape works with shp_hline", {
 })
 
 test_that("filter argument works", {
-  las <- lasdetectshape(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
+  las <- segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
 
   cn <- names(las@data)
 
   expect_true("Coplanar" %in% cn)
   expect_true(is.logical(las@data$Coplanar))
   expect_equivalent(as.numeric(table(las$Coplanar)), c(12572, 322))
-  expect_error(lasdetectshape(las, shp_plane(k = 15), "Coplanar", filter = ~Intensity > 200), "'Intensity'")
+  expect_error(segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Intensity > 200), "'Intensity'")
 })
 

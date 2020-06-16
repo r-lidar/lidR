@@ -82,7 +82,7 @@ lasclipCircle = function(las, xcenter, ycenter, radius, ...) {
 #' @export
 #' @rdname deprecated
 lasdetectshape = function(las, algorithm, attribute = "Shape", filter = NULL) {
-  .lidr3depreciation("detect_shape")
+  .lidr3depreciation("segment_shapes")
   return(segment_shapes(las, algorithm, attribute, filter))
 }
 
@@ -334,19 +334,21 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
 .lidr3depreciation <- function(name)
 {
   # no depreciation v3.0.0
-  return(invisible())
+  #return(invisible())
 
   # message v 3.1.0
-  msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
-  message(msg)
-  return(invisible())
+  #msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
+  #message(msg)
+  #return(invisible())
 
   # warning v3.2.0
-  .Deprecated(name)
-  return(invisible())
+  #msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
+  #warning(msg, call. = FALSE)
+  #return(invisible())
 
   # error v3.3.0
-  .Defunct(name)
+  msg = paste(as.character(sys.call(sys.parent()))[1L], "is defunct. Use", name, "instead.")
+  stop(msg, call. = FALSE)
   return(invisible())
 }
 
