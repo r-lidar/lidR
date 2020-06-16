@@ -18,10 +18,16 @@ test_that("tree_hulls works with bbox hulls", {
 })
 
 test_that("tree_hulls works with concave hulls", {
-  hulls = tree_hulls(las, "concave")
 
-  expect_is(hulls, "SpatialPolygonsDataFrame")
-  expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
+  # Added if in 3.0.1 because of some flavour misteriously
+  # no longer have the package
+  if (requireNamespace("concaveman", quietly = TRUE))
+  {
+    hulls = tree_hulls(las, "concave")
+
+    expect_is(hulls, "SpatialPolygonsDataFrame")
+    expect_equal(dim(hulls), c(length(unique(las$treeID))-1,4))
+  }
 })
 
 test_that("tree_hulls supports custom metrics", {
