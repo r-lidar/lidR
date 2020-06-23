@@ -121,7 +121,8 @@ grid_canopy.LAScatalog = function(las, res, algorithm)
 
   # Enforce some options
   opt_select(las)       <- "xyzr"
-  opt_chunk_buffer(las) <- 2
+  if (opt_wall_to_wall(las))
+    opt_chunk_buffer(las) <- 2
 
   # Compute the alignment option including the case when res is a RasterLayer
   alignment   <- list(res = res, start = c(0,0))
