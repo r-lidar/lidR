@@ -227,7 +227,8 @@ grid_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), filter =
     stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
   # Enforce some options
-  opt_chunk_buffer(las) <- 0.1*alignment[["res"]]
+  if (opt_wall_to_wall(ctg))
+    opt_chunk_buffer(las) <- 0.1*alignment[["res"]]
 
   # Processing
   globals <- future::getGlobalsAndPackages(func)
