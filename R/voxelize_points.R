@@ -98,6 +98,7 @@ voxelize_points.LAScluster = function(las, res)
 #' @export
 voxelize_points.LAScatalog = function(las, res)
 {
+  opt_select(las) <- "xyzi"
   if (opt_wall_to_wall(las))
     opt_chunk_buffer(las) <- res[1]
 
