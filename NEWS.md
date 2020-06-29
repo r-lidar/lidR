@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.0.2
 
 * Fix: in `grid_metrics()` and `grid_canopy()` when processing a `LAScatalog` the option to process by files without buffer and disabling the wall-to-wall guarantees (processing independant filles) is now repected. [See also](https://gis.stackexchange.com/questions/365686/how-to-exclude-bounding-boxes-of-plots-in-lascatalog). 
+* Fix: in `grid_metrics()` NA pixels were zeroed. They are now properly initialized to NA.
 
 ## lidR v3.0.1 (Release date: 2020-06-08)
 

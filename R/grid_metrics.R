@@ -182,6 +182,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL)
     for (i in 1:nmetrics)
     {
       values <- vector(mode = class(metrics[[i]]), length = ncells)
+      values[] <- NA
       values[cells] <- metrics[[i]]
       output <- raster::setValues(output, values, layer = i)
     }
