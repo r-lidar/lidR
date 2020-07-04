@@ -44,7 +44,7 @@ plot(las@header)
 plot(flightlines, add = TRUE)
 }
 \references{
-Roussel Jean-Romain, Bourdon Jean-Francois, Achim Alexis, Range-based intensity
+Roussel Jean-Romain, Bourdon Jean-Francois, Achim Alexis, (2020) Range-based intensity
 normalization of ALS data over forested areas using a sensor tracking method from multiple returns
-(submitted)
+(preprint) Retrieved from eartharxiv.org/k32qw
 }
