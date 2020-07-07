@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.0.3 (Release date: )
 
 * New: `tin()` gains a parameter `extrapolate` to control how the method treats interpolation of points outside the convex hull determined by ground points. This solves [#356](https://github.com/Jean-Romain/lidR/issues/356) 
+* Doc: supported processing options in `grid_terrain()` were inccorect especially the buffer that *is* required. 
 
 ## lidR v3.0.2 (Release date: 2020-06-30)
 

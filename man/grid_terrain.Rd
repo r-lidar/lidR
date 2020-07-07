@@ -43,11 +43,11 @@ returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 }
 \description{
 Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
-the points classified as "ground" (Classification = 2 according to
+the points classified as "ground" and "water (Classification = 2 and 9 according to
 \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
-to compute the interpolation.\cr
+to compute the interpolation.\cr\cr
 How well the edges of the dataset are interpolated depends on the interpolation method used.
-Thus, a buffer around the region of interest is always recommended to avoid edge effects.
+A buffer around the region of interest is always recommended to avoid edge effects.
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -72,7 +72,7 @@ more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentatio
 \item \strong{chunk size}: How much data is loaded at once. The chunk size may be slightly modified
 internally to ensure a strict continuous wall-to-wall output even when chunk size is equal to 0
 (processing by file).
-\item chunk buffer: This function guarantees a strict continuous wall-to-wall output. The
+\item \strong{chunk buffer}: This function guarantees a strict continuous wall-to-wall output. The
 \code{buffer} option is not considered.
 \item \strong{chunk alignment}: Align the processed chunks. The alignment may be slightly modified
 internally to ensure a strict continuous wall-to-wall output.
@@ -81,8 +81,7 @@ internally to ensure a strict continuous wall-to-wall output.
 Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}}, \code{\{YBOTTOM\}}, \code{\{YTOP\}},
 \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if chunk size is equal to 0 (processing
 by file), \code{\{ORIGINALFILENAME\}}.
-\item \strong{\emph{select}}: The \code{grid_*} functions usually 'know' what should be loaded
-and this option is not considered. In \link{grid_metrics} this option is respected.
+\item select: The function 'knows' what should be loaded and this option is not considered.
 \item \strong{filter}: Read only the points of interest.
 }
 }
