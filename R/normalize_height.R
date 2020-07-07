@@ -146,7 +146,7 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
     use_class <- as.integer(use_class)
 
-    if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.")
+    if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
     # Non standart evaluation (R CMD check)
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
@@ -172,7 +172,7 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
     nnas    <- sum(isna)
 
     if (nnas > 0 & na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."))
+      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
   }
   else
   {

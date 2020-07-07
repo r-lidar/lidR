@@ -4,7 +4,14 @@
 \alias{tin}
 \title{Spatial Interpolation Algorithm}
 \usage{
-tin()
+tin(..., extrapolate = knnidw(1, 1, 50))
+}
+\arguments{
+\item{...}{unused}
+
+\item{extrapolate}{There are usually a few points outside the convex hull, determined by the ground
+points at the very edge of the dataset, that cannot be interpolated with a triangulation.
+Extrapolation is done using the nearest neighbour approach by default using \link{knnidw}.}
 }
 \description{
 This function is made to be used in \link{grid_terrain} or \link{normalize_height}. It implements an algorithm
