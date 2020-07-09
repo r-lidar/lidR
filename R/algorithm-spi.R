@@ -54,6 +54,7 @@
 #' plot_dtm3d(dtm)
 tin = function(..., extrapolate = knnidw(1,1,50))
 {
+  assert_is_algorithm_spi(extrapolate)
   extrapolate <- lazyeval::uq(extrapolate)
 
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
@@ -68,7 +69,7 @@ tin = function(..., extrapolate = knnidw(1,1,50))
     {
       verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
 
-      lidR.context <- LIDRCONTEXTSPI
+      lidR.context <- "spatial_interpolation"
       what <- data.frame(X = where$X[!isna], Y = where$Y[!isna], Z = z[!isna])
       where <- data.frame(X = where$X[isna],  Y = where$Y[isna])
       zknn <- extrapolate(what, where, scales, offsets)
