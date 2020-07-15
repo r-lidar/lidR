@@ -4,6 +4,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 * New: `tin()` gains a parameter `extrapolate` to control how the method treats interpolation of points outside the convex hull determined by ground points. This solves [#356](https://github.com/Jean-Romain/lidR/issues/356) 
 * Doc: supported processing options in `grid_terrain()` were inccorect especially the buffer that *is* required. 
+* Doc: in `Wing2015()` the mention about weak performance was removed since it was not longer true for a while.
+* Misc: fix C++ error that will append in next version of `Rcpp` ahead of the release of `Rcpp`. Thanks to @waltersom in [#358](https://github.com/Jean-Romain/lidR/pull/358)
 
 ## lidR v3.0.2 (Release date: 2020-06-30)
 

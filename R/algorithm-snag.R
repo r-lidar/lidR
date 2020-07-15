@@ -52,9 +52,6 @@
 #' \item 4: high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
 #' canopy cover >= 55\%).
 #' }
-#' The current implementation is known to use a large amount of memory for storing the N x k
-#' integer matrix returning the near neighbor indices for each point in the point cloud.
-#' Improvements are possible in future package versions.
 #'
 #' @param neigh_radii numeric. A vector of three radii used in quantifying local-area centered
 #' neighborhoods. See Wing et al. (2015) reference page 171 and Figure 4. Defaults are 1.5,
