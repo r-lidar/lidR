@@ -1,4 +1,5 @@
 context("grid_terrain")
+rgdal::set_thin_PROJ6_warnings(TRUE)
 
 las <- lidR:::dummy_las(5000)
 projection(las) <- sp::CRS("+init=epsg:4326")
