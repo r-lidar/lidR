@@ -9,7 +9,7 @@ R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Ap
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-:book: Read the [Wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
+:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) and the [Wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
 
 To cite the package use `citation()` from within R:
 
