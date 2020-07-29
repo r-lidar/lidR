@@ -410,4 +410,8 @@ test_that("clip throw an error with invalid template", {
   opt_laz_compression(ctg2) <- TRUE
 
   expect_error(lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900), "Ill-formed template string in the catalog")
+
+  opt_output_files(ctg2)    <- paste0(tmp, "/*")
+
+  expect_error(lasclipRectangle(ctg2, 684850, 5017850, 684900, 5017900), "undefined in clip functions")
 })
