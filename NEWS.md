@@ -1,13 +1,15 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better.
 
-## lidR v3.0.3 (Release date: )
+## lidR v3.0.3 (Release date: 2020-08-05)
 
 * New: `tin()` gains a parameter `extrapolate` to control how the method treats interpolation of points outside the convex hull determined by ground points. This solves [#356](https://github.com/Jean-Romain/lidR/issues/356) 
-* Doc: supported processing options in `grid_terrain()` were inccorect especially the buffer that *is* required. 
+* Doc: supported processing options in `grid_terrain()` were incorrect especially the buffer that *is* required. 
 * Doc: in `Wing2015()` the mention about weak performance was removed since it was not longer true for a while.
-* Misc: fix C++ error that will append in next version of `Rcpp` ahead of the release of `Rcpp`. Thanks to @waltersom in [#358](https://github.com/Jean-Romain/lidR/pull/358)
+* Doc: clarification of the supported templates in man page named `clip`
+* Enhance: a more informative error is thrown when using `{ORIGINALFILENAME}` as a template in `clip_*()`.
+* Misc: fix C++ error that will happen in next version of `Rcpp` ahead of the release of `Rcpp`. Thanks to @waltersom in [#358](https://github.com/Jean-Romain/lidR/pull/358)
 
-## lidR v3.0.2 (Release date: 2020-06-30)
+## lidR v3.0.2 (Release date: 2020-07-05)
 
 * Fix: in `grid_metrics()` and `grid_canopy()` when processing a `LAScatalog` the option to process by files without buffer and disabling the wall-to-wall guarantees (processing independant filles) is now repected. [See also](https://gis.stackexchange.com/questions/365686/how-to-exclude-bounding-boxes-of-plots-in-lascatalog). 
 * Fix: in `grid_metrics()` NA pixels were zeroed. They are now properly initialized to NA.
