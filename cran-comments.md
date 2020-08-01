@@ -1,5 +1,3 @@
-This is an early release to fix troubleshooting on CRAN with 32 bits Solaris: quantization test failure 32 bits case was handled with a _WIN32 preprocesor condition which was not valid for Solaris. The fixed has been tested against rhub and was expected to be integrated in 3.0.1 but I made a mistake this is why the fix was not in 3.0.1.
-  
 ## Test environments
 
 * Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with g++ (7.5.0)
