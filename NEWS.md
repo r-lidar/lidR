@@ -715,11 +715,11 @@ The lidR package versions 1 were mainly built upon "personal R scripts" I wrote 
 
 Old binaries can still be found here for 6 months:
 
-- [Windows R-3.6](https://drive.google.com/open?id=1VHM38ftV71lasTQCcm8BxEChP2qxpV9e)
-- [Windows R-3.5](https://drive.google.com/open?id=1E-Iieu0DTKHsDq1TDwq_VUGeiXta2T_Y)
-- [Windows R-3.4](https://drive.google.com/open?id=1nRUyH0SaBCflGDCItkZhhSU9NQR0DXqr)
-- [Mac OSX R-3.5](https://drive.google.com/open?id=1fmMTi6haFQpJFjAVVqW-vIFTULT_YWak)
-- [Mac OSX R-3.4](https://drive.google.com/open?id=1Pw04QHeoF4uE8QPRIASGX_sB17r-sdZm)
+- Windows R-3.6
+- Windows R-3.5
+- Windows R-3.4
+- Mac OSX R-3.5
+- Mac OSX R-3.4
 
 ### Overview of the main visible changes
 
