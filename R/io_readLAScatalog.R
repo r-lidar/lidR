@@ -55,7 +55,13 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   else if (!dir.exists(folder))
     stop(glue::glue("{folder} does not exist."))
   else
-    files <- list.files(folder, full.names = T, pattern = "(?i)\\.la(s|z)$", ...)
+  {
+    p <- list(...)
+    p$path <- folder
+    p$full.names <- TRUE
+    if (is.null(p$pattern)) p$pattern <- "(?i)\\.la(s|z)$"
+    files <- do.call(list.files, p)
+  }
 
   verbose("Reading files...")
 

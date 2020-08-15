@@ -1,4 +1,8 @@
-If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better.
+If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
+
+## lidR v3.0.4 (Release date: )
+
+* Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
 
 ## lidR v3.0.3 (Release date: 2020-08-05)
 
