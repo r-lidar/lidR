@@ -417,7 +417,7 @@ epsg2CRS <- function(epsg, fail = FALSE)
     if (!fail)
       return(sp::CRS(NA_character_))
     else
-      stop("Invalid epsg code", call. = FALSE)
+      stop(paste("Invalid epsg code", epsg), call. = FALSE)
   })
 
   return(crs)
