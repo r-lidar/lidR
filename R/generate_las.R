@@ -20,7 +20,7 @@ generate_las <- function(n, seeds = 1) {
   header[["Y offset"]] <- 0
   header[["Z offset"]] <- 0
   las <- suppressMessages(suppressWarnings(LAS(data, header, check = FALSE)))
-  epsg(las) <- 26917
+  projection(las) <- 26917
   return(las)
 }
 
