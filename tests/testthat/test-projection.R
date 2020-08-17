@@ -6,7 +6,7 @@ las = lidR:::dummy_las(10)
 test_that("Internal projection conversion works", {
 
   wkt <- rgdal::showWKT("+init=epsg:2008")
-  expected <- sp::CRS(SRS_string = "EPSG:2008")
+  expected <- sp::CRS("+init=epsg:2008")
 
   expect_equal(lidR:::epsg2CRS(2008), expected)
   expect_equal(lidR:::epsg2CRS(200800), sp::CRS())
@@ -55,11 +55,11 @@ test_that("projection<- with wkt code works", {
 
   las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
 
-  projection(las) <- sp::CRS(SRS_string = "EPSG:26917")
+  projection(las) <- sp::CRS("+init=epsg:26917")
 
   expect_match(wkt(las), "NAD83 / UTM zone 17N")
 
-  projection(las) <- sp::CRS(SRS_string = "EPSG:26918")
+  projection(las) <- sp::CRS("+init=epsg:26918")
 
   expect_match(wkt(las), "NAD83 / UTM zone 18N")
 })
@@ -68,11 +68,11 @@ test_that("crs<- with wkt code works", {
 
   las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
 
-  crs(las) <- sp::CRS(SRS_string = "EPSG:26919")
+  crs(las) <- sp::CRS("+init=epsg:26919")
 
   expect_match(wkt(las), "NAD83 / UTM zone 19N")
 
-  crs(las) <- sp::CRS(SRS_string = "EPSG:26918")
+  crs(las) <- sp::CRS("+init=epsg:26918")
 
   expect_match(wkt(las), "NAD83 / UTM zone 18N")
 })
