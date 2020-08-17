@@ -6,10 +6,10 @@
 \alias{epsg<-}
 \alias{st_crs}
 \alias{wkt<-}
-\alias{projection,LASheader-method}
-\alias{crs,LASheader-method}
 \alias{epsg,LASheader-method}
 \alias{epsg<-,LASheader-method}
+\alias{projection,LASheader-method}
+\alias{crs,LASheader-method}
 \alias{wkt,LASheader-method}
 \alias{wkt<-,LASheader-method}
 \alias{st_crs.LASheader}
@@ -35,13 +35,13 @@ st_crs(x, ...)
 
 wkt(object) <- value
 
-\S4method{projection}{LASheader}(x, asText = TRUE)
-
-\S4method{crs}{LASheader}(x, asText = FALSE)
-
 \S4method{epsg}{LASheader}(object, ...)
 
 \S4method{epsg}{LASheader}(object) <- value
+
+\S4method{projection}{LASheader}(x, asText = TRUE)
+
+\S4method{crs}{LASheader}(x, asText = FALSE)
 
 \S4method{wkt}{LASheader}(obj)
 
@@ -79,45 +79,66 @@ LASheader objects).}
 
 \item{...}{Unused.}
 
-\item{value}{A \code{CRS} object or a \code{proj4string} string for function\code{projection}.
-An EPSG code as integer for function \code{epsg}. A \code{WKT} string for function \code{wkt}.}
+\item{value}{A \code{CRS} object or a \code{proj4string} string or WKT string or an EPSG code.}
 
 \item{asText}{logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.}
 }
 \description{
-Get or set the projection of a LAS* object with the function \code{projection}. Functions \code{epsg}
-and \code{wkt} are reserved for advanced users (see details).
+Get or set the projection of a LAS* object with the function \code{projection}.
+Functions \verb{epsg<-} and \verb{wkt<-} are legacy functions superseded by \verb{projection<-}.
 }
 \details{
 There are two ways to store the CRS of a point cloud in a LAS file:
 \itemize{
-\item Store an EPSG code (for LAS 1.0 to 1.4)
+\item Store an EPSG code (for LAS 1.0 to 1.3)
 \item Store a WTK string (for LAS 1.4)
 }
 
-On the other hand, all spatial R packages use a \code{proj4string} to store the CRS. This is why
-the CRS is duplicated in a LAS object. The information belongs within the header in a format that
-can be written in a LAS file and in the slot \code{proj4string} in a format that can be understood
-by R packages.
+On the other hand, R sptial packages use a \code{proj4string} to store the CRS (but
+the ecosystem is moving to WKT). This is why the CRS is duplicated in a LAS object.
+The information belongs within the header in a format that can be written in a
+LAS file and in the slot \code{proj4string} in a format that can be understood by R
+packages.
 \itemize{
-\item \verb{projection<-}: updates the CRS from a \code{proj4string}. It updates the header either
-with the EPSG code for LAS formats < 1.4 or with a WKT string for LAS format 1.4 and updates the
-\code{proj4string} slot. This function should always be preferred.
-\item \verb{epsg<-}: updates the CRS from an EPSG code. It adds the EPSG code in the header and updates
-the \code{proj4string} slot.
-\item \verb{wkt<-}: updates the CRS from a WKT string. It adds the WKT string in the header and updates
-the \code{proj4string} slot.
-\item \code{projection}: reads the \code{proj4string} from the \code{proj4string} slot.
+\item \verb{projection<-}: assigns a CRS from a \code{CRS} (\code{sp}), a \code{crs} (\code{sf}), a WKT
+string, a proj4string or an epsg code. It updates the header of the LAS
+object either with the EPSG code for LAS formats < 1.4 or with a WKT string
+for LAS format 1.4 and updates the \code{proj4string} slot.
+\item \code{crs} and \verb{crs<-} are equivalent to \code{projection} and \verb{projection<-}
+\item \verb{epsg<-}, \verb{wkt<- }: legacy functions superseded by \verb{projection<-}
+\item \code{projection}: returns the CRS in \code{sp} format
+\item \code{st_crs} return the CRS in \code{sf} format.
 \item \code{epsg}: reads the epsg code from the header.
 \item \code{wkt}: reads the WKT string from the header.
-\item \code{crs} and \verb{crs<-} are equivalent to \code{projection}
 }
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile)
-crs <- sp::CRS("+init=epsg:26918")
 
-projection(las)
+Get the EPSG code stored in the header (returns 0 if not recorded)
+epsg(las)
+
+Get the WKT string stored in the header (LAS >= 1.4)
+wkt(las)
+
+To get the WKT of the CRS
+wkt(crs(las))
+
+# Recorded CRS is "NAD83 / UTM zone 17N"
+st_crs(las)$input
+
+# Overwrite the CRS (but does not reproject)
+crs <- sp::CRS(SRS_string = "EPSG:26918")
 projection(las) <- crs
+st_crs(las)$input
+
+# Uses the EPSG code
+projection(las) <- 26919
+st_crs(las)$input
+
+# Uses the a crs from sf
+crs <- sf::st_crs("EPSG:3035")
+projection(las) <- crs
+
 }
