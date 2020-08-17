@@ -468,7 +468,7 @@ wkt2CRS <- function(wkt, fail = FALSE)
     if (!is.na(epsg))
       return(epsg)
     else
-      return(L0)
+      return(0L)
   }
   else
     stop("Internal error: x is not a CRS or a crs", call. = FALSE)
