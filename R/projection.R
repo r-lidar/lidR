@@ -444,6 +444,9 @@ wkt2CRS <- function(wkt, fail = FALSE)
 {
   if (is(x, "CRS"))
   {
+    if (is.na(x@projargs))
+      return(0L)
+
     # Extract epsg code if any
     epsg  <- sub("\\+init=epsg:(\\d+).*",  "\\1", x@projargs)
     epsg  <- suppressWarnings(as.integer(epsg))
@@ -462,6 +465,9 @@ wkt2CRS <- function(wkt, fail = FALSE)
   }
   else if (is(x, "crs"))
   {
+    if (is.na(x$input))
+      return(0L)
+
     epsg  <- sub("\\EPSG:(\\d+).*",  "\\1", x$input)
     epsg  <- suppressWarnings(as.integer(epsg))
 
