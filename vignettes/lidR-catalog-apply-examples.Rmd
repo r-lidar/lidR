@@ -7,6 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
 The following demonstrates how to write your own functions that are fully applicable on a wide catalog of point clouds and based on the available `lidR` tools. We will create a simple `filter_noise` function. This example should not be considered as the reference method for filtering noise, but rather as a demonstration to help understand the logic behind the design of lidR, and as a full example of how to create a user-defined function that is fully operational. The code design is the one used internally in lidR and relies on S3 method dispatch. For more details, we recommend reading the chapter about [S3 method dispatch](http://adv-r.had.co.nz/S3.html) from the [Advanced R](http://adv-r.had.co.nz/) book.
 
 ## Create a generic `filter_noise` function
