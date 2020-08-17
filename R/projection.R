@@ -367,21 +367,37 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   if (is.na(sp::proj4string(x)))
     stop("No transformation possible from NA reference system")
 
-  # Tranform the point coordinates
+  # Transform the point coordinates
   spts <- sp::SpatialPoints(coordinates(x))
   spts@proj4string <- crs(x)
   spts <- sp::spTransform(spts, CRSobj)
+  X <- spts@coords[,1]
+  Y <- spts@coords[,2]
+
+  # Update the offsets in the header
+  offsetx <- floor(min(x$X))
+  offsety <- floor(min(x$Y))
+  x@header@PHB[["X offset"]] <- offsetx
+  x@header@PHB[["Y offset"]] <- offsety
+
+  # Update the scale factors
+  p <- list(...)
+  scalex <- x@header@PHB[["X scale factor"]]
+  scaley <- x@header@PHB[["X scale factor"]]
+  if (!is.null(p$scale)) scalex <- scaley <- p$scale
+  x@header@PHB[["X scale factor"]] <- scalex
+  x@header@PHB[["Y scale factor"]] <- scaley
+
+  # Quantize the coordinates
+  fast_quantization(X, scalex, offsetx)
+  fast_quantization(Y, scaley, offsety)
 
   # Update the LAS object
-  x@data[["X"]] <- spts@coords[,1]
-  x@data[["Y"]] <- spts@coords[,2]
+  x@data[["X"]] <- X
+  x@data[["Y"]] <- Y
   x <- lasupdateheader(x)
-
-  # Update the offsets
-  x@header@PHB[["X offset"]] <- min(x$X)
-  x@header@PHB[["Y offset"]] <- min(x$Y)
-
   crs(x) <- CRSobj
+
   return(x)
 })
 
