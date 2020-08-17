@@ -75,7 +75,7 @@
 #' sf::st_crs(las)$input
 #'
 #' # Overwrite the CRS (but does not reproject)
-#' crs <- sp::CRS(SRS_string = "EPSG:26918")
+#' crs <- sp::CRS("+init=epsg:26918")
 #' projection(las) <- crs
 #' sf::st_crs(las)$input
 #'
