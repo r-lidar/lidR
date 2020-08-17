@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.0.4 (Release date: )
 
 * Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
+* Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as proj4 string but using the WTK string using `sf` style display. This is part of migration toward WTK instead of proj4.
 
 ## lidR v3.0.3 (Release date: 2020-08-05)
 
