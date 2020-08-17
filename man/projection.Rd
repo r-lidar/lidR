@@ -4,74 +4,62 @@
 \alias{projection}
 \alias{epsg}
 \alias{epsg<-}
-\alias{st_crs}
-\alias{wkt<-}
 \alias{epsg,LASheader-method}
 \alias{epsg<-,LASheader-method}
-\alias{projection,LASheader-method}
-\alias{crs,LASheader-method}
-\alias{wkt,LASheader-method}
-\alias{wkt<-,LASheader-method}
-\alias{st_crs.LASheader}
-\alias{projection,LAS-method}
-\alias{projection<-,LAS-method}
-\alias{crs,LAS-method}
-\alias{crs<-,LAS-method}
 \alias{epsg,LAS-method}
 \alias{epsg<-,LAS-method}
+\alias{wkt<-}
+\alias{wkt,LASheader-method}
+\alias{wkt<-,LASheader-method}
 \alias{wkt,LAS-method}
 \alias{wkt<-,LAS-method}
-\alias{st_crs.LAS}
+\alias{projection,LASheader-method}
+\alias{projection,LAS-method}
+\alias{projection<-,LAS-method}
 \alias{projection,LAScatalog-method}
+\alias{crs,LASheader-method}
+\alias{crs,LAS-method}
+\alias{crs<-,LAS-method}
 \alias{crs,LAScatalog-method}
-\alias{st_crs.LAScatalog}
 \title{Get or set the projection of a LAS* object}
 \usage{
 epsg(object, ...)
 
 epsg(object) <- value
 
-st_crs(x, ...)
-
-wkt(object) <- value
-
 \S4method{epsg}{LASheader}(object, ...)
 
 \S4method{epsg}{LASheader}(object) <- value
-
-\S4method{projection}{LASheader}(x, asText = TRUE)
-
-\S4method{crs}{LASheader}(x, asText = FALSE)
-
-\S4method{wkt}{LASheader}(obj)
-
-\S4method{wkt}{LASheader}(object) <- value
-
-\method{st_crs}{LASheader}(x, ...)
-
-\S4method{projection}{LAS}(x, asText = TRUE)
-
-\S4method{projection}{LAS}(x) <- value
-
-\S4method{crs}{LAS}(x, asText = FALSE)
-
-\S4method{crs}{LAS}(x, ...) <- value
 
 \S4method{epsg}{LAS}(object)
 
 \S4method{epsg}{LAS}(object) <- value
 
+wkt(object) <- value
+
+\S4method{wkt}{LASheader}(obj)
+
+\S4method{wkt}{LASheader}(object) <- value
+
 \S4method{wkt}{LAS}(obj)
 
 \S4method{wkt}{LAS}(object) <- value
 
-\method{st_crs}{LAS}(x, ...)
+\S4method{projection}{LASheader}(x, asText = TRUE)
+
+\S4method{projection}{LAS}(x, asText = TRUE)
+
+\S4method{projection}{LAS}(x) <- value
 
 \S4method{projection}{LAScatalog}(x, asText = TRUE)
 
-\S4method{crs}{LAScatalog}(x, asText = FALSE)
+\S4method{crs}{LASheader}(x, asText = FALSE)
 
-\method{st_crs}{LAScatalog}(x, ...)
+\S4method{crs}{LAS}(x, asText = FALSE)
+
+\S4method{crs}{LAS}(x, ...) <- value
+
+\S4method{crs}{LAScatalog}(x, asText = FALSE)
 }
 \arguments{
 \item{object, x, obj}{An object of class LAS or eventually LASheader (regular users don't need to manipulate
@@ -84,8 +72,7 @@ LASheader objects).}
 \item{asText}{logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.}
 }
 \description{
-Get or set the projection of a LAS* object with the function \code{projection}.
-Functions \verb{epsg<-} and \verb{wkt<-} are legacy functions superseded by \verb{projection<-}.
+Get or set the projection of a LAS* object.
 }
 \details{
 There are two ways to store the CRS of a point cloud in a LAS file:
@@ -104,10 +91,10 @@ packages.
 string, a proj4string or an epsg code. It updates the header of the LAS
 object either with the EPSG code for LAS formats < 1.4 or with a WKT string
 for LAS format 1.4 and updates the \code{proj4string} slot.
+\item \code{projection}: returns the CRS in \code{sp} format
 \item \code{crs} and \verb{crs<-} are equivalent to \code{projection} and \verb{projection<-}
 \item \verb{epsg<-}, \verb{wkt<- }: legacy functions superseded by \verb{projection<-}
-\item \code{projection}: returns the CRS in \code{sp} format
-\item \code{st_crs} return the CRS in \code{sf} format.
+\item \code{sf::st_crs} return the CRS in \code{sf} format.
 \item \code{epsg}: reads the epsg code from the header.
 \item \code{wkt}: reads the WKT string from the header.
 }
@@ -116,28 +103,28 @@ for LAS format 1.4 and updates the \code{proj4string} slot.
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile)
 
-Get the EPSG code stored in the header (returns 0 if not recorded)
+# Get the EPSG code stored in the header (returns 0 if not recorded)
 epsg(las)
 
-Get the WKT string stored in the header (LAS >= 1.4)
+# Get the WKT string stored in the header (LAS >= 1.4)
 wkt(las)
 
-To get the WKT of the CRS
-wkt(crs(las))
+# To get the WKT of the CRS
+sp::wkt(crs(las))
 
 # Recorded CRS is "NAD83 / UTM zone 17N"
-st_crs(las)$input
+sf::st_crs(las)$input
 
 # Overwrite the CRS (but does not reproject)
 crs <- sp::CRS(SRS_string = "EPSG:26918")
 projection(las) <- crs
-st_crs(las)$input
+sf::st_crs(las)$input
 
 # Uses the EPSG code
 projection(las) <- 26919
-st_crs(las)$input
+sf::st_crs(las)$input
 
-# Uses the a crs from sf
+# Uses a crs from sf
 crs <- sf::st_crs("EPSG:3035")
 projection(las) <- crs
 

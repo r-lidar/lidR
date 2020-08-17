@@ -27,8 +27,7 @@
 
 #' Get or set the projection of a LAS* object
 #'
-#' Get or set the projection of a LAS* object with the function `projection`.
-#' Functions `epsg<-` and `wkt<-` are legacy functions superseded by `projection<-`.
+#' Get or set the projection of a LAS* object.
 #'
 #' There are two ways to store the CRS of a point cloud in a LAS file:
 #'
@@ -45,10 +44,10 @@
 #'    string, a proj4string or an epsg code. It updates the header of the LAS
 #'    object either with the EPSG code for LAS formats < 1.4 or with a WKT string
 #'    for LAS format 1.4 and updates the `proj4string` slot.
+#'    - `projection`: returns the CRS in `sp` format
 #'    - `crs` and `crs<-` are equivalent to `projection` and `projection<-`
 #'    - `epsg<-`, `wkt<- `: legacy functions superseded by `projection<-`
-#'    - `projection`: returns the CRS in `sp` format
-#'    - `st_crs` return the CRS in `sf` format.
+#'    - `sf::st_crs` return the CRS in `sf` format.
 #'    - `epsg`: reads the epsg code from the header.
 #'    - `wkt`: reads the WKT string from the header.
 #'
@@ -63,28 +62,28 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' Get the EPSG code stored in the header (returns 0 if not recorded)
+#' # Get the EPSG code stored in the header (returns 0 if not recorded)
 #' epsg(las)
 #'
-#' Get the WKT string stored in the header (LAS >= 1.4)
+#' # Get the WKT string stored in the header (LAS >= 1.4)
 #' wkt(las)
 #'
-#' To get the WKT of the CRS
-#' wkt(crs(las))
+#' # To get the WKT of the CRS
+#' sp::wkt(crs(las))
 #'
 #' # Recorded CRS is "NAD83 / UTM zone 17N"
-#' st_crs(las)$input
+#' sf::st_crs(las)$input
 #'
 #' # Overwrite the CRS (but does not reproject)
 #' crs <- sp::CRS(SRS_string = "EPSG:26918")
 #' projection(las) <- crs
-#' st_crs(las)$input
+#' sf::st_crs(las)$input
 #'
 #' # Uses the EPSG code
 #' projection(las) <- 26919
-#' st_crs(las)$input
+#' sf::st_crs(las)$input
 #'
-#' # Uses the a crs from sf
+#' # Uses a crs from sf
 #' crs <- sf::st_crs("EPSG:3035")
 #' projection(las) <- crs
 #'
@@ -97,6 +96,8 @@
 #' @md
 NULL
 
+# ==== EPSG ====
+
 #' @export
 #' @rdname projection
 setGeneric("epsg", function(object, ...)
@@ -106,23 +107,6 @@ setGeneric("epsg", function(object, ...)
 #' @rdname projection
 setGeneric("epsg<-", function(object, value)
   standardGeneric("epsg<-"))
-
-# @export
-# @rdname projection
-#setGeneric("wkt", function(object, ...)
-#  standardGeneric("wkt"))
-
-#' @export
-#' @importFrom sf st_crs
-#' @rdname projection
-st_crs <- function(x, ...) UseMethod("st_crs")
-
-#' @export
-#' @rdname projection
-setGeneric("wkt<-", function(object, value)
-  standardGeneric("wkt<-"))
-
-# ==== LASheader ====
 
 #' @export
 #' @rdname projection
@@ -143,27 +127,32 @@ setMethod("epsg<-", "LASheader", function(object, value)
 
 #' @export
 #' @rdname projection
-setMethod("projection", "LASheader", function(x, asText = TRUE)
+setMethod("epsg", "LAS", function(object)
 {
-  if (use_epsg(x) && epsg(x) != 0L)
-    proj4 <- epsg2CRS(epsg(x))
-  else if (use_wktcs(x) && wkt(x) != "")
-    proj4 <- wkt2CRS(wkt(x))
-  else
-    proj4 <- sp::CRS()
-
-  if (asText)
-    return(proj4@projargs)
-  else
-    return(proj4)
+  return(epsg(object@header))
 })
 
 #' @export
 #' @rdname projection
-setMethod("crs", "LASheader", function(x, asText = FALSE)
+setMethod("epsg<-", "LAS", function(object, value)
 {
-  return(projection(x, asText))
+  proj4 <- epsg2CRS(value, fail = TRUE)
+  epsg(object@header) <- value
+  object@proj4string <- proj4
+  return(object)
 })
+
+# ==== WKT =====
+
+# @export
+# @rdname projection
+#setGeneric("wkt", function(object, ...)
+#  standardGeneric("wkt"))
+
+#' @export
+#' @rdname projection
+setGeneric("wkt<-", function(object, value)
+  standardGeneric("wkt<-"))
 
 #' @export
 #' @importFrom sp wkt
@@ -184,17 +173,42 @@ setMethod("wkt<-", "LASheader", function(object, value)
 })
 
 #' @export
-#' @importFrom sf st_crs
+#' @importFrom sp wkt
 #' @rdname projection
-st_crs.LASheader <- function(x, ...)
+setMethod("wkt", "LAS", function(obj)
 {
-  if (use_epsg(x))
-    return(sf::st_crs(epsg(x)))
-  else
-    return(sf::st_crs(wkt(x)))
-}
+  return(wkt(obj@header))
+})
 
-# ==== LAS ====
+#' @export
+#' @rdname projection
+setMethod("wkt<-", "LAS", function(object, value)
+{
+  proj4 <- wkt2CRS(value, fail = TRUE)
+  wkt(object@header) <- value
+  object@proj4string <- proj4
+  return(object)
+})
+
+
+# ==== PROJECTION =====
+
+#' @export
+#' @rdname projection
+setMethod("projection", "LASheader", function(x, asText = TRUE)
+{
+  if (use_epsg(x) && epsg(x) != 0L)
+    proj4 <- epsg2CRS(epsg(x))
+  else if (use_wktcs(x) && wkt(x) != "")
+    proj4 <- wkt2CRS(wkt(x))
+  else
+    proj4 <- sp::CRS()
+
+  if (asText)
+    return(proj4@projargs)
+  else
+    return(proj4)
+})
 
 # This is legacy code that should no longer be used because it returns a proj4 string
 
@@ -281,6 +295,27 @@ setMethod("projection<-", "LAS", function(x, value)
 
 #' @export
 #' @rdname projection
+setMethod("projection", "LAScatalog", function(x, asText = TRUE)
+{
+  proj4 <- x@proj4string
+
+  if (asText)
+    return(proj4@projargs)
+  else
+    return(proj4)
+})
+
+# ==== CRS ====
+
+#' @export
+#' @rdname projection
+setMethod("crs", "LASheader", function(x, asText = FALSE)
+{
+  return(projection(x, asText))
+})
+
+#' @export
+#' @rdname projection
 setMethod("crs", "LAS", function(x, asText = FALSE)
 {
   return(projection(x, asText))
@@ -294,62 +329,6 @@ setMethod("crs<-", "LAS", function(x, ..., value)
   return(x)
 })
 
-#' @export
-#' @rdname projection
-setMethod("epsg", "LAS", function(object)
-{
-  return(epsg(object@header))
-})
-
-#' @export
-#' @rdname projection
-setMethod("epsg<-", "LAS", function(object, value)
-{
-  proj4 <- epsg2CRS(value, fail = TRUE)
-  epsg(object@header) <- value
-  object@proj4string <- proj4
-  return(object)
-})
-
-#' @export
-#' @importFrom sp wkt
-#' @rdname projection
-setMethod("wkt", "LAS", function(obj)
-{
-  return(wkt(obj@header))
-})
-
-#' @export
-#' @rdname projection
-setMethod("wkt<-", "LAS", function(object, value)
-{
-  proj4 <- wkt2CRS(value, fail = TRUE)
-  wkt(object@header) <- value
-  object@proj4string <- proj4
-  return(object)
-})
-
-#' @export
-#' @importFrom sf st_crs
-#' @rdname projection
-st_crs.LAS <- function(x, ...)
-{
-  return(sf::st_crs(x@proj4string))
-}
-
-# ===== LAScatalog =======
-
-#' @export
-#' @rdname projection
-setMethod("projection", "LAScatalog", function(x, asText = TRUE)
-{
-  proj4 <- x@proj4string
-
-  if (asText)
-    return(proj4@projargs)
-  else
-    return(proj4)
-})
 
 #' @export
 #' @rdname projection
@@ -358,16 +337,7 @@ setMethod("crs", "LAScatalog", function(x, asText = FALSE)
   return(projection(x, asText))
 })
 
-#' @export
-#' @importFrom sf st_crs
-#' @rdname projection
-st_crs.LAScatalog <- function(x, ...)
-{
-  return(sf::st_crs(x@proj4string))
-}
-
-
-# ===== INTERNAL TOOLS =======
+# ===== SPTRANSFORM ====
 
 #' Datum transformation for LAS objects
 #'
@@ -414,6 +384,8 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   crs(x) <- CRSobj
   return(x)
 })
+
+# ===== INTERNAL TOOLS =======
 
 use_wktcs <- function(x) {
   UseMethod("use_wktcs", x)

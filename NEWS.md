@@ -5,7 +5,6 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
 * Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as proj4 string but using the WTK string using `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of migration toward WTK instead of proj4.
 * Change: `lidR` now explicitly depends on `rgdal >= 1.5.8`.
-* New: `st_crs` functions returns the CRS in `sf` format.
 * New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`
 * Internal: better supports in `projection` of the current changes with CRS representation in the R spatial ecosystem.
 ```
