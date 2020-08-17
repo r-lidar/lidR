@@ -239,11 +239,13 @@ setMethod("projection<-", "LAS", function(x, value)
   # In all case we need to get a WKT or an EPSG code to update the
   # header depending on the LAS format (1.4 or above)
 
+  proj6 <- rgdal::new_proj_and_gdal()
+
   if (is(value, "CRS"))
   {
     proj4 <- value@projargs
     CRS <- value
-    wkt <- comment(value)
+    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
     epsg <- .find_epsg_code(CRS)
   }
   else if (is(value, "crs"))
@@ -257,7 +259,7 @@ setMethod("projection<-", "LAS", function(x, value)
   {
     CRS <- sp::CRS(SRS_string = value)
     proj4 <- CRS@projargs
-    wkt <- comment(CRS)
+    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
     epsg <- .find_epsg_code(CRS)
   }
   else if (is.numeric(value))
