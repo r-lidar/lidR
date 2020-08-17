@@ -32,7 +32,7 @@ Imports:
     Rcpp (>= 1.0.3),
     RCSF,
     rgeos,
-    rgdal,
+    rgdal (>= 1.4.8),
     rgl,
     rlas (>= 1.3.5),
     sf,

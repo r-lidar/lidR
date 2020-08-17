@@ -51,6 +51,7 @@
 #'    - `epsg`: reads the epsg code from the header.
 #'    - `wkt`: reads the WKT string from the header.
 #'    - `crs` and `crs<-` are equivalent to `projection`
+#'    - `st_crs` return the CRS in `sf` format.
 #'
 #' @param object,x,obj An object of class LAS or eventually LASheader (regular users don't need to manipulate
 #' LASheader objects).
@@ -92,9 +93,33 @@ setGeneric("epsg<-", function(object, value)
 #  standardGeneric("wkt"))
 
 #' @export
+#' @importFrom sf st_crs
+#' @rdname projection
+st_crs <- function(x, ...) UseMethod("st_crs")
+
+#' @export
 #' @rdname projection
 setGeneric("wkt<-", function(object, value)
   standardGeneric("wkt<-"))
+
+# ==== LASheader ====
+
+#' @export
+#' @rdname projection
+setMethod("epsg", "LASheader", function(object, ...)
+{
+  return(rlas::header_get_epsg(as.list(object)))
+})
+
+#' @export
+#' @rdname projection
+setMethod("epsg<-", "LASheader", function(object, value)
+{
+  if (use_wktcs(object)) stop("This object is not in a format that supports EPSG code. Use a WKT string.", call. = FALSE)
+  header <- as.list(object)
+  header <- rlas::header_set_epsg(header, value)
+  return(LASheader(header))
+})
 
 #' @export
 #' @rdname projection
@@ -120,25 +145,6 @@ setMethod("crs", "LASheader", function(x, asText = FALSE)
   return(projection(x, asText))
 })
 
-# ==== LASheader ====
-
-#' @export
-#' @rdname projection
-setMethod("epsg", "LASheader", function(object, ...)
-{
-  return(rlas::header_get_epsg(as.list(object)))
-})
-
-#' @export
-#' @rdname projection
-setMethod("epsg<-", "LASheader", function(object, value)
-{
-  if (use_wktcs(object)) stop("This object is not in a format that supports EPSG code. Use a WKT string.", call. = FALSE)
-  header <- as.list(object)
-  header <- rlas::header_set_epsg(header, value)
-  return(LASheader(header))
-})
-
 #' @export
 #' @importFrom sp wkt
 #' @rdname projection
@@ -157,8 +163,20 @@ setMethod("wkt<-", "LASheader", function(object, value)
   return(LASheader(header))
 })
 
+#' @export
+#' @importFrom sf st_crs
+#' @rdname projection
+st_crs.LASheader <- function(x, ...)
+{
+  if (use_epsg(x))
+    return(sf::st_crs(epsg(x)))
+  else
+    return(sf::st_crs(wkt(x)))
+}
 
 # ==== LAS ====
+
+# This is legacy code that should no longer be used because it returns a proj4 string
 
 #' @export
 #' @rdname projection
@@ -171,6 +189,8 @@ setMethod("projection", "LAS", function(x, asText = TRUE)
   else
     return(proj4)
 })
+
+# This is legacy code that should be updated to uses WKT
 
 #' @export
 #' @rdname projection
@@ -273,6 +293,14 @@ setMethod("wkt<-", "LAS", function(object, value)
   return(object)
 })
 
+#' @export
+#' @importFrom sf st_crs
+#' @rdname projection
+st_crs.LAS <- function(x, ...)
+{
+  return(sf::st_crs(x@proj4string))
+}
+
 # ===== LAScatalog =======
 
 #' @export
@@ -293,6 +321,15 @@ setMethod("crs", "LAScatalog", function(x, asText = FALSE)
 {
   return(projection(x, asText))
 })
+
+#' @export
+#' @importFrom sf st_crs
+#' @rdname projection
+st_crs.LAScatalog <- function(x, ...)
+{
+  return(sf::st_crs(x@proj4string))
+}
+
 
 # ===== INTERNAL TOOLS =======
 
@@ -384,30 +421,19 @@ epsg2proj <- function(epsg, fail = FALSE)
 
 epsg2CRS <- function(epsg, fail = FALSE)
 {
-  # patch starting from rgdal 1.5-8
-  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
-  {
-    SRS_string = paste0("EPSG:", epsg)
+  SRS_string = paste0("EPSG:", epsg)
 
-    crs <- tryCatch(
-    {
-      sp::CRS(SRS_string = SRS_string)
-    },
-    error = function(e)
-    {
-      if (!fail)
-        return(sp::CRS(NA_character_))
-      else
-        stop("Invalid epsg code", call. = FALSE)
-    })
-
-    return(crs)
-  }
-  else
+  crs <- tryCatch(
   {
-    proj <- epsg2proj(epsg, fail)
-    crs <- sp::CRS(proj)
-  }
+    sp::CRS(SRS_string = SRS_string)
+  },
+  error = function(e)
+  {
+    if (!fail)
+      return(sp::CRS(NA_character_))
+    else
+      stop("Invalid epsg code", call. = FALSE)
+  })
 
   return(crs)
 }
@@ -429,28 +455,17 @@ wkt2proj <- function(wkt, fail = FALSE)
 
 wkt2CRS <- function(wkt, fail = FALSE)
 {
-  # patch starting from rgdal 1.5-8
-  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
+  crs <- tryCatch(
   {
-    crs <- tryCatch(
-    {
-        sp::CRS(SRS_string = wkt)
-    },
-    error = function(e)
-    {
-      if (!fail)
-        return(sp::CRS(NA_character_))
-      else
-        stop("Invalid WKT string", call. = FALSE)
-    })
-
-    return(crs)
-  }
-  else
+    sp::CRS(SRS_string = wkt)
+  },
+  error = function(e)
   {
-    proj <- wkt2proj(wkt, fail)
-    crs <- sp::CRS(proj, doCheckCRSArgs = FALSE) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
-  }
+    if (!fail)
+      return(sp::CRS(NA_character_))
+    else
+      stop("Invalid WKT string", call. = FALSE)
+  })
 
   return(crs)
 }
