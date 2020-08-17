@@ -408,34 +408,50 @@ use_epsg.LASheader <- function(x) {
 
 epsg2CRS <- function(epsg, fail = FALSE)
 {
-  crs <- tryCatch(
+  if (rgdal::new_proj_and_gdal())
   {
-    sp::CRS(SRS_string = paste0("EPSG:", epsg))
-  },
-  error = function(e)
+    crs <- tryCatch(
+    {
+      sp::CRS(SRS_string = paste0("EPSG:", epsg))
+    },
+    error = function(e)
+    {
+      if (!fail)
+        return(sp::CRS(NA_character_))
+      else
+        stop(paste("Invalid epsg code", epsg), call. = FALSE)
+    })
+  }
+  else
   {
-    if (!fail)
-      return(sp::CRS(NA_character_))
-    else
-      stop(paste("Invalid epsg code", epsg), call. = FALSE)
-  })
+    proj <- epsg2proj(epsg, fail)
+    crs <- sp::CRS(proj)
+  }
 
   return(crs)
 }
 
 wkt2CRS <- function(wkt, fail = FALSE)
 {
-  crs <- tryCatch(
+  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
   {
-    sp::CRS(SRS_string = wkt)
-  },
-  error = function(e)
+    crs <- tryCatch(
+    {
+      sp::CRS(SRS_string = wkt)
+    },
+    error = function(e)
+    {
+      if (!fail)
+        return(sp::CRS(NA_character_))
+      else
+        stop("Invalid WKT string", call. = FALSE)
+    })
+  }
+  else
   {
-    if (!fail)
-      return(sp::CRS(NA_character_))
-    else
-      stop("Invalid WKT string", call. = FALSE)
-  })
+    proj <- wkt2proj(wkt, fail)
+    crs <- sp::CRS(proj, doCheckCRSArgs = FALSE) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
+  }
 
   return(crs)
 }
@@ -478,4 +494,35 @@ wkt2CRS <- function(wkt, fail = FALSE)
   }
   else
     stop("Internal error: x is not a CRS or a crs", call. = FALSE)
+}
+
+epsg2proj <- function(epsg, fail = FALSE)
+{
+  tryCatch(
+  {
+    wkt <- rgdal::showWKT(glue::glue("+init=epsg:{epsg}"))
+    rgdal::showP4(wkt)
+  },
+  error = function(e)
+  {
+    if (!fail)
+      return(NA_character_)
+    else
+      stop("Invalid epsg code", call. = FALSE)
+  })
+}
+
+wkt2proj <- function(wkt, fail = FALSE)
+{
+  tryCatch(
+  {
+    rgdal::showP4(wkt)
+  },
+  error = function(e)
+  {
+    if (!fail)
+      return(NA_character_)
+    else
+      stop("Invalid WKT", call. = FALSE)
+  })
 }

@@ -10,8 +10,6 @@ use_bioc: yes
 
 addons:
   apt:
-    sources:
-      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libgdal-dev
       - libproj-dev
