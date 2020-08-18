@@ -1,6 +1,18 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.0.4 (Release date: )
+## lidR v3.1.0 (Release date: yyyy-mm-dd)
+
+#### CHANGE
+
+ - The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
+ 
+#### NEW FEATURES
+
+#### ENHANCEMENTS
+
+#### FIXES
+
+## lidR v3.0.4 (Release date: yyyy-mm-dd)
 
 * Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
 * Fix: in `spTransform()` the reprojected point cloud have quantized coordinates and is now LAS compliant [#369](https://github.com/Jean-Romain/lidR/issues/369).

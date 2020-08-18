@@ -185,4 +185,3 @@ test_that("User get throw error if function do not return NULL for empty chun", 
   expect_error(catalog_apply(ctg, test), "User's function does not return NULL")
   expect_error(catalog_apply(ctg, test2), "User's function does not return NULL")
 })
-

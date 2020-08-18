@@ -337,14 +337,14 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
   #return(invisible())
 
   # message v 3.1.0
-  #msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
-  #message(msg)
-  #return(invisible())
+  msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
+  message(msg)
+  return(invisible())
 
   # warning v3.2.0
-  #msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
-  #warning(msg, call. = FALSE)
-  #return(invisible())
+  msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
+  warning(msg, call. = FALSE)
+  return(invisible())
 
   # error v3.3.0
   msg = paste(as.character(sys.call(sys.parent()))[1L], "is defunct. Use", name, "instead.")

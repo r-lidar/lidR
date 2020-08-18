@@ -1,4 +1,4 @@
-context("lasgrid")
+context("grid_*")
 
 las = lidR:::generate_las(5000, seeds = 10)
 
