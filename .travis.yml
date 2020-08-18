@@ -30,5 +30,8 @@ addons:
 r_packages:
   - covr
 
+r_github_packages:
+  - Jean-Romain/RMCC
+
 after_success:
   - Rscript -e 'library(covr); codecov(type = "all")'
