@@ -109,18 +109,12 @@ rBuildVRT = function(file_list, vrt)
   if (!options("lidR.buildVRT")[[1]])
     return(unlist(file_list))
 
-  if (!requireNamespace("gdalUtils", quietly = TRUE))
-  {
-    message("'gdalUtils' package is needed to build a virtual raster mosaic. Returns the list of written files instead.")
-    return(unlist(file_list))
-  }
-
   file_list <- unlist(file_list)
   layers    <- names(raster::stack(file_list[1]))
   folder    <- dirname(file_list[1])
   file      <- paste0("/", vrt, ".vrt")
   vrt       <- paste0(folder, file)
-  gdalUtils::gdalbuildvrt(file_list, vrt)
+  sf::gdal_utils("buildvrt", source = file_list, destination = vrt, quiet = TRUE)
   if (!file.exists(vrt)) return(unlist(file_list))
   file_list <- raster::brick(vrt)
   names(file_list) <- layers
