@@ -4,9 +4,15 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### CHANGE
 
- - The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
+1. The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
  
 #### NEW FEATURES
+
+1. New algorithm `mcc()` for ground classification based on Evans and Hudak (2007). This a porting of the MCC-lidar software to R via the `RMCC` package.
+```r
+las <- classify_ground(las, mcc())
+```
+
 
 #### ENHANCEMENTS
 

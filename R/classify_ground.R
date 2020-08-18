@@ -34,7 +34,7 @@
 #'
 #' @template param-las
 #'
-#' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
+#' @param algorithm a ground-segmentation function. \code{lidR} has: \link{pmf}, \link{csf} and \link{mcc}.
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
 #' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
 #' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
