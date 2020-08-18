@@ -238,6 +238,7 @@ setMethod("projection<-", "LAS", function(x, value)
   # - a number > EPSG code
   # In all case we need to get a WKT or an EPSG code to update the
   # header depending on the LAS format (1.4 or above)
+  # In addition we need this to work both with old and new proj and gdal
 
   proj6 <- rgdal::new_proj_and_gdal()
 
@@ -250,10 +251,20 @@ setMethod("projection<-", "LAS", function(x, value)
   }
   else if (is(value, "crs"))
   {
-    wkt <- value$wkt
-    CRS <- sp::CRS(SRS_string = wkt)
-    proj4 <- CRS@projargs
-    epsg <- .find_epsg_code(value)
+    if (proj6)
+    {
+      wkt <- value$wkt
+      CRS <- sp::CRS(SRS_string = wkt)
+      proj4 <- CRS@projargs
+      epsg <- .find_epsg_code(value)
+    }
+    else
+    {
+      proj4 <- value$proj4string
+      CRS <- sp::CRS(proj4)
+      wkt <- rgdal::showWKT(proj4)
+      epsg <- .find_epsg_code(value)
+    }
   }
   else if (is.character(value))
   {
@@ -266,7 +277,7 @@ setMethod("projection<-", "LAS", function(x, value)
   {
     epsg <- value
     CRS <- epsg2CRS(epsg)
-    wkt <- comment(CRS)
+    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
     proj4 <- CRS@projargs
   }
   else
@@ -292,7 +303,7 @@ setMethod("projection<-", "LAS", function(x, value)
       epsg(x@header) <- epsg
     }
 
-    x@proj4string <-CRS
+    x@proj4string <- CRS
   }
 
   return(x)
@@ -486,6 +497,9 @@ wkt2CRS <- function(wkt, fail = FALSE)
   }
   else if (is(x, "crs"))
   {
+    if (!is.null(x$epsg))
+      return(x$epsg)
+
     if (is.na(x$input))
       return(0L)
 

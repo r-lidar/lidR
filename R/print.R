@@ -70,7 +70,7 @@ setMethod("show", "LAS", function(object)
   format    <- phb[["Point Data Format ID"]]
 
   coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- coord.ref$input
+  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
 
   units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
   units <- if (length(units) == 0) "units" else units
