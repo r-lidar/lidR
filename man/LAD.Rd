@@ -29,10 +29,10 @@ et al. By definition the layer 0 will always return infinity because no returns 
 the ground. Therefore, the layer 0 is removed from the returned results.
 }
 \examples{
-z = c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
-z = z[z<45 & z>0]
+z <- c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
+z <- z[z<45 & z>0]
 
-lad = LAD(z)
+lad <- LAD(z)
 
 plot(lad, type="l", xlab="Elevation", ylab="Leaf area density")
 }

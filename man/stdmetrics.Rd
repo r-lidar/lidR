@@ -122,48 +122,47 @@ individual tree level.}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "*")
+las <- readLAS(LASfile, select = "*")
 
 # All the predefined metrics
-m1 = grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
+m1 <- grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
 
 # Convenient shortcut
-m2 = grid_metrics(las, .stdmetrics)
+m2 <- grid_metrics(las, .stdmetrics)
 
 # Basic metrics from intensities
-m3 = grid_metrics(las, ~stdmetrics_i(Intensity))
+m3 <- grid_metrics(las, ~stdmetrics_i(Intensity))
 
 # All the metrics from intensities
-m4 = grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+m4 <- grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
 
 # Convenient shortcut for the previous example
-m5 = grid_metrics(las, .stdmetrics_i)
+m5 <- grid_metrics(las, .stdmetrics_i)
 
 # Compute the metrics only on first return
-first = filter_first(las)
-m6 = grid_metrics(first, .stdmetrics_z)
+first <- filter_first(las)
+m6 <- grid_metrics(first, .stdmetrics_z)
 
 # Compute the metrics with a threshold at 2 meters
-over2 = filter_poi(las, Z > 2)
-m7 = grid_metrics(over2, .stdmetrics_z)
+m7 <- grid_metrics(over2, .stdmetrics_z, filter = ~Z >= 2)
 
 # Works also with cloud_metrics and hexbin_metrics
-m8 = cloud_metrics(las, .stdmetrics)
-m9 = hexbin_metrics(las, .stdmetrics)
+m8 <- cloud_metrics(las, .stdmetrics)
+m9 <- hexbin_metrics(las, .stdmetrics)
 
 # Combine some predefined function with your own new metrics
 # Here convenient shortcuts are no longer usable.
 myMetrics = function(z, i, rn)
 {
-  first  = rn == 1L
-  zfirst = z[first]
-  nfirst = length(zfirst)
-  above2 = sum(z > 2)
+  first  <- rn == 1L
+  zfirst <- z[first]
+  nfirst <- length(zfirst)
+  above2 <- sum(z > 2)
 
-  x = above2/nfirst*100
+  x <- above2/nfirst*100
 
   # User's metrics
-  metrics = list(
+  metrics <- list(
      above2aboven1st = x,       # Num of returns above 2 divided by num of 1st returns
      zimean  = mean(z*i),       # Mean products of z by intensity
      zsqmean = sqrt(mean(z^2))  # Quadratic mean of z
@@ -173,12 +172,12 @@ myMetrics = function(z, i, rn)
   return( c(metrics, stdmetrics_z(z)) )
 }
 
-m10 = grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber))
+m10 <- grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber))
 
 # Users can write their own convenient shorcuts like this:
 .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
 
-m11 = grid_metrics(las, .myMetrics)
+m11 <- grid_metrics(las, .myMetrics)
 }
 \references{
 Lucas, C., Bouten, W., Koma, Z., Kissling, W. D., & Seijmonsbergen, A. C. (2019). Identification

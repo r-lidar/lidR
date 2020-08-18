@@ -20,11 +20,11 @@ A number between 0 and 1
 A fixed normalization of the entropy function (see references)
 }
 \examples{
-z = runif(10000, 0, 10)
+z <- runif(10000, 0, 10)
 
 VCI(z, by = 1, zmax = 20)
 
-z = abs(rnorm(10000, 10, 1))
+z <- abs(rnorm(10000, 10, 1))
 
 # expected to be closer to 0.
 VCI(z, by = 1, zmax = 20)
