@@ -109,15 +109,13 @@ Supported processing options for a \code{LAScatalog} (in bold). For more details
 \item buffer: Not supported yet.
 \item alignment: Does not makes sense here.
 \item \strong{progress}: Displays a progress estimation.
-\item \strong{stop_early}: Leave this 'as-is' unless you are an advanced user.
 \item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
 They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
-\code{clip_roi} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-{YCENTER}} or any names from the table of attributes of a spatial object given as
-input such as \code{{PLOT_ID}} or \code{{YEAR}}, for example, if these attributes exist. If empty everything
+\code{clip_*} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+{YCENTER}}. In addition \code{clip_roi} supports any names from the table of attributes of a spatial object given as
+input such as \code{{PLOTID}}, \code{{YEAR}}, \code{{SPECIES}}, for examples, if these attributes exist. If empty everything
 is returned into R.
 \item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item \strong{drivers}: Leave this 'as-is' unless you are an advanced user.
 \item select: The function will write files equivalent to the originals. This option is not respected.
 \item \strong{filter}: Read only the points of interest.
 }

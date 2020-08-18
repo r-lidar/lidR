@@ -2,7 +2,6 @@ context("projection")
 
 las = lidR:::generate_las(10)
 
-
 test_that("Internal projection conversion works", {
 
   wkt <- rgdal::showWKT("+init=epsg:2008")
@@ -13,12 +12,24 @@ test_that("Internal projection conversion works", {
   expect_equal(lidR:::epsg2CRS(200800), sp::CRS())
   expect_error(lidR:::epsg2CRS(200800, fail = TRUE), "Invalid epsg code")
 
-  #expect_equal(lidR:::wkt2CRS(wkt), expected) # commented because with rgdal 1.5-8 it returns a slighly modified WKT comment
+  #expect_equal(lidR:::wkt2CRS(wkt), expected) # commented because with rgdal 1.5-8 it returns a slightly modified WKT comment
   expect_equal(lidR:::wkt2CRS("INVALID")@projargs, NA_character_)
   expect_error(lidR:::wkt2CRS("INVALID", fail = TRUE), "Invalid WKT")
 })
 
-test_that("projection<- with epsg code works", {
+test_that("projection<- with EPSG works", {
+
+  projection(las) <- 26919
+
+  expect_equal(epsg(las), 26919)
+
+  projection(las) <- 26918
+
+  expect_equal(epsg(las), 26918)
+})
+
+
+test_that("projection<- with CRS works", {
 
   projection(las) <- sp::CRS("+init=epsg:26917")
 
@@ -44,26 +55,44 @@ test_that("projection<- with wkt code works", {
 
   las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
 
-  projection(las) <- sp::CRS("+init=epsg:26917")
+  if (rgdal::new_proj_and_gdal())
+  {
+    projection(las) <- sp::CRS(SRS_string = "EPSG:26919")
+    expect_match(wkt(las), "NAD83 / UTM zone 19N")
 
-  expect_match(wkt(las), "PROJCS")
+    projection(las) <- sp::CRS(SRS_string = "EPSG:26918")
+    expect_match(wkt(las), "NAD83 / UTM zone 18N")
+  }
+  else
+  {
+    projection(las) <- sp::CRS("+init=epsg:26919")
+    expect_match(wkt(las), "PROJCS")
 
-  projection(las) <- sp::CRS("+init=epsg:26918")
-
-  expect_match(wkt(las), "PROJCS")
+    projection(las) <- sp::CRS("+init=epsg:26918")
+    expect_match(wkt(las), "PROJCS")
+  }
 })
 
 test_that("crs<- with wkt code works", {
 
   las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
 
-  crs(las) <- sp::CRS("+init=epsg:26917")
+  if (rgdal::new_proj_and_gdal())
+  {
+    crs(las) <- sp::CRS(SRS_string = "EPSG:26919")
+    expect_match(wkt(las), "NAD83 / UTM zone 19N")
 
-  expect_match(wkt(las), "PROJCS")
+    crs(las) <- sp::CRS(SRS_string = "EPSG:26918")
+    expect_match(wkt(las), "NAD83 / UTM zone 18N")
+  }
+  else
+  {
+    crs(las) <- sp::CRS("+init=epsg:26919")
+    expect_match(wkt(las), "PROJCS")
 
-  crs(las) <- sp::CRS("+init=epsg:26918")
-
-  expect_match(wkt(las), "PROJCS")
+    crs(las) <- sp::CRS("+init=epsg:26918")
+    expect_match(wkt(las), "PROJCS")
+  }
 })
 
 test_that("epsg<- works", {

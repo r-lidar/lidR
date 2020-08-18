@@ -59,9 +59,6 @@ following five snag classes:
 \item 4: high canopy cover snag - snags protruding above the live canopy in dense conditions (e.g.,
 canopy cover >= 55\%).
 }
-The current implementation is known to use a large amount of memory for storing the N x k
-integer matrix returning the near neighbor indices for each point in the point cloud.
-Improvements are possible in future package versions.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

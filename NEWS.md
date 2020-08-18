@@ -1,6 +1,31 @@
-If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better.
+If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.0.1
+## lidR v3.0.4 (Release date: )
+
+* Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
+* Fix: in `spTransform()` the reprojected point cloud have quantized coordinates and is now LAS compliant [#369](https://github.com/Jean-Romain/lidR/issues/369).
+* Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as proj4 string but using the WTK string with `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of migration toward WTK instead of proj4.
+* Change: `lidR` now explicitly depends on `rgdal >= 1.5.8`.
+* New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`
+* New: in `spTransform()` it is now possible to use a parameter `scale` to change the scale factor after reprojection. This is useful projecting from lon-lat data `las2 = spTransform(las, crs, scale = 0.01)`
+* Internal: better supports in `projection<-` of the current changes with CRS representation in the R spatial ecosystem.
+```
+
+## lidR v3.0.3 (Release date: 2020-08-05)
+
+* New: `tin()` gains a parameter `extrapolate` to control how the method treats interpolation of points outside the convex hull determined by ground points. This solves [#356](https://github.com/Jean-Romain/lidR/issues/356) 
+* Doc: supported processing options in `grid_terrain()` were incorrect especially the buffer that *is* required. 
+* Doc: in `Wing2015()` the mention about weak performance was removed since it was not longer true for a while.
+* Doc: clarification of the supported templates in man page named `clip`
+* Enhance: a more informative error is thrown when using `{ORIGINALFILENAME}` as a template in `clip_*()`.
+* Misc: fix C++ error that will happen in next version of `Rcpp` ahead of the release of `Rcpp`. Thanks to @waltersom in [#358](https://github.com/Jean-Romain/lidR/pull/358)
+
+## lidR v3.0.2 (Release date: 2020-07-05)
+
+* Fix: in `grid_metrics()` and `grid_canopy()` when processing a `LAScatalog` the option to process by files without buffer and disabling the wall-to-wall guarantees (processing independant filles) is now repected. [See also](https://gis.stackexchange.com/questions/365686/how-to-exclude-bounding-boxes-of-plots-in-lascatalog). 
+* Fix: in `grid_metrics()` NA pixels were zeroed. They are now properly initialized to NA.
+
+## lidR v3.0.1 (Release date: 2020-06-18)
 
 * Fix: in `grid_terrain()` and `normalize_height()` we introduced few releases ago an option `use_class` but we did not removed an internal test consisting in failling in absance of point classified 2. This invalidated the possibility to use e.g. `use_class = 1` in files that do not respect ASPRS standards [#350](https://github.com/Jean-Romain/lidR/issues/350).
 * Fix: many troubles introduced in v3.0.0 on CRAN
@@ -701,11 +726,11 @@ The lidR package versions 1 were mainly built upon "personal R scripts" I wrote 
 
 Old binaries can still be found here for 6 months:
 
-- [Windows R-3.6](https://drive.google.com/open?id=1VHM38ftV71lasTQCcm8BxEChP2qxpV9e)
-- [Windows R-3.5](https://drive.google.com/open?id=1E-Iieu0DTKHsDq1TDwq_VUGeiXta2T_Y)
-- [Windows R-3.4](https://drive.google.com/open?id=1nRUyH0SaBCflGDCItkZhhSU9NQR0DXqr)
-- [Mac OSX R-3.5](https://drive.google.com/open?id=1fmMTi6haFQpJFjAVVqW-vIFTULT_YWak)
-- [Mac OSX R-3.4](https://drive.google.com/open?id=1Pw04QHeoF4uE8QPRIASGX_sB17r-sdZm)
+- Windows R-3.6
+- Windows R-3.5
+- Windows R-3.4
+- Mac OSX R-3.5
+- Mac OSX R-3.4
 
 ### Overview of the main visible changes
 

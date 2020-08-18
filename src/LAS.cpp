@@ -1206,17 +1206,17 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   // Retrieve the names of the attributes
   std::vector<std::string> names = as<std::vector<std::string> >(data.names());
 
-  // Need some iterator to loop on the DataFrame columns
-  Rcpp::DataFrame::iterator it1;
-  Rcpp::DataFrame::iterator it2;
+  // Need some iterator to loop on the List columns
+  Rcpp::List::iterator it1;
+  Rcpp::List::iterator it2;
   std::vector<std::string>::iterator it3;
 
-  // Need a physical DataFrame to handle a reference to the data of the environement 'env'.
+  // Need a physical List to handle a reference to the data of the environement 'env'.
   // Not mandatory stricly speaking but easier to handle this stuff with Rcpp than R's C API
-  DataFrame proxy;
+  List proxy;
 
   // We populate the environement by creating new vector of size nalloc binded to
-  // the original names in the LAS object + a shallow copy in the DataFrame 'proxy'.
+  // the original names in the LAS object + a shallow copy in the List 'proxy'.
   it3 = names.begin();
   for (it1 = data.begin() ; it1 != data.end() ; ++it1)
   {
@@ -1317,7 +1317,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
         //Rprintf("Realloc from %d to %d at point %d because neigborhood of size %d\n", nalloc, si, i, sn);
         nalloc = si;
         sc = sn;
-        proxy = DataFrame::create();
+        proxy = List::create();
 
         it3 = names.begin();
         for (it1 = data.begin() ; it1 != data.end() ; ++it1)

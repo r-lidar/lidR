@@ -114,7 +114,7 @@ LIDRNIT <- "normalize_intensity"
 LIDRTRK <- "SensorTracking"
 
 LIDRCONTEXTDSM <- "grid_canopy"
-LIDRCONTEXTSPI <- c("normalize_height", "grid_terrain", "p2r")
+LIDRCONTEXTSPI <- c("normalize_height", "grid_terrain", "p2r", "spatial_interpolation")
 LIDRCONTEXTGND <- "classify_ground"
 LIDRCONTEXTITD <- "find_trees"
 LIDRCONTEXTDEC <- "decimate_points"

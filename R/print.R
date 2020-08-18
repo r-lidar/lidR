@@ -69,6 +69,9 @@ setMethod("show", "LAS", function(object)
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
 
+  coord.ref <- sf::st_crs(object@proj4string)
+  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
+
   units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
   units <- if (length(units) == 0) "units" else units
 
@@ -100,7 +103,7 @@ setMethod("show", "LAS", function(object)
   cat("class        : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
   cat("memory       :", size, "\n")
   cat("extent       : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref.  :", object@proj4string@projargs, "\n")
+  cat("coord. ref.  :", coord.ref, "\n")
   cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points       :", npoints.h, pointprefix, "points\n")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
@@ -124,6 +127,9 @@ setMethod("show", "LAScatalog", function(object)
   minor       <- sort(unique(object[["Version.Minor"]]))
   version     <- paste(major, minor, sep = ".", collapse = " and ")
   format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
+
+  coord.ref <- sf::st_crs(object@proj4string)
+  coord.ref <- coord.ref$input
 
   if (area > 1000*1000/2)
   {
@@ -149,7 +155,7 @@ setMethod("show", "LAScatalog", function(object)
 
   cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
   cat("extent      : ", ext@xmin, ", ", ext@xmax, ", ", ext@ymin, ", ", ext@ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref. :", object@proj4string@projargs, "\n")
+  cat("coord. ref. :", coord.ref, "\n")
   cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")

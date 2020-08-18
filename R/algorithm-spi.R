@@ -33,6 +33,11 @@
 #' determined by the ground points at the very edge of the dataset, that cannot be interpolated with
 #' a triangulation. Extrapolation is done using the nearest neighbour approach.
 #'
+#' @param ... unused
+#' @param extrapolate There are usually a few points outside the convex hull, determined by the ground
+#' points at the very edge of the dataset, that cannot be interpolated with a triangulation.
+#' Extrapolation is done using the nearest neighbour approach by default using \link{knnidw}.
+#'
 #' @export
 #'
 #' @family spatial interpolation algorithms
@@ -47,18 +52,35 @@
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
-tin = function()
+tin = function(..., extrapolate = knnidw(1,1,50))
 {
+  assert_is_algorithm_spi(extrapolate)
+  extrapolate <- lazyeval::uq(extrapolate)
+
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z    <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets)
+    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets)
+
+    # Extrapolate beyond the convex hull
     isna <- is.na(z)
     nnas <- sum(isna)
-    if (nnas > 0) {
+    if (nnas > 0)
+    {
       verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
-      z[isna] <- C_knnidw(where$X[!isna], where$Y[!isna], z[!isna], where$X[isna], where$Y[isna], 1, 1, 25, getThread())
+
+      lidR.context <- "spatial_interpolation"
+      what <- data.frame(X = where$X[!isna], Y = where$Y[!isna], Z = z[!isna])
+      where <- data.frame(X = where$X[isna],  Y = where$Y[isna])
+      zknn <- extrapolate(what, where, scales, offsets)
+      z[isna] <- zknn
+      isna <- is.na(zknn)
+      nnas <- sum(isna)
+
+      if (nnas > 0)
+        message(glue::glue("Interpolation of {nnas} points outside the convex hull defined by ground points (outside the triangulation) failed and returned NAs."))
     }
+
     return(z)
   }
 

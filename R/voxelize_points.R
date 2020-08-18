@@ -99,7 +99,8 @@ voxelize_points.LAScluster = function(las, res)
 voxelize_points.LAScatalog = function(las, res)
 {
   opt_select(las) <- "xyzi"
-  opt_chunk_buffer(las) <- res[1]
+  if (opt_wall_to_wall(las))
+    opt_chunk_buffer(las) <- res[1]
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_apply(las, voxelize_points, res = res, .options = options)

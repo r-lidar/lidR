@@ -30,11 +30,11 @@
 #' Digital Terrain Model
 #'
 #' Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
-#' the points classified as "ground" (Classification = 2 according to
+#' the points classified as "ground" and "water (Classification = 2 and 9 according to
 #' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
-#' to compute the interpolation.\cr
+#' to compute the interpolation.\cr\cr
 #' How well the edges of the dataset are interpolated depends on the interpolation method used.
-#' Thus, a buffer around the region of interest is always recommended to avoid edge effects.
+#' A buffer around the region of interest is always recommended to avoid edge effects.
 #'
 #' @template param-las
 #'
@@ -55,7 +55,7 @@
 #'
 #' @template LAScatalog
 #'
-#' @template section-supported-option-grid_functions
+#' @template section-supported-option-grid_terrain
 #'
 #' @template return-grid-Layer
 #'
