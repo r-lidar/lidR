@@ -198,10 +198,11 @@ mcc <- function(s = 1.5, t = 0.3)
     . <- X <- Y <- Z <- NULL
     assert_is_valid_context(LIDRCONTEXTGND, "mcc")
     las@data[["idx"]] <- 1:npoints(las)
-    if (length(filter) > 1) cloud <- las@data[filter, .(X,Y,Z, idx)]
+    cloud <- las@data
+    if (length(filter) > 1) cloud <- cloud[filter, .(X,Y,Z, idx)]
     gnd <- RMCC::MCC(cloud, s, t)
-    idx <- cloud$idx[gnd]
-    return(idx)
+    ids <- cloud$idx[gnd]
+    return(ids)
   }
 
   class(f) <- LIDRALGORITHMGND
