@@ -102,7 +102,7 @@ template<class T> struct DSort2D
     T p;
 };
 
-// Used in QuadTree3D
+// Used in spatial index for knn
 template<class T> struct DSort3D
 {
   DSort3D(const T& _p) : p(_p) {}
@@ -112,12 +112,12 @@ template<class T> struct DSort3D
     double dx1 = p.x - rhs.x;
     double dy1 = p.y - rhs.y;
     double dz1 = p.z - rhs.z;
-    double d1  = std::sqrt(dx1 * dx1 + dy1 * dy1 + dz1 * dz1);
+    double d1  = dx1 * dx1 + dy1 * dy1 + dz1 * dz1;
 
     double dx2 = p.x - lhs.x;
     double dy2 = p.y - lhs.y;
     double dz2 = p.z - lhs.z;
-    double d2  = std::sqrt(dx2 * dx2 + dy2 * dy2 + dz2 * dz2);
+    double d2  = dx2 * dx2 + dy2 * dy2 + dz2 * dz2;
 
     return d2 < d1;
   }
@@ -127,12 +127,12 @@ template<class T> struct DSort3D
     double dx1 = p.x - rhs->x;
     double dy1 = p.y - rhs->y;
     double dz1 = p.z - rhs->z;
-    double d1  = std::sqrt(dx1 * dx1 + dy1 * dy1 + dz1 * dz1);
+    double d1  = dx1 * dx1 + dy1 * dy1 + dz1 * dz1;
 
     double dx2 = p.x - lhs->x;
     double dy2 = p.y - lhs->y;
     double dz2 = p.z - lhs->z;
-    double d2  = std::sqrt(dx2 * dx2 + dy2 * dy2 + dz2 * dz2);
+    double d2  = dx2 * dx2 + dy2 * dy2 + dz2 * dz2;
 
     return d2 < d1;
   }
