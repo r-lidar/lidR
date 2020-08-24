@@ -6,9 +6,9 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   npoints = x.size();
 
-  depth = 0;
+  int depth = 0;
   depth = std::floor(std::log(npoints)/std::log(4));
-  depth = (depth >= 1) ? depth : 1;
+  depth = (depth >= 0) ? depth : 0;
   depth = (depth >= 8) ? 8 : depth;
 
   ncols = 1 << depth;
@@ -45,6 +45,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   xres  = (xmax - xmin) / (double)ncols;
   yres  = (ymax - ymin) / (double)nrows;
+
   area  = ncols * nrows * xres * yres;
 
   registry.resize(ncols*nrows);
@@ -62,9 +63,9 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   npoints = std::count(f.begin(), f.end(), true);
 
-  depth = 0;
+  int depth = 0;
   depth = std::floor(std::log(npoints)/std::log(4));
-  depth = (depth >= 1) ? depth : 1;
+  depth = (depth >= 0) ? depth : 0;
   depth = (depth >= 8) ? 8 : depth;
 
   ncols = 1 << depth;
@@ -101,6 +102,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   xres  = (xmax - xmin) / (double)ncols;
   yres  = (ymax - ymin) / (double)nrows;
+
   area  = ncols * nrows * xres * yres;
 
   registry.resize(ncols*nrows);

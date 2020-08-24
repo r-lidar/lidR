@@ -12,7 +12,6 @@ class GridPartition
     unsigned int npoints;
     unsigned int ncols;
     unsigned int nrows;
-    unsigned int depth;
     bool use3D;
     double xmin;
     double xmax;
