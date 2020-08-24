@@ -6,14 +6,6 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   npoints = x.size();
 
-  int depth = 0;
-  depth = std::floor(std::log(npoints)/std::log(4));
-  depth = (depth >= 0) ? depth : 0;
-  depth = (depth >= 8) ? 8 : depth;
-
-  ncols = 1 << depth;
-  nrows = 1 << depth;
-
   use3D = false;
 
   xmin  =  std::numeric_limits<double>::infinity();
@@ -43,12 +35,30 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   ymin -= 1;
   ymax += 1;
 
-  xres  = (xmax - xmin) / (double)ncols;
-  yres  = (ymax - ymin) / (double)nrows;
+  int depth = 0;
+  depth = std::floor(std::log(npoints)/std::log(4));
+  depth = (depth >= 0) ? depth : 0;
+  depth = (depth >= 8) ? 8 : depth;
 
-  area  = ncols * nrows * xres * yres;
+  unsigned int ncells = (1 << depth) * (1 << depth);
+  double xrange = xmax - xmin;
+  double yrange = ymax - ymin;
+  double ratio = xrange/yrange;
 
-  registry.resize(ncols*nrows);
+  nrows = std::round(std::sqrt(ncells/ratio));
+  ncols = std::round(ncells/nrows);
+  if (ncols <= 0) ncols = 1;
+  if (nrows <= 0) nrows = 1;
+  ncells = ncols*nrows;
+
+  xres  = xrange / (double)ncols;
+  yres  = yrange / (double)nrows;
+
+  //Rprintf("Spatial index of %d points with %d x %d = %d cells. xres = %lf yres = %lf", npoints, ncols, nrows, ncells, xres, yres);
+
+  area  = ncells * xres * yres;
+
+  registry.resize(ncells);
 
   for (int i = 0 ; i < x.size() ; i++) {
     Point p(x[i],y[i], i);
@@ -63,14 +73,6 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   npoints = std::count(f.begin(), f.end(), true);
 
-  int depth = 0;
-  depth = std::floor(std::log(npoints)/std::log(4));
-  depth = (depth >= 0) ? depth : 0;
-  depth = (depth >= 8) ? 8 : depth;
-
-  ncols = 1 << depth;
-  nrows = 1 << depth;
-
   use3D = false;
 
   xmin  =  std::numeric_limits<double>::infinity();
@@ -100,8 +102,24 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   ymin -= 1;
   ymax += 1;
 
-  xres  = (xmax - xmin) / (double)ncols;
-  yres  = (ymax - ymin) / (double)nrows;
+  int depth = 0;
+  depth = std::floor(std::log(npoints)/std::log(4));
+  depth = (depth >= 0) ? depth : 0;
+  depth = (depth >= 8) ? 8 : depth;
+
+  unsigned int ncells = (1 << depth) * (1 << depth);
+  double xrange = xmax - xmin;
+  double yrange = ymax - ymin;
+  double ratio = xrange/yrange;
+
+  nrows = std::round(std::sqrt(ncells/ratio));
+  ncols = std::round(ncells/nrows);
+  if (ncols <= 0) ncols = 1;
+  if (nrows <= 0) nrows = 1;
+  ncells = ncols*nrows;
+
+  xres  = xrange / (double)ncols;
+  yres  = yrange / (double)nrows;
 
   area  = ncols * nrows * xres * yres;
 
