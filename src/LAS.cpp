@@ -390,23 +390,35 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
       tree.lookup(circ, pts);
     }
 
-    // Get the highest Z in the windows
-    double Zmax = std::numeric_limits<double>::min();
-    Point* p = pts[0];
-    for (unsigned int j = 0 ; j < pts.size() ; j++)
+    // Initialize the highest point using the central point
+    Point p(X[i], Y[i], i);
+    double zmax = Z[i];
+    bool is_lm = true;
+
+    // Search if one is higher
+    for (auto pt : pts)
     {
-      if(Z[pts[j]->id] > Zmax)
+      double z = Z[pt->id];
+
+      // Found one higher, it is not a LM
+      if(z > zmax)
       {
-        p = pts[j];
-        Zmax = Z[p->id];
+        is_lm = false;
+        break;
+      }
+
+      // Found one equal. If this one was already tagged LM we can't have two lm
+      // The first tagged has the precedence
+      if (z == zmax && filter[pt->id])
+      {
+        is_lm = false;
+        break;
       }
     }
 
-    // The central pixel is the highest, it is a LM
     #pragma omp critical
     {
-      if (Z[i] == Zmax && X[i] == p->x && Y[i] == p->y)
-        filter[i] = true;
+      filter[i] = is_lm;
     }
   }
 
