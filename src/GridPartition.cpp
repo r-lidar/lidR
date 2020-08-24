@@ -47,7 +47,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   yres  = (ymax - ymin) / (double)nrows;
   area  = ncols * nrows * xres * yres;
 
-  registry.resize((ncols+1)*(nrows+1));
+  registry.resize(ncols*nrows);
 
   for (int i = 0 ; i < x.size() ; i++) {
     Point p(x[i],y[i], i);
@@ -103,7 +103,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   yres  = (ymax - ymin) / (double)nrows;
   area  = ncols * nrows * xres * yres;
 
-  registry.resize((ncols+1)*(nrows+1));
+  registry.resize(ncols*nrows);
 
   for (auto i = 0 ; i < x.size() ; i++) {
     if (f[i]) {
