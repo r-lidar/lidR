@@ -10,7 +10,6 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`
 * New: in `spTransform()` it is now possible to use a parameter `scale` to change the scale factor after reprojection. This is useful projecting from lon-lat data `las2 = spTransform(las, crs, scale = 0.01)`
 * Internal: better supports in `projection<-` of the current changes with CRS representation in the R spatial ecosystem.
-```
 
 ## lidR v3.0.3 (Release date: 2020-08-05)
 
