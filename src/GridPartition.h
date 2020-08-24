@@ -50,9 +50,9 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<Point*>& r
   double ymax = shape.bbox.center.y + shape.bbox.half_res.y;
 
   int colmin  = std::floor((xmin - this->xmin) / xres);
-  int rowmax  = std::floor((this->ymax - ymin) / yres);
-  int colmax  = std::floor((xmax - this->xmin) / xres);
+  int colmax  = std::ceil((xmax - this->xmin) / xres);
   int rowmin  = std::floor((this->ymax - ymax) / yres);
+  int rowmax  = std::ceil((this->ymax - ymin) / yres);
   int cell;
 
   res.clear();
@@ -78,9 +78,9 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ>&
   double ymax = shape.bbox.center.y + shape.bbox.half_res.y;
 
   int colmin  = std::floor((xmin - this->xmin) / xres);
-  int rowmax  = std::floor((this->ymax - ymin) / yres);
-  int colmax  = std::floor((xmax - this->xmin) / xres);
+  int colmax  = std::ceil((xmax - this->xmin) / xres);
   int rowmin  = std::floor((this->ymax - ymax) / yres);
+  int rowmax  = std::ceil((this->ymax - ymin) / yres);
   int cell;
 
   res.clear();

@@ -13,11 +13,20 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   ncols = 1 << depth;
   nrows = 1 << depth;
+
   use3D = false;
-  xmin  = Rcpp::min(x);
-  xmax  = Rcpp::max(x);
-  ymin  = Rcpp::min(y);
-  ymax  = Rcpp::max(y);
+
+  xmin  =  std::numeric_limits<double>::infinity();
+  xmax  = -std::numeric_limits<double>::infinity();
+  ymin  =  std::numeric_limits<double>::infinity();
+  ymax  = -std::numeric_limits<double>::infinity();
+
+  for (auto i = 0 ; i < x.size() ; i++) {
+    if (x[i] < xmin) xmin = x[i];
+    if (x[i] > xmax) xmax = x[i];
+    if (y[i] < ymin) ymin = y[i];
+    if (y[i] > ymax) ymax = y[i];
+  }
 
   if ((xmax - xmin) == 0) {
     xmin -= (ymax - ymin)/2;
@@ -60,6 +69,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
 
   ncols = 1 << depth;
   nrows = 1 << depth;
+
   use3D = false;
 
   xmin  =  std::numeric_limits<double>::infinity();
