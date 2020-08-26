@@ -44,7 +44,7 @@ X = c(1, 2, 3, 10, 11, 12, 1, 2, 3)
 Y = c(3, 2, 1, 5, 7, 6, 8, 9, 7)
 Z = c(20, 1, 1, 5, 7, 6, 1, 1, 4)
 
-test_that("QuandTree circle lookup works", {
+test_that("Spatial index circle lookup works", {
 
   id = lidR:::C_circle_lookup(X,Y, 2,2,1)
   expect_equal(id, 2)
@@ -64,7 +64,7 @@ test_that("QuandTree circle lookup works", {
 })
 
 
-test_that("QuandTree knn 3d lookup works", {
+test_that("Spatial index knn 3d lookup works", {
 
   id = lidR:::C_knn3d_lookup(X,Y, Z,2,2,0,1)
   expect_equal(id, 2)
@@ -82,7 +82,7 @@ X = c(0, 1, 1, 0, 0.5)
 Y = c(0, 0, 1, 1, 0.5)
 Z = c(0, 1, 1, 0, 0.5)
 
-test_that("QuandTree knn works even with npoints < k", {
+test_that("Spatial index knn works even with npoints < k", {
 
   nn = lidR:::C_knn(X,Y, c(0,2), c(0.8,2), 8, 1)
 

@@ -1,4 +1,5 @@
 
+set.seed(12)
 X = runif(100, 0, 100)
 Y = runif(100, 0, 100)
 Z = rep(0, 100)
@@ -75,3 +76,4 @@ test_that("find_localmaxima throw errors", {
   expect_error(find_localmaxima(las, c(10, 20, 45)), "not all in range")
   expect_error(find_localmaxima(las, -5), "not all positive")
 })
+

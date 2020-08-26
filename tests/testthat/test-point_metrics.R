@@ -75,6 +75,11 @@ test_that("points_metrics restpect the filter argument (shpere)", {
   expect_equal(m$V1, c(0.75, 1.75, 0.75, 1.75))
 })
 
+test_that("points_metrics fails with 0 points after filter ", {
+
+  expect_error(point_metrics(las, ~mean(Z), r = 0.8, filter = ~I>2000))
+})
+
 test_that("points_metrics works with a multiple metrics (knn)", {
 
   m = point_metrics(las, ~list(mean(Z), max(Z), Z[1]), k = 3L)

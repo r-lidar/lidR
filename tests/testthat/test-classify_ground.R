@@ -1,5 +1,7 @@
 context("classify_ground")
 
+rgdal::set_thin_PROJ6_warnings(TRUE)
+
 file <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(file, select = "xyzrn")
 ctg = catalog(file)
@@ -23,7 +25,7 @@ test_that("classify_ground pmf works", {
 
   expect_true("Classification" %in% n)
   expect_equal(unique(las@data$Classification), c(1L, 2L))
-  expect_equal(sum(las@data$Classification == 2L), 19383L)
+  expect_equal(sum(las@data$Classification == 2L), 19472L)
 
   expect_error(classify_ground(ctg, mypmf), "buffer")
 
@@ -36,7 +38,7 @@ test_that("classify_ground pmf works", {
   ctg2 = classify_ground(ctg, mypmf)
   las2 = readLAS(ctg2)
 
-  expect_equal(sum(las2@data$Classification == 2L), 19383L)
+  expect_equal(sum(las2@data$Classification == 2L), 19472L)
   expect_equal(nrow(las2@data), nrow(las@data))
 
   las@data[, Classification := NULL]

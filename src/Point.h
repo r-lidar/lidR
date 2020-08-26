@@ -60,7 +60,7 @@ template<typename T> struct ZSort
   bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
 };
 
-// Sort points by Z attributes
+// Sort points by R attributes
 template<typename T> struct RSort
 {
   bool operator()(const T* lhs, const T* rhs) const { return lhs->r < rhs->r; }
@@ -102,7 +102,7 @@ template<class T> struct DSort2D
     T p;
 };
 
-// Used in spatial index for knn
+// Sort points according to their distance to a reference point (3D)
 template<class T> struct DSort3D
 {
   DSort3D(const T& _p) : p(_p) {}
@@ -174,26 +174,6 @@ static inline double min (double a, double b, double c)
     return (b > c ? c : b);
   else
     return (a > c ? c : a);
-}
-
-static inline double distanceSquarePointToSegment(const Point& p1, const Point& p2, const Point& p)
-{
-  double p1_p2_squareLength = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y);
-  double dotProduct = ((p.x - p1.x)*(p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y)) / p1_p2_squareLength;
-
-  if ( dotProduct < 0 )
-  {
-    return (p.x - p1.x)*(p.x - p1.x) + (p.y - p1.y)*(p.y - p1.y);
-  }
-  else if ( dotProduct <= 1 )
-  {
-    double p_p1_squareLength = (p1.x - p.x)*(p1.x - p.x) + (p1.y - p.y)*(p1.y - p.y);
-    return p_p1_squareLength - dotProduct * dotProduct * p1_p2_squareLength;
-  }
-  else
-  {
-    return (p.x - p2.x)*(p.x - p2.x) + (p.y - p2.y)*(p.y - p2.y);
-  }
 }
 
 #endif //POINT_H

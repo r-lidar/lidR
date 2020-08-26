@@ -9,6 +9,7 @@ using namespace Rcpp;
 class LAS
 {
   public:
+    S4 las;
     NumericVector X;
     NumericVector Y;
     NumericVector Z;
@@ -19,9 +20,7 @@ class LAS
     std::vector<bool> filter;
 
   public:
-    LAS(S4 las);
-    LAS(S4 las, int npcu);
-    ~LAS();
+    LAS(S4 las, int npcu = 1);
 
     void new_filter(LogicalVector b);
     //void apply_filter();

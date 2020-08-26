@@ -276,13 +276,13 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
         double edge_BC = w.x * w.x + w.y * w.y;
         double edge_max = max(edge_AB, edge_AC, edge_BC);
 
-        // Interpolate in this triangle if the longest edge fullfil requirements
+        // Interpolate in this triangle if the longest edge fulfil requirements
         if (trim == 0 || edge_max < trim)
         {
           Triangle tri(A,B,C);
 
           // Find the points in this triangle
-          std::vector<Point*> pts;
+          std::vector<PointXYZ*> pts;
           tree.lookup(tri,pts);
 
           if (pts.size() > 0)
@@ -290,7 +290,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
             // For each point, linear interpolation
             for (unsigned int j = 0 ; j < pts.size() ; j++)
             {
-              Point *p = pts[j];
+              PointXYZ *p = pts[j];
 
               PointXYZ n;
               n.x = u.y*v.z-u.z*v.y;
@@ -416,13 +416,13 @@ IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int n
     Point C(P(iC, 0), P(iC, 1));
 
     Triangle triangle(A,B,C);
-    std::vector<Point*> points;
+    std::vector<PointXYZ*> points;
     tree.lookup(triangle, points);
 
     // Return the id of the triangle
     #pragma omp critical
     {
-      for(std::vector<Point*>::iterator it = points.begin(); it != points.end(); it++)
+      for(std::vector<PointXYZ*>::iterator it = points.begin(); it != points.end(); it++)
       {
         int id = (*it)->id;
         output(id) = k + 1;
