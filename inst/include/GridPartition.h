@@ -1,5 +1,84 @@
-#include "GridPartition.h"
+#ifndef SP_H
+#define SP_H
 
+#include <Rcpp.h>
+#include "Point.h"
+#include "Shapes.h"
+
+class GridPartition
+{
+  public:
+    GridPartition(const Rcpp::S4 las);
+    GridPartition(const Rcpp::S4 las, const std::vector<bool>& filter);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector);
+    GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
+    template<typename T> void lookup(T& shape, std::vector<PointXYZ*>&);
+    void knn(const Point&, const unsigned int, std::vector<PointXYZ*>&);
+    void knn(const Point&, const unsigned int, const double, std::vector<PointXYZ*>&);
+    void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ*>&);
+    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ*>&);
+
+  private:
+    unsigned int npoints;
+    unsigned int ncols;
+    unsigned int nrows;
+    unsigned int nlayers;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    double xres;
+    double yres;
+    double zres;
+    double area;
+    double volume;
+    std::vector<double> filter;
+    std::vector<std::vector<PointXYZ>> registry;
+
+  private:
+    int getCell(const PointXYZ&);
+    bool insert(const PointXYZ&);
+    void init(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
+    void setLayers(const int);
+};
+
+
+template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>& res)
+{
+  double xmin = shape.xmin;
+  double xmax = shape.xmax;
+  double ymin = shape.ymin;
+  double ymax = shape.ymax;
+  double zmin = shape.zmin;
+  double zmax = shape.zmax;
+
+  int colmin = std::floor((xmin - this->xmin) / xres);
+  int colmax = std::ceil((xmax - this->xmin) / xres);
+  int rowmin = std::floor((this->ymax - ymax) / yres);
+  int rowmax = std::ceil((this->ymax - ymin) / yres);
+  int laymin = std::floor((zmin - this->zmin) / zres);
+  int laymax = std::ceil((zmax - this->zmin) / zres);
+  int cell;
+
+  res.clear();
+  for (int col = std::max(colmin,0) ; col <= std::min(colmax, (int)ncols-1) ; col++) {
+    for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, (int)nrows-1) ; row++) {
+      for (int lay = std::max(laymin,0) ; lay <= std::min(laymax, (int)nlayers-1) ; lay++) {
+        cell = lay * nrows * ncols + row * ncols + col;
+        for (std::vector<PointXYZ>::iterator it = registry[cell].begin() ; it != registry[cell].end() ; it++) {
+          if (shape.contains(*it))
+            res.emplace_back(&(*it));
+        }
+      }
+    }
+  }
+
+  return;
+}
+
+inline
 GridPartition::GridPartition(const Rcpp::S4 las)
 {
   Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
@@ -29,6 +108,7 @@ GridPartition::GridPartition(const Rcpp::S4 las)
   init(x,y,z);
 }
 
+inline
 GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
 {
   Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
@@ -57,6 +137,7 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
   init(x,y,z);
 }
 
+inline
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
 {
   if (x.size() != y.size())
@@ -78,6 +159,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   init(x,y,z);
 }
 
+inline
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
 {
   if (x.size() != y.size())
@@ -99,28 +181,30 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   init(x,y,z);
 }
 
+inline
 void GridPartition::setLayers(const int search_type)
 {
   // nlayers = 1 is equivalent to legacy code with no layer defined (was implicitly one)
   // with other search type we can add layers to get a z index.
   switch (search_type)
   {
-    case 0:  nlayers = 1;  break;
-    case 1:  nlayers = 1;  break;
-    case 2:  nlayers = 10; break;
-    case 3:  nlayers = 1;  break;
-    case 4:  nlayers = 1;  break;
-    case 5:  nlayers = 1;  break;
-    case 10: nlayers = 1;  break;
-    case 11: nlayers = 1;  break;
-    case 12: nlayers = 10; break;
-    case 13: nlayers = 1;  break;
-    case 14: nlayers = 1;  break;
-    case 15: nlayers = 1;  break;
-    default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
+  case 0:  nlayers = 1;  break;
+  case 1:  nlayers = 1;  break;
+  case 2:  nlayers = 10; break;
+  case 3:  nlayers = 1;  break;
+  case 4:  nlayers = 1;  break;
+  case 5:  nlayers = 1;  break;
+  case 10: nlayers = 1;  break;
+  case 11: nlayers = 1;  break;
+  case 12: nlayers = 10; break;
+  case 13: nlayers = 1;  break;
+  case 14: nlayers = 1;  break;
+  case 15: nlayers = 1;  break;
+  default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
   }
 }
 
+inline
 void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
 {
   if (npoints == 0)
@@ -196,7 +280,8 @@ void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector 
   }
 }
 
-inline bool GridPartition::insert(const PointXYZ& p)
+inline
+bool GridPartition::insert(const PointXYZ& p)
 {
   int key = getCell(p);
   if (key < 0 || key >= (int)registry.size()) return false;
@@ -204,7 +289,8 @@ inline bool GridPartition::insert(const PointXYZ& p)
   return true;
 }
 
-inline int GridPartition::getCell(const PointXYZ& p)
+inline
+int GridPartition::getCell(const PointXYZ& p)
 {
   int col = std::floor((p.x - xmin) / xres);
   int row = std::floor((ymax - p.y) / yres);
@@ -215,6 +301,7 @@ inline int GridPartition::getCell(const PointXYZ& p)
   return cell;
 }
 
+inline
 void GridPartition::knn(const Point& p, const unsigned int k, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
@@ -235,6 +322,7 @@ void GridPartition::knn(const Point& p, const unsigned int k, std::vector<PointX
   return;
 }
 
+inline
 void GridPartition::knn(const Point& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
@@ -264,6 +352,7 @@ void GridPartition::knn(const Point& p, const unsigned int k, const double maxra
   return;
 }
 
+inline
 void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
@@ -284,6 +373,7 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<Poi
   return;
 }
 
+inline
 void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
@@ -311,3 +401,5 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double ma
   for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
   return;
 }
+
+#endif //SP_H
