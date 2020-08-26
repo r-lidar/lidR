@@ -4,6 +4,9 @@
 #include <cmath>
 #include <vector>
 
+namespace lidR
+{
+
 template<typename T1, typename T2, typename T3> struct Point2D
 {
   T1 x;
@@ -174,6 +177,8 @@ static inline double min (double a, double b, double c)
     return (b > c ? c : b);
   else
     return (a > c ? c : a);
+}
+
 }
 
 #endif //POINT_H

@@ -2,9 +2,10 @@
 #define SHAPES_H
 
 #include <stdio.h>
-
 #include "Point.h"
 
+namespace lidR
+{
 
 #define EPSILON 2e-6
 #define XYINF 99999999999;
@@ -286,6 +287,8 @@ bool Sphere::contains(const T& p)
   double C = center.z - p.z;
   double d = A*A + B*B + C*C;
   return(d <= radius*radius + EPSILON);
+}
+
 }
 
 #endif //SHAPES_H

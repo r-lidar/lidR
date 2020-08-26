@@ -8,6 +8,9 @@
 
 using boost::polygon::voronoi_diagram;
 using namespace Rcpp;
+using namespace lidR;
+
+typedef lidR::GridPartition SpatialIndex;
 
 // The point structure must be an integral number. Boost perform on integral number only.
 struct point_int

@@ -5,6 +5,9 @@
 #include "Point.h"
 #include "Shapes.h"
 
+namespace lidR
+{
+
 class GridPartition
 {
   public:
@@ -426,6 +429,8 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double ma
   res.clear();
   for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
   return;
+}
+
 }
 
 #endif //SP_H

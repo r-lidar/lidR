@@ -296,11 +296,12 @@ SEXP fast_eigen_values(arma::mat A)
  * ======= BINARY SEARCH TREE FUNCTIONS =========
  */
 
-//#include "QuadTree.h"
 #include "GridPartition.h"
 #include "Progress.h"
 
-typedef GridPartition SpatialIndex;
+using namespace lidR;
+
+typedef lidR::GridPartition SpatialIndex;
 
 // [[Rcpp::export(rng = false)]]
 Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu)

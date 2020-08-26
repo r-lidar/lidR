@@ -5,7 +5,9 @@
 #include "Progress.h"
 #include "myomp.h"
 
-typedef GridPartition SpatialIndex;
+using namespace lidR;
+
+typedef lidR::GridPartition SpatialIndex;
 
 LAS::LAS(S4 las, int ncpu)
 {
