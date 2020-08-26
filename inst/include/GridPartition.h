@@ -19,6 +19,7 @@ class GridPartition
     void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ*>&);
 
   private:
+    bool multilayer;
     unsigned int npoints;
     unsigned int ncols;
     unsigned int nrows;
@@ -41,7 +42,7 @@ class GridPartition
     int getCell(const PointXYZ&);
     bool insert(const PointXYZ&);
     void init(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
-    void setLayers(const int);
+    bool multilayered(const int);
 };
 
 
@@ -103,7 +104,7 @@ GridPartition::GridPartition(const Rcpp::S4 las)
   // capability
   int search_type = 0;
   if (las.hasSlot("type")) search_type = las.slot("type");
-  setLayers(search_type);
+  multilayer = multilayered(search_type);
 
   init(x,y,z);
 }
@@ -132,7 +133,7 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
   // capability
   int search_type = 0;
   if (las.hasSlot("type")) search_type = las.slot("type");
-  setLayers(search_type);
+  multilayer = multilayered(search_type);
 
   init(x,y,z);
 }
@@ -151,7 +152,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   std::fill(filter.begin(), filter.end(), true);
 
   // Use legacy 2D index
-  nlayers = 1;
+  multilayer = false;
 
   // Create a dummy z vector with 0s
   Rcpp::NumericVector z(npoints, 0);
@@ -176,30 +177,30 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   std::fill(filter.begin(), filter.end(), true);
 
   // Use legacy 2D index
-  nlayers = 1;
+  multilayer = false;
 
   init(x,y,z);
 }
 
 inline
-void GridPartition::setLayers(const int search_type)
+bool GridPartition::multilayered(const int search_type)
 {
   // nlayers = 1 is equivalent to legacy code with no layer defined (was implicitly one)
   // with other search type we can add layers to get a z index.
   switch (search_type)
   {
-  case 0:  nlayers = 1;  break;
-  case 1:  nlayers = 1;  break;
-  case 2:  nlayers = 10; break;
-  case 3:  nlayers = 1;  break;
-  case 4:  nlayers = 1;  break;
-  case 5:  nlayers = 1;  break;
-  case 10: nlayers = 1;  break;
-  case 11: nlayers = 1;  break;
-  case 12: nlayers = 10; break;
-  case 13: nlayers = 1;  break;
-  case 14: nlayers = 1;  break;
-  case 15: nlayers = 1;  break;
+  case 0:  return false;  break;
+  case 1:  return false;  break;
+  case 2:  return true;   break;
+  case 3:  return false;  break;
+  case 4:  return false;  break;
+  case 5:  return false;  break;
+  case 10: return false;  break;
+  case 11: return false;  break;
+  case 12: return true;   break;
+  case 13: return false;  break;
+  case 14: return false;  break;
+  case 15: return false;  break;
   default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
   }
 }
@@ -247,18 +248,43 @@ void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector 
   double xrange = xmax - xmin;
   double yrange = ymax - ymin;
   double zrange = zmax - zmin;
-  double ratio = xrange/yrange;
+  double xyratio = xrange/yrange;
+  double xzratio = xrange/zrange;
+  double yzratio = yrange/zrange;
 
-  // Compute the number of rows and columns in such a way that there is approximately
-  // the number of wanted cells but the organization of the cell is well balanced
-  // so the resolutions on x-y are close. We want:
-  // ncols/nrows = ratio
-  // ncols*nrows*nlayers = ncells
-  nrows = std::round(std::sqrt(ncells/(ratio*nlayers)));
-  if (nrows <= 0) nrows = 1;
-  ncols = std::round(ncells/(nrows*nlayers));
-  if (ncols <= 0) ncols = 1;
-  ncells = ncols*nrows*nlayers;
+  if (!multilayer)
+  {
+    // Compute the number of rows and columns in such a way that there is approximately
+    // the number of wanted cells but the organization of the cell is well balanced
+    // so the resolutions on x-y are close. We want:
+    // ncols/nrows = xyratio
+    // ncols*nrows = ncells
+    ncols = std::round(std::sqrt(ncells*xyratio));
+    if (ncols <= 0) ncols = 1;
+    nrows = std::round(ncols/xyratio);
+    if (nrows <= 0) nrows = 1;
+    nlayers = 1;
+
+    ncells = ncols*nrows*nlayers;
+  }
+  else
+  {
+    // Compute the number of rows and columns in such a way that there is approximately
+    // the number of wanted cells but the organization of the cell is well balanced
+    // so the resolutions on x-y are close. We want:
+    // ncols/nrows = xyratio
+    // ncols/nlays = xzratio
+    // nrows/nlays = yzratio
+    // ncols*nrows*nlayers = ncells
+    ncols = std::round(std::cbrt(ncells*xyratio*xzratio));
+    if (ncols <= 0) ncols = 1;
+    nrows = std::round(ncols/xyratio);
+    if (nrows <= 0) nrows = 1;
+    nlayers = std::round(ncols/xzratio);
+    if (nlayers <= 0) nlayers = 1;
+
+    ncells = ncols*nrows*nlayers;
+  }
 
   xres = xrange / (double)ncols;
   yres = yrange / (double)nrows;

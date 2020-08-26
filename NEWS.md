@@ -26,6 +26,8 @@ readTLSLAS("file.las")
 #> point source : TLS
 ```
 
+3. The C++ classes for spatial index are now header-only and stored in `inst/include` meaning that other package can link to `lidR` to uses the spatial index at C++ level. However the classes are not documented yet.
+
 #### ENHANCEMENTS
 
 1. Internally the spatial index better balances the repartion of cells in the partition. While this should be invisible in most cases it might speed-up a bit some queries in some very specific dataset. The goal of this enhancement is mainly to provide optimal indexes for TLS data.
