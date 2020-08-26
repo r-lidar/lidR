@@ -68,6 +68,7 @@ setMethod("show", "LAS", function(object)
   minor     <- phb[["Version Minor"]]
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
+  type      <- format_point_type(object@type)
 
   coord.ref <- sf::st_crs(object@proj4string)
   coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
@@ -107,6 +108,7 @@ setMethod("show", "LAS", function(object)
   cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points       :", npoints.h, pointprefix, "points\n")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
+  cat("point source : ", type, "\n", sep = "")
   #cat("names        :", attr, "\n")
 
   return(invisible(object))

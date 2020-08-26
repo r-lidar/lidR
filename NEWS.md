@@ -12,6 +12,19 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ```r
 las <- classify_ground(las, mcc())
 ```
+2. The class `LAS` has a new slot `@type` that registers the source and the type of the point cloud (e.g. ALS, TLS, UAV, DAP). This come with several new functions `read*LAS()` that register the point cloud type. Registering the good point type may improve the performance of some functions. If performance are not
+improved in this release the future version of the package may bring enhancements as a function of the point cloud type.
+```r
+readTLSLAS("file.las")
+#> class        : LAS (v1.2 format 1)
+#> memory       : 5.6 Mb 
+#> extent       : 273357.1, 273642.9, 5274357, 5274643 (xmin, xmax, ymin, ymax)
+#> coord. ref.  : NAD83(CSRS) / MTM zone 7 
+#> area         : 81584.33 m²
+#> points       : 73.4 thousand points
+#> density      : 0.9 points/m²
+#> point source : TLS
+```
 
 #### ENHANCEMENTS
 

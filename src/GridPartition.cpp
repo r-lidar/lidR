@@ -105,20 +105,19 @@ void GridPartition::setLayers(const int search_type)
   // with other search type we can add layers to get a z index.
   switch (search_type)
   {
-  case 0: // Legacy
-    nlayers = 1;
-    break;
-  case 1: // ALS
-    nlayers = 1;
-    break;
-  case 2: // TLS
-    nlayers = 10;
-    break;
-  case 3: // Normalized ALS
-    nlayers = 1;
-    break;
-  default:
-    Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
+    case 0:  nlayers = 1;  break;
+    case 1:  nlayers = 1;  break;
+    case 2:  nlayers = 10; break;
+    case 3:  nlayers = 1;  break;
+    case 4:  nlayers = 1;  break;
+    case 5:  nlayers = 1;  break;
+    case 10: nlayers = 1;  break;
+    case 11: nlayers = 1;  break;
+    case 12: nlayers = 10; break;
+    case 13: nlayers = 1;  break;
+    case 14: nlayers = 1;  break;
+    case 15: nlayers = 1;  break;
+    default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
   }
 }
 

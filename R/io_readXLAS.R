@@ -1,20 +1,51 @@
-#' Read multispectral .las or .laz files
-#'
-#' Multispectral laser data are often stored in 3 differents files. If this is the case this function
-#' reads the .las or .laz files of each channel and merges them into an object of class
-#' \link[=LAS-class]{LAS} and takes care of attributing an ID to each channel. If the
-#' multisprectral point cloud is already stored in a single file, use \link{readLAS}. This function
-#' is somewhat experimental and its names could change.
+#' @export
+#' @rdname readLAS
+readTLSLAS = function(files,  select = "*", filter = "")
+{
+  las <- readLAS(files, select, filter)
+  las@type <- TLSLAS
+  return(las)
+}
+
+#' @export
+#' @rdname readLAS
+readUAVLAS = function(files,  select = "*", filter = "")
+{
+  las <- readLAS(files, select, filter)
+  las@type <- UAVLAS
+  return(las)
+}
+
+#' @export
+#' @rdname readLAS
+readDAPLAS = function(files,  select = "*", filter = "")
+{
+  las <- readLAS(files, select, filter)
+  las@type <- DAPLAS
+  return(las)
+}
+
+#' @section Multispectral data:
+#' Multispectral laser data are often stored in 3 different files. If this is the case
+#' \code{readMSLAS} reads the .las or .laz files of each channel and merges them into
+#' an object of class \link[=LAS-class]{LAS} and takes care of attributing an ID to each
+#' channel. If the multisprectral point cloud is already stored in a single file
+#' leave \code{file2} and \code{file3} missing.
 #'
 #' @param files1,files2,files3 characters. Path(s) to one or several a file(s). Each argument being
-#' one channel.
-#' @param select,filter character. See \link{readLAS}.
-#'
-#' @return A LAS object
+#' one channel (see section 'Multispectral data').
 #'
 #' @export
+#' @rdname readLAS
 readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 {
+  if (missing(files2) && missing(files3))
+  {
+    las <- readLAS(files1, select, filter)
+    las@type <- MLSLAS
+    return(las)
+  }
+
   las <- readLAS(c(files1, files2, files3), select, filter)
 
   if (!"ScannerChannel" %in% names(las@data))
@@ -51,5 +82,6 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
     }
   }
 
+  las@type <- MLSLAS
   return(las)
 }

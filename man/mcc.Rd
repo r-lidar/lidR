@@ -56,7 +56,7 @@ up or down by 0.1 m increments (if data are in meters; 0.3 if data are in feet).
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn")
 
-las <- classify_ground(las, mcc(2,0.5))
+las <- classify_ground(las, mcc(1.5,0.3))
 plot(las, color = "Classification")
 }
 \references{
