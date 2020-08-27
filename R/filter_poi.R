@@ -59,7 +59,7 @@ filter_poi = function(las, ...)
   if (sum(keep) == nrow(las@data))
     return(las)
 
-  return(LAS(las@data[keep], las@header, las@proj4string, check = FALSE))
+  return(LAS(las@data[keep], las@header, las@proj4string, check = FALSE, las@type))
 }
 
 lasfilter_ <- function(las, conditions)

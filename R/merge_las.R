@@ -38,6 +38,6 @@ rbind.LAS <- function(...)
   assert_all_are_same_crs(dots)
 
   data = data.table::rbindlist(lapply(dots, function(x) { x@data } ))
-  return(LAS(data, dots[[1]]@header, dots[[1]]@proj4string))
+  return(LAS(data, dots[[1]]@header, dots[[1]]@proj4string, type = dots[[1]]@type))
 }
 

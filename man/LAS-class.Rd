@@ -6,7 +6,7 @@
 \alias{LAS}
 \title{An S4 class to represent a .las or .laz file}
 \usage{
-LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE)
+LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE, type = NA)
 }
 \arguments{
 \item{data}{a \link[data.table:data.table]{data.table} containing the data of a las or laz file.}
@@ -17,6 +17,9 @@ a las or laz file.}
 \item{proj4string}{projection string of class \link[sp:CRS-class]{CRS-class}.}
 
 \item{check}{logical. Conformity tests while building the object.}
+
+\item{type}{numeric or character. 1 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
+Can be prefixed with 'n' such as 'nALS' to tell it is normalized.}
 }
 \value{
 An object of class \code{LAS}

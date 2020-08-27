@@ -80,7 +80,7 @@ voxelize_points.LAS = function(las, res)
     voxels <- unique(by)
   }
 
-  output <- LAS(voxels, header = las@header, proj4string = las@proj4string, check = FALSE)
+  output <- LAS(voxels, header = las@header, proj4string = las@proj4string, check = FALSE, type = las@type)
   return(output)
 }
 
