@@ -197,7 +197,7 @@ mcc <- function(s = 1.5, t = 0.3)
 {
   f = function(las, filter)
   {
-    . <- X <- Y <- Z <- NULL
+    . <- X <- Y <- Z <- idx <- NULL
     assert_is_valid_context(LIDRCONTEXTGND, "mcc")
     las@data[["idx"]] <- 1:npoints(las)
     cloud <- las@data
