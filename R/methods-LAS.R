@@ -35,8 +35,8 @@
 #' @return An object of class \code{LAS}
 #' @export
 #' @describeIn LAS-class creates objects of class LAS. The original data is updated by reference to
-#' clamp the coordinates with respect to the scale factor of the header. If header is not provided scale
-#' factor is set to 0.001
+#' quantize the coordinates according to the scale factor of the header if no header is provided>
+#' In this case the scale factor is set to 0.001
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, type = NA)
 {
   .N <- X <- Y <- Z <- NULL

@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-LAScluster <- function(center, width, height, buffer, shape, files, name, proj4string = sp::CRS())
+LAScluster <- function(center, width, height, buffer, shape, files, name, proj4string = sp::CRS(), type = UKNLAS)
 {
-  return(new("LAScluster", center, width, height, buffer, shape, files, name, "", proj4string))
+  return(new("LAScluster", center, width, height, buffer, shape, files, name, "", proj4string, type))
 }

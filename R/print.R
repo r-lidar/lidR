@@ -129,6 +129,7 @@ setMethod("show", "LAScatalog", function(object)
   minor       <- sort(unique(object[["Version.Minor"]]))
   version     <- paste(major, minor, sep = ".", collapse = " and ")
   format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
+  type        <- format_point_type(object@type)
 
   coord.ref <- sf::st_crs(object@proj4string)
   coord.ref <- coord.ref$input
@@ -162,6 +163,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      :", npoints.h, pointprefix, "points\n")
   cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
+  cat("point source: ", type, "\n", sep = "")
   return(invisible(object))
 })
 
@@ -306,7 +308,7 @@ setMethod("show", "LAScluster", function(object)
   cat("size    :", object@width, "x", object@height, "\n")
   cat("files   :", basename(object@files), "\n")
   cat("filter  :", object@filter, "\n")
-
+  cat("point source: ", format_point_type(object@type), "\n", sep = "")
   return(invisible(object))
 })
 

@@ -2,6 +2,10 @@
 % Please edit documentation in R/io_readLAScatalog.R
 \name{readLAScatalog}
 \alias{readLAScatalog}
+\alias{readALSLAScatalog}
+\alias{readTLSLAScatalog}
+\alias{readUAVLAScatalog}
+\alias{readDAPLAScatalog}
 \alias{catalog}
 \title{Create an object of class LAScatalog}
 \usage{
@@ -15,29 +19,76 @@ readLAScatalog(
   ...
 )
 
+readALSLAScatalog(
+  folder,
+  progress = TRUE,
+  select = "*",
+  filter = "",
+  chunk_size = 0,
+  chunk_buffer = 30,
+  ...
+)
+
+readTLSLAScatalog(
+  folder,
+  progress = TRUE,
+  select = "*",
+  filter = "",
+  chunk_size = 0,
+  chunk_buffer = 30,
+  ...
+)
+
+readUAVLAScatalog(
+  folder,
+  progress = TRUE,
+  select = "*",
+  filter = "",
+  chunk_size = 0,
+  chunk_buffer = 30,
+  ...
+)
+
+readDAPLAScatalog(
+  folder,
+  progress = TRUE,
+  select = "*",
+  filter = "",
+  chunk_size = 0,
+  chunk_buffer = 30,
+  ...
+)
+
 catalog(folder, ...)
 }
 \arguments{
-\item{folder}{string. The path of a folder containing a set of las/laz files. Can also be a vector of
-file paths.}
+\item{folder}{string. The path of a folder containing a set of las/laz files.
+Can also be a vector of file paths.}
 
-\item{progress, select, filter, chunk_size, chunk_buffer}{Easily accessible processing options tuning.
-See \link{LAScatalog-class} and \link{catalog_options_tools}.}
+\item{progress, select, filter, chunk_size, chunk_buffer}{Easily accessible processing
+options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.}
 
-\item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically `recursive = TRUE`.}
+\item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically
+`recursive = TRUE`.}
 }
 \value{
 A \code{LAScatalog} object
 }
 \description{
-Create an object of class \link[=LAScatalog-class]{LAScatalog} from a folder or a collection of filenames.
-A LAScatalog is a representation of a collection of las/laz files. A computer cannot load all the data at
-once. A \code{LAScatalog} is a simple way to manage all the files sequentially. Most functions from
-\code{lidR} can be used seamlessly with a LAScatalog using the internal \code{LAScatalog} processing
-engine. To take advantage of the \code{LAScatalog} processing engine the user must first adjust some
-processing options using the \link[=catalog_options_tools]{appropriated functions}. Careful
-reading of the \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
-\code{LAScatalog} class correctly.\cr\cr \code{catalog()} is softly deprecated for \code{readLAScatalog()}.
+Create an object of class \link[=LAScatalog-class]{LAScatalog} from a folder
+or a collection of filenames. A LAScatalog is a representation of a collection
+of las/laz files. A computer cannot load all the data at once. A \code{LAScatalog}
+is a simple way to manage all the files sequentially. Most functions from
+\code{lidR} can be used seamlessly with a LAScatalog using the internal
+\code{LAScatalog} processing engine. To take advantage of the \code{LAScatalog}
+processing engine the user must first adjust some processing options using the
+\link[=catalog_options_tools]{appropriated functions}. Careful reading of the
+\link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
+\code{LAScatalog} class correctly.\cr\cr
+\code{readLAScatalog} is the generic function. Using one of \code{read*LAScatalog}
+functions adds a tag to the returned object to register a point cloud type.
+Registering the good point type \bold{may} improve the performance of some functions
+(see also \link[=LAS-class]{LAS-class}.)
 }
 \examples{
 # A single file LAScatalog using data provided with the package
@@ -48,7 +99,7 @@ plot(ctg)
 \dontrun{
 ctg <- readLAScatalog("/path/to/a/folder/of/las/files")
 
-# Internal engine will sequentially process chunks of size 500 x 500 m (clusters)
+# Internal engine will sequentially process chunks of size 500 x 500 m
 opt_chunk_size(ctg) <- 500
 
 # Internal engine will align the 500 x 500 m chunks on x = 250 and y = 300

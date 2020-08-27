@@ -56,8 +56,8 @@ is also standardized. Columns are named:
 \section{Functions}{
 \itemize{
 \item \code{LAS}: creates objects of class LAS. The original data is updated by reference to
-clamp the coordinates with respect to the scale factor of the header. If header is not provided scale
-factor is set to 0.001
+quantize the coordinates according to the scale factor of the header if no header is provided>
+In this case the scale factor is set to 0.001
 }}
 
 \section{Slots}{
@@ -82,7 +82,7 @@ correct type can speed-up some operations. Setting the wrong type may slow down
 some operation for example if an ALS point cloud is declared TLS. Types 0 and 1
 are actually equivalent and correspond to legacy behaviour. For example if a TLS
 point cloud is tagged ALS the processing will be similar to processing in
-version < 3.1.0 without degradation of the performances.#'}
+version < 3.1.0 without degradation of the performances.}
 }}
 
 \section{Extends}{
@@ -100,12 +100,31 @@ las
 data <- data.frame(X = runif(100, 0, 100),
                    Y = runif(100, 0, 100),
                    Z = runif(100, 0, 20))
+
+# 'data' has many decimal digits
 data
 
-las <- LAS(data) # /!\ data is updated by reference
+# Create a default header and quantize *by reference*
+# the coordinates to fit with offset and scale factors
+cloud <- LAS(data)
 
+# 'data' has been updated and coordinates were quantized
 data
-las
+cloud
+
+# Be careful when providing a header the function assumes that
+# it corresponds to the data and won't quantize the coordinates
+data <- data.frame(X = runif(100, 0, 100),
+                   Y = runif(100, 0, 100),
+                   Z = runif(100, 0, 20))
+
+header <- las@header
+
+# This works
+cloud <- LAS(data, header)
+
+# But creates an invalid LAS object
+las_check(cloud)
 }
 \seealso{
 \link{readLAS}

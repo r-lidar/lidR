@@ -2,6 +2,7 @@
 % Please edit documentation in R/io_readLAS.R, R/io_readXLAS.R
 \name{readLAS}
 \alias{readLAS}
+\alias{readALSLAS}
 \alias{readTLSLAS}
 \alias{readUAVLAS}
 \alias{readDAPLAS}
@@ -9,6 +10,8 @@
 \title{Read .las or .laz files}
 \usage{
 readLAS(files, select = "*", filter = "")
+
+readALSLAS(files, select = "*", filter = "")
 
 readTLSLAS(files, select = "*", filter = "")
 

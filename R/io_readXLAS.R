@@ -1,5 +1,15 @@
 #' @export
 #' @rdname readLAS
+readALSLAS = function(files,  select = "*", filter = "")
+{
+  las <- readLAS(files, select, filter)
+  las@type <- ALSLAS
+  return(las)
+}
+
+
+#' @export
+#' @rdname readLAS
 readTLSLAS = function(files,  select = "*", filter = "")
 {
   las <- readLAS(files, select, filter)

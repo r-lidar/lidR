@@ -135,7 +135,20 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
 
   buffer <- X <- Y <- NULL
 
-  las <- readLAS(files@files, files@select,files@filter)
+  if (files@type == UKNLAS | files@type == UKNLAS + NLAS)
+    read <- readLAS
+  else if (files@type == ALSLAS | files@type == ALSLAS + NLAS)
+    read <- readALSLAS
+  else if (files@type == TLSLAS | files@type == TLSLAS + NLAS)
+    read <- readTLSLAS
+  else if (files@type == UAVLAS | files@type == UAVLAS + NLAS)
+    read <- readUAVLAS
+  else if (files@type == DAPLAS | files@type == DAPLAS + NLAS)
+    read <- readDAPLAS
+  else
+    read <- readLAS
+
+  las <- read(files@files, files@select, files@filter)
   las@proj4string <- files@proj4string
 
   las@data[, buffer := LIDRNOBUFFER]

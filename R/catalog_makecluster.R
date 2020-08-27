@@ -178,7 +178,7 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
     clusters = lapply(1:length(xcenter), function(i)
     {
       center  <- list(x = xcenter[i], y = ycenter[i])
-      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, filenames[i], "noname", proj4string = ctg@proj4string)
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, filenames[i], "noname", proj4string = ctg@proj4string, ctg@type)
 
       cluster@select <- ctg@input_options$select
       cluster@filter <- paste(cluster@filter, ctg@input_options$filter)

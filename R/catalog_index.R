@@ -85,7 +85,7 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     center  <- list(x = (bbox@xmax + bbox@xmin)/2, y = (bbox@ymax + bbox@ymin)/2)
     width   <- (bbox@xmax - bbox@xmin)
     height  <- (bbox@ymax - bbox@ymin)
-    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname", proj4string = catalog@proj4string)
+    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname", proj4string = catalog@proj4string, type = catalog@type)
 
     cluster@select <- opt_select(catalog)
     cluster@filter <- paste(cluster@filter, opt_filter(catalog))
