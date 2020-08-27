@@ -8,6 +8,14 @@
 namespace lidR
 {
 
+/*
+ * Spatial index using a grid-based indexation. The grid-based indexation
+ * can be extended with multiple layers to become a voxel-based indexation.
+ * public members are:
+ * - Constructors
+ * - Lookup (templated to search any arbitrary shape)
+ * - knn (both in 2D or 3D)
+ */
 class GridPartition
 {
   public:
@@ -16,8 +24,8 @@ class GridPartition
     GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector);
     GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
     template<typename T> void lookup(T& shape, std::vector<PointXYZ*>&);
-    void knn(const Point&, const unsigned int, std::vector<PointXYZ*>&);
-    void knn(const Point&, const unsigned int, const double, std::vector<PointXYZ*>&);
+    void knn(const PointXY&, const unsigned int, std::vector<PointXYZ*>&);
+    void knn(const PointXY&, const unsigned int, const double, std::vector<PointXYZ*>&);
     void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ*>&);
     void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ*>&);
 
@@ -48,7 +56,133 @@ class GridPartition
     bool multilayered(const int);
 };
 
+/*
+ * Default constructor using an S4 LAS object. The LAS object contains a tag
+ * that enables to choose automatically between a grid- or voxel-based indexation
+ */
+inline
+GridPartition::GridPartition(const Rcpp::S4 las)
+{
+  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
+  Rcpp::NumericVector x = data["X"];
+  Rcpp::NumericVector y = data["Y"];
+  Rcpp::NumericVector z = data["Z"];
 
+  // Number of points
+  npoints = data.nrow();
+
+  //Initialize a filter with true (all points are kept)
+  filter.resize(npoints);
+  std::fill(filter.begin(), filter.end(), true);
+
+  // Define the search type. Most of the cases are ALS data. Despite it is 3D
+  // point clouds, only a 2D index is sufficient because most of the dispersion
+  // is on x-y with proportionally no dispersion on z. E.g. when searching points
+  // within sphere centred on (0,0,15) a 2D search in a cylinder centred on (0,0)
+  // enables to eliminate 99% of the points and there is no advantage at adding an
+  // index on z. This is not true for TLS data that do need a 3D index. Ultimately
+  // an octree but here we only extended the original partition to add layer index
+  // capability
+  int search_type = 0;
+  if (las.hasSlot("type")) search_type = las.slot("type");
+  multilayer = multilayered(search_type);
+
+  init(x,y,z);
+}
+
+/*
+ * Constructor with a filter. To work with a subset of a point cloud (e.g. first
+ * return only) lidR never actually subset the point cloud because it creates an
+ * intermediate (partial) copy of the point cloud. Instead lidR allocates a boolean
+ * vector that is used to skip points one the fly. Points of 'las' where 'f' is false
+ * are simply not inserted in the index.
+ */
+inline
+GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
+{
+  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
+  Rcpp::NumericVector x = data["X"];
+  Rcpp::NumericVector y = data["Y"];
+  Rcpp::NumericVector z = data["Z"];
+
+  // Number of points
+  npoints = std::accumulate(f.begin(), f.end(), 0);
+
+  //Initialize a filter to discard some points on the fly
+  std::copy(f.begin(), f.end(), std::back_inserter(filter));
+
+  // Define the search type. Most of the cases are ALS data. Despite it is 3D
+  // point clouds, only a 2D index is sufficient because most of the dispersion
+  // is on x-y with proportionally no dispersion on z. e.g. when searching points
+  // within sphere centred on (0,0,15) a 2D search in a cylinder centred on (0,0)
+  // enables to eliminate 99% of the points and there is no advantage at adding an
+  // index on z. This is not true for TLS data that do need a 3D index. Ultimately
+  // an octree but here we only extended the original partition to add layer index
+  // capability
+  int search_type = 0;
+  if (las.hasSlot("type")) search_type = las.slot("type");
+  multilayer = multilayered(search_type);
+
+  init(x,y,z);
+}
+
+/*
+ * Legacy constructor for 2D data. Should not be used but is still used in lidR
+ * for code that need refactoring + to build simple unit tests.
+ */
+inline
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
+{
+  if (x.size() != y.size())
+    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
+
+  // Number of points
+  npoints = x.size();
+
+  // Initialize a filter with true (all points are kept)
+  filter.resize(npoints);
+  std::fill(filter.begin(), filter.end(), true);
+
+  // Use legacy 2D index
+  multilayer = false;
+
+  // Create a dummy z vector with 0s
+  Rcpp::NumericVector z(npoints, 0);
+
+  init(x,y,z);
+}
+
+/*
+ * Legacy constructor for 3D data. Should not be used but is still used in lidR
+ * for code that need refactoring + to build simple unit tests.
+ */
+inline
+GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z)
+{
+  if (x.size() != y.size())
+    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
+
+  if (x.size() != z.size())
+    Rcpp::stop("Internal error in spatial index: x and z have different sizes.");
+
+  // Number of points
+  npoints = x.size();
+
+  // Initialize a filter with true (all points are kept)
+  filter.resize(npoints);
+  std::fill(filter.begin(), filter.end(), true);
+
+  // Use legacy 2D index
+  multilayer = false;
+
+  init(x,y,z);
+}
+
+/*
+ * Query points within a shape. The function being templated any shape is possible
+ * lidR defines some shapes in Shape.h. Some shapes are 2D (e.g. Circle) other
+ * are 3D (e.g. Sphere).
+ */
 template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>& res)
 {
   double xmin = shape.xmin;
@@ -82,130 +216,119 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>
   return;
 }
 
+/*
+ * Query the knn of a given 2D point. In that case the Z coordinates is not
+ * considered for searching the neighbours. It is a search on XY only.
+ */
 inline
-GridPartition::GridPartition(const Rcpp::S4 las)
+void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
 {
-  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
-  Rcpp::NumericVector x = data["X"];
-  Rcpp::NumericVector y = data["Y"];
-  Rcpp::NumericVector z = data["Z"];
+  double density = npoints / area;
+  double radius  = std::sqrt((double)k / (density * 3.14));
 
-  // Number of points
-  npoints = data.nrow();
-
-  //Initialize a filter with true (all points are kept)
-  filter.resize(npoints);
-  std::fill(filter.begin(), filter.end(), true);
-
-  // Define the search type. Most of the cases are ALS data. Despite it is 3D
-  // point clouds, only a 2D index is sufficient because most of the dispersion
-  // is on x-y with proportionally no dispersion on z. E.g. when searching points
-  // within sphere centred on (0,0,15) a 2D search in a cylinder centred on (0,0)
-  // enables to eliminate 99% of the points and there is no advantage at adding an
-  // index on z. This is not true for TLS data that do need a 3D index. Ultimately
-  // an octree but here we only extended the original partition to add layer index
-  // capability
-  int search_type = 0;
-  if (las.hasSlot("type")) search_type = las.slot("type");
-  multilayer = multilayered(search_type);
-
-  init(x,y,z);
-}
-
-inline
-GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
-{
-  Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
-  Rcpp::NumericVector x = data["X"];
-  Rcpp::NumericVector y = data["Y"];
-  Rcpp::NumericVector z = data["Z"];
-
-  // Number of points
-  npoints = std::accumulate(f.begin(), f.end(), 0);
-
-  //Initialize a filter to discard some points on the fly
-  std::copy(f.begin(), f.end(), std::back_inserter(filter));
-
-  // Define the search type. Most of the cases are ALS data. Despite it is 3D
-  // point clouds, only a 2D index is sufficient because most of the dispersion
-  // is on x-y with proportionally no dispersion on z. e.g. when searching points
-  // within sphere centred on (0,0,15) a 2D search in a cylinder centred on (0,0)
-  // enables to eliminate 99% of the points and there is no advantage at adding an
-  // index on z. This is not true for TLS data that do need a 3D index. Ultimately
-  // an octree but here we only extended the original partition to add layer index
-  // capability
-  int search_type = 0;
-  if (las.hasSlot("type")) search_type = las.slot("type");
-  multilayer = multilayered(search_type);
-
-  init(x,y,z);
-}
-
-inline
-GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
-{
-  if (x.size() != y.size())
-    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
-
-  // Number of points
-  npoints = x.size();
-
-  // Initialize a filter with true (all points are kept)
-  filter.resize(npoints);
-  std::fill(filter.begin(), filter.end(), true);
-
-  // Use legacy 2D index
-  multilayer = false;
-
-  // Create a dummy z vector with 0s
-  Rcpp::NumericVector z(npoints, 0);
-
-  init(x,y,z);
-}
-
-inline
-GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
-{
-  if (x.size() != y.size())
-    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
-
-  if (x.size() != z.size())
-    Rcpp::stop("Internal error in spatial index: x and z have different sizes.");
-
-  // Number of points
-  npoints = x.size();
-
-  // Initialize a filter with true (all points are kept)
-  filter.resize(npoints);
-  std::fill(filter.begin(), filter.end(), true);
-
-  // Use legacy 2D index
-  multilayer = false;
-
-  init(x,y,z);
-}
-
-inline
-bool GridPartition::multilayered(const int search_type)
-{
-  // nlayers = 1 is equivalent to legacy code with no layer defined (was implicitly one)
-  // with other search type we can add layers to get a z index.
-  switch (search_type)
-  {
-  case 0:  return false;  break;
-  case 1:  return false;  break;
-  case 2:  return true;   break;
-  case 3:  return false;  break;
-  case 4:  return false;  break;
-  case 5:  return false;  break;
-  case 10: return false;  break;
-  case 11: return false;  break;
-  case 12: return true;   break;
-  case 13: return false;  break;
-  case 14: return false;  break;
-  case 15: return false;  break;
-  default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
+  std::vector<PointXYZ*> pts;
+  while (pts.size() < k && pts.size() < npoints) {
+    pts.clear();
+    Circle circ(p.x, p.y, radius);
+    this->lookup(circ, pts);
+    radius *= 1.5;
   }
+
+  PointXYZ pp(p.x, p.y, 0, 0);
+  std::sort(pts.begin(), pts.end(), DSort2D<PointXYZ>(pp));
+  res.clear();
+  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
+  return;
+}
+
+/*
+ * Query the knn of a given 2D point with a maximum radius search. If there are
+ * less than k neighbours it returns less than k points
+ */
+inline
+void GridPartition::knn(const PointXY& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+{
+  double density = npoints / area;
+  double radius  = std::sqrt((double)k / (density * 3.14));
+
+  std::vector<PointXYZ*> pts;
+  if (radius < maxradius)
+  {
+    while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
+      pts.clear();
+      Circle circ(p.x, p.y, radius);
+      this->lookup(circ, pts);
+      radius *= 1.5;
+    }
+  }
+
+  if (radius >= maxradius)
+  {
+    Circle circ(p.x, p.y, maxradius);
+    this->lookup(circ, pts);
+  }
+
+  PointXYZ pp(p.x, p.y, 0, 0);
+  std::sort(pts.begin(), pts.end(), DSort2D<PointXYZ>(pp));
+  res.clear();
+  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
+  return;
+}
+
+/*
+ * Query the knn of a given 3D point.
+ */
+inline
+void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
+{
+  double density = npoints / area;
+  double radius  = std::sqrt((double)k / (density * 3.14));
+
+  std::vector<PointXYZ*> pts;
+  while (pts.size() < k && pts.size() < npoints) {
+    pts.clear();
+    Sphere sphere(p.x, p.y, p.z, radius);
+    this->lookup(sphere, pts);
+    radius *= 1.5;
+  }
+
+  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
+  res.clear();
+  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++)
+    res.emplace_back(pts[i]);
+  return;
+}
+
+/*
+ * Query the knn of a given 3D point with a maximum radius.
+ */
+inline
+void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+{
+  double density = npoints / area;
+  double radius  = std::sqrt((double)k / (density * 3.14));
+
+  std::vector<PointXYZ*> pts;
+  if (radius < maxradius)
+  {
+    while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
+      pts.clear();
+      Sphere sphere(p.x, p.y, p.z, radius);
+      this->lookup(sphere, pts);
+      radius *= 1.5;
+    }
+  }
+
+  if (radius >= maxradius)
+  {
+    Sphere sphere(p.x, p.y, p.z, maxradius);
+    this->lookup(sphere, pts);
+  }
+
+  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
+  res.clear();
+  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
+  return;
 }
 
 inline
@@ -331,104 +454,26 @@ int GridPartition::getCell(const PointXYZ& p)
 }
 
 inline
-void GridPartition::knn(const Point& p, const unsigned int k, std::vector<PointXYZ*>& res)
+bool GridPartition::multilayered(const int search_type)
 {
-  double density = npoints / area;
-  double radius  = std::sqrt((double)k / (density * 3.14));
-
-  std::vector<PointXYZ*> pts;
-  while (pts.size() < k && pts.size() < npoints) {
-    pts.clear();
-    Circle circ(p.x, p.y, radius);
-    this->lookup(circ, pts);
-    radius *= 1.5;
-  }
-
-  PointXYZ pp(p.x, p.y, 0, 0);
-  std::sort(pts.begin(), pts.end(), DSort2D<PointXYZ>(pp));
-  res.clear();
-  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
-  return;
-}
-
-inline
-void GridPartition::knn(const Point& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
-{
-  double density = npoints / area;
-  double radius  = std::sqrt((double)k / (density * 3.14));
-
-  std::vector<PointXYZ*> pts;
-  if (radius < maxradius)
+  // nlayers = 1 is equivalent to legacy code with no layer defined (was implicitly one)
+  // with other search type we can add layers to get a z index.
+  switch (search_type)
   {
-    while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
-      pts.clear();
-      Circle circ(p.x, p.y, radius);
-      this->lookup(circ, pts);
-      radius *= 1.5;
-    }
+  case 0:  return false;  break;
+  case 1:  return false;  break;
+  case 2:  return true;   break;
+  case 3:  return false;  break;
+  case 4:  return false;  break;
+  case 5:  return false;  break;
+  case 10: return false;  break;
+  case 11: return false;  break;
+  case 12: return true;   break;
+  case 13: return false;  break;
+  case 14: return false;  break;
+  case 15: return false;  break;
+  default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
   }
-
-  if (radius >= maxradius)
-  {
-    Circle circ(p.x, p.y, maxradius);
-    this->lookup(circ, pts);
-  }
-
-  PointXYZ pp(p.x, p.y, 0, 0);
-  std::sort(pts.begin(), pts.end(), DSort2D<PointXYZ>(pp));
-  res.clear();
-  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
-  return;
-}
-
-inline
-void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
-{
-  double density = npoints / area;
-  double radius  = std::sqrt((double)k / (density * 3.14));
-
-  std::vector<PointXYZ*> pts;
-  while (pts.size() < k && pts.size() < npoints) {
-    pts.clear();
-    Sphere sphere(p.x, p.y, p.z, radius);
-    this->lookup(sphere, pts);
-    radius *= 1.5;
-  }
-
-  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
-  res.clear();
-  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++)
-    res.emplace_back(pts[i]);
-  return;
-}
-
-inline
-void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
-{
-  double density = npoints / area;
-  double radius  = std::sqrt((double)k / (density * 3.14));
-
-  std::vector<PointXYZ*> pts;
-  if (radius < maxradius)
-  {
-    while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
-      pts.clear();
-      Sphere sphere(p.x, p.y, p.z, radius);
-      this->lookup(sphere, pts);
-      radius *= 1.5;
-    }
-  }
-
-  if (radius >= maxradius)
-  {
-    Sphere sphere(p.x, p.y, p.z, maxradius);
-    this->lookup(sphere, pts);
-  }
-
-  std::sort(pts.begin(), pts.end(), DSort3D<PointXYZ>(p));
-  res.clear();
-  for (auto i = 0 ; i < std::min((int)k, (int)pts.size()) ; i++) res.emplace_back(pts[i]);
-  return;
 }
 
 }

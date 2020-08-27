@@ -48,6 +48,7 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5>struct 
 };
 
 typedef Point2D<double, double, int> Point;
+typedef Point2D<double, double, int> PointXY;
 typedef Point3D<double, double, double, int> PointXYZ;
 typedef Point4D<double, double, double, int, double> PointXYZR;
 
