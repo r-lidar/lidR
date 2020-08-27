@@ -18,7 +18,7 @@ a las or laz file.}
 
 \item{check}{logical. Conformity tests while building the object.}
 
-\item{type}{numeric or character. ) to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
+\item{type}{numeric or character. 0 to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
 Can be prefixed with 'n' such as 'nALS' to tell it is normalized.}
 }
 \value{
@@ -39,6 +39,7 @@ is also standardized. Columns are named:
 \item{\code{X} (numeric)}
 \item{\code{Y} (numeric)}
 \item{\code{Z} (numeric)}
+\item{\code{gpstime} (numeric)}
 \item{\code{Intensity} (integer)}
 \item{\code{ReturnNumber} (integer)}
 \item{\code{NumberOfReturns} (integer)}
@@ -48,15 +49,18 @@ is also standardized. Columns are named:
 \item{\code{Synthetic_flag} (logical)}
 \item{\code{Keypoint_flag} (logical)}
 \item{\code{Withheld_flag} (logical)}
-\item{\code{ScanAngle} (integer)}
+\item{\code{ScanAngleRank} (integer)}
+\item{\code{ScanAngle} (numeric)}
 \item{\code{UserData} (integer)}
 \item{\code{PointSourceID} (integer)}
+\item{\code{R,G,b} (integer)}
+\item{\code{NIR} (integer)}
 }
 }
 \section{Functions}{
 \itemize{
 \item \code{LAS}: creates objects of class LAS. The original data is updated by reference to
-quantize the coordinates according to the scale factor of the header if no header is provided>
+quantize the coordinates according to the scale factor of the header if no header is provided.
 In this case the scale factor is set to 0.001
 }}
 

@@ -40,6 +40,7 @@
 #' \item{\code{X} (numeric)}
 #' \item{\code{Y} (numeric)}
 #' \item{\code{Z} (numeric)}
+#' \item{\code{gpstime} (numeric)}
 #' \item{\code{Intensity} (integer)}
 #' \item{\code{ReturnNumber} (integer)}
 #' \item{\code{NumberOfReturns} (integer)}
@@ -49,9 +50,12 @@
 #' \item{\code{Synthetic_flag} (logical)}
 #' \item{\code{Keypoint_flag} (logical)}
 #' \item{\code{Withheld_flag} (logical)}
-#' \item{\code{ScanAngle} (integer)}
+#' \item{\code{ScanAngleRank} (integer)}
+#' \item{\code{ScanAngle} (numeric)}
 #' \item{\code{UserData} (integer)}
 #' \item{\code{PointSourceID} (integer)}
+#' \item{\code{R,G,b} (integer)}
+#' \item{\code{NIR} (integer)}
 #' }
 #'
 #' @section Extends:

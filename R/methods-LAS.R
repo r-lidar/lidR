@@ -30,12 +30,12 @@
 #' a las or laz file.
 #' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
 #' @param check logical. Conformity tests while building the object.
-#' @param type numeric or character. ) to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
+#' @param type numeric or character. 0 to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
 #' Can be prefixed with 'n' such as 'nALS' to tell it is normalized.
 #' @return An object of class \code{LAS}
 #' @export
 #' @describeIn LAS-class creates objects of class LAS. The original data is updated by reference to
-#' quantize the coordinates according to the scale factor of the header if no header is provided>
+#' quantize the coordinates according to the scale factor of the header if no header is provided.
 #' In this case the scale factor is set to 0.001
 LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, type = NA)
 {

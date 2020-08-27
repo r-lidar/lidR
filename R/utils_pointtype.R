@@ -48,9 +48,9 @@ get_point_type = function(input)
       if (length(i) == 0)
         stop("Incorrect type", call. = FALSE)
       else
-        return(i + NLAS)
+        return(i + NLAS - 1)
     } else {
-      return(i)
+      return(i - 1)
     }
   } else {
     stop("Incorrect type", call. = FALSE)
