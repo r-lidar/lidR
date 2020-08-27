@@ -185,11 +185,13 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #' @family ground segmentation algorithms
 #'
 #' @examples
+#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
 #' las <- classify_ground(las, mcc(1.5,0.3))
 #' plot(las, color = "Classification")
+#' }
 #' @export
 mcc <- function(s = 1.5, t = 0.3)
 {

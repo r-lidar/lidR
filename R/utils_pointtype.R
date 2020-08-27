@@ -41,10 +41,10 @@ get_point_type = function(input)
     return(input)
   } else if (is.character(input)) {
     types <- c("unknown", "ALS", "TLS", "UAV", "DAP")
-    i <- which(type == types)
+    i <- which(input == types)
     if (length(i) == 0)  {
       types <- c("nunknown", "nALS", "nTLS", "nUAV", "nDAP")
-      i <- which(type == types)
+      i <- which(input == types)
       if (length(i) == 0)
         stop("Incorrect type", call. = FALSE)
       else
