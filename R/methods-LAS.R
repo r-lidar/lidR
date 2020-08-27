@@ -30,7 +30,7 @@
 #' a las or laz file.
 #' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
 #' @param check logical. Conformity tests while building the object.
-#' @param type numeric or character. 1 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
+#' @param type numeric or character. ) to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
 #' Can be prefixed with 'n' such as 'nALS' to tell it is normalized.
 #' @return An object of class \code{LAS}
 #' @export

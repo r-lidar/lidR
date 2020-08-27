@@ -18,7 +18,7 @@ a las or laz file.}
 
 \item{check}{logical. Conformity tests while building the object.}
 
-\item{type}{numeric or character. 1 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
+\item{type}{numeric or character. ) to 5 or to 10 to 15 or one of 'ALS', 'TLS', 'UAV', 'DAP'.
 Can be prefixed with 'n' such as 'nALS' to tell it is normalized.}
 }
 \value{

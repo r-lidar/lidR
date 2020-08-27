@@ -35,21 +35,24 @@ get_point_type = function(input)
   if (is.null(input)) return(UKNLAS)
   if (is.na(input))   return(UKNLAS)
 
-  if (is.numeric(input))
-  {
-    if (input < 0 | input > 15)    stop("Incorrect type", call. = FALSE)
+  if (is.numeric(input)) {
+    if (input < 0 | input > 15) stop("Incorrect type", call. = FALSE)
     if (as.integer(input) != input) stop("Incorrect type", call. = FALSE)
     return(input)
-  }
-  else if (is.character(input))
-  {
-    types = c("unknown", "ALS", "TLS", "UAV", "DAP", "nALS", "nTLS", "nUAV", "nDAP", "nunknown")
-    i = which(type == types)
-    if (length(i) == 0)  stop("Incorrect type", call. = FALSE)
-    return(i)
-  }
-  else
-  {
+  } else if (is.character(input)) {
+    types <- c("unknown", "ALS", "TLS", "UAV", "DAP")
+    i <- which(type == types)
+    if (length(i) == 0)  {
+      types <- c("nunknown", "nALS", "nTLS", "nUAV", "nDAP")
+      i <- which(type == types)
+      if (length(i) == 0)
+        stop("Incorrect type", call. = FALSE)
+      else
+        return(i + NLAS)
+    } else {
+      return(i)
+    }
+  } else {
     stop("Incorrect type", call. = FALSE)
   }
 }
