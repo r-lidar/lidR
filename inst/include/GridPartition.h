@@ -46,7 +46,7 @@ class GridPartition
     double zres;
     double area;
     double volume;
-    std::vector<double> filter;
+    std::vector<bool> filter;
     std::vector<std::vector<PointXYZ>> registry;
 
   private:
