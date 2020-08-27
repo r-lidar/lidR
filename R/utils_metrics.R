@@ -96,7 +96,7 @@
 #' m6 <- grid_metrics(first, .stdmetrics_z)
 #'
 #' # Compute the metrics with a threshold at 2 meters
-#' m7 <- grid_metrics(over2, .stdmetrics_z, filter = ~Z >= 2)
+#' m7 <- grid_metrics(las, .stdmetrics_z, filter = ~Z >= 2)
 #'
 #' # Works also with cloud_metrics and hexbin_metrics
 #' m8 <- cloud_metrics(las, .stdmetrics)
