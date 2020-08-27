@@ -10,7 +10,10 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 2.5,
+  fig.height = 2.5,
+  dev.args = list(pointsize = 9)
 )
 options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
@@ -108,7 +111,7 @@ When processing a `LAScatalog` the area covered is divided into chunks that are 
 
 So each file is processed sequentially. For a given processed file, the content is read and loaded into R. In the following figure chunk number 42 is currently read and processed (in blue):
 
-```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
+```{r, echo = FALSE}
 bbox = as.numeric(ctg@data[42,1:4])
 
 plot(ctg)
@@ -117,7 +120,7 @@ graphics::rect(bbox[1], bbox[3], bbox[2], bbox[4], border = "black", col = "blue
 
 But the current processed file is not the only one that needs to be read. To properly process the catalog without edge artifacts we need to load an extra buffer around the processed file (in red). 
 
-```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
+```{r, echo = FALSE}
 bbox = as.numeric(ctg@data[42,1:4])
 
 plot(ctg)
@@ -127,7 +130,7 @@ graphics::rect(bbox[2], bbox[4], bbox[1], bbox[3], border = "black", col = "blue
 
 To load a buffer the processing engine must not only read the processed file **but also** the 8 neighbouring tiles (in red) to selectively read a small buffer around the processed file. Thus, for each processed file it is not one file that is read but nine. This is one of the reasons why the read time is far from negligible compared to the actual computation time.
 
-```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
+```{r, echo = FALSE}
 neighbourg = ctg@data[c(19,20,23, 41, 43, 44, 45, 47),1:4]
 
 plot(ctg)
@@ -151,7 +154,7 @@ system.time(readLAS(file.laz))
 ```
 
 
-```{r, echo = FALSE, fig.width=3.5, fig.height=3.4}
+```{r, echo = FALSE}
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las = readLAS(LASfile)
 f = tempfile(fileext = ".las")
@@ -186,7 +189,7 @@ This is made possible by indexing the las or laz files with lax files. A lax fil
 By adding lax files along with your las/laz files the buffer can be added around the processing file by only partially reading the 8 neigbouring files (in red)
 
 
-```{r, echo = FALSE, fig.width=3.5, fig.height=3.5}
+```{r, echo = FALSE}
 neighbourg = ctg@data[c(19,20,23, 41, 43, 44, 45, 47),1:4]
 
 J = list(c(1200,1000,0,0),
@@ -227,7 +230,7 @@ system.time(readLAS(file.laz))
 system.time(readLAS(file.laz, select = "xyz"))
 ```
 
-```{r, echo = FALSE, fig.width=3.4, fig.height=3.4}
+```{r, echo = FALSE}
 # LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 # las = readLAS(LASfile)
 # f = tempfile(fileext = ".las")

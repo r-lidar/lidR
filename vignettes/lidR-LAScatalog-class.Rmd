@@ -10,7 +10,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dev.args = list(pointsize = 10)
 )
 options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
@@ -158,7 +159,7 @@ The function `las_check` when applied to a catalog does not perform a deep inspe
 
 `lidR` provides a simple `plot()` function to plot a `LAScatalog` object:
 
-```{r, fig.width=4, fig.height=4}
+```{r}
 plot(ctg)
 ```
 
@@ -168,11 +169,11 @@ The option `mapview = TRUE` displays the catalog on an interactive map with pan 
 plot(ctg, mapview = TRUE, map.type = "Esri.WorldImagery")
 ```
 
-![](https://raw.githubusercontent.com/Jean-Romain/storage/master/CATALOG/mapview-vignette.png).
+![](https://raw.githubusercontent.com/Jean-Romain/storage/master/CATALOG/mapview-vignette.png)
 
 Being a SpatialPolygonsDataFrame, the function `spplot` from `sp` can be used on a `LAScatalog` to check the content of the files. In the following we can immediately see that the catalog is not normalized and is likely to contain outliers:
 
-```{r, fig.width=4, fig.height=4}
+```{r}
 spplot(ctg, "Min.Z")
 ```
 
