@@ -342,7 +342,9 @@ print.lidRAlgorithm = function(x, ...)
   else if (is (x, LIDRSHP))
   { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
   else if (is (x, LIDRSPI))
-  {  use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
+  { use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
+  else if (is (x, LIDROUT))
+  { use = "noise classification" ; with = LIDRCONTEXTOUT }
   else
   { use = "unknown" ; with = "unknown" } # nocov
 
