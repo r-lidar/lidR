@@ -47,3 +47,11 @@ test_that("classify_noise sor works", {
   expect_equal(sum(las2@data$Classification == 18L), 26)
   expect_equal(nrow(las2@data), nrow(las@data))
 })
+
+test_that("classify_noise sor with quantiles", {
+
+  las <- classify_noise(las, sor(15,0.9998,TRUE))
+
+  expect_equal(sum(las@data$Classification == 18L), 15L)
+})
+

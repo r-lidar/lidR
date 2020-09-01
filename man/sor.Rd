@@ -4,12 +4,17 @@
 \alias{sor}
 \title{Noise Segmentation Algorithm}
 \usage{
-sor(k = 10, m = 3)
+sor(k = 10, m = 3, quantile = FALSE)
 }
 \arguments{
 \item{k}{numeric. The number of neighbours}
 
-\item{m}{numeric. Multiplier. The maximum distance will be: avg distance + m * std deviation}
+\item{m}{numeric. Multiplier. The maximum distance will be: avg distance + m * std deviation
+if \code{quantile = TRUE} m becomes the quantile threshold}
+
+\item{quantile}{boolean. Modification of the original SOR to use a quantile
+threshold instead of a standard deviation multiplier. In this case the maximum
+distance will be: quantile(avg distance, probs = m)}
 }
 \description{
 This function is made to be used in \link{classify_noise}. It implements an

@@ -12,6 +12,10 @@
 #'
 #' @param k numeric. The number of neighbours
 #' @param m numeric. Multiplier. The maximum distance will be: avg distance + m * std deviation
+#' if \code{quantile = TRUE} m becomes the quantile threshold
+#' @param quantile boolean. Modification of the original SOR to use a quantile
+#' threshold instead of a standard deviation multiplier. In this case the maximum
+#' distance will be: quantile(avg distance, probs = m)
 #'
 #' @export
 #'
@@ -30,23 +34,35 @@
 #'
 #' las <- classify_noise(las, sor(15,7))
 #' plot(las, color = "Classification")
-sor = function(k = 10, m = 3)
+sor = function(k = 10, m = 3, quantile = FALSE)
 {
   assert_is_a_number(k)
   assert_is_a_number(m)
   assert_all_are_positive(k)
-  assert_all_are_non_negative(m)
+  assert_is_a_bool(quantile)
+
+  if (!quantile)
+    assert_all_are_non_negative(m)
+  else
+    assert_all_are_in_closed_range(m, 0, 1)
 
   k <- lazyeval::uq(k)
   m <- lazyeval::uq(m)
+  quantile <- lazyeval::uq(quantile)
 
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTOUT, "sor")
     dmean <- C_fast_knn_metrics(las, k, 1, getThreads())
-    avg <- mean(dmean)
-    std <- sd(dmean)
-    return(dmean > avg + m*std)
+    if (quantile) {
+      th <- quantile(dmean, probs = m)
+    } else {
+      avg <- mean(dmean)
+      std <- sd(dmean)
+      th <- avg + m*std
+    }
+
+    return(dmean > th)
   }
 
   class(f) <- c(LIDRALGORITHMOUT, LIDRALGORITHMOPENMP)
