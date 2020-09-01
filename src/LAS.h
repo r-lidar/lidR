@@ -32,6 +32,7 @@ class LAS
     void filter_with_grid(S4 layout);
     void filter_shape(int method, NumericVector th, int k);
     void filter_progressive_morphology(NumericVector ws, NumericVector th);
+    void filter_isolated_voxel(double ws, int isolated);
 
     void z_open(double resolution);
     void z_smooth(double size, int method, int shape, double sigma);

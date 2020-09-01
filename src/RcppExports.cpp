@@ -288,6 +288,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_isolated_voxel
+LogicalVector C_isolated_voxel(S4 las, double res, int isolated);
+RcppExport SEXP _lidR_C_isolated_voxel(SEXP lasSEXP, SEXP resSEXP, SEXP isolatedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    Rcpp::traits::input_parameter< int >::type isolated(isolatedSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_isolated_voxel(las, res, isolated));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_check_gpstime
 int C_check_gpstime(NumericVector t, IntegerVector rn);
 RcppExport SEXP _lidR_C_check_gpstime(SEXP tSEXP, SEXP rnSEXP) {
@@ -513,6 +525,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},
+    {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},

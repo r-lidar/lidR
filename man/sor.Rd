@@ -18,7 +18,7 @@ distance will be: quantile(avg distance, probs = m)}
 }
 \description{
 This function is made to be used in \link{classify_noise}. It implements an
-algorithm for outliers (noise) segmentation points based on Satistical Outliers
+algorithm for outliers (noise) segmentation based on Satistical Outliers
 Removal (SOR) methods first described in the
 \href{https://pointclouds.org/documentation/tutorials/statistical_outlier.html}{PCL library}
 and also implemented in
@@ -40,5 +40,9 @@ las$Z[id] = las$Z[id] + err
 
 las <- classify_noise(las, sor(15,7))
 plot(las, color = "Classification")
+}
+\seealso{
+Other noise segmentation algorithms: 
+\code{\link{ivf}()}
 }
 \concept{noise segmentation algorithms}

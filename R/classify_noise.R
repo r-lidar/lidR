@@ -34,7 +34,7 @@
 #'
 #' @template param-las
 #'
-#' @param algorithm a noise-segmentation function. \code{lidR} has: \link{sor}, \link{vor}.
+#' @param algorithm a noise-segmentation function. \code{lidR} has: \link{sor}, \link{ivf}.
 #'
 #' @template LAScatalog
 #'
@@ -55,8 +55,19 @@
 #' err = runif(20, -50, 50)
 #' las$Z[id] = las$Z[id] + err
 #'
+#'
+#' # Using SOR
+#' # =============
+#'
 #' las <- classify_noise(las, sor(15,7))
 #' plot(las, color = "Classification")
+#'
+#'
+#' # Using IVF
+#' # =============
+#'
+#' las <- classify_noise(las, ivf(5,2))
+#' las_denoise <- filter_poi(las, Classification != LASNOISE)
 classify_noise = function(las, algorithm)
 {
   UseMethod("classify_noise", las)

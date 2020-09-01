@@ -22,6 +22,7 @@ opt_chunk_buffer(ctg) <- 0
 opt_progress(ctg) <- FALSE
 
 mysor = sor(15,7)
+myivf = ivf(5,2)
 
 test_that("classify_noise sor works", {
 
@@ -33,11 +34,11 @@ test_that("classify_noise sor works", {
   expect_equal(unique(las@data$Classification), c(1L, 2L, 9L, 18L))
   expect_equal(sum(las@data$Classification == 18L), 28L)
 
-  expect_error(classify_ground(ctg, mysor), "buffer")
+  expect_error(classify_noise(ctg, mysor), "buffer")
 
   opt_chunk_buffer(ctg) <- 30
 
-  expect_error(classify_ground(ctg, mysor), "output file")
+  expect_error(classify_noise(ctg, mysor), "output file")
 
   opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
 
@@ -53,5 +54,16 @@ test_that("classify_noise sor with quantiles", {
   las <- classify_noise(las, sor(15,0.9998,TRUE))
 
   expect_equal(sum(las@data$Classification == 18L), 15L)
+})
+
+test_that("classify_noise ivf works", {
+
+  las <- classify_noise(las, myivf)
+
+  n = names(las@data)
+
+  expect_true("Classification" %in% n)
+  expect_equal(sort(unique(las@data$Classification)), c(1L, 2L, 9L, 18L))
+  expect_equal(sum(las@data$Classification == LASNOISE), 13L)
 })
 

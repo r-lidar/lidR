@@ -4,6 +4,7 @@
 #include "GridPartition.h"
 #include "Progress.h"
 #include "myomp.h"
+#include <boost/functional/hash.hpp>
 
 using namespace lidR;
 
@@ -698,6 +699,55 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
       if (!filter[j]) continue;
       filter[j] = (oldZ[j] - Z[j]) < th[i];
     }
+  }
+
+  return;
+}
+
+void LAS::filter_isolated_voxel(double res, int isolated)
+{
+  typedef std::array<int, 3> Array;
+
+  double xoffset = X[0];
+  double yoffset = Y[0];
+  double zoffset = Z[0];
+
+  // Stores for a given voxel the number of point in its 27 voxels neighbourhood
+  std::unordered_map<Array, unsigned int, boost::hash<Array> > dynamic_registry;
+
+  for (int n = 0 ; n < npoints ; n++)
+  {
+    int nx = std::floor((X[n] - xoffset) / res);
+    int ny = std::floor((Y[n] - yoffset) / res);
+    int nz = std::floor((Z[n] - zoffset) / res);
+
+    // Add one in the 27 neighbouring voxel of this point
+    for (int i : {-1,0,1})
+    {
+      for (int j : {-1,0,1})
+      {
+        for (int k : {-1,0,1})
+        {
+          if (!(i == 0 && j == 0 && k == 0))
+          {
+            Array key = {nx + i, ny + j, nz + k};
+            dynamic_registry.insert({key, 0});
+            dynamic_registry[key]++;
+          }
+        }
+      }
+    }
+  }
+
+  // Loop again through each point.
+  // Check if the number of points in its neighbourhood is above the threshold
+  for (int n = 0 ; n < npoints ; n++)
+  {
+    int nx = std::floor((X[n] - xoffset) / res);
+    int ny = std::floor((Y[n] - yoffset) / res);
+    int nz = std::floor((Z[n] - zoffset) / res);
+    Array key = {nx, ny, nz};
+    filter[n] = dynamic_registry[key] <= isolated;
   }
 
   return;

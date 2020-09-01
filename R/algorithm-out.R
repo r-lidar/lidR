@@ -1,7 +1,7 @@
 #' Noise Segmentation Algorithm
 #'
 #' This function is made to be used in \link{classify_noise}. It implements an
-#' algorithm for outliers (noise) segmentation points based on Satistical Outliers
+#' algorithm for outliers (noise) segmentation based on Satistical Outliers
 #' Removal (SOR) methods first described in the
 #' \href{https://pointclouds.org/documentation/tutorials/statistical_outlier.html}{PCL library}
 #' and also implemented in
@@ -68,3 +68,52 @@ sor = function(k = 10, m = 3, quantile = FALSE)
   class(f) <- c(LIDRALGORITHMOUT, LIDRALGORITHMOPENMP)
   return(f)
 }
+
+#' Noise Segmentation Algorithm
+#'
+#' This function is made to be used in \link{classify_noise}. It implements an
+#' algorithm for outliers (noise) segmentation based on isolated voxels filter (IVF).
+#' It is similar to \href{https://rapidlasso.com/lastools/lasnoise/}{lasnoise from lastools}.
+#' The algorithm find points that have only few other points in their surrounding
+#' 3 x 3 x 3 = 27 voxels.
+#'
+#' @param res numeric. Resolution of the voxels
+#' @param n integer. The maximal number of few other points in the 27 voxels
+#'
+#' @export
+#'
+#' @family noise segmentation algorithms
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las <- readLAS(LASfile)
+#'
+#' # Add some artificial outliers
+#' set.seed(314)
+#' id = round(runif(20, 0, npoints(las)))
+#' set.seed(42)
+#' err = runif(20, -50, 50)
+#' las$Z[id] = las$Z[id] + err
+#'
+#' las <- classify_noise(las, ivf(5,2))
+#' plot(las, color = "Classification")
+ivf = function(res = 5, n = 6)
+{
+  assert_is_a_number(res)
+  assert_is_a_number(n)
+  assert_all_are_positive(res)
+  assert_all_are_non_negative(n)
+
+  res <- lazyeval::uq(res)
+  n <- lazyeval::uq(n)
+
+  f = function(las)
+  {
+    assert_is_valid_context(LIDRCONTEXTOUT, "ivf")
+    return(C_isolated_voxel(las, res, n))
+  }
+
+  class(f) <- c(LIDRALGORITHMOUT)
+  return(f)
+}
+

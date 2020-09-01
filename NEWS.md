@@ -33,6 +33,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 4. `classify_noise()`
     - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
     - New algorithm `sor()` (statistical outlier removal) for noise classification
+    - New algorithm `ivf()` (isolated voxel filter) for noise classification
 
 #### ENHANCEMENTS
 

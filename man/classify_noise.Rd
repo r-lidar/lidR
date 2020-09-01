@@ -9,7 +9,7 @@ classify_noise(las, algorithm)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{a noise-segmentation function. \code{lidR} has: \link{sor}, \link{vor}.}
+\item{algorithm}{a noise-segmentation function. \code{lidR} has: \link{sor}, \link{ivf}.}
 }
 \value{
 If the input is a \code{LAS} object, return a \code{LAS} object. If the input is a
@@ -66,6 +66,17 @@ set.seed(42)
 err = runif(20, -50, 50)
 las$Z[id] = las$Z[id] + err
 
+
+# Using SOR
+# =============
+
 las <- classify_noise(las, sor(15,7))
 plot(las, color = "Classification")
+
+
+# Using IVF
+# =============
+
+las <- classify_noise(las, ivf(5,2))
+las_denoise <- filter_poi(las, Classification != LASNOISE)
 }

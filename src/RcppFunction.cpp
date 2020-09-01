@@ -143,6 +143,14 @@ LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu)
   return Rcpp::wrap(pt.filter);
 }
 
+//[[Rcpp::export(rng = false)]]
+LogicalVector C_isolated_voxel(S4 las, double res, int isolated)
+{
+  LAS pt(las);
+  pt.filter_isolated_voxel(res, isolated);
+  return Rcpp::wrap(pt.filter);
+}
+
 
 // [[Rcpp::export(rng = false)]]
 int C_check_gpstime(NumericVector t, IntegerVector rn)

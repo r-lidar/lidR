@@ -85,6 +85,10 @@ C_local_maximum <- function(las, ws, ncpu) {
     .Call(`_lidR_C_local_maximum`, las, ws, ncpu)
 }
 
+C_isolated_voxel <- function(las, res, isolated) {
+    .Call(`_lidR_C_isolated_voxel`, las, res, isolated)
+}
+
 C_check_gpstime <- function(t, rn) {
     .Call(`_lidR_C_check_gpstime`, t, rn)
 }
