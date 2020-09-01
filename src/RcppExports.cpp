@@ -238,6 +238,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_fast_knn_metrics
+NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu);
+RcppExport SEXP _lidR_C_fast_knn_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP metricsSEXP, SEXP cpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type metrics(metricsSEXP);
+    Rcpp::traits::input_parameter< int >::type cpu(cpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_fast_knn_metrics(las, k, metrics, cpu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lasrangecorrection
 IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f);
 RcppExport SEXP _lidR_C_lasrangecorrection(SEXP lasSEXP, SEXP flightlinesSEXP, SEXP RsSEXP, SEXP fSEXP) {
@@ -495,6 +509,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 7},
+    {"_lidR_C_fast_knn_metrics", (DL_FUNC) &_lidR_C_fast_knn_metrics, 4},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},

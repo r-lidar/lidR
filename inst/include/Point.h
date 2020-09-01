@@ -6,7 +6,6 @@
 
 namespace lidR
 {
-
 template<typename T1, typename T2, typename T3> struct Point2D
 {
   T1 x;
@@ -30,6 +29,7 @@ template<typename T1, typename T2, typename T3, typename T4> struct Point3D
   Point3D(const T1 _x, const T2 _y, const T3 _z) : x(_x), y(_y), z(_z), id(0) {}
   Point3D(const T1 _x, const T2 _y, const T3 _z, const T4 _id) : x(_x), y(_y), z(_z), id(_id) {}
 };
+
 
 typedef Point2D<double, double, unsigned int> Point;
 typedef Point2D<double, double, unsigned int> PointXY;

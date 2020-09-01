@@ -8,25 +8,31 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
  
 #### NEW FEATURES
 
-1. New algorithm `mcc()` for ground classification based on Evans and Hudak (2007). This a porting of the MCC-lidar software to R via the `RMCC` package.
-```r
-las <- classify_ground(las, mcc())
-```
-2. The class `LAS` has a new slot `@type` that registers the source and the type of the point cloud (e.g. ALS, TLS, UAV, DAP). This come with several new functions `read*LAS()` that register the point cloud type. Registering the good point type may improve the performance of some functions. If performance are not
-improved in this release the future version of the package may bring enhancements as a function of the point cloud type.
-```r
-readTLSLAS("file.las")
-#> class        : LAS (v1.2 format 1)
-#> memory       : 5.6 Mb 
-#> extent       : 273357.1, 273642.9, 5274357, 5274643 (xmin, xmax, ymin, ymax)
-#> coord. ref.  : NAD83(CSRS) / MTM zone 7 
-#> area         : 81584.33 m²
-#> points       : 73.4 thousand points
-#> density      : 0.9 points/m²
-#> point source : TLS
-```
+1. `Classify_ground()`
+    - New algorithm `mcc()` for ground classification based on Evans and Hudak (2007). This a porting of the MCC-lidar software to R via the `RMCC` package.
+    ```r
+    las <- classify_ground(las, mcc())
+    ```
+2. ALS, TLS, UAV, DAP
+    - The class `LAS` has a new slot `@type` that registers the source and the type of the point cloud (e.g. ALS, TLS, UAV, DAP). The `print()` function displays the point source. 
+    ```r
+    #> class        : LAS (v1.2 format 1)
+    #> memory       : 5.6 Mb 
+    #> extent       : 273357.1, 273642.9, 5274357, 5274643 (xmin, xmax, ymin, ymax)
+    #> coord. ref.  : NAD83(CSRS) / MTM zone 7 
+    #> area         : 81584.33 m²
+    #> points       : 73.4 thousand points
+    #> density      : 0.9 points/m²
+    #> point source : TLS
+    ```
+    - This come with several new functions `read*LAS()` such as `readTLSLAS()` that register the point cloud type. Registering the good point type may improve the performance of some functions. If performance are not improved in this release the future version of the package may bring enhancements as a function of the point cloud type. This is particularly visible in functions that perform 3D knn search such as `point_metrics()`. Computing `point_metrics()` on a TLS point cloud tagged TLS is much faster than if not tagged.
 
-3. The C++ classes for spatial index are now header-only and stored in `inst/include` meaning that other package can link to `lidR` to uses the spatial index at C++ level. However the classes are not documented yet.
+3. C++ API
+    - The C++ classes for spatial index are now header-only and stored in `inst/include` meaning that other package can link to `lidR` to uses the spatial index at C++ level. However the classes are not documented yet but the source code is simple and commented.
+    
+4. `classify_noise()`
+    - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
+    - New algorithm `sor()` (statistical outlier removal) for noise classification
 
 #### ENHANCEMENTS
 
