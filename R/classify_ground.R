@@ -107,7 +107,7 @@ classify_ground.LAS = function(las, algorithm, last_returns = TRUE)
     }
     else
     {
-      new_classes <- rep(LASUNCLASSIFIED, npoints(las))
+      new_classes <- las@data[["Classification"]]
     }
   }
   else

@@ -89,3 +89,11 @@ test_that("makeZhangParam works", {
   expect_error(util_makeZhangParam(), NA)
 })
 
+test_that("classify_ground does not erase former classification (but new ground points)", {
+
+  las <- readLAS(file, select = "xyzrnc")
+  las <- filter_poi(las, X < mean(X), Y < mean(Y))
+  las$Classification[las$Classification == LASGROUND] <- LASUNCLASSIFIED
+  las <- classify_ground(las, mypmf)
+  expect_equal(names(table(las$Classification)), c("1", "2", "9"))
+})
