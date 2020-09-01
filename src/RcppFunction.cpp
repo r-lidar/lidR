@@ -113,6 +113,13 @@ List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SE
   return pt.point_metrics(k, r, data, nalloc, call, env);
 }
 
+// [[Rcpp::export]]
+NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu)
+{
+  LAS pt(las, cpu);
+  return pt.fast_knn_metrics(k, metrics);
+}
+
 // [[Rcpp::export(rng = false)]]
 IntegerVector C_lasrangecorrection(S4 las, DataFrame flightlines, double Rs, double f)
 {

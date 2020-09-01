@@ -69,6 +69,10 @@ C_point_metrics <- function(las, k, r, nalloc, call, env, filter) {
     .Call(`_lidR_C_point_metrics`, las, k, r, nalloc, call, env, filter)
 }
 
+C_fast_knn_metrics <- function(las, k, metrics, cpu) {
+    .Call(`_lidR_C_fast_knn_metrics`, las, k, metrics, cpu)
+}
+
 C_lasrangecorrection <- function(las, flightlines, Rs, f) {
     .Call(`_lidR_C_lasrangecorrection`, las, flightlines, Rs, f)
 }

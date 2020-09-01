@@ -1419,3 +1419,45 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 
   return output;
 }
+
+NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
+{
+  Progress pb(npoints, "Metrics computation: ");
+
+  bool abort = false;
+
+  SpatialIndex tree(las);
+
+  NumericVector out(npoints);
+
+  #pragma omp parallel for num_threads(ncpu)
+  for (unsigned int i = 0 ; i < npoints ; i++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
+    pb.increment();
+
+    PointXYZ p(X[i], Y[i], Z[i]);
+
+    std::vector<PointXYZ*> pts;
+    tree.knn(p, k, pts);
+
+    int n = pts.size();
+    double d = 0;
+    double dmean = 0;
+    for (unsigned int j = 1 ; j < pts.size() ; j++)
+    {
+      d = std::sqrt((p.x - pts[j]->x)*(p.x - pts[j]->x) + (p.y - pts[j]->y)*(p.y - pts[j]->y) + (p.z - pts[j]->z)*(p.z - pts[j]->z));
+      dmean += d;
+    }
+
+    #pragma omp critical
+    {
+      out(i) = dmean/(double)(k-1);
+    }
+  }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
+
+  return out;
+}

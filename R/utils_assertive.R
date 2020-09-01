@@ -200,6 +200,12 @@ assert_is_algorithm_trk = function(x)
     stop("The algorithm used is not an algorithm for sensor tracking.", call. = FALSE)
 }
 
+assert_is_algorithm_out = function(x)
+{
+  if (!is(x, LIDROUT))
+    stop("The algorithm used is not an algorithm for noise segmentation.", call. = FALSE)
+}
+
 assert_is_valid_context = function(expected_contexts, name = "", null_allowed = FALSE)
 {
   received_context <- tryCatch({get("lidR.context", envir = parent.frame(n = 2L))}, error = function(e) {return(NULL)})
