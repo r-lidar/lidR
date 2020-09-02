@@ -58,7 +58,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
       th <- quantile(dmean, probs = m)
     } else {
       avg <- mean(dmean)
-      std <- sd(dmean)
+      std <- stats::sd(dmean)
       th <- avg + m*std
     }
 
