@@ -76,7 +76,8 @@ jobs:
             libglu1-mesa-dev \
             libfreetype6-dev \
             libnode-dev \
-            libxt-dev
+            libxt-dev \
+            libfftw3-dev
 
       - name: Install dependencies
         run: |
