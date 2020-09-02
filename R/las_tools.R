@@ -1,22 +1,61 @@
-#' Rescale and reoffset a LAS object
+#' LAS tools
 #'
-#' Modify the scale factor and the offset of a LAS object. This function modify the header and
-#' recompute the coordinates. Coordinates might be moved by few tenth of millimeters or few
-#' millimeters depending of the accuracy imposed by the user.
+#' Tools to manipulate LAS object maintaining compliance with
+#' \href{http://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{ASPRS specification}
+#'
+#' In the specification of the LAS format the coordinates are expected to be given
+#' with a precision e.g. 0.01 for a millimeter precision (or millifeet) meaning
+#' that a files records 123.46 not 123.45678. Also coordinates are stored as
+#' integer. This is made possible with a scale and offset factor. For example
+#' 123.46 with an offset of 10000 and a scale factor of 0.01 is actually stored as
+#' 123.46/0.01 - 10000 = 2346. Storing 123.45678 with a scale of 0.01 and an offset
+#' of 1000 is invalid because it does not converts to integer: 123.45678/0.01 - 10000
+#' = 2345.678. Having an invalid LAS object may be critical in some application.
+#' First when writing into a LAS file, user will loose the extra precision without
+#' warning but some algorithm in lidR use the conversion to integer to make integer-based
+#' compilation and speed-up some algorithm. Creation of an and invalid LAS object
+#' may cause troubles.
 #'
 #' @param las An object of class LAS
+#' @param x numeric. Coordinates vector
+#' @param scale,offset scalar. scale and offset
 #' @param xscale,yscale,zscale scalar. Can be missing if not relevant.
 #' @param xoffset,yoffset,zoffset scalar. Can be missing if not relevant.
-#'
-#'
-#' @export
+#' @param by_reference bool. Update the data in place without allocating new memory.
+#' @param ... Unused.
 #'
 #' @examples
-#' LASfile <- system.file("extdata", "example.laz", package = "rlas")
-#' las <- readLAS(LASfile)
+#' LASfile <- system.file("extdata", "example.laz", package="rlas")
+#' las = readLAS(LASfile)
 #'
+#' # Manual modification of the coordinates (rotation, alignment, ...)
+#' las$X <- las$X + 2/3
+#' las$Y <- las$Y - 5/3
+#'
+#' # The point cloud is no longer valid
+#' las_check(las)
+#'
+#' # It is important to fix that
+#' las_quantize(las)
+#'
+#' # Now the file is almost valid
+#' las_check(las)
+#'
+#' # Update the object to set up-to-date header data
+#' las <- las_update(las)
+#' las_check(las)
+#'
+#' # Recompute the coordinates with new scales and offsets
 #' las <- las_rescale(las, xscale = 0.01, yscale = 0.01)
 #' las <- las_reoffset(las, xoffset = 300000, yoffset = 5248000)
+#' @rdname las_utilities
+#' @name las_utilities
+#' @family las utilities
+NULL
+
+
+#' @export
+#' @rdname las_utilities
 las_rescale = function(las, xscale, yscale, zscale)
 {
   xoffset <- las@header@PHB[["X offset"]]
@@ -57,7 +96,7 @@ las_rescale = function(las, xscale, yscale, zscale)
   return(las)
 }
 
-#' @rdname las_rescale
+#' @rdname las_utilities
 #' @export
 las_reoffset = function(las, xoffset, yoffset, zoffset)
 {
@@ -114,3 +153,81 @@ las_reoffset = function(las, xoffset, yoffset, zoffset)
   las <- lasupdateheader(las)
   return(las)
 }
+
+#' @export
+#' @rdname las_utilities
+las_quantize = function(las, by_reference = TRUE)
+{
+  xscale <- las@header@PHB[["X scale factor"]]
+  yscale <- las@header@PHB[["Y scale factor"]]
+  zscale <- las@header@PHB[["Z scale factor"]]
+  xoffset <- las@header@PHB[["X offset"]]
+  yoffset <- las@header@PHB[["Y offset"]]
+  zoffset <- las@header@PHB[["Z offset"]]
+
+  if (isTRUE(by_reference))
+  {
+    quantize(las$X, xscale, xoffset)
+    quantize(las$Y, yscale, yoffset)
+    quantize(las$Z, zscale, zoffset)
+    return(invisible(las))
+  }
+  else
+  {
+    las@data[["X"]] <- quantize(las$X, xscale, xoffset, FALSE)
+    las@data[["Y"]] <- quantize(las$Y, yscale, yoffset, FALSE)
+    las@data[["Z"]] <- quantize(las$Z, zscale, zoffset, FALSE)
+    return(las)
+  }
+}
+
+#' @export
+#' @rdname las_utilities
+las_update = function(las)
+{
+  stopifnotlas(las)
+
+  header     <- as.list(las@header)
+  new_header <- rlas::header_update(header, las@data)
+  new_header <- LASheader(new_header)
+  las@header <- new_header
+  las@bbox[1,1] <- new_header@PHB[["Min X"]]
+  las@bbox[1,2] <- new_header@PHB[["Max X"]]
+  las@bbox[2,1] <- new_header@PHB[["Min Y"]]
+  las@bbox[2,2] <- new_header@PHB[["Max Y"]]
+  return(las)
+}
+
+#' @export
+#' @rdname las_utilities
+quantize = function(x, scale, offset, by_reference = TRUE, ...)
+{
+  if (isTRUE(by_reference))
+  {
+    fast_quantization(x, scale, offset)
+    return(invisible(x))
+  }
+  else
+  {
+    y <- data.table::copy(x)
+    fast_quantization(y, scale, offset)
+    return(y)
+  }
+}
+
+#' @export
+#' @rdname las_utilities
+is.quantized = function(x, scale, offset, ...)
+{
+  p <- list(...)
+  if (!is.null(p$sample))
+    x <- sample(x, min(100, length(x)))
+
+  return(fast_countunquantized(x, scale, offset) == 0L)
+}
+
+#' @export
+#' @rdname las_utilities
+count_not_quantized = fast_countunquantized
+
+lasupdateheader = las_update

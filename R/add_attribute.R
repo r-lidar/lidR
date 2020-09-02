@@ -5,7 +5,7 @@
 #' a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
 #' and so on, for each point. It is possible to add supplementary attributes.
 #'
-#' Users cannot assign names that are the same as the names of the core attributes. These functions are 
+#' Users cannot assign names that are the same as the names of the core attributes. These functions are
 #' dedicated to adding data that are not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")} will fail because \code{R} is a name reserved for the red channel of a .las file that contains RGB
 #' attributes. Use \code{add_lasrgb} instead.
 #' \describe{
@@ -35,7 +35,7 @@
 #' be missing (see details).
 #' @param name character. The name of the extra bytes attribute to add in the file.
 #' @param desc character. A short description of the extra bytes attribute to add in the file (32 characters).
-#' @param type character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", 
+#' @param type character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort",
 #' "short", "uint", "int", "uint64", "int64", "float", "double"}.
 #' @param scale,offset numeric. The scale and offset of the data. NULL if not relevant.
 #' @param NA_value numeric or integer. NA is not a valid value in a las file. At time of writing it will
@@ -245,21 +245,6 @@ remove_lasattribute = function(las, name)
 
     return(las)
   }
-}
-
-lasupdateheader = function(las)
-{
-  stopifnotlas(las)
-
-  header     <- as.list(las@header)
-  new_header <- rlas::header_update(header, las@data)
-  new_header <- LASheader(new_header)
-  las@header <- new_header
-  las@bbox[1,1] <- new_header@PHB[["Min X"]]
-  las@bbox[1,2] <- new_header@PHB[["Max X"]]
-  las@bbox[2,1] <- new_header@PHB[["Min Y"]]
-  las@bbox[2,2] <- new_header@PHB[["Max Y"]]
-  return(las)
 }
 
 # type = 0 : undocumented

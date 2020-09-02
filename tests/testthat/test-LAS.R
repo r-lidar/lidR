@@ -60,7 +60,7 @@ test_that("LAS builds a LAS 1.2 prf 3 object from RGB data", {
 
 test_that("LAS builds a LAS object respecting a header", {
 
-  las2 <- LAS(data, las@header)
+  las2 <- LAS(data, las@header, check = FALSE)
 
   expect_is(las2, "LAS")
   expect_equal(las2@header@PHB$`Version Minor`, las@header@PHB$`Version Minor`)
@@ -80,7 +80,7 @@ test_that("LAS builds a LAS object with a CRS", {
   expect_true(is.na(las2@proj4string))
   expect_equal(epsg(las2), 0)
 
-  las2 <- LAS(data, las@header)
+  las2 <- LAS(data, las@header, check = FALSE)
 
   expect_equal(projection(las2), projection(las))
   expect_equal(epsg(las2), 26917)
@@ -155,6 +155,11 @@ test_that("LAS throws a warning/error if building an invalid LAS", {
   data <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
 
   expect_error(LAS(data, header), "Version")
+
+  # Non quantized coordinates
+
+  header@PHB$`Version Minor` <- 1L
+  expect_warning(LAS(data, header), "quantization errors")
 })
 
 test_that("LAS redefined behavior of $, [, and [[", {

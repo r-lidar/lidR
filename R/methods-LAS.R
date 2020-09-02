@@ -139,6 +139,20 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, ty
     rlas::is_NIR_in_valid_format(header, data, "warning")
     rlas::is_gpstime_in_valid_format(header, data, "warning")
     rlas::is_ScanAngle_in_valid_format(header, data, "warning")
+
+    xscale <- header[["X scale factor"]]
+    yscale <- header[["Y scale factor"]]
+    zscale <- header[["Z scale factor"]]
+    xoffset <- header[["X offset"]]
+    yoffset <- header[["Y offset"]]
+    zoffset <- header[["Z offset"]]
+
+    if (!is.quantized(data[["X"]], xscale, xoffset, sample = TRUE))
+      warning("Detection of quantization errors for X", call. = FALSE)
+    if (!is.quantized(data[["Y"]], yscale, yoffset, sample = TRUE))
+      warning("Detection of quantization errors for Y", call. = FALSE)
+    if (!is.quantized(data[["Z"]], zscale, zoffset, sample = TRUE))
+      warning("Detection of quantization errors for Z", call. = FALSE)
   }
 
   header <- LASheader(header)

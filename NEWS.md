@@ -5,6 +5,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 #### CHANGE
 
 1. The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
+2. The construction of a `LAS` object with `LAS()` now triggers warnings with inccorectly quantized coordinates according to the information in the header.
  
 #### NEW FEATURES
 
@@ -34,6 +35,10 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
     - New algorithm `sor()` (statistical outlier removal) for noise classification
     - New algorithm `ivf()` (isolated voxel filter) for noise classification
+    
+5. LAS utilities to manipulate valid LAS object. We have seen some bad coding pratices here and there of people generating invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object.
+    - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the header meta data.
+    - New function `las_update()` to update the header (bounding box, number of points, return count and so on).
 
 #### ENHANCEMENTS
 

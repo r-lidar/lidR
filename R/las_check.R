@@ -61,6 +61,7 @@
 #' las <- readLAS(LASfile)
 #' las_check(las)
 #' @export
+#' @family las utilities
 las_check = function(las, print = TRUE, ...)
 {
   UseMethod("las_check", las)

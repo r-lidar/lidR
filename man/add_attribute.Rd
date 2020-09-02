@@ -37,7 +37,7 @@ be missing (see details).}
 
 \item{desc}{character. A short description of the extra bytes attribute to add in the file (32 characters).}
 
-\item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort", 
+\item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort",
 "short", "uint", "int", "uint64", "int64", "float", "double"}.}
 
 \item{scale, offset}{numeric. The scale and offset of the data. NULL if not relevant.}
@@ -57,7 +57,7 @@ a las file contains a core of defined attributes, such as XYZ coordinates, inten
 and so on, for each point. It is possible to add supplementary attributes.
 }
 \details{
-Users cannot assign names that are the same as the names of the core attributes. These functions are 
+Users cannot assign names that are the same as the names of the core attributes. These functions are
 dedicated to adding data that are not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")} will fail because \code{R} is a name reserved for the red channel of a .las file that contains RGB
 attributes. Use \code{add_lasrgb} instead.
 \describe{
