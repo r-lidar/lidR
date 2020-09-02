@@ -43,7 +43,7 @@ jobs:
       - name: Brew and macOS config
         if: runner.os == 'macOS'
         run: |
-          brew install pkg-config \
+          brew install \
             udunits \
             gdal
 
@@ -76,7 +76,7 @@ jobs:
             libgl1-mesa-dev \
             libglu1-mesa-dev \
             libfreetype6-dev \
-            libv8-3.14-dev \
+            libnode-dev \
             libxt-dev
 
       - name: Install dependencies
