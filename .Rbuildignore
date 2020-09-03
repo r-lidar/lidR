@@ -15,3 +15,4 @@
 ^man/figures$
 ^codecov\.yml$
 ^CRAN-RELEASE$
+^\.github$
