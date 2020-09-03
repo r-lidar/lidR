@@ -30,6 +30,7 @@ Imports:
     lazyeval,
     Rcpp (>= 1.0.3),
     RCSF,
+    RMCC,
     rgeos,
     rgdal (>= 1.4.8),
     rgl,
