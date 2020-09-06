@@ -31,6 +31,7 @@ class GridPartition
 
   private:
     bool multilayer;
+    unsigned int ncells;
     unsigned int npoints;
     unsigned int ncols;
     unsigned int nrows;
@@ -50,9 +51,8 @@ class GridPartition
     std::vector<std::vector<PointXYZ>> registry;
 
   private:
-    int getCell(const PointXYZ&);
-    bool insert(const PointXYZ&);
-    void init(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
+    int get_cell(double, double, double);
+    void build(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
     bool multilayered(const int);
 };
 
@@ -87,7 +87,7 @@ GridPartition::GridPartition(const Rcpp::S4 las)
   if (las.hasSlot("type")) search_type = las.slot("type");
   multilayer = multilayered(search_type);
 
-  init(x,y,z);
+  build(x,y,z);
 }
 
 /*
@@ -123,7 +123,7 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
   if (las.hasSlot("type")) search_type = las.slot("type");
   multilayer = multilayered(search_type);
 
-  init(x,y,z);
+  build(x,y,z);
 }
 
 /*
@@ -134,7 +134,7 @@ inline
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
 {
   if (x.size() != y.size())
-    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
+    Rcpp::stop("Internal error in spatial index: x and y have different sizes."); // # nocov
 
   // Number of points
   npoints = x.size();
@@ -149,7 +149,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   // Create a dummy z vector with 0s
   Rcpp::NumericVector z(npoints, 0);
 
-  init(x,y,z);
+  build(x,y,z);
 }
 
 /*
@@ -160,10 +160,10 @@ inline
 GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z)
 {
   if (x.size() != y.size())
-    Rcpp::stop("Internal error in spatial index: x and y have different sizes.");
+    Rcpp::stop("Internal error in spatial index: x and y have different sizes."); // # nocov
 
   if (x.size() != z.size())
-    Rcpp::stop("Internal error in spatial index: x and z have different sizes.");
+    Rcpp::stop("Internal error in spatial index: x and z have different sizes."); // # nocov
 
   // Number of points
   npoints = x.size();
@@ -175,7 +175,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   // Use legacy 2D index
   multilayer = false;
 
-  init(x,y,z);
+  build(x,y,z);
 }
 
 /*
@@ -332,10 +332,10 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double ma
 }
 
 inline
-void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
+void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
 {
   if (npoints == 0)
-    Rcpp::stop("Internal error in spatial index: impossible to build an index with 0 points.");
+    Rcpp::stop("Internal error in spatial index: impossible to build an index with 0 points."); // # nocov
 
   // Compute the bounding box
   xmin =  XYINF;
@@ -363,12 +363,12 @@ void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector 
   zmax += buf;
 
   // Historically the spatial index was a quadtree defined by a depth
-  // The depth is still use to compute the number of cells
+  // The depth is still used to compute the number of cells
   int depth = 0;
   depth = std::floor(std::log(npoints)/std::log(4));
   depth = (depth >= 0) ? depth : 0;
   depth = (depth >= 8) ? 8 : depth;
-  unsigned int ncells = (1 << depth) * (1 << depth);
+  ncells = (1 << depth) * (1 << depth);
 
   // Compute some indicator of shape
   double xrange = xmax - xmin;
@@ -397,7 +397,7 @@ void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector 
   {
     // Compute the number of rows and columns in such a way that there is approximately
     // the number of wanted cells but the organization of the cell is well balanced
-    // so the resolutions on x-y are close. We want:
+    // so the resolutions on x-y-z are close. We want:
     // ncols/nrows = xyratio
     // ncols/nlays = xzratio
     // nrows/nlays = yzratio
@@ -422,34 +422,45 @@ void GridPartition::init(const Rcpp::NumericVector x, const Rcpp::NumericVector 
   area = xrange * yrange;
   volume = area * zrange;
 
-  registry.resize(ncells);
+  // Precompute cell indexes and number of points per cells
+  std::vector<int> cell_index(x.size(), 0);
+  std::vector<unsigned int> cell_points(ncells, 0);
+  for (auto i = 0 ; i < x.size() ; i++) {
+    int cell = get_cell(x[i], y[i], z[i]);
+    cell_index[i] = cell;
+    cell_points[cell]++;
+  }
 
+  // Allocate the strict amount of memory required
+  // The goal is to avoid over memory allocation when using push_back, which double
+  // the size of the container when resized.
+  registry.resize(ncells);
+  for (auto i = 0 ; i < ncells; i++)
+    registry[i].reserve(cell_points[i]);
+
+  // Insert the points. No segfault possible here because get_cell() already check
+  // if the values it returns are < 0 or > ncells-1 so we are sure to do not access
+  // memory beyond registry range. No need to extra security tests (hopefully)
+  unsigned int key;
   for (int i = 0 ; i < x.size() ; i++) {
     if (filter[i]) {
-      PointXYZ p(x[i],y[i], z[i], i);
-      if (!insert(p)) Rcpp::stop("Internal error in GridPartition. Point not inserted.");
+      key = cell_index[i];
+      registry[key].emplace_back(x[i], y[i], z[i], i);
     }
   }
 }
 
 inline
-bool GridPartition::insert(const PointXYZ& p)
+int GridPartition::get_cell(double x, double y, double z)
 {
-  int key = getCell(p);
-  if (key < 0 || key >= (int)registry.size()) return false;
-  registry[key].emplace_back(p);
-  return true;
-}
-
-inline
-int GridPartition::getCell(const PointXYZ& p)
-{
-  int col = std::floor((p.x - xmin) / xres);
-  int row = std::floor((ymax - p.y) / yres);
-  int lay = std::floor((p.z - zmin) / zres);
+  int col = std::floor((x - xmin) / xres);
+  int row = std::floor((ymax - y) / yres);
+  int lay = std::floor((z - zmin) / zres);
   if (row < 0 || row > (int)nrows-1 || col < 0 || col > (int)ncols-1 || lay < 0 || lay > (int)nlayers-1)
-    Rcpp::stop("Internal error in spatial index: point out of the range.");
+    Rcpp::stop("Internal error in spatial index: point out of the range."); // # nocov
   int cell = lay * nrows * ncols + row * ncols + col;
+  if (cell < 0 || cell >= ncells)
+    Rcpp::stop("Internal error in spatial index: cell out of the range."); // # nocov
   return cell;
 }
 

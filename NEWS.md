@@ -44,6 +44,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 1. Internally the spatial index better balances the repartion of cells in the partition. While this should be invisible in most cases it might speed-up a bit some queries in some very specific dataset. The goal of this enhancement is mainly to provide optimal indexes for TLS data.
 
+2. Internally the spatial index better allocates memory and this should reduce memory footprint.
+
 #### FIXES
 
 ## lidR v3.0.4 (Release date: yyyy-mm-dd)
