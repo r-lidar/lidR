@@ -106,7 +106,7 @@ las_reoffset = function(las, xoffset, yoffset, zoffset)
 
   xrange  <- c(las@header@PHB[["Min X"]], las@header@PHB[["Max X"]])
   yrange  <- c(las@header@PHB[["Min Y"]], las@header@PHB[["Max Y"]])
-  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max z"]])
+  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max Z"]])
 
   if (!missing(xoffset))
   {
