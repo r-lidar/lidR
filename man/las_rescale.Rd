@@ -17,8 +17,8 @@ las_reoffset(las, xoffset, yoffset, zoffset)
 \item{xoffset, yoffset, zoffset}{scalar. Can be missing if not relevant.}
 }
 \description{
-Modify the scale factor and the offset of a LAS object. This function modify the header and
-recompute the coordinates. Coordinates might be moved by few tenth of millimeters or few
+Modifies the scale factor and the offset of a LAS object. This function modifies the header and
+recomputes the coordinates. Coordinates might be moved by few tenth of millimeters or few
 millimeters depending of the accuracy imposed by the user.
 }
 \examples{

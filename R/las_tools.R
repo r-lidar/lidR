@@ -1,7 +1,7 @@
 #' Rescale and reoffset a LAS object
 #'
-#' Modify the scale factor and the offset of a LAS object. This function modify the header and
-#' recompute the coordinates. Coordinates might be moved by few tenth of millimeters or few
+#' Modifies the scale factor and the offset of a LAS object. This function modifies the header and
+#' recomputes the coordinates. Coordinates might be moved by few tenth of millimeters or few
 #' millimeters depending of the accuracy imposed by the user.
 #'
 #' @param las An object of class LAS
@@ -67,7 +67,7 @@ las_reoffset = function(las, xoffset, yoffset, zoffset)
 
   xrange  <- c(las@header@PHB[["Min X"]], las@header@PHB[["Max X"]])
   yrange  <- c(las@header@PHB[["Min Y"]], las@header@PHB[["Max Y"]])
-  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max z"]])
+  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max Z"]])
 
   if (!missing(xoffset))
   {
