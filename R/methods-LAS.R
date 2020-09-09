@@ -224,7 +224,36 @@ setMethod("$<-", "LAS", function(x, name, value)
       stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
+
+  if (name == "X")
+  {
+    scale  <- x@header@PHB[["X scale factor"]]
+    offset <- x@header@PHB[["X offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
+  if (name == "Y")
+  {
+    scale  <- x@header@PHB[["Y scale factor"]]
+    offset <- x@header@PHB[["Y offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
+  if (name == "Z")
+  {
+    scale  <- x@header@PHB[["Z scale factor"]]
+    offset <- x@header@PHB[["Z offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
   x@data[[name]] = value
+
+  if (name %in% c("X", "Y", "Z"))
+    x <- las_update(x)
+
   return(x)
 })
 
@@ -246,6 +275,46 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
       stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
+  if (!i %in% names(x@data))
+    stop("Addition of a new column using $ is forbidden for LAS objects. See ?add_attribute", call. = FALSE)
+
+  if (i %in% LASATTRIBUTES)
+  {
+    type1 <- storage.mode(x@data[[i]])
+    type2 <- storage.mode(value)
+
+    if (type1 != type2)
+      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
+  }
+
+  if (i == "X")
+  {
+    scale  <- x@header@PHB[["X scale factor"]]
+    offset <- x@header@PHB[["X offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
+  if (i == "Y")
+  {
+    scale  <- x@header@PHB[["Y scale factor"]]
+    offset <- x@header@PHB[["Y offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
+  if (i == "Z")
+  {
+    scale  <- x@header@PHB[["Z scale factor"]]
+    offset <- x@header@PHB[["Z offset"]]
+    if(!is.quantized(value, scale, offset))
+      value <- quantize(value, scale, offset, FALSE)
+  }
+
   x@data[[i]] = value
+
+  if (i %in% c("X", "Y", "Z"))
+    x <- las_update(x)
+
   return(x)
 })

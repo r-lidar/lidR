@@ -183,6 +183,55 @@ test_that("LAS redefined behavior of $, [, and [[", {
   expect_error(las[["U"]] <- 1:10, "Addition of a new column")
 })
 
+test_that("LAS operator $ quantize on the fly and update header", {
+
+  las <- lidR:::generate_las(10)
+
+  x = runif(10)
+  y = runif(10)
+  z = runif(10)
+
+  las$X <- x
+  las$Y <- y
+  las$Z <- z
+
+  expect_equal(las$X, quantize(x, 0.001, 0, FALSE))
+  expect_equal(las$Y, quantize(y, 0.001, 0, FALSE))
+  expect_equal(las$Z, quantize(z, 0.001, 0, FALSE))
+
+  xbbox = range(quantize(x, 0.001, 0, FALSE))
+  ybbox = range(quantize(y, 0.001, 0, FALSE))
+
+  expect_equivalent(las@bbox, matrix(c(xbbox, ybbox), ncol = 2, byrow = T))
+  expect_equal(las@header@PHB[["Min X"]], xbbox[1])
+  expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
+})
+
+test_that("LAS operator $ quantize on the fly and update header", {
+
+  las <- lidR:::generate_las(10)
+
+  x = runif(10)
+  y = runif(10)
+  z = runif(10)
+
+  las[["X"]] <- x
+  las[["Y"]] <- y
+  las[["Z"]] <- z
+
+  expect_equal(las$X, quantize(x, 0.001, 0, FALSE))
+  expect_equal(las$Y, quantize(y, 0.001, 0, FALSE))
+  expect_equal(las$Z, quantize(z, 0.001, 0, FALSE))
+
+  xbbox = range(quantize(x, 0.001, 0, FALSE))
+  ybbox = range(quantize(y, 0.001, 0, FALSE))
+
+  expect_equivalent(las@bbox, matrix(c(xbbox, ybbox), ncol = 2, byrow = T))
+  expect_equal(las@header@PHB[["Min X"]], xbbox[1])
+  expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
+})
+
+
 test_that("LAS conversion to SpatialPointsDataFrame works", {
   las <- lidR:::generate_las(10)
   splas <- as.spatial(las)

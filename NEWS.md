@@ -35,11 +35,21 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
     - New algorithm `sor()` (statistical outlier removal) for noise classification
     - New algorithm `ivf()` (isolated voxel filter) for noise classification
-    
-5. LAS utilities to manipulate valid LAS object. We have seen some bad coding pratices here and there of people generating invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object.
-    - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the header meta data.
-    - New function `las_update()` to update the header (bounding box, number of points, return count and so on).
 
+5. Quantization of the coordinates. `LAS` objects in `lidR`object closely respect the ASPRS standard. But when update manually by users some inadequte pratices may generate invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object and we modified the behavior of the `[[<-` and `$<-` operators to ensure that is is more difficult to create `LAS` object that are not ASPRS compliant.
+    - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the header metadata.
+    - New function `las_update()` to update the header (bounding box, number of points, return count and so on) if a LAS object was modified outside a `lidR` functions.
+    - Enhanced behaviour of `[[<-` and `$<-` operators. Values are quantized on-the-fly and the header is updated automatically when attributing new values to `X`, `Y` or `Z`.
+    ```r
+    las$X # Orignal values
+    #> [1] 0.755 0.286 0.100 0.954 0.416 0.455 0.971 0.584 0.962 0.762
+    las$X + 5/3 # Many decimals because 5/3 = 1.666666...
+    #> [1] 2.421667 1.952667 1.766667 2.620667 2.082667 2.121667 2.637667 2.250667 2.628667 2.428667
+    las$X <- las$X + 5/3 # Update X with these numbers
+    las$X # Values where quantized (and header updated)
+    #> [1] 2.422 1.953 1.767 2.621 2.083 2.122 2.638 2.251 2.629 2.429
+    ```
+    
 #### ENHANCEMENTS
 
 1. Internally the spatial index better balances the repartion of cells in the partition. While this should be invisible in most cases it might speed-up a bit some queries in some very specific dataset. The goal of this enhancement is mainly to provide optimal indexes for TLS data.
