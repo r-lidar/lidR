@@ -7,14 +7,14 @@
 #' with a precision e.g. 0.01 for a millimeter precision (or millifeet) meaning
 #' that a files records 123.46 not 123.45678. Also coordinates are stored as
 #' integer. This is made possible with a scale and offset factor. For example
-#' 123.46 with an offset of 10000 and a scale factor of 0.01 is actually stored as
-#' 123.46/0.01 - 10000 = 2346. Storing 123.45678 with a scale of 0.01 and an offset
-#' of 1000 is invalid because it does not converts to integer: 123.45678/0.01 - 10000
+#' 123.46 with an offset of 100 and a scale factor of 0.01 is actually stored as
+#' (123.46 - 100)/0.01 = 2346. Storing 123.45678 with a scale of 0.01 and an offset
+#' of 100 is invalid because it does not converts to integer: (123.45678-100)/0.01
 #' = 2345.678. Having an invalid LAS object may be critical in some application.
 #' First when writing into a LAS file, user will loose the extra precision without
 #' warning but some algorithm in lidR use the conversion to integer to make integer-based
-#' compilation and speed-up some algorithm. Creation of an and invalid LAS object
-#' may cause troubles.
+#' computation and speed-up some algorithm and use less memory. Creation of an
+#' invalid LAS object may cause troubles and incorrect outputs.
 #'
 #' @param las An object of class LAS
 #' @param x numeric. Coordinates vector
