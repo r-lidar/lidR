@@ -37,7 +37,29 @@ rbind.LAS <- function(...)
   names(dots) <- NULL
   assert_all_are_same_crs(dots)
 
-  data = data.table::rbindlist(lapply(dots, function(x) { x@data } ))
+  xscales <- sapply(dots, function(x) x@header@PHB[["X scale factor"]])
+  yscales <- sapply(dots, function(x) x@header@PHB[["Y scale factor"]])
+  zscales <- sapply(dots, function(x) x@header@PHB[["Z scale factor"]])
+  xoffsets <- sapply(dots, function(x) x@header@PHB[["X offset"]])
+  yoffsets <- sapply(dots, function(x) x@header@PHB[["Y offset"]])
+  zoffsets <- sapply(dots, function(x) x@header@PHB[["Z offset"]])
+
+  need_quantization <- FALSE
+  if (length(unique(xscales)) != 1L || length(unique(yscales)) != 1L || length(unique(zscales)) != 1L ||
+      length(unique(xoffsets)) != 1L || length(unique(yoffsets)) != 1L || length(unique(zoffsets)) != 1L)
+  {
+    warning("Different LAS objects have different scales and/or offsets. The first object was used as reference to quantize the others.", call. = FALSE)
+    need_quantization <- TRUE
+  }
+
+  data <- data.table::rbindlist(lapply(dots, function(x) { x@data } ))
+
+  if (need_quantization)
+  {
+    quantize(data[["X"]], xscales[1], xoffsets[1])
+    quantize(data[["Y"]], yscales[1], yoffsets[1])
+    quantize(data[["Z"]], zscales[1], zoffsets[1])
+  }
+
   return(LAS(data, dots[[1]]@header, dots[[1]]@proj4string, type = dots[[1]]@type))
 }
-
