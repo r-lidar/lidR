@@ -8,7 +8,12 @@ test_that("Internal projection conversion works", {
   expected <- sp::CRS("+init=epsg:2008")
   expected@projargs <- sub("\\+init=epsg:\\d+\\s", "", expected@projargs)
 
-  expect_equal(lidR:::epsg2CRS(2008), expected)
+  if (rgdal::new_proj_and_gdal()) {
+    expect_true(rgdal::compare_CRS(lidR:::epsg2CRS(2008),
+      expected)["equivalent"])
+  } else {
+    expect_equal(lidR:::epsg2CRS(2008), expected)
+  }
   expect_equal(lidR:::epsg2CRS(200800), sp::CRS())
   expect_error(lidR:::epsg2CRS(200800, fail = TRUE), "Invalid epsg code")
 
