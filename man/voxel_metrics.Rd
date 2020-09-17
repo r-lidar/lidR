@@ -16,7 +16,8 @@ voxel_metrics(las, func, res = 1)
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table
-has the class \code{lasmetrics3d} enabling easier plotting.
+has the class \code{lasmetrics3d} enabling easier plotting. It also has an
+attribute \code{res} that stores the resolution.
 }
 \description{
 This is a 3D version of \link{grid_metrics}. It creates a 3D matrix of voxels with a given resolution.
@@ -26,17 +27,16 @@ functions. The function will dispatch the LiDAR data for each voxel in the user'
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile)
+las <- readLAS(LASfile)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the number of points is computed.
 voxel_metrics(las, ~length(Z), 3)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
-# the mean scan angle of points is computed.
+# the mean intensity of points is computed.
 voxel_metrics(las, ~mean(Intensity), 3)
 
-\dontrun{
 # Define your own metric function
 myMetrics = function(i)
 {
@@ -48,11 +48,12 @@ myMetrics = function(i)
    return(ret)
 }
 
-voxels = voxel_metrics(las, ~myMetrics(Intensity), 3)
+voxels <- voxel_metrics(las, ~myMetrics(Intensity), 3)
 
 plot(voxels, color = "imean", trim = 100)
 #etc.
-}
+
+attr(voxels, "res")
 }
 \seealso{
 Other metrics: 
