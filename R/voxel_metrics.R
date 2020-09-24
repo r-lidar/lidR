@@ -40,23 +40,23 @@
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
 #'
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
-#' has the class \code{lasmetrics3d} enabling easier plotting.
+#' has the class \code{lasmetrics3d} enabling easier plotting. It also has an
+#' attribute \code{res} that stores the resolution.
 #'
 #' @export
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las <- readLAS(LASfile)
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the number of points is computed.
 #' voxel_metrics(las, ~length(Z), 3)
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
-#' # the mean scan angle of points is computed.
+#' # the mean intensity of points is computed.
 #' voxel_metrics(las, ~mean(Intensity), 3)
 #'
-#' \dontrun{
 #' # Define your own metric function
 #' myMetrics = function(i)
 #' {
@@ -68,11 +68,12 @@
 #'    return(ret)
 #' }
 #'
-#' voxels = voxel_metrics(las, ~myMetrics(Intensity), 3)
+#' voxels <- voxel_metrics(las, ~myMetrics(Intensity), 3)
 #'
 #' plot(voxels, color = "imean", trim = 100)
 #' #etc.
-#' }
+#'
+#' attr(voxels, "res")
 #' @family metrics
 voxel_metrics = function(las, func, res = 1)
 {
@@ -92,7 +93,7 @@ voxel_metrics = function(las, func, res = 1)
   stat <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
   data.table::setnames(stat, c("Xgrid", "Ygrid", "Zgrid"), c("X", "Y", "Z"))
   data.table::setattr(stat, "class", c("lasmetrics3d", attr(stat, "class")))
-  data.table::setattr(stat, "res", res)
+  data.table::setattr(stat, "res", res[1])
   return(stat)
 }
 
