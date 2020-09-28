@@ -54,7 +54,9 @@
 #' plot_dtm3d(dtm)
 tin = function(..., extrapolate = knnidw(1,1,50))
 {
-  assert_is_algorithm_spi(extrapolate)
+  if (!is.null(extrapolate))
+    assert_is_algorithm_spi(extrapolate)
+
   extrapolate <- lazyeval::uq(extrapolate)
 
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
@@ -65,7 +67,7 @@ tin = function(..., extrapolate = knnidw(1,1,50))
     # Extrapolate beyond the convex hull
     isna <- is.na(z)
     nnas <- sum(isna)
-    if (nnas > 0)
+    if (nnas > 0 && !is.null(extrapolate))
     {
       verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
 
