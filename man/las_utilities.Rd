@@ -9,7 +9,8 @@
 \alias{quantize}
 \alias{is.quantized}
 \alias{count_not_quantized}
-\title{LAS tools}
+\alias{storable_coordinate_range}
+\title{LAS utilities}
 \usage{
 las_rescale(las, xscale, yscale, zscale)
 
@@ -24,6 +25,8 @@ quantize(x, scale, offset, by_reference = TRUE, ...)
 is.quantized(x, scale, offset, ...)
 
 count_not_quantized(x, scale, offset)
+
+storable_coordinate_range(scale, offset)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -81,8 +84,8 @@ las_check(las)
 
 # In practice the above code is not relevant because operators
 # <- already perform such operation on the fly. Thus the following
-# syntax must be preferred and return valid objects. Previous tools
-only intend to be used in very specific cases
+# syntax must be preferred and returns valid objects. Previous tools
+# only intend to be used in very specific cases
 las$X <- las$X + 2/3
 las$Y <- las$Y - 5/3
 

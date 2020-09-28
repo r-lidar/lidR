@@ -47,8 +47,8 @@
 #'
 #' # In practice the above code is not relevant because operators
 #' # <- already perform such operation on the fly. Thus the following
-#' # syntax must be preferred and return valid objects. Previous tools
-#' only intend to be used in very specific cases
+#' # syntax must be preferred and returns valid objects. Previous tools
+#' # only intend to be used in very specific cases
 #' las$X <- las$X + 2/3
 #' las$Y <- las$Y - 5/3
 #'

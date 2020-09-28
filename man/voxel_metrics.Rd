@@ -38,11 +38,12 @@ las <- readLAS(LASfile)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the number of points is computed.
-voxel_metrics(las, ~length(Z), 3)
+vm <- voxel_metrics(las, ~length(Z), 3)
 
 # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 # the mean intensity of points is computed.
-voxel_metrics(las, ~mean(Intensity), 3)
+vm <- voxel_metrics(las, ~mean(Intensity), 3)
+plot(vm, color = "V1", colorPalette = heat.colors(50), trim = 90)
 
 # Define your own metric function
 myMetrics = function(i)
@@ -57,7 +58,7 @@ myMetrics = function(i)
 
 voxels <- voxel_metrics(las, ~myMetrics(Intensity), 3)
 
-plot(voxels, color = "imean", trim = 100)
+plot(voxels, color = "imean", colorPalette = heat.colors(50), trim = 90)
 #etc.
 
 attr(voxels, "res")
