@@ -6,6 +6,12 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 1. The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
 2. The construction of a `LAS` object with `LAS()` now triggers warnings with inccorectly quantized coordinates according to the information in the header.
+3. `grid_terrain()` now has a parameter `...` after `algorithm` which invalidate code that uses too much parameters without naming them. This no longer works:
+```r
+grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
+# Use instead
+grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 8)
+```
  
 #### NEW FEATURES
 
@@ -52,6 +58,16 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     
 6. metrics
     - `voxel_metrics()` gained a parameter `all_voxels` to include voxels with 0 point [#375](https://github.com/Jean-Romain/lidR/issues/375).
+    
+7. `grid_terrain()`
+    - new parameter `...` after `algorithm` which invalidate code that uses too much parameters without naming them. This no longer works:
+    ```r
+    grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
+    # Use instead
+    grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 8)
+    ```
+    - new parameter `is_concave` to compute a nicer DTM if the point cloud is not convex [#374](https://github.com/Jean-Romain/lidR/issues/374)
+     
     
 #### ENHANCEMENTS
 

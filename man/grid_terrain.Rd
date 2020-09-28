@@ -8,10 +8,12 @@ grid_terrain(
   las,
   res = 1,
   algorithm,
+  ...,
   keep_lowest = FALSE,
   full_raster = FALSE,
   use_class = c(2L, 9L),
-  Wdegenerated = TRUE
+  Wdegenerated = TRUE,
+  is_concave = FALSE
 )
 }
 \arguments{
@@ -22,6 +24,8 @@ In that case the \code{RasterLayer} is used as the layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
 \code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).}
+
+\item{...}{Usunsed}
 
 \item{keep_lowest}{logical. This option forces the original lowest ground point of each
 cell (if it exists) to be chosen instead of the interpolated values.}
@@ -35,6 +39,12 @@ each pixel of the raster is interpolated.}
 
 \item{Wdegenerated}{logical. The function always check and remove degenerated ground points. If
 any a warning in thrown.}
+
+\item{is_concave}{boolean. By default the function tries to compute a DTM that
+have the same shape than the point cloud by interpolating only in the convex
+hull of the points. If the point cloud is concave this may lead to weird values
+where there is no points. Use \code{is_concave = TRUE} to use a concave hull.
+This is more computationally depending and requires the concaveman package.}
 }
 \value{
 A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s

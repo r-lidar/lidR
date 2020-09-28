@@ -42,7 +42,7 @@
 #'
 #' @param algorithm function. A function that implements an algorithm to compute spatial interpolation.
 #' \code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).
-#'
+#' @param ... Usunsed
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
 #' @param full_raster logical. By default the interpolation is made only within the convex hull of
@@ -52,6 +52,11 @@
 #' (class 2) and water points (class 9).
 #' @param Wdegenerated logical. The function always check and remove degenerated ground points. If
 #' any a warning in thrown.
+#' @param is_concave boolean. By default the function tries to compute a DTM that
+#' have the same shape than the point cloud by interpolating only in the convex
+#' hull of the points. If the point cloud is concave this may lead to weird values
+#' where there is no points. Use \code{is_concave = TRUE} to use a concave hull.
+#' This is more computationally depending and requires the concaveman package.
 #'
 #' @template LAScatalog
 #'
@@ -79,13 +84,13 @@
 #' plot_dtm3d(dtm2)
 #' plot_dtm3d(dtm3)
 #' }
-grid_terrain = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
+grid_terrain = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
 {
   UseMethod("grid_terrain", las)
 }
 
 #' @export
-grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
+grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer", call. = FALSE)
@@ -125,8 +130,15 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   grid[, Z := NULL]
   data.table::setnames(grid, names(grid), c("X", "Y"))
 
-  if (!full_raster) {
-    hull <- convex_hull(las@data$X, las@data$Y)
+  # Unless we want to interpolate the whole raster we want to actually generate
+  # a DTM that have the same shape than the point cloud
+  if (!full_raster)
+  {
+    if (is_concave)
+      hull <- concaveman::concaveman(as.matrix(lidR:::coordinates(las)), 10, 100)
+    else
+      hull <- convex_hull(las@data$X, las@data$Y)
+
     hull <- sp::Polygon(hull)
     hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
     hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
@@ -135,7 +147,8 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
     if (!all(keep)) grid = grid[keep]
   }
 
-  # Interpolate the terrain
+  # Interpolate the terrain providing what to interpolate (ground) and where
+  # to interpolate (grid)
   verbose("Interpolating ground points...")
   lidR.context <- "grid_terrain"
   Zg <- algorithm(ground, grid, scales, offsets)
@@ -143,8 +156,9 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
   suppressWarnings(layout[cells] <- Zg)
 
-  # Replace the interpolated value by the lowest point
-  if (keep_lowest) {
+  # Replace the interpolated value by the lowest point (legacy code)
+  if (keep_lowest)
+  {
     verbose("Forcing the lowest ground points to be retained...")
     reso <- raster::res(layout)[1]
     lasg <- filter_poi(las, Classification %in% c(use_class))
@@ -156,7 +170,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, keep_lowest = FALSE, full_r
 }
 
 #' @export
-grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
+grid_terrain.LAScluster = function(las, res = 1, algorithm, ...,  keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
 {
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
@@ -168,7 +182,7 @@ grid_terrain.LAScluster = function(las, res = 1, algorithm, keep_lowest = FALSE,
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE)
+grid_terrain.LAScatalog = function(las, res = 1, ..., algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
@@ -196,6 +210,6 @@ grid_terrain.LAScatalog = function(las, res = 1, algorithm, keep_lowest = FALSE,
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, Wdegenerated = Wdegenerated, .options = options)
+  output  <- catalog_apply(las, grid_terrain, res = res, algorithm = algorithm, ..., keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, Wdegenerated = Wdegenerated, is_concave = is_concave, .options = options)
   return(output)
 }
