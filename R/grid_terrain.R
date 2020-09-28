@@ -182,7 +182,7 @@ grid_terrain.LAScluster = function(las, res = 1, algorithm, ...,  keep_lowest = 
 }
 
 #' @export
-grid_terrain.LAScatalog = function(las, res = 1, ..., algorithm, keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
+grid_terrain.LAScatalog = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_raster = FALSE, use_class = c(2L,9L), Wdegenerated = TRUE, is_concave = FALSE)
 {
   # Defensive programming
   if (!is_a_number(res) & !is(res, "RasterLayer")) stop("res is not a number or a RasterLayer")
