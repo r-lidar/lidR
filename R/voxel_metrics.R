@@ -38,6 +38,11 @@
 #' @param func formula. An expression to be applied to each voxel (see also \link{grid_metrics}).
 #' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
+#' @param ... Unused
+#' @param all_voxels boolean. By default the functions returns only voxels that
+#' contain 1 or more points. Empty voxels do not exist as the metrics are undefined.
+#' If \code{all_voxels = TRUE} all the voxels are returned and metrics are NA for
+#' voxels with 0 points.
 #'
 #' @return It returns a \code{data.table} containing the metrics for each voxel. The table
 #' has the class \code{lasmetrics3d} enabling easier plotting. It also has an
@@ -51,11 +56,12 @@
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the number of points is computed.
-#' voxel_metrics(las, ~length(Z), 3)
+#' vm <- voxel_metrics(las, ~length(Z), 3)
 #'
 #' # Cloud of points is voxelized with a 3-meter resolution and in each voxel
 #' # the mean intensity of points is computed.
-#' voxel_metrics(las, ~mean(Intensity), 3)
+#' vm <- voxel_metrics(las, ~mean(Intensity), 3)
+#' plot(vm, color = "V1", colorPalette = heat.colors(50), trim = 90)
 #'
 #' # Define your own metric function
 #' myMetrics = function(i)
@@ -70,15 +76,16 @@
 #'
 #' voxels <- voxel_metrics(las, ~myMetrics(Intensity), 3)
 #'
-#' plot(voxels, color = "imean", trim = 100)
+#' plot(voxels, color = "imean", colorPalette = heat.colors(50), trim = 90)
 #' #etc.
 #'
 #' attr(voxels, "res")
 #' @family metrics
-voxel_metrics = function(las, func, res = 1)
+voxel_metrics = function(las, func, res = 1, ..., all_voxels = FALSE)
 {
   stopifnotlas(las)
   assert_all_are_non_negative(res)
+  assert_is_a_bool(all_voxels)
 
   if (length(res) == 1L)
     res <- c(res,res)
@@ -94,6 +101,26 @@ voxel_metrics = function(las, func, res = 1)
   data.table::setnames(stat, c("Xgrid", "Ygrid", "Zgrid"), c("X", "Y", "Z"))
   data.table::setattr(stat, "class", c("lasmetrics3d", attr(stat, "class")))
   data.table::setattr(stat, "res", res[1])
+
+
+  if (all_voxels)
+  {
+    xrange <- range(las$X)
+    yrange <- range(las$Y)
+    zrange <- range(las$Z)
+    xrange <- f_grid(xrange, res[1], 0)
+    yrange <- f_grid(yrange, res[1], 0)
+    zrange <- f_grid(zrange, res[2], 0.5*res[2])
+    X <- seq(xrange[1], xrange[2], by = res[1])
+    Y <- seq(yrange[1], yrange[2], by = res[1])
+    Z <- seq(zrange[1], zrange[2], by = res[2])
+    all <- expand.grid(X = X,Y = Y, Z = Z)
+    data.table::setDT(all)
+    data.table::setkey(all, X,Y, Z)
+    data.table::setkey(stat, X,Y, Z)
+    stat <- stat[all]
+  }
+
   return(stat)
 }
 

@@ -4,7 +4,7 @@
 \alias{voxel_metrics}
 \title{Voxelize the space and compute metrics for each voxel}
 \usage{
-voxel_metrics(las, func, res = 1)
+voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 }
 \arguments{
 \item{las}{An object of class \code{LAS}.}
@@ -13,6 +13,13 @@ voxel_metrics(las, func, res = 1)
 
 \item{res}{numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).}
+
+\item{...}{Unused}
+
+\item{all_voxels}{boolean. By default the functions returns only voxels that
+contain 1 or more points. Empty voxels do not exist as the metrics are undefined.
+If \code{all_voxels = TRUE} all the voxels are returned and metrics are NA for
+voxels with 0 points.}
 }
 \value{
 It returns a \code{data.table} containing the metrics for each voxel. The table

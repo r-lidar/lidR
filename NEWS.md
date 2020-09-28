@@ -50,6 +50,9 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     #> [1] 2.422 1.953 1.767 2.621 2.083 2.122 2.638 2.251 2.629 2.429
     ```
     
+6. metrics
+    - `voxel_metrics()` gained a parameter `all_voxels` to include voxels with 0 point [#375](https://github.com/Jean-Romain/lidR/issues/375).
+    
 #### ENHANCEMENTS
 
 1. Internally the spatial index better balances the repartion of cells in the partition. While this should be invisible in most cases it might speed-up a bit some queries in some very specific dataset. The goal of this enhancement is mainly to provide optimal indexes for TLS data.
