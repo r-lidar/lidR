@@ -58,8 +58,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_interpolate_delaunay
-NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim, int ncpu);
-RcppExport SEXP _lidR_C_interpolate_delaunay(SEXP PSEXP, SEXP LSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP trimSEXP, SEXP ncpuSEXP) {
+NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim, double min_normal_z, int ncpu);
+RcppExport SEXP _lidR_C_interpolate_delaunay(SEXP PSEXP, SEXP LSEXP, SEXP scalesSEXP, SEXP offsetsSEXP, SEXP trimSEXP, SEXP min_normal_zSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< DataFrame >::type P(PSEXP);
@@ -67,8 +67,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type offsets(offsetsSEXP);
     Rcpp::traits::input_parameter< double >::type trim(trimSEXP);
+    Rcpp::traits::input_parameter< double >::type min_normal_z(min_normal_zSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_interpolate_delaunay(P, L, scales, offsets, trim, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_interpolate_delaunay(P, L, scales, offsets, trim, min_normal_z, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -482,7 +483,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_cmpCPA", (DL_FUNC) &_lidR_cmpCPA, 1},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 4},
-    {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 6},
+    {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},

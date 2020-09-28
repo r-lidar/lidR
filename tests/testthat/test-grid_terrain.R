@@ -99,7 +99,7 @@ test_that("grid_terrain returns a circular dtm ", {
   expect_equal(names(dtm), "Z")
 
   error <- suppressWarnings(abs(dtm - tdtm))
-  expect_equal(mean(error[], na.rm = TRUE), 0.065, tolerance = 0.0005)
+  expect_equal(mean(error[], na.rm = TRUE), 0.0655, tolerance = 0.0005)
 
   z <- raster::extract(dtm, las2@data[, .(X,Y)])
   expect_true(!anyNA(z))

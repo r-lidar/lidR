@@ -162,7 +162,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
 }
 
 // [[Rcpp::export(rng = false)]]
-NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim = 0, int ncpu = 1)
+NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector scales, NumericVector offsets, double trim = 0, double min_normal_z = 0, int ncpu = 1)
 {
   if (!P.containsElementNamed("X") || !P.containsElementNamed("Y") || !P.containsElementNamed("Z"))
     throw Rcpp::exception("Internal error in C_interpolate_delaunay: columns are not named XYZ.", false); // # nocov
@@ -297,11 +297,22 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
               n.y = u.z*v.x-u.x*v.z;
               n.z = u.x*v.y-u.y*v.x;
 
-              double intercept = -(n.x*C.x + n.y*C.y + n.z*Z[C.id]);
+              PointXYZ nn;  // normalized normal vector
+              double norm = std::sqrt(n.x*n.x + n.y*n.y + n.z*n.z);
+              nn.x = n.x/norm;
+              nn.y = n.y/norm;
+              nn.z = n.z/norm;
 
-              #pragma omp critical
+              // If the z component is very very small it mean that the triangle is
+              // Almost vertical. It is an artefact at the very edge of the dataset
+              if (nn.z > min_normal_z)
               {
-                z_out[p->id] = -(p->x * n.x + p->y * n.y + intercept)/n.z;
+                double intercept = -(n.x*C.x + n.y*C.y + n.z*Z[C.id]);
+
+                #pragma omp critical
+                {
+                  z_out[p->id] = -(p->x * n.x + p->y * n.y + intercept)/n.z;
+                }
               }
             }
           }
