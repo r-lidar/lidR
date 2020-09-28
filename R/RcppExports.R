@@ -17,8 +17,8 @@ C_delaunay <- function(P, scales, offsets, trim = 0) {
     .Call(`_lidR_C_delaunay`, P, scales, offsets, trim)
 }
 
-C_interpolate_delaunay <- function(P, L, scales, offsets, trim = 0, ncpu = 1L) {
-    .Call(`_lidR_C_interpolate_delaunay`, P, L, scales, offsets, trim, ncpu)
+C_interpolate_delaunay <- function(P, L, scales, offsets, trim = 0, min_normal_z = 0, ncpu = 1L) {
+    .Call(`_lidR_C_interpolate_delaunay`, P, L, scales, offsets, trim, min_normal_z, ncpu)
 }
 
 C_tinfo <- function(D, P) {

@@ -52,7 +52,7 @@
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
-tin = function(..., extrapolate = knnidw(1,1,50))
+tin = function(..., extrapolate = knnidw(3,1,50))
 {
   if (!is.null(extrapolate))
     assert_is_algorithm_spi(extrapolate)
@@ -62,7 +62,7 @@ tin = function(..., extrapolate = knnidw(1,1,50))
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets)
+    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets, min_normal_z = 4e-2)
 
     # Extrapolate beyond the convex hull
     isna <- is.na(z)
@@ -189,7 +189,7 @@ interpolate_kriging = function(points, coord, model, k)
   return(x$var1.pred)
 }
 
-interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offsets = c(0,0), options = "QbB")
+interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offsets = c(0,0), options = "QbB", min_normal_z = 0)
 {
   stopifnot(is.numeric(trim), length(trim) == 1L)
   stopifnot(is.numeric(scales), length(scales) == 2L)
@@ -231,7 +231,7 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   }
 
   if (boosted_triangulation) {
-    return(C_interpolate_delaunay(points, coord, scales, offsets, trim, getThreads()))
+    return(C_interpolate_delaunay(points, coord, scales, offsets, trim, min_normal_z, getThreads()))
   }
   else {
     P <- as.matrix(points)
