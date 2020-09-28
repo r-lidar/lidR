@@ -99,9 +99,6 @@ voxel_metrics = function(las, func, res = 1, ..., all_voxels = FALSE)
   by   <- group_grid_3d(las@data$X, las@data$Y, las@data$Z, res, c(0,0,0.5*res[2]))
   stat <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = by]
   data.table::setnames(stat, c("Xgrid", "Ygrid", "Zgrid"), c("X", "Y", "Z"))
-  data.table::setattr(stat, "class", c("lasmetrics3d", attr(stat, "class")))
-  data.table::setattr(stat, "res", res[1])
-
 
   if (all_voxels)
   {
@@ -120,6 +117,9 @@ voxel_metrics = function(las, func, res = 1, ..., all_voxels = FALSE)
     data.table::setkey(stat, X,Y, Z)
     stat <- stat[all]
   }
+
+  data.table::setattr(stat, "class", c("lasmetrics3d", attr(stat, "class")))
+  data.table::setattr(stat, "res", res[1])
 
   return(stat)
 }
