@@ -224,29 +224,23 @@ setMethod("$<-", "LAS", function(x, name, value)
       stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
-
-  if (name == "X")
+  for (coordinate_name in c("X", "Y", "Z"))
   {
-    scale  <- x@header@PHB[["X scale factor"]]
-    offset <- x@header@PHB[["X offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
-  }
+    if (name == coordinate_name)
+    {
+      scale_string <- paste(name, "scale factor")
+      offset_string <- paste(name, "offset")
+      scale  <- x@header@PHB[[scale_string]]
+      offset <- x@header@PHB[[offset_string]]
+      valid_range <- storable_coordinate_range(scale, offset)
+      value_range <- range(value)
 
-  if (name == "Y")
-  {
-    scale  <- x@header@PHB[["Y scale factor"]]
-    offset <- x@header@PHB[["Y offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
-  }
+      if (value_range[1] < valid_range[1] | value_range[2] > valid_range[2])
+        stop(glue::glue("Trying to store values ranging in [{value_range[1]}, {value_range[2]}] but storable range is [{valid_range[1]}, {valid_range[2]}]"), call. = FALSE)
 
-  if (name == "Z")
-  {
-    scale  <- x@header@PHB[["Z scale factor"]]
-    offset <- x@header@PHB[["Z offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
+      if(!is.quantized(value, scale, offset))
+        value <- quantize(value, scale, offset, FALSE)
+    }
   }
 
   x@data[[name]] = value
@@ -287,28 +281,23 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
       stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
   }
 
-  if (i == "X")
+  for (coordinate_name in c("X", "Y", "Z"))
   {
-    scale  <- x@header@PHB[["X scale factor"]]
-    offset <- x@header@PHB[["X offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
-  }
+    if (i == coordinate_name)
+    {
+      scale_string <- paste(i, "scale factor")
+      offset_string <- paste(i, "offset")
+      scale  <- x@header@PHB[[scale_string]]
+      offset <- x@header@PHB[[offset_string]]
+      valid_range <- storable_coordinate_range(scale, offset)
+      value_range <- range(value)
 
-  if (i == "Y")
-  {
-    scale  <- x@header@PHB[["Y scale factor"]]
-    offset <- x@header@PHB[["Y offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
-  }
+      if (value_range[1] < valid_range[1] | value_range[2] > valid_range[2])
+        stop(glue::glue("Trying to store values ranging in [{value_range[1]}, {value_range[2]}] but storable range is [{valid_range[1]}, {valid_range[2]}]"), call. = FALSE)
 
-  if (i == "Z")
-  {
-    scale  <- x@header@PHB[["Z scale factor"]]
-    offset <- x@header@PHB[["Z offset"]]
-    if(!is.quantized(value, scale, offset))
-      value <- quantize(value, scale, offset, FALSE)
+      if(!is.quantized(value, scale, offset))
+        value <- quantize(value, scale, offset, FALSE)
+    }
   }
 
   x@data[[i]] = value

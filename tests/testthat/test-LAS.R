@@ -207,7 +207,7 @@ test_that("LAS operator $ quantize on the fly and update header", {
   expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
 })
 
-test_that("LAS operator $ quantize on the fly and update header", {
+test_that("LAS operator [[ quantize on the fly and update header", {
 
   las <- lidR:::generate_las(10)
 
@@ -229,6 +229,17 @@ test_that("LAS operator $ quantize on the fly and update header", {
   expect_equivalent(las@bbox, matrix(c(xbbox, ybbox), ncol = 2, byrow = T))
   expect_equal(las@header@PHB[["Min X"]], xbbox[1])
   expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
+})
+
+test_that("LAS operator[[ and $ throw error for not storable coordinates", {
+  las <- lidR:::generate_las(10)
+  x <- round(runif(10),2)
+  x[5] <- 21474836.47
+
+  expect_error(las$X <- x, "Trying to store values ranging in")
+  expect_error(las$Y <- x, "Trying to store values ranging in")
+  expect_error(las[["X"]] <- x, "Trying to store values ranging in")
+  expect_error(las[["Y"]] <- x, "Trying to store values ranging in")
 })
 
 

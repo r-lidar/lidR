@@ -14,6 +14,7 @@ las1@data[5:7, Classification := 2L]
 las1@data[1, Withheld_flag := TRUE]
 las1@data[1, Synthetic_flag := TRUE]
 las1@data[1, Keypoint_flag := TRUE]
+las1@data[25, Z := 1234567890.1]
 las1@data$gpstime <- 0
 las1@proj4string <- sp::CRS("+init=epsg:26917")
 las1@header@PHB[["X scale factor"]] <- 0.123

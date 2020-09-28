@@ -1,4 +1,4 @@
-#' LAS tools
+#' LAS utilities
 #'
 #' Tools to manipulate LAS object maintaining compliance with
 #' \href{http://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{ASPRS specification}
@@ -237,5 +237,20 @@ is.quantized = function(x, scale, offset, ...)
 #' @export
 #' @rdname las_utilities
 count_not_quantized = fast_countunquantized
+
+
+#' @export
+#' @rdname las_utilities
+storable_coordinate_range <- function(scale, offset) {
+
+  assert_is_a_number(scale)
+  assert_is_a_number(offset)
+
+  storable_min <- -2147483647 * scale + offset
+  storable_max <-  2147483647 * scale + offset
+
+  return(c("min" = storable_min, "max" = storable_max))
+}
+
 
 lasupdateheader = las_update

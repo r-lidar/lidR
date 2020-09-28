@@ -63,8 +63,8 @@ LASfile <- system.file("extdata", "example.laz", package="rlas")
 las = readLAS(LASfile)
 
 # Manual modification of the coordinates (rotation, alignment, ...)
-las$X <- las$X + 2/3
-las$Y <- las$Y - 5/3
+las@data$X <- las@data$X + 2/3
+las@data$Y <- las@data$Y - 5/3
 
 # The point cloud is no longer valid
 las_check(las)
@@ -79,7 +79,15 @@ las_check(las)
 las <- las_update(las)
 las_check(las)
 
-# Recompute the coordinates with new scales and offsets
+# In practice the above code is not relevant because operators
+# <- already perform such operation on the fly. Thus the following
+# syntax must be preferred and return valid objects. Previous tools
+only intend to be used in very specific cases
+las$X <- las$X + 2/3
+las$Y <- las$Y - 5/3
+
+# Rescale and reoffset recompute the coordinates with
+# new scales and offsets according to LAS specification
 las <- las_rescale(las, xscale = 0.01, yscale = 0.01)
 las <- las_reoffset(las, xoffset = 300000, yoffset = 5248000)
 }
