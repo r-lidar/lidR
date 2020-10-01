@@ -714,3 +714,63 @@ VCI = function(z, zmax, by = 1)
   z = z[z < zmax]
   return(entropy(z, by, zmax))
 }
+
+#' Computes the effective number of layers based on the methods Ebrecht et al. (see references)
+#' Evective Numbers of Layers (ENL) descriptor of vertical structure, and its variability across sampling points as a measure of horizontal structural variability
+#' Using diversity indices of different Hill-Numbers (^0^D, ^1^D and ^2^D, see Hill, 1973 and Jost, 2006)  
+#' $p_{i}$ is the proportion of filled voxels in the $i_{th}$ vertical layer to the sum of filled voxel in the entire volume analysed.  
+#' $N_{top}$ refers to the top stand height.  
+#' ^0^D ENL corresponds to the number of 1 m layers and thus approximates stand height ($\sum_{i=1}^n p_{i}^0$). With ^1^D ENL (exponential Shannon-Index, $\exp(-\sum_{i=1}^n p_{i} * \ln(p_{i}))$) and ^2^D ENL (inverse Simpson-Index, $1/\sum_{i=1}^n p_{i}^2$), layers are weighted stronger the more they are occupied (weighing of ^2^D ENL > that of ^1^D ENL). Weighing results in a lower number of effective layers when compared to ^0^D ENL. At a given number of layers both ^1^D and ^2^D ENL values increase with more evenly occupied layers. When considering foliage only, the natural logarithm of ^1^D ENL equals FHD based on layers of 1 m thickness.
+#' @param z vector of z coordinates
+#' @param by numeric. The thickness of the layers used (height bin)
+#' @param by numeric. Hill Number
+#' @param by numeric. Minium height cut off
+#' @references Ehbrecht, M., Schall, P., Juchheim, J., Ammer, C., Seidel, D., 2016. Effective number of layers: A new measure for quantifying three-dimensional stand structure based on sampling with terrestrial LiDAR. Forest Ecology and Management 380, 212–223. https://doi.org/10.1016/j.foreco.2016.09.003
+#' @export ENL
+ENL = function(z, by = 1, D = 2, zmin= NULL)
+{
+  # Using different Hill numbers 0-2
+  
+  
+  # Setting minium height to 0
+  if (is.null(zmin))
+    zmin = 0
+
+  # Check if D is between 0 and 2
+  if (D < 0)
+    return(NA_real_)
+
+  if (D > 2)
+    return(NA_real_)
+
+  # Define the number of x meters bins from zmin to zmax (rounded to the next integer)
+  zmax = max(z)
+  bk = seq(zmin, ceiling(zmax/by)*by, by)
+
+  # Compute the p for each bin
+  hist = findInterval(z, bk)
+  hist = fast_table(hist, length(bk) - 1)
+  hist = hist/sum(hist)
+
+  # Remove bins where there are no points because of log(0)
+  p    = hist[hist > 0]
+  #pref = rep(1/length(hist), length(hist))
+
+  # calculate ENL
+  if(D==2){
+    enl <- 1 / sum(p^2) #2D ENL formula
+  }else{
+    if(D==1){
+      enl <- exp(-sum(p*log(p))) #1D ENL formula
+    }else{
+      if(D==0){
+      enl <- sum(p^0) #0D ENL formula
+      }else{
+      stop("D must be 0,1 or 2.") #Error
+      enl <- NA
+      }
+    }
+  }
+
+  return(enl)
+}
