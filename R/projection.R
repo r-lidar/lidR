@@ -115,6 +115,7 @@ setGeneric("epsg<-", function(object, value)
 #' @rdname projection
 setMethod("epsg", "LASheader", function(object, ...)
 {
+  if (use_wktcs(object))  warning("This LAS object stores the CRS as WKT. 0 returned; use 'wkt()' instead.", call. = FALSE)
   return(rlas::header_get_epsg(as.list(object)))
 })
 
