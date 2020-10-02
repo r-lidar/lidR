@@ -4,7 +4,7 @@
 \alias{tin}
 \title{Spatial Interpolation Algorithm}
 \usage{
-tin(..., extrapolate = knnidw(1, 1, 50))
+tin(..., extrapolate = knnidw(3, 1, 50))
 }
 \arguments{
 \item{...}{unused}
