@@ -379,7 +379,7 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   # Update the scale factors
   p <- list(...)
   scalex <- x@header@PHB[["X scale factor"]]
-  scaley <- x@header@PHB[["X scale factor"]]
+  scaley <- x@header@PHB[["Y scale factor"]]
   if (!is.null(p$scale)) scalex <- scaley <- p$scale
   x@header@PHB[["X scale factor"]] <- scalex
   x@header@PHB[["Y scale factor"]] <- scaley
