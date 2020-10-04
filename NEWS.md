@@ -9,6 +9,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Fix [#371](https://github.com/Jean-Romain/lidR/issues/371). `las_reoffset()` may not have caught extremely rare Z coordinate overflow when converting to integer.
 * Fix [#372](https://github.com/Jean-Romain/lidR/issues/372). `las_reoffset()` incorrectly converted decimal coordinate to integer using `trunc` instead of `round`.
 * Fix [#365](https://github.com/Jean-Romain/lidR/issues/365). Poor interpolation at the very edge of the Delaunay triangulation in some case. Triangle with a too steep slope are now removed which trigers a knnidw interpolation instead.
+* Fix: `projection<-()` and `crs<-()` properly attribute `NA` CRS for LAS 1.4
 * Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as proj4 string but using the WTK string with `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of migration toward WTK instead of proj4.
 * Change: `lidR` now explicitly depends on `rgdal >= 1.5.8`.
 * Enhance: `epsg()` now throw a warning if the LAS is in format 1.4 and CRS is stored as WKT

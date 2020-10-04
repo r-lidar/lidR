@@ -248,6 +248,7 @@ setMethod("projection<-", "LAS", function(x, value)
     proj4 <- value@projargs
     CRS <- value
     wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
+    if (is.null(wkt)) wkt = ""
     epsg <- .find_epsg_code(CRS)
   }
   else if (is(value, "crs"))
@@ -263,7 +264,7 @@ setMethod("projection<-", "LAS", function(x, value)
     {
       proj4 <- value$proj4string
       CRS <- sp::CRS(proj4)
-      wkt <- rgdal::showWKT(proj4)
+      wkt <- rgdal::showWKT
       epsg <- .find_epsg_code(value)
     }
   }
@@ -284,11 +285,13 @@ setMethod("projection<-", "LAS", function(x, value)
   else
     stop("'value' is not a CRS or a string or a number.")
 
-  if (is.na(proj4)) return(x)
-
   if (use_wktcs(x))
   {
-    wkt(x@header) <- wkt
+    if (is.null(wkt) || wkt == "")
+      x@header@VLR[["WKT OGC CS"]] <- NULL
+    else
+      wkt(x@header) <- wkt
+
     x@proj4string <- CRS
   }
   else
