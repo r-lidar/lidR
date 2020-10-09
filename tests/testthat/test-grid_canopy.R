@@ -102,3 +102,12 @@ test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
   expect_equal(x, y, tolerance = 0.00079)
 })
 
+test_that("triangulation does not return negative values", {
+  # See https://gis.stackexchange.com/questions/376261/negative-values-after-chm-rasterization-lidr
+  LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
+  las <- readLAS(LASfile, select = "xyzr", filter = "-inside 684750 5017800 684850 5017900")
+  chm = grid_canopy(las, 1, dsmtin())
+  expect_equal(min(chm[], na.rm = T), 0)
+})
+
+

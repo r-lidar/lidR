@@ -1,7 +1,7 @@
 #include "Shapes.h"
 #include <algorithm>
 
-#define EPSILON 2e-6
+#define EPSILON 2e-8
 
 Shape::Shape()
 {

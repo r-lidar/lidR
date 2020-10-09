@@ -12,6 +12,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Fix: `projection<-()` and `crs<-()` properly attributes `NA` CRS for LAS 1.4 objects
 * Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as a proj4 string but uses the WTK string with `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of the migration toward WTK instead of proj4.
 * Change: `lidR` now explicitly depends on `rgdal >= 1.5.8`.
+* Change: `grid_canopy()` now rounds the values of the pixels for not outputing pixels that with an irrelevant number of decimal digits.
 * Enhance: `epsg()` now throws a warning if the LAS is in format 1.4 and CRS is stored as WKT.
 * New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`.
 * New: in `spTransform()` it is now possible to use a parameter `scale` to change the scale factor after reprojection. This is useful for projecting from lon-lat data `las2 = spTransform(las, crs, scale = 0.01)`.
