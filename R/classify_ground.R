@@ -30,7 +30,7 @@
 #'
 #' Classify points as 'ground' or 'not ground' with several possible algorithms. The function updates the
 #' attribute \code{Classification} of the LAS object. The points classified as 'ground' are assigned
-#' a value of 2 according to \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{las specifications}.
+#' a value of 2 according to \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}.
 #'
 #' @template param-las
 #'

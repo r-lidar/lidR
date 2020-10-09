@@ -44,7 +44,7 @@ returned (see \link[gdalUtils:gdalbuildvrt]{gdalbuildvrt})
 \description{
 Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
 the points classified as "ground" and "water (Classification = 2 and 9 according to
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications})
+\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications})
 to compute the interpolation.\cr\cr
 How well the edges of the dataset are interpolated depends on the interpolation method used.
 A buffer around the region of interest is always recommended to avoid edge effects.

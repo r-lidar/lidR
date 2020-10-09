@@ -125,7 +125,7 @@ ctg
 
 A `LAScatalog` inherits a `SpatialPolygonsDataFrame`. Thus, it has the structure of a `SpatialPolygonsDataFrame` plus some extra slots that store information relative to how the `LAScatalog` will be processed.
 
-The slot `data` of a `LAScatalog` object contains a `data.frame` with the most important information read from the header of .las or .laz files. Reading only the header of the file provides an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) version 1.4
+The slot `data` of a `LAScatalog` object contains a `data.frame` with the most important information read from the header of .las or .laz files. Reading only the header of the file provides an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) version 1.4
 
 The other slots are well documented in the documentation ?\`LAScatalog-class\` so they are not described in this vignette.
 

@@ -23,13 +23,13 @@ An object of class \code{LAS}
 }
 \description{
 Class LAS is the representation of a las/laz file according to the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
+\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
 }
 \details{
 A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
 a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
 a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
+\href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 for more information). Because las files are standardized the table of attributes read from the las/laz file
 is also standardized. Columns are named:
 \itemize{
@@ -65,10 +65,10 @@ factor is set to 0.001
 \item{\code{proj4string}}{Object of class \link[sp:CRS-class]{CRS}, projection string}
 
 \item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
+\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}}
 
 \item{\code{header}}{Object of class \link[=LASheader-class]{LASheader}. las file header according to the
-\href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}}
+\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}}
 }}
 
 \section{Extends}{
