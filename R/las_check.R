@@ -405,7 +405,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   h2("Checking coordinate reference sytem...")
 
-  code    <- epsg(las)
+  code    <- if (use_epsg(las)) epsg(las) else 0
   swkt    <- wkt(las)
   lasproj <- las@proj4string
   failure <- FALSE
