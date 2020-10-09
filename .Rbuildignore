@@ -15,4 +15,5 @@
 ^man/figures$
 ^codecov\.yml$
 ^CRAN-RELEASE$
+^NEW_v2.md$
 ^\.github$
