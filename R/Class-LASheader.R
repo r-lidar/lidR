@@ -28,7 +28,7 @@
 #' An S4 class to represent the header of .las or .laz files
 #'
 #' An S4 class to represent the header of .las or .laz files according to the
-#' \href{http://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format specifications}.
+#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
 #' A \code{LASheader} object contains a \code{list} in the slot \code{@PHB} with
 #' the data read from the Public Header Block and \code{list} in the slot \code{@VLR} with
 #' the data read from the Variable Length Records

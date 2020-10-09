@@ -8,12 +8,12 @@ citEntry(entry="Article",
          pages = "112061",
          year = "2020",
          issn = "0034-4257",
-         doi = "https://doi.org/10.1016/j.rse.2020.112061",
-         url = "http://www.sciencedirect.com/science/article/pii/S0034425720304314",
+         doi = "10.1016/j.rse.2020.112061",
+         url = "https://www.sciencedirect.com/science/article/pii/S0034425720304314",
          textVersion =
            paste("Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020).",
            "lidR : An R package for analysis of Airborne Laser Scanning (ALS) data.",
-           "Remote Sensing of Environment, 251 (August), 112061. https://doi.org/10.1016/j.rse.2020.112061.")
+           "Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.")
 )
 
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)

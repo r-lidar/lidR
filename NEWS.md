@@ -77,22 +77,22 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
 
 #### FIXES
 
-## lidR v3.0.4 (Release date: yyyy-mm-dd)
+## lidR v3.0.4 (Release date: 2020-10-08)
 
-* Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()` but the argument `pattern` is actually hard coded internally and this prevent to overwrite it. When using `readLAScatalog(..., pattern = "xxx")` this triggered an error `formal argument "pattern" matched by multiple actual arguments`. It now works. See  [#368](https://github.com/Jean-Romain/lidR/issues/368) 
-* Fix: in `spTransform()` the reprojected point cloud have quantized coordinates and is now LAS compliant [#369](https://github.com/Jean-Romain/lidR/issues/369).
-* Fix: The local maximum filter algorithm more robustly find local maxima when two or more close points/pixels have the exact same local maximum height. Previously, if two or more points in a close neighbourhood were all the highest they may all be missed depending on the order they were processed (which is somewhat random). The fix allows to retain one local maximum among multiple ones with a precedence to the first one identified as local maximum. The consequences of this fix is that slighly more more apices may be found especially when processing aCHM in `RasterLayer`.
-* Fix: `classify_groud()` no longer erases the former classification when no ground points were recorded but some points are classified with other classes.
-* Fix [#371](https://github.com/Jean-Romain/lidR/issues/371). `las_reoffset()` may not have caught extremely rare Z coordinate overflow when converting to integer.
-* Fix [#372](https://github.com/Jean-Romain/lidR/issues/372). `las_reoffset()` incorrectly converted decimal coordinate to integer using `trunc` instead of `round`.
-* Fix [#365](https://github.com/Jean-Romain/lidR/issues/365). Poor interpolation at the very edge of the Delaunay triangulation in some case. Triangle with a too steep slope are now removed which trigers a knnidw interpolation instead.
-* Fix: `projection<-()` and `crs<-()` properly attribute `NA` CRS for LAS 1.4
-* Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as proj4 string but using the WTK string with `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of migration toward WTK instead of proj4.
+* Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()`, but the argument `pattern` was actually hard coded internally and this prevents it being overwritten. When using `readLAScatalog(..., pattern = "xxx")` this previously triggered an error, `formal argument "pattern" matched by multiple actual arguments`. It now works. See [#368](https://github.com/Jean-Romain/lidR/issues/368).
+* Fix: in `spTransform()` the reprojected point cloud now has quantized coordinates and is thus LAS compliant [#369](https://github.com/Jean-Romain/lidR/issues/369).
+* Fix: The local maximum filter algorithm more robustly finds local maxima when two or more close points or pixels share the exact same height and are both locally the highest. Previously, if two or more points in a close neighbourhood were both the highest, they may all be missed depending on the order they were processed (which is somewhat random). The fix allows users to retain one local maximum among multiple ones with a precedence to the first one identified as local maximum. The consequences of this fix are that slightly more apices may be found, especially when processing a CHM in `RasterLayer`.
+* Fix: `classify_ground()` no longer erases the previous classification when no ground points were recorded but some points are classified with other classes.
+* Fix [#365](https://github.com/Jean-Romain/lidR/issues/365). Poor interpolation at the very edge of the Delaunay triangulation in some cases. Triangles with too steep a slope are now removed. This triggers a knnidw interpolation instead.
+* Fix [#371](https://github.com/Jean-Romain/lidR/issues/371): `las_reoffset()` may not have caught extremely rare Z coordinate overflow when converting to integers.
+* Fix [#372](https://github.com/Jean-Romain/lidR/issues/372). `las_reoffset()` incorrectly converted decimal coordinates to integers using `trunc` instead of `round`.
+* Fix: `projection<-()` and `crs<-()` properly attributes `NA` CRS for LAS 1.4 objects
+* Change: in `print` the CRS of `LAS` and `LAScatalog` is no longer displayed as a proj4 string but uses the WTK string with `sf` style display. E.g. `NAD83 / UTM zone 17N` is displayed instead of `+proj=utm +zone=17 +datum=NAD83 +units=m +no_defs`. This is part of the migration toward WTK instead of proj4.
 * Change: `lidR` now explicitly depends on `rgdal >= 1.5.8`.
-* Enhance: `epsg()` now throw a warning if the LAS is in format 1.4 and CRS is stored as WKT
-* New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`
-* New: in `spTransform()` it is now possible to use a parameter `scale` to change the scale factor after reprojection. This is useful projecting from lon-lat data `las2 = spTransform(las, crs, scale = 0.01)`
-* Internal: better supports in `projection<-` of the current changes with CRS representation in the R spatial ecosystem.
+* Enhance: `epsg()` now throws a warning if the LAS is in format 1.4 and CRS is stored as WKT.
+* New: `projection()<-` supports `crs` from `sf` and numeric values for espg code: `projection(las) <- 26918`.
+* New: in `spTransform()` it is now possible to use a parameter `scale` to change the scale factor after reprojection. This is useful for projecting from lon-lat data `las2 = spTransform(las, crs, scale = 0.01)`.
+* Internal: better support in `projection<-` of the current changes with CRS representation in the R spatial ecosystem.
 * Doc: new CITATION file. `citation("lidR")`
 
 ## lidR v3.0.3 (Release date: 2020-08-05)

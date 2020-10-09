@@ -98,7 +98,7 @@ plot(chm, col = col)
 
 **lidR** is developed openly at [Laval University](https://www.ulaval.ca/en/).
 
-* Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](http://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
+* Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](https://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](http://profiles.forestry.ubc.ca/person/nicholas-coops/).
 * Development of the `lidR` package between 2018 and 2020 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://mffp.gouv.qc.ca/).
 
 <img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/logos.svg" width="600" align="center">
