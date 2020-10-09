@@ -62,7 +62,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
   f = function(what, where, scales = c(0,0), offsets = c(0,0))
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets, min_normal_z = 4e-2)
+    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets, min_normal_z = 3e-2)
 
     # Extrapolate beyond the convex hull
     isna <- is.na(z)
