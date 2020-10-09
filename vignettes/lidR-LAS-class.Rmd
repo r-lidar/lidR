@@ -35,7 +35,7 @@ A `LAS` object is composed of four slots: `@data`, `@header`, `@proj4string` and
 
 ### @data: the point cloud
 
-The slot `data` of a LAS object contains a `data.table` with the data read from .las or .laz file(s). The columns of the table are named after the [LAS specification](http://www.asprs.org/wp-content/uploads/2010/12/LAS_1_4_r13.pdf) version 1.4. Each name is reserved and is associated with a given type:
+The slot `data` of a LAS object contains a `data.table` with the data read from .las or .laz file(s). The columns of the table are named after the [LAS specification](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) version 1.4. Each name is reserved and is associated with a given type:
 
 - `X` `Y` `Z` (dbl)
 - `Intensity` (int)
