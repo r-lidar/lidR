@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.0.5 (Release date: ...)
+
+* Fix: In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.
+
 ## lidR v3.0.4 (Release date: 2020-10-08)
 
 * Fix: in `readLAScatalog()` the documentation states that `...` is propagated to `list.files()`, but the argument `pattern` was actually hard coded internally and this prevents it being overwritten. When using `readLAScatalog(..., pattern = "xxx")` this previously triggered an error, `formal argument "pattern" matched by multiple actual arguments`. It now works. See [#368](https://github.com/Jean-Romain/lidR/issues/368).
