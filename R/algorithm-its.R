@@ -125,8 +125,8 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     if (!missing(extent))
     {
       assert_is_all_of(extent, "Extent")
-      chm <- raster::crop(chm, extent)
-      treetops <- raster::crop(treetops, extent)
+      chm <- raster::crop(chm, extent+raster::res(chm)[1])
+      treetops <- raster::crop(treetops, extent+raster::res(chm)[1])
 
       # If no remaining seed, exit with with warning
       if (is.null(treetops))
@@ -358,8 +358,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     if (!missing(extent))
     {
       assert_is_all_of(extent, "Extent")
-      chm <- raster::crop(chm, extent)
-      treetops <- raster::crop(treetops, extent)
+      chm <- raster::crop(chm, extent+raster::res(chm)[1])
+      treetops <- raster::crop(treetops, extent+raster::res(chm)[1])
 
       if (is.null(treetops))
       {
@@ -515,7 +515,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     if (!missing(extent))
     {
       assert_is_all_of(extent, "Extent")
-      chm <- raster::crop(chm, extent)
+      chm <- raster::crop(chm, extent+raster::res(chm)[1])
     }
 
     # Convert the CHM to a matrix
