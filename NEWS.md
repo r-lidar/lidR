@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 * Fix: In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.
 * Fix: In `segment_trees()` when using a raster-based algorithm, few points may be missclassified NAs at the edges of the point cloud instead of getting the correct tree ID found in the raster because of some edge effect.
+* Doc: The documentation of `point_metrics()` clarifies how the user-defined function is fed and in which order the points are sorted.
 
 ## lidR v3.0.4 (Release date: 2020-10-08)
 
