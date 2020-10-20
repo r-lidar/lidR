@@ -93,6 +93,9 @@ grid_canopy.LAS = function(las, res, algorithm)
   lidR.context <- "grid_canopy"
   z <- algorithm(las, layout)
 
+  # Quantize
+  z <- round(z, 3)
+
   suppressWarnings(layout[] <- z)
   names(layout) <- "Z"
   return(layout)

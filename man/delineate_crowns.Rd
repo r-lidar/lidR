@@ -40,8 +40,7 @@ details and references).
 }
 \details{
 The concave hull method under the hood is described in Park & Oh (2012). The function relies on
-the \link[concaveman:concaveman]{concaveman} function which itself is a wrapper around
-\href{https://github.com/mapbox/concaveman}{Vladimir Agafonking's implementation}.
+the \link[concaveman:concaveman]{concaveman} function.
 }
 \section{Working with a \code{LAScatalog}}{
 

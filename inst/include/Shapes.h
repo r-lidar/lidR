@@ -7,7 +7,7 @@
 namespace lidR
 {
 
-#define EPSILON 2e-6
+#define EPSILON 2e-8
 #define XYINF 99999999999;
 #define ZINF 2147483640;
 

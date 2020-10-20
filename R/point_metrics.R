@@ -4,6 +4,13 @@
 #' function is very similar to \link{grid_metrics} but computes metrics \bold{for each point} based on
 #' its k-nearest neighbours or its sphere neighbourhood.
 #'
+#' When the neighbourhood is knn the user-defined function is fed with the current
+#' processed point and its k-1 neighbours. The current point being considered as
+#' the 1-neighbour with a distance 0 to the reference point. The points are ordered
+#' by distance to the central point. When the neighbourhood is a sphere the processed
+#' point is also included in the query but point are coming in a random order.
+#'
+#' @section Performances:
 #' It is important to bear in mind that this function is very fast for the feature it provides i.e.
 #' mapping a user-defined function at the point level using optimized memory management. However, it
 #' is still computationally demanding.\cr\cr
