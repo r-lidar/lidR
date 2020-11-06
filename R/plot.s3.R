@@ -138,6 +138,13 @@ plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
   }
 
   add_dtm3d(shift, dtm, ...)
+
+  .pan3d(2)
+
+  if (clear_artifacts)
+    return(invisible(shift))
+  else
+    return(invisible(c(0,0)))
 }
 
 #' @rdname plot_3d

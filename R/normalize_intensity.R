@@ -81,7 +81,7 @@ normalize_intensity.LAScatalog = function(las, algorithm)
   opt_select(las) <- "*"
   opt_chunk_buffer(las) <- 0
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, autoread = TRUE)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_sapply(las, normalize_intensity, algorithm = algorithm, .options = options)
   return(output)
 }
