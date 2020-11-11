@@ -5,6 +5,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Fix: In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.
 * Fix: In `segment_trees()` when using a raster-based algorithm, few points may be missclassified NAs at the edges of the point cloud instead of getting the correct tree ID found in the raster because of some edge effect.
 * Fix: `normalize_intensity()` was not working with a `LAScatalog`. See [#388](https://github.com/Jean-Romain/lidR/issues/388)
+* Fix: In `grid_*()` function when a `RasterLayer` is given as layout, the computation was performed for all the cells no matter if the extent of the loaded point cloud was much smaller than the raster. For big rasters this had for consequences to dramatically increase the wordload with useless computation and to saturate the RAM to a point that the computation was no longer doable.
 * Doc: The documentation of `point_metrics()` clarifies how the user-defined function is fed and in which order the points are sorted.
 * Enhance: `plot_dtm3d()` now enables pan by default like `plot()` for `LAS` objects.
 
