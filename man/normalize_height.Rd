@@ -44,8 +44,9 @@ elevation of NA are filtered. Be careful this creates a copy of the point cloud.
 However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
 extrabytes attribute. See also \link{add_lasattribute}.}
 
-\item{Wdegenerated}{logical. The function always check and remove degenerated ground points. If
-any a warning in thrown.}
+\item{Wdegenerated}{logical. The function always check and remove degenerated ground points
+for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
+TRUE a warning in thrown to alert about the presence of degenerated ground points.}
 
 \item{e1}{a LAS object}
 
