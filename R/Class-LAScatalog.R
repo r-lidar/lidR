@@ -86,7 +86,7 @@
 #' }
 #'
 #' @section Chunk options:
-#' The slot \code{@clustering_options} contains a \code{list} of options that determine how chunks
+#' The slot \code{@chunk_options} contains a \code{list} of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are made.
 #' \itemize{
 #' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
@@ -104,7 +104,7 @@
 #' }
 #'
 #' @section Output options:
-#' The slot \code{@output_options} contains a \code{list} of options that determine how clusters
+#' The slot \code{@output_options} contains a \code{list} of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are written. By "written" we mean written to files
 #' or written in R memory.
 #'
@@ -123,7 +123,7 @@
 #' This option will generate as many filenames as needed with custom names for each file. The list of
 #' allowed templates is described in the documentation for each function. See \link{opt_output_files}.
 #' \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
-#' Spatial*, LAS objects. It is recommended that only advanced users change this option. A dedicated
+#' Spatial*, sf, LAS objects. It is recommended that only advanced users change this option. A dedicated
 #' page describes the drivers in \link{lidR-LAScatalog-drivers}.
 #' \item \strong{merge}: boolean. Multiple objects are merged into a single one at the end of the processing.
 #' }
