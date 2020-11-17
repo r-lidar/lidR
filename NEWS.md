@@ -77,6 +77,10 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
 
 #### FIXES
 
+#### MISCELLANEOUS
+
+1. `opt_cores()` and `opt_cores<-()` are now defunc. These functions did not have any effect because they only throw a warning to alert about deprecation since v2.1.0 (July 2019).
+
 ## lidR v3.0.5 (Release date: ...)
 
 * Fix: In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.

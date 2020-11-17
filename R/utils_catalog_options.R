@@ -126,23 +126,6 @@ opt_chunk_is_file = function(ctg)
 
 #' @rdname catalog_options_tools
 #' @export
-opt_cores = function(ctg)
-{
-  warning("Option no longer supported. See ?`lidR-parallelism`.", call. = FALSE)
-  return(NULL)
-}
-
-#' @rdname catalog_options_tools
-#' @export
-`opt_cores<-` = function(ctg, value)
-{
-  warning("Option no longer supported. See ?`lidR-parallelism`.", call. = FALSE)
-  return(ctg)
-}
-
-
-#' @rdname catalog_options_tools
-#' @export
 opt_progress = function(ctg)
 {
   return(ctg@processing_options$progress)
