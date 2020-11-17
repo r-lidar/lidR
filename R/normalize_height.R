@@ -55,8 +55,9 @@
 #' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
 #' However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
 #' extrabytes attribute. See also \link{add_lasattribute}.
-#' @param Wdegenerated logical. The function always check and remove degenerated ground points. If
-#' any a warning in thrown.
+#' @param Wdegenerated logical. The function always check and remove degenerated ground points
+#' for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
+#' TRUE a warning in thrown to alert about the presence of degenerated ground points.
 #'
 #' @template LAScatalog
 #'

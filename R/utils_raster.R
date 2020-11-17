@@ -55,7 +55,9 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
     if (round(resolution[1], 4) != round(resolution[2], 4))
       stop("Rasters with different x y resolutions are not supported", call. = FALSE)
 
-    res <- raster::crop(res, raster::extent(las) + resolution[1])
+    if (!is.null(raster::intersect(raster::extent(res), raster::extent(las))))
+      res <- raster::crop(res, raster::extent(las) + resolution[1])
+
     res@data@values <- rep(NA, raster::ncell(res))
     return(res)
   }

@@ -37,8 +37,9 @@ each pixel of the raster is interpolated.}
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
 
-\item{Wdegenerated}{logical. The function always check and remove degenerated ground points. If
-any a warning in thrown.}
+\item{Wdegenerated}{logical. The function always check and remove degenerated ground points
+for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
+TRUE a warning in thrown to alert about the presence of degenerated ground points.}
 
 \item{is_concave}{boolean. By default the function tries to compute a DTM that
 have the same shape than the point cloud by interpolating only in the convex

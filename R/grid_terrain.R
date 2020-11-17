@@ -50,8 +50,9 @@
 #' each pixel of the raster is interpolated.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).
-#' @param Wdegenerated logical. The function always check and remove degenerated ground points. If
-#' any a warning in thrown.
+#' @param Wdegenerated logical. The function always check and remove degenerated ground points
+#' for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
+#' TRUE a warning in thrown to alert about the presence of degenerated ground points.
 #' @param is_concave boolean. By default the function tries to compute a DTM that
 #' have the same shape than the point cloud by interpolating only in the convex
 #' hull of the points. If the point cloud is concave this may lead to weird values
