@@ -109,7 +109,7 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
   lidR.context = "track_sensor"
 
-  . <- X <- Y <- Z <- ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- gpstime <- UserData <-  NULL
+  . <- X <- Y <- Z <- ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- gpstime <- UserData <-  missing_psi <- NULL
 
   data <- las@data
 
@@ -176,10 +176,24 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
     zero  <- zero[-1,]
     return(zero)
   }
+  else
+  {
+    # Adress issue 391
+    psi <- unique(data$PointSourceID)
+    missing  <- !psi %in% unique(P$PointSourceID)
+    if (any(missing))
+    {
+      missing_psi = psi[missing]
+      txtids <- paste(missing_psi, collapse = ";")
+      missing_psi <- as.character(missing_psi)
+      warning(glue::glue("Some swaths present in the point cloud (PointSourceID = [{txtids}]) did not produce any sensor location."), call. = FALSE)
+    }
+  }
 
   na <- is.na(P[["X"]])
   P  <- P[!na]
   P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)], proj4string = las@proj4string)
+  comment(P) <- missing_psi
 
   if (sum(na) > 0)
     warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be incorrectly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)

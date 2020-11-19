@@ -10,6 +10,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Doc: The argument `Wdegerated` in `grid_terrain()` and `normalize_height()` was misleading.  An wrong interpretation was that degeratated ground points were discared from the dataset. The documentation now clarrifies the text to avoid misinterpretation.
 * Doc: minor fixes and clarifications in the `LAScatalog-class` page of the manual.
 * Enhance: `plot_dtm3d()` now enables pan by default like `plot()` for `LAS` objects.
+* Enhance: `track_sensor()` throw a new warning is a swath in the point cloud does not produce any sensor location. This adresses [#391](https://github.com/Jean-Romain/lidR/issues/391).
 
 ## lidR v3.0.4 (Release date: 2020-10-08)
 
