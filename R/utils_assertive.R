@@ -118,14 +118,14 @@ assert_is_all_of = function(x, class)
 {
   x. <- lazyeval::expr_text(x)
   if (!is(x, class))
-    stop(glue::glue("{x.} is not a {class} it is {class(x)}."), call. = FALSE)
+    stop(glue::glue("{x.} is not a {class} it is {class(x)[1]}."), call. = FALSE)
 }
 
 assert_is_function = function(x)
 {
   x. <- lazyeval::expr_text(x)
   if (!is.function(x))
-    stop(glue::glue("{x.} is not a function it is a {class(x)}."), call. = FALSE)
+    stop(glue::glue("{x.} is not a function it is a {class(x)[1]}."), call. = FALSE)
 }
 
 assert_all_are_same_crs = function(x)
