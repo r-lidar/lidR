@@ -8,8 +8,6 @@
 \alias{opt_chunk_size<-}
 \alias{opt_chunk_alignment}
 \alias{opt_chunk_alignment<-}
-\alias{opt_cores}
-\alias{opt_cores<-}
 \alias{opt_progress}
 \alias{opt_progress<-}
 \alias{opt_stop_early}
@@ -41,10 +39,6 @@ opt_chunk_size(ctg) <- value
 opt_chunk_alignment(ctg)
 
 opt_chunk_alignment(ctg) <- value
-
-opt_cores(ctg)
-
-opt_cores(ctg) <- value
 
 opt_progress(ctg)
 
