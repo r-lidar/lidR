@@ -42,7 +42,7 @@
 #'
 #' @param algorithm function. A function that implements an algorithm to compute spatial interpolation.
 #' \code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).
-#' @param ... Usunsed
+#' @param ... Unused
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
 #' @param full_raster logical. By default the interpolation is made only within the convex hull of
@@ -104,6 +104,12 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   if (any(as.integer(use_class) != use_class)) stop("'add_class' is not a vector of integers'", call. = FALSE)
   use_class <- as.integer(use_class)
 
+  # Special non-documented optimization to bypass .availableRAM() from raster
+  # In some specific cases where I want to create sequentially many tiny DTMs
+  # In this case safety checks from raster become the bottlenecks
+  ellipsis <- list(...)
+  fast <- isTRUE(ellipsis[["fast"]])
+
   # Non standart evaluation (R CMD check)
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
@@ -126,7 +132,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   verbose("Generating interpolation coordinates...")
   layout <- rOverlay(las, res)
   names(layout) <- "Z"
-  grid <- raster::as.data.frame(layout, xy = TRUE)
+  grid <- raster2dataframe(layout, xy = TRUE, fast = fast)
   data.table::setDT(grid)
   grid[, Z := NULL]
   data.table::setnames(grid, names(grid), c("X", "Y"))
@@ -155,7 +161,13 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   Zg <- algorithm(ground, grid, scales, offsets)
   Zg <- round_any(Zg, zscale)
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
-  suppressWarnings(layout[cells] <- Zg)
+
+  if (fast) {
+    layout@data@values[cells] <- Zg
+    layout@data@inmemory <- TRUE
+  } else {
+    suppressWarnings(layout[cells] <- Zg)
+  }
 
   # Replace the interpolated value by the lowest point (legacy code)
   if (keep_lowest)

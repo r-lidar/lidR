@@ -178,3 +178,30 @@ match_chm_and_seeds = function(chm, seeds, field)
 
   return(list(cells = cells, ids = ids))
 }
+
+raster2dataframe = function(x, xy = FALSE, na.rm = FALSE, fast = FALSE)
+{
+  if (!fast) return(raster::as.data.frame(x, xy = xy, na.rm = na.rm))
+
+  v <- raster::getValues(x)
+
+  if (xy) {
+    XY <- data.frame(raster::xyFromCell(x, 1:raster::ncell(x)))
+    v <- cbind(XY, v)
+  }
+
+  if (na.rm)
+    v <- stats::na.omit(cbind(1:raster::ncell(x), v))
+
+  v <- as.data.frame(v)
+
+  if (na.rm) {
+    rownames(v) <- as.character(v[,1])
+    v <- v[,-1,drop=FALSE]
+  }
+
+  if (raster::nlayers(x) == 1)
+    colnames(v)[ncol(v)] <- names(x)  # for nlayers = 1
+
+  return(v)
+}

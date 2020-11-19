@@ -25,7 +25,7 @@ In that case the \code{RasterLayer} is used as the layout.}
 \item{algorithm}{function. A function that implements an algorithm to compute spatial interpolation.
 \code{lidR} implements \link{knnidw}, \link{tin}, and \link{kriging} (see respective documentation and examples).}
 
-\item{...}{Usunsed}
+\item{...}{Unused}
 
 \item{keep_lowest}{logical. This option forces the original lowest ground point of each
 cell (if it exists) to be chosen instead of the interpolated values.}
