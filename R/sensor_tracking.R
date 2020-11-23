@@ -105,11 +105,12 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
   assert_is_algorithm_trk(algorithm)
   assert_is_a_bool(extra_check)
   assert_is_a_number(thin_pulse_with_time)
+  assert_all_are_non_negative(thin_pulse_with_time)
   assert_is_a_bool(multi_pulse)
 
   lidR.context = "track_sensor"
 
-  . <- X <- Y <- Z <- ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- gpstime <- UserData <-  NULL
+  . <- X <- Y <- Z <- ReturnNumber <- NumberOfReturns <- PointSourceID <- pulseID <- gpstime <- UserData <-  missing_psi <- NULL
 
   data <- las@data
 
@@ -131,6 +132,10 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
     data.table::setorder(data, UserData, gpstime, ReturnNumber) ## set record order
 
   data$pulseID <- .lagisdiff(data[["gpstime"]])
+
+  # Fix #392
+  if (multi_pulse)
+    data[["pulseID"]] = data[["pulseID"]] + data[["UserData"]]
 
   # Count the points per pulse. We kept only first and last so it should be always 2
   count <- fast_table(data$pulseID,  max(data$pulseID))
@@ -176,10 +181,24 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
     zero  <- zero[-1,]
     return(zero)
   }
+  else
+  {
+    # Adress issue 391
+    psi <- unique(data$PointSourceID)
+    missing  <- !psi %in% unique(P$PointSourceID)
+    if (any(missing))
+    {
+      missing_psi = psi[missing]
+      txtids <- paste(missing_psi, collapse = ";")
+      missing_psi <- as.character(missing_psi)
+      warning(glue::glue("Some swaths present in the point cloud (PointSourceID = [{txtids}]) did not produce any sensor location."), call. = FALSE)
+    }
+  }
 
   na <- is.na(P[["X"]])
   P  <- P[!na]
   P  <- sp::SpatialPointsDataFrame(P[,3:4], P[,c(5,1,2,6)], proj4string = las@proj4string)
+  comment(P) <- missing_psi
 
   if (sum(na) > 0)
     warning(glue::glue("Something went wrong in {sum(na)} bins. The point cloud is likely to be incorrectly populated in a way not handled internally. Positions had not been computed everywere."), call. = FALSE)
@@ -200,13 +219,17 @@ track_sensor.LAScluster <- function(las, algorithm, extra_check = TRUE, thin_pul
 track_sensor.LAScatalog <- function(las, algorithm, extra_check = TRUE, thin_pulse_with_time = 0.001, multi_pulse = FALSE)
 {
   assert_is_a_number(thin_pulse_with_time)
+  assert_all_are_non_negative(thin_pulse_with_time)
 
   if (multi_pulse == FALSE)
     opt_select(las) <- "xyzrntpa"
   else
     opt_select(las) <- "xyzrntpau"
 
-  opt_filter(las) <- paste("-drop_single -thin_pulses_with_time", format(thin_pulse_with_time, scientific =  FALSE), opt_filter(las))
+  if (thin_pulse_with_time > 0)
+    opt_filter(las) <- paste("-drop_single -thin_pulses_with_time", format(thin_pulse_with_time, scientific =  FALSE), opt_filter(las))
+  else
+    opt_filter(las) <- paste("-drop_single", opt_filter(las))
 
   if (opt_output_files(las) != "")
   {
