@@ -132,6 +132,10 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
   data$pulseID <- .lagisdiff(data[["gpstime"]])
 
+  # Fix #392
+  if (multi_pulse)
+    data[["pulseID"]] = data[["pulseID"]] + data[["UserData"]]
+
   # Count the points per pulse. We kept only first and last so it should be always 2
   count <- fast_table(data$pulseID,  max(data$pulseID))
 
