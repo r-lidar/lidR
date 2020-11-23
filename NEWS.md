@@ -7,6 +7,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 * Fix: `normalize_intensity()` was not working with a `LAScatalog`. See [#388](https://github.com/Jean-Romain/lidR/issues/388)
 * Fix: In `grid_*()` function when a `RasterLayer` is given as layout, the computation was performed for all the cells no matter if the extent of the loaded point cloud was much smaller than the raster. For big rasters this had for consequences to dramatically increase the wordload with useless computation and to saturate the RAM to a point that the computation was no longer doable.
 * Fix: In `track_sensor()` pulseID could be wrongly attributed for multi-beam sensors if the number of points very low. See [#388](https://github.com/Jean-Romain/lidR/issues/392)
+* Fix: In `track_sensor()` if `thin_pulses_with_time = 0` a single pulse was loaded with a `LAScatalog`. However it worked with a LAS.
 * Doc: The documentation of `point_metrics()` clarifies how the user-defined function is fed and in which order the points are sorted.
 * Doc: The argument `Wdegerated` in `grid_terrain()` and `normalize_height()` was misleading.  An wrong interpretation was that degeratated ground points were discared from the dataset. The documentation now clarrifies the text to avoid misinterpretation.
 * Doc: minor fixes and clarifications in the `LAScatalog-class` page of the manual.

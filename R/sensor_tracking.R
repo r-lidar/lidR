@@ -105,6 +105,7 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
   assert_is_algorithm_trk(algorithm)
   assert_is_a_bool(extra_check)
   assert_is_a_number(thin_pulse_with_time)
+  assert_all_are_non_negative(thin_pulse_with_time)
   assert_is_a_bool(multi_pulse)
 
   lidR.context = "track_sensor"
@@ -218,13 +219,17 @@ track_sensor.LAScluster <- function(las, algorithm, extra_check = TRUE, thin_pul
 track_sensor.LAScatalog <- function(las, algorithm, extra_check = TRUE, thin_pulse_with_time = 0.001, multi_pulse = FALSE)
 {
   assert_is_a_number(thin_pulse_with_time)
+  assert_all_are_non_negative(thin_pulse_with_time)
 
   if (multi_pulse == FALSE)
     opt_select(las) <- "xyzrntpa"
   else
     opt_select(las) <- "xyzrntpau"
 
-  opt_filter(las) <- paste("-drop_single -thin_pulses_with_time", format(thin_pulse_with_time, scientific =  FALSE), opt_filter(las))
+  if (thin_pulse_with_time > 0)
+    opt_filter(las) <- paste("-drop_single -thin_pulses_with_time", format(thin_pulse_with_time, scientific =  FALSE), opt_filter(las))
+  else
+    opt_filter(las) <- paste("-drop_single", opt_filter(las))
 
   if (opt_output_files(las) != "")
   {
