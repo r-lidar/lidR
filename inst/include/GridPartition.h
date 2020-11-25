@@ -84,7 +84,11 @@ GridPartition::GridPartition(const Rcpp::S4 las)
   // an octree but here we only extended the original partition to add layer index
   // capability
   int search_type = 0;
-  if (las.hasSlot("type")) search_type = las.slot("type");
+  if (las.hasSlot("index"))
+  {
+    Rcpp::List index = las.slot("index");
+    search_type = index["index"];
+  }
   multilayer = multilayered(search_type);
 
   build(x,y,z);
@@ -120,7 +124,11 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
   // an octree but here we only extended the original partition to add layer index
   // capability
   int search_type = 0;
-  if (las.hasSlot("type")) search_type = las.slot("type");
+  if (las.hasSlot("index"))
+  {
+    Rcpp::List index = las.slot("index");
+    search_type = index["index"];
+  }
   multilayer = multilayered(search_type);
 
   build(x,y,z);

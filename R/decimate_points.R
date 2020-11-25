@@ -70,7 +70,7 @@ decimate_points.LAS = function(las, algorithm)
   assert_is_algorithm_dec(algorithm)
   lidR.context <- "decimate_points"
   selected <- algorithm(las)
-  return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE, type = las@type))
+  return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE, index = las@index))
 }
 
 #' @export

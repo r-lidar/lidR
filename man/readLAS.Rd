@@ -40,9 +40,12 @@ Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If seve
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.\cr\cr
-\code{readLAS} is the generic function. Using one of \code{read*LAS} functions adds a tag to the returned
-object to register a point cloud type. Registering the good point type \bold{may}
- improve the performance of some functions (see also \link[=LAS-class]{LAS-class}.)
+\code{readLAS} is the generic function and always works. Using one of \code{read*LAS} functions
+adds information to the returned object to register a point-cloud type. Registering the good point
+type \strong{may} improve the performance of some functions by enabling to select an appropriated spatial index.
+See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
+compatibility reasons \code{readLAS()} and \code{readALSLAS()} are equivalent assuming that lidR
+was firstly designed for ALS.
 }
 \details{
 \strong{Select:} the 'select' argument specifies the data that will actually be loaded. For example,
@@ -60,7 +63,7 @@ This is much more efficient than \link{filter_poi} in many ways. If the desired 
 before reading the file, the internal filters should always be preferred. The available filters are
 those from \code{LASlib} and can be found by running the following command: \code{readLAS(filter = "-help")}.
 (see also \link[rlas:read.las]{rlas::read.las}). From \code{rlas} v1.3.6 the transformation commands
-can also be passed via the argument filter.\cr\cr
+can also be passed via the argument filter.
 }
 \section{Multispectral data}{
 

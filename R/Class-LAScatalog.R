@@ -68,16 +68,7 @@
 #'
 #' @slot input_options list. A list of parameters to pass to \link{readLAS} (see dedicated section).
 #'
-#' @slot type integer. A number that corresponds to a point cloud type. 0 unknown (legacy
-#' with older version of lidR); 1 ALS; 2 TLS; 3 UAV; 4 DAP; 5 Multispectral ALS ;
-#' 10:15 Normalized version of each types. This information is not critical for
-#' working with lidR but it is uses when building a spatial index in some functions
-#' that require spatial indexing to build an optimized index type. Setting the
-#' correct type can speed-up some operations. Setting the wrong type may slow down
-#' some operation for example if an ALS point cloud is declared TLS. Types 0 and 1
-#' are actually equivalent and correspond to legacy behaviour. For example if a TLS
-#' point cloud is tagged ALS the processing will be similar to processing in
-#' version < 3.1.0 without degradation of the performances.
+#' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
 #'
 #' @section Processing options:
 #' The slot \code{@processing_options} contains a \code{list} of options that determine how chunks
@@ -213,7 +204,7 @@ setClass(
     processing_options = "list",
     output_options = "list",
     input_options = "list",
-    type = "numeric"
+    index = "list"
   )
 )
 
@@ -283,7 +274,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
     alt_dir = ""
   )
 
-  .Object@type <- UKNLAS
+  .Object@index <- LIDRDEFAULTINDEX
 
   return(.Object)
 })

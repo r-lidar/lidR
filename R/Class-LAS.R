@@ -71,16 +71,7 @@
 #' @slot header Object of class \link[=LASheader-class]{LASheader}. las file header according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
 #'
-#' @slot type integer. A number that corresponds to a point cloud type. 0 unknown (legacy
-#' with older version of lidR); 1 ALS; 2 TLS; 3 UAV; 4 DAP; 5 Multispectral ALS ;
-#' 10:15 Normalized version of each types. This information is not critical for
-#' working with lidR but it is uses when building a spatial index in some functions
-#' that require spatial indexing to build an optimized index type. Setting the
-#' correct type can speed-up some operations. Setting the wrong type may slow down
-#' some operation for example if an ALS point cloud is declared TLS. Types 0 and 1
-#' are actually equivalent and correspond to legacy behaviour. For example if a TLS
-#' point cloud is tagged ALS the processing will be similar to processing in
-#' version < 3.1.0 without degradation of the performances.
+#' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
 #'
 #' @include Class-LASheader.R
 #' @export
@@ -123,7 +114,7 @@
 #' \link{readLAS}
 setClass(
   Class = "LAS", contains = "Spatial",
-  representation(data = "data.table", header = "LASheader", type = "numeric")
+  representation(data = "data.table", header = "LASheader", index = "list")
 )
 
 setMethod("initialize", "LAS", function(.Object)
@@ -147,7 +138,7 @@ setMethod("initialize", "LAS", function(.Object)
   .Object@proj4string <- sp::CRS()
   .Object@header      <- LASheader(header)
   .Object@data        <- data
-  .Object@type        <- 0L
+  .Object@index       <- LIDRDEFAULTINDEX
 
   return(.Object)
 })

@@ -4,16 +4,18 @@
 #' or a collection of filenames. A LAScatalog is a representation of a collection
 #' of las/laz files. A computer cannot load all the data at once. A \code{LAScatalog}
 #' is a simple way to manage all the files sequentially. Most functions from
-#' \code{lidR} can be used seamlessly with a LAScatalog using the internal
-#' \code{LAScatalog} processing engine. To take advantage of the \code{LAScatalog}
+#' `lidR` can be used seamlessly with a LAScatalog using the internal
+#' `LAScatalog` processing engine. To take advantage of the `LAScatalog`
 #' processing engine the user must first adjust some processing options using the
 #' \link[=catalog_options_tools]{appropriated functions}. Careful reading of the
 #' \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
-#' \code{LAScatalog} class correctly.\cr\cr
-#' \code{readLAScatalog} is the generic function. Using one of \code{read*LAScatalog}
-#' functions adds a tag to the returned object to register a point cloud type.
-#' Registering the good point type \bold{may} improve the performance of some functions
-#' (see also \link[=LAS-class]{LAS-class}.)
+#' `LAScatalog` class correctly.\cr\cr
+#' `readLAScatalog` is the generic function and always works. Using one of `read*LAScatalog` functions
+#' adds information to the returned object to register a point-cloud type. Registering the good point
+#' type **may** improve the performance of some functions by enabling to select an appropriated spatial index.
+#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
+#' compatibility reasons `readLAScatalog()` and `readALSLAScatalog()` are equivalent assuming that lidR
+#' was firstly designed for ALS.
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files.
 #' Can also be a vector of file paths.
@@ -51,6 +53,7 @@
 #' help("LAScatalog-class", "lidR")
 #' help("catalog_options_tools", "lidR")
 #' }
+#' @md
 readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   assert_is_character(folder)
@@ -161,7 +164,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
-  ctg@type <- ALSLAS
+  ctg@index <- LIDRALSINDEX
   return(ctg)
 }
 
@@ -171,7 +174,7 @@ readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "",
 readTLSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
-  ctg@type <- TLSLAS
+  ctg@index <- LIDRTLSINDEX
   return(ctg)
 }
 
@@ -180,7 +183,7 @@ readTLSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "",
 readUAVLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
-  ctg@type <- UAVLAS
+  ctg@index <- LIDRUAVINDEX
   return(ctg)
 }
 
@@ -189,7 +192,7 @@ readUAVLAScatalog = function(folder, progress = TRUE, select = "*", filter = "",
 readDAPLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
-  ctg@type <- DAPLAS
+  ctg@index <- LIDRDAPINDEX
   return(ctg)
 }
 

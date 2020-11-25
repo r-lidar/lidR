@@ -3,7 +3,7 @@
 readALSLAS = function(files,  select = "*", filter = "")
 {
   las <- readLAS(files, select, filter)
-  las@type <- ALSLAS
+  las@index <- LIDRALSINDEX
   return(las)
 }
 
@@ -13,7 +13,7 @@ readALSLAS = function(files,  select = "*", filter = "")
 readTLSLAS = function(files,  select = "*", filter = "")
 {
   las <- readLAS(files, select, filter)
-  las@type <- TLSLAS
+  las@index <- LIDRTLSINDEX
   return(las)
 }
 
@@ -22,7 +22,7 @@ readTLSLAS = function(files,  select = "*", filter = "")
 readUAVLAS = function(files,  select = "*", filter = "")
 {
   las <- readLAS(files, select, filter)
-  las@type <- UAVLAS
+  las@index <- LIDRUAVINDEX
   return(las)
 }
 
@@ -31,7 +31,7 @@ readUAVLAS = function(files,  select = "*", filter = "")
 readDAPLAS = function(files,  select = "*", filter = "")
 {
   las <- readLAS(files, select, filter)
-  las@type <- DAPLAS
+  las@index <- LIDRDAPINDEX
   return(las)
 }
 
@@ -52,7 +52,7 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
   if (missing(files2) && missing(files3))
   {
     las <- readLAS(files1, select, filter)
-    las@type <- MLSLAS
+    las@index <- LIDRMLSINDEX
     return(las)
   }
 
@@ -92,6 +92,6 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
     }
   }
 
-  las@type <- MLSLAS
+  las@index <- LIDRMLSINDEX
   return(las)
 }

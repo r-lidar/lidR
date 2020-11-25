@@ -199,7 +199,7 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
   fast_quantization(las@data[["Z"]], zscale, zoffset)
   las <- lasupdateheader(las)
-  las@type <- las@type + NLAS
+  las@index$sensor <- las@index$sensor + NLAS
   return(las)
 }
 
@@ -239,7 +239,7 @@ unnormalize_height = function(las)
   else
     message("No attribute 'Zref' found. Un-normalizisation is impossible.")
 
-  if (las@type > NLAS) las@type <- las@type - NLAS
+  if (las@index$sensor > NLAS) las@index$sensor <- las@index$sensor - NLAS
   return(las)
 }
 

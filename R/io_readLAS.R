@@ -31,12 +31,15 @@
 #' once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 #' to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 #' The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.\cr\cr
-#' \code{readLAS} is the generic function. Using one of \code{read*LAS} functions adds a tag to the returned
-#' object to register a point cloud type. Registering the good point type \bold{may}
-#'  improve the performance of some functions (see also \link[=LAS-class]{LAS-class}.)
+#' `readLAS` is the generic function and always works. Using one of `read*LAS` functions
+#' adds information to the returned object to register a point-cloud type. Registering the good point
+#' type **may** improve the performance of some functions by enabling to select an appropriated spatial index.
+#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
+#' compatibility reasons `readLAS()` and `readALSLAS()` are equivalent assuming that lidR
+#' was firstly designed for ALS.
 #'
 #'
-#' \strong{Select:} the 'select' argument specifies the data that will actually be loaded. For example,
+#' **Select:** the 'select' argument specifies the data that will actually be loaded. For example,
 #' 'xyzia' means that the x, y, and z coordinates, the intensity and the scan angle will be loaded.
 #' The supported entries are t - gpstime, a - scan angle, i - intensity, n - number of returns,
 #' r - return number, c - classification, s - synthetic flag, k - keypoint flag, w - withheld flag,
@@ -46,18 +49,17 @@
 #' Also numbers from 1 to 9 for the extra bytes data numbers 1 to 9. 0 enables all extra bytes to be
 #' loaded and '*' is the wildcard that enables everything to be loaded from the LAS file. \cr
 #' Note that x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
-#' \strong{Filter:} the 'filter' argument allows filtering of the point cloud while reading files.
+#' **Filter:** the 'filter' argument allows filtering of the point cloud while reading files.
 #' This is much more efficient than \link{filter_poi} in many ways. If the desired filters are known
 #' before reading the file, the internal filters should always be preferred. The available filters are
-#' those from \code{LASlib} and can be found by running the following command: \code{readLAS(filter = "-help")}.
-#' (see also \link[rlas:read.las]{rlas::read.las}). From \code{rlas} v1.3.6 the transformation commands
-#' can also be passed via the argument filter.\cr\cr
+#' those from `LASlib` and can be found by running the following command: `readLAS(filter = "-help")`.
+#' (see also \link[rlas:read.las]{rlas::read.las}). From `rlas` v1.3.6 the transformation commands
+#' can also be passed via the argument filter.
 #'
 #' @param files characters. Path(s) to one or several a file(s). Can also be a
 #' \link[=LAScatalog-class]{LAScatalog} object.
 #' @param select character. Read only attributes of interest to save memory (see details).
 #' @param filter character. Read only points of interest to save memory (see details).
-#'
 #'
 #' @return A LAS object
 #'
@@ -72,6 +74,7 @@
 #'
 #' # Negation of attributes is also possible (all except intensity and angle)
 #' las = readLAS(LASfile, select = "* -i -a")
+#' @md
 readLAS = function(files, select = "*", filter = "")
 {
   if (filter == "-h" | filter == "-help")
@@ -135,21 +138,9 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
 
   buffer <- X <- Y <- NULL
 
-  if (files@type == UKNLAS | files@type == UKNLAS + NLAS)
-    read <- readLAS
-  else if (files@type == ALSLAS | files@type == ALSLAS + NLAS)
-    read <- readALSLAS
-  else if (files@type == TLSLAS | files@type == TLSLAS + NLAS)
-    read <- readTLSLAS
-  else if (files@type == UAVLAS | files@type == UAVLAS + NLAS)
-    read <- readUAVLAS
-  else if (files@type == DAPLAS | files@type == DAPLAS + NLAS)
-    read <- readDAPLAS
-  else
-    read <- readLAS
-
-  las <- read(files@files, files@select, files@filter)
+  las <- readLAS(files@files, files@select, files@filter)
   las@proj4string <- files@proj4string
+  las@index <- files@index
 
   las@data[, buffer := LIDRNOBUFFER]
 
@@ -292,5 +283,5 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  return(LAS(data, header, check = TRUE))
+  return(LAS(data, header, check = TRUE, index = LIDRDEFAULTINDEX))
 }

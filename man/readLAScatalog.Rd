@@ -69,7 +69,7 @@ Can also be a vector of file paths.}
 options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.}
 
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically
-`recursive = TRUE`.}
+\code{recursive = TRUE}.}
 }
 \value{
 A \code{LAScatalog} object
@@ -85,10 +85,12 @@ processing engine the user must first adjust some processing options using the
 \link[=catalog_options_tools]{appropriated functions}. Careful reading of the
 \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 \code{LAScatalog} class correctly.\cr\cr
-\code{readLAScatalog} is the generic function. Using one of \code{read*LAScatalog}
-functions adds a tag to the returned object to register a point cloud type.
-Registering the good point type \bold{may} improve the performance of some functions
-(see also \link[=LAS-class]{LAS-class}.)
+\code{readLAScatalog} is the generic function and always works. Using one of \code{read*LAScatalog} functions
+adds information to the returned object to register a point-cloud type. Registering the good point
+type \strong{may} improve the performance of some functions by enabling to select an appropriated spatial index.
+See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
+compatibility reasons \code{readLAScatalog()} and \code{readALSLAScatalog()} are equivalent assuming that lidR
+was firstly designed for ALS.
 }
 \examples{
 # A single file LAScatalog using data provided with the package

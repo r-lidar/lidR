@@ -41,11 +41,11 @@ setClass(
     name   = "character",
     save   = "character",
     alt_dir = "character",
-    type = "numeric"
+    index = "list"
   )
 )
 
-setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name, wkt, proj4string, type)
+setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name, wkt, proj4string, index)
 {
   hw = width/2
   hh = height/2
@@ -64,7 +64,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   .Object@save   <- ""
   .Object@wkt    <- ""
   .Object@proj4string <- proj4string
-  .Object@type   <- type
+  .Object@index   <- index
 
   if (shape == LIDRCIRCLE)
     .Object@filter = paste("-inside_circle", xc, yc, hw + buffer)
