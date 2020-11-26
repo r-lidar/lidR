@@ -1,14 +1,12 @@
 #include "LAS.h"
 #include <boost/geometry.hpp>
 #include <limits>
-#include "GridPartition.h"
+#include "SpatialIndex.h"
 #include "Progress.h"
 #include "myomp.h"
 #include <boost/functional/hash.hpp>
 
 using namespace lidR;
-
-typedef lidR::GridPartition SpatialIndex;
 
 LAS::LAS(S4 las, int ncpu)
 {

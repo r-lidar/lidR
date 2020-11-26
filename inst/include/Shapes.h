@@ -76,10 +76,7 @@ struct Rectangle: public Shape
   template<typename T> bool contains(const T&);
 };
 
-inline
-Rectangle::Rectangle(double xmin, double xmax, double ymin, double ymax) : Shape(xmin, xmax, ymin, ymax)
-{
-}
+inline Rectangle::Rectangle(double xmin, double xmax, double ymin, double ymax) : Shape(xmin, xmax, ymin, ymax) { }
 
 template<typename T>
 bool Rectangle::contains(const T& p)

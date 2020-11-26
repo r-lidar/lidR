@@ -19,6 +19,7 @@ namespace lidR
 class GridPartition
 {
   public:
+    GridPartition();
     GridPartition(const Rcpp::S4 las);
     GridPartition(const Rcpp::S4 las, const std::vector<bool>& filter);
     GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector);
@@ -31,37 +32,31 @@ class GridPartition
 
   private:
     bool multilayer;
-    unsigned int ncells;
-    unsigned int npoints;
-    unsigned int ncols;
-    unsigned int nrows;
-    unsigned int nlayers;
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    double zmin;
-    double zmax;
-    double xres;
-    double yres;
-    double zres;
-    double area;
-    double volume;
+    unsigned int  npoints;
+    unsigned int ncols, nrows, nlayers, ncells;
+    double xmin,ymin,xmax,ymax,zmin,zmax;
+    double xres, yres, zres;
+    double area, volume;
     std::vector<bool> filter;
-    std::vector<std::vector<PointXYZ>> registry;
+    std::vector<std::vector<PointXYZ>> heap;
+    enum TYPES {UKN = 0, ALS = 1, TLS = 2, UAV = 3, DAP = 4, MLS = 5};
+    enum INDEXES {AUTOINDEX = 0, GRIDPARTITION = 1, VOXELPARTITION = 2};
 
   private:
     int get_cell(double, double, double);
     void build(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
-    bool multilayered(const int);
+    bool multilayered(const Rcpp::S4 las);
 };
+
+inline GridPartition::GridPartition()
+{
+}
 
 /*
  * Default constructor using an S4 LAS object. The LAS object contains a tag
  * that enables to choose automatically between a grid- or voxel-based indexation
  */
-inline
-GridPartition::GridPartition(const Rcpp::S4 las)
+inline GridPartition::GridPartition(const Rcpp::S4 las)
 {
   Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
   Rcpp::NumericVector x = data["X"];
@@ -83,13 +78,7 @@ GridPartition::GridPartition(const Rcpp::S4 las)
   // index on z. This is not true for TLS data that do need a 3D index. Ultimately
   // an octree but here we only extended the original partition to add layer index
   // capability
-  int search_type = 0;
-  if (las.hasSlot("index"))
-  {
-    Rcpp::List index = las.slot("index");
-    search_type = index["index"];
-  }
-  multilayer = multilayered(search_type);
+  multilayer = multilayered(las);
 
   build(x,y,z);
 }
@@ -101,8 +90,7 @@ GridPartition::GridPartition(const Rcpp::S4 las)
  * vector that is used to skip points one the fly. Points of 'las' where 'f' is false
  * are simply not inserted in the index.
  */
-inline
-GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
+inline GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
 {
   Rcpp::DataFrame data = Rcpp::as<Rcpp::DataFrame>(las.slot("data"));
   Rcpp::NumericVector x = data["X"];
@@ -123,13 +111,7 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
   // index on z. This is not true for TLS data that do need a 3D index. Ultimately
   // an octree but here we only extended the original partition to add layer index
   // capability
-  int search_type = 0;
-  if (las.hasSlot("index"))
-  {
-    Rcpp::List index = las.slot("index");
-    search_type = index["index"];
-  }
-  multilayer = multilayered(search_type);
+  multilayer = multilayered(las);
 
   build(x,y,z);
 }
@@ -138,8 +120,7 @@ GridPartition::GridPartition(const Rcpp::S4 las, const std::vector<bool>& f)
  * Legacy constructor for 2D data. Should not be used but is still used in lidR
  * for code that need refactoring + to build simple unit tests.
  */
-inline
-GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
+inline GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
 {
   if (x.size() != y.size())
     Rcpp::stop("Internal error in spatial index: x and y have different sizes."); // # nocov
@@ -164,8 +145,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
  * Legacy constructor for 3D data. Should not be used but is still used in lidR
  * for code that need refactoring + to build simple unit tests.
  */
-inline
-GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z)
+inline GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVector y, const Rcpp::NumericVector z)
 {
   if (x.size() != y.size())
     Rcpp::stop("Internal error in spatial index: x and y have different sizes."); // # nocov
@@ -181,7 +161,7 @@ GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::NumericVec
   std::fill(filter.begin(), filter.end(), true);
 
   // Use legacy 2D index
-  multilayer = false;
+  multilayer = true;
 
   build(x,y,z);
 }
@@ -213,7 +193,7 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>
     for (int row = std::max(rowmin,0) ; row <= std::min(rowmax, (int)nrows-1) ; row++) {
       for (int lay = std::max(laymin,0) ; lay <= std::min(laymax, (int)nlayers-1) ; lay++) {
         cell = lay * nrows * ncols + row * ncols + col;
-        for (std::vector<PointXYZ>::iterator it = registry[cell].begin() ; it != registry[cell].end() ; it++) {
+        for (std::vector<PointXYZ>::iterator it = heap[cell].begin() ; it != heap[cell].end() ; it++) {
           if (shape.contains(*it))
             res.emplace_back(&(*it));
         }
@@ -228,8 +208,7 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>
  * Query the knn of a given 2D point. In that case the Z coordinates is not
  * considered for searching the neighbours. It is a search on XY only.
  */
-inline
-void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
@@ -253,8 +232,7 @@ void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<Poin
  * Query the knn of a given 2D point with a maximum radius search. If there are
  * less than k neighbours it returns less than k points
  */
-inline
-void GridPartition::knn(const PointXY& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXY& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
@@ -286,8 +264,7 @@ void GridPartition::knn(const PointXY& p, const unsigned int k, const double max
 /*
  * Query the knn of a given 3D point.
  */
-inline
-void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
@@ -310,8 +287,7 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<Poi
 /*
  * Query the knn of a given 3D point with a maximum radius.
  */
-inline
-void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
@@ -339,11 +315,10 @@ void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double ma
   return;
 }
 
-inline
-void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
+inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::NumericVector y,  const Rcpp::NumericVector z)
 {
-  if (npoints == 0)
-    Rcpp::stop("Internal error in spatial index: impossible to build an index with 0 points."); // # nocov
+  //if (npoints == 0)
+  //  Rcpp::stop("Internal error in spatial index: impossible to build an index with 0 points."); // # nocov
 
   // Compute the bounding box
   xmin =  XYINF;
@@ -442,24 +417,25 @@ void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::NumericVector
   // Allocate the strict amount of memory required
   // The goal is to avoid over memory allocation when using push_back, which double
   // the size of the container when resized.
-  registry.resize(ncells);
+  heap.resize(ncells);
   for (auto i = 0 ; i < ncells; i++)
-    registry[i].reserve(cell_points[i]);
+    heap[i].reserve(cell_points[i]);
+
+  //Rprintf("Partition [%.2lf, %.2lf] x [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d cells in %d layers \n", xmin,xmax,ymin,ymax,zmin,zmax,ncells, nlayers);
 
   // Insert the points. No segfault possible here because get_cell() already check
   // if the values it returns are < 0 or > ncells-1 so we are sure to do not access
-  // memory beyond registry range. No need to extra security tests (hopefully)
+  // memory beyond heap range. No need to extra security tests (hopefully)
   unsigned int key;
   for (int i = 0 ; i < x.size() ; i++) {
     if (filter[i]) {
       key = cell_index[i];
-      registry[key].emplace_back(x[i], y[i], z[i], i);
+      heap[key].emplace_back(x[i], y[i], z[i], i);
     }
   }
 }
 
-inline
-int GridPartition::get_cell(double x, double y, double z)
+inline int GridPartition::get_cell(double x, double y, double z)
 {
   int col = std::floor((x - xmin) / xres);
   int row = std::floor((ymax - y) / yres);
@@ -472,27 +448,35 @@ int GridPartition::get_cell(double x, double y, double z)
   return cell;
 }
 
-inline
-bool GridPartition::multilayered(const int search_type)
+inline bool GridPartition::multilayered(const Rcpp::S4 las)
 {
-  // nlayers = 1 is equivalent to legacy code with no layer defined (was implicitly one)
-  // with other search type we can add layers to get a z index.
-  switch (search_type)
+  if (las.hasSlot("index"))
   {
-  case 0:  return false;  break;
-  case 1:  return false;  break;
-  case 2:  return true;   break;
-  case 3:  return false;  break;
-  case 4:  return false;  break;
-  case 5:  return false;  break;
-  case 10: return false;  break;
-  case 11: return false;  break;
-  case 12: return true;   break;
-  case 13: return false;  break;
-  case 14: return false;  break;
-  case 15: return false;  break;
-  default: Rcpp::stop("Internal error in spatial index: the LAS object has a slot 'type' that is not recognized.");
+    Rcpp::List index = las.slot("index");
+    int code = index["index"];
+    int sensor = index["sensor"];
+
+    // Automatic index selection
+    if (code == AUTOINDEX)
+    {
+      if (sensor == TLS || sensor == UAV || sensor == DAP)
+        return true;
+      else
+        return false;
+    }
+    else
+    {
+      if (code == GRIDPARTITION)
+        return false;
+      else if (code == VOXELPARTITION)
+        return true;
+      else
+        Rcpp::stop("Internal error in GridPartition: las object registered a spatial index that is not a partition."); // # nocov
+    }
   }
+
+  // Backward compatibility
+  return false; // # nocov
 }
 
 }

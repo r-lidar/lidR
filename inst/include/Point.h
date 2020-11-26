@@ -35,6 +35,13 @@ typedef Point2D<double, double, unsigned int> Point;
 typedef Point2D<double, double, unsigned int> PointXY;
 typedef Point3D<double, double, double, unsigned int> PointXYZ;
 
+template<typename T, typename U> double distance(T& lhs, U& rhs)
+{
+  double dx = lhs.x - rhs.x;
+  double dy = lhs.y - rhs.y;
+  return std::sqrt(dx*dx+dy*dy);
+}
+
 
 /*
  * Used to sort points with std::sort

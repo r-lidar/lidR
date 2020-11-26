@@ -2,7 +2,16 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.1.0 (Release date: yyyy-mm-dd)
 
-#### CHANGE
+#### MAJOR NEW FEATURES
+
+The release 3.1.0 comes with major internal modifications enabling to chose different kind of spatial index to process the point-clouds including Quatrees and Octrees. Previous releases were optimized to processed ALS data fast but were suboptimal for TLS data (for example) because the spatial index was optimized for ALS. With 3 new spatial indexes, version 3.1.0 brings the capability to process TLS data efficiently. At the time being, `lidR` is still focusing on ALS and does not include many functions for TLS processing but the existing functions that apply on all kind of point-cloud such as `point_metrics()` or `detect_shape()` are already much faster on TLS.
+
+1. The class `LAS` has a new slot `@index` that registers the source of the point cloud (e.g. ALS, TLS, UAV, DAP) and the spatial index that must be used (e.g. grid partition, voxel partition, quadtree, octree). See `help("lidR-spatial-index")`.
+2. This come with several new functions `read*LAS()` such as `readTLSLAS()` that register the point cloud type and a default spatial index. Registering the good point type improves the performance of some functions. If performance are not improved in this release the future version of the package may bring enhancements as a function of the point-cloud type. This is particularly visible in functions that perform 3D knn search such as `point_metrics()`. Computing `point_metrics()` on a TLS point-cloud tagged TLS is much faster than if not tagged.
+3. New functions `index()` and `sensor()` to modify manually spatial index related informations. `help("lidR-spatial-index")`.
+4. C++ API: the C++ classes for spatial index are header-only and stored in `inst/include` meaning that other packages can link to `lidR` to uses the spatial index at C++ level. However the classes are not documented yet but the source code is simple and commented and the [lidR book](https://jean-romain.github.io/lidRbook/) contains or will contain a chapter about spatial indexing.
+
+#### CHANGES
 
 1. The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
 2. The construction of a `LAS` object with `LAS()` now triggers warnings with inccorectly quantized coordinates according to the information in the header.
@@ -12,37 +21,23 @@ grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
 # Use instead
 grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 8)
 ```
+4. `opt_cores()` and `opt_cores<-()` are now defunc. These functions did not have any effect because they only throw a warning to alert about deprecation since v2.1.0 (July 2019).
+5.  The classes `LAS*` have a new slot `@index` (see above). This should not break anything expect if a `LAS*` object was save in a `Rds` files and loaded as an R object instead of being read with `readLAS`.
  
 #### NEW FEATURES
 
-1. `Classify_ground()`
+1. `classify_ground()`
     - New algorithm `mcc()` for ground classification based on Evans and Hudak (2007). This a porting of the MCC-lidar software to R via the `RMCC` package.
     ```r
     las <- classify_ground(las, mcc())
     ```
-2. ALS, TLS, UAV, DAP
-    - The class `LAS` has a new slot `@type` that registers the source and the type of the point cloud (e.g. ALS, TLS, UAV, DAP). The `print()` function displays the point source. 
-    ```r
-    #> class        : LAS (v1.2 format 1)
-    #> memory       : 5.6 Mb 
-    #> extent       : 273357.1, 273642.9, 5274357, 5274643 (xmin, xmax, ymin, ymax)
-    #> coord. ref.  : NAD83(CSRS) / MTM zone 7 
-    #> area         : 81584.33 m²
-    #> points       : 73.4 thousand points
-    #> density      : 0.9 points/m²
-    #> point source : TLS
-    ```
-    - This come with several new functions `read*LAS()` such as `readTLSLAS()` that register the point cloud type. Registering the good point type may improve the performance of some functions. If performance are not improved in this release the future version of the package may bring enhancements as a function of the point cloud type. This is particularly visible in functions that perform 3D knn search such as `point_metrics()`. Computing `point_metrics()` on a TLS point cloud tagged TLS is much faster than if not tagged.
-
-3. C++ API
-    - The C++ classes for spatial index are now header-only and stored in `inst/include` meaning that other package can link to `lidR` to uses the spatial index at C++ level. However the classes are not documented yet but the source code is simple and commented.
     
-4. `classify_noise()`
+2. `classify_noise()`
     - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
     - New algorithm `sor()` (statistical outlier removal) for noise classification
     - New algorithm `ivf()` (isolated voxel filter) for noise classification
 
-5. Quantization of the coordinates. `LAS` objects in `lidR`object closely respect the ASPRS standard. But when update manually by users some inadequte pratices may generate invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object and we modified the behavior of the `[[<-` and `$<-` operators to ensure that is is more difficult to create `LAS` object that are not ASPRS compliant.
+3. Quantization of the coordinates. `LAS` objects in `lidR`object closely respect the ASPRS standard. When modified manually by users some inadequte pratices may generate invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object and we modified the behavior of the `[[<-` and `$<-` operators to ensure that it is more difficult to create `LAS` objects that are not ASPRS compliant.
     - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the header metadata.
     - New function `las_update()` to update the header (bounding box, number of points, return count and so on) if a LAS object was modified outside a `lidR` functions.
     - Enhanced behaviour of `[[<-` and `$<-` operators. Values are quantized on-the-fly and the header is updated automatically when attributing new values to `X`, `Y` or `Z`.
@@ -55,11 +50,12 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
     las$X # Values where quantized (and header updated)
     #> [1] 2.422 1.953 1.767 2.621 2.083 2.122 2.638 2.251 2.629 2.429
     ```
+    - New manual page can be found in `help("las_utilities")`.
     
-6. metrics
+4. metrics
     - `voxel_metrics()` gained a parameter `all_voxels` to include voxels with 0 point [#375](https://github.com/Jean-Romain/lidR/issues/375).
     
-7. `grid_terrain()`
+5. `grid_terrain()`
     - new parameter `...` after `algorithm` which invalidate code that uses too much parameters without naming them. This no longer works:
     ```r
     grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
@@ -68,19 +64,6 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
     ```
     - new parameter `is_concave` to compute a nicer DTM if the point cloud is not convex [#374](https://github.com/Jean-Romain/lidR/issues/374)
      
-    
-#### ENHANCEMENTS
-
-1. Internally the spatial index better balances the repartion of cells in the partition. While this should be invisible in most cases it might speed-up a bit some queries in some very specific dataset. The goal of this enhancement is mainly to provide optimal indexes for TLS data.
-
-2. Internally the spatial index better allocates memory and this should reduce memory footprint.
-
-#### FIXES
-
-#### MISCELLANEOUS
-
-1. `opt_cores()` and `opt_cores<-()` are now defunc. These functions did not have any effect because they only throw a warning to alert about deprecation since v2.1.0 (July 2019).
-
 ## lidR v3.0.5 (Release date: ...)
 
 * Fix: In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.
