@@ -33,7 +33,7 @@ sptest <- function(cluster, DataFrame = FALSE) {
   if (!DataFrame )
     return(sp::SpatialPoints(head(lidR:::coordinates(las))))
   else
-    return(sp::SpatialPointsDataFrame(head(lidR:::coordinates(las)), data.frame(u = runif(6))))
+    return(sp::SpatialPointsDataFrame(head(lidR:::coordinates(las)), data.frame(u = 1:6)))
 }
 
 sftest <- function(cluster) {

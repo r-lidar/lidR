@@ -216,9 +216,9 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   }
 
   # Check if coordinates actually match the resolution
-  # Check only 100 of them including the first one
-  n <- min(100, length(points$X)) - 1
-  s <- c(1, sample(2:length(points$X), n))
+  # Check only 100 of them
+  n <- min(100L, length(points$X))
+  s <- as.integer(seq(1L, length(points$X), length.out = n))
   X <- points$X[s]
   Y <- points$Y[s]
   x <- fast_countunquantized(X, scales[1], offsets[1])
