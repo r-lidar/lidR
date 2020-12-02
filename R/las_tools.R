@@ -229,7 +229,11 @@ is.quantized = function(x, scale, offset, ...)
 {
   p <- list(...)
   if (!is.null(p$sample))
-    x <- sample(x, min(100, length(x)))
+  {
+    n <- min(100L, length(x))
+    s <- as.integer(seq(1L, length(x), length.out = n))
+    x <- x[s]
+  }
 
   return(fast_countunquantized(x, scale, offset) == 0L)
 }
