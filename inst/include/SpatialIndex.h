@@ -152,5 +152,5 @@ inline int SpatialIndex::index_selector(const Rcpp::S4 las)
 
 }
 
-#endif //QT_H
+#endif //INDEX_H
 

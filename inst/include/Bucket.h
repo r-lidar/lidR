@@ -12,9 +12,11 @@ namespace Bucket
 
 struct KnnBucket
 {
-  KnnBucket(PointXYZ& p, const unsigned int k, const double radius);
+  KnnBucket(const PointXYZ& p, const unsigned int k, const double radius);
+  KnnBucket(const PointXY& p, const unsigned int k, const double radius);
   void push(PointXYZ& p);
 
+  bool XYonly = false;
   unsigned int k;
   unsigned int pos_max_dist;
   double max_dist;
@@ -23,19 +25,34 @@ struct KnnBucket
   std::vector<PointXYZ*> bucket;
 };
 
-inline KnnBucket::KnnBucket(PointXYZ& _p, const unsigned int _k, const double radius)
+inline KnnBucket::KnnBucket(const PointXYZ& p, const unsigned int k, const double radius)
 {
-  k = 0;
-  pref = _p;
+  this->k = 0;
+  pref = p;
+  XYonly = false;
   pos_max_dist = 0;
   max_dist = (radius == 0) ? std::numeric_limits<double>::max() : radius;
-  bucket.resize(_k);
-  distance.resize(_k);
+  bucket.resize(k);
+  distance.resize(k);
 }
+
+inline KnnBucket::KnnBucket(const PointXY& p, const unsigned int k, const double radius)
+{
+  this->k = 0;
+  pref = PointXYZ(p.x, p.y, 0);
+  XYonly = true;
+  pos_max_dist = 0;
+  max_dist = (radius == 0) ? std::numeric_limits<double>::max() : radius;
+  bucket.resize(k);
+  distance.resize(k);
+}
+
 
 inline void KnnBucket::push(PointXYZ& p)
 {
-  double dist = std::sqrt((pref.x-p.x)*(pref.x-p.x)+(pref.y-p.y)*(pref.y-p.y)+(pref.z-p.z)*(pref.z-p.z));
+  double dist = (pref.x-p.x)*(pref.x-p.x)+(pref.y-p.y)*(pref.y-p.y);
+  if (!XYonly) dist += (pref.z-p.z)*(pref.z-p.z);
+  dist = std::sqrt(dist);
 
   if (dist <= max_dist && k < bucket.size())
   {

@@ -2,11 +2,11 @@
 #'
 #' This document explains how to process point-clouds taking advantage of different spatial
 #' indexes available in the lidR package. lidR can use several types of spatial indexes to
-#' apply algorithms that need a spatial indexing as fast as possible. The choice of the spatial
+#' apply algorithms (that need a spatial indexing) as fast as possible. The choice of the spatial
 #' index depends on the type of point-cloud that is processed and the algorithm that is performed.
 #' lidR can use a grid partition, a voxel partition, a quadtree or an octree. See details.
 #'
-#' In lidR (>= 3.1.0), a \link[=LAS-class]{LAS} object records the sensor used to sample
+#' From lidR (>= 3.1.0), a \link[=LAS-class]{LAS} object records the sensor used to sample
 #' the point-cloud (ALS, TLS, UAV, DAP) as well as the spatial index that must be used
 #' for processing the point cloud. This can be set manually by the user but the simplest is
 #' to use one of the \link[=readLAS]{read*LAS()} function. By default a point-cloud is associated
@@ -19,22 +19,27 @@
 #' - `sensor`: an integer that records the sensor type
 #' - `index`: an integer that records the spatial index to used
 #'
-#' Some global variable defined in the package can be used to attribute manually the adequate
-#' codes if needed. By default the spatial index code is 0 meaning that each function is free
-#' to choose a spatial index depending on the recorded sensor. If the code is not 0 then each
-#' function will be forced to used the spatial index that is imposed.
+#' By default the spatial index code is 0 ("automatic") meaning that each function is free
+#' to choose a different spatial index depending on the recorded sensor. If the code is not
+#' 0 then each function will be forced to used the spatial index that is imposed.
 #'
 #' \link[=LAScatalog-class]{LAScatalog} objects also record such information that is automatically
 #' propagated to the LAS objects when processing.
 #'
-#' Notice that sensor code 0 (not registered) is equivalent to ALS for legacy and backward
-#' compatibility reasons. Consequently `readLAS()` and `readALSLAS()` are equivalent.
+#' Note: before version 3.1.0 point-clouds were all considered as ALS because lidR was preliminary
+#' designed for ALS. Consequently for legacy and backward compatibility reasons `readLAS()`
+#' and `readALSLAS()` are actually equivalent. `readLAS()` tags the point cloud with "unknown"
+#' sensor while `readALSLAS()` tags it with 'ALS' both behave the same and
+#' especially behave the same than in versions < 3.1. As a consequence using `readLAS()` provides
+#' the same performance (no degradation) than in previous version while using one of `read*LAS()`
+#' may improve the performance.
 #'
 #' @template param-las
-#' @param h boolean. Human readable
-#' @param value integer. A code for refereeing to a sensor type or a spatial index type. Use
-#' one of `UKNLAS`, `ALSLAS`, `TLSLAS`, `UAVLAS`, `DAPLAS`, `MLSLAS` for sensor and one of
-#' `LIDRAUTOINDEX`, `LIDRGRIDPARTITION`, `LIDRVOXELPARTITION`, `LIDRQUADTREE` `LIDROCTREE`
+#' @param h boolean. Human readable. Everything is stored as integers that are understood
+#' internally. Use `h = TRUE` for user readable output.
+#' @param value integer or character. A code for refereeing to a sensor type or a spatial
+#' index type. Use one of `"unknown"`, `"als"`, `"tls"`, `"uav"`, `"dap"`, `"multispectral"`
+#' for sensor and one of `"auto"`, `"gridpartition"`, `"voxelpartition"`, `"quadtree"`, `"octree"`
 #' for spatial index.
 #'
 #' @examples
@@ -52,13 +57,13 @@
 #'
 #' # Modification of the sensor enables to select a better spatial index
 #' # when processing the point-cloud.
-#' sensor(las) <- TLSLAS
+#' sensor(las) <- "tls"
 #' sensor(las, h = TRUE)
 #' index(las, h = TRUE)
 #'
 #' # Modification of the spatial index forces to use one of the avaialble
 #' # spatial index.
-#' index(las) <- LIDRQUATREE
+#' index(las) <- "quadtree"
 #' sensor(las, h = TRUE)
 #' index(las, h = TRUE)
 #'
@@ -70,64 +75,35 @@
 #'
 #' # But for some specific point-cloud / algorithm it might be advised to force
 #' # the use of a specific spatial index to perform the computation faster
-#' index(las) <- LIDRVOXELPARTITION
+#' index(las) <- "voxelpartition"
 #' index(las, h = TRUE)
 #'
 #' # With a LAScatalog, spatial indexing informations are propagated to the
 #' # different chunks
 #' ctg = readTLSLAScatalog(LASfile)
-#' index(ctg) <- LIDRVOXELPARTITION
+#' index(ctg) <- "voxelpartition"
 #' sensor(ctg, h = TRUE)
 #' index(ctg, h = TRUE)
+#'
 #'
 #' @name lidR-spatial-index
 #' @md
 NULL
 
-#' @rdname lidR-spatial-index
-#' @export
+LIDRSPATIALINDEXES <- c("auto", "gridpartition", "voxelpartition", "quadtree", "octree")
 LIDRAUTOINDEX      <- 0L
-
-#' @rdname lidR-spatial-index
-#' @export
 LIDRGRIDPARTITION  <- 1L
-
-#' @rdname lidR-spatial-index
-#' @export
 LIDRVOXELPARTITION <- 2L
-
-#' @rdname lidR-spatial-index
-#' @export
 LIDRQUADTREE       <- 3L
-
-#' @rdname lidR-spatial-index
-#' @export
 LIDROCTREE         <- 4L
 
-#' @rdname lidR-spatial-index
-#' @export
+LIDRAQUISITIONDEVICES <- c("unknown", "als", "tls", "uav", "dap", "multispectral")
 UKNLAS <- 0L
-
-#' @rdname lidR-spatial-index
-#' @export
 ALSLAS <- 1L
-
-#' @rdname lidR-spatial-index
-#' @export
 TLSLAS <- 2L
-
-#' @rdname lidR-spatial-index
-#' @export
 UAVLAS <- 3L
-
-#' @rdname lidR-spatial-index
-#' @export
 DAPLAS <- 4L
-
-#' @rdname lidR-spatial-index
-#' @export
 MLSLAS <- 5L
-
 NLAS   <- 10L
 
 LIDRDEFAULTINDEX <- list(sensor = UKNLAS, index = LIDRAUTOINDEX)
@@ -153,6 +129,24 @@ sensor = function(las, h = FALSE)
 #' @export
 `sensor<-` = function(las, value)
 {
+  if (is.character(value))
+  {
+    assert_is_a_string(value)
+    value <- tolower(value)
+    match.arg(value, LIDRAQUISITIONDEVICES)
+    value <- match(value, LIDRAQUISITIONDEVICES) - 1
+  }
+  else if (is.numeric(value))
+  {
+    assert_is_a_number(value)
+    assert_all_are_in_closed_range(value, 0L, length(LIDRAQUISITIONDEVICES)-1)
+    value <- as.integer(value)
+  }
+  else
+  {
+    stop("'value' must be an interger or a string.", call. = FALSE)
+  }
+
   las@index[["sensor"]] <- value
   return(las)
 }
@@ -161,6 +155,8 @@ sensor = function(las, h = FALSE)
 #' @export
 index = function(las, h = FALSE)
 {
+
+
   if (isTRUE(h))
     index = format_index(las)
   else
@@ -173,6 +169,24 @@ index = function(las, h = FALSE)
 #' @export
 `index<-` = function(las, value)
 {
+  if (is.character(value))
+  {
+    assert_is_a_string(value)
+    value <- tolower(value)
+    match.arg(value, LIDRSPATIALINDEXES)
+    value <- match(value, LIDRSPATIALINDEXES) - 1L
+  }
+  else if (is.numeric(value))
+  {
+    assert_is_a_number(value)
+    assert_all_are_in_closed_range(value, 0L, length(LIDRSPATIALINDEXES)-1)
+    value <- as.integer(value)
+  }
+  else
+  {
+    stop("'value' must be an interger or a string.", call. = FALSE)
+  }
+
   las@index[["index"]] <- value
   return(las)
 }
@@ -211,7 +225,7 @@ format_index = function(las)
     stop("invalid sensor registred", call. = FALSE)
 
   if (index == LIDRAUTOINDEX)
-    index = "automatic selection"
+    index = "automatic"
   else if (index == LIDRGRIDPARTITION)
     index = "grid partition"
   else if (index == LIDRVOXELPARTITION)

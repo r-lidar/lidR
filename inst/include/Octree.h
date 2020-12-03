@@ -131,8 +131,7 @@ inline void Octree::knn(const PointXYZ& p, const unsigned int k, std::vector<Poi
 
 inline void Octree::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
 {
-  PointXYZ q(p.x, p.y, 0);
-  Bucket::KnnBucket bucket(q, k, radius);
+  Bucket::KnnBucket bucket(p, k, radius);
   knn(bucket);
 
   res.clear();
@@ -144,8 +143,7 @@ inline void Octree::knn(const PointXY& p, const unsigned int k, const double rad
 
 inline void Octree::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
 {
-  PointXYZ q(p.x, p.y, p.z);
-  Bucket::KnnBucket bucket(q, k, radius);
+  Bucket::KnnBucket bucket(p, k, radius);
   knn(bucket);
 
   res.clear();
@@ -257,7 +255,7 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
   root.level = ROOT_LEVEL;
   heap.push_back(root);
 
-  //Rprintf("Octree [%.2lf, %.2lf] x [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d level and %d node \n",  xmin,xmax,ymin,ymax,zmin,zmax,ROOT_LEVEL+1, node_count);
+  Rprintf("Octree [%.2lf, %.2lf] x [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d level and %d node \n",  xmin,xmax,ymin,ymax,zmin,zmax,ROOT_LEVEL+1, node_count);
 
   // Built the Octree
   Node::Ocnode* node;
@@ -375,34 +373,34 @@ template<typename T>  Node::Ocnode* Octree::locate_nearest_node(const T p)
 template<typename T>  Node::Ocnode* Octree::locate_region(T shape)
 {
   // Scale coordinates to simulate a [0,1] x [0,1] x [0, 1] Octree
-  double xmin = (shape.xmin - xmin)/(xmax-xmin);
-  double xmax = (shape.xmax - xmin)/(xmax-xmin);
-  double ymin = (shape.ymin - ymin)/(ymax-ymin);
-  double ymax = (shape.ymax - ymin)/(ymax-ymin);
-  double zmin = (shape.zmin - zmin)/(zmax-zmin);
-  double zmax = (shape.zmax - zmin)/(zmax-zmin);
+  double bbxmin = (shape.xmin - xmin)/(xmax-xmin);
+  double bbxmax = (shape.xmax - xmin)/(xmax-xmin);
+  double bbymin = (shape.ymin - ymin)/(ymax-ymin);
+  double bbymax = (shape.ymax - ymin)/(ymax-ymin);
+  double bbzmin = (shape.zmin - zmin)/(zmax-zmin);
+  double bbzmax = (shape.zmax - zmin)/(zmax-zmin);
 
-  if (xmax < 0) return 0;
-  if (xmin > 1) return 0;
-  if (ymax < 0) return 0;
-  if (ymin > 1) return 0;
-  if (zmax < 0) return 0;
-  if (zmin > 1) return 0;
+  if (bbxmax < 0) return 0;
+  if (bbxmin > 1) return 0;
+  if (bbymax < 0) return 0;
+  if (bbymin > 1) return 0;
+  if (bbzmax < 0) return 0;
+  if (bbzmin > 1) return 0;
 
-  xmin = std::max(xmin, 0.0);
-  xmax = std::min(xmax, 1.0);
-  ymin = std::max(ymin, 0.0);
-  ymax = std::min(ymax, 1.0);
-  zmin = std::max(zmin, 0.0);
-  zmax = std::min(zmax, 1.0);
+  bbxmin = std::max(bbxmin, 0.0);
+  bbxmax = std::min(bbxmax, 1.0);
+  bbymin = std::max(bbymin, 0.0);
+  bbymax = std::min(bbymax, 1.0);
+  bbzmin = std::max(bbzmin, 0.0);
+  bbzmax = std::min(bbzmax, 1.0);
 
   //----Determine the x and y locational codes of the region boundaries
-  unsigned char x0LocCode = (xmin == 1) ? MAX_VAL-1 : (unsigned char) (xmin * MAX_VAL);
-  unsigned char y0LocCode = (ymin == 1) ? MAX_VAL-1 : (unsigned char) (ymin * MAX_VAL);
-  unsigned char z0LocCode = (zmin == 1) ? MAX_VAL-1 : (unsigned char) (zmin * MAX_VAL);
-  unsigned char x1LocCode = (xmax == 1) ? MAX_VAL-1 : (unsigned char) (xmax * MAX_VAL);
-  unsigned char y1LocCode = (ymax == 1) ? MAX_VAL-1 : (unsigned char) (ymax * MAX_VAL);
-  unsigned char z1LocCode = (zmax == 1) ? MAX_VAL-1 : (unsigned char) (zmax * MAX_VAL);
+  unsigned char x0LocCode = (bbxmin == 1) ? MAX_VAL-1 : (unsigned char) (bbxmin * MAX_VAL);
+  unsigned char y0LocCode = (bbymin == 1) ? MAX_VAL-1 : (unsigned char) (bbymin * MAX_VAL);
+  unsigned char z0LocCode = (bbzmin == 1) ? MAX_VAL-1 : (unsigned char) (bbzmin * MAX_VAL);
+  unsigned char x1LocCode = (bbxmax == 1) ? MAX_VAL-1 : (unsigned char) (bbxmax * MAX_VAL);
+  unsigned char y1LocCode = (bbymax == 1) ? MAX_VAL-1 : (unsigned char) (bbymax * MAX_VAL);
+  unsigned char z1LocCode = (bbzmax == 1) ? MAX_VAL-1 : (unsigned char) (bbzmax * MAX_VAL);
 
   //----Determine the XOR'ed pairs of locational codes of the region boundaries
   unsigned char xDiff = x0LocCode ^ x1LocCode;
@@ -468,7 +466,7 @@ inline Node::Ocnode* Octree::traverse_to_level(Node::Ocnode* node, unsigned char
   return node;
 }
 
-void Octree::harvest_knn(Node::Ocnode* node, Bucket::KnnBucket& bucket, unsigned char excludepos)
+inline void Octree::harvest_knn(Node::Ocnode* node, Bucket::KnnBucket& bucket, unsigned char excludepos)
 {
 
   // If it is a leaf we harvest all the point and push thin the knn bucket

@@ -449,48 +449,57 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_circle_lookup
-IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double y, double r);
-RcppExport SEXP _lidR_C_circle_lookup(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP rSEXP) {
+IntegerVector C_circle_lookup(S4 las, double x, double y, double r);
+RcppExport SEXP _lidR_C_circle_lookup(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_circle_lookup(X, Y, x, y, r));
+    rcpp_result_gen = Rcpp::wrap(C_circle_lookup(las, x, y, r));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_orectangle_lookup
-IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, double y, double w, double h, double angle);
-RcppExport SEXP _lidR_C_orectangle_lookup(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP wSEXP, SEXP hSEXP, SEXP angleSEXP) {
+IntegerVector C_orectangle_lookup(S4 las, double x, double y, double w, double h, double angle);
+RcppExport SEXP _lidR_C_orectangle_lookup(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP wSEXP, SEXP hSEXP, SEXP angleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type w(wSEXP);
     Rcpp::traits::input_parameter< double >::type h(hSEXP);
     Rcpp::traits::input_parameter< double >::type angle(angleSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_orectangle_lookup(X, Y, x, y, w, h, angle));
+    rcpp_result_gen = Rcpp::wrap(C_orectangle_lookup(las, x, y, w, h, angle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_knn2d_lookup
+IntegerVector C_knn2d_lookup(S4 las, double x, double y, int k);
+RcppExport SEXP _lidR_C_knn2d_lookup(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knn2d_lookup(las, x, y, k));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_knn3d_lookup
-IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, double x, double y, double z, int k);
-RcppExport SEXP _lidR_C_knn3d_lookup(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP kSEXP) {
+IntegerVector C_knn3d_lookup(S4 las, double x, double y, double z, int k);
+RcppExport SEXP _lidR_C_knn3d_lookup(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type z(zSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knn3d_lookup(X, Y, Z, x, y, z, k));
+    rcpp_result_gen = Rcpp::wrap(C_knn3d_lookup(las, x, y, z, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -539,9 +548,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 9},
     {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 6},
-    {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 5},
-    {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 7},
-    {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 7},
+    {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 4},
+    {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 6},
+    {"_lidR_C_knn2d_lookup", (DL_FUNC) &_lidR_C_knn2d_lookup, 4},
+    {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 5},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}
 };

@@ -290,7 +290,7 @@ NumericVector roundc(NumericVector x, int digit = 0)
 }
 
 /*
- * ======= ALGEBRA FUNCTIONS =========
+// ======= ALGEBRA FUNCTIONS =========
  */
 
 #include <RcppArmadillo.h>
@@ -311,12 +311,10 @@ SEXP fast_eigen_values(arma::mat A)
  * ======= BINARY SEARCH TREE FUNCTIONS =========
  */
 
-#include "GridPartition.h"
+#include "SpatialIndex.h"
 #include "Progress.h"
 
 using namespace lidR;
-
-typedef lidR::GridPartition SpatialIndex;
 
 // [[Rcpp::export(rng = false)]]
 Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, int k, int ncpu)
@@ -325,7 +323,7 @@ Rcpp::List C_knn(NumericVector X, NumericVector Y, NumericVector x, NumericVecto
   IntegerMatrix knn_idx(n, k);
   NumericMatrix knn_dist(n, k);
 
-  SpatialIndex tree(X,Y);
+  GridPartition tree(X,Y);
 
   #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
@@ -357,7 +355,7 @@ NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, Numeri
   unsigned int n = x.length();
   NumericVector iZ(n, NA_REAL);
 
-  SpatialIndex tree(X,Y);
+  GridPartition tree(X,Y);
   Progress pb(n, "Inverse distance weighting: ");
 
   bool abort = false;
@@ -415,7 +413,7 @@ IntegerVector C_count_in_disc(NumericVector X, NumericVector Y, NumericVector x,
   unsigned int n = x.length();
   IntegerVector output(n);
 
-  SpatialIndex tree(X,Y);
+  GridPartition tree(X,Y);
 
   #pragma omp parallel for num_threads(ncpu)
   for(unsigned int i = 0 ; i < n ; i++)
@@ -434,14 +432,16 @@ IntegerVector C_count_in_disc(NumericVector X, NumericVector Y, NumericVector x,
 }
 
 
-// Only for unit tests
+/*
+ * ======= UNIT TEST ONLY =========
+ */
 
 // [[Rcpp::export(rng = false)]]
-IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double y, double r)
+IntegerVector C_circle_lookup(S4 las, double x, double y, double r)
 {
   std::vector<int> id;
 
-  SpatialIndex tree(X,Y);
+  SpatialIndex tree(las);
   std::vector<PointXYZ*> pts;
   Circle circ(x,y,r);
   tree.lookup(circ, pts);
@@ -453,7 +453,7 @@ IntegerVector C_circle_lookup(NumericVector X, NumericVector Y, double x, double
 }
 
 // [[Rcpp::export(rng = false)]]
-IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, double y, double w, double h, double angle)
+IntegerVector C_orectangle_lookup(S4 las, double x, double y, double w, double h, double angle)
 {
   std::vector<int> id;
 
@@ -462,7 +462,7 @@ IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, do
   double xmin = x-w/2;
   double ymin = y-h/2;
 
-  SpatialIndex tree(X,Y);
+  SpatialIndex tree(las);
   std::vector<PointXYZ*> pts;
   OrientedRectangle orect(xmin, xmax, ymin, ymax, angle);
   tree.lookup(orect, pts);
@@ -473,14 +473,30 @@ IntegerVector C_orectangle_lookup(NumericVector X, NumericVector Y, double x, do
   return wrap(id);
 }
 
-
 // [[Rcpp::export(rng = false)]]
-IntegerVector C_knn3d_lookup(NumericVector X, NumericVector Y, NumericVector Z, double x, double y, double z, int k)
+IntegerVector C_knn2d_lookup(S4 las, double x, double y, int k)
 {
   std::vector<int> id;
 
-  // Creation of a SpatialIndex
-  SpatialIndex tree(X, Y, Z);
+  SpatialIndex tree(las);
+
+  PointXY p(x,y);
+  std::vector<PointXYZ*> pts;
+  tree.knn(p, k, pts);
+
+  for (size_t j = 0 ; j < pts.size() ; j++)
+    id.push_back(pts[j]->id + 1);
+
+  return wrap(id);
+}
+
+
+// [[Rcpp::export(rng = false)]]
+IntegerVector C_knn3d_lookup(S4 las, double x, double y, double z, int k)
+{
+  std::vector<int> id;
+
+  SpatialIndex tree(las);
 
   PointXYZ p(x,y,z);
   std::vector<PointXYZ*> pts;

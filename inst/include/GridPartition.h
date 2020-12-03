@@ -1,5 +1,5 @@
-#ifndef SP_H
-#define SP_H
+#ifndef GP_H
+#define GP_H
 
 #include <Rcpp.h>
 #include "Point.h"
@@ -399,7 +399,7 @@ inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::Numeri
   yres = yrange / (double)nrows;
   zres = zrange / (double)nlayers;
 
-  //Rprintf("Spatial index of %d points with %d x %d x %d = %d cells \n", npoints, ncols, nrows, nlayers, ncells);
+  Rprintf("Spatial index of %d points with %d x %d x %d = %d cells \n", npoints, ncols, nrows, nlayers, ncells);
   //Rprintf("xres = %.3lf yres = %.3lf zres = %.3lf \n", xres, yres, zres);
 
   area = xrange * yrange;
@@ -481,4 +481,4 @@ inline bool GridPartition::multilayered(const Rcpp::S4 las)
 
 }
 
-#endif //SP_H
+#endif //GP_H

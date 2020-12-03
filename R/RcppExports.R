@@ -137,16 +137,20 @@ C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {
     .Call(`_lidR_C_count_in_disc`, X, Y, x, y, radius, ncpu)
 }
 
-C_circle_lookup <- function(X, Y, x, y, r) {
-    .Call(`_lidR_C_circle_lookup`, X, Y, x, y, r)
+C_circle_lookup <- function(las, x, y, r) {
+    .Call(`_lidR_C_circle_lookup`, las, x, y, r)
 }
 
-C_orectangle_lookup <- function(X, Y, x, y, w, h, angle) {
-    .Call(`_lidR_C_orectangle_lookup`, X, Y, x, y, w, h, angle)
+C_orectangle_lookup <- function(las, x, y, w, h, angle) {
+    .Call(`_lidR_C_orectangle_lookup`, las, x, y, w, h, angle)
 }
 
-C_knn3d_lookup <- function(X, Y, Z, x, y, z, k) {
-    .Call(`_lidR_C_knn3d_lookup`, X, Y, Z, x, y, z, k)
+C_knn2d_lookup <- function(las, x, y, k) {
+    .Call(`_lidR_C_knn2d_lookup`, las, x, y, k)
+}
+
+C_knn3d_lookup <- function(las, x, y, z, k) {
+    .Call(`_lidR_C_knn3d_lookup`, las, x, y, z, k)
 }
 
 R_omp_get_max_threads <- function() {
