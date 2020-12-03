@@ -27,6 +27,13 @@
 
 cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, ...)
 {
+  # See future#446
+  if (packageVersion("future") <= "1.20.1")
+  {
+    rng = RNGkind()
+    on.exit(RNGkind(rng[1]), add = TRUE)
+  }
+
   # Parse ellipsis
   params  <- list(...)
 
@@ -109,7 +116,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       if (is.null(y)) y <- NULL
       if (!is.null(y) && writemode) y <- writeANY(y, save, drivers)
       y
-    }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS))
+    }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS), seed = TRUE)
 
     # Evaluation of the state of the futures
     for (j in 1:i)

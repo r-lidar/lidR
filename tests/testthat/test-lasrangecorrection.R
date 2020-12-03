@@ -26,7 +26,7 @@ test_that("lasrangecorrection fails with invalid sensor data", {
 
   raster::crs(sensor) <- crs(las)
   tsensor <- sp::spTransform(sensor, sp::CRS("+init=epsg:26917"))
-  expect_error(lasrangecorrection(las, tsensor, Rs = 2000), "Point-cloud and sensor positions do not overlap.")
+  expect_error(lasrangecorrection(las, tsensor, Rs = 2000), "Unrealistic range")
 
   sensor@data[["gpstime"]] <- NULL
   expect_error(lasrangecorrection(las, sensor, Rs = 2000), "No 'gpstime' attribute found in sensor")
