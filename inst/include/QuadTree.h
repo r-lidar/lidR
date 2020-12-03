@@ -237,7 +237,7 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
   root.level = ROOT_LEVEL;
   heap.push_back(root);
 
-  Rprintf("QuadTree [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d level and %d node \n", xmin,xmax,ymin,ymax,ROOT_LEVEL+1, node_count);
+  //Rprintf("QuadTree [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d level and %d node \n", xmin,xmax,ymin,ymax,ROOT_LEVEL+1, node_count);
 
   Node::Quadnode* node;
   for(int i = 0 ; i < x.size() ; i++)

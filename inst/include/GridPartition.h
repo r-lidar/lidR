@@ -399,9 +399,6 @@ inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::Numeri
   yres = yrange / (double)nrows;
   zres = zrange / (double)nlayers;
 
-  Rprintf("Spatial index of %d points with %d x %d x %d = %d cells \n", npoints, ncols, nrows, nlayers, ncells);
-  //Rprintf("xres = %.3lf yres = %.3lf zres = %.3lf \n", xres, yres, zres);
-
   area = xrange * yrange;
   volume = area * zrange;
 
