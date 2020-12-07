@@ -464,6 +464,8 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     if (cluster@files[1] == "")
       return(NULL)
 
+
+
     x <- suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
 
     if (is.null(x))
@@ -551,7 +553,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   # output should contain nothing because everything has been streamed into files
   if (opt_output_files(ctg) != "")
   {
-    written_path = c()
+    written_path = character(0)
     for (i in seq_along(clusters))
     {
       if (clusters[[i]]@files[1] == "")
@@ -566,8 +568,27 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
         message(glue::glue("No point found for within region of interest {i}."))
     }
 
-    new_ctg <- suppressMessages(readLAScatalog(written_path))
-    opt_copy(new_ctg) <- ctg
+    if (length(written_path) > 0)
+    {
+      new_ctg <- suppressMessages(readLAScatalog(written_path))
+      opt_copy(new_ctg) <- ctg
+    }
+    else
+    {
+      # Empty LAScatalog
+      LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+      new_ctg <- readLAScatalog(LASfile)
+      data <- new_ctg@data
+      data <- data[0,]
+      poly <- sp::SpatialPolygons(list())
+      poly <- sp::SpatialPolygonsDataFrame(poly, data)
+      new_ctg@data <- data
+      new_ctg@polygons <- poly@polygons
+      new_ctg@plotOrder <- poly@plotOrder
+      new_ctg@bbox <- matrix(0,2,2)
+      new_ctg@proj4string <- ctg@proj4string
+    }
+
     return(list(new_ctg))
   }
   # output should contain LAS objects returned at the R level

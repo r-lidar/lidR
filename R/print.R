@@ -118,8 +118,8 @@ setMethod("show", "LAScatalog", function(object)
   area.h      <- area
   npoints     <- sum(object@data$Number.of.point.records)
   npoints.h   <- npoints
-  ext         <- raster::extent(object)
-  units       <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
+  ext         <- object@bbox
+  units      <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
   units       <- if (length(units) == 0) "units" else units
   areaprefix  <- ""
   pointprefix <- ""
@@ -127,6 +127,9 @@ setMethod("show", "LAScatalog", function(object)
   minor       <- sort(unique(object[["Version.Minor"]]))
   version     <- paste(major, minor, sep = ".", collapse = " and ")
   format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
+  density     <- round(npoints/area, 1)
+
+  if (is.nan(density)) density <- 0
 
   coord.ref <- sf::st_crs(object@proj4string)
   coord.ref <- coord.ref$input
@@ -137,7 +140,12 @@ setMethod("show", "LAScatalog", function(object)
     area.h     <- round(area/(1000*1000), 2)
   }
 
-  if (npoints > 1000 & npoints < 1000^2)
+  if (npoints <= 1000)
+  {
+    pointprefix <- ""
+    npoints.h   <- npoints
+  }
+  else if (npoints > 1000 & npoints < 1000^2)
   {
     pointprefix <- "thousand"
     npoints.h   <- round(npoints/1000, 1)
@@ -154,11 +162,11 @@ setMethod("show", "LAScatalog", function(object)
   }
 
   cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
-  cat("extent      : ", ext@xmin, ", ", ext@xmax, ", ", ext@ymin, ", ", ext@ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("extent      : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
   cat("coord. ref. :", coord.ref, "\n")
   cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
-  cat("points      :", npoints.h, pointprefix, "points\n")
-  cat("density     : ", round(npoints/area, 1), " points/", units, "\u00B2\n", sep = "")
+  cat("points      : ", npoints.h, pointprefix, " points\n", sep = "")
+  cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
   return(invisible(object))
 })
