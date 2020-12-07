@@ -212,8 +212,13 @@ test_that("lasclip returns an empty point cloud if no point found in the query",
   circ1 <- suppressWarnings(lasclipCircle(las, 68480, 5017850, 10))
   circ2 <- suppressWarnings(lasclipCircle(ctg, 68480, 5017850, 10))
 
+  # Unit test for #400
+  opt_output_files(ctg) <- tempfile()
+  circ3 <- suppressWarnings(lasclipCircle(ctg, 68480, 5017850, 10))
+
   expect_true(is.empty(circ1))
   expect_true(is.empty(circ2))
+  expect_equal(dim(circ3), c(0,34))
 })
 
 
