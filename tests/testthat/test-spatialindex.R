@@ -212,13 +212,11 @@ test_that("knn in 2d works for each spatial indexes", {
     id = lidR:::C_knn2d_lookup(las, 2,2,1)
     expect_equal(id, 2)
 
-    id = lidR:::C_knn2d_lookup(las, 2,2,4)
-    id = sort(id)
-    expect_equal(id, c(1,2,3,9))
+    id = lidR:::C_knn2d_lookup(las, 2,2.1,4)
+    expect_equal(id, c(2,1,3,9))
 
     id = lidR:::C_knn2d_lookup(las, 6,6,2)
-    id = sort(id)
-    expect_equal(id, c(4, 9))
+    expect_equal(id, c(9, 4))
   }
 })
 
@@ -232,11 +230,9 @@ test_that("knn in 3d works for each spatial indexes", {
     expect_equal(id, 2)
 
     id = lidR:::C_knn3d_lookup(las, 2,2,2,4)
-    id = sort(id)
-    expect_equal(id, c(2,3,7,9))
+    expect_equal(id, c(2,3,9,7))
 
     id = lidR:::C_knn3d_lookup(las, 6,6,50,2)
-    id = sort(id)
     expect_equal(id, c(1, 5))
   }
 })
@@ -245,4 +241,34 @@ test_that("Spatial index fails with inccorect code", {
 
     las@index$index <- 12
     expect_error(lidR:::C_circle_lookup(las, 2,2,1), "index code inccorect")
+})
+
+test_that("Spatial indexes work with more points (coverage)", {
+
+  las = lidR:::generate_las(2000)
+
+  x = runif(1, 10, 900)
+  y = runif(1, 10, 900)
+  z = runif(1, 1, 19)
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_knn3d_lookup(las, x,y,z,10)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, u[[1]])))
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_circle_lookup(las, x, 20, 5)
+    id = sort(id)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, u[[1]])))
 })

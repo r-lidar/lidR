@@ -41,7 +41,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las)
   case VOXELPARTITION: grid = GridPartition(las); break;
   case QUADTREE: quadtree = QuadTree(las); break;
   case OCTREE: octree = Octree(las); break;
-  default: Rcpp::stop("Internal error: spatial index code inccorect."); break;
+  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # no cov
   }
 }
 
@@ -55,7 +55,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& f
   case VOXELPARTITION: grid = GridPartition(las, f); break;
   case QUADTREE: quadtree = QuadTree(las, f); break;
   case OCTREE: octree = Octree(las, f); break;
-  default: Rcpp::stop("Internal error: spatial index code inccorect."); break;
+  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # no cov
   }
 }
 
