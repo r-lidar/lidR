@@ -359,7 +359,7 @@ inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::Numeri
   double zrange = zmax - zmin;
   double xyratio = xrange/yrange;
   double xzratio = xrange/zrange;
-  double yzratio = yrange/zrange;
+  //double yzratio = yrange/zrange;
 
   if (!multilayer)
   {
@@ -415,7 +415,7 @@ inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::Numeri
   // The goal is to avoid over memory allocation when using push_back, which double
   // the size of the container when resized.
   heap.resize(ncells);
-  for (auto i = 0 ; i < ncells; i++)
+  for (unsigned int i = 0 ; i < ncells; i++)
     heap[i].reserve(cell_points[i]);
 
   //Rprintf("Partition [%.2lf, %.2lf] x [%.2lf, %.2lf] x [%.2lf, %.2lf] with %d cells in %d layers \n", xmin,xmax,ymin,ymax,zmin,zmax,ncells, nlayers);
@@ -440,7 +440,7 @@ inline int GridPartition::get_cell(double x, double y, double z)
   if (row < 0 || row > (int)nrows-1 || col < 0 || col > (int)ncols-1 || lay < 0 || lay > (int)nlayers-1)
     Rcpp::stop("Internal error in spatial index: point out of the range."); // # nocov
   int cell = lay * nrows * ncols + row * ncols + col;
-  if (cell < 0 || cell >= ncells)
+  if (cell < 0 || cell >= (int)ncells)
     Rcpp::stop("Internal error in spatial index: cell out of the range."); // # nocov
   return cell;
 }

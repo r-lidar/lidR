@@ -136,7 +136,7 @@ inline void Octree::knn(const PointXY& p, const unsigned int k, const double rad
 
   res.clear();
   PointXYZ pp(p.x, p.y, 0, 0);
-  for(int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort2D<PointXYZ>(pp));
   return;
 }
@@ -147,7 +147,7 @@ inline void Octree::knn(const PointXYZ& p, const unsigned int k, const double ra
   knn(bucket);
 
   res.clear();
-  for(int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort3D<PointXYZ>(p));
   return;
 }
@@ -176,7 +176,7 @@ inline void Octree::knn(Bucket::KnnBucket& bucket)
 inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::NumericVector z)
 {
   if (x.size() != y.size())
-    throw(std::runtime_error("Internal error in Octree. x and y have different sizes."));
+    throw(std::runtime_error("Internal error in Octree. x and y have different sizes.")); // # no cov
 
   if (x.size() != z.size())
     Rcpp::stop("Internal error in spatial index: x and z have different sizes."); // # nocov
@@ -238,7 +238,7 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
   // Not more than 8 because we are using unsigned char to locate the nodes.
   // In practice 6 level is enough
   // 6 levels -> 8^6 = 262144 leaves -> 1+8+64+512+4096+32768+262144=299592 quadrants
-  int num_levels = std::floor(std::log(x.size())/std::log(8));
+  unsigned int num_levels = std::floor(std::log(x.size())/std::log(8));
   num_levels = (num_levels >= 1) ? num_levels : 1;
   num_levels = (num_levels >= 6) ? 6 : num_levels;
 
@@ -268,7 +268,7 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
       if (node->level > 0)
       {
         if (!insert(&heap[0], p))
-          Rcpp::stop("Internal error in Octree. Point not inserted.");
+          Rcpp::stop("Internal error in Octree. Point not inserted."); // # no cov
       }
       else
       {
@@ -300,7 +300,7 @@ inline bool Octree::insert(Node::Ocnode* node, const PointXYZ& p)
     }
   }
 
-  return false;
+  return false; // # no cov
 }
 
 inline Node::Ocnode* Octree::subdivide(Node::Ocnode* node)
@@ -589,7 +589,7 @@ template<typename T> bool Octree::intersects(Node::Ocnode* node, T& shape)
 {
   double xmin, xmax, ymin, ymax, zmin, zmax;
   compute_bbox(node, xmin, xmax, ymin, ymax, zmin, zmax);
-  return !(shape.xmin > xmax || shape.xmax < xmin || shape.ymin > ymax || shape.ymax < ymin, shape.zmin > zmax || shape.zmax < zmin);
+  return !(shape.xmin > xmax || shape.xmax < xmin || shape.ymin > ymax || shape.ymax < ymin || shape.zmin > zmax || shape.zmax < zmin);
 }
 
 }

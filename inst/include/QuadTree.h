@@ -136,7 +136,7 @@ inline void QuadTree::knn(const PointXY& p, const unsigned int k, const double r
 
   res.clear();
   PointXYZ pp(p.x, p.y, 0, 0);
-  for(int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort2D<PointXYZ>(pp));
   return;
 }
@@ -147,7 +147,7 @@ inline void QuadTree::knn(const PointXYZ& p, const unsigned int k, const double 
   knn(bucket);
 
   res.clear();
-  for(int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort3D<PointXYZ>(p));
   return;
 }
@@ -175,7 +175,7 @@ inline void QuadTree::knn(Bucket::KnnBucket& bucket)
 inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::NumericVector z)
 {
   if (x.size() != y.size())
-    throw(std::runtime_error("Internal error in QuadTree. x and y have different sizes."));
+    throw(std::runtime_error("Internal error in QuadTree. x and y have different sizes.")); // # no cov
 
   if (x.size() != z.size())
     Rcpp::stop("Internal error in spatial index: x and z have different sizes."); // # nocov
@@ -221,7 +221,7 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
   // Estimate the depth of the Quadtree
   // Not more than 8 because we are using unsigned char to locate the nodes.
   // 8 levels -> 4^8 = 65536 leaves -> 1+4+16+64+256+1024+4096+16384+65536=87381 quadrants
-  int num_levels = std::floor(std::log(x.size())/std::log(4));
+  unsigned int num_levels = std::floor(std::log(x.size())/std::log(4));
   num_levels = (num_levels >= 1) ? num_levels : 1;
   num_levels = (num_levels >= 8) ? 8 : num_levels;
 
@@ -249,7 +249,7 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
       if (node->level > 0)
       {
         if (!insert(&heap[0], p))
-          Rcpp::stop("Internal error in QuadTree. Point not inserted.");
+          Rcpp::stop("Internal error in QuadTree. Point not inserted."); // # no cov
       }
       else
       {
@@ -279,7 +279,7 @@ inline bool QuadTree::insert(Node::Quadnode* node, const PointXYZ& p)
     }
   }
 
-  return false;
+  return false; // # no cov
 }
 
 inline Node::Quadnode* QuadTree::subdivide(Node::Quadnode* node)

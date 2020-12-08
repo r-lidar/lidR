@@ -247,7 +247,6 @@ double LAS::range(NumericVector &x, NumericVector &y , NumericVector &z, Numeric
 {
   NumericVector::iterator it;
   double dx, dy, dz, r, R;
-  double i;
   int j = 0;
 
   // The sensor positions were already sorted a R level
@@ -702,7 +701,7 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
   return;
 }
 
-void LAS::filter_isolated_voxel(double res, int isolated)
+void LAS::filter_isolated_voxel(double res, unsigned int isolated)
 {
   typedef std::array<int, 3> Array;
 
@@ -713,7 +712,7 @@ void LAS::filter_isolated_voxel(double res, int isolated)
   // Stores for a given voxel the number of point in its 27 voxels neighbourhood
   std::unordered_map<Array, unsigned int, boost::hash<Array> > dynamic_registry;
 
-  for (int n = 0 ; n < npoints ; n++)
+  for (unsigned int n = 0 ; n < npoints ; n++)
   {
     int nx = std::floor((X[n] - xoffset) / res);
     int ny = std::floor((Y[n] - yoffset) / res);
@@ -739,7 +738,7 @@ void LAS::filter_isolated_voxel(double res, int isolated)
 
   // Loop again through each point.
   // Check if the number of points in its neighbourhood is above the threshold
-  for (int n = 0 ; n < npoints ; n++)
+  for (unsigned int n = 0 ; n < npoints ; n++)
   {
     int nx = std::floor((X[n] - xoffset) / res);
     int ny = std::floor((Y[n] - yoffset) / res);
@@ -1308,9 +1307,9 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   int pOutError = 0;
 
   // This is the size of memory used to store the neighborhood
-  int si = nalloc; // initially allocated
-  int sc = si;     // current
-  int sn = si;     // new
+  unsigned int si = nalloc; // initially allocated
+  unsigned int sc = si;     // current
+  unsigned int sn = si;     // new
 
   if (!dynamic_memory_realloc && si != k) Rcpp::stop("Internal error: k elements should have been allocated.");
 
@@ -1490,7 +1489,6 @@ NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
     std::vector<PointXYZ*> pts;
     tree.knn(p, k, pts);
 
-    int n = pts.size();
     double d = 0;
     double dmean = 0;
     for (unsigned int j = 1 ; j < pts.size() ; j++)
