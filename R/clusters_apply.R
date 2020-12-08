@@ -28,7 +28,7 @@
 cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, ...)
 {
   # See future#446
-  if (packageVersion("future") <= "1.20.1")
+  if (utils::packageVersion("future") <= "1.20.1")
   {
     rng = RNGkind()
     on.exit(RNGkind(rng[1]), add = TRUE)
