@@ -49,9 +49,9 @@ a \code{list} with two elements:
 \item \code{index}: an integer that records the spatial index to used
 }
 
-By default the spatial index code is 0 meaning that each function is free
-to choose a spatial index depending on the recorded sensor. If the code is not 0 then each
-function will be forced to used the spatial index that is imposed.
+By default the spatial index code is 0 ("automatic") meaning that each function is free
+to choose a different spatial index depending on the recorded sensor. If the code is not
+0 then each function will be forced to used the spatial index that is imposed.
 
 \link[=LAScatalog-class]{LAScatalog} objects also record such information that is automatically
 propagated to the LAS objects when processing.
@@ -59,8 +59,8 @@ propagated to the LAS objects when processing.
 Note: before version 3.1.0 point-clouds were all considered as ALS because lidR was preliminary
 designed for ALS. Consequently for legacy and backward compatibility reasons \code{readLAS()}
 and \code{readALSLAS()} are actually equivalent. \code{readLAS()} tags the point cloud with "unknown"
-sensor while \code{readALSLAS()} tags it with 'ALS' but spatial indexing behaves the same and
-behaves the same than in versions < 3.1. As a consequence using \code{readLAS()} provides
+sensor while \code{readALSLAS()} tags it with 'ALS' both behave the same and
+especially behave the same than in versions < 3.1. As a consequence using \code{readLAS()} provides
 the same performance (no degradation) than in previous version while using one of \code{read*LAS()}
 may improve the performance.
 }
@@ -106,5 +106,6 @@ ctg = readTLSLAScatalog(LASfile)
 index(ctg) <- "voxelpartition"
 sensor(ctg, h = TRUE)
 index(ctg, h = TRUE)
+
 
 }

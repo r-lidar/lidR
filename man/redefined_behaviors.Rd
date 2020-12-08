@@ -3,6 +3,7 @@
 \name{$<-,LAS-method}
 \alias{$<-,LAS-method}
 \alias{[[<-,LAS,ANY,missing-method}
+\alias{[,LAS,numeric,ANY-method}
 \alias{[,LAScatalog,ANY,ANY-method}
 \alias{[[<-,LAScatalog,ANY,ANY-method}
 \alias{$<-,LAScatalog-method}
@@ -11,6 +12,8 @@
 \S4method{$}{LAS}(x, name) <- value
 
 \S4method{[[}{LAS,ANY,missing}(x, i, j) <- value
+
+\S4method{[}{LAS,numeric,ANY}(x, i)
 
 \S4method{[}{LAScatalog,ANY,ANY}(x, i, j, ..., drop = TRUE)
 

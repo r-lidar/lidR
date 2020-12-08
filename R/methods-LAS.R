@@ -310,3 +310,11 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 
   return(x)
 })
+
+#' @rdname redefined_behaviors
+#' @export
+setMethod("[", c("LAS", "numeric"),  function(x, i)
+{
+  data = x@data[i]
+  return(LAS(data, las@header, las@proj4string, FALSE, las@index))
+})
