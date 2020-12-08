@@ -265,10 +265,40 @@ test_that("Spatial indexes work with more points (coverage)", {
   for(index in 0:4)
   {
     index(las) <- index
-    id = lidR:::C_circle_lookup(las, x, 20, 5)
+    id = lidR:::C_circle_lookup(las, x, y, 5)
     id = sort(id)
     u[[index+1]] = id
   }
 
   expect_true(all(sapply(u, identical, u[[1]])))
+})
+
+test_that("Spatial indexes work with 0 point", {
+
+  las = lidR:::generate_las(0)
+
+  x = runif(1, 10, 900)
+  y = runif(1, 10, 900)
+  z = runif(1, 1, 19)
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_knn3d_lookup(las, x, y, z,10)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, integer(0))))
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_circle_lookup(las, x, y, 5)
+    id = sort(id)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, integer(0))))
 })
