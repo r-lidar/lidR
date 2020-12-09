@@ -92,7 +92,7 @@ inline Octree::Octree(const Rcpp::NumericVector x, const Rcpp::NumericVector y)
   std::fill(filter.begin(), filter.end(), true);
 
   // Create a dummy z vector with 0s
-  Rcpp::NumericVector z(x.size(), 0);
+  Rcpp::NumericVector z(x.size());
 
   build(x,y,z);
 }

@@ -136,7 +136,7 @@ inline GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::Num
   multilayer = false;
 
   // Create a dummy z vector with 0s
-  Rcpp::NumericVector z(npoints, 0);
+  Rcpp::NumericVector z(npoints);
 
   build(x,y,z);
 }
