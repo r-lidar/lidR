@@ -222,6 +222,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_knnidw
+NumericVector C_knnidw(S4 las, NumericVector x, NumericVector y, int k, double p, double rmax, int ncpu);
+RcppExport SEXP _lidR_C_knnidw(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP rmaxSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< double >::type rmax(rmaxSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_knnidw(las, x, y, k, p, rmax, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_point_metrics
 List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter);
 RcppExport SEXP _lidR_C_point_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP nallocSEXP, SEXP callSEXP, SEXP envSEXP, SEXP filterSEXP) {
@@ -415,24 +431,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_knnidw
-NumericVector C_knnidw(NumericVector X, NumericVector Y, NumericVector Z, NumericVector x, NumericVector y, int k, double p, double rmax, int ncpu);
-RcppExport SEXP _lidR_C_knnidw(SEXP XSEXP, SEXP YSEXP, SEXP ZSEXP, SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP pSEXP, SEXP rmaxSEXP, SEXP ncpuSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< double >::type rmax(rmaxSEXP);
-    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_knnidw(X, Y, Z, x, y, k, p, rmax, ncpu));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_count_in_disc
 IntegerVector C_count_in_disc(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, double radius, int ncpu);
 RcppExport SEXP _lidR_C_count_in_disc(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP radiusSEXP, SEXP ncpuSEXP) {
@@ -530,6 +528,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
+    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 7},
     {"_lidR_C_fast_knn_metrics", (DL_FUNC) &_lidR_C_fast_knn_metrics, 4},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
@@ -546,7 +545,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
-    {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 9},
     {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 6},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 4},
     {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 6},

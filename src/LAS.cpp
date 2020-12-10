@@ -1507,3 +1507,61 @@ NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
 
   return out;
 }
+
+NumericVector LAS::interpolate_knnidw(NumericVector x, NumericVector y, int k, double p, double rmax)
+{
+  unsigned int n = x.length();
+  NumericVector iZ(n, NA_REAL);
+
+  SpatialIndex tree(las);
+  Progress pb(n, "Inverse distance weighting: ");
+
+  bool abort = false;
+
+  #pragma omp parallel for num_threads(ncpu)
+  for(unsigned int i = 0 ; i < n ; i++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+
+    Point pt(x[i], y[i]);
+    std::vector<PointXYZ*> pts;
+    tree.knn(pt, k, rmax, pts);
+
+    double sum_zw = 0;
+    double sum_w  = 0;
+
+    for (unsigned int j = 0 ; j < pts.size() ; j++)
+    {
+      double dx = pts[j]->x - x[i];
+      double dy = pts[j]->y - y[i];
+      double d  = std::sqrt(dx*dx + dy*dy);
+      double w;
+      double z = Z[pts[j]->id];
+
+      if (d > 0)
+      {
+        w = 1/pow(d,p);
+        sum_zw += z*w;
+        sum_w  += w;
+      }
+      else
+      {
+        sum_zw = z;
+        sum_w  = 1;
+        break;
+      }
+    }
+
+    #pragma omp critical
+    {
+      iZ(i) = sum_zw/sum_w;
+    }
+  }
+
+  if (abort) throw Rcpp::internal::InterruptedException();
+
+  return iZ;
+}
+

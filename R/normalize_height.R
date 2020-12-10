@@ -149,17 +149,8 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
     if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
-    # Non standart evaluation (R CMD check)
+    # Non standard evaluation (R CMD check)
     . <- Z <- Zref <- X <- Y <- Classification <- NULL
-
-    # Delaunay triangulation with boost requiere to
-    # compute back integer coordinates
-    xscale  <- las@header@PHB[["X scale factor"]]
-    yscale  <- las@header@PHB[["Y scale factor"]]
-    xoffset <- las@header@PHB[["X offset"]]
-    yoffset <- las@header@PHB[["Y offset"]]
-    scales  <- c(xscale, yscale)
-    offsets <- c(xoffset, yoffset)
 
     # Select the ground points
     ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
@@ -168,7 +159,8 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
     # wbuffer = !"buffer" %in% names(las@data)
     lidR.context <- "normalize_height"
-    Zground <- algorithm(ground, las@data, scales, offsets)
+    ground  <- LAS(ground, las@header, proj4string = las@proj4string, check = FALSE, index = las@index)
+    Zground <- algorithm(ground, las@data)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)
 

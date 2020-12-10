@@ -110,18 +110,8 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   ellipsis <- list(...)
   fast <- isTRUE(ellipsis[["fast"]])
 
-  # Non standart evaluation (R CMD check)
+  # Non standard evaluation (R CMD check)
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
-
-  # Delaunay triangulation with boost requires to
-  # compute back integer coordinates
-  xscale  <- las@header@PHB[["X scale factor"]]
-  yscale  <- las@header@PHB[["Y scale factor"]]
-  zscale  <- las@header@PHB[["Z scale factor"]]
-  xoffset <- las@header@PHB[["X offset"]]
-  yoffset <- las@header@PHB[["Y offset"]]
-  scales  <- c(xscale, yscale)
-  offsets <- c(xoffset, yoffset)
 
   # Select the ground points
   ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
@@ -158,8 +148,9 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   # to interpolate (grid)
   verbose("Interpolating ground points...")
   lidR.context <- "grid_terrain"
-  Zg <- algorithm(ground, grid, scales, offsets)
-  Zg <- round_any(Zg, zscale)
+  ground <- LAS(ground, las@header, proj4string = las@proj4string, check = FALSE, index = las@index)
+  Zg <- algorithm(ground, grid)
+  fast_quantization(Zg, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
 
   if (fast) {

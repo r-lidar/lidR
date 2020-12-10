@@ -65,6 +65,10 @@ C_rasterize <- function(las, layout, subcircle = 0, method = 1L) {
     .Call(`_lidR_C_rasterize`, las, layout, subcircle, method)
 }
 
+C_knnidw <- function(las, x, y, k, p, rmax, ncpu) {
+    .Call(`_lidR_C_knnidw`, las, x, y, k, p, rmax, ncpu)
+}
+
 C_point_metrics <- function(las, k, r, nalloc, call, env, filter) {
     .Call(`_lidR_C_point_metrics`, las, k, r, nalloc, call, env, filter)
 }
@@ -127,10 +131,6 @@ fast_eigen_values <- function(A) {
 
 C_knn <- function(X, Y, x, y, k, ncpu) {
     .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
-}
-
-C_knnidw <- function(X, Y, Z, x, y, k, p, rmax, ncpu) {
-    .Call(`_lidR_C_knnidw`, X, Y, Z, x, y, k, p, rmax, ncpu)
 }
 
 C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {

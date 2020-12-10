@@ -59,10 +59,10 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 
   extrapolate <- lazyeval::uq(extrapolate)
 
-  f = function(what, where, scales = c(0,0), offsets = c(0,0))
+  f = function(las, where)
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "tin")
-    z <- interpolate_delaunay(what, where, trim = 0, scales = scales, offsets = offsets, min_normal_z = 3e-2)
+    z <- interpolate_delaunay(las, where, trim = 0, min_normal_z = 3e-2)
 
     # Extrapolate beyond the convex hull
     isna <- is.na(z)
@@ -72,9 +72,8 @@ tin = function(..., extrapolate = knnidw(3,1,50))
       verbose("Interpolating the points ouside the convex hull of the ground points using knnidw()")
 
       lidR.context <- "spatial_interpolation"
-      what <- data.frame(X = where$X[!isna], Y = where$Y[!isna], Z = z[!isna])
       where <- data.frame(X = where$X[isna],  Y = where$Y[isna])
-      zknn <- extrapolate(what, where, scales, offsets)
+      zknn <- extrapolate(las, where)
       z[isna] <- zknn
       isna <- is.na(zknn)
       nnas <- sum(isna)
@@ -120,10 +119,10 @@ knnidw = function(k = 10, p = 2, rmax = 50)
   p <- lazyeval::uq(p)
   rmax <- lazyeval::uq(rmax)
 
-  f = function(what, where, scales = c(0,0), offsets = c(0,0))
+  f = function(las, where)
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "knnidw")
-    return(interpolate_knnidw(what, where, k, p, rmax))
+    return(interpolate_knnidw(las, where, k, p, rmax))
   }
 
   class(f) <- c(LIDRALGORITHMSPI, LIDRALGORITHMOPENMP)
@@ -159,10 +158,10 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' plot_dtm3d(dtm)
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
-  f = function(what, where, scales = c(0,0), offsets = c(0,0))
+  f = function(las, where)
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "kriging")
-    return(interpolate_kriging(what, where, model, k))
+    return(interpolate_kriging(las, where, model, k))
   }
 
   class(f) <- LIDRALGORITHMSPI
@@ -171,21 +170,20 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 
 interpolate_knnidw = function(points, coord, k, p, rmax = 50)
 {
-  z <- C_knnidw(points$X, points$Y, points$Z, coord$X, coord$Y, k, p, rmax, getThread())
-  return(z)
+  if (!inherits(points, "LAS")) {
+    h <- rlas::header_create(points)
+    points <- LAS(points, h, check = F)
+  }
+  return(C_knnidw(points, coord$X, coord$Y, k, p, rmax, getThread()))
 }
 
 interpolate_kriging = function(points, coord, model, k)
 {
   X <- Y <- Z <- NULL
-
-  if (!getOption("lidR.verbose"))
-    sink(tempfile())
-
+  if (!getOption("lidR.verbose")) sink(tempfile())
+  if (inherits(points, "LAS")) points <- points@data
   x  <- gstat::krige(Z~X+Y, location = ~X+Y, data = points, newdata = coord, model, nmax = k)
-
   sink()
-
   return(x$var1.pred)
 }
 

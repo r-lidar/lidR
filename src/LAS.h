@@ -47,6 +47,7 @@ class LAS
     IntegerVector segment_trees(double dt1, double dt2, double Zu, double R, double th_tree, double radius);
     List point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env);
     NumericVector fast_knn_metrics(unsigned int k, IntegerVector metrics);
+    NumericVector interpolate_knnidw(NumericVector x, NumericVector y, int k, double p, double rmax);
 
   private:
     static bool coplanar (arma::vec& latent, arma::mat& coeff, NumericVector& th) { return latent[1] > th[0]*latent[2] && th[1]*latent[1] > latent[0]; }

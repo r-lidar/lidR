@@ -24,6 +24,7 @@ test_that("normalize_intensity fails with invalid LAS data", {
 
 test_that("normalize_intensity fails with invalid sensor data", {
 
+
   raster::crs(sensor) <- crs(las)
   tsensor <- sp::spTransform(sensor, sp::CRS("+init=epsg:26917"))
   expect_error(normalize_intensity(las, range_correction(tsensor, Rs = 2000)), "Unrealistic range")

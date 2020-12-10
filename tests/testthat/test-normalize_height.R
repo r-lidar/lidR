@@ -33,7 +33,7 @@ test_that("Each ground point is at 0 with kriging", {
   unnormalize_height(las)
 })
 
-test_that("Each ground point is at 0 a RasterLayer", {
+test_that("Each ground point is at 0 with a RasterLayer", {
   las <- normalize_height(las, dtm)
   Z0 = las@data[Classification == 2]$Z
   expect_equal(mean(abs(Z0)), 0.06, tol = 0.001)
@@ -64,7 +64,7 @@ test_that("Error if NAs in DTM", {
   expect_equal(npoints(las2), npoints(las) - 6 )
 })
 
-test_that("normalize_height work with a catalog", {
+test_that("normalize_height works with a catalog", {
   expect_error(normalize_height(ctg, tin()), "buffer")
 
   opt_chunk_buffer(ctg) <- 30

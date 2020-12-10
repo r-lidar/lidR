@@ -134,24 +134,24 @@ test_that("knnidw works", {
   X = c(0, 1, 1, 0, 0.5)
   Y = c(0, 0, 1, 1, 0.5)
   Z = c(0, 1, 1, 0, 0.5)
+  D = data.frame(X,Y,Z)
+  las = LAS(D)
 
-  val1 = lidR:::C_knnidw(X,Y, Z, 0.1, 0.1, 1, 1, 50, 1)
-  val2 = lidR:::C_knnidw(X,Y, Z, 0.2, 0.2, 1, 1, 50, 1)
-  val3 = lidR:::C_knnidw(X,Y, Z, 0.3, 0.3, 1, 1, 50, 1)
-  val4 = lidR:::C_knnidw(X,Y, Z, 0.4, 0.5, 1, 1, 50, 1)
+  val1 = lidR:::C_knnidw(las, 0.1, 0.1, 1, 1, 50, 1)
+  val2 = lidR:::C_knnidw(las, 0.2, 0.2, 1, 1, 50, 1)
+  val3 = lidR:::C_knnidw(las, 0.3, 0.3, 1, 1, 50, 1)
+  val4 = lidR:::C_knnidw(las, 0.4, 0.5, 1, 1, 50, 1)
 
   expect_equal(val1, 0)
   expect_equal(val2, 0)
   expect_equal(val3, 0.5)
   expect_equal(val4, 0.5)
 
-  val1 = lidR:::C_knnidw(X,Y, Z, 0.25, 0.25, 2, 1, 50, 1)
-  val2 = lidR:::C_knnidw(X,Y, Z, 0.2, 0.2, 2, 1, 50, 1)
+  val1 = lidR:::C_knnidw(las, 0.25, 0.25, 2, 1, 50, 1)
+  val2 = lidR:::C_knnidw(las, 0.2, 0.2, 2, 1, 50, 1)
 
   expect_equal(val1, 0.25)
   expect_equal(val2, 0.2)
-
-  lidR:::C_knnidw(X,Y, Z, 0.25, 0.25, 2, 1, 50, 1)
 })
 
 X = c(1, 2, 3, 10, 11, 12, 1, 2, 3)
