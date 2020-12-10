@@ -228,6 +228,17 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
   ROOT_LEVEL = num_levels - 1;
   MAX_VAL = 1 << ROOT_LEVEL;
 
+  if (x.size() == 0)
+  {
+    xmin = 0;
+    xmax = 0;
+    ymin = 0;
+    ymax = 0;
+    num_levels = 1;
+    ROOT_LEVEL = 0;
+    MAX_VAL = 1;
+  }
+
   unsigned int node_count = 0;
   for (unsigned int i = 0 ; i <= num_levels ; ++i) { node_count += std::pow(4, i); }
   heap.reserve(std::ceil(node_count/4));
@@ -347,10 +358,8 @@ template<typename T>  Node::Quadnode* QuadTree::locate_region(T shape)
   double bbymin = (shape.ymin - ymin)/(ymax-ymin);
   double bbymax = (shape.ymax - ymin)/(ymax-ymin);
 
-  if (bbxmax < 0) return 0;
-  if (bbxmin > 1) return 0;
-  if (bbymax < 0) return 0;
-  if (bbymin > 1) return 0;
+  if (bbxmax < 0 || bbxmin > 1 || bbymax < 0 || bbymin > 1)
+    return 0;
 
   bbxmin = std::max(bbxmin, 0.0);
   bbxmax = std::min(bbxmax, 1.0);

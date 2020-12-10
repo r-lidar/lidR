@@ -245,6 +245,19 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
   ROOT_LEVEL = num_levels - 1;
   MAX_VAL = 1 << ROOT_LEVEL;
 
+  if (x.size() == 0)
+  {
+    xmin = 0;
+    xmax = 0;
+    ymin = 0;
+    ymax = 0;
+    zmin = 0;
+    zmax = 0;
+    num_levels = 1;
+    ROOT_LEVEL = 0;
+    MAX_VAL = 1;
+  }
+
   // Compute the maximum number of node given the depth and alloc memory for
   // 1/4 of the maximum number of nodes
   unsigned int node_count = 0;
@@ -380,12 +393,8 @@ template<typename T>  Node::Ocnode* Octree::locate_region(T shape)
   double bbzmin = (shape.zmin - zmin)/(zmax-zmin);
   double bbzmax = (shape.zmax - zmin)/(zmax-zmin);
 
-  if (bbxmax < 0) return 0;
-  if (bbxmin > 1) return 0;
-  if (bbymax < 0) return 0;
-  if (bbymin > 1) return 0;
-  if (bbzmax < 0) return 0;
-  if (bbzmin > 1) return 0;
+  if (bbxmax < 0 || bbxmin > 1 || bbymax < 0 || bbymin > 1 || bbzmax < 0 || bbzmin > 1)
+    return 0;
 
   bbxmin = std::max(bbxmin, 0.0);
   bbxmax = std::min(bbxmax, 1.0);

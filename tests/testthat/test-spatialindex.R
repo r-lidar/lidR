@@ -302,3 +302,53 @@ test_that("Spatial indexes work with 0 point", {
 
   expect_true(all(sapply(u, identical, integer(0))))
 })
+
+test_that("Spatial indexes work with 1 point", {
+
+  las = LAS(data.frame(X = 10, Y = 10, Z = 10))
+
+  x = runif(1, 10, 11)
+  y = runif(1, 10, 11)
+  z = runif(1, 1, 19)
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_knn3d_lookup(las, x, y, z, 10)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, 1L)))
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_circle_lookup(las, x, y, 5)
+    id = sort(id)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, 1L)))
+})
+
+test_that("Spatial indexes work no point to find", {
+
+  las = lidR:::generate_las(10)
+
+  x = -100
+  y = -100
+  z = 0
+
+  u = vector("list", 4)
+  for(index in 0:4)
+  {
+    index(las) <- index
+    id = lidR:::C_circle_lookup(las, x, y, 5)
+    id = sort(id)
+    u[[index+1]] = id
+  }
+
+  expect_true(all(sapply(u, identical, integer(0))))
+})
