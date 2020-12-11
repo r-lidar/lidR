@@ -20,11 +20,11 @@ class Octree
     Octree(const Rcpp::S4 las, const std::vector<bool>& filter);
     Octree(const Rcpp::NumericVector, const Rcpp::NumericVector);
     Octree(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
-    template<typename T> void lookup(T& shape, std::vector<PointXYZ*>&);
-    void knn(const PointXY&, const unsigned int, std::vector<PointXYZ*>&);
-    void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ*>&);
-    void knn(const PointXY&, const unsigned int, const double, std::vector<PointXYZ*>&);
-    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ*>&);
+    template<typename T> void lookup(T& shape, std::vector<PointXYZ>&);
+    void knn(const PointXY&, const unsigned int, std::vector<PointXYZ>&);
+    void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ>&);
+    void knn(const PointXY&, const unsigned int, const double, std::vector<PointXYZ>&);
+    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ>&);
 
   private:
     std::vector<Node::Ocnode> heap;
@@ -44,7 +44,7 @@ class Octree
     void build(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
     void knn(Bucket::KnnBucket&);
     void harvest_knn(Node::Ocnode* node, Bucket::KnnBucket& knn, unsigned char excludepos);
-    template<typename T> void harvest_in(Node::Ocnode* node, T& shape, std::vector<PointXYZ*>& res);
+    template<typename T> void harvest_in(Node::Ocnode* node, T& shape, std::vector<PointXYZ>& res);
     template<typename T> bool contains(Node::Ocnode*, const T&);
     template<typename T> double distance(Node::Ocnode*, const T&);
     template<typename T> bool intersects(Node::Ocnode* node, T& shape);
@@ -112,42 +112,42 @@ inline Octree::Octree(const Rcpp::NumericVector x, const Rcpp::NumericVector y, 
   build(x,y,z);
 }
 
-template<typename T> void Octree::lookup(T& shape, std::vector<PointXYZ*>& res)
+template<typename T> void Octree::lookup(T& shape, std::vector<PointXYZ>& res)
 {
   Node::Ocnode* node = locate_region(shape);
   if (node != 0) harvest_in(node, shape, res);
   return;
 }
 
-inline void Octree::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void Octree::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   knn(p, k, 0, res);
 }
 
-inline void Octree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void Octree::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   knn(p, k, 0, res);
 }
 
-inline void Octree::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
+inline void Octree::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   Bucket::KnnBucket bucket(p, k, radius);
   knn(bucket);
 
   res.clear();
   PointXYZ pp(p.x, p.y, 0, 0);
-  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(*bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort2D<PointXYZ>(pp));
   return;
 }
 
-inline void Octree::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
+inline void Octree::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   Bucket::KnnBucket bucket(p, k, radius);
   knn(bucket);
 
   res.clear();
-  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(bucket.bucket[i]);
+  for(unsigned int i = 0 ; i < bucket.k ; i++) res.push_back(*bucket.bucket[i]);
   std::sort(res.begin(), res.end(), DSort3D<PointXYZ>(p));
   return;
 }
@@ -510,14 +510,14 @@ inline void Octree::harvest_knn(Node::Ocnode* node, Bucket::KnnBucket& bucket, u
   return;
 }
 
-template<typename T> void Octree::harvest_in(Node::Ocnode* node, T& shape, std::vector<PointXYZ*>& res)
+template<typename T> void Octree::harvest_in(Node::Ocnode* node, T& shape, std::vector<PointXYZ>& res)
 {
   if (node->firstChild == -1)
   {
     for (std::vector<PointXYZ>::iterator it = node->points.begin() ; it != node->points.end() ; it++)
     {
       if (shape.contains(*it))
-        res.emplace_back(&(*it));
+        res.emplace_back(*it);
     }
   }
   else

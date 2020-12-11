@@ -13,11 +13,11 @@ class SpatialIndex
 public:
   SpatialIndex(const Rcpp::S4 las);
   SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& filter);
-  template<typename T> void lookup(T& shape, std::vector<PointXYZ*>& res);
-  void knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res);
-  void knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res);
-  void knn(const PointXY& p, const unsigned int k, const double r, std::vector<PointXYZ*>& res);
-  void knn(const PointXYZ& p, const unsigned int k, const double r, std::vector<PointXYZ*>& res);
+  template<typename T> void lookup(T& shape, std::vector<PointXYZ>& res);
+  void knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ>& res);
+  void knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res);
+  void knn(const PointXY& p, const unsigned int k, const double r, std::vector<PointXYZ>& res);
+  void knn(const PointXYZ& p, const unsigned int k, const double r, std::vector<PointXYZ>& res);
 
 private:
   int index_selector(const Rcpp::S4 las);
@@ -59,7 +59,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& f
   }
 }
 
-template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ*>& res)
+template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ>& res)
 {
   switch(type)
   {
@@ -72,7 +72,7 @@ template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ*>&
   return;
 }
 
-inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   switch(type)
   {
@@ -85,7 +85,7 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vecto
   return;
 }
 
-inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   switch(type)
   {
@@ -98,7 +98,7 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vect
   return;
 }
 
-inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
+inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   switch(type)
   {
@@ -111,7 +111,7 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const doub
   return;
 }
 
-inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ*>& res)
+inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   switch(type)
   {

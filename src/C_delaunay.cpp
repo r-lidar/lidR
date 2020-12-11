@@ -285,7 +285,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
           Triangle tri(A,B,C);
 
           // Find the points in this triangle
-          std::vector<PointXYZ*> pts;
+          std::vector<PointXYZ> pts;
           tree.lookup(tri,pts);
 
           if (pts.size() > 0)
@@ -293,7 +293,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
             // For each point, linear interpolation
             for (unsigned int j = 0 ; j < pts.size() ; j++)
             {
-              PointXYZ *p = pts[j];
+              PointXYZ& p = pts[j];
 
               PointXYZ n;
               n.x = u.y*v.z-u.z*v.y;
@@ -314,7 +314,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
 
                 #pragma omp critical
                 {
-                  z_out[p->id] = -(p->x * n.x + p->y * n.y + intercept)/n.z;
+                  z_out[p.id] = -(p.x * n.x + p.y * n.y + intercept)/n.z;
                 }
               }
             }
@@ -430,15 +430,15 @@ IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int n
     Point C(P(iC, 0), P(iC, 1));
 
     Triangle triangle(A,B,C);
-    std::vector<PointXYZ*> points;
+    std::vector<PointXYZ> points;
     tree.lookup(triangle, points);
 
     // Return the id of the triangle
     #pragma omp critical
     {
-      for(std::vector<PointXYZ*>::iterator it = points.begin(); it != points.end(); it++)
+      for(std::vector<PointXYZ>::iterator it = points.begin(); it != points.end(); it++)
       {
-        int id = (*it)->id;
+        int id = it->id;
         output(id) = k + 1;
       }
     }

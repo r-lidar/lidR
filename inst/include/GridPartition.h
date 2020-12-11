@@ -24,11 +24,11 @@ class GridPartition
     GridPartition(const Rcpp::S4 las, const std::vector<bool>& filter);
     GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector);
     GridPartition(const Rcpp::NumericVector, const Rcpp::NumericVector, const Rcpp::NumericVector);
-    template<typename T> void lookup(T& shape, std::vector<PointXYZ*>&);
-    void knn(const PointXY&, const unsigned int, std::vector<PointXYZ*>&);
-    void knn(const PointXY&, const unsigned int, const double, std::vector<PointXYZ*>&);
-    void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ*>&);
-    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ*>&);
+    template<typename T> void lookup(T& shape, std::vector<PointXYZ>&);
+    void knn(const PointXY&, const unsigned int, std::vector<PointXYZ>&);
+    void knn(const PointXY&, const unsigned int, const double, std::vector<PointXYZ>&);
+    void knn(const PointXYZ&, const unsigned int, std::vector<PointXYZ>&);
+    void knn(const PointXYZ&, const unsigned int, const double, std::vector<PointXYZ>&);
 
   private:
     bool multilayer;
@@ -171,7 +171,7 @@ inline GridPartition::GridPartition(const Rcpp::NumericVector x, const Rcpp::Num
  * lidR defines some shapes in Shape.h. Some shapes are 2D (e.g. Circle) other
  * are 3D (e.g. Sphere).
  */
-template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>& res)
+template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ>& res)
 {
   double xmin = shape.xmin;
   double xmax = shape.xmax;
@@ -195,7 +195,7 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>
         cell = lay * nrows * ncols + row * ncols + col;
         for (std::vector<PointXYZ>::iterator it = heap[cell].begin() ; it != heap[cell].end() ; it++) {
           if (shape.contains(*it))
-            res.emplace_back(&(*it));
+            res.emplace_back(*it);
         }
       }
     }
@@ -208,12 +208,12 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ*>
  * Query the knn of a given 2D point. In that case the Z coordinates is not
  * considered for searching the neighbours. It is a search on XY only.
  */
-inline void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
 
-  std::vector<PointXYZ*> pts;
+  std::vector<PointXYZ> pts;
   while (pts.size() < k && pts.size() < npoints) {
     pts.clear();
     Circle circ(p.x, p.y, radius);
@@ -232,12 +232,12 @@ inline void GridPartition::knn(const PointXY& p, const unsigned int k, std::vect
  * Query the knn of a given 2D point with a maximum radius search. If there are
  * less than k neighbours it returns less than k points
  */
-inline void GridPartition::knn(const PointXY& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXY& p, const unsigned int k, const double maxradius, std::vector<PointXYZ>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
 
-  std::vector<PointXYZ*> pts;
+  std::vector<PointXYZ> pts;
   if (radius < maxradius)
   {
     while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
@@ -264,12 +264,12 @@ inline void GridPartition::knn(const PointXY& p, const unsigned int k, const dou
 /*
  * Query the knn of a given 3D point.
  */
-inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
 
-  std::vector<PointXYZ*> pts;
+  std::vector<PointXYZ> pts;
   while (pts.size() < k && pts.size() < npoints) {
     pts.clear();
     Sphere sphere(p.x, p.y, p.z, radius);
@@ -287,12 +287,12 @@ inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, std::vec
 /*
  * Query the knn of a given 3D point with a maximum radius.
  */
-inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ*>& res)
+inline void GridPartition::knn(const PointXYZ& p, const unsigned int k, const double maxradius, std::vector<PointXYZ>& res)
 {
   double density = npoints / area;
   double radius  = std::sqrt((double)k / (density * 3.14));
 
-  std::vector<PointXYZ*> pts;
+  std::vector<PointXYZ> pts;
   if (radius < maxradius)
   {
     while (pts.size() < k && pts.size() < npoints && radius <= maxradius) {
