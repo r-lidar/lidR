@@ -79,6 +79,7 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
 * Doc: minor fixes and clarifications in the `LAScatalog-class` page of the manual.
 * Enhance: `plot_dtm3d()` now enables pan by default like `plot()` for `LAS` objects.
 * Enhance: `track_sensor()` throw a new warning is a swath in the point cloud does not produce any sensor location. This adresses [#391](https://github.com/Jean-Romain/lidR/issues/391).
+* Misc: switch to C++14 (see [#404](https://github.com/Jean-Romain/lidR/issues/404))
 
 ## lidR v3.0.4 (Release date: 2020-10-08)
 
