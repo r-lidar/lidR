@@ -40,12 +40,15 @@ Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If seve
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 The LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.\cr\cr
-\code{readLAS} is the generic function and always works. Using one of \code{read*LAS} functions
+\code{readLAS} is the original function and always works. Using one of \code{read*LAS} functions
 adds information to the returned object to register a point-cloud type. Registering the good point
 type \strong{may} improve the performance of some functions by enabling to select an appropriated spatial index.
-See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
-compatibility reasons \code{readLAS()} and \code{readALSLAS()} are equivalent assuming that lidR
-was firstly designed for ALS.
+See \link[=lidR-spatial-index]{spatial indexing}. Notice that by legacy and for backward
+compatibility reasons \code{readLAS()} and \code{readALSLAS()} are equivalent because lidR
+was firstly designed for ALS and thus the original function \code{readLAS()} was (supposedly)
+used for ALS. Reading a TLS dataset with \code{readLAS()} instead of \code{readTLSLAS()} is perfectly
+valid and performs similarly than in versions \verb{<= 3.0.0} with neither performance degradation nor
+improvements.
 }
 \details{
 \strong{Select:} the 'select' argument specifies the data that will actually be loaded. For example,

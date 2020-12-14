@@ -100,6 +100,8 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   assert_is_algorithm_spi(algorithm)
   assert_is_a_bool(keep_lowest)
   assert_is_a_bool(full_raster)
+  assert_is_a_bool(is_concave)
+  if (full_raster & is_concave) stop("'full_raster' and 'is_concave' cannot both be 'TRUE'", call. = FALSE)
   if (!"Classification" %in% names(las@data)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
   if (any(as.integer(use_class) != use_class)) stop("'add_class' is not a vector of integers'", call. = FALSE)
   use_class <- as.integer(use_class)

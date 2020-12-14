@@ -10,12 +10,13 @@
 #' \link[=catalog_options_tools]{appropriated functions}. Careful reading of the
 #' \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 #' `LAScatalog` class correctly.\cr\cr
-#' `readLAScatalog` is the generic function and always works. Using one of `read*LAScatalog` functions
+#' `readLAScatalog` is the original function and always works. Using one of `read*LAScatalog` functions
 #' adds information to the returned object to register a point-cloud type. Registering the good point
 #' type **may** improve the performance of some functions by enabling to select an appropriated spatial index.
-#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that for legacy and backward
-#' compatibility reasons `readLAScatalog()` and `readALSLAScatalog()` are equivalent assuming that lidR
-#' was firstly designed for ALS.
+#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that by legacy and for backward
+#' compatibility reasons `readLAScatalog()` and `readALSLAScatalog()` are equivalent because lidR
+#' was firstly designed for ALS and thus the original function `readLAScatalog()` was
+#' (supposedly) used for ALS.
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files.
 #' Can also be a vector of file paths.

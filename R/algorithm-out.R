@@ -11,11 +11,11 @@
 #' (multiplier) the standard deviation are considered noise.
 #'
 #' @param k numeric. The number of neighbours
-#' @param m numeric. Multiplier. The maximum distance will be: avg distance + m * std deviation
-#' if \code{quantile = TRUE} m becomes the quantile threshold
+#' @param m numeric. Multiplier. The maximum distance will be: `avg distance + m * std deviation`.
+#' If `quantile = TRUE`, `m` becomes the quantile threshold.
 #' @param quantile boolean. Modification of the original SOR to use a quantile
 #' threshold instead of a standard deviation multiplier. In this case the maximum
-#' distance will be: quantile(avg distance, probs = m)
+#' distance will be: `quantile(distances, probs = m)`
 #'
 #' @export
 #'
@@ -25,7 +25,8 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' # Add some artificial outliers
+#' # Add some artificial outliers because the original
+#' # dataset is 'clean'
 #' set.seed(314)
 #' id = round(runif(20, 0, npoints(las)))
 #' set.seed(42)
@@ -33,7 +34,7 @@
 #' las$Z[id] = las$Z[id] + err
 #'
 #' las <- classify_noise(las, sor(15,7))
-#' plot(las, color = "Classification")
+#' @md
 sor = function(k = 10, m = 3, quantile = FALSE)
 {
   assert_is_a_number(k)
@@ -96,7 +97,6 @@ sor = function(k = 10, m = 3, quantile = FALSE)
 #' las$Z[id] = las$Z[id] + err
 #'
 #' las <- classify_noise(las, ivf(5,2))
-#' plot(las, color = "Classification")
 ivf = function(res = 5, n = 6)
 {
   assert_is_a_number(res)

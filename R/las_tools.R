@@ -5,12 +5,12 @@
 #'
 #' In the specification of the LAS format the coordinates are expected to be given
 #' with a precision e.g. 0.01 for a millimeter precision (or millifeet) meaning
-#' that a files records 123.46 not 123.45678. Also coordinates are stored as
+#' that a files records e.g. 123.46 not 123.45678. Also coordinates are stored as
 #' integer. This is made possible with a scale and offset factor. For example
 #' 123.46 with an offset of 100 and a scale factor of 0.01 is actually stored as
 #' (123.46 - 100)/0.01 = 2346. Storing 123.45678 with a scale of 0.01 and an offset
 #' of 100 is invalid because it does not converts to integer: (123.45678-100)/0.01
-#' = 2345.678. Having an invalid LAS object may be critical in some application.
+#' = 2345.678. Having an invalid LAS object may be critical in some lidR applications.
 #' First when writing into a LAS file, user will loose the extra precision without
 #' warning but some algorithm in lidR use the conversion to integer to make integer-based
 #' computation and speed-up some algorithm and use less memory. Creation of an
@@ -28,7 +28,7 @@
 #' LASfile <- system.file("extdata", "example.laz", package="rlas")
 #' las = readLAS(LASfile)
 #'
-#' # Manual modification of the coordinates (rotation, alignment, ...)
+#' # Manual modification of the coordinates (e.g. rotation, re-alignment, ...)
 #' las@data$X <- las@data$X + 2/3
 #' las@data$Y <- las@data$Y - 5/3
 #'
@@ -45,10 +45,10 @@
 #' las <- las_update(las)
 #' las_check(las)
 #'
-#' # In practice the above code is not relevant because operators
-#' # <- already perform such operation on the fly. Thus the following
+#' # In practice the above code is not useful for regulr users because operators
+#' # $<- already perform such operation on-the-fly. Thus the following
 #' # syntax must be preferred and returns valid objects. Previous tools
-#' # only intend to be used in very specific cases
+#' # only intend to be used in very specific cases.
 #' las$X <- las$X + 2/3
 #' las$Y <- las$Y - 5/3
 #'

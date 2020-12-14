@@ -9,7 +9,7 @@ point_metrics(las, func, k, r, xyz = FALSE, filter = NULL, ...)
 \arguments{
 \item{las}{An object of class LAS}
 
-\item{func}{formula. An expression to be applied to each cell (see section "Parameter func").}
+\item{func}{formula. An expression to be applied to each point neighboorhood (see section "Parameter func").}
 
 \item{k, r}{integer and numeric respectively for k-nearest neighbours and radius of the neighborhood
 sphere. If k is given and r is missing, compute the with the knn, if r is given and k is missing
@@ -35,7 +35,7 @@ When the neighbourhood is knn the user-defined function is fed with the current
 processed point and its k-1 neighbours. The current point being considered as
 the 1-neighbour with a distance 0 to the reference point. The points are ordered
 by distance to the central point. When the neighbourhood is a sphere the processed
-point is also included in the query but point are coming in a random order.
+point is also included in the query but points are coming in a random order.
 }
 \section{Performances}{
 

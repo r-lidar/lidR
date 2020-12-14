@@ -54,7 +54,7 @@
 #' \item{\code{ScanAngle} (numeric)}
 #' \item{\code{UserData} (integer)}
 #' \item{\code{PointSourceID} (integer)}
-#' \item{\code{R,G,b} (integer)}
+#' \item{\code{R,G,B} (integer)}
 #' \item{\code{NIR} (integer)}
 #' }
 #'
@@ -77,7 +77,7 @@
 #' @export
 #' @examples
 #' # Read a las/laz file
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' LASfile <- system.file("extdata", "example.laz", package="rlas")
 #' las <- readLAS(LASfile)
 #' las
 #'
@@ -102,13 +102,11 @@
 #' data <- data.frame(X = runif(100, 0, 100),
 #'                    Y = runif(100, 0, 100),
 #'                    Z = runif(100, 0, 20))
-#'
 #' header <- las@header
 #'
-#' # This works
+#' # This works but triggers warnings and creates an invalid LAS object
 #' cloud <- LAS(data, header)
 #'
-#' # But creates an invalid LAS object
 #' las_check(cloud)
 #' @seealso
 #' \link{readLAS}

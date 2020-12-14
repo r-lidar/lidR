@@ -51,13 +51,14 @@ a \code{list} with two elements:
 
 By default the spatial index code is 0 ("automatic") meaning that each function is free
 to choose a different spatial index depending on the recorded sensor. If the code is not
-0 then each function will be forced to used the spatial index that is imposed.
+0 then each function will be forced to used the spatial index that is imposed. This,
+obviously, applies to functions that do use spatial indexing.
 
 \link[=LAScatalog-class]{LAScatalog} objects also record such information that is automatically
 propagated to the LAS objects when processing.
 
 Note: before version 3.1.0 point-clouds were all considered as ALS because lidR was preliminary
-designed for ALS. Consequently for legacy and backward compatibility reasons \code{readLAS()}
+designed for ALS. Consequently by legacy and for backward compatibility reasons \code{readLAS()}
 and \code{readALSLAS()} are actually equivalent. \code{readLAS()} tags the point cloud with "unknown"
 sensor while \code{readALSLAS()} tags it with 'ALS' both behave the same and
 especially behave the same than in versions < 3.1. As a consequence using \code{readLAS()} provides
@@ -107,5 +108,73 @@ index(ctg) <- "voxelpartition"
 sensor(ctg, h = TRUE)
 index(ctg, h = TRUE)
 
+# ==================
+PERFORMANCE TESTS
+# ==================
 
+\dontrun{
+# Performance tests on TLS
+# ------------------------
+
+# The package does not include TLS data
+# so we can generate something that looks TLS-ish
+# >>>>>>>>>>>
+X = runif(50, -25, 25)
+Y = runif(50, -25, 25)
+X = as.numeric(sapply(X, function(x) rnorm(2000, x, 2)))
+Y = as.numeric(sapply(Y, function(x) rnorm(2000, x, 2)))
+Z = abs(rnorm(length(Y), 10, 5))
+veg = data.frame(X,Y,Z)
+X = runif(5000, -30, 30)
+Y = runif(5000, -30, 30)
+Z = runif(5000, 0, 1)
+ground = data.frame(X,Y,Z)
+X = runif(30, -30, 30)
+Y = runif(30, -30, 30)
+Z = runif(30, 0, 30)
+noise = data.frame(X,Y,Z)
+las = LAS(rbind(ground, veg, noise))
+# <<<<<<<<<<<<<
+
+plot(las)
+
+# If read with readALSLAS()
+sensor(las) <- "als"
+system.time(classify_noise(las, sor(20, 8)))
+#> 1.5 sec
+
+# If read with readTLSLAS()
+sensor(las) <- "tls"
+system.time(classify_noise(las, sor(20, 8)))
+#> 0.6 sec
+
+# Performance tests on ALS
+# ------------------------
+
+# The package does not include large ALS data
+# so we can generate something that looks ALS-ish
+# >>>>>>>>>>>
+X = runif(4e5, 0, 1000)
+Y = runif(4e5, 0, 1000)
+Z = 40*sin(0.01*X) + 50*cos(0.005*Y) + abs(rnorm(length(Y), 10, 5))
+veg = data.frame(X,Y,Z)
+X = runif(100, 0, 1000)
+Y = runif(100, 0, 1000)
+Z = 40*sin(0.01*X) + 50*cos(0.005*Y) + abs(rnorm(length(Y), 10, 5)) + runif(100, 30, 70)
+noise = data.frame(X,Y,Z)
+las = LAS(rbind(veg, noise))
+# <<<<<<<<<<<<<
+
+plot(las)
+
+# If read with readALSLAS()
+sensor(las) <- "als"
+system.time(classify_noise(las, sor(15, 8)))
+#> 3 sec
+
+# If read with readTLSLAS()
+sensor(las) <- "tls"
+system.time(classify_noise(las, sor(15, 8)))
+#> 4.3 sec
+}
 }

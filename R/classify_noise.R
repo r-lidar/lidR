@@ -55,18 +55,14 @@
 #' err = runif(20, -50, 50)
 #' las$Z[id] = las$Z[id] + err
 #'
-#'
 #' # Using SOR
-#' # =============
-#'
 #' las <- classify_noise(las, sor(15,7))
 #' plot(las, color = "Classification")
 #'
-#'
 #' # Using IVF
-#' # =============
-#'
 #' las <- classify_noise(las, ivf(5,2))
+#'
+#' # Remove outliers using filter_poi()
 #' las_denoise <- filter_poi(las, Classification != LASNOISE)
 classify_noise = function(las, algorithm)
 {

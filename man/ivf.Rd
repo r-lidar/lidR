@@ -30,7 +30,6 @@ err = runif(20, -50, 50)
 las$Z[id] = las$Z[id] + err
 
 las <- classify_noise(las, ivf(5,2))
-plot(las, color = "Classification")
 }
 \seealso{
 Other noise segmentation algorithms: 

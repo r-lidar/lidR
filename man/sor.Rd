@@ -9,12 +9,12 @@ sor(k = 10, m = 3, quantile = FALSE)
 \arguments{
 \item{k}{numeric. The number of neighbours}
 
-\item{m}{numeric. Multiplier. The maximum distance will be: avg distance + m * std deviation
-if \code{quantile = TRUE} m becomes the quantile threshold}
+\item{m}{numeric. Multiplier. The maximum distance will be: \verb{avg distance + m * std deviation}.
+If \code{quantile = TRUE}, \code{m} becomes the quantile threshold.}
 
 \item{quantile}{boolean. Modification of the original SOR to use a quantile
 threshold instead of a standard deviation multiplier. In this case the maximum
-distance will be: quantile(avg distance, probs = m)}
+distance will be: \code{quantile(distances, probs = m)}}
 }
 \description{
 This function is made to be used in \link{classify_noise}. It implements an
@@ -31,7 +31,8 @@ The points that are farther than the average distance plus a number of times
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile)
 
-# Add some artificial outliers
+# Add some artificial outliers because the original
+# dataset is 'clean'
 set.seed(314)
 id = round(runif(20, 0, npoints(las)))
 set.seed(42)
@@ -39,7 +40,6 @@ err = runif(20, -50, 50)
 las$Z[id] = las$Z[id] + err
 
 las <- classify_noise(las, sor(15,7))
-plot(las, color = "Classification")
 }
 \seealso{
 Other noise segmentation algorithms: 
