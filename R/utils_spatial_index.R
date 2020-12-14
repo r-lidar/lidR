@@ -87,7 +87,7 @@
 #' index(ctg, h = TRUE)
 #'
 #' # ==================
-#' PERFORMANCE TESTS
+#' # PERFORMANCE TESTS
 #' # ==================
 #'
 #' \dontrun{
