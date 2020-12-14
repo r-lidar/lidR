@@ -120,10 +120,19 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   iterations       <- lazyeval::uq(iterations)
   time_step        <- lazyeval::uq(time_step)
 
+  assert_is_a_bool(sloop_smooth)
+  assert_is_a_number(class_threshold)
+  assert_is_a_number(cloth_resolution)
+  assert_is_a_number(rigidness)
+  assert_is_a_number(iterations)
+  assert_is_a_number(time_step)
+  assert_package_is_installed("RCSF")
+
   f = function(las, filter)
   {
     . <- X <- Y <- Z <- NULL
     assert_is_valid_context(LIDRCONTEXTGND, "csf")
+
     las@data[["idx"]] <- 1:npoints(las)
     cloud <- las@data[filter, .(X,Y,Z, idx)]
     gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
@@ -193,6 +202,13 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #' @export
 mcc <- function(s = 1.5, t = 0.3)
 {
+  s <- lazyeval::uq(s)
+  t <- lazyeval::uq(t)
+
+  assert_is_a_number(s)
+  assert_is_a_number(t)
+  assert_package_is_installed("RMCC")
+
   f = function(las, filter)
   {
     . <- X <- Y <- Z <- idx <- NULL

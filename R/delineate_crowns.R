@@ -96,13 +96,9 @@ delineate_crowns.LAS = function(las, type = c("convex", "concave", "bbox"), conc
   assert_is_a_string(attribute)
 
   # concaveman is only a 'suggested' dependency
-  if (type == "concave")
-  {
-    if (!requireNamespace("concaveman", quietly = TRUE))
-      stop("'concaveman' package is needed to compute concave hull.", call. = FALSE) # nocov
-  }
+  if (type == "concave") assert_package_is_installed("concaveman")
 
-  # Pointeur on function C style coding
+  # Pointer on function C style coding
   if      (type == "convex")  fhull <- stdtreehullconvex
   else if (type == "concave") fhull <- stdtreehullconcave
   else if (type == "bbox")    fhull <- stdtreehullbbox

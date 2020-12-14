@@ -80,15 +80,14 @@
 #' @family metrics
 hexbin_metrics = function(las, func, res = 20)
 {
+  assert_package_is_installed("hexbin")
+
   stopifnotlas(las)
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)
 
   call <- lazyeval::as_call(func)
-
-  if (!requireNamespace("hexbin", quietly = TRUE))
-    stop("'hexbin' package is needed for this function to work. Please install it.")
 
   res  <- round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
   ext  <- raster::extent(las)

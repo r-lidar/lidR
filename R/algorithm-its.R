@@ -503,8 +503,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
     # Test if requiered packages are installed
     if (is.null(treetops))
     {
-      if (!requireNamespace("EBImage", quietly = TRUE))
-        stop("'EBImage' package is needed for this function to work. Please read documentation.", call. = FALSE) # nocov
+      assert_package_is_installed("EBImage")
     }
     #else
     #{

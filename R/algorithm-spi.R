@@ -158,6 +158,8 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' plot_dtm3d(dtm)
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
+  assert_package_is_installed("gstat")
+
   f = function(las, where)
   {
     assert_is_valid_context(LIDRCONTEXTSPI, "kriging")

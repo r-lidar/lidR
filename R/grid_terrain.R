@@ -134,9 +134,14 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   if (!full_raster)
   {
     if (is_concave)
+    {
+      assert_package_is_installed("concaveman")
       hull <- concaveman::concaveman(as.matrix(coordinates(las)), 10, 100)
+    }
     else
+    {
       hull <- convex_hull(las@data$X, las@data$Y)
+    }
 
     hull <- sp::Polygon(hull)
     hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))

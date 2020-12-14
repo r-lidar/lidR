@@ -228,6 +228,12 @@ assert_las_is_not_empty = function(x)
     stop("The point cloud contains 0 point", call. = FALSE)
 }
 
+assert_package_is_installed = function(x)
+{
+  if (!requireNamespace(x, quietly = TRUE))
+    stop(glue::glue("Package '{x}' needed for this function to work. Please install it."), call. = FALSE) # nocov
+}
+
 
 stopifnotlas = function(x)
 {
