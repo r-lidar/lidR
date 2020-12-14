@@ -272,7 +272,7 @@ setMethod("projection<-", "LAS", function(x, value)
   {
     CRS <- sp::CRS(SRS_string = value)
     proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
+    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
     epsg <- .find_epsg_code(CRS)
   }
   else if (is.numeric(value))
