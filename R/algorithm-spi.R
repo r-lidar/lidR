@@ -176,6 +176,8 @@ interpolate_knnidw = function(points, coord, k, p, rmax = 50)
     h <- rlas::header_create(points)
     points <- LAS(points, h, check = F)
   }
+
+  force_autoindex(points) <- LIDRGRIDPARTITION
   return(C_knnidw(points, coord$X, coord$Y, k, p, rmax, getThread()))
 }
 
@@ -191,6 +193,8 @@ interpolate_kriging = function(points, coord, model, k)
 
 interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offsets = c(0,0), options = "QbB", min_normal_z = 0)
 {
+  # /!\ TODO: triangulation does not respect spatial index and always use grid partition
+
   stopifnot(is.numeric(trim), length(trim) == 1L)
   stopifnot(is.numeric(scales), length(scales) == 2L)
   stopifnot(is.numeric(offsets), length(offsets) == 2L)

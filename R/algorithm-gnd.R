@@ -68,6 +68,7 @@ pmf = function(ws, th)
   f = function(las, filter)
   {
     assert_is_valid_context(LIDRCONTEXTGND, "pmf")
+    force_autoindex(las) <- LIDRGRIDPARTITION
     return(C_pmf(las, ws, th, filter))
   }
 

@@ -309,7 +309,7 @@ format_index = function(las)
   return(return(list(sensor = sensor, index = index)))
 }
 
-force_autoindex = function(las, value)
+`force_autoindex<-` = function(las, value)
 {
   if (index(las) == LIDRAUTOINDEX)
     index(las) <- value

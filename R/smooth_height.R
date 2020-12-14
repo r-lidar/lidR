@@ -44,6 +44,7 @@ smooth_height = function(las, size, method = c("average", "gaussian"), shape = c
   if (method == "average") method <- 1  else method <- 2
   if (method == "circle") shape   <- 1  else shape  <- 2
 
+  force_autoindex(las) <- LIDRGRIDPARTITION
   Zs <- C_smooth(las, size, method, shape, sigma, getThread())
   fast_quantization(Zs, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
 

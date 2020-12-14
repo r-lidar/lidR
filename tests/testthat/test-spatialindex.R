@@ -352,3 +352,22 @@ test_that("Spatial indexes work no point to find", {
 
   expect_true(all(sapply(u, identical, integer(0))))
 })
+
+test_that("Forcing autoindex work", {
+
+  las = readLAS(LASfile)
+
+  lidR:::force_autoindex(las) <- lidR:::LIDRGRIDPARTITION
+
+  expect_equal(index(las), 1L)
+
+  lidR:::force_autoindex(las) <- lidR:::LIDRQUADTREE
+
+  expect_equal(index(las), 1L)
+
+  index(las) <- lidR:::LIDRAUTOINDEX
+
+  lidR:::force_autoindex(las) <- lidR:::LIDRQUADTREE
+
+  expect_equal(index(las), 3L)
+})

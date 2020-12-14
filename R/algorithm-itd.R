@@ -120,6 +120,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
       stop("'ws' must be a number or a function", call. = FALSE)
     }
 
+    force_autoindex(las) <- LIDRGRIDPARTITION
     return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
