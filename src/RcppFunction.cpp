@@ -318,7 +318,7 @@ SEXP fast_eigen_values(arma::mat A)
  * ======= BINARY SEARCH TREE FUNCTIONS =========
  */
 
-#include "SpatialIndex.h"
+#include "lidR/SpatialIndex.h"
 #include "Progress.h"
 
 using namespace lidR;

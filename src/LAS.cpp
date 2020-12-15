@@ -1,10 +1,10 @@
 #include "LAS.h"
-#include <boost/geometry.hpp>
-#include <limits>
-#include "SpatialIndex.h"
 #include "Progress.h"
 #include "myomp.h"
+#include "SpatialIndexes.h"
+#include <limits>
 #include <boost/functional/hash.hpp>
+#include <boost/geometry.hpp>
 
 using namespace lidR;
 

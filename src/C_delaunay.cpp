@@ -1,16 +1,11 @@
-#include <Rcpp.h>
-#include "Point.h"
-#include "Shapes.h"
+#include "lidR/GridPartition.h"
 #include "Progress.h"
-#include "GridPartition.h"
 
 #include <boost/polygon/voronoi.hpp>
 
 using boost::polygon::voronoi_diagram;
 using namespace Rcpp;
 using namespace lidR;
-
-typedef lidR::GridPartition SpatialIndex;
 
 // The point structure must be an integral number. Boost perform on integral number only.
 struct point_int
@@ -43,8 +38,6 @@ namespace boost
     };
   }
 }
-
-typedef GridPartition SpatialIndex;
 
 // [[Rcpp::export(rng = false)]]
 IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offsets, double trim = 0)
@@ -228,7 +221,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
   construct_voronoi(points.begin(), points.end(), &vd);
 
   // Build a Spatial to retrieve point in triangles.
-  SpatialIndex tree(x,y);
+  GridPartition tree(x,y);
 
   // Progressbar and user interruption.
   bool abort = false;
@@ -400,7 +393,7 @@ IntegerVector C_tsearch(IntegerMatrix D, NumericMatrix P, NumericMatrix X, int n
 
   NumericVector x = X(_, 0);
   NumericVector y = X(_, 1);
-  SpatialIndex tree(x, y);
+  GridPartition tree(x, y);
 
   int nelem = D.nrow();
   int np = X.nrow();
