@@ -19,7 +19,7 @@ shp_line(th1 = 10, k = 8)
 \item{k}{integer. Number of neighbours used to estimate the neighborhood.}
 }
 \description{
-These functions are made to be used in \link{lasdetectshape}. They implement algorithms for local
+These functions are made to be used in \link{segment_shapes}. They implement algorithms for local
 neighborhood shape estimation.
 }
 \details{

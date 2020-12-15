@@ -27,7 +27,7 @@
 
 #' Algorithms for shape detection of the local point neighborhood
 #'
-#' These functions are made to be used in \link{lasdetectshape}. They implement algorithms for local
+#' These functions are made to be used in \link{segment_shapes}. They implement algorithms for local
 #' neighborhood shape estimation.
 #'
 #' In the following, \eqn{a1, a2, a3} denote the eigenvalues of the covariance matrix of the neighbouring
