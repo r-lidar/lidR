@@ -308,8 +308,26 @@ engine_update_progress <- function(pb, cluster, state, p, j)
   else
     pb$update(p)
 
-  return(invisible()) # nocov end
+  return(invisible(NULL)) # nocov end
 }
+
+# nocov start
+engin_close_pb <- function(pb)
+{
+  if (is.null(pb))
+    return(invisible(NULL))
+
+  if (!interactive())
+    return(invisible(NULL))
+
+  if (is(pb, "txtProgressBar"))
+    utils::close(pb)
+  else if (!pb$finished)
+    pb$terminate()
+
+  return(invisible(NULL))
+}
+# nocov end
 
 engine_save_logs <- function(cluster, index)
 {
