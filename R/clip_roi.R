@@ -464,16 +464,17 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
     if (cluster@files[1] == "")
       return(NULL)
 
-
-
     x <- suppressMessages(suppressWarnings(streamLAS(cluster, ofile = cluster@save, filter_wkt = cluster@wkt)))
 
     if (is.null(x))
     {
       x <- 0
       class(x) <- "lidr_internal_skip_write"
+      return(x)
     }
 
+    index(x) <- index(cluster)
+    sensor(x) <- sensor(cluster)
     return(x)
   }
 

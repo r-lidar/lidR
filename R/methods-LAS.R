@@ -163,12 +163,15 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, in
   if (is.null(index))
     index <- LIDRDEFAULTINDEX
 
+  index$xprt <- NULL
+
   las             <- new("LAS")
   las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
   las@header      <- header
   las@data        <- data
   las@proj4string <- proj4string
-  las@index       <-
+  las@index       <- index
+
 
   return(las)
 }

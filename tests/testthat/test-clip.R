@@ -420,3 +420,15 @@ test_that("clip throw an error with invalid template", {
 
   expect_error(clip_rectangle(ctg2, 684850, 5017850, 684900, 5017900), "undefined in clip functions")
 })
+
+
+test_that("clip repects spatial index metadata in LAScatalog", {
+  xc <- 684800
+  yc <- 5017850
+  r  <- 10
+  sensor(ctg) <- "tls"
+  index(ctg) <- "octree"
+  las = clip_circle(ctg, xc, yc, r)
+  expect_equal(index(las), index(ctg))
+  expect_equal(sensor(las), sensor(ctg))
+})

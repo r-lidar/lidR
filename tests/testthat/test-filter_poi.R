@@ -37,3 +37,14 @@ test_that("filter memory optimization works", {
   expect_reference(las@data, las3@data)
 })
 
+test_that("filter preserves spatial index metadata", {
+  sensor(las) <- "tls"
+  index(las) <- "octree"
+  las@index$xprt <- "dummy"
+  las2 = filter_poi(las, Z > 10)
+  expect_equal(index(las), index(las2))
+  expect_equal(sensor(las), sensor(las2))
+  expect_true(is.null(las2@index$xprt))
+})
+
+
