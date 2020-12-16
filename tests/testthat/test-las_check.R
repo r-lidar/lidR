@@ -123,7 +123,7 @@ test_that("las_check quantization specific test", {
 test_that("las_check performs a deep inspection of a LAScatalog", {
 
   sink(tempfile())
-  ctg = lidR::catalog_generator(2, 20)
+  ctg = lidR:::catalog_generator(2, 20)
   o1 = las_check(ctg, print = FALSE, deep = TRUE)
   o2 = las_check(ctg, print = TRUE, deep = TRUE)
 

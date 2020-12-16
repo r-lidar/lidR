@@ -319,5 +319,5 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 setMethod("[", c("LAS", "numeric"),  function(x, i)
 {
   data = x@data[i]
-  return(LAS(data, las@header, las@proj4string, FALSE, las@index))
+  return(LAS(data, x@header, x@proj4string, FALSE, x@index))
 })

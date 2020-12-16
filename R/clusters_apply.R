@@ -49,6 +49,8 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
   pb         <- engine_progress_bar(nclusters, prgrss)
   percentage <- 0
 
+  on.exit(engin_close_pb(pb))
+
   # Inititalize parallelism
   workers    <- getWorkers()
   threads    <- getThreads()
@@ -321,7 +323,7 @@ engin_close_pb <- function(pb)
     return(invisible(NULL))
 
   if (is(pb, "txtProgressBar"))
-    utils::close(pb)
+    close(pb)
   else if (!pb$finished)
     pb$terminate()
 
