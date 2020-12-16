@@ -1,6 +1,6 @@
 context("catalog_apply writemode")
 
-ctg <- lidR:::catalog_generator(10)
+ctg <- lidR:::catalog_generator(2, 50)
 
 test <- function(cluster) {
   las <- readLAS(cluster)
@@ -34,7 +34,7 @@ test_that("catalog_apply respects ID template", {
   o <- catalog_apply(ctg, test)
   o <- unlist(o)
 
-  i <- paste0("p", 1:4)
+  i <- paste0("p", 1:2)
   o <- tools::file_path_sans_ext(basename(o))
 
   expect_equal(i, o)
@@ -47,7 +47,7 @@ test_that("catalog_apply respects COORDINATES template", {
   o <- catalog_apply(ctg, test)
   o <- unlist(o)
 
-  i <- c("0_0", "75_0", "150_0", "0_75", "75_75", "150_75", "0_150", "75_150", "150_150")
+  i <- c("0_0", "75_0", "0_75", "75_75", "0_150", "75_150")
   o <- tools::file_path_sans_ext(basename(o))
 
   expect_equal(i, o)
@@ -75,7 +75,7 @@ test_that("catalog_apply can write with custom drivers", {
   req <- catalog_apply(ctg, test)
   req <- unlist(req)
 
-  expect_equal(basename(req), paste0(1:4, ".rds"))
+  expect_equal(basename(req), paste0(1:2, ".rds"))
   expect_true(all(file.exists(req)))
 })
 

@@ -1,6 +1,6 @@
 context("catalog_apply generic")
 
-ctg <- lidR:::catalog_generator(500)
+ctg <- lidR:::catalog_generator(2, 500)
 opt_chunk_size(ctg) <- 150
 
 test_that("catalog_apply makes strict non-overlaping chunks", {
@@ -17,7 +17,7 @@ test_that("catalog_apply makes strict non-overlaping chunks", {
   s1  <- do.call(sum, req)
   s2  <- sum(ctg@data$Number.of.point.records)
 
-  expect_equal(length(req), 4L)
+  expect_equal(length(req), 2L)
   expect_equal(s1, s2)
 
   # Count the first return
@@ -32,7 +32,7 @@ test_that("catalog_apply makes strict non-overlaping chunks", {
   s1  <- do.call(sum, req)
   s2  <- sum(ctg@data$Number.of.1st.return)
 
-  expect_equal(length(req), 4L)
+  expect_equal(length(req), 2L)
   expect_equal(s1, s2)
 })
 
@@ -143,12 +143,12 @@ test_that("catalog_apply return a partial ouptut and generates logs", {
   req2 <- suppressMessages(catalog_apply(ctg, test, .options = option))
 
   expect_is(req1, "list")
-  expect_equal(length(req1), 2L)
-  expect_message(catalog_apply(ctg, test), "chunk3.rds")
+  expect_equal(length(req1), 1L)
+  expect_message(catalog_apply(ctg, test), "chunk2.rds")
   expect_message(catalog_apply(ctg, test), "Test error")
 
   expect_is(req2, "data.frame")
-  expect_equal(nrow(req2), 6L)
+  expect_equal(nrow(req2), 3L)
 })
 
 test_that("catalog_apply can bypass errors", {

@@ -1,6 +1,6 @@
 context("catalog_apply autoread")
 
-ctg <- lidR:::catalog_generator(250)
+ctg <- lidR:::catalog_generator(2, 250)
 
 rtest <- function(las, bbox, layers = 1L) {
   r = lidR:::rOverlay(las, 2)
@@ -21,7 +21,7 @@ test_that("catalog_apply autoread works", {
 
   expect_true(raster::inMemory(req2))
   expect_equal(names(req2), "layername1")
-  expect_equal(raster::extent(req2), raster::extent(0,200,0,200))
-  expect_equal(sum(is.na(req2[])), 8L)
+  expect_equal(raster::extent(req2), raster::extent(0,100,0,200))
+  expect_equal(sum(is.na(req2[])), 4L)
 })
 

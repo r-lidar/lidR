@@ -63,7 +63,7 @@ las <- readLAS(LASfile, select = "xyzr", filter = "-thin_with_grid 1")
 ctg <- catalog(LASfile)
 
 opt_filter(ctg)          <- "-thin_with_grid 1"
-opt_chunk_size(ctg)      <- 50
+opt_chunk_size(ctg)      <- 100
 opt_chunk_alignment(ctg) <- c(5,15)
 opt_chunk_buffer(ctg)    <- 10
 opt_progress(ctg)        <- FALSE

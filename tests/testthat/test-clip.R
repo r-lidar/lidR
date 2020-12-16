@@ -9,7 +9,8 @@ opt_select(ctg)   <- "xyz"
 opt_filter(ctg)   <- "-keep_class 2"
 
 shapefile_dir <- system.file("extdata", package = "lidR")
-lakes <- rgdal::readOGR(shapefile_dir, "lake_polygons_UTM17", verbose = F)
+sflakes <- sf::st_read(shapefile_dir, "lake_polygons_UTM17", quiet = TRUE)
+lakes <- sf::as_Spatial(sflakes)
 
 test_that("clip_roi clips a rectangle both on a LAS and a LAScatalog", {
 
@@ -432,3 +433,4 @@ test_that("clip repects spatial index metadata in LAScatalog", {
   expect_equal(index(las), index(ctg))
   expect_equal(sensor(las), sensor(ctg))
 })
+

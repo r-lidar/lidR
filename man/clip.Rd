@@ -135,7 +135,7 @@ subset2 = clip_rectangle(ctg, 684850, 5017850, 684900, 5017900)
 
 # Extract all the polygons from a shapefile
 f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
-lakes <- shapefile(f)
+lakes <- sf::st_read(f, quiet = TRUE)
 subset3 <- clip_roi(ctg, lakes)
 
 # Extract the polygons, write them in files named after the lake names,

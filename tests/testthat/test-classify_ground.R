@@ -3,11 +3,11 @@ context("classify_ground")
 rgdal::set_thin_PROJ6_warnings(TRUE)
 
 file <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(file, select = "xyzrn")
+las = suppressWarnings(readLAS(file, select = "xyzrn"))
 ctg = catalog(file)
 
-opt_chunk_size(ctg) <- 160
-ctg@chunk_options$alignment = c(273340, 5274340)
+opt_chunk_size(ctg) <- 300
+ctg@chunk_options$alignment = c(50, 200)
 opt_chunk_buffer(ctg) <- 0
 opt_progress(ctg) <- FALSE
 
@@ -59,7 +59,7 @@ test_that("classify_ground csf works", {
   ctg2 = classify_ground(ctg, mycsf)
   las2 = readLAS(ctg2)
 
-  expect_equal(sum(las2@data$Classification == 2L), 26715L-862L)
+  expect_equal(sum(las2@data$Classification == 2L), 26715L-450L)
   expect_equal(nrow(las2@data), nrow(las@data))
 })
 

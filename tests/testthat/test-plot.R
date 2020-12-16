@@ -6,11 +6,13 @@ LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
 ctg     <- readLAScatalog(LASfile)
 
 test_that("plot LAS works", {
-  expect_error(plot(las, axis = TRUE), NA)
+  expect_error(plot(las, color = "Intensity", axis = TRUE, legend = T), NA)
   rgl::rgl.close()
 })
 
 test_that("plot LAS works with attributes", {
+
+  skip_on_cran()
 
   las@data$treeID <- sample(1:3, npoints(las), T)
   las@data$R <- 255
@@ -102,3 +104,4 @@ test_that("add = x overlay a second point cloud", {
   rgl::rgl.close()
 
 })
+

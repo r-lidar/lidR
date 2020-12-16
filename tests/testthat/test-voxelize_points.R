@@ -7,17 +7,18 @@ ctg     <-  catalog(LASfile)
 test_that("filter_surfacepoints works", {
 
   opt_progress(ctg) <- FALSE
-  opt_chunk_size(ctg) <- 180
+  opt_chunk_size(ctg) <- 300
+  opt_chunk_alignment(ctg)<- c(120, 100)
   opt_output_files(ctg) <- paste0(tempdir(), "/file_{ID}")
-  ctgdec <-  voxelize_points(ctg, 2)
+  ctgdec <-  voxelize_points(ctg, 4)
 
-  vox  <- voxelize_points(las, 2)
+  vox  <- voxelize_points(las, 4)
   vox2 <- readLAS(ctgdec)
 
   data.table::setorder(vox@data, X,Y,Z)
   data.table::setorder(vox2@data, X,Y,Z)
 
-  expect_equal(nrow(vox@data), 43076L)
+  expect_equal(nrow(vox@data), 13822L)
   expect_equal(vox@data, vox2@data)
 })
 

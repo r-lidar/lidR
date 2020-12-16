@@ -89,8 +89,8 @@ LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
 ctg      <- readLAScatalog(LASfile, select = "xyz", filter = "-keep_first")
 las      <- readLAS(ctg)
 
-opt_chunk_size(ctg)      <- 140
-opt_chunk_alignment(ctg) <- c(684760, 5017760)
+opt_chunk_size(ctg)      <- 260
+opt_chunk_alignment(ctg) <- c(160, 160)
 opt_chunk_buffer(ctg)    <- 0
 opt_progress(ctg)        <- FALSE
 opt_select(ctg)          <- "xyz"
@@ -122,16 +122,6 @@ test_that("grid_metric return the same both with catalog and las + grid alignmen
 })
 
 test_that("grid_metric works with a RasterLayer as input instead of a resolution", {
-
-  # --- partially matching bbox
-
-  r <- raster::raster(round(extent(las) - 80))
-  raster::res(r) <- 15
-  raster::crs(r) <- crs(las)
-
-  m1 <- grid_metrics(ctg, ~length(Z), r)
-  m2 <- grid_metrics(las, ~length(Z), r)
-  expect_equal(m1, m2)
 
   # --- partially matching bbox
 
@@ -172,8 +162,8 @@ test_that("predefined metric set work both with a LAS and LAScatalog", {
   expect_error(grid_metrics(las, .stdmetrics_i), NA)
   expect_error(grid_metrics(las, .stdmetrics_rn), NA)
   expect_error(grid_metrics(las, .stdmetrics_ctrl), NA)
+  expect_error(grid_metrics(las, .stdshapemetrics), NA)
   expect_error(grid_metrics(ctg, .stdmetrics_z), NA)
-  expect_error(grid_metrics(ctg, .stdshapemetrics), NA)
 })
 
 test_that("Using a non empty layout return correct output (#318)", {

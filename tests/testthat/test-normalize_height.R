@@ -5,8 +5,8 @@ las = readLAS(LASfile)
 ctg = catalog(LASfile)
 dtm = grid_terrain(las, 1, tin())
 
-opt_chunk_size(ctg) <- 160
-ctg@chunk_options$alignment = c(332550, 5238450)
+opt_chunk_size(ctg) <- 300
+ctg@chunk_options$alignment = c(50, 200)
 opt_chunk_buffer(ctg) <- 0
 opt_progress(ctg) <- FALSE
 
@@ -27,7 +27,7 @@ test_that("Each ground point is at 0 with delaunay", {
 })
 
 test_that("Each ground point is at 0 with kriging", {
-  las <- normalize_height(las, kriging(k = 10L))
+  las <- normalize_height(las, kriging(k = 3L))
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))
   unnormalize_height(las)

@@ -7,7 +7,7 @@ vertx = c(0,1,0)
 verty = c(0,0,1)
 
 las <- lidR:::generate_las(500)
-ctg <- lidR:::catalog_generator(500)
+ctg <- lidR:::catalog_generator(4, 500)
 
 test_that("convex hull works", {
   expect_equal(lidR:::convex_hull(x,y), data.frame(x = c(1,0,0,1,1), y = c(0,0,1,1,0)))

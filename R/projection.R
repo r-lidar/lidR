@@ -363,7 +363,7 @@ setMethod("crs", "LAScatalog", function(x, asText = FALSE)
 #' @noRd
 setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
 {
-  if (is.na(sp::proj4string(x)))
+  if (is.na(x@proj4string@projargs))
     stop("No transformation possible from NA reference system")
 
   # Transform the point coordinates

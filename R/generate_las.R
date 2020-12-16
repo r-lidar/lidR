@@ -24,21 +24,29 @@ generate_las <- function(n, seeds = 1) {
   return(las)
 }
 
-catalog_generator <- function(n, size = 100, seed = 1) {
+catalog_generator <- function(ntiles = 4, npoints = 250, size = 100, seed = 1) {
   X <- Y <- NULL
 
-  # Generate a catalog
-  xshift <- c(0, size, 0, size)
-  yshift <- c(0, 0, size, size)
-  shift  <- cbind(xshift, yshift)
-  temp   <- sapply(1:nrow(shift), function(x) tempfile(fileext = ".las"))
+  xntiles = as.integer(floor(ntiles/2))
+  yntiles = as.integer(ceiling(ntiles/xntiles))
 
-  for (i in 1:nrow(shift))
+  # Generate a catalog
+  xshift <- seq(0, (xntiles-1)*size, by = size)
+  yshift <- seq(0, (yntiles-1)*size, by = size)
+  ntiles <- length(xshift)*length(yshift)
+  temp   <- sapply(1:ntiles, function(x) tempfile(fileext = ".las"))
+
+  k = 1
+  for (i in 1:length(xshift))
   {
-    las <- generate_las(n, seeds = i + seed)
-    las@data[, X := X + shift[i,1]]
-    las@data[, Y := Y + shift[i,2]]
-    writeLAS(las, temp[i])
+    for (j in 1:length(yshift))
+    {
+      las <- generate_las(npoints, seeds = k + seed)
+      las@data[, X := X + xshift[i]]
+      las@data[, Y := Y + yshift[j]]
+      writeLAS(las, temp[k])
+      k = k+1
+    }
   }
 
   ctg <- readLAScatalog(temp)

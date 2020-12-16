@@ -1,6 +1,6 @@
 context("catalog_apply automerge")
 
-ctg <- lidR:::catalog_generator(250)
+ctg <- lidR:::catalog_generator(2, 250)
 ctg@output_options$drivers$Raster$param$overwrite = TRUE
 ctg@output_options$drivers$Spatial$param$overwrite = TRUE
 ctg@output_options$drivers$SimpleFeature$param$delete_dsn = TRUE
@@ -14,7 +14,7 @@ if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal()) {
 rtest <- function(cluster, layers = 1L) {
   las <- readLAS(cluster)
   if (is.empty(las)) return(NULL)
-  r = lidR:::rOverlay(las, 2)
+  r = lidR:::rOverlay(las, 4)
   r[] <- 1L
   r[55:56] <- NA
   if (layers > 1) {
@@ -70,8 +70,8 @@ test_that("catalog_apply automerge works with in memory RastersLayer", {
   expect_equal(crs(req1), crs(ctg))
   expect_is(req1, "RasterLayer")
   expect_is(req2, "RasterLayer")
-  expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-  expect_equal(sum(is.na(req1[])), 8L)
+  expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
+  expect_equal(sum(is.na(req1[])), 4L)
 
   expect_equal(req1, req2)
 })
@@ -89,8 +89,8 @@ test_that("catalog_apply automerge works with in memory RastersBrick", {
   expect_equal(names(req1), c("layername1", "layername2"))
   expect_equal(crs(req1), crs(ctg))
   expect_is(req1, "RasterBrick")
-  expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-  expect_equal(sum(is.na(req1[])), 16L)
+  expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
+  expect_equal(sum(is.na(req1[])), 8L)
 
   expect_equal(req1, req2)
 })
@@ -109,8 +109,8 @@ test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
     #expect_equal(names(req1), "layername1")
     #expect_equal(crs(req1)@projargs, crs(ctg)@projargs) # patch for raster not updated with rgal 1.5-8
     expect_is(req1, "RasterLayer")
-    expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-    expect_equal(sum(is.na(req1[])), 8L)
+    expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
+    expect_equal(sum(is.na(req1[])), 4L)
   }
 })
 
@@ -128,8 +128,8 @@ test_that("catalog_apply automerge works with on disk RastersBrick (VRT)", {
     #expect_equal(names(req1), c("layername1", "layername2"))
     #expect_equal(crs(req1)@projargs, crs(ctg)@projargs) # patch for raster not updated with rgal 1.5-8
     expect_is(req1, "RasterBrick")
-    expect_equal(raster::extent(req1), raster::extent(0,200,0,200))
-    expect_equal(sum(is.na(req1[])), 16L)
+    expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
+    expect_equal(sum(is.na(req1[])), 8L)
   }
 })
 
@@ -140,14 +140,14 @@ test_that("catalog_apply automerge works with in memory SpatialPoints*", {
 
   expect_is(req2, "SpatialPoints")
   expect_equal(req2@proj4string, crs(ctg))
-  expect_equal(length(req2), 24L)
+  expect_equal(length(req2), 12L)
 
   option <- list(automerge = TRUE)
   req2 <- catalog_apply(ctg, sptest, DataFrame = TRUE, .options = option)
 
   expect_is(req2, "SpatialPointsDataFrame")
   expect_equal(req2@proj4string, crs(ctg))
-  expect_equal(dim(req2), c(24L,1L))
+  expect_equal(dim(req2), c(12L,1L))
 })
 
 test_that("catalog_apply automerge works with on disk SpatialPoints*", {
@@ -168,7 +168,7 @@ test_that("catalog_apply automerge works with in memory POINTS", {
 
   expect_is(req2, "sf")
   #expect_equal(projection(req2), "+proj=tmerc +lat_0=0 +lon_0=-55.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +no_defs")
-  expect_equal(nrow(req2), 24L)
+  expect_equal(nrow(req2), 12L)
 })
 
 test_that("catalog_apply automerge works with on disk POINTS*", {
@@ -189,7 +189,7 @@ test_that("catalog_apply automerge works with in memory LAS", {
 
   expect_is(req2, "LAS")
   expect_equal(crs(req2), crs(ctg))
-  expect_equal(npoints(req2), 24L)
+  expect_equal(npoints(req2), 12L)
 })
 
 test_that("catalog_apply automerge works with on disk LAS (LAScatalog)", {
@@ -209,7 +209,7 @@ test_that("catalog_apply automerge works with in memory data.frame", {
   req2 <- catalog_apply(ctg, dftest, .options = option)
 
   expect_is(req2, "data.frame")
-  expect_equal(nrow(req2), 24L)
+  expect_equal(nrow(req2), 12L)
 })
 
 test_that("catalog_apply automerge works with on disk data.frame", {
@@ -232,12 +232,11 @@ test_that("catalog_apply automerge does not fail with heterogeneous outputs", {
 
   opt_wall_to_wall(ctg) <- FALSE
   option <- list(automerge = FALSE)
-  req <- suppressWarnings(catalog_sapply(ctg, test, .options = option))
 
-  expect_warning(catalog_sapply(ctg, test, .options = option), "heterogeneous objects")
+  expect_warning(req <- catalog_sapply(ctg, test, .options = option), "heterogeneous objects")
   expect_is(req, "list")
   expect_is(req[[1]], "data.frame")
-  expect_is(req[[3]], "list")
+  expect_is(req[[2]], "list")
 })
 
 test_that("catalog_apply automerge does not fail with unsupported objects outputs", {
@@ -250,9 +249,8 @@ test_that("catalog_apply automerge does not fail with unsupported objects output
 
   opt_wall_to_wall(ctg) <- FALSE
   option <- list(automerge = FALSE)
-  req <- suppressWarnings(catalog_sapply(ctg, test, .options = option))
 
-  expect_warning(catalog_sapply(ctg, test, .options = option), "unsupported objects")
+  expect_warning(req <- catalog_sapply(ctg, test, .options = option), "unsupported objects")
   expect_is(req, "list")
   expect_is(req[[1]], "lm")
 })

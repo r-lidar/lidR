@@ -1,7 +1,8 @@
 context("catalog_errors")
 
 file <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg  <- catalog(file)
+ctg  <- readLAScatalog(file)
+opt_progress(ctg) <- FALSE
 
 opt_chunk_size(ctg) <- 160
 ctg@chunk_options$alignment <- c(684750, 5017760)
@@ -17,3 +18,4 @@ test_that("functions throw error were needed", {
   expect_error(classify_ground(ctg, csf()), "output file")
   expect_error(decimate_points(ctg, homogenize(5)), "output file")
 })
+

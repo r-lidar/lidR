@@ -32,7 +32,7 @@ test_that("decimate_points fails with unproper catalog options", {
 
 test_that("decimate_points works with a LAScatalog", {
 
-  ctg <- lidR:::catalog_generator(200)
+  ctg <- lidR:::catalog_generator(2, 200)
   opt_output_files(ctg) <- "{tempdir()}/{ID}"
   ctg2 <- decimate_points(ctg, highest(10))
 

@@ -109,9 +109,9 @@ file <- system.file("extdata", "Topography.laz", package = "lidR")
 ctg  <- catalog(file)
 las  <- readLAS(file)
 
-opt_chunk_size(ctg)      <- 180
+opt_chunk_size(ctg)      <- 300
 opt_chunk_buffer(ctg)    <- 30
-opt_chunk_alignment(ctg) <- c(332400, 5238400)
+opt_chunk_alignment(ctg) <- c(50, 200)
 opt_progress(ctg)        <- FALSE
 
 test_that("grid_terrain returns the same both with LAScatalog and LAS", {
@@ -125,9 +125,8 @@ test_that("grid_terrain returns the same both with LAScatalog and LAS", {
   cdtm2 <- raster::crop(dtm2, bbox)
 
   error <- abs(cdtm1 - cdtm2)
-  error <- error[error > 0.01]
 
-  expect_equal(mean(error), 0.0195, tolerance = 0.001)
+  expect_equal(mean(error[]), 0, tolerance = 0.00001)
 
   z <- raster::extract(dtm2, las@data[, .(X,Y)])
   expect_true(!anyNA(z))
@@ -157,7 +156,5 @@ test_that("grid_terrain fails in some specific case", {
 
   las@data$Classification <- NULL
   expect_error(grid_terrain(las, 1, tin()), "LAS object does not contain 'Classification' attribute")
-
-
 })
 

@@ -5,9 +5,9 @@ las = readLAS(LASfile, select = "xyzt", filter = "-drop_z_below 0")
 ctg = catalog(LASfile)
 
 opt_progress(ctg) <- FALSE
-opt_chunk_alignment(ctg) <- c(-10,3812970)
-opt_chunk_size(ctg) <- 60
-opt_chunk_buffer(ctg) <- 20
+opt_chunk_alignment(ctg) <- c(50,60)
+opt_chunk_size(ctg) <- 100
+opt_chunk_buffer(ctg) <- 15
 
 test_that("find_trees LMF works with a LAS", {
 

@@ -255,3 +255,4 @@ test_that("LAS build an empty point cloud with no header (#314)", {
   expect_equal(npoints(las), 0L)
   expect_equal(names(las@data), c("X", "Y", "Z"))
 })
+

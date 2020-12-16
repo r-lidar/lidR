@@ -175,7 +175,7 @@ test_that("segment_trees supports a LAScatalog", {
   las = segment_trees(las, li2012(speed_up = 5), uniqueness = 'bitmerge', attribute = "treeID2")
 
   # Commenting this test temporarily to be able to have a build on MacOS. Then I will be
-  # able to test that on somebody computer.
+  # able to test that on somebody' computer.
   #expect_equal(length(na.omit(unique(las@data$treeID))), 274) # 272 on Fedora and MacOS. Impossible to reproduce.
   #expect_equal(las$treeID, las$treeID2) # added this test but cannot test on mac os.
 })

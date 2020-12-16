@@ -16,8 +16,8 @@ f = tempfile(fileext = ".las")
 writeLAS(las, f)
 
 ctg = readLAScatalog(f)
-opt_chunk_size(ctg) <- 160
-ctg@chunk_options$alignment = c(273340, 5274340)
+opt_chunk_size(ctg) <- 300
+ctg@chunk_options$alignment = c(50, 200)
 opt_chunk_buffer(ctg) <- 0
 opt_progress(ctg) <- FALSE
 
