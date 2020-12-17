@@ -41,7 +41,6 @@ Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#do
 }
 \seealso{
 Other ground segmentation algorithms: 
-\code{\link{csf}()},
-\code{\link{mcc}()}
+\code{\link{csf}()}
 }
 \concept{ground segmentation algorithms}

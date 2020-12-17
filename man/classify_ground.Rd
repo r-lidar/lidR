@@ -9,7 +9,8 @@ classify_ground(las, algorithm, last_returns = TRUE)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf}, \link{csf} and \link{mcc}.}
+\item{algorithm}{a ground-segmentation function. \code{lidR} has: \link{pmf} and \link{csf}.
+The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has 'mcc'.}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
 in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute

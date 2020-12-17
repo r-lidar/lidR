@@ -47,13 +47,10 @@ Suggests:
     mapedit,
     progress,
     RCSF,
-    RMCC,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
     covr
-Remotes:
-    Jean-Romain/RMCC
 LazyData: true
 RoxygenNote: 7.1.1
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
