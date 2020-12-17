@@ -10,6 +10,8 @@ namespace lidR
 #define EPSILON 2e-8
 #define XYINF 99999999999;
 #define ZINF 2147483640;
+#define MAX(a,b,c) ((a>b)?((a>c)?a:c):((b>c)?b:c));
+#define MIN(a,b,c) ((a>b)?((b>c)?c:b):((a>c)?c:a));
 
 struct Shape
 {
@@ -26,8 +28,7 @@ struct Shape
   template<typename T> bool contains(const T&);
 };
 
-inline
-Shape::Shape()
+inline Shape::Shape()
 {
   this->xmin = -XYINF;
   this->xmax = XYINF;
@@ -37,8 +38,7 @@ Shape::Shape()
   this->zmax = ZINF;
 }
 
-inline
-Shape::Shape(double xmin, double xmax, double ymin, double ymax)
+inline Shape::Shape(double xmin, double xmax, double ymin, double ymax)
 {
   this->xmin = xmin;
   this->xmax = xmax;
@@ -48,8 +48,7 @@ Shape::Shape(double xmin, double xmax, double ymin, double ymax)
   this->zmax = ZINF;
 }
 
-inline
-Shape::Shape(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
+inline Shape::Shape(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
 {
   this->xmin = xmin;
   this->xmax = xmax;
@@ -97,8 +96,7 @@ struct OrientedRectangle: public Shape
   Point D;
 };
 
-inline
-OrientedRectangle::OrientedRectangle(double xmin, double xmax, double ymin, double ymax, double angle) : Shape()
+inline OrientedRectangle::OrientedRectangle(double xmin, double xmax, double ymin, double ymax, double angle) : Shape()
 {
   // Rectangle center
   double cx = (xmax + xmin)/2;
@@ -171,8 +169,7 @@ struct Circle: public Shape
   double radius;
 };
 
-inline
-Circle::Circle(double xcenter, double ycenter, double radius) : Shape(xcenter-radius, xcenter+radius, ycenter-radius, ycenter+radius)
+inline Circle::Circle(double xcenter, double ycenter, double radius) : Shape(xcenter-radius, xcenter+radius, ycenter-radius, ycenter+radius)
 {
   center.x = xcenter;
   center.y = ycenter;
@@ -198,13 +195,12 @@ struct Triangle: public Shape
   Point C;
 };
 
-inline
-Triangle::Triangle(Point& A, Point& B, Point& C)
+inline Triangle::Triangle(Point& A, Point& B, Point& C)
 {
-  xmin = min(A.x, B.x, C.x);
-  ymin = min(A.y, B.y, C.y);
-  xmax = max(A.x, B.x, C.x);
-  ymax = max(A.y, B.y, C.y);
+  xmin = MIN(A.x, B.x, C.x);
+  ymin = MIN(A.y, B.y, C.y);
+  xmax = MAX(A.x, B.x, C.x);
+  ymax = MAX(A.y, B.y, C.y);
 
   this->A = A;
   this->B = B;
@@ -258,7 +254,6 @@ double Triangle::distanceSquarePointToSegment(const Point& p1, const Point& p2, 
   }
 }
 
-
 struct Sphere: public Shape
 {
   Sphere(double xcenter, double ycenter, double zcenter, double radius);
@@ -267,8 +262,7 @@ struct Sphere: public Shape
   double radius;
 };
 
-inline
-Sphere::Sphere(double xcenter, double ycenter, double zcenter, double radius) : Shape(xcenter-radius, xcenter+radius, ycenter-radius, ycenter+radius, zcenter-radius, zcenter+radius)
+inline Sphere::Sphere(double xcenter, double ycenter, double zcenter, double radius) : Shape(xcenter-radius, xcenter+radius, ycenter-radius, ycenter+radius, zcenter-radius, zcenter+radius)
 {
   center.x = xcenter;
   center.y = ycenter;

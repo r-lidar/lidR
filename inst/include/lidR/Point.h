@@ -169,22 +169,6 @@ template<typename T> std::vector<double> sqdistance(std::vector<T*>& pts, T& u)
   return y;
 }
 
-static inline double max (double a, double b, double c)
-{
-  if (a < b)
-    return (b < c ? c : b);
-  else
-    return (a < c ? c : a);
-}
-
-static inline double min (double a, double b, double c)
-{
-  if (a > b)
-    return (b > c ? c : b);
-  else
-    return (a > c ? c : a);
-}
-
 }
 
 #endif //POINT_H

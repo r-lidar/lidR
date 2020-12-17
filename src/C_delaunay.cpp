@@ -7,6 +7,8 @@ using boost::polygon::voronoi_diagram;
 using namespace Rcpp;
 using namespace lidR;
 
+
+
 // The point structure must be an integral number. Boost perform on integral number only.
 struct point_int
 {
@@ -128,7 +130,7 @@ IntegerMatrix C_delaunay(DataFrame P, NumericVector scales, NumericVector offset
           double edge_AB = u.x * u.x + u.y * u.y;
           double edge_AC = v.x * v.x + v.y * v.y;
           double edge_BC = w.x * w.x + w.y * w.y;
-          double edge_max = max(edge_AB, edge_AC, edge_BC);
+          double edge_max = MAX(edge_AB, edge_AC, edge_BC);
 
           bool skip = (trim > 0) ? edge_max > atrim : edge_max < atrim;
 
@@ -270,7 +272,7 @@ NumericVector C_interpolate_delaunay(DataFrame P, DataFrame L, NumericVector sca
         double edge_AB = u.x * u.x + u.y * u.y;
         double edge_AC = v.x * v.x + v.y * v.y;
         double edge_BC = w.x * w.x + w.y * w.y;
-        double edge_max = max(edge_AB, edge_AC, edge_BC);
+        double edge_max = MAX(edge_AB, edge_AC, edge_BC);
 
         // Interpolate in this triangle if the longest edge fulfil requirements
         if (trim == 0 || edge_max < trim)

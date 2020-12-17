@@ -133,10 +133,6 @@ C_knn <- function(X, Y, x, y, k, ncpu) {
     .Call(`_lidR_C_knn`, X, Y, x, y, k, ncpu)
 }
 
-C_count_in_disc <- function(X, Y, x, y, radius, ncpu) {
-    .Call(`_lidR_C_count_in_disc`, X, Y, x, y, radius, ncpu)
-}
-
 C_circle_lookup <- function(las, x, y, r) {
     .Call(`_lidR_C_circle_lookup`, las, x, y, r)
 }

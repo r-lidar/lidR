@@ -431,21 +431,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_count_in_disc
-IntegerVector C_count_in_disc(NumericVector X, NumericVector Y, NumericVector x, NumericVector y, double radius, int ncpu);
-RcppExport SEXP _lidR_C_count_in_disc(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP radiusSEXP, SEXP ncpuSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_count_in_disc(X, Y, x, y, radius, ncpu));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_circle_lookup
 IntegerVector C_circle_lookup(S4 las, double x, double y, double r);
 RcppExport SEXP _lidR_C_circle_lookup(SEXP lasSEXP, SEXP xSEXP, SEXP ySEXP, SEXP rSEXP) {
@@ -545,7 +530,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
-    {"_lidR_C_count_in_disc", (DL_FUNC) &_lidR_C_count_in_disc, 6},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 4},
     {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 6},
     {"_lidR_C_knn2d_lookup", (DL_FUNC) &_lidR_C_knn2d_lookup, 4},

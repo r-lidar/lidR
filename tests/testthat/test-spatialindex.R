@@ -179,9 +179,6 @@ test_that("circle lookup works for each spatial index", {
     id = lidR:::C_circle_lookup(las, 6,6,2)
     expect_equal(length(id), 0)
   }
-
-  n <- lidR:::C_count_in_disc(X, Y, c(3, 10), c(2, 5), 2.1, 1L)
-  expect_equal(n, c(2,1))
 })
 
 test_that("oriented rectangle lookup works for each spatial index", {
