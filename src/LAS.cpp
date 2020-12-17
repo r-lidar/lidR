@@ -1,7 +1,7 @@
 #include "LAS.h"
 #include "Progress.h"
 #include "myomp.h"
-#include "SpatialIndexes.h"
+#include "SpatialIndex.h"
 #include <limits>
 #include <boost/functional/hash.hpp>
 #include <boost/geometry.hpp>

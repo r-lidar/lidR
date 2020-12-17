@@ -1,7 +1,6 @@
 #ifndef SHAPES_H
 #define SHAPES_H
 
-#include <stdio.h>
 #include "Point.h"
 
 namespace lidR

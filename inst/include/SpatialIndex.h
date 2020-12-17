@@ -1,13 +1,23 @@
 #ifndef INDEX_H
 #define INDEX_H
 
-#include "GridPartition.h"
-#include "QuadTree.h"
-#include "Octree.h"
+#include <Rcpp.h>
+#include "lidR/GridPartition.h"
+#include "lidR/QuadTree.h"
+#include "lidR/Octree.h"
+#include "lidR/Shapes.h"
+#include "lidR/Point.h"
 
 namespace lidR
 {
 
+/*
+ * Spatial index using transparently 4 possible indexation structures.
+ * public members are:
+ * - Constructors
+ * - Lookup (templated to search any arbitrary shape)
+ * - knn (both in 2D or 3D)
+ */
 class SpatialIndex
 {
 public:
@@ -20,7 +30,7 @@ public:
   void knn(const PointXYZ& p, const unsigned int k, const double r, std::vector<PointXYZ>& res);
 
 private:
-  int index_selector(const Rcpp::S4 las);
+  int index_selector(const Rcpp::S4 las) const;
 
 private:
   GridPartition grid;
@@ -31,6 +41,10 @@ private:
   enum INDEXES {AUTOINDEX = 0, GRIDPARTITION = 1, VOXELPARTITION = 2, QUADTREE = 3, OCTREE = 4};
 };
 
+/*
+ * Default constructor using an S4 LAS object. The LAS object contains a tag
+ * that enables to choose automatically between spatial index possibilities
+ */
 inline SpatialIndex::SpatialIndex(const Rcpp::S4 las)
 {
   type = index_selector(las);
@@ -41,10 +55,17 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las)
   case VOXELPARTITION: grid = GridPartition(las); break;
   case QUADTREE: quadtree = QuadTree(las); break;
   case OCTREE: octree = Octree(las); break;
-  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # no cov
+  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # nocov
   }
 }
 
+/*
+ * Constructor with a filter. To work with a subset of a point cloud (e.g. first
+ * return only) lidR never actually subsets a LAS object because this would create an
+ * intermediate (partial) copy of the point cloud. Instead lidR allocates a boolean
+ * vector that is used to skip some points on-the-fly. Points of 'las' where 'f' is false
+ * are simply not inserted in the index.
+ */
 inline SpatialIndex::SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& f)
 {
   type = index_selector(las);
@@ -55,10 +76,15 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& f
   case VOXELPARTITION: grid = GridPartition(las, f); break;
   case QUADTREE: quadtree = QuadTree(las, f); break;
   case OCTREE: octree = Octree(las, f); break;
-  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # no cov
+  default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # nocov
   }
 }
 
+/*
+ * Query points within a shape. The function being templated any shape is possible
+ * lidR defines some shapes in Shapes.h. Some shapes are 2D (e.g. Circle) other
+ * are 3D (e.g. Sphere).
+ */
 template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ>& res)
 {
   switch(type)
@@ -72,6 +98,11 @@ template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ>& 
   return;
 }
 
+
+/*
+ * Query the knn of a given 2D point. In that case the Z coordinates is not
+ * considered for searching the neighbours. It is a search on XY only.
+ */
 inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   switch(type)
@@ -85,6 +116,10 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vecto
   return;
 }
 
+/*
+ * Query the knn of a given 2D point with a maximum radius search. If there are
+ * less than k neighbours it returns less than k points
+ */
 inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vector<PointXYZ>& res)
 {
   switch(type)
@@ -98,6 +133,9 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vect
   return;
 }
 
+/*
+ * Query the knn of a given 3D point.
+ */
 inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   switch(type)
@@ -111,6 +149,9 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const doub
   return;
 }
 
+/*
+ * Query the knn of a given 3D point with a maximum radius.
+ */
 inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const double radius, std::vector<PointXYZ>& res)
 {
   switch(type)
@@ -124,7 +165,11 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const dou
   return;
 }
 
-inline int SpatialIndex::index_selector(const Rcpp::S4 las)
+/*
+ * PRIVATE MEMBERS
+ */
+
+inline int SpatialIndex::index_selector(const Rcpp::S4 las) const
 {
   int code = GRIDPARTITION;
   int sensor = UKN;
