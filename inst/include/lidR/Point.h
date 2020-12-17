@@ -30,10 +30,25 @@ template<typename T1, typename T2, typename T3, typename T4> struct Point3D
   Point3D(const T1 _x, const T2 _y, const T3 _z, const T4 _id) : x(_x), y(_y), z(_z), id(_id) {}
 };
 
+template<typename T1, typename T2, typename T3, typename T4, typename T5>struct Point4D
+{
+    T1 x;
+    T2 y;
+    T3 z;
+    T4 id;
+    T5 r;
+
+    Point4D() {}
+    Point4D(const T1 _x, const T2 _y) : x(_x), y(_y), z(0), id(0), r(0) {}
+    Point4D(const T1 _x, const T2 _y, const T3 _z) : x(_x), y(_y), z(_z), id(0), r(0) {}
+    Point4D(const T1 _x, const T2 _y, const T3 _z, const T4 _id) : x(_x), y(_y), z(_z), id(_id), r(0) {}
+    Point4D(const T1 _x, const T2 _y, const T3 _z, const T4 _id, const T5 _r) : x(_x), y(_y), z(_z), id(_id), r(_r) {}
+  };
 
 typedef Point2D<double, double, unsigned int> Point;
 typedef Point2D<double, double, unsigned int> PointXY;
 typedef Point3D<double, double, double, unsigned int> PointXYZ;
+typedef Point4D<double, double, double, int, double> PointXYZR;
 
 template<typename T, typename U> double distance(T& lhs, U& rhs)
 {
@@ -52,6 +67,13 @@ template<typename T> struct ZSort
 {
   bool operator()(const T* lhs, const T* rhs) const { return lhs->z > rhs->z; }
   bool operator()(const T lhs, const T rhs) const { return lhs.z > rhs.z; }
+};
+
+// Sort points by R attributes
+template<typename T> struct RSort
+{
+  bool operator()(const T* lhs, const T* rhs) const { return lhs->r < rhs->r; }
+  bool operator()(const T lhs, const T rhs) const { return lhs.r < rhs.r ; }
 };
 
 // Sort points according to their distance to a reference point (2D)
