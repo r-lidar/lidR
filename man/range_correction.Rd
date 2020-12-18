@@ -52,7 +52,7 @@ las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 R = get_range(las, sensor)
 }
 \references{
-Gatziolis, D. (2013). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
+Gatziolis, D. (2011). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
 Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.
 https://doi.org/10.14358/pers.77.3.251
 }
