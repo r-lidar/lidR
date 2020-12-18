@@ -6,7 +6,7 @@ LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
 ctg     <- readLAScatalog(LASfile)
 
 test_that("plot LAS works", {
-  expect_error(plot(las, color = "Intensity", axis = TRUE, legend = T), NA)
+  expect_error(plot(las), NA)
   rgl::rgl.close()
 })
 

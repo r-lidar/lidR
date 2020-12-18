@@ -27,6 +27,9 @@ test_that("Each ground point is at 0 with delaunay", {
 })
 
 test_that("Each ground point is at 0 with kriging", {
+
+  skip_if_not_installed("gstat")
+
   las <- normalize_height(las, kriging(k = 3L))
   Z0 = las@data[Classification == 2]$Z
   expect_true(all(Z0 == 0))

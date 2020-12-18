@@ -51,6 +51,8 @@ test_that("grid_terrain works with delaunay", {
 
 test_that("grid_terrain works with kriging", {
 
+  skip_if_not_installed("gstat")
+
   dtm <- grid_terrain(las, 1, kriging(k = 10L))
 
   expect_true(is(dtm, "RasterLayer"))

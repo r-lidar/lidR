@@ -4,6 +4,8 @@ las <- lidR:::generate_las(4000)
 
 test_that("hexbin_metrics space cells properly", {
 
+  skip_if_not_installed("hexbin")
+
   x  <- hexbin_metrics(las, mean(Z), 20)
   xy <- hexbin::hcell2xy(x)
   y  <- xy$x %>% unique %>% sort %>%  diff %>% round(2) %>% unique
@@ -15,6 +17,8 @@ test_that("hexbin_metrics space cells properly", {
 })
 
 test_that("hexbin_metrics accepts both an expression and a formula", {
+
+  skip_if_not_installed("hexbin")
 
   expect_error(hexbin_metrics(las,  mean(Z), 20), NA)
   expect_error(hexbin_metrics(las, ~mean(Z), 20), NA)
