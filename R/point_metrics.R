@@ -20,24 +20,24 @@
 #' times (once  per cell). On the contrary, with \code{point_metrics}, \code{mean} is called 1000000
 #' times (once per point). So the function is expected to be more than 400 times slower in this specific
 #' case (but it does not provide the same feature).\cr\cr
-#' This is why the user-defined function is expected to be well optimized, otherwise it might drastically
+#' This is why the user-defined function is expected to be well-optimized, otherwise it might drastically
 #' slow down this already heavy computation. See examples.\cr\cr
 #' Last but not least, \code{grid_metrics()} relies on the \code{data.table} package to compute a
 #' user-defined function in each pixel. \code{point_metrics()} relies on a similar method but with a
-#' major difference: is does not rely on \code{data.table} and thus has not been tested over many years
+#' major difference: it does not rely on \code{data.table} and thus has not been tested over many years
 #' by thousands of people. Please report bugs, if any.
 #'
 #' @param las An object of class LAS
-#' @param func formula. An expression to be applied to each point neighboorhood (see section "Parameter func").
+#' @param func formula. An expression to be applied to each point neighbourhood (see section "Parameter func").
 #' @param k,r integer and numeric respectively for k-nearest neighbours and radius of the neighborhood
-#' sphere. If k is given and r is missing, compute the with the knn, if r is given and k is missing
+#' sphere. If k is given and r is missing, computes with the knn, if r is given and k is missing
 #' computes with a sphere neighborhood, if k and r are given computes with the knn and a limit on the
 #' search distance.
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
 #' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
 #' memory. If \code{filter != NULL} it obviously takes memory.
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
-#' in an optimized way. See also examples.
+#' in an optimized way. See examples.
 #' @param ... unused.
 #'
 #' @section Parameter \code{func}:
@@ -52,7 +52,7 @@
 #' point_metrics(las, ~f(Z), k = 8)
 #' point_metrics(las, ~f(Intensity), k = 5)
 #' }
-#' Everything that works in \link{grid_metrics} should also work in \code{point_metrics} but might
+#' Everything that works in \link{grid_metrics} should also work in \code{point_metrics} but sometimes might
 #' be meaningless. For example, computing the quantile of elevation does not really makes sense here.
 #' @examples
 #' \dontrun{
@@ -78,7 +78,7 @@
 #'
 #' # We can verify that it returns the same as 'shp_plane'
 #' las <- segment_shape(las, shp_plane(k = 25), "planar")
-#' #> Computed in 0.1 second
+#' #> Computed in 0.1 seconds
 #'
 #' all.equal(M$planar, las$planar)
 #'
@@ -109,7 +109,7 @@
 #' #> Computed in 0.5 seconds
 #'
 #' all.equal(M$planar, las$planar)
-#' # Here we can see that the optimized version is way better but is still 5 times slower
+#' # Here we can see that the optimized version is way better but is still 5-times slower
 #' # because of the overhead of calling R functions and switching back and forth from R to C++.
 #'
 #'

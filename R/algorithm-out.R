@@ -1,12 +1,12 @@
 #' Noise Segmentation Algorithm
 #'
 #' This function is made to be used in \link{classify_noise}. It implements an
-#' algorithm for outliers (noise) segmentation based on Satistical Outliers
+#' algorithm for outliers (noise) segmentation based on Statistical Outliers
 #' Removal (SOR) methods first described in the
 #' \href{https://pointclouds.org/documentation/tutorials/statistical_outlier.html}{PCL library}
 #' and also implemented in
 #' \href{https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter}{CloudCompare}.
-#' For each point, it computes the mean distance from it to all its k-neighbours.
+#' For each point, it computes the mean distance to all its k-nearest neighbours.
 #' The points that are farther than the average distance plus a number of times
 #' (multiplier) the standard deviation are considered noise.
 #'
@@ -75,11 +75,11 @@ sor = function(k = 10, m = 3, quantile = FALSE)
 #' This function is made to be used in \link{classify_noise}. It implements an
 #' algorithm for outliers (noise) segmentation based on isolated voxels filter (IVF).
 #' It is similar to \href{https://rapidlasso.com/lastools/lasnoise/}{lasnoise from lastools}.
-#' The algorithm find points that have only few other points in their surrounding
+#' The algorithm finds points that have only a few other points in their surrounding
 #' 3 x 3 x 3 = 27 voxels.
 #'
 #' @param res numeric. Resolution of the voxels
-#' @param n integer. The maximal number of few other points in the 27 voxels
+#' @param n integer. The maximal number of 'other points' in the 27 voxels
 #'
 #' @export
 #'

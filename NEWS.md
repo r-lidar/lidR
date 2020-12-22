@@ -4,25 +4,25 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### MAJOR NEW FEATURES
 
-The release 3.1.0 comes with major internal modifications enabling to chose different kind of spatial indexes to process the point-clouds including Quatrees and Octrees (but not only). Previous releases were optimized to processed ALS data but were suboptimal for TLS data (for example) because the spatial index in use was specialized for ALS. With 3 new spatial indexes, version 3.1.0 brings the capability to process TLS (but not only) data more efficiently. At the time being, `lidR` is still focusing on ALS and does not include many functions for TLS processing but the existing functions that apply on all kind of point-cloud such as `point_metrics()`, `detect_shape()`, `classify_noise()` are already much faster on TLS.
+The release of `lidR` 3.1.0 comes with major internal modifications enabling users to chose different kinds of spatial indices to process the point-clouds, including Quadtrees and Octrees, plus others. Previous releases were optimized to process ALS data but were suboptimal for TLS data (for example) because the spatial index in use was specialized for ALS. With 3 new spatial indices, version 3.1.0 brings the capability to process TLS (but not only) data more efficiently. For the time being, however, `lidR` is still mainly focused on ALS and does not include many functions for TLS processing, but the existing functions that be used on all kinds of point-cloud, such as `point_metrics()`, `detect_shape()`, and `classify_noise()` are already much faster for TLS data.
 
 1. The class `LAS` has a new slot `@index` that registers the source of the point cloud (e.g. ALS, TLS, UAV, DAP) and the spatial index that must be used (e.g. grid partition, voxel partition, quadtree, octree). See `help("lidR-spatial-index")`.
-2. This comes with several new functions `read*LAS()` such as `readTLSLAS()` that register the point-cloud type and a default spatial index. Registering the good point type improves the performance of some functions. This is particularly visible in functions that perform 3D knn search such as `point_metrics()`. Computing `point_metrics()` on a TLS point-cloud tagged TLS is much faster than if not tagged. If the performances are not improved in this release the future version of the package may bring enhancements transparently.
-3. New functions `index()` and `sensor()` to modify manually the spatial indexing related informations. `help("lidR-spatial-index")`.
-4. New C++ API: the C++ classes for spatial indexing are header-only and stored in `inst/include` meaning that other packages can link to `lidR` to uses the spatial index at C++ level. The classes are not documented yet but the source code is simple and commented and the [lidR book](https://jean-romain.github.io/lidRbook/) contains or will contain a chapter about spatial indexing.
+2. This comes with several new `read*LAS()` functions, such as `readTLSLAS()`, which registers the point-cloud type and a default spatial index. Registering the correct point type improves the performance of some functions. This is particularly visible in functions that perform 3D knn searches, such as `point_metrics()`. Computing `point_metrics()` on a TLS point-cloud tagged as TLS is much faster than if it is not tagged. If performance is not improved in this release the future versions of the package may bring enhancements transparently.
+3. New functions `index()` and `sensor()` to manually modify the spatial indexing-related information. `help("lidR-spatial-index")`.
+4. New C++ API: the C++ classes for spatial indexing are header-only and stored in `inst/include`, meaning that other packages can link to `lidR` to uses the spatial index at C++ level. The classes are not documented yet but the source code is simple and commented, and the [lidR book](https://jean-romain.github.io/lidRbook/) contains (or will contain) a chapter on spatial indexing.
 
 #### CHANGES
 
-1. The use of old deprecated namespace such as (`lassomething()`) now triggers a message to invite moving on the new namespace.
-2. The construction of a `LAS` object with `LAS()` now triggers warnings with inccorectly quantized coordinates according to the information in the header.
-3. `grid_terrain()` now has a parameter `...` after `algorithm` which invalidate code that uses too much parameters without naming them. This no longer works:
+1. The use of old deprecated namespaces (such as `lassomething()`) now triggers a message inviting users to move on the new namespace.
+2. The construction of a `LAS` object with `LAS()` now triggers warnings with incorrectly quantized coordinates according to the information in the header.
+3. `grid_terrain()` now has a parameter `...` after `algorithm` that invalidates code that uses too many parameters without naming them. This no longer works:
 ```r
 grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
 # Use instead
 grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 8)
 ```
-4. `opt_cores()` and `opt_cores<-()` are now defunc. These functions did not have any effect because they only throw a warning to alert about deprecation since v2.1.0 (July 2019).
-5.  The classes `LAS*` have a new slot `@index` (see above). This should not break anything expect if a `LAS*` object was saved in a `Rds` files and loaded as an R object instead of being read with `readLAS`.
+4. `opt_cores()` and `opt_cores<-()` are now defunct. These functions did not have any effect because they only throw a warning to alert about deprecation since v2.1.0 (July 2019).
+5.  The `LAS*` classes have a new slot `@index` (see above). This should not break anything expect when a `LAS*` object is saved in an `Rds` file and loaded as an R object instead of being read with `readLAS`.
  
 #### NEW FEATURES
 
@@ -37,12 +37,12 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
     - New algorithm `sor()` (statistical outlier removal) for noise classification
     - New algorithm `ivf()` (isolated voxel filter) for noise classification
 
-3. Quantization of the coordinates. `LAS` objects in `lidR` closely respect the ASPRS standard. When modified manually by users some inadequte pratices may generate invalid LAS objects. We thus decided to export some internal functions to help creating valid LAS object and we modified the behavior of the `[[<-` and `$<-` operators to ensure that it is more difficult to create `LAS` objects that are not ASPRS compliant.
+3. Quantization of the coordinates. `LAS` objects in `lidR` closely respect the ASPRS standard. When modified manually by users, some inadequate practices may generate invalid LAS objects. We thus decided to export some internal functions to help in creating valid LAS objects and we modified the behavior of the `[[<-` and `$<-` operators to ensure that it is more difficult to create `LAS` objects that are not ASPRS compliant.
     - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the metadata in the header.
     - New function `las_update()` to update the header (bounding box, number of points, return count and so on) if a LAS object was modified outside a `lidR` functions.
     - Enhanced behaviour of `[[<-` and `$<-` operators. Values are quantized on-the-fly and the header is updated automatically when attributing new values to `X`, `Y` or `Z`.
     ```r
-    las$X # Orignal values
+    las$X # Original values
     #> [1] 0.755 0.286 0.100 0.954 0.416 0.455 0.971 0.584 0.962 0.762
     las$X + 5/3 # Many decimals because 5/3 = 1.666666...
     #> [1] 2.421667 1.952667 1.766667 2.620667 2.082667 2.121667 2.637667 2.250667 2.628667 2.428667
@@ -53,35 +53,35 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
     - New manual page can be found in `help("las_utilities")`.
     
 4. metrics
-    - `voxel_metrics()` gained a parameter `all_voxels` to include voxels with 0 point [#375](https://github.com/Jean-Romain/lidR/issues/375).
+    - `voxel_metrics()` gained a parameter `all_voxels` to include "empty" voxels (i.e. those with 0 points) in the output [#375](https://github.com/Jean-Romain/lidR/issues/375).
     
 5. `grid_terrain()`
-    - new parameter `...` after `algorithm` which invalidate code that uses too much parameters without naming them. This no longer works:
+    - new parameter `...` after `algorithm` that invalidates code that uses too many parameters without naming them. This no longer works:
     ```r
     grid_terrain(las, 1, tin(), TRUE, TRUE, 8)
     # Use instead
     grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 8)
     ```
-    - new parameter `is_concave` to compute a nicer DTM if the point-cloud boudaries are not convex [#374](https://github.com/Jean-Romain/lidR/issues/374)
+    - new parameter `is_concave` to compute a nicer DTM if the point-cloud boundaries are not convex [#374](https://github.com/Jean-Romain/lidR/issues/374)
      
 ### FIXES
 
 1. In `clip_transect()` the polygon generated to extract the transect defined by points `p1`, `p2` was created by buffering the line `p1-p2` with a `SQUARE` cap style meaning that the transect was extended beyond points `p1`, `p2`. It now uses a `FLAT` cap style meaning that the transect is no longer extended beyond the limits of the user input.
-2. In `segment_trees()` when using a raster-based algorithm, few points may be missclassified NAs at the edges of the point cloud instead of getting the correct tree ID found in the raster because of some edge effect.
-3. `normalize_intensity()` was not working with a `LAScatalog`. See [#388](https://github.com/Jean-Romain/lidR/issues/388)
-4. In `grid_*()` function when a `RasterLayer` is given as layout, the computation was performed for all the cells no matter if the extent of the loaded point-cloud was much smaller than the raster. For big rasters this had for consequences to dramatically increases the workload with useless computation and to saturate the RAM to a point that the computation was no longer doable.
+2. In `segment_trees()` when using a raster-based algorithm, some points may have been misclassified as NAs at the edges of the point cloud instead of getting the correct tree ID found in the raster because of some edge effects. Now, all points are correctly classified and there are no longer false positive NAs.
+3. `normalize_intensity()` was previously not working with a `LAScatalog`. Now fixed. See [#388](https://github.com/Jean-Romain/lidR/issues/388)
+4. In `grid_*()` functions when a `RasterLayer` is given as layout, the computation was performed for all the cells no matter if the extent of the loaded point-cloud was much smaller than the raster. For large rasters this dramatically increased the workload with redundant computation and saturated the RAM to a point that the computation was no longer possible. 
 5. In `track_sensor()` pulse IDs could be wrongly attributed for multi-beam sensors if the number of points is very low. See [#392](https://github.com/Jean-Romain/lidR/issues/392)
-6. In `track_sensor()` if `thin_pulses_with_time = 0` a single pulse was loaded with a `LAScatalog`. However it worked as expected with a `LAS`. The behavior has been fixed.
+6. In `track_sensor()`, if `thin_pulses_with_time = 0` a single pulse was loaded with a `LAScatalog`. However it worked as expected with a `LAS` object. This behavior has been fixed.
 7. Fixed some new warnings coming from `future` and related to RNG.
-8. `clip_*()` in a region with no point from a `LAScatalog` + an output file no longer fails. See [#400](https://github.com/Jean-Romain/lidR/issues/400).
+8. `clip_*()` in a region with no points from a `LAScatalog` + an output file no longer fails. See [#400](https://github.com/Jean-Romain/lidR/issues/400).
 
 ### ENHANCEMENTS
 
 * Doc: The documentation of `point_metrics()` clarifies how the user-defined function is fed and in which order the points are sorted.
-* Doc: The argument `Wdegerated` in `grid_terrain()` and `normalize_height()` was misleading.  An wrong interpretation was that degeratated ground points were discared from the dataset. The documentation now clarrifies the text to avoid misinterpretation.
+* Doc: The argument `Wdegenerated` in `grid_terrain()` and `normalize_height()` was misleading. A wrong interpretation was that degenerated ground points were discarded from the dataset. The documentation now clarifies the text to avoid misinterpretation.
 * Doc: minor fixes and clarifications in the `LAScatalog-class` page of the manual.
-* Enhance: `plot_dtm3d()` now enables pan by default like `plot()` for `LAS` objects.
-* Enhance: `track_sensor()` throw a new warning if a swath in the point cloud does not produce any sensor location. This adresses [#391](https://github.com/Jean-Romain/lidR/issues/391).
+* Enhance: `plot_dtm3d()` now enables pan by default, like `plot()` for `LAS` objects.
+* Enhance: `track_sensor()` throws a new warning if a swath in the point cloud does not produce any sensor location. This addresses [#391](https://github.com/Jean-Romain/lidR/issues/391).
 * Misc: switch to C++14 (see [#402](https://github.com/Jean-Romain/lidR/issues/402))
 
 ## lidR v3.0.4 (Release date: 2020-10-08)

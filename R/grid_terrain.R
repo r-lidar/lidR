@@ -30,7 +30,7 @@
 #' Digital Terrain Model
 #'
 #' Interpolates the ground points and creates a rasterized digital terrain model. The algorithm uses
-#' the points classified as "ground" and "water (Classification = 2 and 9 according to
+#' the points classified as "ground" and "water" (Classification = 2 and 9, respectively, according to
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications})
 #' to compute the interpolation.\cr\cr
 #' How well the edges of the dataset are interpolated depends on the interpolation method used.
@@ -46,18 +46,18 @@
 #' @param keep_lowest logical. This option forces the original lowest ground point of each
 #' cell (if it exists) to be chosen instead of the interpolated values.
 #' @param full_raster logical. By default the interpolation is made only within the convex hull of
-#' the point cloud. This prevent against meaningless interpolations where there is no data. If TRUE
+#' the point cloud. This prevents meaningless interpolations where there is no data. If TRUE,
 #' each pixel of the raster is interpolated.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).
-#' @param Wdegenerated logical. The function always check and remove degenerated ground points
-#' for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
-#' TRUE a warning in thrown to alert about the presence of degenerated ground points.
+#' @param Wdegenerated logical. The function always checks and removes degenerated ground points
+#' for computing the DTM to avoid unexpected behaviours, such as infinite elevation. If
+#' TRUE, a warning is thrown to alert users to the presence of degenerated ground points.
 #' @param is_concave boolean. By default the function tries to compute a DTM that
-#' have the same shape than the point cloud by interpolating only in the convex
+#' has the same shape as the point cloud by interpolating only in the convex
 #' hull of the points. If the point cloud is concave this may lead to weird values
-#' where there is no points. Use \code{is_concave = TRUE} to use a concave hull.
-#' This is more computationally depending and requires the concaveman package.
+#' where there are no points. Use \code{is_concave = TRUE} to use a concave hull.
+#' This is more computationally -involved and requires the concaveman package.
 #'
 #' @template LAScatalog
 #'

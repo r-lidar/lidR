@@ -7,16 +7,15 @@
 #' `lidR` can be used seamlessly with a LAScatalog using the internal
 #' `LAScatalog` processing engine. To take advantage of the `LAScatalog`
 #' processing engine the user must first adjust some processing options using the
-#' \link[=catalog_options_tools]{appropriated functions}. Careful reading of the
+#' \link[=catalog_options_tools]{appropriate functions}. Careful reading of the
 #' \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 #' `LAScatalog` class correctly.\cr\cr
-#' `readLAScatalog` is the original function and always works. Using one of `read*LAScatalog` functions
-#' adds information to the returned object to register a point-cloud type. Registering the good point
-#' type **may** improve the performance of some functions by enabling to select an appropriated spatial index.
-#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that by legacy and for backward
-#' compatibility reasons `readLAScatalog()` and `readALSLAScatalog()` are equivalent because lidR
-#' was firstly designed for ALS and thus the original function `readLAScatalog()` was
-#' (supposedly) used for ALS.
+#' `readLAScatalog` is the original function and always works. Using one of the `read*LAScatalog` functions
+#' adds information to the returned object to register a point-cloud type. Registering the correct point
+#' type **may** improve the performance of some functions by enabling users to select an appropriate spatial index.
+#' See \link[=lidR-spatial-index]{spatial indexing}. Notice that by legacy and for backwards-compatibility
+#' reasons `readLAScatalog()` and `readALSLAScatalog()` are equivalent because lidR was originally designed
+#' for ALS and thus the original function `readLAScatalog()` was (supposedly) used for ALS.
 #'
 #' @param folder string. The path of a folder containing a set of las/laz files.
 #' Can also be a vector of file paths.
@@ -154,8 +153,8 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
 
-  #if (!is.indexed(res))
-  #message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
+  # if (!is.indexed(res))
+  # message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
 
   return(res)
 }
