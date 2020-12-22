@@ -131,13 +131,12 @@ test_that("Silva's works standalone", {
 
 test_that("Watershed's methods works", {
 
-  if (require("EBImage", quietly = T, warn.conflicts = FALSE))
-  {
-    las <- segment_trees(las, lidR::watershed(chm))
+  skip_if_not_installed("EBImage")
 
-    expect_true("treeID" %in% names(las@data))
-    expect_true(is.integer(las@data$treeID))
-  }
+  las <- segment_trees(las, lidR::watershed(chm))
+
+  expect_true("treeID" %in% names(las@data))
+  expect_true(is.integer(las@data$treeID))
 })
 
 # test_that("MC watershed methods works", {

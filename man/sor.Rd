@@ -18,12 +18,12 @@ distance will be: \code{quantile(distances, probs = m)}}
 }
 \description{
 This function is made to be used in \link{classify_noise}. It implements an
-algorithm for outliers (noise) segmentation based on Satistical Outliers
+algorithm for outliers (noise) segmentation based on Statistical Outliers
 Removal (SOR) methods first described in the
 \href{https://pointclouds.org/documentation/tutorials/statistical_outlier.html}{PCL library}
 and also implemented in
 \href{https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter}{CloudCompare}.
-For each point, it computes the mean distance from it to all its k-neighbours.
+For each point, it computes the mean distance to all its k-nearest neighbours.
 The points that are farther than the average distance plus a number of times
 (multiplier) the standard deviation are considered noise.
 }

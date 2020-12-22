@@ -18,7 +18,7 @@ If the input is a \code{LAS} object, return a \code{LAS} object. If the input is
 \description{
 Classify points as 'noise' (outliers) with several possible algorithms. The function updates the
 attribute \code{Classification} of the LAS object. The points classified as 'noise' are assigned
-a value of 18 according to \href{http://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}.
+a value of 18 according to \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}.
 }
 \section{Working with a \code{LAScatalog}}{
 

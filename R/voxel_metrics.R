@@ -39,7 +39,7 @@
 #' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
 #' @param ... Unused
-#' @param all_voxels boolean. By default the functions return only voxels that
+#' @param all_voxels boolean. By default the function returns only voxels that
 #' contain 1 or more points. Empty voxels do not exist as the metrics are undefined.
 #' If \code{all_voxels = TRUE} all the voxels are returned and metrics are NA for
 #' voxels with 0 points.

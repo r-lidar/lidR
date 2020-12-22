@@ -4,7 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### MAJOR NEW FEATURES
 
-The release of `lidR` 3.1.0 comes with major internal modifications enabling users to chose different kinds of spatial indices to process the point-clouds, including Quadtrees and Octrees, plus others. Previous releases were optimized to process ALS data but were suboptimal for TLS data (for example) because the spatial index in use was specialized for ALS. With 3 new spatial indices, version 3.1.0 brings the capability to process TLS (but not only) data more efficiently. For the time being, however, `lidR` is still mainly focused on ALS and does not include many functions for TLS processing, but the existing functions that be used on all kinds of point-cloud, such as `point_metrics()`, `detect_shape()`, and `classify_noise()` are already much faster for TLS data.
+The release of `lidR` 3.1.0 comes with major internal modifications enabling users to chose different kinds of spatial indexes to process the point-clouds, including Quadtrees and Octrees, plus others. Previous releases were optimized to process ALS data but were suboptimal for TLS data (for example) because the spatial index in use was specialized for ALS. With 3 new spatial indexes, version 3.1.0 brings the capability to process TLS (but not only) data more efficiently. For the time being, however, `lidR` is still mainly focused on ALS and does not include many functions for TLS processing, but the existing functions that be used on all kinds of point-cloud, such as `point_metrics()`, `detect_shape()`, and `classify_noise()` are already much faster for TLS data.
 
 1. The class `LAS` has a new slot `@index` that registers the source of the point cloud (e.g. ALS, TLS, UAV, DAP) and the spatial index that must be used (e.g. grid partition, voxel partition, quadtree, octree). See `help("lidR-spatial-index")`.
 2. This comes with several new `read*LAS()` functions, such as `readTLSLAS()`, which registers the point-cloud type and a default spatial index. Registering the correct point type improves the performance of some functions. This is particularly visible in functions that perform 3D knn searches, such as `point_metrics()`. Computing `point_metrics()` on a TLS point-cloud tagged as TLS is much faster than if it is not tagged. If performance is not improved in this release the future versions of the package may bring enhancements transparently.
@@ -26,18 +26,12 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
  
 #### NEW FEATURES
 
-1. `classify_ground()`
-    - New algorithm `mcc()` for ground classification based on Evans and Hudak (2007). This a porting of the MCC-lidar software to R via the `RMCC` package.
-    ```r
-    las <- classify_ground(las, mcc())
-    ```
-    
-2. `classify_noise()`
+1. `classify_noise()`
     - New function `classify_noise()` to classify the outliers of a point-cloud according to ASPRS standard
     - New algorithm `sor()` (statistical outlier removal) for noise classification
     - New algorithm `ivf()` (isolated voxel filter) for noise classification
 
-3. Quantization of the coordinates. `LAS` objects in `lidR` closely respect the ASPRS standard. When modified manually by users, some inadequate practices may generate invalid LAS objects. We thus decided to export some internal functions to help in creating valid LAS objects and we modified the behavior of the `[[<-` and `$<-` operators to ensure that it is more difficult to create `LAS` objects that are not ASPRS compliant.
+2. Quantization of the coordinates. `LAS` objects in `lidR` closely respect the ASPRS standard. When modified manually by users, some inadequate practices may generate invalid LAS objects. We thus decided to export some internal functions to help in creating valid LAS objects and we modified the behavior of the `[[<-` and `$<-` operators to ensure that it is more difficult to create `LAS` objects that are not ASPRS compliant.
     - New functions `las_quantize()`, `quantize()`, `is.quantized()`, `count_not_quantized()` to ensure that coordinates are quantized according to the metadata in the header.
     - New function `las_update()` to update the header (bounding box, number of points, return count and so on) if a LAS object was modified outside a `lidR` functions.
     - Enhanced behaviour of `[[<-` and `$<-` operators. Values are quantized on-the-fly and the header is updated automatically when attributing new values to `X`, `Y` or `Z`.
@@ -52,10 +46,10 @@ grid_terrain(las, 1, tin(), keep_lowest = TRUE, full_raster = TRUE, use_class = 
     ```
     - New manual page can be found in `help("las_utilities")`.
     
-4. metrics
+3. metrics
     - `voxel_metrics()` gained a parameter `all_voxels` to include "empty" voxels (i.e. those with 0 points) in the output [#375](https://github.com/Jean-Romain/lidR/issues/375).
     
-5. `grid_terrain()`
+4. `grid_terrain()`
     - new parameter `...` after `algorithm` that invalidates code that uses too many parameters without naming them. This no longer works:
     ```r
     grid_terrain(las, 1, tin(), TRUE, TRUE, 8)

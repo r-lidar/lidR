@@ -1,7 +1,7 @@
 #' LAS utilities
 #'
 #' Tools to manipulate LAS objects maintaining compliance with
-#' \href{http://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{ASPRS specification}
+#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{ASPRS specification}
 #'
 #' In the specification of the LAS format the coordinates are expected to be given
 #' with a certain precision e.g. 0.01 for a millimeter precision (or millifeet), meaning
@@ -11,8 +11,8 @@
 #' (123.46 - 100)/0.01 = 2346. Storing 123.45678 with a scale factor of 0.01 and an offset
 #' of 100 is invalid because it does not convert to an integer: (123.45678-100)/0.01
 #' = 2345.678. Having an invalid LAS object may be critical in some lidR applications.
-#' When first writing into a LAS file, users will loose the extra precision without
-#' warning but some algorithms in lidR use the integer conversion to make integer-based
+#' When writing into a LAS file, users will loose the extra precision without
+#' warning and some algorithms in lidR use the integer conversion to make integer-based
 #' computation and thus speed-up some algorithms and use less memory. Creation of an
 #' invalid LAS object may cause problems and incorrect outputs.
 #'

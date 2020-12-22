@@ -1,7 +1,7 @@
 #' Spatial index
 #'
 #' This document explains how to process point-clouds taking advantage of different spatial
-#' indices available in the lidR package. lidR can use several types of spatial indices to
+#' indices available in the lidR package. lidR can use several types of spatial indexes to
 #' apply algorithms (that need a spatial indexing) as fast as possible. The choice of the spatial
 #' index depends on the type of point-cloud that is processed and the algorithm that is performed.
 #' lidR can use a grid partition, a voxel partition, a quadtree or an octree. See details.
@@ -63,7 +63,7 @@
 #' index(las, h = TRUE)
 #'
 #' # Modification of the spatial index forces users to choose one of the available
-#' # spatial indices.
+#' # spatial indexes.
 #' index(las) <- "quadtree"
 #' sensor(las, h = TRUE)
 #' index(las, h = TRUE)

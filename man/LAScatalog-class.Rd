@@ -61,7 +61,7 @@ The slot \code{@processing_options} contains a \code{list} of options that deter
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
 Progress estimation can be enhanced by installing the package \code{progress}. See \link{opt_progress}.
 \item \strong{stop_early}: boolean. Stop the processing if an error occurs in a chunk. If \code{FALSE}
-the process can run until the end removing chunks that failed. Default is TRUE and the user should
+the process can run until the end, removing chunks that failed. Default is TRUE and the user should
 have no reason to change this. See \link{opt_stop_early}.
 \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a
 continuous output without edge effects, assuming that the catalog is a wall-to-wall catalog. To do
@@ -82,8 +82,8 @@ A small size allows small amounts of data to be loaded at once, saving computer 
 The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
 catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
 the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
-\item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there is
-no edge effect between two independent chunks and that the output is continuous. This is mandatory for
+\item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there are
+no edge effects between two independent chunks and that the output is continuous. This is mandatory for
 some algorithms. Default is 30. See \link{opt_chunk_buffer}.
 \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
@@ -101,7 +101,7 @@ or written in R memory.
 \itemize{
 \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned in R. Otherwise, if
 \code{output_files} is a string the outputs will be written to files.
-This is useful if the output is too big to be returned in R. A path to a templated filename
+This is useful if the output is too big to be returned in R. A path to a filename template
 without extension (the engine guesses it for you) is expected. When several files are going to be
 written a single string is provided with a template that is automatically filled. For example,
 the following file names are possible:
@@ -113,9 +113,9 @@ the following file names are possible:
 This option will generate as many filenames as needed with custom names for each file. The list of
 allowed templates is described in the documentation for each function. See \link{opt_output_files}.
 \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
-Spatial*, sf, LAS objects. It is recommended that only advanced users change this option. A dedicated
+Spatial*, sf, and LAS objects. It is recommended that only advanced users change this option. A dedicated
 page describes the drivers in \link{lidR-LAScatalog-drivers}.
-\item \strong{merge}: boolean. Multiple objects are merged into a single one at the end of the processing.
+\item \strong{merge}: boolean. Multiple objects are merged into a single object at the end of the processing.
 }
 }
 
