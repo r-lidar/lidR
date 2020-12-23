@@ -1,13 +1,12 @@
 ## Test environments
 
-* Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with g++ (7.5.0)
-* Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with g++ (8.4.0)
-* Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with clang++ (6.0.0)
-* Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with clang++ (6.0.0) -std=c++11
-* Linux Mint 19 (Ubuntu 16.04), R 4.0.0 with g++ (7.5.0) + valgrind   
-* Windows Server 2008 R 4.0.0 via win-builder
-* Windows Server 2008 R 3.6.3 via win-builder
-* Windows Server 2008 R 3.6.1 via win-builder
+* Linux Mint 20 (Ubuntu 20.04), R 4.0.3 with g++
+* Linux Mint 20 (Ubuntu 20.04), R 4.0.3 with g++) + valgrind 
+* Windows Server 2009 via github CI
+* Ubuntu 20.04 R-release via github CI
+* Ubuntu 20.04 R-devel via github CI
+* Windows Server 2008 R-release via win-builder
+* Windows Server 2008 Rdevel via win-builder
 
 ## R CMD check results
 
