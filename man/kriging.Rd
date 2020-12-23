@@ -20,6 +20,7 @@ point of interest it kriges the terrain using the k-nearest neighbour ground poi
 is more difficult to manipulate but it is also the most advanced method for interpolating spatial data.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 
@@ -29,6 +30,7 @@ dtm = grid_terrain(las, algorithm = kriging())
 
 plot(dtm, col = terrain.colors(50))
 plot_dtm3d(dtm)
+}
 }
 \seealso{
 Other spatial interpolation algorithms: 

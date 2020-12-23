@@ -47,7 +47,9 @@
 #' @examples
 #' # A valid file properly populated
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile)
+#' las = readLAS(LASfile,
+#'               select = "xyzrntp",
+#'               filter = "-drop_single -thin_pulses_with_time 0.001")
 #' plot(las)
 #'
 #' # pmin = 15 because it is an extremely small file
@@ -57,15 +59,6 @@
 #'
 #' plot(las@header)
 #' plot(flightlines, add = TRUE)
-#'
-#' x <- plot(las)
-#' add_flightlines3d(x, flightlines, radius = 10)
-#'
-#' # Load only the data actually useful
-#' las <- readLAS(LASfile,
-#'                select = "xyzrntp",
-#'                filter = "-drop_single -thin_pulses_with_time 0.001")
-#' flightlines <- track_sensor(las,  Roussel2020(pmin = 15))
 #'
 #' x <- plot(las)
 #' add_flightlines3d(x, flightlines, radius = 10)

@@ -147,7 +147,7 @@ returns a `LAS`` object.
 
 \examples{
 # More examples might be avaible in the official lidR vignettes or
-# on the github wiki <http://jean-romain.github.io/lidR/wiki>
+# on the github book <https://jean-romain.github.io/lidRbook/>
 
 ## =========================================================================
 ## Example 1: detect all the tree tops over an entire catalog
@@ -166,7 +166,7 @@ my_tree_detection_method <- function(cluster, ws)
   if (is.empty(las)) return(NULL)
 
   # Find the tree tops using a user-developed method (here simply a LMF).
-  ttops <- tree_detection(las, lmf(ws))
+  ttops <- find_trees(las, lmf(ws))
 
   # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
   # plus the trees tops in the buffered area. We need to remove the buffer otherwise we will get
@@ -179,20 +179,21 @@ my_tree_detection_method <- function(cluster, ws)
 
 # 2. Build a project (here, a single file catalog for the purposes of this dummmy example).
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-project <- readLAScatalog(LASfile)
-plot(project)
+prj <- readLAScatalog(LASfile)
+plot(prj)
 
-# 3. Set some catalog options.
-# For this dummy example, the chunk size is 80 m and the buffer is 10 m
-opt_chunk_buffer(project) <- 10
-opt_chunk_size(project)   <- 80            # small because this is a dummy example.
-opt_select(project)       <- "xyz"         # read only the coordinates.
-opt_filter(project)       <- "-keep_first" # read only first returns.
+# 3. Set some processing options.
+# For this dummy example, the chunk size is 100 m and the buffer is 10 m
+opt_chunk_buffer(prj) <- 10
+opt_chunk_size(prj)   <- 100            # small because this is a dummy example.
+opt_chunk_alignment(prj) <- c(-50, -35) # Align such as it creates 2 chunks only.
+opt_select(prj)       <- "xyz"          # Read only the coordinates.
+opt_filter(prj)       <- "-keep_first"  # Read only first returns.
 
 # 4. Apply a user-defined function to take advantage of the internal engine
 opt    <- list(need_buffer = TRUE,   # catalog_apply will throw an error if buffer = 0
                automerge   = TRUE)   # catalog_apply will merge the outputs into a single object
-output <- catalog_apply(project, my_tree_detection_method, ws = 5, .options = opt)
+output <- catalog_apply(prj, my_tree_detection_method, ws = 5, .options = opt)
 
 spplot(output)
 
@@ -214,15 +215,15 @@ rumple_index_surface = function(cluster, res)
 }
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-project <- readLAScatalog(LASfile)
+prj <- readLAScatalog(LASfile)
 
-opt_chunk_buffer(project) <- 1
-opt_chunk_size(project)   <- 120     # small because this is a dummy example.
-opt_select(project)       <- "xyz"   # read only the coordinates.
+opt_chunk_buffer(prj) <- 1
+opt_chunk_size(prj)   <- 140     # small because this is a dummy example.
+opt_select(prj)       <- "xyz"   # read only the coordinates.
 
 opt     <- list(raster_alignment = 20, # catalog_apply will adjust the chunks if required
                 automerge = TRUE)      # catalog_apply will merge the outputs into a single raster
-output  <- catalog_apply(project, rumple_index_surface, res = 20, .options = opt)
+output  <- catalog_apply(prj, rumple_index_surface, res = 20, .options = opt)
 
 plot(output, col = height.colors(50))
 }

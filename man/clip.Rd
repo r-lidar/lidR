@@ -142,15 +142,15 @@ subset3 <- clip_roi(ctg, lakes)
 # do not load anything in R
 opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = clip_roi(ctg, lakes)
-#plot(mew_ctg)
+plot(new_ctg)
 
 # Extract a transect
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 ctg <- readLAScatalog(LASfile)
 p1 <- c(273357, y = 5274357)
-p2 <- c(273642, y = 5274642)
-tr1 <- clip_transect(ctg, p1, p2, width = 3)
-tr2 <- clip_transect(ctg, p1, p2, width = 3, xz = TRUE)
+p2 <- c(273450, y = 5274450)
+tr1 <- clip_transect(ctg, p1, p2, width = 4)
+tr2 <- clip_transect(ctg, p1, p2, width = 4, xz = TRUE)
 plot(tr1, axis = TRUE, clear_artifacts = FALSE)
 plot(tr2, axis = TRUE, clear_artifacts = FALSE)
 

@@ -56,11 +56,12 @@
 #' # Using the Progressive Morphological Filter
 #' # --------------------------------------
 #'
-#' ws  <- seq(3,12, 3)
+#' # (Parameters chosen mainly for speed)
+#' ws  <- seq(3,12, 4)
 #' th  <- seq(0.1, 1.5, length.out = length(ws))
 #'
 #' las <- classify_ground(las, pmf(ws, th))
-#' plot(las, color = "Classification")
+#' #plot(las, color = "Classification")
 #'
 #' #' # Using the Cloth Simulation Filter
 #' # --------------------------------------
@@ -68,7 +69,7 @@
 #' # (Parameters chosen mainly for speed)
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
 #' las <- classify_ground(las, mycsf)
-#' plot(las, color = "Classification")
+#' #plot(las, color = "Classification")
 classify_ground = function(las, algorithm, last_returns = TRUE)
 {
   UseMethod("classify_ground", las)

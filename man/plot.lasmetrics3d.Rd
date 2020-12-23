@@ -39,6 +39,6 @@ This function implements a 3D plot method for 'lasmetrics3d' objects
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)
 
-voxels = voxel_metrics(lidar, list(Imean = mean(Intensity)))
-plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=0.99)
+voxels = voxel_metrics(lidar, list(Imean = mean(Intensity)), res = 5)
+plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=60)
 }

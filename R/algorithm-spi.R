@@ -107,12 +107,12 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
 #'
-#' # plot(las)
+#' #plot(las)
 #'
 #' dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #'
-#' plot(dtm, col = terrain.colors(50))
-#' plot_dtm3d(dtm)
+#' #plot(dtm, col = terrain.colors(50))
+#' #plot_dtm3d(dtm)
 knnidw = function(k = 10, p = 2, rmax = 50)
 {
   k <- lazyeval::uq(k)
@@ -147,6 +147,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' @family spatial interpolation algorithms
 #'
 #' @examples
+#' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
 #'
@@ -156,6 +157,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
+#' }
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
   assert_package_is_installed("gstat")

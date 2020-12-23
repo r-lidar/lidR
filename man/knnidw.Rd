@@ -22,12 +22,12 @@ an inverse-distance weighting (IDW).
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 
-# plot(las)
+#plot(las)
 
 dtm = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 
-plot(dtm, col = terrain.colors(50))
-plot_dtm3d(dtm)
+#plot(dtm, col = terrain.colors(50))
+#plot_dtm3d(dtm)
 }
 \seealso{
 Other spatial interpolation algorithms: 

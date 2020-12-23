@@ -24,13 +24,13 @@
 #' las <- readLAS(LASfile, select = "xyz")
 #'
 #' las <- filter_surfacepoints(las, 1)
-#' plot(las)
+#' #plot(las)
 #'
 #' las <- smooth_height(las, 5, "gaussian", "circle", sigma = 2)
-#' plot(las)
+#' #plot(las)
 #'
 #' las <- unsmooth_height(las)
-#' plot(las)
+#' #plot(las)
 smooth_height = function(las, size, method = c("average", "gaussian"), shape = c("circle", "square"), sigma = size/6)
 {
   stopifnotlas(las)

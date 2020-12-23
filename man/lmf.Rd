@@ -42,17 +42,13 @@ add_treetops3d(x, ttops)
 f <- function(x) { x * 0.07 + 3}
 ttops <- find_trees(las, lmf(f))
 
-x <- plot(las)
-add_treetops3d(x, ttops)
+#x <- plot(las)
+#add_treetops3d(x, ttops)
 
 # raster-based
 # ============
 
-# 5x5 m fixed window size
 chm <- grid_canopy(las, res = 1, p2r(0.15))
-kernel <- matrix(1,3,3)
-chm <- raster::focal(chm, w = kernel, fun = median, na.rm = TRUE)
-
 ttops <- find_trees(chm, lmf(5))
 
 plot(chm, col = height.colors(30))

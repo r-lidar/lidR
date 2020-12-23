@@ -69,7 +69,7 @@
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
-#' plot(las)
+#' #plot(las)
 #'
 #' # First option: use a RasterLayer as DTM
 #' # =======================================================
@@ -77,16 +77,16 @@
 #' dtm <- grid_terrain(las, 1, knnidw(k = 6L, p = 2))
 #' las <- normalize_height(las, dtm)
 #'
-#' plot(dtm)
-#' plot(las)
+#' #plot(dtm)
+#' #plot(las)
 #'
 #' # restore original elevations
 #' las <- unnormalize_height(las)
-#' plot(las)
+#' #plot(las)
 #'
 #' # operator - can be used. This is equivalent to the previous
 #' las <- las - dtm
-#' plot(las)
+#' #plot(las)
 #'
 #' # restore original elevations
 #' las <- unnormalize_height(las)
@@ -95,7 +95,7 @@
 #' # =========================================================
 #'
 #' las <- normalize_height(las, tin())
-#' plot(las)
+#' #plot(las)
 #'
 #' # operator - can be used. This is equivalent to the previous
 #' las <- unnormalize_height(las)

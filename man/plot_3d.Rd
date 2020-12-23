@@ -49,7 +49,7 @@ with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile)
+las = readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
 
 dtm = grid_terrain(las, algorithm = tin())
 ttops <- find_trees(las, lmf(ws = 5))

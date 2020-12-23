@@ -13,12 +13,13 @@
 #' @return \code{SpatialPointsDataFrame} with attributes from the corresponding point in the LAS object,
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyzi", filter = "-drop_z_below 0")
+#' las <- readLAS(LASfile, select = "xyzi", filter = "-drop_z_below 0 -keep_random_fraction 0.5")
 #'
 #' # Using a 20x5 rectangle with a 45 degrees angle.
 #' # This won't find the tree properly in the general case
 #' # but may find some oriented structure.
 #' lm = find_localmaxima(las, c(20, 5, pi/4))
+#' plot(lm)
 #' @export
 find_localmaxima = function(las, w, filter = NULL)
 {

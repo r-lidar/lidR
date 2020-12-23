@@ -71,13 +71,14 @@
 #'
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
-#' plot(las)
+#' #plot(las)
 #'
 #' dtm1 = grid_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #' dtm2 = grid_terrain(las, algorithm = tin())
-#' dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
 #'
 #' \dontrun{
+#' dtm3 = grid_terrain(las, algorithm = kriging(k = 10L))
+#'
 #' plot(dtm1)
 #' plot(dtm2)
 #' plot(dtm3)

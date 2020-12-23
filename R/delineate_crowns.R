@@ -66,19 +66,22 @@
 #' # Only the hulls
 #' convex_hulls = delineate_crowns(las)
 #' plot(convex_hulls)
-#' spplot(convex_hulls, "ZTOP")
 #'
 #' # The hulls + some user-defined metrics
 #' convex_hulls = delineate_crowns(las, func = ~list(Zmean = mean(Z)))
-#' spplot(convex_hulls, "Zmean")
+#' convex_hulls
 #'
 #' # The bounding box
 #' bbox_hulls = delineate_crowns(las, "bbox")
 #' plot(bbox_hulls)
 #'
 #' \dontrun{
+#' # With concave hull (longer to compute)
 #' concave_hulls = delineate_crowns(las, "concave")
-#' sp::plot(concave_hulls)
+#' plot(concave_hulls)
+#'
+#' spplot(convex_hulls, "ZTOP")
+#' spplot(convex_hulls, "Zmean")
 #' }
 delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {

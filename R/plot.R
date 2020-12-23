@@ -78,6 +78,7 @@
 #' plot(las)
 #' plot(las, color = "Intensity")
 #'
+#' \dontrun{
 #' # If outliers break the color range, use the trim parameter
 #' plot(las, color = "Intensity", trim = 150)
 #'
@@ -85,8 +86,9 @@
 #'
 #' # This dataset is already tree segmented
 #' plot(las, color = "treeID")
+#' }
 #'
-#' # single file catalog using data provided in lidR
+#' # single file LAScatalog using data provided in lidR
 #' ctg = readLAScatalog(LASfile)
 #' plot(ctg)
 #'

@@ -77,30 +77,23 @@
 #' las <- readLAS(LASfile, select = "*")
 #'
 #' # All the predefined metrics
-#' m1 <- grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1))
+#' m1 <- grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1), res = 40)
 #'
 #' # Convenient shortcut
-#' m2 <- grid_metrics(las, .stdmetrics)
+#' m2 <- grid_metrics(las, .stdmetrics, res = 40)
 #'
 #' # Basic metrics from intensities
-#' m3 <- grid_metrics(las, ~stdmetrics_i(Intensity))
+#' m3 <- grid_metrics(las, ~stdmetrics_i(Intensity), res = 40)
 #'
 #' # All the metrics from intensities
-#' m4 <- grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber))
+#' m4 <- grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber), res = 40)
 #'
 #' # Convenient shortcut for the previous example
-#' m5 <- grid_metrics(las, .stdmetrics_i)
-#'
-#' # Compute the metrics only on first return
-#' first <- filter_first(las)
-#' m6 <- grid_metrics(first, .stdmetrics_z)
-#'
-#' # Compute the metrics with a threshold at 2 meters
-#' m7 <- grid_metrics(las, .stdmetrics_z, filter = ~Z >= 2)
+#' m5 <- grid_metrics(las, .stdmetrics_i, res = 40)
 #'
 #' # Works also with cloud_metrics and hexbin_metrics
-#' m8 <- cloud_metrics(las, .stdmetrics)
-#' m9 <- hexbin_metrics(las, .stdmetrics)
+#' m6 <- cloud_metrics(las, .stdmetrics)
+#' m7 <- hexbin_metrics(las, .stdmetrics)
 #'
 #' # Combine some predefined function with your own new metrics
 #' # Here convenient shortcuts are no longer usable.
@@ -124,12 +117,11 @@
 #'   return( c(metrics, stdmetrics_z(z)) )
 #' }
 #'
-#' m10 <- grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber))
+#' m10 <- grid_metrics(las, ~myMetrics(Z, Intensity, ReturnNumber), res = 40)
 #'
 #' # Users can write their own convenient shorcuts like this:
 #' .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
-#'
-#' m11 <- grid_metrics(las, .myMetrics)
+#' m11 <- grid_metrics(las, .myMetrics, res = 40)
 #' @seealso
 #' \link{cloud_metrics}
 #' \link{grid_metrics}

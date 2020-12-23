@@ -46,7 +46,7 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las <- readLAS(LASfile)
+#' las <- readLAS(LASfile, filter = "-keep_random_fraction 0.5")
 #'
 #' # Add 20 artificial outliers
 #' set.seed(314)
@@ -57,7 +57,7 @@
 #'
 #' # Using SOR
 #' las <- classify_noise(las, sor(15,7))
-#' plot(las, color = "Classification")
+#' #plot(las, color = "Classification")
 #'
 #' # Using IVF
 #' las <- classify_noise(las, ivf(5,2))
