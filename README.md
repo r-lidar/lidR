@@ -16,7 +16,7 @@ To cite the package use `citation()` from within R:
 ```r
 citation("lidR")
 #> Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
-#> Jean-Romain Roussel and David Auty (2020). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.0.5. https://cran.r-project.org/package=lidR
+#> Jean-Romain Roussel and David Auty (2021). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.1.0. https://cran.r-project.org/package=lidR
 ```     
 
 # Key features

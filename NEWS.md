@@ -1,6 +1,6 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.1.0 (Release date: yyyy-mm-dd)
+## lidR v3.1.0 (Release date: 2020-01-04)
 
 #### MAJOR NEW FEATURES
 
