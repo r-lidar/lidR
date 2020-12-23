@@ -16,7 +16,7 @@ plot(x, y, ...)
   colorPalette = "auto",
   bg = "black",
   trim = Inf,
-  backend = c("rgl", "pcv"),
+  backend = "rgl",
   clear_artifacts = TRUE,
   nbits = 16,
   axis = FALSE,
@@ -49,11 +49,11 @@ coloring depending on the argument \code{color}}
 \item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
 Every point with a value higher than \code{trim} will be plotted with the highest color.}
 
-\item{backend}{character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
-the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
-\code{PointCloudViewer} package, which is much more efficient and can handle million of points
-using less memory. \code{PointCloudViewer} is not available on CRAN yet and should
-be installed from github (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).}
+\item{backend}{character. Can be \code{"rgl"} or \code{"lidRviewer"}. If \code{"rgl"} is chosen
+the display relies on the \code{rgl} package. If \code{"lidRviewer"} is chosen it relies on the
+\code{lidRviewer} package, which is much more efficient and can handle million of points
+using less memory. \code{lidRviewer} is not available on CRAN yet and should
+be installed from github (see. \url{https://github.com/Jean-Romain/lidRviewer}).}
 
 \item{clear_artifacts}{logical. It is a known and documented issue that the 3D visualisation with
 \code{rgl} displays artifacts. The points look aligned and/or regularly spaced in some view angles.
@@ -69,7 +69,7 @@ on 8 bits set this parameter to 8.}
 
 \item{legend}{logical. Display a gradient color legend.}
 
-\item{add}{If \code{FALSE} normal behavior otherwise must be the output of a prior plot function
+\item{add}{If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 to enable the alignment of a second point cloud.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}

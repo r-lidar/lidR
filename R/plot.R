@@ -56,12 +56,12 @@
 #' on 8 bits set this parameter to 8.
 #' @param axis logical. Display axis on XYZ coordinates.
 #' @param legend logical. Display a gradient color legend.
-#' @param backend character. Can be \code{"rgl"} or \code{"pcv"}. If \code{"rgl"} is chosen
-#' the display relies on the \code{rgl} package. If \code{"pcv"} is chosen it relies on the
-#' \code{PointCloudViewer} package, which is much more efficient and can handle million of points
-#' using less memory. \code{PointCloudViewer} is not available on CRAN yet and should
-#' be installed from github (see. \url{https://github.com/Jean-Romain/PointCloudViewer}).
-#' @param add If \code{FALSE} normal behavior otherwise must be the output of a prior plot function
+#' @param backend character. Can be \code{"rgl"} or \code{"lidRviewer"}. If \code{"rgl"} is chosen
+#' the display relies on the \code{rgl} package. If \code{"lidRviewer"} is chosen it relies on the
+#' \code{lidRviewer} package, which is much more efficient and can handle million of points
+#' using less memory. \code{lidRviewer} is not available on CRAN yet and should
+#' be installed from github (see. \url{https://github.com/Jean-Romain/lidRviewer}).
+#' @param add If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 #' to enable the alignment of a second point cloud.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
@@ -98,7 +98,7 @@ setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
 #' @rdname plot
-setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
+setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = "rgl", clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
 {
   plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, add, ...)
 })
@@ -223,12 +223,12 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
   }
 }
 
-plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = c("rgl", "pcv"), clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
+plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = "rgl", clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
 {
   backend <- match.arg(backend)
-  use_pcv <- backend == "pcv"
+  use_pcv <- backend == "lidRviewer"
   use_rgl <- !use_pcv
-  has_pcv <- "PointCloudViewer" %in% rownames(utils::installed.packages())
+  has_pcv <- "lidRviewer" %in% rownames(utils::installed.packages())
   has_col <- color %in% names(x@data)
   use_rgb <- color == "RGB"
   has_rgb <- all(c("R", "G", "B") %in% names(x@data))
@@ -237,7 +237,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   value_index <- FALSE
 
   if (is.empty(x))         stop("Cannot display an empty point cloud", call. = FALSE)
-  if (use_pcv & !has_pcv)  stop("'PointCloudViewer' package is needed. Please read documentation.", call. = FALSE) # nocov
+  if (use_pcv & !has_pcv)  stop("'lidRviewer' package is needed. Please read documentation.", call. = FALSE) # nocov
   if (length(color) > 1)   stop("'color' should contain a single value.", call. = FALSE)
   if (!use_rgb & !has_col) stop("'color' should refer to an attribute of the LAS data.", call. = FALSE)
   if (use_rgb & !has_rgb)  stop("No 'RGB' attributes found.", call. = FALSE)
@@ -368,12 +368,12 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 # nocov start
 .plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_index, add)
 {
-  if (!isFALSE(add)) stop("Argument 'add = TRUE' is not supported with PointCloudViewer.")
+  if (!isFALSE(add)) stop("Argument 'add = TRUE' is not supported with lidRviewer")
 
   if (is.character(col))
   {
     if (col == "RGB")
-      eval(parse(text = "PointCloudViewer::plot_xyzrgb(las@data$X, las@data$Y, las@data$Z, las@data$R, las@data$G, las@data$B, args$size)"))
+      eval(parse(text = "lidRviewer::plot_xyzrgb(las@data$X, las@data$Y, las@data$Z, las@data$R, las@data$G, las@data$B, args$size)"))
     else
       stop("Unexpected error.", call. = FALSE)
   }
@@ -387,7 +387,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
       id <- cut(col, length(pal), labels = FALSE)
     }
 
-    eval(parse(text = "PointCloudViewer::plot_xyzcol(las@data$X, las@data$Y, las@data$Z, pal, id, args$size)"))
+    eval(parse(text = "lidRviewer::plot_xyzcol(las@data$X, las@data$Y, las@data$Z, pal, id, args$size)"))
   }
 
   return(invisible(c(0,0)))
