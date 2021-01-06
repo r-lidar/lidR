@@ -2,10 +2,8 @@
 #'
 #' This function is made to be used in \link{classify_noise}. It implements an
 #' algorithm for outliers (noise) segmentation based on Statistical Outliers
-#' Removal (SOR) methods first described in the
-#' \href{https://pointclouds.org/documentation/tutorials/statistical_outlier.html}{PCL library}
-#' and also implemented in
-#' \href{https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter}{CloudCompare}.
+#' Removal (SOR) methods first described in the PCL library
+#' and also implemented in CloudCompare (see references).
 #' For each point, it computes the mean distance to all its k-nearest neighbours.
 #' The points that are farther than the average distance plus a number of times
 #' (multiplier) the standard deviation are considered noise.
@@ -35,6 +33,9 @@
 #'
 #' las <- classify_noise(las, sor(15,7))
 #' @md
+#' @references
+#' https://pointclouds.org/documentation/tutorials/statistical_outlier.html \cr
+#' https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter
 sor = function(k = 10, m = 3, quantile = FALSE)
 {
   assert_is_a_number(k)
