@@ -24,7 +24,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
 ```
 
-```{r, echo = FALSE}
+```{r data, echo = FALSE}
 data = data.table::data.table(
   Max.X   = c(885228.88, 886993.96, 885260.93, 887025.96,
               885292.94, 887056.88, 892199.94, 893265.54, 892229.99, 893295.15,
@@ -135,12 +135,12 @@ In the following vignette we will discuss first the high-level API then the low-
 
 The catalog takes care of making chunks and users can define the size of the chunks. By default this size is set to 0 meaning that a chunk is a file and thus each file will be processed sequentially. The chunk size is not the most important option. It is mainly intended to be used with small configuration computers to avoid loading too many points at once. Reducing or increasing the chunk size does not modify the output but it reduces the memory used by reducing the quantity of points loaded. It is recommended to set this option to 0, but sometimes it is a good idea to set it to a small size to process particularly large files.
 
-```{r, echo = FALSE}
+```{r setbuffer2, echo = FALSE}
 opt_chunk_buffer(ctg) <- 0
 ```
 
 
-```{r, fig.show='hold'}
+```{r plotctg, fig.show='hold'}
 opt_chunk_size(ctg) <- 0 # Processing by files
 plot(ctg, chunk = TRUE)
 
@@ -153,12 +153,12 @@ plot(ctg, chunk = TRUE)
 Each chunk is loaded with a buffer around it to ensure that independent clouds will not be affected by edge effects. For example, when computing a digital terrain model if a buffer is not loaded, the terrain is weakly computed at the edge of the point cloud because of the absence of context in the neighbourhood. The chunk buffer size is the most important option. A buffer that is too small can create incorrect outputs. The default is 30 m, which is likely to be appropriate for most use cases.
 
 
-```{r, echo = FALSE}
+```{r setbuffer1, echo = FALSE}
 opt_chunk_size(ctg) <- 0
 ```
 
 
-```{r, fig.show='hold'}
+```{r plotbuffer, fig.show='hold'}
 opt_chunk_buffer(ctg) <- 0 # No buffer
 plot(ctg, chunk = TRUE)
 
@@ -168,7 +168,7 @@ plot(ctg, chunk = TRUE)
 
 `lidR` functions always check if an appropriate buffer is set. For example, it is impossible to apply `grid_terrain()` with no buffer.
 
-```{r, error=TRUE}
+```{r dtmnobuffer, error=TRUE}
 opt_chunk_buffer(ctg) <- 0
 grid_terrain(ctg, 1, tin())
 ```
@@ -178,7 +178,7 @@ grid_terrain(ctg, 1, tin())
 In some cases it might be suitable to control the alignment of the chunks to force a given pattern. This is a rare use case but the engine supports such a possibility. This option is obviously meaningless when processing by file. The chunk alignment is not the most important option and does not modify the output, but it may generate more, or fewer, chunks depending on the alignment. However, it might be very useful in the particular case of the function `catalog_retile()`, for example, to accurately control the new tiling pattern.
 
 
-```{r, fig.show='hold'}
+```{r alignment, fig.show='hold'}
 opt_chunk_size(ctg) <- 2000
 opt_chunk_buffer(ctg) <- 0
 plot(ctg, chunk = TRUE)
@@ -219,7 +219,7 @@ opt_filter(ctg) <- "-keep_first -drop_z_below 2"
 m <- grid_metrics(ctg, .stdmetrics, 20)
 ```
 
-```{r echo = FALSE, rgl=TRUE, dev='png'}
+```{r void, echo = FALSE, rgl=TRUE, dev='png'}
 #LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #ctg = readLAScatalog(LASfile)
 #opt_progress(ctg) <- FALSE
@@ -264,14 +264,14 @@ dtm <- grid_terrain(ctg, 1, tin())
 
 By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in the working environment in a straightforward way. For example, a `SpatialPointsDataFrame` for `find_trees()`.
 
-```{r echo = FALSE, rgl=TRUE, dev='png'}
+```{r writeondisk, echo = FALSE, rgl=TRUE, dev='png'}
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 ctg2 <- readLAScatalog(LASfile)
 opt_progress(ctg2) <- FALSE
 opt_chunk_size(ctg2) <- 250
 ```
 
-```{r}
+```{r findtree}
 # Find the trees
 trees <- find_trees(ctg2, lmf(3))
 
@@ -287,7 +287,7 @@ opt_output_files(ctg) <- "/folder/to/save/filename_{TEMPLATE1}_{TEMPLATE2}...{TE
 
 The templates can be `XCENTER`, `YCENTER`, `XLEFT`, `YBOTTOM`, `XRIGHT`, `YTOP`, `ID` or `ORIGINALFILENAME`. The templated string does not contain the file extension. The engine guesses the extension and it works no matter the output. For example:
 
-```{r}
+```{r template}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
 trees <- find_trees(ctg2, lmf(3))
@@ -301,7 +301,7 @@ There is one file per chunk and thus processing by file with the template `{ORIG
 
 In the previous example, several shapefiles were written on disk and there is no way to combine them into a single light R object. But sometimes it is possible to return a light object that aggregates all the written files. For rasters, for example, it is possible to build a virtual raster mosaic. The engine automatically does this when it is possible.
 
-```{r}
+```{r writechm}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
 chm <- grid_canopy(ctg2, 1, p2r())
@@ -313,14 +313,14 @@ chm
 
 There are two special cases. The first one is when raster files are written. They are merged into a valid `RasterLayer` using a virtual mosaic. The second one is when LAS or LAZ files are written on disk. They are merged into a `LAScatalog`.
 
-```{r, echo=FALSE}
-ctg2 = lidR:::catalog_generator(600)
+```{r generate, echo=FALSE}
+ctg2 = lidR:::catalog_generator(6)
 opt_progress(ctg2) <- FALSE
 x = c(50, 90, 150, 140)
 y = c(55, 75, 80, 180)
 ```
 
-```{r, fig.show='hold'}
+```{r clip, fig.show='hold'}
 opt_output_files(ctg2) <- "{tempdir()}/plot_{ID}"
 new_ctg <- clip_circle(ctg2, x, y, 20)
 plot(ctg2)
