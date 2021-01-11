@@ -185,7 +185,6 @@ test_that("clip_roi throw error with lines", {
   expect_error(clip_roi(las, sfline), "Incorrect geometry type")
 })
 
-
 test_that("clip_roi clips a rectangle from a bounding box both on a LAS and LAScatalog", {
 
   # Extent
@@ -221,7 +220,6 @@ test_that("clip_roi returns an empty point cloud if no point found in the query"
   expect_true(is.empty(circ2))
   expect_equal(dim(circ3), c(0,34))
 })
-
 
 test_that("clip_roi supports multiple queries", {
 
@@ -324,7 +322,6 @@ test_that("clip_roi returns an empty point cloud for empty multiple queries", {
   expect_equal(polys1, polys2)
 })
 
-
 test_that("clip_roi throws errors with invalid queries", {
 
   # Invalid WKT
@@ -406,7 +403,6 @@ test_that("clip writes file following LAScatalog options", {
   expect_equal(normalizePath(ctg4@data$filename), normalizePath(paste0(tmp, "/", 1:2, "_plot", 1:2, ".las")))
 })
 
-
 test_that("clip throw an error with invalid template", {
 
   tmp  <- tempdir()
@@ -421,7 +417,6 @@ test_that("clip throw an error with invalid template", {
 
   expect_error(clip_rectangle(ctg2, 684850, 5017850, 684900, 5017900), "undefined in clip functions")
 })
-
 
 test_that("clip repects spatial index metadata in LAScatalog", {
   xc <- 684800

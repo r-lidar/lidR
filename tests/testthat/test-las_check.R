@@ -53,6 +53,9 @@ test_that("las_check works without error with LAS", {
   sink(tempfile())
   expect_error(las_check(las0), NA)
   expect_error(las_check(las1), NA)
+
+  skip_on_cran()
+
   expect_error(las_check(las2), NA)
   expect_error(las_check(las3), NA)
   expect_error(las_check(las4), NA)
@@ -122,14 +125,9 @@ test_that("las_check quantization specific test", {
 
 test_that("las_check performs a deep inspection of a LAScatalog", {
 
-  sink(tempfile())
   ctg = lidR:::catalog_generator(2, 20)
   o1 = las_check(ctg, print = FALSE, deep = TRUE)
-  o2 = las_check(ctg, print = TRUE, deep = TRUE)
 
-  sink(NULL)
-
-  expect_equal(o1,o2)
   expect_equal(length(o1), 2L)
 })
 

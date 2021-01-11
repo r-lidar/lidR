@@ -71,31 +71,35 @@ test_that("plot LAScatalog works", {
 })
 
 test_that("plot lasmetrics3d works", {
+  skip_on_cran()
   x = voxel_metrics(las, ~length(Z), 5)
   expect_error(plot(x), NA)
   rgl::rgl.close()
 })
 
 test_that("plot dtm3 works", {
+  skip_on_cran()
   x = grid_terrain(las, 1, knnidw())
   expect_error(plot_dtm3d(x), NA)
   rgl::rgl.close()
 })
 
 test_that("add dtm3d works", {
+  skip_on_cran()
   x = grid_terrain(las, 1, knnidw())
   expect_error({y = plot(las) ; add_dtm3d(y, x)}, NA)
   rgl::rgl.close()
 })
 
 test_that("add treetop3d works", {
+  skip_on_cran()
   x = find_trees(las, lmf(3))
   expect_error({y = plot(las) ; add_treetops3d(y, x)}, NA)
   rgl::rgl.close()
 })
 
 test_that("add = x overlay a second point cloud", {
-
+  skip_on_cran()
   gnd = filter_poi(las, Classification == LASGROUND)
   ngnd = filter_poi(las, Classification != LASGROUND)
 

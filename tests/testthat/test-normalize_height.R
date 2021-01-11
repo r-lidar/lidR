@@ -1,7 +1,7 @@
 context("normalize_height")
 
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile)
+las = readLAS(LASfile, filter = "-keep_xy 273450 5274350 273550 5274450")
 ctg = catalog(LASfile)
 dtm = grid_terrain(las, 1, tin())
 
@@ -39,7 +39,7 @@ test_that("Each ground point is at 0 with kriging", {
 test_that("Each ground point is at 0 with a RasterLayer", {
   las <- normalize_height(las, dtm)
   Z0 = las@data[Classification == 2]$Z
-  expect_equal(mean(abs(Z0)), 0.06, tol = 0.001)
+  expect_equal(mean(abs(Z0)), 0.06, tol = 0.002)
 })
 
 test_that("Absolute elevation is extrabytes(ed)", {
@@ -56,18 +56,17 @@ test_that("Absolute elevation is extrabytes(ed)", {
 })
 
 test_that("Error if NAs in DTM", {
-  dtm = grid_terrain(las, 2, tin())
-  dtm[1500] <- NA
+  dtm[2500] <- NA
 
   expect_error(normalize_height(las, dtm), "not normalizable")
-  expect_message(normalize_height(las, dtm, na.rm = TRUE), "6 points were not normalizable and removed")
+  expect_message(normalize_height(las, dtm, na.rm = TRUE), "2 points were not normalizable and removed")
 
   las2 = suppressMessages(normalize_height(las, dtm, na.rm = TRUE))
 
-  expect_equal(npoints(las2), npoints(las) - 6 )
+  expect_equal(npoints(las2), npoints(las) - 2 )
 })
 
-test_that("normalize_height works with a catalog", {
+test_that("normalize_height works with a LAScatalog", {
   expect_error(normalize_height(ctg, tin()), "buffer")
 
   opt_chunk_buffer(ctg) <- 30
@@ -79,7 +78,7 @@ test_that("normalize_height works with a catalog", {
   ctg2 = normalize_height(ctg, tin())
   las2 = readLAS(ctg2)
 
-  expect_equal(nrow(las2@data), nrow(las@data))
+  expect_equal(nrow(las2@data), 73403L)
 })
 
 test_that("normalize_height works with minus symbol", {

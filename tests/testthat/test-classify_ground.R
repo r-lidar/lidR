@@ -3,7 +3,7 @@ context("classify_ground")
 rgdal::set_thin_PROJ6_warnings(TRUE)
 
 file <- system.file("extdata", "Topography.laz", package="lidR")
-las = suppressWarnings(readLAS(file, select = "xyzrn"))
+las = suppressWarnings(readLAS(file, select = "xyzrn", filter = "-keep_xy 273450 5274350 273550 5274450"))
 ctg = catalog(file)
 
 opt_chunk_size(ctg) <- 300
@@ -17,18 +17,20 @@ th = seq(0.1, 2, length.out = length(ws))
 mypmf = pmf(ws, th)
 mycsf = csf(TRUE, 1, 1, time_step = 1)
 
-test_that("classify_ground pmf works", {
+test_that("classify_ground pmf works with LAS", {
 
   las <- classify_ground(las, mypmf)
 
   n = names(las@data)
 
   expect_true("Classification" %in% n)
-  expect_equal(unique(las@data$Classification), c(1L, 2L))
-  expect_equal(sum(las@data$Classification == 2L), 19472L)
+  expect_equal(sort(unique(las@data$Classification)), c(1L, 2L))
+  expect_equal(sum(las@data$Classification == 2L), 1933L)
 
   expect_error(classify_ground(ctg, mypmf), "buffer")
+})
 
+test_that("classify_ground pmf works with LAScatalog", {
   opt_chunk_buffer(ctg) <- 30
 
   expect_error(classify_ground(ctg, mypmf), "output file")
@@ -39,19 +41,20 @@ test_that("classify_ground pmf works", {
   las2 = readLAS(ctg2)
 
   expect_equal(sum(las2@data$Classification == 2L), 19472L)
-  expect_equal(nrow(las2@data), nrow(las@data))
-
-  las@data[, Classification := NULL]
 })
 
-test_that("classify_ground csf works", {
+test_that("classify_ground csf works with LAS", {
   las <- classify_ground(las, mycsf)
 
   n = names(las@data)
 
   expect_true("Classification" %in% n)
-  expect_equal(unique(las@data$Classification), c(2L, 1L))
-  expect_equal(sum(las@data$Classification == 2L), 26715L)
+  expect_equal(sort(unique(las@data$Classification)), c(1L, 2L))
+  expect_equal(sum(las@data$Classification == 2L), 2605L)
+})
+
+test_that("classify_ground csf works with LAScatalog", {
+  skip_on_cran()
 
   opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}_ground")
   opt_chunk_buffer(ctg) <- 30
@@ -60,7 +63,6 @@ test_that("classify_ground csf works", {
   las2 = readLAS(ctg2)
 
   expect_equal(sum(las2@data$Classification == 2L), 26715L-450L)
-  expect_equal(nrow(las2@data), nrow(las@data))
 })
 
 test_that("classify_ground csf works with last_returns = FALSE", {
@@ -99,3 +101,4 @@ test_that("classify_ground does not erase former classification (but new ground 
   las <- classify_ground(las, mypmf)
   expect_equal(names(table(las$Classification)), c("1", "2", "9"))
 })
+
