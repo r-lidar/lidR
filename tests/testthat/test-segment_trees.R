@@ -154,28 +154,45 @@ test_that("segment_trees can store in a user defined column", {
 
 test_that("segment_trees supports different unicity srategies", {
 
-  las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "gpstime")
+  las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "incremental", attribute = "ID1")
+  las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "gpstime", attribute = "ID2")
+  las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "bitmerge", attribute = "ID3")
 
-  expect_equal(length(na.omit(unique(las@data$treeID))), 48L)
+  expect_equal(length(na.omit(unique(las@data$ID1))), 48L)
+  expect_equal(length(na.omit(unique(las@data$ID2))), 48L)
+  expect_equal(length(na.omit(unique(las@data$ID3))), 48L)
 
-  las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "bitmerge")
+  u = las@data[, if (!anyNA(.BY)) .I[which(Z == max(Z))], by = "ID1"]
+  s = las@data[u$V1]
 
-  expect_equal(length(na.omit(unique(las@data$treeID))), 48L)
+  expectedID2 = s$gpstime
+  expectedID3 = s$X*100*2^32 + s$Y*100
+
+  id42 = s$ID1 == 42
+
+  expect_equal(s$ID2[!id42], expectedID2[!id42])
+  expect_equal(s$ID3[!id42], expectedID3[!id42])
+
+  expect_equal(s$ID2[id42][1], min(s$gpstime[id42]))
+  expect_equal(s$ID3[id42][1], expectedID3[id42][which.min(s$X[id42])])
 })
 
 test_that("segment_trees supports a LAScatalog", {
 
   # Skipping this test temporarily to be able to have a build on MacOS. Then I will be
   # able to test that on somebody' computer.
-  skip("to do: fix")
+  skip_on_cran()
 
   opt_output_files(ctg) <- "{tempdir()}/{ID}"
-  new_ctg <- segment_trees(ctg, li2012(speed_up = 5), uniqueness = 'bitmerge')
+  new_ctg <- segment_trees(ctg, li2012(speed_up = 5), uniqueness = 'gpstime')
 
   las = readLAS(new_ctg)
-  las = segment_trees(las, li2012(speed_up = 5), uniqueness = 'bitmerge', attribute = "treeID2")
+  las = segment_trees(las, li2012(speed_up = 5), uniqueness = 'gpstime', attribute = "treeID2")
 
   expect_equal(length(na.omit(unique(las@data$treeID))), 274) # 272 on Fedora and MacOS. Impossible to reproduce.
+  expect_equal(length(na.omit(unique(las@data$treeID2))), 274) # 272 on Fedora and MacOS. Impossible to reproduce.
+
+  skip("Need investigation")
   expect_equal(las$treeID, las$treeID2) # added this test but cannot test on mac os.
 })
 
