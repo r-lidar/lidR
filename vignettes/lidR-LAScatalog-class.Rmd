@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   dev.args = list(pointsize = 10)
 )
+
 options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
 ```
@@ -173,7 +174,7 @@ plot(ctg, mapview = TRUE, map.type = "Esri.WorldImagery")
 
 Being a SpatialPolygonsDataFrame, the function `spplot` from `sp` can be used on a `LAScatalog` to check the content of the files. In the following we can immediately see that the catalog is not normalized and is likely to contain outliers:
 
-```{r}
+```{r, warning=FALSE}
 spplot(ctg, "Min.Z")
 ```
 

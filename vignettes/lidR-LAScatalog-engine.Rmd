@@ -17,7 +17,23 @@ knitr::opts_chunk$set(
   fig.height = 2.5,
   dev.args = list(pointsize = 9)
 )
-rgl::setupKnitr()
+knitr::knit_hooks$set(time_it = local({
+  now <- NULL
+  function(before, options) {
+    if (before) {
+      # record the current time before each chunk
+      now <<- Sys.time()
+    } else {
+      # calculate the time difference after a chunk
+      res <- difftime(Sys.time(), now)
+      # return a character string to show the time
+      #if (res > 0.1)
+      #paste("<br/>========================<br/>Time for this code chunk ", options$label, " to run:", round(res,2), "<br/>========================<br/>")
+    }
+  }
+}))
+knitr::opts_chunk$set(time_it = TRUE)
+#rgl::setupKnitr()
 rgdal::set_thin_PROJ6_warnings(TRUE)
 options(rmarkdown.html_vignette.check_title = FALSE)
 
@@ -25,72 +41,23 @@ library(lidR)
 ```
 
 ```{r data, echo = FALSE}
-data = data.table::data.table(
-  Max.X   = c(885228.88, 886993.96, 885260.93, 887025.96,
-              885292.94, 887056.88, 892199.94, 893265.54, 892229.99, 893295.15,
-              888759.96, 890524.95, 892259.98, 894025.98, 892289.96, 894055.93,
-              888790.91, 890554.98, 888820.95, 890585.99, 892319.96, 894084.97,
-              892349.89, 894114.29, 895250.23, 895094.78, 895044.96, 895053.55,
-              885323.96, 887087.95, 885355.95, 887119.96, 883657.85, 885387.95,
-              887150.97, 885419.98, 887182.95, 883688.44, 885442.91, 887193.9,
-              888851.96, 890615.97, 888882.94, 890646.97, 892379.94, 894127.84,
-              892409.97, 892676.58, 888913.92, 890676.93, 888944.86, 890707.98,
-              892439.95, 894124.59, 892469.86, 894232.94, 894786.68, 888958.83,
-              890713.51, 892476.43, 894239.97, 894786.07),
-  Min.X   = c(885022.37,
-              885204.73, 885027.52, 885229.03, 885040.86, 885261.03, 891503.09,
-              892198.69, 891501.42, 892200.07, 886970.07, 888735.55, 891499.96,
-              892230.05, 890521.99, 892260.01, 886994.05, 888760.09, 887026.07,
-              888791.01, 890525.05, 892290.04, 890555.01, 892320.12, 894002.98,
-              894026.02, 894056.02, 894085.03, 885051.45, 885293.03, 885063.29,
-              885324.03, 883166.09, 885072.16, 885356.09, 883642.36, 885388.15,
-              883180.23, 883658.11, 885420.02, 887057.07, 888821.02, 887088.11,
-              888852.03, 890586.03, 892350.02, 890616.07, 892380.01, 887120.07,
-              888883.03, 887151.11, 888914.02, 890647.06, 892410.06, 890677.07,
-              892440.07, 894209.19, 887183.07, 888945.12, 890708.03, 892470.16,
-              894233.07),
-  Max.Y   = c(630219.48, 630214.96, 631609.95, 631604.97,
-              633001.65, 632995.99, 625898.35, 625882.94, 627289.82, 627273.89,
-              630174.88, 630134.94, 628681.66, 628664.99, 630094.95, 630057.95,
-              631564.98, 631524.94, 632955.82, 632915.99, 631486.9, 631447.96,
-              632876.93, 632838.96, 628627.89, 630019.93, 631410.97, 631740.88,
-              634393.05, 634386.96, 635786.24, 635779.96, 638613.36, 637176.84,
-              637169.92, 638601.99, 638560.96, 639938.36, 639926.95, 639558.31,
-              634346.93, 634307.92, 635739.92, 635699.92, 634268.97, 634229.95,
-              635659.89, 635622.88, 637129.84, 637089.93, 638520.94, 638481.91,
-              637051.99, 637012.92, 638442.98, 638403.94, 638366.87, 639177.04,
-              639133.74, 638702.56, 638702.56, 638702.56),
-  Min.Y   = c(629157.18,
-              629099.31, 630215.04, 630175.05, 631605.02, 631565.05, 625816.52,
-              625793.6, 625883.01, 625860.81, 629036.82, 629017.72, 627274.01,
-              627251.36, 628665.04, 628628.01, 630135.08, 630095.02, 631525.01,
-              631487.19, 630058.02, 630020.05, 631448.08, 631411.03, 627506.32,
-              628612.41, 629999.84, 631390.38, 632996.06, 632956.04, 634387.01,
-              634347.01, 637939.24, 635780.07, 635740.05, 637170.11, 637130.14,
-              638602.13, 638561.04, 638521.07, 632916.05, 632877.04, 634308.06,
-              634269.04, 632839.06, 632801.04, 634230.04, 634223.9, 635700.07,
-              635660.11, 637090.03, 637052.15, 635623.06, 635619.13, 637013.1,
-              636979.71, 637259.33, 638482.01, 638443.02, 638404.08, 638367.11,
-              638355.37),
-  Min.Z   = c(325.12, 251.48, 244.68, 286.7, 338.86, 320.68, 118.08, 60.69, 
-              -5.01, -7.58, 225.29, 252, 87.3, 41.7, 115.01, 28.77, 205.11, 
-              200.85, 200.54, 169.5, 90.64, 19.72, 126.04, 28.6, 41.98, 43.15, 
-              7.74, 6.7, 199.26, 190.02, 284.92, 216.16, 218.14, 318.93, 220.21, 
-              218.04, 137.31, 218.13, 217.34, 190.42, 207.62, 113.84, 118.18, 
-              141.52, 92, 52.5, 91.2, 77.92, 156.57, 89.53, 108.83, 93.98, 
-              23.45, 1.64, 33.22, 3.29, 0.61, 108.03, 208.38, 121.18, 58.83, 
-              0.95),
-  Max.Z   = c(418.46, 990.54, 409.06, 1021.87, 996.42, 1005.02, 173.77, 393.97, 
-              836.52, 820.98, 414.2, 936.47, 792.95, 822.51, 777.31, 837.87, 
-              419.15, 741.84, 907.2, 872.27, 898.53, 822.53, 846.77, 740.65, 
-              826.61, 890.21, 828.86, 680.32, 390.31, 997.2, 965.55, 969.24, 
-              249.34, 849.5, 950.2, 848.64, 904.1, 880, 827.92, 888.34, 462.88, 
-              906.61, 440.83, 887.34, 860.37, 747.1, 808.75, 194.76, 734.21, 
-              838.34, 834.76, 758.91, 771.76, 670.1, 810.94, 761.53, 109.26, 
-              303.94, 349.94, 799.8, 737.01, 593.91),
-  filename = paste0("path/to/las/files/file", 1:62, ".las")
-)
-
+data = structure(list(Max.X = c(332099.99, 333600, 335099.99, 336217.52, 
+332099.99, 333599.99, 335099.99, 336368.67, 332099.99, 333599.99, 
+335100, 336217.52), Min.X = c(331016.91, 332100.01, 333600.01, 
+335100, 331016.91, 332100, 333600, 335100, 331016.92, 332100.01, 
+333600.01, 335100.01), Max.Y = c(5529993.99, 5529993.99, 5529993.99, 
+5529993.99, 5528399.99, 5528399.99, 5528399.99, 5528399.99, 5526399.98, 
+5526399.96, 5526399.99, 5526399.99), Min.Y = c(5528400, 5528400, 
+5528400, 5528400, 5526400, 5526400, 5526400, 5526400, 5524793.5, 
+5524793.5, 5524800.38, 5524793.5), Max.Z = c(53.53, 47.59, 48.66, 
+49.36, 46.13, 48.16, 50.51, 50.86, 45, 74.18, 52.56, 49.33), 
+    Min.Z = c(-15.95, -7.87, -3.55, -14.96, -5.94, -11.15, -5.11, 
+    -4.12, -9.63, -8.27, -35.88, -20.59), filename = c("folder/file1.las", 
+    "folder/file2.las", "folder/file3.las", "folder/file4.las", 
+    "folder/file5.las", "folder/file6.las", "folder/file7.las", 
+    "folder/file8.las", "folder/file9.las", "folder/file10.las", 
+    "folder/file11.las", "folder/file12.las")), row.names = c(NA, 
+-12L), class = "data.frame")
 
 pgeom <- lapply(1:nrow(data), function(i)
 {
@@ -144,7 +111,7 @@ opt_chunk_buffer(ctg) <- 0
 opt_chunk_size(ctg) <- 0 # Processing by files
 plot(ctg, chunk = TRUE)
 
-opt_chunk_size(ctg) <- 900 # Processing chunks of 900 x 900
+opt_chunk_size(ctg) <- 1000 # Processing chunks of 1000 x 1000
 plot(ctg, chunk = TRUE)
 ```
 
@@ -264,19 +231,27 @@ dtm <- grid_terrain(ctg, 1, tin())
 
 By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in the working environment in a straightforward way. For example, a `SpatialPointsDataFrame` for `find_trees()`.
 
-```{r writeondisk, echo = FALSE, rgl=TRUE, dev='png'}
+```{r writeondisk, echo = FALSE, eval = FALSE}
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 ctg2 <- readLAScatalog(LASfile)
 opt_progress(ctg2) <- FALSE
-opt_chunk_size(ctg2) <- 250
+opt_chunk_size(ctg2) <- 100
 ```
 
-```{r findtree}
+```r
 # Find the trees
 trees <- find_trees(ctg2, lmf(3))
 
 # The trees are immediately usable in subsequent analyses
 trees
+#> class       : SpatialPointsDataFrame 
+#> features    : 177 
+#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
+#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
+#> variables   : 2
+#> names       : treeID,     Z 
+#> min values  :      1,  2.42 
+#> max values  :    177, 32.07
 ```
 
 However in some case this behaviour might not be suitable especially for a large collection of files that cover a broad area. In this case the computer might not be able to handle so much data and/or will run into trouble when merging the different independent chunks into a single object. This is why the engine has the capability to write on disk the output of each independent chunk. The function `opt_output_files()` can be used to set a path on disk where the output of each chunk should be saved on disk. This path is templated so the engine is able to create a different file name for each chunk. The general form is the following:
@@ -287,7 +262,7 @@ opt_output_files(ctg) <- "/folder/to/save/filename_{TEMPLATE1}_{TEMPLATE2}...{TE
 
 The templates can be `XCENTER`, `YCENTER`, `XLEFT`, `YBOTTOM`, `XRIGHT`, `YTOP`, `ID` or `ORIGINALFILENAME`. The templated string does not contain the file extension. The engine guesses the extension and it works no matter the output. For example:
 
-```{r template}
+```{r template, eval = FALSE}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
 trees <- find_trees(ctg2, lmf(3))
@@ -295,13 +270,15 @@ trees <- find_trees(ctg2, lmf(3))
 # The output has been modified by these options and it now gives
 # the paths to the written files (here shapefiles)
 trees
+#> "/tmp/RtmpJQHPNz/tree_coordinate_481200_3812900.shp" "/tmp/RtmpJQHPNz/tree_coordinate_481300_3812900.shp" "/tmp/RtmpJQHPNz/tree_coordinate_481200_3813000.shp"
+#> [4] "/tmp/RtmpJQHPNz/tree_coordinate_481300_3813000.shp"
 ```
 
 There is one file per chunk and thus processing by file with the template `{ORIGINALFILENAME}` or its shortcut `{*}` may be suitable to further match the output files with the point cloud files. However, depending on the size of the file and the capacity of the computer it is not always possible (see section "Control of the chunk size").
 
 In the previous example, several shapefiles were written on disk and there is no way to combine them into a single light R object. But sometimes it is possible to return a light object that aggregates all the written files. For rasters, for example, it is possible to build a virtual raster mosaic. The engine automatically does this when it is possible.
 
-```{r writechm}
+```{r writechm, eval = FALSE}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
 chm <- grid_canopy(ctg2, 1, p2r())
@@ -309,23 +286,29 @@ chm <- grid_canopy(ctg2, 1, p2r())
 # Many rasters have been written on disk
 # but a light RasterLayer has been returned anyway
 chm
+#> class      : RasterLayer 
+#> dimensions : 90, 90, 8100  (nrow, ncol, ncell)
+#> resolution : 1, 1  (x, y)
+#> extent     : 481260, 481350, 3812921, 3813011  (xmin, xmax, ymin, ymax)
+#> crs        : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
+#> source     : /tmp/RtmpZVJ2hy/grid_canopy.vrt 
+#> names      : tree_coordinate_481260_3812921 
+#> values     : 0, 32.07  (min, max)
 ```
 
 There are two special cases. The first one is when raster files are written. They are merged into a valid `RasterLayer` using a virtual mosaic. The second one is when LAS or LAZ files are written on disk. They are merged into a `LAScatalog`.
 
-```{r generate, echo=FALSE}
-ctg2 = lidR:::catalog_generator(6)
-opt_progress(ctg2) <- FALSE
-x = c(50, 90, 150, 140)
-y = c(55, 75, 80, 180)
-```
-
-```{r clip, fig.show='hold'}
+```{r clip, fig.show='hold', eval=FALSE}
 opt_output_files(ctg2) <- "{tempdir()}/plot_{ID}"
 new_ctg <- clip_circle(ctg2, x, y, 20)
-plot(ctg2)
-points(x,y)
-plot(new_ctg)
+new_ctg
+#> class       : LAScatalog (v1.2 format 0)
+#> extent      : 32.372, 163.136, 38.494, 198.636 (xmin, xmax, ymin, ymax)
+#> coord. ref. : NAD83 / UTM zone 17N 
+#> area        : 3895.031 m²
+#> points      : 44 points
+#> density     : 8 points/m²
+#> num. files  : 4 
 ```
 
 ### Modification of the file format
@@ -347,12 +330,12 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 cl <- lidR:::catalog_makecluster(ctg)
-for (i in 1:18){
+for (i in 1:5){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-bbox <- cl[[19]]@bbox
+bbox <- cl[[6]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "cornflowerblue")
 
 ```
@@ -374,15 +357,15 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 cl <- lidR:::catalog_makecluster(ctg)
-for (i in 1:22){
+for (i in 1:6){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-bbox <- cl[[23]]@bbox
+bbox <- cl[[7]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "orange")
 
-bbox <- cl[[24]]@bbox
+bbox <- cl[[8]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "cornflowerblue")
 ```
 
@@ -401,15 +384,15 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 cl <- lidR:::catalog_makecluster(ctg)
-for (i in 1:29){
+for (i in 1:8){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-bbox <- cl[[23]]@bbox
+bbox <- cl[[7]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "orange")
 
-bbox <- cl[[30]]@bbox
+bbox <- cl[[9]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "red")
 
 ```
@@ -439,10 +422,10 @@ for (i in 1:length(cl)){
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-bbox <- cl[[23]]@bbox
+bbox <- cl[[7]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "orange")
 
-bbox <- cl[[30]]@bbox
+bbox <- cl[[9]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "red")
 
 ```
@@ -452,31 +435,36 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "red"
 Sometimes some chunks are empty and we discover this only when loading the region of interest. This may happen when the chunk pattern is different from the tiling pattern because some chunks may have been created but they do not actually encompass any points. This is the case when the file is only partially populated because the bounding box of the file/tile is bigger than its actual contents. This often happens on the edge of the collection. In this case the engine displays the chunks in gray. This may also happen if `filter` is set in such a way that a lot of points are discarded and in some chunks all the points appear to be discarded. Those chunk are displayed in gray.
 
 ```{r, echo=FALSE}
-opt_chunk_size(ctg) <- 500
+opt_chunk_size(ctg) <- 400
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 cl <- lidR:::catalog_makecluster(ctg)
-for (i in 1:190){
+for (i in 1:50){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-bbox <- cl[[75]]@bbox
+bbox <- cl[[1]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 
-bbox <- cl[[47]]@bbox
+bbox <- cl[[2]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 
-bbox <- cl[[68]]@bbox
+bbox <- cl[[3]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 
-bbox <- cl[[89]]@bbox
+bbox <- cl[[14]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 
-bbox <- cl[[152]]@bbox
+bbox <- cl[[15]]@bbox
 graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 
+bbox <- cl[[16]]@bbox
+graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
+
+bbox <- cl[[29]]@bbox
+graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "gray")
 ```
 
 ### Parallel processing
@@ -496,12 +484,12 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 cl <- lidR:::catalog_makecluster(ctg)
-for (i in 1:18) {
+for (i in 1:6) {
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
 }
 
-for (i in 19:22) {
+for (i in 7:11) {
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "cornflowerblue")
 }
@@ -556,7 +544,7 @@ It is possible to process only a subregion of the collection by flagging some fi
 
 ```{r}
 ctg$processed <- FALSE
-ctg$processed[41:44] <- TRUE
+ctg$processed[6:7] <- TRUE
 plot(ctg)
 ```
 
@@ -610,7 +598,7 @@ catalog_apply(ctg, routine)
 
 When reading a chunk with `readLAS()` the `LAS` object read is a point cloud that encompass the chunk plus the buffer. This `LAS` object has an extra attribute named `buffer` that records whether the points are in the buffered region or not. 0 refers to no buffer, 1,2,3 and 4 refer, respectively, to bottom, left, top and right buffers. If plotted, this is what could be seen.
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide',fig.keep='none'}
+```{r getachunk, eval=FALSE,echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide',fig.keep='none'}
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 test = readLAScatalog(LASfile)
 
@@ -621,22 +609,39 @@ chunks = lidR:::catalog_makecluster(test)
 chunk = chunks[[5]]
 ```
 
-```{r, rgl = TRUE}
+```{r rglbuffer, rgl = TRUE, eval = FALSE}
 las <- readLAS(chunk)
 plot(las, color = "buffer")
 ```
 
+<img src="data:image/png;base64,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" />
+
 The chunk is formally a `LAScluster` object. This is a lightweight object that roughly contains the names of the files that need to be read, the extent of the chunk and some metadata useful internally.
 
-```{r}
+```{r, eval = FALSE}
 print(chunk)
+#> class       : LAScluster 
+#> features    : 1 
+#> extent      : 684800, 684950, 5017810, 5017960  (xmin, xmax, ymin, ymax)
+#> crs         : +proj=utm +zone=17 +datum=NAD83 +units=m +no_defs
 ```
 
 It inherits from `sp::Spatial` so `raster::extent()` and `sp::bbox()` are valid functions that return the bounding box of the chunk. The bounding box of the chunk is the bounding box without the buffer.
  
-```{r}
-extent(chunk)
-bbox(chunk)
+```{r, warning = FALSE, eval = FALSE}
+raster::extent(chunk)
+#> class      : Extent 
+#> xmin       : 684800 
+#> xmax       : 684950 
+#> ymin       : 5017810 
+#> ymax       : 5017960
+sp::bbox(chunk)
+#>         [,1]    [,2]
+#> [1,]  684800  684950
+#> [2,] 5017810 5017960
+sf::st_bbox(chunk)
+#>    xmin    ymin    xmax    ymax 
+#>  684800 5017810  684950 5017960
 ```
 
 Being able to retrieve the true bounding box allows for removal of the buffer. Indeed, the point cloud is loaded with a buffer and all subsequent computation will provide an output with the buffer included in the results. At the end the engine will merge everything and the buffered region will appear twice or more. So the final output must be unbuffered by any means. One can find examples in the documentation of `catalog_apply()`, in [this vignette](lidR-catalog-apply-examples.html) or in the source code of `lidR`.
@@ -645,14 +650,14 @@ Being able to retrieve the true bounding box allows for removal of the buffer. I
 
 Sometime we need to control processing options carried by the `LAScatalog` to ensure that users do not use invalid options. For example `grid_terrain()` ensures that the buffer is not 0.
 
-```{r, error = TRUE}
+```{r bufferror, error = TRUE}
 opt_chunk_buffer(ctg) <- 0
 grid_terrain(ctg, 1, tin())
 ```
 
 This can be reproduced with the option `need_buffer = TRUE`
 
-```{r, error = TRUE}
+```{r routineerror, error = TRUE}
 routine <- function(chunk){ 
    las <- readLAS(chunk)
    if (is.empty(las)) return(NULL)
@@ -668,43 +673,68 @@ Other options are documented in the manual. They serve to make safe new high-lev
 
 By default `catalog_apply()` returns a `list` with one output per chunk. 
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide',fig.keep='none'}
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+```{r preparectg, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide',fig.keep='none'}
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 ctg = readLAScatalog(LASfile)
 
-opt_chunk_size(ctg) <- 200
+opt_chunk_buffer(ctg) <- 10
+opt_chunk_size(ctg) <- 100
 opt_chunk_alignment(ctg) <- c(50,50)
 opt_progress(ctg) <- FALSE
 ```
 
-```{r}
+```{r applyroutine, eval = FALSE}
 routine <- function(chunk){ 
    las <- readLAS(chunk)               # read the chunk
    if (is.empty(las)) return(NULL)     # exit if empty
    ttop <- find_trees(las, lmf(3))     # make any computation
-   ttop <- crop(ttop, extent(chunk))   # remove the buffer
+   ttop <- raster::crop(ttop, extent(chunk))   # remove the buffer
    return(ttop)
 }
 
 out <- catalog_apply(ctg, routine)
 class(out)
+#> [1] "list"
 print(out[[1]])
+#> class       : SpatialPointsDataFrame 
+#> features    : 94 
+#> extent      : 481260.1, 481349.8, 3812921, 3812950  (xmin, xmax, ymin, ymax)
+#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
+#> variables   : 2
+#> names       : treeID,     Z 
+#> min values  :      1,  2.16 
+#> max values  :    132, 32.07
 ```
 
 This `list` must be reduced after `catalog_apply()`. The way to merge depends on the contents of the `list`. Here the list contains `SpatialPointsDataFrame` so we can `rbind` the list.
 
-```{r}
+```{r, eval = FALSE}
 out <- do.call(rbind, out)
 print(out)
+#> class       : SpatialPointsDataFrame 
+#> features    : 297 
+#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
+#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
+#> variables   : 2
+#> names       : treeID,     Z 
+#> min values  :      1,  2.16 
+#> max values  :    247, 32.07
 ```
 
 But in practice a safe merging is not always trivial and it is annoying to do it manually. The engine supports automerging of `Spatial*`, `sf`, `Raster*`, `data.frame` and `LAS` objects.
 
-```{r}
+```{r automerge, eval = FALSE}
 options <- list(automerge = TRUE)
 out <- catalog_apply(ctg, routine, .options = options)
-class(out)
 print(out)
+#> class       : SpatialPointsDataFrame 
+#> features    : 297 
+#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
+#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
+#> variables   : 2
+#> names       : treeID,     Z 
+#> min values  :      1,  2.16 
+#> max values  :    247, 32.07
 ```
 
 In the worst case the type is not supported and a list is returned anyway without failure.
@@ -723,7 +753,7 @@ find_deadtree <- function(las, param1, param2)
 
 We now want to make this function work with a `LAScatalog` in the sane  way as all the other `lidR` functions. One option is the following. First, the function checks the input, if it is a `LAScatalog` it makes use of `catalog_apply()` to apply itself. Then the function will be fed with `LAScluster`s. We test if the input is a `LAScluster` and if it is we read the chunk and apply the function on the loaded point cloud. To finish, if the input is a `LAS` we perform the actual computation.
 
-```{r}
+```r
 find_deadtrees <- function(las, param1, param2)
 {
    if (is(las, "LAScatalog"))  {

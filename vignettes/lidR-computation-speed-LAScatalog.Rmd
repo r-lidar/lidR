@@ -15,6 +15,22 @@ knitr::opts_chunk$set(
   fig.height = 2.5,
   dev.args = list(pointsize = 9)
 )
+knitr::knit_hooks$set(time_it = local({
+  now <- NULL
+  function(before, options) {
+    if (before) {
+      # record the current time before each chunk
+      now <<- Sys.time()
+    } else {
+      # calculate the time difference after a chunk
+      res <- difftime(Sys.time(), now)
+      # return a character string to show the time
+      #if (res > 0.1)
+      #paste("<br/>========================<br/>Time for this code chunk ", options$label, " to run:", round(res,2), "<br/>========================<br/>")
+    }
+  }
+}))
+knitr::opts_chunk$set(time_it = TRUE)
 options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
 ```
@@ -148,13 +164,8 @@ To process a `LAScatalog` faster we need to read the files faster.
 
 A laz file is a strongly compressed las file. Reading a laz file is thus slower than reading a las file because it must be un-compressed on the fly at reading time. The following graph shows a benchmark of read time for a single file.
 
-```r
-system.time(readLAS(file.las))
-system.time(readLAS(file.laz))
-```
 
-
-```{r, echo = FALSE}
+```{r, echo = FALSE,eval=FALSE}
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las = readLAS(LASfile)
 f = tempfile(fileext = ".las")
@@ -175,6 +186,18 @@ op <- graphics::par(mar = c(4,4,1,1) + 0.1)
 barplot(X$t/min(X$t), names.arg = X$format, col = "darkred", xlab = "File format", ylab = "Relative read time", asp = 1)
 graphics::par(op)
 ```
+```r
+t1 = system.time(readLAS("file.laz"))
+t2 = system.time(readLAS("file.las"))
+```
+```{r, echo = FALSE}
+X = structure(list(t = c(1.5, 0.75), format = c("laz", 
+"las")), class = "data.frame", row.names = c(NA, -2L))
+op <- graphics::par(mar = c(4,4,1,1) + 0.1)
+barplot(X$t/min(X$t), names.arg = X$format, col = "darkred", xlab = "File format", ylab = "Relative read time", asp = 1)
+graphics::par(op)
+```
+
 
 So let's assume that the total computation time is 1 unit of time divided into 0.25 units of actual processing time and 0.75 units of read time (which is a fairly reasonable ratio). We can divide the read time by 3, and thus have 0.25 units of read time and 0.25 units of computing time, which gives a computation time of 0.5 instead of 1. We can therefore speed-up the computation time by a factor of 2 by using the las format instead of laz. Obviously the gain is less significant for more computationally demanding processes.
 
