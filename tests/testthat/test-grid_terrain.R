@@ -107,9 +107,8 @@ test_that("grid_terrain returns a circular dtm ", {
   expect_true(!anyNA(z))
 })
 
-file <- system.file("extdata", "Topography.laz", package = "lidR")
-ctg  <- catalog(file)
-las  <- readLAS(file)
+ctg  <- topography_ctg
+las  <- topography
 
 opt_chunk_size(ctg)      <- 300
 opt_chunk_buffer(ctg)    <- 30

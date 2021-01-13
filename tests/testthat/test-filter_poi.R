@@ -1,6 +1,6 @@
 context("filter_poi")
 
-las = lidR:::generate_las(500)
+las = random_500_points
 
 test_that("filter works", {
   las2 = filter_poi(las, X > 50)

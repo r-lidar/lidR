@@ -1,7 +1,7 @@
 context("readLAS")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-ctg <- readLAScatalog(LASfile, chunk_size = 100, select = "xyzrn")
+LASfile <- example_las_path
+ctg <- readLAScatalog(example_las_path, chunk_size = 100, select = "xyzrn")
 cls <- lidR:::catalog_makecluster(ctg)
 
 test_that("readLAS reads files", {

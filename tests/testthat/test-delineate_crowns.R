@@ -1,7 +1,6 @@
 context("delineate_crowns")
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, "0", filter = "-keep_xy 481270 3812930 481310 3812970")
+las = clip_rectangle(mixedconifer, 481270, 3812930, 481310, 3812970)
 
 test_that("delineate_crowns works with convex hulls", {
   hulls = delineate_crowns(las)
@@ -37,8 +36,7 @@ test_that("delineate_crowns supports custom metrics", {
   expect_equal(dim(hulls), c(length(unique(las$treeID))-1,5))
 })
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-ctg = readLAScatalog(LASfile)
+ctg = mixedconifer_ctg
 opt_select(ctg) = "0"
 opt_chunk_size(ctg) = 100
 opt_chunk_alignment(ctg)  <- c(0,20)
@@ -50,3 +48,4 @@ test_that("delineate_crowns works with a custom metrics", {
   expect_is(hulls, "SpatialPolygonsDataFrame")
   expect_equal(dim(hulls), c(200,5))
 })
+

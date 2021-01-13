@@ -1,7 +1,7 @@
 context("triangulation")
 
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile, filter = "-keep_class 2 -keep_every_nth 10")
+las <- filter_ground(topography)
+las <- las[seq(1, npoints(las), 10)]
 
 test_that("Boosted delaunay produces the correct output", {
 
@@ -37,7 +37,7 @@ test_that("Delaunay works with a LAS", {
   ts <- lidR:::tDelaunay(las)
 
   expect_is(ts, "matrix")
-  expect_equal(dim(ts), c(1608,3))
+  expect_equal(dim(ts), c(1617,3))
 })
 
 test_that("Boosted Delaunay trimming option works", {
@@ -159,3 +159,4 @@ test_that("delaunay rasterization fall back to geometry", {
 
   expect_message(lidR:::tDelaunay(ps, scales = c(1,1), offsets = c(0.25,0)), "reverted to the old slow method")
 })
+

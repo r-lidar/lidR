@@ -1,6 +1,6 @@
 context("catalog_apply discontinuous files")
 
-ctg = lidR:::catalog_generator(2, 50)
+ctg = random_2files_250points
 
 test_that("opt_independent_files set adequate option for plot inventories", {
   opt_independent_files(ctg) <- TRUE

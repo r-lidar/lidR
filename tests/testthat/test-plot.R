@@ -1,11 +1,11 @@
 context("plot")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las     <- readLAS(LASfile)
-LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg     <- readLAScatalog(LASfile)
+las     <- example
+ctg     <- megaplot_ctg
 
 test_that("plot LAS works", {
+  skip_on_cran()
+
   expect_error(plot(las), NA)
   rgl::rgl.close()
 })
@@ -46,6 +46,7 @@ test_that("plot LAS does not work with missing attributes", {
 })
 
 test_that("plot LAS works with artifact", {
+  skip_on_cran()
   expect_error(plot(las, clear_artifact = FALSE), NA)
 })
 

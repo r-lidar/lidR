@@ -2,9 +2,7 @@ context("classify_noise")
 
 rgdal::set_thin_PROJ6_warnings(TRUE)
 
-file <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(file)
-
+las = topography
 
 set.seed(314)
 id = round(runif(20, 0, npoints(las)))

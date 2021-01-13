@@ -1,6 +1,6 @@
 context("lasupdateheader")
 
-las <- lidR:::generate_las(100)
+las <- random_10_points
 
 test_that("header bbox is updated", {
   Zm <- las@header@PHB$`Max Z`

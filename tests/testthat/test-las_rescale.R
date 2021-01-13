@@ -1,7 +1,6 @@
 context("las_rescale")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las     <- readLAS(LASfile, "xyz")
+las <- example
 
 test_that("las_rescale works", {
   las2 = suppressMessages(las_rescale(las, xscale = 1, yscale = 1, zscale = 1))

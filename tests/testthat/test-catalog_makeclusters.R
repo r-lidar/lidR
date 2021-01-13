@@ -307,8 +307,7 @@ test_that("catalog_makecluster makes no cluster that belong on a tile only with 
   expect_equal(length(cl), 100L)
 })
 
-LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
-project <- catalog(LASfile)
+project <- megaplot_ctg
 
 test_that("catalog_makecluster makes correct clusters that do not overlap", {
 

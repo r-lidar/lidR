@@ -85,9 +85,9 @@ test_that("grid_metrics accepts both an expression or a formula", {
 })
 
 # Convert laz to las for faster testing
-LASfile  <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg      <- readLAScatalog(LASfile, select = "xyz", filter = "-keep_first")
-las      <- readLAS(ctg)
+las <- filter_first(megaplot)
+las@data$Intensity <- NULL
+ctg <- megaplot_ctg
 
 opt_chunk_size(ctg)      <- 260
 opt_chunk_alignment(ctg) <- c(160, 160)
@@ -156,7 +156,7 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
 
 test_that("predefined metric set work both with a LAS and LAScatalog", {
 
-  las <- lidR:::generate_las(500)
+  las <- random_500_points
 
   expect_error(grid_metrics(las, .stdmetrics_z), NA)
   expect_error(grid_metrics(las, .stdmetrics_i), NA)
@@ -168,8 +168,7 @@ test_that("predefined metric set work both with a LAS and LAScatalog", {
 
 test_that("Using a non empty layout return correct output (#318)", {
 
-  LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-  ldr = readLAS(LASfile, filter = "-keep_scan_angle -3 3")
+  ldr = filter_poi(megaplot, ScanAngleRank >= -3, ScanAngleRank <= 3 )
   ref = lidR:::rOverlay(ldr, 20)
   suppressWarnings(ref[] <- 10)
   m = grid_metrics(ldr, mean(Z), ref)

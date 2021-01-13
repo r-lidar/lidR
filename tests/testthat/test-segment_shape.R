@@ -1,7 +1,8 @@
 context("segment_shapes")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las <- readLAS(LASfile, filter = "-thin_with_grid 2", select = "c")
+set.seed(1)
+las <- decimate_points(megaplot, random(0.1))
+las@data = las@data[,c(1:4, 10)]
 
 test_that("segment_shapes works with shp_coplanar", {
   las <- segment_shapes(las, shp_plane(k = 15), "Coplanar")
@@ -10,7 +11,7 @@ test_that("segment_shapes works with shp_coplanar", {
 
   expect_true("Coplanar" %in% cn)
   expect_true(is.logical(las@data$Coplanar))
-  expect_equivalent(as.numeric(table(las$Coplanar)), c(11230, 1664))
+  expect_equivalent(as.numeric(table(las$Coplanar)), c(4980, 331))
 })
 
 test_that("segment_shapes works with shp_hcoplanar", {
@@ -20,18 +21,18 @@ test_that("segment_shapes works with shp_hcoplanar", {
 
   expect_true("Hcoplanar" %in% cn)
   expect_true(is.logical(las@data$Hcoplanar))
-  expect_equivalent(as.numeric(table(las$Hcoplanar)), c(11250, 1644))
+  expect_equivalent(as.numeric(table(las$Hcoplanar)), c(4990, 321))
 })
 
 
 test_that("segment_shapes works with shp_hline", {
-  las <- segment_shapes(las, shp_line(k = 15), "line")
+  las <- segment_shapes(las, shp_line(k = 8), "line")
 
   cn <- names(las@data)
 
   expect_true("line" %in% cn)
   expect_true(is.logical(las@data$line))
-  expect_equivalent(as.numeric(table(las$line)), 12894)
+  expect_equivalent(as.numeric(table(las$line)), c(5269, 42))
 })
 
 test_that("filter argument works", {
@@ -41,7 +42,7 @@ test_that("filter argument works", {
 
   expect_true("Coplanar" %in% cn)
   expect_true(is.logical(las@data$Coplanar))
-  expect_equivalent(as.numeric(table(las$Coplanar)), c(12572, 322))
+  expect_equivalent(as.numeric(table(las$Coplanar)), c(5281, 30))
   expect_error(segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Intensity > 200), "'Intensity'")
 })
 

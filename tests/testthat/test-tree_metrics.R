@@ -1,11 +1,12 @@
 context("tree_metrics")
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "ia0", filter = "-drop_z_below 0 -keep_xy 481270 3812920 481310 3812960")
-ctg = catalog(LASfile)
+las = clip_rectangle(mixedconifer, 481270, 3812920, 481310, 3812960)
+las = filter_poi(las, Z >= 0)
+ctg = mixedconifer_ctg
 
 opt_progress(ctg) <- FALSE
 opt_chunk_size(ctg) <- 120
+opt_chunk_alignment(ctg) <- c(50, -30)
 opt_chunk_buffer(ctg) <- 20
 
 test_that("tree_metrics works with a LAS", {

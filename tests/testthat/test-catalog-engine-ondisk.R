@@ -1,6 +1,6 @@
 context("catalog_apply writemode")
 
-ctg <- lidR:::catalog_generator(2, 50)
+ctg <- random_2files_250points
 
 test <- function(cluster) {
   las <- readLAS(cluster)

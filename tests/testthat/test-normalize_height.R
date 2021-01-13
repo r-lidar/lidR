@@ -1,8 +1,7 @@
 context("normalize_height")
 
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, filter = "-keep_xy 273450 5274350 273550 5274450")
-ctg = catalog(LASfile)
+las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
+ctg = topography_ctg
 dtm = grid_terrain(las, 1, tin())
 
 opt_chunk_size(ctg) <- 300

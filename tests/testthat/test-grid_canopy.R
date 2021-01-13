@@ -58,9 +58,8 @@ test_that("grid_canopy with p2r() works with na.fill", {
   expect_equal(sum(is.na(x[])), 0L)
 })
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
-las <- readLAS(LASfile, select = "xyzr", filter = "-thin_with_grid 1")
-ctg <- catalog(LASfile)
+las <- readLAS(mixedconifer_las_path, select = "xyzr", filter = "-thin_with_grid 1")
+ctg <- mixedconifer_ctg
 
 opt_filter(ctg)          <- "-thin_with_grid 1"
 opt_chunk_size(ctg)      <- 100
@@ -104,8 +103,7 @@ test_that("grid_canopy pit-free works both with LAS and LAScatalog", {
 
 test_that("triangulation does not return negative values", {
   # See https://gis.stackexchange.com/questions/376261/negative-values-after-chm-rasterization-lidr
-  LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
-  las <- readLAS(LASfile, select = "xyzr", filter = "-inside 684750 5017800 684850 5017900")
+  las <- clip_rectangle(megaplot, 684750, 5017800, 684850, 5017900)
   chm = grid_canopy(las, 1, dsmtin())
   expect_equal(min(chm[], na.rm = T), 0)
 })

@@ -1,7 +1,7 @@
 context("cloud_metrics")
 
 LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las     <- readLAS(LASfile)
+las     <- example
 ctg     <- suppressMessages(readLAScatalog(c(LASfile, LASfile)))
 opt_progress(ctg) <- FALSE
 
@@ -32,4 +32,5 @@ test_that("cloud_metrics works with catalog_apply", {
   expect_is(x[[1]], "list")
   expect_is(x[[2]], "list")
 })
+
 

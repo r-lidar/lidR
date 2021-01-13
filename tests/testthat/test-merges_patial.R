@@ -1,10 +1,7 @@
 context("merge_spatial")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-shapefile_dir <- system.file("extdata", package = "lidR")
-
-lidar <- readLAS(LASfile, select = "xyzi", filter = "-thin_with_grid 4")
-sflakes <- sf::st_read(shapefile_dir, "lake_polygons_UTM17", quiet = TRUE)
+lidar <- decimate_points(megaplot, highest(7))
+sflakes <- sf::st_read(system.file("extdata", "", package="lidR"), "lake_polygons_UTM17", quiet = TRUE)
 splakes <- sf::as_Spatial(sflakes)
 
 test_that("merge_spatial works with SpatialPolygonsDataFrame", {
@@ -14,21 +11,21 @@ test_that("merge_spatial works with SpatialPolygonsDataFrame", {
 
   expect_true("inlakes" %in% cn)
   expect_true(is.logical(lidar@data$inlakes))
-  expect_equivalent(as.numeric(table(lidar$inlakes)), c(2823, 536))
+  expect_equivalent(as.numeric(table(lidar$inlakes)), c(966, 216))
 
   lidar <- merge_spatial(lidar, splakes, "LAKENAME_1")
   cn <- names(lidar@data)
 
   expect_true("LAKENAME_1" %in% cn)
   expect_equal(typeof(lidar@data$LAKENAME_1), typeof(splakes$LAKENAME_1))
-  expect_equivalent(as.numeric(table(lidar$LAKENAME_1)), c(536))
+  expect_equivalent(as.numeric(table(lidar$LAKENAME_1)), c(216))
 
   lidar <- merge_spatial(lidar, splakes)
   cn <- names(lidar@data)
 
   expect_true("id" %in% cn)
   expect_true(is.integer(lidar@data$id))
-  expect_equivalent(as.numeric(table(lidar$id)), c(536))
+  expect_equivalent(as.numeric(table(lidar$id)), c(216))
 })
 
 test_that("merge_spatial works with sf", {
@@ -38,21 +35,21 @@ test_that("merge_spatial works with sf", {
 
   expect_true("inlakes" %in% cn)
   expect_true(is.logical(lidar@data$inlakes))
-  expect_equivalent(as.numeric(table(lidar$inlakes)), c(2823, 536))
+  expect_equivalent(as.numeric(table(lidar$inlakes)), c(966, 216))
 
   lidar <- merge_spatial(lidar, sflakes, "LAKENAME_1")
   cn <- names(lidar@data)
 
   expect_true("LAKENAME_1" %in% cn)
   expect_equal(typeof(lidar@data$LAKENAME_1), typeof(sflakes$LAKENAME_1))
-  expect_equivalent(as.numeric(table(lidar$LAKENAME_1)), c(536))
+  expect_equivalent(as.numeric(table(lidar$LAKENAME_1)), c(216))
 
   lidar <- merge_spatial(lidar, sflakes)
   cn <- names(lidar@data)
 
   expect_true("id" %in% cn)
   expect_true(is.integer(lidar@data$id))
-  expect_equivalent(as.numeric(table(lidar$id)), c(536))
+  expect_equivalent(as.numeric(table(lidar$id)), c(216))
 })
 
 test_that("merge_spatial never fails (sp)", {
@@ -85,13 +82,10 @@ test_that("merge_spatial never fails (sf)", {
 
 test_that("merge_spatial do not fail with 1 point (#347)", {
 
-  one_out <- filter_poi(lidar, Z >= 27.35)
-  one_in <- filter_poi(lidar, Intensity == 320)
+  one_in <- filter_poi(lidar, Intensity == 105)
 
-  one_out <- merge_spatial(one_out, splakes)
   one_in <- merge_spatial(one_in, splakes)
 
-  expect_equal(one_out$id, NA_integer_)
   expect_equal(one_in$id, 1L)
 })
 
@@ -104,12 +98,12 @@ test_that("merge_spatial works with SpatialPolygons", {
 
   expect_true("id" %in% cn)
   expect_true(is.integer(lidar@data$id))
-  expect_equivalent(as.numeric(table(lidar$id)), c(536))
+  expect_equivalent(as.numeric(table(lidar$id)), c(216))
 })
 
 test_that("merge_spatial works with raster", {
 
-  r = grid_metrics(lidar, mean(Z))
+  r = grid_metrics(lidar, mean(Z), )
 
   lidar <- merge_spatial(lidar, r, "Zmean")
 
@@ -117,7 +111,7 @@ test_that("merge_spatial works with raster", {
 
   expect_true("Zmean" %in% cn)
   expect_true(is.numeric(lidar@data$Zmean))
-  expect_equal(mean(lidar@data$Zmean), 14.7, tol = 0.01)
+  expect_equal(mean(lidar@data$Zmean), 17.9, tol = 0.01)
 })
 
 
@@ -141,6 +135,6 @@ test_that("merge_spatial works a RGB RasterBrick", {
 
   expect_true(all(c("R", "G", "B") %in% cn))
   expect_true(is.integer(lidar@data$R))
-  expect_equal(lidar@header@PHB$`Point Data Format ID`, 2L)
+  expect_equal(lidar@header@PHB$`Point Data Format ID`, 3L)
 })
 

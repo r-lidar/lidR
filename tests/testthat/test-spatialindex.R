@@ -1,6 +1,6 @@
 context("spatial index")
 
-LASfile <- system.file("extdata", "example.laz", package="rlas")
+LASfile <- example_las_path
 
 test_that("read*LAS work", {
 

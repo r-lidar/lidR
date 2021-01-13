@@ -1,7 +1,8 @@
 context("catalog_apply generic")
 
-ctg <- lidR:::catalog_generator(2, 500)
-opt_chunk_size(ctg) <- 150
+ctg <- random_2files_250points
+opt_chunk_size(ctg) <- 151
+opt_progress(ctg) <- FALSE
 
 test_that("catalog_apply makes strict non-overlaping chunks", {
 
@@ -42,27 +43,23 @@ test_that("catalog_apply fixes chunk alignment", {
   {
     las <- readLAS(cluster)
     if (is.empty(las)) return(NULL)
-    r = grid_metrics(las, ~max(Z), res)
-    return(r)
+    return(npoints(las))
   }
 
   res = 8
 
-  las = readLAS(ctg)
-
-  # Reference
-  R0 = grid_metrics(las, ~max(Z), res = res)
+  # Expected
+  R0 <- list(381, 119)
 
   # Without option
-  R1 <- catalog_sapply(ctg, test, res = res)
+  R1 <- catalog_apply(ctg, test, res = res)
 
   # With option
   option <- list(raster_alignment = res)
-  R2 <- catalog_sapply(ctg, test, res = res, .options = option)
+  expect_message(R2 <- catalog_apply(ctg, test, res = res, .options = option), "Chunk size changed to 152")
 
   expect_equal(R0, R2)
-  expect_true(!identical(R0[], R1[]))
-  expect_message(catalog_apply(ctg, test, res = res, .options = option), "Chunk size changed to 152")
+  expect_true(!identical(R0, R1))
 })
 
 test_that("catalog_apply fixes chunk alignment even by file", {
@@ -185,3 +182,4 @@ test_that("User get throw error if function do not return NULL for empty chun", 
   expect_error(catalog_apply(ctg, test), "User's function does not return NULL")
   expect_error(catalog_apply(ctg, test2), "User's function does not return NULL")
 })
+

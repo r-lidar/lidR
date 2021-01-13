@@ -1,7 +1,6 @@
 context("filter_duplicates")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las     <- readLAS(LASfile)
+las     <- example
 
 test_that("filter_duplicates works with LAS", {
    las@data <- rbind(las@data, las@data)

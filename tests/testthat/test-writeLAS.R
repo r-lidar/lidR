@@ -1,7 +1,6 @@
 context("writeLAS")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-i = readLAS(LASfile)
+i = megaplot
 ofile = paste0(tempfile(), ".las")
 
 test_that("Test if I/O are equal", {

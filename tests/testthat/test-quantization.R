@@ -5,8 +5,7 @@ y = data.table::copy(x)
 scale = 0.001
 offset = 500
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
+las = megaplot
 
 test_that("is.quantized works", {
   expect_true(!is.quantized(x, scale, offset))

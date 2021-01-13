@@ -1,10 +1,9 @@
 context("track_sensor")
 
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile)
-ctg <- readLAScatalog(LASfile)
-opt_chunk_size(ctg) <- 250
-opt_chunk_alignment(ctg) <- c(273300,5274300)
+las = topography
+ctg <- topography_ctg
+opt_chunk_size(ctg) <- 300
+opt_chunk_alignment(ctg) <- c(50,180)
 opt_chunk_buffer(ctg) <- 40
 opt_progress(ctg) <- FALSE
 

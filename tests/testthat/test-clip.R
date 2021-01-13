@@ -1,10 +1,9 @@
 context("clip_roi")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las <- readLAS(LASfile, select = "xyz")
-ctg <- catalog(LASfile)
+las <- readLAS(example_las_path)
+ctg <- example_ctg
 
-opt_select(ctg) <- "xyz"
+opt_progress(ctg) = FALSE
 
 test_that("clip_roi clips a rectangle both on a LAS and a LAScatalog", {
 

@@ -1,7 +1,6 @@
 context("LAScatalog")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg     <- catalog(LASfile)
+ctg <- megaplot_ctg
 
 opt_chunk_size(ctg)      <- 140
 opt_chunk_alignment(ctg) <- c(684760, 5017760)

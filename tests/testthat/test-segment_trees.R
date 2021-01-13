@@ -1,8 +1,10 @@
 context("segment_trees")
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package = "lidR")
-las = readLAS(LASfile, select = "xyzrt", filter = "-drop_z_below 0 -keep_xy 481250 3812980 481300 3813030")
-ctg = readLAScatalog(LASfile, progress = FALSE, chunk_size = 100, chunk_buffer = 20)
+las = clip_rectangle(mixedconifer, 481250, 3812980, 481300, 3813030)
+ctg = mixedconifer_ctg
+opt_progress(ctg) = FALSE
+opt_chunk_size(ctg) = 100
+opt_chunk_buffer(ctg) = 20
 opt_chunk_alignment(ctg) <- c(0, 20)
 
 chm = grid_canopy(las, 0.5, pitfree())
@@ -198,13 +200,11 @@ test_that("segment_trees supports a LAScatalog", {
 
 test_that("tree_metrics works", {
 
-  las <- segment_trees(las, li2012(speed_up = 5), attribute = "plop")
+  las@data$plop = las$treeID
+  las@data$treeID = NULL
 
-  expect_error(tree_metrics(las, max(Z)), "not segmented")
-
-  Y <- tree_metrics(las, max(Z), attribute = "plop")
-
-  expect_error(tree_metrics(las, max(Z), attribute = "abc"), "trees are not segmented")
+  expect_error(tree_metrics(las, ~max(Z)), "not segmented")
+  expect_error(tree_metrics(las, max(Z), attribute = "plop"), NA)
 })
 
 # Commented because CRAN doesn't like to call Bioconductor package

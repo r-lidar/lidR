@@ -6,8 +6,8 @@ y = c(0,0,1,1,0.1,0.5,0.8,0.3,0.1,0.4,0.7)
 vertx = c(0,1,0)
 verty = c(0,0,1)
 
-las <- lidR:::generate_las(500)
-ctg <- lidR:::catalog_generator(4, 500)
+las <- random_500_points
+ctg <- random_2files_250points
 
 test_that("convex hull works", {
   expect_equal(lidR:::convex_hull(x,y), data.frame(x = c(1,0,0,1,1), y = c(0,0,1,1,0)))
@@ -31,13 +31,13 @@ test_that("area works with a 0 points", {
 
 test_that("npoints works with a LAS*", {
   expect_equal(npoints(las), 500)
-  expect_equal(npoints(ctg), 2000)
+  expect_equal(npoints(ctg), 500)
   expect_equal(npoints(las@header), 500)
 })
 
 test_that("density works with a LAS*", {
   expect_equal(density(las), 0.05, tolerance = 0.002)
-  expect_equal(density(ctg), 0.05, tolerance = 0.001)
+  expect_equal(density(ctg), 0.025, tolerance = 0.001)
   expect_equal(density(las@header), 0.05, tolerance = 0.001)
 })
 

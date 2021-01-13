@@ -1,8 +1,7 @@
 context("find_trees")
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las = readLAS(LASfile, select = "xyzt", filter = "-drop_z_below 0")
-ctg = catalog(LASfile)
+las = filter_poi(mixedconifer, Z >= 0)
+ctg = mixedconifer_ctg
 
 opt_progress(ctg) <- FALSE
 opt_chunk_alignment(ctg) <- c(50,60)

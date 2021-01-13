@@ -1,8 +1,7 @@
 context("LAS")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
-las     <- readLAS(LASfile)
-data    <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+las  <- megaplot
+data <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
 
 test_that("Print a LAS object works", {
 
@@ -164,7 +163,7 @@ test_that("LAS throws a warning/error if building an invalid LAS", {
 
 test_that("LAS redefined behavior of $, [, and [[", {
 
-  las <- lidR:::generate_las(10)
+  las <- random_10_points
 
   expect_true(is.numeric(las$Z))
   expect_equal(length(las$Z), 10)
@@ -185,7 +184,7 @@ test_that("LAS redefined behavior of $, [, and [[", {
 
 test_that("LAS operator $ quantize on the fly and update header", {
 
-  las <- lidR:::generate_las(10)
+  las <- random_10_points
 
   x = runif(10)
   y = runif(10)
@@ -209,7 +208,7 @@ test_that("LAS operator $ quantize on the fly and update header", {
 
 test_that("LAS operator [[ quantize on the fly and update header", {
 
-  las <- lidR:::generate_las(10)
+  las <- random_10_points
 
   x = runif(10)
   y = runif(10)
@@ -232,7 +231,7 @@ test_that("LAS operator [[ quantize on the fly and update header", {
 })
 
 test_that("LAS operator[[ and $ throw error for not storable coordinates", {
-  las <- lidR:::generate_las(10)
+  las <- random_10_points
   x <- round(runif(10),2)
   x[5] <- 21474836.47
 
@@ -244,7 +243,7 @@ test_that("LAS operator[[ and $ throw error for not storable coordinates", {
 
 
 test_that("LAS conversion to SpatialPointsDataFrame works", {
-  las <- lidR:::generate_las(10)
+  las <- random_10_points
   splas <- as.spatial(las)
 
   expect_true(is(splas, "SpatialPointsDataFrame"))

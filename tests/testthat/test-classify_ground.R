@@ -1,10 +1,8 @@
 context("classify_ground")
 
-rgdal::set_thin_PROJ6_warnings(TRUE)
-
 file <- system.file("extdata", "Topography.laz", package="lidR")
-las = suppressWarnings(readLAS(file, select = "xyzrn", filter = "-keep_xy 273450 5274350 273550 5274450"))
-ctg = catalog(file)
+las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
+ctg = topography_ctg
 
 opt_chunk_size(ctg) <- 300
 ctg@chunk_options$alignment = c(50, 200)
@@ -95,7 +93,7 @@ test_that("makeZhangParam works", {
 
 test_that("classify_ground does not erase former classification (but new ground points)", {
 
-  las <- readLAS(file, select = "xyzrnc")
+  las <- topography
   las <- filter_poi(las, X < mean(X), Y < mean(Y))
   las$Classification[las$Classification == LASGROUND] <- LASUNCLASSIFIED
   las <- classify_ground(las, mypmf)

@@ -1,7 +1,7 @@
 context("add_attribute")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las     <- readLAS(LASfile, "xyz")
+las     <- example
+las@data <- lidR:::coordinates3D(las)
 x = runif(30)
 k = sample(1:100, 30)
 n = npoints(las)

@@ -1,10 +1,10 @@
 context("las_merge")
 
-las1 = lidR:::generate_las(10)
-las2 = lidR:::generate_las(10)
+las1 = random_10_points
+las2 = random_10_points
 las2 = las_rescale(las2, 0.1)
-las3 = lidR:::generate_las(10)
-las4 = lidR:::generate_las(10)
+las3 = random_10_points
+las4 = random_10_points
 epsg(las4) <- 32619
 
 test_that("rbind merge 2 las", {

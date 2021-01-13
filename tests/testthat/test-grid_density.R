@@ -1,8 +1,7 @@
 context("grid_density")
 
-file <- system.file("extdata", "Megaplot.laz", package="lidR")
-ctg  <- catalog(file)
-las  <- readLAS(file)
+ctg  <- megaplot_ctg
+las  <- megaplot
 
 opt_chunk_buffer(ctg)    <- 0
 opt_chunk_size(ctg)      <- 160
@@ -23,3 +22,4 @@ test_that("grid_density returns pulse density", {
   expect_is(d1, "RasterBrick")
   expect_equal(names(d1), c("point_density", "pulse_density"))
 })
+

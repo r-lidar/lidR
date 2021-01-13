@@ -1,6 +1,6 @@
 context("voxel_metrics")
 
-las <- lidR:::generate_las(500)
+las <- random_500_points
 
 test_that("voxel_metrics returns a named data.frame", {
 

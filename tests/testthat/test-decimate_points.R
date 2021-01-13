@@ -1,8 +1,7 @@
 context("decimate_points")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile)
-ctg = catalog(LASfile)
+las = megaplot
+ctg = megaplot_ctg
 
 test_that("decimate_points homogenize algorithm works", {
   lasdec = decimate_points(las, homogenize(0.5,5))
@@ -32,7 +31,7 @@ test_that("decimate_points fails with unproper catalog options", {
 
 test_that("decimate_points works with a LAScatalog", {
 
-  ctg <- lidR:::catalog_generator(2, 200)
+  ctg <- random_2files_250points
   opt_output_files(ctg) <- "{tempdir()}/{ID}"
   ctg2 <- decimate_points(ctg, highest(10))
 

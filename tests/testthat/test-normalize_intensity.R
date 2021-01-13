@@ -1,7 +1,6 @@
 context("normalize_intensity")
 
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile)
+las <- topography
 sensor <- track_sensor(las, Roussel2020(pmin = 15))
 
 test_that("normalize_intensity works", {

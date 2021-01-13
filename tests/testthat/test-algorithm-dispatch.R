@@ -1,13 +1,13 @@
 context("algorithm dispatch")
 
-f <- lmf(2)
-g <- shp_plane()
-h <- li2012()
-k <- tin()
-
 las <- lidR:::generate_las(10)
 
 test_that("An error is thrown if algorithms are called in wrong context", {
+  f <- lmf(2)
+  g <- shp_plane()
+  h <- li2012()
+  k <- tin()
+
   expect_error(f(), "The 'lmf' algorithm has not been called in the correct context.")
   expect_error(g(), "The 'shp_plane' algorithm has not been called in the correct context.")
   expect_error(h(), "The 'li2012' algorithm has not been called in the correct context.")

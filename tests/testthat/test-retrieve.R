@@ -1,8 +1,7 @@
-context("lasidentify")
+context("retrieve")
 
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, "trn", filter = "-keep_xy 684766 5017870 684866 5017970")
-
+las = clip_rectangle(megaplot, 684766, 5017870, 684866, 5017970)
+las@data = las@data[,c(1:4, 6:7)]
 # retrieve_pulses
 
 test_that("retrieve_pulses works", {
@@ -63,3 +62,4 @@ test_that("retrieve_scanlines fails if no gpstime", {
   las@data[["gpstime"]] <- NULL
   expect_error(retrieve_scanlines(las), "No 'gpstime' attribute found")
 })
+

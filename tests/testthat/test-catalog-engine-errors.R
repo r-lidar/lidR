@@ -1,7 +1,6 @@
 context("catalog_errors")
 
-file <- system.file("extdata", "Megaplot.laz", package = "lidR")
-ctg  <- readLAScatalog(file)
+ctg  <- megaplot_ctg
 opt_progress(ctg) <- FALSE
 
 opt_chunk_size(ctg) <- 160

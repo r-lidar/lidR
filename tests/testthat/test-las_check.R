@@ -1,8 +1,6 @@
 context("las_check")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-las0    <- readLAS(LASfile)
-
+las0    <- example
 las1 <- las0
 las1@data <- data.table::copy(las0@data)
 
@@ -36,8 +34,7 @@ las3@proj4string <- sp::CRS("+init=epsg:26917")
 las4 = las2
 las4@proj4string <- sp::CRS("+init=epsg:2008")
 
-LASfile <- system.file("extdata", "example.laz", package = "rlas")
-ctg0 <- readLAScatalog(LASfile)
+ctg0 <- example_ctg
 
 LASfile <- system.file("extdata", "", package = "lidR")
 ctg1 <- readLAScatalog(LASfile)

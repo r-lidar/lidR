@@ -1,9 +1,14 @@
 context("segment_snags")
 
-LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyzinr", filter="-drop_z_below 0 -keep_first -inside 481260 3812921 481300 3812961")
-ctg <- readLAScatalog(LASfile)
+las = clip_rectangle(mixedconifer, 481260, 3812921, 481300, 3812961)
+las = filter_poi(las, Z >= 0)
+ctg <- megaplot_ctg
 opt_progress(ctg) <- FALSE
+opt_chunk_size(ctg) <- 250
+opt_chunk_alignment(ctg) <- c(10, 130)
+opt_chunk_buffer(ctg) <- 10
+opt_output_files(ctg) <- "{tempfile()}/{ID}"
+opt_select(ctg) <- "2"
 
 BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
                          0.85, 0.85, 0.60,
@@ -18,11 +23,8 @@ test_that("Wing's method works", {
 })
 
 test_that("segment_snags works with a LAScatalog", {
- opt_chunk_size(ctg) <- 100
- opt_chunk_alignment(ctg) <- c(10, 15)
- opt_chunk_buffer(ctg) <- 10
- opt_output_files(ctg) <- "{tempfile()}/{ID}"
- opt_select(ctg) <- "2"
+
+ skip_on_cran()
 
  ctg2 <- segment_snags(ctg, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = BBPRthrsh_mat))
  las2 <- readLAS(ctg2)
