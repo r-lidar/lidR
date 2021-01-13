@@ -89,7 +89,7 @@
 #'
 #' ttops <- find_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
-#' plot(las, color = "treeID", colorPalette = col)
+#' #plot(las, color = "treeID", colorPalette = col)
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
   assert_is_all_of(chm, "RasterLayer")
@@ -225,7 +225,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' col <- pastel.colors(200)
 #'
 #' las <- segment_trees(las, li2012(dt1 = 1.4))
-#' plot(las, color = "treeID", colorPalette = col)
+#' #plot(las, color = "treeID", colorPalette = col)
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
   assert_is_a_number(dt1)
@@ -316,7 +316,8 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+#' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.3))
@@ -325,7 +326,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 #'
 #' ttops <- find_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, silva2016(chm, ttops))
-#' plot(las, color = "treeID", colorPalette = col)
+#' #plot(las, color = "treeID", colorPalette = col)
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
   assert_is_all_of(chm, "RasterLayer")
@@ -454,7 +455,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' poi = "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+#' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(250)
 #'
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.3))

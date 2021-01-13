@@ -82,10 +82,6 @@
 #'
 #' # === Using all points ===
 #'
-#' # Canopy surface model with 4 m^2 cells
-#' metrics = grid_metrics(las, ~max(Z), 2)
-#' plot(metrics, col = col)
-#'
 #' # Mean height with 400 m^2 cells
 #' metrics = grid_metrics(las, ~mean(Z), 20)
 #' plot(metrics, col = col)
@@ -103,8 +99,8 @@
 #' metrics = grid_metrics(las, ~myMetrics(Z, Intensity))
 #'
 #' plot(metrics, col = col)
-#' plot(metrics, "zwimean", col = col)
-#' plot(metrics, "zimean", col = col)
+#' #plot(metrics, "zwimean", col = col)
+#' #plot(metrics, "zimean", col = col)
 #'
 #' # === With point filters ===
 #'

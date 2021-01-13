@@ -33,11 +33,11 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile)
 
 las <- segment_shapes(las, shp_plane(k = 15), "Coplanar")
-plot(las, color = "Coplanar")
+#plot(las, color = "Coplanar")
 
 # Drop ground point at runtime
 las <- segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
-plot(las, color = "Coplanar")
+#plot(las, color = "Coplanar")
 }
 
 }

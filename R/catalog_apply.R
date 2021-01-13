@@ -208,6 +208,8 @@
 #'
 #' spplot(output)
 #'
+#' \dontrun{
+#'
 #' ## ===================================================
 #' ## Example 2: compute a rumple index on surface points
 #' ## ===================================================
@@ -237,6 +239,7 @@
 #' output  <- catalog_apply(prj, rumple_index_surface, res = 20, .options = opt)
 #'
 #' plot(output, col = height.colors(50))
+#' }
 #' @export
 #' @md
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)

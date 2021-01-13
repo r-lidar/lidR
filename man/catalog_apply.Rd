@@ -197,6 +197,8 @@ output <- catalog_apply(prj, my_tree_detection_method, ws = 5, .options = opt)
 
 spplot(output)
 
+\dontrun{
+
 ## ===================================================
 ## Example 2: compute a rumple index on surface points
 ## ===================================================
@@ -226,4 +228,5 @@ opt     <- list(raster_alignment = 20, # catalog_apply will adjust the chunks if
 output  <- catalog_apply(prj, rumple_index_surface, res = 20, .options = opt)
 
 plot(output, col = height.colors(50))
+}
 }

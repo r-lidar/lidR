@@ -202,7 +202,8 @@ dsmtin = function(max_edge = 0)
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile)
+#' poi = "-drop_z_below 0 -inside 481280 3812940 481330 3812990"
+#' las <- readLAS(LASfile, filter = poi)
 #' col <- height.colors(50)
 #'
 #' # Basic triangulation and rasterization of first returns

@@ -44,7 +44,7 @@ las <- readLAS(LASfile, select = "xyzrn")
 
 mycsf <- csf(TRUE, 1, 1, time_step = 1)
 las <- classify_ground(las, mycsf)
-plot(las, color = "Classification")
+#plot(las, color = "Classification")
 }
 \references{
 W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Use Airborne LiDAR Data

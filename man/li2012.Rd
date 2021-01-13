@@ -37,7 +37,7 @@ las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col <- pastel.colors(200)
 
 las <- segment_trees(las, li2012(dt1 = 1.4))
-plot(las, color = "treeID", colorPalette = col)
+#plot(las, color = "treeID", colorPalette = col)
 }
 \references{
 Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segmenting individual

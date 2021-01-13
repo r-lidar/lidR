@@ -63,7 +63,7 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyzrn")
+las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
 
 # Using the Progressive Morphological Filter
 # --------------------------------------

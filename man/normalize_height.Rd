@@ -107,7 +107,7 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile)
+las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 
 #plot(las)
 
@@ -117,7 +117,7 @@ las <- readLAS(LASfile)
 dtm <- grid_terrain(las, 1, knnidw(k = 6L, p = 2))
 las <- normalize_height(las, dtm)
 
-#plot(dtm)
+plot(dtm)
 #plot(las)
 
 # restore original elevations

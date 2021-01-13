@@ -69,7 +69,7 @@ chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
 ttops <- find_trees(chm, lmf(4, 2))
 las   <- segment_trees(las, dalponte2016(chm, ttops))
-plot(las, color = "treeID", colorPalette = col)
+#plot(las, color = "treeID", colorPalette = col)
 }
 \references{
 Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from

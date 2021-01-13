@@ -62,7 +62,9 @@ canopy cover >= 55\%).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyzi", filter="-keep_first") # Wing also included -keep_single
+# Wing also included -keep_single
+poi ="-keep_first -inside 481260 3812920 481310 3812960"
+las <- readLAS(LASfile, select = "xyzi", filter = poi)
 
 # For the Wing2015 method, supply a matrix of snag BranchBolePtRatio conditional
 # assessment thresholds (see Wing et al. 2015, Table 2, pg. 172)
@@ -76,11 +78,11 @@ bbpr_thresholds <- matrix(c(0.80, 0.80, 0.70,
 las <- segment_snags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = bbpr_thresholds))
 
 # Plot it all, tree and snag points...
-plot(las, color="snagCls", colorPalette = rainbow(5))
+#plot(las, color="snagCls", colorPalette = rainbow(5))
 
 # Filter and plot snag points only
 snags <- filter_poi(las, snagCls > 0)
-plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
+#plot(snags, color="snagCls", colorPalette = rainbow(5)[-1])
 
 # Wing et al's (2015) methods ended with performing tree segmentation on the
 # classified and filtered point cloud using the watershed method

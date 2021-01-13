@@ -125,38 +125,35 @@ is returned into R.
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
 # Load the file and clip the region of interest
-las = readLAS(LASfile)
+las = readLAS(LASfile, select = "xyz", filter = "-keep_first")
 subset1 = clip_rectangle(las, 684850, 5017850, 684900, 5017900)
 
 # Do not load the file(s), extract only the region of interest
 # from a bigger dataset
-ctg = readLAScatalog(LASfile)
+ctg = readLAScatalog(LASfile, progress = FALSE, filter = "-keep_first")
 subset2 = clip_rectangle(ctg, 684850, 5017850, 684900, 5017900)
 
 # Extract all the polygons from a shapefile
 f <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 lakes <- sf::st_read(f, quiet = TRUE)
-subset3 <- clip_roi(ctg, lakes)
+subset3 <- clip_roi(las, lakes)
 
-# Extract the polygons, write them in files named after the lake names,
-# do not load anything in R
+# Extract the polygons for a catalog, write them in files named
+# after the lake names, do not load anything in R
 opt_output_files(ctg) <- paste0(tempfile(), "_{LAKENAME_1}")
 new_ctg = clip_roi(ctg, lakes)
 plot(new_ctg)
 
 # Extract a transect
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-ctg <- readLAScatalog(LASfile)
-p1 <- c(273357, y = 5274357)
-p2 <- c(273450, y = 5274450)
-tr1 <- clip_transect(ctg, p1, p2, width = 4)
-tr2 <- clip_transect(ctg, p1, p2, width = 4, xz = TRUE)
-plot(tr1, axis = TRUE, clear_artifacts = FALSE)
-plot(tr2, axis = TRUE, clear_artifacts = FALSE)
+p1 <- c(684800, y = 5017800)
+p2 <- c(684900, y = 5017900)
+tr1 <- clip_transect(las, p1, p2, width = 4)
 
 \dontrun{
 plot(subset1)
 plot(subset2)
 plot(subset3)
+
+plot(tr1, axis = TRUE, clear_artifacts = FALSE)
 }
 }

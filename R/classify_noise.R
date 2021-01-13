@@ -46,7 +46,7 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las <- readLAS(LASfile, filter = "-keep_random_fraction 0.5")
+#' las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 #'
 #' # Add 20 artificial outliers
 #' set.seed(314)

@@ -28,7 +28,7 @@ for more information.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-lidar = readLAS(LASfile)
+lidar = readLAS(LASfile,filter = "-keep_random_fraction 0.5")
 
 col = grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
 
@@ -55,8 +55,8 @@ myMetrics = function(z, i)
 metrics = hexbin_metrics(lidar, ~myMetrics(Z, Intensity), 10)
 
 hexbin::plot(metrics$zwimean, colramp = col, main = "zwimean")
-hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
-hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
+#hexbin::plot(metrics$zimean, colramp = col, main = "zimean")
+#hexbin::plot(metrics$zsqmean, colramp = col, main = "zsqmean")
 }
 \seealso{
 Other metrics: 

@@ -48,12 +48,12 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813030")
 #'
 #' ttops <- find_trees(las, lmf(ws = 5))
 #'
-#' x = plot(las)
-#' add_treetops3d(x, ttops)
+#' #x = plot(las)
+#' #add_treetops3d(x, ttops)
 #' @md
 find_trees = function(las, algorithm, uniqueness = 'incremental')
 {

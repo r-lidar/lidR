@@ -74,7 +74,7 @@
 #' @param th numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "*")
+#' las <- readLAS(LASfile, select = "*", filter = "-keep_random_fraction 0.5")
 #'
 #' # All the predefined metrics
 #' m1 <- grid_metrics(las, ~stdmetrics(X,Y,Z,Intensity,ReturnNumber,Classification,dz=1), res = 40)

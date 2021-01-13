@@ -45,11 +45,9 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las <- readLAS(LASfile)
+#' las <- readLAS(LASfile,  filter = "-inside 684800 5017800 684900 5017900")
 #'
 #' d <- grid_density(las, 5)
-#' plot(d)
-#' d <- grid_density(las, 10)
 #' plot(d)
 #'
 #' las <- retrieve_pulses(las)

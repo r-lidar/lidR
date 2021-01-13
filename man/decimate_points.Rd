@@ -60,14 +60,14 @@ las = readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an overall density of 1
 thinned1 = decimate_points(las, random(1))
-plot(grid_density(las))
-plot(grid_density(thinned1))
+#plot(grid_density(las))
+#plot(grid_density(thinned1))
 
 # Select points randomly to reach an homogeneous density of 1
 thinned2 = decimate_points(las, homogenize(1,5))
-plot(grid_density(thinned2))
+#plot(grid_density(thinned2))
 
 # Select the highest point within each pixel of an overlayed grid
 thinned3 = decimate_points(las, highest(5))
-plot(thinned3)
+#plot(thinned3)
 }

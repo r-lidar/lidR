@@ -27,7 +27,7 @@ It is deeply inspired by Popescu & Wynne (2004) (see references).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813050")
 
 # point-cloud-based
 # =================
@@ -35,8 +35,8 @@ las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 # 5x5 m fixed window size
 ttops <- find_trees(las, lmf(5))
 
-x <- plot(las)
-add_treetops3d(x, ttops)
+#x <- plot(las)
+#add_treetops3d(x, ttops)
 
 # variable windows size
 f <- function(x) { x * 0.07 + 3}

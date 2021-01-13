@@ -53,13 +53,13 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyzrn")
+#' las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
 #'
 #' ws <- seq(3,12, 3)
 #' th <- seq(0.1, 1.5, length.out = length(ws))
 #'
 #' las <- classify_ground(las, pmf(ws, th))
-#' plot(las, color = "Classification")
+#' #plot(las, color = "Classification")
 pmf = function(ws, th)
 {
   ws <- lazyeval::uq(ws)
@@ -111,7 +111,7 @@ pmf = function(ws, th)
 #'
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
 #' las <- classify_ground(las, mycsf)
-#' plot(las, color = "Classification")
+#' #plot(las, color = "Classification")
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {
   sloop_smooth     <- lazyeval::uq(sloop_smooth)

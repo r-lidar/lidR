@@ -50,7 +50,7 @@
 #' las = readLAS(LASfile,
 #'               select = "xyzrntp",
 #'               filter = "-drop_single -thin_pulses_with_time 0.001")
-#' plot(las)
+#' #plot(las)
 #'
 #' # pmin = 15 because it is an extremely small file
 #' # strongly decimated to reduce its size. There are
@@ -60,8 +60,8 @@
 #' plot(las@header)
 #' plot(flightlines, add = TRUE)
 #'
-#' x <- plot(las)
-#' add_flightlines3d(x, flightlines, radius = 10)
+#' #x <- plot(las)
+#' #add_flightlines3d(x, flightlines, radius = 10)
 #'
 #' \dontrun{
 #' # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"

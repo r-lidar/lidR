@@ -44,7 +44,8 @@ cloud. However, the user can use this as a stand-alone function like this:
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(200)
 
 chm <- grid_canopy(las, res = 0.5, p2r(0.3))
@@ -53,7 +54,7 @@ chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
 ttops <- find_trees(chm, lmf(4, 2))
 las   <- segment_trees(las, silva2016(chm, ttops))
-plot(las, color = "treeID", colorPalette = col)
+#plot(las, color = "treeID", colorPalette = col)
 }
 \references{
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,

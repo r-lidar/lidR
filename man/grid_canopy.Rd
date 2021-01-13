@@ -64,7 +64,7 @@ and this option is not considered. In \link{grid_metrics} this option is respect
 
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile)
+las <- readLAS(LASfile, filter = "-inside 481280 3812940 481330 3812990")
 col <- height.colors(50)
 
 # Points-to-raster algorithm with a resolution of 1 meter

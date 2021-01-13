@@ -63,7 +63,7 @@
 #' las
 #'
 #' las <- retrieve_flightlines(las)
-#' plot(las, color = "flightlineID")
+#' #plot(las, color = "flightlineID")
 retrieve_pulses = function(las)
 {
   stopifnotlas(las)

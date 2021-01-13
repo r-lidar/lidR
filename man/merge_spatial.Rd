@@ -37,14 +37,14 @@ point cloud with RGB values.}
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shp     <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 
-las   <- readLAS(LASfile)
+las   <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
 lakes <- sf::st_read(shp)
 
 # The attribute "inlake" does not exist in the shapefile.
 # Points are classified as TRUE if in a polygon
 las    <- merge_spatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
 forest <- filter_poi(las, inlakes == FALSE)
-plot(forest)
+#plot(forest)
 
 # The attribute "LAKENAME_1" exists in the shapefile.
 # Points are classified with the values of the polygons

@@ -48,5 +48,5 @@ las <- retrieve_pulses(las)
 las
 
 las <- retrieve_flightlines(las)
-plot(las, color = "flightlineID")
+#plot(las, color = "flightlineID")
 }

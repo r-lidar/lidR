@@ -50,7 +50,8 @@ cloud. However, the user can use this as a stand-alone function like this:
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+poi = "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(250)
 
 chm <- grid_canopy(las, res = 0.5, p2r(0.3))
