@@ -37,13 +37,6 @@
 #' @template return-lasfilter-las-lascatalog
 #'
 #' @export
-#'
-#' @examples
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile)
-#' subset = filter_surfacepoints(las, 2)
-#' plot(subset)
-#'
 #' @family filters
 filter_surfacepoints = function(las, res)
 {

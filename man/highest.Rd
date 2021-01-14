@@ -20,7 +20,7 @@ las = readLAS(LASfile, select = "xyz")
 
 # Select the highest point within each cell of an overlayed grid
 thinned = decimate_points(las, highest(4))
-plot(thinned)
+#plot(thinned)
 }
 \seealso{
 Other point cloud decimation algorithms: 

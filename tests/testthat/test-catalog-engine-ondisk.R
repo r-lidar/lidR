@@ -10,11 +10,11 @@ test <- function(cluster) {
 
 test_that("catalog_apply respects ORIGINALFILENAME template", {
 
-  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
+  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}_{ID}")
   o <- catalog_apply(ctg, test)
   o <- unlist(o)
 
-  ifiles <- tools::file_path_sans_ext(basename(ctg$filename))
+  ifiles <- paste0(tools::file_path_sans_ext(basename(ctg$filename)), "_", 1:2)
   ofiles <- tools::file_path_sans_ext(basename(o))
 
   expect_equal(ifiles, ofiles)
@@ -26,18 +26,6 @@ test_that("catalog_apply fails with ORIGINALFILENAME template if chunks != files
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
   expect_error(catalog_apply(ctg, test))
-})
-
-test_that("catalog_apply respects ID template", {
-
-  opt_output_files(ctg) <- paste0(tempdir(), "/p{ID}")
-  o <- catalog_apply(ctg, test)
-  o <- unlist(o)
-
-  i <- paste0("p", 1:2)
-  o <- tools::file_path_sans_ext(basename(o))
-
-  expect_equal(i, o)
 })
 
 test_that("catalog_apply respects COORDINATES template", {

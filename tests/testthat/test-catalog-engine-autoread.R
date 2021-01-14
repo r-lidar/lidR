@@ -1,6 +1,7 @@
 context("catalog_apply autoread")
 
 ctg <- random_2files_250points
+opt_progress(ctg) = FALSE
 
 test <- function(las, bbox, layers = 1L) {
   sp = as.spatial(las)

@@ -21,6 +21,8 @@ test_that("catalog_apply makes strict non-overlaping chunks", {
   expect_equal(length(req), 2L)
   expect_equal(s1, s2)
 
+  skip_on_cran()
+
   # Count the first return
   test <- function(cluster)
   {
@@ -106,6 +108,8 @@ test_that("catalog_apply generates errors if function does not return NULL for e
 
 test_that("catalog_apply use alternative directories", {
 
+  skip_on_cran()
+
   test <- function(cluster)
   {
     las <- readLAS(cluster)
@@ -136,14 +140,11 @@ test_that("catalog_apply return a partial ouptut and generates logs", {
   opt_wall_to_wall(ctg) <- FALSE
 
   option <- list(automerge = TRUE)
-  req1 <- suppressMessages(catalog_apply(ctg, test))
-  req2 <- suppressMessages(catalog_apply(ctg, test, .options = option))
+  expect_message(req1 <- catalog_apply(ctg, test), "chunk2.rds")
+  expect_message(req2 <- catalog_apply(ctg, test, .options = option), "Test error")
 
   expect_is(req1, "list")
   expect_equal(length(req1), 1L)
-  expect_message(catalog_apply(ctg, test), "chunk2.rds")
-  expect_message(catalog_apply(ctg, test), "Test error")
-
   expect_is(req2, "data.frame")
   expect_equal(nrow(req2), 3L)
 })
@@ -168,7 +169,7 @@ test_that("User get a warning/error when using ORIGINALFILENAME", {
   expect_message({opt_output_files(ctg) <- "{ID}"}, NA)
 })
 
-test_that("User get throw error if function do not return NULL for empty chun", {
+test_that("User get throw error if function does not return NULL for empty chun", {
 
   test <- function(cluster) {
     las <- readLAS(cluster)

@@ -20,7 +20,7 @@ The algorithm finds points that have only a few other points in their surroundin
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile)
+las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 
 # Add some artificial outliers
 set.seed(314)

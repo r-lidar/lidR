@@ -115,7 +115,7 @@ random = function(density, use_pulse = FALSE)
 #'
 #' # Select points randomly to reach an homogeneous density of 1
 #' thinned = decimate_points(las, homogenize(1,5))
-#' plot(grid_density(thinned))
+#' plot(grid_density(thinned, 10))
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
   assert_is_a_number(density)
@@ -172,7 +172,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #'
 #' # Select the highest point within each cell of an overlayed grid
 #' thinned = decimate_points(las, highest(4))
-#' plot(thinned)
+#' #plot(thinned)
 highest = function(res = 1)
 {
   assert_is_a_number(res)

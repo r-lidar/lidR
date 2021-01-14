@@ -54,8 +54,6 @@ dftest <- function(cluster) {
   head(lidR:::coordinates3D(las))
 }
 
-vrt_supported <- TRUE
-
 test_that("catalog_apply automerge works with in memory RastersLayer", {
   # No automerge option
   req1 <- catalog_apply(ctg, rtest)
@@ -77,6 +75,9 @@ test_that("catalog_apply automerge works with in memory RastersLayer", {
 })
 
 test_that("catalog_apply automerge works with in memory RastersBrick", {
+
+  skip_on_cran()
+
   # No automerge option
   req1 <- catalog_apply(ctg, rtest, layers = 2L)
   req1 <- lidR:::rMergeList(req1)
@@ -97,8 +98,6 @@ test_that("catalog_apply automerge works with in memory RastersBrick", {
 
 test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
 
-  if (vrt_supported)
-  {
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
     # automerge option
@@ -111,13 +110,10 @@ test_that("catalog_apply automerge works with on disk RastersLayer (VRT)", {
     expect_is(req1, "RasterLayer")
     expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
     expect_equal(sum(is.na(req1[])), 4L)
-  }
 })
 
 test_that("catalog_apply automerge works with on disk RastersBrick (VRT)", {
 
-  if (vrt_supported)
-  {
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
     # automerge option
@@ -130,10 +126,11 @@ test_that("catalog_apply automerge works with on disk RastersBrick (VRT)", {
     expect_is(req1, "RasterBrick")
     expect_equal(raster::extent(req1), raster::extent(0,100,0,200))
     expect_equal(sum(is.na(req1[])), 8L)
-  }
 })
 
 test_that("catalog_apply automerge works with in memory SpatialPoints*", {
+
+  skip_on_cran()
 
   option <- list(automerge = TRUE)
   req2 <- catalog_apply(ctg, sptest, .options = option)
@@ -152,6 +149,8 @@ test_that("catalog_apply automerge works with in memory SpatialPoints*", {
 
 test_that("catalog_apply automerge works with on disk SpatialPoints*", {
 
+  skip_on_cran()
+
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
   option <- list(automerge = TRUE)
@@ -163,6 +162,8 @@ test_that("catalog_apply automerge works with on disk SpatialPoints*", {
 
 test_that("catalog_apply automerge works with in memory POINTS", {
 
+  skip_on_cran()
+
   option <- list(automerge = TRUE)
   req2 <- catalog_apply(ctg, sftest, .options = option)
 
@@ -172,6 +173,8 @@ test_that("catalog_apply automerge works with in memory POINTS", {
 })
 
 test_that("catalog_apply automerge works with on disk POINTS*", {
+
+  skip_on_cran()
 
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
@@ -205,6 +208,8 @@ test_that("catalog_apply automerge works with on disk LAS (LAScatalog)", {
 
 test_that("catalog_apply automerge works with in memory data.frame", {
 
+  skip_on_cran()
+
   option <- list(automerge = TRUE)
   req2 <- catalog_apply(ctg, dftest, .options = option)
 
@@ -213,6 +218,8 @@ test_that("catalog_apply automerge works with in memory data.frame", {
 })
 
 test_that("catalog_apply automerge works with on disk data.frame", {
+
+  skip_on_cran()
 
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}")
 
@@ -256,6 +263,8 @@ test_that("catalog_apply automerge does not fail with unsupported objects output
 })
 
 test_that("catalog_sapply is the same than apply with automerge", {
+
+  skip_on_cran()
 
   option <- list(automerge = FALSE)
   req1 <- catalog_sapply(ctg, rtest)

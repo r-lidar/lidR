@@ -38,13 +38,6 @@ and cannot be changed.
 }
 }
 
-\examples{
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile)
-subset = filter_surfacepoints(las, 2)
-plot(subset)
-
-}
 \seealso{
 Other filters: 
 \code{\link{filter_duplicates}()},

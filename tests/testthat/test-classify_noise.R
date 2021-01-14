@@ -2,7 +2,7 @@ context("classify_noise")
 
 rgdal::set_thin_PROJ6_warnings(TRUE)
 
-las = topography
+las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
 
 set.seed(314)
 id = round(runif(20, 0, npoints(las)))
@@ -29,8 +29,8 @@ test_that("classify_noise sor works", {
   n = names(las@data)
 
   expect_true("Classification" %in% n)
-  expect_equal(unique(las@data$Classification), c(1L, 2L, 9L, 18L))
-  expect_equal(sum(las@data$Classification == 18L), 28L)
+  expect_equal(sort(unique(las@data$Classification)), c(1L, 2L, 9L, 18L))
+  expect_equal(sum(las@data$Classification == LASNOISE), 13L)
 
   expect_error(classify_noise(ctg, mysor), "buffer")
 
@@ -43,15 +43,15 @@ test_that("classify_noise sor works", {
   ctg2 = classify_noise(ctg, mysor)
   las2 = readLAS(ctg2)
 
-  expect_equal(sum(las2@data$Classification == 18L), 26)
+  expect_equal(sum(las2@data$Classification == 18L), 13)
   expect_equal(nrow(las2@data), nrow(las@data))
 })
 
 test_that("classify_noise sor with quantiles", {
 
-  las <- classify_noise(las, sor(15,0.9998,TRUE))
+  las <- classify_noise(las, sor(15,0.999,TRUE))
 
-  expect_equal(sum(las@data$Classification == 18L), 15L)
+  expect_equal(sum(las@data$Classification == 18L), 11L)
 })
 
 test_that("classify_noise ivf works", {

@@ -27,7 +27,7 @@ The points that are farther than the average distance plus a number of times
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile)
+las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 
 # Add some artificial outliers because the original
 # dataset is 'clean'
