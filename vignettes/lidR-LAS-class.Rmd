@@ -97,7 +97,11 @@ las@header@VLR[["GeoKeyDirectoryTag"]][["tags"]][[2]][["value offset"]]
 
 According to LAS specification the CRS system can also be a WKT string when the WKT bit flag is set to `TRUE`.
 
-```{r}
+```r
+las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
+```
+
+```{r, echo=FALSE, eval=FALSE}
 las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
 
 projection(las) <- sp::CRS("+init=epsg:26917")
