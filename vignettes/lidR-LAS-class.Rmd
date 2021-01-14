@@ -88,7 +88,7 @@ print(las@header)
 The slot `@proj4string` is inherited from the `Spatial` class from the `sp` package. It is a `CRS` object that stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS or a WKT string (depending how it has been recorded in the file), but it is also stored in the slot `@proj4string`. This is to ensure it meets R standards and is in accordance with other spatial data packages in the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `projection()`. This function updates the header of the LAS object **and** the proj4string.
 
 ```{r}
-projection(las) <- sp::CRS(SRS_string = "EPSG:26917")
+projection(las) <- sp::CRS("+init=epsg:26917")
 projection(las)
 
 # Header has been updated but users do not need to take care of that
@@ -100,7 +100,7 @@ According to LAS specification the CRS system can also be a WKT string when the 
 ```{r}
 las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
 
-projection(las) <- sp::CRS(SRS_string = "EPSG:26917")
+projection(las) <- sp::CRS("+init=epsg:26917")
 projection(las)
 
 # Header has been updated but users do not need to take care of that
