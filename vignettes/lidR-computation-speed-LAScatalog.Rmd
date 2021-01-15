@@ -234,7 +234,7 @@ for (i in 1:nrow(neighbourg))
 }
 ```
 
-The best way to create a lax file is to use [laxindex](https://www.cs.unc.edu/~isenburg/lastools/download/lasindex_README.txt) from [LAStools](https://rapidlasso.com/lastools/). It is a free and open-source part of LAStools. If you cannot or do not want to use LAStools the lidR package has an (undocumented) internal function that creates lax files using the `rlas` package:
+The best way to create a lax file is to use laxindex from [LAStools](https://rapidlasso.com/lastools/). It is a free and open-source part of LAStools. If you cannot or do not want to use LAStools the lidR package has an (undocumented) internal function that creates lax files using the `rlas` package:
 
 ```r
 lidR:::catalog_laxindex(ctg)
