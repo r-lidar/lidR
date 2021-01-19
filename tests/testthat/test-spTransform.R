@@ -2,7 +2,7 @@ context("spTransform")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las <- readLAS(LASfile, select = "xyz")
-crs <- sp::CRS(SRS_string = "EPSG:26918")
+crs <- sp::CRS("+init=epsg:26918") # Fails on Solaris: crs <- sp::CRS(SRS_string = "EPSG:26918")
 
 las2 <- spTransform(las, crs)
 
