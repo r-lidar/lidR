@@ -221,7 +221,8 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
   // Estimate the depth of the Quadtree
   // Not more than 8 because we are using unsigned char to locate the nodes.
   // 8 levels -> 4^8 = 65536 leaves -> 1+4+16+64+256+1024+4096+16384+65536=87381 quadrants
-  unsigned int num_levels = std::floor(std::log(x.size())/std::log(4));
+  unsigned int n = x.size();
+  unsigned int num_levels = (n > 0) ? std::floor(std::log(n)/std::log(4)) : 0;
   num_levels = (num_levels >= 1) ? num_levels : 1;
   num_levels = (num_levels >= 8) ? 8 : num_levels;
 

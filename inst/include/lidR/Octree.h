@@ -238,7 +238,8 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
   // Not more than 8 because we are using unsigned char to locate the nodes.
   // In practice 6 level is enough
   // 6 levels -> 8^6 = 262144 leaves -> 1+8+64+512+4096+32768+262144=299592 quadrants
-  unsigned int num_levels = std::floor(std::log(x.size())/std::log(8));
+  unsigned int n = x.size();
+  unsigned int num_levels = (n > 0) ? std::floor(std::log(n)/std::log(8)) : 0;
   num_levels = (num_levels >= 1) ? num_levels : 1;
   num_levels = (num_levels >= 6) ? 6 : num_levels;
 
