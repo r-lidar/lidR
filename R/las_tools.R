@@ -210,6 +210,13 @@ las_update = function(las)
 #' @rdname las_utilities
 quantize = function(x, scale, offset, by_reference = TRUE, ...)
 {
+  umin = min(x)
+  umax = max(x)
+  urange = storable_coordinate_range(scale, offset)
+
+  if (umax > urange[2] | umin < urange[1])
+    stop("'x' contains unquantizable values out of the storable range.", call. = FALSE)
+
   if (isTRUE(by_reference))
   {
     fast_quantization(x, scale, offset)

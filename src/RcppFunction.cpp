@@ -236,9 +236,13 @@ int fast_countbelow(NumericVector x, double t)
 void fast_quantization(NumericVector x, double scale, double offset)
 {
   int X = 0;
+  double u;
+  double um = INT_MAX;
 
   for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
   {
+    u = (*it - offset)/scale;
+    if (u > um || u < -um) Rcpp::stop("Non quantizable value outside the range of representable values of type 'int'");
     X = std::round((*it - offset)/scale);
     *it = X * scale + offset;
   }
@@ -251,22 +255,44 @@ int fast_countunquantized(NumericVector x, double scale, double offset)
 {
   int X = 0;
   int k = 0;
+  double u;
+  double um = INT_MAX;
 
   // 32 bits fix
   if (sizeof(void*) == 4)
   {
     for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
     {
-      X = std::round((*it - offset)/scale);
-      if (std::abs(*it - (X * scale + offset)) > 1e-9) k++;
+      u = (*it - offset)/scale;
+
+      // If u is in u32 range
+      if (u < um && u > -um)
+      {
+        X = std::round((*it - offset)/scale);
+        if (std::abs(*it - (X * scale + offset)) > 1e-9) k++;
+      }
+      else
+      {
+        k++;
+      }
     }
   }
   else
   {
     for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
     {
-      X = std::round((*it - offset)/scale);
-      if (*it != X * scale + offset) k++;
+      u = (*it - offset)/scale;
+
+      // If u is in u32 range
+      if (u < INT_MAX && u > -INT_MAX)
+      {
+        X = std::round(u);
+        if (*it != X * scale + offset) k++;
+      }
+      else
+      {
+        k++;
+      }
     }
   }
 
@@ -278,8 +304,6 @@ int fast_countover(NumericVector x, double t)
 {
   return std::count_if(x.begin(), x.end(), std::bind(std::greater<double>(), std::placeholders::_1, t));
 }
-
-
 
 // [[Rcpp::export(rng=false)]]
 NumericVector roundc(NumericVector x, int digit = 0)

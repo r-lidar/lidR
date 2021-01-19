@@ -43,3 +43,9 @@ test_that("Quantization works on las data", {
   expect_equal(las@data[["X"]][1], x,  tolerance = 0)
 })
 
+test_that("Quantization works with out of 32 bits integer range values", {
+
+  expect_error(quantize(1234567890.1, 0.01, 0), "'x' contains unquantizable values out of the storable range.")
+  expect_equal(count_not_quantized(1234567890.1, 0.01, 0), 1L)
+})
+
