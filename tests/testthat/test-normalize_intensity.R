@@ -23,6 +23,7 @@ test_that("normalize_intensity fails with invalid LAS data", {
 
 test_that("normalize_intensity fails with invalid sensor data", {
 
+  sink(tempfile())
 
   raster::crs(sensor) <- crs(las)
   tsensor <- sp::spTransform(sensor, sp::CRS("+init=epsg:26917"))
@@ -33,6 +34,8 @@ test_that("normalize_intensity fails with invalid sensor data", {
 
   sensor@data[["gpstime"]] <- 1:8
   expect_error(normalize_intensity(las, range_correction(sensor, Rs = 2000)), "gpstime range from the sensor does not contain gpstime range from the point-cloud")
+
+  sink(NULL)
 })
 
 test_that("normalize_intensity fails with invalid attribute modification", {
@@ -55,8 +58,10 @@ test_that("normalize_intensity works with 3 coordinates SpatialPointsDataFrame",
 
 test_that("normalize_intensity is able to detect unrealistic range corrections", {
 
+  sink(tempfile())
   sensor$Z[5] <- 8000
-  expect_error(capture.output(normalize_intensity(las, range_correction(sensor, Rs = 2000)), type = "message"), "Unrealistic range")
+  expect_error(normalize_intensity(las, range_correction(sensor, Rs = 2000)), "Unrealistic range")
+  sink(NULL)
 })
 
 test_that("normalize_intensity clamps values to 65535 with warning", {

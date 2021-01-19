@@ -298,11 +298,11 @@ double LAS::range(NumericVector &x, NumericVector &y , NumericVector &z, Numeric
 
   if (R > 3 * R_control)
   {
-    REprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
-    REprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
-    REprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
-    REprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
-    REprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
+    Rprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
+    Rprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
+    Rprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
+    Rprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
+    Rprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
     throw Rcpp::exception("Unrealistic range: see message above", false);
   }
 
