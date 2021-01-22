@@ -3,7 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.1.1 (Release date: ...)
 
 - Fix usban issue: outside the range of representable values of type 'int' for spatial indexes built with 0 point.
-- Fix usban issue: outside the range of representable values of type 'int' when quantizing or counting non quantized values that are not quantizable according to the the given scale and offset.
+- Fix usban issue: outside the range of representable values of type 'int' when quantizing or counting non quantized values that are not quantizable according the the given scale and offset.
 - Remove lax files in example data.
 
 ## lidR v3.1.0 (Release date: 2020-01-15)
