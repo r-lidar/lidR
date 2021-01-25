@@ -225,7 +225,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
 
 plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = "rgl", clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)
 {
-  backend <- match.arg(backend)
+  backend <- match.arg(backend, c("rgl", "lidRviewer"))
   use_pcv <- backend == "lidRviewer"
   use_rgl <- !use_pcv
   has_pcv <- "lidRviewer" %in% rownames(utils::installed.packages())
