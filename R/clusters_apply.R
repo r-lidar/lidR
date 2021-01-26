@@ -61,7 +61,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
   future <- if (!nofuture) future::future else function(expr, ...) { eval(substitute(expr, parent.frame())) }
 
   verbose(glue::glue("Start processing {nclusters} chunks..."))
-  verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))
+  #verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))
 
   # ==== PROCESSING ====
 
