@@ -52,17 +52,83 @@ get_lidr_threads = function()
 
 get_future_workers = function()
 {
-  n <- formals(future::plan())$workers
-  if (is.null(n) || is.character(n)) # e.g. future::plan(future::remote(), workers = "localhost")
-    return(1L) # nocov
-  else if (is.call(n))               # e.g. future::plan(future::multisession())
-    return(future::availableCores())
-  else                               # e.g. future::plan(future::multisession(), workers = 2L)
-    return(n)  # nocov
+  # If NULL returned it means that I'm not able to know if the plan involves local workers
+  # or complex architecture such as remote computers or multiple node on a HPC
+
+  # nocov start
+
+  strategy <- future::plan()
+  n <- formals(strategy)$workers
+
+  if (is(strategy, "sequential"))
+  {
+    verbose("Parallel strategy: sequential")
+    return(1L)
+  }
+
+  if (is(strategy, "remote")) # e.g. plan(remote(), workers = "localhost")
+  {
+    verbose("Parallel strategy: remote")
+    return(1L)
+  }
+
+  if (is(strategy, "cluster")) # e.g. plan(multisession or  plan(cluster) or plan(cluster, workers =  makeCluster(3, type='SOCK'))
+  {
+    verbose("Parallel strategy: cluster")
+
+    if (is.numeric(n))            # e.g. plan(multisession, workers = 2L)
+      return(n)
+
+    if (is.call(n))               # e.g. plan(multisession or plan(cluster)
+    {
+       n <- eval(n)
+       if (is.numeric(n))
+         return(n)
+       else
+         return(NULL)
+    }
+
+    return(NULL)
+  }
+
+  return(NULL)
+
+ # nocov end
 }
 
+
+# Because I made some typos and I rebamed stuff and I did
+# not check the code yet
 getThread <- get_lidr_threads
 getThreads <- get_lidr_threads
 getWorkers <- get_future_workers
 setThreads <- set_lidr_threads
+
+must_disable_openmp = function()
+{
+  if (getOption("lidR.threads.manual") == TRUE)
+    return(FALSE)
+
+  workers    <- getWorkers()
+  threads    <- getThreads()
+  cores      <- future::availableCores()
+
+  if (is.null(workers))
+  {
+    warning("The parallel evaluation strategy was no recognized and lidR does not know if OpenMP should be disabled.
+OpenMP has been disabled by security. Use option(lidR.threads.manual = TRUE) and set_lidr_threads() for a fine control of parallelism.", call. = FALSE)
+    return(TRUE)
+  }
+
+  workers * threads > cores
+
+  if (workers * threads > cores)
+  {
+    # nocov because tested with a single core on CRAN
+    verbose(glue::glue("Cannot nest {workers} future threads and {threads} OpenMP threads. Precedence given to future: OpenMP threads set to 1.")) # nocov
+    return(TRUE)
+  }
+
+  return(FALSE)
+}
 

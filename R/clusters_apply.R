@@ -49,28 +49,16 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
   pb         <- engine_progress_bar(nclusters, prgrss)
   percentage <- 0
 
-
-
   on.exit(engin_close_pb(pb))
 
-  # Inititalize parallelism
-  workers    <- getWorkers()
-  threads    <- getThreads()
-  cores      <- future::availableCores()
-  manual     <- getOption("lidR.threads.manual")
+  # Disable OpenMP?
+  threads = if (must_disable_openmp()) 1L else getThreads()
 
   # The nofuture mainly intend to be used on CRAN unit test because even small examples are
   # long to run. This is because the initialisation of a future is long even for sequential
   # plan.
-  nofuture   <- isTRUE(getOption('lidR.no.future'))
+  nofuture <- isTRUE(getOption('lidR.no.future'))
   future <- if (!nofuture) future::future else function(expr, ...) { eval(substitute(expr, parent.frame())) }
-
-  if (!manual && workers * threads > cores)
-  {
-    # nocov because tested with a single core on CRAN
-    verbose(glue::glue("Cannot nest {workers} future threads and {threads} OpenMP threads. Precedence given to future: OpenMP threads set to 1.")) # nocov
-    threads <- 1L # nocov
-  }
 
   verbose(glue::glue("Start processing {nclusters} chunks..."))
   verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))

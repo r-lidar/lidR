@@ -1,5 +1,13 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.1.2 (Release date: ...)
+
+- Fix `catalog_apply()` now works with cluster plan `plan(future::cluster, workers = makeCluster(3, type='SOCK'))` meaning that it can be used on HPC. We took advantage of this bug to better detect the parallel strategy used and disable or not OpenMP. When `lidR` is not able to figure out if the strategy involves multiple machines or multiple cores of a single machine, then a warning is thrown and OpenMP is disabled by security.
+```r
+The parallel evaluation strategy was no recognized and lidR does not know if OpenMP should be disabled.
+OpenMP has been disabled by security. Use option(lidR.threads.manual = TRUE) and set_lidr_threads() for a fine control of parallelism. 
+```
+
 ## lidR v3.1.1 (Release date: 2020-01-22)
 
 - Fix usban issue: outside the range of representable values of type 'int' for spatial indexes built with 0 point.
