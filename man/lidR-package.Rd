@@ -32,7 +32,7 @@ a VRT be built? Default: TRUE}
 checks the parallel strategy chosen by the user and verify if C++ parallelization with
 OpenMP should be disabled to avoid nested parallel loops. Default: TRUE. If FALSE
 the catalog processing engine will not check for nested parallelism
-and will respect the settings of \link{set_lidr_thread}.}
+and will respect the settings of \link{set_lidr_threads}.}
 }
 }
 
