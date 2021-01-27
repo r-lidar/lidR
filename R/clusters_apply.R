@@ -51,8 +51,12 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   on.exit(engin_close_pb(pb))
 
-  # Disable OpenMP?
-  threads = if (must_disable_openmp()) 1L else getThreads()
+  # Disable OpenMP? The different between  LIDRTHREADS$n and LIDRTHREADS$input
+  # is that n is the corrected number of workers. e.g on a quadcore set_lidr_threads(0)
+  # set 4 and set_lidr_threads(12) set 4 too. On the contrary input will be 0 and 12 respectively
+  # Consequently so on remote machines with different capabilities than the master worker
+  # the information is not overwritten by the master worker.
+  threads = if (must_disable_openmp()) 1L else if (isFALSE(getOption("lidR.check.nested.parallelism"))) LIDRTHREADS$input else LIDRTHREADS$n
 
   verbose(glue::glue("Start processing {nclusters} chunks..."))
   #verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))

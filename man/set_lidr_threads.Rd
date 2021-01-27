@@ -10,12 +10,12 @@ set_lidr_threads(threads)
 get_lidr_threads()
 }
 \arguments{
-\item{threads}{An integer >= 0. Default 0 means use all CPU available and leave the operating system
-to multi task.}
+\item{threads}{Positve scala. Default 0 means use all CPU available. Values > 1 mean
+using n cores, values in ]0, 1[ mean using a fraction of the cores e.g. 0.5 = half.}
 }
 \description{
 Set and get number of threads to be used in lidR functions that are parallelized with OpenMP.
-Default value 0 means to utilize all CPU available. \code{get_lidr_threads()} returns the number
+0 means to utilize all CPU available. \code{get_lidr_threads()} returns the number
 of threads that will be used. This affects \code{lidR} package but also the \code{data.table} package
 by internally calling \link[data.table:openmp-utils]{setDTthreads} because several functions  of
 lidR rely on \code{data.table} but it does not change R itself or other packages using OpenMP.

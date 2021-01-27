@@ -23,7 +23,11 @@
     lidR.check.nested.parallelism = TRUE)
 
   max <- R_omp_get_max_threads()
-  if (max > 0) LIDRTHREADS$n <- as.integer(max/2)
+  if (max > 0)
+  {
+    LIDRTHREADS$n <- as.integer(max/2)
+    LIDRTHREADS$input <- as.integer(max/2)
+  }
 
   toset <- !(names(op.lidR) %in% names(op))
   if (any(toset)) options(op.lidR[toset])
