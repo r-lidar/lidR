@@ -29,8 +29,8 @@
 #' To know which algorithms are parallelized users can refer to the documentation or use the
 #' function \link{is.parallelised}.
 #' \preformatted{
-#' is.parallel(lmf(2))   #> TRUE
-#' is.parallel(li2012()) #> FALSE
+#' is.parallelised(lmf(2))   #> TRUE
+#' is.parallelised(li2012()) #> FALSE
 #' }
 #' @section chunk-based parallelism:
 #' When processing a LAScatalog, the internal engine splits the dataset into chunks and each chunk is
@@ -56,6 +56,7 @@
 #' memory. This may be too much and the speed-up is not guaranteed since there is some overhead involved in
 #' reading several files at a time. Once this point is understood, chunk-based parallelism is very
 #' powerful since all the algorithms can be parallelized whether or not they are natively parallel.
+#' It also allows to parallelize the computation on several machines on the network or to work on a HPC.
 #'
 #' @section Nested parallelism - part 1:
 #' Previous sections stated that some algorithms are natively parallel, such as \link{lmf}, and some are
@@ -70,12 +71,9 @@
 #' out <- tree_detection(ctg, lmf(2))
 #' }
 #' Here the catalog will be split into chunks that will be processed in parallel. And each computation
-#' itself implies a parallelized task. This is a nested parallelism task and it is bad! Hopefully the lidR
+#' itself implies a parallelized task. This is a nested parallelism task and it is dangerous! Hopefully the lidR
 #' package handles such cases and chooses by default to give precedence to chunk-based parallelism. In this
-#' case chunks will be processed in parallel and the points will be processed serially. The question
-#' of nested parallel loops is irrelevant. The catalog processing engine has precedence rules that are
-#' guaranteed to avoid nested parallelism. This precedence rule aims to (1) always work (2) preserve
-#' behaviors of lidR version 2.0.y.
+#' case chunks will be processed in parallel and the points will be processed serially by disabling OpenMP.
 #'
 #' @section Nested parallelism - part 2:
 #' We explained rules of precedence. But actually the user can tune the engine more accurately. Let's
@@ -105,7 +103,7 @@
 #' catalog_apply(ctg, myfun, ws = 5)
 #' }
 #' The rule is simple. If the number of workers needed is greater than the number of
-#' available workers then OpenMP is disabled. Let suppose we have a quadcore machine:
+#' available workers then OpenMP is disabled. Let suppose we have a 4 cores:
 #' \preformatted{
 #' # 2 chunks 2 threads: OK
 #' plan(multisession, workers = 2L)
@@ -124,6 +122,15 @@
 #' plan(multisession, workers = 3L)
 #' set_lidr_threads(2L)
 #' }
+#'
+#' @section Complex computing architectures:
+#' For more complex processing architectures such as multiple computers controlled remotely
+#' or HPC a finer tuning might be necessary. Using
+#' \preformatted{
+#' options(lidR.check.nested.parallelism = FALSE)
+#' }
+#' lidR will no longer check for nested parallelism and will never automatically disable OpenMP.
+#'
 #'
 #' @name lidR-parallelism
 NULL

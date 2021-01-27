@@ -106,7 +106,11 @@ setThreads <- set_lidr_threads
 
 must_disable_openmp = function()
 {
-  if (getOption("lidR.threads.manual") == TRUE)
+  # Backward compatibility
+  if (isTRUE(getOption("lidR.threads.manual")))
+    return(FALSE)
+
+  if (isFALSE(getOption("lidR.check.nested.parallelism")))
     return(FALSE)
 
   workers    <- getWorkers()
@@ -116,11 +120,10 @@ must_disable_openmp = function()
   if (is.null(workers))
   {
     warning("The parallel evaluation strategy was no recognized and lidR does not know if OpenMP should be disabled.
-OpenMP has been disabled by security. Use option(lidR.threads.manual = TRUE) and set_lidr_threads() for a fine control of parallelism.", call. = FALSE)
+OpenMP has been disabled by security.
+Use options(lidR.check.nested.parallelism = FALSE) and set_lidr_threads() for a fine control of parallelism.", call. = FALSE)
     return(TRUE)
   }
-
-  workers * threads > cores
 
   if (workers * threads > cores)
   {

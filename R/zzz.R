@@ -20,7 +20,7 @@
     lidR.interactive = TRUE,
     lidR.debug = FALSE,
     lidR.buildVRT = TRUE,
-    lidR.threads.manual = FALSE)
+    lidR.check.nested.parallelism = TRUE)
 
   max <- R_omp_get_max_threads()
   if (max > 0) LIDRTHREADS$n <- as.integer(max/2)
