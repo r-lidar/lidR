@@ -9,7 +9,7 @@ OpenMP has been disabled by security.
 Use options(lidR.check.nested.parallelism = FALSE) and set_lidr_threads() for a fine control of parallelism.
 ```
 - Doc: documentation of `options(lidR.check.nested.parallelism = FALSE)` was missing. Information can now be found in `?lidR-package` and `?lidR-parallelism`
-- Enhance: in `catalog_apply()` if `lidR.check.nested.parallelism = FALSE` it now respects the input of `set_lidr_thread()` instead of the output of `get_lidr_threads()`. For example if `set_lidr_thread(0)` it now propagate the information 0 (all cores) instead of the output of `get_lidr_thread()` which might be e.g. 4 on the master worker but more on the more on the slave workers. Similarly `set_lidr_thread(20)` will request 20 cores to the workers even if `get_lidr_thread()` returns 4 on the local machine.
+- Enhance: in `catalog_apply()` if `lidR.check.nested.parallelism = FALSE` it now respects the input of `set_lidr_thread()` instead of the output of `get_lidr_threads()`. For example if `set_lidr_thread(0)` it now propagates the information 0 (all cores) instead of the output of `get_lidr_thread()` which might be e.g. 4 on the master worker but might be different on the slave workers. Similarly `set_lidr_thread(20)` will request 20 cores to the workers even if `get_lidr_thread()` returns 4 on the local machine.
 - Enhance: `set_lidr_thread()` accepts inputs < 1 such as 0.5 to mean 'half' or 'quarter' of available cores.
 
 ## lidR v3.1.1 (Release date: 2020-01-22)

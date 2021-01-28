@@ -23,21 +23,23 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
+          - {os: macOS-latest, r: "release"}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RGL_USE_NULL: true
       RSPM: ${{ matrix.config.rspm }}
-      # NOT_CRAN: true
-
+      NOT_CRAN: true
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.1
 
       - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
+          Ncpus: 4
 
       - uses: r-lib/actions/setup-pandoc@master
 
@@ -63,7 +65,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install system dependencies
+      - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
@@ -80,6 +82,13 @@ jobs:
             libnode-dev \
             libxt-dev \
             libfftw3-dev
+
+      - name: Install system dependencies (MacOS)
+        if: runner.os == 'macOS'
+        run: |
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          rm '/usr/local/bin/gfortran'
+          brew install pkg-config gdal proj geos
 
       - name: Install dependencies
         run: |
