@@ -181,10 +181,20 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
     Rcpp::stop("Internal error in spatial index: x and z have different sizes."); // # nocov
 
   // Compute the bounding box of the tree
-  xmin = Rcpp::min(x);
-  ymin = Rcpp::min(y);
-  xmax = Rcpp::max(x);
-  ymax = Rcpp::max(y);
+  if (x.size() > 0)
+  {
+    xmin = Rcpp::min(x);
+    ymin = Rcpp::min(y);
+    xmax = Rcpp::max(x);
+    ymax = Rcpp::max(y);
+  }
+  else
+  {
+    xmin = 0;
+    ymin = 0;
+    xmax = 0;
+    ymax = 0;
+  }
 
   // Check if we do no have a 0 width range for x or y otherwise we will make divisions by 0
   // This may happen in rare cases with 1 point or with x|y aligned points
@@ -228,17 +238,6 @@ inline void QuadTree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp:
 
   ROOT_LEVEL = num_levels - 1;
   MAX_VAL = 1 << ROOT_LEVEL;
-
-  if (x.size() == 0)
-  {
-    xmin = 0;
-    xmax = 0;
-    ymin = 0;
-    ymax = 0;
-    num_levels = 1;
-    ROOT_LEVEL = 0;
-    MAX_VAL = 1;
-  }
 
   unsigned int node_count = 0;
   for (unsigned int i = 0 ; i <= num_levels ; ++i) { node_count += std::pow(4, i); }

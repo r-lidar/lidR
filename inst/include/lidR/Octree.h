@@ -182,12 +182,24 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
     Rcpp::stop("Internal error in spatial index: x and z have different sizes."); // # nocov
 
   // Compute the bounding box of the tree
-  xmin = Rcpp::min(x);
-  ymin = Rcpp::min(y);
-  zmin = Rcpp::min(z);
-  xmax = Rcpp::max(x);
-  ymax = Rcpp::max(y);
-  zmax = Rcpp::max(z);
+  if (x.size() > 0)
+  {
+    xmin = Rcpp::min(x);
+    ymin = Rcpp::min(y);
+    zmin = Rcpp::min(z);
+    xmax = Rcpp::max(x);
+    ymax = Rcpp::max(y);
+    zmax = Rcpp::max(z);
+  }
+  else
+  {
+    xmin = 0;
+    ymin = 0;
+    xmax = 0;
+    ymax = 0;
+    zmin = 0;
+    zmax = 0;
+  }
 
   // Check if we do no have a 0 width range for x or y or z otherwise we will make divisions by 0
   // This may happen in rare cases with 1 point or with x|y|z aligned points
@@ -245,19 +257,6 @@ inline void Octree::build(Rcpp::NumericVector x, Rcpp::NumericVector y,  Rcpp::N
 
   ROOT_LEVEL = num_levels - 1;
   MAX_VAL = 1 << ROOT_LEVEL;
-
-  if (x.size() == 0)
-  {
-    xmin = 0;
-    xmax = 0;
-    ymin = 0;
-    ymax = 0;
-    zmin = 0;
-    zmax = 0;
-    num_levels = 1;
-    ROOT_LEVEL = 0;
-    MAX_VAL = 1;
-  }
 
   // Compute the maximum number of node given the depth and alloc memory for
   // 1/4 of the maximum number of nodes
