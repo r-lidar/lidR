@@ -49,7 +49,9 @@ jobs:
           # conflicts with gfortran from r-lib/actions when linking gcc
           rm '/usr/local/bin/gfortran'
           brew install pkg-config gdal proj geos
-          brew cask install xquartz
+          wget https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.11.dmg
+          sudo hdiutil attach XQuartz-2.7.11.dmg
+          sudo installer -package /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
 
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
@@ -67,7 +69,10 @@ jobs:
             libfreetype6-dev \
             libnode-dev \
             libxt-dev \
-            libfftw3-dev
+            libfftw3-dev \
+            libc6-dev \
+            libc6
+
 
       - name: Query dependencies
         run: |
