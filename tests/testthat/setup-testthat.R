@@ -1,6 +1,6 @@
 options(lidR.progress = FALSE)
+options(rgl.useNULL = TRUE)
 rgdal::set_thin_PROJ6_warnings(TRUE)
-
 #Sys.setenv(NOT_CRAN = "false")
 
 megaplot_laz_path <- system.file("extdata", "Megaplot.laz", package="lidR")
