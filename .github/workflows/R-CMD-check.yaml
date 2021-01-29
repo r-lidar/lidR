@@ -23,6 +23,7 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
+          - {os: macOS-latest, r: "release"}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
@@ -44,9 +45,10 @@ jobs:
       - name: Brew and macOS config
         if: runner.os == 'macOS'
         run: |
-          brew install \
-            udunits \
-            gdal
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          rm '/usr/local/bin/gfortran'
+          brew install gdal proj geos
+          brew install --cask xquartz
 
       - name: Query dependencies
         run: |
