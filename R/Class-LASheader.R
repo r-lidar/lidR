@@ -37,6 +37,8 @@
 #'
 #' @slot VLR list. Represents the Variable Length Records
 #'
+#' @slot EVLR list. Represents the Extended Variable Length Records
+#'
 #' @exportClass LASheader
 setClass(
   Class = "LASheader",

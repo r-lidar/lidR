@@ -245,17 +245,17 @@ setMethod("show", "LASheader",  function(object)
 
   if (nvlr == 0)
   {
-    cat("Variable length records:  void\n")
+    cat("Variable Length Records (VLR):  void\n")
   }
   else
   {
-    cat("Variable length records:\n")
+    cat("Variable Length Records (VLR):\n")
 
     for (i in 1:nvlr)
     {
       vlr = object@VLR[[i]]
 
-      cat("   Variable length record", i, "of", nvlr, "\n")
+      cat("   Variable Length Record", i, "of", nvlr, "\n")
       #cat("       Reserve:            ",  vlr$reserved, "\n")
       #cat("       User ID:             ", vlr$`user ID`, "\n")
       #cat("       record ID:           ", vlr$`record ID`, "\n")
@@ -303,11 +303,11 @@ setMethod("show", "LASheader",  function(object)
 
   if (nevlr == 0)
   {
-    cat("Extended Variable length records:  void\n")
+    cat("Extended Variable Length Records (EVLR):  void\n")
   }
   else
   {
-    cat("Extended Variable length records:\n")
+    cat("Extended Variable Length Records (EVLR):\n")
 
     for (i in 1:nevlr)
     {

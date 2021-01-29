@@ -17,5 +17,7 @@ the data read from the Variable Length Records
 \item{\code{PHB}}{list. Represents the Public Header Block}
 
 \item{\code{VLR}}{list. Represents the Variable Length Records}
+
+\item{\code{EVLR}}{list. Represents the Extended Variable Length Records}
 }}
 
