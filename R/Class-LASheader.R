@@ -40,7 +40,7 @@
 #' @exportClass LASheader
 setClass(
   Class = "LASheader",
-  representation(PHB = "list", VLR = "list")
+  representation(PHB = "list", VLR = "list", EVLR = "list")
 )
 
 setMethod("initialize", "LASheader", function(.Object, data = list())
@@ -48,12 +48,18 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
   stopifnot(is.list(data))
 
   vlr <- list()
-  if (!is.null(data$`Variable Length Records`))
-    vlr <- data$`Variable Length Records`
+  if (!is.null(data[["Variable Length Records"]]))
+    vlr <- data[["Variable Length Records"]]
+
+  evlr <- list()
+  if (!is.null(data[["Extended Variable Length Records"]]))
+    evlr <- data[["Extended Variable Length Records"]]
 
   .Object@PHB <- data
-  .Object@PHB$`Variable Length Records` <- NULL
+  .Object@PHB[["Variable Length Records"]] <- NULL
+  .Object@PHB[["Extended Variable Length Records"]] <- NULL
   .Object@VLR <- vlr
+  .Object@EVLR <- evlr
 
   return(.Object)
 })

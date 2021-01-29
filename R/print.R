@@ -240,62 +240,122 @@ setMethod("show", "LASheader",  function(object)
   cat("min X Y Z:               ", x$`Min X`, x$`Min Y`, x$`Min Z`, "\n")
   cat("max X Y Z:               ", x$`Max X`, x$`Max Y`, x$`Max Z`, "\n")
 
-  n = length(object@VLR)
+  nvlr  <- length(object@VLR)
+  nevlr <- length(object@EVLR)
 
-  if (n == 0)
+  if (nvlr == 0)
   {
     cat("Variable length records:  void\n")
-    return(invisible())
+  }
+  else
+  {
+    cat("Variable length records:\n")
+
+    for (i in 1:nvlr)
+    {
+      vlr = object@VLR[[i]]
+
+      cat("   Variable length record", i, "of", nvlr, "\n")
+      #cat("       Reserve:            ",  vlr$reserved, "\n")
+      #cat("       User ID:             ", vlr$`user ID`, "\n")
+      #cat("       record ID:           ", vlr$`record ID`, "\n")
+      #cat("       Length after header: ", vlr$`length after header`, "\n")
+      cat("       Description:", vlr$description, "\n")
+
+      if (vlr$`record ID` == 34735)
+      {
+        cat("       Tags:\n")
+        lapply(vlr[[6]], function(xx)
+        {
+          cat("          Key", xx$key, "value", xx$`value offset`, "\n")
+        })
+      }
+      else if (vlr$`record ID` == 34736)
+      {
+        cat("       data:                ", vlr[[6]], "\n")
+      }
+      else if (vlr$`record ID` == 34737)
+      {
+        cat("       data:                ", vlr[[6]], "\n")
+      }
+      else if (vlr$`record ID` == 4)
+      {
+        cat("       Extra Bytes Description:\n")
+        lapply(vlr$`Extra Bytes Description`, function(xx)
+        {
+          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
+        })
+      }
+      else if (vlr$`record ID` == 4)
+      {
+        cat("       Extra Bytes Description:\n")
+        lapply(vlr$`Extra Bytes Description`, function(xx)
+        {
+          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
+        })
+      }
+      else if (vlr$`record ID` == 2112)
+      {
+        cat("       WKT OGC COORDINATE SYSTEM: ", strtrim(vlr$`WKT OGC COORDINATE SYSTEM`, 70), " [...] (truncated)\n", sep = "")
+      }
+    }
   }
 
-  cat("Variable length records: \n")
-
-  for (i in 1:n)
+  if (nevlr == 0)
   {
-    vlr = object@VLR[[i]]
+    cat("Extended Variable length records:  void\n")
+  }
+  else
+  {
+    cat("Extended Variable length records:\n")
 
-    cat("   Variable length record", i, "of", n, "\n")
-    #cat("       Reserve:            ",  vlr$reserved, "\n")
-    #cat("       User ID:             ", vlr$`user ID`, "\n")
-    #cat("       record ID:           ", vlr$`record ID`, "\n")
-    #cat("       Length after header: ", vlr$`length after header`, "\n")
-    cat("       Description:", vlr$description, "\n")
+    for (i in 1:nevlr)
+    {
+      vlr = object@EVLR[[i]]
 
-    if (vlr$`record ID` == 34735)
-    {
-      cat("       Tags:\n")
-      lapply(vlr[[6]], function(xx)
+      cat("   Extended Variable length record", i, "of", nevlr, "\n")
+      #cat("       Reserve:            ",  vlr$reserved, "\n")
+      #cat("       User ID:             ", vlr$`user ID`, "\n")
+      #cat("       record ID:           ", vlr$`record ID`, "\n")
+      #cat("       Length after header: ", vlr$`length after header`, "\n")
+      cat("       Description:", vlr$description, "\n")
+
+      if (vlr$`record ID` == 34735)
       {
-        cat("          Key", xx$key, "value", xx$`value offset`, "\n")
-      })
-    }
-    else if (vlr$`record ID` == 34736)
-    {
-      cat("       data:                ", vlr[[6]], "\n")
-    }
-    else if (vlr$`record ID` == 34737)
-    {
-      cat("       data:                ", vlr[[6]], "\n")
-    }
-    else if (vlr$`record ID` == 4)
-    {
-      cat("       Extra Bytes Description:\n")
-      lapply(vlr$`Extra Bytes Description`, function(xx)
+        cat("       Tags:\n")
+        lapply(vlr[[6]], function(xx)
+        {
+          cat("          Key", xx$key, "value", xx$`value offset`, "\n")
+        })
+      }
+      else if (vlr$`record ID` == 34736)
       {
-        cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
-      })
-    }
-    else if (vlr$`record ID` == 4)
-    {
-      cat("       Extra Bytes Description:\n")
-      lapply(vlr$`Extra Bytes Description`, function(xx)
+        cat("       data:                ", vlr[[6]], "\n")
+      }
+      else if (vlr$`record ID` == 34737)
       {
-        cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
-      })
-    }
-    else if (vlr$`record ID` == 2112)
-    {
-      cat("       WKT OGC COORDINATE SYSTEM: ", strtrim(vlr$`WKT OGC COORDINATE SYSTEM`, 70), " [...] (truncated)\n", sep = "")
+        cat("       data:                ", vlr[[6]], "\n")
+      }
+      else if (vlr$`record ID` == 4)
+      {
+        cat("       Extra Bytes Description:\n")
+        lapply(vlr$`Extra Bytes Description`, function(xx)
+        {
+          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
+        })
+      }
+      else if (vlr$`record ID` == 4)
+      {
+        cat("       Extra Bytes Description:\n")
+        lapply(vlr$`Extra Bytes Description`, function(xx)
+        {
+          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
+        })
+      }
+      else if (vlr$`record ID` == 2112)
+      {
+        cat("       WKT OGC COORDINATE SYSTEM: ", strtrim(vlr$`WKT OGC COORDINATE SYSTEM`, 70), " [...] (truncated)\n", sep = "")
+      }
     }
   }
 

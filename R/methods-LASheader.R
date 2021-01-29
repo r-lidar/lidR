@@ -43,7 +43,8 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 #' @export
 as.list.LASheader <- function(x, ...)
 {
-  PHB = x@PHB
-  VLR = list(`Variable Length Records` = x@VLR)
-  return(c(PHB, VLR))
+  PHB  <- x@PHB
+  VLR  <- list(`Variable Length Records` = x@VLR)
+  EVLR <- list(`Extended Variable Length Records` = x@EVLR)
+  return(c(PHB, VLR, EVLR))
 }
