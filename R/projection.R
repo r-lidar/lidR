@@ -280,7 +280,7 @@ setMethod("projection<-", "LAS", function(x, value)
     epsg <- value
     CRS <- epsg2CRS(epsg)
     proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
+    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
   }
   else
     stop("'value' is not a CRS or a string or a number.")
