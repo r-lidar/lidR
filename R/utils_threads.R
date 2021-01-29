@@ -25,7 +25,7 @@ set_lidr_threads = function(threads)
   if (max < 0)
   {
     if (threads > 1) message("This installation of lidR has not been compiled with OpenMP support") # nocov
-    LIDRTHREADS$input <- 1L
+    LIDRTHREADS$input <- threads
     LIDRTHREADS$n <- 1L # nocov
     data.table::setDTthreads(1L) # nocov
     return(invisible()) # nocov
