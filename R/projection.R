@@ -366,6 +366,8 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   if (is.na(x@proj4string@projargs))
     stop("No transformation possible from NA reference system")
 
+  p <- list(...)
+
   # Transform the point coordinates
   spts <- sp::SpatialPoints(coordinates(x))
   spts@proj4string <- crs(x)
@@ -374,13 +376,14 @@ setMethod("spTransform", signature("LAS", "CRS"), function(x, CRSobj, ...)
   Y <- spts@coords[,2]
 
   # Update the offsets in the header
-  offsetx <- floor(min(x$X))
-  offsety <- floor(min(x$Y))
+  offsetx <- floor(min(X))
+  offsety <- floor(min(Y))
+  if (!is.null(p$xoffset)) offsetx <- p$xoffset
+  if (!is.null(p$yoffset)) offsety <- p$yoffset
   x@header@PHB[["X offset"]] <- offsetx
   x@header@PHB[["Y offset"]] <- offsety
 
   # Update the scale factors
-  p <- list(...)
   scalex <- x@header@PHB[["X scale factor"]]
   scaley <- x@header@PHB[["Y scale factor"]]
   if (!is.null(p$scale)) scalex <- scaley <- p$scale
