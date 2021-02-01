@@ -1,3 +1,8 @@
+#if defined(__GNUC__) && (__GNUC__ < 5) && !defined(__clang__) && !defined(__llvm__) && !defined(__INTEL_COMPILER)
+#include "gcc_4_9_patch/std_is_trivially_substitutes.hpp"
+#include "gcc_4_9_patch/boost_compare_patched.hpp"
+#endif
+
 #include "LAS.h"
 #include "Progress.h"
 #include "myomp.h"
