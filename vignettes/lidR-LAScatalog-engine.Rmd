@@ -540,7 +540,7 @@ Overlapping is not an issue by itself. The actual problem is duplicated points. 
 
 ### Partial processing
 
-It is possible to process only a subregion of the collection by flagging some files. In this case only the flagged files will be processed but the neighbouring tiles are used to load a buffer so the local context is not lost. Below only 4 files are flagged and the display plots the other tiles almost white.
+It is possible to process only a subregion of the collection by flagging some files. In this case only the flagged files will be processed but the neighbouring tiles will be used to load a buffer so the local context beyond the processed tiles is not lost. In the figure below 2 files are flagged `processed` and the display plots the other tiles almost white.
 
 ```{r}
 ctg$processed <- FALSE
@@ -646,7 +646,7 @@ sf::st_bbox(chunk)
 
 Being able to retrieve the true bounding box allows for removal of the buffer. Indeed, the point cloud is loaded with a buffer and all subsequent computation will provide an output with the buffer included in the results. At the end the engine will merge everything and the buffered region will appear twice or more. So the final output must be unbuffered by any means. One can find examples in the documentation of `catalog_apply()`, in [this vignette](lidR-catalog-apply-examples.html) or in the source code of `lidR`.
 
-### Control the option provided by the catalog
+### Control the options provided by the catalog
 
 Sometime we need to control processing options carried by the `LAScatalog` to ensure that users do not use invalid options. For example `grid_terrain()` ensures that the buffer is not 0.
 
