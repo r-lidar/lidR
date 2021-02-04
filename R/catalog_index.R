@@ -73,7 +73,7 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     }
 
     # If one file that emcompasses the bbox is set to 'non processing' resize the chunk
-    if (any(!process[tile_is_in_bbox])) {
+    if (!by_file && any(!process[tile_is_in_bbox])) {
       k <- process & tile_is_in_bbox
       bbox@xmin <- max(min(MinX[k]), bbox@xmin)
       bbox@ymin <- max(min(MinY[k]), bbox@ymin)
