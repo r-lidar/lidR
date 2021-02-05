@@ -62,6 +62,6 @@ test_that("classify_noise ivf works", {
 
   expect_true("Classification" %in% n)
   expect_equal(sort(unique(las@data$Classification)), c(1L, 2L, 9L, 18L))
-  expect_equal(sum(las@data$Classification == LASNOISE), 13L)
+  expect_equal(sum(las@data$Classification == LASNOISE), 12L)
 })
 

@@ -8,7 +8,6 @@
 #include "myomp.h"
 #include "SpatialIndex.h"
 #include <limits>
-#include <boost/functional/hash.hpp>
 #include <boost/geometry.hpp>
 
 using namespace lidR;
@@ -708,20 +707,25 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
 
 void LAS::filter_isolated_voxel(double res, unsigned int isolated)
 {
-  typedef std::array<int, 3> Array;
+  double xmin = min(X);
+  double ymin = min(Y);
+  double zmin = min(Z);
+  double xmax = max(X);
+  double ymax = max(Y);
+  double zmax = max(Z);
 
-  double xoffset = X[0];
-  double yoffset = Y[0];
-  double zoffset = Z[0];
+  unsigned int width = std::floor((xmax - xmin) / res);
+  unsigned int height = std::floor((ymax - ymin) / res);
+  //unsigned int depth = std::floor((zmax - zmin) / res);
 
   // Stores for a given voxel the number of point in its 27 voxels neighbourhood
-  std::unordered_map<Array, unsigned int, boost::hash<Array> > dynamic_registry;
+  std::unordered_map<unsigned int, unsigned int> dynamic_registry;
 
   for (unsigned int n = 0 ; n < npoints ; n++)
   {
-    int nx = std::floor((X[n] - xoffset) / res);
-    int ny = std::floor((Y[n] - yoffset) / res);
-    int nz = std::floor((Z[n] - zoffset) / res);
+    int nx = std::floor((X[n] - xmin) / res);
+    int ny = std::floor((Y[n] - ymin) / res);
+    int nz = std::floor((Z[n] - zmin) / res);
 
     // Add one in the 27 neighbouring voxel of this point
     for (int i : {-1,0,1})
@@ -732,7 +736,7 @@ void LAS::filter_isolated_voxel(double res, unsigned int isolated)
         {
           if (!(i == 0 && j == 0 && k == 0))
           {
-            Array key = {nx + i, ny + j, nz + k};
+            unsigned int key = (nx+i) + (ny+j)*width + (nz+k)*width*height;
             dynamic_registry.insert({key, 0});
             dynamic_registry[key]++;
           }
@@ -745,10 +749,10 @@ void LAS::filter_isolated_voxel(double res, unsigned int isolated)
   // Check if the number of points in its neighbourhood is above the threshold
   for (unsigned int n = 0 ; n < npoints ; n++)
   {
-    int nx = std::floor((X[n] - xoffset) / res);
-    int ny = std::floor((Y[n] - yoffset) / res);
-    int nz = std::floor((Z[n] - zoffset) / res);
-    Array key = {nx, ny, nz};
+    int nx = std::floor((X[n] - xmin) / res);
+    int ny = std::floor((Y[n] - ymin) / res);
+    int nz = std::floor((Z[n] - zmin) / res);
+    unsigned int key = nx + ny*width + nz*width*height;
     filter[n] = dynamic_registry[key] <= isolated;
   }
 
