@@ -740,10 +740,10 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
 
   h2("Checking CRS consistency...")
 
-  s = length(unique(data$EPSG))
+  s = length(unique(data[["CRS"]]))
 
   if (s > 1L)
-    fail("Inconsistent EPSG codes")
+    fail("Inconsistent CRS accross files")
   else
     ok()
 

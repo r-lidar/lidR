@@ -89,10 +89,13 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   {
     header        <- rlas:::lasheaderreader(x)
     header        <- LASheader(header)
-    epsg          <- epsg(header)
     PHB           <- header@PHB
     names(PHB)    <- phblab
-    PHB$EPSG      <- epsg
+
+    if (use_wktcs(header))
+      PHB[["CRS"]] <- wkt(header)
+    else
+      PHB[["CRS"]] <- epsg(header)
 
     # Compatibility with rlas 1.3.0
     if (!is.null( PHB[["Number.of.points.by.return"]]))
