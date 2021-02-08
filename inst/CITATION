@@ -1,7 +1,7 @@
 citHeader("To cite package lidR in publications use both:")
 
 citEntry(entry="Article",
-         author = "Jean-Romain, Roussel and David Auty and Nicholas C. Coops and Piotr Tompalski and Tristan R.H. Goodbody and Andrew Sánchez Meador and Jean-François Bourdon and Florian de Boissieu and Alexis Achim",
+         author = "Jean-Romain Roussel and David Auty and Nicholas C. Coops and Piotr Tompalski and Tristan R.H. Goodbody and Andrew Sánchez Meador and Jean-François Bourdon and Florian de Boissieu and Alexis Achim",
          title = "lidR: An R package for analysis of Airborne Laser Scanning (ALS) data",
          journal = "Remote Sensing of Environment",
          volume = "251",
