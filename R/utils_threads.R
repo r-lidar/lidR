@@ -82,14 +82,31 @@ get_future_workers = function()
     return(1L)
   }
 
-  if (is(strategy, "cluster")) # e.g. plan(multisession or  plan(cluster) or plan(cluster, workers =  makeCluster(3, type='SOCK'))
+  if (is(strategy, "multicore")) # e.g. plan(multicore)
+  {
+    verbose("Parallel strategy: multicore")
+
+    if (is.numeric(n))            # e.g. plan(multicore, workers = 2L)
+      return(n)
+
+    if (is.call(n))               # e.g. plan(multisession or plan(cluster)
+    {
+      n <- eval(n)
+      if (is.numeric(n))
+        return(n)
+      else
+        return(NULL)
+    }
+  }
+
+  if (is(strategy, "cluster")) # e.g. plan(multisession) or plan(cluster) or plan(cluster, workers =  makeCluster(3, type='SOCK'))
   {
     verbose("Parallel strategy: cluster")
 
     if (is.numeric(n))            # e.g. plan(multisession, workers = 2L)
       return(n)
 
-    if (is.call(n))               # e.g. plan(multisession or plan(cluster)
+    if (is.call(n))               # e.g. plan(multisession) or plan(cluster)
     {
        n <- eval(n)
        if (is.numeric(n))
