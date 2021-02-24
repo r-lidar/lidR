@@ -65,5 +65,6 @@ grid_density = function(las, res = 4)
   else
     X <- grid_metrics(las, ~list(point_density = .N, pulse_density = length(unique(pulseID))), res)
 
+  X[is.na(X)] <- 0
   return(X/resolution^2)
 }
