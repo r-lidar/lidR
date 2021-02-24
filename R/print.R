@@ -132,7 +132,7 @@ setMethod("show", "LAScatalog", function(object)
   if (is.nan(density)) density <- 0
 
   coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- coord.ref$input
+  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
 
   if (area > 1000*1000/2)
   {
