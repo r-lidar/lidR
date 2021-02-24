@@ -16,9 +16,11 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: attribution of a WKT string with `projection()` when using an epsg code as input (`projection(las) <- 12345`).
 - Fix: partial processing mode now respects the raster alignment when processed by file
 - Fix: `readLAScatalog()` now reads the WKT CRS of LAS files format 1.4. To support both EPSG and WKT the table of attribute of a `LAScatalog` now has a column named `CRS` that replace former column `EPSG`.
+- Fix: `print()` for a `LAScatalog` now prints the CRS exactly like `print` for `LAS`.
 - Doc: documentation of `options(lidR.check.nested.parallelism = FALSE)` was missing. Information can now be found in `?lidR-package` and `?lidR-parallelism`
 - Enhance: in `catalog_apply()` if `lidR.check.nested.parallelism = FALSE` it now respects the input of `set_lidr_thread()` instead of the output of `get_lidr_threads()`. For example if `set_lidr_thread(0)` it now propagates the information 0 (all cores) instead of the output of `get_lidr_thread()` which might be e.g. 4 on the master worker but might be different on the slave workers. Similarly `set_lidr_thread(20)` will request 20 cores to the workers even if `get_lidr_thread()` returns 4 on the local machine.
 - Enhance: `set_lidr_thread()` accepts inputs < 1 such as 0.5 or 0.25 to mean 'half' or 'quarter' of available cores.
+- Enhance: `grid_density()` now returns 0 for pixels with 0 points instead of `NA` which make more sense and corresponds more to the truth.
 
 ## lidR v3.1.1 (Release date: 2020-01-22)
 
