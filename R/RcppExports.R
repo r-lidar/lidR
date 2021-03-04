@@ -41,6 +41,10 @@ C_highest <- function(las, layout) {
     .Call(`_lidR_C_highest`, las, layout)
 }
 
+C_lowest <- function(las, layout) {
+    .Call(`_lidR_C_lowest`, las, layout)
+}
+
 C_in_polygon <- function(las, wkt, ncpu) {
     .Call(`_lidR_C_in_polygon`, las, wkt, ncpu)
 }

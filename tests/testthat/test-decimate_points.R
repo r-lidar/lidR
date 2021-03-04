@@ -20,8 +20,19 @@ test_that("decimate_points random algorithm works", {
 test_that("decimate_points highest algorithm works", {
   lasdec = decimate_points(las, highest(2))
   xdec = grid_density(lasdec, res = 5)
+  zmean = mean(lasdec$Z)
 
   expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.23, 0.25))
+  expect_equal(zmean, 16.25, tolerance = 0.01)
+})
+
+test_that("decimate_points lowest algorithm works", {
+  lasdec = decimate_points(las, lowest(2))
+  xdec = grid_density(lasdec, res = 5)
+  zmean = mean(lasdec$Z)
+
+  expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.23, 0.25))
+  expect_equal(zmean, 7.42, tolerance = 0.01)
 })
 
 test_that("decimate_points fails with unproper catalog options", {

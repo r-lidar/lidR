@@ -156,9 +156,9 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' This function is made to be used in \link{decimate_points}. It implements an algorithm that
-#' creates a grid with a given resolution and filters the point cloud by selecting the highest point
-#' within each cell.
+#' These functions are made to be used in \link{decimate_points}. They implements algorithms that
+#' creates a grid with a given resolution and filters the point cloud by selecting the highest/lowest
+#' point within each cell.
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
 #'
@@ -173,6 +173,12 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' # Select the highest point within each cell of an overlayed grid
 #' thinned = decimate_points(las, highest(4))
 #' #plot(thinned)
+#'
+#' # Select the lowest point within each cell of an overlayed grid
+#' thinned = decimate_points(las, lowest(4))
+#' #plot(thinned)
+#' @rdname maxima
+#' @name maxima
 highest = function(res = 1)
 {
   assert_is_a_number(res)
@@ -190,6 +196,28 @@ highest = function(res = 1)
   class(f) <- LIDRALGORITHMDEC
   return(f)
 }
+
+#' @rdname maxima
+#' @family point cloud decimation algorithms
+#' @export
+lowest = function(res = 1)
+{
+  assert_is_a_number(res)
+  assert_all_are_positive(res)
+
+  res <- lazyeval::uq(res)
+
+  f = function(las)
+  {
+    assert_is_valid_context(LIDRCONTEXTDEC, "lowest")
+    layout  <- rOverlay(las, res)
+    return(C_lowest(las, layout))
+  }
+
+  class(f) <- LIDRALGORITHMDEC
+  return(f)
+}
+
 
 .selected_pulses = function(pulseID, n)
 {

@@ -137,6 +137,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_lowest
+LogicalVector C_lowest(S4 las, S4 layout);
+RcppExport SEXP _lidR_C_lowest(SEXP lasSEXP, SEXP layoutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< S4 >::type layout(layoutSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_lowest(las, layout));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_in_polygon
 LogicalVector C_in_polygon(S4 las, std::string wkt, int ncpu);
 RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktSEXP, SEXP ncpuSEXP) {
@@ -507,6 +518,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},
+    {"_lidR_C_lowest", (DL_FUNC) &_lidR_C_lowest, 2},
     {"_lidR_C_in_polygon", (DL_FUNC) &_lidR_C_in_polygon, 3},
     {"_lidR_C_lasdetectshape", (DL_FUNC) &_lidR_C_lasdetectshape, 6},
     {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 7},

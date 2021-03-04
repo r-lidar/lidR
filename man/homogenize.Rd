@@ -35,7 +35,7 @@ plot(grid_density(thinned, 10))
 }
 \seealso{
 Other point cloud decimation algorithms: 
-\code{\link{highest}()},
+\code{\link{maxima}},
 \code{\link{random}()}
 }
 \concept{point cloud decimation algorithms}

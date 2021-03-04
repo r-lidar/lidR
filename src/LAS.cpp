@@ -501,7 +501,7 @@ void LAS::filter_local_maxima(NumericVector ws)
   return;
 }
 
-void LAS::filter_with_grid(S4 layout)
+void LAS::filter_with_grid(S4 layout, bool max)
 {
   S4 extent   = layout.slot("extent");
   int ncols   = layout.slot("ncols");
@@ -512,9 +512,10 @@ void LAS::filter_with_grid(S4 layout)
   double ymax = extent.slot("ymax");
   double xres = (xmax - xmin) / ncols;
   double yres = (ymax - ymin) / nrows;
+  int limit = (max) ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
 
   std::vector<int> output(ncols*nrows);
-  std::fill(output.begin(), output.end(), std::numeric_limits<int>::min());
+  std::fill(output.begin(), output.end(), limit);
 
   for (unsigned int i = 0 ; i < npoints ; i++)
   {
@@ -534,20 +535,24 @@ void LAS::filter_with_grid(S4 layout)
 
     int cell = row * ncols + col;
 
-    if (output[cell] == std::numeric_limits<int>::min())
+    if (output[cell] == limit)
     {
       output[cell] = i;
     }
     else
     {
       double zref = Z[output[cell]];
-      if (zref < z) output[cell] = i;
+      if (max) {
+        if (zref < z) output[cell] = i;
+      } else {
+        if (zref > z) output[cell] = i;
+      }
     }
   }
 
   for (unsigned int i = 0 ; i < output.size() ; i++)
   {
-    if (output[i] > std::numeric_limits<int>::min())
+    if (output[i] != limit)
       filter[output[i]] = true;
   }
 

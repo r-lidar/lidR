@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.1.2 (Release date: ...)
 
 - New: the class `LASheader` has a new slot `@EVLR` for the extended variable length records. `print()` has been extended to display EVLR. While this change is compatible with `rlas <= 1.3.9` it is only used with version of `rlas >= 1.3.10`. 
+- New: algorithm `lowest()` for `decimate_points()`
 - Fix: usban outside the range of representable values of type 'char' for spatial indexes built with 0 point.
 - Fix: usban outside the range of representable values of type 'long int' for `ivc()` because of `boost`.
 - Fix: build failure with GCC 4.x

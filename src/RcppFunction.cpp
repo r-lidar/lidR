@@ -53,7 +53,15 @@ NumericVector C_smooth(S4 las, double size, int method, int shape, double sigma,
 LogicalVector C_highest(S4 las, S4 layout)
 {
   LAS pt(las);
-  pt.filter_with_grid(layout);
+  pt.filter_with_grid(layout, true);
+  return Rcpp::wrap(pt.filter);
+}
+
+// [[Rcpp::export(rng = false)]]
+LogicalVector C_lowest(S4 las, S4 layout)
+{
+  LAS pt(las);
+  pt.filter_with_grid(layout, false);
   return Rcpp::wrap(pt.filter);
 }
 
