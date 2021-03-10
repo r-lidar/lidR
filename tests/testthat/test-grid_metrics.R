@@ -134,8 +134,9 @@ test_that("grid_metric works with a RasterLayer as input instead of a resolution
 
   m1 <- grid_metrics(las, ~length(Z), r)
 
-  expect_equal(raster::extent(m1), raster::extent(684756, 684831, 5017767, 5018007))
+  expect_equal(raster::extent(m1), raster::extent(r))
   expect_equal(sum(!is.na(m1[])), 80L)
+  expect_equal(sum(is.na(m1[])), 160L)
 
   # --- no matching bbox
 
