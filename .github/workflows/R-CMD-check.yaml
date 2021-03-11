@@ -112,5 +112,5 @@ jobs:
 
       - name: Test coverage
         if: matrix.config.os == 'ubuntu-20.04' && matrix.config.r == 'devel'
-        covr::codecov(type = "all")
+        run: covr::codecov(type = "all")
         shell: Rscript {0}
