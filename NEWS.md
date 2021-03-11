@@ -1,11 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.1.2 (Release date: ...)
+## lidR v3.1.2 (Release date: 2021-03-11)
 
-- New: the class `LASheader` has a new slot `@EVLR` for the extended variable length records. `print()` has been extended to display EVLR. While this change is compatible with `rlas <= 1.3.9` it is only used with version of `rlas >= 1.3.10`. 
+- New: the class `LASheader` has a new slot `@EVLR` for the extended variable length records. `print()` has been extended to display EVLR. While this change is compatible with `rlas <= 1.3.9` it is only used with version of `rlas >= 1.4.0`. 
 - New: algorithm `lowest()` for `decimate_points()`
 - Fix: usban outside the range of representable values of type 'char' for spatial indexes built with 0 point.
-- Fix: usban outside the range of representable values of type 'long int' for `ivc()` because of `boost`.
 - Fix: build failure with GCC 4.x
 - Fix: `catalog_apply()` now works with cluster plan `plan(cluster)` meaning that it can be used on HPC e.g. with MDPI. We took advantage of this bug to better detect the parallel strategy used and disable or not OpenMP. When `lidR` is not able to figure out if the strategy involves multiple machines or multiple cores of a single machine, then a warning is thrown and OpenMP is disabled by security.
     ```
@@ -21,15 +20,15 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Doc: documentation of `options(lidR.check.nested.parallelism = FALSE)` was missing. Information can now be found in `?lidR-package` and `?lidR-parallelism`
 - Enhance: in `catalog_apply()` if `lidR.check.nested.parallelism = FALSE` it now respects the input of `set_lidr_thread()` instead of the output of `get_lidr_threads()`. For example if `set_lidr_thread(0)` it now propagates the information 0 (all cores) instead of the output of `get_lidr_thread()` which might be e.g. 4 on the master worker but might be different on the slave workers. Similarly `set_lidr_thread(20)` will request 20 cores to the workers even if `get_lidr_thread()` returns 4 on the local machine.
 - Enhance: `set_lidr_thread()` accepts inputs < 1 such as 0.5 or 0.25 to mean 'half' or 'quarter' of available cores.
-- Enhance: `grid_density()` now returns 0 for pixels with 0 points instead of `NA` which make more sense and corresponds more to the truth.
+- Enhance: `grid_density()` now returns 0 for pixels with 0 points instead of `NA` which make more sense and corresponds to what should be expected.
 
-## lidR v3.1.1 (Release date: 2020-01-22)
+## lidR v3.1.1 (Release date: 2021-01-22)
 
 - Fix usban issue: outside the range of representable values of type 'int' for spatial indexes built with 0 point.
 - Fix usban issue: outside the range of representable values of type 'int' when quantizing or counting non quantized values that are not quantizable according the the given scale and offset.
 - Remove lax files in example data.
 
-## lidR v3.1.0 (Release date: 2020-01-15)
+## lidR v3.1.0 (Release date: 2021-01-15)
 
 #### MAJOR NEW FEATURES
 
