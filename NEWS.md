@@ -2,6 +2,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.1.3 (Release date: ...)
 
+- Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411).
 
 ## lidR v3.1.2 (Release date: 2021-03-11)
 

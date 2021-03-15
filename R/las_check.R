@@ -609,6 +609,7 @@ las_check.LAS = function(las, print = TRUE, ...)
     return(warnerr)
 }
 
+#' @export
 las_check.LAScluster = function(las, print = TRUE, ...)
 {
   f <- basename(las@files)
