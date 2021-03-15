@@ -640,7 +640,6 @@ las_check.LAS = function(las, print = TRUE, ...)
 #' @export
 las_check.LAScluster = function(las, print = TRUE, ...)
 {
-  print("call")
   f <- basename(las@files)
   if (length(f) > 1) stop("Internal error: several files in the LAScluster. Please report this issue")
 
