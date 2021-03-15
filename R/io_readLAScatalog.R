@@ -60,10 +60,10 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   finfo <- file.info(folder)
 
-  if (all(!finfo$isdir))
+  if (all(is.na(finfo$isdir)))
+    stop(glue::glue("'{folder}' does not exist."), call. = FALSE)
+  else if (all(!finfo$isdir))
     files <- normalizePath(folder)
-  else if (!dir.exists(folder))
-    stop(glue::glue("{folder} does not exist."))
   else
   {
     p <- list(...)
