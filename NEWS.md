@@ -1,5 +1,8 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.1.3 (Release date: ...)
+
+
 ## lidR v3.1.2 (Release date: 2021-03-11)
 
 - New: the class `LASheader` has a new slot `@EVLR` for the extended variable length records. `print()` has been extended to display EVLR. While this change is compatible with `rlas <= 1.3.9` it is only used with version of `rlas >= 1.4.0`. 
