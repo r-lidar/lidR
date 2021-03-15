@@ -52,7 +52,7 @@
 #' @param ... Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
 #' all the files and performs a deep inspection.
 #'
-#' @return A list with two elements named \code{warnings} and \code{errors}. This list is returned
+#' @return A list with three elements named \code{message}, \code{warnings} and \code{errors}. This list is returned
 #' invisibly if \code{print = TRUE}. If \code{deep = TRUE} a nested list is returned with one element
 #' per file.
 #'
@@ -80,12 +80,13 @@ las_check.LAS = function(las, print = TRUE, ...)
   {
     green = crayon::green
     red = crayon::red
-    orange = crayon::yellow
+    yellow = crayon::yellow
+    orange = crayon::make_style("orange")
     silver = crayon::silver
   }
   else
   {
-    green <- red <- orange <- silver <- function(x) { return(x) } # nocov
+    green <- red <- orange <- yellow <- silver <- function(x) { return(x) } # nocov
   }
 
   h1    <- function(x)   {if (print) cat("\n", x)}
@@ -98,13 +99,14 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   warnings <- character(0)
   errors <- character(0)
+  infos <- character(0)
 
   fail  <- function(msg) {
     if (print) {
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", red(g("   \u2717 {x}")))
+        for (x in msg) cat("\n", red(g("   \U2717 {x}")))
       }
     }
 
@@ -116,11 +118,23 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", orange(g("  \u26A0 {x}")))
+        for (x in msg) cat("\n", orange(g("  \U26A0 {x}")))
       }
     }
 
     if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
+  }
+
+  info  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
+        ok()
+      } else {
+        for (x in msg) cat("\n", yellow(g("  \U1F6C8 {x}")))
+      }
+    }
+
+    if (length(msg) > 0) { for (x in msg) infos <<- append(infos, x) }
   }
 
   xscale <- las@header@PHB$`X scale factor`
@@ -323,7 +337,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       msg = c(msg, g("'EdgeOfFlightline' attribute is not populated."))
   }
 
-  warn(msg)
+  info(msg)
 
   h2("Checking gpstime incoherances")
 
@@ -367,7 +381,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       msg = c(msg, g("{s} points flagged 'keypoint'."))
   }
 
-  warn(msg)
+  info(msg)
 
   h2("Checking user data attribute...")
 
@@ -378,7 +392,7 @@ las_check.LAS = function(las, print = TRUE, ...)
     s = sum(data[["UserData"]] != 0)
 
     if (s > 0)
-      warn(g("{s} points have a non 0 UserData attribute. This probably has a meaning."))
+      info(g("{s} points have a non 0 UserData attribute. This probably has a meaning."))
     else
       ok()
   }
@@ -600,6 +614,7 @@ las_check.LAS = function(las, print = TRUE, ...)
     skip()
 
   warnerr = list(
+    messages = infos,
     warnings = warnings,
     errors = errors)
 
@@ -612,6 +627,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 #' @export
 las_check.LAScluster = function(las, print = TRUE, ...)
 {
+  print("call")
   f <- basename(las@files)
   if (length(f) > 1) stop("Internal error: several files in the LAScluster. Please report this issue")
 
@@ -665,22 +681,26 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   {
     green = crayon::green
     red = crayon::red
-    orange = crayon::yellow
+    yellow = crayon::yellow
+    orange = crayon::make_style("orange")
     silver = crayon::silver
   }
   else
   {
-    green <- red <- orange <- silver <- function(x) { return(x) } # nocov
+    green <- red <- orange <- yellow <- silver <- function(x) { return(x) } # nocov
   }
+
 
   warnings <- character(0)
   errors <- character(0)
+  infos <- character(0)
 
   h1    <- function(x) {if (print) cat("\n", x)}
   h2    <- function(x) {if (print) cat("\n  -", x)}
-  ok    <- function()  {if (print) cat(green(" \u2713"))}
-  fail  <- function(x) {if (print) { cat("\n", red(g("   \u2717 {x}"))) } ; errors <<- append(errors, x)}
-  warn  <- function(x) {if (print) { cat("\n", orange(g("   \u26A0 {x}"))) } ; warnings <<- append(warnings, x)}
+  ok    <- function()  {if (print) cat(green(" \U2713"))}
+  fail  <- function(x) {if (print) { cat("\n", red(g("   \U2717 {x}"))) } ; errors <<- append(errors, x)}
+  warn  <- function(x) {if (print) { cat("\n", orange(g("   \U26A0 {x}"))) } ; warnings <<- append(warnings, x)}
+  info  <- function(x) {if (print) { cat("\n", orange(g("   \U1F6C8 {x}"))) } ; infos <<- append(infos, x)}
   #skip  <- function()  {cat(silver(g(" skipped")))}
   no    <- function()  {if (print) cat(red(g(" no")))}
   yes   <- function()  {if (print) cat(green(g(" yes")))}
@@ -817,6 +837,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
     no()
 
   warnerr = list(
+    messages = infos,
     warnings = warnings,
     errors = errors)
 

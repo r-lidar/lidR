@@ -17,7 +17,7 @@ vector with the reported warnings and errors.}
 all the files and performs a deep inspection.}
 }
 \value{
-A list with two elements named \code{warnings} and \code{errors}. This list is returned
+A list with three elements named \code{message}, \code{warnings} and \code{errors}. This list is returned
 invisibly if \code{print = TRUE}. If \code{deep = TRUE} a nested list is returned with one element
 per file.
 }
