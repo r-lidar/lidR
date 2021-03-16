@@ -2,6 +2,13 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.2.0 (Release date: ...)
 
+#### NEW FEATURES
+
+1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and a spatial criterion (e.g. inside a polygon)
+```r
+las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
+```
+
 ## lidR v3.1.3 (Release date: ...)
 
 - Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411).

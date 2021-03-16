@@ -88,6 +88,7 @@ Collate:
     'catalog_select.R'
     'classify_ground.R'
     'classify_noise.R'
+    'classify_poi.R'
     'clip_roi.R'
     'cloud_metrics.R'
     'clusters_apply.R'
