@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411).
 - Fix: `readLAScatalog()` throw an more informative error when attempting to read an non-existing folder.
+- Fix: the LAScatalog processing engine printed the outputs twice for rare function that print something like `las_check()`  ([#414](https://github.com/Jean-Romain/lidR/issues/414)
 - New: `las_check()` introduces a new type of message called "message". Some message previously classified as "warning" are now classified as "message". Warnings are now displayed in orange and messages in yellow. The output of `las_check()` has now 3 items instead of 2.
 
 ## lidR v3.1.2 (Release date: 2021-03-11)
