@@ -25,11 +25,12 @@
 #
 # ===============================================================================
 
-#' Merge LAS objects
+#' Merge LAS* objects
 #'
-#' Merge LAS objects
+#' Merge LAS* objects
 #'
-#' @param ... LAS objects
+#' @param ... LAS or LAScatalog objects
+#' @name rbind
 #' @export
 rbind.LAS <- function(...)
 {
@@ -63,3 +64,30 @@ rbind.LAS <- function(...)
 
   return(LAS(data, dots[[1]]@header, dots[[1]]@proj4string, index = dots[[1]]@index))
 }
+
+#' @name rbind
+#' @export
+rbind.LAScatalog <- function(...)
+{
+  dots <- list(...)
+  names(dots) <- NULL
+  assert_all_are_same_crs(dots)
+
+  data <- data.table::rbindlist(lapply(dots, function(x) { x@data } ))
+
+  ctg <- dots[[1]]
+  ctg@data <- data
+
+  minx <- min(data[["Min.X"]])
+  miny <- min(data[["Min.Y"]])
+  maxx <- min(data[["Max.X"]])
+  maxy <- min(data[["Max.Y"]])
+  ctg@bbox <- matrix(c(minx, maxx, miny, maxy), ncol = 2, byrow = T)
+
+  chk = las_check(ctg, print = FALSE)
+  for (msg in chk$warnings) warning(msg, call. = FALSE)
+  for (msg in chk$errors) warning(msg, call. = FALSE)
+
+  return(ctg)
+}
+

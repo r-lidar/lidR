@@ -40,3 +40,13 @@ test_that("rbind fails with different CRS", {
 
   expect_error(rbind(las1, las4), "Different CRS")
 })
+
+test_that("rbind works with LAScatalog", {
+
+  expect_error( rbind(megaplot_ctg, mixedconifer_ctg), "Different CRS")
+
+  megaplot_ctg@proj4string <- sp::CRS()
+  topography_ctg@proj4string <- sp::CRS()
+
+  expect_warning(rbind(megaplot_ctg, topography_ctg))
+})

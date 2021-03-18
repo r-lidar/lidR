@@ -8,6 +8,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ```r
 las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
 ```
+2. New function `rbind()` for `LAScatalog`.
 
 ## lidR v3.1.3 (Release date: ...)
 
