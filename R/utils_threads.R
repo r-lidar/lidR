@@ -91,7 +91,7 @@ get_future_workers = function()
 
     if (is.call(n))               # e.g. plan(multisession or plan(cluster)
     {
-      n <- eval(n)
+      n <- eval(n, envir = environment(parallelly::availableCores))
       if (is.numeric(n))
         return(n)
       else
@@ -108,7 +108,7 @@ get_future_workers = function()
 
     if (is.call(n))               # e.g. plan(multisession) or plan(cluster)
     {
-       n <- eval(n)
+       n <- eval(n, envir = environment(parallelly::availableCores))
        if (is.numeric(n))
          return(n)
        else
@@ -142,7 +142,7 @@ must_disable_openmp = function()
 
   workers    <- getWorkers()
   threads    <- getThreads()
-  cores      <- future::availableCores()
+  cores      <- parallelly::availableCores()
 
   if (is.null(workers))
   {
