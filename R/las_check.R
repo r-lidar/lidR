@@ -76,26 +76,13 @@ las_check.LAS = function(las, print = TRUE, ...)
   head <- as.list(las@header)
   g    <- glue::glue
 
-  if (requireNamespace("crayon", quietly = TRUE))
-  {
-    green = crayon::green
-    red = crayon::red
-    yellow = crayon::yellow
-    orange = crayon::make_style("orange")
-    silver = crayon::silver
-  }
-  else
-  {
-    green <- red <- orange <- yellow <- silver <- function(x) { return(x) } # nocov
-  }
-
   h1    <- function(x)   {if (print) cat("\n", x)}
   h2    <- function(x)   {if (print) cat("\n  -", x)}
-  ok    <- function()    {if (print) cat(green(" \u2713"))}
-  skip  <- function()    {if (print) cat(silver(g(" skipped")))}
-  no    <- function()    {if (print) cat(red(g(" no")))}
-  yes   <- function()    {if (print) cat(green(g(" yes")))}
-  maybe <- function()    {if (print) cat(orange(g(" maybe")))}
+  ok    <- function()    {if (print) cat(colourise(" \u2713", "green"))}
+  skip  <- function()    {if (print) cat(colourise(g(" skipped"), "light gray"))}
+  no    <- function()    {if (print) cat(colourise(g(" no"), "red"))}
+  yes   <- function()    {if (print) cat(colourise(g(" yes"), "green"))}
+  maybe <- function()    {if (print) cat(colourise(g(" maybe"), "yellow"))}
 
   warnings <- character(0)
   errors <- character(0)
@@ -106,7 +93,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", red(g("   \U2717 {x}")))
+        for (x in msg) cat("\n", colourise(g("   \U2717 {x}"), "red"))
       }
     }
 
@@ -118,7 +105,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", orange(g("  \U26A0 {x}")))
+        for (x in msg) cat("\n", colourise(g("  \U26A0 {x}"), "yellow"))
       }
     }
 
@@ -130,7 +117,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", yellow(g("  \U1F6C8 {x}")))
+        for (x in msg) cat("\n", colourise(g("  \U1F6C8 {x}"), "green"))
       }
     }
 
@@ -689,34 +676,20 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   data <- las@data
   g    <- glue::glue
 
-  if (requireNamespace("crayon", quietly = TRUE))
-  {
-    green = crayon::green
-    red = crayon::red
-    yellow = crayon::yellow
-    orange = crayon::make_style("orange")
-    silver = crayon::silver
-  }
-  else
-  {
-    green <- red <- orange <- yellow <- silver <- function(x) { return(x) } # nocov
-  }
-
-
   warnings <- character(0)
   errors <- character(0)
   infos <- character(0)
 
   h1    <- function(x) {if (print) cat("\n", x)}
   h2    <- function(x) {if (print) cat("\n  -", x)}
-  ok    <- function()  {if (print) cat(green(" \U2713"))}
-  fail  <- function(x) {if (print) { cat("\n", red(g("   \U2717 {x}"))) } ; errors <<- append(errors, x)}
-  warn  <- function(x) {if (print) { cat("\n", orange(g("   \U26A0 {x}"))) } ; warnings <<- append(warnings, x)}
-  info  <- function(x) {if (print) { cat("\n", orange(g("   \U1F6C8 {x}"))) } ; infos <<- append(infos, x)}
+  ok    <- function()  {if (print) cat(colourise(" \U2713", "green"))}
+  fail  <- function(x) {if (print) { cat("\n", colourise(g("   \U2717 {x}"), "red")) } ; errors <<- append(errors, x)}
+  warn  <- function(x) {if (print) { cat("\n", colourise(g("   \U26A0 {x}"), "yellow")) } ; warnings <<- append(warnings, x)}
+  info  <- function(x) {if (print) { cat("\n", colourise(g("   \U1F6C8 {x}")), "green") } ; infos <<- append(infos, x)}
   #skip  <- function()  {cat(silver(g(" skipped")))}
-  no    <- function()  {if (print) cat(red(g(" no")))}
-  yes   <- function()  {if (print) cat(green(g(" yes")))}
-  maybe <- function()  {if (print) cat(orange(g(" maybe")))}
+  no    <- function()  {if (print) cat(colourise(g(" no"), "red"))}
+  yes   <- function()  {if (print) cat(colourise(g(" yes"), "green"))}
+  maybe <- function()  {if (print) cat(colourise(g(" maybe"), "yellow"))}
 
   # ==== data =====
 
@@ -867,4 +840,59 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
     return(invisible(warnerr))
   else
     return(warnerr)
+}
+
+# code from testthat
+# https://github.com/r-lib/testthat/blob/717b02164def5c1f027d3a20b889dae35428b6d7/R/colour-text.r
+
+colourise <- function(text, fg = "black", bg = NULL) {
+  term <- Sys.getenv()["TERM"]
+  colour_terms <- c("xterm-color","xterm-256color", "screen", "screen-256color")
+
+  if (nchar(Sys.getenv('R_TESTS')) != 0 || !any(term %in% colour_terms, na.rm = TRUE)) {
+    return(text)
+  }
+
+  .fg_colours <- c(
+    "black" = "0;30",
+    "blue" = "0;34",
+    "green" = "0;32",
+    "cyan" = "0;36",
+    "red" = "0;31",
+    "purple" = "0;35",
+    "brown" = "0;33",
+    "light gray" = "0;37",
+    "dark gray" = "1;30",
+    "light blue" = "1;34",
+    "light green" = "1;32",
+    "light cyan" = "1;36",
+    "light red" = "1;31",
+    "light purple" = "1;35",
+    "yellow" = "1;33",
+    "white" = "1;37"
+  )
+
+  .bg_colours <- c(
+    "black" = "40",
+    "red" = "41",
+    "green" = "42",
+    "brown" = "43",
+    "blue" = "44",
+    "purple" = "45",
+    "cyan" = "46",
+    "light gray" = "47"
+  )
+
+  col_escape <- function(col) {
+    paste0("\033[", col, "m")
+  }
+
+  col <- .fg_colours[tolower(fg)]
+  if (!is.null(bg)) {
+    col <- paste0(col, .bg_colours[tolower(bg)], sep = ";")
+  }
+
+  init <- col_escape(col)
+  reset <- col_escape("0")
+  paste0(init, text, reset)
 }

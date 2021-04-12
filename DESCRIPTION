@@ -41,7 +41,6 @@ Imports:
 Suggests:
     EBImage,
     concaveman,
-    crayon,
     gstat,
     hexbin,
     mapview,

@@ -10,6 +10,10 @@ las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = la
 ```
 2. New function `rbind()` for `LAScatalog`.
 
+#### MISCELANEOUS
+
+1. Remove `crayon` dependency
+
 ## lidR v3.1.3 (Release date: ...)
 
 - Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411).
