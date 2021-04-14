@@ -333,7 +333,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   assert_is_all_of(treetops, "SpatialPointsDataFrame")
   assert_is_a_number(max_cr_factor)
   assert_is_a_number(exclusion)
-  assert_all_are_in_open_range(max_cr_factor, 0, 1)
+  assert_all_are_positive(max_cr_factor)
   assert_all_are_in_open_range(exclusion, 0, 1)
 
   chm            <- lazyeval::uq(chm)

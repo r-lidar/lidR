@@ -209,6 +209,10 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
 engine_eval_state <- function(future)
 {
+  # Fix #414
+  sink(paste0(tempdir(), "/dev_null"))
+  on.exit(sink(NULL))
+
   cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
 
   if (is.null(future))
