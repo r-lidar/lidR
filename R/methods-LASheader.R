@@ -28,7 +28,7 @@
 #' Create a \code{LASheader} object
 #'
 #' Creates a  \code{LASheader} object either from a raw \code{list} containing all the
-#' elements named according to the \code{rlas} package or creates a header from a  code{data.frame}
+#' elements named according to the \code{rlas} package or creates a header from a  \code{data.frame}
 #' or \code{data.table} containing a point-cloud. In this case it will generate a header
 #' according to the data using \link[rlas:header_create]{rlas::header_create()}. It will
 #' guess the LAS file format, the point data format, initialize the scale factors and offsets
@@ -56,8 +56,8 @@
 #' header = LASheader(data)
 #' header
 #'
-#' # XYZ are given with 3 decimals. This was not inferred by the function so we change
-#' # that manually
+#' # XYZ are given with 3 decimals. This was not inferred by the
+#' # function so we change that manually
 #' header@PHB[["X scale factor"]] <- 0.001
 #' header@PHB[["Y scale factor"]] <- 0.001
 #' header@PHB[["Z scale factor"]] <- 0.001
@@ -67,6 +67,18 @@
 #'
 #' las <- LAS(data, header)
 #' las
+#'
+#' # The function inferred a LAS 1.2 format 1 which is correct
+#' # Upgrade to LAS 1.4 for the example
+#' header@VLR <- list() # Erase VLR previously written
+#' header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
+#' header@PHB[["Version Minor"]] <- 4L
+#' header@PHB[["Header Size"]] <- 375L
+#' header@PHB[["Offset to point data"]] <- 375L
+#' wkt(header) <- sf::st_crs("EPSG:32618")$wkt
+#' header
+#' las1.4 <- LAS(data, header)
+#' las1.4
 #' @export
 LASheader <- function(data = list()) {return(new("LASheader", data))}
 
