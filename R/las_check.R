@@ -68,21 +68,17 @@ las_check = function(las, print = TRUE, ...)
 }
 
 #' @export
-las_check.LAS = function(las, print = TRUE, ...)
+las_check.LASheader = function(las, print = TRUE, ...)
 {
-  assert_is_a_bool(print)
+  xscale  <- las@PHB[["X scale factor"]]
+  xoffset <- las@PHB[["X offset"]]
+  yscale  <- las@PHB[["Y scale factor"]]
+  yoffset <- las@PHB[["Y offset"]]
+  zscale  <- las@PHB[["Z scale factor"]]
+  zoffset <- las@PHB[["Z offset"]]
 
-  data <- las@data
-  head <- as.list(las@header)
+  head <- as.list(las)
   g    <- glue::glue
-
-  h1    <- function(x)   {if (print) cat("\n", x)}
-  h2    <- function(x)   {if (print) cat("\n  -", x)}
-  ok    <- function()    {if (print) cat(colourise(" \u2713", "green"))}
-  skip  <- function()    {if (print) cat(colourise(g(" skipped"), "light gray"))}
-  no    <- function()    {if (print) cat(colourise(g(" no"), "red"))}
-  yes   <- function()    {if (print) cat(colourise(g(" yes"), "green"))}
-  maybe <- function()    {if (print) cat(colourise(g(" maybe"), "yellow"))}
 
   warnings <- character(0)
   errors <- character(0)
@@ -105,7 +101,7 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", colourise(g("  \U26A0 {x}"), "yellow"))
+        for (x in msg) cat("\n", colourise(g("   \U26A0 {x}"), "yellow"))
       }
     }
 
@@ -117,19 +113,141 @@ las_check.LAS = function(las, print = TRUE, ...)
       if (length(msg) == 0) {
         ok()
       } else {
-        for (x in msg) cat("\n", colourise(g("  \U1F6C8 {x}"), "green"))
+        for (x in msg) cat("\n", colourise(g("   \U1F6C8 {x}"), "green"))
       }
     }
 
     if (length(msg) > 0) { for (x in msg) infos <<- append(infos, x) }
   }
 
-  xscale <- las@header@PHB$`X scale factor`
-  xoffset <- las@header@PHB$`X offset`
-  yscale <- las@header@PHB$`Y scale factor`
-  yoffset <- las@header@PHB$`Y offset`
-  zscale <- las@header@PHB$`Z scale factor`
-  zoffset <- las@header@PHB$`Z offset`
+  h1("Checking the header")
+
+  h2("Checking header completeness...")
+
+  msg = character(0)
+  msg = c(msg, rlas::is_defined_offsets(head, "vector"))
+  msg = c(msg, rlas::is_defined_scalefactors(head, "vector"))
+  msg = c(msg, rlas::is_defined_version(head, "vector"))
+  msg = c(msg, rlas::is_defined_pointformat(head, "vector"))
+  msg = c(msg, rlas::is_defined_date(head, "vector"))
+  msg = c(msg, rlas::is_defined_globalencoding(head, "vector"))
+
+  fail(msg)
+
+  h2("Checking scale factor validity...")
+
+  fail(rlas::is_valid_scalefactors(head, "vector"))
+
+  h2("Checking point data format ID validity...")
+
+  fail(rlas::is_valid_pointformat(head, "vector"))
+
+  h2("Checking extra bytes attributes validity...")
+
+  fail(rlas::is_valid_extrabytes(head, "vector"))
+
+  h2("Checking the bounding box validity...")
+
+  bbx = c(head[["Min X"]], head[["Max X"]])
+  bby = c(head[["Min Y"]], head[["Max Y"]])
+  bbz = c(head[["Min Z"]], head[["Max Z"]])
+
+  i <- fast_countunquantized(bbx, xscale, xoffset)
+  j <- fast_countunquantized(bby, yscale, yoffset)
+  k <- fast_countunquantized(bbz, zscale, zoffset)
+
+  if (i + j + k > 0)
+  {
+    if (i > 0) fail("Stored resolution of 'Min X' and/or 'Max X' not compatible with 'X offset' and 'X scale factor'")
+    if (j > 0) fail("Stored resolution of 'Min Y' and/or 'Max Y' not compatible with 'Y offset' and 'Y scale factor'")
+    if (k > 0) fail("Stored resolution of 'Min Z' and/or 'Max Z' not compatible with 'Z offset' and 'Z scale factor'")
+  }
+  else
+  {
+    ok()
+  }
+
+  h2("Checking coordinate reference system...")
+
+  code    <- if (use_epsg(las)) epsg(las) else 0
+  swkt    <- wkt(las)
+  failure <- FALSE
+
+  if (use_epsg(las) && swkt != "")
+  { fail("Global encoding WKT bits set to 0 but a WKT string found in the header") ; failure = TRUE }
+
+  if (use_wktcs(las) && code != 0)
+  { fail("Global encoding WKT bits set to 1 but an epsg code found in the header") ; failure = TRUE }
+
+  if (!failure)
+    ok()
+
+  warnerr = list(
+    messages = infos,
+    warnings = warnings,
+    errors = errors)
+
+  if (print)
+    return(invisible(warnerr))
+  else
+    return(warnerr)
+}
+
+#' @export
+las_check.LAS = function(las, print = TRUE, ...)
+{
+  assert_is_a_bool(print)
+
+  data <- las@data
+  head <- as.list(las@header)
+  g    <- glue::glue
+
+  warnings <- character(0)
+  errors <- character(0)
+  infos <- character(0)
+
+  fail  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
+        ok()
+      } else {
+        for (x in msg) cat("\n", colourise(g("   \U2717 {x}"), "red"))
+      }
+    }
+
+    if (length(msg) > 0) { for (x in msg) errors <<- append(errors, x) }
+  }
+
+  warn  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
+        ok()
+      } else {
+        for (x in msg) cat("\n", colourise(g("   \U26A0 {x}"), "yellow"))
+      }
+    }
+
+    if (length(msg) > 0) { for (x in msg) warnings <<- append(warnings, x) }
+  }
+
+  info  <- function(msg) {
+    if (print) {
+      if (length(msg) == 0) {
+        ok()
+      } else {
+        for (x in msg) cat("\n", colourise(g("   \U1F6C8 {x}"), "green"))
+      }
+    }
+
+    if (length(msg) > 0) { for (x in msg) infos <<- append(infos, x) }
+  }
+
+  xscale <- las@header@PHB[["X scale factor"]]
+  xoffset <- las@header@PHB[["X offset"]]
+  yscale <- las@header@PHB[["Y scale factor"]]
+  yoffset <- las@header@PHB[["Y offset"]]
+  zscale <- las@header@PHB[["Z scale factor"]]
+  zoffset <- las@header@PHB[["Z offset"]]
 
   # ==== data =====
 
@@ -390,54 +508,50 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   # ==== header ====
 
-  h1("Checking the header")
+  head_chk <- las_check(las@header, print = print, ...)
+  infos <- c(infos, head_chk[["infos"]])
+  errors <- c(errors, head_chk[["errors"]])
+  warnings <- c(warnings, head_chk[["warnings"]])
 
-  h2("Checking header completeness...")
+  # ==== data vs header ====
+
+  h1("Checking header vs data adequacy")
+
+  h2("Checking attributes vs. point format...")
 
   msg = character(0)
-  msg = c(msg, rlas::is_defined_offsets(head, "vector"))
-  msg = c(msg, rlas::is_defined_scalefactors(head, "vector"))
-  msg = c(msg, rlas::is_defined_version(head, "vector"))
-  msg = c(msg, rlas::is_defined_pointformat(head, "vector"))
-  msg = c(msg, rlas::is_defined_date(head, "vector"))
-  msg = c(msg, rlas::is_defined_globalencoding(head, "vector"))
+  msg = c(msg, rlas::is_NIR_in_valid_format(head, data, "vector"))
+  msg = c(msg, rlas::is_gpstime_in_valid_format(head, data, "vector"))
+  msg = c(msg, rlas::is_RGB_in_valid_format(head, data, "vector"))
 
   fail(msg)
 
-  h2("Checking scale factor validity...")
+  h2("Checking header bbox vs. actual content...")
 
-  fail(rlas::is_valid_scalefactors(head, "vector"))
-
-  h2("Checking point data format ID validity...")
-
-  fail(rlas::is_valid_pointformat(head, "vector"))
-
-  h2("Checking extra bytes attributes validity...")
-
-  fail(rlas::is_valid_extrabytes(head, "vector"))
-
-  h2("Checking the bounding box validity...")
-
-  bbx = c(head[["Min X"]], head[["Max X"]])
-  bby = c(head[["Min Y"]], head[["Max Y"]])
-  bbz = c(head[["Min Z"]], head[["Max Z"]])
-
-  i <- fast_countunquantized(bbx, xscale, xoffset)
-  j <- fast_countunquantized(bby, yscale, yoffset)
-  k <- fast_countunquantized(bbz, zscale, zoffset)
-
-  if (i + j + k > 0)
-  {
-    if (i > 0) fail("Stored resolution of 'Min X' and/or 'Max X' not compatible with 'X offset' and 'X scale factor'")
-    if (j > 0) fail("Stored resolution of 'Min Y' and/or 'Max Y' not compatible with 'Y offset' and 'Y scale factor'")
-    if (k > 0) fail("Stored resolution of 'Min Z' and/or 'Max Z' not compatible with 'Z offset' and 'Z scale factor'")
+  if (any(c("X", "Y", "Z") %in% whichnas)) {
+    skip()
   }
-  else
-  {
-    ok()
+  else {
+    msg = character(0)
+    msg = c(msg, rlas::is_XY_larger_than_bbox(head, data, "vector"))
+    msg = c(msg, rlas::is_XY_smaller_than_bbox(head, data, "vector"))
+    msg = c(msg, rlas::is_Z_in_bbox(head, data, "vector"))
+    warn(msg)
   }
 
-  h2("Checking coordinate reference sytem...")
+  h2("Checking header number of points vs. actual content...")
+
+  warn(rlas::is_number_of_points_in_accordance_with_header(head, data, "vector"))
+
+  h2("Checking header return number vs. actual content...")
+
+  warn(rlas::is_number_of_points_by_return_in_accordance_with_header(head, data, "vector"))
+
+  # ==== CRS ====
+
+  h1("Checking coordinate reference system...")
+
+  h2("Checking if the CRS was understood by R...")
 
   code    <- if (use_epsg(las)) epsg(las) else 0
   swkt    <- wkt(las)
@@ -490,12 +604,6 @@ las_check.LAS = function(las, print = TRUE, ...)
       ok()
   }
 
-  if (use_epsg(las) && swkt != "")
-  { fail("Global encoding WKT bits set to 0 but a WKT string found in the header") ; failure = TRUE }
-
-  if (use_wktcs(las) && code != 0)
-  { fail("Global encoding WKT bits set to 1 but an epsg code found in the header") ; failure = TRUE }
-
   if (code == 0 & swkt == "")
   {
     if (!is.na(lasproj@projargs))
@@ -504,40 +612,6 @@ las_check.LAS = function(las, print = TRUE, ...)
     if (!failure)
       ok()
   }
-
-  # ==== data vs header ====
-
-  h1("Checking header vs data adequacy")
-
-  h2("Checking attributes vs. point format...")
-
-  msg = character(0)
-  msg = c(msg, rlas::is_NIR_in_valid_format(head, data, "vector"))
-  msg = c(msg, rlas::is_gpstime_in_valid_format(head, data, "vector"))
-  msg = c(msg, rlas::is_RGB_in_valid_format(head, data, "vector"))
-
-  fail(msg)
-
-  h2("Checking header bbox vs. actual content...")
-
-  if (any(c("X", "Y", "Z") %in% whichnas)) {
-    skip()
-  }
-  else {
-    msg = character(0)
-    msg = c(msg, rlas::is_XY_larger_than_bbox(head, data, "vector"))
-    msg = c(msg, rlas::is_XY_smaller_than_bbox(head, data, "vector"))
-    msg = c(msg, rlas::is_Z_in_bbox(head, data, "vector"))
-    warn(msg)
-  }
-
-  h2("Checking header number of points vs. actual content...")
-
-  warn(rlas::is_number_of_points_in_accordance_with_header(head, data, "vector"))
-
-  h2("Checking header return number vs. actual content...")
-
-  warn(rlas::is_number_of_points_by_return_in_accordance_with_header(head, data, "vector"))
 
   # ==== Preprocessing ====
 
@@ -680,16 +754,9 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   errors <- character(0)
   infos <- character(0)
 
-  h1    <- function(x) {if (print) cat("\n", x)}
-  h2    <- function(x) {if (print) cat("\n  -", x)}
-  ok    <- function()  {if (print) cat(colourise(" \U2713", "green"))}
   fail  <- function(x) {if (print) { cat("\n", colourise(g("   \U2717 {x}"), "red")) } ; errors <<- append(errors, x)}
   warn  <- function(x) {if (print) { cat("\n", colourise(g("   \U26A0 {x}"), "yellow")) } ; warnings <<- append(warnings, x)}
   info  <- function(x) {if (print) { cat("\n", colourise(g("   \U1F6C8 {x}")), "green") } ; infos <<- append(infos, x)}
-  #skip  <- function()  {cat(silver(g(" skipped")))}
-  no    <- function()  {if (print) cat(colourise(g(" no"), "red"))}
-  yes   <- function()  {if (print) cat(colourise(g(" yes"), "green"))}
-  maybe <- function()  {if (print) cat(colourise(g(" maybe"), "yellow"))}
 
   # ==== data =====
 
@@ -841,6 +908,15 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   else
     return(warnerr)
 }
+
+h1    <- function(x) {if (get("print", envir = parent.frame())) cat("\n", x)}
+h2    <- function(x) {if (get("print", envir = parent.frame())) cat("\n  -", x)}
+ok    <- function()  {if (get("print", envir = parent.frame())) cat(colourise(" \u2713", "green"))}
+skip  <- function()  {if (get("print", envir = parent.frame())) cat(colourise(" skipped", "light gray"))}
+no    <- function()  {if (get("print", envir = parent.frame())) cat(colourise(" no", "red"))}
+yes   <- function()  {if (get("print", envir = parent.frame())) cat(colourise(" yes", "green"))}
+maybe <- function()  {if (get("print", envir = parent.frame())) cat(colourise(" maybe", "yellow"))}
+
 
 # code from testthat
 # https://github.com/r-lib/testthat/blob/717b02164def5c1f027d3a20b889dae35428b6d7/R/colour-text.r

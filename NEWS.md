@@ -8,9 +8,13 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ```r
 las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
 ```
-2. New function `rbind()` for `LAScatalog`.
 
-3. The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
+2. `LAScatalog`
+   -  New function `rbind()` for `LAScatalog`.
+
+2 `LASheader`
+   - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
+   - `las_check()` can now check a standalone `LASheader`
 
 #### MISCELANEOUS
 
