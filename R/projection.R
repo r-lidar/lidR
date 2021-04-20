@@ -435,7 +435,8 @@ epsg2CRS <- function(epsg, fail = FALSE)
   {
     crs <- tryCatch(
     {
-      sp::CRS(SRS_string = paste0("EPSG:", epsg))
+      sfcrs <- suppressWarnings(sf::st_crs(paste0("EPSG:", epsg)))
+      return(suppressWarnings(sp::CRS(SRS_string = sfcrs$wkt)))
     },
     error = function(e)
     {

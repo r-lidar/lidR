@@ -7,6 +7,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: the LAScatalog processing engine printed the outputs twice for rare function that print something like `las_check()`  ([#414](https://github.com/Jean-Romain/lidR/issues/414))
 - New: `las_check()` introduces a new type of message called "message". Some message previously classified as "warning" are now classified as "message". Warnings are now displayed in orange and messages in yellow. The output of `las_check()` has now 3 items instead of 2.
 - Enhance: `max_cr_factor` in `silva2019()` is now allowed to be in [0, inf[ instead of [0,1] (([#417](https://github.com/Jean-Romain/lidR/issues/417))
+- Enhance: added a workaround to avoid `sp` printing `proj_create: crs not found` for non recognized EPSG codes and avoid throwing warning `Discarded datum [...] in Proj4 definition`
 - Misc: removed `LazyData` in `DESCRIPTION`
 
 ## lidR v3.1.2 (Release date: 2021-03-11)
