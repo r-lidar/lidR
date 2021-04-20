@@ -13,7 +13,7 @@ wide LiDAR coverages split into many files.
 }
 \details{
 To learn more about lidR, start with the vignettes: browseVignettes(package = "lidR"). Users can also
-find unofficial supplementary documentation in the \href{https://github.com/Jean-Romain/lidR/wiki}{github wiki pages}.
+find unofficial supplementary documentation in the \href{https://jean-romain.github.io/lidRbook/}{lidR book}.
 To ask "how to" questions please ask on \href{https://gis.stackexchange.com/}{gis.stackexchange.com}
 with the tag \code{lidr}.
 }
@@ -58,6 +58,7 @@ Other contributors:
   \item Andrew Sánchez Meador (Implemented wing2015() for segment_snags()) [contributor]
   \item Bourdon Jean-François (Contributed to Roussel2020() for track_sensor()) [contributor]
   \item Gatziolis Demetrios (Implemented Gatziolis2019() for track_sensor()) [contributor]
+  \item Leon Steinmeier \email{Lenostatos@gmx.de} (Contributed to parallelization management) [contributor]
 }
 
 }

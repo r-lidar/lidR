@@ -83,6 +83,7 @@ get_lidr_threads = function()
 #'   future::plan() could not be evaluated. The latter might be the case when a
 #'   future::plan() involves complex architectures such as remote computers or
 #'   multiple nodes on a HPC.
+#' @noRd
 try_to_get_num_future_cores = function()
 {
   # nocov start
