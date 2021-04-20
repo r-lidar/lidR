@@ -7,11 +7,48 @@
 LASheader(data = list())
 }
 \arguments{
-\item{data}{a list containing the data from the header of a las file.}
+\item{data}{a list containing the data from the header of a LAS file. Can also be
+a \code{data.frame} or \code{data.table}}
 }
 \value{
 An object of class \code{LASheader}
 }
 \description{
-Create a \code{LASheader} object
+Creates a  \code{LASheader} object either from a raw \code{list} containing all the
+elements named according to the \code{rlas} package or creates a header from a  code{data.frame}
+or \code{data.table} containing a point-cloud. In this case it will generate a header
+according to the data using \link[rlas:header_create]{rlas::header_create()}. It will
+guess the LAS file format, the point data format, initialize the scale factors and offsets
+but these initialization and guesses may not suit user's needs. Users may be advised to
+modify manually the results to fits their specific need.
+}
+\examples{
+data = data.frame(X = c(339002.889, 339002.983, 339002.918),
+                  Y = c(5248000.515, 5248000.478, 5248000.318),
+                  Z = c(975.589, 974.778, 974.471),
+                  gpstime = c(269347.28141, 269347.28142, 269347.28143),
+                  Intensity = c(82L, 54L, 27L),
+                  ReturnNumber = c(1L, 1L, 2L),
+                  NumberOfReturns = c(1L, 1L, 2L),
+                  ScanDirectionFlag = c(1L, 1L, 1L),
+                  EdgeOfFlightline = c(1L, 0L, 0L),
+                  Classification = c(1L, 1L, 1L),
+                  ScanAngleRank = c(-21L, -21L, -21L),
+                  UserData = c(32L, 32L, 32L),
+                  PointSourceID = c(17L, 17L, 17L))
+
+header = LASheader(data)
+header
+
+# XYZ are given with 3 decimals. This was not inferred by the function so we change
+# that manually
+header@PHB[["X scale factor"]] <- 0.001
+header@PHB[["Y scale factor"]] <- 0.001
+header@PHB[["Z scale factor"]] <- 0.001
+
+# Record an EPSG code
+epsg(header) <- 32618
+
+las <- LAS(data, header)
+las
 }

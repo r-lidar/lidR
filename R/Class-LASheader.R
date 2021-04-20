@@ -47,6 +47,9 @@ setClass(
 
 setMethod("initialize", "LASheader", function(.Object, data = list())
 {
+  if (is.data.frame(data))
+    data <- rlas::header_create(data)
+
   stopifnot(is.list(data))
 
   vlr <- list()

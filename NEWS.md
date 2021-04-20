@@ -10,6 +10,8 @@ las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = la
 ```
 2. New function `rbind()` for `LAScatalog`.
 
+3. The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
+
 #### MISCELANEOUS
 
 1. Remove `crayon` dependency
