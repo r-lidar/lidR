@@ -5,14 +5,14 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 #### NEW FEATURES
 
 1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and a spatial criterion (e.g. inside a polygon)
-```r
-las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
-```
+    ```r
+    las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
+    ```
 
 2. `LAScatalog`
    -  New function `rbind()` for `LAScatalog`.
 
-2 `LASheader`
+3. `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
    - `las_check()` can now check a standalone `LASheader`
 
