@@ -48,7 +48,11 @@ setClass(
 setMethod("initialize", "LASheader", function(.Object, data = list())
 {
   if (is.data.frame(data))
+  {
     data <- rlas::header_create(data)
+    if (data[["X scale factor"]] == 1e-8)
+      warning("A scale factor of 1e-8 was infered from the data when creating a LASheader. Data is likely to be over precise", call. = FALSE)
+  }
 
   stopifnot(is.list(data))
 

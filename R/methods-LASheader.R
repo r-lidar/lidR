@@ -58,6 +58,7 @@
 #'
 #' # XYZ are given with 3 decimals. This was not inferred by the
 #' # function so we change that manually
+#' # (Note: from package rlas 1.4.1 this is now inferred properly in most cases)
 #' header@PHB[["X scale factor"]] <- 0.001
 #' header@PHB[["Y scale factor"]] <- 0.001
 #' header@PHB[["Z scale factor"]] <- 0.001
