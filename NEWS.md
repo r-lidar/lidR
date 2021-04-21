@@ -15,7 +15,12 @@ las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = la
 2 `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
    - `las_check()` can now check a standalone `LASheader`
-
+   
+4. Full waveform: with most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR` provides some compatible functions. However the support of FWF is still a work in progress in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently, tools provided by `lidR` may also change until the support of FWF becomes mature and stable in `rlas`.
+   - New function `interpret_waveform()` to transform waveform into a regular point cloud
+   - New supported flag `W` for parameter `select` in `readLAS()`
+   - New automatic colouring scheme for attribute `Amplitude` in `plot(las, color = "Amplitude")` that aims to be used with FWF.
+   
 #### MISCELANEOUS
 
 1. Remove `crayon` dependency

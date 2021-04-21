@@ -39,7 +39,7 @@ A LAS object
 Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If several files are read at
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
-LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0,1,2,3,5,6,7,8 are supported.\cr\cr
+LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
 \code{readLAS} is the original function and always works. Using one of the \code{read*LAS} functions
 adds information to the returned object to register a point-cloud type. Registering the correct point
 type \strong{may} improve the performance of some functions by enabling users to select an appropriate spatial index.
@@ -56,7 +56,8 @@ The supported entries are t - gpstime, a - scan angle, i - intensity, n - number
 r - return number, c - classification, s - synthetic flag, k - keypoint flag, w - withheld flag,
 o - overlap flag (format 6+), u - user data, p - point source ID, e - edge of flight line flag,
 d - direction of scan flag, R - red channel of RGB color, G - green channel of RGB color,
-B - blue channel of RGB color, N - near-infrared channel. C - scanner channel (format 6+).
+B - blue channel of RGB color, N - near-infrared channel, C - scanner channel (format 6+),
+W - Full waveform.
 Also numbers from 1 to 9 for the extra bytes data numbers 1 to 9. 0 enables all extra bytes to be
 loaded and '*' is the wildcard that enables everything to be loaded from the LAS file. \cr
 Note that x, y, z are implicit and always loaded. 'xyzia' is equivalent to 'ia'.\cr\cr
@@ -67,6 +68,18 @@ those from \code{LASlib} and can be found by running the following command: \cod
 (see also \link[rlas:read.las]{rlas::read.las}). From \code{rlas} v1.3.6 the transformation commands
 can also be passed via the argument filter.
 }
+\section{Full waveform}{
+
+With most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR`
+provides some compatible functions. However the support of FWF is still a work in progress
+in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently,
+tools provided by `lidR` may also change until the support of FWF becomes mature and
+stable in `rlas`. See also \link[rlas:read.las]{rlas::read.las}.\cr\cr
+Remember that FWF represents an insanely huge amount of data. It terms of memory it is like
+having between 10 to 100 times more points. Consequently loading FWF data in R should be
+restricted to relatively small point clouds.
+}
+
 \section{Multispectral data}{
 
 Multispectral laser data are often stored in 3 different files. If this is the case

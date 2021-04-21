@@ -102,6 +102,7 @@ Collate:
     'filter_surfacepoints.R'
     'find_localmaxima.R'
     'find_trees.R'
+    'fullwaveform.R'
     'generate_las.R'
     'grid_canopy.R'
     'grid_density.R'
