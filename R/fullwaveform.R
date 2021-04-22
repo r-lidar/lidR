@@ -20,6 +20,9 @@
 #' }
 interpret_waveform <- function(las)
 {
+  if (utils::packageVersion("rlas") <= package_version("1.4.0"))
+    stop("Package rlas > 1.4.0 is required for this function")
+
   header <- as.list(las@header)
   data <- las@data
   fwf <- rlas::fwf_interpreter(header, data)
