@@ -9,7 +9,7 @@ R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Ap
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) and the [wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package.
+:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) and the [wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
 
 To cite the package use `citation()` from within R:
 
@@ -92,34 +92,33 @@ col <- random.colors(50)
 plot(chm, col = col)
 ```
 
-### Other tools
+### Full waveform
 
-`lidR` has many other tools and is a continuously improved package. If it does not exist in `lidR` please ask us for a new feature, and depending on the feasibility we will be glad to implement your requested feature.
+<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/FWF/fwf.gif">
+
+lidR can read full waveform data from LAS files and provides interpreter functions to convert the raw data into something easier to manage and display in R. The support of FWF is still in early stage of development.
+
+```r
+fwf <- readLAS("<fullwaveform.las>")
+
+# Interpret the waveform into something easier to manage
+las <- interpret_waveform(fwf)
+
+# Display discrete points and waveforms
+x <- plot(fwf, colorPalette = "red", bg = "white")
+plot(las, color = "Amplitude", add = x)
+```
 
 # About
 
 **lidR** is developed openly at [Laval University](https://www.ulaval.ca/en/).
 
 * Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](https://aware.forestry.ubc.ca/); grantee [Prof Nicholas Coops](https://forestry.ubc.ca/faculty-profile/nicholas-coops/).
-* Development of the `lidR` package between 2018 and 2020 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://mffp.gouv.qc.ca/).
+* Development of the `lidR` package between 2018 and 2021 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://mffp.gouv.qc.ca/).
 
 <img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/logos.svg" width="600" align="center">
 
-# Install `lidR`
-
-```r
-# The latest released version from CRAN with
-install.packages("lidR")
-
-# The latest stable development version from github with
-remotes::install_github("Jean-Romain/lidR")
-```
-
-To install the package from github make sure you have a working development environment.
-
-* **Windows**: Install [Rtools.exe](https://cran.r-project.org/bin/windows/Rtools/).  
-* **Mac**: Install `Xcode` from the Mac App Store.
-* **Linux**: Install the following libraries:
+# Install `lidR` dependencies on GNU/Linux
 
 ```
 # Ubuntu
@@ -131,7 +130,5 @@ sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx1
 sudo dnf install gdal-devel geos-devel udunits2-devel proj-devel mesa-libGL-devel mesa-libGLU-devel freetype-devel libjpeg-turbo-devel v8-devel
 ```
 
-# Changelog
 
-[See changelogs on NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
   
