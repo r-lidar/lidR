@@ -47,6 +47,8 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, in
   if (!data.table::is.data.table(data))
     stop("Invalid parameter data in constructor.")
 
+  names(data) <- fix_name_convention(names(data))
+
   rlas::is_defined_coordinates(data, "stop")
   rlas::is_valid_XYZ(data, "stop")
 
@@ -321,3 +323,14 @@ setMethod("[", c("LAS", "numeric"),  function(x, i)
   data = x@data[i]
   return(LAS(data, x@header, x@proj4string, FALSE, x@index))
 })
+
+fix_name_convention <- function(names)
+{
+  input <- tolower(names)
+  lasattr <- tolower(LASATTRIBUTES)
+  idx <- match(input, lasattr)
+  new <- LASATTRIBUTES[idx]
+  changed <- new != names
+  for (i in which(changed)) message(glue::glue("Attribute '{names[i]}' renamed '{new[i]}' to match with default attribute names."))
+  return(new)
+}

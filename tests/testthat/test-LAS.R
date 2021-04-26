@@ -2,6 +2,7 @@ context("LAS")
 
 las  <- megaplot
 data <- data.frame(X = runif(10), Y = runif(10), Z = runif(10))
+outs <- data.frame(x = runif(10), Y = runif(10), z = runif(10), pointsourceid = 1:10)
 
 test_that("Print a LAS object works", {
 
@@ -253,5 +254,12 @@ test_that("LAS build an empty point cloud with no header (#314)", {
   las = LAS(data.frame(X = numeric(0), Y = numeric(0), Z = numeric(0)))
   expect_equal(npoints(las), 0L)
   expect_equal(names(las@data), c("X", "Y", "Z"))
+})
+
+test_that("LAS rename the attribute", {
+  x <- outs[["x"]]
+  las = LAS(outs)
+  expect_equal(names(las@data), c("X", "Y", "Z", "PointSourceID"))
+  expect_reference(las@data[["X"]], x)
 })
 

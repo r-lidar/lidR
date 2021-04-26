@@ -16,7 +16,19 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
    - `las_check()` can now check a standalone `LASheader`
    
-4. Full waveform: with most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR` provides some compatible functions. However the support of FWF is still a work in progress in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently, tools provided by `lidR` may also change until the support of FWF becomes mature and stable in `rlas`.
+4. `LAS`
+   - The function `LAS` now automatically fix the case of attributes names to match the naming convention of the `rlas` package. This simplify the creation of compatible objects from non LAS files sources.
+   ```r
+   data <- data.frame(x = runif(10), Y = runif(10), z = runif(10), pointsourceid = 1:10)
+   las <- LAS(data)
+   #> Attribute 'x' renamed 'X' to match with default attribute names.
+   #> Attribute 'z' renamed 'Z' to match with default attribute names.
+   #> Attribute 'pointsourceid' renamed 'PointSourceID' to match with default attribute names.
+   las$PointSourceID
+   #> [1]  1  2  3  4  5  6  7  8  9 10
+   ```
+   
+5. Full waveform: with most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR` provides some compatible functions. However the support of FWF is still a work in progress in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently, tools provided by `lidR` may also change until the support of FWF becomes mature and stable in `rlas`.
    - New function `interpret_waveform()` to transform waveform into a regular point cloud
    - New supported flag `W` for parameter `select` in `readLAS()`
    - New automatic colouring scheme for attribute `Amplitude` in `plot(las, color = "Amplitude")` that aims to be used with FWF.
