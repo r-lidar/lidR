@@ -92,10 +92,11 @@ p2r = function(subcircle = 0, na.fill = NULL)
       hull <- convex_hull(las@data$X, las@data$Y)
 
       # buffer around convex hull
-      sphull <- sp::Polygon(hull)
-      sphull <- sp::SpatialPolygons(list(sp::Polygons(list(sphull), "null")))
-      hull   <- rgeos::gBuffer(sphull, width = raster::res(layout)[1])
-      hull   <- hull@polygons[[1]]@Polygons[[1]]@coords
+      hull <- sf::st_polygon(list(as.matrix(hull)))
+      hull <- sf::st_sfc(hull)
+      hull <- sf::st_buffer(hull, dist = raster::res(layout)[1])
+      hull <- sf::st_coordinates(hull)[,1:2]
+
       grid   <- raster::as.data.frame(layout, xy = TRUE, na.rm = TRUE)
       data.table::setDT(grid)
       data.table::setnames(grid, names(grid), c("X", "Y", "Z"))

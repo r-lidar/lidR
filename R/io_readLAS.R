@@ -147,7 +147,7 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
   las@proj4string <- files@proj4string
   las@index <- files@index
 
-  las@data[, buffer := LIDRNOBUFFER]
+  las@data[["buffer"]] <- rep(LIDRNOBUFFER, npoints(las))
 
   if (files@buffer > 0)
   {

@@ -293,7 +293,7 @@ engine_update_progress <- function(pb, cluster, state, p, j)
       bbox <- cluster@bbox
       graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = col)
     } else {
-      poly <- rgeos::readWKT(cluster@wkt)
+      poly <- sf::st_as_sfc(cluster@wkt)
       plot(poly, add = TRUE, col = col)
     }
   } else if (cluster@shape == LIDRCIRCLE) {

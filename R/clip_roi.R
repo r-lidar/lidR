@@ -133,7 +133,7 @@
 clip_roi = function(las, geometry, ...)
 {
   if (is.character(geometry))
-    geometry <- rgeos::readWKT(geometry, p4s = las@proj4string)
+    geometry <- sf::st_as_sfc(geometry, crs = sf::st_crs(las))
 
   if (is(geometry, "Polygon"))
     geometry <- sp::Polygons(list(geometry), ID = 1)
@@ -147,7 +147,7 @@ clip_roi = function(las, geometry, ...)
   if (is(geometry, "SpatialPoints") | is(geometry, "SpatialPointsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
-  if (is(geometry, "sf"))
+  if (is(geometry, "sf") | is(geometry, "sfc"))
   {
     if (all(sf::st_is(geometry, "POLYGON") | sf::st_is(geometry, "MULTIPOLYGON")))
     {
@@ -370,9 +370,10 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
   a  <- atan(dy/dx)
   rot <- matrix(c(cos(a), sin(a), -sin(a), cos(a)), ncol = 2)
   coords <- rbind(p1, p2)
-  line <- sp::SpatialLines(list(sp::Lines(sp::Line(coords), ID = "1")))
-  raster::crs(line) <- crs(las)
-  poly <- rgeos::gBuffer(line, width = width/2, capStyle = "FLAT")
+  line <- sf::st_linestring(coords)
+  line <- sf::st_sfc(line)
+  sf::st_crs(line) <- sf::st_crs(las)
+  poly <- sf::st_buffer(line, dist = width/2, endCapStyle = "FLAT")
   las <- clip_roi(las, poly)
 
   if (!xz) { return(las) }
@@ -427,11 +428,9 @@ clip_sf.LAScatalog = function(las, sf)
 {
   wkt  <- sf::st_as_text(sf::st_geometry(sf), digits = 10)
 
-  bboxes <- lapply(wkt, function(string)
-  {
-    spgeom <- rgeos::readWKT(string)
-    return(raster::extent(spgeom))
-  })
+  # We need the bounding box of each geometry to be able to leverage automatically spatial
+  # indexing of LAS files with LAX files
+  bboxes <- lapply(sf, function(x) { raster::extent(sf::st_bbox(x)) })
 
   output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf = sf)
 

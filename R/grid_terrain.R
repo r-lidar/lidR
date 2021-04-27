@@ -144,10 +144,10 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
       hull <- convex_hull(las@data$X, las@data$Y)
     }
 
-    hull <- sp::Polygon(hull)
-    hull <- sp::SpatialPolygons(list(sp::Polygons(list(hull), "null")))
-    hull <- rgeos::gBuffer(hull, width = raster::res(layout)[1])
-    hull <- hull@polygons[[1]]@Polygons[[1]]@coords
+    hull <- sf::st_polygon(list(as.matrix(hull)))
+    hull <- sf::st_sfc(hull)
+    hull <- sf::st_buffer(hull, dist = raster::res(layout)[1])
+    hull <- sf::st_coordinates(hull)[,1:2]
     keep <- sp::point.in.polygon(grid$X, grid$Y, hull[,1], hull[,2], TRUE) > 0
     if (!all(keep)) grid = grid[keep]
   }
