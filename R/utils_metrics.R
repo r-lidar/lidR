@@ -173,14 +173,14 @@ stdmetrics_z = function(z, dz = 1, th = 2, zmin = 0)
 
   pzabovemean <- fast_countover(z, zmean) / n * 100
 
-  if (zmax <= 0)
+  if (zmax <= zmin)
   {
     d <- rep(0, 9)
   }
   else
   {
     breaks <- seq(zmin, zmax, (zmax-zmin)/10)
-    d <- findInterval(z, breaks)
+    d <- findInterval(z[z>zmin], breaks)
     d <- fast_table(d, 10)
     d <- d / sum(d)*100
     d <- cumsum(d)[1:9]
