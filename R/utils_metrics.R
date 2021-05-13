@@ -179,7 +179,7 @@ stdmetrics_z = function(z, dz = 1, th = 2, zmin = 0)
   }
   else
   {
-    breaks <- seq(zmin, zmax, zmax/10)
+    breaks <- seq(zmin, zmax, (zmax-zmin)/10)
     d <- findInterval(z, breaks)
     d <- fast_table(d, 10)
     d <- d / sum(d)*100
