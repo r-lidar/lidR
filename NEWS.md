@@ -3,13 +3,14 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.1.3 (Release date: ...)
 
 - Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411)).
-- Fix: the LAScatalog processing engine printed the outputs twice for rare function that print something like `las_check()`  ([#414](https://github.com/Jean-Romain/lidR/issues/414))
+- Fix: the LAScatalog processing engine printed the outputs twice for rare functions that print something like `las_check()`  ([#414](https://github.com/Jean-Romain/lidR/issues/414))
 - Fix: `merge_spatial()` did not work with `sf` objects.
 - New: `las_check()` introduces a new type of message called "message". Some message previously classified as "warning" are now classified as "message". Warnings are now displayed in orange and messages in yellow. The output of `las_check()` has now 3 items instead of 2.
 - New: `stdmetrics_z` gains a new parameter `zmin = 0` to control the lower bound of the integration for metrics `zpcumx` (see [#424](https://github.com/Jean-Romain/lidR/issues/424).
 - Enhance: `max_cr_factor` in `silva2019()` is now allowed to be in [0, inf[ instead of [0,1] (([#417](https://github.com/Jean-Romain/lidR/issues/417))
 - Enhance: added a workaround to avoid `sp` printing `proj_create: crs not found` for non recognized EPSG codes and avoid throwing warning `Discarded datum [...] in Proj4 definition`
-- Enhance: `readLAScatalog()` throw an more informative error when attempting to read an non-existing folder.
+- Enhance: `readLAScatalog()` throws a more informative error when attempting to read an non-existing folder.
+- Enhance: `readXXXLAS()` now throws an error for `LAScluster` ([#430](https://github.com/Jean-Romain/lidR/issues/430)).
 - Doc: Updates and clarifications in the doc of `stdmetrics`.
 - Misc: removed `LazyData` in `DESCRIPTION`
 

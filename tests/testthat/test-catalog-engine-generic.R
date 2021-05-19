@@ -177,10 +177,10 @@ test_that("User get throw error if function does not return NULL for empty chun"
   }
 
   test2 <- function(cluster) {
-    stop("dummy error")
+    stop("dummy error", call. = FALSE)
   }
 
   expect_error(catalog_apply(ctg, test), "User's function does not return NULL")
-  expect_error(catalog_apply(ctg, test2), "User's function does not return NULL")
+  expect_error(catalog_apply(ctg, test2), "dummy error")
 })
 
