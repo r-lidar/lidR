@@ -36,6 +36,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 #### MISCELANEOUS
 
 1. Remove `crayon`, `rgeos` dependencies
+2. Package `RCSF` is now suggested only and is consequently no longer installed by default with lidR
 
 ## lidR v3.1.4 (Release date: ...)
 
