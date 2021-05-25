@@ -241,49 +241,11 @@ setMethod("projection<-", "LAS", function(x, value)
   # header depending on the LAS format (1.4 or above)
   # In addition we need this to work both with old and new proj and gdal
 
-  proj6 <- rgdal::new_proj_and_gdal()
-
-  if (is(value, "CRS"))
-  {
-    proj4 <- value@projargs
-    CRS <- value
-    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
-    if (is.null(wkt)) wkt = ""
-    epsg <- .find_epsg_code(CRS)
-  }
-  else if (is(value, "crs"))
-  {
-    if (proj6)
-    {
-      wkt <- value$wkt
-      CRS <- sp::CRS(SRS_string = wkt)
-      proj4 <- CRS@projargs
-      epsg <- .find_epsg_code(value)
-    }
-    else # nocov start
-    {
-      proj4 <- value$proj4string
-      CRS <- sp::CRS(proj4)
-      wkt <- rgdal::showWKT
-      epsg <- .find_epsg_code(value)
-    } # nocov end
-  }
-  else if (is.character(value))
-  {
-    CRS <- sp::CRS(SRS_string = value)
-    proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
-    epsg <- .find_epsg_code(CRS)
-  }
-  else if (is.numeric(value))
-  {
-    epsg <- value
-    CRS <- epsg2CRS(epsg)
-    proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
-  }
-  else
-    stop("'value' is not a CRS or a string or a number.")
+  all_crs <- all_crs_formats(value)
+  CRS <- all_crs[["CRS"]]
+  wkt <- all_crs[["wkt"]]
+  epsg <- all_crs[["epsg"]]
+  proj4 <- all_crs[["proj4"]]
 
   if (use_wktcs(x))
   {
@@ -325,6 +287,16 @@ setMethod("projection", "LAScatalog", function(x, asText = TRUE)
     return(proj4)
 })
 
+#' @export
+#' @rdname projection
+setMethod("projection<-", "LAScatalog", function(x, value)
+{
+  all_crs <- all_crs_formats(value)
+  x@proj4string <- all_crs[["CRS"]]
+  return(x)
+})
+
+
 # ==== CRS ====
 
 #' @export
@@ -356,6 +328,15 @@ setMethod("crs", "LAScatalog", function(x, asText = FALSE)
 {
   return(projection(x, asText))
 })
+
+#' @export
+#' @rdname projection
+setMethod("crs<-", "LAScatalog", function(x, ..., value)
+{
+  projection(x) <- value
+  return(x)
+})
+
 
 # ===== SPTRANSFORM ====
 
@@ -429,6 +410,8 @@ use_epsg.LASheader <- function(x) {
   return(!x@PHB[["Global Encoding"]][["WKT"]])
 }
 
+
+
 epsg2CRS <- function(epsg, fail = FALSE)
 {
   if (rgdal::new_proj_and_gdal())
@@ -478,6 +461,55 @@ wkt2CRS <- function(wkt, fail = FALSE)
   } # nocov end
 
   return(crs)
+}
+
+all_crs_formats = function(value)
+{
+  proj6 <- rgdal::new_proj_and_gdal()
+
+  if (is(value, "CRS"))
+  {
+    proj4 <- value@projargs
+    CRS <- value
+    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
+    if (is.null(wkt)) wkt = ""
+    epsg <- .find_epsg_code(CRS)
+  }
+  else if (is(value, "crs"))
+  {
+    if (proj6)
+    {
+      wkt <- value$wkt
+      CRS <- sp::CRS(SRS_string = wkt)
+      proj4 <- CRS@projargs
+      epsg <- .find_epsg_code(value)
+    }
+    else # nocov start
+    {
+      proj4 <- value$proj4string
+      CRS <- sp::CRS(proj4)
+      wkt <- rgdal::showWKT
+      epsg <- .find_epsg_code(value)
+    } # nocov end
+  }
+  else if (is.character(value))
+  {
+    CRS <- sp::CRS(SRS_string = value)
+    proj4 <- CRS@projargs
+    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
+    epsg <- .find_epsg_code(CRS)
+  }
+  else if (is.numeric(value))
+  {
+    epsg <- value
+    CRS <- epsg2CRS(epsg)
+    proj4 <- CRS@projargs
+    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
+  }
+  else
+    stop("'value' is not a CRS or a string or a number.", call. = FALSE)
+
+  return(list(epsg = epsg, CRS = CRS, proj4 = proj4, wkt = wkt))
 }
 
 .find_epsg_code <- function(x)
@@ -555,3 +587,4 @@ wkt2proj <- function(wkt, fail = FALSE)
   })
 }
 # nocov end
+

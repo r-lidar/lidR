@@ -17,6 +17,7 @@
 \alias{projection,LAS-method}
 \alias{projection<-,LAS-method}
 \alias{projection,LAScatalog-method}
+\alias{projection<-,LAScatalog-method}
 \alias{crs,LASheader-method}
 \alias{crs,LAS-method}
 \alias{crs<-,LAS-method}
@@ -52,6 +53,8 @@ wkt(object) <- value
 \S4method{projection}{LAS}(x) <- value
 
 \S4method{projection}{LAScatalog}(x, asText = TRUE)
+
+\S4method{projection}{LAScatalog}(x) <- value
 
 \S4method{crs}{LASheader}(x, asText = FALSE)
 

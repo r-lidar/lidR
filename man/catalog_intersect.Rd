@@ -2,21 +2,20 @@
 % Please edit documentation in R/catalog_intersect.R
 \name{catalog_intersect}
 \alias{catalog_intersect}
-\title{Subset a LAScatalog with a Spatial* object}
+\title{Subset a LAScatalog with a spatial object}
 \usage{
 catalog_intersect(ctg, y)
 }
 \arguments{
 \item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object}
 
-\item{y}{Extent, Raster*, SpatialPolygons*, SpatialLines* or SpatialPoints* object}
+\item{y}{Extent, Raster*, Spatial*, sf, sfc, Extent or bbox objects}
 }
 \value{
 A LAScatalog
 }
 \description{
-Subset a LAScatalog with a Spatial* object to keep only the tiles of interest. Internally, it uses the
-function \link[raster:intersect]{intersect} from \code{raster} with a tweak to make it work
-with a LAScatalog. It can be used to select tiles of interest that encompass Spatial* objects such
-as SpatialPoints, SpatialPolygons or SpatialLines.
+Subset a LAScatalog with a spatial object to keep only the tiles of interest. It can be
+used to select tiles of interest that encompass spatial objects such as Spatial* objects,
+Raster* objects or sf, sfc objects
 }

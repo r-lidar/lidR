@@ -10,11 +10,20 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     ```
 
 2. `LAScatalog`
-   -  New function `rbind()` for `LAScatalog`.
+   - New function `rbind()` for `LAScatalog`.
+   - New function `projection()` and `crs()` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actualy called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
+   ```r
+   projection(ctg) <- st_crs(3625)
+   # or
+   projection(ctg) <- 3625
+   ```
 
 3. `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
    - `las_check()` can now check a standalone `LASheader`
+   ```r
+   las_check(las@header)
+   ```
    
 4. `LAS`
    - The function `LAS` now automatically fix the case of attributes names to match the naming convention of the `rlas` package. This simplify the creation of compatible objects from non LAS files sources.
