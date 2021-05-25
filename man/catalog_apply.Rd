@@ -102,9 +102,10 @@ NULL outputs
 \item \code{need_output_file = TRUE} the function complains if no output file template is provided.
 \item \code{raster_alignment = ...} the function checks the alignment of the chunks. This option is
 important if the output is a raster. See below for more details.
-\item \code{automerge = TRUE} by defaut the engine returns a \verb{list`` with one item per chunk. If }automerge = TRUE\verb{, it tries to merge the outputs into a single object: a }Raster*``, a
-\verb{Spatial*}, a `LAS*` similar to other functions of the package. This is a fail-safe
-option so in the worst case, if the merge fails, the `list` is returned.
+\item \code{automerge = TRUE} by defaut the engine returns a \code{list} with one item per chunk. If
+\code{automerge = TRUE}, it tries to merge the outputs into a single object: a \verb{Raster*}, a
+\verb{Spatial*}, a \verb{LAS*} similar to other functions of the package. This is a fail-safe
+option so in the worst case, if the merge fails, the \code{list} is returned.
 \item \code{autoread = TRUE}. Introduced in v3.0.0 this option enables to get rid of the first steps of the
 function i.e \code{readLAS()} and \verb{if (is.empty())}. In this case the function must take two
 objects as input, first a \code{LAS} object and second a \code{Extent} from \code{raster}.
@@ -121,10 +122,9 @@ raster_alignment = list(res = 20)
 # check if chunks are aligned with a raster of resolution 20
 # that starts at (0,10)
 raster_alignment = list(res = 20, start = c(0,10))
-```
+}
 
 See also \link{grid_metrics} for more details.
-}
 }
 
 \section{Supported processing options}{

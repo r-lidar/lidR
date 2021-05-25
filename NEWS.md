@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.1.4 (Release date: ...)
+
+- Doc: fix some code block rendering in `catalog_apply` man page
+
 ## lidR v3.1.3 (Release date: 2021-05-20)
 
 - Fix: `las_check(..., deep = TRUE)` was not working in parallel ([#411](https://github.com/Jean-Romain/lidR/issues/411)).
