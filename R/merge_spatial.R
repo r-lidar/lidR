@@ -77,7 +77,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
 {
   if (is(source, "sf"))
   {
-    if (sf::st_geometry_type(source) != "POLYGON")
+    if (any(!sf::st_geometry_type(source) %in% c("POLYGON", "MULTIPOLYGON")))
       stop("Only POLYGON geometry types are supported for sf objects", call. = FALSE)
 
     box <- raster::extent(las)

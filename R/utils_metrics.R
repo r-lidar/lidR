@@ -29,12 +29,17 @@
 
 #' Predefined standard metrics functions
 #'
-#' Predefined functions computable at pixel level (\link{grid_metrics}), hexagonal cell level
-#' (\link{hexbin_metrics}), point cloud level (\link{cloud_metrics}), tree level (\link{tree_metrics})
-#' voxel level (\link{voxel_metrics}) and point level  (\link{point_metrics}). Each function comes
-#' with a convenient shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way
-#' to compute user-defined metrics rather than to provide them. However, for efficiency and to save
-#' time, a set of standard metrics has been predefined (see details).
+#' Predefined metrics functions intendend to me used in \code{*_metrics} function such as
+#' \link{grid_metrics}, \link{hexbin_metrics}, \link{cloud_metrics}, \link{tree_metrics},
+#' \link{voxel_metrics} or \link{point_metrics}. Each function comes with a convenient
+#' shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way
+#' to compute user-defined metrics rather than to provide them. However, for efficiency and
+#' to save time, sets of standard metrics have been predefined (see details). Every function
+#' can be computed by every \code{*_metrics} functions however \code{stdmetrics*} are
+#' more pixel-based metrics, \code{stdtreemetrics} are more tree-based metrics and
+#' \code{stdshapemetrics} are more point-based metrics. For example the metric zmean
+#' computed by \code{stdmetrics_z} makes sense when computed at the pixel level but brings
+#' no information at the voxel level.
 #'
 #' The function names, their parameters and the output names of the metrics rely on a nomenclature chosen for brevity:
 #' \itemize{
@@ -56,7 +61,7 @@
 #' intensity at a given percentile of height.\cr\cr
 #' Each function has a convenient associated variable. It is the name of the function, with a
 #' dot before the name. This enables the function to be used without writing parameters. The cost
-#' of such a feature is inflexibility. It corresponds to a predefined behavior (see examples)\cr
+#' of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr
 #' \describe{
 #' \item{\code{stdmetrics}}{is a combination of \code{stdmetrics_ctrl} + \code{stdmetrics_z} +
 #' \code{stdmetrics_i} +  \code{stdmetrics_rn}}
@@ -72,6 +77,9 @@
 #' @param pulseID The number referencing each pulse
 #' @param dz numeric. Layer thickness  metric \link[=entropy]{entropy}
 #' @param th numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.
+#' @param zmin numeric. Lower bound of the integral for zpcumx metrics.
+#' See \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{wiki page} and Wood et al.
+#' (2008) reference.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "*", filter = "-keep_random_fraction 0.5")
@@ -122,6 +130,11 @@
 #' # Users can write their own convenient shorcuts like this:
 #' .myMetrics = ~myMetrics(Z, Intensity, ReturnNumber)
 #' m11 <- grid_metrics(las, .myMetrics, res = 40)
+#'
+#' @references
+#' M. Woods, K. Lim, and P. Treitz. Predicting forest stand variables from LiDAR data in
+#' the Great Lakes – St. Lawrence forest of Ontario. The Forestry Chronicle. 84(6): 827-839.
+#' https://doi.org/10.5558/tfc84827-6
 #' @seealso
 #' \link{cloud_metrics}
 #' \link{grid_metrics}
@@ -131,10 +144,10 @@
 #' \link{point_metrics}
 #' @rdname stdmetrics
 #' @export
-stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2)
+stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2, zmin = 0)
 {
   C  <- stdmetrics_ctrl(x, y, z)
-  Z  <- stdmetrics_z(z, dz, th)
+  Z  <- stdmetrics_z(z, dz, th, zmin)
   I  <- stdmetrics_i(i, z, class, rn)
   RN <- stdmetrics_rn(rn, class)
   #PU = stdmetrics_pulse(pulseID, rn)
@@ -145,7 +158,7 @@ stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2)
 
 #' @rdname stdmetrics
 #' @export
-stdmetrics_z = function(z, dz = 1, th = 2)
+stdmetrics_z = function(z, dz = 1, th = 2, zmin = 0)
 {
   n <- length(z)
   zmax  <- max(z)
@@ -160,14 +173,14 @@ stdmetrics_z = function(z, dz = 1, th = 2)
 
   pzabovemean <- fast_countover(z, zmean) / n * 100
 
-  if (zmax <= 0)
+  if (zmax <= zmin)
   {
     d <- rep(0, 9)
   }
   else
   {
-    breaks <- seq(0, zmax, zmax/10)
-    d <- findInterval(z, breaks)
+    breaks <- seq(zmin, zmax, (zmax-zmin)/10)
+    d <- findInterval(z[z>zmin], breaks)
     d <- fast_table(d, 10)
     d <- d / sum(d)*100
     d <- cumsum(d)[1:9]

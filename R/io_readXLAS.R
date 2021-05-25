@@ -2,6 +2,7 @@
 #' @rdname readLAS
 readALSLAS = function(files,  select = "*", filter = "")
 {
+  do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
   las@index <- LIDRALSINDEX
   return(las)
@@ -12,6 +13,7 @@ readALSLAS = function(files,  select = "*", filter = "")
 #' @rdname readLAS
 readTLSLAS = function(files,  select = "*", filter = "")
 {
+  do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
   las@index <- LIDRTLSINDEX
   return(las)
@@ -21,6 +23,7 @@ readTLSLAS = function(files,  select = "*", filter = "")
 #' @rdname readLAS
 readUAVLAS = function(files,  select = "*", filter = "")
 {
+  do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
   las@index <- LIDRUAVINDEX
   return(las)
@@ -30,6 +33,7 @@ readUAVLAS = function(files,  select = "*", filter = "")
 #' @rdname readLAS
 readDAPLAS = function(files,  select = "*", filter = "")
 {
+  do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
   las@index <- LIDRDAPINDEX
   return(las)
@@ -94,4 +98,10 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
   las@index <- LIDRMLSINDEX
   return(las)
+}
+
+do_no_read_lascluster = function(x)
+{
+  if (is(x, "LAScluster"))
+    stop("Use readLAS() to read a LAScluster object not one of readXXXLAS(). A LAScluster object already contains metadata about the point cloud type.", call. = FALSE)
 }

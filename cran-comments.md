@@ -1,7 +1,6 @@
 ## Test environments
 
-* Linux Mint 20 (Ubuntu 20.04), R 4.0.3 with g++
-* Linux Mint 20 (Ubuntu 20.04), R 4.0.3 with g++) + valgrind 
+* Linux Mint 20 (Ubuntu 20.04), R 4.1.0 with g++
 * Windows Server 2009 via github CI
 * Ubuntu 20.04 R-release via github CI
 * Ubuntu 20.04 R-devel via github CI
@@ -18,6 +17,6 @@ This is compiled code in the libs/ directory.
 
 ## Downstream dependencies
 
-We checked 4 reverse dependencies by running R CMD check with this version installed. 
+We checked 6 reverse dependencies by running R CMD check with this version installed. 
 We did not see any new problems.
 

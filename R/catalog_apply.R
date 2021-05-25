@@ -101,7 +101,7 @@
 #' myfun <- function(las, bbox ...) {
 #'    # do something
 #' }
-#' ````
+#' ```
 #'
 #' @section .options:
 #' Users may have noticed that some lidR functions throw an error when the processing options are
@@ -115,8 +115,8 @@
 #' - `need_output_file = TRUE` the function complains if no output file template is provided.
 #' - `raster_alignment = ...` the function checks the alignment of the chunks. This option is
 #' important if the output is a raster. See below for more details.
-#' - `automerge = TRUE` by defaut the engine returns a `list`` with one item per chunk. If
-#' `automerge = TRUE`, it tries to merge the outputs into a single object: a `Raster*``, a
+#' - `automerge = TRUE` by defaut the engine returns a `list` with one item per chunk. If
+#' `automerge = TRUE`, it tries to merge the outputs into a single object: a `Raster*`, a
 #' `Spatial*`, a `LAS*` similar to other functions of the package. This is a fail-safe
 #' option so in the worst case, if the merge fails, the `list` is returned.
 #' - `autoread = TRUE`. Introduced in v3.0.0 this option enables to get rid of the first steps of the
@@ -129,7 +129,7 @@
 #' not be visible). Users can check this with the options `raster_alignment`, that can take the
 #' resolution of the raster as input, as well as the starting point if needed. The following are accepted:
 #'
-#' ````
+#' ```
 #' # check if chunks are aligned with a raster of resolution 20
 #' raster_alignment = 20
 #' raster_alignment = list(res = 20)
@@ -315,7 +315,10 @@ assert_fun_is_null_with_empty_cluster = function(ctg, FUN, ...)
     cl <- LAScluster(list(x = 0, y = 0), 0, 0, 0, LIDRRECTANGLE, system.file("extdata", "example.laz", package = "rlas"), "noname")
     cl@select <- "*"
 
-    u <- tryCatch(FUN(cl, ...), error = function(e) {return(0)})
+    u <- tryCatch(FUN(cl, ...), error = function(e)
+    {
+      stop(paste0("The function is tested before starting processing the collection and failed with following error:\n", e), call. = FALSE)
+    })
 
     if (!is.null(u))
       stop("User's function does not return NULL for empty chunks. Please see the documentation of catalog_apply.", call. = FALSE)
