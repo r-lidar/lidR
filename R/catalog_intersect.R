@@ -25,16 +25,15 @@
 #
 # ===============================================================================
 
-#' Subset a LAScatalog with a Spatial* object
+#' Subset a LAScatalog with a spatial object
 #'
-#' Subset a LAScatalog with a Spatial* object to keep only the tiles of interest. Internally, it uses the
-#' function \link[raster:intersect]{intersect} from \code{raster} with a tweak to make it work
-#' with a LAScatalog. It can be used to select tiles of interest that encompass Spatial* objects such
-#' as SpatialPoints, SpatialPolygons or SpatialLines.
+#' Subset a LAScatalog with a spatial object to keep only the tiles of interest. It can be
+#' used to select tiles of interest that encompass spatial objects such as Spatial* objects,
+#' Raster* objects or sf, sfc objects
 #'
 #' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'
-#' @param y Extent, Raster*, SpatialPolygons*, SpatialLines* or SpatialPoints* object
+#' @param y Extent, Raster*, Spatial*, sf, sfc, Extent or bbox objects
 #'
 #' @return A LAScatalog
 #'
@@ -42,11 +41,33 @@
 catalog_intersect = function(ctg, y)
 {
   assert_is_all_of(ctg, "LAScatalog")
-  spdf <- as.spatial(ctg)
-  spdf$PolygonID <- 1:nrow(spdf@data)
-  if (!sp::identicalCRS(spdf, y)) warning("Non identical CRS", call. = FALSE)
-  raster::crs(spdf) <- sp::CRS()
-  raster::crs(y) <- sp::CRS()
-  i <- raster::intersect(spdf, y)$PolygonID
+
+  i <- NULL
+
+  if (is(y, "Extent") | is(y, "Raster"))
+  {
+    crs <- if (is(y, "Raster")) sf::st_crs(y) else sf::st_crs(ctg)
+    y <- sf::st_as_sfc(sf::st_bbox(y))
+    sf::st_crs(y) <- crs
+  }
+
+  if (is(y, "Spatial"))
+    y <- sf::st_as_sf(y)
+
+  if (is(y, "sf"))
+    y <- sf::st_geometry(y)
+
+  if (is(y, "sfc"))
+  {
+    sfctg <- sf::st_as_sf(ctg)
+    i <- if (is(y, "sfc_POINT")) sf::st_within(y, sfctg, sparse = T) else sf::st_intersects(y, sfctg, sparse = T)
+    i <- Filter(function(x) {length(x) > 0}, i)
+    i <- Reduce(c, i)
+    i <- unique(i)
+  }
+
+  if (is.null(i))
+    stop("Not supported input geometry", call. = FALSE)
+
   return(ctg[i,])
 }

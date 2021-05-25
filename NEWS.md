@@ -33,6 +33,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    - New supported flag `W` for parameter `select` in `readLAS()`
    - New automatic colouring scheme for attribute `Amplitude` in `plot(las, color = "Amplitude")` that aims to be used with FWF.
    
+6. `catalog_intersect()` now supports `sf`, `sfc`, `Extent` and `bbox` objects
+   
 #### MISCELANEOUS
 
 1. Remove `crayon`, `rgeos` dependencies

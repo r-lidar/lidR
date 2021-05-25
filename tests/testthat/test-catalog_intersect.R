@@ -70,20 +70,28 @@ pts <- sp::SpatialPoints(pts, proj4string = ctg@proj4string)
 test_that("catalog_intersect extract the tiles lie in a SpatialPolygons", {
 
   ctg2 <- catalog_intersect(ctg, polygon)
+  ctg22 <- catalog_intersect(ctg, sf::st_as_sf(polygon))
+
 
   expect_equal(ctg2$filename, c("abc12", "abc17", "abc18", "abc19", "abc20", "abc21", "abc23"))
+  expect_equal(ctg2, ctg22)
 })
 
 test_that("catalog_intersect extracts the tiles that lie in the bbox of a Raster", {
 
   ctg2 <- suppressWarnings(catalog_intersect(ctg, r))
+  ctg22 <- suppressWarnings(catalog_intersect(ctg, raster::extent(r)))
 
   expect_equal(ctg2$filename, c("abc11", "abc12", "abc15", "abc17", "abc18", "abc19", "abc20", "abc21", "abc23"))
+  expect_equal(ctg2, ctg22)
 })
 
 test_that("catalog_intersect extracts the tiles that contains the points of a SpatialPoints", {
 
   ctg2 <- catalog_intersect(ctg, pts)
+  ctg22 <- catalog_intersect(ctg, sf::st_as_sf(pts))
 
-  expect_equal(ctg2$filename, c("abc12", "abc17", "abc21"))
+  expect_equal(sort(ctg2$filename), sort(c("abc12", "abc17", "abc21")))
+  expect_equal(ctg2, ctg22)
 })
+
