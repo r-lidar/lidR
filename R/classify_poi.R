@@ -51,6 +51,8 @@ classify_poi.LAS = function(las, class, poi = NULL, roi = NULL, inverse_roi = FA
   assert_is_a_bool(inverse_roi)
   stopifnot(class == as.integer(class))
 
+  Classification <- NULL
+
   bool1 <- rep(TRUE, npoints(las))
   if (!is.null(poi)) bool1 <- parse_filter(las, poi)
 
