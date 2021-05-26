@@ -45,7 +45,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 6. `catalog_intersect()` now supports `sf`, `sfc`, `Extent` and `bbox` objects
 
 7. Concave hull: lidR now includes its own C++ code to compute concave hulls using [concaveman-cpp](https://github.com/sadaszewski/concaveman-cpp).
-   - New function `concaveman()` to conpute concave hulls
+   - New function `concaveman()` to compute concave hulls
    - `delineate_crowns()` using concave hulls is now between 10 to 50 times faster.
     ```r
     LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

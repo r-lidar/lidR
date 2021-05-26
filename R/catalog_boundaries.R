@@ -8,9 +8,8 @@
 #' @param concavity numeric a relative measure of concavity. 1 results in a relatively detailed shape,
 #' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 #' shapes.
-#' @param lengthThreshold numeric. when a segment length is under this threshold, it stops being
+#' @param length_threshold numeric. when a segment length is under this threshold, it stops being
 #' considered for further detalization. Higher values result in simpler shapes.
-#' @param simplify numeric: passed to \link[rgeos:gSimplify]{gSimplify}.
 #'
 #' @section Supported processing options:
 #' Supported processing options for more details see the
@@ -30,18 +29,17 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")
-#' ctg2 <- catalog_boundaries(ctg, 2, 5, 3)
+#' ctg2 <- catalog_boundaries(ctg, 2, 5)
 #' plot(ctg)
 #' plot(ctg2, add = TRUE)
-catalog_boundaries = function(ctg, concavity = 5, lengthThreshold = 5, simplify = 3)
+catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
 {
-  f = function(las, bbox, concavity, lengthThreshold, simplify)
+  f = function(las, bbox, concavity, lengthThreshold)
   {
-    cc <- concaveman::concaveman(as.matrix(coordinates(las)), concavity = concavity, length_threshold = lengthThreshold)
+    cc <- concaveman(las$X, las$Y, concavity = concavity, length_threshold = length_threshold)
     p <- sp::Polygon(cc)
     p <- sp::Polygons(list(p), ID = "1")
     p <- sp::SpatialPolygons(list(p), proj4string = las@proj4string)
-    if (simplify > 0)  p <- rgeos::gSimplify(p, simplify)
     return(p)
   }
 
@@ -50,7 +48,7 @@ catalog_boundaries = function(ctg, concavity = 5, lengthThreshold = 5, simplify 
   lidR::opt_select(ctg) <- "xyz"
   lidR::opt_output_files(ctg) <- ""
   options = list(autoread = TRUE)
-  res = lidR::catalog_apply(ctg, f, concavity = concavity, lengthThreshold = lengthThreshold, simplify = simplify, .options = options)
+  res = lidR::catalog_apply(ctg, f, concavity = concavity, length_threshold = length_threshold, .options = options)
 
   for (i in 1:length(res)) res[[i]]@polygons[[1]]@ID = as.character(i)
   Sr <- do.call(rbind, res)
@@ -62,7 +60,7 @@ catalog_boundaries = function(ctg, concavity = 5, lengthThreshold = 5, simplify 
   nctg@plotOrder <- Sr@plotOrder
   nctg@data <- data
   nctg@polygons <- Sr@polygons
-  lidR:::opt_copy(nctg) <- ctg
+  opt_copy(nctg) <- ctg
   attr(nctg, "trueshape") <- TRUE
   return(nctg)
 }

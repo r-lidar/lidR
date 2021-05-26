@@ -47,7 +47,6 @@ Suggests:
     mapview,
     mapedit,
     progress,
-    rgeos,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown

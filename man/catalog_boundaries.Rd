@@ -4,7 +4,7 @@
 \alias{catalog_boundaries}
 \title{Computes the polygon that encloses the points}
 \usage{
-catalog_boundaries(ctg, concavity = 5, lengthThreshold = 5, simplify = 3)
+catalog_boundaries(ctg, concavity = 5, length_threshold = 5)
 }
 \arguments{
 \item{ctg}{A LAScatalog}
@@ -13,10 +13,8 @@ catalog_boundaries(ctg, concavity = 5, lengthThreshold = 5, simplify = 3)
 Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 shapes.}
 
-\item{lengthThreshold}{numeric. when a segment length is under this threshold, it stops being
+\item{length_threshold}{numeric. when a segment length is under this threshold, it stops being
 considered for further detalization. Higher values result in simpler shapes.}
-
-\item{simplify}{numeric: passed to \link[rgeos:gSimplify]{gSimplify}.}
 }
 \value{
 A LAScatalog with true boundaries
@@ -44,7 +42,7 @@ Supported processing options for more details see the
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")
-ctg2 <- catalog_boundaries(ctg, 2, 5, 3)
+ctg2 <- catalog_boundaries(ctg, 2, 5)
 plot(ctg)
 plot(ctg2, add = TRUE)
 }
