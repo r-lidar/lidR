@@ -11,7 +11,8 @@ Authors@R: c(
     person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented wing2015() for segment_snags()"),
     person("Bourdon", "Jean-François", email = "", role = ("ctb"), comment = "Contributed to Roussel2020() for track_sensor()"),
     person("Gatziolis", "Demetrios", email = "", role = ("ctb"), comment = "Implemented Gatziolis2019() for track_sensor()"),
-    person("Leon", "Steinmeier", email = "Lenostatos@gmx.de", role = ("ctb"), comment = "Contributed to parallelization management"))
+    person("Leon", "Steinmeier", email = "Lenostatos@gmx.de", role = ("ctb"), comment = "Contributed to parallelization management"),
+    person("Stanislaw", "Adaszewski", email = "Lenostatos@gmx.de", role = ("ctb"), comment = "Contributed to parallelization management"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
@@ -39,10 +40,10 @@ Imports:
     utils
 Suggests:
     EBImage,
-    concaveman,
     gstat,
     hexbin,
     RCSF,
+    rgeos,
     mapview,
     mapedit,
     progress,
@@ -89,6 +90,7 @@ Collate:
     'clip_roi.R'
     'cloud_metrics.R'
     'clusters_apply.R'
+    'concaveman.R'
     'decimate_points.R'
     'delineate_crowns.R'
     'deprecated.R'

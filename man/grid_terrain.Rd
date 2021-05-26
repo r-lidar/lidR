@@ -45,7 +45,7 @@ TRUE, a warning is thrown to alert users to the presence of degenerated ground p
 has the same shape as the point cloud by interpolating only in the convex
 hull of the points. If the point cloud is concave this may lead to weird values
 where there are no points. Use \code{is_concave = TRUE} to use a concave hull.
-This is more computationally -involved and requires the concaveman package.}
+This is more computationally demanding. It uses \link{concaveman} internally.}
 }
 \value{
 A \code{RasterLayer} containing a numeric value in each cell. If the \code{RasterLayer}s

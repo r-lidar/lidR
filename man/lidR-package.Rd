@@ -59,6 +59,7 @@ Other contributors:
   \item Bourdon Jean-François (Contributed to Roussel2020() for track_sensor()) [contributor]
   \item Gatziolis Demetrios (Implemented Gatziolis2019() for track_sensor()) [contributor]
   \item Leon Steinmeier \email{Lenostatos@gmx.de} (Contributed to parallelization management) [contributor]
+  \item Stanislaw Adaszewski \email{Lenostatos@gmx.de} (Contributed to parallelization management) [contributor]
 }
 
 }

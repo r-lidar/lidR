@@ -11,7 +11,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 2. `LAScatalog`
    - New function `rbind()` for `LAScatalog`.
-   - New function `projection()` and `crs()` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actualy called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
+   - New function `projection()` and `crs()` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
    ```r
    projection(ctg) <- st_crs(3625)
    # or
@@ -43,6 +43,20 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    - New automatic colouring scheme for attribute `Amplitude` in `plot(las, color = "Amplitude")` that aims to be used with FWF.
    
 6. `catalog_intersect()` now supports `sf`, `sfc`, `Extent` and `bbox` objects
+
+7. Concave hull: lidR now includes its own C++ code to compute concave hulls using [concaveman-cpp](https://github.com/sadaszewski/concaveman-cpp).
+   - New function `concaveman()` to conpute concave hulls
+   - `delineate_crowns()` using concave hulls is now between 10 to 50 times faster.
+    ```r
+    LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+    las = readLAS(LASfile, select = "xyz0")
+    concave_hulls <- delineate_crowns(las, "concave")
+    # Before v3.2.0: 7.1 seconds
+    # From v3.2.0  : 0.2 seconds
+    ```
+   - `grid_terrain()` with `is_concave = TRUE` should also be faster.
+    
+8. New function `catalog_boundary()` to compute the actual shape of the point-cloud
    
 #### MISCELANEOUS
 

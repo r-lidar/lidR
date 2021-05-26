@@ -153,6 +153,10 @@ C_knn3d_lookup <- function(las, x, y, z, k) {
     .Call(`_lidR_C_knn3d_lookup`, las, x, y, z, k)
 }
 
+cpp_concaveman <- function(x, y, concavity, lengthThreshold, chull) {
+    .Call(`_lidR_cpp_concaveman`, x, y, concavity, lengthThreshold, chull)
+}
+
 R_omp_get_max_threads <- function() {
     .Call(`_lidR_R_omp_get_max_threads`)
 }

@@ -57,7 +57,7 @@
 #' has the same shape as the point cloud by interpolating only in the convex
 #' hull of the points. If the point cloud is concave this may lead to weird values
 #' where there are no points. Use \code{is_concave = TRUE} to use a concave hull.
-#' This is more computationally -involved and requires the concaveman package.
+#' This is more computationally demanding. It uses \link{concaveman} internally.
 #'
 #' @template LAScatalog
 #'
@@ -135,14 +135,9 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   if (!full_raster)
   {
     if (is_concave)
-    {
-      assert_package_is_installed("concaveman")
-      hull <- concaveman::concaveman(as.matrix(coordinates(las)), 10, 100)
-    }
+      hull <- concaveman(coordinates(las), 10, 100)
     else
-    {
       hull <- convex_hull(las@data$X, las@data$Y)
-    }
 
     hull <- sf::st_polygon(list(as.matrix(hull)))
     hull <- sf::st_sfc(hull)
