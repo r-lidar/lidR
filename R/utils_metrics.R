@@ -373,7 +373,7 @@ stdtreehullconcave = function(x,y,z,grp, concavity, length_threshold)
   if (length(x) < 4)
     return(NULL)
 
-  P <- concaveman::concaveman(cbind(x,y), concavity, length_threshold)
+  P <- concaveman(x, y, concavity, length_threshold)
   poly <- sp::Polygon(P)
   poly <- sp::Polygons(list(poly), ID = grp)
 

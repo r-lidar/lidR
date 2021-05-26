@@ -40,7 +40,7 @@ details and references).
 }
 \details{
 The concave hull method under the hood is described in Park & Oh (2012). The function relies on
-the \link[concaveman:concaveman]{concaveman} function.
+the \link{concaveman} function.
 }
 \section{Working with a \code{LAScatalog}}{
 
@@ -96,14 +96,12 @@ convex_hulls
 bbox_hulls = delineate_crowns(las, "bbox")
 plot(bbox_hulls)
 
-\dontrun{
-# With concave hull (longer to compute)
+# With concave hull
 concave_hulls = delineate_crowns(las, "concave")
 plot(concave_hulls)
 
 spplot(convex_hulls, "ZTOP")
 spplot(convex_hulls, "Zmean")
-}
 }
 \references{
 Park, J. S., & Oh, S. J. (2012). A new concave hull algorithm and concaveness measure

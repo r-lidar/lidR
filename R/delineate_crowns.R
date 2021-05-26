@@ -32,7 +32,7 @@
 #' details and references).
 #'
 #' The concave hull method under the hood is described in Park & Oh (2012). The function relies on
-#' the \link[concaveman:concaveman]{concaveman} function.
+#' the \link{concaveman} function.
 #'
 #' @template param-las
 #' @param type character. Hull type. Can be 'convex', 'concave' or 'bbox'.
@@ -77,14 +77,12 @@
 #' bbox_hulls = delineate_crowns(las, "bbox")
 #' plot(bbox_hulls)
 #'
-#' \dontrun{
-#' # With concave hull (longer to compute)
+#' # With concave hull
 #' concave_hulls = delineate_crowns(las, "concave")
 #' plot(concave_hulls)
 #'
 #' spplot(convex_hulls, "ZTOP")
 #' spplot(convex_hulls, "Zmean")
-#' }
 delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavity = 3, length_threshold = 0, func = NULL, attribute = "treeID")
 {
   UseMethod("delineate_crowns", las)
@@ -99,9 +97,6 @@ delineate_crowns.LAS = function(las, type = c("convex", "concave", "bbox"), conc
   assert_is_a_number(length_threshold)
   assert_all_are_non_negative(length_threshold)
   assert_is_a_string(attribute)
-
-  # concaveman is only a 'suggested' dependency
-  if (type == "concave") assert_package_is_installed("concaveman")
 
   # Pointer on function C style coding
   if      (type == "convex")  fhull <- stdtreehullconvex

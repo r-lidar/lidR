@@ -497,6 +497,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_concaveman
+DataFrame cpp_concaveman(NumericVector x, NumericVector y, double concavity, double lengthThreshold, IntegerVector chull);
+RcppExport SEXP _lidR_cpp_concaveman(SEXP xSEXP, SEXP ySEXP, SEXP concavitySEXP, SEXP lengthThresholdSEXP, SEXP chullSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< double >::type concavity(concavitySEXP);
+    Rcpp::traits::input_parameter< double >::type lengthThreshold(lengthThresholdSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type chull(chullSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_concaveman(x, y, concavity, lengthThreshold, chull));
+    return rcpp_result_gen;
+END_RCPP
+}
 // R_omp_get_max_threads
 int R_omp_get_max_threads();
 RcppExport SEXP _lidR_R_omp_get_max_threads() {
@@ -546,6 +561,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 6},
     {"_lidR_C_knn2d_lookup", (DL_FUNC) &_lidR_C_knn2d_lookup, 4},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 5},
+    {"_lidR_cpp_concaveman", (DL_FUNC) &_lidR_cpp_concaveman, 5},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}
 };

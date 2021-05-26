@@ -430,7 +430,7 @@ clip_sf.LAScatalog = function(las, sf)
 
   # We need the bounding box of each geometry to be able to leverage automatically spatial
   # indexing of LAS files with LAX files
-  bboxes <- lapply(sf, function(x) { raster::extent(sf::st_bbox(x)) })
+  bboxes <- lapply(sf::st_geometry(sf), function(x) { raster::extent(sf::st_bbox(x)) })
 
   output = catalog_extract(las, bboxes, LIDRRECTANGLE, sf = sf)
 
