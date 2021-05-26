@@ -157,71 +157,70 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
 
   if (mapview)
   {
-    if (!requireNamespace("mapview", quietly = TRUE))
-    {
-      message("'mapview' is required to display the LAScatalog interactively.") # nocov
-      mapview <- FALSE # nocov
-    }
-
-    if (overlaps)
-      message("overlaps = TRUE is not supported yet with mapview") # nocov
-  }
-
-  if (mapview)
-  {
+    assert_package_is_installed("mapview")
+    if (overlaps) message("overlaps = TRUE is not supported yet with mapview") # nocov
     LAScatalog <- x
     mapview::mapview(LAScatalog, ...)
+    return(invisible())
   }
-  else if (chunk_pattern)
+
+  if (chunk_pattern)
   {
+    # TODO: enhance to allow custom rendering
     opt_progress(x) <- TRUE
     catalog_makecluster(x)
     return(invisible())
   }
-  else
-  {
-    # New feature from v2.2.0 to do not process some tiles
-    process <- x@data$process
-    if (is.null(process)) process <- rep(TRUE, nrow(x@data))
-    if (!is.logical(process)) {
-      warning("The attribute 'process' of the catalog is not logical.", call. = FALSE)
-      process <- rep(TRUE, nrow(x@data))
-    }
 
-    alpha   <- ifelse(process, 0.15, 0.03)
-    param   <- list(...)
-    xmin    <- min(x@data$Min.X)
-    xmax    <- max(x@data$Max.X)
-    ymin    <- min(x@data$Min.Y)
-    ymax    <- max(x@data$Max.Y)
-    xcenter <- (xmin + xmax)/2
-    ycenter <- (ymin + ymax)/2
-    col    <- grDevices::rgb(0, 0, 1, alpha = alpha)
+  # New feature from v2.2.0: partial processing plotted in light colour
+  process <- x@data[["process"]]
+  if (is.null(process)) process <- rep(TRUE, nrow(x@data))
+  if (!is.logical(process)) {
+    warning("The attribute 'process' of the catalog is not logical.", call. = FALSE)
+    process <- rep(TRUE, nrow(x@data))
+  }
 
-    if (is.null(param$xlim)) param$xlim <- c(xmin, xmax)
-    if (is.null(param$ylim)) param$ylim <- c(ymin, ymax)
-    if (is.null(param$xlab)) param$xlab <- ""
-    if (is.null(param$ylab)) param$ylab <- ""
-    if (is.null(param$asp))  param$asp  <- 1
-    if (!is.null(param$col)) col <- param$col
+  # New feature from 3.2.0: plot true boundaries instead of bboxes
+  trueshape <- !is.null(attr(x, "trueshape"))
 
-    param$col <- "white"
-    param$x   <- xcenter
-    param$y   <- ycenter
+  alpha   <- ifelse(process, 0.15, 0.03)
+  param   <- list(...)
+  xmin    <- min(x@data$Min.X)
+  xmax    <- max(x@data$Max.X)
+  ymin    <- min(x@data$Min.Y)
+  ymax    <- max(x@data$Max.Y)
+  xcenter <- (xmin + xmax)/2
+  ycenter <- (ymin + ymax)/2
+  col    <- grDevices::rgb(0, 0, 1, alpha = alpha)
 
-    op <- graphics::par(mar = c(2.5,2.5,1,1) + 0.1)
+  if (is.null(param$xlim)) param$xlim <- c(xmin, xmax)
+  if (is.null(param$ylim)) param$ylim <- c(ymin, ymax)
+  if (is.null(param$xlab)) param$xlab <- ""
+  if (is.null(param$ylab)) param$ylab <- ""
+  if (is.null(param$asp))  param$asp  <- 1
+  if (!is.null(param$col)) col <- param$col
 
-    if (is.null(param$add)) do.call(graphics::plot, param)
+  param$col <- "white"
+  param$x   <- xcenter
+  param$y   <- ycenter
 
+  op <- graphics::par(mar = c(2.5,2.5,1,1) + 0.1)
+  on.exit(graphics::par(op))
+
+  if (is.null(param$add)) do.call(graphics::plot, param)
+
+  if (trueshape) {
+    plot(as.spatial(x), col = col, add = T)
+  } else {
     graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = col)
     graphics::par(op)
-
-    if (overlaps) {
-      plot(catalog_overlaps(x), add = T, col = "red", border = "red")
-    }
-
-    return(invisible())
   }
+
+  if (overlaps) {
+    plot(catalog_overlaps(x), add = T, col = "red", border = "red")
+  }
+
+  return(invisible())
 }
 
 plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = "rgl", clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, ...)

@@ -46,6 +46,7 @@ Suggests:
     mapview,
     mapedit,
     progress,
+    rgeos,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
@@ -74,6 +75,7 @@ Collate:
     'algorithm-spi.R'
     'algorithm-trk.R'
     'catalog_apply.R'
+    'catalog_boundaries.R'
     'catalog_fakerun.R'
     'catalog_index.R'
     'catalog_intersect.R'

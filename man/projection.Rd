@@ -22,6 +22,7 @@
 \alias{crs,LAS-method}
 \alias{crs<-,LAS-method}
 \alias{crs,LAScatalog-method}
+\alias{crs<-,LAScatalog-method}
 \title{Get or set the projection of a LAS* object}
 \usage{
 epsg(object, ...)
@@ -63,6 +64,8 @@ wkt(object) <- value
 \S4method{crs}{LAS}(x, ...) <- value
 
 \S4method{crs}{LAScatalog}(x, asText = FALSE)
+
+\S4method{crs}{LAScatalog}(x, ...) <- value
 }
 \arguments{
 \item{object, x, obj}{An object of class LAS or eventually LASheader (regular users don't need to manipulate
