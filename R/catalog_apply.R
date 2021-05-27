@@ -244,54 +244,38 @@
 #' @md
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 {
-  # ==== INITIALISATONS ====
-
   # Assert correctness of inputs
   assert_is_all_of(ctg, "LAScatalog")
   assert_is_function(FUN)
 
-  # Store stuff in 3-letter variables to reduce width of next lines
+  # Parse options to check validity or initialize some missing
   opt <- engine_parse_options(.options)
-  ral <- opt[["raster_alignment"]]
-  nbu <- opt[["need_buffer"]]
-  mer <- opt[["automerge"]]
-  rea <- opt[["autoread"]]
-  cal <- opt[["check_alignment"]]
-  dnu <- opt[["drop_null"]]
-  nof <- opt[["need_output_file"]]
-  glo <- opt[["globals"]]
-  res <- ral[["res"]]
-  sta <- ral[["start"]]
 
-  pop <- ctg@processing_options
-  oop <- ctg@output_options
+  # Assert correctness and check alignment
+  if (opt[["autoread"]] == FALSE) assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
+  assert_processing_constraints_are_repected(ctg, opt[["need_buffer"]], opt[["need_output_file"]])
 
-  # Assert correctness and check aligment
-  if (rea == FALSE) assert_fun_is_null_with_empty_cluster(ctg, FUN, ...)
-  assert_processing_constraints_are_repected(ctg, nbu, nof)
-
-  # Realignment
-  realigment = FALSE
-  if (cal) realigment = list(res = res, start = sta)
+  # Realignment of the chunk if needed
+  realigment <- if (opt[["check_alignment"]]) realigment = opt[["raster_alignment"]] else FALSE
 
   # Produce the chunks
-  clusters <- catalog_makecluster(ctg, realigment)
+  clusters <- catalog_makechunks(ctg, realigment)
 
-  # Disable the progress bar of the functions but ensure user options are restored
+  # Disable the progress bar of the functions and ensure user options are restored
   oldstate <- getOption("lidR.progress")
   options(lidR.progress = FALSE)
   on.exit(options(lidR.progress = oldstate), add = TRUE)
 
-  # Process
-  output <- cluster_apply(clusters, FUN, pop, oop, glo, rea, ...)
+  # Process with the catalog processing engine
+  output <- cluster_apply(clusters, FUN, ctg@processing_options, ctg@output_options, opt[["globals"]], opt[["autoread"]], ...)
 
   # Filter NULLs and return
-  if (isTRUE(dnu))
+  if (isTRUE(opt[["drop_null"]]))
     output <- Filter(Negate(is.null), output)
 
   # Automerge
-  if (!isFALSE(mer) && opt_merge(ctg))
-    output <- catalog_merge_results(ctg, output, mer, as.character(substitute(FUN)))
+  if (!isFALSE(opt[["automerge"]]) && opt_merge(ctg))
+    output <- catalog_merge_results(ctg, output, opt[["automerge"]], as.character(substitute(FUN)))
 
   return(output)
 }
