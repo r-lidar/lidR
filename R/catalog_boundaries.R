@@ -34,7 +34,7 @@
 #' plot(ctg2, add = TRUE)
 catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
 {
-  f = function(las, bbox, concavity, lengthThreshold)
+  f = function(las, bbox, concavity, length_threshold)
   {
     cc <- concaveman(las$X, las$Y, concavity = concavity, length_threshold = length_threshold)
     p <- sp::Polygon(cc)
