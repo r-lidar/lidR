@@ -12,42 +12,42 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 2. `LAScatalog`
    - New function `rbind()` for `LAScatalog`.
    - New function `projection()` and `crs()` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
-   ```r
-   projection(ctg) <- st_crs(3625)
-   # or
-   projection(ctg) <- 3625
-   ```
+      ```r
+      projection(ctg) <- st_crs(3625)
+      # or
+      projection(ctg) <- 3625
+      ```
    - The processing engine has a new options to drop some chunks under `ctg@chunk_options$drop`. This generates regions that won't be processed. This option accepts a vector of chunk IDs that are dropped and is thus versatile but its main role is to allow restarting a computation that failed. We consequently introduced the function `opt_restart()`. Let assume that the computation failed after few hours at 80% in chunk number 800. User get a partial output for the 799 first chunks but chunk 800 have a problem that can be solved. It is now possible to restart at 800 and get the second part of the output without restarting from 0
-   ```r
-   output <-    catlog_apply(ctg, myfun, param)
-   # Failed after 80%, 'output' contains a partial output
-   # Fix the trouble
+      ```r
+      output <-    catlog_apply(ctg, myfun, param)
+      # Failed after 80%, 'output' contains a partial output
+      # Fix the trouble
    
-   opt_restart(ctg) <- 800
-   output2 <- catlog_apply(ctg, myfun, param)
+      opt_restart(ctg) <- 800
+      output2 <- catlog_apply(ctg, myfun, param)
    
-   # Merge 'output' and 'output2'
-   ```
+      # Merge 'output' and 'output2'
+      ```
    - The vignette `LAScatalog engine` and the manual `LAScatalog-class` were updated in consequence of previous feature
 
 3. `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
    - `las_check()` can now check a standalone `LASheader`
-   ```r
-   las_check(las@header)
-   ```
+       ```r
+       las_check(las@header)
+       ```
    
 4. `LAS`
-   - The function `LAS` now automatically fix the case of attributes names to match the naming convention of the `rlas` package. This simplify the creation of compatible objects from non LAS files sources.
-   ```r
-   data <- data.frame(x = runif(10), Y = runif(10), z = runif(10), pointsourceid = 1:10)
-   las <- LAS(data)
-   #> Attribute 'x' renamed 'X' to match with default attribute names.
-   #> Attribute 'z' renamed 'Z' to match with default attribute names.
-   #> Attribute 'pointsourceid' renamed 'PointSourceID' to match with default attribute names.
-   las$PointSourceID
-   #> [1]  1  2  3  4  5  6  7  8  9 10
-   ```
+   - The function `LAS` now automatically fixes the font case of attributes names to match the naming convention of the `rlas` package. This simplifies the creation of compatible objects from non LAS files sources.
+       ```r
+       data <- data.frame(x = runif(10), Y = runif(10), z = runif(10), pointsourceid = 1:10)
+       las <- LAS(data)
+       #> Attribute 'x' renamed 'X' to match with default attribute names.
+       #> Attribute 'z' renamed 'Z' to match with default attribute names.
+       #> Attribute 'pointsourceid' renamed 'PointSourceID' to match with default attribute names.
+       las$PointSourceID
+       #> [1]  1  2  3  4  5  6  7  8  9 10
+       ```
    
 5. Full waveform: with most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR` provides some compatible functions. However the support of FWF is still a work in progress in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently, tools provided by `lidR` may also change until the support of FWF becomes mature and stable in `rlas`.
    - New function `interpret_waveform()` to transform waveform into a regular point cloud
@@ -59,13 +59,13 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 7. Concave hull: lidR now includes its own C++ code to compute concave hulls using [concaveman-cpp](https://github.com/sadaszewski/concaveman-cpp).
    - New function `concaveman()` to compute concave hulls
    - `delineate_crowns()` using concave hulls is now between 10 to 50 times faster.
-    ```r
-    LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-    las = readLAS(LASfile, select = "xyz0")
-    concave_hulls <- delineate_crowns(las, "concave")
-    # Before v3.2.0: 7.1 seconds
-    # From v3.2.0  : 0.2 seconds
-    ```
+        ```r
+        LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+        las = readLAS(LASfile, select = "xyz0")
+        concave_hulls <- delineate_crowns(las, "concave")
+        # Before v3.2.0: 7.1 seconds
+        # From v3.2.0  : 0.2 seconds
+        ```
    - `grid_terrain()` with `is_concave = TRUE` should also be faster.
     
 8. New function `catalog_boundary()` to compute the actual shape of the point-cloud
