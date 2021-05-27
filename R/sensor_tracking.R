@@ -110,6 +110,18 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
   # Get only the first and last returns of multiple returns
   data <- data[(ReturnNumber == NumberOfReturns | ReturnNumber == 1) & NumberOfReturns > 1]
 
+  # Filter potentially duplicated points (#396)
+  if (multi_pulse == FALSE)
+    dup <- duplicated(data, by = c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns"))
+  else
+    dup <- duplicated(data, by = c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns", "UserData"))
+
+  if (any(dup))
+  {
+    warning(glue::glue("There were {sum(dup)} duplicated points. They were removed for processing."), call. = FALSE)
+    data <- data[!dup]
+  }
+
   # Decimate the dataset by gpstime
   if (thin_pulse_with_time > 0)
   {
