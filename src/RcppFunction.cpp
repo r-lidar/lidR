@@ -328,6 +328,31 @@ NumericVector roundc(NumericVector x, int digit = 0)
   return y;
 }
 
+// [[Rcpp::export(rng=false)]]
+NumericVector bitmerge(IntegerVector u, IntegerVector v)
+{
+  if (u.size() != v.size())
+    Rcpp::stop("Internal error in bitmerge: u and v have different sizes");
+
+  int32_t x;
+  int32_t y;
+  int64_t z;
+  double  t;
+  int n = u.size();
+  NumericVector o(n);
+
+  for (int i = 0 ; i < n ; ++i)
+  {
+    x = u[i];
+    y = v[i];
+    z = (int64_t)x << 32 | y;
+    memcpy(&t, &z, sizeof(int64_t));
+    o[i] = t;
+  }
+
+  return o;
+}
+
 /*
 // ======= ALGEBRA FUNCTIONS =========
  */

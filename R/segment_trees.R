@@ -64,17 +64,19 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
   else
     stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"))
 
+  # If uniqueness is incremental we are done
   if (uniqueness == 'incremental')
   {
     las <- add_lasattribute(las, name = attribute, desc = "An ID for each segmented tree")
     return(las)
   }
 
+  # Otherwise we must compute an ID that is guaranteed to be unique
+
   tapex <- function(z,t) {
     zmax <- max(z)
     j <- which(z == zmax) # allows to retrieve potentially multiple points that are all max
     if (length(j) > 1) j <- j[which.min(t[j])] # arbitrarily takes the lowest gpstime
-
     return(list(t.pos.t = t[j]))
   }
 
@@ -89,13 +91,9 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
   ids <- las@data[[attribute]]
 
   if (uniqueness == 'gpstime')
-    identifyers <- las@data[, if (!is.na(.BY)) tapex(Z, gpstime), by = ids]
-  else if (uniqueness == 'bitmerge')
-    identifyers <- las@data[, if (!is.na(.BY)) xyapex(X, Y, Z), by = ids]
-
-
-  if (uniqueness == 'gpstime')
   {
+    identifyers <- las@data[, if (!is.na(.BY)) tapex(Z, gpstime), by = ids]
+
     ids <- data.frame(ids)
     data.table::setDT(ids)
     matching <- identifyers[ids, on = 'ids']
@@ -105,8 +103,11 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
     las <- add_lasattribute_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
     return(las)
   }
-  else if (uniqueness == 'bitmerge')
+
+  if (uniqueness == 'bitmerge')
   {
+    identifyers <- las@data[, if (!is.na(.BY)) xyapex(X, Y, Z), by = ids]
+
     xoffset <- las@header@PHB[["X offset"]]
     yoffset <- las@header@PHB[["Y offset"]]
     zoffset <- las@header@PHB[["Z offset"]]
@@ -118,7 +119,7 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
     xscaled <- as.integer((identifyers[["x.pos.t"]] - xoffset)/xscale)
     yscaled <- as.integer((identifyers[["y.pos.t"]] - yoffset)/yscale)
 
-    identifyers[["IDs"]] <- xscaled * 2^32 + yscaled
+    identifyers[["IDs"]] <- bitmerge(xscaled, yscaled)
 
     identifyers <- identifyers[, c(1,4)]
     ids <- data.frame(ids)
@@ -130,8 +131,6 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
     las <- add_lasattribute_manual(las, name = attribute, desc = "An ID for each segmented tree", type = "double", NA_value = .Machine$double.xmin)
     return(las)
   }
-  else
-    stop('Internal error: invalid uniqueness method', call. = FALSE) # nocov
 }
 
 #' @export

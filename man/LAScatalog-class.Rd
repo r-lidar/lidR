@@ -92,7 +92,7 @@ will belong on x = 0 and y = 0 and all the the other chunks will be multiples of
 Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 \item \strong{drop}: integers. A vector of integers that specify the IDs of the chunks that should not be
 created. This is designed to enable to restart a computation that failed without reprocessing
-everything. See \link{opt_restart}. Technically this options may be used for partial processing of
+everything. See \code{opt_restart}. Technically this options may be used for partial processing of
 a collection but should not. Partial processing is already a feature of the engine. See
 \href{https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing}{this vignette}
 }

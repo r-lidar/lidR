@@ -417,6 +417,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bitmerge
+NumericVector bitmerge(IntegerVector u, IntegerVector v);
+RcppExport SEXP _lidR_bitmerge(SEXP uSEXP, SEXP vSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type u(uSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(bitmerge(u, v));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_eigen_values
 SEXP fast_eigen_values(arma::mat A);
 RcppExport SEXP _lidR_fast_eigen_values(SEXP ASEXP) {
@@ -555,6 +566,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_fast_countunquantized", (DL_FUNC) &_lidR_fast_countunquantized, 3},
     {"_lidR_fast_countover", (DL_FUNC) &_lidR_fast_countover, 2},
     {"_lidR_roundc", (DL_FUNC) &_lidR_roundc, 2},
+    {"_lidR_bitmerge", (DL_FUNC) &_lidR_bitmerge, 2},
     {"_lidR_fast_eigen_values", (DL_FUNC) &_lidR_fast_eigen_values, 1},
     {"_lidR_C_knn", (DL_FUNC) &_lidR_C_knn, 6},
     {"_lidR_C_circle_lookup", (DL_FUNC) &_lidR_C_circle_lookup, 4},

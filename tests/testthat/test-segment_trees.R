@@ -154,7 +154,7 @@ test_that("segment_trees can store in a user defined column", {
   expect_true("plop" %in% names(las@data))
 })
 
-test_that("segment_trees supports different unicity srategies", {
+test_that("segment_trees supports different unicity strategies", {
 
   las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "incremental", attribute = "ID1")
   las <- segment_trees(las, li2012(speed_up = 5), uniqueness = "gpstime", attribute = "ID2")
@@ -168,7 +168,7 @@ test_that("segment_trees supports different unicity srategies", {
   s = las@data[u$V1]
 
   expectedID2 = s$gpstime
-  expectedID3 = s$X*100*2^32 + s$Y*100
+  expectedID3 = lidR:::bitmerge(s$X*100, s$Y*100)
 
   id42 = s$ID1 == 42
 

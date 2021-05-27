@@ -69,6 +69,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    - `grid_terrain()` with `is_concave = TRUE` should also be faster.
     
 8. New function `catalog_boundary()` to compute the actual shape of the point-cloud
+
+9. In `find_trees()` and `segment_trees()` the `bitmerge` strategy to generate robust unique IDs was not actually a valid and robust procedure. It had the advantage of generating integers but was not 100% unique. The probability to generate duplicates was low but we change the strategy to use a true bit merging procedure anyway. The new IDs thus generated are weird decimal number such as 5.001120e-310 but are guaranteed to be unique. Documentation has been updated in consequence to explain the method.
    
 #### MISCELANEOUS
 

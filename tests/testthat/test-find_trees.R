@@ -66,7 +66,7 @@ test_that("find_trees supports different unicity strategies", {
   ttops = find_trees(las, lmf(5), uniqueness = "bitmerge")
 
   expect_true(is.double(ttops$treeID))
-  expect_equal(mean(ttops$treeID), 206718581340247136)
+  expect_equal(mean(ttops$treeID), 7.440262e-295)
 })
 
 

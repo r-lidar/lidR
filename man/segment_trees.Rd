@@ -48,23 +48,28 @@ on the edge of a processing chunk will be assigned the same ID.
 is the legacy method.}
 \item{gpstime}{This method uses the gpstime of the highest point of a tree (apex) to create a
 unique ID. This ID is not an integer but a 64-bit decimal number which is suboptimal but at
-least it is exepected to be unique \strong{if the gpstime attribute is consistent across files}.
+least it is expected to be unique \strong{if the gpstime attribute is consistent across files}.
 If inconsistencies with gpstime are reported (for example gpstime records the week time and was
 reset to 0 in a coverage that takes more than a week to complete), there is a (low) probability to get
 ID attribution errors.}
 \item{bitmerge}{This method uses the XY coordinates of the highest point (apex) of a tree to
-create a single number with a bitwise operation. First, XY coordinates are converted to integers using the
-scales and offsets of the point-cloud. Then the ID is computed with X * 2^32 + Y to combine twice the 32-bits
-of information into a 64-bit number. For example, if the apex is at (10.32, 25.64)
-with a scale factor of 0.01 and an offset of 0, the integer coordinates are X = 1032 and Y = 2564
-and the ID is 4432406252036. Such methods return a 64-bit integer but because 64-bit integers do
-not exist in R it is converted to a 64-bit decimal number that is guaranteed to be unique
-\strong{if all files have the same offsets and scale factors}.}
+create a single 64 bits number with a bitwise operation. First, XY coordinates are converted to
+32 bits integers using the scales and offsets of the point-cloud. For example, if the apex is at
+(10.32, 25.64) with a scale factor of 0.01 and an offset of 0, the 32 bits integer coordinates are
+X = 1032 and Y = 2564. Their binary representation are respectively (here displayed on 16 bits)
+0000010000001000 and 0000101000000100. X is shifted by 32 bits an becomes a 64 bits integer. Y is kept
+as is and the binary representation are unionized into a 64 bits integer like (here displayed on 32 bit)
+00000100000010000000101000000100 that is guaranteed to be unique. However R
+does not support 64 bits integers. The previous steps are done at C++ level and the 64 bits binary
+representation is reinterpreted into a 64 bit decimal number to be returned in R. The IDs thus generated
+are somewhat weird. For example the tree ID 00000100000010000000101000000100 which is 67635716 if
+interpreted as integer becomes 3.34164837074751323479078607289E-316 if interpreted as a decimal number.
+This is far from optimal but at least it is guaranteed to be unique  \strong{if all files have the same offsets and scale factors}.}
 }
 
 All the proposed options are suboptimal because they either do not guarantee uniqueness in all cases
 (inconsistencies in the collection of files), or they imply that IDs are based on non-integers or
-meaningless numbers. But at the very least we expect this to work for simple cases.
+meaningless numbers. But at least it works and deals with R limitations.
 }
 
 \section{Working with a \code{LAScatalog}}{

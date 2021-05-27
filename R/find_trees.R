@@ -115,7 +115,7 @@ find_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
         xscaled <- as.integer((maxima[["X"]] - xoffset)/xscale)
         yscaled <- as.integer((maxima[["Y"]] - yoffset)/yscale)
 
-        ids <- xscaled * 2^32 + yscaled
+        ids <- bitmerge(xscaled, yscaled)
       }
 
       data   <- data.frame(treeID = ids, Z = maxima[["Z"]])

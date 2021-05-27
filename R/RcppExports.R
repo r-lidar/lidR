@@ -129,6 +129,10 @@ roundc <- function(x, digit = 0L) {
     .Call(`_lidR_roundc`, x, digit)
 }
 
+bitmerge <- function(u, v) {
+    .Call(`_lidR_bitmerge`, u, v)
+}
+
 fast_eigen_values <- function(A) {
     .Call(`_lidR_fast_eigen_values`, A)
 }
