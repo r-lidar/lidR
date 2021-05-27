@@ -248,6 +248,10 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
     })
   }
 
+  # New feature 3.2.0: skip some chunks (allow to restart a code that crashed)
+  if (!is.null(ctg@chunk_options[["drop"]]) && length(ctg@chunk_options[["drop"]]) > 0)
+    clusters <- clusters[-ctg@chunk_options[["drop"]]]
+
   # Plot the catalog and the clusters if progress
   if (plot)
   {

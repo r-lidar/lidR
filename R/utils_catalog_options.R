@@ -26,12 +26,20 @@
 # ==============================================================================
 
 
-# ========= Clustering Options ===============
-
 #' Get or set LAScatalog processing engine options
 #'
 #' The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
-#' The options are used by all the functions that support a \code{LAScatalog} as input.
+#' The options are used by all the functions that support a `LAScatalog` as input. Most options are
+#' easy to understand and to link to the documentation of \link[=LAScatalog-class]{LAScatalog} but some
+#' need more details. See section details.
+#'
+#' - **opt_restart()** automatically sets the chunk option named "drop" in such a way that
+#' the engine will restart at a given chunk
+#' - **opt_independent_file()** automatically sets the chunk size, chunk buffer and wall-to-wall options
+#' to process files that are not spatially related to each other such as plot inventories.
+#' - **opt_laz_compression()** automatically modifies the drivers to write LAZ files instead of LAS files
+#
+#'
 #'
 #' @param ctg An object of class \link[=LAScatalog-class]{LAScatalog}
 #' @param value An appropriate value depending on the expected input.
@@ -57,7 +65,10 @@
 #'
 #' opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
 #' summary(ctg)
+#' @md
 NULL
+
+# ========= Chunk Options ===============
 
 #' @rdname catalog_options_tools
 #' @export
@@ -114,6 +125,23 @@ opt_chunk_alignment = function(ctg)
   assert_is_numeric(value)
   assert_is_of_length(value, 2)
   ctg@chunk_options$alignment <- value
+  return(ctg)
+}
+
+#' @rdname catalog_options_tools
+#' @export
+`opt_restart<-` = function(ctg, value)
+{
+  assert_is_numeric(value)
+  assert_is_of_length(value, 1)
+  value <- as.integer(value)
+  stopifnot(value >= 1)
+
+  if (value == 1)
+    ctg@chunk_options$drop <- NULL
+  else
+    ctg@chunk_options$drop <- 1:(value-1)
+
   return(ctg)
 }
 

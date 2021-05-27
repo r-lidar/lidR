@@ -372,8 +372,8 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "corn
 If a chunk produced an error this is also rendered in real time. The computation stops as usual but the error is handled in such a way that the code does not actually fail. The functions returned a partial output i.e. the output of the tiles that were computed successfully. A message is printed telling the user what the error was and where it occurred, and suggests to load this specific section of the catalog to test what was wrong with it. In the following case one tile was not classified so it failed.
 
 ```r
-#> An error occurred when processing the chunk 30. Try to load this chunk with:
-#>  chunk <- readRDS("/tmp/RtmpTozKLu/chunk30.rds")
+#> An error occurred when processing the chunk 9. Try to load this chunk with:
+#>  chunk <- readRDS("/tmp/RtmpTozKLu/chunk9.rds")
 #>  las <- readLAS(chunk)
 #> No ground point found.
 ```
@@ -400,11 +400,30 @@ graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "red"
 The engine logged the chunk and it is easy to load this specific processing region for further investigation by copy pasting the mentioned code.
 
 ```r
-chunk <- readRDS("/tmp/RtmpTozKLu/chunk30.rds")
+chunk <- readRDS("/tmp/RtmpTozKLu/chunk9.rds")
 las <- readLAS(chunk)
 ```
 
-The engine is able to bypass the error. This can be activated with `opt_stop_early()` and the computation will run until the end in any case. In this case chunks that failed will be missing and the output will contain holes with missing data. We do not recommend the use of this option because other errors will be bypassed as well without triggering any informative message. This option exists and can be useful if used carefully. Users should always try to fix any problems.
+It is possible to restart the computation at a given chunk to produce the missing parts. In the previous example the chunk number 9 failed so we can restart at 9
+
+```r
+opt_restart(ctg) <- 9
+```
+
+```{r, echo=FALSE}
+opt_chunk_size(ctg) <- 0
+opt_output_files(ctg) <- ""
+opt_wall_to_wall(ctg) <- FALSE
+opt_progress(ctg) <- TRUE
+opt_restart(ctg) <- 9
+cl <- lidR:::catalog_makecluster(ctg)
+for (i in 1:4){
+  bbox <- cl[[i]]@bbox
+  graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
+}
+```
+
+The engine is also able to bypass the error. This can be activated with `opt_stop_early()` and the computation will run until the end in any case. In this case chunks that failed will be missing and the output will contain holes with missing data. We do not recommend the use of this option because other errors will be bypassed as well without triggering any informative message. This option exists and can be useful if used carefully. Users should always try to fix any problems.
 
 ```r
 opt_stop_early(ctg) <- FALSE
@@ -416,6 +435,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
+opt_restart(ctg) <- 1
 cl <- lidR:::catalog_makecluster(ctg)
 for (i in 1:length(cl)){
   bbox <- cl[[i]]@bbox

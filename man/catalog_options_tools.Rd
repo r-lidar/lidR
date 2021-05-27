@@ -8,6 +8,7 @@
 \alias{opt_chunk_size<-}
 \alias{opt_chunk_alignment}
 \alias{opt_chunk_alignment<-}
+\alias{opt_restart<-}
 \alias{opt_progress}
 \alias{opt_progress<-}
 \alias{opt_stop_early}
@@ -39,6 +40,8 @@ opt_chunk_size(ctg) <- value
 opt_chunk_alignment(ctg)
 
 opt_chunk_alignment(ctg) <- value
+
+opt_restart(ctg) <- value
 
 opt_progress(ctg)
 
@@ -83,7 +86,18 @@ opt_filter(ctg) <- value
 }
 \description{
 The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
-The options are used by all the functions that support a \code{LAScatalog} as input.
+The options are used by all the functions that support a \code{LAScatalog} as input. Most options are
+easy to understand and to link to the documentation of \link[=LAScatalog-class]{LAScatalog} but some
+need more details. See section details.
+}
+\details{
+\itemize{
+\item \strong{opt_restart()} automatically sets the chunk option named "drop" in such a way that
+the engine will restart at a given chunk
+\item \strong{opt_independent_file()} automatically sets the chunk size, chunk buffer and wall-to-wall options
+to process files that are not spatially related to each other such as plot inventories.
+\item \strong{opt_laz_compression()} automatically modifies the drivers to write LAZ files instead of LAS files
+}
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

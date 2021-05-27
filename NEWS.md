@@ -17,6 +17,18 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    # or
    projection(ctg) <- 3625
    ```
+   - The processing engine has a new options to drop some chunks under `ctg@chunk_options$drop`. This generates regions that won't be processed. This option accepts a vector of chunk IDs that are dropped and is thus versatile but its main role is to allow restarting a computation that failed. We consequently introduced the function `opt_restart()`. Let assume that the computation failed after few hours at 80% in chunk number 800. User get a partial output for the 799 first chunks but chunk 800 have a problem that can be solved. It is now possible to restart at 800 and get the second part of the output without restarting from 0
+   ```r
+   output <-    catlog_apply(ctg, myfun, param)
+   # Failed after 80%, 'output' contains a partial output
+   # Fix the trouble
+   
+   opt_restart(ctg) <- 800
+   output2 <- catlog_apply(ctg, myfun, param)
+   
+   # Merge 'output' and 'output2'
+   ```
+   - The vignette `LAScatalog engine` and the manual `LAScatalog-class` were updated in consequence of previous feature
 
 3. `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
