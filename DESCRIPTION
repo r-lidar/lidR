@@ -33,7 +33,7 @@ Imports:
     Rcpp (>= 1.0.3),
     rgdal (>= 1.5.8),
     rgl,
-    rlas (>= 1.3.5),
+    rlas (>= 1.5.0),
     sf,
     stats,
     tools,
@@ -50,6 +50,8 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
+Remotes:
+    rlas
 RoxygenNote: 7.1.1
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
