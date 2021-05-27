@@ -16,7 +16,7 @@ how the dataset is processed (see details).
 A \code{LAScatalog} is formally a \code{SpatialPolygonsDataFrame} extended with new slots that
 contain processing options. In \code{lidR}, each function that supports a \code{LAScatalog} as
 input will respect these processing options. Internally, processing a catalog is almost always the
-same and relies on just a few steps:
+same and relies on a few steps:\cr
 \enumerate{
 \item Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
 catalog. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
@@ -26,8 +26,9 @@ return the expected output.
 \item Merge the outputs of the different chunks once they are all processed to build a continuous
 (wall-to-wall) output.
 }
+
 So basically, a \code{LAScatalog} is an object that allows for batch processing but with the specificity
-that \code{lidR} does not loop through las files, but loops seamlessly through chunks that do not
+that \code{lidR} does not loop through LAS or LAZ files, but loops seamlessly through chunks that do not
 necessarily match with the file pattern. This way \code{lidR} can sequentially process tiny ROIs even if
 each file may be individually too big to fit in memory. This is also why point cloud indexation
 with \code{lax} files may significantly speed-up the processing.\cr\cr
@@ -55,7 +56,7 @@ the outputs (see dedicated section).}
 
 \section{Processing options}{
 
-The slot \code{@processing_options} contains a \code{list} of options that determine how chunks
+The slot \verb{@processing_options} contains a \code{list} of options that determine how chunks
 (the sub-areas that are sequentially processed) are processed.
 \itemize{
 \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
@@ -65,21 +66,22 @@ the process can run until the end, removing chunks that failed. Default is TRUE 
 have no reason to change this. See \link{opt_stop_early}.
 \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a
 continuous output without edge effects, assuming that the catalog is a wall-to-wall catalog. To do
-so, some options are checked internally to guard against bad settings, such as buffer = 0 for an
+so, some options are checked internally to guard against bad settings, such as \code{buffer = 0} for an
 algorithm that requires a buffer. In rare cases it might be useful to disable these controls. If
 \code{wall.to.wall = FALSE} controls are disabled and wall-to-wall outputs cannot be guaranteed.
 See \link{opt_wall_to_wall}
 }
 }
+}
 
 \section{Chunk options}{
 
-The slot \code{@chunk_options} contains a \code{list} of options that determine how chunks
+The slot \verb{@chunk_options} contains a \code{list} of options that determine how chunks
 (the sub-areas that are sequentially processed) are made.
 \itemize{
 \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa.
-The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
+A small size allows small amounts of data to be loaded at once, saving computer memory.
+With big chunks the computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
 catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
 the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there are
@@ -94,10 +96,9 @@ Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 
 \section{Output options}{
 
-The slot \code{@output_options} contains a \code{list} of options that determine how chunks
+The slot \verb{@output_options} contains a \code{list} of options that determine how chunks
 (the sub-areas that are sequentially processed) are written. By "written" we mean written to files
 or written in R memory.
-
 \itemize{
 \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned in R. Otherwise, if
 \code{output_files} is a string the outputs will be written to files.
@@ -121,15 +122,14 @@ page describes the drivers in \link{lidR-LAScatalog-drivers}.
 
 \section{Input options}{
 
-The slot \code{@input_options} contains a \code{list} of options that are passed to the function
+The slot \verb{@input_options} contains a \code{list} of options that are passed to the function
 \link{readLAS}. Indeed, the \code{readLAS} function is not called directly by the user but by the
 internal processing engine. Users can propagate these options through the \code{LAScatalog} settings.
-
 \itemize{
-\item \strong{select}: string. The \code{select} option. Usually this option is not respected because
+\item \strong{select}: string. The option \code{select}. Usually this option is not respected because
 each function knows which data must be loaded or not. This is documented in each function. See
 \link{opt_select}.
-\item \strong{filter}: string. The \code{filter} option. See \link{opt_filter}.
+\item \strong{filter}: string. The option \code{filter}. See \link{opt_filter}.
 }
 }
 

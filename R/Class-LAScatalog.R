@@ -27,35 +27,34 @@
 
 #' An S4 class to represent a catalog of .las or .laz files
 #'
-#' A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
+#' A `LAScatalog` object is a representation of a set of las/laz files. A `LAScatalog` is
 #' a way to manage and process an entire dataset. It allows the user to process a large area, or to
 #' selectively clip data from a large area without loading all the data into computer memory.
-#' A \code{LAScatalog} can be built with the function \link{readLAScatalog} and is formally an extension of
-#' a \code{SpatialPolygonsDataFrame} containing extra data to allow users greater control over
+#' A `LAScatalog` can be built with the function \link{readLAScatalog} and is formally an extension of
+#' a `SpatialPolygonsDataFrame` containing extra data to allow users greater control over
 #' how the dataset is processed (see details).
 #'
-#' A \code{LAScatalog} is formally a \code{SpatialPolygonsDataFrame} extended with new slots that
-#' contain processing options. In \code{lidR}, each function that supports a \code{LAScatalog} as
+#' A `LAScatalog` is formally a `SpatialPolygonsDataFrame` extended with new slots that
+#' contain processing options. In `lidR`, each function that supports a `LAScatalog` as
 #' input will respect these processing options. Internally, processing a catalog is almost always the
-#' same and relies on just a few steps:
-#' \enumerate{
-#' \item Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
+#' same and relies on a few steps:\cr
+#' 1. Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
 #' catalog. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
-#' \item Loop over each chunk (in parallel or not).
-#' \item For each chunk, load the points inside the ROI into R, run some R functions,
+#' 2. Loop over each chunk (in parallel or not).
+#' 3. For each chunk, load the points inside the ROI into R, run some R functions,
 #' return the expected output.
-#' \item Merge the outputs of the different chunks once they are all processed to build a continuous
+#' 4. Merge the outputs of the different chunks once they are all processed to build a continuous
 #' (wall-to-wall) output.
-#' }
-#' So basically, a \code{LAScatalog} is an object that allows for batch processing but with the specificity
-#' that \code{lidR} does not loop through las files, but loops seamlessly through chunks that do not
-#' necessarily match with the file pattern. This way \code{lidR} can sequentially process tiny ROIs even if
+#'
+#' So basically, a `LAScatalog` is an object that allows for batch processing but with the specificity
+#' that `lidR` does not loop through LAS or LAZ files, but loops seamlessly through chunks that do not
+#' necessarily match with the file pattern. This way `lidR` can sequentially process tiny ROIs even if
 #' each file may be individually too big to fit in memory. This is also why point cloud indexation
-#' with \code{lax} files may significantly speed-up the processing.\cr\cr
+#' with `lax` files may significantly speed-up the processing.\cr\cr
 #' It is important to note that catalogs with files that overlap each other are not natively supported
-#' by \code{lidR}. When encountering such datasets the user should always filter any overlaps if
+#' by `lidR`. When encountering such datasets the user should always filter any overlaps if
 #' possible. This is possible if the overlapping points are flagged, for example in the
-#' 'withheld' attribute. Otherwise \code{lidR} will not be able to process the dataset correctly.
+#' 'withheld' attribute. Otherwise `lidR` will not be able to process the dataset correctly.
 #'
 #' @slot processing_options list. A list that contains some settings describing how the catalog will be
 #' processed (see dedicated section).
@@ -71,48 +70,46 @@
 #' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
 #'
 #' @section Processing options:
-#' The slot \code{@processing_options} contains a \code{list} of options that determine how chunks
+#' The slot `@processing_options` contains a `list` of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are processed.
-#' \itemize{
-#' \item \strong{progress}: boolean. Display a progress bar and a chart of progress. Default is TRUE.
-#' Progress estimation can be enhanced by installing the package \code{progress}. See \link{opt_progress}.
-#' \item \strong{stop_early}: boolean. Stop the processing if an error occurs in a chunk. If \code{FALSE}
+#'
+#' - **progress**: boolean. Display a progress bar and a chart of progress. Default is TRUE.
+#' Progress estimation can be enhanced by installing the package `progress`. See \link{opt_progress}.
+#' - **stop_early**: boolean. Stop the processing if an error occurs in a chunk. If `FALSE`
 #' the process can run until the end, removing chunks that failed. Default is TRUE and the user should
 #' have no reason to change this. See \link{opt_stop_early}.
-#' \item \strong{wall.to.wall} logical. The catalog processing engine always guarantees to return a
+#' - **wall.to.wall** logical. The catalog processing engine always guarantees to return a
 #' continuous output without edge effects, assuming that the catalog is a wall-to-wall catalog. To do
-#' so, some options are checked internally to guard against bad settings, such as buffer = 0 for an
+#' so, some options are checked internally to guard against bad settings, such as `buffer = 0` for an
 #' algorithm that requires a buffer. In rare cases it might be useful to disable these controls. If
-#' \code{wall.to.wall = FALSE} controls are disabled and wall-to-wall outputs cannot be guaranteed.
+#' `wall.to.wall = FALSE` controls are disabled and wall-to-wall outputs cannot be guaranteed.
 #' See \link{opt_wall_to_wall}
 #' }
 #'
 #' @section Chunk options:
-#' The slot \code{@chunk_options} contains a \code{list} of options that determine how chunks
+#' The slot `@chunk_options` contains a `list` of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are made.
-#' \itemize{
-#' \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
-#' A small size allows small amounts of data to be loaded at once, saving computer memory, and vice versa.
-#' The computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
-#' catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
+#'
+#' - **chunk_size**: numeric. The size of the chunks that will be sequentially processed.
+#' A small size allows small amounts of data to be loaded at once, saving computer memory.
+#' With big chunks the computation is usually faster but uses much more memory. If `chunk_size = 0` the
+#' catalog is processed sequentially *by file* i.e. a chunk is a file. Default is 0 i.e. by default
 #' the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
-#' \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there are
+#' - **buffer**: numeric. Each chunk can be read with an extra buffer around it to ensure there are
 #' no edge effects between two independent chunks and that the output is continuous. This is mandatory for
 #' some algorithms. Default is 30. See \link{opt_chunk_buffer}.
-#' \item \strong{alignment}: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
+#' - **alignment**: numeric. A vector of size 2 (x and y coordinates, respectively) to align the
 #' chunk pattern. By default the alignment is made along (0,0), meaning that the edge of the first chunk
 #' will belong on x = 0 and y = 0 and all the the other chunks will be multiples of the chunk size.
-#' Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
-#' }
+#' Not relevant if `chunk_size = 0`. See \link{opt_chunk_alignment}.
 #'
 #' @section Output options:
-#' The slot \code{@output_options} contains a \code{list} of options that determine how chunks
+#' The slot `@output_options` contains a `list` of options that determine how chunks
 #' (the sub-areas that are sequentially processed) are written. By "written" we mean written to files
 #' or written in R memory.
 #'
-#' \itemize{
-#' \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned in R. Otherwise, if
-#' \code{output_files} is a string the outputs will be written to files.
+#' - **output_files**: string. If `output_files = ""` outputs are returned in R. Otherwise, if
+#' `output_files` is a string the outputs will be written to files.
 #' This is useful if the output is too big to be returned in R. A path to a filename template
 #' without extension (the engine guesses it for you) is expected. When several files are going to be
 #' written a single string is provided with a template that is automatically filled. For example,
@@ -124,23 +121,20 @@
 #' }
 #' This option will generate as many filenames as needed with custom names for each file. The list of
 #' allowed templates is described in the documentation for each function. See \link{opt_output_files}.
-#' \item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
+#' - **drivers**: list. This contains all the drivers required to seamlessly write Raster*,
 #' Spatial*, sf, and LAS objects. It is recommended that only advanced users change this option. A dedicated
 #' page describes the drivers in \link{lidR-LAScatalog-drivers}.
-#' \item \strong{merge}: boolean. Multiple objects are merged into a single object at the end of the processing.
-#' }
+#' - **merge**: boolean. Multiple objects are merged into a single object at the end of the processing.
 #'
 #' @section Input options:
-#' The slot \code{@input_options} contains a \code{list} of options that are passed to the function
-#' \link{readLAS}. Indeed, the \code{readLAS} function is not called directly by the user but by the
-#' internal processing engine. Users can propagate these options through the \code{LAScatalog} settings.
+#' The slot `@input_options` contains a `list` of options that are passed to the function
+#' \link{readLAS}. Indeed, the `readLAS` function is not called directly by the user but by the
+#' internal processing engine. Users can propagate these options through the `LAScatalog` settings.
 #'
-#' \itemize{
-#' \item \strong{select}: string. The \code{select} option. Usually this option is not respected because
+#' - **select**: string. The option `select`. Usually this option is not respected because
 #' each function knows which data must be loaded or not. This is documented in each function. See
 #' \link{opt_select}.
-#' \item \strong{filter}: string. The \code{filter} option. See \link{opt_filter}.
-#' }
+#' - **filter**: string. The option `filter`. See \link{opt_filter}.
 #'
 #' @import data.table
 #' @import methods
@@ -196,6 +190,7 @@
 #' # The user has access to the catalog engine through the function catalog_apply
 #' output <- catalog_apply(ctg, FUN, ...)
 #' }
+#' @md
 setClass(
   Class = "LAScatalog",
   contains = "SpatialPolygonsDataFrame",
