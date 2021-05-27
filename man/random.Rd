@@ -29,6 +29,7 @@ plot(grid_density(thinned1))
 \seealso{
 Other point cloud decimation algorithms: 
 \code{\link{homogenize}()},
-\code{\link{maxima}}
+\code{\link{maxima}},
+\code{\link{random_per_voxel}()}
 }
 \concept{point cloud decimation algorithms}

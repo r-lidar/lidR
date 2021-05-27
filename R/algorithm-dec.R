@@ -156,7 +156,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' These functions are made to be used in \link{decimate_points}. They implements algorithms that
+#' These functions are made to be used in \link{decimate_points}. They implement algorithms that
 #' creates a grid with a given resolution and filters the point cloud by selecting the highest/lowest
 #' point within each cell.
 #'
@@ -215,6 +215,44 @@ lowest = function(res = 1)
   }
 
   class(f) <- LIDRALGORITHMDEC
+  return(f)
+}
+
+#' Point Cloud Decimation Algorithm
+#'
+#' This functions is made to be used in \link{decimate_points}. It implements an algorithm that
+#' creates a 3D grid with a given resolution and filters the point cloud by selecting randomly
+#' n points within each voxel
+#'
+#' @param res numeric. The resolution of the voxel grid used to filter the point cloud
+#' @param n integer. The number o point to select
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile, select = "xyz")
+#'
+#' # Select the highest point within each cell of an overlayed grid
+#' thinned = decimate_points(las, random_per_voxel(8, 1))
+#' #plot(thinned)
+#' @family point cloud decimation algorithms
+#' @export
+random_per_voxel = function(res = 1, n = 1)
+{
+  assert_all_are_positive(n)
+  assert_all_are_positive(res)
+  n <- as.integer(n)
+  if (length(res) == 1) res <- c(res, res)
+
+  n <- lazyeval::uq(n)
+  res <- lazyeval::uq(res)
+
+  f = function(las)
+  {
+    by <- lidR:::group_grid_3d(las$X, las$Y, las$Z, res)
+    return(las@data[, .selected_pulses(1:.N, n), by = by]$V1)
+  }
+
+  class(f) <- lidR:::LIDRALGORITHMDEC
   return(f)
 }
 

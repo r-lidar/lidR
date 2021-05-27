@@ -32,7 +32,7 @@
 #'
 #' @template param-las
 #' @param algorithm function. An algorithm of point decimation. \code{lidR} have: \link{random},
-#' \link{homogenize} and \link{highest}.
+#' \link{homogenize}, \link{highest}, \link{lowest} and \link{random_per_voxel}.
 #'
 #' @template LAScatalog
 #'
