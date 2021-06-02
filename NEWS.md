@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.1.4 (Release date: ...)
 
 - Doc: fix some code block rendering in `catalog_apply` man page
+- Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
 
 ## lidR v3.1.3 (Release date: 2021-05-20)
 

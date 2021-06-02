@@ -181,7 +181,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       percentage <-  engine_compute_progress(states)
       engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
-      if (states[j] == CHUNK_ERROR & abort)
+      if (states[j] == CHUNK_ERROR && abort)
       {
         if (j == 1)
         {
@@ -193,6 +193,11 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
           message(messages[j])
           return(output)
         }
+      }
+
+      if (states[j] == CHUNK_ERROR && !abort) {
+        output[[j]] <- NULL
+        next
       }
 
       if (states[j] == CHUNK_NULL) next
