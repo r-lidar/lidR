@@ -126,7 +126,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
       # The state is ERROR: abort the process nicely
-      if (states[j] == CHUNK_ERROR & abort)
+      if (states[j] == CHUNK_ERROR && abort)
       {
         # If it fails in first chunk it is likely to be an error in code.
         # Stop and display the error message
@@ -144,7 +144,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
         }
       }
 
-      if (states[j] == CHUNK_ERROR & !abort) {
+      if (states[j] == CHUNK_ERROR && !abort) {
         output[[j]] <- NULL
         next
       }
@@ -181,7 +181,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       percentage <-  engine_compute_progress(states)
       engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
 
-      if (states[j] == CHUNK_ERROR & abort)
+      if (states[j] == CHUNK_ERROR && abort)
       {
         if (j == 1)
         {
@@ -193,6 +193,11 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
           message(messages[j])
           return(output)
         }
+      }
+
+      if (states[j] == CHUNK_ERROR && !abort) {
+        output[[j]] <- NULL
+        next
       }
 
       if (states[j] == CHUNK_NULL) next
