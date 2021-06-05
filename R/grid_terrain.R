@@ -187,7 +187,7 @@ grid_terrain.LAScluster = function(las, res = 1, algorithm, ...,  keep_lowest = 
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   bbox <- raster::extent(las)
-  dtm  <- grid_terrain(x, res, algorithm, keep_lowest, full_raster, use_class, Wdegenerated)
+  dtm  <- grid_terrain(x, res, algorithm, keep_lowest = keep_lowest, full_raster = full_raster, use_class = use_class, Wdegenerated = Wdegenerated, is_concave = is_concave)
   dtm  <- raster::crop(dtm, bbox)
   raster::crs(dtm) <- crs(x) # patch for raster not updated with rgal 1.5-8
   return(dtm)
