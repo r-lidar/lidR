@@ -5,6 +5,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Doc: fix some code block rendering in `catalog_apply` man page
 - Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
 - Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels leading to invalid inputs ([#437](https://github.com/Jean-Romain/lidR/issues/437)).
+- Enhance: the `plot` function used to display the output of `voxel_metrics()` now internally uses the same function than `LAS` object. This enhances the rendering using the `clear_artifact` by default and allows for a lot more flexibility in the rendering.
 
 ## lidR v3.1.3 (Release date: 2021-05-20)
 
