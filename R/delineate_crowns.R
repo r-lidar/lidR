@@ -112,6 +112,12 @@ delineate_crowns.LAS = function(las, type = c("convex", "concave", "bbox"), conc
   X <- Y <- Z <- NULL
   hulls <- las@data[, if (!anyNA(.BY)) fhull(X,Y,Z,.GRP, concavity, length_threshold), by = attribute]
 
+  if (nrow(hulls) == 0)
+  {
+    warning("No tree found. NULL returned.", call. = FALSE)
+    return(NULL)
+  }
+
   # Convert to SpatialPolygons
   spoly <- sp::SpatialPolygons(hulls[["poly"]])
   for (i in 1:length(spoly)) spoly@polygons[[i]]@ID <- as.character(i)

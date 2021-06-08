@@ -64,6 +64,9 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
   else
     stop(glue::glue("Wrong output type for the algorithm used. Expected 'RasterLayer' or 'integer', received {class(output)}"))
 
+  if (all(is.na(las@data[[attribute]])))
+    message("No tree found. Maybe use different parameters.")
+
   if (uniqueness == 'incremental')
   {
     las <- add_lasattribute(las, name = attribute, desc = "An ID for each segmented tree")

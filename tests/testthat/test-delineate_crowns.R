@@ -29,6 +29,12 @@ test_that("delineate_crowns works with concave hulls", {
   }
 })
 
+test_that("delineate_crowns returns NULL for no trees", {
+  las@data$treeID <- NA_integer_
+  expect_warning(delineate_crowns(las), "NULL returned")
+  expect_true(is.null(suppressWarnings(delineate_crowns(las))))
+})
+
 test_that("delineate_crowns supports custom metrics", {
   hulls = delineate_crowns(las, "bbox", func = ~max(Z))
 
