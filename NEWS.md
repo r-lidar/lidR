@@ -4,7 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - Doc: fix some code block rendering in `catalog_apply` man page
 - Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
-- Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels leading to invalid inputs ([#437](https://github.com/Jean-Romain/lidR/issues/437)).
+- Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels leading to invalid inputs and floating points precision errors lead to supernumerary voxels ([#437](https://github.com/Jean-Romain/lidR/issues/437), [#439](https://github.com/Jean-Romain/lidR/issues/439)).
 - Fix: `grid_terrain()` used with a `LAScatalog` no longer propagated the options. For example when using `use_class = c(2L, 8L, 9L, 10L)` this was not propagated and the option was actually the default one i.e. `use_class = c(2L, 9L)`. This bug was introduced in 3.1.0
 - Fix: `delineate_crowns()` now returns `NULL` is the input point-cloud with all point being NA. It also triggers a warning. ([#438](https://github.com/Jean-Romain/lidR/issues/438)).
 - Enhance: the `plot` function used to display the output of `voxel_metrics()` now internally uses the same function than `LAS` object. This enhances the rendering using the `clear_artifact` by default and allows for a lot more flexibility in the rendering.
