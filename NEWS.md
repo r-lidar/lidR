@@ -2,12 +2,15 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.1.4 (Release date: ...)
 
+- Change: `manual()` now uses the middle button to perform the selection. Historically the button was "right" but later the right button was added in lidR and attributed to the dragging action. By using "right" in this function this disabled the possibility to drag the scene. Consequently we changed the default to use the middle button. See [#442](https://github.com/Jean-Romain/lidR/issues/442)).
 - Doc: fix some code block rendering in `catalog_apply` man page
 - Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
 - Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels leading to invalid inputs and floating points precision errors lead to supernumerary voxels ([#437](https://github.com/Jean-Romain/lidR/issues/437), [#439](https://github.com/Jean-Romain/lidR/issues/439)).
 - Fix: `grid_terrain()` used with a `LAScatalog` no longer propagated the options. For example when using `use_class = c(2L, 8L, 9L, 10L)` this was not propagated and the option was actually the default one i.e. `use_class = c(2L, 9L)`. This bug was introduced in 3.1.0
 - Fix: `delineate_crowns()` now returns `NULL` is the input point-cloud with all point being NA. It also triggers a warning. ([#438](https://github.com/Jean-Romain/lidR/issues/438)).
+- Fix: `manual()` the function that allow for finding the trees manually was no longer working proably because of some slight modification in the `rgl` package.
 - Enhance: the `plot` function used to display the output of `voxel_metrics()` now internally uses the same function than `LAS` object. This enhances the rendering using the `clear_artifact` by default and allows for a lot more flexibility in the rendering.
+- Enhance: new parameter `button` in `manual()` to choose which button to use.
 - Enhance: `segment_trees()` now print a message if all points are `NA` to suggest to use other parameters
 
 ## lidR v3.1.3 (Release date: 2021-05-20)
