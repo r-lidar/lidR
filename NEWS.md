@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.1.4 (Release date: ...)
 
 - Change: `manual()` now uses the middle button to perform the selection. Historically the button was "right" but later the right button was added in lidR and attributed to the dragging action. By using "right" in this function this disabled the possibility to drag the scene. Consequently we changed the default to use the middle button. See [#442](https://github.com/Jean-Romain/lidR/issues/442)).
+- Change: `manual()` now removes all apices in the selection rectangle when removing some false positive. See [#445](https://github.com/Jean-Romain/lidR/issues/445)).
 - Doc: fix some code block rendering in `catalog_apply` man page
 - Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
 - Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels leading to invalid inputs and floating points precision errors lead to supernumerary voxels ([#437](https://github.com/Jean-Romain/lidR/issues/437), [#439](https://github.com/Jean-Romain/lidR/issues/439)).

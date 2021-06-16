@@ -217,7 +217,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
       # There are some apices in the selected region: remove them
       if (sum(i) > 0)
       {
-        ii <- which(i == TRUE)[1]
+        ii <- which(i == TRUE)
         rgl::rgl.pop(id = apice[ii]$id)
         apice <- apice[-ii]
       }
