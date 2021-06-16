@@ -43,8 +43,10 @@
 #' @method plot lasmetrics3d
 plot.lasmetrics3d = function(x, y, ...)
 {
+
   header = rlas::header_create(x)
   las = LAS(x, header, check = FALSE)
+  attr(las, "res") <- attr(x, "res")
   plot(las, ...)
 }
 
