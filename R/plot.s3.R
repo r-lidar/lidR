@@ -31,14 +31,8 @@
 #'
 #' @param x An object of the class \code{'lasmetrics3d'}
 #' @param y Unused (inherited from R base)
-#' @param color characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.
-#' @param colorPalette characters. A color palette name. Default is \code{height.colors} provided by the package lidR
-#' @param bg The color for the background. Default is black.
-#' @param trim numeric. Enables trimming of values when outliers break the color palette range.
-#' Default is 1 meaning that the whole range of the values is used for the color palette.
-#' 0.9 means that 10% of the highest values are not used to define the color palette.
-#' In this case the values higher than the 90th percentile are set to the highest color. They are not removed.
-#' @param \dots Supplementary parameters for \link[rgl:3dobjects]{points3d} if the display method is "points".
+#' @param \dots Supplementary parameters for \link[lidR:plot]{plot}. The function internally uses the
+#' same plot function than LAS objects.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' lidar = readLAS(LASfile)
@@ -47,36 +41,11 @@
 #' plot(voxels, color = "Imean", colorPalette = heat.colors(50), trim=60)
 #' @export
 #' @method plot lasmetrics3d
-plot.lasmetrics3d = function(x, y, color = "Z", colorPalette = height.colors(50), bg = "black", trim = Inf, ...)
+plot.lasmetrics3d = function(x, y, ...)
 {
-  inargs <- list(...)
-  inargs$col <- color
-
-  if (length(color) == 1)
-  {
-    if (color %in% names(x))
-    {
-      data <- x[[color]]
-
-      if (is.numeric(data) | is.logical(data))
-      {
-        inargs$col <- set.colors(data, colorPalette, trim)
-        inargs$col[is.na(inargs$col)] <- "lightgray"
-      }
-      else if (is.character(data))
-      {
-        inargs$col <- data
-      }
-      else
-      {
-        stop("Internal error: type not supported to color the voxels", call. = FALSE)
-      }
-    }
-  }
-
-  rgl::open3d()
-  rgl::rgl.bg(color = bg)
-  do.call(rgl::points3d, c(list(x = x$X, y = x$Y, z = x$Z), inargs))
+  header = rlas::header_create(x)
+  las = LAS(x, header, check = FALSE)
+  plot(las, ...)
 }
 
 #' Add a spatial object to a point cloud scene

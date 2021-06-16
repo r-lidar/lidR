@@ -4,33 +4,15 @@
 \alias{plot.lasmetrics3d}
 \title{Plot voxelized LiDAR data}
 \usage{
-\method{plot}{lasmetrics3d}(
-  x,
-  y,
-  color = "Z",
-  colorPalette = height.colors(50),
-  bg = "black",
-  trim = Inf,
-  ...
-)
+\method{plot}{lasmetrics3d}(x, y, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{'lasmetrics3d'}}
 
 \item{y}{Unused (inherited from R base)}
 
-\item{color}{characters. The field used to color the points. Default is Z coordinates. Or a vector of colors.}
-
-\item{colorPalette}{characters. A color palette name. Default is \code{height.colors} provided by the package lidR}
-
-\item{bg}{The color for the background. Default is black.}
-
-\item{trim}{numeric. Enables trimming of values when outliers break the color palette range.
-Default is 1 meaning that the whole range of the values is used for the color palette.
-0.9 means that 10% of the highest values are not used to define the color palette.
-In this case the values higher than the 90th percentile are set to the highest color. They are not removed.}
-
-\item{\dots}{Supplementary parameters for \link[rgl:3dobjects]{points3d} if the display method is "points".}
+\item{\dots}{Supplementary parameters for \link[lidR:plot]{plot}. The function internally uses the
+same plot function than LAS objects.}
 }
 \description{
 This function implements a 3D plot method for 'lasmetrics3d' objects

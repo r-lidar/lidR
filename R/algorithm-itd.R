@@ -131,14 +131,16 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' This function is made to be used in \link{find_trees}. It implements an algorithm for manual
 #' tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
 #' This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
-#' invited to select a rectangular region of interest in the scene using the right mouse button.
+#' invited to select a rectangular region of interest in the scene using the mouse button.
 #' Within the selected region the highest point will be flagged as 'tree top' in the scene. Once all the trees
-#' are labeled the user can exit the tool by selecting an empty region. Points can also be unflagged.
+#' are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
 #' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 #'
 #' @param detected \code{SpatialPointsDataFrame} of already found tree tops that need manual correction.
 #' @param radius numeric. Radius of the spheres displayed on the point cloud (aesthetic purposes only).
-#' @param color character. Color of the spheres displayed on the point cloud (aesthetic purposes only).
+#' @param color character. Colour of the spheres displayed on the point cloud (aesthetic purposes only).
+#' @param button Which button to use for selection. One of "left", "middle", "right". lidR using left
+#' for rotation and right for dragging using one of left or right will disable either rotation or dragging
 #' @param ... supplementary parameters to be passed to \link{plot}.
 #'
 #' @family individual tree detection algorithms
@@ -156,7 +158,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = find_trees(las, lmf(5))
 #' ttops = find_trees(las, manual(ttops))
 #' }
-manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov start
+manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle", ...) # nocov start
 {
   f = function(las)
   {
@@ -207,15 +209,15 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov sta
     repeat
     {
       # Select a region
-      f <- rgl::select3d(button = c("right"))
+      f <- rgl::select3d(button = button)
 
       # Get the apices in the selected region
-      i <- f(apice)
+      i <- if (nrow(apice) > 0) f(apice) else FALSE
 
       # There are some apices in the selected region: remove them
       if (sum(i) > 0)
       {
-        ii <- which(i == TRUE)[1]
+        ii <- which(i == TRUE)
         rgl::rgl.pop(id = apice[ii]$id)
         apice <- apice[-ii]
       }
@@ -225,7 +227,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", ...) # nocov sta
         # Get the points in the selected region
         i <- f(las@data)
 
-        # There are points is the region: exit the function
+        # There is 0 points is the region: exit the function
         if (sum(i) == 0)
           break;
 
