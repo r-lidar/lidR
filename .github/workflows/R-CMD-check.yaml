@@ -31,6 +31,7 @@ jobs:
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_FORCE_SUGGESTS_: false
       RGL_USE_NULL: ${{ matrix.config.rglusenull }}
       RSPM: ${{ matrix.config.rspm }}
       NOT_CRAN: true
@@ -65,8 +66,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
