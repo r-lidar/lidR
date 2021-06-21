@@ -454,8 +454,9 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' @family raster based tree segmentation algorithms
 #'
 #' @examples
+#' \donttest{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' poi = "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+#' poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
 #' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(250)
 #'
@@ -465,6 +466,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' las <- segment_trees(las, watershed(chm))
 #'
 #' plot(las, color = "treeID", colorPalette = col)
+#' }
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
   chm     <- lazyeval::uq(chm)
