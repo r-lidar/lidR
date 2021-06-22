@@ -49,8 +49,9 @@ cloud. However, the user can use this as a stand-alone function like this:
 }
 }
 \examples{
+\donttest{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-poi = "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
 las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(250)
 
@@ -60,6 +61,7 @@ chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 las <- segment_trees(las, watershed(chm))
 
 plot(las, color = "treeID", colorPalette = col)
+}
 }
 \seealso{
 Other individual tree segmentation algorithms: 

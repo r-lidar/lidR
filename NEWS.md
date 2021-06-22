@@ -91,10 +91,19 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 1. Remove `crayon` and `hexbin` dependencies
 2. Packages `RCSF` and `rgeos` are now only suggested and they are consequently no longer installed by default with lidR
 
-## lidR v3.1.4 (Release date: ...)
+## lidR v3.1.4 (Release date: 2021-06-22)
 
+- Change: `manual()` now uses the middle button to perform the selection. Historically the button was "right" but later the right button was added in lidR and attributed to the dragging action. By using "right" in this function this disabled the possibility to drag the scene. Consequently we changed the default to use the middle button. ([#442](https://github.com/Jean-Romain/lidR/issues/442)).
+- Change: `manual()` now removes all apices in the selection rectangle when removing some false positive ([#445](https://github.com/Jean-Romain/lidR/issues/445)).
 - Doc: fix some code block rendering in `catalog_apply` man page
-- Fix: fix catalog processing engine edge case when the last chunks fail. See ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
+- Fix: fix catalog processing engine edge case when the last chunks fail ([#435](https://github.com/Jean-Romain/lidR/issues/435)).
+- Fix: `voxel_metrics()` with `all_voxels = TRUE` did not work as expected. The insertion of empty voxels corrupted some of the real voxels. This bug lead to invalid output and some floating points precision errors lead to supernumerary voxels ([#437](https://github.com/Jean-Romain/lidR/issues/437), [#439](https://github.com/Jean-Romain/lidR/issues/439)).
+- Fix: `grid_terrain()` used with a `LAScatalog` no longer propagated the options. For example when using `use_class = c(2L, 8L, 9L, 10L)` this was not propagated and the option was actually the default one i.e. `use_class = c(2L, 9L)`. This bug was introduced in 3.1.0
+- Fix: `delineate_crowns()` now returns `NULL` if the input point-cloud has only points with treeID = NA. It also triggers a warning. ([#438](https://github.com/Jean-Romain/lidR/issues/438)).
+- Fix: `manual()` the function that allow for finding the trees manually was no longer working probably because of some slight modifications in the `rgl` package.
+- Enhance: the `plot` function used to display the output of `voxel_metrics()` now internally uses the same function than `LAS` objects. This enhances the rendering using the `clear_artifact` option by default and allows for a lot more flexibility in the rendering.
+- Enhance: new parameter `button` in `manual()` to choose which button to use.
+- Enhance: `segment_trees()` now print a message if all points are `NA` to suggest to use other parameters
 
 ## lidR v3.1.3 (Release date: 2021-05-20)
 
