@@ -59,7 +59,6 @@ cloud_metrics(lidar, .stdmetrics)
 
 Other metrics: 
 \code{\link{grid_metrics}()},
-\code{\link{hexbin_metrics}()},
 \code{\link{point_metrics}()},
 \code{\link{tree_metrics}()},
 \code{\link{voxel_metrics}()}

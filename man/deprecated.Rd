@@ -42,6 +42,7 @@
 \alias{sensor_tracking}
 \alias{tree_detection}
 \alias{tree_hulls}
+\alias{hexbin_metrics}
 \title{Deprecated functions in lidR}
 \usage{
 lascheck(las)
@@ -165,6 +166,8 @@ tree_hulls(
   func = NULL,
   attribute = "treeID"
 )
+
+hexbin_metrics(...)
 }
 \arguments{
 \item{las}{See the new functions that replace the old ones}

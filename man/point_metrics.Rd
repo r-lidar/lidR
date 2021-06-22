@@ -146,7 +146,6 @@ all.equal(M1, M2)
 Other metrics: 
 \code{\link{cloud_metrics}()},
 \code{\link{grid_metrics}()},
-\code{\link{hexbin_metrics}()},
 \code{\link{tree_metrics}()},
 \code{\link{voxel_metrics}()}
 }

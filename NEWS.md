@@ -2,6 +2,10 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.2.0 (Release date: ...)
 
+#### CHAMGES
+
+1. `hexbin_metrics()` was an unused function and has been removed from `lidR`. It can be retrieved in [`lidRplugins`](https://github.com/Jean-Romain/lidRplugins)
+
 #### NEW FEATURES
 
 1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and a spatial criterion (e.g. inside a polygon)
@@ -84,7 +88,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    
 #### MISCELANEOUS
 
-1. Remove `crayon` dependencies
+1. Remove `crayon` and `hexbin` dependencies
 2. Packages `RCSF` and `rgeos` are now only suggested and they are consequently no longer installed by default with lidR
 
 ## lidR v3.1.4 (Release date: ...)

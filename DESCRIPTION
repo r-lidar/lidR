@@ -41,7 +41,6 @@ Imports:
 Suggests:
     EBImage,
     gstat,
-    hexbin,
     RCSF,
     rgeos,
     mapview,
@@ -112,7 +111,6 @@ Collate:
     'grid_density.R'
     'grid_metrics.R'
     'grid_terrain.R'
-    'hexbin_metrics.R'
     'io_readLAS.R'
     'io_readLAScatalog.R'
     'io_readXLAS.R'

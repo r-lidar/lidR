@@ -331,6 +331,13 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
   return(delineate_crowns(las, type, concavity, length_threshold, func, attribute))
 }
 
+#' @export
+#' @rdname deprecated
+hexbin_metrics = function(...)
+{
+  stop("hexbin_metrics() was an unused function and has been removed from lidR. It can be retrieved in lidRplugins https://github.com/Jean-Romain/lidRplugins")
+}
+
 .lidr3depreciation <- function(name)
 {
   # no depreciation v3.0.0
@@ -351,5 +358,7 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
   stop(msg, call. = FALSE)
   return(invisible())
 }
+
+
 
 # nocov end
