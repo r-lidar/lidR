@@ -79,6 +79,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     vm <- voxel_metrics(las, ~list(N = length(Z)), 8)
     plot(vm, color = "V1", voxels = T)
     ```
+    
+12. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility bu not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in v3.3.0 as planned and be definitively removed in 3.4.0
    
 #### MISCELANEOUS
 
