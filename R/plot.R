@@ -346,8 +346,6 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
     mincol <- 0
     maxcol <- 1
     col <- set.colors(as.numeric(col), pal)
-  } else {
-    stop("Only numeric and logical attributes are supported.", call. = FALSE)
   }
 
   col[is.na(col)] <- "lightgray"
