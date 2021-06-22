@@ -22,6 +22,7 @@ plot(x, y, ...)
   axis = FALSE,
   legend = FALSE,
   add = FALSE,
+  voxel = FALSE,
   ...
 )
 
@@ -72,18 +73,18 @@ on 8 bits set this parameter to 8.}
 \item{add}{If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 to enable the alignment of a second point cloud.}
 
-\item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
-
-\item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
-
-\item{overlaps}{logical. Highlight the overlaps between files.}
-
 \item{voxel}{boolean or numeric. Displays  instead of points. Useful to render the output
 of \link{voxelize_points} for example. However it is computationally demanding to render and can
 easily takes 15 seconds for 10000 voxels. It should be reserved to small scenes. If boolean the voxel
 resolution is guessed automatically. Otherwise user can provide the size of the voxels. An internal
 optimization get rid of voxels that are not visible when surrounded by other voxels to reduce the
 rendering time.}
+
+\item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
+
+\item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
+
+\item{overlaps}{logical. Highlight the overlaps between files.}
 }
 \description{
 Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr
