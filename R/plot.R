@@ -263,7 +263,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
     verbose("Plotting in voxel mode")
 
     if (!is.null(attr(x, 'res')) && !is.numeric(voxel)) {
-      voxels <- attr(x, 'res')
+      voxel <- attr(x, 'res')
       verbose(glue::glue("Resolution of the voxels found in the attribute 'res': {voxel}"))
     } else if (isTRUE(voxel)) {
       xres <- min(diff(sort(unique(x$X))))
