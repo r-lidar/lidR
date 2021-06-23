@@ -420,7 +420,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 }
 
 # nocov start
-.plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_is_index, add, use_voxels)
+.plot_with_pcv = function(las, bg, col, pal, trim, clear_artifacts, axis, legend, args, value_is_index, add, use_voxel)
 {
   if (!isFALSE(add)) stop("Argument 'add' is not supported with lidRviewer")
   if (!isFALSE(use_voxel)) stop("Argument 'use_voxel' is not supported with lidRviewer")

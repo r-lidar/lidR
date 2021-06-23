@@ -248,11 +248,11 @@ random_per_voxel = function(res = 1, n = 1)
 
   f = function(las)
   {
-    by <- lidR:::group_grid_3d(las$X, las$Y, las$Z, res)
+    by <- group_grid_3d(las$X, las$Y, las$Z, res)
     return(las@data[, .selected_pulses(1:.N, n), by = by]$V1)
   }
 
-  class(f) <- lidR:::LIDRALGORITHMDEC
+  class(f) <- LIDRALGORITHMDEC
   return(f)
 }
 

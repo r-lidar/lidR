@@ -148,10 +148,6 @@ m4 <- grid_metrics(las, ~stdmetrics_i(Intensity, Z, Classification, ReturnNumber
 # Convenient shortcut for the previous example
 m5 <- grid_metrics(las, .stdmetrics_i, res = 40)
 
-# Works also with cloud_metrics and hexbin_metrics
-m6 <- cloud_metrics(las, .stdmetrics)
-m7 <- hexbin_metrics(las, .stdmetrics)
-
 # Combine some predefined function with your own new metrics
 # Here convenient shortcuts are no longer usable.
 myMetrics = function(z, i, rn)
