@@ -210,6 +210,15 @@ int C_check_gpstime(NumericVector t, IntegerVector rn)
   return sum;
 }
 
+//[[Rcpp::export(rng = false)]]
+DataFrame C_eigen_metrics(S4 las, int k, double r, LogicalVector filter, int ncpu)
+{
+  LAS pt(las, ncpu);
+  pt.new_filter(filter);
+  return pt.eigen_decomposition(k, r);
+}
+
+
 /*
  * ======= FAST BASE FUNCTIONS =========
  */

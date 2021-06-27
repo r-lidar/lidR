@@ -81,6 +81,14 @@ lasfilter_ <- function(las, conditions)
   return(combined_bools)
 }
 
+parse_filter = function(las, filter, k)
+{
+  if (!is.null(filter))
+    return(lasfilter_(las, list(filter)))
+
+  return(TRUE)
+}
+
 #' Predefined point of interest filters
 #'
 #' Select only some returns

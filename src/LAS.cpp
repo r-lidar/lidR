@@ -1481,6 +1481,103 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   return output;
 }
 
+DataFrame LAS::eigen_decomposition(int k, double r)
+{
+  int n = std::count(filter.begin(), filter.end(), true);
+  IntegerVector pointID(n);
+  NumericVector eigen_largest(n);
+  NumericVector eigen_medium(n);
+  NumericVector eigen_smallest(n);
+
+  bool abort = false;
+  unsigned int j = 0;
+
+  int mode = 0;
+  if (k == 0 && r > 0)
+    mode = 1;
+  else if (k > 0 && r == 0)
+    mode = 0;
+  else if (k > 0 && r > 0)
+    mode = 2;
+  else
+    Rcpp::stop("Internal error: invalid argument k or r");
+
+  SpatialIndex index(las, filter);
+  Progress pb(npoints, "Eigen decomposition: ");
+
+
+  #pragma omp parallel for num_threads(ncpu)
+  for (unsigned int i = 0 ; i < npoints ; i++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+    if (!filter[i]) continue;
+
+    PointXYZ p(X[i], Y[i], Z[i]);
+
+    std::vector<PointXYZ> pts;
+    switch (mode)
+    {
+      case 0:
+      {
+        index.knn(p, k, pts);
+        break;
+      }
+
+      case 1:
+      {
+        Sphere sp(p.x, p.y, p.z, r);
+        index.lookup(sp, pts);
+        break;
+      }
+
+      case 2:
+      {
+        index.knn(p, k, r, pts);
+        break;
+      }
+
+      default:
+      {
+        Rcpp::stop("Internal error in LAS::eigen_decomposition: invalid search mode");
+        break;
+      }
+    }
+
+    arma::mat A(pts.size(),3);
+    arma::mat coeff;  // Principle component matrix
+    arma::mat score;
+    arma::vec latent; // Eigenvalues in descending order
+
+    for (unsigned int k = 0 ; k < pts.size() ; k++)
+    {
+      A(k,0) = pts[k].x;
+      A(k,1) = pts[k].y;
+      A(k,2) = pts[k].z;
+    }
+
+    arma::princomp(coeff, score, latent, A);
+
+    #pragma omp critical
+    {
+      pointID[j] = i;
+      eigen_largest[j] = latent[0];
+      eigen_medium[j] = latent[1];
+      eigen_smallest[j] = latent[2];
+      j++;
+    }
+  }
+
+  DataFrame out;
+  out.push_back(pointID+1, "pointID");
+  out.push_back(eigen_largest, "eigen_largest");
+  out.push_back(eigen_medium, "eigen_medium");
+  out.push_back(eigen_smallest, "eigen_smallest");
+  return out;
+}
+
+
 NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
 {
   Progress pb(npoints, "Metrics computation: ");

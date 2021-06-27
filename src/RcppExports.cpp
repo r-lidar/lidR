@@ -339,6 +339,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_eigen_metrics
+DataFrame C_eigen_metrics(S4 las, int k, double r, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_eigen_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_eigen_metrics(las, k, r, filter, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_table
 IntegerVector fast_table(IntegerVector x, int size);
 RcppExport SEXP _lidR_fast_table(SEXP xSEXP, SEXP sizeSEXP) {
@@ -559,6 +573,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},
     {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
+    {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 5},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

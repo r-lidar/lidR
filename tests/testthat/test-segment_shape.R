@@ -46,3 +46,30 @@ test_that("filter argument works", {
   expect_error(segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Intensity > 200), "'Intensity'")
 })
 
+
+test_that("point_eigenvalue works", {
+  res1 <- point_eigenvalues(las, k = 5, metrics = TRUE)
+  res2 <- point_metrics(las, .stdshapemetrics, k = 5)
+  res2[["horizontality"]] = NULL
+
+  expect_equal(res1, res2)
+
+  res1 <- point_eigenvalues(las, k = 5, r = 5, metrics = TRUE)
+  res2 <- point_metrics(las, .stdshapemetrics, k = 5, r = 5)
+  res2[["horizontality"]] = NULL
+
+  expect_equal(res1, res2)
+
+  res1 <- point_eigenvalues(las, r = 5, metrics = TRUE)
+  res2 <- point_metrics(las, .stdshapemetrics, r = 5)
+  res2[["horizontality"]] = NULL
+
+  expect_equal(res1, res2)
+
+  res1 <- point_eigenvalues(las, r = 5, metrics = TRUE, filter = ~Classification == 2L)
+  res2 <- point_metrics(las, .stdshapemetrics, r = 5,  filter = ~Classification == 2L)
+  res2[["horizontality"]] = NULL
+
+  expect_equal(nrow(res1), 492L)
+  expect_equal(res1, res2)
+})

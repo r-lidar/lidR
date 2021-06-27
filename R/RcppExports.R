@@ -101,6 +101,10 @@ C_check_gpstime <- function(t, rn) {
     .Call(`_lidR_C_check_gpstime`, t, rn)
 }
 
+C_eigen_metrics <- function(las, k, r, filter, ncpu) {
+    .Call(`_lidR_C_eigen_metrics`, las, k, r, filter, ncpu)
+}
+
 fast_table <- function(x, size = 5L) {
     .Call(`_lidR_fast_table`, x, size)
 }
