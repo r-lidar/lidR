@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.1.5 (Release date: 2021-06-22)
+
+- Fix: `quantize()` now preserves NaN values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
+
 ## lidR v3.1.4 (Release date: 2021-06-22)
 
 - Change: `manual()` now uses the middle button to perform the selection. Historically the button was "right" but later the right button was added in lidR and attributed to the dragging action. By using "right" in this function this disabled the possibility to drag the scene. Consequently we changed the default to use the middle button. ([#442](https://github.com/Jean-Romain/lidR/issues/442)).
