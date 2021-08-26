@@ -1,8 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.1.5 (Release date: 2021-06-22)
+## lidR v3.1.5 (Release date: ...)
 
-- Fix: `quantize()` now preserves NaN values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
+- Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
+- Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and become `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
 
 ## lidR v3.1.4 (Release date: 2021-06-22)
 
