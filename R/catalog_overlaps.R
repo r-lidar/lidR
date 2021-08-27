@@ -11,8 +11,8 @@ catalog_overlaps <- function(catalog)
 
     if (length(k) == 0) next
 
-    p <- sfdf[k, ]
-    q <- sfdf[i, ]
+    p <- sfdf[k]
+    q <- sfdf[i]
     w <- sf::st_intersection(q, p)
 
     intersections[[i]] <- w
