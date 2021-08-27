@@ -99,6 +99,7 @@ Collate:
     'doc-drivers.R'
     'doc-lidR.R'
     'doc-parallelism.R'
+    'efi_metrics.R'
     'filter_duplicates.R'
     'filter_poi.R'
     'filter_roi.R'

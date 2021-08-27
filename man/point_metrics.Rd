@@ -145,6 +145,7 @@ all.equal(M1, M2)
 \seealso{
 Other metrics: 
 \code{\link{cloud_metrics}()},
+\code{\link{efi_metrics}()},
 \code{\link{grid_metrics}()},
 \code{\link{tree_metrics}()},
 \code{\link{voxel_metrics}()}
