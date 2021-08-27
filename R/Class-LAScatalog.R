@@ -105,7 +105,7 @@
 #' created. This is designed to enable to restart a computation that failed without reprocessing
 #' everything. See `opt_restart`. Technically this options may be used for partial processing of
 #' a collection but should not. Partial processing is already a feature of the engine. See
-#' [this vignette](https://cran.r-project.org/web/packages/lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing)
+#' [this vignette](https://cran.r-project.org/package=lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing)
 #'
 #' @section Output options:
 #' The slot `@output_options` contains a `list` of options that determine how chunks
