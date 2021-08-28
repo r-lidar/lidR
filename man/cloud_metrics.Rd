@@ -58,8 +58,8 @@ cloud_metrics(lidar, .stdmetrics)
 \link[=LAD]{LAD}
 
 Other metrics: 
-\code{\link{efi_metrics}()},
 \code{\link{grid_metrics}()},
+\code{\link{plot_metrics}()},
 \code{\link{point_metrics}()},
 \code{\link{tree_metrics}()},
 \code{\link{voxel_metrics}()}

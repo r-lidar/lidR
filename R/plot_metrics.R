@@ -2,7 +2,7 @@
 #'
 #' Computes metrics for each plot of a ground inventory by 1. clipping the plots inventories 2. computing
 #' user's metrics to each plot 3. combining spatial data and metrics into one data.frame ready for
-#' statistical modelling. `efi_metrics` is basically a seamless wrapper around \link{clip_roi},
+#' statistical modelling. `plot_metrics` is basically a seamless wrapper around \link{clip_roi},
 #' \link{cloud_metrics}, `cbind` and adequate processing settings.
 #'
 #' @template param-las
@@ -17,23 +17,23 @@
 #' inventory <- sf::st_read(SHPfile, quiet = TRUE)
 #' inventory # contains an ID and a Value Of Interest (VOI) per plot
 #'
-#' M <- efi_metrics(las, ~list(q85 = quantile(Z, probs = 0.85)), inventory, radius = 11.28)
+#' M <- plot_metrics(las, ~list(q85 = quantile(Z, probs = 0.85)), inventory, radius = 11.28)
 #' model <- lm(VOI ~ q85, M)
 #'
-#' M <- efi_metrics(las, .stdmetrics_z, inventory, radius = 11.28)
+#' M <- plot_metrics(las, .stdmetrics_z, inventory, radius = 11.28)
 #'
 #' \dontrun{
 #' # Works with polygons as well
 #' inventory <- sf::st_buffer(inventory, 11.28)
 #' plot(las@header)
 #' plot(sf::st_geometry(inventory), add = TRUE)
-#' M <- efi_metrics(las, .stdmetrics_z, inventory)
+#' M <- plot_metrics(las, .stdmetrics_z, inventory)
 #' }
-#' @return A `data.frame` with all the metrics for each plot as well as all the attributes of the spatial
-#' object used to query the inventory such as plot ID, basal area, above ground biomass
+#' @return An `sp` or `sf` object depending on the input with all the metrics for each plot binded
+#' with the original input.
 #' @export
 #' @family metrics
-efi_metrics <- function(las, func, geometry, ...)
+plot_metrics <- function(las, func, geometry, ...)
 {
   rois <- clip_roi(las, geometry, ...)
 
@@ -50,12 +50,6 @@ efi_metrics <- function(las, func, geometry, ...)
 
   metrics <- data.table::rbindlist(metrics)
   data.table::setDF(metrics)
-
-  if (is(geometry, "sf"))
-    ToA <- sf::st_drop_geometry(geometry)
-  else
-    ToA <- geometry@data
-
-  metrics <- cbind(ToA, metrics)
+  metrics <- cbind(geometry, metrics)
   return(metrics)
 }

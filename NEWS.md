@@ -86,7 +86,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     plot(vm, color = "V1", voxels = T)
     ```
     
-12. New function `efi_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
+12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
    
 #### MISCELANEOUS
 
