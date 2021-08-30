@@ -135,7 +135,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   if (!full_raster)
   {
     if (is_concave)
-      hull <- concaveman(coordinates(las), 10, 100)
+      hull <- concaveman(coordinates(las), concavity = 10, length_threshold = 100)
     else
       hull <- convex_hull(las@data$X, las@data$Y)
 
