@@ -80,7 +80,7 @@
 #' # Negation of attributes is also possible (all except intensity and angle)
 #' las = readLAS(LASfile, select = "* -i -a")
 #' @md
-readLAS = function(files, select = "*", filter = "")
+readLAS = function(files, select = "* -s -w -k", filter = "")
 {
   if (filter == "-h" | filter == "-help")
   {
@@ -183,19 +183,19 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
 }
 
 #' @export
-readLAS.character = function(files, select = "*", filter = "")
+readLAS.character = function(files, select = "* -s -w -k", filter = "")
 {
   assert_is_a_string(select)
   assert_is_a_string(filter)
   return(streamLAS(files, ofile = "", select, filter))
 }
 
-streamLAS = function(x, ofile, select = "*", filter = "", filter_wkt = "")
+streamLAS = function(x, ofile, select = "* -s -w -k", filter = "", filter_wkt = "")
 {
   UseMethod("streamLAS", x)
 }
 
-streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt = "")
+streamLAS.LAScluster = function(x, ofile, select = "* -s -w -k", filter = "", filter_wkt = "")
 {
   las = streamLAS(x@files, ofile, x@select, x@filter, filter_wkt)
 
@@ -214,7 +214,7 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt 
   return(las)
 }
 
-streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt = "")
+streamLAS.character = function(x, ofile, select = "* -s -w -k", filter = "", filter_wkt = "")
 {
   assert_all_are_existing_files(x)
 

@@ -1,6 +1,6 @@
 #' @export
 #' @rdname readLAS
-readALSLAS = function(files,  select = "*", filter = "")
+readALSLAS = function(files,  select = "* -s -w -k", filter = "")
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
@@ -11,7 +11,7 @@ readALSLAS = function(files,  select = "*", filter = "")
 
 #' @export
 #' @rdname readLAS
-readTLSLAS = function(files,  select = "*", filter = "")
+readTLSLAS = function(files,  select = "* -s -w -k", filter = "")
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
@@ -21,7 +21,7 @@ readTLSLAS = function(files,  select = "*", filter = "")
 
 #' @export
 #' @rdname readLAS
-readUAVLAS = function(files,  select = "*", filter = "")
+readUAVLAS = function(files,  select = "* -s -w -k", filter = "")
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
@@ -31,7 +31,7 @@ readUAVLAS = function(files,  select = "*", filter = "")
 
 #' @export
 #' @rdname readLAS
-readDAPLAS = function(files,  select = "*", filter = "")
+readDAPLAS = function(files,  select = "* -s -w -k", filter = "")
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
@@ -51,7 +51,7 @@ readDAPLAS = function(files,  select = "*", filter = "")
 #'
 #' @export
 #' @rdname readLAS
-readMSLAS = function(files1, files2, files3, select = "*", filter = "")
+readMSLAS = function(files1, files2, files3, select = "* -s -w -k", filter = "")
 {
   if (missing(files2) && missing(files3))
   {
