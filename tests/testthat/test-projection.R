@@ -88,7 +88,11 @@ test_that("epsg<- works", {
 
 test_that("Set an invalid code or WKT fails", {
   expect_error({ epsg(las) <- 200800 }, "Invalid epsg")
-  expect_error({ wkt(las) <- "INVALID" }, "Invalid WKT")
+
+  if (rgdal::new_proj_and_gdal())
+    expect_error({ wkt(las) <- "INVALID" }, "Invalid WKT")
+  else
+    expect_error({ wkt(las) <- "INVALID" }, "WKT strings are no longer supported with old versions of GDAL/PROJ")
 })
 
 test_that("#323 do not segfault", {
