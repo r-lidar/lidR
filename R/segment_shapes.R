@@ -87,6 +87,8 @@ segment_shapes.LAS = function(las, algorithm, attribute = "Shape", filter = NULL
 #' search distance.
 point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, filter = NULL)
 {
+  pointID <- NULL
+
   if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
 
   # knn + radius
