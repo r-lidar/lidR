@@ -92,7 +92,7 @@ test_that("Set an invalid code or WKT fails", {
   if (rgdal::new_proj_and_gdal())
     expect_error({ wkt(las) <- "INVALID" }, "Invalid WKT")
   else
-    expect_error({ wkt(las) <- "INVALID" }, "WKT strings are no longer supported with old versions of GDAL/PROJ")
+    expect_error({ wkt(las) <- "INVALID" }, "WKT strings are no longer supported in lidR with old versions of GDAL/PROJ")
 })
 
 test_that("#323 do not segfault", {
