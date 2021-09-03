@@ -453,7 +453,7 @@ wkt2CRS <- function(wkt, fail = FALSE)
 {
   if (!rgdal::new_proj_and_gdal())
   {
-    return(sp::CRS(NA_character_))
+    stop("WKT strings are no longer supported in lidR with old versions of GDAL/PROJ", call. = FALSE)
   }
 
   crs <- tryCatch(
