@@ -54,7 +54,7 @@
 #' help("catalog_options_tools", "lidR")
 #' }
 #' @md
-readLAScatalog <- function(folder, progress = TRUE, select = "* -s -w -k", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   assert_is_character(folder)
 
@@ -164,7 +164,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "* -s -w -k", filte
 
 #' @export
 #' @rdname readLAScatalog
-readALSLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
   ctg@index <- LIDRALSINDEX
@@ -174,7 +174,7 @@ readALSLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", fil
 
 #' @export
 #' @rdname readLAScatalog
-readTLSLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readTLSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
   ctg@index <- LIDRTLSINDEX
@@ -183,7 +183,7 @@ readTLSLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", fil
 
 #' @export
 #' @rdname readLAScatalog
-readUAVLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readUAVLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
   ctg@index <- LIDRUAVINDEX
@@ -192,7 +192,7 @@ readUAVLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", fil
 
 #' @export
 #' @rdname readLAScatalog
-readDAPLAScatalog = function(folder, progress = TRUE, select = "* -s -w -k", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readDAPLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
   ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
   ctg@index <- LIDRDAPINDEX

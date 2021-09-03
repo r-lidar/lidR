@@ -12,7 +12,7 @@
 readLAScatalog(
   folder,
   progress = TRUE,
-  select = "* -s -w -k",
+  select = "*",
   filter = "",
   chunk_size = 0,
   chunk_buffer = 30,
@@ -22,7 +22,7 @@ readLAScatalog(
 readALSLAScatalog(
   folder,
   progress = TRUE,
-  select = "* -s -w -k",
+  select = "*",
   filter = "",
   chunk_size = 0,
   chunk_buffer = 30,
@@ -32,7 +32,7 @@ readALSLAScatalog(
 readTLSLAScatalog(
   folder,
   progress = TRUE,
-  select = "* -s -w -k",
+  select = "*",
   filter = "",
   chunk_size = 0,
   chunk_buffer = 30,
@@ -42,7 +42,7 @@ readTLSLAScatalog(
 readUAVLAScatalog(
   folder,
   progress = TRUE,
-  select = "* -s -w -k",
+  select = "*",
   filter = "",
   chunk_size = 0,
   chunk_buffer = 30,
@@ -52,7 +52,7 @@ readUAVLAScatalog(
 readDAPLAScatalog(
   folder,
   progress = TRUE,
-  select = "* -s -w -k",
+  select = "*",
   filter = "",
   chunk_size = 0,
   chunk_buffer = 30,

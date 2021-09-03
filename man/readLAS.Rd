@@ -9,17 +9,17 @@
 \alias{readMSLAS}
 \title{Read .las or .laz files}
 \usage{
-readLAS(files, select = "* -s -w -k", filter = "")
+readLAS(files, select = "*", filter = "")
 
-readALSLAS(files, select = "* -s -w -k", filter = "")
+readALSLAS(files, select = "*", filter = "")
 
-readTLSLAS(files, select = "* -s -w -k", filter = "")
+readTLSLAS(files, select = "*", filter = "")
 
-readUAVLAS(files, select = "* -s -w -k", filter = "")
+readUAVLAS(files, select = "*", filter = "")
 
-readDAPLAS(files, select = "* -s -w -k", filter = "")
+readDAPLAS(files, select = "*", filter = "")
 
-readMSLAS(files1, files2, files3, select = "* -s -w -k", filter = "")
+readMSLAS(files1, files2, files3, select = "*", filter = "")
 }
 \arguments{
 \item{files}{characters. Path(s) to one or several a file(s). Can also be a

@@ -8,9 +8,6 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in v3.3.0 as planned and be definitively removed in 3.4.0
 
-3. The new default for `readLAS()` is `"* -s -w -k"` that mean that synthetic, withheld and keypoint flags are not longer read by default. The reason is that in 99% of the case they are not populated, users do not know what they mean and they account for 15 to 20% of the memory of a `LAS` object. This change will save memory
-without affecting much the workflow. A warning is still triggered at read time if a withheld point is loaded.
-
 #### NEW FEATURES
 
 1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and a spatial criterion (e.g. inside a polygon)
@@ -28,7 +25,7 @@ without affecting much the workflow. A warning is still triggered at read time i
       ```
    - The processing engine has a new options to drop some chunks under `ctg@chunk_options$drop`. This generates regions that won't be processed. This option accepts a vector of chunk IDs that are dropped and is thus versatile but its main role is to allow restarting a computation that failed. We consequently introduced the function `opt_restart()`. Let assume that the computation failed after few hours at 80% in chunk number 800. User get a partial output for the 799 first chunks but chunk 800 have a problem that can be solved. It is now possible to restart at 800 and get the second part of the output without restarting from 0
       ```r
-      output <- catlog_apply(ctg, myfun, param)
+      output <-    catlog_apply(ctg, myfun, param)
       # Failed after 80%, 'output' contains a partial output
       # Fix the trouble
    
