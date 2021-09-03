@@ -204,7 +204,9 @@ setMethod("projection", "LASheader", function(x, asText = TRUE)
   if (use_epsg(x) && epsg(x) != 0L)
     proj4 <- epsg2CRS(epsg(x))
   else if (use_wktcs(x) && wkt(x) != "")
+  {
     proj4 <- wkt2CRS(wkt(x))
+  }
   else
     proj4 <- sp::CRS()
 
@@ -425,40 +427,27 @@ use_epsg.LASheader <- function(x) {
 
 epsg2CRS <- function(epsg, fail = FALSE)
 {
-  if (rgdal::new_proj_and_gdal())
+  crs <- tryCatch(
   {
-    crs <- tryCatch(
-    {
-      sfcrs <- suppressWarnings(sf::st_crs(paste0("EPSG:", epsg)))
-      return(suppressWarnings(sp::CRS(SRS_string = sfcrs$wkt)))
-    },
-    error = function(e)
-    {
-      if (!fail)
-        return(sp::CRS(NA_character_))
-      else
-        stop(paste("Invalid epsg code", epsg), call. = FALSE)
-    })
-  }
-  else # nocov start
+    crs <- suppressWarnings(sf::st_crs(paste0("EPSG:", epsg)))
+    return(suppressWarnings(as(crs, "CRS")))
+  },
+  error = function(e)
   {
-    proj <- epsg2proj(epsg, fail)
-    crs <- sp::CRS(proj)
-  } # nocov end
+    if (!fail)
+      return(sp::CRS(NA_character_))
+    else
+      stop(paste("Invalid epsg code", epsg), call. = FALSE)
+  })
 
   return(crs)
 }
 
 wkt2CRS <- function(wkt, fail = FALSE)
 {
-  if (!rgdal::new_proj_and_gdal())
-  {
-    stop("WKT strings are no longer supported in lidR with old versions of GDAL/PROJ", call. = FALSE)
-  }
-
   crs <- tryCatch(
   {
-    sp::CRS(SRS_string = wkt)
+    as(sf::st_crs(wkt), "CRS")
   },
   error = function(e)
   {
@@ -470,37 +459,3 @@ wkt2CRS <- function(wkt, fail = FALSE)
 
   return(crs)
 }
-
-# nocov start
-epsg2proj <- function(epsg, fail = FALSE)
-{
-  tryCatch(
-  {
-    crs <- sp::CRS(SRS_string = glue::glue("EPSG:{epsg}"))
-    crs@projargs
-  },
-  error = function(e)
-  {
-    if (!fail)
-      return(NA_character_)
-    else
-      stop("Invalid epsg code", call. = FALSE)
-  })
-}
-
-wkt2proj <- function(wkt, fail = FALSE)
-{
-  tryCatch(
-  {
-    crs <- sp::CRS(SRS_string = glue::glue("EPSG:{epsg}"))
-    crs@projargs
-  },
-  error = function(e)
-  {
-    if (!fail)
-      return(NA_character_)
-    else
-      stop("Invalid WKT", call. = FALSE)
-  })
-}
-# nocov end
