@@ -97,6 +97,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
 - Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and become `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
+- Change: `rgdal` will be retired in 2024. Code using `rgdal` internally has been removed. In many cases this will not change anything for users but in some cases it may fail at assigning an EPSG code to the LAS file. Also old version of `rgdal` built with old version of `gdal` and `proj` are no longer supported ([#466](https://github.com/Jean-Romain/lidR/issues/466))
 
 ## lidR v3.1.4 (Release date: 2021-06-22)
 

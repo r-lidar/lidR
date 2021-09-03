@@ -1,7 +1,5 @@
 context("classify_noise")
 
-rgdal::set_thin_PROJ6_warnings(TRUE)
-
 las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
 
 set.seed(314)
