@@ -25,36 +25,6 @@ user's metrics to each plot 3. combining spatial data and metrics into one data.
 statistical modelling. `plot_metrics` is basically a seamless wrapper around \link{clip_roi},
 \link{cloud_metrics}, `cbind` and adequate processing settings.
 }
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} in \code{plot_metrics} function (in bold). For
-more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item chunk size: Not relevant here
-\item chunk buffer: Not relevant here
-\item chunk alignment: Not relevant here
-\item \strong{progress}: Displays a progress estimate.
-\item output files: plots are extracted in memory
-\item \strong{select}: Read only the attributes of interest
-\item \strong{filter}: Read only the points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 SHPfile <- system.file("extdata", "efi_plot.shp", package="lidR")

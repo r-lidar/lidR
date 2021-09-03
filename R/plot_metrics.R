@@ -10,21 +10,6 @@
 #' @param geometry a spatial object. Many types are supported (see also \link{clip_roi})
 #' @param ... optional supplementary options (see also \link{clip_roi})
 #'
-#' @template LAScatalog
-#'
-#' @section Supported processing options:
-#' Supported processing options for a \code{LAScatalog} in \code{plot_metrics} function (in bold). For
-#' more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-#' \itemize{
-#' \item chunk size: Not relevant here
-#' \item chunk buffer: Not relevant here
-#' \item chunk alignment: Not relevant here
-#' \item \strong{progress}: Displays a progress estimate.
-#' \item output files: plots are extracted in memory
-#' \item \strong{select}: Read only the attributes of interest
-#' \item \strong{filter}: Read only the points of interest.
-#' }
-
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' SHPfile <- system.file("extdata", "efi_plot.shp", package="lidR")
