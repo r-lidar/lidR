@@ -1,7 +1,7 @@
 context("grid_metrics")
 
 las <- lidR:::generate_las(2000)
-projection(las) <- sp::CRS("+init=epsg:4326")
+projection(las) <- 4326
 
 test_that("grid_metrics returns a named RasterLayer", {
 

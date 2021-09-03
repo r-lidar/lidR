@@ -2,9 +2,11 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.2.0 (Release date: ...)
 
-#### CHAMGES
+#### CHANGES
 
 1. `hexbin_metrics()` was an unused function and has been removed from `lidR`. It can be retrieved in [`lidRplugins`](https://github.com/Jean-Romain/lidRplugins)
+
+2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in v3.3.0 as planned and be definitively removed in 3.4.0
 
 #### NEW FEATURES
 
@@ -84,12 +86,18 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     plot(vm, color = "V1", voxels = T)
     ```
     
-12. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility bu not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in v3.3.0 as planned and be definitively removed in 3.4.0
+12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
    
 #### MISCELANEOUS
 
 1. Remove `crayon` and `hexbin` dependencies
 2. Packages `RCSF` and `rgeos` are now only suggested and they are consequently no longer installed by default with lidR
+
+## lidR v3.1.5 (Release date: ...)
+
+- Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
+- Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and become `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
+- Change: `rgdal` will be retired in 2024. Code using `rgdal` internally has been removed. In many cases this will not change anything for users but in some cases it may fail at assigning an EPSG code to the LAS file. Also old version of `rgdal` built with old version of `gdal` and `proj` are no longer supported ([#466](https://github.com/Jean-Romain/lidR/issues/466))
 
 ## lidR v3.1.4 (Release date: 2021-06-22)
 

@@ -49,7 +49,7 @@ cloud. However, the user can use this as a stand-alone function like this:
 }
 }
 \examples{
-\donttest{
+\dontrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
 las <- readLAS(LASfile, select = "xyz", filter = poi)

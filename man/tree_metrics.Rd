@@ -103,6 +103,7 @@ metrics = tree_metrics(las, .stdtreemetrics)
 Other metrics: 
 \code{\link{cloud_metrics}()},
 \code{\link{grid_metrics}()},
+\code{\link{plot_metrics}()},
 \code{\link{point_metrics}()},
 \code{\link{voxel_metrics}()}
 }

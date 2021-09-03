@@ -209,6 +209,7 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 
   n <- length(i)
   itot <- sum(i)
+  if (is.double(itot)) stop("Metric 'itot' is greater than 2147483647 and cannot be stored as integer.", call. = FALSE)
   imean <- mean(i)
 
   probs <- seq(0.05, 0.95, 0.05)

@@ -454,7 +454,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' @family raster based tree segmentation algorithms
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
 #' las <- readLAS(LASfile, select = "xyz", filter = poi)
@@ -504,7 +504,7 @@ ws_generic = function(chm, th_tree = 2, tol = 1, ext = 1, treetops = NULL, ID = 
   {
     assert_is_valid_context(LIDRCONTEXTITS, "watershed", null_allowed = TRUE)
 
-    # Test if requiered packages are installed
+    # Test if required packages are installed
     if (is.null(treetops))
     {
       assert_package_is_installed("EBImage")

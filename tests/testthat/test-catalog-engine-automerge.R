@@ -5,12 +5,6 @@ ctg@output_options$drivers$Raster$param$overwrite = TRUE
 ctg@output_options$drivers$Spatial$param$overwrite = TRUE
 ctg@output_options$drivers$SimpleFeature$param$delete_dsn = TRUE
 
-if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal()) {
-  expected_crs <- sp::CRS(SRS_string = "EPSG:26917")
-} else {
-  expected_crs <- sp::CRS("+init=epsg:26917")
-}
-
 rtest <- function(cluster, layers = 1L) {
   las <- readLAS(cluster)
   if (is.empty(las)) return(NULL)

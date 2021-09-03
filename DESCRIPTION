@@ -3,7 +3,7 @@ Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
 Version: 3.2.0
-Date: 2021-06-22
+Date: 2021-08-26
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -49,8 +49,6 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-Remotes:
-    rlas
 RoxygenNote: 7.1.1
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
@@ -128,6 +126,7 @@ Collate:
     'normalize_intensity.R'
     'plot.R'
     'plot.s3.R'
+    'plot_metrics.R'
     'point_metrics.R'
     'print.R'
     'projection.R'
