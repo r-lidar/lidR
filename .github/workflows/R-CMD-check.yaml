@@ -26,7 +26,7 @@ jobs:
           - {os: windows-latest, r: 'release', rglusenull: "true"}
           #- {os: windows-latest, r: '3.6', rglusenull: "true"}
           #- {os: macOS-latest, r: 'release', rglusenull: "true"}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          #- {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
