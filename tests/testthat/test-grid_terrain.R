@@ -1,8 +1,7 @@
 context("grid_terrain")
-rgdal::set_thin_PROJ6_warnings(TRUE)
 
 las <- lidR:::generate_las(5000)
-projection(las) <- sp::CRS("+init=epsg:4326")
+projection(las) <- 4326
 las@data[, Z := round(Z + 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)]
 
 tdtm   <- lidR:::rOverlay(las, 1)

@@ -241,49 +241,43 @@ setMethod("projection<-", "LAS", function(x, value)
   # header depending on the LAS format (1.4 or above)
   # In addition we need this to work both with old and new proj and gdal
 
-  proj6 <- rgdal::new_proj_and_gdal()
-
   if (is(value, "CRS"))
   {
     proj4 <- value@projargs
     CRS <- value
-    wkt <- if (proj6) comment(value) else rgdal::showWKT(proj4)
-    if (is.null(wkt)) wkt = ""
-    epsg <- .find_epsg_code(CRS)
+    crs <- sf::st_crs(CRS)
+    wkt <- crs$wkt
+    epsg <- crs$epsg
   }
   else if (is(value, "crs"))
   {
-    if (proj6)
-    {
-      wkt <- value$wkt
-      CRS <- sp::CRS(SRS_string = wkt)
-      proj4 <- CRS@projargs
-      epsg <- .find_epsg_code(value)
-    }
-    else # nocov start
-    {
-      proj4 <- value$proj4string
-      CRS <- sp::CRS(proj4)
-      wkt <- rgdal::showWKT
-      epsg <- .find_epsg_code(value)
-    } # nocov end
+    wkt <- value$wkt
+    CRS <- sp::CRS(SRS_string = wkt)
+    crs <- value
+    proj4 <- CRS@projargs
+    epsg <- crs$epsg
   }
   else if (is.character(value))
   {
     CRS <- sp::CRS(SRS_string = value)
     proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
-    epsg <- .find_epsg_code(CRS)
+    crs <- sf::st_crs(CRS)
+    wkt <- crs$wkt
+    epsg <- crs$epsg
   }
   else if (is.numeric(value))
   {
     epsg <- value
     CRS <- epsg2CRS(epsg)
+    crs <- sf::st_crs(CRS)
     proj4 <- CRS@projargs
-    wkt <- if (proj6) comment(CRS) else rgdal::showWKT(proj4)
+    wkt <- crs$wkt
   }
   else
     stop("'value' is not a CRS or a string or a number.")
+
+  if (is.null(epsg) | is.na(epsg))
+    epsg = 0
 
   if (use_wktcs(x))
   {
@@ -457,70 +451,24 @@ epsg2CRS <- function(epsg, fail = FALSE)
 
 wkt2CRS <- function(wkt, fail = FALSE)
 {
-  if (utils::packageVersion("rgdal") > "1.4.8" && rgdal::new_proj_and_gdal())
+  if (!rgdal::new_proj_and_gdal())
   {
-    crs <- tryCatch(
-    {
-      sp::CRS(SRS_string = wkt)
-    },
-    error = function(e)
-    {
-      if (!fail)
-        return(sp::CRS(NA_character_))
-      else
-        stop("Invalid WKT string", call. = FALSE)
-    })
+    return(sp::CRS(NA_character_))
   }
-  else # nocov start
+
+  crs <- tryCatch(
   {
-    proj <- wkt2proj(wkt, fail)
-    crs <- sp::CRS(proj, doCheckCRSArgs = FALSE) # doCheckCRSArgs = FALSE added in 2.2.4 after #323
-  } # nocov end
+    sp::CRS(SRS_string = wkt)
+  },
+  error = function(e)
+  {
+    if (!fail)
+      return(sp::CRS(NA_character_))
+    else
+      stop("Invalid WKT string", call. = FALSE)
+  })
 
   return(crs)
-}
-
-.find_epsg_code <- function(x)
-{
-  if (is(x, "CRS"))
-  {
-    if (is.na(x@projargs))
-      return(0L)
-
-    # Extract epsg code if any
-    epsg  <- sub("\\+init=epsg:(\\d+).*",  "\\1", x@projargs)
-    epsg  <- suppressWarnings(as.integer(epsg))
-
-    if (!is.na(epsg)) return(epsg)
-
-    ## We were not able to extract the epsg code earlier, we can retrieve it
-    ## with rgdal and proj4 string
-    epsg <- rgdal::showEPSG(x@projargs)
-
-    # We are still unable to find an epsg code
-    if (epsg == "OGRERR_UNSUPPORTED_SRS")
-      return(0L)
-    else
-      return(epsg)
-  }
-  else if (is(x, "crs"))
-  {
-    if (!is.null(x$epsg))
-      return(x$epsg)
-
-    if (is.na(x$input))
-      return(0L)
-
-    epsg  <- sub("\\EPSG:(\\d+).*",  "\\1", x$input)
-    epsg  <- suppressWarnings(as.integer(epsg))
-
-    if (!is.na(epsg))
-      return(epsg)
-    else
-      return(0L)
-  }
-  else
-    stop("Internal error: x is not a CRS or a crs", call. = FALSE)
 }
 
 # nocov start
@@ -528,8 +476,8 @@ epsg2proj <- function(epsg, fail = FALSE)
 {
   tryCatch(
   {
-    wkt <- rgdal::showWKT(glue::glue("+init=epsg:{epsg}"))
-    rgdal::showP4(wkt)
+    crs <- sp::CRS(SRS_string = glue::glue("EPSG:{epsg}"))
+    crs@projargs
   },
   error = function(e)
   {
@@ -544,7 +492,8 @@ wkt2proj <- function(wkt, fail = FALSE)
 {
   tryCatch(
   {
-    rgdal::showP4(wkt)
+    crs <- sp::CRS(SRS_string = glue::glue("EPSG:{epsg}"))
+    crs@projargs
   },
   error = function(e)
   {
