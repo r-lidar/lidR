@@ -31,7 +31,6 @@ Imports:
     grDevices,
     lazyeval,
     Rcpp (>= 1.0.3),
-    rgdal (>= 1.5.8),
     rgl,
     rlas (>= 1.5.0),
     sf,
@@ -46,6 +45,7 @@ Suggests:
     mapview,
     mapedit,
     progress,
+    rgdal (>= 1.5-8),
     testthat (>= 2.1.0),
     knitr,
     rmarkdown

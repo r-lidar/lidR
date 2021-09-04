@@ -115,15 +115,6 @@ epsg(las)
 # Get the WKT string stored in the header (LAS >= 1.4)
 wkt(las)
 
-if (rgdal::new_proj_and_gdal())
-{
-   # Get the WKT of the CRS
-   sp::wkt(crs(las))
-
-   # Recorded CRS is "NAD83 / UTM zone 17N"
-   sf::st_crs(las)$input
-}
-
 # Overwrite the CRS (but does not reproject)
 crs <- sp::CRS("+init=epsg:26918")
 projection(las) <- crs

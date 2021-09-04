@@ -514,10 +514,10 @@ las_check.LAS = function(las, print = TRUE, ...)
     codeproj = wkt2CRS(swkt)
 
     if (is.na(codeproj@projargs))
-    { .fail("WKT OGC CS not understood by rgdal") ; failure = TRUE }
+    { .fail("WKT OGC CS not parsed by sf::st_crs") ; failure = TRUE }
 
     if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { .warn("WKT OGC CS not understood by rgdal but a proj4string found") ; failure = TRUE }
+    { .warn("WKT OGC CS not parsed by sf::st_crs but a proj4string found") ; failure = TRUE }
 
     if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
     { .warn("WKT OGC CS is valid but no proj4string found") ; failure = TRUE }
