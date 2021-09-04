@@ -2,6 +2,10 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.2.0 (Release date: ...)
 
+#### ANNOUCEMENT
+
+`rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require in depth redesign of `lidR`. We started the work and we plan to release `lidR` 4.0.0 with no longer any internal code that uses `sp` and `raster`. We hope do to that with a minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0 but some backward incompatibilities will necessarily arise. Especially `LAS` will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `SpatialPolygonDataFrame`. Our plan is (hopefully) to redesign `lidR` in such a way that nobody will notice the change expect users who dig a bit too much into the objects.
+
 #### CHANGES
 
 1. `hexbin_metrics()` was an unused function and has been removed from `lidR`. It can be retrieved in [`lidRplugins`](https://github.com/Jean-Romain/lidRplugins)
@@ -87,6 +91,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     ```
     
 12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
+
+13. New function `point_eigenvalue()` that is equivalent to `point_metrics(las, .stdshapemetrics)` but specialized, optimized and paralleled to be 10 times faster.
 
 #### FIXES
 
