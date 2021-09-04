@@ -4,7 +4,7 @@
 #' in \link{LAScatalog-class}, users can set a templated filename to store the outputs on disk instead
 #' of in R memory. By defaut \code{LAS} objects are stored in .las files with \link{writeLAS},
 #' \code{Raster*} objects are stored in .tif files with \link[raster:writeRaster]{writeRaster},
-#' \code{Spatial*} objects are stored in .shp files with \link[rgdal:writeOGR]{writeOGR},
+#' \code{Spatial*} objects are stored in .shp files with \link[sf:st_write]{st_write},
 #' \code{data.frame} objects are stored in .csv files with \link[data.table:fwrite]{fwrite}, and other
 #' objects are not supported. However, users can modify all these default settings and even add new drivers.
 #' This manual page explain how. One may also refer to some unofficial documentation
@@ -73,7 +73,7 @@
 #'
 #' @section Modify a driver (2/2):
 #' It is also possible to completely overwrite an existing driver. By default \code{SpatialPointsDataFrame}
-#' objects are written into ESRI shapefiles with \link[rgdal:writeOGR]{writeOGR}. \code{writeOGR} can write into other
+#' objects are written into ESRI shapefiles with \link[sf:st_write]{st_write}. \code{writeOGR} can write into other
 #' file types, such as GeoPackage or GeoJSON and even as SQLlite database objects. But it cannot add data into
 #' an existing SQLlite database. Let's create our own driver for a \code{SpatialPointsDataFrame}. First
 #' we need a function able to write and append a \code{SpatialPointsDataFrame} into a SQLlite database
