@@ -106,7 +106,7 @@ setGeneric("plot", function(x, y, ...)
 #' @rdname plot
 setMethod("plot", signature(x = "LAS", y = "missing"), function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim = Inf, backend = "rgl", clear_artifacts = TRUE, nbits = 16, axis = FALSE, legend = FALSE, add = FALSE, voxel = FALSE, ...)
 {
-  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, add, ...)
+  plot.LAS(x, y, color, colorPalette, bg, trim, backend, clear_artifacts, nbits, axis, legend, add, voxel, ...)
 })
 
 #' @export
