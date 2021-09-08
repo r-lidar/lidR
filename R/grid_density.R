@@ -61,7 +61,12 @@ grid_density = function(las, res = 4)
     resolution = res
 
   if (!"pulseID" %in% names(las@data))
-    X <- grid_metrics(las, ~list(point_density = .N), res)
+  {
+    layout <- rOverlay(las, res, buffer = 0)
+    count <- C_rasterize(las, layout, FALSE, 3L)
+    layout[] <- count/(raster::res(layout)^2)
+    X <- layout
+  }
   else
     X <- grid_metrics(las, ~list(point_density = .N, pulse_density = length(unique(pulseID))), res)
 

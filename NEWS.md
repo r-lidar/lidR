@@ -94,6 +94,10 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 13. New function `point_eigenvalue()` that is equivalent to `point_metrics(las, .stdshapemetrics)` but specialized, optimized and paralleled to be 10 times faster.
 
+#### ENHANCEMENTS
+
+1. `grid_density()` is 10 times faster
+
 #### FIXES
 
 1. Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
