@@ -373,6 +373,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   if (isFALSE(add)) {
     rgl::open3d()
     rgl::rgl.bg(color = bg)
+    rgl::rgl.material(specular = "black")
   }
 
   # Two modes, point-cloud rendering or voxel rendering
