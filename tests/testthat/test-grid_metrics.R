@@ -84,7 +84,47 @@ test_that("grid_metrics accepts both an expression or a formula", {
   expect_equal(x, y)
 })
 
-# Convert laz to las for faster testing
+test_that("grid_metrics splits by echo type", {
+
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = "first")
+
+  expect_true(is(x, "RasterLayer"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(5,5,1))
+  expect_equal(raster::extent(x), raster::extent(0,100,0,100))
+  expect_equal(x@crs, las@proj4string)
+  expect_equal(names(x), "Zmean.first")
+
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("first", "last"))
+
+  expect_true(is(x, "RasterBrick"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(5,5,2))
+  expect_equal(raster::extent(x), raster::extent(0,100,0,100))
+  expect_equal(x@crs, las@proj4string)
+  expect_equal(names(x), c("Zmean.first", "Zmean.last"))
+
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("all", "first", "last"))
+
+  expect_true(is(x, "RasterBrick"))
+  expect_equal(raster::res(x), c(20,20))
+  expect_equal(dim(x), c(5,5,3))
+  expect_equal(raster::extent(x), raster::extent(0,100,0,100))
+  expect_equal(x@crs, las@proj4string)
+  expect_equal(names(x), c("Zmean", "Zmean.first", "Zmean.last"))
+})
+
+test_that("3 way to compute with first returns are giving the same", {
+
+  x1 = grid_metrics(filter_last(megaplot), mean(Z), 20)
+  x2 = grid_metrics(megaplot, mean(Z), 20, filter = ~ReturnNumber == NumberOfReturns)
+  #x3 = grid_metrics(megaplot, mean(Z), 20, by_echos = "last")
+  #names(x3) <- names(x1)
+
+  expect_equal(x1, x2)
+  #expect_equal(x1, x3) hey cannot be the same because by_echo = "last" does not consider single
+})
+
 las <- filter_first(megaplot)
 las@data$Intensity <- NULL
 ctg <- megaplot_ctg
@@ -176,5 +216,7 @@ test_that("Using a non empty layout return correct output (#318)", {
 
   expect_equal(sum(is.na(m[])), 52L)
 })
+
+
 
 

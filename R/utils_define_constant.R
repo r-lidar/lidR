@@ -74,6 +74,12 @@ LASBRIGDE             <- 17L
 #' @rdname asprs
 LASNOISE              <- 18L
 
+LASFIRST <- 1L
+LASINTERMEDIATE <- 2L
+LASLAST <- 3L
+LASSINGLE <- 4L
+LASMULTIPLE <- 5L
+
 CHUNK_WAINTING        <- 0L
 CHUNK_OK              <- 1L
 CHUNK_NULL            <- 2L
