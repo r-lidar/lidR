@@ -55,6 +55,12 @@
 #' plot(d)
 grid_density = function(las, res = 4)
 {
+  UseMethod("grid_density", las)
+}
+
+#' @export
+grid_density.LAS = function(las, res = 4)
+{
   if (is(res, "RasterLayer"))
     resolution = raster::res(res)[1]
   else
@@ -64,7 +70,7 @@ grid_density = function(las, res = 4)
   {
     layout <- rOverlay(las, res, buffer = 0)
     count <- C_rasterize(las, layout, FALSE, 3L)
-    layout[] <- count/(raster::res(layout)^2)
+    layout[] <- count
     X <- layout
   }
   else
@@ -73,3 +79,48 @@ grid_density = function(las, res = 4)
   X[is.na(X)] <- 0
   return(X/resolution^2)
 }
+
+#' @export
+grid_density.LAScluster = function(las, res = 4)
+{
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+  bbox <- raster::extent(las)
+  dsm  <- grid_density(x, res)
+  dsm  <- raster::crop(dsm, bbox)
+  raster::crs(dsm) <- crs(x) # patch for raster not updated with rgal 1.5-8
+  return(dsm)
+}
+
+#' @export
+grid_density.LAScatalog = function(las, res = 4)
+{
+  # Defensive programming
+  if (!is_a_number(res) && !is(res, "RasterLayer"))  stop("res is not a number or a RasterLayer")
+  if (is_a_number(res)) assert_all_are_non_negative(res)
+
+  # Enforce some options
+  opt_select(las) <- "xyz"
+  if (opt_wall_to_wall(las))
+    opt_chunk_buffer(las) <- 2
+
+  # Compute the alignment option including the case when res is a RasterLayer
+  alignment   <- list(res = res, start = c(0,0))
+  if (is(res, "RasterLayer"))
+  {
+    ext       <- raster::extent(res)
+    r         <- raster::res(res)[1]
+    las       <- catalog_intersect(las, res)
+    start     <- c(ext@xmin, ext@ymin)
+    alignment <- list(res = r, start = start)
+  }
+
+  if (opt_chunk_size(las) > 0 && opt_chunk_size(las) < 2*alignment$res)
+    stop("The chunk size is too small. Process aborted.", call. = FALSE)
+
+  # Processing
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
+  output  <- catalog_apply(las, grid_density, res = res, .options = options)
+  return(output)
+}
+

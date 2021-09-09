@@ -5,7 +5,7 @@ las  <- megaplot
 
 opt_chunk_buffer(ctg)    <- 0
 opt_chunk_size(ctg)      <- 160
-opt_chunk_alignment(ctg) <- c(0, 92)
+opt_chunk_alignment(ctg) <- c(50, 92)
 opt_progress(ctg)        <- FALSE
 
 test_that("grid_density returns the same both with LAScatalog and LAS", {
