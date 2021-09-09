@@ -89,21 +89,24 @@ hexbin_metrics = function(las, func, res = 20)
 
   call <- lazyeval::as_call(func)
 
-  res  <- round(sqrt(((2*res*res)/(3*sqrt(3)))), 2)
+  resy <- round(sqrt((res^2)/(6 * sqrt(3)/4)), 2)
+  resx <- round(((sqrt(3)/2)*resy), 2)
   ext  <- raster::extent(las)
-  xmin <- round_any(ext@xmin, res)
-  xmax <- round_any(ext@xmax, res)
-  ymin <- round_any(ext@ymin, res)
-  ymax <- round_any(ext@ymax, res)
-
-  if (xmax < ext@xmax) xmax <- xmax + res
-  if (xmin > ext@xmin) xmin <- xmin - res
-  if (ymax < ext@ymax) ymax <- ymax + res
-  if (ymin > ext@ymin) ymin <- ymin - res
-
-  dx    <- (xmax - xmin)
-  dy    <- (ymax - ymin)
-  xbins <- (xmax - xmin)/(2*res)
+  xmin <- round_any(ext@xmin, resx)
+  xmax <- round_any(ext@xmax, resx)
+  ymin <- round_any(ext@ymin, resy)
+  ymax <- round_any(ext@ymax, resy)
+  if (xmax < ext@xmax)
+    xmax <- xmax + resx
+  if (xmin > ext@xmin)
+    xmin <- xmin - resx
+  if (ymax < ext@ymax)
+    ymax <- ymax + resy
+  if (ymin > ext@ymin)
+    ymin <- ymin - resy
+  dx <- (xmax - xmin)
+  dy <- (ymax - ymin)
+  xbins <- (xmax - xmin)/(2 * resx)
 
   layout   <- hexbin::hexbin(las@data$X, las@data$Y, shape = dy/dx,  xbins = xbins, xbnds = c(xmin, xmax), IDs = TRUE)
   metrics  <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = layout@cID]
