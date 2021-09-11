@@ -4,24 +4,24 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### ANNOUCEMENT
 
-`rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require in depth redesign of `lidR`. We started the work and we plan to release `lidR` 4.0.0 with no longer any internal code that uses `sp` and `raster`. We hope do to that with a minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0 but some backward incompatibilities will necessarily arise. Especially `LAS` will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `SpatialPolygonDataFrame`. Our plan is (hopefully) to redesign `lidR` in such a way that nobody will notice the change expect users who dig a bit too much into the objects.
+`rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require an in depth rebase of `lidR`. We started the work and we plan to release `lidR` 4.0.0 with no longer any internal code that uses `sp` and `raster`. This version already no longer uses `rgdal`. We hope do to that change with a minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0 but some backward incompatibilities will necessarily arise. Especially `LAS` will no longer inherit the `sp::Spatial` class and will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `sp::SpatialPolygonDataFrame`. Our plan is (hopefully) to rebase `lidR` in such a way that nobody will notice the changes expect users who dig a bit too much into the objects but backward incompatibilities will necessarily arise.
 
 #### CHANGES
 
 1. `hexbin_metrics()` was an unused function and has been removed from `lidR`. It can be retrieved in [`lidRplugins`](https://github.com/Jean-Romain/lidRplugins)
 
-2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in v3.3.0 as planned and be definitively removed in 3.4.0
+2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in next version.
 
 #### NEW FEATURES
 
-1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and a spatial criterion (e.g. inside a polygon)
+1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and/or a spatial criterion (e.g. inside a polygon). For example the following with attribute the las "high vegetation" to each non ground point that is not in the lake polygon.
     ```r
     las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
     ```
 
 2. `LAScatalog`
    - New function `rbind()` for `LAScatalog`.
-   - New function `projection()` and `crs()` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
+   - New function `projection()<-` and `crs()<-` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
       ```r
       projection(ctg) <- st_crs(3625)
       # or
@@ -84,15 +84,17 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 10. New algorithm `random_per_voxel()` for `decimate_points` that keep n points per voxel ([#406](https://github.com/Jean-Romain/lidR/issues/406)).
 
-11. 3D rendering: `plot()` has a new parameter `voxels = TRUE` or `voxels = 0.5` to render a point-cloud with voxels. This is useful to render the output of `voxelize_points()` or `voxel_metrics()` for examples. This is computationally demanding and takes time so it should be reserved to small scene 30,000 or 40,000 voxels maximum. Yet there is no hard coded limits 
-    ```r
-    vm <- voxel_metrics(las, ~list(N = length(Z)), 8)
-    plot(vm, color = "V1", voxels = T)
-    ```
+11. 3D rendering: 
+    - `plot()` gains a new parameter `voxels = TRUE` or `voxels = 0.5` to render a point-cloud with voxels. This is useful to render the output of `voxelize_points()` or `voxel_metrics()` for examples. This is computationally demanding and takes time so it should be reserved to small scenes with 30,000 or 40,000 voxels maximum. Yet there is no hard coded limits 
+      ```r
+      vm <- voxel_metrics(las, ~list(N = length(Z)), 8)
+      plot(vm, color = "V1", voxels = T)
+      ```
+    - specular reflections are now disable in `plot()`.
     
 12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
 
-13. New function `point_eigenvalue()` that is equivalent to `point_metrics(las, .stdshapemetrics)` but specialized, optimized and paralleled to be 10 times faster.
+13. New function `point_eigenvalue()` that is equivalent to `point_metrics(las, .stdshapemetrics)` but specialized, optimized and parallelized to be 10 times faster.
 
 14. `grid_metrics()` gains a new parameters `by_echo` allowing to compute the metrics for different types of echos independently. It is now possible to map e.g. `mean(Intensity)` for first returns only + multiple return only + single return only. All metrics are computed in a single run and returned in a raster stack.
 
