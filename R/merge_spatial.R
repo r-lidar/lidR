@@ -75,18 +75,18 @@ merge_spatial = function(las, source, attribute = NULL)
 #' @export
 merge_spatial.LAS = function(las, source, attribute = NULL)
 {
-  if (is(source, "sf"))
+  if (is(source, "sf") | is(source, "sfc"))
   {
     if (any(!sf::st_geometry_type(source) %in% c("POLYGON", "MULTIPOLYGON")))
-      stop("Only POLYGON geometry types are supported for sf objects", call. = FALSE)
+      stop("Only POLYGON geometry types are supported for sf and sfc objects", call. = FALSE)
 
     box <- raster::extent(las)
     box <- sf::st_bbox(box)
     width <- (box[3] - box[1])*0.01 + las@header@PHB[["X scale factor"]]
     height <- (box[4] - box[2])*0.01 + las@header@PHB[["Y scale factor"]]
     box <- box + c(-width, -height, width, height)
-    attr(box, "crs") <- sf::st_crs(source) # fix for code before rgdal 1.5-8 (probably)
-    sf::st_agr(source) = "constant"
+    sf::st_crs(box) <- sf::st_crs(source)
+    sf::st_agr(source) <- "constant"
     source <- sf::st_crop(source, box)
   }
 
@@ -94,10 +94,10 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
     attribute <- NULL
 
   if (is(source, "Polygon"))
-    source <- sp::Polygons(list(source), ID = 1)
+    source <- sf::st_geometry(sf::st_polygon(list(source)))
 
-  if (is(source, "Polygons"))
-    source <- sp::SpatialPolygons(list(source), proj4string = las@proj4string)
+  #if (is(source, "Polygons"))
+    #source <- sp::SpatialPolygons(list(source), proj4string = las@proj4string)
 
   if (is(source, "SpatialPolygons") | is(source, "SpatialPolygonsDataFrame"))
   {
@@ -113,7 +113,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
     }
   }
 
-  if (is(source, "sf"))
+  if (is(source, "sf") | is(source, "sfc"))
     values <- merge_sf(las, source, attribute)
   else if (is(source, "RasterLayer"))
     values <- merge_raster(las, source)

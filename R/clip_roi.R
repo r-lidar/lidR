@@ -53,13 +53,14 @@
 #' \itemize{
 #'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
 #'  a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
-#'  \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
-#'  \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
-#'  \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+#'  \item \link[sp:Polygon-class]{Polygon}, \link[sp:SpatialPolygons-class]{SpatialPolygons},
+#'  \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame},  \link[sp:SpatialPoints-class]{SpatialPoints}
+#'  or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
 #'  in that case a parameter 'radius' must be passed in \code{...}
-#'  \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+#'  \item \link[sf:sf]{SimpleFeature} from sf that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
 #'  In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
-#'  \item \link[raster:Extent-class]{Extent}
+#'  \item \link[raster:Extent-class]{Extent} from package \code{raster}
+#'  \item \link[sf:st_bbox]{bbox} from package \code{sf}
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
 #'  \preformatted{
 #'   min     max
@@ -136,16 +137,16 @@ clip_roi = function(las, geometry, ...)
     geometry <- sf::st_as_sfc(geometry, crs = sf::st_crs(las))
 
   if (is(geometry, "Polygon"))
-    geometry <- sp::Polygons(list(geometry), ID = 1)
-
-  if (is(geometry, "Polygons"))
-    geometry <- sp::SpatialPolygons(list(geometry), proj4string = las@proj4string)
+    geometry <- sf::st_geometry(sf::st_polygon(list(geometry@coords)))
 
   if (is(geometry, "SpatialPolygons") | is(geometry, "SpatialPolygonsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
 
   if (is(geometry, "SpatialPoints") | is(geometry, "SpatialPointsDataFrame"))
     geometry <- sf::st_as_sf(geometry)
+
+  if (is(geometry, "sfg"))
+    geometry <- sf::st_geometry(geometry)
 
   if (is(geometry, "sf") | is(geometry, "sfc"))
   {
@@ -170,10 +171,10 @@ clip_roi = function(las, geometry, ...)
   }
   else if (is(geometry, "Extent"))
   {
-    xmin = geometry@xmin
-    xmax = geometry@xmax
-    ymin = geometry@ymin
-    ymax = geometry@ymax
+    xmin <- geometry@xmin
+    xmax <- geometry@xmax
+    ymin <- geometry@ymin
+    ymax <- geometry@ymax
     return(clip_rectangle(las, xmin, ymin, xmax, ymax))
   }
   else if (is.matrix(geometry))
@@ -181,21 +182,20 @@ clip_roi = function(las, geometry, ...)
     if (!all(dim(geometry) == 2))
       stop("Matrix must have a size 2 x 2")
 
-    xmin = geometry[1]
-    xmax = geometry[3]
-    ymin = geometry[2]
-    ymax = geometry[4]
+    xmin <- geometry[1]
+    xmax <- geometry[3]
+    ymin <- geometry[2]
+    ymax <- geometry[4]
     return(clip_rectangle(las, xmin, ymin, xmax, ymax))
   }
-  #else if (tryCatch(is(raster::extent(geometry), "Extent"), error = function(e) return(FALSE)))
-  #{
-    #geometry = raster::extent(geometry)
-    #xmin = geometry@xmin
-    #xmax = geometry@xmax
-    #ymin = geometry@ymin
-    #ymax = geometry@ymax
-    #return(clip_rectangle(las, xmin, ymin, xmax, ymax))
-  #}
+  else if (is(geometry, "bbox"))
+  {
+    xmin <- geometry$xmin
+    xmax <- geometry$xmax
+    ymin <- geometry$ymin
+    ymax <- geometry$ymax
+    return(clip_rectangle(las, xmin, ymin, xmax, ymax))
+  }
   else
   {
     stop(paste0("Geometry type ", paste0(class(geometry), collapse = " "), " not supported"))

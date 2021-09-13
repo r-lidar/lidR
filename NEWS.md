@@ -98,6 +98,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 14. `grid_metrics()` gains a new parameters `by_echo` allowing to compute the metrics for different types of echos independently. It is now possible to map e.g. `mean(Intensity)` for first returns only + multiple return only + single return only. All metrics are computed in a single run and returned in a raster stack.
 
+15. `merge_spatial()` supports `sfc`
+
 #### ENHANCEMENTS
 
 1. `grid_density()` is 10 times faster
