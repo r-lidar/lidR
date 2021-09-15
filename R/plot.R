@@ -219,8 +219,16 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
 
     if (is.null(param$add)) do.call(graphics::plot, param)
 
-    graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = col)
-    graphics::par(op)
+    if (!isTRUE(attr(x, "trueshape")))
+    {
+      graphics::rect(x@data$Min.X, x@data$Min.Y, x@data$Max.X, x@data$Max.Y, col = col)
+      graphics::par(op)
+    }
+    else
+    {
+      plot(as.spatial(x), col = col)
+      graphics::par(op)
+    }
 
     if (overlaps) {
       plot(catalog_overlaps(x), add = T, col = "red", border = "red")

@@ -29,7 +29,7 @@
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")
-#' ctg2 <- catalog_boundaries(ctg, 2, 5)
+#' ctg2 <- catalog_boundaries(ctg, 1, 15)
 #' plot(ctg)
 #' plot(ctg2, add = TRUE)
 catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
