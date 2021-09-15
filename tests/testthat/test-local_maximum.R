@@ -36,6 +36,13 @@ test_that("find_localmaxima works with rect", {
   expect_equal(length(lm), 1)
 })
 
+test_that("find_localmaxima respects filter argument", {
+
+  lm = find_localmaxima(las, 14, filter = ~Z > 5)
+
+  expect_equal(length(lm), length(x) - 5)
+})
+
 test_that("find_localmaxima works with oriented rect", {
 
   lm = find_localmaxima(las, c(10, 10))

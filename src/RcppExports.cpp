@@ -310,14 +310,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_local_maximum
-LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu);
-RcppExport SEXP _lidR_C_local_maximum(SEXP lasSEXP, SEXP wsSEXP, SEXP ncpuSEXP) {
+LogicalVector C_local_maximum(S4 las, NumericVector ws, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_local_maximum(SEXP lasSEXP, SEXP wsSEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type ws(wsSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_local_maximum(las, ws, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_local_maximum(las, ws, filter, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -575,7 +576,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_fast_knn_metrics", (DL_FUNC) &_lidR_C_fast_knn_metrics, 4},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},
-    {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 3},
+    {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 4},
     {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 5},

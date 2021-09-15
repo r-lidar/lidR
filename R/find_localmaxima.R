@@ -36,7 +36,7 @@ find_localmaxima = function(las, w, filter = NULL)
   if (length(w) == 3) verbose("Local maxima search in an oriented rectangle")
 
   filter <- parse_filter(las, filter)
-  id <- C_local_maximum(las, w, getThreads())
+  id <- C_local_maximum(las, w, filter, getThreads())
 
   maxima <- las@data[id]
   data.table::setDF(maxima)

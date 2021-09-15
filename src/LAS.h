@@ -17,6 +17,7 @@ class LAS
     unsigned int ncpu;
     unsigned int npoints;
     std::vector<bool> filter;
+    std::vector<bool> skip;
 
   public:
     LAS(S4 las, int npcu = 1);

@@ -1,6 +1,5 @@
 context("classify_ground")
 
-file <- system.file("extdata", "Topography.laz", package="lidR")
 las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
 ctg = topography_ctg
 

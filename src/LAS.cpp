@@ -31,14 +31,16 @@ LAS::LAS(S4 las, int ncpu)
   this->ncpu = ncpu;
   this->filter.resize(npoints);
   std::fill(filter.begin(), filter.end(), false);
+  this->skip.resize(npoints);
+  std::fill(skip.begin(), skip.end(), false);
 }
 
 void LAS::new_filter(LogicalVector b)
 {
   if (b.size() == 1)
-    std::fill(filter.begin(), filter.end(), b[0]);
+    std::fill(skip.begin(), skip.end(), b[0]);
   else if (b.size() == (int)npoints)
-    this->filter = Rcpp::as< std::vector<bool> >(b);
+    this->skip = Rcpp::as< std::vector<bool> >(b);
   else
     Rcpp::stop("Internal error in 'new_filter"); // # nocov
 }
@@ -145,7 +147,7 @@ void LAS::z_open(double resolution)
 
   NumericVector Z_out(npoints);
 
-  SpatialIndex tree(las, filter);
+  SpatialIndex tree(las, skip);
 
   Progress p(2*npoints, "Morphological filter: ");
 
@@ -154,7 +156,7 @@ void LAS::z_open(double resolution)
   {
     p.check_abort();
     p.update(i);
-    if (!filter[i]) continue;
+    if (!skip[i]) continue;
 
     std::vector<PointXYZ> pts;
     Rectangle rect(X[i]-half_res, X[i]+half_res,Y[i]-half_res, Y[i]+half_res);
@@ -180,7 +182,7 @@ void LAS::z_open(double resolution)
   {
     p.check_abort();
     p.update(i+npoints);
-    if (!filter[i]) continue;
+    if (!skip[i]) continue;
 
     std::vector<PointXYZ> pts;
     Rectangle rect(X[i]-half_res, X[i]+half_res,Y[i]-half_res, Y[i]+half_res);
@@ -442,7 +444,7 @@ void LAS::filter_local_maxima(NumericVector ws)
   else
     Rcpp::stop("C++ unexpected internal error in 'filter_local_maxima': invalid windows."); // # nocov
 
-  SpatialIndex tree(las);
+  SpatialIndex tree(las, skip);
   Progress pb(npoints, "Local maximum filter: ");
 
   #pragma omp parallel for num_threads(ncpu)
@@ -451,6 +453,7 @@ void LAS::filter_local_maxima(NumericVector ws)
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
+    if (!skip[i]) continue;
 
     // Get the points within a windows centred on the current point
     std::vector<PointXYZ> pts;
@@ -519,7 +522,7 @@ void LAS::filter_with_grid(S4 layout, bool max)
 
   for (unsigned int i = 0 ; i < npoints ; i++)
   {
-    if (filter[i]) continue;
+    if (skip[i]) continue;
 
     double x = X[i];
     double y = Y[i];
@@ -578,7 +581,7 @@ void LAS::filter_in_polygon(std::string wkt)
     #pragma omp parallel for num_threads(ncpu)
     for(unsigned int i = 0 ; i < npoints ; i++)
     {
-      if (filter[i]) continue;
+      if (skip[i]) continue;
 
       Point p;
       p.set<0>(X[i]);
@@ -610,7 +613,7 @@ void LAS::filter_in_polygon(std::string wkt)
     #pragma omp parallel for num_threads(ncpu)
     for(unsigned int i = 0 ; i < npoints ; i++)
     {
-      if (filter[i]) continue;
+      if (skip[i]) continue;
 
       Point p;
       p.set<0>(X[i]);
@@ -642,7 +645,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
 
   bool abort = false;
 
-  SpatialIndex qtree(las, filter);
+  SpatialIndex qtree(las, skip);
 
   bool (*predicate)(arma::vec&, arma::mat&, NumericVector&);
   switch(method)
@@ -658,7 +661,7 @@ void LAS::filter_shape(int method, NumericVector th, int k)
     if (abort) continue;
     if (pb.check_interrupt()) abort = true; // No data race here because only thread 0 can actually write
     pb.increment();
-    if (!filter[i]) continue;
+    if (!skip[i]) continue;
 
     arma::mat A(k,3);
     arma::mat coeff;  // Principle component matrix
@@ -702,10 +705,12 @@ void LAS::filter_progressive_morphology(NumericVector ws, NumericVector th)
 
     for (unsigned int j = 0 ; j < npoints ; j++)
     {
-      if (!filter[j]) continue;
-      filter[j] = (oldZ[j] - Z[j]) < th[i];
+      if (!skip[j]) continue;
+      skip[j] = (oldZ[j] - Z[j]) < th[i];
     }
   }
+
+  filter = skip;
 
   return;
 }
@@ -1306,14 +1311,14 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 
   // Number of points actually processed considering the filter.
   // The output is allocated using this number
-  int nprocessed = std::count(filter.begin(), filter.end(), true);
+  int nprocessed = std::count(skip.begin(), skip.end(), true);
   List output(nprocessed);
 
   // Current index in the output
   int j = 0;
 
   // Construction of a spatial index to make the queries
-  SpatialIndex tree(las, filter);
+  SpatialIndex tree(las, skip);
   Progress pb(npoints, "Metrics computation: ");
 
   // Error handling variables
@@ -1335,7 +1340,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
-    if (!filter[i]) continue;
+    if (!skip[i]) continue;
 
     std::vector<PointXYZ> pts;
 
@@ -1483,7 +1488,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 
 DataFrame LAS::eigen_decomposition(int k, double r)
 {
-  int n = std::count(filter.begin(), filter.end(), true);
+  int n = std::count(skip.begin(), skip.end(), true);
   IntegerVector pointID(n);
   NumericVector eigen_largest(n);
   NumericVector eigen_medium(n);
@@ -1502,7 +1507,7 @@ DataFrame LAS::eigen_decomposition(int k, double r)
   else
     Rcpp::stop("Internal error: invalid argument k or r");
 
-  SpatialIndex index(las, filter);
+  SpatialIndex index(las, skip);
   Progress pb(npoints, "Eigen decomposition: ");
 
 
@@ -1512,7 +1517,7 @@ DataFrame LAS::eigen_decomposition(int k, double r)
     if (abort) continue;
     if (pb.check_interrupt()) abort = true;
     pb.increment();
-    if (!filter[i]) continue;
+    if (!skip[i]) continue;
 
     PointXYZ p(X[i], Y[i], Z[i]);
 

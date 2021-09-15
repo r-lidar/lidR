@@ -108,6 +108,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 1. Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
 2. Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and become `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
+3. Fix: `find_localmaxima()` respects argument the `filter`. It was previously not considered.
    
 #### MISCELANEOUS
 

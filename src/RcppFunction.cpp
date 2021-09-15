@@ -151,9 +151,10 @@ NumericVector C_lasrange(S4 las, DataFrame flightlines)
 }
 
 //[[Rcpp::export(rng = false)]]
-LogicalVector C_local_maximum(S4 las, NumericVector ws, int ncpu)
+LogicalVector C_local_maximum(S4 las, NumericVector ws, LogicalVector filter, int ncpu)
 {
   LAS pt(las, ncpu);
+  pt.new_filter(filter);
   pt.filter_local_maxima(ws);
   return Rcpp::wrap(pt.filter);
 }
