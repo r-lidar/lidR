@@ -153,6 +153,7 @@ grid_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, f
   lidR.context <- "grid_terrain"
   ground <- LAS(ground, las@header, proj4string = las@proj4string, check = FALSE, index = las@index)
   Zg <- algorithm(ground, grid)
+  Zg[is.nan(Zg)] <- NA_real_
   fast_quantization(Zg, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
   cells <- raster::cellFromXY(layout, grid[, .(X,Y)])
 

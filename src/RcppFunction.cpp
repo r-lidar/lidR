@@ -259,7 +259,7 @@ void fast_quantization(NumericVector x, double scale, double offset)
 
   for (NumericVector::iterator it = x.begin(), end = x.end() ; it != end ; ++it)
   {
-    if (!Rcpp::traits::is_nan<REALSXP>(*it))
+    if (!Rcpp::traits::is_nan<REALSXP>(*it) && !Rcpp::traits::is_na<REALSXP>(*it))
     {
       u = (*it - offset)/scale;
       if (u > um || u < -um) Rcpp::stop("Non quantizable value outside the range of representable values of type 'int'");
