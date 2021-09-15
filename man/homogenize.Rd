@@ -30,7 +30,7 @@ LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an homogeneous density of 1
-thinned = decimate_points(las, homogenize(1,5))
+thinned <- decimate_points(las, homogenize(1,5))
 plot(grid_density(thinned, 10))
 }
 \seealso{

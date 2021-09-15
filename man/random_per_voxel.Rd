@@ -9,7 +9,7 @@ random_per_voxel(res = 1, n = 1)
 \arguments{
 \item{res}{numeric. The resolution of the voxel grid used to filter the point cloud}
 
-\item{n}{integer. The number o point to select}
+\item{n}{integer. The number of points to select}
 }
 \description{
 This functions is made to be used in \link{decimate_points}. It implements an algorithm that
@@ -18,10 +18,8 @@ n points within each voxel
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
-
-# Select the highest point within each cell of an overlayed grid
-thinned = decimate_points(las, random_per_voxel(8, 1))
+las <- readLAS(LASfile, select = "xyz")
+thinned <- decimate_points(las, random_per_voxel(8, 1))
 #plot(thinned)
 }
 \seealso{

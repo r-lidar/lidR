@@ -1,14 +1,14 @@
 #' Computes the polygon that encloses the points
 #'
 #' Computes the polygon that encloses the points. It reads all the file one by one and computes a
-#' concave hull using the concaveman function. When all the hulls are computed it updates the
+#' concave hull using the \link{concaveman} function. When all the hulls are computed it updates the
 #' LAScatalog to set the true polygons instead of the bounding boxes.
 #'
 #' @param ctg A LAScatalog
-#' @param concavity numeric a relative measure of concavity. 1 results in a relatively detailed shape,
+#' @param concavity numeric. A relative measure of concavity. 1 results in a relatively detailed shape,
 #' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 #' shapes.
-#' @param length_threshold numeric. when a segment length is under this threshold, it stops being
+#' @param length_threshold numeric. When a segment length is under this threshold, it stops being
 #' considered for further detalization. Higher values result in simpler shapes.
 #'
 #' @section Supported processing options:
@@ -47,6 +47,7 @@ catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
   lidR::opt_chunk_size(ctg) <- 0
   lidR::opt_select(ctg) <- "xyz"
   lidR::opt_output_files(ctg) <- ""
+  lidR::opt_independent_files(ctg) <- TRUE
   options = list(autoread = TRUE)
   res = lidR::catalog_apply(ctg, f, concavity = concavity, length_threshold = length_threshold, .options = options)
 

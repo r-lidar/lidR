@@ -1,6 +1,6 @@
 #' Classify points of interest
 #'
-#' Classify points that meet some criterion and/or that belong in a region of interest. The
+#' Classify points that meet some logical criterion and/or that belong in a region of interest. The
 #' function updates the attribute \code{Classification} of the LAS object.
 #'
 #' @template param-las
@@ -27,11 +27,12 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shp     <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 #'
-#' las   <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
+#' las  <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
 #' lake <- sf::st_read(shp, quiet = TRUE)
 #'
 #' # Classifies the point that are NOT in the lake and that are NOT ground points as class 5
-#' las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lake, inverse = TRUE)
+#' poi <- ~Classification != LASGROUND
+#' las <- classify_poi(las, LASHIGHVEGETATION, poi = poi, roi = lake, inverse = TRUE)
 #'
 #' # Classifies the point that are in the lake as class 9
 #' las <- classify_poi(las, LASWATER, roi = lake, inverse = FALSE)

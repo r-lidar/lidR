@@ -70,13 +70,14 @@ points of interest. This is faster, easier and much more memory-efficient for ex
 \itemize{
  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
  a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
- \item \link[sp:Polygon-class]{Polygon} or \link[sp:Polygons-class]{Polygons}
- \item \link[sp:SpatialPolygons-class]{SpatialPolygons} or \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame}
- \item \link[sp:SpatialPoints-class]{SpatialPoints} or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
+ \item \link[sp:Polygon-class]{Polygon}, \link[sp:SpatialPolygons-class]{SpatialPolygons},
+ \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame},  \link[sp:SpatialPoints-class]{SpatialPoints}
+ or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
  in that case a parameter 'radius' must be passed in \code{...}
- \item \link[sf:sf]{SimpleFeature} that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
+ \item \link[sf:sf]{SimpleFeature} from sf that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
  In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
- \item \link[raster:Extent-class]{Extent}
+ \item \link[raster:Extent-class]{Extent} from package \code{raster}
+ \item \link[sf:st_bbox]{bbox} from package \code{sf}
  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
  \preformatted{
   min     max

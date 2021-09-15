@@ -9,11 +9,11 @@ catalog_boundaries(ctg, concavity = 5, length_threshold = 5)
 \arguments{
 \item{ctg}{A LAScatalog}
 
-\item{concavity}{numeric a relative measure of concavity. 1 results in a relatively detailed shape,
+\item{concavity}{numeric. A relative measure of concavity. 1 results in a relatively detailed shape,
 Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 shapes.}
 
-\item{length_threshold}{numeric. when a segment length is under this threshold, it stops being
+\item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
 considered for further detalization. Higher values result in simpler shapes.}
 }
 \value{
@@ -21,7 +21,7 @@ A LAScatalog with true boundaries
 }
 \description{
 Computes the polygon that encloses the points. It reads all the file one by one and computes a
-concave hull using the concaveman function. When all the hulls are computed it updates the
+concave hull using the \link{concaveman} function. When all the hulls are computed it updates the
 LAScatalog to set the true polygons instead of the bounding boxes.
 }
 \section{Supported processing options}{

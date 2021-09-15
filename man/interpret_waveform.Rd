@@ -2,7 +2,7 @@
 % Please edit documentation in R/fullwaveform.R
 \name{interpret_waveform}
 \alias{interpret_waveform}
-\title{Convert a full waveform into regular a point cloud}
+\title{Convert full waveform data into regular a point cloud}
 \usage{
 interpret_waveform(las)
 }
@@ -10,13 +10,14 @@ interpret_waveform(las)
 \item{las}{An object of class LAS with full waveform data}
 }
 \value{
-An object of class LAS 1.2 format 0 with
+An object of class LAS 1.2 format 0 with one points per records
 }
 \description{
-Full waveform can be difficult to manipulate and visualize. This function converts
-a LAS object with full waveform data into a regular point cloud. Each waveform records
-becomes a point with XYZ coordinates and an amplitude (units: volts) and ID that recors
-each original pulse
+Full waveform can be difficult to manipulate and visualize in R. This function converts
+a LAS object with full waveform data into a regular point cloud. Each waveform record
+becomes a point with XYZ coordinates and an amplitude (units: volts) and ID that records
+each original pulse. Notice that this has for effect to drastically inflate the size of the
+object in memory that is likely already very big.
 }
 \section{Full waveform}{
 

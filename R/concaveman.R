@@ -1,5 +1,7 @@
 #' A very fast 2D concave hull algorithm
 #'
+#' A very fast 2D concave hull algorithm for a set of points
+#'
 #' The algorithm is based on ideas from Park and Oh (2012). A first implementation in
 #' JavaScript was proposed by Vladimir Agafonkin in \href{https://github.com/mapbox/concaveman}{mapbox}.
 #' This implementation dramatically improved performance over the one stated in the paper
@@ -16,7 +18,7 @@
 #' @param concavity numeric a relative measure of concavity. 1 results in a relatively detailed shape,
 #' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 #' shapes.
-#' @param length_threshold numeric. when a segment length is under this threshold, it stops being
+#' @param length_threshold numeric. When a segment length is under this threshold, it stops being
 #' considered for further detalization. Higher values result in simpler shapes.
 #'
 #' @references Park, J.-S & Oh, S.-J. (2013). A New Concave Hull Algorithm and Concaveness Measure

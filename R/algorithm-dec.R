@@ -114,7 +114,7 @@ random = function(density, use_pulse = FALSE)
 #' las = readLAS(LASfile, select = "xyz")
 #'
 #' # Select points randomly to reach an homogeneous density of 1
-#' thinned = decimate_points(las, homogenize(1,5))
+#' thinned <- decimate_points(las, homogenize(1,5))
 #' plot(grid_density(thinned, 10))
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
@@ -225,14 +225,12 @@ lowest = function(res = 1)
 #' n points within each voxel
 #'
 #' @param res numeric. The resolution of the voxel grid used to filter the point cloud
-#' @param n integer. The number o point to select
+#' @param n integer. The number of points to select
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz")
-#'
-#' # Select the highest point within each cell of an overlayed grid
-#' thinned = decimate_points(las, random_per_voxel(8, 1))
+#' las <- readLAS(LASfile, select = "xyz")
+#' thinned <- decimate_points(las, random_per_voxel(8, 1))
 #' #plot(thinned)
 #' @family point cloud decimation algorithms
 #' @export

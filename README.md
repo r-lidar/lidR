@@ -7,9 +7,9 @@ lidR <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/man/fig
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
-The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin lidar data, manage a catalog of datasets, automatically extract ground inventories, process a set of tiles using multicore processing, individual tree segmentation, classify data from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
+The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) and the [wiki pages](https://github.com/Jean-Romain/lidR/wiki) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
+:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
 
 To cite the package use `citation()` from within R:
 
@@ -53,14 +53,14 @@ plot(chm)
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-plot_interactive.gif">
 
-`lidR` enables the user to manage, use and process a catalog of `las` files. The function `catalog` builds a `LAScatalog` object from a folder. The function `plot` displays this catalog on an interactive map using the `mapview` package (if installed).
+`lidR` enables the user to manage, use and process a collection of `las` files. The function `readLAScatalog` builds a `LAScatalog` object from a folder. The function `plot` displays this collection on an interactive map using the `mapview` package (if installed).
 
 ```r
 ctg <- readLAScatalog("<folder/>")
 plot(ctg, map = TRUE)
 ```
 
-From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `clip_roi()`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that can be done with multicore processing, where possible.
+From a `LAScatalog` object the user can (for example) extract some regions of interest (ROI) with `clip_roi()`. Using a catalog for the extraction of the ROI guarantees fast and memory-efficient clipping. `LAScatalog` objects allow many other manipulations that can be done with multicore processing.
 
 ### Individual tree segmentation
 

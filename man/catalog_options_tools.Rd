@@ -88,15 +88,15 @@ opt_filter(ctg) <- value
 The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
 The options are used by all the functions that support a \code{LAScatalog} as input. Most options are
 easy to understand and to link to the documentation of \link[=LAScatalog-class]{LAScatalog} but some
-need more details. See section details.
+need more details. See section 'Details'.
 }
 \details{
 \itemize{
 \item \strong{opt_restart()} automatically sets the chunk option named "drop" in such a way that
-the engine will restart at a given chunk
+the engine will restart at a given chunk skip all previous chunks. Useful to restart after a crash.
 \item \strong{opt_independent_file()} automatically sets the chunk size, chunk buffer and wall-to-wall options
 to process files that are not spatially related to each other such as plot inventories.
-\item \strong{opt_laz_compression()} automatically modifies the drivers to write LAZ files instead of LAS files
+\item \strong{opt_laz_compression()} automatically modifies the drivers to write LAZ files instead of LAS files#'
 }
 }
 \examples{

@@ -49,7 +49,7 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true

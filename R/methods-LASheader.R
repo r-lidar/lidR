@@ -28,8 +28,8 @@
 #' Create a \code{LASheader} object
 #'
 #' Creates a  \code{LASheader} object either from a raw \code{list} containing all the
-#' elements named according to the \code{rlas} package or creates a header from a  \code{data.frame}
-#' or \code{data.table} containing a point-cloud. In this case it will generate a header
+#' elements named according to the \code{rlas} package or creates a header from a \code{data.frame}
+#' or \code{data.table} containing a point-cloud. In the later case it will generate a header
 #' according to the data using \link[rlas:header_create]{rlas::header_create()}. It will
 #' guess the LAS file format, the point data format, initialize the scale factors and offsets
 #' but these initialization and guesses may not suit user's needs. Users may be advised to
@@ -65,6 +65,7 @@
 #'
 #' # Record an EPSG code
 #' epsg(header) <- 32618
+#' header
 #'
 #' las <- LAS(data, header)
 #' las

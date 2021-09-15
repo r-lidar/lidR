@@ -14,10 +14,13 @@ matrix x, a list with two components, etc.}
 Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 shapes.}
 
-\item{length_threshold}{numeric. when a segment length is under this threshold, it stops being
+\item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
 considered for further detalization. Higher values result in simpler shapes.}
 }
 \description{
+A very fast 2D concave hull algorithm for a set of points
+}
+\details{
 The algorithm is based on ideas from Park and Oh (2012). A first implementation in
 JavaScript was proposed by Vladimir Agafonkin in \href{https://github.com/mapbox/concaveman}{mapbox}.
 This implementation dramatically improved performance over the one stated in the paper

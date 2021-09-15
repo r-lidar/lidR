@@ -73,7 +73,7 @@ on 8 bits set this parameter to 8.}
 \item{add}{If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 to enable the alignment of a second point cloud.}
 
-\item{voxel}{boolean or numeric. Displays  instead of points. Useful to render the output
+\item{voxel}{boolean or numeric. Displays voxels instead of points. Useful to render the output
 of \link{voxelize_points} for example. However it is computationally demanding to render and can
 easily takes 15 seconds for 10000 voxels. It should be reserved to small scenes. If boolean the voxel
 resolution is guessed automatically. Otherwise user can provide the size of the voxels. An internal
@@ -96,13 +96,13 @@ Plot displays a \link[=LASheader-class]{LASheader} object exactly like it displa
 object.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile)
 
 plot(las)
 plot(las, color = "Intensity")
 
-\dontrun{
 # If outliers break the color range, use the trim parameter
 plot(las, color = "Intensity", trim = 150)
 
@@ -110,10 +110,11 @@ plot(las, color = "Classification")
 
 # This dataset is already tree segmented
 plot(las, color = "treeID")
-}
 
 # single file LAScatalog using data provided in lidR
 ctg = readLAScatalog(LASfile)
 plot(ctg)
+plot(ctg, map = T, map.types = "Esri.WorldImagery")
+}
 
 }
