@@ -48,6 +48,7 @@ does not plot the actual coordinates of the point cloud, but offsetted values. S
 with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
 }
 \examples{
+\dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
 
@@ -60,7 +61,6 @@ x = plot(las)
 add_dtm3d(x, dtm)
 add_treetops3d(x, ttops)
 
-\dontrun{
 library(magrittr)
 plot(las) \%>\% add_dtm3d(dtm) \%>\% add_treetops3d(ttops)
 }

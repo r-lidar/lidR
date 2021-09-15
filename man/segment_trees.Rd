@@ -113,5 +113,5 @@ las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 
 # Using Li et al. (2012)
 las <- segment_trees(las, li2012(R = 3, speed_up = 5))
-plot(las, color = "treeID")
+#plot(las, color = "treeID")
 }
