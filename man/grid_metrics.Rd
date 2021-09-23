@@ -28,9 +28,8 @@ grid aligns on (0,0).}
 in an optimized way. See examples.}
 
 \item{by_echo}{characters. The metrics are computed multiples times for different echo types. Can
-be one or more of "all", "first", "intermediate", "last", "single", "multiple". See examples. Default
-is "all" meaning that it computes metrics with all points provided. "last" refers to the last points
-from beams with multiple returns and does not include first returns from single returns.}
+be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples. Default
+is "all" meaning that it computes metrics with all points provided.}
 }
 \value{
 A \code{RasterLayer} or a \code{RasterBrick} containing a numeric value in each cell. If the

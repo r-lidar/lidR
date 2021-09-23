@@ -16,9 +16,8 @@
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
 #' @param by_echo characters. The metrics are computed multiples times for different echo types. Can
-#' be one or more of "all", "first", "intermediate", "last", "single", "multiple". See examples. Default
-#' is "all" meaning that it computes metrics with all points provided. "last" refers to the last points
-#' from beams with multiple returns and does not include first returns from single returns.
+#' be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples. Default
+#' is "all" meaning that it computes metrics with all points provided.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -113,7 +112,7 @@ grid_metrics.LAS = function(las, func, res = 20, start = c(0,0), filter = NULL, 
   assert_is_numeric(start)
   formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!formula) func <- lazyeval::f_capture(func)
-  echo_types <- c("all", "first", "intermediate", "last", "single", "multiple")
+  echo_types <- c("all", "first", "intermediate", "lastofmany", "single", "multiple")
   stopifnot(all(by_echo %in% echo_types))
 
   # New 3.2.0 feature for computing metrics for each eho type
@@ -267,9 +266,9 @@ grid_metrics_by_echo_type = function(las, layout, call, cells, filter, by_echo)
   echo_types[LASFIRST] <- "first"
   echo_types[LASSINGLE] <- "single"
   echo_types[LASMULTIPLE] <- "multiple"
-  echo_types[LASLAST] <- "last"
+  echo_types[LASLASTOFMANY] <- "lastofmany"
   echo_types[LASINTERMEDIATE] <- "intermediate"
-  echo_types1 <- echo_types[c(LASFIRST, LASINTERMEDIATE, LASLAST)]
+  echo_types1 <- echo_types[c(LASFIRST, LASINTERMEDIATE, LASLASTOFMANY)]
   echo_types2 <- echo_types[c(LASSINGLE, LASMULTIPLE)]
   echo_class  <- get_echo_type(las$ReturnNumber, las$NumberOfReturns)
   echo_class1 <- echo_class[[1]]
@@ -372,7 +371,7 @@ get_echo_type <- function(ReturnNumber, NumberOfReturns)
 
   class1 <- rep(LASINTERMEDIATE, n)
   class1[ReturnNumber == 1L] <- LASFIRST
-  class1[ReturnNumber == NumberOfReturns & ReturnNumber > 1L] <- LASLAST
+  class1[ReturnNumber == NumberOfReturns & ReturnNumber > 1L] <- LASLASTOFMANY
 
   class2 <- rep(LASMULTIPLE, n)
   class2[NumberOfReturns == 1L] <- LASSINGLE
