@@ -95,23 +95,23 @@ test_that("grid_metrics splits by echo type", {
   expect_equal(x@crs, las@proj4string)
   expect_equal(names(x), "Zmean.first")
 
-  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("first", "last"))
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("first", "lastofmany"))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(5,5,2))
   expect_equal(raster::extent(x), raster::extent(0,100,0,100))
   expect_equal(x@crs, las@proj4string)
-  expect_equal(names(x), c("Zmean.first", "Zmean.last"))
+  expect_equal(names(x), c("Zmean.first", "Zmean.lastofmany"))
 
-  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("all", "first", "last"))
+  x <- grid_metrics(las, ~list(Zmean = mean(Z)), by_echo = c("all", "first", "lastofmany"))
 
   expect_true(is(x, "RasterBrick"))
   expect_equal(raster::res(x), c(20,20))
   expect_equal(dim(x), c(5,5,3))
   expect_equal(raster::extent(x), raster::extent(0,100,0,100))
   expect_equal(x@crs, las@proj4string)
-  expect_equal(names(x), c("Zmean", "Zmean.first", "Zmean.last"))
+  expect_equal(names(x), c("Zmean", "Zmean.first", "Zmean.lastofmany"))
 })
 
 test_that("3 way to compute with first returns are giving the same", {
