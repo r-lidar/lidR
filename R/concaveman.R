@@ -10,7 +10,7 @@
 #' implementation proposed by Vladimir Agafonkin. Later a C++ version of Vladimir Agafonkin's
 #' JavaScript implementation was proposed by Stanislaw Adaszewski in
 #' \href{https://github.com/sadaszewski/concaveman-cpp}{concaveman-cpp}. This concaveman
-#' function uses the Stanislaw Adaszewski's C++ code making the concaveman algorithm an
+#' function uses Stanislaw Adaszewski's C++ code making the concaveman algorithm an
 #' order of magnitude (up to 50 times) faster than the Javascript version.
 #'
 #' @param x,y coordinate vectors of points. This can be specified as two vectors x and y, a 2-column
@@ -19,7 +19,7 @@
 #' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 #' shapes.
 #' @param length_threshold numeric. When a segment length is under this threshold, it stops being
-#' considered for further detalization. Higher values result in simpler shapes.
+#' considered for further detailed processing. Higher values result in simpler shapes.
 #'
 #' @references Park, J.-S & Oh, S.-J. (2013). A New Concave Hull Algorithm and Concaveness Measure
 #' for n-dimensional Datasets. Journal of Information Science and Engineering. 29. 379-392.

@@ -1,13 +1,13 @@
-#' Convert full waveform data into regular a point cloud
+#' Convert full waveform data into a regular point cloud
 #'
 #' Full waveform can be difficult to manipulate and visualize in R. This function converts
 #' a LAS object with full waveform data into a regular point cloud. Each waveform record
-#' becomes a point with XYZ coordinates and an amplitude (units: volts) and ID that records
-#' each original pulse. Notice that this has for effect to drastically inflate the size of the
-#' object in memory that is likely already very big.
+#' becomes a point with XYZ coordinates and an amplitude (units: volts) and an ID that records
+#' each original pulse. Notice that this has the effect of drastically inflating the size of the
+#' object in memory, which is likely already very large
 #'
 #' @param las An object of class LAS with full waveform data
-#' @return An object of class LAS 1.2 format 0 with one points per records
+#' @return An object of class LAS 1.2 format 0 with one point per records
 #'
 #' @template section-fwf
 #' @export

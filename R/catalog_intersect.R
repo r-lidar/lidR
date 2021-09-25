@@ -29,7 +29,7 @@
 #'
 #' Subset a LAScatalog with a spatial object to keep only the tiles of interest. It can be
 #' used to select tiles of interest that encompass spatial objects such as Spatial* objects,
-#' Raster* objects or sf, sfc objects
+#' Raster* objects or sf and sfc objects
 #'
 #' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'

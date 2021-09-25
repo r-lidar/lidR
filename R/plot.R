@@ -53,7 +53,7 @@
 #' The drawback is that the point cloud is not plotted at its actual coordinates.
 #' @param nbits integer. If \code{color = RGB} it assumes that RGB colours are coded on 16 bits as described
 #' in the LAS format specification. However, this is not always respected. If the colors are stored
-#' on 8 bits set this parameter to 8.
+#' on 8 bits, set this parameter to 8.
 #' @param axis logical. Display axis on XYZ coordinates.
 #' @param legend logical. Display a gradient colour legend.
 #' @param backend character. Can be \code{"rgl"} or \code{"lidRviewer"}. If \code{"rgl"} is chosen
@@ -64,11 +64,10 @@
 #' @param add If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 #' to enable the alignment of a second point cloud.
 #' @param voxel boolean or numeric. Displays voxels instead of points. Useful to render the output
-#' of \link{voxelize_points} for example. However it is computationally demanding to render and can
-#' easily takes 15 seconds for 10000 voxels. It should be reserved to small scenes. If boolean the voxel
-#' resolution is guessed automatically. Otherwise user can provide the size of the voxels. An internal
-#' optimization get rid of voxels that are not visible when surrounded by other voxels to reduce the
-#' rendering time.
+#' of \link{voxelize_points}, for example. However it is computationally demanding to render and can
+#' easily take 15 seconds for 10000 voxels. It should be reserved for small scenes. If boolean the voxel
+#' resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time, 
+#' an internal optimization removes voxels that are not visible when surrounded by other voxels.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
@@ -416,7 +415,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
 
   if (legend)
   {
-    # nocov because this fails on some flavor on CRAN
+    # nocov because this fails on some flavors on CRAN
     f <- .plot_scale_gradient(mincol, maxcol, fg, pal, bg) # nocov
     rgl::bg3d(texture = f, col = "white") # nocov
   }

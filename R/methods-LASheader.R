@@ -29,11 +29,11 @@
 #'
 #' Creates a  \code{LASheader} object either from a raw \code{list} containing all the
 #' elements named according to the \code{rlas} package or creates a header from a \code{data.frame}
-#' or \code{data.table} containing a point-cloud. In the later case it will generate a header
+#' or \code{data.table} containing a point cloud. In the latter case it will generate a header
 #' according to the data using \link[rlas:header_create]{rlas::header_create()}. It will
-#' guess the LAS file format, the point data format, initialize the scale factors and offsets
-#' but these initialization and guesses may not suit user's needs. Users may be advised to
-#' modify manually the results to fits their specific need.
+#' guess the LAS file format, the point data format, and initialize the scale factors and offsets,
+#' but these may not suit a user's needs. Users are advised to
+#' manually modify the results to fit their specific needs.
 #'
 #' @param data a list containing the data from the header of a LAS file. Can also be
 #' a \code{data.frame} or \code{data.table}
@@ -56,8 +56,8 @@
 #' header = LASheader(data)
 #' header
 #'
-#' # XYZ are given with 3 decimals. This was not inferred by the
-#' # function so we change that manually
+#' # XYZ values are given with 3 decimals. This was not inferred by the
+#' # function so we changed it manually
 #' # (Note: from package rlas 1.4.1 this is now inferred properly in most cases)
 #' header@PHB[["X scale factor"]] <- 0.001
 #' header@PHB[["Y scale factor"]] <- 0.001

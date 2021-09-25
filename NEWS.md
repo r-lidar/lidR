@@ -4,30 +4,30 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### ANNOUCEMENT
 
-`rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require an in depth rebase of `lidR`. We started the work and we plan to release `lidR` 4.0.0 with no longer any internal code that uses `sp` and `raster`. This version already no longer uses `rgdal`. We hope do to that change with a minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0 but some backward incompatibilities will necessarily arise. Especially `LAS` will no longer inherit the `sp::Spatial` class and will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `sp::SpatialPolygonDataFrame`. Our plan is (hopefully) to rebase `lidR` in such a way that nobody will notice the changes expect users who dig a bit too much into the objects but backward incompatibilities will necessarily arise.
+`rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it has already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require an in-depth rebase of `lidR`. We have started the work and we plan to release `lidR` 4.0.0 that will no longer have any internal code that uses `sp` and `raster`. This version already no longer uses `rgdal`. We hope make these changes with minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0, but some backward incompatibilities will necessarily arise. In particular, `LAS` will no longer inherit the `sp::Spatial` class and will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `sp::SpatialPolygonDataFrame`. Our plan is (hopefully) to rebase `lidR` in such a way that nobody will notice the changes expect users who dig a little deeper into the objects.
 
 #### CHANGES
 
 1. `hexbin_metrics()` was an unused function and has been removed from `lidR`. It can be retrieved in [`lidRplugins`](https://github.com/Jean-Romain/lidRplugins)
 
-2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on the new namespace. Now in 3.2.0 they throw a formal warning saying to move on the new namespace. They will throw an error in next version.
+2. Functions using the former namespace such as `lassomething()` that were renamed into `verb_noun()` in version 3.0.0 now throw a warning. In v3.0.0 they were still usable for backward compatibility but not documented. In v3.1.0 they printed a message saying to move on to the new namespace. Now in 3.2.0 they throw a formal warning saying to move on to the new namespace. They will throw an error in the next version.
 
 #### NEW FEATURES
 
-1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet logical criterion (e.g. Z > 2) and/or a spatial criterion (e.g. inside a polygon). For example the following with attribute the las "high vegetation" to each non ground point that is not in the lake polygon.
+1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet a logical criterion (e.g. Z > 2) and/or a spatial criterion (e.g. inside a polygon). For example, the following will attribute the las "high vegetation" to each non-ground point that is not in the lake polygon.
     ```r
     las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
     ```
 
 2. `LAScatalog`
    - New function `rbind()` for `LAScatalog`.
-   - New function `projection()<-` and `crs()<-` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated function in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
+   - New functions `projection()<-` and `crs()<-` for `LAScatalog`. Those two functions were already working in previous versions but in absence of dedicated functions in lidR the functions that were actually called were `raster::projection()` and `raster::crs()` thanks to class inheritance. However the functions from `raster` do not support `crs` from `sf` or numbers as input. Adding a dedicated function in lidR brings consistency between `LAS` and `LAScatalog` ([#405](https://github.com/Jean-Romain/lidR/issues/405)):
       ```r
       projection(ctg) <- st_crs(3625)
       # or
       projection(ctg) <- 3625
       ```
-   - The processing engine has a new options to drop some chunks under `ctg@chunk_options$drop`. This generates regions that won't be processed. This option accepts a vector of chunk IDs that are dropped and is thus versatile but its main role is to allow restarting a computation that failed. We consequently introduced the function `opt_restart()`. Let assume that the computation failed after few hours at 80% in chunk number 800. User get a partial output for the 799 first chunks but chunk 800 have a problem that can be solved. It is now possible to restart at 800 and get the second part of the output without restarting from 0
+   - The processing engine has a new option to drop some chunks under `ctg@chunk_options$drop`. This generates regions that won't be processed. This option accepts a vector of chunk IDs that are dropped and is thus versatile, but its main role is to allow restarting a computation that failed. We consequently introduced the function `opt_restart()`. Let's assume that the computation failed after few hours at 80% in chunk number 800. Users get a partial output for the first 799 chunks but chunk 800 has a problem that can be solved. It is now possible to restart at 800 and get the second part of the output without restarting from 0:
       ```r
       output <-    catlog_apply(ctg, myfun, param)
       # Failed after 80%, 'output' contains a partial output
@@ -38,7 +38,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
    
       # Merge 'output' and 'output2'
       ```
-   - The vignette `LAScatalog engine` and the manual `LAScatalog-class` were updated in consequence of previous feature
+   - The vignette `LAScatalog engine` and the manual `LAScatalog-class` were updated to reflect these features
 
 3. `LASheader`
    - The function `LASheader()` can now create a `LASheader` object from a `data.frame`. This addition aims to facilitate the creation of valid `LAS` objects from external data.
@@ -48,7 +48,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
        ```
    
 4. `LAS`
-   - The function `LAS` now automatically fixes the font case of attributes names to match the naming convention of the `rlas` package. This simplifies the creation of compatible objects from non LAS files sources.
+   - The function `LAS` now automatically fixes the font case of attributes names to match the naming convention of the `rlas` package. This simplifies the creation of compatible objects from non-LAS file sources.
        ```r
        data <- data.frame(x = runif(10), Y = runif(10), z = runif(10), pointsourceid = 1:10)
        las <- LAS(data)
@@ -80,23 +80,23 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
     
 8. New function `catalog_boundary()` to compute the actual shape of the point-cloud
 
-9. In `find_trees()` and `segment_trees()` the `bitmerge` strategy to generate robust unique IDs was not actually a valid and robust procedure. It had the advantage of generating integers but was not 100% unique. The probability to generate duplicates was low but we change the strategy to use a true bit merging procedure anyway. The new IDs thus generated are weird decimal number such as 5.001120e-310 but are guaranteed to be unique. Documentation has been updated in consequence to explain the method.
+9. In `find_trees()` and `segment_trees()` the `bitmerge` strategy to generate robust unique IDs was not actually a valid and robust procedure. It had the advantage of generating integers but was not 100% unique. The probability to generate duplicates was low but we changed the strategy to use a true bit-merging procedure anyway. The new IDs thus generated are weird decimal number such as 5.001120e-310 but are guaranteed to be unique. The documentation has been updated to explain the method.
 
 10. New algorithm `random_per_voxel()` for `decimate_points` that keep n points per voxel ([#406](https://github.com/Jean-Romain/lidR/issues/406)).
 
 11. 3D rendering: 
-    - `plot()` gains a new parameter `voxels = TRUE` or `voxels = 0.5` to render a point-cloud with voxels. This is useful to render the output of `voxelize_points()` or `voxel_metrics()` for examples. This is computationally demanding and takes time so it should be reserved to small scenes with 30,000 or 40,000 voxels maximum. Yet there is no hard coded limits 
+    - `plot()` gains a new parameter `voxels = TRUE` or `voxels = 0.5` to render a point cloud with voxels. This is useful to render the output of `voxelize_points()` or `voxel_metrics()`, for example. This is computationally demanding and takes time so it should be reserved to small scenes with 30,000 or 40,000 voxels maximum, but note that there is no hard coded limit.
       ```r
       vm <- voxel_metrics(las, ~list(N = length(Z)), 8)
       plot(vm, color = "V1", voxels = T)
       ```
     - specular reflections are now disable in `plot()`.
     
-12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, compute metrics for each plot and return a ready to use `data.frame` for statistical modelling.
+12. New function `plot_metrics()` that wraps several other functions into one seamless function that extracts ground inventory plots, computes metrics for each plot and returns a ready to use `data.frame` for statistical modelling.
 
 13. New function `point_eigenvalue()` that is equivalent to `point_metrics(las, .stdshapemetrics)` but specialized, optimized and parallelized to be 10 times faster.
 
-14. `grid_metrics()` gains a new parameters `by_echo` allowing to compute the metrics for different types of echos independently. It is now possible to map e.g. `mean(Intensity)` for first returns only + multiple return only + single return only. All metrics are computed in a single run and returned in a raster stack.
+14. `grid_metrics()` gains a new parameters `by_echo` allowing users to compute the metrics for different types of echos independently. It is now possible to map e.g. `mean(Intensity)` for first returns only + multiple return only + single return only. All metrics are computed in a single run and returned in a raster stack.
 
 15. `merge_spatial()` supports `sfc`
 
@@ -106,15 +106,15 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### FIXES
 
-1. Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinite ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
-2. Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and become `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
-3. Fix: `find_localmaxima()` respects argument the `filter`. It was previously not considered.
+1. Fix: `quantize()` now preserves `NaN` values instead of converting them into minus infinity ([#460](https://github.com/Jean-Romain/lidR/issues/460)).
+2. Fix: `stdmetrics_i()` now fails with an informative message when the sum of intensities is greater than `.Machine$integer.max` and becomes `double` ([#463](https://github.com/Jean-Romain/lidR/issues/463))
+3. Fix: `find_localmaxima()` respects the `filter` argument. It was previously not considered.
    
-#### MISCELANEOUS
+#### MISCELLANEOUS
 
 1. Remove `crayon` and `hexbin` dependencies
 2. Packages `RCSF` and `rgeos` are now only suggested and they are consequently no longer installed by default with lidR
-3. Change: `rgdal` will be retired in 2024. Code using `rgdal` internally has been removed. In many cases this will not change anything for users but in some cases it may fail at assigning an EPSG code to the LAS file. Also old version of `rgdal` built with old version of `gdal` and `proj` are no longer supported ([#466](https://github.com/Jean-Romain/lidR/issues/466))
+3. Change: `rgdal` will be retired in 2024. Code using `rgdal` internally has been removed. In many cases this will not change anything for users but in some cases it may fail when assigning an EPSG code to the LAS file. Also, old versions of `rgdal` built with old versions of `gdal` and `proj` are no longer supported ([#466](https://github.com/Jean-Romain/lidR/issues/466))
 
 ## lidR v3.1.4 (Release date: 2021-06-22)
 

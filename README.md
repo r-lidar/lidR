@@ -25,7 +25,7 @@ citation("lidR")
 
 ### Read and display a las file
 
-In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [lidRviewer](https://github.com/Jean-Romain/lidRviewer) with greater display capabilities.
+In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [lidRviewer](https://github.com/Jean-Romain/lidRviewer) with better display capabilities.
 
 ```r
 las <- readLAS("<file.las>")
@@ -80,7 +80,7 @@ plot(las, color = "treeID", colorPalette = col)
 
 <img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-processing.gif">
 
-Most of the lidR functions can process seamlessly a set of tiles and return a continuous output. Users can create their own methods using the `LAScatalog` processing engine via the `catalog_apply()` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
+Most of the lidR functions can seamlessly process a set of tiles and return a continuous output. Users can create their own methods using the `LAScatalog` processing engine via the `catalog_apply()` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
 
 ```r
 # Load a LAScatalog instead of a LAS file
@@ -96,7 +96,7 @@ plot(chm, col = col)
 
 <img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/FWF/fwf.gif">
 
-lidR can read full waveform data from LAS files and provides interpreter functions to convert the raw data into something easier to manage and display in R. The support of FWF is still in early stage of development.
+lidR can read full waveform data from LAS files and provides interpreter functions to convert the raw data into something easier to manage and display in R. The support of FWF is still in the early stages of development.
 
 ```r
 fwf <- readLAS("<fullwaveform.las>")
