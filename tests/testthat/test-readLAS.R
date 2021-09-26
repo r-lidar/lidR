@@ -62,6 +62,16 @@ test_that("readLAS throws warning for invalid files", {
   expect_equal(las@header@PHB$`Y scale factor`, 0.01234)
 })
 
+test_that("readLAS can read a file with invalid CRS", {
+  example@header@VLR$GeoKeyDirectoryTag$tags[[2]]$`value offset` = 22022
+  f <- tempfile(fileext = ".las")
+  rlas:::C_writer(f, as.list(example@header), example@data)
+  las  <- suppressWarnings(readLAS(f))
+
+  expect_equal(epsg(las), 22022)
+  expect_equal(projection(las), NA_character_)
+})
+
 test_that("readLAS LAScluster throw warning when select/filter is used", {
 
   expect_warning(readLAS(cls[[1]], select = "i"), "Argument 'select' is not used")

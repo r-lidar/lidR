@@ -1,8 +1,12 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.2.1(Release date: 2021-09-27)
+
+- Fix stuff on Solaris.
+
 ## lidR v3.2.0 (Release date: 2021-09-26)
 
-#### ANNOUCEMENT
+#### ANNOUNCEMENT
 
 `rgdal` and `rgeos` will be retired on Jan 1st 2024. `raster` and `sp` are based on `rgdal`/`rgeos`. `lidR` is based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it has already started to be the case). So, it is time to fully embrace `sf`, `terra`/`stars` and to leave `sp` and `raster`. This will require an in-depth rebase of `lidR`. We have started the work and we plan to release `lidR` 4.0.0 that will no longer have any internal code that uses `sp` and `raster`. This version already no longer uses `rgdal`. We hope make these changes with minimal breakage in backward compatibility by maintaining the conversion to `sp`/`raster` for functions from v < 4.0.0, but some backward incompatibilities will necessarily arise. In particular, `LAS` will no longer inherit the `sp::Spatial` class and will no longer contain a `sp::CRS` but a `sf::crs` and `LAScatalog` will no longer be `sp::SpatialPolygonDataFrame`. Our plan is (hopefully) to rebase `lidR` in such a way that nobody will notice the changes expect users who dig a little deeper into the objects.
 

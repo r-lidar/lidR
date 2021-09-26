@@ -68,18 +68,9 @@
 #' # Get the WKT string stored in the header (LAS >= 1.4)
 #' wkt(las)
 #'
-#' # Overwrite the CRS (but does not reproject)
-#' crs <- sp::CRS("+init=epsg:26918")
-#' projection(las) <- crs
-#' sf::st_crs(las)$input
-#'
 #' # Uses the EPSG code
 #' projection(las) <- 26919
 #' sf::st_crs(las)$input
-#'
-#' # Uses a crs from sf
-#' crs <- sf::st_crs(3035)
-#' projection(las) <- crs
 #'
 #' @importFrom raster projection<-
 #' @importFrom raster projection
@@ -418,25 +409,25 @@ all_crs_formats = function(value)
   }
   else if (is(value, "crs"))
   {
-    wkt <- value$wkt
-    CRS <- sp::CRS(SRS_string = wkt)
     crs <- value
+    wkt <- value$wkt
+    CRS <- as(crs, "CRS")
     proj4 <- CRS@projargs
     epsg <- crs$epsg
   }
   else if (is.character(value))
   {
-    CRS <- sp::CRS(SRS_string = value)
+    crs <- sf::st_crs(value)
+    CRS <- as(crs, "CRS")
     proj4 <- CRS@projargs
-    crs <- sf::st_crs(CRS)
     wkt <- crs$wkt
     epsg <- crs$epsg
   }
   else if (is.numeric(value))
   {
     epsg <- value
-    CRS <- epsg2CRS(epsg)
-    crs <- sf::st_crs(CRS)
+    crs <- sf::st_crs(epsg)
+    CRS <- as(crs, "CRS")
     proj4 <- CRS@projargs
     wkt <- crs$wkt
   }
@@ -445,7 +436,6 @@ all_crs_formats = function(value)
 
   return(list(epsg = epsg, CRS = CRS, crs = crs, proj4 = proj4, wkt = wkt))
 }
-
 
 epsg2CRS <- function(epsg, fail = FALSE)
 {
