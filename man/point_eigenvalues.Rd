@@ -18,17 +18,17 @@ and \link{shp_line}.}
 \item{attribute}{character. The name of the new column to add into the LAS object.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
-in an optimized way. See also examples.}
+in an optimized way. See the examples.}
 
 \item{k, r}{integer and numeric respectively for k-nearest neighbours and radius of the neighborhood
 sphere. If k is given and r is missing, computes with the knn, if r is given and k is missing
 computes with a sphere neighbourhood, if k and r are given computes with the knn and a limit on the
 search distance.}
 
-\item{xyz}{logical. Return the XYZ coordinates of each points instead of IDs}
+\item{xyz}{logical. Returns the XYZ coordinates of each points instead of IDs.}
 
 \item{metrics}{logical. Compute additional metrics such as curvature, linearity, planarity based
-on the eigenvalues}
+on the eigenvalues.}
 }
 \value{
 \describe{
@@ -44,10 +44,10 @@ points. The eigenvalues are later used either to segment linear/planar points or
 metrics (see Details).
 }
 \details{
-All the functions documented here can be reproduced with \link{point_metrics}. However
-\link{point_metrics} is a versatile and multipurpose function that is not as fast as possible because
-it calls user-defined R code and that implies computation overheads. These functions are parallelized
-plain C++ versions of tools buildable with \code{point_metrics} and are consequently 10 times faster.
+All the functions documented here can be reproduced with \link{point_metrics}. However,
+\link{point_metrics} is a versatile and multipurpose function that is not as fast as is possible because
+it calls user-defined R code and that implies computational overheads. These functions are parallelized
+plain C++ versions of tools users can build with \code{point_metrics} and are consequently 10-times faster.
 \describe{
 \item{\strong{segment_shape}}{The points that meet a given criterion based on the eigenvalue are labelled as
 approximately coplanar/colinear or any other shape supported.}

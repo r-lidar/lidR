@@ -2,7 +2,7 @@
 % Please edit documentation in R/fullwaveform.R
 \name{interpret_waveform}
 \alias{interpret_waveform}
-\title{Convert full waveform data into regular a point cloud}
+\title{Convert full waveform data into a regular point cloud}
 \usage{
 interpret_waveform(las)
 }
@@ -10,24 +10,24 @@ interpret_waveform(las)
 \item{las}{An object of class LAS with full waveform data}
 }
 \value{
-An object of class LAS 1.2 format 0 with one points per records
+An object of class LAS 1.2 format 0 with one point per records
 }
 \description{
 Full waveform can be difficult to manipulate and visualize in R. This function converts
 a LAS object with full waveform data into a regular point cloud. Each waveform record
-becomes a point with XYZ coordinates and an amplitude (units: volts) and ID that records
-each original pulse. Notice that this has for effect to drastically inflate the size of the
-object in memory that is likely already very big.
+becomes a point with XYZ coordinates and an amplitude (units: volts) and an ID that records
+each original pulse. Notice that this has the effect of drastically inflating the size of the
+object in memory, which is likely already very large
 }
 \section{Full waveform}{
 
 With most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR`
-provides some compatible functions. However the support of FWF is still a work in progress
+provides some compatible functions. However, the support of FWF is still a work-in-progress
 in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently,
 tools provided by `lidR` may also change until the support of FWF becomes mature and
 stable in `rlas`. See also \link[rlas:read.las]{rlas::read.las}.\cr\cr
 Remember that FWF represents an insanely huge amount of data. It terms of memory it is like
-having between 10 to 100 times more points. Consequently loading FWF data in R should be
+having between 10 to 100 times more points. Consequently, loading FWF data in R should be
 restricted to relatively small point clouds.
 }
 

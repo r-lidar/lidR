@@ -14,7 +14,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 #### NEW FEATURES
 
-1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet a logical criterion (e.g. Z > 2) and/or a spatial criterion (e.g. inside a polygon). For example, the following will attribute the las "high vegetation" to each non-ground point that is not in the lake polygon.
+1. `classify_poi()`. New function capable of attributing a class of choice to any points that meet a logical criterion (e.g. Z > 2) and/or a spatial criterion (e.g. inside a polygon). For example, the following will attribute the class "high vegetation" to each non-ground point that is not in the lake polygon.
     ```r
     las <- classify_poi(las, LASHIGHVEGETATION, poi = ~Classification != 2, roi = lakes, inverse = TRUE)
     ```

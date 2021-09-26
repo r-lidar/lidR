@@ -15,7 +15,7 @@ Infinity results in a convex hull. You can use values lower than 1, but they can
 shapes.}
 
 \item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
-considered for further detalization. Higher values result in simpler shapes.}
+considered for further detailed processing. Higher values result in simpler shapes.}
 }
 \description{
 A very fast 2D concave hull algorithm for a set of points
@@ -29,7 +29,7 @@ using a spatial index. The algorithm was then ported to R by Joël Gombin in the
 implementation proposed by Vladimir Agafonkin. Later a C++ version of Vladimir Agafonkin's
 JavaScript implementation was proposed by Stanislaw Adaszewski in
 \href{https://github.com/sadaszewski/concaveman-cpp}{concaveman-cpp}. This concaveman
-function uses the Stanislaw Adaszewski's C++ code making the concaveman algorithm an
+function uses Stanislaw Adaszewski's C++ code making the concaveman algorithm an
 order of magnitude (up to 50 times) faster than the Javascript version.
 }
 \examples{

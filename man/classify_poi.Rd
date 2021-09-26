@@ -17,12 +17,12 @@ classify_poi(
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{class}{The ASPRS class to attribute to the points that meet the criterion}
+\item{class}{The ASPRS class to attribute to the points that meet the criterion.}
 
-\item{poi}{a formula of logical predicates. The point that are \code{TRUE} will be classified \code{class}.}
+\item{poi}{a formula of logical predicates. The points that are \code{TRUE} will be classified \code{class}.}
 
 \item{roi}{A \code{SpatialPolygons}, \code{SpatialPolygonDataFrame} from \code{sp} or a \code{POLYGON} from \code{sf}.
-The point that are in the region of interest delimited by the polygon(s) are classified
+The points that are in the region of interest delimited by the polygon(s) are classified
 \code{class}.}
 
 \item{inverse_roi}{bool. Inverses the \code{roi}. The points that are outside the polygon(s)
@@ -82,11 +82,11 @@ shp     <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 las  <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
 lake <- sf::st_read(shp, quiet = TRUE)
 
-# Classifies the point that are NOT in the lake and that are NOT ground points as class 5
+# Classifies the points that are NOT in the lake and that are NOT ground points as class 5
 poi <- ~Classification != LASGROUND
 las <- classify_poi(las, LASHIGHVEGETATION, poi = poi, roi = lake, inverse = TRUE)
 
-# Classifies the point that are in the lake as class 9
+# Classifies the points that are in the lake as class 9
 las <- classify_poi(las, LASWATER, roi = lake, inverse = FALSE)
 
 #plot(las, color = "Classification")

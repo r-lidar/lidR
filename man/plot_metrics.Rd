@@ -16,12 +16,12 @@ plot_metrics(las, func, geometry, ...)
 \item{...}{optional supplementary options (see also \link{clip_roi})}
 }
 \value{
-An `sp` or `sf` object depending on the input with all the metrics for each plot binded
+An `sp` or `sf` object depending on the input with all the metrics for each plot bound
 with the original input.
 }
 \description{
-Computes metrics for each plot of a ground inventory by 1. clipping the plots inventories 2. computing
-user's metrics to each plot 3. combining spatial data and metrics into one data.frame ready for
+Computes metrics for each plot of a ground inventory by 1. clipping the plots inventories, 2. computing
+a user's metrics to each plot, and 3. combining spatial data and metrics into one data.frame ready for
 statistical modelling. `plot_metrics` is basically a seamless wrapper around \link{clip_roi},
 \link{cloud_metrics}, `cbind` and adequate processing settings.
 }
@@ -45,12 +45,12 @@ but this is not mandatory.\cr
 Supported processing options for a \code{LAScatalog} in \code{plot_metrics} function (in bold). For
 more details see the \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
 \itemize{
-\item chunk size: Not relevant here
-\item chunk buffer: Not relevant here
-\item chunk alignment: Not relevant here
+\item chunk size: Not relevant here.
+\item chunk buffer: Not relevant here.
+\item chunk alignment: Not relevant here.
 \item \strong{progress}: Displays a progress estimate.
-\item output files: plots are extracted in memory
-\item \strong{select}: Read only the attributes of interest
+\item output files: plots are extracted in memory.
+\item \strong{select}: Read only the attributes of interest.
 \item \strong{filter}: Read only the points of interest.
 }
 }

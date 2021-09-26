@@ -13,7 +13,7 @@ random_per_voxel(res = 1, n = 1)
 }
 \description{
 This functions is made to be used in \link{decimate_points}. It implements an algorithm that
-creates a 3D grid with a given resolution and filters the point cloud by selecting randomly
+creates a 3D grid with a given resolution and filters the point cloud by randomly selecting
 n points within each voxel
 }
 \examples{

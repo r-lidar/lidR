@@ -93,10 +93,10 @@ need more details. See section 'Details'.
 \details{
 \itemize{
 \item \strong{opt_restart()} automatically sets the chunk option named "drop" in such a way that
-the engine will restart at a given chunk skip all previous chunks. Useful to restart after a crash.
+the engine will restart at a given chunk and skip all previous chunks. Useful for restarting after a crash.
 \item \strong{opt_independent_file()} automatically sets the chunk size, chunk buffer and wall-to-wall options
-to process files that are not spatially related to each other such as plot inventories.
-\item \strong{opt_laz_compression()} automatically modifies the drivers to write LAZ files instead of LAS files#'
+to process files that are not spatially related to each other, such as plot inventories.
+\item \strong{opt_laz_compression()} automatically modifies the drivers to write LAZ files instead of LAS files.
 }
 }
 \examples{

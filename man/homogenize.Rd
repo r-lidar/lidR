@@ -21,7 +21,7 @@ points in each cell. It is designed to produce point clouds that have uniform de
 the coverage area. For each cell, the proportion of points or pulses that will be retained is computed
 using the actual local density and the desired density. If the desired density is greater than the actual
 density it returns an unchanged set of points (it cannot increase the density). The cell size must be
-large enough to compute a coherent local density. For example in a 2 points/m^2 point cloud, 25 square
+large enough to compute a coherent local density. For example, in a 2 points/m^2 point cloud, 25 square
 meters would be feasible; however 1 square meter cells would not be feasible because density does
 not have meaning at this scale.
 }

@@ -14,13 +14,13 @@ Infinity results in a convex hull. You can use values lower than 1, but they can
 shapes.}
 
 \item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
-considered for further detalization. Higher values result in simpler shapes.}
+considered for further detailed processing. Higher values result in simpler shapes.}
 }
 \value{
 A LAScatalog with true boundaries
 }
 \description{
-Computes the polygon that encloses the points. It reads all the file one by one and computes a
+Computes the polygon that encloses the points. It reads all the files one by one and computes a
 concave hull using the \link{concaveman} function. When all the hulls are computed it updates the
 LAScatalog to set the true polygons instead of the bounding boxes.
 }
@@ -33,7 +33,7 @@ Supported processing options for more details see the
 \item chunk buffer: Not supported, it processes by file with no buffer.
 \item chunk alignment: Not supported, it processes by file.
 \item \strong{progress}: Displays a progress estimate.
-\item output files: Not supported, it returns an R object
+\item output files: Not supported, it returns an R object.
 \item select: Not supported, it loads XYZ only.
 \item \strong{filter}: Read only the points of interest.
 }
