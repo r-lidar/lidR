@@ -85,7 +85,7 @@ See \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{wiki page} and Wo
 \item{pulseID}{The number referencing each pulse}
 }
 \description{
-Predefined metrics functions intendend to me used in \code{*_metrics} function such as
+Predefined metrics functions intended to me used in \code{*_metrics} function such as
 \link{grid_metrics}, \link{hexbin_metrics}, \link{cloud_metrics}, \link{tree_metrics},
 \link{voxel_metrics} or \link{point_metrics}. Each function comes with a convenient
 shortcuts for lazy coding. The \code{lidR} package aims to provide an easy way

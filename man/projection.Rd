@@ -115,17 +115,8 @@ epsg(las)
 # Get the WKT string stored in the header (LAS >= 1.4)
 wkt(las)
 
-# Overwrite the CRS (but does not reproject)
-crs <- sp::CRS("+init=epsg:26918")
-projection(las) <- crs
-sf::st_crs(las)$input
-
 # Uses the EPSG code
 projection(las) <- 26919
 sf::st_crs(las)$input
-
-# Uses a crs from sf
-crs <- sf::st_crs(3035)
-projection(las) <- crs
 
 }
