@@ -37,7 +37,7 @@
 #' be aligned with a raster, for example to ensure the continuity of the output. If the chunk size is
 #' 800 and the expected product is a raster with a resolution of 35, 800 and 35 are not compatible
 #' and will create 2 different partial pixels on the edges. The realignment option forces the
-#' chunk to fit the grid aligment.
+#' chunk to fit the grid alignment.
 #' @param plot logical. Displays the chunk pattern.
 #'
 #' @return A list containing objects of class \code{LAScluster}.

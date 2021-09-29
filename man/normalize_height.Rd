@@ -41,7 +41,7 @@ elevation of NA are filtered. Be careful this creates a copy of the point cloud.
 \link[raster:extract]{extract}. Typically one may use \code{method = "bilinear"}.}
 
 \item{add_lasattribute}{logical. By default the above see level elevation is retained in a new attribute.
-However this new attribute will be discared at write time. If \code{TRUE} it is maintained as an
+However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
 extrabytes attribute. See also \link{add_lasattribute}.}
 
 \item{Wdegenerated}{logical. The function always check and remove degenerated ground points

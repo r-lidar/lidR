@@ -10,7 +10,7 @@ set_lidr_threads(threads)
 get_lidr_threads()
 }
 \arguments{
-\item{threads}{Positve scala. Default 0 means use all CPU available. Values > 1 mean
+\item{threads}{Positive scalar. Default 0 means use all CPU available. Values > 1 mean
 using n cores, values in ]0, 1[ mean using a fraction of the cores e.g. 0.5 = half.}
 }
 \description{

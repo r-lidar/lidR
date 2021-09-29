@@ -12,7 +12,7 @@ LIDRTHREADS$input <- 1L
 #'
 #' @seealso \link{lidR-parallelism}
 #'
-#' @param threads Positve scala. Default 0 means use all CPU available. Values > 1 mean
+#' @param threads Positive scalar. Default 0 means use all CPU available. Values > 1 mean
 #' using n cores, values in ]0, 1[ mean using a fraction of the cores e.g. 0.5 = half.
 #' @export
 set_lidr_threads = function(threads)
