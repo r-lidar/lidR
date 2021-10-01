@@ -1192,24 +1192,24 @@ NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
         if (y == ymin) row = nrows-1;
         if (x == xmax) col = ncols-1;
 
-        if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-          Rcpp::stop("C++ unexpected internal error in 'rasterize': point out of raster."); // # nocov
+        if (!(row < 0 || row >= nrows || col < 0 || col >= ncols))
+        {
+          int cell = row * ncols + col;
+          raster(cell) = f(raster(cell), z);
 
-        int cell = row * ncols + col;
-        raster(cell) = f(raster(cell), z);
-
-        // This is a hack for R 4.0.0 with alternative compiler toolchain (gcc8 32 bits)
-        // I'm not able to understand why adding a print line fixes the problem
-        // and I don't even know what is the problem.
-        #ifdef _WIN32
-        #ifdef __MINGW32__
-        #ifdef __GNUC__
-        #if __GNUC__ >= 8
-                if (cell == raster.size() + 1) Rprintf("x = %lf, y = %lf\n", x, y);
-        #endif
-        #endif
-        #endif
-        #endif
+          // This is a hack for R 4.0.0 with alternative compiler toolchain (gcc8 32 bits)
+          // I'm not able to understand why adding a print line fixes the problem
+          // and I don't even know what is the problem.
+          #ifdef _WIN32
+          #ifdef __MINGW32__
+          #ifdef __GNUC__
+          #if __GNUC__ >= 8
+          if (cell == raster.size() + 1) Rprintf("x = %lf, y = %lf\n", x, y);
+          #endif
+          #endif
+          #endif
+          #endif
+        }
       }
     }
   }
