@@ -663,6 +663,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
     opt_chunk_buffer(las) <- 0
     opt_select(las) <- "*"
     opt_filter(las) <- ""
+    opt_output_files(las) <- ""
     opt_wall_to_wall(las) <- FALSE
     if (print) opt_progress(las) <-  FALSE
     out <- catalog_apply(las, las_check, print = print)

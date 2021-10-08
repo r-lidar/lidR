@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.2.2 (Release date: ...)
 
 - Enhance: `grid_*()` functions support a `RasterLayer` smaller than the point cloud ([#483](https://github.com/Jean-Romain/lidR/issues/483))
+- Fix: `las_check()` with a `LAScatalog` and with `deep = TRUE` failed with a output file template ([#484](https://github.com/Jean-Romain/lidR/issues/484)).
 
 ## lidR v3.2.1 (Release date: 2021-09-27)
 
