@@ -160,7 +160,7 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, in
   header <- LASheader(header)
 
   if (is.na(proj4string@projargs))
-    proj4string <- crs(header)
+    proj4string <- projection(header, asText = FALSE)
 
   if (is.null(index))
     index <- LIDRDEFAULTINDEX
