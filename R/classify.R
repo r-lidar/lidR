@@ -1,0 +1,98 @@
+#' Classify points
+#'
+#' Classify points that meet some criterion and/or that belong in a region of interest. The
+#' functions update the attribute `Classification` of the LAS object according to
+#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}
+#'
+#' \describe{
+#' \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
+#' The points classified as 'noise' are assigned a value of 18.}
+#' \item{classify_ground}{Classify points as 'ground' with several possible algorithms. The points
+#' classified as 'ground' are assigned a value of 2 }
+#' \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
+#' region of interest with class of choice.}
+#' }
+#'
+#' @template param-las
+#' @param algorithm an algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
+#' classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
+#' The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has `mcc`.
+#' @param class The ASPRS class to attribute to the points that meet the criterion.
+#' @param poi a formula of logical predicates. The points that are `TRUE` will be classified `class`.
+#' @param roi A `SpatialPolygons`, `SpatialPolygonDataFrame` from `sp` or a `POLYGON` from `sf`.
+#' The points that are in the region of interest delimited by the polygon(s) are classified
+#' `class`.
+#' @param inverse_roi bool. Inverses the `roi`. The points that are outside the polygon(s)
+#' are classified `class`
+#' @param by_reference bool. Updates the classification in place (LAS only).
+#' @param last_returns logical. The algorithm will use only the last returns (including the first returns
+#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+#' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
+#' to \code{FALSE} automatically.
+#'
+#' @name classify
+#' @rdname classify
+#' @md
+#' @examples
+#' # === Classify ground ===
+#'
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
+#'
+#' # Using the Progressive Morphological Filter
+#' # ------------------------------------------
+#'
+#' # (Parameters chosen mainly for speed)
+#' ws  <- seq(3,12, 4)
+#' th  <- seq(0.1, 1.5, length.out = length(ws))
+#'
+#' las <- classify_ground(las, pmf(ws, th))
+#' #plot(las, color = "Classification")
+#'
+#' # Using the Cloth Simulation Filter
+#' # ---------------------------------
+#'
+#' # (Parameters chosen mainly for speed)
+#' mycsf <- csf(TRUE, 1, 1, time_step = 1)
+#' las <- classify_ground(las, mycsf)
+#' #plot(las, color = "Classification")
+#'
+#' # === Classify noise ===
+#'
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
+#'
+#' # Add 20 artificial outliers
+#' set.seed(314)
+#' id = round(runif(20, 0, npoints(las)))
+#' set.seed(42)
+#' err = runif(20, -50, 50)
+#' las$Z[id] = las$Z[id] + err
+#'
+#' # Using SOR
+#' las <- classify_noise(las, sor(15,7))
+#' #plot(las, color = "Classification")
+#'
+#' # Using IVF
+#' las <- classify_noise(las, ivf(5,2))
+#'
+#' # Remove outliers using filter_poi()
+#' las_denoise <- filter_poi(las, Classification != LASNOISE)
+#'
+#' # === Classify POI ===
+#'
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' shp <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
+#'
+#' las  <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
+#' lake <- sf::st_read(shp, quiet = TRUE)
+#'
+#' # Classifies the points that are NOT in the lake and that are NOT ground points as class 5
+#' poi <- ~Classification != LASGROUND
+#' las <- classify_poi(las, LASHIGHVEGETATION, poi = poi, roi = lake, inverse = TRUE)
+#'
+#' # Classifies the points that are in the lake as class 9
+#' las <- classify_poi(las, LASWATER, roi = lake, inverse = FALSE)
+#'
+#' #plot(las, color = "Classification")
+NULL

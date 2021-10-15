@@ -84,6 +84,7 @@ Collate:
     'catalog_overlaps.R'
     'catalog_retile.R'
     'catalog_select.R'
+    'classify.R'
     'classify_ground.R'
     'classify_noise.R'
     'classify_poi.R'
