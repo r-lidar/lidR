@@ -14,6 +14,9 @@ using namespace lidR;
 
 LAS::LAS(S4 las, int ncpu)
 {
+  Rcpp::List index = las.slot("index");
+  this->sensor = index["sensor"];
+
   this->las = las;
 
   DataFrame data = as<DataFrame>(las.slot("data"));
@@ -302,7 +305,7 @@ double LAS::range(NumericVector &x, NumericVector &y , NumericVector &z, Numeric
 
   R  = std::sqrt(dx*dx + dy*dy + dz*dz);
 
-  if (R > 3 * R_control)
+  if (sensor != TLS && R > 3 * R_control)
   {
     Rprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
     Rprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
