@@ -5,7 +5,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Enhance: `grid_*()` functions support a `RasterLayer` smaller than the point cloud ([#483](https://github.com/Jean-Romain/lidR/issues/483))
 - Fix: `las_check()` with a `LAScatalog` and with `deep = TRUE` failed with a output file template ([#484](https://github.com/Jean-Romain/lidR/issues/484)).
 - Fix: `readLAS()` no longer reads LAS files on some Windows/Mac machine ([#485](https://github.com/Jean-Romain/lidR/issues/485)). It seems it is an issue with CRAN binaries. By releasing 3.2.2 we hope to trigger a new build.
-- Enhance: `get_range()` and consequently `range_correction()` no longer throw high range error for highly variable range sensor like TLS ([#490](https://github.com/Jean-Romain/lidR/issues/4902)).
+- Enhance: `get_range()` and consequently `range_correction()` no longer throw high range error for highly variable range sensor like TLS ([#490](https://github.com/Jean-Romain/lidR/issues/490)).
 
 ## lidR v3.2.1 (Release date: 2021-09-27)
 
