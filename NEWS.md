@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v3.2.3 (Release date: ...)
+
+- Fix: bitmerge strategy was bugged and may return NaN and also probably duplicated IDs ([#492](https://github.com/Jean-Romain/lidR/issues/492))
+
 ## lidR v3.2.2 (Release date: 2021-10-18)
 
 - Enhance: `grid_*()` functions support a `RasterLayer` smaller than the point cloud ([#483](https://github.com/Jean-Romain/lidR/issues/483))
