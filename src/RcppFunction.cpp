@@ -347,19 +347,23 @@ NumericVector bitmerge(IntegerVector u, IntegerVector v)
   if (u.size() != v.size())
     Rcpp::stop("Internal error in bitmerge: u and v have different sizes");
 
-  int32_t x;
-  int32_t y;
-  int64_t z;
-  double  t;
-  int n = u.size();
-  NumericVector o(n);
+  double t;
+  int32_t  x;
+  int32_t  y;
+  uint32_t n;
+  uint32_t m;
+  uint64_t z;
+  int s = u.size();
+  NumericVector o(s);
 
-  for (int i = 0 ; i < n ; ++i)
+  for (int i = 0 ; i < s ; ++i)
   {
     x = u[i];
     y = v[i];
-    z = (int64_t)x << 32 | y;
-    memcpy(&t, &z, sizeof(int64_t));
+    memcpy(&n, &x, sizeof(x));
+    memcpy(&m, &y, sizeof(y));
+    z = (uint64_t) n << 32 | m;
+    t = static_cast<double>(z);
     o[i] = t;
   }
 

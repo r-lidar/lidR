@@ -46,9 +46,8 @@
 #' For the pre-processing tests the function only makes an estimation and may not be correct.
 #'
 #' @template param-las
-#' @param print logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
-#' the functions returns a \code{list} with two elements named 'warnings' and 'errors' containing a
-#' vector with the reported warnings and errors.
+#' @param print logical. By default, prints a report and returns a \code{list} invisibly. If
+#' \code{print = FALSE} the functions returns a \code{list} visibly and do not print the report.
 #' @param ... Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
 #' all the files and performs a deep inspection.
 #'
@@ -663,6 +662,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
     opt_chunk_buffer(las) <- 0
     opt_select(las) <- "*"
     opt_filter(las) <- ""
+    opt_output_files(las) <- ""
     opt_wall_to_wall(las) <- FALSE
     if (print) opt_progress(las) <-  FALSE
     out <- catalog_apply(las, las_check, print = print)

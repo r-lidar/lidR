@@ -57,6 +57,10 @@ class LAS
     static double rmax(double x, double y) { if (NumericVector::is_na(x)) return y; return (x > y) ? x : y; }
     static double rmin(double x, double y) { if (NumericVector::is_na(x)) return y; return (x < y) ? x : y; }
     static double rcount(double x, double y) { if (NumericVector::is_na(x)) return 1; return x+1;}
+
+private:
+  unsigned int sensor;
+  enum TYPES {UKN = 0, ALS = 1, TLS = 2, UAV = 3, DAP = 4, MLS = 5};
 };
 
 #endif //LAS_H

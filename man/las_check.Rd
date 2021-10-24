@@ -9,9 +9,8 @@ las_check(las, print = TRUE, ...)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{print}{logical. By default, prints a report into standard ouptut. If \code{print = FALSE}
-the functions returns a \code{list} with two elements named 'warnings' and 'errors' containing a
-vector with the reported warnings and errors.}
+\item{print}{logical. By default, prints a report and returns a \code{list} invisibly. If
+\code{print = FALSE} the functions returns a \code{list} visibly and do not print the report.}
 
 \item{...}{Use \code{deep = TRUE} on a LAScatalog only. Instead of a shallow inspection it reads
 all the files and performs a deep inspection.}

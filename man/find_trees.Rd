@@ -47,8 +47,8 @@ is the legacy method.}
 unique ID. This ID is not an integer but a 64-bit decimal number, which is suboptimal but at
 least it is expected to be unique \strong{if the gpstime attribute is consistent across files}.
 If inconsistencies with gpstime are reported (for example gpstime records the week time and was
-reset to 0 in a coverage that takes more than a week to complete), there is a (low) probability tof getting
-ID attribution errors.}
+reset to 0 in a coverage that takes more than a week to complete), there is a (low) probability of
+getting ID attribution errors.}
 \item{bitmerge}{This method uses the XY coordinates of the highest point (apex) of a tree to
 create a single 64-bit number with a bitwise operation. First, XY coordinates are converted to
 32-bit integers using the scales and offsets of the point cloud. For example, if the apex is at
@@ -60,8 +60,9 @@ as-is and the binary representations are unionized into a 64-bit integer like (h
 does not support 64-bit integers. The previous steps are done at C++ level and the 64-bit binary
 representation is reinterpreted into a 64-bit decimal number to be returned in R. The IDs thus generated
 are somewhat weird. For example, the tree ID 00000100000010000000101000000100 which is 67635716 if
-interpreted as an integer becomes 3.34164837074751323479078607289E-316 if interpreted as a decimal number.
-This is far from optimal but at least it is guaranteed to be unique  \strong{if all files have the same offsets and scale factors}.}
+interpreted as an integer becomes 3.34164837074751323479078607289E-316 if interpreted as a decimal
+number. This is far from optimal but at least it is guaranteed to be unique  \strong{if all files have
+the same offsets and scale factors}.}
 }
 
 All the proposed options are suboptimal because they either do not guarantee uniqueness in all cases

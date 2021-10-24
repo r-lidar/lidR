@@ -1,6 +1,17 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.2.1(Release date: 2021-09-27)
+## lidR v3.2.3 (Release date: ...)
+
+- Fix: bitmerge strategy was bugged and may return NaN and also probably duplicated IDs ([#492](https://github.com/Jean-Romain/lidR/issues/492))
+
+## lidR v3.2.2 (Release date: 2021-10-18)
+
+- Enhance: `grid_*()` functions support a `RasterLayer` smaller than the point cloud ([#483](https://github.com/Jean-Romain/lidR/issues/483))
+- Fix: `las_check()` with a `LAScatalog` and with `deep = TRUE` failed with a output file template ([#484](https://github.com/Jean-Romain/lidR/issues/484)).
+- Fix: `readLAS()` no longer reads LAS files on some Windows/Mac machine ([#485](https://github.com/Jean-Romain/lidR/issues/485)). It seems it is an issue with CRAN binaries. By releasing 3.2.2 we hope to trigger a new build.
+- Enhance: `get_range()` and consequently `range_correction()` no longer throw high range error for highly variable range sensor like TLS ([#490](https://github.com/Jean-Romain/lidR/issues/490)).
+
+## lidR v3.2.1 (Release date: 2021-09-27)
 
 - Fix stuff on Solaris.
 
