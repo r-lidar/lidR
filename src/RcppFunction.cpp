@@ -363,7 +363,7 @@ NumericVector bitmerge(IntegerVector u, IntegerVector v)
     memcpy(&n, &x, sizeof(x));
     memcpy(&m, &y, sizeof(y));
     z = (uint64_t) n << 32 | m;
-    memcpy(&t, &z, sizeof(z));
+    t = static_cast<double>(z);
     o[i] = t;
   }
 
