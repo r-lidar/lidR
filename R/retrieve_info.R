@@ -68,7 +68,7 @@ retrieve_pulses = function(las)
 {
   stopifnotlas(las)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Pulse IDs cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
@@ -93,7 +93,7 @@ retrieve_flightlines = function(las, dt = 30)
   assert_is_a_number(dt)
   assert_all_are_non_negative(dt)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Flightlines cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
@@ -116,10 +116,10 @@ retrieve_scanlines = function(las)
 {
   stopifnotlas(las)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Scanlines IDs cannot be computed from this object", call. = FALSE)
 
-  if (!"ScanDirectionFlag" %in% names(las@data))
+  if (!"ScanDirectionFlag" %in% names(las))
     stop("No 'ScanDirectionFlag' attribute found. Scanlines cannot be computed from this object", call. = FALSE)
 
   values <- unique(las@data[["ScanDirectionFlag"]])

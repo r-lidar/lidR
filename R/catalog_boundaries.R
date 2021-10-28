@@ -34,34 +34,21 @@
 #' plot(ctg2, add = TRUE)
 catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
 {
-  f = function(las, bbox, concavity, length_threshold)
-  {
-    cc <- concaveman(las$X, las$Y, concavity = concavity, length_threshold = length_threshold)
-    p <- sp::Polygon(cc)
-    p <- sp::Polygons(list(p), ID = "1")
-    p <- sp::SpatialPolygons(list(p), proj4string = las@proj4string)
+  f = function(las, bbox, concavity, length_threshold) {
+    p <- st_concave_hull(las, concavity = concavity, length_threshold = length_threshold)
     return(p)
   }
 
-  lidR::opt_chunk_buffer(ctg) <- 0
-  lidR::opt_chunk_size(ctg) <- 0
-  lidR::opt_select(ctg) <- "xyz"
-  lidR::opt_output_files(ctg) <- ""
-  lidR::opt_independent_files(ctg) <- TRUE
-  options = list(autoread = TRUE)
-  res = lidR::catalog_apply(ctg, f, concavity = concavity, length_threshold = length_threshold, .options = options)
+  opt_chunk_buffer(ctg) <- 0
+  opt_chunk_size(ctg) <- 0
+  opt_select(ctg) <- "xyz"
+  opt_output_files(ctg) <- ""
+  opt_independent_files(ctg) <- TRUE
+  options <- list(autoread = TRUE)
+  res <- catalog_apply(ctg, f, concavity = concavity, length_threshold = length_threshold, .options = options)
 
-  for (i in 1:length(res)) res[[i]]@polygons[[1]]@ID = as.character(i)
-  Sr <- do.call(rbind, res)
-  data <- ctg@data
-
-  nctg <- new("LAScatalog")
-  nctg@bbox <- Sr@bbox
-  nctg@proj4string <- Sr@proj4string
-  nctg@plotOrder <- Sr@plotOrder
-  nctg@data <- data
-  nctg@polygons <- Sr@polygons
-  opt_copy(nctg) <- ctg
-  attr(nctg, "trueshape") <- TRUE
-  return(nctg)
+  geom <- do.call(c, res)
+  sf::st_geometry(ctg@data) <- geom
+  attr(ctg, "trueshape") <- TRUE
+  return(ctg)
 }

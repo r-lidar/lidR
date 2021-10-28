@@ -26,7 +26,7 @@ computation speed. The lower the value, the faster the method. Default is 10.}
 }
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
-segmentation based on the Li et al. (2012) article (see reference). This method is a growing region
+segmentation based on Li et al. (2012) (see reference). This method is a growing region
 method working at the point cloud level. It is an implementation, as strict as possible, made by
 the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
 for objects that are too low.

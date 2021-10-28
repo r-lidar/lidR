@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2017 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Subdivide a LAScatalog into chunks
 #'
 #' Virtually subdivide a LAScatalog into chunks. This function is an internal function exported to
@@ -59,19 +32,19 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   realigned <- FALSE
 
   # New feature from v2.2.0 to not process some tiles
-  processed <- ctg@data$processed
+  processed <- ctg$processed
   if (is.null(processed)) processed <- rep(TRUE, nrow(ctg@data))
   if (!is.logical(processed)) stop("The attribute 'processed' of the catalog is not logical.", call. = FALSE)
-  files <- ctg@data$filename[processed]
+  files <- ctg$filename[processed]
 
   if (by_file)
   {
     # If processing by file the chunks are easy to make. It corresponds
     # to the bounding boxes of the files
-    xmin <- ctg@data[["Min.X"]]
-    xmax <- ctg@data[["Max.X"]]
-    ymin <- ctg@data[["Min.Y"]]
-    ymax <- ctg@data[["Max.Y"]]
+    xmin <- ctg[["Min.X"]]
+    xmax <- ctg[["Max.X"]]
+    ymin <- ctg[["Min.Y"]]
+    ymax <- ctg[["Max.Y"]]
 
     # Remove the files that are flagged for buffer only but no actual processing
     xmin <- xmin[processed]
@@ -173,12 +146,12 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   # Creation of a set of LASclusters from the rectangles
   if (by_file && buffer <= 0 && realigned == FALSE)
   {
-    filenames <- ctg@data$filename[processed]
+    filenames <- ctg$filename[processed]
 
     clusters = lapply(1:length(xcenter), function(i)
     {
       center  <- list(x = xcenter[i], y = ycenter[i])
-      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, filenames[i], "noname", proj4string = ctg@proj4string, ctg@index)
+      cluster <- LAScluster(center, width[i], height[i], buffer, LIDRRECTANGLE, filenames[i], "noname", crs = st_crs(ctg), ctg@index)
 
       cluster@select <- ctg@input_options$select
       cluster@filter <- paste(cluster@filter, ctg@input_options$filter)
@@ -188,9 +161,9 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   }
   else
   {
-    bboxes = mapply(raster::extent, xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
-    clusters = suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, processed, TRUE, by_file))
-    clusters = clusters[!sapply(clusters, is.null)]
+    bboxes   <- st_make_bboxes(xcenter - width/2, xcenter + width/2, ycenter - height/2, ycenter + height/2)
+    clusters <- suppressWarnings(catalog_index(ctg, bboxes, LIDRRECTANGLE, buffer, processed, TRUE, by_file))
+    clusters <- clusters[!sapply(clusters, is.null)]
   }
 
   # Post-process the clusters
@@ -255,8 +228,8 @@ catalog_makechunks = function(ctg, realignment = FALSE, plot = opt_progress(ctg)
   # Plot the catalog and the clusters if progress
   if (plot)
   {
-    xrange = c(min(xmin, ctg@data[["Min.X"]]), max(xmax, ctg@data[["Max.X"]]))
-    yrange = c(min(ymin, ctg@data[["Min.Y"]]), max(ymax, ctg@data[["Max.Y"]]))
+    xrange = c(min(xmin, ctg[["Min.X"]]), max(xmax, ctg[["Max.X"]]))
+    yrange = c(min(ymin, ctg[["Min.Y"]]), max(ymax, ctg[["Max.Y"]]))
     title  = "Pattern of chunks"
     plot.LAScatalog(ctg, mapview = FALSE, chunk_pattern = FALSE, main = title, xlim = xrange, ylim = yrange)
 

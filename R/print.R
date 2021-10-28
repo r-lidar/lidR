@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Summary and Print for \code{LAS*} objects
 #'
 #' @param object,x A \code{LAS*} object or other lidR related objects.
@@ -56,24 +29,19 @@ setMethod("print", "LAS", function(x)
 setMethod("show", "LAS", function(object)
 {
   size      <- format(utils::object.size(object), units = "auto")
-  area      <- area(object)
+  area      <- as.numeric(st_area(object))
   area.h    <- area
   npoints   <- nrow(object@data)
   npoints.h <- npoints
   dpts      <- if (area > 0) npoints/area else 0
-  #attr      <- names(object@data)
-  ext       <- sp::bbox(object)
+  ext       <- st_bbox(object)
   phb       <- object@header@PHB
   major     <- phb[["Version Major"]]
   minor     <- phb[["Version Minor"]]
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
-
-  coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
-
-  units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
-  units <- if (length(units) == 0) "units" else units
+  units     <- st_crs(object)$units_gdal
+  units     <- if (is.na(units)) "units" else units
 
   areaprefix  <- ""
   pointprefix <- ""
@@ -102,10 +70,10 @@ setMethod("show", "LAS", function(object)
 
   cat("class        : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
   cat("memory       :", size, "\n")
-  cat("extent       : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref.  :", coord.ref, "\n")
+  cat("extent       : ", ext[1], ", ", ext[3], ", ", ext[2], ", ", ext[4], " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("coord. ref.  :", st_crs(object)$Name, "\n")
   cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
-  cat("points       :", npoints.h, pointprefix, "points\n")
+  cat("points       : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
   #cat("names        :", attr, "\n")
 
@@ -114,13 +82,13 @@ setMethod("show", "LAS", function(object)
 
 setMethod("show", "LAScatalog", function(object)
 {
-  area        <- area(object)
+  area        <- as.numeric(st_area(object))
   area.h      <- area
   npoints     <- sum(object@data$Number.of.point.records)
   npoints.h   <- npoints
-  ext         <- object@bbox
-  units      <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
-  units       <- if (length(units) == 0) "units" else units
+  ext         <- st_bbox(object)
+  units       <- st_crs(object)$units_gdal
+  units       <- if (is.na(units)) "units" else units
   areaprefix  <- ""
   pointprefix <- ""
   major       <- sort(unique(object[["Version.Major"]]))
@@ -130,9 +98,6 @@ setMethod("show", "LAScatalog", function(object)
   density     <- round(npoints/area, 1)
 
   if (is.nan(density)) density <- 0
-
-  coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
 
   if (area > 1000*1000/2)
   {
@@ -162,10 +127,10 @@ setMethod("show", "LAScatalog", function(object)
   }
 
   cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
-  cat("extent      : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref. :", coord.ref, "\n")
+  cat("extent      : ", ext[1], ", ", ext[3], ", ", ext[2], ", ", ext[4], " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("coord. ref. :", st_crs(object)$Name, "\n")
   cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
-  cat("points      : ", npoints.h, pointprefix, " points\n", sep = "")
+  cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
   return(invisible(object))
@@ -439,4 +404,13 @@ print.lidRAlgorithm = function(x, ...)
   }
 
   return(invisible(x))
+}
+
+print.raster_template <- function(x, ...)
+{
+  cat("Object of class raster_template\n")
+  cat("extent     : ", x$xmin, ", ", x$xmax, ", ",  x$ymin, ", ", x$ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("resolution :", x$xres, x$yres, "\n")
+  cat("size       :", x$ncol, x$nrow, "\n")
+  cat("crs        :", x$crs$Name, "\n")
 }

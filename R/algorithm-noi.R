@@ -45,7 +45,6 @@ range_correction = function(sensor, Rs, f = 2.3, gpstime = "gpstime", elevation 
   assert_is_a_number(f)
   assert_all_are_positive(Rs)
   assert_all_are_positive(f)
-  assert_is_all_of(sensor, "SpatialPointsDataFrame")
 
   Rs <- lazyeval::uq(Rs)
   f <- lazyeval::uq(f)
@@ -75,54 +74,62 @@ get_range = function(las, sensor, gpstime = "gpstime", elevation = "Z")
 
 prepare_sensor = function(sensor, gpstime, elevation, las)
 {
-  stopifnot(is(sensor, "SpatialPointsDataFrame"))
+  if (is(sensor, "SpatialPointsDataFrame"))
+    sensor <- sf::st_as_sf(sensor)
 
-  if (!"gpstime"   %in% names(las@data))
+  if (!is(sensor, "sf"))
+    stop("'ttops' is not a SpatialPointsDataFrame or sf")
+
+  geom <- sf::st_geometry(sensor)
+  if (!is(geom, "sfc_POINT"))
+    stop("Only point geometry types are supported", call. = FALSE)
+
+  if (!"gpstime"   %in% names(las))
     stop("No 'gpstime' attribute found in las",   call. = FALSE)
 
-  if (!"Intensity" %in% names(las@data))
+  if (!"Intensity" %in% names(las))
     stop("No 'Intensity' attribute found", call. = FALSE)
 
-  # Relaxed in #395
-  #if (is.null(raster::intersect(raster::extent(las), raster::extent(sensor))))
-  #  stop("Point-cloud and sensor positions do not overlap.", call. = FALSE)
-
-  if (!gpstime %in% names(sensor@data))
+  if (!gpstime %in% names(sensor))
     stop(glue::glue("No '{gpstime}' attribute found in sensor."), call. = FALSE)
 
-  if (ncol(sensor@coords) == 3 && !is.null(elevation))
+  if (is(sf::st_geometry(sensor)[[1]], "XYZ"))
   {
     elevation = NULL
-    message("3 coordinates detected in the sensor positions, parameter 'elevation' was not considered.")
+    message("3 coordinates detected in the sensor positions, parameter 'elevation' is not considered.")
   }
 
-  fl <- sensor@coords
+  fl <- sf::st_coordinates(sensor)
   fl <- data.table::data.table(fl)
 
-  trange.las <- range(las@data[["gpstime"]])
-  trange.sensor <- range(sensor@data[[gpstime]])
+  trange.las <- range(las[["gpstime"]])
+  trange.sensor <- range(sensor[[gpstime]])
 
   if ((trange.las[1] < trange.sensor[1] - 2) || (trange.las[2] > trange.sensor[2] + 2))
     stop("'gpstime range from the sensor does not contain gpstime range from the point-cloud", call. = FALSE)
 
-  if (!is.null(elevation)) {
-    if (!elevation %in% names(sensor@data))
+  if (!is.null(elevation))
+  {
+    if (!elevation %in% names(sensor))
       stop(glue::glue("No '{elevation}' attribute found in sensor."), call. = FALSE)
 
-    fl[["Z"]] <- sensor@data[[elevation]]
-  } else {
-    if (ncol(sensor@coords) != 3)
+    fl[["Z"]] <- sensor[[elevation]]
+  }
+  else
+  {
+    if (ncol(fl) != 3)
       stop("There are only two dimensions in the coordinates of the sensor.", call. = FALSE)
   }
 
-  fl[["gpstime"]] <- sensor@data[[gpstime]]
+  fl[["gpstime"]] <- sensor[[gpstime]]
 
   fl <- data.table::data.table(fl)
   data.table::setorder(fl, gpstime)
   data.table::setnames(fl, c("X", "Y", "Z", "gpstime"))
   dup <- duplicated(fl, by = "gpstime")
 
-  if (any(dup)) {
+  if (any(dup))
+  {
     warning("Duplicated gpstime found. Duplicated sensor positions were removed.", call. = FALSE)
     fl <- fl[!dup]
   }

@@ -1,6 +1,5 @@
 options(lidR.progress = FALSE)
 options(rgl.useNULL = TRUE)
-rgdal::set_thin_PROJ6_warnings(TRUE)
 #Sys.setenv(NOT_CRAN = "false")
 
 megaplot_laz_path <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -30,3 +29,4 @@ mixedconifer_ctg <- readLAScatalog(mixedconifer_las_path)
 topography_ctg <- readLAScatalog(topography_las_path)
 example_ctg <- readLAScatalog(example_las_path)
 random_2files_250points <- lidR:::catalog_generator(2, 250) # 180 ms
+

@@ -27,20 +27,18 @@ data <- data.table::data.table(
 )
 
 
-pgeom <- lapply(1:nrow(data), function(i)
+geom <- lapply(1:nrow(data), function(i)
 {
   mtx <- matrix(c(data$Min.X[i], data$Max.X[i], data$Min.Y[i], data$Max.Y[i])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-  sp::Polygons(list(sp::Polygon(mtx)),as.character(i))
+  sf::st_polygon(list(mtx))
 })
 
-Sr <- sp::SpatialPolygons(pgeom, proj4string = sp::CRS("+init=epsg:26917"))
+geom <-sf::st_sfc(geom)
+sf::st_crs(geom) <- 26917
+data <- sf::st_set_geometry(data, geom)
 
-ctg             <- new("LAScatalog")
-ctg@bbox        <- Sr@bbox
-ctg@proj4string <- Sr@proj4string
-ctg@plotOrder   <- Sr@plotOrder
-ctg@data        <- data
-ctg@polygons    <- Sr@polygons
+ctg       <- new("LAScatalog")
+ctg@data  <- data
 
 opt_progress(ctg) <- FALSE
 
@@ -125,16 +123,16 @@ test_that("catalog_makecluster makes correct clusters by file", {
 
   cl <- lidR:::catalog_makecluster(ctg)
 
-  width   <- sapply(cl, function(x) x@width)
-  buffer  <- sapply(cl, function(x) x@buffer)
-  xwidth  <- sapply(cl, function(x) x@bbox[3] - x@bbox[1])
-  ywidth  <- sapply(cl, function(x) x@bbox[4] - x@bbox[2])
-  xbwidth <- sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
-  ybwidth <- sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
-  xbuffer <- sapply(cl, function(x) x@bbbox[3] - x@bbox[3])
-  ybuffer <- sapply(cl, function(x) x@bbbox[4] - x@bbox[4])
-  nfiles  <- sapply(cl, function(x) length(x@files))
-  mainf   <- sapply(cl, function(x) x@files[1])
+  width   <- unname(sapply(cl, function(x) x@width))
+  buffer  <- unname(sapply(cl, function(x) x@buffer))
+  xwidth  <- unname(sapply(cl, function(x) x@bbox[3] - x@bbox[1]))
+  ywidth  <- unname(sapply(cl, function(x) x@bbox[4] - x@bbox[2]))
+  xbwidth <- unname(sapply(cl, function(x) x@bbbox[3] - x@bbbox[1]))
+  ybwidth <- unname(sapply(cl, function(x) x@bbbox[4] - x@bbbox[2]))
+  xbuffer <- unname(sapply(cl, function(x) x@bbbox[3] - x@bbox[3]))
+  ybuffer <- unname(sapply(cl, function(x) x@bbbox[4] - x@bbox[4]))
+  nfiles  <- unname(sapply(cl, function(x) length(x@files)))
+  mainf   <- unname(sapply(cl, function(x) x@files[1]))
 
   expect_equal(length(cl), nrow(ctg@data))
   expect_equal(width, ctg@data$Max.X - ctg@data$Min.X)
@@ -242,12 +240,12 @@ test_that("catalog_makecluster extend the chunks with a raster by file", {
 
   cl <- lidR:::catalog_makecluster(ctg, realignment = list(res = 55, start = c(0,0)))
 
-  width   <- sapply(cl, function(x) x@width)
-  buffer  <- sapply(cl, function(x) x@buffer)
-  xwidth  <- sapply(cl, function(x) x@bbox[3] - x@bbox[1])
-  ywidth  <- sapply(cl, function(x) x@bbox[4] - x@bbox[2])
-  xbwidth <- sapply(cl, function(x) x@bbbox[3] - x@bbbox[1])
-  ybwidth <- sapply(cl, function(x) x@bbbox[4] - x@bbbox[2])
+  width   <- unname(sapply(cl, function(x) x@width))
+  buffer  <- unname(sapply(cl, function(x) x@buffer))
+  xwidth  <- unname(sapply(cl, function(x) x@bbox[3] - x@bbox[1]))
+  ywidth  <- unname(sapply(cl, function(x) x@bbox[4] - x@bbox[2]))
+  xbwidth <- unname(sapply(cl, function(x) x@bbbox[3] - x@bbbox[1]))
+  ybwidth <- unname(sapply(cl, function(x) x@bbbox[4] - x@bbbox[2]))
 
   expect_equal(length(cl), nrow(ctg@data))
   expect_equal(width, lidR:::round_any(width, 55))
@@ -332,7 +330,6 @@ test_that("catalog_makecluster throw error when using ORIGINALFILENAME", {
 })
 
 test_that("plot overlaps works", {
-
   expect_error(plot(ctg, overlaps = TRUE), NA)
 })
 

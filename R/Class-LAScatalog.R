@@ -1,45 +1,16 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2017-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-#' An S4 class to represent a catalog of .las or .laz files
+#' An S4 class to represent a collection of .las or .laz files
 #'
 #' A `LAScatalog` object is a representation of a set of las/laz files. A `LAScatalog` is
 #' a way to manage and process an entire dataset. It allows the user to process a large area, or to
 #' selectively clip data from a large area without loading all the data into computer memory.
-#' A `LAScatalog` can be built with the function \link{readLAScatalog} and is formally an extension of
-#' a `SpatialPolygonsDataFrame` containing extra data to allow users greater control over
-#' how the dataset is processed (see details).
+#' A `LAScatalog` can be built with the function \link{readLAScatalog}.
 #'
-#' A `LAScatalog` is formally a `SpatialPolygonsDataFrame` extended with new slots that
-#' contain processing options. In `lidR`, each function that supports a `LAScatalog` as
+#' A `LAScatalog` contains a `sf` object to store the geometry and metadata. It is extended with slots
+#' that contain processing options. In `lidR`, each function that supports a `LAScatalog` as
 #' input will respect these processing options. Internally, processing a catalog is almost always the
 #' same and relies on a few steps:\cr
 #' 1. Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
-#' catalog. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
+#' collection. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
 #' 2. Loop over each chunk (in parallel or not).
 #' 3. For each chunk, load the points inside the ROI into R, run some R functions,
 #' return the expected output.
@@ -56,13 +27,16 @@
 #' possible. This is possible if the overlapping points are flagged, for example in the
 #' 'withheld' attribute. Otherwise `lidR` will not be able to process the dataset correctly.
 #'
-#' @slot processing_options list. A list that contains some settings describing how the catalog will be
+#' @slot data sf. A `sf` `data.frame` with the bounding box of each file as well as all the information
+#' read from the header of each LAS/LAZ file.
+#'
+#' @slot processing_options list. A list that contains some settings describing how the collection will be
 #' processed (see dedicated section).
 #'
-#' @slot chunk_options list. A list that contains some settings describing how the catalog will be
+#' @slot chunk_options list. A list that contains some settings describing how the collection will be
 #' sub-divided into chunks to be processed (see dedicated section).
 #'
-#' @slot output_options list. A list that contains some settings describing how the catalog will return
+#' @slot output_options list. A list that contains some settings describing how the collection will return
 #' the outputs (see dedicated section).
 #'
 #' @slot input_options list. A list of parameters to pass to \link{readLAS} (see dedicated section).
@@ -92,8 +66,9 @@
 #' - **chunk_size**: numeric. The size of the chunks that will be sequentially processed.
 #' A small size allows small amounts of data to be loaded at once, saving computer memory.
 #' With big chunks the computation is usually faster but uses much more memory. If `chunk_size = 0` the
-#' catalog is processed sequentially *by file* i.e. a chunk is a file. Default is 0 i.e. by default
-#' the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
+#' chunk pattern is build using the file pattern. The chunks are expecting to be wall-to-wall coverage,
+#' this means that chunk size = 0 has meaning only if the files are not overlapping. Default is 0 i.e.
+#' by default the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
 #' - **buffer**: numeric. Each chunk can be read with an extra buffer around it to ensure there are
 #' no edge effects between two independent chunks and that the output is continuous. This is mandatory for
 #' some algorithms. Default is 30. See \link{opt_chunk_buffer}.
@@ -140,11 +115,6 @@
 #' \link{opt_select}.
 #' - **filter**: string. The option `filter`. See \link{opt_filter}.
 #'
-#' @import data.table
-#' @import methods
-#' @importClassesFrom sp CRS
-#' @importClassesFrom sp SpatialPolygonsDataFrame
-#'
 #' @export
 #'
 #' @useDynLib lidR, .registration = TRUE
@@ -152,16 +122,14 @@
 #' @examples
 #' \dontrun{
 #' # Build a catalog
-#' ctg <- readLAScatalog("filder/to/las/files/")
+#' ctg <- readLAScatalog("filder/to/las/files/", filter =  "-keep_first")
 #'
-#' # Set some options
-#' opt_filter(ctg) <- "-keep_first"
 #'
 #' # Summary gives a summary of how the catalog will be processed
 #' summary(ctg)
 #'
 #' # We can seamlessly use lidR functions
-#' hmean <- grid_metrics(ctg, mean(Z), 20)
+#' hmean <- pixel_metrics(ctg, mean(Z), 20)
 #' ttops <- tree_detection(ctg, lmf(5))
 #'
 #' # For low memory config it is probably advisable not to load entire files
@@ -170,19 +138,19 @@
 #'
 #' # Sometimes the output is likely to be very large
 #' # e.g. large coverage and small resolution
-#' dtm <- grid_terrain(ctg, 1, tin())
+#' dtm <- rasterize_terrain(ctg, 1, tin())
 #'
 #' # In that case it is advisable to write the output(s) to files
 #' opt_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
 #'
 #' # Raster will be written to disk. The list of written files is returned
 #' # or, in this specific case, a virtual raster mosaic.
-#' dtm <- grid_terrain(ctg, 1, tin())
+#' dtm <- rasterize_terrain(ctg, 1, tin())
 #'
 #' # When chunks are files the original names of the las files can be preserved
 #' opt_chunk_size(ctg) <- 0
 #' opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
-#' dtm <- grid_terrain(ctg, 1, tin())
+#' dtm <- rasterize_terrain(ctg, 1, tin())
 #'
 #' # For some functions, files MUST be written to disk. Indeed, it is certain that R cannot
 #' # handle the entire output.
@@ -191,14 +159,15 @@
 #' opt_laz_compression(ctg) <- TRUE
 #' new_ctg <- normalize_height(ctg, tin())
 #'
-#' # The user has access to the catalog engine through the function catalog_apply
+#' # The user has access to the catalog engine through the functions catalog_apply
+#' # and catalog_map
 #' output <- catalog_apply(ctg, FUN, ...)
 #' }
 #' @md
 setClass(
   Class = "LAScatalog",
-  contains = "SpatialPolygonsDataFrame",
   representation(
+    data = "sf",
     chunk_options = "list",
     processing_options = "list",
     output_options = "list",
@@ -209,8 +178,6 @@ setClass(
 
 setMethod("initialize", "LAScatalog", function(.Object)
 {
-  callNextMethod()
-
   drivers = list(
     Raster = list(
       write = raster::writeRaster,
@@ -218,6 +185,20 @@ setMethod("initialize", "LAScatalog", function(.Object)
       object = "x",
       path = "filename",
       param = list(format = "GTiff", NAflag = -999999)
+    ),
+    stars = list(
+      write = stars::write_stars,
+      extension = ".tif",
+      object = "obj",
+      path = "dsn",
+      param = list(NA_value = -999999)
+    ),
+    SpatRaster = list(
+      write = terra::writeRaster,
+      extension = ".tif",
+      object = "x",
+      path = "filename",
+      param = list(NAflag = -999999)
     ),
     LAS = list(
       write = lidR::writeLAS,
@@ -233,14 +214,14 @@ setMethod("initialize", "LAScatalog", function(.Object)
       path = "filename",
       param = list(overwrite = FALSE)
     ),
-    SimpleFeature = list(
+    sf = list(
       write = sf::st_write,
       extension = ".shp",
       object = "obj",
       path = "dsn",
       param = list(quiet = TRUE)
     ),
-    DataFrame = list(
+    data.frame = list(
       write = data.table::fwrite,
       extension = ".txt",
       object = "x",
@@ -248,6 +229,48 @@ setMethod("initialize", "LAScatalog", function(.Object)
       param = list()
     )
   )
+
+  data <- structure(list(
+    File.Signature = "LASF",
+    File.Source.ID = 0L,
+    GUID = "",
+    Version.Major = 1L,
+    Version.Minor = 2L,
+    System.Identifier = "",
+    Generating.Software = "",
+    File.Creation.Day.of.Year = 0L,
+    File.Creation.Year = 0L,
+    Header.Size = 227L,
+    Offset.to.point.data = 321,
+    Number.of.variable.length.records = 1,
+    Point.Data.Format.ID = 1L,
+    Point.Data.Record.Length = 28L,
+    Number.of.point.records = 0L,
+    X.scale.factor = 0.01,
+    Y.scale.factor = 0.01,
+    Z.scale.factor = 0.01,
+    X.offset = 0,
+    Y.offset = 0,
+    Z.offset = 0,
+    Max.X = 0,
+    Min.X = 0,
+    Max.Y = 0,
+    Min.Y = 0,
+    Max.Z = 0,
+    Min.Z = 0,
+    CRS = 0L,
+    Number.of.1st.return = 0L,
+    Number.of.2nd.return = 0L,
+    Number.of.3rd.return = 0L,
+    Number.of.4th.return = 0L,
+    Number.of.5th.return = 0L,
+    filename = ""),
+    row.names = c(NA, -1L), class = "data.frame")
+
+  data <- sf::st_sf(data, geometry = sf::st_sfc(lapply(1, function(x) sf::st_polygon() )))
+  data <- data[-1,]
+
+  .Object@data <- data
 
   .Object@chunk_options <- list(
     size = 0,
@@ -278,3 +301,5 @@ setMethod("initialize", "LAScatalog", function(.Object)
 
   return(.Object)
 })
+
+

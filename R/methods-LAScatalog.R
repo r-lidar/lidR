@@ -1,44 +1,18 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2017-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
 
-#' @rdname extent
 #' @export
-#' @importMethodsFrom raster extent
-setMethod("extent", "LAScatalog",
-          function(x, ...) {
-            return(raster::extent(min(x@data$Min.X), max(x@data$Max.X), min(x@data$Min.Y), max(x@data$Max.Y)))
-          }
-)
+#' @rdname Extract
+setMethod("$", "LAScatalog", function(x, name) { x@data[[name]] })
+
+#' @export
+#' @rdname Extract
+setMethod("[[", c("LAScatalog", "ANY", "missing"), function(x, i, j, ...) { x@data[[i]] })
+
 
 #' @param ... Unused
 #' @param drop Unused
-#' @rdname redefined_behaviors
 #' @export
-setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
+#' @rdname Extract
+setMethod("[", "LAScatalog", function(x, i, j, ..., drop = FALSE) {
 
   ctgname <- deparse(substitute(x))
   iname   <- deparse(substitute(i))
@@ -51,32 +25,36 @@ setMethod("[", "LAScatalog", function(x, i, j, ..., drop = TRUE) {
     stop(glue::glue("This action is not allowed for a {class(x)}. i cannot be missing."), call. = FALSE)
 
   if (!missing(i) & missing(j) & nargs == 2L)
-    stop(glue::glue("This action is not allowed for a {class(x)}. Maybe you meant: {ctgname}[{iname}, ]."), call. = FALSE)
+    return(x@data[i])
 
-  y <- callNextMethod()
-
-  new_ctg <- new("LAScatalog")
-  new_ctg@chunk_options <- x@chunk_options
-  new_ctg@processing_options <- x@processing_options
-  new_ctg@output_options     <- x@output_options
-  new_ctg@input_options      <- x@input_options
-  new_ctg@data               <- y@data
-  new_ctg@polygons           <- y@polygons
-  new_ctg@plotOrder          <- y@plotOrder
-  new_ctg@bbox               <- y@bbox
-  new_ctg@proj4string        <- y@proj4string
-  return(new_ctg)
+  x@data <- x@data[i, ]
+  return(x)
 })
 
-# #' @rdname redefined_behaviors
-# #' @export
-# setMethod("[<-", "LAScatalog",  function(x, i, j, value)
-# {
-#  stop("LAScatalog data are read from standard files and cannot be modified")
-# })
-
-#' @rdname redefined_behaviors
 #' @export
+#' @rdname Extract
+setMethod("[", c("LAScatalog", "logical"),  function(x, i)
+{
+  x@data <- x@data[i,]
+  return(x)
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAScatalog", "sf"),  function(x, i)
+{
+  return(x[sf::st_geometry(i)])
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAScatalog", "sfc"),  function(x, i)
+{
+  return(catalog_intersect(x, i))
+})
+
+#' @export
+#' @rdname Extract
 setMethod("[[<-", "LAScatalog",  function(x, i, j, value)
 {
   if (i %in% LASCATALOGATTRIBUTES)
@@ -86,8 +64,8 @@ setMethod("[[<-", "LAScatalog",  function(x, i, j, value)
   return(x)
 })
 
-#' @rdname redefined_behaviors
 #' @export
+#' @rdname Extract
 setMethod("$<-", "LAScatalog", function(x, name, value)
 {
   if (name %in% LASCATALOGATTRIBUTES)

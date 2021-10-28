@@ -53,17 +53,17 @@ test_that("header extrabyte is updated", {
   x = runif(n)
 
   las <- add_attribute(las, x, "x")
-  expect_true("x" %in% names(las@data))
+  expect_true("x" %in% names(las))
   expect_true(is.null(las@header@VLR$Extra_Bytes))
 
 
   las <- add_lasattribute(las, name = "x", desc = "test")
-  expect_true("x" %in% names(las@data))
+  expect_true("x" %in% names(las))
   expect_true(!is.null(las@header@VLR$Extra_Bytes))
   expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$x$data_type, 10L)
 
   las <- add_lasattribute_manual(las, name = "x", desc = "test", type = "int")
-  expect_true("x" %in% names(las@data))
+  expect_true("x" %in% names(las))
   expect_true(!is.null(las@header@VLR$Extra_Bytes))
   expect_equal(las@header@VLR$Extra_Bytes$`Extra Bytes Description`$x$data_type, 6L)
 })

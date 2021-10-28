@@ -62,30 +62,21 @@ region of interest with class of choice.}
 }
 }
 \examples{
-# === Classify ground ===
+# ===============
+# Classify ground
+# ===============
 
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
-
-# Using the Progressive Morphological Filter
-# ------------------------------------------
-
-# (Parameters chosen mainly for speed)
-ws  <- seq(3,12, 4)
-th  <- seq(0.1, 1.5, length.out = length(ws))
-
-las <- classify_ground(las, pmf(ws, th))
-#plot(las, color = "Classification")
-
-# Using the Cloth Simulation Filter
-# ---------------------------------
 
 # (Parameters chosen mainly for speed)
 mycsf <- csf(TRUE, 1, 1, time_step = 1)
 las <- classify_ground(las, mycsf)
 #plot(las, color = "Classification")
 
-# === Classify noise ===
+# ===============
+# Classify noise
+# ===============
 
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
@@ -97,17 +88,15 @@ set.seed(42)
 err = runif(20, -50, 50)
 las$Z[id] = las$Z[id] + err
 
-# Using SOR
-las <- classify_noise(las, sor(15,7))
-#plot(las, color = "Classification")
-
 # Using IVF
 las <- classify_noise(las, ivf(5,2))
 
 # Remove outliers using filter_poi()
 las_denoise <- filter_poi(las, Classification != LASNOISE)
 
-# === Classify POI ===
+# ===============
+# Classify POI
+# ===============
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 shp <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")

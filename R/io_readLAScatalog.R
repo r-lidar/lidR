@@ -76,7 +76,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  crs    <- crs(header)
+  crs    <- st_crs(header)
   phblab <- make.names(names(header@PHB))
   phblab[4] <- "GUID"
 
@@ -123,6 +123,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
+  data.table::setDF(headers)
 
   xmin <- headers$Min.X
   xmax <- headers$Max.X
@@ -130,22 +131,18 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   ymax <- headers$Max.Y
   ids  <- as.character(seq_along(files))
 
-  pgeom <- lapply(seq_along(ids), function(xi)
-  {
+  geom <- lapply(seq_along(ids), function(xi) {
     mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
+    sf::st_polygon(list(mtx))
   })
 
-  Sr = sp::SpatialPolygons(pgeom, proj4string = crs)
+  geom <-sf::st_sfc(geom)
+  sf::st_crs(geom) <- crs
+  headers <- sf::st_set_geometry(headers, geom)
 
-  data.table::setDF(headers)
 
   res <- new("LAScatalog")
-  res@bbox <- Sr@bbox
-  res@proj4string <- Sr@proj4string
-  res@plotOrder <- Sr@plotOrder
   res@data <- headers
-  res@polygons <- Sr@polygons
 
   opt_filter(res) <- filter
   opt_select(res) <- select

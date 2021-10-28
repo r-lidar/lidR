@@ -120,16 +120,16 @@ setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, map
 #' @rdname plot
 setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapview = FALSE, ...)
 {
-  epsg <- epsg(x)
   PHB  <- x@PHB
-  crs  <- epsg2CRS(epsg)
+  crs  <- st_crs(x)
   xmin <- PHB[["Min X"]]
   xmax <- PHB[["Max X"]]
   ymin <- PHB[["Min Y"]]
   ymax <- PHB[["Max Y"]]
   mtx  <- matrix(c(xmin, xmax, ymin, ymax)[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-  Sr   <- sp::Polygons(list(sp::Polygon(mtx)), "1")
-  Sr   <- sp::SpatialPolygons(list(Sr), proj4string = crs)
+  geom <- sf::st_polygon(list(mtx))
+  geom <- sf::st_sfc(geom)
+  sf::st_crs(geom) <- crs
 
   names(PHB) <- make.names(names(PHB))
 
@@ -144,12 +144,11 @@ setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapv
     PHB[["Global.Encoding"]] <- NULL
   }
 
+  data <- data.table::as.data.table(PHB)
+  data <- sf::st_set_geometry(data, geom)
+
   res <- new("LAScatalog")
-  res@bbox <- Sr@bbox
-  res@proj4string <- Sr@proj4string
-  res@plotOrder <- Sr@plotOrder
-  res@data <- data.table::as.data.table(PHB)
-  res@polygons <- Sr@polygons
+  res@data <- data
 
   plot.LAScatalog(res, mapview = mapview, ...)
 })
@@ -174,8 +173,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
 
   if (mapview)
   {
-    LAScatalog <- x
-    mapview::mapview(LAScatalog, ...)
+    mapview::mapview(x@data, ...)
   }
   else if (chunk_pattern)
   {

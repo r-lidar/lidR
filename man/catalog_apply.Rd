@@ -2,12 +2,12 @@
 % Please edit documentation in R/catalog_apply.R
 \name{catalog_apply}
 \alias{catalog_apply}
-\alias{catalog_sapply}
+\alias{catalog_map}
 \title{LAScatalog processing engine}
 \usage{
 catalog_apply(ctg, FUN, ..., .options = NULL)
 
-catalog_sapply(ctg, FUN, ..., .options = NULL)
+catalog_map(ctg, FUN, ..., .options = NULL)
 }
 \arguments{
 \item{ctg}{A \link[=LAScatalog-class]{LAScatalog} object.}
@@ -23,25 +23,20 @@ This function gives users access to the \link[=LAScatalog-class]{LAScatalog} pro
 It allows the application of a user-defined routine over an entire catalog. The LAScatalog
 processing engine tool is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 \code{catalog_apply()} is the core of the lidR package. It drives every single function that can process a
-\code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_sapply} is the same
-with the option \code{automerge = TRUE} enforced to simplify the output.\cr\cr
-\strong{Warning:} the LAScatalog processing engine has a mechanism to load buffered data 'on-the-fly'
-to avoid edge artifacts, but no mechanism to remove the buffer after applying user-defined functions,
-since this task is specific to each process. In other \code{lidR} functions this task is performed
-specifically for each function. In \code{catalog_apply()} the user's function can return any output,
-thus users must take care of this task themselves (See section "Edge artifacts")
+\code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_map} is a simplified version
+of catalog_apply() that suits for 90\% of use cases.
 }
 \section{Edge artifacts}{
 
 
 It is important to take precautions to avoid 'edge artifacts' when processing wall-to-wall
-tiles. If the points from neighboring tiles are not included during certain processes,
+tiles. If the points from neighbouring tiles are not included during certain processes,
 this could create 'edge artifacts' at the tile boundaries. For example, empty or incomplete
 pixels in a rasterization process, or dummy elevations in a ground interpolation. The LAScatalog
-processing engine provides internal tools to load buffered data 'on-the-fly'. However, there is
-no mechanism to remove the results computed in the buffered area since this task depends on the
-output of the user-defined function. The user must take care of this task (see examples) to prevent
-unexpected output with duplicated entries or conflict between values computed twice.
+processing engine provides internal tools to load buffered data 'on-the-fly'. \code{catalog_map()} takes
+care of removing automatically the results computed in the buffered area to avoid unexpected output
+with duplicated entries or conflict between values computed twice. However \code{catalog_apply()} does not
+do that and leave users free to handle this in a custom way.
 }
 
 \section{Buffered data}{
@@ -57,34 +52,42 @@ for filtering of buffer points if required.
 \section{Function template}{
 
 
-The parameter \code{FUN} expects a function with a first argument that will be supplied automatically
-by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}. A \code{LAScluster}
-is an internal undocumented class but the user needs to know only three things about this class:
+The parameter \code{FUN} of \code{catalog_apply} expects a function with a first argument that will be
+supplied automatically by the \code{LAScatalog} processing engine. This first argument is a \code{LAScluster}.
+A \code{LAScluster} is an internal undocumented class but the user needs to know only three things about
+this class:
 \itemize{
-\item It represents a chunk of the catalog
+\item It represents a chunk of the file collection
 \item The function \link{readLAS} can be used with a \code{LAScluster}
-\item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} can be used with a \code{LAScluster}
-and it returns the bounding box of the cluster without the buffer. It can be used to clip the output
-and remove the buffered region (see examples).
+\item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} or \link[sf:st_bbox]{st_bbox}
+can be used with a \code{LAScluster} and they return the bounding box of the cluster without the buffer.
+It must be used to clip the output and remove the buffered region (see examples).
 }
 
 A user-defined function must be templated like this:\preformatted{myfun <- function(cluster, ...) \{
    las <- readLAS(cluster)
    if (is.empty(las)) return(NULL)
    # do something
+
    # remove the buffer of the output
+   bbox <- bbox(cluster)
+   something <- remove_buffer(something, bbox)
    return(something)
 \}
 }
 
-The line \code{if(is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
+The line \code{if (is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
 0 points (we can't know this before reading the file). In this case an empty point cloud with 0 points
 is returned by \code{readLAS()} and this may fail in subsequent code. Thus, exiting early from the user-defined
 function by returning \code{NULL} indicates to the internal engine that the cluster was empty.
 
-From v3.0.0 if \code{autoread = TRUE} the following template is accepted because the engine takes care
-of the above mentionned steps:\preformatted{myfun <- function(las, bbox ...) \{
+\code{catalog_map} is much simpler (but less versatile). It automatically takes care of reading the chunk
+and checks if the point cloud is empty. It also automatically crop the buffer. The way it crops the
+buffer suits for most case but for some special cases it may be advice to handle this in a more
+specific way i.e. using \code{catalog_apply}. For catalog map the first argument is a \code{LAS} and the
+template is:\preformatted{myfun <- function(las, ...) \{
    # do something
+   return(something)
 \}
 }
 }
@@ -94,21 +97,26 @@ of the above mentionned steps:\preformatted{myfun <- function(las, bbox ...) \{
 Users may have noticed that some lidR functions throw an error when the processing options are
 inappropriate. For example, some functions need a buffer and thus \code{buffer = 0} is forbidden.
 Users can add the same constraints to protect against inappropriate options. The \code{.options}
-argument is a \code{list} that allows users to tune the behavior of the processing engine.
+argument is a \code{list} that allows users to tune the behaviour of the processing engine.
 \itemize{
-\item \code{drop_null = FALSE} Not intended to be used by regular users. The engine does not remove
+\item \code{drop_null = FALSE}: not intended to be used by regular users. The engine does not remove
 NULL outputs
-\item \code{need_buffer = TRUE} the function complains if the buffer is 0.
+\item \code{need_buffer = TRUE}: the function complains if the buffer is 0.
 \item \code{need_output_file = TRUE} the function complains if no output file template is provided.
 \item \code{raster_alignment = ...} the function checks the alignment of the chunks. This option is
 important if the output is a raster. See below for more details.
-\item \code{automerge = TRUE} by defaut the engine returns a \code{list} with one item per chunk. If
+\item \code{automerge = TRUE} by default the engine returns a \code{list} with one item per chunk. If
 \code{automerge = TRUE}, it tries to merge the outputs into a single object: a \verb{Raster*}, a
-\verb{Spatial*}, a \verb{LAS*} similar to other functions of the package. This is a fail-safe
-option so in the worst case, if the merge fails, the \code{list} is returned.
+\verb{Spatial*}, a \verb{LAS*}, an \code{sf}, a \code{ stars} similarly to other functions of the package. This is a
+fail-safe option so in the worst case, if the merging fails, the \code{list} is returned. This is
+activated by \code{catalog_map} making it simpler.
 \item \code{autoread = TRUE}. Introduced in v3.0.0 this option enables to get rid of the first steps of the
 function i.e \code{readLAS()} and \verb{if (is.empty())}. In this case the function must take two
-objects as input, first a \code{LAS} object and second a \code{Extent} from \code{raster}.
+objects as input, first a \code{LAS} object and second a \code{bbox} from \code{sf}. This is
+activated by \code{catalog_map} making it simpler.
+\item \code{autocrop = TRUE}. Introduced in v4.0.0 this option enables to get rid of the buffer crop steps
+of the function i.e \code{something <- remove_buffer(something, bbox)}. In this case the function must
+take one \code{LAS} object as input. This is activated by \code{catalog_map} making it simpler.
 }
 
 When the function \code{FUN} returns a raster it is important to ensure that the chunks are aligned
@@ -123,26 +131,6 @@ raster_alignment = list(res = 20)
 # that starts at (0,10)
 raster_alignment = list(res = 20, start = c(0,10))
 }
-
-See also \link{grid_metrics} for more details.
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[=LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \emph{chunk_size}: How much data is loaded at once.
-\item \emph{chunk_buffer}: Load chunks with a buffer.
-\item \emph{chunk_alignment}: Align the chunks.
-\item \emph{progress}: Displays a progress estimate.
-\item \emph{output_files}: The user-defined function outputs will be written to files instead of being
-returned into R.
-\item \emph{laz_compression}: write \code{las} or \code{laz} files only if the user-defined function
-returns a `LAS`` object.
-\item \emph{select}: Select only the data of interest to save processing memory.
-\item \emph{filter}: Read only the points of interest.
-}
 }
 
 \examples{
@@ -151,29 +139,28 @@ returns a `LAS`` object.
 
 ## =========================================================================
 ## Example 1: detect all the tree tops over an entire catalog
-## (this is basically a reproduction of the existing lidR function 'tree_detection')
+## (this is basically a reproduction of the existing lidR function 'locate_trees')
 ## =========================================================================
 
 # 1. Build the user-defined function that analyzes each chunk of the catalog.
 # The function's first argument is a LAScluster object. The other arguments can be freely
-# choosen by the user.
+# chosen by the users.
 my_tree_detection_method <- function(cluster, ws)
 {
-  # The cluster argument is a LAScluster object. The user does not need to know how it works.
+  # The cluster argument is a LAScluster object. The users do not need to know how it works.
   # readLAS will load the region of interest (chunk) with a buffer around it, taking advantage of
   # point cloud indexation if possible. The filter and select options are propagated automatically
   las <- readLAS(cluster)
   if (is.empty(las)) return(NULL)
 
   # Find the tree tops using a user-developed method (here simply a LMF).
-  ttops <- find_trees(las, lmf(ws))
+  ttops <- locate_trees(las, lmf(ws))
 
-  # ttops is a SpatialPointsDataFrame that contains the tree tops in our region of interest
+  # ttops is an sf object that contains the tree tops in our region of interest
   # plus the trees tops in the buffered area. We need to remove the buffer otherwise we will get
   # some trees more than once.
-  bbox  <- raster::extent(cluster)
-  ttops <- raster::crop(ttops, bbox)
-
+  bbox  <- st_bbox(cluster)
+  ttops <- sf::st_crop(ttops, bbox)
   return(ttops)
 }
 
@@ -195,24 +182,47 @@ opt    <- list(need_buffer = TRUE,   # catalog_apply will throw an error if buff
                automerge   = TRUE)   # catalog_apply will merge the outputs into a single object
 output <- catalog_apply(prj, my_tree_detection_method, ws = 5, .options = opt)
 
-spplot(output)
+plot(output)
 
-\dontrun{
+\donttest{
+## =========================================================================
+## Example 1: simplified. There is nothing that requires special data
+## manipulation in the previous example. Everything can be handled automatically
+##=========================================================================
+
+# 1. Build the user-defined function that analyzes a point cloud.
+my_tree_detection_method <- function(las, ws)
+{
+  # Find the tree tops using a user-developed method (here simply a LMF).
+  ttops <- locate_trees(las, lmf(ws))
+  return(ttops)
+}
+
+# 2. Build a project
+LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+prj <- readLAScatalog(LASfile)
+plot(prj)
+
+# 3. Set some processing options.
+# For this dummy example, the chunk size is 100 m and the buffer is 10 m
+opt_chunk_buffer(prj) <- 10
+opt_chunk_size(prj)   <- 100            # small because this is a dummy example.
+opt_chunk_alignment(prj) <- c(-50, -35) # Align such as it creates 2 chunks only.
+opt_select(prj)       <- "xyz"          # Read only the coordinates.
+opt_filter(prj)       <- "-keep_first"  # Read only first returns.
+
+# 4. Apply a user-defined function to take advantage of the internal engine
+opt    <- list(need_buffer = TRUE)   # catalog_apply will throw an error if buffer = 0
+output <- catalog_map(prj, my_tree_detection_method, ws = 5, .options = opt)
 
 ## ===================================================
 ## Example 2: compute a rumple index on surface points
 ## ===================================================
 
-rumple_index_surface = function(cluster, res)
+rumple_index_surface = function(las, res)
 {
-  las = readLAS(cluster)
-  if (is.empty(las)) return(NULL)
-
   las    <- filter_surfacepoints(las, 1)
-  rumple <- grid_metrics(las, ~rumple_index(X,Y,Z), res)
-  bbox   <- raster::extent(cluster)
-  rumple <- raster::crop(rumple, bbox)
-
+  rumple <- pixel_metrics(las, ~rumple_index(X,Y,Z), res)
   return(rumple)
 }
 
@@ -223,10 +233,9 @@ opt_chunk_buffer(prj) <- 1
 opt_chunk_size(prj)   <- 140     # small because this is a dummy example.
 opt_select(prj)       <- "xyz"   # read only the coordinates.
 
-opt     <- list(raster_alignment = 20, # catalog_apply will adjust the chunks if required
-                automerge = TRUE)      # catalog_apply will merge the outputs into a single raster
-output  <- catalog_apply(prj, rumple_index_surface, res = 20, .options = opt)
+opt    <- list(raster_alignment = 20) # catalog_apply will adjust the chunks if required
+output <- catalog_map(prj, rumple_index_surface, res = 20, .options = opt)
 
-plot(output, col = height.colors(50))
+plot(output, col = height.colors(15), breaks = "equal")
 }
 }

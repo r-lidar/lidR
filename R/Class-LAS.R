@@ -30,8 +30,7 @@
 #' Class LAS is the representation of a las/laz file according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
 #'
-#' A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
-#' a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
+#' A \code{LAS} object contains a \code{data.table} with the data read from a \code{las/laz} file and
 #' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #' for more information). Because las files are standardized the table of attributes read from the las/laz file
@@ -58,17 +57,13 @@
 #' \item{\code{NIR} (integer)}
 #' }
 #'
-#' @section Extends:
-#' Class  \link[sp:Spatial-class]{Spatial}, directly.
 #'
-#' @slot bbox Object of class \code{matrix}, with bounding box
-#'
-#' @slot proj4string Object of class \link[sp:CRS-class]{CRS}, projection string
+#' @slot crs Object of class \link[sf:st_crs]{crs} from sf
 #'
 #' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
 #'
-#' @slot header Object of class \link[=LASheader-class]{LASheader}. las file header according to the
+#' @slot header Object of class \link[=LASheader-class]{LASheader}. LAS file header according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
 #'
 #' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
@@ -111,8 +106,8 @@
 #' @seealso
 #' \link{readLAS}
 setClass(
-  Class = "LAS", contains = "Spatial",
-  representation(data = "data.table", header = "LASheader", index = "list")
+  Class = "LAS",
+  representation(data = "data.table", header = "LASheader", crs = "crs", index = "list")
 )
 
 setMethod("initialize", "LAS", function(.Object)
@@ -132,8 +127,7 @@ setMethod("initialize", "LAS", function(.Object)
   header$`Y offset` <- 0
   header$`Z offset` <- 0
 
-  .Object@bbox        <- matrix(0, 2, 2)
-  .Object@proj4string <- sp::CRS()
+  .Object@crs         <- sf::NA_crs_
   .Object@header      <- LASheader(header)
   .Object@data        <- data
   .Object@index       <- LIDRDEFAULTINDEX

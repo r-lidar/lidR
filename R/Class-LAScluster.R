@@ -26,9 +26,10 @@
 # ===============================================================================
 
 setClass(
-  Class = "LAScluster", contains = "Spatial",
+  Class = "LAScluster",
   representation(
     center = "list",
+    bbox   = "matrix",
     bbbox  = "matrix",
     width  = "numeric",
     height = "numeric",
@@ -41,11 +42,12 @@ setClass(
     name   = "character",
     save   = "character",
     alt_dir = "character",
-    index = "list"
+    crs     = "crs",
+    index   = "list"
   )
 )
 
-setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name, wkt, proj4string, index)
+setMethod("initialize", "LAScluster", function(.Object, center, width, height, buffer, shape, files, name, wkt, crs, index)
 {
   hw = width/2
   hh = height/2
@@ -63,7 +65,7 @@ setMethod("initialize", "LAScluster", function(.Object, center, width, height, b
   .Object@files  <- files
   .Object@save   <- ""
   .Object@wkt    <- ""
-  .Object@proj4string <- proj4string
+  .Object@crs    <- crs
   .Object@index   <- index
 
   if (shape == LIDRCIRCLE)

@@ -1,8 +1,8 @@
 #' Deprecated functions in lidR
 #'
-#' These functions are provided for compatibility with older versions of lidR but are deprecated
-#' since lidR version 3. They will progressively print a message, throw a warning and eventually be
-#' removed. The links below point to the documentation of the new names \cr\cr
+#' These functions are provided for compatibility with older versions of lidR but are deprecated. They
+#' will progressively print a message, throw a warning and eventually be removed. The links below point
+#' to the documentation of the new names \cr\cr
 #' \link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
 #' \link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
 #' \link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
@@ -14,7 +14,7 @@
 #' \link[=segment_snags]{lassnags}
 #' \link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
 #' \link[=track_sensor]{sensor_tracking} \link[=find_trees]{tree_detection}
-#' \link[=delineate_crowns]{tree_hull}
+#' \link[=crown_metrics]{tree_hull}
 #'
 #' @param las See the new functions that replace the old ones
 #' @param geometry See the new functions that replace the old ones
@@ -32,11 +32,11 @@
 #' @param na.rm,use_class,add_lasattribute See the new functions that replace the old ones
 #' @param sensor,Rs,f,gpstime,elevation See the new functions that replace the old ones
 #' @param xscale,yscale,zscale,xoffset,yoffset,zoffset See the new functions that replace the old ones
-#' @param CRSobj See the new functions that replace the old ones
 #' @param size,method,shape,sigma See the new functions that replace the old ones
 #' @param uniqueness See the new functions that replace the old ones
 #' @param interval,pmin,extra_check,thin_pulse_with_time See the new functions that replace the old ones
 #' @param concavity,length_threshold,func See the new functions that replace the old ones
+#' @param ctg,FUN,.options see \link{catalog_apply}
 #'
 #' @rdname deprecated
 #' @name deprecated
@@ -262,13 +262,6 @@ lassnags = function(las, algorithm, attribute = "snagCls") {
 
 #' @export
 #' @rdname deprecated
-lastransform = function(las, CRSobj) {
-  .lidr3depreciation("spTransform")
-  return(spTransform(las, CRSobj))
-}
-
-#' @export
-#' @rdname deprecated
 lastrees = function(las, algorithm, attribute = "treeID", uniqueness = 'incremental') {
   .lidr3depreciation("segment_trees")
   return(segment_trees(las, algorithm, attribute, uniqueness))
@@ -336,6 +329,44 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
 hexbin_metrics = function(...)
 {
   stop("hexbin_metrics() was an unused function and has been removed from lidR. It can be retrieved in lidRplugins https://github.com/Jean-Romain/lidRplugins")
+}
+
+#' @export
+#' @rdname deprecated
+catalog_sapply <- function(ctg, FUN, ..., .options = NULL)
+{
+  if (is.null(.options))
+    .options <- list(automerge = TRUE)
+  else
+  {
+    .options$automerge <- TRUE
+  }
+
+  return(catalog_apply(ctg, FUN, ..., .options = .options))
+}
+
+
+#' @export
+#' @rdname deprecated
+filter_surfacepoints = function(las, res)
+{
+  UseMethod("filter_surfacepoints", las)
+}
+
+#' @rdname deprecated
+filter_surfacepoints.LAS = function(las, res)
+{
+  return(decimate_points(las, highest(res)))
+}
+
+#' @rdname deprecated
+filter_surfacepoints.LAScatalog = function(las, res)
+{
+  opt_select(las)       <- "*"
+  opt_chunk_buffer(las) <- res
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, filter_surfacepoints, res = res, .options = options)
+  return(output)
 }
 
 .lidr3depreciation <- function(name)

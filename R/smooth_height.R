@@ -23,7 +23,7 @@
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyz")
 #'
-#' las <- filter_surfacepoints(las, 1)
+#' las <- decimate_points(las, highest(1))
 #' #plot(las)
 #'
 #' las <- smooth_height(las, 5, "gaussian", "circle", sigma = 2)
@@ -48,7 +48,7 @@ smooth_height = function(las, size, method = c("average", "gaussian"), shape = c
   Zs <- C_smooth(las, size, method, shape, sigma, getThread())
   fast_quantization(Zs, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
 
-  if (!"Zraw" %in% names(las@data))
+  if (!"Zraw" %in% names(las))
     las@data[["Zraw"]] <- las@data[["Z"]]
 
   las@data[["Z"]] <- Zs
@@ -62,7 +62,7 @@ unsmooth_height = function(las)
   stopifnotlas(las)
   Z <- Zraw <- NULL
 
-  if ("Zraw" %in% names(las@data))
+  if ("Zraw" %in% names(las))
   {
     las@data[["Z"]] <- las@data[["Zraw"]]
     las@data[["Zraw"]] <- NULL

@@ -75,7 +75,7 @@ is.empty <- function(las)
 #' @export
 is.overlapping = function(catalog)
 {
-  sfdf          <- sf::st_as_sf(catalog)
+  sfdf          <- catalog@data
   contour       <- sf::st_union(sfdf)
   actual_area   <- sf::st_area(contour)
   average_area  <- actual_area / length(sfdf)

@@ -101,7 +101,7 @@ add_lasattribute = function(las, x, name, desc)
 
   if (missing(x))
   {
-    if (!name %in% names(las@data))
+    if (!name %in% names(las))
       stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
 
     x <- las@data[[name]]
@@ -142,7 +142,7 @@ add_lasattribute_manual = function(las, x, name, desc, type, offset = NULL, scal
 
   if (missing(x))
   {
-    if (!name %in% names(las@data))
+    if (!name %in% names(las))
       stop(glue::glue("{name} is not an attribute of the LAS object."), call. = FALSE)
 
     x <- las@data[[name]]
@@ -196,11 +196,11 @@ add_lasrgb <- function(las, R, G, B)
   {
     # nothing to do
   }
-  else if ("NIR" %in% names(las@data))
+  else if ("NIR" %in% names(las))
   {
     format <- 8L
   }
-  else if ("gpstime" %in% names(las@data))
+  else if ("gpstime" %in% names(las))
   {
     format <- 3L
   }
@@ -221,7 +221,7 @@ remove_lasattribute = function(las, name)
   assert_is_a_string(name)
   stopif_forbidden_name(name)
 
-  if (!name %in% names(las@data))
+  if (!name %in% names(las))
   {
      message(glue::glue("{name} is not an attribute of the LAS object."))
      return(las)

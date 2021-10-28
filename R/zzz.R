@@ -21,7 +21,8 @@
     lidR.debug = FALSE,
     lidR.buildVRT = TRUE,
     lidR.check.nested.parallelism = TRUE,
-    lidR.optimize.voxel.rendering = TRUE)
+    lidR.optimize.voxel.rendering = TRUE,
+    lidR.raster.default = "stars")
 
   max <- R_omp_get_max_threads()
   if (max > 0)

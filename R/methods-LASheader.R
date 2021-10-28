@@ -100,3 +100,25 @@ as.list.LASheader <- function(x, ...)
   EVLR <- list(`Extended Variable Length Records` = x@EVLR)
   return(c(PHB, VLR, EVLR))
 }
+
+#' @export
+#' @rdname Extract
+setMethod("$", "LASheader", function(x, name) { return(x[[name]]) })
+
+#' @export
+#' @rdname Extract
+setMethod("[[", c("LASheader", "ANY", "missing"), function(x, i, j, ...) {
+
+  assert_is_a_string(i)
+
+  if (i %in% names(x@PHB))
+    return(x@PHB[[i]])
+
+  if (i %in% names(x@VLR))
+    return(x@VLR[[i]])
+
+  if (i %in% names(x@EVLR))
+    return(x@EVLR[[i]])
+
+  return(NULL)
+})

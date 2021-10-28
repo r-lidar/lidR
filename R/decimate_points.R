@@ -44,16 +44,16 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile, select = "xyz")
+#' las <- readLAS(LASfile, select = "xyz")
 #'
 #' # Select points randomly to reach an overall density of 1
-#' thinned1 = decimate_points(las, random(1))
-#' #plot(grid_density(las))
-#' #plot(grid_density(thinned1))
+#' thinned1 <- decimate_points(las, random(1))
+#' #plot(rasterize_density(las))
+#' #plot(rasterize_density(thinned1))
 #'
 #' # Select points randomly to reach an homogeneous density of 1
-#' thinned2 = decimate_points(las, homogenize(1,5))
-#' #plot(grid_density(thinned2))
+#' thinned2 <- decimate_points(las, homogenize(1,5))
+#' #plot(rasterize_density(thinned2))
 #'
 #' # Select the highest point within each pixel of an overlayed grid
 #' thinned3 = decimate_points(las, highest(5))
@@ -70,18 +70,7 @@ decimate_points.LAS = function(las, algorithm)
   assert_is_algorithm_dec(algorithm)
   lidR.context <- "decimate_points"
   selected <- algorithm(las)
-  return(LAS(las@data[selected], las@header, las@proj4string, check = FALSE, index = las@index))
-}
-
-#' @export
-decimate_points.LAScluster = function(las, algorithm)
-{
-  buffer <- NULL
-  x <- suppressMessages(suppressWarnings(readLAS(las)))
-  if (is.empty(x)) return(NULL)
-  x <- decimate_points(x, algorithm)
-  x <- filter_poi(x, buffer == 0)
-  return(x)
+  return(las[selected])
 }
 
 #' @export
@@ -99,7 +88,7 @@ decimate_points.LAScatalog = function(las, algorithm)
   if (!is.null(e[["res"]])) opt_chunk_buffer(las) <- e[["res"]]
 
   # Processing
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, decimate_points, algorithm = algorithm, .options = options)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, decimate_points, algorithm = algorithm, .options = options)
   return(output)
 }

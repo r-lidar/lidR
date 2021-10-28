@@ -18,7 +18,7 @@ BBPRthrsh_mat <- matrix(c(0.80, 0.80, 0.70,
 
 test_that("Wing's method works", {
   las <- segment_snags(las, wing2015(neigh_radii = c(1.5, 1, 2), BBPRthrsh_mat = BBPRthrsh_mat))
-  expect_true("snagCls" %in% names(las@data))
+  expect_true("snagCls" %in% names(las))
   expect_equal(as.numeric(table(las@data$snagCls)), c(7223, 93, 55, 15))
 })
 

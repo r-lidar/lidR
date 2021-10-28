@@ -63,7 +63,7 @@ random = function(density, use_pulse = FALSE)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "random")
 
-    if(use_pulse & !"pulseID" %in% names(las@data))
+    if(use_pulse & !"pulseID" %in% names(las))
     {
       warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
@@ -132,7 +132,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "homogenize")
 
-    if (use_pulse & !"pulseID" %in% names(las@data))
+    if (use_pulse & !"pulseID" %in% names(las))
     {
       warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
@@ -141,8 +141,8 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
     pulseID <- NULL
 
     n       <- round(density*res^2)
-    layout  <- rOverlay(las, res)
-    cells   <- raster::cellFromXY(layout, coordinates(las))
+    layout  <- raster_layout(las, res)
+    cells   <- get_group(layout, las)
 
     if (use_pulse)
       return(las@data[, .I[.selected_pulses(pulseID, n)], by = cells]$V1)
@@ -189,7 +189,7 @@ highest = function(res = 1)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "highest")
-    layout  <- rOverlay(las, res)
+    layout <- raster_layout(las, res)
     return(C_highest(las, layout))
   }
 
@@ -210,7 +210,7 @@ lowest = function(res = 1)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "lowest")
-    layout  <- rOverlay(las, res)
+    layout <- raster_layout(las, res)
     return(C_lowest(las, layout))
   }
 

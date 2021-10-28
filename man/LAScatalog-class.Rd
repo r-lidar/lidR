@@ -3,23 +3,21 @@
 \docType{class}
 \name{LAScatalog-class}
 \alias{LAScatalog-class}
-\title{An S4 class to represent a catalog of .las or .laz files}
+\title{An S4 class to represent a collection of .las or .laz files}
 \description{
 A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
 a way to manage and process an entire dataset. It allows the user to process a large area, or to
 selectively clip data from a large area without loading all the data into computer memory.
-A \code{LAScatalog} can be built with the function \link{readLAScatalog} and is formally an extension of
-a \code{SpatialPolygonsDataFrame} containing extra data to allow users greater control over
-how the dataset is processed (see details).
+A \code{LAScatalog} can be built with the function \link{readLAScatalog}.
 }
 \details{
-A \code{LAScatalog} is formally a \code{SpatialPolygonsDataFrame} extended with new slots that
-contain processing options. In \code{lidR}, each function that supports a \code{LAScatalog} as
+A \code{LAScatalog} contains a \code{sf} object to store the geometry and metadata. It is extended with slots
+that contain processing options. In \code{lidR}, each function that supports a \code{LAScatalog} as
 input will respect these processing options. Internally, processing a catalog is almost always the
 same and relies on a few steps:\cr
 \enumerate{
 \item Define chunks. A chunk is an arbitrarily-defined region of interest (ROI) of the
-catalog. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
+collection. Altogether, the chunks are a wall-to-wall set of ROIs that encompass the whole dataset.
 \item Loop over each chunk (in parallel or not).
 \item For each chunk, load the points inside the ROI into R, run some R functions,
 return the expected output.
@@ -40,13 +38,16 @@ possible. This is possible if the overlapping points are flagged, for example in
 \section{Slots}{
 
 \describe{
-\item{\code{processing_options}}{list. A list that contains some settings describing how the catalog will be
+\item{\code{data}}{sf. A \code{sf} \code{data.frame} with the bounding box of each file as well as all the information
+read from the header of each LAS/LAZ file.}
+
+\item{\code{processing_options}}{list. A list that contains some settings describing how the collection will be
 processed (see dedicated section).}
 
-\item{\code{chunk_options}}{list. A list that contains some settings describing how the catalog will be
+\item{\code{chunk_options}}{list. A list that contains some settings describing how the collection will be
 sub-divided into chunks to be processed (see dedicated section).}
 
-\item{\code{output_options}}{list. A list that contains some settings describing how the catalog will return
+\item{\code{output_options}}{list. A list that contains some settings describing how the collection will return
 the outputs (see dedicated section).}
 
 \item{\code{input_options}}{list. A list of parameters to pass to \link{readLAS} (see dedicated section).}
@@ -81,8 +82,9 @@ The slot \verb{@chunk_options} contains a \code{list} of options that determine 
 \item \strong{chunk_size}: numeric. The size of the chunks that will be sequentially processed.
 A small size allows small amounts of data to be loaded at once, saving computer memory.
 With big chunks the computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
-catalog is processed sequentially \emph{by file} i.e. a chunk is a file. Default is 0 i.e. by default
-the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
+chunk pattern is build using the file pattern. The chunks are expecting to be wall-to-wall coverage,
+this means that chunk size = 0 has meaning only if the files are not overlapping. Default is 0 i.e.
+by default the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there are
 no edge effects between two independent chunks and that the output is continuous. This is mandatory for
 some algorithms. Default is 30. See \link{opt_chunk_buffer}.
@@ -140,16 +142,14 @@ each function knows which data must be loaded or not. This is documented in each
 \examples{
 \dontrun{
 # Build a catalog
-ctg <- readLAScatalog("filder/to/las/files/")
+ctg <- readLAScatalog("filder/to/las/files/", filter =  "-keep_first")
 
-# Set some options
-opt_filter(ctg) <- "-keep_first"
 
 # Summary gives a summary of how the catalog will be processed
 summary(ctg)
 
 # We can seamlessly use lidR functions
-hmean <- grid_metrics(ctg, mean(Z), 20)
+hmean <- pixel_metrics(ctg, mean(Z), 20)
 ttops <- tree_detection(ctg, lmf(5))
 
 # For low memory config it is probably advisable not to load entire files
@@ -158,19 +158,19 @@ opt_chunk_size(ctg) <- 500
 
 # Sometimes the output is likely to be very large
 # e.g. large coverage and small resolution
-dtm <- grid_terrain(ctg, 1, tin())
+dtm <- rasterize_terrain(ctg, 1, tin())
 
 # In that case it is advisable to write the output(s) to files
 opt_output_files(ctg) <- "path/to/folder/DTM_chunk_{XLEFT}_{YBOTTOM}"
 
 # Raster will be written to disk. The list of written files is returned
 # or, in this specific case, a virtual raster mosaic.
-dtm <- grid_terrain(ctg, 1, tin())
+dtm <- rasterize_terrain(ctg, 1, tin())
 
 # When chunks are files the original names of the las files can be preserved
 opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- "path/to/folder/DTM_{ORIGINALFILENAME}"
-dtm <- grid_terrain(ctg, 1, tin())
+dtm <- rasterize_terrain(ctg, 1, tin())
 
 # For some functions, files MUST be written to disk. Indeed, it is certain that R cannot
 # handle the entire output.
@@ -179,7 +179,8 @@ opt_output_files(ctg) <- "path/to/folder/{ORIGINALFILENAME}_norm"
 opt_laz_compression(ctg) <- TRUE
 new_ctg <- normalize_height(ctg, tin())
 
-# The user has access to the catalog engine through the function catalog_apply
+# The user has access to the catalog engine through the functions catalog_apply
+# and catalog_map
 output <- catalog_apply(ctg, FUN, ...)
 }
 }

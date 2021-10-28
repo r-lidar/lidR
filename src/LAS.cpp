@@ -1,8 +1,3 @@
-#if defined(__GNUC__) && (__GNUC__ < 5) && !defined(__clang__) && !defined(__llvm__) && !defined(__INTEL_COMPILER)
-#include "gcc_4_9_patch/std_is_trivially_substitutes.hpp"
-#include "gcc_4_9_patch/boost_compare_patched.hpp"
-#endif
-
 #include "LAS.h"
 #include "Progress.h"
 #include "myomp.h"
@@ -507,15 +502,14 @@ void LAS::filter_local_maxima(NumericVector ws)
   return;
 }
 
-void LAS::filter_with_grid(S4 layout, bool max)
+void LAS::filter_with_grid(List layout, bool max)
 {
-  S4 extent   = layout.slot("extent");
-  int ncols   = layout.slot("ncols");
-  int nrows   = layout.slot("nrows");
-  double xmin = extent.slot("xmin");
-  double xmax = extent.slot("xmax");
-  double ymin = extent.slot("ymin");
-  double ymax = extent.slot("ymax");
+  int ncols   = layout["ncol"];
+  int nrows   = layout["nrow"];
+  double xmin = layout["xmin"];
+  double xmax = layout["xmax"];
+  double ymin = layout["ymin"];
+  double ymax = layout["ymax"];
   double xres = (xmax - xmin) / ncols;
   double yres = (ymax - ymin) / nrows;
   int limit = (max) ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
@@ -565,81 +559,80 @@ void LAS::filter_with_grid(S4 layout, bool max)
   return;
 }
 
-void LAS::filter_in_polygon(std::string wkt)
+IntegerVector LAS::find_polygon_ids(CharacterVector wkts)
 {
   typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> Point;
   typedef boost::geometry::model::polygon<Point> Polygon;
   typedef boost::geometry::model::multi_polygon<Polygon> MultiPolygon;
   typedef boost::geometry::model::box<Point> Bbox;
 
-  if (wkt.find("MULTIPOLYGON") != std::string::npos)
+  SpatialIndex tree(las);
+  IntegerVector poly_id(X.size());
+  std::fill(poly_id.begin(), poly_id.end(), NA_INTEGER);
+
+  for (unsigned int j = 0 ; j < wkts.size() ; j++)
   {
-    Point p;
-    Bbox bbox;
-    MultiPolygon polygons;
+    bool is_in_polygon = false;
+    std::string wkt = as<std::string>(wkts[j]);
 
-    boost::geometry::read_wkt(wkt, polygons);
-    boost::geometry::envelope(polygons, bbox);
-
-    #pragma omp parallel for num_threads(ncpu)
-    for(unsigned int i = 0 ; i < npoints ; i++)
+    if (wkt.find("MULTIPOLYGON") != std::string::npos)
     {
-      if (skip[i]) continue;
-
       Point p;
-      p.set<0>(X[i]);
-      p.set<1>(Y[i]);
+      Bbox bbox;
+      MultiPolygon polygons;
 
-      bool isin = false;
+      boost::geometry::read_wkt(wkt, polygons);
+      boost::geometry::envelope(polygons, bbox);
 
-      if (boost::geometry::covered_by(p, bbox))
+      double min_x = bbox.min_corner().get<0>();
+      double min_y = bbox.min_corner().get<1>();
+      double max_x = bbox.max_corner().get<0>();
+      double max_y = bbox.max_corner().get<1>();
+
+      lidR::Rectangle rect(min_x, max_x, min_y, max_y);
+      std::vector<PointXYZ> pts;
+      tree.lookup(rect, pts);
+
+      for(unsigned int i = 0 ; i < pts.size() ; i++)
       {
+        p.set<0>(pts[i].x);
+        p.set<1>(pts[i].y);
         if (boost::geometry::covered_by(p, polygons))
-          isin = true;
-      }
-
-      #pragma omp critical
-      {
-        filter[i] = isin;
+          poly_id[pts[i].id] = j;
       }
     }
-  }
-  else if (wkt.find("POLYGON") != std::string::npos)
-  {
-    Point p;
-    Bbox bbox;
-    Polygon polygon;
-
-    boost::geometry::read_wkt(wkt, polygon);
-    boost::geometry::envelope(polygon, bbox);
-
-    #pragma omp parallel for num_threads(ncpu)
-    for(unsigned int i = 0 ; i < npoints ; i++)
+    else if (wkt.find("POLYGON") != std::string::npos)
     {
-      if (skip[i]) continue;
-
       Point p;
-      p.set<0>(X[i]);
-      p.set<1>(Y[i]);
+      Bbox bbox;
+      Polygon polygon;
 
-      bool isin = false;
+      boost::geometry::read_wkt(wkt, polygon);
+      boost::geometry::envelope(polygon, bbox);
 
-      if (boost::geometry::covered_by(p, bbox))
+      double min_x = bbox.min_corner().get<0>();
+      double min_y = bbox.min_corner().get<1>();
+      double max_x = bbox.max_corner().get<0>();
+      double max_y = bbox.max_corner().get<1>();
+
+      lidR::Rectangle rect(min_x, max_x, min_y, max_y);
+      std::vector<PointXYZ> pts;
+      tree.lookup(rect, pts);
+
+      for(unsigned int i = 0 ; i < pts.size() ; i++)
       {
+        p.set<0>(pts[i].x);
+        p.set<1>(pts[i].y);
         if (boost::geometry::covered_by(p, polygon))
-          isin = true;
-      }
-
-      #pragma omp critical
-      {
-        filter[i] = isin;
+          poly_id[pts[i].id] = j;
       }
     }
-  }
-  else
-    Rcpp::stop("Unexpected error in point in polygon: WKT is not a POLYGON or MULTIPOLYGON"); // # nocov
+    else
+      Rcpp::stop("Unexpected error in point_in_polygon: WKT is not a POLYGON or MULTIPOLYGON"); // # nocov
 
-  return;
+  }
+
+  return poly_id;
 }
 
 void LAS::filter_shape(int method, NumericVector th, int k)
@@ -1152,15 +1145,14 @@ IntegerVector LAS::segment_trees(double dt1, double dt2, double Zu, double R, do
   return idtree;
 }
 
-NumericVector LAS::rasterize(S4 layout, double subcircle, int method)
+NumericVector LAS::rasterize(List layout, double subcircle, int method)
 {
-  S4 extent   = layout.slot("extent");
-  int ncols   = layout.slot("ncols");
-  int nrows   = layout.slot("nrows");
-  double xmin = extent.slot("xmin");
-  double xmax = extent.slot("xmax");
-  double ymin = extent.slot("ymin");
-  double ymax = extent.slot("ymax");
+  int ncols   = layout["ncol"];
+  int nrows   = layout["nrow"];
+  double xmin = layout["xmin"];
+  double xmax = layout["xmax"];
+  double ymin = layout["ymin"];
+  double ymax = layout["ymax"];
   double xres = (xmax - xmin) / ncols;
   double yres = (ymax - ymin) / nrows;
 

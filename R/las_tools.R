@@ -199,10 +199,6 @@ las_update = function(las)
   new_header <- rlas::header_update(header, las@data)
   new_header <- LASheader(new_header)
   las@header <- new_header
-  las@bbox[1,1] <- new_header@PHB[["Min X"]]
-  las@bbox[1,2] <- new_header@PHB[["Max X"]]
-  las@bbox[2,1] <- new_header@PHB[["Min Y"]]
-  las@bbox[2,2] <- new_header@PHB[["Max Y"]]
   return(las)
 }
 
@@ -210,9 +206,9 @@ las_update = function(las)
 #' @rdname las_utilities
 quantize = function(x, scale, offset, by_reference = TRUE, ...)
 {
-  umin = min(x)
-  umax = max(x)
-  urange = storable_coordinate_range(scale, offset)
+  umin <- min(x)
+  umax <- max(x)
+  urange <- storable_coordinate_range(scale, offset)
 
   if (umax > urange[2] | umin < urange[1])
     stop("'x' contains unquantizable values out of the storable range.", call. = FALSE)

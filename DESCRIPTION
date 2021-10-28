@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 3.2.3
+Version: 4.0.0
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -21,7 +21,8 @@ URL: https://github.com/Jean-Romain/lidR
 BugReports: https://github.com/Jean-Romain/lidR/issues
 License: GPL-3
 Depends:
-    R (>= 3.4.0),methods,raster,sp (>= 1.4.2)
+    R (>= 3.4.0),
+    methods
 Imports:
     data.table (>= 1.12.0),
     future,
@@ -29,22 +30,25 @@ Imports:
     glue,
     grDevices,
     lazyeval,
+    raster,
     Rcpp (>= 1.0.3),
     rgl,
     rlas (>= 1.5.0),
     sf,
+    sp,
     stats,
+    stars,
+    terra,
     tools,
     utils
 Suggests:
     EBImage,
     gstat,
     RCSF,
-    rgeos,
+    rgdal,
     mapview,
     mapedit,
     progress,
-    rgdal (>= 1.5-8),
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
@@ -63,6 +67,7 @@ Collate:
     'add_attribute.R'
     'algorithm-dec.R'
     'algorithm-dsm.R'
+    'algorithm-dtm.R'
     'algorithm-gnd.R'
     'algorithm-itd.R'
     'algorithm-its.R'
@@ -70,8 +75,8 @@ Collate:
     'algorithm-out.R'
     'algorithm-shp.R'
     'algorithm-snag.R'
-    'algorithm-spi.R'
     'algorithm-trk.R'
+    'backward_compatibility.R'
     'catalog_apply.R'
     'catalog_boundaries.R'
     'catalog_fakerun.R'
@@ -79,7 +84,6 @@ Collate:
     'catalog_intersect.R'
     'catalog_laxindex.R'
     'catalog_makecluster.R'
-    'catalog_merge_results.R'
     'catalog_overlaps.R'
     'catalog_retile.R'
     'catalog_select.R'
@@ -88,68 +92,78 @@ Collate:
     'classify_noise.R'
     'classify_poi.R'
     'clip_roi.R'
-    'cloud_metrics.R'
-    'clusters_apply.R'
     'concaveman.R'
     'decimate_points.R'
-    'delineate_crowns.R'
     'deprecated.R'
     'doc-drivers.R'
     'doc-lidR.R'
     'doc-parallelism.R'
-    'filter_duplicates.R'
-    'filter_poi.R'
-    'filter_roi.R'
-    'filter_surfacepoints.R'
-    'find_localmaxima.R'
-    'find_trees.R'
+    'engine_apply.R'
+    'engine_crop.R'
+    'engine_merge.R'
+    'engine_write.R'
+    'fasterize.R'
+    'filters.R'
     'fullwaveform.R'
     'generate_las.R'
-    'grid_canopy.R'
-    'grid_density.R'
-    'grid_metrics.R'
-    'grid_terrain.R'
     'io_readLAS.R'
     'io_readLAScatalog.R'
     'io_readXLAS.R'
-    'io_writeANY.R'
     'io_writeLAS.R'
     'las_check.R'
     'las_tools.R'
-    'merge_las.R'
+    'locate_trees.R'
     'merge_spatial.R'
     'methods-LAS.R'
     'methods-LAScatalog.R'
     'methods-LAScluster.R'
     'methods-LASheader.R'
+    'metrics_cloud.R'
+    'metrics_crowns.R'
+    'metrics_hexagons.R'
+    'metrics_pixels.R'
+    'metrics_plot.R'
+    'metrics_point.R'
+    'metrics_polygon.R'
+    'metrics_stdmetrics.R'
+    'metrics_template.R'
+    'metrics_voxels.R'
+    'normalize.R'
     'normalize_height.R'
     'normalize_intensity.R'
     'plot.R'
     'plot.s3.R'
-    'plot_metrics.R'
-    'point_metrics.R'
     'print.R'
-    'projection.R'
+    'rasterize.R'
+    'rasterize_canopy.R'
+    'rasterize_density.R'
+    'rasterize_terrain.R'
     'retrieve_info.R'
+    'segment.R'
     'segment_shapes.R'
     'segment_snags.R'
     'segment_trees.R'
-    'sensor_tracking.R'
     'smooth_height.R'
-    'tree_metrics.R'
+    'st_area.R'
+    'st_as_sf.R'
+    'st_bbox.R'
+    'st_coordinates.R'
+    'st_crs.R'
+    'st_hull.R'
+    'st_misc.R'
+    'st_transform.R'
+    'track_sensor.R'
     'utils_assertive.R'
+    'utils_base.R'
     'utils_catalog_options.R'
     'utils_colors.R'
     'utils_define_constant.R'
     'utils_delaunay.R'
     'utils_geometry.R'
     'utils_is.R'
-    'utils_metrics.R'
     'utils_misc.R'
     'utils_raster.R'
     'utils_spatial_index.R'
     'utils_threads.R'
-    'utils_typecast.R'
-    'voxel_metrics.R'
     'voxelize_points.R'
     'zzz.R'

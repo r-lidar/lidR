@@ -482,26 +482,26 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   code    <- if (use_epsg(las)) epsg(las) else 0
   swkt    <- wkt(las)
-  lasproj <- las@proj4string
+  lasproj <- las@crs
   failure <- FALSE
 
   if (use_epsg(las) && code != 0)
   {
-    codeproj <- epsg2CRS(code)
+    codeproj <- epsg2crs(code, fail = FALSE)
 
-    if (is.na(codeproj@projargs))
+    if (is.na(codeproj))
     { .fail(glue::glue("EPSG code {code} unknown")) ; failure = TRUE }
 
-    if (is.na(codeproj@projargs) && !is.na(lasproj@projargs))
-    { .warn(glue::glue("EPSG code is unknown but a proj4string found")) ; failure = TRUE }
+    if (is.na(codeproj) && !is.na(lasproj))
+    { .warn(glue::glue("EPSG code is unknown but a CRS found")) ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) && is.na(lasproj@projargs))
-    { .warn("ESPG code is valid but no proj4string found") ; failure = TRUE }
+    if (!is.na(codeproj) && is.na(lasproj))
+    { .warn("ESPG code is valid but no CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) && !is.na(lasproj@projargs))
+    if (!is.na(codeproj) && !is.na(lasproj))
     {
-      if (codeproj@projargs != lasproj@projargs)
-      { .fail("ESPG code and proj4string do not match") ; failure = TRUE }
+      if (codeproj != lasproj)
+      { .fail("ESPG code and CRS do not match") ; failure = TRUE }
     }
 
     if (!failure)
@@ -510,21 +510,21 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (use_wktcs(las) && swkt != "")
   {
-    codeproj = wkt2CRS(swkt)
+    codeproj = wkt2crs(swkt, fail = FALSE)
 
-    if (is.na(codeproj@projargs))
-    { .fail("WKT OGC CS not parsed by sf::st_crs") ; failure = TRUE }
+    if (is.na(codeproj))
+    { .fail("WKT OGC CS not parsed") ; failure = TRUE }
 
-    if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { .warn("WKT OGC CS not parsed by sf::st_crs but a proj4string found") ; failure = TRUE }
+    if (is.na(codeproj) & !is.na(lasproj))
+    { .warn("WKT OGC CS not parsed but a CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
-    { .warn("WKT OGC CS is valid but no proj4string found") ; failure = TRUE }
+    if (!is.na(codeproj) & is.na(lasproj))
+    { .warn("WKT OGC CS is valid but no CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
+    if (!is.na(codeproj) & !is.na(lasproj))
     {
-      if (codeproj@projargs != lasproj@projargs)
-      { .fail("WKT OGC CS and proj4string do not match") ; failure = TRUE }
+      if (codeproj != lasproj)
+      { .fail("WKT OGC CS and CRS do not match") ; failure = TRUE }
     }
 
     if (!failure)
@@ -533,8 +533,8 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (code == 0 & swkt == "")
   {
-    if (!is.na(lasproj@projargs))
-    { .warn("A proj4string found but no CRS in the header") ; failure = TRUE }
+    if (!is.na(lasproj))
+    { .warn("A CRS found but no CRS in the header") ; failure = TRUE }
 
     if (!failure)
       .ok()
@@ -569,8 +569,8 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
   else
   {
-    min = grid_metrics(las, ~min(Z), res = 20)
-    mean_min = mean(abs(min[]), na.rm = TRUE)
+    min = pixel_metrics(las, ~abs(min(Z)), res = 20)
+    mean_min = mean(min[[1]], na.rm = TRUE)
 
     if (mean_min <= 0.1) {
       .yes()

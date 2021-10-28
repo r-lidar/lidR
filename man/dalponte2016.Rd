@@ -40,7 +40,7 @@ such data trees will be numbered sequentially.}
 }
 \description{
 This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
-segmentation based on the Dalponte and Coomes (2016) algorithm (see reference).
+segmentation based on Dalponte and Coomes (2016) algorithm (see reference).
 This is a seeds + growing region algorithm. This algorithm exists in the package \code{itcSegment}.
 This version has been written from the paper in C++. Consequently it is hundreds to millions times
 faster than the original version. Note that this algorithm strictly performs a segmentation, while the

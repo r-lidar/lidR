@@ -25,7 +25,7 @@ data trees will be numbered sequentially.}
 }
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
-segmentation based on the Silva et al. (2016) article (see reference). This is a simple method
+segmentation based on Silva et al. (2016) (see reference). This is a simple method
 based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
 in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
 code written from the original article by the lidR authors and is considerably (between 250
@@ -37,9 +37,9 @@ user does not even have the point cloud that generated the CHM. \code{lidR} is a
 library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
- chm = raster("file/to/a/chm/")
- ttops = find_trees(chm, lmf(3))
- crowns = silva2016(chm, ttops)()
+ chm <- raster("file/to/a/chm/")
+ ttops <- find_trees(chm, lmf(3))
+ crowns <- silva2016(chm, ttops)()
 }
 }
 \examples{

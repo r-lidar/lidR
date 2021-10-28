@@ -1,72 +1,49 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Merge a point cloud with a source of spatial data
 #'
 #' Merge a point cloud with a source of spatial data. It adds an attribute along each point based on
-#' a value found in the spatial data. Sources of spatial data can be a \code{SpatialPolygons*})
-#' , a \code{sf data.frame} or a \code{Raster*}.\cr
+#' a value found in the spatial data. Sources of spatial data can be a `SpatialPolygons*` an `sf`/`sfc`
+#' a `Raster*` a `stars` or a `SpatRaster`.\cr
 #' \itemize{
-#' \item{\code{SpatialPolygons*, sf}: it checks if the points belongs within each polygon. If
-#' the parameter \code{attribute} is the name of an attribute in the table of attributes it assigns
+#' \item{`SpatialPolygons*`, `sf` and `sfc`: it checks if the points belongs within each polygon. If
+#' the parameter `attribute` is the name of an attribute in the table of attributes it assigns
 #' to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
-#' \item{\code{RasterLayer}: it attributes to each point the value found in each pixel of the
-#' \code{RasterLayer}}.
-#' \item{\code{RasterStack} or \code{RasterBrick} must have 3 channels for RGB colors. It colorizes the
-#' point cloud with RGB values.}
+#' \item{`RasterLayer`, single band `stars` ot single layer `SparRaster`: it attributes to each point
+#' the value found in each pixel of the raster}.
+#' \item{`RasterStack`, `RasterBrick`, multibands `stars` or multilayer `SpatRaster` must have 3
+#' layers for RGB colors. It colourizes the point cloud with RGB values.}
 #' }
 #'
-#' @param las An object of class \code{LAS}
-#' @param source An object of class \code{SpatialPolygons*} or \code{sf} or \code{RasterLayer} or a
-#' \code{RasterStack} or \code{RasterBrick} with RGB colors.
-#' @param attribute character. The name of an attribute in the table of attributes of the shapefile or
-#' the name of a new column in the LAS object. Not relevant for RGB colorization.
+#' @param las An object of class `LAS`
+#' @param source An object of class `SpatialPolygons*` or `sf` or `sfc` or `RasterLayer` or
+#' `RasterStack` or `RasterBrick` or `stars`.
+#' @param attribute character. The name of an attribute in the table of attributes or
+#' the name of a new column in the LAS object. Not relevant for RGB colourization.
 #'
-#' @return An object of the class \code{LAS}.
+#' @return An `LAS` object
 #'
 #' @export
+#' @md
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shp     <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")
 #'
 #' las   <- readLAS(LASfile, filter = "-keep_random_fraction 0.1")
-#' lakes <- sf::st_read(shp)
+#' lakes <- sf::st_read(shp, quiet = TRUE)
 #'
 #' # The attribute "inlake" does not exist in the shapefile.
 #' # Points are classified as TRUE if in a polygon
 #' las    <- merge_spatial(las, lakes, "inlakes")     # New attribute 'inlakes' is added.
+#' names(las)
+#'
 #' forest <- filter_poi(las, inlakes == FALSE)
 #' #plot(forest)
 #'
 #' # The attribute "LAKENAME_1" exists in the shapefile.
 #' # Points are classified with the values of the polygons
 #' las <- merge_spatial(las, lakes, "LAKENAME_1")     # New column 'LAKENAME_1' is added.
+#' names(las)
 merge_spatial = function(las, source, attribute = NULL)
 {
   UseMethod("merge_spatial", las)
@@ -75,50 +52,32 @@ merge_spatial = function(las, source, attribute = NULL)
 #' @export
 merge_spatial.LAS = function(las, source, attribute = NULL)
 {
-  if (is(source, "sf") | is(source, "sfc"))
-  {
-    if (any(!sf::st_geometry_type(source) %in% c("POLYGON", "MULTIPOLYGON")))
-      stop("Only POLYGON geometry types are supported for sf and sfc objects", call. = FALSE)
+  if (is_raster(source) && !raster_nlayer(source) %in% c(1,3))
+    stop("rasters must have 1 or 3 bands", call. = FALSE)
 
-    box <- raster::extent(las)
-    box <- sf::st_bbox(box)
-    width <- (box[3] - box[1])*0.01 + las@header@PHB[["X scale factor"]]
-    height <- (box[4] - box[2])*0.01 + las@header@PHB[["Y scale factor"]]
-    box <- box + c(-width, -height, width, height)
-    sf::st_crs(box) <- sf::st_crs(source)
-    sf::st_agr(source) <- "constant"
-    source <- sf::st_crop(source, box)
-  }
+  if (inherits(source, "Spatial"))
+    source <- sf::st_as_sf(source)
 
-  if (is(source, "SpatialPolygons") && !is(source, "SpatialPolygonsDataFrame"))
-    attribute <- NULL
-
-  if (is(source, "Polygon"))
-    source <- sf::st_geometry(sf::st_polygon(list(source)))
-
-  #if (is(source, "Polygons"))
-    #source <- sp::SpatialPolygons(list(source), proj4string = las@proj4string)
-
-  if (is(source, "SpatialPolygons") | is(source, "SpatialPolygonsDataFrame"))
-  {
-    bbox <- extent(las)
-    source2 <- raster::crop(source, bbox*1.01 + las@header@PHB[["X scale factor"]])
-
-    if (!is.null(source2))
-      source <- sf::st_as_sf(source2)
-    else
-    {
-      source <- sf::st_as_sf(source)
-      source <- source[0,]
-    }
-  }
+  rgb <- is_raster(source) && raster_nlayer(source) == 3L
 
   if (is(source, "sf") | is(source, "sfc"))
+  {
+    geom <- sf::st_geometry(source)
+    if (!is(geom, "sfc_POLYGON") & !is(geom, "sfc_MULTIPOLYGON"))
+      stop("Only polygon geometry types are supported", call. = FALSE)
+
+    # crop to bbox of las to reduce computation time
+    source <- st_crop_if_not_similar_bbox(source, las)
+  }
+
+  if (is(source, "sf"))
     values <- merge_sf(las, source, attribute)
-  else if (is(source, "RasterLayer"))
-    values <- merge_raster(las, source)
-  else if (is(source, "RasterStack") | is(source, "RasterBrick"))
-    return(merge_rgb(las, source))
+  else if (is(source, "sfc"))
+    values <- merge_sfc(las, source, attribute)
+  else if (is_raster(source) && !rgb)
+    values <- raster_value_from_xy(source, las$X, las$Y)
+  else if (is_raster(source) && rgb)
+    return(colorize(las, source))
   else
     stop("No method for this source format.")
 
@@ -129,26 +88,26 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
   return(las)
 }
 
-merge_rgb = function(las, source)
+colorize = function(las, source)
 {
-  cells <- raster::cellFromXY(source[[1]], coordinates(las))
+  cells <- raster_cell_from_xy(source, las$X, las$Y)
 
-  R <- source[[1]][]
-  G <- source[[2]][]
-  B <- source[[3]][]
+  R <- raster_value_from_cells(source, cells, 1L)
+  G <- raster_value_from_cells(source, cells, 2L)
+  B <- raster_value_from_cells(source, cells, 3L)
   R <- as.integer(R[cells])
   G <- as.integer(G[cells])
   B <- as.integer(B[cells])
 
   if (anyNA(R) | anyNA(G) | anyNA(B))
-    stop("Some points were associated with an RGB color of NA. RGB cannot be NA in a LAS object. Colorization aborted.", call. = FALSE)
+    stop("Some points were associated with an NA RGB color. RGB cannot be NA in a LAS object. Colorization aborted.", call. = FALSE)
 
   return(add_lasrgb(las, R, G, B))
 }
 
 merge_sf = function(las, source, attribute = NULL)
 {
-  npoints <- nrow(las@data)
+  npoints <- npoints(las)
 
   # No attribute is provided: assign the number of the polygon
   if (is.null(attribute))
@@ -188,33 +147,43 @@ merge_sf = function(las, source, attribute = NULL)
 
   verbose("Testing whether points fall in a given polygon...")
 
-  ids <- rep(0L, npoints)
-
-  for (i in seq_along(sf::st_geometry(source)))
-  {
-    wkt          <- sf::st_as_text(sf::st_geometry(source)[i], digits = 10)
-    in_poly      <- C_in_polygon(las, wkt, getThread())
-    ids[in_poly] <- i
-  }
+  idx <- point_in_polygons(las, sf::st_geometry(source))
 
   if (method == 1)
-    values[ids > 0L] <- source[[attribute]][ids[ids > 0]]
+    values[!is.na(idx)] <- source[[attribute]][idx[!is.na(idx)]]
   else if (method == 2)
-    values <- ids > 0
+    values <- !is.na(idx)
   else
-    values <- ifelse(ids == 0L, NA_integer_, ids)
+    values <- idx
 
   return(values)
 }
 
-merge_raster = function(las, raster)
+merge_sfc = function(las, source, attribute = NULL)
 {
-  cells <- raster::cellFromXY(raster, coordinates(las))
+  npoints <- npoints(las)
 
-  # This will respect data type when in memory (data type lost if written in file)
-  if (raster::inMemory(raster))
-    return(raster@data@values[cells])
+  # No attribute is provided: assign the number of the polygon
+  if (is.null(attribute)) {
+    method <- 0
+    values <- rep(NA_integer_, npoints)
+  } else {
+    method <- 2
+    values <- logical(npoints)
+  }
+
+  if (length(source) == 0)
+    return(values)
+
+
+  sfc <- sf::st_geometry(source)
+  ids <- point_in_polygons(las, sfc)
+
+  if (method == 2)
+    values <- !is.na(ids)
   else
-    return(raster[cells])
+    values <- ids
+
+  return(values)
 }
 

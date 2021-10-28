@@ -26,10 +26,9 @@ class LAS
     //void apply_filter();
     //IntegerVector index_filter();
 
-    void filter_in_polygon(std::string wkt);
     void filter_local_maxima(NumericVector ws, double min_height, bool circular);
     void filter_local_maxima(NumericVector ws);
-    void filter_with_grid(S4 layout, bool max);
+    void filter_with_grid(List layout, bool max);
     void filter_shape(int method, NumericVector th, int k);
     void filter_progressive_morphology(NumericVector ws, NumericVector th);
     void filter_isolated_voxel(double ws, unsigned int isolated);
@@ -40,9 +39,9 @@ class LAS
 
     double range(NumericVector&, NumericVector& , NumericVector&, NumericVector&,  int, double);
 
-    NumericVector rasterize(S4 layout, double subcircle, int method);
+    NumericVector rasterize(List layout, double subcircle, int method);
     NumericVector compute_range(DataFrame flightlines);
-
+    IntegerVector find_polygon_ids(CharacterVector wkts);
     IntegerVector segment_snags(NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
     IntegerVector segment_trees(double dt1, double dt2, double Zu, double R, double th_tree, double radius);
     List point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env);

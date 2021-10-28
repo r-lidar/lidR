@@ -62,7 +62,7 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
   las <- readLAS(c(files1, files2, files3), select, filter)
 
-  if (!"ScannerChannel" %in% names(las@data))
+  if (!"ScannerChannel" %in% names(las))
   {
     tmp <- readLAS(files1, "", filter)
     n1 <- npoints(tmp)

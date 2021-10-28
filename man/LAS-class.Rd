@@ -6,7 +6,7 @@
 \alias{LAS}
 \title{An S4 class to represent a .las or .laz file}
 \usage{
-LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE, index = NULL)
+LAS(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = NULL, ...)
 }
 \arguments{
 \item{data}{a \link[data.table:data.table]{data.table} containing the data of a las or laz file.}
@@ -14,12 +14,14 @@ LAS(data, header = list(), proj4string = sp::CRS(), check = TRUE, index = NULL)
 \item{header}{a \code{list} or a \link[=LASheader-class]{LASheader} containing the header of
 a las or laz file.}
 
-\item{proj4string}{projection string of class \link[sp:CRS-class]{CRS-class}.}
+\item{crs}{crs object of class \link[sf:st_crs]{crs} from sf}
 
 \item{check}{logical. Conformity tests while building the object.}
 
 \item{index}{list with two elements \code{list(sensor = 0L, index = 0L)}.
 See \link[=lidR-spatial-index]{spatial indexing}}
+
+\item{...}{unused}
 }
 \value{
 An object of class \code{LAS}
@@ -29,8 +31,7 @@ Class LAS is the representation of a las/laz file according to the
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
 }
 \details{
-A \code{LAS} object inherits a \link[sp:Spatial-class]{Spatial} object from \code{sp}. Thus it is
-a \code{Spatial} object plus a \code{data.table} with the data read from a \code{las/laz} file and
+A \code{LAS} object contains a \code{data.table} with the data read from a \code{las/laz} file and
 a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 for more information). Because las files are standardized the table of attributes read from the las/laz file
@@ -67,23 +68,16 @@ In this case the scale factor is set to 0.001
 \section{Slots}{
 
 \describe{
-\item{\code{bbox}}{Object of class \code{matrix}, with bounding box}
-
-\item{\code{proj4string}}{Object of class \link[sp:CRS-class]{CRS}, projection string}
+\item{\code{crs}}{Object of class \link[sf:st_crs]{crs} from sf}
 
 \item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}}
 
-\item{\code{header}}{Object of class \link[=LASheader-class]{LASheader}. las file header according to the
+\item{\code{header}}{Object of class \link[=LASheader-class]{LASheader}. LAS file header according to the
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}}
 
 \item{\code{index}}{list. See \link[=lidR-spatial-index]{spatial indexing}.}
 }}
-
-\section{Extends}{
-
-Class  \link[sp:Spatial-class]{Spatial}, directly.
-}
 
 \examples{
 # Read a las/laz file

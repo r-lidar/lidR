@@ -21,24 +21,23 @@ data <- data.table::data.table(
               627274.01, 627251.36, 628665.04, 628628.01, 630135.08, 630095.02,
               631525.01, 631487.19, 630058.02, 630020.05, 631448.08, 631411.03,
               627506.32, 628612.41, 629999.84, 631390.38, 632996.06, 632956.04),
+  X.scale.factor = 0.01,
+  Y.scale.factor = 0.01,
   filename = paste0("abc", 1:30)
 )
 
-
-pgeom <- lapply(1:nrow(data), function(i)
+geom <- lapply(1:nrow(data), function(i)
 {
   mtx <- matrix(c(data$Min.X[i], data$Max.X[i], data$Min.Y[i], data$Max.Y[i])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-  sp::Polygons(list(sp::Polygon(mtx)),as.character(i))
+  sf::st_polygon(list(mtx))
 })
 
-Sr <- sp::SpatialPolygons(pgeom, proj4string = sp::CRS("+init=epsg:26917"))
+geom <-sf::st_sfc(geom)
+sf::st_crs(geom) <- 26917
+data <- sf::st_set_geometry(data, geom)
 
-ctg             <- new("LAScatalog")
-ctg@bbox        <- Sr@bbox
-ctg@proj4string <- Sr@proj4string
-ctg@plotOrder   <- Sr@plotOrder
-ctg@data        <- data
-ctg@polygons    <- Sr@polygons
+ctg       <- new("LAScatalog")
+ctg@data  <- data
 
 opt_progress(ctg) <- FALSE
 
@@ -50,12 +49,12 @@ polygon <- structure(
     630634.9, 629678.5, 631162.7, 633572.9),
   .Dim = c(6L, 2L))
 
-polygon <- sp::Polygon(polygon)
-polygon <- sp::Polygons(list(polygon), "1")
-polygon <- sp::SpatialPolygons(list(polygon), proj4string = ctg@proj4string)
+polygon <- sf::st_polygon(list(polygon))
+polygon <- sf::st_geometry(polygon)
+polygon <- sf::st_set_crs(polygon, st_crs(ctg))
 
 # Build a Raster
-r <- raster::raster(raster::extent(polygon))
+r <- raster::raster(raster::extent(sf::st_bbox(polygon)))
 projection(r) <- projection(ctg)
 
 # Build a SpatialPoints
@@ -64,10 +63,12 @@ pts <- structure(
     887754.0, 888653.5, 633572.9,  633244.7,
     630634.9, 629678.5, 631162.7, 633572.9),
   .Dim = c(6L, 2L))
+pts <- as.data.frame(pts)
+names(pts) <- c("X", "Y")
 
-pts <- sp::SpatialPoints(pts, proj4string = ctg@proj4string)
+pts <- sf::st_as_sf(pts, coords = c("X", "Y"), crs = st_crs(ctg))
 
-test_that("catalog_intersect extract the tiles lie in a SpatialPolygons", {
+test_that("catalog_intersect extract the tiles that lie in a SpatialPolygons", {
 
   ctg2 <- catalog_intersect(ctg, polygon)
   ctg22 <- catalog_intersect(ctg, sf::st_as_sf(polygon))

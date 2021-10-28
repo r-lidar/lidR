@@ -72,7 +72,7 @@ test_that("normalize_height works with a LAScatalog", {
 
   expect_error(normalize_height(ctg, tin()), "output file")
 
-  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = normalize_height(ctg, tin())
   las2 = readLAS(ctg2)

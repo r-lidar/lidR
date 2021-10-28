@@ -18,7 +18,7 @@ test_that("classify_ground pmf works with LAS", {
 
   las <- classify_ground(las, mypmf)
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(sort(unique(las@data$Classification)), c(1L, 2L))
@@ -32,7 +32,7 @@ test_that("classify_ground pmf works with LAScatalog", {
 
   expect_error(classify_ground(ctg, mypmf), "output file")
 
-  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = classify_ground(ctg, mypmf)
   las2 = readLAS(ctg2)
@@ -43,7 +43,7 @@ test_that("classify_ground pmf works with LAScatalog", {
 test_that("classify_ground csf works with LAS", {
   las <- classify_ground(las, mycsf)
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(sort(unique(las@data$Classification)), c(1L, 2L))
@@ -53,7 +53,7 @@ test_that("classify_ground csf works with LAS", {
 test_that("classify_ground csf works with LAScatalog", {
   skip_on_cran()
 
-  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}_ground")
+  opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}_ground")
   opt_chunk_buffer(ctg) <- 30
 
   ctg2 = classify_ground(ctg, mycsf)
@@ -66,7 +66,7 @@ test_that("classify_ground csf works with last_returns = FALSE", {
   las <- lidR:::generate_las(500)
   las <- classify_ground(las, csf(), last_returns = FALSE)
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(unique(las@data$Classification), c(1L, 2L))
@@ -79,7 +79,7 @@ test_that("classify_ground works with last_returns = TRUE but attribute not prop
   las@data$Classification <- NULL
   las <- suppressWarnings(classify_ground(las, csf(), last_returns = TRUE))
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(unique(las@data$Classification), c(1L, 2L))

@@ -25,7 +25,7 @@
 #
 # ===============================================================================
 
-LAScluster <- function(center, width, height, buffer, shape, files, name, proj4string = sp::CRS(), index = LIDRDEFAULTINDEX)
+LAScluster <- function(center, width, height, buffer, shape, files, name, crs = sf::NA_crs_, index = LIDRDEFAULTINDEX)
 {
-  return(new("LAScluster", center, width, height, buffer, shape, files, name, "", proj4string, index))
+  return(new("LAScluster", center, width, height, buffer, shape, files, name, "", crs, index))
 }

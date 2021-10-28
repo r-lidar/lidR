@@ -48,10 +48,10 @@ y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
 las2 = clip_polygon(las,x,y)
 plot(las2)
 
-# Since the TIN interpolation is done within the convex hull of the point cloud
-# dummy pixels are interpolated that are strictly correct according to the interpolation method
-# used, but meaningless in our CHM
-chm <- grid_canopy(las2, res = 0.5, pitfree())
+# Because the TIN interpolation is done within the convex hull of the point cloud
+# dummy pixels are interpolated that are strictly correct according to the interpolation
+# method used, but meaningless in our CHM
+chm <- grid_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
 plot(chm, col = col)
 
 chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))

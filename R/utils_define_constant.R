@@ -74,6 +74,7 @@ LASBRIGDE             <- 17L
 #' @rdname asprs
 LASNOISE              <- 18L
 
+LASALLECHOS <- 0L
 LASFIRST <- 1L
 LASINTERMEDIATE <- 2L
 LASLASTOFMANY <- 3L
@@ -121,11 +122,11 @@ LIDRNIT <- "normalize_intensity"
 LIDRTRK <- "SensorTracking"
 LIDROUT <- "NoiseSegmentation"
 
-LIDRCONTEXTDSM <- "grid_canopy"
-LIDRCONTEXTSPI <- c("normalize_height", "grid_terrain", "p2r", "spatial_interpolation")
+LIDRCONTEXTDSM <- "rasterize_canopy"
+LIDRCONTEXTSPI <- c("normalize_height", "rasterize_terrain", "p2r", "spatial_interpolation")
 LIDRCONTEXTGND <- "classify_ground"
 LIDRCONTEXTOUT <- "classify_noise"
-LIDRCONTEXTITD <- "find_trees"
+LIDRCONTEXTITD <- "locate_trees"
 LIDRCONTEXTDEC <- "decimate_points"
 LIDRCONTEXTSHP <- "segment_shapes"
 LIDRCONTEXTSNG <- "segment_snags"

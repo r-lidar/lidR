@@ -341,7 +341,7 @@ opt_filter = function(ctg)
   ctg@processing_options <- value@processing_options
   ctg@output_options <- value@output_options
   ctg@input_options <- value@input_options
-  ctg@proj4string <- value@proj4string
+  st_crs(ctg) <- st_crs(value)
   return(ctg)
 }
 

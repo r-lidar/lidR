@@ -18,7 +18,7 @@ test_that("Plot LAScatalog object works", {
   expect_error(plot(ctg, chunk = TRUE), NA)
   expect_error(plot(ctg, mapview = TRUE), NA)
   expect_error(plot(ctg, col = "red"), NA)
-  expect_error(spplot(ctg, "Min.Z"), NA)
+  expect_error(plot(ctg@data["Min.Z"]), NA)
 })
 
 test_that("LAScatalog redefined behavior of $, [, and [[", {
@@ -35,7 +35,6 @@ test_that("LAScatalog redefined behavior of $, [, and [[", {
 
   expect_true(is.null(ctg[["U"]]))
 
-  expect_error(ctg[1:2], "not allowed")
   expect_error(ctg[1:2,1:2], "not allowed")
 })
 
@@ -44,7 +43,7 @@ test_that("LAScatalog conversion to SpatialPolygonsDataFrame works", {
   spctg <- as.spatial(ctg)
 
   expect_true(is(spctg, "SpatialPolygonsDataFrame"))
-  expect_reference(ctg@data, spctg@data)
+  expect_reference(ctg@data$UserData, spctg@data$UserData)
 })
 
 

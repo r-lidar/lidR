@@ -45,8 +45,8 @@ test_that("rbind works with LAScatalog", {
 
   expect_error( rbind(megaplot_ctg, mixedconifer_ctg), "Different CRS")
 
-  megaplot_ctg@proj4string <- sp::CRS()
-  topography_ctg@proj4string <- sp::CRS()
+  st_crs(megaplot_ctg) <- sf::NA_crs_
+  st_crs(topography_ctg) <- sf::NA_crs_
 
   expect_warning(rbind(megaplot_ctg, topography_ctg))
 })

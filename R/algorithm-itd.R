@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 # ===== LMF ======
 
 #' Individual Tree Detection Algorithm
@@ -167,7 +140,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     . <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
-    crs = sp::CRS()
+    crs = sf::NA_crs_
 
     if (!interactive())
       stop("R is not being used interactively", call. = FALSE)
@@ -178,7 +151,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     }
     else if (is(detected, "SpatialPointsDataFrame"))
     {
-      crs          <- detected@proj4string
+      crs          <- sf::st_crs(detected)
       apice        <- data.table::data.table(detected@coords)
       apice$Z      <- detected@data[["Z"]]
       names(apice) <- c("X","Y","Z")
@@ -244,7 +217,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     apice[, treeID := 1:.N]
     apice[, X := X + minx]
     apice[, Y := Y + miny]
-    output <- sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
+    output <- sf::st_as_sf(apice, coords = c("X", "Y", "Z"), crs = crs)
     return(output)
   }
 

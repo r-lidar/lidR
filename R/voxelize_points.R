@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Voxelize a point cloud
 #'
 #' Reduce the number of points by voxelizing the point cloud. If the Intensity is part of the attributes
@@ -68,7 +41,7 @@ voxelize_points.LAS = function(las, res)
 
   by <- group_grid_3d(las@data$X, las@data$Y, las@data$Z, res, c(0,0,0.5*res[2]))
 
-  if ("Intensity" %in% names(las@data))
+  if ("Intensity" %in% names(las))
   {
     voxels <- las@data[, list(Intensity = as.integer(mean(Intensity))), by = by]
     data.table::setnames(voxels, c("X", "Y", "Z", "Intensity"))
@@ -80,7 +53,7 @@ voxelize_points.LAS = function(las, res)
     voxels <- unique(by)
   }
 
-  output <- LAS(voxels, header = las@header, proj4string = las@proj4string, check = FALSE, index = las@index)
+  output <- LAS(voxels, header = las@header, crs = las@crs, check = FALSE, index = las@index)
   return(output)
 }
 
@@ -91,7 +64,7 @@ voxelize_points.LAScluster = function(las, res)
   if (is.empty(x)) return(NULL)
 
   output <- voxelize_points(x, res)
-  output <- clip_roi(output, raster::extent(las))
+  output <- clip_roi(output, st_bbox(las))
   return(output)
 }
 

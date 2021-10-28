@@ -7,7 +7,7 @@ las@data = las@data[,c(1:4, 10)]
 test_that("segment_shapes works with shp_coplanar", {
   las <- segment_shapes(las, shp_plane(k = 15), "Coplanar")
 
-  cn <- names(las@data)
+  cn <- names(las)
 
   expect_true("Coplanar" %in% cn)
   expect_true(is.logical(las@data$Coplanar))
@@ -17,7 +17,7 @@ test_that("segment_shapes works with shp_coplanar", {
 test_that("segment_shapes works with shp_hcoplanar", {
   las <- segment_shapes(las, shp_hplane(k = 15), "Hcoplanar")
 
-  cn <- names(las@data)
+  cn <- names(las)
 
   expect_true("Hcoplanar" %in% cn)
   expect_true(is.logical(las@data$Hcoplanar))
@@ -28,7 +28,7 @@ test_that("segment_shapes works with shp_hcoplanar", {
 test_that("segment_shapes works with shp_hline", {
   las <- segment_shapes(las, shp_line(k = 8), "line")
 
-  cn <- names(las@data)
+  cn <- names(las)
 
   expect_true("line" %in% cn)
   expect_true(is.logical(las@data$line))
@@ -38,7 +38,7 @@ test_that("segment_shapes works with shp_hline", {
 test_that("filter argument works", {
   las <- segment_shapes(las, shp_plane(k = 15), "Coplanar", filter = ~Classification != 2L)
 
-  cn <- names(las@data)
+  cn <- names(las)
 
   expect_true("Coplanar" %in% cn)
   expect_true(is.logical(las@data$Coplanar))

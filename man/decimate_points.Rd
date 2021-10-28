@@ -56,16 +56,16 @@ and cannot be changed.
 
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
+las <- readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an overall density of 1
-thinned1 = decimate_points(las, random(1))
-#plot(grid_density(las))
-#plot(grid_density(thinned1))
+thinned1 <- decimate_points(las, random(1))
+#plot(rasterize_density(las))
+#plot(rasterize_density(thinned1))
 
 # Select points randomly to reach an homogeneous density of 1
-thinned2 = decimate_points(las, homogenize(1,5))
-#plot(grid_density(thinned2))
+thinned2 <- decimate_points(las, homogenize(1,5))
+#plot(rasterize_density(thinned2))
 
 # Select the highest point within each pixel of an overlayed grid
 thinned3 = decimate_points(las, highest(5))

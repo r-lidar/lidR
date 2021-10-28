@@ -5,36 +5,36 @@ ctg <- example_ctg
 
 opt_progress(ctg) = FALSE
 
-test_that("clip_roi clips a rectangle both on a LAS and a LAScatalog", {
+test_that("clip_rectangle clips a rectangle both on a LAS and a LAScatalog", {
 
   rect1 <- clip_rectangle(las, 339006, 5248000, 339012, 5248002)
   rect2 <- clip_rectangle(ctg, 339006, 5248000, 339012, 5248002)
 
   expect_true(extent(rect1) <= raster::extent(339006, 5248000, 339012, 5248002))
-  expect_equal(rect1@proj4string, las@proj4string)
+  expect_equal(rect1@crs, las@crs)
   expect_equal(npoints(rect1), 17L)
   expect_equal(rect1, rect2)
 })
 
-test_that("clip_roi clips a circle both on a LAS and a LAScatalog", {
+test_that("clip_circle clips a circle both on a LAS and a LAScatalog", {
 
   circ1 <- clip_circle(las, 339008, 5248001, 2)
   circ2 <- clip_circle(ctg, 339008, 5248001, 2)
 
-  expect_equal(circ1@proj4string, las@proj4string)
+  expect_equal(st_crs(circ1), st_crs(las))
   expect_equal(npoints(circ1), 15L)
-  expect_equal(circ2@proj4string, ctg@proj4string)
+  expect_equal(st_crs(circ2), st_crs(ctg))
   expect_equal(circ1, circ2)
 })
 
-test_that("clip_roi clips a polygon both on a LAS and a LAScatalog", {
+test_that("clip_polygon clips a polygon both on a LAS and a LAScatalog", {
 
   tri1 <- clip_polygon(las, c(339008, 339010, 339010, 339008), c(5248000, 5248000, 5248002, 5248000))
   tri2 <- clip_polygon(ctg, c(339008, 339010, 339010, 339008), c(5248000, 5248000, 5248002, 5248000))
 
-  expect_equal(tri1@proj4string, las@proj4string)
+  expect_equal(st_crs(tri1), st_crs(las))
   expect_equal(npoints(tri1), 15L)
-  expect_equal(tri2@proj4string, ctg@proj4string)
+  expect_equal(st_crs(tri2), st_crs(ctg))
   expect_equal(tri1, tri2)
 })
 
@@ -49,15 +49,15 @@ test_that("clip_roi memory optimization works", {
 
 test_that("clip_roi clips polygon works from WTK both on a LAS and LAScatalog", {
 
-  wkt2 <- "POLYGON ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000))"
+  wkt <- "POLYGON ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000))"
 
-  poly1   <- clip_roi(las, wkt2)
-  poly2   <- clip_roi(ctg, wkt2)
+  poly1   <- clip_roi(las, wkt)
+  poly2   <- clip_roi(ctg, wkt)
 
   expect_is(poly1, "LAS")
   expect_equal(npoints(poly1), 15L)
   expect_equal(poly1, poly2)
-  expect_equal(poly1@proj4string, las@proj4string)
+  expect_equal(poly1@crs, las@crs)
 })
 
 test_that("clip_roi clips polygon works from sp polygons both on a LAS and LAScatalog", {
@@ -75,45 +75,50 @@ test_that("clip_roi clips polygon works from sp polygons both on a LAS and LASca
 
   expect_is(poly1, "LAS")
   expect_equal(npoints(poly1), 2L)
-  expect_equal(poly1@proj4string, las@proj4string)
-  expect_equal(poly2@proj4string, ctg@proj4string)
+  expect_equal(st_crs(poly1), st_crs(las))
+  expect_equal(st_crs(poly2), st_crs(ctg))
   expect_equal(poly1, poly2)
 })
 
-test_that("clip_roi clips point with SpatialPoints on LAS and LAScatalog", {
+test_that("clip_roi clips point with SpatialPoints and sfc on LAS and LAScatalog", {
 
   xc <- c(339008, 339009)
   yc <- c(5248001, 5248001)
+  xy <- data.frame(X = xc, Y = yc)
   r  <- 2
 
-  p = sp::SpatialPoints(cbind(xc, yc))
+  p <- sf::st_as_sf(xy, coords = c("X", "Y"))
+  p <- sf::st_geometry(p)
 
-  discs1 <- clip_roi(las, p, radius = r)
-  discs2 <- clip_roi(ctg, p, radius = r)
-  discs3 <- clip_roi(ctg, p, radius = c(r,2))
+  discs1 <- clip_roi(las, sf::as_Spatial(p), radius = r)
+  discs2 <- clip_roi(las, p, radius = r)
+  discs3 <- clip_roi(ctg, p, radius = r)
+  discs4 <- clip_roi(ctg, p, radius = c(r,2))
 
   expect_is(discs1, "list")
   expect_equal(length(discs1), 2L)
   expect_equal(discs1, discs2)
+  expect_equal(discs1, discs3)
+  expect_equal(discs1, discs4)
 })
 
-test_that("clip_roi clips a transect on LAS and LAScatalog", {
+test_that("clip_transect clips a transect on LAS and LAScatalog", {
 
-  p1 = bbox(las)[,1]
-  p2 = bbox(las)[,2]
-  tr1 = clip_transect(las, p1, p2, 2, xz = FALSE)
-  tr2 = clip_transect(ctg, p1, p2, 2, xz = FALSE)
+  p1  <- st_bbox(las)[1:2]
+  p2  <- st_bbox(las)[3:4]
+  tr1 <- clip_transect(las, p1, p2, 2, xz = FALSE)
+  tr2 <- clip_transect(ctg, p1, p2, 2, xz = FALSE)
 
   expect_equal(npoints(tr1), 29L)
   expect_equal(tr1, tr2)
 })
 
-test_that("clip_roi clips reorients the point cloud on LAS and LAScatalog", {
+test_that("clip_transect clips reorients the point-cloud on LAS and LAScatalog", {
 
-  p1 = bbox(las)[,1]
-  p2 = bbox(las)[,2]
-  tr1 = clip_transect(las, p1, p2, 2, xz = TRUE)
-  tr2 = clip_transect(ctg, p1, p2, 2, xz = TRUE)
+  p1  <- st_bbox(las)[1:2]
+  p2  <- st_bbox(las)[3:4]
+  tr1 <- clip_transect(las, p1, p2, 2, xz = TRUE)
+  tr2 <- clip_transect(ctg, p1, p2, 2, xz = TRUE)
 
   expect_equal(npoints(tr1), 29L)
   expect_equal(tr1, tr2)
@@ -127,9 +132,10 @@ test_that("clip_roi throw error with points and no radius", {
 
   xc <- c(684800, 684850)
   yc <- c(5017850, 5017900)
-  r  <- 10
-
-  p = sp::SpatialPoints(cbind(xc, yc))
+  xy <- data.frame(X = xc, Y = yc)
+  r  <- 2
+  p <- sf::st_as_sf(xy, coords = c("X", "Y"))
+  p <- sf::st_geometry(p)
 
   expect_error(clip_roi(las, p), "requires addition of parameter 'radius'")
 })
@@ -138,16 +144,9 @@ test_that("clip_roi throw error with lines", {
 
   l1 = cbind(c(1,2,3),c(3,2,2))
   l2 = cbind(c(1,2,3),c(1,1.5,1))
-  Sl1 = Line(l1)
-  Sl2 = Line(l2)
-  S1 = Lines(list(Sl1), ID="a")
-  S2 = Lines(list(Sl2), ID="b")
-  Sl = SpatialLines(list(S1,S2))
-  sfline = sf::st_as_sf(Sl)
+  Sl = sf::st_geometry(sf::st_linestring(l1))
 
-  expect_error(clip_roi(las, S2), "Geometry type Lines not supported")
-  expect_error(clip_roi(las, Sl), "Geometry type SpatialLines not supported")
-  expect_error(clip_roi(las, sfline), "Incorrect geometry type")
+  expect_error(clip_roi(las, Sl), "Incorrect geometry type")
 })
 
 test_that("clip_roi clips a rectangle from a bounding box both on a LAS and LAScatalog", {
@@ -174,7 +173,8 @@ test_that("clip_roi clips a rectangle from a bounding box both on a LAS and LASc
   expect_equal(rect1, rect2)
 })
 
-test_that("clip_roi returns an empty point cloud if no point found in the query", {
+
+test_that("clip_* returns an empty point cloud if no point found in the query", {
 
   circ1 <- suppressWarnings(clip_circle(las, 68480, 5017850, 10))
   circ2 <- suppressWarnings(clip_circle(ctg, 68480, 5017850, 10))
@@ -185,10 +185,10 @@ test_that("clip_roi returns an empty point cloud if no point found in the query"
 
   expect_true(is.empty(circ1))
   expect_true(is.empty(circ2))
-  expect_equal(dim(circ3), c(0,34))
+  expect_equal(dim(circ3), c(0,35))
 })
 
-test_that("clip_roi supports multiple queries", {
+test_that("clip_* supports multiple queries", {
 
   # Multiple disc
   xc <- c(339008, 339009)
@@ -216,7 +216,7 @@ test_that("clip_roi supports multiple queries", {
   expect_equal(rect1, rect2)
 })
 
-test_that("clip_roi throw error for invalid multiple queries", {
+test_that("clip_* throw error for invalid multiple queries", {
 
   # Multiple disc
   xc <- c(684800, 684850)
@@ -226,7 +226,7 @@ test_that("clip_roi throw error for invalid multiple queries", {
   expect_error(clip_circle(las, xc, yc, r), "xc and r have different lengths")
 })
 
-test_that("clip_roi returns an empty point cloud for empty multiple queries", {
+test_that("clip_* return an empty point-cloud for empty multiple queries", {
 
   # Multiple disc
   xc <- c(339008, 68480)
@@ -258,7 +258,7 @@ test_that("clip_roi returns an empty point cloud for empty multiple queries", {
   expect_equal(rect1, rect2)
 })
 
-test_that("clip_roi throws errors with invalid queries", {
+test_that("clip_* throw errors with invalid queries", {
 
   # Invalid WKT
   wkt <- "POLGON ((684975.7 5«017899, 685007.3 5017873, 684994.3 5017816, 684936.1 5017812, 684918.8 5017845, 684975.7 5017899))"
@@ -294,7 +294,7 @@ test_that("clip_roi throws errors with invalid queries", {
   expect_error(clip_roi(las, geom), "Geometry type A B not supported")
 })
 
-test_that("clip writes file following LAScatalog options", {
+test_that("clip_* write file following LAScatalog options", {
 
   tmp  <- tempdir()
 
@@ -319,16 +319,15 @@ test_that("clip writes file following LAScatalog options", {
 
   xc <- c(339008, 339009)
   yc <- c(5248001, 5248001)
-  X = cbind(xc, yc)
-  D = data.frame(PlotID = paste0("plot", 1:2))
-  P = sp::SpatialPointsDataFrame(X, D)
+  D = data.frame(X = xc, Y = yc, PlotID = paste0("plot", 1:2))
+  P = sf::st_as_sf(D, coords = c("X", "Y"))
 
   opt_output_files(ctg2) <- paste0(tmp, "/{PlotID}")
   ctg3 = clip_roi(ctg2, P, radius = 2)
   expect_equal(normalizePath(ctg3@data$filename), normalizePath(paste0(tmp, "/plot", 1:2, ".las")))
 })
 
-test_that("clip throw an error with invalid template", {
+test_that("clip_* throw an error with invalid template", {
 
   tmp  <- tempdir()
 
@@ -343,7 +342,7 @@ test_that("clip throw an error with invalid template", {
   expect_error(clip_rectangle(ctg2,  339006, 5248000, 339012, 5248002), "undefined in clip functions")
 })
 
-test_that("clip repects spatial index metadata in LAScatalog", {
+test_that("clip_* respect spatial index metadata in LAScatalog", {
   xc <- 339008
   yc <- 5248001
   r  <- 2
