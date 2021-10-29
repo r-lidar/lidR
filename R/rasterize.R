@@ -31,7 +31,8 @@
 #' cell (if it exists) to be chosen instead of the interpolated values.
 #' @param shape logical. By default the interpolation is made only within the convex hull of
 #' the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
-#' interpolations where there is no data. It can also be "concave" or "bbox".
+#' interpolations where there is no data. It can also be "concave" or "bbox". It can also be an `sfc`
+#' to define a polygon where to perform the interpolation.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).
 #' @param Wdegenerated logical. The function always checks and removes degenerated ground points

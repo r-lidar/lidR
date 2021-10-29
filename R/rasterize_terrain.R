@@ -21,7 +21,11 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
   assert_is_a_bool(keep_lowest)
-  shape <- match.arg(shape)
+
+  if (is.character(shape))
+    shape <- match.arg(shape, c("convex", "concave", "bbox"))
+  else if (!is(shape, "sfc_POLYGON") & !is(shape, "sfc_MULTIPOLYGON"))
+    stop("Argument 'shape' must be a string or a sfc", call. = FALSE)
 
   if (!"Classification" %in% names(las)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
   if (any(as.integer(use_class) != use_class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
@@ -41,7 +45,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
   layout <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
   layout <- raster_materialize(layout, values = 0, pkg = "stars")
 
-  if (shape %in% c("convex", "concave"))
+  if (is.character(shape) && shape %in% c("convex", "concave"))
   {
     if (shape == "concave")
       hull <- st_concave_hull(las, concavity = 10, length_threshold = 100)
@@ -51,6 +55,9 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
     hull <- sf::st_buffer(hull, dist = raster_res(layout)[1])
     layout <- layout[hull]
   }
+
+  if (is(shape, "sfc"))
+    layout <- layout[shape]
 
   grid <- raster_as_dataframe(layout, xy = TRUE, na.rm = TRUE)
 

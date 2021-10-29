@@ -39,7 +39,7 @@ As mentionned the backward incompatibilities are minor and should not be visible
   plot(ctg["Max.Z"])
   ```
 
-45 `track_sensor()` is not backward compatible because it is a very specific function used by probably 10 peoples in the world. We choose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`
+5. `track_sensor()` is not backward compatible because it is a very specific function used by probably 10 peoples in the world. We choose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`
 
 ### Replacement function
 
@@ -101,6 +101,8 @@ New functions are mostly convenient features that simplify some workflow without
   ```r
   sub <- las[sfc]
   ```
+  
+13. `rasterize_terrain()` accepts an `sfc` as argument to force interpolation within a defined area.
 
 ### Documentation
 
