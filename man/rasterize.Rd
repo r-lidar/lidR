@@ -8,48 +8,44 @@
 \alias{rasterize_terrain}
 \title{Rasterize a point cloud}
 \usage{
-rasterize_canopy(las, res, algorithm)
+rasterize_canopy(las, res = 1, algorithm = p2r(), ...)
 
-rasterize_density(las, res = 4)
+rasterize_density(las, res = 4, ...)
 
 rasterize_terrain(
   las,
   res = 1,
-  algorithm,
-  ...,
-  keep_lowest = FALSE,
-  use_class = c(2L, 9L),
+  algorithm = tin(),
+  class = c(2L, 9L),
   shape = "convex",
-  Wdegenerated = TRUE
+  ...
 )
 }
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{res}{numeric. The size of a grid cell in point-cloud coordinates units. Can also be
-\code{RasterLayer} or a \code{stars} used as layout.}
+\code{RasterLayer} or a \code{stars} or a \code{SpatRaster} used as layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute a digital surface model
 or a digital terrain model. \code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree}
 for digital surface models and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
 models (see respective documentation and examples).}
 
-\item{...}{Ignored}
+\item{...}{Use \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \code{RasterLayer}
+or \code{stars}. Default is \code{getOption("lidR.raster.default")}. Under the hood lidR uses native pkg code
+and doe not cast to pkg.}
 
-\item{keep_lowest}{logical. This option forces the original lowest ground point of each
-cell (if it exists) to be chosen instead of the interpolated values.}
-
-\item{use_class}{integer vector. By default the terrain is computed by using ground points
+\item{class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
 
 \item{shape}{logical. By default the interpolation is made only within the convex hull of
 the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
 interpolations where there is no data. It can also be "concave" or "bbox". It can also be an \code{sfc}
 to define a polygon where to perform the interpolation.}
-
-\item{Wdegenerated}{logical. The function always checks and removes degenerated ground points
-for computing the DTM to avoid unexpected behaviours, such as infinite elevation. If
-TRUE, a warning is thrown to alert users to the presence of degenerated ground points.}
+}
+\value{
+\code{RasterLayer} or a \code{stars} or a \code{SpatRaster} depending on the settings.
 }
 \description{
 Rasterize a point-cloud in different ways to compute a DTM, a CHM or a density map. Most

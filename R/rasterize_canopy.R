@@ -1,17 +1,20 @@
 #' @export
 #' @rdname rasterize
-rasterize_canopy = function(las, res, algorithm)
+rasterize_canopy = function(las, res = 1, algorithm = p2r(), ...)
 {
   UseMethod("rasterize_canopy", las)
 }
 
 #' @export
-rasterize_canopy.LAS = function(las, res, algorithm)
+rasterize_canopy.LAS = function(las, res = 1, algorithm = p2r(), ...)
 {
   # Defensive programming
   assert_is_algorithm(algorithm)
   assert_is_algorithm_dsm(algorithm)
   assert_las_is_not_empty(las)
+
+  dots <- list(...)
+  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
   # Some algorithm have an extra option 'subscircle' that need to buffer the layout
   # Must be rewritten because it is a hack !
@@ -30,14 +33,14 @@ rasterize_canopy.LAS = function(las, res, algorithm)
   z <- round(z, 3)
 
   layout <- raster_layout(las, res, buffer = subcircle)
-  layout <- raster_materialize(layout)
+  layout <- raster_materialize(layout, pkg = pkg)
   layout <- raster_set_values(layout, z)
   raster_names(layout) <- "Z"
   return(layout)
 }
 
 #' @export
-rasterize_canopy.LAScatalog = function(las, res, algorithm)
+rasterize_canopy.LAScatalog = function(las, res = 1, algorithm = p2r(), ...)
 {
   # Defensive programming
   assert_is_algorithm(algorithm)
@@ -64,6 +67,6 @@ rasterize_canopy.LAScatalog = function(las, res, algorithm)
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
-  output  <- catalog_map(las, rasterize_canopy, res = res, algorithm = algorithm, .options = options)
+  output  <- catalog_map(las, rasterize_canopy, res = res, algorithm = algorithm, ..., .options = options)
   return(output)
 }

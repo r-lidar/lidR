@@ -1,6 +1,6 @@
 #' @export
 #' @rdname rasterize
-rasterize_density = function(las, res = 4)
+rasterize_density = function(las, res = 4, ...)
 {
   UseMethod("rasterize_density", las)
 }
@@ -8,13 +8,16 @@ rasterize_density = function(las, res = 4)
 #' @export
 rasterize_density.LAS = function(las, res = 4)
 {
+  dots <- list(...)
+  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
+
   if (!"pulseID" %in% names(las))
   {
     template <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
     count  <- fasterize(las, template, FALSE, "count")
 
     X <- raster_layout(las, res)
-    X <- raster_materialize(X)
+    X <- raster_materialize(X, pkg = pkg)
     X <- raster_set_values(X, count)
     raster_names(X) <- "density"
   }
@@ -29,7 +32,7 @@ rasterize_density.LAS = function(las, res = 4)
 }
 
 #' @export
-rasterize_density.LAScatalog = function(las, res = 4)
+rasterize_density.LAScatalog = function(las, res = 4, ...)
 {
   # Defensive programming
   if (is_a_number(res))
@@ -56,6 +59,6 @@ rasterize_density.LAScatalog = function(las, res = 4)
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
-  output  <- catalog_map(las, rasterize_density, res = res, .options = options)
+  output  <- catalog_map(las, rasterize_density, res = res, ..., .options = options)
   return(output)
 }

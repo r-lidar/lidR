@@ -49,23 +49,22 @@ as.spatial.LAScatalog = function(x) return(sf::as_Spatial(x@data))
 tree_metrics <- function(las, func = ~list(Z = max(Z)), attribute = "treeID", ...)
 {
   res <- crown_metrics(las, func, geom = "point", attribute, ...)
-  return(sf::as_Spatial(res))
+  if (inherits(res, "Spatial")) res <- sf::as_Spatial(res)
+  res
 }
 
 #' @export
 #' @rdname old_spatial_packages
 grid_canopy = function(las, res, algorithm)
 {
-  res <- rasterize_canopy(las, res, algorithm)
-  return(as_Raster(res))
+  rasterize_canopy(las, res, algorithm, pkg = "raster")
 }
 
 #' @export
 #' @rdname old_spatial_packages
 grid_density = function(las, res = 4)
 {
-  res <- rasterize_density(las, res)
-  return(as_Raster(res))
+  rasterize_density(las, res, pkg = "raster")
 }
 
 #' @export
@@ -76,8 +75,7 @@ grid_terrain = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_
   if (full_raster) shape <- "bbox"
   if (is_concave) shape <- "concave"
 
-  res <- rasterize_terrain(las, res, algorithm, ..., keep_lowest = keep_lowest, shape = shape, use_class = use_class, Wdegenerated = Wdegenerated)
-  return(as_Raster(res))
+  rasterize_terrain(las, res, algorithm, shape = shape, class = use_class, keep_lowest = keep_lowest, Wdegenerated = Wdegenerated, pkg = "raster")
 }
 
 #' @export
@@ -94,9 +92,11 @@ grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL, by_e
 find_trees = function(las, algorithm, uniqueness = 'incremental')
 {
   res <- locate_trees(las, algorithm, uniqueness)
-  res <- sf::st_zm(res)
-  res <- sf::st_zm(res)
-  return(sf::as_Spatial(res))
+  if (inherits(res, "Spatial")) {
+    res <- sf::st_zm(res)
+    res <- sf::as_Spatial(res)
+  }
+  res
 }
 
 #' @export
@@ -105,7 +105,8 @@ delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavit
 {
   type <- match.arg(type)
   res <- crown_metrics(las, func = func, geom = type, concaveman = c(concavity, length_threshold), attribute = attribute, xyz = TRUE)
-  return(sf::as_Spatial(res))
+  if (inherits(res, "Spatial")) res <- sf::as_Spatial(res)
+  res
 }
 
 

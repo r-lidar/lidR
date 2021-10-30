@@ -1,12 +1,12 @@
 #' @export
 #' @rdname rasterize
-rasterize_terrain = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, use_class = c(2L,9L), shape = "convex", Wdegenerated = TRUE)
+rasterize_terrain = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
 {
   UseMethod("rasterize_terrain", las)
 }
 
 #' @export
-rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, use_class = c(2L,9L), shape = "convex", Wdegenerated = TRUE)
+rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
 {
   # NOTE: the complexity of the code comes from the fact that res can be a number, a RasterLayer
   # a stars or a SpatRaster, and the function must return a corresponding raster. This implies
@@ -20,7 +20,10 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
 
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
-  assert_is_a_bool(keep_lowest)
+
+  dots <- list(...)
+  Wdegenerated <- isTRUE(dots$Wdegenerated)
+  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
   if (is.character(shape))
     shape <- match.arg(shape, c("convex", "concave", "bbox"))
@@ -28,14 +31,14 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
     stop("Argument 'shape' must be a string or a sfc", call. = FALSE)
 
   if (!"Classification" %in% names(las)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
-  if (any(as.integer(use_class) != use_class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
-  use_class <- as.integer(use_class)
+  if (any(as.integer(class) != class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
+  class <- as.integer(class)
 
   # Non standard evaluation (R CMD check)
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
   # Select the ground points
-  ground <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
+  ground <- las@data[Classification %in% c(class), .(X,Y,Z)]
   if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
   ground <- check_degenerated_points(ground, Wdegenerated)
 
@@ -74,14 +77,15 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
   # This part of the code is raster agnostic. It returns a raster from the default format
   # registered in lidR or from the format given in 'res'
   layout <- raster_layout(las, res)
-  layout <- raster_materialize(layout)
+  layout <- raster_materialize(layout, pkg = pkg)
   layout <- raster_set_values(layout, Zg, cells = cells)
 
   # Replace the interpolated value by the lowest point (legacy code)
+  keep_lowest <- isTRUE(dots$keep_lowest)
   if (keep_lowest)
   {
     res    <- raster_res(layout)[1]
-    lasg   <- filter_poi(las, Classification %in% c(use_class))
+    lasg   <- filter_poi(las, Classification %in% c(class))
     rmin   <- template_metrics(lasg, ~list(Z = min(Z)), layout)
     Z1     <- raster_values(layout)
     Z2     <- raster_values(rmin)
@@ -94,7 +98,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm, ..., keep_lowest = FAL
 }
 
 #' @export
-rasterize_terrain.LAScatalog = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, use_class = c(2L,9L), shape = "convex", Wdegenerated = TRUE)
+rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
@@ -122,6 +126,6 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm, ..., keep_lowes
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_map(las, rasterize_terrain, res = res, algorithm = algorithm, ..., keep_lowest = keep_lowest, shape = shape, use_class = use_class, Wdegenerated = Wdegenerated, .options = options)
+  output  <- catalog_map(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, class = class, ..., .options = options)
   return(output)
 }
