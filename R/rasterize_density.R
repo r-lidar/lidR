@@ -11,19 +11,20 @@ rasterize_density.LAS = function(las, res = 4, ...)
   dots <- list(...)
   pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
+  X <- raster_layout(las, res)
+  X <- raster_materialize(X, pkg = pkg)
+
   if (!"pulseID" %in% names(las))
   {
     template <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
     count  <- fasterize(las, template, FALSE, "count")
 
-    X <- raster_layout(las, res)
-    X <- raster_materialize(X, pkg = pkg)
     X <- raster_set_values(X, count)
     raster_names(X) <- "density"
   }
   else
   {
-    X <- pixel_metrics(las, ~list(point_density = .N, pulse_density = length(unique(pulseID))), res)
+    X <- pixel_metrics(las, ~list(point_density = .N, pulse_density = length(unique(pulseID))), X)
   }
 
   X <- raster_replace_na(X)
