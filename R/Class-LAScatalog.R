@@ -117,8 +117,6 @@
 #'
 #' @export
 #'
-#' @useDynLib lidR, .registration = TRUE
-#'
 #' @examples
 #' \dontrun{
 #' # Build a catalog
