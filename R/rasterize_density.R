@@ -6,7 +6,7 @@ rasterize_density = function(las, res = 4, ...)
 }
 
 #' @export
-rasterize_density.LAS = function(las, res = 4)
+rasterize_density.LAS = function(las, res = 4, ...)
 {
   dots <- list(...)
   pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg

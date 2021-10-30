@@ -395,8 +395,9 @@ raster_materialize <- function(raster, pkg = getOption("lidR.raster.default"), v
 
   if (pkg == "raster")
   {
+    crs  <- as(st_crs(bbox), "CRS")
     bbox <- raster::extent(bbox)
-    res  <- suppressWarnings(raster::raster(bbox, res = raster$xres, crs = as(st_crs(bbox), "CRS")))
+    res  <- suppressWarnings(raster::raster(bbox, res = raster$xres, crs = crs))
     suppressWarnings(res[] <- values)
     return(res)
   }

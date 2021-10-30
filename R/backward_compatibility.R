@@ -49,7 +49,7 @@ as.spatial.LAScatalog = function(x) return(sf::as_Spatial(x@data))
 tree_metrics <- function(las, func = ~list(Z = max(Z)), attribute = "treeID", ...)
 {
   res <- crown_metrics(las, func, geom = "point", attribute, ...)
-  if (inherits(res, "Spatial")) res <- sf::as_Spatial(res)
+  if (is(res, "sf")) res <- sf::as_Spatial(res)
   res
 }
 
@@ -92,7 +92,7 @@ grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL, by_e
 find_trees = function(las, algorithm, uniqueness = 'incremental')
 {
   res <- locate_trees(las, algorithm, uniqueness)
-  if (inherits(res, "Spatial")) {
+  if (is(res, "sf")) {
     res <- sf::st_zm(res)
     res <- sf::as_Spatial(res)
   }
@@ -105,7 +105,7 @@ delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavit
 {
   type <- match.arg(type)
   res <- crown_metrics(las, func = func, geom = type, concaveman = c(concavity, length_threshold), attribute = attribute, xyz = TRUE)
-  if (inherits(res, "Spatial")) res <- sf::as_Spatial(res)
+  if (is(res, "sf")) res <- sf::as_Spatial(res)
   res
 }
 

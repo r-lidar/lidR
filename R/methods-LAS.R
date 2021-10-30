@@ -327,7 +327,7 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 setMethod("[", c("LAS", "numeric"),  function(x, i)
 {
   data <- x@data[i]
-  return(LAS(data, x@header, x@crs, FALSE, x@index))
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
 })
 
 #' @export
@@ -335,7 +335,7 @@ setMethod("[", c("LAS", "numeric"),  function(x, i)
 setMethod("[", c("LAS", "logical"),  function(x, i)
 {
   data <- x@data[i]
-  return(LAS(data, x@header, x@crs, FALSE, x@index))
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
 })
 
 #' @export
