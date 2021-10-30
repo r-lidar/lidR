@@ -24,7 +24,7 @@ st_bbox.LAS = function(obj, ...)
   xr <- range(obj$X)
   yr <- range(obj$Y)
   bbox <- st_bbox(c(xmin = xr[1], xmax = xr[2], ymin = yr[1], ymax = yr[2]))
-  sf::st_crs(bbox) <- obj@crs
+  sf::st_crs(bbox) <- st_crs(obj)
   return(bbox)
 }
 

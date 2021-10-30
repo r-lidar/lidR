@@ -41,6 +41,11 @@ As mentionned the backward incompatibilities are minor and should not be visible
 
 5. `track_sensor()` is not backward compatible because it is a very specific function used by probably 10 peoples in the world. We choose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`
 
+6. Serialized `LAS` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS` object is now different because a slot `@crs` replaces the slot `@proj4string`. You may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so in practice it should be backward compatible transparently. In the worst case it is possible to repair a `LAS` object v3 with:
+  ```r
+  las <- LAS(las)
+  ```
+
 ### Replacement function
 
 Former functions that return `Spatial*` objects from `sp` should no longer be used. It is time for everybody to embrace `sf`. These functions are still in `lidR` for backward compatibility though. They won't be removed expect if package `sp` is removed from CRAN. It might happen on Jan 1st 2024, it might happen later. We do no know. New functions return `sf` or `sfc` objects

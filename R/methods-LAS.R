@@ -15,6 +15,25 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
 {
   .N <- X <- Y <- Z <- NULL
 
+  # This is a repair feature for lidR v3 to lidR v4
+  if (is(data, "LAS"))
+  {
+    if (methods::.hasSlot(data, "proj4string"))
+    {
+      pts  <- data@data
+      phb  <- data@header@PHB
+      vlr  <- data@header@VLR
+      crs  <- data@proj4string
+      evlr <- NULL
+      if (methods::.hasSlot(data@header, "EVLR"))
+        evlr <- data@header@EVLR
+
+      return(suppressWarnings(LAS(pts, c(phb, vlr, evlr), proj4string = crs, check = FALSE)))
+    }
+
+    return(data)
+  }
+
   # For backward compatibility
   dots <- list(...)
   if (!is.null(dots$proj4string))
@@ -324,7 +343,7 @@ setMethod("[", c("LAS", "logical"),  function(x, i)
 setMethod("[", c("LAS", "logical"),  function(x, i)
 {
   data <- x@data[i]
-  return(LAS(data, x@header, x@crs, FALSE, x@index))
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
 })
 
 #' @export

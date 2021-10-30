@@ -54,7 +54,13 @@ NULL
 
 #' @export
 #' @rdname st_crs
-st_crs.LAS = function(x, ...) { return(x@crs) }
+st_crs.LAS = function(x, ...) {
+  # Workaround to minimize backward incompatibilities
+  if (methods::.hasSlot(x, "proj4string"))
+     return(sf::st_crs(x@proj4string))
+
+  return(x@crs)
+}
 
 #' @export
 #' @rdname st_crs
