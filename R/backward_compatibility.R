@@ -109,5 +109,20 @@ delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavit
   res
 }
 
+is_las_v3 <- function(x) { !methods::.hasSlot(x, "crs") }
+las_v3_repair <- function(x) { if (is_las_v3(x)) return(LAS(x)) else return(x) }
 
+is_lascatalog_v3 <- function(x) { !methods::.hasSlot(x, "crs") }
+lascatalog_v3_repair <- function(x)
+{
+  if (is_lascatalog_v3(x))
+  {
+    y <- new("LAScatalog")
+    y@data <- sf::st_as_sf(as.spatial(x))
+    opt_copy(y) <- x
+    return(y)
+  }
+  else
+    return(x)
+}
 

@@ -56,15 +56,22 @@ NULL
 #' @rdname st_crs
 st_crs.LAS = function(x, ...) {
   # Workaround to minimize backward incompatibilities
-  if (methods::.hasSlot(x, "proj4string"))
-     return(sf::st_crs(x@proj4string))
+  if (is_las_v3(x))
+    return(sf::st_crs(x@proj4string))
 
   return(x@crs)
 }
 
 #' @export
 #' @rdname st_crs
-st_crs.LAScatalog = function(x, ...) { return(sf::st_crs(x@data)) }
+st_crs.LAScatalog = function(x, ...)
+{
+  # Workaround to minimize backward incompatibilities
+  if (is_lascatalog_v3(x))
+    return(sf::st_crs(x@proj4string))
+
+  return(sf::st_crs(x@data))
+}
 
 #' @export
 #' @rdname st_crs
@@ -99,7 +106,9 @@ NULL
   # - a number > EPSG code
   # In all case we need to get a WKT or an EPSG code to update the
   # header depending on the LAS format (1.4 or above)
-  # In addition we need this to work both with old and new proj and gdal
+
+  # Workaround to repair LAS v3 and minimize backward incompatibilities with v4
+  x <- las_v3_repair(x)
 
   all   <- all_crs_formats(value)
   CRS   <- all[["CRS"]]
@@ -158,6 +167,9 @@ NULL
 #' @rdname st_crs
 `st_crs<-.LAScatalog` = function(x, value)
 {
+  # Workaround to repair LAScatalog v3 and minimize backward incompatibilities with v4
+  x <- lascatalog_v3_repair(x)
+
   x@data <- sf::st_set_crs(x@data, sf::NA_crs_)
   x@data <- sf::st_set_crs(x@data, sf::st_crs(value))
   return(x)
