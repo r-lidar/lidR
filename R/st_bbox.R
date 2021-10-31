@@ -45,6 +45,8 @@ st_bbox.LASheader = function(obj, ...)
 #' @rdname st_bbox
 st_bbox.LAScatalog = function(obj, ...)
 {
+  # Workaround to repair LAScatalog v3 and minimize backward incompatibilities with v4
+  obj <- lascatalog_v3_repair(obj)
   return(sf::st_bbox(obj@data))
 }
 

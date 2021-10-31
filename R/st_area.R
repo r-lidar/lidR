@@ -41,6 +41,8 @@ st_area.LASheader = function(x, ...)
 #' @rdname st_area
 st_area.LAScatalog = function(x, ...)
 {
+  x <- lascatalog_v3_repair(x)
+
   if (nrow(x@data) == 0L) { return(0) }
   areas <- sf::st_area(x@data)
   return(sum(areas))

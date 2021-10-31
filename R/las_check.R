@@ -161,20 +161,28 @@ las_check.LAS = function(las, print = TRUE, ...)
 {
   assert_is_a_bool(print)
 
-  data <- las@data
-  head <- as.list(las@header)
-  g    <- glue::glue
-
   warnings <- character(0)
   errors <- character(0)
   infos <- character(0)
+  g <- glue::glue
 
-  xscale <- las@header@PHB[["X scale factor"]]
-  xoffset <- las@header@PHB[["X offset"]]
-  yscale <- las@header@PHB[["Y scale factor"]]
-  yoffset <- las@header@PHB[["Y offset"]]
-  zscale <- las@header@PHB[["Z scale factor"]]
-  zoffset <- las@header@PHB[["Z offset"]]
+  if (is_las_v3(las))
+  {
+    .h1("Checking format")
+    .h2("Checking lidR format version is v4...")
+    .fail("This LAS is in old format from lidR v3")
+    las <- las_v3_repair(las)
+  }
+
+  data <- las@data
+  head <- as.list(las@header)
+
+  xscale <- las[["X scale factor"]]
+  xoffset <- las[["X offset"]]
+  yscale <- las[["Y scale factor"]]
+  yoffset <- las[["Y offset"]]
+  zscale <- las[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
 
   # ==== data =====
 
@@ -485,9 +493,6 @@ las_check.LAS = function(las, print = TRUE, ...)
   lasproj <- st_crs(las)
   failure <- FALSE
 
-  if (is_las_v3(las))
-  { .fail("Found a slot @proj4string instead of a slot @crs. Please repair your LAS object with las <- LAS(las)") ; failure = TRUE }
-
   if (use_epsg(las) && code != 0)
   {
     codeproj <- epsg2crs(code, fail = FALSE)
@@ -677,15 +682,23 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
       return(out)
   }
 
-
-  data <- las@data
-  g    <- glue::glue
-
   warnings <- character(0)
   errors <- character(0)
   infos <- character(0)
+  g <- glue::glue
+
+  if (is_lascatalog_v3(las))
+  {
+    .h1("Checking format")
+    .h2("Checking lidR format version is v4...")
+    .fail("This LAScatalog is in old format from lidR v3")
+    las <- lascatalog_v3_repair(las)
+  }
+
+  data <- las@data
 
   # ==== data =====
+
 
   .h1("Checking headers consistency")
 

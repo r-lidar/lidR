@@ -42,7 +42,22 @@ as.spatial.LAS = function(x) { sp::SpatialPointsDataFrame(x@data[, 1:2], x@data[
 
 #' @export
 #' @rdname old_spatial_packages
-as.spatial.LAScatalog = function(x) return(sf::as_Spatial(x@data))
+as.spatial.LAScatalog = function(x)
+{
+  # Workaround to repair LAScatalog v3 and minimize backward incompatibilities with v4
+  if (is_lascatalog_v3(x))
+  {
+    res <- new("SpatialPolygonsDataFrame")
+    res@bbox <- x@bbox
+    res@proj4string <- x@proj4string
+    res@plotOrder <- x@plotOrder
+    res@data <- x@data
+    res@polygons <- x@polygons
+    return(res)
+  }
+
+  return(sf::as_Spatial(x@data))
+}
 
 #' @export
 #' @rdname old_spatial_packages
