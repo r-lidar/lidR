@@ -39,6 +39,8 @@ catalog_boundaries = function(ctg, concavity = 5, length_threshold = 5)
     return(p)
   }
 
+  if (is_lascatalog_v3(ctg)) ctg <- lascatalog_v3_repair(ctg)
+
   opt_chunk_buffer(ctg) <- 0
   opt_chunk_size(ctg) <- 0
   opt_select(ctg) <- "xyz"

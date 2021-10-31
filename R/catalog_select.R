@@ -28,6 +28,8 @@ catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unproc
   assert_is_a_bool(mapview)
   method <- match.arg(method)
 
+  if (is_lascatalog_v3(ctg)) catalog <- lascatalog_v3_repair(ctg)
+
   Min.X <- Min.Y <- Max.X <- Max.Y <- NULL
 
   if (mapview & (!requireNamespace("mapview", quietly = TRUE) | !requireNamespace("mapedit", quietly = TRUE)))

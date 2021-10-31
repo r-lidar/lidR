@@ -19,6 +19,8 @@ catalog_intersect = function(ctg, y, ..., subset = c("subset", "flag_unprocessed
   assert_is_all_of(ctg, "LAScatalog")
   subset <- match.arg(subset)
 
+  if (is_lascatalog_v3(ctg)) ctg <- lascatalog_v3_repair(ctg)
+
   i <- NULL
 
   if (is(y, "Extent") | inherits(y, "Raster"))
