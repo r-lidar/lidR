@@ -44,22 +44,6 @@ tin = function(..., extrapolate = knnidw(3,1,50))
       where2 <- data.frame(X = where$X[isna],  Y = where$Y[isna])
       zknn <- extrapolate(las, where2)
       z[isna] <- zknn
-      isna <- is.na(z)
-      nnas <- sum(isna)
-    }
-
-    # if it remains NAs it means that we have points very far from ground points
-    # and they cannot be interpolated. But we will interpolate them anyway. Previously
-    # the function stopped. It now forces interpolation with NN.
-    if (nnas > 0)
-    {
-      warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbor was used but interpolation is weak for those points"), call. = FALSE)
-
-      lidR.context <- "spatial_interpolation"
-      extrapolate <- knnidw(1, rmax = .Machine$double.xmax)
-      where2 <- data.frame(X = where$X[isna],  Y = where$Y[isna])
-      znn <- extrapolate(las, where2)
-      z[isna] <- znn
     }
 
     return(z)

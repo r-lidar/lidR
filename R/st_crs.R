@@ -99,6 +99,12 @@ NULL
 #' @rdname st_crs
 `st_crs<-.LAS` = function(x, value)
 {
+  if (is(value, "crs") && value == sf::NA_crs_)
+  {
+    x@crs <- sf::NA_crs_
+    return(x)
+  }
+
   # The input is either:
   # - a string > proj4 or WKT
   # - a CRS > from sp

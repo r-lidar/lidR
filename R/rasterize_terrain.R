@@ -21,10 +21,6 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
 
-  dots <- list(...)
-  Wdegenerated <- isTRUE(dots$Wdegenerated)
-  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
-
   if (is.character(shape))
     shape <- match.arg(shape, c("convex", "concave", "bbox"))
   else if (!is(shape, "sfc_POLYGON") & !is(shape, "sfc_MULTIPOLYGON"))
@@ -33,6 +29,12 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   if (!"Classification" %in% names(las)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
   if (any(as.integer(class) != class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
   class <- as.integer(class)
+
+  # Elipsis parsing
+  dots <- list(...)
+  Wdegenerated <- isTRUE(dots$Wdegenerated)
+  keep_lowest <- isTRUE(dots$keep_lowest)
+  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
   # Non standard evaluation (R CMD check)
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
@@ -70,18 +72,35 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   ground <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
   Zg <- algorithm(ground, grid)
   Zg[is.nan(Zg)] <- NA_real_
+
+  # If it remains NAs it means that we have points very far from ground points
+  # and they cannot be interpolated. But we will interpolate them anyway. Previously
+  # the function stopped. It now forces interpolation with NN.
+  isna <- is.na(Zg)
+  nnas <- sum(isna)
+  if (nnas > 0)
+  {
+    warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbor was used but interpolation is weak for those points"), call. = FALSE)
+
+    nn <- knnidw(1, rmax = .Machine$double.xmax)
+    grid <- data.frame(X = grid$X[isna],  Y = grid$Y[isna])
+    znn <- nn(ground, grid)
+    z[isna] <- znn
+  }
+
+  # Quantize the elevation for not returning absurdly accurate elevation
   fast_quantization(Zg, las[["Z scale factor"]], las[["Z offset"]])
-  cells <- get_group(layout, grid)
 
   # Assignment of the values to a raster. It might be a raster from raster/stars/terra
   # This part of the code is raster agnostic. It returns a raster from the default format
-  # registered in lidR or from the format given in 'res'
+  # registered in lidR or from pkg argument or the format given in 'res'
+  cells  <- get_group(layout, grid)
   layout <- raster_layout(las, res)
   layout <- raster_materialize(layout, pkg = pkg)
   layout <- raster_set_values(layout, Zg, cells = cells)
 
-  # Replace the interpolated value by the lowest point (legacy code)
-  keep_lowest <- isTRUE(dots$keep_lowest)
+  # Replace the interpolated value by the lowest point (legacy code) for option
+  # keep_lowest that has been removed
   if (keep_lowest)
   {
     res    <- raster_res(layout)[1]
