@@ -482,8 +482,11 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   code    <- if (use_epsg(las)) epsg(las) else 0
   swkt    <- wkt(las)
-  lasproj <- las@crs
+  lasproj <- st_crs(las)
   failure <- FALSE
+
+  if (is_las_v3(las))
+  { .fail("Found a slot @proj4string instead of a slot @crs. Please repair your LAS object with las <- LAS(las)") ; failure = TRUE }
 
   if (use_epsg(las) && code != 0)
   {

@@ -55,7 +55,7 @@ st_bbox.LAScluster = function(obj, ...)
   bb <- as.numeric(obj@bbox)
   names(bb) <- c("xmin", "ymin", "xmax", "ymax")
   bb <- sf::st_bbox(bb)
-  sf::st_crs(bb) <- obj@crs
+  sf::st_crs(bb) <- st_crs(obj)
   return(bb)
 }
 

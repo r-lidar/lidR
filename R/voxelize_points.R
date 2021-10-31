@@ -53,7 +53,7 @@ voxelize_points.LAS = function(las, res)
     voxels <- unique(by)
   }
 
-  output <- LAS(voxels, header = las@header, crs = las@crs, check = FALSE, index = las@index)
+  output <- LAS(voxels, header = las@header, crs = st_crs(las), check = FALSE, index = las@index)
   return(output)
 }
 

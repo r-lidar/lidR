@@ -117,7 +117,7 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
   buffer <- X <- Y <- NULL
 
   las <- readLAS(files@files, files@select, files@filter)
-  las@crs <- files@crs
+  st_crs(las) <- st_crs(files)
   las@index <- files@index
 
   las@data[["buffer"]] <- rep(LIDRNOBUFFER, npoints(las))

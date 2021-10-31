@@ -63,7 +63,7 @@ rbind.LAS <- function(...)
     quantize(data[["Z"]], zscales[1], zoffsets[1])
   }
 
-  return(LAS(data, dots[[1]]@header, dots[[1]]@crs, index = dots[[1]]@index))
+  return(LAS(data, dots[[1]]@header, st_crs(dots[[1]]), index = dots[[1]]@index))
 }
 
 #' @name rbind

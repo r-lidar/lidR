@@ -38,7 +38,7 @@ as.spatial = function(x) UseMethod("as.spatial", x)
 
 #' @export
 #' @rdname old_spatial_packages
-as.spatial.LAS = function(x) { sp::SpatialPointsDataFrame(x@data[, 1:2], x@data[, 3:ncol(x@data)], proj4string = as(x@crs, "CRS")) }
+as.spatial.LAS = function(x) { sp::SpatialPointsDataFrame(x@data[, 1:2], x@data[, 3:ncol(x@data)], proj4string = as(st_crs(x), "CRS")) }
 
 #' @export
 #' @rdname old_spatial_packages

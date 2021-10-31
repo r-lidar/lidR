@@ -47,7 +47,7 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 
     # wbuffer = !"buffer" %in% names(las)
     lidR.context <- "normalize_height"
-    ground  <- LAS(ground, las@header, crs = las@crs, check = FALSE, index = las@index)
+    ground  <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
     Zground <- algorithm(ground, las@data)
     isna    <- is.na(Zground)
     nnas    <- sum(isna)

@@ -67,7 +67,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   # Interpolate the terrain providing what to interpolate (ground) and where
   # to interpolate (grid)
   lidR.context <- "rasterize_terrain"
-  ground <- LAS(ground, las@header, crs = las@crs, check = FALSE, index = las@index)
+  ground <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
   Zg <- algorithm(ground, grid)
   Zg[is.nan(Zg)] <- NA_real_
   fast_quantization(Zg, las[["Z scale factor"]], las[["Z offset"]])
