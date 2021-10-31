@@ -345,7 +345,6 @@ catalog_sapply <- function(ctg, FUN, ..., .options = NULL)
   return(catalog_apply(ctg, FUN, ..., .options = .options))
 }
 
-
 #' @export
 #' @rdname deprecated
 filter_surfacepoints = function(las, res)
@@ -380,16 +379,14 @@ filter_surfacepoints.LAScatalog = function(las, res)
   #return(invisible())
 
   # warning v3.2.0
-  msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
-  warning(msg, call. = FALSE)
-  return(invisible())
+  #msg = paste(as.character(sys.call(sys.parent()))[1L], "is deprecated. Use", name, "instead.")
+  #warning(msg, call. = FALSE)
+  #return(invisible())
 
   # error v3.3.0
   msg = paste(as.character(sys.call(sys.parent()))[1L], "is defunct. Use", name, "instead.")
   stop(msg, call. = FALSE)
   return(invisible())
 }
-
-
 
 # nocov end
