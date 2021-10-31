@@ -1,81 +1,103 @@
 #' @export
 #' @rdname normalize
-normalize_height = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_height = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
   UseMethod("normalize_height", las)
 }
 
 #' @export
-normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
-  assert_is_a_bool(na.rm)
-  assert_is_a_bool(add_lasattribute)
-  assert_is_a_bool(Wdegenerated)
+  # Non standard evaluation (R CMD check)
+  . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-  if (is(algorithm, "stars_proxy"))
-    stop("stars_proxy not supported yet")
+  # Ellipsis parsing
+  dots <- list(...)
+  Wdegenerated <- isTRUE(dots$Wdegenerated)
+  add_lasattribute <- isTRUE(dots$add_lasattribute)
 
+  # If algorithm is raster we make a basic substraction
   if (is_raster(algorithm))
   {
-    Zground <- raster_value_from_xy(algorithm, las$X, las$Y)
-    isna    <- is.na(Zground)
-    nnas    <- sum(isna)
+    dtm <- algorithm
 
-    if (nnas > 0 && na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
+    Zg <- raster_value_from_xy(dtm, las$X, las$Y)
+    isna <- is.na(Zg)
+    nnas <- n_na_not_in_buffer(las, isna)
+
+    # If it remains NAs (not from the buffer) it means that we have points that are not in the DTM
+    # (the DTM does not cover the point cloud entirely). We will find a value anyway.
+    # Previously the function stopped. It now forces interpolation with NN.
+    if (nnas > 0)
+    {
+      nn <- knnidw(1, rmax = .Machine$double.xmax)
+      znn <- nn(raster_as_las(dtm), las@data[isna, .(X,Y,Z)])
+      Zg[isna] <- znn
+      warning(glue::glue("{nnas} points do not belong in the raster. Nearest neighbor was used to assign a value."), call. = FALSE)
+    }
   }
+  # If algorithm is spatial interpolation function
   else if (is.function(algorithm))
   {
     assert_is_algorithm(algorithm)
     assert_is_algorithm_spi(algorithm)
 
     if (any(as.integer(use_class) != use_class))
-      stop("'add_class' is not a vector of integers'", call. = FALSE)
+      stop("'use_class' is not a vector of integers'", call. = FALSE)
 
     use_class <- as.integer(use_class)
 
     if (!"Classification" %in% names(las))
-      stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
+      stop("No attribute 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
-    # Non standard evaluation (R CMD check)
-    . <- Z <- Zref <- X <- Y <- Classification <- NULL
+    # Select the ground points. If dtm is provided, then the ground point are from the DTM
+    if (!is.null(dtm))
+    {
+      dtm <- raster_crop(dtm, st_bbox(las))
+      ground <- raster_as_las(dtm)
+    }
+    else
+    {
+      ground  <- las@data[Classification %in% use_class, .(X,Y,Z)]
+      if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
+      ground  <- check_degenerated_points(ground, Wdegenerated)
+    }
 
-    # Select the ground points
-    ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
-    if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
-    ground  <- check_degenerated_points(ground, Wdegenerated)
-
-    # wbuffer = !"buffer" %in% names(las)
+    # Interpolate the terrain providing what to interpolate (ground) and where
+    # to interpolate (the point clouf)
     lidR.context <- "normalize_height"
-    ground  <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
-    Zground <- algorithm(ground, las@data)
-    isna    <- is.na(Zground)
-    nnas    <- sum(isna)
+    ground <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
+    Zg <- algorithm(ground, las@data)
+    Zg[is.nan(Zg)] <- NA_real_
 
-    if (nnas > 0 & na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
+    # If it remains NAs (not in buffer) it means that we have points very far from ground points
+    # and they cannot be interpolated. But we will interpolate them anyway. Previously
+    # the function stopped. It now forces interpolation with NN.
+    isna <- is.na(Zg)
+    nnas <- n_na_not_in_buffer(las, isna)
+    if (nnas > 0)
+    {
+      nn <- knnidw(1, rmax = .Machine$double.xmax)
+      znn <- nn(ground, las@data[isna, .(X,Y,Z)])
+      Zg[isna] <- znn
+      warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbor was used but interpolation is weak for those points"), call. = FALSE)
+    }
   }
   else
   {
     stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'raster' or 'function'"), call. = FALSE)
   }
 
-  zoffset <- las@header@PHB[["Z offset"]]
-  zscale <- las@header@PHB[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
+  zscale <- las[["Z scale factor"]]
 
   if (!"Zref" %in% names(las))
-    las@data[["Zref"]] <- las@data[["Z"]]
+    las@data[["Zref"]] <- las[["Z"]]
 
-  las@data[["Z"]] <- las@data[["Z"]] - Zground
+  las@data[["Z"]] <- las[["Z"]] - Zg
 
   if (add_lasattribute && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
     las <- add_lasattribute_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
-
-  if (nnas > 0 && na.rm == TRUE)
-  {
-    las <- las[!isna]
-    message(glue::glue("{nnas} points were not normalizable and removed."))
-  }
 
   fast_quantization(las@data[["Z"]], zscale, zoffset)
   las <- las_update(las)
@@ -84,12 +106,12 @@ normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,
 }
 
 #' @export
-normalize_height.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_height.LAScatalog = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
   opt_select(las) <- "*"
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
-  output  <- catalog_map(las, normalize_height, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_lasattribute = add_lasattribute, Wdegenerated = Wdegenerated, .options = options)
+  output  <- catalog_map(las, normalize_height, algorithm = algorithm, use_class = use_class, dtm = dtm, ..., .options = options)
   return(output)
 }
 
@@ -141,4 +163,16 @@ check_degenerated_points = function(points, Wdegenerated = TRUE)
     points = points[, .(Z = min(Z)), by = .(X,Y)]
 
   return(points)
+}
+
+n_na_not_in_buffer <- function(las, isna)
+{
+  nnas <- sum(isna)
+  if (nnas == 0) return(0)
+
+  if (!"buffer" %in% names(las))
+    return(nnas)
+
+  buffer_na <- las$buffer[isna]
+  return(sum(buffer_na == LIDRNOBUFFER))
 }

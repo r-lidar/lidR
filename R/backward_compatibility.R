@@ -90,7 +90,7 @@ grid_terrain = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_
   if (full_raster) shape <- "bbox"
   if (is_concave) shape <- "concave"
 
-  rasterize_terrain(las, res, algorithm, shape = shape, class = use_class, keep_lowest = keep_lowest, Wdegenerated = Wdegenerated, pkg = "raster")
+  rasterize_terrain(las, res, algorithm, shape = shape, use_class = use_class, keep_lowest = keep_lowest, Wdegenerated = Wdegenerated, pkg = "raster")
 }
 
 #' @export

@@ -16,7 +16,7 @@ rasterize_terrain(
   las,
   res = 1,
   algorithm = tin(),
-  class = c(2L, 9L),
+  use_class = c(2L, 9L),
   shape = "convex",
   ...
 )
@@ -36,7 +36,7 @@ models (see respective documentation and examples).}
 or \code{stars}. Default is \code{getOption("lidR.raster.default")}. Under the hood lidR uses native pkg code
 and doe not cast to pkg.}
 
-\item{class}{integer vector. By default the terrain is computed by using ground points
+\item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
 
 \item{shape}{logical. By default the interpolation is made only within the convex hull of

@@ -9,15 +9,7 @@
 \alias{normalize_intensity}
 \title{Normalize point cloud}
 \usage{
-normalize_height(
-  las,
-  algorithm,
-  na.rm = FALSE,
-  use_class = c(2L, 9L),
-  ...,
-  add_lasattribute = FALSE,
-  Wdegenerated = TRUE
-)
+normalize_height(las, algorithm, use_class = c(2L, 9L), dtm = NULL, ...)
 
 unnormalize_height(las)
 
@@ -28,30 +20,27 @@ normalize_intensity(las, algorithm)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{an algorithm for spatial interpolation. \code{lidR} has \link{tin},
+\item{algorithm}{(1) An algorithm for spatial interpolation. \code{lidR} has \link{tin},
 \link{kriging}, \link{knnidw} or a raster representing a digital terrain
-model. An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.}
-
-\item{na.rm}{logical. When using a raster as DTM, by default the function fails if a point
-fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
-elevation of NA are filtered.}
+model. (2) An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.}
 
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.}
 
+\item{dtm}{raster. If \code{dtm} is provided, then the DTM is used in place of ground points. This is different
+than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} the dtm is subtracted naively. \code{algorithm = tin()}
+and \code{dtm = raster} the ground points of the point-cloud are not used. Instead the DTM is the ground points
+and is triangulated.}
+
 \item{...}{ignored}
-
-\item{add_lasattribute}{logical. By default the above see level elevation is retained in a new attribute.
-However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
-extrabytes attribute. See also \link{add_lasattribute}.}
-
-\item{Wdegenerated}{logical. The function always check and remove degenerated ground points
-for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
-TRUE a warning in thrown to alert about the presence of degenerated ground points.}
 
 \item{e1}{a LAS object}
 
 \item{e2}{A raster representing a digital terrain model in format from `raster`, `stars` or `terra`..}
+
+\item{add_lasattribute}{logical. By default the above see level elevation is retained in a new attribute.
+However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
+extrabytes attribute. See also \link{add_lasattribute}.}
 }
 \description{
 Normalize elevation or intensity values using multiple methods.
@@ -59,7 +48,7 @@ Normalize elevation or intensity values using multiple methods.
 \details{
 \describe{
 \item{normalize_height}{Subtract digital terrain model (DTM) from LiDAR point cloud to create a
-dataset normalized with the ground at 0. The DTM can be a raster but it can also be computed
+dataset normalized with the ground at 0. The DTM can be a raster, ibut it can also be computed
 on-the-fly. In this case the algorithm does not use rasterized data and each point is interpolated.
 There is no inaccuracy due to the discretization of the terrain and the resolution of the terrain
 is virtually infinite. A new attribute 'Zref' records the former elevation values, which enables
@@ -68,59 +57,4 @@ the use of \link{unnormalize_height} to restore original point elevations.}
 records the normalized intensity. An extra attribute named 'RawIntensity' records the original
 intensities.}
 }
-}
-\examples{
-LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile)
-
-# ====================
-# Normalize elevation
-# ====================
-
-# First option: use a raster as DTM
-# --------------------------------------
-
-dtm <- rasterize_terrain(las, 1, knnidw(k = 6L, p = 2))
-nlas <- normalize_height(las, dtm)
-
-# restore original elevations
-las <- unnormalize_height(nlas)
-
-# operator - can be used. This is equivalent to the previous
-nlas <- las - dtm
-
-# restore original elevations
-las <- unnormalize_height(las)
-
-# Second option: interpolate each point (no discretization)
-# ---------------------------------------------------------
-
-nlas <- normalize_height(las, tin())
-
-# operator - can be used. This is equivalent to the previous
-las <- unnormalize_height(nlas)
-nlas <- las - tin()
-
-\dontrun{
-# All the following syntaxes are correct
-las <- normalize_height(las, knnidw())
-las <- normalize_height(las, knnidw(k = 8, p = 2))
-las <- las - knnidw()
-las <- las - knnidw(k = 8)
-las <- normalize_height(las, kriging())
-las <- las - kriging(k = 8)
-}
-
-# ====================
-# Normalize intensity
-# ====================
-
-# pmin = 15 because it is an extremely small file
-# strongly decimated to reduce its size. There are
-# actually few multiple returns
-sensor <- track_sensor(las, Roussel2020(pmin = 15))
-
-# Here the effect is virtually null because the size of
-# the sample is too small to notice any effect of range
-las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 }

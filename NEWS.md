@@ -105,6 +105,8 @@ New functions are mostly convenient features that simplify some workflow without
   
 13. `rasterize_terrain()` accepts an `sfc` as argument to force interpolation within a defined area.
 
+14. `normalize_height()` now always interpolates every points. It is not longer possible to get an error that some points cannot be interpolated. The problem of interpolating the DTM where there is no data is still present but we opted for a nearest neighbour approach with a warning instead of a failure. This prevent the method from failing after hours of computation for special cases somewhere in the file collection. This also means we removed the `na.rm` option which is no longer relevant.
+
 ### Documentation
 
 - Man pages of `classify_*`, `rasterize_*`, `*_metrics`, `segment_*` and `normalize_*` were grouped.

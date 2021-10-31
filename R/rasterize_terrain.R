@@ -1,12 +1,12 @@
 #' @export
 #' @rdname rasterize
-rasterize_terrain = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
+rasterize_terrain = function(las, res = 1, algorithm = tin(), use_class = c(2L,9L), shape = "convex", ...)
 {
   UseMethod("rasterize_terrain", las)
 }
 
 #' @export
-rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
+rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(2L,9L), shape = "convex", ...)
 {
   # NOTE: the complexity of the code comes from the fact that res can be a number, a RasterLayer
   # a stars or a SpatRaster, and the function must return a corresponding raster. This implies
@@ -27,10 +27,10 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
     stop("Argument 'shape' must be a string or a sfc", call. = FALSE)
 
   if (!"Classification" %in% names(las)) stop("LAS object does not contain 'Classification' attribute", call. = FALSE)
-  if (any(as.integer(class) != class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
-  class <- as.integer(class)
+  if (any(as.integer(use_class) != use_class)) stop("'use_class' is not a vector of integers'", call. = FALSE)
+  use_class <- as.integer(use_class)
 
-  # Elipsis parsing
+  # Ellipsis parsing
   dots <- list(...)
   Wdegenerated <- isTRUE(dots$Wdegenerated)
   keep_lowest <- isTRUE(dots$keep_lowest)
@@ -40,7 +40,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
   # Select the ground points
-  ground <- las@data[Classification %in% c(class), .(X,Y,Z)]
+  ground <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
   if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
   ground <- check_degenerated_points(ground, Wdegenerated)
 
@@ -80,12 +80,11 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   nnas <- sum(isna)
   if (nnas > 0)
   {
-    warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbor was used but interpolation is weak for those points"), call. = FALSE)
-
     nn <- knnidw(1, rmax = .Machine$double.xmax)
-    grid <- data.frame(X = grid$X[isna],  Y = grid$Y[isna])
-    znn <- nn(ground, grid)
-    z[isna] <- znn
+    sub_grid <- data.frame(X = grid$X[isna],  Y = grid$Y[isna])
+    znn <- nn(ground, sub_grid)
+    Zg[isna] <- znn
+    warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbour was used but interpolation is weak for those points"), call. = FALSE)
   }
 
   # Quantize the elevation for not returning absurdly accurate elevation
@@ -104,7 +103,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
   if (keep_lowest)
   {
     res    <- raster_res(layout)[1]
-    lasg   <- filter_poi(las, Classification %in% c(class))
+    lasg   <- filter_poi(las, Classification %in% c(use_class))
     rmin   <- template_metrics(lasg, ~list(Z = min(Z)), layout)
     Z1     <- raster_values(layout)
     Z2     <- raster_values(rmin)
@@ -117,7 +116,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), class = c(2L,9
 }
 
 #' @export
-rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), class = c(2L,9L), shape = "convex", ...)
+rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_class = c(2L,9L), shape = "convex", ...)
 {
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
@@ -145,6 +144,6 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), class =
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_map(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, class = class, ..., .options = options)
+  output  <- catalog_map(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, use_class = use_class, ..., .options = options)
   return(output)
 }

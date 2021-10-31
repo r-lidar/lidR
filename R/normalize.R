@@ -4,7 +4,7 @@
 #'
 #' \describe{
 #' \item{normalize_height}{Subtract digital terrain model (DTM) from LiDAR point cloud to create a
-#' dataset normalized with the ground at 0. The DTM can be a raster but it can also be computed
+#' dataset normalized with the ground at 0. The DTM can be a raster, ibut it can also be computed
 #' on-the-fly. In this case the algorithm does not use rasterized data and each point is interpolated.
 #' There is no inaccuracy due to the discretization of the terrain and the resolution of the terrain
 #' is virtually infinite. A new attribute 'Zref' records the former elevation values, which enables
@@ -15,25 +15,24 @@
 #' }
 #'
 #' @template param-las
-#' @param algorithm an algorithm for spatial interpolation. \code{lidR} has \link{tin},
+#' @param algorithm (1) An algorithm for spatial interpolation. \code{lidR} has \link{tin},
 #' \link{kriging}, \link{knnidw} or a raster representing a digital terrain
-#' model. An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.
-#' @param na.rm logical. When using a raster as DTM, by default the function fails if a point
-#' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
-#' elevation of NA are filtered.
+#' model. (2) An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.
 #' @param ... ignored
 #' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
 #' However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
 #' extrabytes attribute. See also \link{add_lasattribute}.
-#' @param Wdegenerated logical. The function always check and remove degenerated ground points
-#' for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
-#' TRUE a warning in thrown to alert about the presence of degenerated ground points.
+#' @param dtm raster. If `dtm` is provided, then the DTM is used in place of ground points. This is different
+#' than providing a DTM in `algorithm`. If `algorithm = dtm` the dtm is subtracted naively. `algorithm = tin()`
+#' and `dtm = raster` the ground points of the point-cloud are not used. Instead the DTM is the ground points
+#' and is triangulated.
 #'
 #' @name normalize
 #' @rdname normalize
 #' @examples
+#' @md
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'
