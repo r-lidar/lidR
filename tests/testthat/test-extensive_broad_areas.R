@@ -69,7 +69,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     # Approx 10 minutes
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- "{tempdir()}/montmorency-terrain-{ID}"
-    dtm <- rasterize_terrain(montmorency, 2, tin(), Wdegenerated = FALSE)
+    dtm <- rasterize_terrain(montmorency, 2, tin())
     expect_is(dtm, "stars_proxy")
 
     plot(dtm, breaks = "equal")

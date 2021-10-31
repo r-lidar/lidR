@@ -259,5 +259,47 @@ storable_coordinate_range <- function(scale, offset) {
   return(c("min" = storable_min, "max" = storable_max))
 }
 
+#' @export
+#' @rdname las_utilities
+header <- function(las)
+{
+  return(las@header)
+}
+
+#' @export
+#' @rdname las_utilities
+payload <- function(las)
+{
+  return(las@data)
+}
+#' @export
+#' @rdname las_utilities
+phb <- function(las)
+{
+  if (!is(las, "LASheader"))
+    las <- header(las)
+
+  return(las@PHB)
+}
+
+#' @export
+#' @rdname las_utilities
+vlr <- function(las)
+{
+  if (!is(las, "LASheader"))
+    las <- header(las)
+
+  return(las@VLR)
+}
+
+#' @export
+#' @rdname las_utilities
+evlr <- function(las)
+{
+  if (!is(las, "LASheader"))
+    las <- header(las)
+
+  return(las@EVLR)
+}
 
 lasupdateheader = las_update

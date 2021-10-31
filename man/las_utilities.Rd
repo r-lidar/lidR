@@ -10,6 +10,11 @@
 \alias{is.quantized}
 \alias{count_not_quantized}
 \alias{storable_coordinate_range}
+\alias{header}
+\alias{payload}
+\alias{phb}
+\alias{vlr}
+\alias{evlr}
 \title{LAS utilities}
 \usage{
 las_rescale(las, xscale, yscale, zscale)
@@ -27,6 +32,16 @@ is.quantized(x, scale, offset, ...)
 count_not_quantized(x, scale, offset)
 
 storable_coordinate_range(scale, offset)
+
+header(las)
+
+payload(las)
+
+phb(las)
+
+vlr(las)
+
+evlr(las)
 }
 \arguments{
 \item{las}{An object of class LAS}
