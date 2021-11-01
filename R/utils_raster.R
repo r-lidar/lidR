@@ -268,12 +268,6 @@ raster_names <- function(raster)
   raster_error() # nocov
 }
 
-
-is_raster <- function(raster)
-{
-  raster_is_supported(raster)
-}
-
 as_Raster <- function(raster)
 {
   if (is(raster, "list"))
