@@ -46,7 +46,7 @@ smooth_height = function(las, size, method = c("average", "gaussian"), shape = c
 
   force_autoindex(las) <- LIDRGRIDPARTITION
   Zs <- C_smooth(las, size, method, shape, sigma, getThread())
-  fast_quantization(Zs, las@header@PHB[["Z scale factor"]], las@header@PHB[["Z offset"]])
+  fast_quantization(Zs, las[["Z scale factor"]], las[["Z offset"]])
 
   if (!"Zraw" %in% names(las))
     las@data[["Zraw"]] <- las@data[["Z"]]

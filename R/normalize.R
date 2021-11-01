@@ -31,8 +31,8 @@
 #'
 #' @name normalize
 #' @rdname normalize
-#' @examples
 #' @md
+#' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
 #'

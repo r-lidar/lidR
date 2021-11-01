@@ -169,10 +169,10 @@ interpolate_delaunay <- function(points, coord, trim = 0, scales = c(1,1), offse
   boosted_triangulation <- TRUE
 
   if (inherits(points, "LAS")) {
-    xscale  <- points@header@PHB[["X scale factor"]]
-    yscale  <- points@header@PHB[["Y scale factor"]]
-    xoffset <- points@header@PHB[["X offset"]]
-    yoffset <- points@header@PHB[["Y offset"]]
+    xscale  <- points[["X scale factor"]]
+    yscale  <- points[["Y scale factor"]]
+    xoffset <- points[["X offset"]]
+    yoffset <- points[["Y offset"]]
     scales  <- c(xscale, yscale)
     offsets <- c(xoffset, yoffset)
     points  <- points@data

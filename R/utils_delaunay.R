@@ -10,10 +10,10 @@ tDelaunay = function(P, trim = 0, scales = c(1,1), offsets = c(0,0), option = "Q
 
   # P is a LAS object. Use the scale and offset of the header
   if (inherits(P, "LAS")) {
-    xscale  <- P@header@PHB[["X scale factor"]]
-    yscale  <- P@header@PHB[["Y scale factor"]]
-    xoffset <- P@header@PHB[["X offset"]]
-    yoffset <- P@header@PHB[["Y offset"]]
+    xscale  <- P[["X scale factor"]]
+    yscale  <- P[["Y scale factor"]]
+    xoffset <- P[["X offset"]]
+    yoffset <- P[["Y offset"]]
     scales  <- c(xscale, yscale)
     offsets <- c(xoffset, yoffset)
     P <- coordinates3D(P)

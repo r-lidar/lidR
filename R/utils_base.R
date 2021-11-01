@@ -39,12 +39,12 @@ rbind.LAS <- function(...)
   names(dots) <- NULL
   assert_all_are_same_crs(dots)
 
-  xscales <- sapply(dots, function(x) x@header@PHB[["X scale factor"]])
-  yscales <- sapply(dots, function(x) x@header@PHB[["Y scale factor"]])
-  zscales <- sapply(dots, function(x) x@header@PHB[["Z scale factor"]])
-  xoffsets <- sapply(dots, function(x) x@header@PHB[["X offset"]])
-  yoffsets <- sapply(dots, function(x) x@header@PHB[["Y offset"]])
-  zoffsets <- sapply(dots, function(x) x@header@PHB[["Z offset"]])
+  xscales <- sapply(dots, function(x) x[["X scale factor"]])
+  yscales <- sapply(dots, function(x) x[["Y scale factor"]])
+  zscales <- sapply(dots, function(x) x[["Z scale factor"]])
+  xoffsets <- sapply(dots, function(x) x[["X offset"]])
+  yoffsets <- sapply(dots, function(x) x[["Y offset"]])
+  zoffsets <- sapply(dots, function(x) x[["Z offset"]])
 
   need_quantization <- FALSE
   if (length(unique(xscales)) != 1L || length(unique(yscales)) != 1L || length(unique(zscales)) != 1L ||

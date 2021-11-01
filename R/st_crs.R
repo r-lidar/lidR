@@ -393,7 +393,7 @@ use_wktcs <- function(x) {
 }
 
 use_wktcs.LAS <- function(x) {
-  return(x@header@PHB[["Global Encoding"]][["WKT"]])
+  return(x[["Global Encoding"]][["WKT"]])
 }
 
 use_wktcs.LASheader <- function(x) {
@@ -405,7 +405,7 @@ use_epsg <- function(x) {
 }
 
 use_epsg.LAS <- function(x) {
-  return(!x@header@PHB[["Global Encoding"]][["WKT"]])
+  return(!x[["Global Encoding"]][["WKT"]])
 }
 
 use_epsg.LASheader <- function(x) {

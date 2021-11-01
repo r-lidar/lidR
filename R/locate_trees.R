@@ -75,13 +75,13 @@ locate_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
     }
     else
     {
-      xoffset <- las@header@PHB[["X offset"]]
-      yoffset <- las@header@PHB[["Y offset"]]
-      zoffset <- las@header@PHB[["Z offset"]]
+      xoffset <- las[["X offset"]]
+      yoffset <- las[["Y offset"]]
+      zoffset <- las[["Z offset"]]
 
-      xscale  <- las@header@PHB[["X scale factor"]]
-      yscale  <- las@header@PHB[["Y scale factor"]]
-      zscale  <- las@header@PHB[["Z scale factor"]]
+      xscale  <- las[["X scale factor"]]
+      yscale  <- las[["Y scale factor"]]
+      zscale  <- las[["Z scale factor"]]
 
       xscaled <- as.integer((maxima[["X"]] - xoffset)/xscale)
       yscaled <- as.integer((maxima[["Y"]] - yoffset)/yscale)
