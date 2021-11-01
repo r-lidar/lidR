@@ -58,3 +58,58 @@ records the normalized intensity. An extra attribute named 'RawIntensity' record
 intensities.}
 }
 }
+\examples{
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las <- readLAS(LASfile)
+
+# ====================
+# Normalize elevation
+# ====================
+
+# First option: use a raster as DTM
+# --------------------------------------
+
+dtm <- rasterize_terrain(las, 1, knnidw(k = 6L, p = 2))
+nlas <- normalize_height(las, dtm)
+
+# restore original elevations
+las <- unnormalize_height(nlas)
+
+# operator - can be used. This is equivalent to the previous
+nlas <- las - dtm
+
+# restore original elevations
+las <- unnormalize_height(las)
+
+# Second option: interpolate each point (no discretization)
+# ---------------------------------------------------------
+
+nlas <- normalize_height(las, tin())
+
+# operator - can be used. This is equivalent to the previous
+las <- unnormalize_height(nlas)
+nlas <- las - tin()
+
+\dontrun{
+# All the following syntaxes are correct
+las <- normalize_height(las, knnidw())
+las <- normalize_height(las, knnidw(k = 8, p = 2))
+las <- las - knnidw()
+las <- las - knnidw(k = 8)
+las <- normalize_height(las, kriging())
+las <- las - kriging(k = 8)
+}
+
+# ====================
+# Normalize intensity
+# ====================
+
+# pmin = 15 because it is an extremely small file
+# strongly decimated to reduce its size. There are
+# actually few multiple returns
+sensor <- track_sensor(las, Roussel2020(pmin = 15))
+
+# Here the effect is virtually null because the size of
+# the sample is too small to notice any effect of range
+las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
+}

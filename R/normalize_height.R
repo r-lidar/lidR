@@ -11,6 +11,8 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
   # Non standard evaluation (R CMD check)
   . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
+  lidR.context <- "normalize_height"
+
   # Ellipsis parsing
   dots <- list(...)
   Wdegenerated <- isTRUE(dots$Wdegenerated)
@@ -65,7 +67,6 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
 
     # Interpolate the terrain providing what to interpolate (ground) and where
     # to interpolate (the point clouf)
-    lidR.context <- "normalize_height"
     ground <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
     Zg <- algorithm(ground, las@data)
     Zg[is.nan(Zg)] <- NA_real_

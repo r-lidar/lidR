@@ -54,7 +54,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
   test_that("rasterize_terrain works with montmorency", {
 
-    bbox <- sf::st_bbox(c(xmin = 325000, xmax = 335000, ymin = 522000, ymax = 5230000))
+    bbox <- sf::st_bbox(c(xmin = 325000, xmax = 333000, ymin = 521000, ymax = 5229000))
 
     montmorency <- "/media/jr/Seagate Expansion Drive/Quebec/Montmorency/las/"
     montmorency <- readLAScatalog(montmorency)

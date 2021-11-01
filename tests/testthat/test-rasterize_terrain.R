@@ -138,6 +138,8 @@ test_that("rasterize_terrain returns the same both with LAScatalog and LAS", {
 
 test_that("rasterize_terrain fails in some specific case", {
 
+  skip_if_not_installed("geometry")
+
   las@header@PHB$`X scale factor` <- 0.002
   las@header@PHB$`Y scale factor` <- 0.002
 
@@ -156,7 +158,7 @@ test_that("rasterize_terrain fails in some specific case", {
   las@data$Classification <- 1L
   expect_error(rasterize_terrain(las, 1, tin()), "No ground points found")
 
-  expect_error(rasterize_terrain(las, 1, tin(), class = 1), NA)
+  expect_error(rasterize_terrain(las, 1, tin(), use_class = 1), NA)
 
   las@data$Classification <- NULL
   expect_error(rasterize_terrain(las, 1, tin()), "LAS object does not contain 'Classification' attribute")
