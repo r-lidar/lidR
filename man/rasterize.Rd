@@ -34,7 +34,7 @@ models (see respective documentation and examples).}
 
 \item{...}{Use \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \code{RasterLayer}
 or \code{stars}. Default is \code{getOption("lidR.raster.default")}. Under the hood lidR uses native pkg code
-and doe not cast to pkg.}
+and does not cast to pkg.}
 
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}

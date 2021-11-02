@@ -32,7 +32,10 @@
 #' @param by_echo characters. The metrics are computed multiples times for different echo types. Can
 #' be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples.
 #' Default is "all" meaning that it computes metrics with all points provided.
-#' @param ... propagated to `template_metrics` i.e. `filter` and `by_echo`.
+#' @param ... propagated to `template_metrics` i.e. `filter` and `by_echo`. `pixel_metrics()` also
+#' supports `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `RasterLayer`
+#' or `stars`. Default is `getOption("lidR.raster.default")`. Under the hood lidR uses native pkg code
+#' and does not cast to pkg.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -188,13 +191,13 @@ NULL
 
 #' @export
 #' @rdname template_metrics
-template_metrics <- function(las, func, template, filter = NULL, by_echo = "all")
+template_metrics <- function(las, func, template, filter = NULL, by_echo = "all", ...)
 {
   UseMethod("template_metrics", las)
 }
 
 #' @export
-template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "all")
+template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "all", ...)
 {
   . <- echo <- NULL
 
@@ -204,6 +207,9 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   if (!formula) func <- lazyeval::f_capture(func)
   echo_types <- c("all", "first", "intermediate", "lastofmany", "single", "multiple")
   stopifnot(all(by_echo %in% echo_types))
+
+  dots <- list(...)
+  pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
   # Compute on different subsets of echos
   all_echos   <- any(by_echo == "all")
@@ -276,7 +282,7 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
     m[, cells := NULL]
     m[, echo := NULL]
     if (k > 0) names(m) <- paste0(names(m), "." , echo_type)
-    output[[i]] <- assign_to_template(template, cells, m)
+    output[[i]] <- assign_to_template(template, cells, m, pkg = pkg)
     i <- i + 1
   }
   output <- merge_list(template, output)
@@ -533,7 +539,9 @@ assign_to_template.SpatRaster <- function(template, cells, metrics, ...)
 
 assign_to_template.raster_template <- function(template, cells, metrics, ...)
 {
-   template <- raster_materialize(template)
+   dots <- list(...)
+   pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
+   template <- raster_materialize(template, pkg = pkg)
    return(assign_to_template(template, cells, metrics, ...))
 }
 

@@ -76,7 +76,7 @@ to enable the alignment of a second point cloud.}
 \item{voxel}{boolean or numeric. Displays voxels instead of points. Useful to render the output
 of \link{voxelize_points}, for example. However it is computationally demanding to render and can
 easily take 15 seconds for 10000 voxels. It should be reserved for small scenes. If boolean the voxel
-resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time, 
+resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time,
 an internal optimization removes voxels that are not visible when surrounded by other voxels.}
 
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}

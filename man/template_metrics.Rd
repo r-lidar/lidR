@@ -32,7 +32,7 @@ plot_metrics(las, func, geometry, ..., radius)
 
 polygon_metrics(las, func, geometry, ...)
 
-template_metrics(las, func, template, filter = NULL, by_echo = "all")
+template_metrics(las, func, template, filter = NULL, by_echo = "all", ...)
 
 voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 }
@@ -42,7 +42,10 @@ voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 \item{func}{formula. An expression to be applied to each element of the template (see section
 "Parameter func").}
 
-\item{...}{propagated to \code{template_metrics} i.e. \code{filter} and \code{by_echo}.}
+\item{...}{propagated to \code{template_metrics} i.e. \code{filter} and \code{by_echo}. \code{pixel_metrics()} also
+supports \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \code{RasterLayer}
+or \code{stars}. Default is \code{getOption("lidR.raster.default")}. Under the hood lidR uses native pkg code
+and does not cast to pkg.}
 
 \item{geom}{character. geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.}
 
