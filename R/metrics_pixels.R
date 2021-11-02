@@ -2,7 +2,7 @@
 #' In that case the raster is used as the template.
 #' @param start vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0). Not consiered if `res` is a raster
-#' @rdname template_metrics
+#' @rdname aggregate
 #' @export
 pixel_metrics = function(las, func, res = 20, start = c(0,0), ...)
 {

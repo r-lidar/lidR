@@ -4,7 +4,7 @@
 #' @param attribute character. The column name of the attribute containing tree IDs. Default is
 #' \code{"treeID"}
 #'
-#' @rdname template_metrics
+#' @rdname aggregate
 #' @export
 crown_metrics = function(las, func, geom = "point", concaveman = c(3, 0), attribute = "treeID", ...)
 {

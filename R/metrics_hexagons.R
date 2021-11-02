@@ -1,5 +1,5 @@
 #' @param area numeric. Area of the hexagons
-#' @rdname template_metrics
+#' @rdname aggregate
 #' @export
 hexagon_metrics <- function(las, func, area = 400, ...) { UseMethod("hexagon_metrics", las) }
 

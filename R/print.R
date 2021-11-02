@@ -1,14 +1,11 @@
-#' Summary and Print for \code{LAS*} objects
-#'
-#' @param object,x A \code{LAS*} object or other lidR related objects.
-#' @param ... Unused
 setGeneric("print", function(x, ...)
   standardGeneric("print"))
 
 setGeneric("summary", function(object, ...)
   standardGeneric("summary"))
 
-#' @rdname print
+#' @rdname tools
+#' @param object,x A \code{LAS*} object or other lidR related objects.
 #' @aliases summary
 #' @export
 setMethod("summary", "LAS", function(object, ...)
@@ -18,7 +15,7 @@ setMethod("summary", "LAS", function(object, ...)
   return(invisible(object))
 })
 
-#' @rdname print
+#' @rdname tools
 #' @export
 setMethod("print", "LAS", function(x)
 {
@@ -136,7 +133,7 @@ setMethod("show", "LAScatalog", function(object)
   return(invisible(object))
 })
 
-#' @rdname print
+#' @rdname tools
 setMethod("summary", "LAScatalog", function(object, ...)
 {
   inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
@@ -343,7 +340,7 @@ setMethod("show", "LAScluster", function(object)
 
 #' @export
 #' @method print lidRAlgorithm
-#' @rdname print
+#' @rdname tools
 print.lidRAlgorithm = function(x, ...)
 {
   e <- environment(x)

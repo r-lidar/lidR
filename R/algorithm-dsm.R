@@ -38,6 +38,7 @@
 #' chm <- grid_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
 #' plot(chm, col = col)
 #' }
+#' @name dsm_point2raster
 p2r = function(subcircle = 0, na.fill = NULL)
 {
   assert_is_a_number(subcircle)
@@ -132,6 +133,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
 #' plot(chm, col = col)
 #' }
+#' @name dsm_tin
 dsmtin = function(max_edge = 0)
 {
   max_edge <- lazyeval::uq(max_edge)
@@ -198,6 +200,7 @@ dsmtin = function(max_edge = 0)
 #' plot(chm, col = col)
 #' }
 #' @export
+#' @name dsm_pitfree
 pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0)
 {
   assert_is_numeric(thresholds)

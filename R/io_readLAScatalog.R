@@ -22,7 +22,7 @@
 #' @param progress,select,filter,chunk_size,chunk_buffer Easily accessible processing
 #' options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically
-#' `recursive = TRUE`.
+#' `recursive = TRUE`. Propagates also to `readLAScatalog`
 #'
 #' @return A \code{LAScatalog} object
 #'
@@ -161,9 +161,9 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
 #' @export
 #' @rdname readLAScatalog
-readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readALSLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRALSINDEX
   return(ctg)
 }
@@ -171,27 +171,27 @@ readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "",
 
 #' @export
 #' @rdname readLAScatalog
-readTLSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readTLSLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRTLSINDEX
   return(ctg)
 }
 
 #' @export
 #' @rdname readLAScatalog
-readUAVLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readUAVLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRUAVINDEX
   return(ctg)
 }
 
 #' @export
 #' @rdname readLAScatalog
-readDAPLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readDAPLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRDAPINDEX
   return(ctg)
 }

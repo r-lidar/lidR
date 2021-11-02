@@ -32,15 +32,13 @@ than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} the dtm is s
 and \code{dtm = raster} the ground points of the point-cloud are not used. Instead the DTM is the ground points
 and is triangulated.}
 
-\item{...}{ignored}
+\item{...}{ignored
+However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
+extrabytes attribute. See also \link{add_lasattribute}.}
 
 \item{e1}{a LAS object}
 
 \item{e2}{A raster representing a digital terrain model in format from `raster`, `stars` or `terra`..}
-
-\item{add_lasattribute}{logical. By default the above see level elevation is retained in a new attribute.
-However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
-extrabytes attribute. See also \link{add_lasattribute}.}
 }
 \description{
 Normalize elevation or intensity values using multiple methods.

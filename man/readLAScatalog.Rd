@@ -19,45 +19,13 @@ readLAScatalog(
   ...
 )
 
-readALSLAScatalog(
-  folder,
-  progress = TRUE,
-  select = "*",
-  filter = "",
-  chunk_size = 0,
-  chunk_buffer = 30,
-  ...
-)
+readALSLAScatalog(folder, ...)
 
-readTLSLAScatalog(
-  folder,
-  progress = TRUE,
-  select = "*",
-  filter = "",
-  chunk_size = 0,
-  chunk_buffer = 30,
-  ...
-)
+readTLSLAScatalog(folder, ...)
 
-readUAVLAScatalog(
-  folder,
-  progress = TRUE,
-  select = "*",
-  filter = "",
-  chunk_size = 0,
-  chunk_buffer = 30,
-  ...
-)
+readUAVLAScatalog(folder, ...)
 
-readDAPLAScatalog(
-  folder,
-  progress = TRUE,
-  select = "*",
-  filter = "",
-  chunk_size = 0,
-  chunk_buffer = 30,
-  ...
-)
+readDAPLAScatalog(folder, ...)
 
 catalog(folder, ...)
 }
@@ -69,7 +37,7 @@ Can also be a vector of file paths.}
 options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.}
 
 \item{\dots}{Extra parameters to \link[base:list.files]{list.files}. Typically
-\code{recursive = TRUE}.}
+\code{recursive = TRUE}. Propagates also to \code{readLAScatalog}}
 }
 \value{
 A \code{LAScatalog} object

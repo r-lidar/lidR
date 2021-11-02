@@ -83,6 +83,7 @@
 #' @export
 #'
 #' @family snags segmentation algorithms
+#' @name snag_wing2025
 wing2015 = function(neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh = 170, pt_den_req = 3, BBPRthrsh_mat = NULL)
 {
   assert_is_numeric(neigh_radii)

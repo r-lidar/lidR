@@ -9,6 +9,7 @@
 \alias{pixel_metrics}
 \alias{plot_metrics}
 \alias{polygon_metrics}
+\alias{aggregate}
 \alias{template_metrics}
 \alias{voxel_metrics}
 \title{Metric derivation at different levels of regularization}

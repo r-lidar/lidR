@@ -6,6 +6,7 @@
 #' @param palette function. A color palette function. Default is \code{height.colors} provided by the package lidR.
 #' @param trim numeric.
 #' @keywords internal
+#' @noRd
 set.colors = function(x, palette, trim = Inf, value_index = FALSE)
 {
   if (all(is.na(x)))
@@ -38,18 +39,9 @@ set.colors = function(x, palette, trim = Inf, value_index = FALSE)
   return(colors)
 }
 
-#' Palettes
-#'
-#' Create a vector of n contiguous (or not) colors
-#'
 #' @param n The number of colors (> 1) to be in the palette
-#' @family lidrpalettes
-#' @name lidrpalettes
-NULL
-
 #' @export
-#' @rdname lidrpalettes
-#' @family lidrpalettes
+#' @rdname plot
 height.colors = function(n)
 {
   colfunc <- grDevices::colorRampPalette(c("blue", "cyan2", "yellow", "red"))
@@ -57,8 +49,7 @@ height.colors = function(n)
 }
 
 #' @export
-#' @rdname lidrpalettes
-#' @family lidrpalettes
+#' @rdname plot
 forest.colors = function(n)
 {
   colfunc <- grDevices::colorRampPalette(c("darkgreen", "lightgreen"))
@@ -67,8 +58,7 @@ forest.colors = function(n)
 
 
 #' @export
-#' @rdname lidrpalettes
-#' @family lidrpalettes
+#' @rdname plot
 random.colors = function(n)
 {
   h = stats::runif(n, 0, 1);
@@ -79,8 +69,7 @@ random.colors = function(n)
 }
 
 #' @export
-#' @rdname lidrpalettes
-#' @family lidrpalettes
+#' @rdname plot
 pastel.colors = function(n)
 {
   h = stats::runif(n, 0, 360);

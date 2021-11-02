@@ -2,7 +2,7 @@
 #' contain 1 or more points. Empty voxels do not exist as the metrics are undefined.
 #' If \code{all_voxels = TRUE} all the voxels are returned and metrics are NA for
 #' voxels with 0 points.
-#' @rdname template_metrics
+#' @rdname aggregate
 #' @export
 voxel_metrics = function(las, func, res = 1, ..., all_voxels = FALSE)
 {

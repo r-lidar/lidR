@@ -61,6 +61,7 @@
 #'
 #' plot(chm, col = height.colors(30))
 #' plot(ttops, add = TRUE)
+#' @name itd_lmf
 lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 {
   shape <- match.arg(shape)
@@ -131,6 +132,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' ttops = find_trees(las, lmf(5))
 #' ttops = find_trees(las, manual(ttops))
 #' }
+#' @name itd_manual
 manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle", ...) # nocov start
 {
   f = function(las)

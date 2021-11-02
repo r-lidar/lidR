@@ -21,7 +21,6 @@
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.
 #' @param ... ignored
-#' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
 #' However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
 #' extrabytes attribute. See also \link{add_lasattribute}.
 #' @param dtm raster. If `dtm` is provided, then the DTM is used in place of ground points. This is different

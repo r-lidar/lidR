@@ -25,6 +25,7 @@
 #'
 #' plot(dtm, col = terrain.colors(50))
 #' #plot_dtm3d(dtm)
+#' @name dtm_tin
 tin = function(..., extrapolate = knnidw(3,1,50))
 {
   assert_is_algorithm_spi(extrapolate)
@@ -77,6 +78,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #'
 #' #plot(dtm, col = terrain.colors(50))
 #' #plot_dtm3d(dtm)
+#' @name dtm_idw
 knnidw = function(k = 10, p = 2, rmax = 50)
 {
   k <- lazyeval::uq(k)
@@ -122,6 +124,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' plot(dtm, col = terrain.colors(50))
 #' plot_dtm3d(dtm)
 #' }
+#' @name dtm_kriging
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
   assert_package_is_installed("gstat")

@@ -60,8 +60,6 @@
 #' Functions are supposed to return an object that best suit for storing the level of regularization
 #' asked.
 #'
-#' @export
-#'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' las = readLAS(LASfile, filter = "-keep_random_fraction 0.5")
@@ -184,13 +182,13 @@
 #'
 #' cloud_metrics(las, func, by_echo = echo)
 #'
-#' @name template_metrics
-#' @rdname template_metrics
+#' @name aggregate
+#' @rdname aggregate
 #' @md
 NULL
 
 #' @export
-#' @rdname template_metrics
+#' @rdname aggregate
 template_metrics <- function(las, func, template, filter = NULL, by_echo = "all", ...)
 {
   UseMethod("template_metrics", las)

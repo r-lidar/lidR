@@ -1,4 +1,4 @@
-#' @rdname template_metrics
+#' @rdname aggregate
 #' @export
 polygon_metrics = function(las, func, geometry, ...)
 {
