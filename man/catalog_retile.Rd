@@ -25,39 +25,6 @@ Note that this function is not actually very useful since \code{lidR} manages ev
 (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
 useful for working in other software, for example, but not in \code{lidR}.
 }
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[=LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \strong{chunk_size}: Size of the new tiles.
-\item \strong{buffer}: Load new tiles with a buffer. The expected value is usually 0.
-\item \strong{alignment}: Alignment of the new tiles.
-\item \strong{cores}: The number of cores used. \code{catalog_retile} streams the data (nothing is
-loaded at th R level). The maximum number of cores can be safely used.
-\item \strong{progress}: Displays a progress estimation.
-\item \strong{output_files*}: Mandatory. The new tiles will be written in new files.
-\item \strong{laz_compression}: save \code{las} or \code{laz} files.
-\item select: \code{catalog_retile} preserve the file format anyway.
-\item \strong{filter}: Retile and save only the points of interest.
-}
-}
-
 \examples{
 \dontrun{
 ctg = readLAScatalog("path/to/catalog")

@@ -12,24 +12,6 @@
 #' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
 #' useful for working in other software, for example, but not in \code{lidR}.
 #'
-#' @template LAScatalog
-#'
-#' @section Supported processing options:
-#' Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-#' \link[=LAScatalog-class]{LAScatalog engine documentation}:
-#' \itemize{
-#' \item \strong{chunk_size}: Size of the new tiles.
-#' \item \strong{buffer}: Load new tiles with a buffer. The expected value is usually 0.
-#' \item \strong{alignment}: Alignment of the new tiles.
-#' \item \strong{cores}: The number of cores used. \code{catalog_retile} streams the data (nothing is
-#' loaded at th R level). The maximum number of cores can be safely used.
-#' \item \strong{progress}: Displays a progress estimation.
-#' \item \strong{output_files*}: Mandatory. The new tiles will be written in new files.
-#' \item \strong{laz_compression}: save \code{las} or \code{laz} files.
-#' \item select: \code{catalog_retile} preserve the file format anyway.
-#' \item \strong{filter}: Retile and save only the points of interest.
-#' }
-#'
 #' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'
 #' @return A new \code{LAScatalog} object

@@ -8,10 +8,6 @@
 #' @param res numeric. The resolution of the voxels. \code{res = 1} for a 1x1x1 cubic voxels. Optionally
 #' \code{res = c(1,2)} for non-cubic voxels (1x1x2 cuboid voxel).
 #'
-#' @template LAScatalog
-#'
-#' @template section-supported-option-lasupdater
-#'
 #' @template return-lasfilter-las-lascatalog
 #'
 #' @export

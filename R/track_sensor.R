@@ -23,9 +23,6 @@
 #' For a given time interval, when weird points are not filtered, the position is not computed for this
 #' interval.
 #'
-#' @template LAScatalog
-#' @template section-supported-options-sensor_tracking
-#'
 #' @template param-las
 #' @param algorithm function. An algorithm to compute sensor tracking. \code{lidR} implements
 #' \link{Roussel2020} and  \link{Gatziolis2019} (see respective documentation and examples).

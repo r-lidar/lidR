@@ -86,42 +86,6 @@ y 5017823 5017957}
  }
 }
 
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[=LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item chunk_size: Does not make sense here.
-\item buffer: Not supported yet.
-\item alignment: Does not makes sense here.
-\item \strong{progress}: Displays a progress estimation.
-\item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
-They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
-\code{clip_*} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-{YCENTER}}. In addition \code{clip_roi} supports any names from the table of attributes of a spatial object given as
-input such as \code{{PLOTID}}, \code{{YEAR}}, \code{{SPECIES}}, for examples, if these attributes exist. If empty everything
-is returned into R.
-\item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item select: The function will write files equivalent to the originals. This option is not respected.
-\item \strong{filter}: Read only the points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 
