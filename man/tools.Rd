@@ -42,7 +42,7 @@ npoints(x, ...)
 density(x, ...)
 }
 \arguments{
-\item{object, x}{A \code{LAS*} object or other lidR related objects.}
+\item{object}{A \code{LAS*} object or other lidR related objects.}
 
 \item{...}{LAS* objects if it is the sole argurment (e.g. in rbind())}
 

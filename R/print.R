@@ -5,7 +5,7 @@ setGeneric("summary", function(object, ...)
   standardGeneric("summary"))
 
 #' @rdname tools
-#' @param object,x A \code{LAS*} object or other lidR related objects.
+#' @param object A \code{LAS*} object or other lidR related objects.
 #' @aliases summary
 #' @export
 setMethod("summary", "LAS", function(object, ...)
