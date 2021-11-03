@@ -35,7 +35,7 @@ raster_template <- function(raster)
     yres <- abs(sdim$y$delta)
     ncol <- as.integer(round((xmax-xmin)/xres))
     nrow <- as.integer(round((ymax-ymin)/yres))
-    crs  <- sf::st_crs(raster)
+    crs  <- raster_crs(raster)
   }
   else
   {
@@ -82,7 +82,7 @@ raster_value_from_xy = function(raster, x, y, layer = 1)
   {
     xrange <- range(x)
     yrange <- range(y)
-    bbox   <- sf::st_bbox(c(xmin = xrange[1], xmax = xrange[2], ymin = yrange[1], ymax = yrange[2]), crs = sf::st_crs(raster))
+    bbox   <- sf::st_bbox(c(xmin = xrange[1], xmax = xrange[2], ymin = yrange[1], ymax = yrange[2]), crs = raster_crs(raster))
     raster <- raster[bbox]
     raster <- stars::st_as_stars(raster)
   }
@@ -232,7 +232,7 @@ raster_as_las <- function(raster, bbox = NULL)
 
   data <- raster_as_dataframe(raster, xy = FALSE, na.rm = TRUE)
   header <- rlas::header_create(data)
-  las <- LAS(data, header, crs = sf::st_crs(raster), check = FALSE)
+  las <- LAS(data, header, crs = raster_crs(raster), check = FALSE)
   return(las)
 }
 
@@ -562,7 +562,7 @@ raster_is_proxy <- function(raster)
     return(!raster::inMemory(raster))
 
   if (is(raster,"SpatRaster"))
-    return(terra::inMemory(raster))
+    return(!terra::inMemory(raster))
 
   return(FALSE)
 }
@@ -620,4 +620,15 @@ raster_bbox <- function(raster)
   }
 
   raster_error() # nocov
+}
+
+raster_crs <- function(raster)
+{
+  if (is(raster, "SpatRaster"))
+  {
+    if (terra::crs(raster) == "")
+      return(sf::NA_crs_)
+  }
+
+  return(sf::st_crs(raster))
 }

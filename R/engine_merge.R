@@ -49,6 +49,8 @@ engine_merge = function(ctg, any_list, ...)
       any_type <- "raster"
     } else if (inherits(x, "stars")) {
       any_type <- "stars"
+    } else if (inherits(x, "SpatRaster")) {
+      any_type <- "terra"
     } else if (inherits(x, "LAS")) {
       any_type <- "las"
     } else if (inherits(x, "SpatialPolygons") | inherits(x, "SpatialPoints")) {
@@ -160,7 +162,8 @@ engine_merge = function(ctg, any_list, ...)
       }
       else
       {
-        output <- do.call(rbind, any_list)
+        output <- data.table::rbindlist(any_list)
+        output <- sf::st_as_sf(output)
         sf::st_crs(output) <- st_crs(ctg)
         return(output)
       }

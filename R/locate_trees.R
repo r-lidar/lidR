@@ -59,8 +59,8 @@ locate_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
 
   if (no_maxima)
   {
-    data   <- data.frame(X = 0, Y = 0, treeID = 0L, Z = 0)
-    output <- sf::st_as_sf(data, coords = c("X", "Y", "Z"), crs = st_crs(las))
+    data   <- data.frame(x = 0, y = 0, z = 0, treeID = 0L, Z = 0)
+    output <- sf::st_as_sf(data, coords = c("x", "y", "z"), crs = st_crs(las))
     output <- output[0,]
   }
   else

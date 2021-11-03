@@ -86,10 +86,12 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     plot(dtm, breaks = "equal", nbreaks = 50)
 
-    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
+    expect_true(min(ntile33_1$Z) > -1)
     plot(ntile33_1)
 
-    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
+    expect_true(min(ntile33_2$Z) > -1)
     plot(ntile33_2)
   })
 
@@ -103,6 +105,14 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     expect_is(dtm, "stars_proxy")
 
     plot(dtm, breaks = "equal", nbreaks = 50)
+
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
+    expect_true(min(ntile33_1$Z) > -1)
+    plot(ntile33_1)
+
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
+    expect_true(min(ntile33_2$Z) > -1)
+    plot(ntile33_2)
   })
 
  test_that("rasterize_terrain works with montmorency with in memory and stars",
@@ -129,10 +139,12 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     plot(dtm, col = gray.colors(30,0,1))
 
-    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
+    expect_true(min(ntile33_1$Z) > -1)
     plot(ntile33_1)
 
-    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
+    expect_true(min(ntile33_2$Z) > -1)
     plot(ntile33_2)
   })
 
@@ -142,10 +154,31 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     options(lidR.raster.default = "terra")
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
-    dtm = rasterize_canopy(montmorency, 2, p2r())
+    dtm = rasterize_canopy(montmorency, 2, p2r()) # terra::mosaic run out of memory
     expect_is(dtm, "SpatRaster")
     expect_false(raster::inMemory(dtm))
 
     plot(dtm, col = height.colors(25))
+
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
+    expect_true(min(ntile33_1$Z) > -1)
+    plot(ntile33_1)
+
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
+    expect_true(min(ntile33_2$Z) > -1)
+    plot(ntile33_2)
+  })
+
+ test_that("locate_trees works with haliburton with small chunks",
+ {
+   # Small chunk to trigger potential errors with empty chunks
+   # Approx 10 minutes
+   opt_chunk_size(haliburton) <- 250
+   opt_output_files(haliburton) <- ""
+   ttops <- locate_trees(haliburton, lmf(3)) # never end to merge
+   expect_is(ttops, "sf")
+
+   plot(haliburton)
+   plot(chm, col = height.colors(25), breaks = "equal", add = T)
   })
 }
