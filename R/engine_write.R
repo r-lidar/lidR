@@ -1,4 +1,8 @@
-writeANY = function(x, path, drivers)
+#' @rdname engine
+#' @export
+#' @param path strings
+#' @param drivers list. Drivers of a LAScatalog
+engine_write = function(x, path, drivers)
 {
   dir <- dirname(path)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)

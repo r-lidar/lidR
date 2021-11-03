@@ -242,7 +242,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   realigment <- if (opt[["check_alignment"]]) realigment = opt[["raster_alignment"]] else FALSE
 
   # Produce the chunks
-  clusters <- catalog_makechunks(ctg, realigment)
+  clusters <- engine_chunks(ctg, realigment)
 
   # Disable the progress bar of the functions and ensure user options are restored
   oldstate <- getOption("lidR.progress")
@@ -250,7 +250,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
   on.exit(options(lidR.progress = oldstate), add = TRUE)
 
   # Process with the catalog processing engine
-  output <- cluster_apply(clusters, FUN, ctg@processing_options, ctg@output_options, opt[["globals"]], opt[["autoread"]], opt[["autocrop"]], ...)
+  output <- engine_apply(clusters, FUN, ctg@processing_options, ctg@output_options, opt[["globals"]], opt[["autoread"]], opt[["autocrop"]], ...)
 
   # Filter NULLs and return
   if (isTRUE(opt[["drop_null"]]))
@@ -258,7 +258,7 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 
   # Automerge
   if (!isFALSE(opt[["automerge"]]) && opt_merge(ctg))
-    output <- catalog_merge_results(ctg, output, as.character(substitute(FUN)))
+    output <- engine_merge(ctg, output, as.character(substitute(FUN)))
 
   return(output)
 }

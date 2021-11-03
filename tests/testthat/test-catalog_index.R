@@ -1,4 +1,4 @@
-context("catalog_index")
+context("engine_index")
 
 data <- data.table::data.table(
   Max.X   = c(885228.88, 886993.96, 885260.93, 887025.96,
@@ -63,14 +63,14 @@ data <- sf::st_set_geometry(data, geom)
 ctg       <- new("LAScatalog")
 ctg@data  <- data
 
-test_that("catalog_index finds files and makes correct chunks", {
+test_that("engine_index finds files and makes correct chunks", {
 
   bboxes <- list(
     sf::st_bbox(c(xmin = 890000, xmax = 890800, ymin = 630000, ymax = 630800)),
     sf::st_bbox(c(xmin = 890000 - 400, xmax = 890800 - 400, ymin = 630000 + 400, ymax = 630800 + 400))
   )
 
-  clusters <- lidR:::catalog_index(ctg, bboxes)
+  clusters <- lidR:::engine_index(ctg, bboxes)
 
   expect_is(clusters, "list")
   expect_equal(length(clusters), 2L)
@@ -79,7 +79,7 @@ test_that("catalog_index finds files and makes correct chunks", {
   expect_equal(clusters[[2]]@files, c("abc18"))
   expect_equal(clusters[[2]]@filter, "-inside 889600 630400 890400 631200 ")
 
-  clusters <- lidR:::catalog_index(ctg, bboxes, lidR:::LIDRCIRCLE)
+  clusters <- lidR:::engine_index(ctg, bboxes, lidR:::LIDRCIRCLE)
 
   expect_is(clusters, "list")
   expect_equal(length(clusters), 2L)
@@ -89,14 +89,14 @@ test_that("catalog_index finds files and makes correct chunks", {
   expect_equal(clusters[[2]]@filter, "-inside_circle 890000 630800 400 ")
 })
 
-test_that("catalog_index returns NULL if there is no match", {
+test_that("engine_index returns NULL if there is no match", {
 
   bboxes <- list(
     sf::st_bbox(c(xmin = 890000, xmax = 890800, ymin = 630000, ymax = 630800)),
     sf::st_bbox(c(xmin = 890000 - 400, xmax = 890800 - 400, ymin = 630000 - 2000, ymax = 630800 - 2000))
   )
 
-  clusters <- lidR:::catalog_index(ctg, bboxes)
+  clusters <- lidR:::engine_index(ctg, bboxes)
 
   expect_is(clusters, "list")
   expect_equal(clusters[[1]]@files, c("abc12", "abc15", "abc18",  "abc21"))

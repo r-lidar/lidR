@@ -78,6 +78,15 @@ raster_cell_from_xy = function(raster, x, y)
 
 raster_value_from_xy = function(raster, x, y, layer = 1)
 {
+  if (is(raster, "stars_proxy"))
+  {
+    xrange <- range(x)
+    yrange <- range(y)
+    bbox   <- sf::st_bbox(c(xmin = xrange[1], xmax = xrange[2], ymin = yrange[1], ymax = yrange[2]), crs = sf::st_crs(raster))
+    raster <- raster[bbox]
+    raster <- stars::st_as_stars(raster)
+  }
+
   cells <- raster_cell_from_xy(raster, x, y)
   return(raster_value_from_cells(raster, cells, layer))
 }
@@ -87,8 +96,8 @@ raster_value_from_cells = function(raster, cells, layer = 1)
   if (inherits(raster, "Raster"))
     return(raster::getValues(raster[[layer]])[cells])
 
-  if (is(source, "stars_proxy"))
-    stop("stars_proxy not supported yet", call. = FALSE) # nocov
+  if (is(raster, "stars_proxy"))
+    stop("stars_proxy not supported yet in 'raster_value_from_cells()'", call. = FALSE) # nocov
 
   if (is(raster, "stars"))
   {
@@ -146,7 +155,7 @@ raster_as_matrix <- function(raster, downsample = FALSE)
     if (raster_ncell(raster) > size)
     {
       if (downsample == FALSE)
-        stop("Cannot convert this ron disk raster into a matrix without downsampling")
+        stop("Cannot convert this ondisk raster into a matrix without downsampling")
 
       raster <- raster_downsample(raster, size)
     }
@@ -188,6 +197,9 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 #' @importFrom stats na.omit
 raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
 {
+  if (raster_is_proxy(raster))
+    stop("stars_proxy not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
+
   m <- raster_as_matrix(raster)
   z <- as.numeric(m$z)
   x <- rep(m$x, length(m$y))
@@ -207,8 +219,17 @@ raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
   return(d)
 }
 
-raster_as_las <- function(raster)
+raster_as_las <- function(raster, bbox = NULL)
 {
+  if (is(raster, "stars_proxy") & is.null(bbox))
+    stop("stars_proxy not supported without a bbox in 'raster_as_las()'", call. = FALSE) # nocov
+
+  if (is(raster, "stars_proxy"))
+  {
+    raster <- raster[bbox]
+    raster <- stars::st_as_stars(raster)
+  }
+
   data <- raster_as_dataframe(raster, xy = FALSE, na.rm = TRUE)
   header <- rlas::header_create(data)
   las <- LAS(data, header, crs = sf::st_crs(raster), check = FALSE)

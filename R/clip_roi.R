@@ -2,11 +2,8 @@
 
 #' Clip points in regions of interest
 #'
-#' Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
-#' (\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point cloud
-#' into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
-#' object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
-#' points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
+#' Clip points within a given region of interest (ROI) from a point cloud (LAS object) or a collection
+#' of files (LAScatalog object).
 #'
 #' @template param-las
 #' @param geometry a geometric object. Many types are supported, see section 'supported geometries'.
@@ -19,21 +16,16 @@
 #' @param xcenter numeric. x coordinates of disc centers.
 #' @param ycenter numeric. y coordinates of disc centers.
 #' @param radius numeric. disc radius or radii.
-#' @param ... in \code{clip_roi}: optional supplementary options (see supported geometries). Unused in
+#' @param ... in `clip_roi`: optional supplementary options (see supported geometries). Unused in
 #' other functions
 #'
 #' @section Supported geometries:
 #' \itemize{
-#'  \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
-#'  a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
-#'  \item \link[sp:Polygon-class]{Polygon}, \link[sp:SpatialPolygons-class]{SpatialPolygons},
-#'  \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame},  \link[sp:SpatialPoints-class]{SpatialPoints}
-#'  or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
-#'  in that case a parameter 'radius' must be passed in \code{...}
-#'  \item \link[sf:sf]{SimpleFeature} from sf that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
-#'  In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
-#'  \item \link[raster:Extent-class]{Extent} from package \code{raster}
-#'  \item \link[sf:st_bbox]{bbox} from package \code{sf}
+#'  \item `SpatialPolygons*` `SpatialPoints*` from `sp` or an \link[sf:sf]{sf/sfc} from `sf` that
+#'  consistently contains `POINT` or `POLYGON/MULTIPOLYGON`.  In case of spatial points
+#'  a parameter 'radius' must be passed in `...`
+#'  \item \link[raster:Extent-class]{Extent} from package `raster`, a \link[sf:st_bbox]{bbox} from
+#'  package `sf`
 #'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
 #'  \preformatted{
 #'   min     max
@@ -41,9 +33,10 @@
 #' y 5017823 5017957}
 #'  }
 #'
-#' @return If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query implies several regions of interest will be returned.\cr\cr
-#' If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS}
-#' objects if the query implies several regions of interest will be returned, or a \code{LAScatalog} if the
+#' @return If the input is a LAS object: an object of class LAS, or a `list` of LAS objects if the
+#' query implies several regions of interest will be returned.\cr\cr
+#' If the input is a LAScatalog object: an object of class LAS, or a `list` of LAS
+#' objects if the query implies several regions of interest will be returned, or a LAScatalog if the
 #' queries are immediately written into files without loading anything in R.
 #'
 #' @examples
@@ -82,6 +75,7 @@
 #' plot(tr1, axis = TRUE, clear_artifacts = FALSE)
 #' }
 #' @name clip
+#' @md
 #' @export
 clip_roi = function(las, geometry, ...)
 {
@@ -406,7 +400,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 
   if (opt_progress(ctg)) plot.LAScatalog(ctg, mapview = FALSE) # nocov
 
-  # Define a function to be passed in cluster_apply
+  # Define a function to be passed in engine_apply
   extract_query = function(cluster)
   {
     if (cluster@files[1] == "")
@@ -428,7 +422,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
 
   # Find the ROIs in the catalog and return LASclusters. If a ROI fall outside the catalog
   # its associated LAScluster is NULL and must receive a special treatment in following code
-  clusters <- catalog_index(ctg, bboxes, shape, 0, outside_catalog_is_null = FALSE)
+  clusters <- engine_index(ctg, bboxes, shape, 0, outside_catalog_is_null = FALSE)
 
   # Add some information in the clusters to correctly extract polygons and to write correct file names
   for (i in 1:length(clusters))
@@ -497,7 +491,7 @@ catalog_extract = function(ctg, bboxes, shape = LIDRRECTANGLE, sf = NULL, data =
   }
 
   # Process the cluster using LAScatalog internal engine
-  output <- cluster_apply(clusters, extract_query, ctg@processing_options, ctg@output_options)
+  output <- engine_apply(clusters, extract_query, ctg@processing_options, ctg@output_options)
 
   # output should contain nothing because everything has been streamed into files
   if (opt_output_files(ctg) != "")

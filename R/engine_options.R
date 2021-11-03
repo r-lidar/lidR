@@ -14,7 +14,9 @@
 #' @param ctg An object of class \link[=LAScatalog-class]{LAScatalog}
 #' @param value An appropriate value depending on the expected input.
 #'
-#' @name catalog_options_tools
+#' @name engine_options
+#' @rdname engine_options
+#' @family LAScatalog processing engine
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -40,14 +42,14 @@ NULL
 
 # ========= Chunk Options ===============
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_chunk_buffer = function(ctg)
 {
   return(ctg@chunk_options$buffer)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_chunk_buffer<-` = function(ctg, value)
 {
@@ -57,14 +59,14 @@ opt_chunk_buffer = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_chunk_size = function(ctg)
 {
   return(ctg@chunk_options$size)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_chunk_size<-` = function(ctg, value)
 {
@@ -81,14 +83,14 @@ opt_chunk_size = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_chunk_alignment = function(ctg)
 {
   return(ctg@chunk_options$alignment)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_chunk_alignment<-` = function(ctg, value)
 {
@@ -98,7 +100,7 @@ opt_chunk_alignment = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_restart<-` = function(ctg, value)
 {
@@ -122,14 +124,14 @@ opt_chunk_is_file = function(ctg)
 
 # ========= Processing Options ===============
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_progress = function(ctg)
 {
   return(ctg@processing_options$progress)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_progress<-` = function(ctg, value)
 {
@@ -138,14 +140,14 @@ opt_progress = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_stop_early = function(ctg)
 {
   return(ctg@processing_options$stop_early)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_stop_early<-` = function(ctg, value)
 {
@@ -154,14 +156,14 @@ opt_stop_early = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_wall_to_wall = function(ctg)
 {
   return(ctg@processing_options$wall_to_wall)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_wall_to_wall<-` = function(ctg, value)
 {
@@ -170,14 +172,14 @@ opt_wall_to_wall = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_independent_files = function(ctg)
 {
   return(!opt_wall_to_wall(ctg) & opt_chunk_buffer(ctg) == 0 & opt_chunk_size(ctg) == 0)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_independent_files<-` = function(ctg, value)
 {
@@ -201,14 +203,14 @@ opt_independent_files = function(ctg)
 
 # =========   Output Options   ===============
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_output_files = function(ctg)
 {
   return(ctg@output_options$output_files)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_output_files<-` = function(ctg, value)
 {
@@ -229,14 +231,14 @@ opt_output_files = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_laz_compression = function(ctg)
 {
   return(ctg@output_options$drivers$LAS$extension == ".laz")
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_laz_compression<-` = function(ctg, value)
 {
@@ -250,7 +252,7 @@ opt_laz_compression = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_merge = function(ctg)
 {
@@ -260,7 +262,7 @@ opt_merge = function(ctg)
   return(ctg@output_options$merge)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_merge<-` = function(ctg, value)
 {
@@ -271,14 +273,14 @@ opt_merge = function(ctg)
 
 # =========   Input Options    ===============
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_select = function(ctg)
 {
   return(ctg@input_options$select)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_select<-` = function(ctg, value)
 {
@@ -287,14 +289,14 @@ opt_select = function(ctg)
   return(ctg)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 opt_filter = function(ctg)
 {
   return(ctg@input_options$filter)
 }
 
-#' @rdname catalog_options_tools
+#' @rdname engine_options
 #' @export
 `opt_filter<-` = function(ctg, value)
 {

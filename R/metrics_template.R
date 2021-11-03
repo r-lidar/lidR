@@ -3,30 +3,34 @@
 #' `template_metrics()` computes a series of user-defined descriptive statistics for a LiDAR dataset within
 #' each element of a template. Depending on the template it can be for each pixel of a raster
 #' (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
-#' functions are convenient and simplified wrappers around `template_metrics()`. See Details and Examples.
+#' functions are convenient and simplified wrappers around `template_metrics()` and are execpted to be
+#' the main functioons used. See Details and Examples.
 #'
 #' \describe{
-#' \item{`pixel_metrics`}{For area-based approach. Computes metrics in an square tessellation.}
-#' \item{`hexagon_metrics`}{Computes metrics in an hexagon tessellation.}
+#' \item{`pixel_metrics`}{Area-based approach. Computes metrics in a square tessellation. The output is a
+#' raster.}
+#' \item{`hexagon_metrics`}{Computes metrics in an hexagon tessellation. The output is a `sf/sfc_POLYGON`}
 #' \item{`plot_metrics`}{Computes metrics for each plot of a ground inventory by 1. clipping the plots
-#' inventories 2. computing user's metrics to each plot 3. combining spatial data and metrics into
-#' one data.frame ready for statistical modelling. `plot_metrics` is basically a seamless wrapper
-#' around \link{clip_roi}, \link{cloud_metrics}, `cbind` and adequate processing settings.}
-#' \item{`cloud_metrics`}{Computes a series of user-defined descriptive statistics for an entire dataset.}
+#' inventories with \link{clip_roi} 2. computing user's metrics to each plot with  \link{cloud_metrics}
+#' 3. combining spatial data and metrics into one data.frame ready for statistical modelling with
+#' `cbind`. The output is of the class of the input.}
+#' \item{`cloud_metrics`}{Computes a series of user-defined descriptive statistics for an entire point cloud.
+#' The output is a `list`}
 #' \item{`crown_metrics`}{Once the trees are segmented, i.e. attributes exist in the
 #' point cloud that reference each tree, computes a set of user-defined descriptive statistics for
-#' each individual tree. The output can be spatial point or spatial polygons.}
+#' each individual tree. The output can be spatial point or spatial polygons (`sf/sfc_POINT` or `sf/sfc_POLYGON`)}
 #' \item{`voxel_metrics`}{Is a 3D version of `pixel_metrics`. It creates a 3D matrix of voxels with a given
-#' resolution. It creates a voxel from the cloud of points if there is at least one point.}
+#' resolution. It creates a voxel from the cloud of points if there is at least one point. The output is
+#' a `data.frame`}
 #' \item{`point_metrics`}{Is a bit more complex and is documented in \link{point_metrics}}
 #' }
 #'
 #' @template param-las
 #' @param func formula. An expression to be applied to each element of the template (see section
 #' "Parameter func").
-#' @param template can be of many types and correspond to the different levels of regularization.
-#' `RasterLayer`, `stars`, `sf/sfc` (polygons), `numeric`, `bbox`. The metrics
-#' are computed for each element of the template. See examples
+#' @param template can be of many types and corresponds to the different levels of regularization.
+#' `RasterLayer/stars/SpatRaster`, `sf/sfc` (polygons), `numeric`, `bbox`, `NULL`. The metrics' are
+#' computed for each element of the template. See examples
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
 #' @param by_echo characters. The metrics are computed multiples times for different echo types. Can
@@ -34,8 +38,7 @@
 #' Default is "all" meaning that it computes metrics with all points provided.
 #' @param ... propagated to `template_metrics` i.e. `filter` and `by_echo`. `pixel_metrics()` also
 #' supports `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `RasterLayer`
-#' or `stars`. Default is `getOption("lidR.raster.default")`. Under the hood lidR uses native pkg code
-#' and does not cast to pkg.
+#' or `stars`. Default is `getOption("lidR.raster.default")`.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -62,30 +65,37 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las = readLAS(LASfile, filter = "-keep_random_fraction 0.5")
-#' col = sf::sf.colors(15)
+#' las <- readLAS(LASfile, filter = "-keep_random_fraction 0.5")
+#' col <- sf::sf.colors(15)
+#' fun1 <- ~list(maxz = max(Z))
+#' fun2 <- ~list(q85 = quantile(Z, probs = 0.85))
 #'
-#' # === Using a generic template ====
+#' # ================
+#' # TEMPLATE METRICS
+#' # ================
 #'
-#' fun <- ~list(maxz = max(Z))
-#'
+#' # a raster as template
 #' template <- raster::raster(extent(las), nrow = 15, ncol = 15)
 #' raster::crs(template) <- crs(las)
-#' m = template_metrics(las, fun, template)
+#' m <- template_metrics(las, fun1, template)
 #' plot(m, col = col)
 #'
-#' sfc = sf::st_as_sfc(st_bbox(las))
-#' template = sf::st_make_grid(sfc, cellsize = 10, square = FALSE)
-#' m = template_metrics(las, fun, template)
+#' # a sfc_POLYGON as template
+#' sfc <- sf::st_as_sfc(st_bbox(las))
+#' template <- sf::st_make_grid(sfc, cellsize = 10, square = FALSE)
+#' m <- template_metrics(las, fun1, template)
 #' plot(m, nbreaks = 15)
 #'
-#' template = st_bbox(las) + c(50,30,-50,-70)
+#' # a bbox as template
+#' template <- st_bbox(las) + c(50,30,-50,-70)
 #' plot(sf::st_as_sfc(st_bbox(las)), col = "gray")
 #' plot(sf::st_as_sfc(template), col = "darkgreen", add = TRUE)
-#' m = template_metrics(las, fun, template)
+#' m <- template_metrics(las, fun2, template)
 #' print(m)
 #'
-#' # === Define your own new metrics ===
+#' # ================
+#' # CUSTOM METRICS
+#' # ================
 #'
 #' myMetrics = function(z, i) {
 #'   metrics = list(
@@ -96,30 +106,36 @@
 #'    return(metrics)
 #' }
 #'
+#' # example with a stars template
 #' template <- stars::st_as_stars(st_bbox(las), nx = 18, ny = 18)
-#' m = template_metrics(las, ~myMetrics(Z, Intensity), template)
+#' m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
 #' plot(m, col = col, breaks = "equal", join_zlim = FALSE)
 #'
-#' # === Entire point cloud ====
+#' # ================
+#' # CLOUD METRICS
+#' # ================
 #'
 #' cloud_metrics(las, .stdmetrics_z)
 #'
-#' # === Area-based approach ===
+#' # ================
+#' # PIXEL METRICS
+#' # ================
 #'
-#' m = pixel_metrics(las, fun, 20)
+#' m <- pixel_metrics(las, fun, 20)
 #' plot(m, col = col, breaks = "equal")
 #'
 #' m = pixel_metrics(las, ~myMetrics(Z, Intensity))
 #' plot(m, col = col)
 #'
-#' # === Ground inventory ====
+#' # ================
+#' # PLOT METRICS
+#' # ================
 #'
 #' shpfile <- system.file("extdata", "efi_plot.shp", package="lidR")
 #' inventory <- sf::st_read(shpfile, quiet = TRUE)
 #' inventory # contains an ID and a Value Of Interest (VOI) per plot
-#' fun = ~list(q85 = quantile(Z, probs = 0.85))
 #'
-#' m <- plot_metrics(las, fun, inventory, radius = 11.28)
+#' m <- plot_metrics(las, fun2, inventory, radius = 11.28)
 #' plot(m["q85"], pch = 19, cex = 3)
 #'
 #' \donttest{
@@ -131,33 +147,40 @@
 #' plot(m["zq85"], pch = 19, cex = 3)
 #' }
 #'
-#' # === Voxels based product
+#' # ================
+#' # VOXEL METRICS
+#' # ================
 #'
 #' m <- voxel_metrics(las, ~length(Z), 8)
 #' m <- voxel_metrics(las, ~mean(Intensity), 8)
 #' #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60)
 #' #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60, voxel = TRUE)
 #'
-#' # === Crown based metrics ====
+#' # ================
+#' # CROWN METRICS
+#' # ================
 #'
+#' # Already tree segmented point cloud
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, filter = "-drop_z_below 0")
+#' trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 #'
-#' metrics <- crown_metrics(las, .stdtreemetrics)
+#' metrics <- crown_metrics(trees, .stdtreemetrics)
 #' plot(metrics["Z"])
 #'
-#' metrics <- crown_metrics(las, .stdtreemetrics, geom = "convex")
+#' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "convex")
 #' plot(metrics["Z"])
 #'
-#' metrics <- crown_metrics(las, .stdtreemetrics, geom = "bbox")
+#' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "bbox")
 #' plot(metrics["Z"])
 #'
 #' \donttest{
-#' metrics <- crown_metrics(las, .stdtreemetrics, geom = "concave")
+#' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "concave")
 #' plot(metrics["Z"])
 #' }
 #'
-#' # === With point filters ===
+#' # ================
+#' # ARGUMENT FILTER
+#' # ================
 #'
 #' # Compute using only some points: basic
 #' first = filter_poi(las, ReturnNumber == 1)
@@ -172,11 +195,15 @@
 #' las = readLAS(LASfile, filter = "-keep_first")
 #' metrics = pixel_metrics(las, ~mean(Z), 20)
 #'
-#' # === Split by echo type ===
+#' # ================
+#' # ARGUMENT BY_ECHO
+#' # ================
 #'
 #' func = ~list(avgI = mean(Intensity))
 #' echo = c("all", "first","multiple")
 #'
+#' # func defines on metrics but 3 are computed respectively for all echos
+#' # for first return only and for multiple returns only
 #' metrics <- pixel_metrics(las, func, 20, by_echo = echo)
 #' plot(metrics, col = heat.colors(25))
 #'

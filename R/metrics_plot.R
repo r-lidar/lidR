@@ -1,5 +1,6 @@
 #' @param geometry a spatial vector object. `sp` and `sf`' objects are supported
-#' @param radius numeric. If the geometry is spatial points as radius must be defined
+#' @param radius numeric. If the geometry is spatial points as radius must be defined. Support one
+#' radius or a vector of radii for variable plot sizes.
 #' @rdname aggregate
 #' @export
 plot_metrics <- function(las, func, geometry, ..., radius)

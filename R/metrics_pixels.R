@@ -1,5 +1,5 @@
-#' @param res numeric. The resolution of the output. Can optionally be a `RasterLayer` or a `stars`
-#' In that case the raster is used as the template.
+#' @param res numeric. The resolution of the output. Can optionally be a `RasterLayer` or a `stars` or
+#' a `SpatRaster`.' In that case the raster is used as the template.
 #' @param start vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
 #' grid aligns on (0,0). Not consiered if `res` is a raster
 #' @rdname aggregate

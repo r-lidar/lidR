@@ -1,4 +1,5 @@
 #' @rdname aggregate
+#' @name aggregate
 #' @export
 cloud_metrics = function(las, func, ...)
 {

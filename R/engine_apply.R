@@ -1,4 +1,13 @@
-cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, .AUTOCROP = FALSE, ...)
+#' @rdname engine
+#' @export
+#' @param .CHUNKS list. list of LAScluster
+#' @param .FUN function. function that respects a template (see \link{catalog_apply})
+#' @param .PROCESSOPT list. Processing option
+#' @param .OUTPUTOPT list. Output option
+#' @param .GLOBALS list. Force export of some object in workers
+#' @param .AUTOREAD bool. Enable autoread
+#' @param .AUTOCROP bool. Enable autocrop
+engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, .AUTOCROP = FALSE, ...)
 {
   # Parse ellipsis
   params  <- list(...)
@@ -8,10 +17,10 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
   second_p <- names(formals(.FUN))[2]
 
   # Initialize output
-  nclusters  <- length(.CLUSTER)
+  nclusters  <- length(.CHUNKS)
   futures    <- vector("list", nclusters)
   output     <- vector("list", nclusters)
-  writemode  <- .CLUSTER[[1]]@save != ""
+  writemode  <- .CHUNKS[[1]]@save != ""
   drivers    <- .OUTPUTOPT$drivers
 
   # Initialize progress bar
@@ -37,14 +46,14 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
   # ==== PROCESSING ====
 
-  for (i in seq_along(.CLUSTER))
+  for (i in seq_along(.CHUNKS))
   {
-    chunk <- .CLUSTER[[i]]
+    chunk <- .CHUNKS[[i]]
     params[[first_p]] <- chunk
     save <- chunk@save
 
     states[i] <- CHUNK_PROCESSING
-    engine_update_progress(pb, .CLUSTER[[i]], states[i], percentage, i)
+    engine_update_progress(pb, .CHUNKS[[i]], states[i], percentage, i)
 
     # Asynchronous computation of .FUN on the chunk
     futures[[i]] <- future::future(
@@ -90,10 +99,10 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
           y <- engine_crop(y, bbox)
       }
       else
-        stop("Internal error in cluster_apply: AUTO options are invalid. Please report.", call. = FALSE)
+        stop("Internal error in engine_apply: AUTO options are invalid. Please report.", call. = FALSE)
 
       if (is.null(y)) y <- NULL
-      if (!is.null(y) && writemode) y <- writeANY(y, save, drivers)
+      if (!is.null(y) && writemode) y <- engine_write(y, save, drivers)
       y
     }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS), seed = TRUE)
 
@@ -113,7 +122,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
 
       # The state changed: the chunk was processed. Update the progress
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
+      engine_update_progress(pb, .CHUNKS[[j]], states[j], percentage, j)
 
       # The state is ERROR: abort the process nicely
       if (states[j] == CHUNK_ERROR && abort)
@@ -128,7 +137,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
         # Return a partial output and display the logs
         else
         {
-          engine_save_logs(.CLUSTER[[j]], j)
+          engine_save_logs(.CHUNKS[[j]], j)
           message(messages[j])
           return(output)
         }
@@ -169,7 +178,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
       if (states[j] == CHUNK_PROCESSING) next
 
       percentage <-  engine_compute_progress(states)
-      engine_update_progress(pb, .CLUSTER[[j]], states[j], percentage, j)
+      engine_update_progress(pb, .CHUNKS[[j]], states[j], percentage, j)
 
       if (states[j] == CHUNK_ERROR && abort)
       {
@@ -179,7 +188,7 @@ cluster_apply = function(.CLUSTER, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NUL
         }
         else
         {
-          engine_save_logs(.CLUSTER[[j]], j)
+          engine_save_logs(.CHUNKS[[j]], j)
           message(messages[j])
           return(output)
         }

@@ -1,19 +1,32 @@
 if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 {
-  test_that("rasterize_canopy works with haliburton", {
+  haliburton_bbox <- sf::st_bbox(c(xmin = 685000, xmax = 695000, ymin = 5010000, ymax = 5015000))
+  haliburton <- "/media/jr/Seagate Expansion Drive/Ontario/Haliburton/Landscape LiDAR"
+  haliburton <- readLAScatalog(haliburton)
+  haliburton <- catalog_intersect(haliburton, haliburton_bbox, subset = "flag_processed")
+  plot(haliburton)
 
-    bbox <- sf::st_bbox(c(xmin = 685000, xmax = 695000, ymin = 5010000, ymax = 5015000))
+  montmorency_bbox <- sf::st_bbox(c(xmin = 325000, xmax = 333000, ymin = 521000, ymax = 5229000))
+  montmorency <- "/media/jr/Seagate Expansion Drive/Quebec/Montmorency/las/"
+  montmorency <- readLAScatalog(montmorency)
+  montmorency <- catalog_intersect(montmorency, montmorency_bbox, subset = "flag_processed")
+  montmorency_tile33 <- readLAS(montmorency$filename[33])
+  plot(montmorency)
 
-    haliburton <- "/media/jr/Seagate Expansion Drive/Ontario/Haliburton/Landscape LiDAR"
-    haliburton <- readLAScatalog(haliburton)
-    haliburton <- catalog_intersect(haliburton, bbox, subset = "flag_processed")
+  library(future)
+  plan(multisession(workers = 2))
 
-    plot(haliburton)
-
-
+  test_that("las_check works",
+  {
     res <- las_check(haliburton) |> lapply(length) |> unlist() |> unname()
     expect_equal(res, c(0,0,0))
 
+    res <- las_check(montmorency) |> lapply(length) |> unlist() |> unname()
+    expect_equal(res, c(0,2,0))
+  })
+
+  test_that("rasterize_canopy works with haliburton with small chunks",
+  {
     # Small chunk to trigger potential errors with empty chunks
     # Approx 7 minutes
     opt_chunk_size(haliburton) <- 250
@@ -23,7 +36,10 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     plot(haliburton)
     plot(chm, col = height.colors(25), breaks = "equal", add = T)
+  })
 
+  test_that("rasterize_canopy works with haliburton by files with stars",
+  {
     # Approx 40 seconds
     opt_chunk_size(haliburton) <- 0
     opt_output_files(haliburton) <- ""
@@ -31,7 +47,10 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     expect_is(chm, "stars")
 
     plot(chm, col = height.colors(25), breaks = "equal")
+  })
 
+  test_that("rasterize_canopy works with haliburton by files with raster",
+  {
     # Approx 40 seconds
     options(lidR.raster.default = "raster")
     opt_chunk_size(haliburton) <- 0
@@ -41,7 +60,10 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     expect_false(raster::inMemory(chm))
 
     plot(chm, col = height.colors(25))
+  })
 
+  test_that("rasterize_canopy works with haliburton by files with terra",
+  {
     # Approx 40 seconds
     options(lidR.raster.default = "terra")
     opt_chunk_size(haliburton) <- 0
@@ -52,18 +74,26 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(chm, col = height.colors(25))
   })
 
-  test_that("rasterize_terrain works with montmorency", {
+  test_that("rasterize_terrain works with montmorency with small chunks",
+  {
+    # Small chunk to trigger potential errors with empty chunks
+    # Approx 10 minutes
+    opt_chunk_size(montmorency) <- 250
+    opt_output_files(montmorency) <- "{tempdir()}/montmorency-terrain-{ID}"
+    dtm <- rasterize_terrain(montmorency, 2, tin())
+    expect_is(dtm, "stars_proxy")
+    expect_equal(basename(dtm[[1]]), "rasterize_terrain.vrt")
 
-    bbox <- sf::st_bbox(c(xmin = 325000, xmax = 333000, ymin = 521000, ymax = 5229000))
+    plot(dtm, breaks = "equal", nbreaks = 50)
 
-    montmorency <- "/media/jr/Seagate Expansion Drive/Quebec/Montmorency/las/"
-    montmorency <- readLAScatalog(montmorency)
-    montmorency <- catalog_intersect(montmorency, bbox, subset = "flag_processed")
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
+    plot(ntile33_1)
 
-    plot(montmorency)
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
+    plot(ntile33_2)
+  })
 
-    res <- las_check(montmorency) |> lapply(length) |> unlist() |> unname()
-    expect_equal(res, c(0,2,0))
+  test_that("rasterize_terrain works with montmorency with by files", {
 
     # Small chunk to trigger potential errors with empty chunks
     # Approx 10 minutes
@@ -72,16 +102,23 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     dtm <- rasterize_terrain(montmorency, 2, tin())
     expect_is(dtm, "stars_proxy")
 
-    plot(dtm, breaks = "equal")
+    plot(dtm, breaks = "equal", nbreaks = 50)
+  })
 
+ test_that("rasterize_terrain works with montmorency with in memory and stars",
+ {
     # Approx ?? minutes
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
     dtm = rasterize_canopy(montmorency, 2, p2r())
     expect_is(dtm, "stars")
+    expect_false(is(dtm, "stars_proxy"))
 
-    plot(dtm, col = height.colors(25), breaks = "equal")
+    plot(dtm, breaks = "equal")
+ })
 
+ test_that("rasterize_terrain works with montmorency with in memory and raster",
+ {
     # Approx ?? minutes
     options(lidR.raster.default = "raster")
     opt_chunk_size(montmorency) <- 0
@@ -90,14 +127,24 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     expect_is(dtm, "RasterLayer")
     expect_false(raster::inMemory(dtm))
 
-    plot(dtm, col = height.colors(25))
+    plot(dtm, col = gray.colors(30,0,1))
 
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
+    plot(ntile33_1)
+
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
+    plot(ntile33_2)
+  })
+
+ test_that("rasterize_terrain works with montmorency with in memory and terra",
+ {
     # Approx ?? minutes
     options(lidR.raster.default = "terra")
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
     dtm = rasterize_canopy(montmorency, 2, p2r())
     expect_is(dtm, "SpatRaster")
+    expect_false(raster::inMemory(dtm))
 
     plot(dtm, col = height.colors(25))
   })

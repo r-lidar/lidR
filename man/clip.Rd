@@ -53,37 +53,30 @@ transect}
 \item{xz}{bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates}
 }
 \value{
-If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query implies several regions of interest will be returned.\cr\cr
-If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS}
-objects if the query implies several regions of interest will be returned, or a \code{LAScatalog} if the
+If the input is a LAS object: an object of class LAS, or a \code{list} of LAS objects if the
+query implies several regions of interest will be returned.\cr\cr
+If the input is a LAScatalog object: an object of class LAS, or a \code{list} of LAS
+objects if the query implies several regions of interest will be returned, or a LAScatalog if the
 queries are immediately written into files without loading anything in R.
 }
 \description{
-Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
-(\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point cloud
-into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
-object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
-points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
+Clip points within a given region of interest (ROI) from a point cloud (LAS object) or a collection
+of files (LAScatalog object).
 }
 \section{Supported geometries}{
 
 \itemize{
- \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
- a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
- \item \link[sp:Polygon-class]{Polygon}, \link[sp:SpatialPolygons-class]{SpatialPolygons},
- \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame},  \link[sp:SpatialPoints-class]{SpatialPoints}
- or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
- in that case a parameter 'radius' must be passed in \code{...}
- \item \link[sf:sf]{SimpleFeature} from sf that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
- In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
- \item \link[raster:Extent-class]{Extent} from package \code{raster}
- \item \link[sf:st_bbox]{bbox} from package \code{sf}
- \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
- \preformatted{
+\item \verb{SpatialPolygons*} \verb{SpatialPoints*} from \code{sp} or an \link[sf:sf]{sf/sfc} from \code{sf} that
+consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.  In case of spatial points
+a parameter 'radius' must be passed in \code{...}
+\item \link[raster:Extent-class]{Extent} from package \code{raster}, a \link[sf:st_bbox]{bbox} from
+package \code{sf}
+\item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
+\preformatted{
   min     max
 x 684816  684943
 y 5017823 5017957}
- }
+}
 }
 
 \examples{

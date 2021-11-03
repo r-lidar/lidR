@@ -7,11 +7,11 @@ ctg@processing_options$progress <- FALSE
 
 test_that("catalog drops some chunk", {
   ctg@chunk_options$drop = 1:3
-  cls = catalog_makechunks(ctg)
+  cls = engine_chunks(ctg)
   expect_equal(length(cls), 5)
 
   ctg@chunk_options$drop = c(1:3, 8)
-  cls = catalog_makechunks(ctg)
+  cls = engine_chunks(ctg)
   expect_equal(length(cls), 4)
 })
 

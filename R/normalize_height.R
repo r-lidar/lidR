@@ -23,6 +23,9 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
   {
     dtm <- algorithm
 
+    if (raster_nlayer(dtm) > 1)
+      stop("A DTM must be a single layer raster", call. = FALSE)
+
     Zg <- raster_value_from_xy(dtm, las$X, las$Y)
     isna <- is.na(Zg)
     nnas <- n_na_not_in_buffer(las, isna)
@@ -55,8 +58,11 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
     # Select the ground points. If dtm is provided, then the ground point are from the DTM
     if (!is.null(dtm))
     {
+      if (raster_nlayer(dtm) > 1)
+        stop("A DTM must be a single layer raster", call. = FALSE)
+
       dtm <- raster_crop(dtm, st_bbox(las))
-      ground <- raster_as_las(dtm)
+      ground <- raster_as_las(dtm, st_bbox(las))
     }
     else
     {

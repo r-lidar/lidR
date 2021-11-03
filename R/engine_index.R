@@ -1,14 +1,21 @@
-catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, process = TRUE, outside_catalog_is_null = TRUE, by_file = FALSE)
+#' @param bboxes list. list of bbox
+#' @param shape numeric LIDRRECTANGLE|LIDRCIRCLE
+#' @param buffer numeric
+#' @param process. logical
+#' @param outside_catalog_is_null bool
+#' @param by_file bool
+#' @noRd
+engine_index =	function(ctg, bboxes, shape = LIDRRECTANGLE, buffer = 0, process = TRUE, outside_catalog_is_null = TRUE, by_file = FALSE)
 {
   stopifnot(is.list(bboxes))
 
-  MinX <- catalog[["Min.X"]]
-  MaxX <- catalog[["Max.X"]]
-  MinY <- catalog[["Min.Y"]]
-  MaxY <- catalog[["Max.Y"]]
+  MinX <- ctg[["Min.X"]]
+  MaxX <- ctg[["Max.X"]]
+  MinY <- ctg[["Min.Y"]]
+  MaxY <- ctg[["Max.Y"]]
 
   if (length(process) == 1L)
-    process <- rep(process, nrow(catalog@data))
+    process <- rep(process, nrow(ctg@data))
 
   queries <- vector("list", length(bboxes))
 
@@ -27,7 +34,7 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     else
       select <- FALSE
 
-    files  <- catalog$filename[select]
+    files  <- ctg$filename[select]
 
     if (length(files) == 0 & outside_catalog_is_null)
       next
@@ -38,7 +45,7 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     # when merged-reading the las files.
     if (length(files) > 1 && by_file)
     {
-      main <- catalog$filename[process][i]
+      main <- ctg$filename[process][i]
       j <- which(files == main)
       if (length(j) == 0) stop("Internal error: the indexation algorithm generated an incorrect list of files. Please report this error.") # nocov
       sfiles <- c(main, files[-j[1]])
@@ -60,10 +67,10 @@ catalog_index =	function(catalog, bboxes, shape = LIDRRECTANGLE, buffer = 0, pro
     center  <- list(x = (bbox$xmax + bbox$xmin)/2, y = (bbox$ymax + bbox$ymin)/2)
     width   <- (bbox$xmax - bbox$xmin)
     height  <- (bbox$ymax - bbox$ymin)
-    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname", crs = st_crs(catalog), index = catalog@index)
+    cluster <- LAScluster(center, width, height, buffer, shape, files, "noname", crs = st_crs(ctg), index = ctg@index)
 
-    cluster@select <- opt_select(catalog)
-    cluster@filter <- paste(cluster@filter, opt_filter(catalog))
+    cluster@select <- opt_select(ctg)
+    cluster@filter <- paste(cluster@filter, opt_filter(ctg))
 
     queries[[i]] <- cluster
   }

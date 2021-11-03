@@ -1,12 +1,9 @@
-#' Merge a list of outputs returned by cluster_apply into a single object. This function is called
-#' at the end of catalog_apply and only there. It merges all the independent outputs into a single
-#' one. It cannot fail, at worst it returns the list.
-#'
-#' @param ctg LAScatalog for processing options
-#' @param any_list a list of same type objects that can be Raster*, sf, sfc, Spatial*, LAS, stars, data.frame
-#' @param ... unused
-
-catalog_merge_results = function(ctg, any_list, ...)
+#' @rdname engine
+#' @export
+#' @param any_list list of LAS, Raster, stars, SpatRaster, sf, sfc, Spatial, data.frame
+#' @param ctg LAScatalog
+#' @family LAScatalog processing engine
+engine_merge = function(ctg, any_list, ...)
 {
   object_are_in_files <- opt_output_files(ctg) != ""
 

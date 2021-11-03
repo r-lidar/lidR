@@ -151,7 +151,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
   else if (chunk_pattern)
   {
     opt_progress(x) <- TRUE
-    catalog_makecluster(x)
+    engine_chunks(x)
     return(invisible())
   }
   else

@@ -359,7 +359,7 @@ In efforts to avoid breaking users' scripts version 3 is fully backwards-compati
     filter_poi(las, !Classification %in% c(LASWIRECONDUCTOR, LASTRANSMISSIONTOWER))
     ```
 
-10. The internal function `catalog_makechunks()` has been exported. It is not actually intended to be used by regular users but might be useful in some specific cases for debugging purposes.
+10. The internal function `engine_chunks()` has been exported. It is not actually intended to be used by regular users but might be useful in some specific cases for debugging purposes.
 
 11. `lasmetrics()`, `grid_metrics3d()`, `grid_hexametrics()` were deprecated in previous versions. They are now defunct.
 
