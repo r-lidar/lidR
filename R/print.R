@@ -37,7 +37,7 @@ setMethod("show", "LAS", function(object)
   minor     <- phb[["Version Minor"]]
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
-  units     <- st_crs(object)$units_gdal
+  units     <- st_crs(object)$units
   units     <- if (is.na(units)) "units" else units
 
   areaprefix  <- ""
@@ -84,7 +84,7 @@ setMethod("show", "LAScatalog", function(object)
   npoints     <- sum(object@data$Number.of.point.records)
   npoints.h   <- npoints
   ext         <- st_bbox(object)
-  units       <- st_crs(object)$units_gdal
+  units       <- st_crs(object)$units
   units       <- if (is.na(units)) "units" else units
   areaprefix  <- ""
   pointprefix <- ""
