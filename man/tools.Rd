@@ -12,6 +12,7 @@
 \alias{ncol.LAS}
 \alias{nrow.LAScatalog}
 \alias{names.LAS}
+\alias{names.LASheader}
 \alias{rbind.LAS}
 \alias{npoints}
 \alias{density}
@@ -34,6 +35,8 @@ ncol.LAS(x)
 nrow.LAScatalog(x)
 
 \method{names}{LAS}(x)
+
+\method{names}{LASheader}(x)
 
 \method{rbind}{LAS}(...)
 
