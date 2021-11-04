@@ -7,7 +7,7 @@
 #' `lidR` can be used seamlessly with a LAScatalog using the internal
 #' `LAScatalog` processing engine. To take advantage of the `LAScatalog`
 #' processing engine the user must first adjust some processing options using the
-#' \link[=catalog_options_tools]{appropriate functions}. Careful reading of the
+#' \link[=engine_options]{appropriate functions}. Careful reading of the
 #' \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 #' `LAScatalog` class correctly.\cr\cr
 #' `readLAScatalog` is the original function and always works. Using one of the `read*LAScatalog` functions
@@ -20,7 +20,7 @@
 #' @param folder string. The path of a folder containing a set of las/laz files.
 #' Can also be a vector of file paths.
 #' @param progress,select,filter,chunk_size,chunk_buffer Easily accessible processing
-#' options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.
+#' options tuning. See \link{LAScatalog-class} and \link{engine_options}.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically
 #' `recursive = TRUE`. Propagates also to `readLAScatalog`
 #'
@@ -35,7 +35,7 @@
 #' plot(ctg)
 #'
 #' \dontrun{
-#' ctg <- readLAScatalog("/path/to/a/folder/of/las/files")
+#' ctg <- readLAScatalog("</path/to/folder/of/las/>")
 #'
 #' # Internal engine will sequentially process chunks of size 500 x 500 m
 #' opt_chunk_size(ctg) <- 500
@@ -46,12 +46,18 @@
 #' # Internal engine will not display a progress estimation
 #' opt_progress(ctg) <- FALSE
 #'
-#' # Internal engine will not return results into R. Instead it will write results in files.
-#' opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#' # Internal engine will not return results into R.
+#' # Instead it will write results in files.
+#' # File will be named e.g.
+#' # filename_256000_1.ext
+#' # filename_257000_2.ext
+#' # filename_258000_3.ext
+#' # ...
+#' opt_output_files(ctg) <- "/path/filename_{XBOTTOM}_{ID}"
 #'
 #' # More details in the documentation
 #' help("LAScatalog-class", "lidR")
-#' help("catalog_options_tools", "lidR")
+#' help("engine_options", "lidR")
 #' }
 #' @md
 readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
@@ -77,7 +83,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   header <- LASheader(rlas::read.lasheader(files[1]))
   crs    <- st_crs(header)
-  phblab <- make.names(names(header@PHB))
+  phblab <- make.names(names(phb(header)))
   phblab[4] <- "GUID"
 
   # Delayed progress bar

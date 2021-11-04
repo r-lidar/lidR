@@ -55,9 +55,9 @@ st_transform.LAS <- function(x, crs, ...)
   x@header@PHB[["Z offset"]] <- offsetz
 
   # Update the scale factors
-  scalex <- x@header@PHB[["X scale factor"]]
-  scaley <- x@header@PHB[["Y scale factor"]]
-  scalez <- x@header@PHB[["Z scale factor"]]
+  scalex <- x[["X scale factor"]]
+  scaley <- x[["Y scale factor"]]
+  scalez <- x[["Z scale factor"]]
   if (!is.null(p$scale)) scalex <- scaley <- scalez <- p$scale
   x@header@PHB[["X scale factor"]] <- scalex
   x@header@PHB[["Y scale factor"]] <- scaley

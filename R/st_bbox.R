@@ -32,10 +32,10 @@ st_bbox.LAS = function(obj, ...)
 #' @rdname st_bbox
 st_bbox.LASheader = function(obj, ...)
 {
-  if (obj@PHB[["Number of point records"]] == 0L)
+  if (obj[["Number of point records"]] == 0L)
     return(sf::NA_bbox_)
 
-  bbox <- with(obj@PHB, c(`Min X`, `Min Y`, `Max X`, `Max Y`))
+  bbox <- c(obj[["Min X"]], obj[["Min Y"]], obj[["Max X"]], obj[["Max Y"]])
   names(bbox) <- c("xmin", "ymin", "xmax", "ymax")
   crs <- tryCatch(crs <- st_crs(obj), error = function(e) sf::NA_crs_)
   return(sf::st_bbox(bbox, crs = crs))

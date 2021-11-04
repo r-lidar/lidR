@@ -42,12 +42,12 @@ las_check = function(las, print = TRUE, ...)
 #' @export
 las_check.LASheader = function(las, print = TRUE, ...)
 {
-  xscale  <- las@PHB[["X scale factor"]]
-  xoffset <- las@PHB[["X offset"]]
-  yscale  <- las@PHB[["Y scale factor"]]
-  yoffset <- las@PHB[["Y offset"]]
-  zscale  <- las@PHB[["Z scale factor"]]
-  zoffset <- las@PHB[["Z offset"]]
+  xscale  <- las[["X scale factor"]]
+  xoffset <- las[["X offset"]]
+  yscale  <- las[["Y scale factor"]]
+  yoffset <- las[["Y offset"]]
+  zscale  <- las[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
 
   head <- as.list(las)
   g    <- glue::glue
@@ -147,8 +147,8 @@ las_check.LAS = function(las, print = TRUE, ...)
     las <- las_v3_repair(las)
   }
 
-  data <- las@data
-  head <- as.list(las@header)
+  data <- payload(las)
+  head <- as.list(header(las))
 
   xscale <- las[["X scale factor"]]
   xoffset <- las[["X offset"]]
@@ -416,7 +416,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   # ==== header ====
 
-  head_chk <- las_check(las@header, print = print, ...)
+  head_chk <- las_check(header(las), print = print, ...)
   infos <- c(infos, head_chk[["infos"]])
   errors <- c(errors, head_chk[["errors"]])
   warnings <- c(warnings, head_chk[["warnings"]])
@@ -550,8 +550,8 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
   else
   {
-    min = pixel_metrics(las, ~abs(min(Z)), res = 20)
-    mean_min = mean(min[[1]], na.rm = TRUE)
+    min = rasterize_fast(las, res = 20, method = "min")
+    mean_min = mean(abs(min[[1]]), na.rm = TRUE)
 
     if (mean_min <= 0.1) {
       .yes()
