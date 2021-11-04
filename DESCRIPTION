@@ -26,7 +26,6 @@ Depends:
 Imports:
     data.table (>= 1.12.0),
     future,
-    geometry,
     glue,
     grDevices,
     lazyeval,
@@ -38,17 +37,18 @@ Imports:
     sp,
     stats,
     stars,
-    terra,
     tools,
     utils
 Suggests:
     EBImage,
+    geometry,
     gstat,
     RCSF,
     rgdal,
     mapview,
     mapedit,
     progress,
+    terra,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
