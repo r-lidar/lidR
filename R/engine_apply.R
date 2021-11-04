@@ -7,6 +7,7 @@
 #' @param .GLOBALS list. Force export of some object in workers
 #' @param .AUTOREAD bool. Enable autoread
 #' @param .AUTOCROP bool. Enable autocrop
+#' @param ... parameters of .FUN
 engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL, .AUTOREAD = FALSE, .AUTOCROP = FALSE, ...)
 {
   # Parse ellipsis

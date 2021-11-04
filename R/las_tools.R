@@ -66,9 +66,9 @@ NULL
 #' @rdname las_utilities
 las_rescale = function(las, xscale, yscale, zscale)
 {
-  xoffset <- las@header@PHB[["X offset"]]
-  yoffset <- las@header@PHB[["Y offset"]]
-  zoffset <- las@header@PHB[["Z offset"]]
+  xoffset <- las[["X offset"]]
+  yoffset <- las[["Y offset"]]
+  zoffset <- las[["Z offset"]]
 
   if (!missing(xscale))
   {
@@ -108,13 +108,13 @@ las_rescale = function(las, xscale, yscale, zscale)
 #' @export
 las_reoffset = function(las, xoffset, yoffset, zoffset)
 {
-  xscale  <- las@header@PHB[["X scale factor"]]
-  yscale  <- las@header@PHB[["Y scale factor"]]
-  zscale  <- las@header@PHB[["Z scale factor"]]
+  xscale  <- las[["X scale factor"]]
+  yscale  <- las[["Y scale factor"]]
+  zscale  <- las[["Z scale factor"]]
 
-  xrange  <- c(las@header@PHB[["Min X"]], las@header@PHB[["Max X"]])
-  yrange  <- c(las@header@PHB[["Min Y"]], las@header@PHB[["Max Y"]])
-  zrange  <- c(las@header@PHB[["Min Z"]], las@header@PHB[["Max Z"]])
+  xrange  <- c(las[["Min X"]], las[["Max X"]])
+  yrange  <- c(las[["Min Y"]], las[["Max Y"]])
+  zrange  <- c(las[["Min Z"]], las[["Max Z"]])
 
   if (!missing(xoffset))
   {
@@ -166,12 +166,12 @@ las_reoffset = function(las, xoffset, yoffset, zoffset)
 #' @rdname las_utilities
 las_quantize = function(las, by_reference = TRUE)
 {
-  xscale <- las@header@PHB[["X scale factor"]]
-  yscale <- las@header@PHB[["Y scale factor"]]
-  zscale <- las@header@PHB[["Z scale factor"]]
-  xoffset <- las@header@PHB[["X offset"]]
-  yoffset <- las@header@PHB[["Y offset"]]
-  zoffset <- las@header@PHB[["Z offset"]]
+  xscale <- las[["X scale factor"]]
+  yscale <- las[["Y scale factor"]]
+  zscale <- las[["Z scale factor"]]
+  xoffset <- las[["X offset"]]
+  yoffset <- las[["Y offset"]]
+  zoffset <- las[["Z offset"]]
 
   if (isTRUE(by_reference))
   {
@@ -298,6 +298,9 @@ evlr <- function(las)
 {
   if (!is(las, "LASheader"))
     las <- header(las)
+
+  if (!methods::.hasSlot(las, "EVLR"))
+    return(NULL)
 
   return(las@EVLR)
 }

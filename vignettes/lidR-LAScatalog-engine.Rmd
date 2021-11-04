@@ -325,7 +325,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:5){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -352,7 +352,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:6){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -379,7 +379,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:8){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -412,7 +412,7 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 opt_restart(ctg) <- 9
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:4){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -432,7 +432,7 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 opt_restart(ctg) <- 1
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:length(cl)){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -455,7 +455,7 @@ opt_chunk_size(ctg) <- 400
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:50){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -499,7 +499,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:6) {
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -621,7 +621,7 @@ test = readLAScatalog(LASfile)
 opt_chunk_size(test) <- 150
 opt_chunk_alignment(test) <- c(50,10)
 opt_progress(ctg) <- FALSE
-chunks = lidR:::catalog_makecluster(test)
+chunks = engine_chunks(test)
 chunk = chunks[[5]]
 ```
 

@@ -1,8 +1,6 @@
-context("readLAS")
-
 LASfile <- example_las_path
 ctg <- readLAScatalog(example_las_path, chunk_size = 100, select = "xyzrn")
-cls <- lidR:::catalog_makecluster(ctg)
+cls <- engine_chunks(ctg)
 
 test_that("readLAS reads files", {
   las <- readLAS(LASfile, select = "xyzrn")

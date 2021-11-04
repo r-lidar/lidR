@@ -20,15 +20,13 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
   {
     if (methods::.hasSlot(data, "proj4string"))
     {
-      pts  <- data@data
-      phb  <- data@header@PHB
-      vlr  <- data@header@VLR
-      crs  <- data@proj4string
-      evlr <- NULL
-      if (methods::.hasSlot(data@header, "EVLR"))
-        evlr <- data@header@EVLR
-
-      return(suppressWarnings(LAS(pts, c(phb, vlr, evlr), proj4string = crs, check = FALSE)))
+      pts  <- payload(data)
+      phb  <- phb(data)
+      vlr  <- vlr(data)
+      crs  <- st_crs(data)
+      evlr <- evlr(data)
+      head <- c(phb, vlr, evlr)
+      return(LAS(pts, head, crs = crs, check = FALSE))
     }
 
     return(data)
@@ -246,20 +244,20 @@ setMethod("$<-", "LAS", function(x, name, value)
     {
       scale_string <- paste(name, "scale factor")
       offset_string <- paste(name, "offset")
-      scale  <- x@header@PHB[[scale_string]]
-      offset <- x@header@PHB[[offset_string]]
+      scale  <- x[[scale_string]]
+      offset <- x[[offset_string]]
       valid_range <- storable_coordinate_range(scale, offset)
       value_range <- range(value)
 
       if (value_range[1] < valid_range[1] | value_range[2] > valid_range[2])
         stop(glue::glue("Trying to store values ranging in [{value_range[1]}, {value_range[2]}] but storable range is [{valid_range[1]}, {valid_range[2]}]"), call. = FALSE)
 
-      if(!is.quantized(value, scale, offset))
+      if (!is.quantized(value, scale, offset))
         value <- quantize(value, scale, offset, FALSE)
     }
   }
 
-  x@data[[name]] = value
+  x@data[[name]] <- value
 
   if (name %in% c("X", "Y", "Z"))
     x <- las_update(x)
@@ -301,8 +299,8 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
     {
       scale_string <- paste(i, "scale factor")
       offset_string <- paste(i, "offset")
-      scale  <- x@header@PHB[[scale_string]]
-      offset <- x@header@PHB[[offset_string]]
+      scale  <- x[[scale_string]]
+      offset <- x[[offset_string]]
       valid_range <- storable_coordinate_range(scale, offset)
       value_range <- range(value)
 

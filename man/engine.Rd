@@ -44,6 +44,8 @@ engine_write(x, path, drivers)
 
 \item{.AUTOCROP}{bool. Enable autocrop}
 
+\item{...}{parameters of .FUN}
+
 \item{ctg}{LAScatalog}
 
 \item{realignment}{\code{FALSE} or \code{list(res = x, start = c(y,z))}. Sometimes the chunk must

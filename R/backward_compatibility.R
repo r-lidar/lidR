@@ -65,7 +65,7 @@ tree_metrics <- function(las, func = ~list(Z = max(Z)), attribute = "treeID", ..
 {
   res <- crown_metrics(las, func, geom = "point", attribute, ...)
   if (is(res, "sf")) res <- sf::as_Spatial(res)
-  res
+  return(res)
 }
 
 #' @export
@@ -111,7 +111,7 @@ find_trees = function(las, algorithm, uniqueness = 'incremental')
     res <- sf::st_zm(res)
     res <- sf::as_Spatial(res)
   }
-  res
+  return(res)
 }
 
 #' @export
@@ -137,7 +137,7 @@ lascatalog_v3_repair <- function(x)
     opt_copy(y) <- x
     return(y)
   }
-  else
-    return(x)
+
+  return(x)
 }
 

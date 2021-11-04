@@ -171,14 +171,14 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
  test_that("locate_trees works with haliburton with small chunks",
  {
-   # Small chunk to trigger potential errors with empty chunks
-   # Approx 10 minutes
+   # Small chunks to trigger potential errors chunks with 0 trees
+   # Approx 20 minutes
    opt_chunk_size(haliburton) <- 250
    opt_output_files(haliburton) <- ""
    ttops <- locate_trees(haliburton, lmf(3)) # never end to merge
    expect_is(ttops, "sf")
 
    plot(haliburton)
-   plot(chm, col = height.colors(25), breaks = "equal", add = T)
+   plot(ttops, col = height.colors(25), breaks = "equal", add = T)
   })
 }

@@ -1,5 +1,3 @@
-context("catalog_makeclusters")
-
 data <- data.table::data.table(
   Max.X   = c(885228.88, 886993.96, 885260.93, 887025.96, 885292.94, 887056.88,
               892199.94, 893265.54, 892229.99, 893295.15, 888759.96, 890524.95,
@@ -47,7 +45,7 @@ test_that("catalog_makecluster makes correct clusters", {
   opt_chunk_size(ctg)   <-  800
   opt_chunk_buffer(ctg) <- 0
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -74,7 +72,7 @@ test_that("catalog_makecluster makes correct clusters with buffer", {
   opt_chunk_size(ctg)   <- 800
   opt_chunk_buffer(ctg) <- 50
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -101,7 +99,7 @@ test_that("catalog_makecluster makes correct clusters with negative buffer", {
   opt_chunk_size(ctg)   <- 800
   opt_chunk_buffer(ctg) <- -100
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -121,7 +119,7 @@ test_that("catalog_makecluster makes correct clusters by file", {
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 0
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   width   <- unname(sapply(cl, function(x) x@width))
   buffer  <- unname(sapply(cl, function(x) x@buffer))
@@ -152,7 +150,7 @@ test_that("catalog_makecluster makes correct clusters by file with buffer", {
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 30
 
-  cl  <- lidR:::catalog_makecluster(ctg)
+  cl  <- engine_chunks(ctg)
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -190,7 +188,7 @@ test_that("catalog_makecluster makes correct clusters by file with negative buff
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- -30
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -218,7 +216,7 @@ test_that("catalog_makecluster realign the chunks with a raster", {
   opt_chunk_size(ctg)   <- 1200
   opt_chunk_buffer(ctg) <- 0
 
-  cl <- lidR:::catalog_makecluster(ctg, realignment = list(res = 55, start = c(0,0)))
+  cl <- engine_chunks(ctg, realignment = list(res = 55, start = c(0,0)))
 
   width   <- sapply(cl, function(x) x@width)
   buffer  <- sapply(cl, function(x) x@buffer)
@@ -238,7 +236,7 @@ test_that("catalog_makecluster extend the chunks with a raster by file", {
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 0
 
-  cl <- lidR:::catalog_makecluster(ctg, realignment = list(res = 55, start = c(0,0)))
+  cl <- engine_chunks(ctg, realignment = list(res = 55, start = c(0,0)))
 
   width   <- unname(sapply(cl, function(x) x@width))
   buffer  <- unname(sapply(cl, function(x) x@buffer))
@@ -261,7 +259,7 @@ test_that("catalog_makecluster works with partial processing", {
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 0
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   nfiles  <- sapply(cl, function(x) length(x@files))
   mainf   <- sapply(cl, function(x) x@files[1])
@@ -274,7 +272,7 @@ test_that("catalog_makecluster works with partial processing", {
   opt_chunk_size(ctg)   <- 0
   opt_chunk_buffer(ctg) <- 30
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   nfiles  <- sapply(cl, function(x) length(x@files))
   mainf   <- sapply(cl, function(x) x@files[1])
@@ -287,7 +285,7 @@ test_that("catalog_makecluster works with partial processing", {
   opt_chunk_size(ctg)   <- 1000
   opt_chunk_buffer(ctg) <- 30
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   nfiles  <- sapply(cl, function(x) length(x@files))
 
@@ -300,7 +298,7 @@ test_that("catalog_makecluster makes no cluster that belong on a tile only with 
   opt_chunk_buffer(ctg) <- 150
   opt_chunk_alignment(ctg) <- c(-100, -150)
 
-  cl <- lidR:::catalog_makecluster(ctg)
+  cl <- engine_chunks(ctg)
 
   expect_equal(length(cl), 100L)
 })
@@ -312,7 +310,7 @@ test_that("catalog_makecluster makes correct clusters that do not overlap", {
   opt_chunk_buffer(project) <- 15
   opt_chunk_size(project)   <- 120
 
-  cluster <- lidR:::catalog_makecluster(project)
+  cluster <- engine_chunks(project)
 
   x <- unlist(lapply(cluster, function(cl) {c(cl@bbox[1], cl@bbox[3])}))
   y <- unlist(lapply(cluster, function(cl) {c(cl@bbox[2], cl@bbox[4])}))
@@ -326,7 +324,7 @@ test_that("catalog_makecluster throw error when using ORIGINALFILENAME", {
   opt_output_files(ctg) <- "{*}"
   opt_chunk_size(ctg) <- 1000
 
-  expect_error(lidR:::catalog_makecluster(ctg), "makes sense only when processing by file")
+  expect_error(engine_chunks(ctg), "makes sense only when processing by file")
 })
 
 test_that("plot overlaps works", {

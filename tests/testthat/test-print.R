@@ -51,7 +51,7 @@ test_that("print works with LAScatalog", {
 
 test_that("print works with LAScluster", {
   sink(tempfile())
-  cl = lidR:::catalog_makecluster(ctg)[[1]]
+  cl = engine_chunks(ctg)[[1]]
   expect_error(show(cl), NA)
   sink(NULL)
 })
