@@ -126,18 +126,15 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_cla
   else if (!raster_is_supported(res))
     stop("'res' must be a number or a raster.", call. = FALSE)
 
-  # Compute the alignment options including the case when res is a RasterLayer/stars/terra
-  alignment <- raster_alignment(res)
-
   # subset the collection to the size of the layout (if any)
   if (!is_a_number(res)) las <- catalog_intersect(las, res)
 
   # Enforce some options
   opt_select(las) <- "xyzc"
-  #opt_filter(las) <-  paste("-keep_class", paste(use_class, collapse = " "), opt_filter(las))
+  opt_filter(las) <-  paste("-keep_class", paste(use_class, collapse = " "), opt_filter(las))
 
-  # Compute the alignment option including the case when res is a RasterLayer
-  alignment   <- list(res = res, start = c(0,0))
+  # Compute the alignment options including the case when res is a raster/stars/terra
+  alignment <- raster_alignment(res)
 
   if (opt_chunk_size(las) > 0 && opt_chunk_size(las) < 2*alignment$res)
     stop("The chunk size is too small. Process aborted.", call. = FALSE)
