@@ -29,6 +29,10 @@ nrow.LAScatalog <- function(x) return(nrow(x@data))
 names.LAS <- function(x) return(names(x@data))
 
 #' @export
+#' @rdname tools
+names.LASheader <- function(x) return(c(names(x@PHB), names(x@VLR), names(x@EVLR)))
+
+#' @export
 names.LAScatalog <- function(x) return(names(x@data))
 
 #' @name tools
