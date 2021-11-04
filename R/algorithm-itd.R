@@ -2,7 +2,7 @@
 
 #' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{find_trees}. It implements an algorithm for tree
+#' This function is made to be used in \link{locate_trees}. It implements an algorithm for tree
 #' detection based on a local maximum filter. The windows size can be fixed or variable and its
 #' shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
 #' It is deeply inspired by Popescu & Wynne (2004) (see references).
@@ -34,14 +34,14 @@
 #' # =================
 #'
 #' # 5x5 m fixed window size
-#' ttops <- find_trees(las, lmf(5))
+#' ttops <- locate_trees(las, lmf(5))
 #'
 #' #x <- plot(las)
 #' #add_treetops3d(x, ttops)
 #'
 #' # variable windows size
 #' f <- function(x) { x * 0.07 + 3}
-#' ttops <- find_trees(las, lmf(f))
+#' ttops <- locate_trees(las, lmf(f))
 #'
 #' #x <- plot(las)
 #' #add_treetops3d(x, ttops)
@@ -49,15 +49,15 @@
 #' # raster-based
 #' # ============
 #'
-#' chm <- grid_canopy(las, res = 1, p2r(0.15))
-#' ttops <- find_trees(chm, lmf(5))
+#' chm <- rasterize_canopy(las, res = 1, p2r(0.15))
+#' ttops <- locate_trees(chm, lmf(5))
 #'
 #' plot(chm, col = height.colors(30))
 #' plot(ttops, add = TRUE)
 #'
 #' # variable window size
 #' f <- function(x) { x * 0.07 + 3 }
-#' ttops <- find_trees(chm, lmf(f))
+#' ttops <- locate_trees(chm, lmf(f))
 #'
 #' plot(chm, col = height.colors(30))
 #' plot(ttops, add = TRUE)
@@ -102,7 +102,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
 #' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{find_trees}. It implements an algorithm for manual
+#' This function is made to be used in \link{locate_trees}. It implements an algorithm for manual
 #' tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
 #' This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
 #' invited to select a rectangular region of interest in the scene using the mouse button.
@@ -126,11 +126,11 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' las = readLAS(LASfile)
 #'
 #' # Full manual tree detection
-#' ttops = find_trees(las, manual())
+#' ttops = locate_trees(las, manual())
 #'
 #' # Automatic detection with manual correction
-#' ttops = find_trees(las, lmf(5))
-#' ttops = find_trees(las, manual(ttops))
+#' ttops = locate_trees(las, lmf(5))
+#' ttops = locate_trees(las, manual(ttops))
 #' }
 #' @name itd_manual
 manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle", ...) # nocov start

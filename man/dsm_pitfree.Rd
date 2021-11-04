@@ -21,7 +21,7 @@ is done (see examples).}
 can replace each return with a circle composed of 8 points (see details).}
 }
 \description{
-This function is made to be used in \link{grid_canopy}. It implements the pit-free algorithm
+This function is made to be used in \link{rasterize_canopy}. It implements the pit-free algorithm
 developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 triangulations at different heights (see references). The \code{subcircle} tweak replaces each
 point with 8 points around the original one. This allows for virtual 'emulation' of the fact that
@@ -35,11 +35,11 @@ las <- readLAS(LASfile, filter = poi)
 col <- height.colors(50)
 
 # Basic triangulation and rasterization of first returns
-chm <- grid_canopy(las, res = 0.5, dsmtin())
+chm <- rasterize_canopy(las, res = 0.5, dsmtin())
 plot(chm, col = col)
 
 # Khosravipour et al. pitfree algorithm
-chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+chm <- rasterize_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 plot(chm, col = col)
 
 \dontrun{
@@ -52,10 +52,10 @@ plot(las2)
 # Because the TIN interpolation is done within the convex hull of the point cloud
 # dummy pixels are interpolated that are strictly correct according to the interpolation
 # method used, but meaningless in our CHM
-chm <- grid_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
+chm <- rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
 plot(chm, col = col)
 
-chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
+chm = rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
 plot(chm, col = col)
 }
 }

@@ -94,7 +94,7 @@ test_that("add dtm3d works", {
 
 test_that("add treetop3d works", {
   skip_on_cran()
-  x = find_trees(las, lmf(3))
+  x = locate_trees(las, lmf(3))
   expect_error({y = plot(las) ; add_treetops3d(y, x)}, NA)
   rgl::rgl.close()
 })

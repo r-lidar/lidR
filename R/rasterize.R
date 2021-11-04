@@ -86,7 +86,7 @@
 #' plot(chm, col = col)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+#' chm <- rasterize_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 #' plot(chm, col = col)
 #'
 #' # ====================

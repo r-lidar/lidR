@@ -13,7 +13,7 @@ If a triangle has an edge length greater than this value it will be removed to t
 on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).}
 }
 \description{
-This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
+This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital
 surface model computation using a Delaunay triangulation of first returns with a linear interpolation
 within each triangle.
 }
@@ -23,7 +23,7 @@ las <- readLAS(LASfile)
 col <- height.colors(50)
 
 # Basic triangulation and rasterization of first returns
-chm <- grid_canopy(las, res = 1, dsmtin())
+chm <- rasterize_canopy(las, res = 1, dsmtin())
 plot(chm, col = col)
 
 \dontrun{
@@ -36,11 +36,11 @@ plot(las2)
 # Since the TIN interpolation is done within the convex hull of the point cloud
 # dummy pixels are interpolated that are strictly correct according to the interpolation method
 # used, but meaningless in our CHM
-chm <- grid_canopy(las2, res = 0.5, dsmtin())
+chm <- rasterize_canopy(las2, res = 0.5, dsmtin())
 plot(chm, col = col)
 
 # Use 'max_edge' to trim dummy triangles
-chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
+chm = rasterize_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
 plot(chm, col = col)
 }
 }

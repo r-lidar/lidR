@@ -226,7 +226,7 @@ test_that("Watershed algorithm works standalone", {
 
 test_that("Dalponte algorithm works standalone and is backward compatible", {
 
-  ttops <- find_trees(chm, lmf(3, 2))
+  ttops <- locate_trees(chm, lmf(3, 2))
   chm   <- as(chm, "Raster")
   trees <- dalponte2016(chm, ttops)()
 
@@ -235,7 +235,7 @@ test_that("Dalponte algorithm works standalone and is backward compatible", {
 
 test_that("Silva algorithm works standalone and is backward compatible", {
 
-  ttops <- find_trees(chm, lmf(3, 2))
+  ttops <- locate_trees(chm, lmf(3, 2))
   chm   <- as(chm, "Raster")
   trees <- silva2016(chm, ttops)()
 

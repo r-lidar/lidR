@@ -30,7 +30,7 @@ library, which is why this algorithm must be used in \link{segment_trees} to mer
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
  chm <- raster("file/to/a/chm/")
- ttops <- find_trees(chm, lmf(3))
+ ttops <- locate_trees(chm, lmf(3))
  crowns <- watershed(chm)()
 }
 }
@@ -41,7 +41,8 @@ poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
 las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(250)
 
-chm <- grid_canopy(las, res = 0.5, p2r(0.3))
+# Using raster because focal does not exist in stars
+chm <- rasterize_canopy(las, res = 0.5, p2r(0.3), pkg = "raster")
 ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 las <- segment_trees(las, watershed(chm))

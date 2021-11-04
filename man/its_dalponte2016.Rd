@@ -20,7 +20,7 @@ dalponte2016(
 an external file.}
 
 \item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
-\link{find_trees} or read from an external shapefile.}
+\link{locate_trees} or read from an external shapefile.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default is 2.}
 
@@ -55,7 +55,7 @@ library, which is why this algorithm must be used in \link{segment_trees} to mer
 cloud. However the user can use this as a stand-alone function like this:
 \preformatted{
  chm = raster("file/to/a/chm/")
- ttops = find_trees(chm, lmf(3))
+ ttops = locate_trees(chm, lmf(3))
  crowns = dalponte2016(chm, ttops)()
 }
 }
@@ -64,11 +64,12 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
 col <- pastel.colors(200)
 
-chm <- grid_canopy(las, 0.5, p2r(0.3))
+# Using raster because focal does not exist in stars
+chm <- rasterize_canopy(las, 0.5, p2r(0.3), pkg = "raster")
 ker <- matrix(1,3,3)
 chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 
-ttops <- find_trees(chm, lmf(4, 2))
+ttops <- locate_trees(chm, lmf(4, 2))
 las   <- segment_trees(las, dalponte2016(chm, ttops))
 #plot(las, color = "treeID", colorPalette = col)
 }

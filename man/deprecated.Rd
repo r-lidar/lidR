@@ -235,6 +235,6 @@ to the documentation of the new names \cr\cr
 \link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
 \link[=segment_snags]{lassnags}
 \link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-\link[=track_sensor]{sensor_tracking} \link[=find_trees]{tree_detection}
+\link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
 \link[=crown_metrics]{tree_hull}
 }

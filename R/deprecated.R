@@ -13,7 +13,7 @@
 #' \link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
 #' \link[=segment_snags]{lassnags}
 #' \link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-#' \link[=track_sensor]{sensor_tracking} \link[=find_trees]{tree_detection}
+#' \link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
 #' \link[=crown_metrics]{tree_hull}
 #'
 #' @param las See the new functions that replace the old ones
@@ -313,8 +313,8 @@ sensor_tracking <- function(las, interval = 0.5, pmin = 50, extra_check = TRUE, 
 #' @export
 #' @rdname deprecated
 tree_detection = function(las, algorithm) {
-  .lidr3depreciation("find_trees")
-  return(find_trees(las, algorithm))
+  .lidr3depreciation("locate_trees")
+  return(locate_trees(las, algorithm))
 }
 
 #' @export

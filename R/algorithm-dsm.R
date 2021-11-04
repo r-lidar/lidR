@@ -2,7 +2,7 @@
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
+#' This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital
 #' surface model computation based on a points-to-raster method: for each pixel of the output raster
 #' the function attributes the height of the highest point found. The \code{subcircle} tweak replaces
 #' each point with 8 points around the original one. This allows for virtual 'emulation' of the fact
@@ -14,7 +14,7 @@
 #'
 #' @param na.fill function. A function that implements an algorithm to compute spatial interpolation
 #' to fill the empty pixel often left by points-to-raster methods. \code{lidR} has \link{knnidw},
-#' \link{tin}, and \link{kriging} (see also \link{grid_terrain} for more details).
+#' \link{tin}, and \link{kriging} (see also \link{rasterize_terrain} for more details).
 #'
 #' @export
 #'
@@ -26,16 +26,16 @@
 #' col <- height.colors(50)
 #'
 #' # Points-to-raster algorithm with a resolution of 1 meter
-#' chm <- grid_canopy(las, res = 1, p2r())
+#' chm <- rasterize_canopy(las, res = 1, p2r())
 #' plot(chm, col = col)
 #'
 #' # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 #' # point by a 20 cm radius circle of 8 points
-#' chm <- grid_canopy(las, res = 0.5, p2r(0.2))
+#' chm <- rasterize_canopy(las, res = 0.5, p2r(0.2))
 #' plot(chm, col = col)
 #'
 #' \dontrun{
-#' chm <- grid_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
+#' chm <- rasterize_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
 #' plot(chm, col = col)
 #' }
 #' @name dsm_point2raster
@@ -95,7 +95,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{grid_canopy}. It implements an algorithm for digital
+#' This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital
 #' surface model computation using a Delaunay triangulation of first returns with a linear interpolation
 #' within each triangle.
 #'
@@ -113,7 +113,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' col <- height.colors(50)
 #'
 #' # Basic triangulation and rasterization of first returns
-#' chm <- grid_canopy(las, res = 1, dsmtin())
+#' chm <- rasterize_canopy(las, res = 1, dsmtin())
 #' plot(chm, col = col)
 #'
 #' \dontrun{
@@ -126,11 +126,11 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' # Since the TIN interpolation is done within the convex hull of the point cloud
 #' # dummy pixels are interpolated that are strictly correct according to the interpolation method
 #' # used, but meaningless in our CHM
-#' chm <- grid_canopy(las2, res = 0.5, dsmtin())
+#' chm <- rasterize_canopy(las2, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
 #' # Use 'max_edge' to trim dummy triangles
-#' chm = grid_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
+#' chm = rasterize_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
 #' plot(chm, col = col)
 #' }
 #' @name dsm_tin
@@ -144,7 +144,7 @@ dsmtin = function(max_edge = 0)
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{grid_canopy}. It implements the pit-free algorithm
+#' This function is made to be used in \link{rasterize_canopy}. It implements the pit-free algorithm
 #' developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
 #' triangulations at different heights (see references). The \code{subcircle} tweak replaces each
 #' point with 8 points around the original one. This allows for virtual 'emulation' of the fact that
@@ -176,11 +176,11 @@ dsmtin = function(max_edge = 0)
 #' col <- height.colors(50)
 #'
 #' # Basic triangulation and rasterization of first returns
-#' chm <- grid_canopy(las, res = 0.5, dsmtin())
+#' chm <- rasterize_canopy(las, res = 0.5, dsmtin())
 #' plot(chm, col = col)
 #'
 #' # Khosravipour et al. pitfree algorithm
-#' chm <- grid_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
+#' chm <- rasterize_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
 #' plot(chm, col = col)
 #'
 #' \dontrun{
@@ -193,10 +193,10 @@ dsmtin = function(max_edge = 0)
 #' # Because the TIN interpolation is done within the convex hull of the point cloud
 #' # dummy pixels are interpolated that are strictly correct according to the interpolation
 #' # method used, but meaningless in our CHM
-#' chm <- grid_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
+#' chm <- rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
 #' plot(chm, col = col)
 #'
-#' chm = grid_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
+#' chm = rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
 #' plot(chm, col = col)
 #' }
 #' @export

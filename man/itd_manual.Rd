@@ -20,7 +20,7 @@ for rotation and right for dragging using one of left or right will disable eith
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
 \description{
-This function is made to be used in \link{find_trees}. It implements an algorithm for manual
+This function is made to be used in \link{locate_trees}. It implements an algorithm for manual
 tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
 This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
 invited to select a rectangular region of interest in the scene using the mouse button.
@@ -34,11 +34,11 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las = readLAS(LASfile)
 
 # Full manual tree detection
-ttops = find_trees(las, manual())
+ttops = locate_trees(las, manual())
 
 # Automatic detection with manual correction
-ttops = find_trees(las, lmf(5))
-ttops = find_trees(las, manual(ttops))
+ttops = locate_trees(las, lmf(5))
+ttops = locate_trees(las, manual(ttops))
 }
 }
 \seealso{
