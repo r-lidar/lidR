@@ -394,19 +394,47 @@ stdtreehullbbox = function(x,y,z, ...)
 
 # ===== OTHER =====
 
-#' Rumple index of roughness
+#' Predefined non standard metrics
 #'
-#' Computes the roughness of a surface as the ratio between its area and its
-#' projected area on the ground. If the input is a gridded object (raster) the
-#' function computes the surfaces using Jenness's algorithm (see references). If
-#' the input is a point cloud the function uses a Delaunay triangulation of the
-#' points and computes the area of each triangle.
+#' Functions and metrics from the literature. See details and references
 #'
-#' @param x A `RasterLayer`, a `stars` or a vector of x coordinates.
+#' \describe{
+#' \item{rumple_index}{Computes the roughness of a surface as the ratio between its area and its
+#' projected area on the ground. If the input is a gridded object (raster) the function computes the
+#' surfaces using Jenness's algorithm (see references). If the input is a point cloud the function
+#' uses a Delaunay triangulation of the points and computes the area of each triangle.}
+#' \item{gap_fraction_profile}{Computes the gap fraction profile using the method of Bouvier et al.
+#' (see reference). The function assesses the number of laser points that actually reached the layer
+#' z+dz and those that passed through the layer [z, z+dz]. By definition the layer 0
+#' will always return 0 because no returns pass through the ground. Therefore, the layer 0 is removed
+#' from the returned results.}
+#' \item{LAD}{Computes a leaf area density profile based on the method of Bouvier et al. (see reference)
+#' The function assesses the number of laser points that actually reached the layer z+dz and those that
+#' passed through the layer [z, z+dz] (see \link[=gap_fraction_profile]{gap_fraction_profile}).
+#' Then it computes the log of this quantity and divides it by the extinction coefficient k as
+#' described in Bouvier et al. By definition the layer 0 will always return infinity because no returns
+#'  pass through the ground. Therefore, the layer 0 is removed from the returned results.}
+#'  \item{entropy}{A normalized Shannon vertical complexity index. The Shannon diversity index is a
+#'  measure for quantifying diversity and is based on the number and frequency of species present. This index,
+#' developed by Shannon and Weaver for use in information theory, was successfully transferred
+#' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
+#' to quantify the diversity and the evenness of an elevational distribution of las points. It
+#' makes bins between 0 and the maximum elevation. If there are negative values the function
+#' returns NA.}
+#' \item{VCI}{Vertical Complexity Index. A fixed normalization of the entropy function from van Ewijk
+#' et al. (2011) (see references)}
+#' }
+#'
+#' @name nstdmetrics
+#' @rdname nstdmetrics
+#' @param by,dz numeric. The thickness of the layers used (height bin)
+#' @param zmax numeric. Maximum elevation for an entropy normalized to zmax.
+NULL
+
+#' @param x A `RasterLayer`, a `stars` a `SpatRaster` or a vector of x coordinates.
 #' @param y numeric. If `x` is a vector of coordinates: the associated y coordinates.
 #' @param z numeric. If `x` is a vector of coordinates: the associated z coordinates.
 #' @param ... unused
-#'
 #' @return numeric. The computed Rumple index.
 #'
 #' @export
@@ -440,6 +468,7 @@ stdtreehullbbox = function(x,y,z, ...)
 #' @references
 #' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation
 #' models. Wildlife Society Bulletin, 32(3), 829–839.
+#' @rdname nstdmetrics
 rumple_index = function(x, y = NULL, z = NULL, ...)
 {
   UseMethod("rumple_index", x)
@@ -499,17 +528,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   return(rumple)
 }
 
-#' Gap fraction profile
-#'
-#' Computes the gap fraction profile using the method of Bouvier et al. (see reference)
-#'
-#' The function assesses the number of laser points that actually reached the layer
-#' z+dz and those that passed through the layer [z, z+dz]. By definition the layer 0
-#' will always return 0 because no returns pass through the ground. Therefore, the layer 0 is removed
-#' from the returned results.
-#'
 #' @param z vector of positive z coordinates
-#' @param dz numeric. The thickness of the layers used (height bin)
 #' @param z0 numeric. The bottom limit of the profile
 #' @return A data.frame containing the bin elevations (z) and the gap fraction for each bin (gf)
 #' @examples
@@ -521,9 +540,11 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 #' gapFraction = gap_fraction_profile(z)
 #'
 #' plot(gapFraction, type="l", xlab="Elevation", ylab="Gap fraction")
-#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
-#' @seealso \link[=LAD]{LAD}
-#' @export gap_fraction_profile
+#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive
+#' models of forest inventory attributes using an area-based approach with airborne las data. Remote
+#' Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
+#' @export
+#' @rdname nstdmetrics
 gap_fraction_profile = function(z, dz = 1, z0 = 2)
 {
   bk <- seq(floor((min(z) - z0)/dz)*dz + z0, ceiling((max(z) - z0)/dz)*dz + z0, dz)
@@ -549,21 +570,8 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
   return(data.frame(z = z[z > z0], gf = i[z > z0]))
 }
 
-#' Leaf area density
-#'
-#' Computes a leaf area density profile based on the method of Bouvier et al. (see reference)
-#'
-#' The function assesses the number of laser points that actually reached the layer
-#' z+dz and those that passed through the layer [z, z+dz] (see \link[=gap_fraction_profile]{gap_fraction_profile}).
-#' Then it computes the log of this quantity and divides it by the extinction coefficient k as described in Bouvier
-#' et al. By definition the layer 0 will always return infinity because no returns pass through
-#' the ground. Therefore, the layer 0 is removed from the returned results.
-#'
-#' @param z vector of positive z coordinates
-#' @param dz numeric. The thickness of the layers used (height bin)
+
 #' @param k numeric. is the extinction coefficient
-#' @param z0 numeric. The bottom limit of the profile
-#' @return A data.frame containing the bin elevations (z) and leaf area density for each bin (lad)
 #' @examples
 #' z <- c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
 #' z <- z[z<45 & z>0]
@@ -571,9 +579,8 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
 #' lad <- LAD(z)
 #'
 #' plot(lad, type="l", xlab="Elevation", ylab="Leaf area density")
-#' @references Bouvier, M., Durrieu, S., Fournier, R. a, & Renaud, J. (2015).  Generalizing predictive models of forest inventory attributes using an area-based approach with airborne las data. Remote Sensing of Environment, 156, 322-334. http://doi.org/10.1016/j.rse.2014.10.004
-#' @seealso \link[=gap_fraction_profile]{gap_fraction_profile}
-#' @export LAD
+#' @export
+#' @rdname nstdmetrics
 LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
   ld <- gap_fraction_profile(z, dz, z0)
@@ -594,21 +601,6 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
   return(data.frame(z = ld$z, lad = lad))
 }
 
-#' Normalized Shannon diversity index
-#'
-#' A normalized Shannon vertical complexity index. The Shannon diversity index is a measure for
-#' quantifying diversity and is based on the number and frequency of species present. This index,
-#' developed by Shannon and Weaver for use in information theory, was successfully transferred
-#' to the description of species diversity in biological systems (Shannon 1948). Here it is applied
-#' to quantify the diversity and the evenness of an elevational distribution of las points. It
-#' makes bins between 0 and the maximum elevation. If there are negative values the function
-#' returns NA.
-#'
-#' @param z vector of positive z coordinates
-#' @param by numeric. The thickness of the layers used (height bin)
-#' @param zmax numeric. Used to turn the function entropy to the function \link[=VCI]{VCI}.
-#' @seealso
-#' \link[=VCI]{VCI}
 #' @examples
 #' z <- runif(10000, 0, 10)
 #'
@@ -628,7 +620,8 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 #' Pretzsch, H. (2008). Description and Analysis of Stand Structures. Springer Berlin Heidelberg. http://doi.org/10.1007/978-3-540-88307-4 (pages 279-280)
 #' Shannon, Claude E. (1948), "A mathematical theory of communication," Bell System Tech. Journal 27, 379-423, 623-656.
 #' @return A number between 0 and 1
-#' @export entropy
+#' @export
+#' @rdname nstdmetrics
 entropy = function(z, by = 1, zmax = NULL)
 {
   # Fixed entropy (van Ewijk et al. (2011)) or flexible entropy
@@ -660,15 +653,8 @@ entropy = function(z, by = 1, zmax = NULL)
   return(S)
 }
 
-#' Vertical Complexity Index
-#'
-#' A fixed normalization of the entropy function (see references)
-#' @param z vector of z coordinates
-#' @param by numeric. The thickness of the layers used (height bin)
-#' @param zmax numeric. Used to turn the function entropy to the function vci.
+
 #' @return A number between 0 and 1
-#' @seealso
-#' \link[=entropy]{entropy}
 #' @examples
 #' z <- runif(10000, 0, 10)
 #'
@@ -679,7 +665,8 @@ entropy = function(z, by = 1, zmax = NULL)
 #' # expected to be closer to 0.
 #' VCI(z, by = 1, zmax = 20)
 #' @references van Ewijk, K. Y., Treitz, P. M., & Scott, N. A. (2011). Characterizing Forest Succession in Central Ontario using LAS-derived Indices. Photogrammetric Engineering and Remote Sensing, 77(3), 261-269. Retrieved from <Go to ISI>://WOS:000288052100009
-#' @export VCI
+#' @export
+#' @rdname nstdmetrics
 VCI = function(z, zmax, by = 1)
 {
   z <- z[z < zmax]

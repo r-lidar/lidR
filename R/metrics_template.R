@@ -1,10 +1,10 @@
 #' Metric derivation at different levels of regularization
 #'
-#' `template_metrics()` computes a series of user-defined descriptive statistics for a LiDAR dataset within
-#' each element of a template. Depending on the template it can be for each pixel of a raster
+#' `template_metrics()` computes a series of user-defined descriptive statistics for a LiDAR dataset
+#' within each element of a template. Depending on the template it can be for each pixel of a raster
 #' (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
-#' functions are convenient and simplified wrappers around `template_metrics()` and are execpted to be
-#' the main functioons used. See Details and Examples.
+#' functions are convenient and simplified wrappers around `template_metrics()` and are expected to be
+#' the main functions used. See Details and Examples.
 #'
 #' \describe{
 #' \item{`pixel_metrics`}{Area-based approach. Computes metrics in a square tessellation. The output is a
@@ -18,7 +18,7 @@
 #' The output is a `list`}
 #' \item{`crown_metrics`}{Once the trees are segmented, i.e. attributes exist in the
 #' point cloud that reference each tree, computes a set of user-defined descriptive statistics for
-#' each individual tree. The output can be spatial point or spatial polygons (`sf/sfc_POINT` or `sf/sfc_POLYGON`)}
+#' each individual tree. The output can be spatial points or spatial polygons (`sf/sfc_POINT` or `sf/sfc_POLYGON`)}
 #' \item{`voxel_metrics`}{Is a 3D version of `pixel_metrics`. It creates a 3D matrix of voxels with a given
 #' resolution. It creates a voxel from the cloud of points if there is at least one point. The output is
 #' a `data.frame`}
@@ -59,9 +59,9 @@
 #' function.
 #'
 #' @return Depends on the function, the template and the number of metrics. Can be a `RasterLayer`,
-#' a `RasterBrick`, a `stars`, an `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`, a `data.table`.
-#' Functions are supposed to return an object that best suit for storing the level of regularization
-#' asked.
+#' a `RasterBrick`, a `stars`, a `SpatRaster` an `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`,
+#' a `data.table`. Functions are supposed to return an object that best suit for storing the level
+#' of regularization asked.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

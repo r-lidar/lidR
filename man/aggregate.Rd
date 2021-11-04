@@ -86,16 +86,16 @@ voxels with 0 points.}
 }
 \value{
 Depends on the function, the template and the number of metrics. Can be a \code{RasterLayer},
-a \code{RasterBrick}, a \code{stars}, an \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame}, a \code{data.table}.
-Functions are supposed to return an object that best suit for storing the level of regularization
-asked.
+a \code{RasterBrick}, a \code{stars}, a \code{SpatRaster} an \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame},
+a \code{data.table}. Functions are supposed to return an object that best suit for storing the level
+of regularization asked.
 }
 \description{
-\code{template_metrics()} computes a series of user-defined descriptive statistics for a LiDAR dataset within
-each element of a template. Depending on the template it can be for each pixel of a raster
+\code{template_metrics()} computes a series of user-defined descriptive statistics for a LiDAR dataset
+within each element of a template. Depending on the template it can be for each pixel of a raster
 (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
-functions are convenient and simplified wrappers around \code{template_metrics()} and are execpted to be
-the main functioons used. See Details and Examples.
+functions are convenient and simplified wrappers around \code{template_metrics()} and are expected to be
+the main functions used. See Details and Examples.
 }
 \details{
 \describe{
@@ -110,7 +110,7 @@ inventories with \link{clip_roi} 2. computing user's metrics to each plot with  
 The output is a \code{list}}
 \item{\code{crown_metrics}}{Once the trees are segmented, i.e. attributes exist in the
 point cloud that reference each tree, computes a set of user-defined descriptive statistics for
-each individual tree. The output can be spatial point or spatial polygons (\code{sf/sfc_POINT} or \code{sf/sfc_POLYGON})}
+each individual tree. The output can be spatial points or spatial polygons (\code{sf/sfc_POINT} or \code{sf/sfc_POLYGON})}
 \item{\code{voxel_metrics}}{Is a 3D version of \code{pixel_metrics}. It creates a 3D matrix of voxels with a given
 resolution. It creates a voxel from the cloud of points if there is at least one point. The output is
 a \code{data.frame}}
