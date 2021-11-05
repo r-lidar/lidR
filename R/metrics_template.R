@@ -29,7 +29,7 @@
 #' @param func formula. An expression to be applied to each element of the template (see section
 #' "Parameter func").
 #' @param template can be of many types and corresponds to the different levels of regularization.
-#' `RasterLayer/stars/SpatRaster`, `sf/sfc` (polygons), `numeric`, `bbox`, `NULL`. The metrics' are
+#' `RasterLayer/stars/SpatRaster`, `sf/sfc` (polygons), `numeric`, `bbox`, `NULL`. The metrics are
 #' computed for each element of the template. See examples
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
@@ -37,7 +37,7 @@
 #' be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples.
 #' Default is "all" meaning that it computes metrics with all points provided.
 #' @param ... propagated to `template_metrics` i.e. `filter` and `by_echo`. `pixel_metrics()` also
-#' supports `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `RasterLayer`
+#' supports `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `Raster*`
 #' or `stars`. Default is `getOption("lidR.raster.default")`.
 #'
 #' @section Parameter \code{func}:
@@ -54,12 +54,12 @@
 #' }
 #' The following existing functions allow the user to
 #' compute some predefined metrics: \link[=stdmetrics]{stdmetrics}
-#' \link[=entropy]{entropy} \link[=VCI]{VCI} \link[=LAD]{LAD}. But usually users must write their own
+#' \link[=entropy]{entropy}, \link[=VCI]{VCI}, \link[=LAD]{LAD}. But usually users must write their own
 #' functions to create metrics. \code{template_metrics} will dispatch the point cloud in the user's
 #' function.
 #'
 #' @return Depends on the function, the template and the number of metrics. Can be a `RasterLayer`,
-#' a `RasterBrick`, a `stars`, a `SpatRaster` an `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`,
+#' a `RasterBrick`, a `stars`, a `SpatRaster` a `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`,
 #' a `data.table`. Functions are supposed to return an object that best suit for storing the level
 #' of regularization asked.
 #'
@@ -82,7 +82,7 @@
 #'
 #' # a sfc_POLYGON as template
 #' sfc <- sf::st_as_sfc(st_bbox(las))
-#' template <- sf::st_make_grid(sfc, cellsize = 10, square = FALSE)
+#' template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
 #' m <- template_metrics(las, fun1, template)
 #' plot(m, nbreaks = 15)
 #'
@@ -97,6 +97,8 @@
 #' # CUSTOM METRICS
 #' # ================
 #'
+#' # Define a function that computes custom metrics
+#' # in a R&D perspective.
 #' myMetrics = function(z, i) {
 #'   metrics = list(
 #'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
@@ -107,7 +109,7 @@
 #' }
 #'
 #' # example with a stars template
-#' template <- stars::st_as_stars(st_bbox(las), nx = 18, ny = 18)
+#' template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
 #' m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
 #' plot(m, col = col, breaks = "equal", join_zlim = FALSE)
 #'
@@ -141,10 +143,10 @@
 #' \donttest{
 #' # Works with polygons as well
 #' inventory <- sf::st_buffer(inventory, 11.28)
-#' plot(las@header)
+#' plot(header(las))
 #' plot(sf::st_geometry(inventory), add = TRUE)
 #' m <- plot_metrics(las, .stdmetrics_z, inventory)
-#' plot(m["zq85"], pch = 19, cex = 3)
+#' plot(m["zq85"], pch = 19, cex = 3, add = TRUE)
 #' }
 #'
 #' # ================
@@ -165,7 +167,7 @@
 #' trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 #'
 #' metrics <- crown_metrics(trees, .stdtreemetrics)
-#' plot(metrics["Z"])
+#' plot(metrics["Z"], pch = 19)
 #'
 #' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "convex")
 #' plot(metrics["Z"])
@@ -202,8 +204,8 @@
 #' func = ~list(avgI = mean(Intensity))
 #' echo = c("all", "first","multiple")
 #'
-#' # func defines on metrics but 3 are computed respectively for all echos
-#' # for first return only and for multiple returns only
+#' # func defines one metrics but 3 are computed respectively for: (1) all echo types,
+#' # (2) for first returns only and (3) for multiple returns only
 #' metrics <- pixel_metrics(las, func, 20, by_echo = echo)
 #' plot(metrics, col = heat.colors(25))
 #'

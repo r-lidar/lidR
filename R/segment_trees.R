@@ -38,7 +38,6 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
     message("No tree found. Maybe use different parameters.")
 
   # If uniqueness is incremental we are done
-
   if (uniqueness == 'incremental')
   {
     las <- add_lasattribute(las, name = attribute, desc = "An ID for each segmented tree")

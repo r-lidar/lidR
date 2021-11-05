@@ -1,4 +1,4 @@
-#' @param geom character. geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.
+#' @param geom character. Geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.
 #' @param concaveman numeric. Only if \code{type = "concave"}. Vector with the two parameters of the
 #' function \link{concaveman}.
 #' @param attribute character. The column name of the attribute containing tree IDs. Default is

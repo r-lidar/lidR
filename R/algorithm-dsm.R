@@ -27,16 +27,16 @@
 #'
 #' # Points-to-raster algorithm with a resolution of 1 meter
 #' chm <- rasterize_canopy(las, res = 1, p2r())
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 #' # point by a 20 cm radius circle of 8 points
 #' chm <- rasterize_canopy(las, res = 0.5, p2r(0.2))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' \dontrun{
 #' chm <- rasterize_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #' }
 #' @name dsm_point2raster
 p2r = function(subcircle = 0, na.fill = NULL)
@@ -114,7 +114,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #'
 #' # Basic triangulation and rasterization of first returns
 #' chm <- rasterize_canopy(las, res = 1, dsmtin())
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' \dontrun{
 #' # Potentially complex concave subset of point cloud
@@ -123,15 +123,15 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' las2 = clip_polygon(las,x,y)
 #' plot(las2)
 #'
-#' # Since the TIN interpolation is done within the convex hull of the point cloud
-#' # dummy pixels are interpolated that are strictly correct according to the interpolation method
+#' # Because the TIN interpolation is done within the convex hull of the point cloud
+#' # dummy pixels are interpolated that are correct according to the interpolation method
 #' # used, but meaningless in our CHM
 #' chm <- rasterize_canopy(las2, res = 0.5, dsmtin())
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' # Use 'max_edge' to trim dummy triangles
 #' chm = rasterize_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #' }
 #' @name dsm_tin
 dsmtin = function(max_edge = 0)
@@ -177,11 +177,11 @@ dsmtin = function(max_edge = 0)
 #'
 #' # Basic triangulation and rasterization of first returns
 #' chm <- rasterize_canopy(las, res = 0.5, dsmtin())
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' # Khosravipour et al. pitfree algorithm
 #' chm <- rasterize_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' \dontrun{
 #' # Potentially complex concave subset of point cloud
@@ -191,13 +191,13 @@ dsmtin = function(max_edge = 0)
 #' plot(las2)
 #'
 #' # Because the TIN interpolation is done within the convex hull of the point cloud
-#' # dummy pixels are interpolated that are strictly correct according to the interpolation
+#' # dummy pixels are interpolated that are correct according to the interpolation
 #' # method used, but meaningless in our CHM
 #' chm <- rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #'
 #' chm = rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
-#' plot(chm, col = col)
+#' plot(chm, col = col, breaks = "equal")
 #' }
 #' @export
 #' @name dsm_pitfree

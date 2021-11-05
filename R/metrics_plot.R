@@ -1,5 +1,6 @@
-#' @param geometry a spatial vector object. `sp` and `sf`' objects are supported
-#' @param radius numeric. If the geometry is spatial points as radius must be defined. Support one
+#' @param geometry A spatial vector object. `sp` and `sf`' objects are supported. `plot_metrics()`
+#' supports point and polygons but `polygon_metrics()` supports only polygons.
+#' @param radius numeric. If the geometry is spatial points a radius must be defined. Support one
 #' radius or a vector of radii for variable plot sizes.
 #' @rdname aggregate
 #' @export

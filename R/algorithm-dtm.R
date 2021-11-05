@@ -1,19 +1,19 @@
 #' Spatial Interpolation Algorithm
 #'
-#' This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It implements
-#' an algorithm for spatial interpolation. Spatial interpolation is based on a Delaunay triangulation,
-#' which performs a linear interpolation within each triangle. There are usually a few points outside
-#' the convex hull, determined by the ground points at the very edge of the dataset, that cannot be
-#' interpolated with a triangulation. Extrapolation is done using the nearest neighbour approach.
+#' This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
+#' implements an algorithm for spatial interpolation. Spatial interpolation is based on a Delaunay
+#' triangulation, which performs a linear interpolation within each triangle. There are usually a
+#' few points outside the convex hull, determined by the ground points at the very edge of the dataset,
+#' that cannot be interpolated with a triangulation. Extrapolation can be performed with another algorithm.
 #'
 #' @param ... unused
 #' @param extrapolate There are usually a few points outside the convex hull, determined by the ground
 #' points at the very edge of the dataset, that cannot be interpolated with a triangulation.
-#' Extrapolation is done using the nearest neighbour approach by default using \link{knnidw}.
+#' Extrapolation is done using \link{knnidw} by default.
 #'
 #' @export
 #'
-#' @family spatial interpolation algorithms
+#' @family dtm algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -23,7 +23,7 @@
 #'
 #' dtm = rasterize_terrain(las, algorithm = tin())
 #'
-#' plot(dtm, col = terrain.colors(50))
+#' #plot(dtm, breaks = "equal", nbreaks = 50)
 #' #plot_dtm3d(dtm)
 #' @name dtm_tin
 tin = function(..., extrapolate = knnidw(3,1,50))
@@ -66,7 +66,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #'
 #' @export
 #'
-#' @family spatial interpolation algorithms
+#' @family dtm algorithms
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -76,7 +76,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #'
 #' dtm = rasterize_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #'
-#' #plot(dtm, col = terrain.colors(50))
+#' #plot(dtm, breaks = "equal", nbreaks = 50)
 #' #plot_dtm3d(dtm)
 #' @name dtm_idw
 knnidw = function(k = 10, p = 2, rmax = 50)
@@ -97,31 +97,31 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 
 #' Spatial Interpolation Algorithm
 #'
-#' This function is made to be used in \link{rasterize_terrain} or \link{classify_ground}. It implements an algorithm
-#' for spatial interpolation. Spatial interpolation is based on universal kriging using the \link[gstat:krige]{krige}
-#' function from \code{gstat}. This method combines the KNN approach with the kriging approach. For each
-#' point of interest it kriges the terrain using the k-nearest neighbour ground points. This method
-#' is more difficult to manipulate but it is also the most advanced method for interpolating spatial data.
+#' This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
+#' implements an algorithm for spatial interpolation. Spatial interpolation is based on universal
+#' kriging using the \link[gstat:krige]{krige} function from \code{gstat}. This method combines the
+#' KNN approach with the kriging approach. For each point of interest it kriges the terrain using
+#' the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also
+#' the most advanced method for interpolating spatial data.
 #'
 #' @param k numeric. Number of k-nearest neighbours. Default 10.
-#'
 #' @param model A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary
 #' or weighted least squares prediction.
 #'
 #' @export
 #'
-#' @family spatial interpolation algorithms
+#' @family dtm algorithms
 #'
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las = readLAS(LASfile)
 #'
-#' # plot(las)
+#' plot(las)
 #'
 #' dtm = rasterize_terrain(las, algorithm = kriging())
 #'
-#' plot(dtm, col = terrain.colors(50))
+#' plot(dtm, breaks = "equal", nbreaks = 50)
 #' plot_dtm3d(dtm)
 #' }
 #' @name dtm_kriging

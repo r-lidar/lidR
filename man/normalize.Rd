@@ -27,14 +27,12 @@ model. (2) An algorithm for intensity normalization. \code{lidR} currently has \
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.}
 
-\item{dtm}{raster. If \code{dtm} is provided, then the DTM is used in place of ground points. This is different
-than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} the dtm is subtracted naively. \code{algorithm = tin()}
-and \code{dtm = raster} the ground points of the point-cloud are not used. Instead the DTM is the ground points
-and is triangulated.}
+\item{dtm}{raster. If \code{dtm} is provided, then the DTM is used in place of ground points. This is
+different than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} the dtm is subtracted naively.
+If \code{algorithm = tin()} and \code{dtm = raster} the ground points are not used and the DTM is
+interpolated as if it were made of regularly spaced ground points.}
 
-\item{...}{ignored
-However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
-extrabytes attribute. See also \link{add_lasattribute}.}
+\item{...}{ignored.}
 
 \item{e1}{a LAS object}
 
@@ -46,7 +44,7 @@ Normalize elevation or intensity values using multiple methods.
 \details{
 \describe{
 \item{normalize_height}{Subtract digital terrain model (DTM) from LiDAR point cloud to create a
-dataset normalized with the ground at 0. The DTM can be a raster, ibut it can also be computed
+dataset normalized with the ground at 0. The DTM can be a raster, but it can also be computed
 on-the-fly. In this case the algorithm does not use rasterized data and each point is interpolated.
 There is no inaccuracy due to the discretization of the terrain and the resolution of the terrain
 is virtually infinite. A new attribute 'Zref' records the former elevation values, which enables

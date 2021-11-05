@@ -5,7 +5,7 @@
 #' @param check logical. Conformity tests while building the object.
 #' @param index list with two elements \code{list(sensor = 0L, index = 0L)}.
 #' See \link[=lidR-spatial-index]{spatial indexing}
-#' @param ... unused
+#' @param ... internal use
 #' @return An object of class \code{LAS}
 #' @export
 #' @describeIn LAS-class creates objects of class LAS. The original data is updated by reference to

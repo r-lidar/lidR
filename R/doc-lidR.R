@@ -2,8 +2,8 @@
 #'
 #' lidR provides a set of tools to manipulate airborne LiDAR data in forestry contexts. The package
 #' works with .las or .laz files. The toolbox includes algorithms for DSM, CHM, DTM, ABA,
-#' normalisation, tree detection, tree segmentation and other tools, as well as an engine to process
-#' broad LiDAR coverages split into many files.
+#' normalisation, tree detection, tree segmentation, tree delineation, colourization, validation and
+#' other tools, as well as a processing engine to process broad LiDAR coverage split into many files.
 #'
 #' To learn more about lidR, start with the vignettes: browseVignettes(package = "lidR"). Users can also
 #' find unofficial supplementary documentation in the \href{https://jean-romain.github.io/lidRbook/}{lidR book}.

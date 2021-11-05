@@ -61,12 +61,12 @@ with such incremental numbering is that, while it ensures a unique ID is assigne
 a given point-cloud, it also guarantees duplication of tree IDs in different tiles or chunks when
 processing a \code{LAScatalog}. This is because each chunk/file is processed independently of the others
 and potentially in parallel on different computers. Thus, the index always restarts at 1 on each
-chunk/file or chunk. Worse, in a tree segmentation process, a tree that is located exactly between
+chunk/file. Worse, in a tree segmentation process, a tree that is located exactly between
 2 chunks/files will have two different IDs for its two halves.
 
 This is why we introduced some uniqueness strategies that are all imperfect and that should be seen
 as experimental. Please report any troubleshooting. Using a uniqueness-safe strategy ensures that
-trees from different files will not share the same IDs. Moreover, it also means that two halves of a tree
+trees from different files will not share the same IDs. It also ensures that two halves of a tree
 on the edge of a processing chunk will be assigned the same ID.
 
 \describe{

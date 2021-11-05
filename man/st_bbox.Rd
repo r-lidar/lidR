@@ -51,5 +51,5 @@ A \code{bbox} from sf, an \code{Extent} from raster or a \code{matrix} from sp.
 \description{
 Bounding box of a LAS* object. \code{st_bbox()} extends \code{sf:st_bbox()}, \code{extent()} extends
 \code{raster:extent()}, \code{bbox()} extends \code{sp:bbox()}. The value returned are similar to their parent
-functions. \code{bbox()} and \code{extent()} are provided for backward compatibility..
+functions. \code{bbox()} and \code{extent()} are provided for backward compatibility.
 }

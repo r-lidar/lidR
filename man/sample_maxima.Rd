@@ -15,7 +15,7 @@ lowest(res = 1)
 }
 \description{
 These functions are made to be used in \link{decimate_points}. They implement algorithms that
-creates a grid with a given resolution and filters the point cloud by selecting the highest/lowest
+create a grid with a given resolution and filters the point cloud by selecting the highest/lowest
 point within each cell.
 }
 \examples{

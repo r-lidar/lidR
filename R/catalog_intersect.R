@@ -1,19 +1,5 @@
-#' Subset a LAScatalog with a spatial object
-#'
-#' Subset a LAScatalog with a spatial object to keep only the tiles of interest. It can be
-#' used to select tiles of interest that encompass spatial objects.
-#'
-#' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
-#' @param y  `bbox`, `sf`, `sfc`, `Extent`, `Raster*`, `Spatial*` objects
-#' @param ... ignored
-#' @param subset character. By default subset of the catalog. It is also possible to flag
-#' the files to maintain the catalog as a whole but process only a subset of its content.
-#' \code{flag_unprocessed} flags the files that will not be processed.
-#' \code{flag_processed} flags the files that will be processed.
-#'
-#' @return A LAScatalog
-#'
 #' @export
+#' @rdname catalog_subset
 catalog_intersect = function(ctg, y, ..., subset = c("subset", "flag_unprocessed", "flag_processed"))
 {
   assert_is_all_of(ctg, "LAScatalog")

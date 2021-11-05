@@ -1,7 +1,7 @@
 #' Concave and convex hulls for LAS objects
 #'
 #' Concave and convex hulls for LAS objects. `st_convex_hull` extends `sf::st_convex_hull` for LAS
-#' objects, Both functions return a polygon geometry. `concaveman` is very a fast 2D concave hull algorithm
+#' objects, Both functions return a `sfc_POLYGON` `concaveman` is very a fast 2D concave hull algorithm
 #' for a set of points
 #'
 #' The concaveman algorithm is based on ideas from Park and Oh (2012). A first implementation in
@@ -35,6 +35,11 @@
 #' hull <- concaveman(x,y)
 #' plot(x,y, asp = 1)
 #' lines(hull, lwd = 3, col = "red")
+#'
+#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' las = readLAS(LASfile, filter = "-drop_z_below 1")
+#' hull = st_concave_hull(las)
+#' plot(hull)
 NULL
 
 #' @export

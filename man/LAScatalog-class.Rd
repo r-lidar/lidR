@@ -5,8 +5,8 @@
 \alias{LAScatalog-class}
 \title{An S4 class to represent a collection of .las or .laz files}
 \description{
-A \code{LAScatalog} object is a representation of a set of las/laz files. A \code{LAScatalog} is
-a way to manage and process an entire dataset. It allows the user to process a large area, or to
+A \code{LAScatalog} object is a representation of a collection of las/laz files. A \code{LAScatalog} is
+a way to manage and batch process a lidar coverage It allows the user to process a large area, or to
 selectively clip data from a large area without loading all the data into computer memory.
 A \code{LAScatalog} can be built with the function \link{readLAScatalog}.
 }
@@ -94,7 +94,7 @@ will belong on x = 0 and y = 0 and all the the other chunks will be multiples of
 Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 \item \strong{drop}: integers. A vector of integers that specify the IDs of the chunks that should not be
 created. This is designed to enable to restart a computation that failed without reprocessing
-everything. See \code{opt_restart}. Technically this options may be used for partial processing of
+everything. See \link{opt_restart<-}. Technically this options may be used for partial processing of
 a collection but should not. Partial processing is already a feature of the engine. See
 \href{https://cran.r-project.org/package=lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing}{this vignette}
 }
@@ -117,12 +117,14 @@ the following file names are possible:
 "C:/user/document/als/zone52_{XLEFT}_{YBOTTOM}_confidential"
 "C:/user/document/als/{ORIGINALFILNAME}_normalized"
 }
-This option will generate as many filenames as needed with custom names for each file. The list of
-allowed templates is described in the documentation for each function. See \link{opt_output_files}.
-\item \strong{drivers}: list. This contains all the drivers required to seamlessly write Raster*,
-Spatial*, sf, and LAS objects. It is recommended that only advanced users change this option. A dedicated
-page describes the drivers in \link{lidR-LAScatalog-drivers}.
+This option will generate as many filenames as needed with custom names for each file. The allowed
+templates are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
+{YCENTER}, {ORIGNALFILENAME}}. See \link{opt_output_files}.
+\item \strong{drivers}: list. This contains all the drivers required to seamlessly write \verb{Raster*},
+\code{SpatRaster}, \code{stars}, \verb{Spatial*}, \code{sf}, and \code{LAS} objects. It is recommended that only advanced
+users change this option. A dedicated page describes the drivers in \link{lidR-LAScatalog-drivers}.
 \item \strong{merge}: boolean. Multiple objects are merged into a single object at the end of the processing.
+See \link{opt_merge}.
 }
 }
 
@@ -149,7 +151,7 @@ ctg <- readLAScatalog("filder/to/las/files/", filter =  "-keep_first")
 summary(ctg)
 
 # We can seamlessly use lidR functions
-hmean <- pixel_metrics(ctg, mean(Z), 20)
+hmean <- pixel_metrics(ctg, ~~mean(Z), 20)
 ttops <- tree_detection(ctg, lmf(5))
 
 # For low memory config it is probably advisable not to load entire files

@@ -14,28 +14,29 @@ or weighted least squares prediction.}
 \item{k}{numeric. Number of k-nearest neighbours. Default 10.}
 }
 \description{
-This function is made to be used in \link{rasterize_terrain} or \link{classify_ground}. It implements an algorithm
-for spatial interpolation. Spatial interpolation is based on universal kriging using the \link[gstat:krige]{krige}
-function from \code{gstat}. This method combines the KNN approach with the kriging approach. For each
-point of interest it kriges the terrain using the k-nearest neighbour ground points. This method
-is more difficult to manipulate but it is also the most advanced method for interpolating spatial data.
+This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
+implements an algorithm for spatial interpolation. Spatial interpolation is based on universal
+kriging using the \link[gstat:krige]{krige} function from \code{gstat}. This method combines the
+KNN approach with the kriging approach. For each point of interest it kriges the terrain using
+the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also
+the most advanced method for interpolating spatial data.
 }
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las = readLAS(LASfile)
 
-# plot(las)
+plot(las)
 
 dtm = rasterize_terrain(las, algorithm = kriging())
 
-plot(dtm, col = terrain.colors(50))
+plot(dtm, breaks = "equal", nbreaks = 50)
 plot_dtm3d(dtm)
 }
 }
 \seealso{
-Other spatial interpolation algorithms: 
+Other dtm algorithms: 
 \code{\link{dtm_idw}},
 \code{\link{dtm_tin}}
 }
-\concept{spatial interpolation algorithms}
+\concept{dtm algorithms}

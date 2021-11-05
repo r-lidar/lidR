@@ -2,17 +2,17 @@
 #'
 #' An S4 class to represent the header of .las or .laz files according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
-#' A \code{LASheader} object contains a \code{list} in the slot \code{@PHB} with
-#' the data read from the Public Header Block and \code{list} in the slot \code{@VLR} with
-#' the data read from the Variable Length Records
+#' A `LASheader` object contains a `list` in the slot `@PHB` with
+#' the data read from the Public Header Block, a `list` in the slot `@VLR` with
+#' the data read from the Variable Length Records and a `list` in the slot `EVLR` with the data read
+#' from the Extended Variable Lenght Records.
 #'
 #' @slot PHB list. Represents the Public Header Block
-#'
 #' @slot VLR list. Represents the Variable Length Records
-#'
 #' @slot EVLR list. Represents the Extended Variable Length Records
 #'
 #' @exportClass LASheader
+#' @md
 setClass(
   Class = "LASheader",
   representation(PHB = "list", VLR = "list", EVLR = "list")
@@ -52,45 +52,35 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
 #' Class LAS is the representation of a las/laz file according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
 #'
-#' A \code{LAS} object contains a \code{data.table} with the data read from a \code{las/laz} file and
+#' A `LAS` object contains a `data.table` with the data read from a `las/laz` file and
 #' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 #' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
 #' for more information). Because las files are standardized the table of attributes read from the las/laz file
 #' is also standardized. Columns are named:
 #' \itemize{
-#' \item{\code{X} (numeric)}
-#' \item{\code{Y} (numeric)}
-#' \item{\code{Z} (numeric)}
-#' \item{\code{gpstime} (numeric)}
-#' \item{\code{Intensity} (integer)}
-#' \item{\code{ReturnNumber} (integer)}
-#' \item{\code{NumberOfReturns} (integer)}
-#' \item{\code{ScanDirectionFlag} (integer)}
-#' \item{\code{EdgeOfFlightline} (integer)}
-#' \item{\code{Classification} (integer)}
-#' \item{\code{Synthetic_flag} (logical)}
-#' \item{\code{Keypoint_flag} (logical)}
-#' \item{\code{Withheld_flag} (logical)}
-#' \item{\code{ScanAngleRank} (integer)}
-#' \item{\code{ScanAngle} (numeric)}
-#' \item{\code{UserData} (integer)}
-#' \item{\code{PointSourceID} (integer)}
-#' \item{\code{R,G,B} (integer)}
-#' \item{\code{NIR} (integer)}
+#' \item{`X`, `Y`, `Z` (numeric)}
+#' \item{`gpstime` (numeric)}
+#' \item{`Intensity` (integer)}
+#' \item{`ReturnNumber`, `NumberOfReturns` (integer)}
+#' \item{`ScanDirectionFlag` (integer)}
+#' \item{`EdgeOfFlightline` (integer)}
+#' \item{`Classification` (integer)}
+#' \item{`Synthetic_flag`,`Keypoint_flag`, `Withheld_flag`  (logical)}
+#' \item{`ScanAngleRank`/`ScanAngle`  (integer/numeric)}
+#' \item{`UserData` (integer)}
+#' \item{`PointSourceID` (integer)}
+#' \item{`R`,`G`,`B`, `NIR` (integer)}
 #' }
 #'
-#'
-#' @slot crs Object of class \link[sf:st_crs]{crs} from sf
-#'
+#' @slot crs Object of class \link[sf:st_crs]{crs} from sf.
 #' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
-#'
 #' @slot header Object of class \link[=LASheader-class]{LASheader}. LAS file header according to the
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
-#'
 #' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
 #'
 #' @export
+#' @md
 #' @examples
 #' # Read a las/laz file
 #' LASfile <- system.file("extdata", "example.laz", package="rlas")
@@ -118,7 +108,7 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
 #' data <- data.frame(X = runif(100, 0, 100),
 #'                    Y = runif(100, 0, 100),
 #'                    Z = runif(100, 0, 20))
-#' header <- las@header
+#' header <- header(las)
 #'
 #' # This works but triggers warnings and creates an invalid LAS object
 #' cloud <- LAS(data, header)

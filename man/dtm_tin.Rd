@@ -12,14 +12,14 @@ tin(..., extrapolate = knnidw(3, 1, 50))
 
 \item{extrapolate}{There are usually a few points outside the convex hull, determined by the ground
 points at the very edge of the dataset, that cannot be interpolated with a triangulation.
-Extrapolation is done using the nearest neighbour approach by default using \link{knnidw}.}
+Extrapolation is done using \link{knnidw} by default.}
 }
 \description{
-This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It implements
-an algorithm for spatial interpolation. Spatial interpolation is based on a Delaunay triangulation,
-which performs a linear interpolation within each triangle. There are usually a few points outside
-the convex hull, determined by the ground points at the very edge of the dataset, that cannot be
-interpolated with a triangulation. Extrapolation is done using the nearest neighbour approach.
+This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
+implements an algorithm for spatial interpolation. Spatial interpolation is based on a Delaunay
+triangulation, which performs a linear interpolation within each triangle. There are usually a
+few points outside the convex hull, determined by the ground points at the very edge of the dataset,
+that cannot be interpolated with a triangulation. Extrapolation can be performed with another algorithm.
 }
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
@@ -29,12 +29,12 @@ las = readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 
 dtm = rasterize_terrain(las, algorithm = tin())
 
-plot(dtm, col = terrain.colors(50))
+#plot(dtm, breaks = "equal", nbreaks = 50)
 #plot_dtm3d(dtm)
 }
 \seealso{
-Other spatial interpolation algorithms: 
+Other dtm algorithms: 
 \code{\link{dtm_idw}},
 \code{\link{dtm_kriging}}
 }
-\concept{spatial interpolation algorithms}
+\concept{dtm algorithms}

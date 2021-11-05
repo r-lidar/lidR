@@ -21,7 +21,7 @@ a las or laz file.}
 \item{index}{list with two elements \code{list(sensor = 0L, index = 0L)}.
 See \link[=lidR-spatial-index]{spatial indexing}}
 
-\item{...}{unused}
+\item{...}{internal use}
 }
 \value{
 An object of class \code{LAS}
@@ -37,25 +37,18 @@ a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
 for more information). Because las files are standardized the table of attributes read from the las/laz file
 is also standardized. Columns are named:
 \itemize{
-\item{\code{X} (numeric)}
-\item{\code{Y} (numeric)}
-\item{\code{Z} (numeric)}
+\item{\code{X}, \code{Y}, \code{Z} (numeric)}
 \item{\code{gpstime} (numeric)}
 \item{\code{Intensity} (integer)}
-\item{\code{ReturnNumber} (integer)}
-\item{\code{NumberOfReturns} (integer)}
+\item{\code{ReturnNumber}, \code{NumberOfReturns} (integer)}
 \item{\code{ScanDirectionFlag} (integer)}
 \item{\code{EdgeOfFlightline} (integer)}
 \item{\code{Classification} (integer)}
-\item{\code{Synthetic_flag} (logical)}
-\item{\code{Keypoint_flag} (logical)}
-\item{\code{Withheld_flag} (logical)}
-\item{\code{ScanAngleRank} (integer)}
-\item{\code{ScanAngle} (numeric)}
+\item{\code{Synthetic_flag},\code{Keypoint_flag}, \code{Withheld_flag}  (logical)}
+\item{\code{ScanAngleRank}/\code{ScanAngle}  (integer/numeric)}
 \item{\code{UserData} (integer)}
 \item{\code{PointSourceID} (integer)}
-\item{\code{R,G,B} (integer)}
-\item{\code{NIR} (integer)}
+\item{\code{R},\code{G},\code{B}, \code{NIR} (integer)}
 }
 }
 \section{Functions}{
@@ -68,7 +61,7 @@ In this case the scale factor is set to 0.001
 \section{Slots}{
 
 \describe{
-\item{\code{crs}}{Object of class \link[sf:st_crs]{crs} from sf}
+\item{\code{crs}}{Object of class \link[sf:st_crs]{crs} from sf.}
 
 \item{\code{data}}{Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}}
@@ -106,7 +99,7 @@ cloud
 data <- data.frame(X = runif(100, 0, 100),
                    Y = runif(100, 0, 100),
                    Z = runif(100, 0, 20))
-header <- las@header
+header <- header(las)
 
 # This works but triggers warnings and creates an invalid LAS object
 cloud <- LAS(data, header)

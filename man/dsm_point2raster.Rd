@@ -30,16 +30,16 @@ col <- height.colors(50)
 
 # Points-to-raster algorithm with a resolution of 1 meter
 chm <- rasterize_canopy(las, res = 1, p2r())
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 
 # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 # point by a 20 cm radius circle of 8 points
 chm <- rasterize_canopy(las, res = 0.5, p2r(0.2))
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 
 \dontrun{
 chm <- rasterize_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 }
 }
 \seealso{

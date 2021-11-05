@@ -37,8 +37,8 @@ be missing (see details).}
 
 \item{desc}{character. A short description of the extra bytes attribute to add in the file (32 characters).}
 
-\item{type}{character. The data type of the extra bytes attribute. Can be \code{"uchar", "char", "ushort",
-"short", "uint", "int", "uint64", "int64", "float", "double"}.}
+\item{type}{character. The data type of the extra bytes attribute. Can be "uchar", "char", "ushort",
+"short", "uint", "int", "uint64", "int64", "float", "double".}
 
 \item{scale, offset}{numeric. The scale and offset of the data. NULL if not relevant.}
 
@@ -58,7 +58,8 @@ and so on, for each point. It is possible to add supplementary attributes.
 }
 \details{
 Users cannot assign names that are the same as the names of the core attributes. These functions are
-dedicated to adding data that are not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")} will fail because \code{R} is a name reserved for the red channel of a .las file that contains RGB
+dedicated to adding data that are not part of the LAS specification. For example, \code{add_lasattribute(las, x, "R")}
+will fail because \code{R} is a name reserved for the red channel of a .las file that contains RGB
 attributes. Use \code{add_lasrgb} instead.
 \describe{
 \item{\code{add_attribute}}{Simply adds a new column in the data but does not update the header. Thus the LAS
@@ -87,29 +88,30 @@ LASfile <- system.file("extdata", "example.laz", package="rlas")
 las <- readLAS(LASfile, select = "xyz")
 
 print(las)
-print(las@header)
+print(header(las))
 
 x <- 1:30
 
 las <- add_attribute(las, x, "mydata")
 print(las)        # The las object has a new attribute called "mydata"
-print(las@header) # But the header has not been updated. This new data will not be written
+print(header(las)) # But the header has not been updated. This new data will not be written
 
 las <- add_lasattribute(las, x, "mydata2", "A new data")
 print(las)        # The las object has a new attribute called "mydata2"
-print(las@header) # The header has been updated. This new data will be written
+print(header(las)) # The header has been updated. This new data will be written
 
 # Optionally if the data is already in the LAS object you can update the header skipping the
 # parameter x
-las <- add_lasattribute(las, name = "mydata", desc = "Amplitude")
-print(las@header)
+las <- add_attribute(las, x, "newattr")
+las <- add_lasattribute(las, name = "newattr", desc = "Amplitude")
+print(header(las))
 
 # Remove an extra bytes attribute
 las <- remove_lasattribute(las, "mydata2")
 print(las)
-print(las@header)
+print(header(las))
 
 las <- remove_lasattribute(las, "mydata")
 print(las)
-print(las@header)
+print(header(las))
 }

@@ -40,13 +40,6 @@ data = data.frame(X = c(339002.889, 339002.983, 339002.918),
 header = LASheader(data)
 header
 
-# XYZ values are given with 3 decimals. This was not inferred by the
-# function so we changed it manually
-# (Note: from package rlas 1.4.1 this is now inferred properly in most cases)
-header@PHB[["X scale factor"]] <- 0.001
-header@PHB[["Y scale factor"]] <- 0.001
-header@PHB[["Z scale factor"]] <- 0.001
-
 # Record an EPSG code
 epsg(header) <- 32618
 header

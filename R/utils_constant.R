@@ -16,7 +16,7 @@ LIDRRIGHTBUFFER       <- 4L
 #' to use one of these global variables.
 #'
 #' @examples
-#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' LASfile <- system.file("extdata", "example.laz", package="rlas")
 #' las = readLAS(LASfile)
 #' las2 = filter_poi(las, Classification %in% c(LASGROUND, LASWATER))
 #'

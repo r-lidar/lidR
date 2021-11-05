@@ -7,7 +7,7 @@
 locate_trees(las, algorithm, uniqueness = "incremental")
 }
 \arguments{
-\item{las}{An object of class \code{LAS} or \code{LAScatalog}. Can also be a \code{RasterLayer} or a \code{stars}.
+\item{las}{An object of class \code{LAS} or \code{LAScatalog}. Can also be a  raster from \code{raster}, \code{stars} or \code{terra}
 representing a canopy height model, in which case it is processed like a regularly-spaced point cloud.}
 
 \item{algorithm}{An algorithm for individual tree detection. lidR has: \link{lmf} and \link{manual}.
@@ -19,7 +19,7 @@ More experimental algorithms may be found in the package \href{https://github.co
 \value{
 \code{locate_trees} returns an sf object with POINT Z geometries. The table of attributes
 contains a column \code{treeID} with an individual ID for each tree. The height of the trees (\code{Z}) are
-also repeated in the table of attribute to be written in file formats that do not support XYZ geometries
+also repeated in the table of attribute to be analysed as an attribute and not as a coordinate.
 }
 \description{
 Individual tree detection function that find the position of the trees using several possible
@@ -33,12 +33,12 @@ with such incremental numbering is that, while it ensures a unique ID is assigne
 a given point-cloud, it also guarantees duplication of tree IDs in different tiles or chunks when
 processing a \code{LAScatalog}. This is because each chunk/file is processed independently of the others
 and potentially in parallel on different computers. Thus, the index always restarts at 1 on each
-chunk/file or chunk. Worse, in a tree segmentation process, a tree that is located exactly between
+chunk/file. Worse, in a tree segmentation process, a tree that is located exactly between
 2 chunks/files will have two different IDs for its two halves.
 
 This is why we introduced some uniqueness strategies that are all imperfect and that should be seen
 as experimental. Please report any troubleshooting. Using a uniqueness-safe strategy ensures that
-trees from different files will not share the same IDs. Moreover, it also means that two halves of a tree
+trees from different files will not share the same IDs. It also ensures that two halves of a tree
 on the edge of a processing chunk will be assigned the same ID.
 
 \describe{
@@ -77,6 +77,5 @@ las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 
 
 ttops <- locate_trees(las, lmf(ws = 5))
 
-#x = plot(las)
-#add_treetops3d(x, ttops)
+#plot(las) |> add_treetops3d(ttops)
 }

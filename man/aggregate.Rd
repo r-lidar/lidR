@@ -44,10 +44,10 @@ voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 "Parameter func").}
 
 \item{...}{propagated to \code{template_metrics} i.e. \code{filter} and \code{by_echo}. \code{pixel_metrics()} also
-supports \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \code{RasterLayer}
+supports \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \verb{Raster*}
 or \code{stars}. Default is \code{getOption("lidR.raster.default")}.}
 
-\item{geom}{character. geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.}
+\item{geom}{character. Geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.}
 
 \item{concaveman}{numeric. Only if \code{type = "concave"}. Vector with the two parameters of the
 function \link{concaveman}.}
@@ -63,13 +63,14 @@ a `SpatRaster`.' In that case the raster is used as the template.}
 \item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
 grid aligns on (0,0). Not consiered if `res` is a raster}
 
-\item{geometry}{a spatial vector object. `sp` and `sf`' objects are supported}
+\item{geometry}{A spatial vector object. `sp` and `sf`' objects are supported. `plot_metrics()`
+supports point and polygons but `polygon_metrics()` supports only polygons.}
 
-\item{radius}{numeric. If the geometry is spatial points as radius must be defined. Support one
+\item{radius}{numeric. If the geometry is spatial points a radius must be defined. Support one
 radius or a vector of radii for variable plot sizes.}
 
 \item{template}{can be of many types and corresponds to the different levels of regularization.
-\code{RasterLayer/stars/SpatRaster}, \code{sf/sfc} (polygons), \code{numeric}, \code{bbox}, \code{NULL}. The metrics' are
+\code{RasterLayer/stars/SpatRaster}, \code{sf/sfc} (polygons), \code{numeric}, \code{bbox}, \code{NULL}. The metrics are
 computed for each element of the template. See examples}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
@@ -86,7 +87,7 @@ voxels with 0 points.}
 }
 \value{
 Depends on the function, the template and the number of metrics. Can be a \code{RasterLayer},
-a \code{RasterBrick}, a \code{stars}, a \code{SpatRaster} an \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame},
+a \code{RasterBrick}, a \code{stars}, a \code{SpatRaster} a \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame},
 a \code{data.table}. Functions are supposed to return an object that best suit for storing the level
 of regularization asked.
 }
@@ -132,7 +133,7 @@ voxel_metrics(las, ~f(Intensity), res = 2)
 }
 The following existing functions allow the user to
 compute some predefined metrics: \link[=stdmetrics]{stdmetrics}
-\link[=entropy]{entropy} \link[=VCI]{VCI} \link[=LAD]{LAD}. But usually users must write their own
+\link[=entropy]{entropy}, \link[=VCI]{VCI}, \link[=LAD]{LAD}. But usually users must write their own
 functions to create metrics. \code{template_metrics} will dispatch the point cloud in the user's
 function.
 }
@@ -156,7 +157,7 @@ plot(m, col = col)
 
 # a sfc_POLYGON as template
 sfc <- sf::st_as_sfc(st_bbox(las))
-template <- sf::st_make_grid(sfc, cellsize = 10, square = FALSE)
+template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
 m <- template_metrics(las, fun1, template)
 plot(m, nbreaks = 15)
 
@@ -171,6 +172,8 @@ print(m)
 # CUSTOM METRICS
 # ================
 
+# Define a function that computes custom metrics
+# in a R&D perspective.
 myMetrics = function(z, i) {
   metrics = list(
      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
@@ -181,7 +184,7 @@ myMetrics = function(z, i) {
 }
 
 # example with a stars template
-template <- stars::st_as_stars(st_bbox(las), nx = 18, ny = 18)
+template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
 m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
 plot(m, col = col, breaks = "equal", join_zlim = FALSE)
 
@@ -215,10 +218,10 @@ plot(m["q85"], pch = 19, cex = 3)
 \donttest{
 # Works with polygons as well
 inventory <- sf::st_buffer(inventory, 11.28)
-plot(las@header)
+plot(header(las))
 plot(sf::st_geometry(inventory), add = TRUE)
 m <- plot_metrics(las, .stdmetrics_z, inventory)
-plot(m["zq85"], pch = 19, cex = 3)
+plot(m["zq85"], pch = 19, cex = 3, add = TRUE)
 }
 
 # ================
@@ -239,7 +242,7 @@ LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 
 metrics <- crown_metrics(trees, .stdtreemetrics)
-plot(metrics["Z"])
+plot(metrics["Z"], pch = 19)
 
 metrics <- crown_metrics(trees, .stdtreemetrics, geom = "convex")
 plot(metrics["Z"])
@@ -276,8 +279,8 @@ metrics = pixel_metrics(las, ~mean(Z), 20)
 func = ~list(avgI = mean(Intensity))
 echo = c("all", "first","multiple")
 
-# func defines on metrics but 3 are computed respectively for all echos
-# for first return only and for multiple returns only
+# func defines one metrics but 3 are computed respectively for: (1) all echo types,
+# (2) for first returns only and (3) for multiple returns only
 metrics <- pixel_metrics(las, func, 20, by_echo = echo)
 plot(metrics, col = heat.colors(25))
 

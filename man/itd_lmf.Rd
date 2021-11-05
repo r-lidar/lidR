@@ -30,37 +30,37 @@ It is deeply inspired by Popescu & Wynne (2004) (see references).
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813050")
 
+# =================
 # point-cloud-based
 # =================
 
 # 5x5 m fixed window size
 ttops <- locate_trees(las, lmf(5))
 
-#x <- plot(las)
-#add_treetops3d(x, ttops)
+#plot(las) |> add_treetops3d(ttops)
 
 # variable windows size
 f <- function(x) { x * 0.07 + 3}
 ttops <- locate_trees(las, lmf(f))
 
-#x <- plot(las)
-#add_treetops3d(x, ttops)
+#plot(las) |> add_treetops3d(ttops)
 
+# ============
 # raster-based
 # ============
 
-chm <- rasterize_canopy(las, res = 1, p2r(0.15))
+chm <- rasterize_canopy(las, res = 1, p2r(0.15), pkg = "terra")
 ttops <- locate_trees(chm, lmf(5))
 
 plot(chm, col = height.colors(30))
-plot(ttops, add = TRUE)
+plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
 
 # variable window size
 f <- function(x) { x * 0.07 + 3 }
 ttops <- locate_trees(chm, lmf(f))
 
 plot(chm, col = height.colors(30))
-plot(ttops, add = TRUE)
+plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
 }
 \references{
 Popescu, Sorin & Wynne, Randolph. (2004). Seeing the Trees in the Forest: Using Lidar and

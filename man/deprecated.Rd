@@ -42,7 +42,6 @@
 \alias{tree_detection}
 \alias{tree_hulls}
 \alias{hexbin_metrics}
-\alias{catalog_sapply}
 \alias{filter_surfacepoints}
 \alias{filter_surfacepoints.LAS}
 \alias{filter_surfacepoints.LAScatalog}
@@ -170,8 +169,6 @@ tree_hulls(
 
 hexbin_metrics(...)
 
-catalog_sapply(ctg, FUN, ..., .options = NULL)
-
 filter_surfacepoints(las, res)
 
 \method{filter_surfacepoints}{LAS}(las, res)
@@ -218,13 +215,12 @@ filter_surfacepoints(las, res)
 \item{interval, pmin, extra_check, thin_pulse_with_time}{See the new functions that replace the old ones}
 
 \item{concavity, length_threshold, func}{See the new functions that replace the old ones}
-
-\item{ctg, FUN, .options}{see \link{catalog_apply}}
 }
 \description{
 These functions are provided for compatibility with older versions of lidR but are deprecated. They
 will progressively print a message, throw a warning and eventually be removed. The links below point
-to the documentation of the new names \cr\cr
+to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
+ill be removed definitively.\cr\cr
 \link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
 \link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
 \link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}

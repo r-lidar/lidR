@@ -3,7 +3,7 @@
 #' Individual tree detection function that find the position of the trees using several possible
 #' algorithms.
 #'
-#' @param las An object of class `LAS` or `LAScatalog`. Can also be a `RasterLayer` or a `stars`.
+#' @param las An object of class `LAS` or `LAScatalog`. Can also be a  raster from `raster`, `stars` or `terra`
 #' representing a canopy height model, in which case it is processed like a regularly-spaced point cloud.
 #' @param algorithm An algorithm for individual tree detection. lidR has: \link{lmf} and \link{manual}.
 #' More experimental algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
@@ -14,7 +14,7 @@
 #'
 #' @return `locate_trees` returns an sf object with POINT Z geometries. The table of attributes
 #' contains a column `treeID` with an individual ID for each tree. The height of the trees (`Z`) are
-#' also repeated in the table of attribute to be written in file formats that do not support XYZ geometries
+#' also repeated in the table of attribute to be analysed as an attribute and not as a coordinate.
 #'
 #' @export
 #'
@@ -24,8 +24,7 @@
 #'
 #' ttops <- locate_trees(las, lmf(ws = 5))
 #'
-#' #x = plot(las)
-#' #add_treetops3d(x, ttops)
+#' #plot(las) |> add_treetops3d(ttops)
 #' @md
 locate_trees = function(las, algorithm, uniqueness = 'incremental')
 {
@@ -107,6 +106,13 @@ locate_trees.RasterLayer = function(las, algorithm, uniqueness = 'incremental')
 
 #' @export
 locate_trees.stars = function(las, algorithm, uniqueness = 'incremental')
+{
+  las <- raster_as_las(las)
+  return(locate_trees(las, algorithm))
+}
+
+#' @export
+locate_trees.SpatRaster = function(las, algorithm, uniqueness = 'incremental')
 {
   las <- raster_as_las(las)
   return(locate_trees(las, algorithm))

@@ -8,11 +8,11 @@
 silva2016(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 }
 \arguments{
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
+\item{chm}{`RasterLayer`, `SpatRaster` or `stars`. Canopy height model. Can be computed with \link{rasterize_canopy} or read from
 an external file.}
 
-\item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
-\link{locate_trees} or read from an external shapefile.}
+\item{treetops}{`SpatialPoints*` or `sf/sfc_POINT` with 2D or 3D coordinates. Can be computed with
+\link{locate_trees} or read from an external file}
 
 \item{max_cr_factor}{numeric. Maximum value of a crown diameter given as a proportion of the
 tree height. Default is 0.6, meaning 60\% of the tree height.}
@@ -20,15 +20,14 @@ tree height. Default is 0.6, meaning 60\% of the tree height.}
 \item{exclusion}{numeric. For each tree, pixels with an elevation lower than \code{exclusion}
 multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.}
 
-\item{ID}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
-each tree, the name of this column. This way, original IDs will be preserved. If there is no such
-data trees will be numbered sequentially.}
+\item{ID}{character. If \code{treetops} contains an attribute with the ID for
+each tree, the name of this attribute. This way, original IDs will be preserved.}
 }
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on Silva et al. (2016) (see reference). This is a simple method
 based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
-in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+in the package \code{rLiDAR}. This version is not the version from \code{rLiDAR}. It is
 code written from the original article by the lidR authors and is considerably (between 250
 and 1000 times) faster.
 }
@@ -38,7 +37,7 @@ user does not even have the point cloud that generated the CHM. \code{lidR} is a
 library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
- chm <- raster("file/to/a/chm/")
+ chm <- raster("chm.tif")
  ttops <- locate_trees(chm, lmf(3))
  crowns <- silva2016(chm, ttops)()
 }

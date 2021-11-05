@@ -54,8 +54,7 @@
 #' plot(las@header)
 #' plot(sf::st_geometry(flightlines), add = TRUE)
 #'
-#' #x <- plot(las)
-#' #add_flightlines3d(x, flightlines, radius = 10)
+#' #plot(las) |> add_flightlines3d(flightlines, radius = 10)
 #'
 #' \dontrun{
 #' # With a LAScatalog "-drop_single" and "-thin_pulses_with_time"

@@ -27,12 +27,12 @@ las = readLAS(LASfile)
 
 dtm = rasterize_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 
-#plot(dtm, col = terrain.colors(50))
+#plot(dtm, breaks = "equal", nbreaks = 50)
 #plot_dtm3d(dtm)
 }
 \seealso{
-Other spatial interpolation algorithms: 
+Other dtm algorithms: 
 \code{\link{dtm_kriging}},
 \code{\link{dtm_tin}}
 }
-\concept{spatial interpolation algorithms}
+\concept{dtm algorithms}

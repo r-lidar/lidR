@@ -3,7 +3,7 @@
 #' Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If several files are read at
 #' once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 #' to save a substantial amount of memory by choosing to load only the attributes or points of interest.
-#' LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
+#' LAS formats 1.0 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
 #' `readLAS` is the original function and always works. Using one of the `read*LAS` functions
 #' adds information to the returned object to register a point-cloud type. Registering the correct point
 #' type **may** improve the performance of some functions by enabling users to select an appropriate spatial index.

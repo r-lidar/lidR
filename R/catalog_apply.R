@@ -1,11 +1,13 @@
 #' LAScatalog processing engine
 #'
 #' This function gives users access to the \link[=LAScatalog-class]{LAScatalog} processing engine.
-#' It allows the application of a user-defined routine over an entire catalog. The LAScatalog
-#' processing engine tool is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
+#' It allows the application of a user-defined routine over a collection of LAS/LAZ files. The
+#' LAScatalog processing engine is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 #' `catalog_apply()` is the core of the lidR package. It drives every single function that can process a
-#' \code{LAScatalog}. It is flexible and powerful but also complex. `catalog_map` is a simplified version
-#' of catalog_apply() that suits for 90% of use cases.
+#' \code{LAScatalog}. It is flexible and powerful but also complex. `catalog_map()` is a simplified version
+#' of `catalog_apply()` that suits for 90% of use cases.\cr\\cr
+#' `catalog_sapply()` is a previous attempt to provide simplified version of `catalog_apply()`. Use
+#' `catalog_map()` instead.
 #'
 #' @param ctg A \link[=LAScatalog-class]{LAScatalog} object.
 #' @param FUN A user-defined function that respects a given template (see section function template)
@@ -20,12 +22,14 @@
 #' pixels in a rasterization process, or dummy elevations in a ground interpolation. The LAScatalog
 #' processing engine provides internal tools to load buffered data 'on-the-fly'. `catalog_map()` takes
 #' care of removing automatically the results computed in the buffered area to avoid unexpected output
-#' with duplicated entries or conflict between values computed twice. However `catalog_apply()` does not
-#' do that and leave users free to handle this in a custom way.
+#' with duplicated entries or conflict between values computed twice. It does that in predefined way
+#' that may not suit all cases. `catalog_apply()` does not remove the buffer and leave users free
+#' to handle this in a custom way. This is why `catalog_apply()` is more complex but gives more freedom
+#' to build new applications.
 #'
 #' @section Buffered data:
 #'
-#' The LAS objects read by the user function have a special attribute called 'buffer' that indicates,
+#' The LAS objects loaded in theses functions have a special attribute called 'buffer' that indicates,
 #' for each point, if it comes from a buffered area or not. Points from non-buffered areas have a
 #' 'buffer' value of 0, while points from buffered areas have a 'buffer' value of 1, 2, 3 or 4, where
 #' 1 is the bottom buffer and 2, 3 and 4 are the left, top and right buffers, respectively. This allows
@@ -41,39 +45,43 @@
 #' - It represents a chunk of the file collection
 #' - The function \link{readLAS} can be used with a `LAScluster`
 #' - The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} or \link[sf:st_bbox]{st_bbox}
-#' can be used with a `LAScluster` and they return the bounding box of the cluster without the buffer.
+#' can be used with a `LAScluster` and they return the bounding box of the chunk without the buffer.
 #' It must be used to clip the output and remove the buffered region (see examples).
 #'
 #' A user-defined function must be templated like this:
 #'
 #' ```
-#' myfun <- function(cluster, ...) {
-#'    las <- readLAS(cluster)
+#' myfun <- function(chunk, ...) {
+#'    # Load the chunk + buffer
+#'    las <- readLAS(chunk)
 #'    if (is.empty(las)) return(NULL)
+#'
 #'    # do something
+#'    output <- do_something(las, ...)
 #'
 #'    # remove the buffer of the output
-#'    bbox <- bbox(cluster)
-#'    something <- remove_buffer(something, bbox)
-#'    return(something)
+#'    bbox <- bbox(chunk)
+#'    output <- remove_buffer(output, bbox)
+#'    return(output)
 #' }
 #' ```
 #'
 #' The line `if (is.empty(las)) return(NULL)` is important because some clusters (chunks) may contain
 #' 0 points (we can't know this before reading the file). In this case an empty point cloud with 0 points
 #' is returned by `readLAS()` and this may fail in subsequent code. Thus, exiting early from the user-defined
-#' function by returning `NULL` indicates to the internal engine that the cluster was empty.
+#' function by returning `NULL` indicates to the internal engine that the chunk was empty.
 #'
 #' `catalog_map` is much simpler (but less versatile). It automatically takes care of reading the chunk
 #' and checks if the point cloud is empty. It also automatically crop the buffer. The way it crops the
-#' buffer suits for most case but for some special cases it may be advice to handle this in a more
-#' specific way i.e. using `catalog_apply`. For catalog map the first argument is a `LAS` and the
+#' buffer suits for most cases but for some special cases it may be advised to handle this in a more
+#' specific way i.e. using `catalog_apply()`. For `catalog_map()` the first argument is a `LAS` and the
 #' template is:
 #'
 #' ```
 #' myfun <- function(las, ...) {
 #'    # do something
-#'    return(something)
+#'    output <- do_something(las, ...)
+#'    return(output)
 #' }
 #' ```
 #'
@@ -124,48 +132,50 @@
 #'
 #' ## =========================================================================
 #' ## Example 1: detect all the tree tops over an entire catalog
-#' ## (this is basically a reproduction of the existing lidR function 'locate_trees')
+#' ## (this is basically a reproduction of the existing function 'locate_trees')
 #' ## =========================================================================
 #'
 #' # 1. Build the user-defined function that analyzes each chunk of the catalog.
 #' # The function's first argument is a LAScluster object. The other arguments can be freely
 #' # chosen by the users.
-#' my_tree_detection_method <- function(cluster, ws)
+#' my_tree_detection_method <- function(chunk, ws)
 #' {
-#'   # The cluster argument is a LAScluster object. The users do not need to know how it works.
+#'   # The chunk argument is a LAScluster object. The users do not need to know how it works.
 #'   # readLAS will load the region of interest (chunk) with a buffer around it, taking advantage of
 #'   # point cloud indexation if possible. The filter and select options are propagated automatically
-#'   las <- readLAS(cluster)
+#'   las <- readLAS(chunk)
 #'   if (is.empty(las)) return(NULL)
 #'
-#'   # Find the tree tops using a user-developed method (here simply a LMF).
+#'   # Find the tree tops using a user-developed method
+#'   # (here simply a LMF for the example).
 #'   ttops <- locate_trees(las, lmf(ws))
 #'
 #'   # ttops is an sf object that contains the tree tops in our region of interest
 #'   # plus the trees tops in the buffered area. We need to remove the buffer otherwise we will get
 #'   # some trees more than once.
-#'   bbox  <- st_bbox(cluster)
+#'   bbox  <- st_bbox(chunk)
 #'   ttops <- sf::st_crop(ttops, bbox)
 #'   return(ttops)
 #' }
 #'
-#' # 2. Build a project (here, a single file catalog for the purposes of this dummmy example).
+#' # 2. Build a collection of file
+#' # (here, a single file LAScatalog for the purposes of this simple example).
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' prj <- readLAScatalog(LASfile)
-#' plot(prj)
+#' ctg <- readLAScatalog(LASfile)
+#' plot(ctg)
 #'
 #' # 3. Set some processing options.
-#' # For this dummy example, the chunk size is 100 m and the buffer is 10 m
-#' opt_chunk_buffer(prj) <- 10
-#' opt_chunk_size(prj)   <- 100            # small because this is a dummy example.
-#' opt_chunk_alignment(prj) <- c(-50, -35) # Align such as it creates 2 chunks only.
-#' opt_select(prj)       <- "xyz"          # Read only the coordinates.
-#' opt_filter(prj)       <- "-keep_first"  # Read only first returns.
+#' # For this small single file example, the chunk size is 100 m + 10 m of buffer
+#' opt_chunk_buffer(ctg) <- 10
+#' opt_chunk_size(ctg)   <- 100            # Small because this is a dummy example.
+#' opt_chunk_alignment(ctg) <- c(-50, -35) # Align such as it creates 2 chunks only.
+#' opt_select(ctg)       <- "xyz"          # Read only the coordinates.
+#' opt_filter(ctg)       <- "-keep_first"  # Read only first returns.
 #'
 #' # 4. Apply a user-defined function to take advantage of the internal engine
 #' opt    <- list(need_buffer = TRUE,   # catalog_apply will throw an error if buffer = 0
 #'                automerge   = TRUE)   # catalog_apply will merge the outputs into a single object
-#' output <- catalog_apply(prj, my_tree_detection_method, ws = 5, .options = opt)
+#' output <- catalog_apply(ctg, my_tree_detection_method, ws = 5, .options = opt)
 #'
 #' plot(output)
 #'
@@ -178,27 +188,28 @@
 #' # 1. Build the user-defined function that analyzes a point cloud.
 #' my_tree_detection_method <- function(las, ws)
 #' {
-#'   # Find the tree tops using a user-developed method (here simply a LMF).
+#'   # Find the tree tops using a user-developed method
+#'   # (here simply a LMF for the example).
 #'   ttops <- locate_trees(las, lmf(ws))
 #'   return(ttops)
 #' }
 #'
 #' # 2. Build a project
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' prj <- readLAScatalog(LASfile)
-#' plot(prj)
+#' ctg <- readLAScatalog(LASfile)
+#' plot(ctg)
 #'
 #' # 3. Set some processing options.
 #' # For this dummy example, the chunk size is 100 m and the buffer is 10 m
-#' opt_chunk_buffer(prj) <- 10
-#' opt_chunk_size(prj)   <- 100            # small because this is a dummy example.
-#' opt_chunk_alignment(prj) <- c(-50, -35) # Align such as it creates 2 chunks only.
-#' opt_select(prj)       <- "xyz"          # Read only the coordinates.
-#' opt_filter(prj)       <- "-keep_first"  # Read only first returns.
+#' opt_chunk_buffer(ctg) <- 10
+#' opt_chunk_size(ctg)   <- 100            # small because this is a dummy example.
+#' opt_chunk_alignment(ctg) <- c(-50, -35) # Align such as it creates 2 chunks only.
+#' opt_select(ctg)       <- "xyz"          # Read only the coordinates.
+#' opt_filter(ctg)       <- "-keep_first"  # Read only first returns.
 #'
 #' # 4. Apply a user-defined function to take advantage of the internal engine
 #' opt    <- list(need_buffer = TRUE)   # catalog_apply will throw an error if buffer = 0
-#' output <- catalog_map(prj, my_tree_detection_method, ws = 5, .options = opt)
+#' output <- catalog_map(ctg, my_tree_detection_method, ws = 5, .options = opt)
 #'
 #' ## ===================================================
 #' ## Example 2: compute a rumple index on surface points
@@ -212,14 +223,14 @@
 #' }
 #'
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' prj <- readLAScatalog(LASfile)
+#' ctg <- readLAScatalog(LASfile)
 #'
-#' opt_chunk_buffer(prj) <- 1
-#' opt_chunk_size(prj)   <- 140     # small because this is a dummy example.
-#' opt_select(prj)       <- "xyz"   # read only the coordinates.
+#' opt_chunk_buffer(ctg) <- 1
+#' opt_chunk_size(ctg)   <- 140     # small because this is a dummy example.
+#' opt_select(ctg)       <- "xyz"   # read only the coordinates.
 #'
 #' opt    <- list(raster_alignment = 20) # catalog_apply will adjust the chunks if required
-#' output <- catalog_map(prj, rumple_index_surface, res = 20, .options = opt)
+#' output <- catalog_map(ctg, rumple_index_surface, res = 20, .options = opt)
 #'
 #' plot(output, col = height.colors(15), breaks = "equal")
 #' }
@@ -261,6 +272,20 @@ catalog_apply <- function(ctg, FUN, ..., .options = NULL)
     output <- engine_merge(ctg, output, as.character(substitute(FUN)))
 
   return(output)
+}
+
+#' @export
+#' @rdname catalog_apply
+catalog_sapply <- function(ctg, FUN, ..., .options = NULL)
+{
+  if (is.null(.options))
+    .options <- list(automerge = TRUE)
+  else
+  {
+    .options$automerge <- TRUE
+  }
+
+  return(catalog_apply(ctg, FUN, ..., .options = .options))
 }
 
 #' @export

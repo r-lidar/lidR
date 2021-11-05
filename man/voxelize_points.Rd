@@ -25,6 +25,6 @@ are lost.
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
-las2 = voxelize_points(las, 2)
-#plot(las2)
+las2 = voxelize_points(las, 5)
+#plot(las2, voxel = TRUE)
 }

@@ -13,9 +13,9 @@
 #' library, which is why this algorithm must be used in \link{segment_trees} to merge the result with the point
 #' cloud. However the user can use this as a stand-alone function like this:
 #' \preformatted{
-#'  chm = raster("file/to/a/chm/")
-#'  ttops = locate_trees(chm, lmf(3))
-#'  crowns = dalponte2016(chm, ttops)()
+#'  chm <- raster("chm.tif")
+#'  ttops <- locate_trees(chm, lmf(3))
+#'  crowns <- dalponte2016(chm, ttops)()
 #' }
 #'
 #' @template param-chm-lastrees
@@ -29,9 +29,8 @@
 #' multiplied by this value. It should be between 0 and 1. Default is 0.55.
 #' @param max_cr numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 #' Default is 10.
-#' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
-#' each tree, the name of this attribute. This way, original IDs will be preserved. If there is no
-#' such data trees will be numbered sequentially.
+#' @param ID character. If `treetops` contains an attribute with the ID for
+#' each tree, the name of this attribute. This way, original IDs will be preserved.
 #'
 #' @references
 #' Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon density from
@@ -44,7 +43,8 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+#' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
 #' # Using raster because focal does not exist in stars
@@ -56,6 +56,7 @@
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
 #' #plot(las, color = "treeID", colorPalette = col)
 #' @name its_dalponte2016
+#' @md
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
 {
   assert_is_a_number(th_tree)
@@ -64,9 +65,9 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   assert_is_a_number(max_cr)
   assert_all_are_in_closed_range(th_seed, 0, 1)
   assert_all_are_in_closed_range(th_cr, 0, 1)
+  stopifnot(raster_is_supported(chm))
 
   treetops <- check_tree_tops(treetops, ID)
-  chm      <- check_chm(chm)
   chm      <- lazyeval::uq(chm)
   treetops <- lazyeval::uq(treetops)
   th_tree  <- lazyeval::uq(th_tree)
@@ -83,16 +84,8 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     if (nrow(treetops) == 0L)
     {
       crown <- chm
-      crown[[1]][] <- NA_integer_
-      storage.mode(crown[[1]]) <- "integer"
+      crown <- raster_set_values(crown, NA_integer_)
       return(crown)
-    }
-
-    return_raster <- FALSE
-    if (is(chm, "RasterLayer"))
-    {
-      chm <- stars::st_as_stars(chm)
-      return_raster <- TRUE
     }
 
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
@@ -102,17 +95,20 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     treetops <- res$treetops
     chm <- res$chm
 
+    st_chm <- chm
+    if (!is(chm, "stars"))
+      st_chm <- stars::st_as_stars(chm)
+
     # If no seed, exit with with warning
     if (nrow(treetops) == 0L)
     {
       warning("No tree can be used as seed", call. = FALSE)
       crown <- chm
-      crown[[1]][] <- NA_integer_
-      storage.mode(crown[[1]]) <- "integer"
+      crown <- raster_set_values(crown, NA_integer_)
       return(crown)
     }
 
-    template <- chm
+    template <- st_chm
     template[[1]][] <- 0L
     storage.mode(template[[1]]) <- "integer"
 
@@ -122,18 +118,20 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 
     Maxima <- raster_as_matrix(rtreetops)$z
     Canopy <- raster_as_matrix(chm)$z
+
     Canopy[is.na(Canopy)] <- -Inf
     Crowns <- C_dalponte2016(Canopy, Maxima, th_seed, th_cr, th_tree, max_cr)
 
     Maxima[Maxima == 0L] <- NA_integer_
     Crowns[Crowns == 0L] <- NA_integer_
     Crowns[] <- treetops[[ID]][Crowns]
-    storage.mode(Crowns) <- storage.mode(treetops[[ID]])
+    val <- as.numeric(t(apply(Crowns, 1, rev)))
+    storage.mode(val) <- storage.mode(treetops[[ID]])
 
-    template[[1]] <- Crowns
-
-    if (return_raster) template <- as(template, "Raster")
-    return(template)
+    output <- chm
+    output <- raster_set_values(output, NA_integer_)
+    output <- raster_set_values(output, val)
+    return(output)
   }
 
   class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED)
@@ -145,29 +143,29 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on Silva et al. (2016) (see reference). This is a simple method
 #' based on seed + voronoi tesselation (equivalent to nearest neighbour). This algorithm is implemented
-#' in the package \code{rLiDAR}. This version is \emph{not} the version from \code{rLiDAR}. It is
+#' in the package `rLiDAR`. This version is not the version from `rLiDAR`. It is
 #' code written from the original article by the lidR authors and is considerably (between 250
 #' and 1000 times) faster.
 #'
 #' Because this algorithm works on a CHM only there is no actual need for a point cloud. Sometimes the
-#' user does not even have the point cloud that generated the CHM. \code{lidR} is a point cloud-oriented
+#' user does not even have the point cloud that generated the CHM. `lidR` is a point cloud-oriented
 #' library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
-#'  chm <- raster("file/to/a/chm/")
+#'  chm <- raster("chm.tif")
 #'  ttops <- locate_trees(chm, lmf(3))
 #'  crowns <- silva2016(chm, ttops)()
 #' }
 #'
 #' @template param-chm-lastrees
 #' @template param-treetops
+#'
 #' @param max_cr_factor numeric. Maximum value of a crown diameter given as a proportion of the
-#' tree height. Default is 0.6, meaning 60\% of the tree height.
-#' @param exclusion numeric. For each tree, pixels with an elevation lower than \code{exclusion}
+#' tree height. Default is 0.6, meaning 60% of the tree height.
+#' @param exclusion numeric. For each tree, pixels with an elevation lower than `exclusion`
 #' multiplied by the tree height will be removed. Thus, this number belongs between 0 and 1.
-#' @param ID character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
-#' each tree, the name of this column. This way, original IDs will be preserved. If there is no such
-#' data trees will be numbered sequentially.
+#' @param ID character. If `treetops` contains an attribute with the ID for
+#' each tree, the name of this attribute. This way, original IDs will be preserved.
 #'
 #' @references
 #' Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers,
@@ -195,6 +193,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' las   <- segment_trees(las, silva2016(chm, ttops))
 #' #plot(las, color = "treeID", colorPalette = col)
 #' @name its_silva2016
+#' @md
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
 {
   assert_is_a_number(max_cr_factor)
@@ -203,7 +202,6 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   assert_all_are_in_open_range(exclusion, 0, 1)
 
   treetops       <- check_tree_tops(treetops, ID)
-  chm            <- check_chm(chm)
   chm            <- lazyeval::uq(chm)
   treetops       <- lazyeval::uq(treetops)
   max_cr_factor  <- lazyeval::uq(max_cr_factor)
@@ -218,18 +216,8 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     if (nrow(treetops) == 0L)
     {
       crown <- chm
-      crown[[1]][] <- NA_integer_
-      storage.mode(crown[[1]]) <- "integer"
+      crown <- raster_set_values(crown, NA_integer_)
       return(crown)
-    }
-
-    . <- R <- X <- Y <- Z <- id <- d <- hmax <- NULL
-
-    return_raster <- FALSE
-    if (is(chm, "RasterLayer"))
-    {
-      chm <- stars::st_as_stars(chm)
-      return_raster <- TRUE
     }
 
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
@@ -239,13 +227,16 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     treetops <- res$treetops
     chm <- res$chm
 
+    st_chm <- chm
+    if (!is(chm, "stars"))
+      st_chm <- stars::st_as_stars(chm)
+
     # If no seed, exit with with warning
     if (nrow(treetops) == 0L)
     {
-      warning("No tree can be used as seed: all tree tops are outside the CHM", call. = FALSE)
+      warning("No tree can be used as seed", call. = FALSE)
       crown <- chm
-      crown[[1]][] <- NA_integer_
-      storage.mode(crown[[1]]) <- "integer"
+      crown <- raster_set_values(crown, NA_integer_)
       return(crown)
     }
 
@@ -258,20 +249,18 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     coords <- sf::st_coordinates(treetops)
     u <- C_knn(coords[,1], coords[,2], chmdt$X, chmdt$Y, 1L, getThread())
 
+    id <- d <- hmax <- Z <- . <- X <- Y <- NULL
     chmdt[, id := u$nn.idx[,1]]
     chmdt[, id := ids[id]]
     chmdt[, d := u$nn.dist[,1]]
     chmdt[, hmax := max(Z), by = id]
 
-    chmdt   <- chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
-    crown   <- chm
-    crown[[1]][] <- NA_integer_
-    cells <- raster_cell_from_xy(crown, chmdt$X, chmdt$Y)
-    crown[[1]][cells] <- chmdt[["id"]]
-    crown[[1]][] <- treetops[[ID]][crown[[1]]]
-    storage.mode(crown[[1]]) <- storage.mode(treetops[[ID]])
+    chmdt <- chmdt[Z >= exclusion*hmax & d <= max_cr_factor*hmax, .(X,Y, id)]
 
-    if (return_raster) crown <- as(crown, "Raster")
+    crown <- chm
+    crown <- raster_set_values(crown, NA_integer_)
+    cells <- raster_cell_from_xy(crown, chmdt$X, chmdt$Y)
+    crown <- raster_set_values(crown, chmdt[["id"]], cells)
     return(crown)
   }
 
@@ -291,8 +280,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 #' cloud. However, the user can use this as a stand-alone function like this:
 #' \preformatted{
-#'  chm <- raster("file/to/a/chm/")
-#'  ttops <- locate_trees(chm, lmf(3))
+#'  chm <- raster("chm.tif")
 #'  crowns <- watershed(chm)()
 #' }
 #'
@@ -321,6 +309,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #'
 #' plot(las, color = "treeID", colorPalette = col)
 #' }
+#' @md
 #' @name its_watershed
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
@@ -329,7 +318,6 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
   assert_is_a_number(ext)
   assert_package_is_installed("EBImage")
 
-  chm     <- check_chm(chm)
   chm     <- lazyeval::uq(chm)
   th_tree <- lazyeval::uq(th_tree)
   tol     <- lazyeval::uq(tol)
@@ -339,17 +327,10 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
   {
     assert_is_valid_context(LIDRCONTEXTITS, "watershed", null_allowed = TRUE)
 
-    raster <- FALSE
-    if (is(chm, "RasterLayer"))
-    {
-      chm <- stars::st_as_stars(chm)
-      raster <- TRUE
-    }
-
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
     # Otherwise we could get a chm much bigger than the LAS (e.g. LAScatalog processing) and
     # process would never ends
-    if (!missing(bbox)) chm <- chm[bbox]
+    if (!missing(bbox)) chm <- raster_crop(chm, bbox)
 
     # Convert the CHM to a matrix
     Canopy <- raster_as_matrix(chm)$z
@@ -358,11 +339,14 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
     Crowns <- EBImage::watershed(Canopy, tol, ext)
 
     Crowns[mask] <- NA_integer_
-    res <- chm
-    res[[1]] <- Crowns
 
-    if (raster) res <- as(res, "Raster")
-    return(res)
+    val <- as.numeric(t(apply(Crowns, 1, rev)))
+    storage.mode(val) <- "integer"
+
+    output <- chm
+    output <- raster_set_values(output, NA_integer_)
+    output <- raster_set_values(output, val)
+    return(output)
   }
 
   class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED)
@@ -372,9 +356,10 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #'
 #' This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 #' segmentation based on Li et al. (2012) (see reference). This method is a growing region
-#' method working at the point cloud level. It is an implementation, as strict as possible, made by
-#' the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
-#' for objects that are too low.
+#' method working at the point cloud level. It is an implementation by lidR authors, from the original
+#' paper, as close as possible from the original description. However we added a parameter \code{hmin}
+#' to prevent over-segmentation for objects that are too low. This algorithm is known to be slow because
+#' it has an algorithmic complexity worst that O(n^2).
 #'
 #' @param dt1 numeric. Threshold number 1. See reference page 79 in Li et al. (2012). Default is 1.5.
 #' @param dt2 numeric. Threshold number 2. See reference page 79 in Li et al. (2012). Default is 2.
@@ -386,7 +371,8 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #' used. See page 79 in Li et al. (2012). Default is 15.
 #' @param speed_up numeric. Maximum radius of a crown. Any value greater than a crown is
 #' good because this parameter does not affect the result. However, it greatly affects the
-#' computation speed. The lower the value, the faster the method. Default is 10.
+#' computation speed by restricting the number of comparisons to perform.
+#' The lower the value, the faster the method. Default is 10.
 #'
 #' @export
 #'
@@ -399,12 +385,14 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+#' poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+#' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
 #' las <- segment_trees(las, li2012(dt1 = 1.4))
 #' #plot(las, color = "treeID", colorPalette = col)
 #' @name its_li2012
+#' @md
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
 {
   assert_is_a_number(dt1)
@@ -483,20 +471,12 @@ check_tree_tops <- function(treetops, ID)
   return(treetops)
 }
 
-check_chm <- function(chm)
-{
-  if (!is(chm, "stars") & !is(chm, "RasterLayer"))
-    stop("chm must be a RasterLayer or a stars object", call. = FALSE)
-
-  return(chm)
-}
-
 crop_special_its <- function (treetops, chm, bbox)
 {
   if (!missing(bbox))
   {
     assert_is_all_of(bbox, "bbox")
-    chm <- chm[bbox]
+    chm <- raster_crop(chm, bbox)
     sf::st_agr(treetops) <- "constant"
     treetops <- sf::st_crop(treetops, bbox)
   }

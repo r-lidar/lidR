@@ -24,12 +24,12 @@ classify_poi(
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{an algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
+\item{algorithm}{An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
 classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
 The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has \code{mcc}.}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
-in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attributes
 \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 to \code{FALSE} automatically.}
 
@@ -37,7 +37,7 @@ to \code{FALSE} automatically.}
 
 \item{poi}{a formula of logical predicates. The points that are \code{TRUE} will be classified \code{class}.}
 
-\item{roi}{A \code{SpatialPolygons}, \code{SpatialPolygonDataFrame} from \code{sp} or a \code{POLYGON} from \code{sf}.
+\item{roi}{A \verb{SpatialPolygons*}, from \code{sp} or a \code{sf/sfc_POLYGON} from \code{sf}.
 The points that are in the region of interest delimited by the polygon(s) are classified
 \code{class}.}
 
@@ -54,9 +54,9 @@ functions update the attribute \code{Classification} of the LAS object according
 \details{
 \describe{
 \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
-The points classified as 'noise' are assigned a value of 18.}
-\item{classify_ground}{Classify points as 'ground' with several possible algorithms. The points
-classified as 'ground' are assigned a value of 2 }
+lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
+\item{classify_ground}{Classify points as 'ground' with several possible algorithms.
+lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assigned a value of 2 }
 \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
 region of interest with class of choice.}
 }
@@ -90,6 +90,7 @@ las$Z[id] = las$Z[id] + err
 
 # Using IVF
 las <- classify_noise(las, ivf(5,2))
+#plot(las, color = "Classification")
 
 # Remove outliers using filter_poi()
 las_denoise <- filter_poi(las, Classification != LASNOISE)

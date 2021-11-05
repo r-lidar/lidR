@@ -28,7 +28,7 @@
 \item{...}{unused.}
 }
 \value{
-numeric. A number.in the same units of the coordinate reference system.
+numeric. A number in the same units of the coordinate reference system.
 }
 \description{
 Surface covered by a \verb{LAS*} object. For \code{LAS} point clouds it is computed based on the
@@ -37,5 +37,5 @@ of the files. For overlapping tiles the value may be larger than the total cover
 some regions are sampled twice. For a \code{LASheader} it is computed with the bounding box.
 As a consequence for the same file \code{st_area} applied on a LASheader or on a LAS can return
 slightly different values. \code{st_area()} extends \code{sf:st_area()}, \code{area()} extends
-\code{raster:area()}. \code{area()} is provided for backward compatibility..
+\code{raster:area()}. \code{area()} is provided for backward compatibility.
 }

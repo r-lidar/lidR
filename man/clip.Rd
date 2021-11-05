@@ -22,26 +22,17 @@ clip_transect(las, p1, p2, width, xz = FALSE, ...)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
+\item{geometry}{a geometric object. spatial points, spatial polygons in sp or sf/sfc format, Extent,
+bbox, 2x2 matrix}
 
 \item{...}{in \code{clip_roi}: optional supplementary options (see supported geometries). Unused in
 other functions}
 
-\item{xleft}{numeric. left x coordinates of rectangles.}
+\item{xleft, ybottom, xright, ytop}{numeric. coordinates of one or several rectangles.}
 
-\item{ybottom}{numeric. bottom y coordinates of rectangles.}
+\item{xpoly, ypoly}{numeric. x coordinates of a polygon.}
 
-\item{xright}{numeric. right x coordinates of rectangles.}
-
-\item{ytop}{numeric. top y coordinates of rectangles.}
-
-\item{xpoly}{numeric. x coordinates of a polygon.}
-
-\item{ypoly}{numeric. y coordinates of a polygon.}
-
-\item{xcenter}{numeric. x coordinates of disc centers.}
-
-\item{ycenter}{numeric. y coordinates of disc centers.}
+\item{xcenter, ycenter}{numeric. x coordinates of on or several disc centres.}
 
 \item{radius}{numeric. disc radius or radii.}
 
@@ -54,31 +45,15 @@ transect}
 }
 \value{
 If the input is a LAS object: an object of class LAS, or a \code{list} of LAS objects if the
-query implies several regions of interest will be returned.\cr\cr
+query implies several regions of interest.\cr\cr
 If the input is a LAScatalog object: an object of class LAS, or a \code{list} of LAS
-objects if the query implies several regions of interest will be returned, or a LAScatalog if the
+objects if the query implies several regions of interest, or a LAScatalog if the
 queries are immediately written into files without loading anything in R.
 }
 \description{
 Clip points within a given region of interest (ROI) from a point cloud (LAS object) or a collection
 of files (LAScatalog object).
 }
-\section{Supported geometries}{
-
-\itemize{
-\item \verb{SpatialPolygons*} \verb{SpatialPoints*} from \code{sp} or an \link[sf:sf]{sf/sfc} from \code{sf} that
-consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.  In case of spatial points
-a parameter 'radius' must be passed in \code{...}
-\item \link[raster:Extent-class]{Extent} from package \code{raster}, a \link[sf:st_bbox]{bbox} from
-package \code{sf}
-\item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
-\preformatted{
-  min     max
-x 684816  684943
-y 5017823 5017957}
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 

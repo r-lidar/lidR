@@ -6,37 +6,19 @@
 #' of files (LAScatalog object).
 #'
 #' @template param-las
-#' @param geometry a geometric object. Many types are supported, see section 'supported geometries'.
-#' @param xleft numeric. left x coordinates of rectangles.
-#' @param ybottom	numeric. bottom y coordinates of rectangles.
-#' @param xright numeric. right x coordinates of rectangles.
-#' @param ytop numeric. top y coordinates of rectangles.
-#' @param xpoly numeric. x coordinates of a polygon.
-#' @param ypoly numeric. y coordinates of a polygon.
-#' @param xcenter numeric. x coordinates of disc centers.
-#' @param ycenter numeric. y coordinates of disc centers.
+#' @param geometry a geometric object. spatial points, spatial polygons in sp or sf/sfc format, Extent,
+#' bbox, 2x2 matrix
+#' @param xleft,ybottom,xright,ytop numeric. coordinates of one or several rectangles.
+#' @param xpoly,ypoly numeric. x coordinates of a polygon.
+#' @param xcenter,ycenter numeric. x coordinates of on or several disc centres.
 #' @param radius numeric. disc radius or radii.
 #' @param ... in `clip_roi`: optional supplementary options (see supported geometries). Unused in
 #' other functions
 #'
-#' @section Supported geometries:
-#' \itemize{
-#'  \item `SpatialPolygons*` `SpatialPoints*` from `sp` or an \link[sf:sf]{sf/sfc} from `sf` that
-#'  consistently contains `POINT` or `POLYGON/MULTIPOLYGON`.  In case of spatial points
-#'  a parameter 'radius' must be passed in `...`
-#'  \item \link[raster:Extent-class]{Extent} from package `raster`, a \link[sf:st_bbox]{bbox} from
-#'  package `sf`
-#'  \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
-#'  \preformatted{
-#'   min     max
-#' x 684816  684943
-#' y 5017823 5017957}
-#'  }
-#'
 #' @return If the input is a LAS object: an object of class LAS, or a `list` of LAS objects if the
-#' query implies several regions of interest will be returned.\cr\cr
+#' query implies several regions of interest.\cr\cr
 #' If the input is a LAScatalog object: an object of class LAS, or a `list` of LAS
-#' objects if the query implies several regions of interest will be returned, or a LAScatalog if the
+#' objects if the query implies several regions of interest, or a LAScatalog if the
 #' queries are immediately written into files without loading anything in R.
 #'
 #' @examples

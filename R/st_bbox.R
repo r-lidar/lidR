@@ -2,7 +2,7 @@
 #'
 #' Bounding box of a LAS* object. `st_bbox()` extends `sf:st_bbox()`, `extent()` extends
 #' `raster:extent()`, `bbox()` extends `sp:bbox()`. The value returned are similar to their parent
-#' functions. `bbox()` and `extent()` are provided for backward compatibility..
+#' functions. `bbox()` and `extent()` are provided for backward compatibility.
 #'
 #' @return A `bbox` from sf, an `Extent` from raster or a `matrix` from sp.
 #'

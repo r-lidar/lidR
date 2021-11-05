@@ -40,7 +40,7 @@ flightlines. Only for XY geometries Ignored if the input have XYZ geometries}
 \item{flightlines}{A `SpatialPointsDataFrame` or `sf` that contains flightlines coordinates.}
 }
 \description{
-Add a `RasterLayer` or `stars` object that represents a digital terrain model or a
+Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a
 `SpatialPointsDataFrame` or `sf` that represents tree tops to a point cloud scene. To add elements
 to a scene with a point cloud plotted with the function plot from lidR, the functions `add_*`
 take as first argument the output of the plot function (see examples), because the plot function
@@ -51,7 +51,7 @@ with `rgl` i.e. `backend = "rgl"` which is the default.
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las <- readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
+las <- readLAS(LASfile)
 
 dtm <- rasterize_terrain(las, algorithm = tin())
 ttops <- locate_trees(las, lmf(ws = 5))

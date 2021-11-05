@@ -2,11 +2,13 @@ las <- lidR:::generate_las(5000)
 st_crs(las) <- 2949
 las@data[, Z := round(Z + 0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)]
 
-tdtm   <- lidR:::raster_layout(las, 1, format = "stars")
-xy     <- lidR:::raster_as_dataframe(tdtm, na.rm = FALSE, xy = TRUE)
-X      <- xy$X
-Y      <- xy$Y
-tdtm[[1]][] <- round(0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)
+tdtm <- lidR:::raster_layout(las, 1, format = "stars")
+xy   <- lidR:::raster_as_dataframe(tdtm, na.rm = FALSE, xy = TRUE)
+X    <- xy$X
+Y    <- xy$Y
+cell <- lidR:::raster_cell_from_xy(tdtm, X, Y)
+gnd  <- round(0.1*X + 0.1*Y + sin(0.01*X) - sin(0.1*Y) + sin(0.003*X*Y),3)
+tdtm <- lidR:::raster_set_values(tdtm, gnd, cell)
 
 test_that("rasterize_terrain works with knnidw", {
 

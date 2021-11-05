@@ -1,16 +1,18 @@
-#' Select LAS files manually from a LAScatalog
+#' Subset a LAScatalog
 #'
-#' Select a set of LAS tiles from a LAScatalog interactively using the mouse. This function
-#' allows users to subset a LAScatalog by clicking on a map of the file.
+#' Subset a LAScatalog interactively using the mouse. Subset a LAScatalog with a spatial object to
+#' keep only the tiles of interest. It can be used to select tiles of interest that encompass spatial
+#' objects.
 #'
-#' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
-#'
+#' @param ctg A \link[=LAScatalog-class]{LAScatalog}
+#' @param y  `bbox`, `sf`, `sfc`, `Extent`, `Raster*`, `Spatial*` objects
+#' @param ... ignored
 #' @param mapview logical. If \code{FALSE}, use R base plot instead of mapview (no pan, no zoom, see
 #' also \link[=plot]{plot})
-#' @param method character. By default selecting tiles that are a subset of the catalog. It is also possible to flag
-#' the files to maintain the catalog as a whole but process only a subset of its content.
-#' \code{flag_unprocessed} enables users to point and click on files that will not be processed.
-#' \code{flag_processed} enables users to point and click on files that will be processed.
+#' @param subset character. By default it subsets the collection It is also possible to flag
+#' the files to maintain the collection as a whole but process only a subset of its content.
+#' \code{flag_unprocessed} flags the files that will not be processed.
+#' \code{flag_processed} flags the files that will be processed.
 #'
 #' @return A LAScatalog object
 #'
@@ -21,12 +23,14 @@
 #' ctg = readLAScatalog("<Path to a folder containing a set of .las files>")
 #' new_ctg = catalog_select(ctg)
 #' }
+#' @name catalog_subset
+#' @rdname catalog_subset
 # nocov start
-catalog_select = function(ctg, mapview = TRUE, method = c("subset", "flag_unprocessed", "flag_processed"))
+catalog_select = function(ctg, mapview = TRUE, subset = c("subset", "flag_unprocessed", "flag_processed"))
 {
   assert_is_all_of(ctg, "LAScatalog")
   assert_is_a_bool(mapview)
-  method <- match.arg(method)
+  method <- match.arg(subset)
 
   if (is_lascatalog_v3(ctg)) catalog <- lascatalog_v3_repair(ctg)
 

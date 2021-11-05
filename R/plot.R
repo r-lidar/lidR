@@ -1,6 +1,6 @@
 #' Plot a LAS* object
 #'
-#' Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr
+#' Plot displays a 3D interactive windows based on rgl for \link{LAS} objects\cr\cr
 #' Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and
 #' zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
 #' system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps
@@ -278,6 +278,8 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
       colorPalette <- rev(c("#440154FF", "#3B528BFF", "#21908CFF", "#5DC863FF", "#FDE725FF"))
     else if (color == "treeID")
       colorPalette <- pastel.colors(200)
+    else if (color == "Amplitude")
+      colorPalette <- rev(c("#ff0000", "#ff1919", "#ff3333", "#ff4d4d", "#ff6666", "#ff8080", "#ff9999", "#ffb3b3", "#ffcccc", "#ffe6e6"))
     else
       colorPalette <- height.colors(50)
   }

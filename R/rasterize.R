@@ -25,8 +25,7 @@
 #' for digital surface models and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
 #' models (see respective documentation and examples).
 #' @param ... Use `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `RasterLayer`
-#' or `stars`. Default is `getOption("lidR.raster.default")`. Under the hood lidR uses native pkg code
-#' and does not cast to pkg.
+#' or `stars`. Default is `getOption("lidR.raster.default")`.
 #' @param res numeric. The size of a grid cell in point-cloud coordinates units. Can also be
 #'  `RasterLayer` or a `stars` or a `SpatRaster` used as layout.
 #' @param shape logical. By default the interpolation is made only within the convex hull of

@@ -8,7 +8,7 @@
 watershed(chm, th_tree = 2, tol = 1, ext = 1)
 }
 \arguments{
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
+\item{chm}{`RasterLayer`, `SpatRaster` or `stars`. Canopy height model. Can be computed with \link{rasterize_canopy} or read from
 an external file.}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default is 2.}
@@ -29,8 +29,7 @@ user does not even have the point cloud that generated the CHM. \code{lidR} is a
 library, which is why this algorithm must be used in \link{segment_trees} to merge the result into the point
 cloud. However, the user can use this as a stand-alone function like this:
 \preformatted{
- chm <- raster("file/to/a/chm/")
- ttops <- locate_trees(chm, lmf(3))
+ chm <- raster("chm.tif")
  crowns <- watershed(chm)()
 }
 }

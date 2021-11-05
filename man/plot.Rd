@@ -100,7 +100,7 @@ an internal optimization removes voxels that are not visible when surrounded by 
 \item{n}{The number of colors (> 1) to be in the palette}
 }
 \description{
-Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr
+Plot displays a 3D interactive windows based on rgl for \link{LAS} objects\cr\cr
 Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and
 zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
 system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps

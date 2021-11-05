@@ -2,7 +2,8 @@
 #'
 #' These functions are provided for compatibility with older versions of lidR but are deprecated. They
 #' will progressively print a message, throw a warning and eventually be removed. The links below point
-#' to the documentation of the new names \cr\cr
+#' to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
+#' ill be removed definitively.\cr\cr
 #' \link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
 #' \link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
 #' \link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
@@ -36,7 +37,6 @@
 #' @param uniqueness See the new functions that replace the old ones
 #' @param interval,pmin,extra_check,thin_pulse_with_time See the new functions that replace the old ones
 #' @param concavity,length_threshold,func See the new functions that replace the old ones
-#' @param ctg,FUN,.options see \link{catalog_apply}
 #'
 #' @rdname deprecated
 #' @name deprecated
@@ -328,21 +328,7 @@ tree_hulls = function(las, type = c("convex", "concave", "bbox"), concavity = 3,
 #' @rdname deprecated
 hexbin_metrics = function(...)
 {
-  stop("hexbin_metrics() was an unused function and has been removed from lidR. It can be retrieved in lidRplugins https://github.com/Jean-Romain/lidRplugins")
-}
-
-#' @export
-#' @rdname deprecated
-catalog_sapply <- function(ctg, FUN, ..., .options = NULL)
-{
-  if (is.null(.options))
-    .options <- list(automerge = TRUE)
-  else
-  {
-    .options$automerge <- TRUE
-  }
-
-  return(catalog_apply(ctg, FUN, ..., .options = .options))
+  .lidr3depreciation("hexagon_metrics")
 }
 
 #' @export

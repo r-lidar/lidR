@@ -1,8 +1,6 @@
 #' Transform or convert coordinates of LAS objects
 #'
-#' Transform or convert coordinates of LAS objects  `st_transform()` extends `sf::st_transform()`,
-#' `spTransform()` extends `sp::spTransform()`. `spTransform()` is provided for backward compatibility
-#' and will be removed when package `sp` will be retired from CRAN.
+#' Transform or convert coordinates of LAS objects  `st_transform()` extends `sf::st_transform()`
 
 #'
 #' @param x, An object of class LAS

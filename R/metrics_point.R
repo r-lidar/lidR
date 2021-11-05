@@ -17,9 +17,9 @@
 #' mapping a user-defined function at the point level using optimized memory management. However, it
 #' is still computationally demanding.\cr\cr
 #' To help users to get an idea of how computationally demanding this function is, let's compare it to
-#' \link{pixel_metrics}. Assuming we want to apply \code{mean(Z)} on a 1 km² tile with 1 point/m²
-#' with a resolution of 20 m (400 m² cells), then the function \code{mean} is called roughly 2500
-#' times (once  per cell). On the contrary, with \code{point_metrics}, \code{mean} is called 1000000
+#' \link{pixel_metrics}. Assuming we want to apply `mean(Z)` on a 1 km² tile with 1 point/m²
+#' with a resolution of 20 m (400 m² cells), then the function `mean is called roughly 2500
+#' times (once  per cell). On the contrary, with `point_metrics`, `mean` is called 1000000
 #' times (once per point). So the function is expected to be more than 400 times slower in this specific
 #' case (but it does not provide the same feature).\cr\cr
 #' This is why the user-defined function is expected to be well-optimized, otherwise it might drastically
@@ -32,9 +32,8 @@
 #' sphere. If k is given and r is missing, computes with the knn, if r is given and k is missing
 #' computes with a sphere neighborhood, if k and r are given computes with the knn and a limit on the
 #' search distance.
-#' @param xyz logical. Coordinates of each point are returned in addition to each metric. If
-#' \code{filter = NULL} coordinates are references to the original coordinates and do not occupy additional
-#' memory. If \code{filter != NULL} it obviously takes memory.
+#' @param xyz logical. Coordinates of each point are returned in addition to each metric. Otherwise an
+#' ID refering to each point.
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
 #' @param ... unused.
@@ -63,7 +62,7 @@
 #' #> Computed in 6.3 seconds
 #'
 #' # We can verify that it returns the same as 'shp_plane'
-#' las <- segment_shape(las, shp_plane(k = 25), "planar")
+#' las <- segment_shapes(las, shp_plane(k = 25), "planar")
 #' #> Computed in 0.1 seconds
 #'
 #' all.equal(M$planar, las$planar)
@@ -98,17 +97,16 @@
 #' # Here we can see that the optimized version is way better but is still 5-times slower
 #' # because of the overhead of calling R functions and switching back and forth from R to C++.
 #'
+#' M <- point_eigenvalues(las, k = 25)
+#' is_planar = M$eigen_medium > (25*M$eigen_smallest) & (6*M$eigen_medium) > M$eigen_largest
+#'
 #' # Use the filter argument to process only first returns
 #' M1 <- point_metrics(las, ~plane_metrics2(X,Y,Z), k = 25, filter = ~ReturnNumber == 1)
 #' dim(M1) # 13894 instead of 17182 previously.
-#'
-#' # is a memory-optimized equivalent to:
-#' first = filter_first(las)
-#' M2 <- point_metrics(first, ~plane_metrics2(X,Y,Z), k = 25)
-#' all.equal(M1, M2)
 #' }
 #' @export
 #' @family metrics
+#' @md
 point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
   UseMethod("point_metrics", las)
 }

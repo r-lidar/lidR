@@ -16,11 +16,11 @@ dalponte2016(
 )
 }
 \arguments{
-\item{chm}{RasterLayer. Image of the canopy. Can be computed with \link{grid_canopy} or read from
+\item{chm}{`RasterLayer`, `SpatRaster` or `stars`. Canopy height model. Can be computed with \link{rasterize_canopy} or read from
 an external file.}
 
-\item{treetops}{\code{SpatialPointsDataFrame}. Can be computed with
-\link{locate_trees} or read from an external shapefile.}
+\item{treetops}{`SpatialPoints*` or `sf/sfc_POINT` with 2D or 3D coordinates. Can be computed with
+\link{locate_trees} or read from an external file}
 
 \item{th_tree}{numeric. Threshold below which a pixel cannot be a tree. Default is 2.}
 
@@ -35,9 +35,8 @@ multiplied by this value. It should be between 0 and 1. Default is 0.55.}
 \item{max_cr}{numeric. Maximum value of the crown diameter of a detected tree (in pixels).
 Default is 10.}
 
-\item{ID}{character. If the \code{SpatialPointsDataFrame} contains an attribute with the ID for
-each tree, the name of this attribute. This way, original IDs will be preserved. If there is no
-such data trees will be numbered sequentially.}
+\item{ID}{character. If \code{treetops} contains an attribute with the ID for
+each tree, the name of this attribute. This way, original IDs will be preserved.}
 }
 \description{
 This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
@@ -54,14 +53,15 @@ user does not even have the point cloud that generated the CHM. \code{lidR} is a
 library, which is why this algorithm must be used in \link{segment_trees} to merge the result with the point
 cloud. However the user can use this as a stand-alone function like this:
 \preformatted{
- chm = raster("file/to/a/chm/")
- ttops = locate_trees(chm, lmf(3))
- crowns = dalponte2016(chm, ttops)()
+ chm <- raster("chm.tif")
+ ttops <- locate_trees(chm, lmf(3))
+ crowns <- dalponte2016(chm, ttops)()
 }
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(200)
 
 # Using raster because focal does not exist in stars

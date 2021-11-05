@@ -24,7 +24,7 @@ col <- height.colors(50)
 
 # Basic triangulation and rasterization of first returns
 chm <- rasterize_canopy(las, res = 1, dsmtin())
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 
 \dontrun{
 # Potentially complex concave subset of point cloud
@@ -33,15 +33,15 @@ y = c(3812940, 3813000, 3813000, 3812960, 3812940, 3812940)
 las2 = clip_polygon(las,x,y)
 plot(las2)
 
-# Since the TIN interpolation is done within the convex hull of the point cloud
-# dummy pixels are interpolated that are strictly correct according to the interpolation method
+# Because the TIN interpolation is done within the convex hull of the point cloud
+# dummy pixels are interpolated that are correct according to the interpolation method
 # used, but meaningless in our CHM
 chm <- rasterize_canopy(las2, res = 0.5, dsmtin())
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 
 # Use 'max_edge' to trim dummy triangles
 chm = rasterize_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
-plot(chm, col = col)
+plot(chm, col = col, breaks = "equal")
 }
 }
 \seealso{

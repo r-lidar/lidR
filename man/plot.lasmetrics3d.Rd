@@ -7,7 +7,7 @@
 \method{plot}{lasmetrics3d}(x, y, ...)
 }
 \arguments{
-\item{x}{An object of the class \code{'lasmetrics3d'}}
+\item{x}{An object of the class \code{lasmetrics3d}}
 
 \item{y}{Unused (inherited from R base)}
 

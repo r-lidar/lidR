@@ -20,9 +20,7 @@ information. Otherwise it will be guessed automatically which might not be the b
 A LAS object
 }
 \description{
-Transform or convert coordinates of LAS objects  \code{st_transform()} extends \code{sf::st_transform()},
-\code{spTransform()} extends \code{sp::spTransform()}. \code{spTransform()} is provided for backward compatibility
-and will be removed when package \code{sp} will be retired from CRAN.
+Transform or convert coordinates of LAS objects  \code{st_transform()} extends \code{sf::st_transform()}
 }
 \examples{
 LASfile <- system.file("extdata", "example.laz", package="rlas")

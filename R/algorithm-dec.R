@@ -130,7 +130,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' Point Cloud Decimation Algorithm
 #'
 #' These functions are made to be used in \link{decimate_points}. They implement algorithms that
-#' creates a grid with a given resolution and filters the point cloud by selecting the highest/lowest
+#' create a grid with a given resolution and filters the point cloud by selecting the highest/lowest
 #' point within each cell.
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud

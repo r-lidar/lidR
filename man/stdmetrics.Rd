@@ -85,46 +85,46 @@ See \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{wiki page} and Wo
 \item{pulseID}{The number referencing each pulse}
 }
 \description{
-Predefined metrics functions intended to me used in `*_metrics` function such as
+Predefined metrics functions intended to me used in \verb{*_metrics} function such as
 \link{pixel_metrics}, \link{cloud_metrics}, \link{crown_metrics}, \link{voxel_metrics} and
-so on. Each function comes with a convenient shortcuts for lazy coding. The `lidR` package aims
+so on. Each function comes with a convenient shortcuts for lazy coding. The \code{lidR} package aims
 to provide an easy way to compute user-defined metrics rather than to provide them. However, for
 efficiency and to save time, sets of standard metrics have been predefined (see details). Every
-function can be computed by every `*_metrics` functions however `stdmetrics*` are
-more pixel-based metrics, `stdtreemetrics` are more tree-based metrics and `stdshapemetrics` are
-more point-based metrics. For example the metric `zmean` computed by `stdmetrics_z` makes sense
+function can be computed by every \verb{*_metrics} functions however \verb{stdmetrics*} are
+more pixel-based metrics, \code{stdtreemetrics} are more tree-based metrics and \code{stdshapemetrics} are
+more point-based metrics. For example the metric \code{zmean} computed by \code{stdmetrics_z} makes sense
 when computed at the pixel level but brings no information at the voxel level.
 }
 \details{
 The function names, their parameters and the output names of the metrics rely on a nomenclature
 chosen for brevity:
 \itemize{
-\item{`z`: refers to the elevation}
-\item{`i`: refers to the intensity}
-\item{`rn`: refers to the return number}
-\item{`q`: refers to quantile}
-\item{`a`: refers to the ScanAngleRank or ScanAngle}
-\item{`n`: refers to a number (a count)}
-\item{`p`: refers to a percentage}
+\item{\code{z}: refers to the elevation}
+\item{\code{i}: refers to the intensity}
+\item{\code{rn}: refers to the return number}
+\item{\code{q}: refers to quantile}
+\item{\code{a}: refers to the ScanAngleRank or ScanAngle}
+\item{\code{n}: refers to a number (a count)}
+\item{\code{p}: refers to a percentage}
 }
-For example the metric named `zq60` refers to the elevation, quantile, 60 i.e. the 60th percentile
-of elevations. The metric `pground` refers to a percentage. It is the percentage of points
-classified as ground. The function `stdmetric_i` refers to metrics of intensity. A description of
+For example the metric named \code{zq60} refers to the elevation, quantile, 60 i.e. the 60th percentile
+of elevations. The metric \code{pground} refers to a percentage. It is the percentage of points
+classified as ground. The function \code{stdmetric_i} refers to metrics of intensity. A description of
 each existing metric can be found on the \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
 Some functions have optional parameters. If these parameters are not provided the function
-computes only a subset of existing metrics. For example, `stdmetrics_i` requires the intensity
+computes only a subset of existing metrics. For example, \code{stdmetrics_i} requires the intensity
 values, but if the elevation values are also provided it can compute additional metrics such as
 cumulative intensity at a given percentile of height.\cr\cr
 Each function has a convenient associated variable. It is the name of the function, with a
 dot before the name. This enables the function to be used without writing parameters. The cost
 of such a feature is inflexibility. It corresponds to a predefined behaviour (see examples)\cr
 \describe{
-\item{`stdmetrics`}{is a combination of `stdmetrics_ctrl` + `stdmetrics_z` +
-`stdmetrics_i` +  `stdmetrics_rn`}
-\item{`stdtreemetrics`}{is a special function that works with \link{crown_metrics}. Actually,
+\item{\code{stdmetrics}}{is a combination of \code{stdmetrics_ctrl} + \code{stdmetrics_z} +
+\code{stdmetrics_i} +  \code{stdmetrics_rn}}
+\item{\code{stdtreemetrics}}{is a special function that works with \link{crown_metrics}. Actually,
 it won't fail with other functions but the output makes more sense if computed at the
 individual tree level.}
-\item{`stdshapemetrics`}{is a set of eigenvalue based feature described in Lucas et al, 2019
+\item{\code{stdshapemetrics}}{is a set of eigenvalue based feature described in Lucas et al, 2019
 (see references).}
 }
 }

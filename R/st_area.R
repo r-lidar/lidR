@@ -6,12 +6,12 @@
 #' some regions are sampled twice. For a `LASheader` it is computed with the bounding box.
 #' As a consequence for the same file `st_area` applied on a LASheader or on a LAS can return
 #' slightly different values. `st_area()` extends `sf:st_area()`, `area()` extends
-#' `raster:area()`. `area()` is provided for backward compatibility..
+#' `raster:area()`. `area()` is provided for backward compatibility.
 #'
 #' @param x An object class \code{LAS*}.
 #' @param ... unused.
 #'
-#' @return numeric. A number.in the same units of the coordinate reference system.
+#' @return numeric. A number in the same units of the coordinate reference system.
 #'
 #' @export
 #' @name st_area

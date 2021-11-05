@@ -201,7 +201,7 @@ test_that("catalog_apply automerge works with on disk POINTS*", {
   req3 <- catalog_apply(ctg, sftest, .options = option)
 
   expect_true(is.character(unlist(req3)))
-  expect_true(all(tools::file_ext(req3) == "shp"))
+  expect_true(all(tools::file_ext(req3) == "gpkg"))
 })
 
 test_that("catalog_apply automerge works with in memory LAS", {

@@ -4,7 +4,7 @@
 \alias{lidR-parallelism}
 \title{Parallel computation in lidR}
 \description{
-This document explain how to process point clouds taking advantage of parallel processing in the
+This document explains how to process point clouds taking advantage of parallel processing in the
 lidR package. The lidR package has two levels of parallelism, which is why it is difficult to
 understand how it works. This page aims to provide users with a clear overview of how to take advantage
 of multicore processing even if they are not comfortable with the parallelism concept.
@@ -16,14 +16,14 @@ natively parallel. In lidR some algorithms are fully computed in parallel, but s
 not parallelizable, while some are only partially parallelized. It means that some portions of the code
 are computed in parallel and some are not. When an algorithm is natively parallel in lidR it is always
 a C++ based parallelization with OpenMP. The advantage is that the computation is faster without any
-consequence for memory usage because the memory is shared between the processors In short,
+consequence for memory usage because the memory is shared between the processors. In short,
 algorithm-based parallelism provides a significant gain without any cost for your R session and
 your system (but obviously there is a greater workload for the processors). By default lidR uses
 half of your cores but you can control this with \link{set_lidr_threads}. For example, the \link{lmf}
 algorithm is natively parallel. The following code is computed in parallel:
 \preformatted{
 las  <- readLAS("file.las")
-tops <- tree_detection(las, lmf(2))
+tops <- locate_trees(las, lmf(2))
 }
 However, as stated above, not all algorithms are parallelized or even parallelizable. For example,
 \link{li2012} is not parallelized. The following code is computed in serial:
@@ -39,9 +39,9 @@ is.parallelised(li2012()) #> FALSE
 }
 }
 
-\section{chunk-based parallelism}{
+\section{Chunk-based parallelism}{
 
-When processing a LAScatalog, the internal engine splits the dataset into chunks and each chunk is
+When processing a \code{LAScatalog}, the internal engine splits the dataset into chunks and each chunk is
 read and processed sequentially in a loop. This loop can be parallelized with the
 \code{future} package. By default the chunks are processed sequentially, but they can be processed
 in parallel by registering an evaluation strategy. For example, the following code is evaluated
@@ -78,7 +78,7 @@ library(future)
 plan(multisession, workers = 4L)
 set_lidr_threads(4L)
 ctg <- readLAScatalog("folder/")
-out <- locate_detection(ctg, lmf(2))
+out <- locate_trees(ctg, lmf(2))
 }
 Here the catalog will be split into chunks that will be processed in parallel. And each computation
 itself implies a parallelized task. This is a nested parallelism task and it is dangerous! Hopefully
@@ -92,10 +92,10 @@ serially by disabling OpenMP.
 We explained rules of precedence. But actually the user can tune the engine more accurately. Let's
 define the following function:
 \preformatted{
-myfun = function(las, ...)
+myfun = function(las, ws, ...)
 {
   las  <- normalize_height(las, tin())
-  tops <- locate_tree(las, lmf(2))
+  tops <- locate_tree(las, lmf(ws))
   return(tops)
 }
 

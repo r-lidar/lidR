@@ -8,7 +8,8 @@
 manual(detected = NULL, radius = 0.5, color = "red", button = "middle", ...)
 }
 \arguments{
-\item{detected}{\code{SpatialPointsDataFrame} of already found tree tops that need manual correction.}
+\item{detected}{\code{SpatialPoints* or }sf/sfc_POINT` with  2 or 3D points of already found tree tops
+that need manual correction. Can be NULL}
 
 \item{radius}{numeric. Radius of the spheres displayed on the point cloud (aesthetic purposes only).}
 

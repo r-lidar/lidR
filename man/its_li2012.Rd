@@ -23,18 +23,21 @@ used. See page 79 in Li et al. (2012). Default is 15.}
 
 \item{speed_up}{numeric. Maximum radius of a crown. Any value greater than a crown is
 good because this parameter does not affect the result. However, it greatly affects the
-computation speed. The lower the value, the faster the method. Default is 10.}
+computation speed by restricting the number of comparisons to perform.
+The lower the value, the faster the method. Default is 10.}
 }
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on Li et al. (2012) (see reference). This method is a growing region
-method working at the point cloud level. It is an implementation, as strict as possible, made by
-the \code{lidR} author but with the addition of a parameter \code{hmin} to prevent over-segmentation
-for objects that are too low.
+method working at the point cloud level. It is an implementation by lidR authors, from the original
+paper, as close as possible from the original description. However we added a parameter \code{hmin}
+to prevent over-segmentation for objects that are too low. This algorithm is known to be slow because
+it has an algorithmic complexity worst that O(n^2).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-drop_z_below 0")
+poi <- "-drop_z_below 0 -inside 481280 3812940 481320 3812980"
+las <- readLAS(LASfile, select = "xyz", filter = poi)
 col <- pastel.colors(200)
 
 las <- segment_trees(las, li2012(dt1 = 1.4))

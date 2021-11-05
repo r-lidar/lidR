@@ -159,6 +159,11 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 
       raster <- raster_downsample(raster, size)
     }
+    else
+    {
+      if (is(raster, "stars"))
+        raster <- stars::st_as_stars(raster)
+    }
   }
 
   if (is(raster, "RasterLayer"))
@@ -171,6 +176,9 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 
   if (is(raster, "stars"))
   {
+    sdim   <- stars::st_dimensions(raster)
+    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not supported yet", call. = FALSE)
+
     dims <- dim(raster)
 
     if (is.na(dims[3]))
@@ -180,7 +188,8 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 
     x <- stars::st_get_dimension_values(raster, 'x')
     y <- stars::st_get_dimension_values(raster, 'y')
-    return(list(x = x, y = y, z = mx))
+    mx <- t(apply(mx, 1, rev))
+    return(list(x = x, y = rev(y), z = mx))
   }
 
   if (is(raster, "SpatRaster"))
@@ -504,6 +513,7 @@ raster_set_values <- function(raster, values, cells = NULL)
   if (is(raster, "stars"))
   {
     raster[[1]][cells] <- values
+    storage.mode(raster[[1]]) <- storage.mode(values)
     return(raster)
   }
 

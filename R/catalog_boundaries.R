@@ -5,24 +5,7 @@
 #' LAScatalog to set the true polygons instead of the bounding boxes.
 #'
 #' @param ctg A LAScatalog
-#' @param concavity numeric. A relative measure of concavity. 1 results in a relatively detailed shape,
-#' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
-#' shapes.
-#' @param length_threshold numeric. When a segment length is under this threshold, it stops being
-#' considered for further detailed processing. Higher values result in simpler shapes.
-#'
-#' @section Supported processing options:
-#' Supported processing options for more details see the
-#' \link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-#' \itemize{
-#' \item chunk size: Not supported, it processes by file.
-#' \item chunk buffer: Not supported, it processes by file with no buffer.
-#' \item chunk alignment: Not supported, it processes by file.
-#' \item \strong{progress}: Displays a progress estimate.
-#' \item output files: Not supported, it returns an R object.
-#' \item select: Not supported, it loads XYZ only.
-#' \item \strong{filter}: Read only the points of interest.
-#' }
+#' @param concavity,length_threshold see \link{concaveman}
 #'
 #' @return A LAScatalog with true boundaries
 #' @export

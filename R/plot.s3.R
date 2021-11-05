@@ -2,7 +2,7 @@
 #'
 #' This function implements a 3D plot method for 'lasmetrics3d' objects
 #'
-#' @param x An object of the class \code{'lasmetrics3d'}
+#' @param x An object of the class `lasmetrics3d`
 #' @param y Unused (inherited from R base)
 #' @param \dots Supplementary parameters for \link[lidR:plot]{plot}. The function internally uses the
 #' same plot function than LAS objects.
@@ -16,6 +16,7 @@
 #' }
 #' @export
 #' @method plot lasmetrics3d
+#' @md
 plot.lasmetrics3d = function(x, y, ...)
 {
   cl <- class(x)
@@ -28,7 +29,7 @@ plot.lasmetrics3d = function(x, y, ...)
 
 #' Add a spatial object to a point cloud scene
 #'
-#' Add a `RasterLayer` or `stars` object that represents a digital terrain model or a
+#' Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a
 #' `SpatialPointsDataFrame` or `sf` that represents tree tops to a point cloud scene. To add elements
 #' to a scene with a point cloud plotted with the function plot from lidR, the functions `add_*`
 #' take as first argument the output of the plot function (see examples), because the plot function
@@ -55,7 +56,7 @@ plot.lasmetrics3d = function(x, y, ...)
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las <- readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
+#' las <- readLAS(LASfile)
 #'
 #' dtm <- rasterize_terrain(las, algorithm = tin())
 #' ttops <- locate_trees(las, lmf(ws = 5))
@@ -72,6 +73,7 @@ NULL
 
 #' @rdname plot_3d
 #' @export
+#' @md
 plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
 {
   rgl::open3d()

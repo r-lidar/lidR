@@ -105,6 +105,7 @@
 #' https://doi.org/10.5558/tfc84827-6
 #' @rdname stdmetrics
 #' @export
+#' @md
 stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2, zmin = 0)
 {
   C  <- stdmetrics_ctrl(x, y, z)

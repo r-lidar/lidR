@@ -7,3 +7,4 @@
 #' Remember that FWF represents an insanely huge amount of data. It terms of memory it is like
 #' having between 10 to 100 times more points. Consequently, loading FWF data in R should be
 #' restricted to relatively small point clouds.
+#' @md
