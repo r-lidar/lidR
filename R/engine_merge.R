@@ -165,6 +165,9 @@ engine_merge = function(ctg, any_list, ...)
         output <- data.table::rbindlist(any_list)
         output <- sf::st_as_sf(output)
         sf::st_crs(output) <- st_crs(ctg)
+        bbox <- st_bbox(ctg)
+        attributes(bbox)$crs <- NULL
+        attributes(sf::st_geometry(output))$bbox  <- bbox
         return(output)
       }
     }
