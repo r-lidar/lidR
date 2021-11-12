@@ -10,6 +10,10 @@
 \alias{extent,LASheader-method}
 \alias{extent,LAScatalog-method}
 \alias{extent,LAScluster-method}
+\alias{ext,LAS-method}
+\alias{ext,LASheader-method}
+\alias{ext,LAScatalog-method}
+\alias{ext,LAScluster-method}
 \alias{bbox,LAS-method}
 \alias{bbox,LASheader-method}
 \alias{bbox,LAScatalog-method}
@@ -32,6 +36,14 @@
 
 \S4method{extent}{LAScluster}(x, ...)
 
+\S4method{ext}{LAS}(x, ...)
+
+\S4method{ext}{LASheader}(x, ...)
+
+\S4method{ext}{LAScatalog}(x, ...)
+
+\S4method{ext}{LAScluster}(x, ...)
+
 \S4method{bbox}{LAS}(obj)
 
 \S4method{bbox}{LASheader}(obj)
@@ -46,10 +58,10 @@
 \item{...}{unused}
 }
 \value{
-A \code{bbox} from sf, an \code{Extent} from raster or a \code{matrix} from sp.
+A \code{bbox} from sf, an \code{Extent} from raster, a \code{matrix} from sp or a \code{SpatExtent} from \code{terra}
 }
 \description{
-Bounding box of a LAS* object. \code{st_bbox()} extends \code{sf:st_bbox()}, \code{extent()} extends
-\code{raster:extent()}, \code{bbox()} extends \code{sp:bbox()}. The value returned are similar to their parent
-functions. \code{bbox()} and \code{extent()} are provided for backward compatibility.
+Bounding box of a LAS* object. \code{st_bbox()} extends \code{sf}, \code{extent()} extends
+\code{raster}, \code{bbox()} extends \code{sp} and \code{ext()} extend \code{terra}. The value returned are similar to their
+parent functions.
 }
