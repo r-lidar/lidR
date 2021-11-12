@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v3.2.3 (Release date: ...)
 
 - Fix: bitmerge strategy was bugged and may return NaN and also probably duplicated IDs ([#492](https://github.com/Jean-Romain/lidR/issues/492))
+- Fix: Maybe fix error in `sp::SpatialPolygons(pgeom, proj4string = crs) : is(proj4string, "CRS") is not TRUE` with `readLAScatalog()`. But this error is very weird and non systematically reproducible.
 
 ## lidR v3.2.2 (Release date: 2021-10-18)
 

@@ -76,7 +76,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  crs    <- crs(header)
+  crs    <- projection(header, FALSE)
   phblab <- make.names(names(header@PHB))
   phblab[4] <- "GUID"
 
