@@ -108,7 +108,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
       return(crown)
     }
 
-    template <- st_chm
+    template <- stars::st_as_stars(st_chm)
     template[[1]][] <- 0L
     storage.mode(template[[1]]) <- "integer"
 
@@ -128,7 +128,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
     val <- as.numeric(t(apply(Crowns, 1, rev)))
     storage.mode(val) <- storage.mode(treetops[[ID]])
 
-    output <- chm
+    output <- template
     output <- raster_set_values(output, NA_integer_)
     output <- raster_set_values(output, val)
     return(output)
