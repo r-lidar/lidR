@@ -40,7 +40,9 @@ segment_trees.LAS = function(las, algorithm, attribute = "treeID", uniqueness = 
   # If uniqueness is incremental we are done
   if (uniqueness == 'incremental')
   {
-    las <- add_lasattribute(las, name = attribute, desc = "An ID for each segmented tree")
+    type <- if (is.integer(las[[attribute]])) "int" else "double"
+    NA_value <- if (is.integer(las[[attribute]])) .Machine$integer.max else .Machine$double.xmin
+    las <- add_lasattribute_manual(las, name = attribute, desc = "An ID for each segmented tree", type = type, NA_value = NA_value)
     return(las)
   }
 
