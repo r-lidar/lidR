@@ -46,3 +46,8 @@ st_crop_if_not_similar_bbox = function(source, las)
   source <- sf::st_crop(source, bbox)
   return(source)
 }
+
+st_proj_is_meters <- function(obj)
+{
+  !is.na(sf::st_crs(obj)) & !sf::st_is_longlat(obj) & is.null(sf::st_crs(obj)$to_meter)
+}

@@ -25,7 +25,24 @@ NULL
 st_area.LAS = function(x, ...)
 {
   if (npoints(x) == 0L) { return(0) }
-  return(sf::st_area(st_convex_hull(x)))
+
+  if (st_crs(x) == sf::NA_crs_)
+    r <- 4
+  else if (sf::st_is_longlat(x))
+    return(sf::st_area(st_convex_hull(x)))
+  else if (st_proj_is_meters(x))
+    r <- 2
+  else
+    r <- 6
+
+  t <- raster_layout(x, r)
+  n <- fasterize(x, t, method = "count")
+  area <- sum(!is.na(n))*r^2
+
+  # Workaround to get area with units without depending directly on units
+  bbox <- sf::st_as_sfc(sf::st_bbox(c(xmin = 0, ymin = 0, xmax = sqrt(area), ymax = sqrt(area)), crs = st_crs(x)))
+
+  return(sf::st_area(bbox))
 }
 
 #' @export
