@@ -1221,11 +1221,11 @@ NumericVector LAS::rasterize(List layout, double subcircle, int method)
       if (y == ymin) row = nrows-1;
       if (x == xmax) col = ncols-1;
 
-      if (row < 0 || row >= nrows || col < 0 || col >= ncols)
-        Rcpp::stop("C++ unexpected internal error in 'rasterize': point out of raster."); // # nocov
-
-      int cell = row * ncols + col;
-      raster(cell) = f(raster(cell), z);
+      if (!(row < 0 || row >= nrows || col < 0 || col >= ncols))
+      {
+        int cell = row * ncols + col;
+        raster(cell) = f(raster(cell), z);
+      }
     }
   }
 
