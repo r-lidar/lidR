@@ -434,13 +434,14 @@ raster_materialize <- function(raster, pkg = getOption("lidR.raster.default"), v
 
   if (pkg == "terra")
   {
+    crs  <- sf::st_crs(bbox)$wkt
     bbox <- as.numeric(bbox)
     bbox <- bbox[c(1,3,2,4)]
     bbox <- terra::ext(bbox)
-    res <- terra::rast(bbox)
+    res  <- terra::rast(bbox)
     terra::res(res) <- raster$xres
     suppressWarnings(res[] <- values)
-    terra::crs(res) <- sf::st_crs(bbox)$wkt
+    terra::crs(res) <- crs
     return(res)
   }
 
