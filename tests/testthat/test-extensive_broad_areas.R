@@ -185,12 +185,12 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
    plot(ttops, col = height.colors(25), breaks = "equal", add = T)
   })
 
-  test_that("lidRbook example",
+  test_that("lidRbook example with stars and dalponte",
   {
     ctg <- lidRbook
 
-    opt_output_files(ctg) <- paste0(tempdir(), "/{*}_dtm")
-    dtm <- rasterize_terrain(ctg, 1, tin())
+    opt_output_files(ctg) <- paste0(tempdir(), "/{*}_dtm_stars")
+    dtm <- rasterize_terrain(ctg, 1, tin(), pkg = "stars")
     plot(dtm)
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_norm")
@@ -201,9 +201,44 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     ttops <- locate_trees(ctg_norm, lmf(4), uniqueness = "bitmerge")
     plot(ttops["treeID"], cex = 0.01, pch = 19)
 
-    opt_output_files(ctg_norm) <- paste0(tempdir(), "/chm_{*}")
-    chm <- rasterize_canopy(ctg_norm, 1, p2r(0.15))
+    opt_output_files(ctg_norm) <- paste0(tempdir(), "/chm_stars_{*}")
+    chm <- rasterize_canopy(ctg_norm, 1, p2r(0.15), , pkg = "stars")
     plot(chm, col = height.colors(50), breaks = "equal")
+
+    expect_error(dalponte2016(chm, ttops)(), "stored on disk")
+
+    opt_output_files(ctg_norm) <- paste0(tempdir(), "/{*}_segmented")
+    algo <- dalponte2016(chm, ttops)
+    ctg_segmented <- segment_trees(ctg_norm, algo)
+
+    opt_output_files(ctg_segmented) <- ""
+    lasplot <- clip_circle(ctg_segmented, 338500, 5238600, 40)
+    plot(lasplot, color = "treeID", bg = "white", size = 4)
+    pol = crown_metrics(lasplot, NULL, geom = "convex")
+    plot(pol, col = pastel.colors(50))
+  })
+
+  test_that("lidRbook example with terra and silva",
+  {
+    ctg <- lidRbook
+
+    opt_output_files(ctg) <- paste0(tempdir(), "/{*}_dtm_terra")
+    dtm <- rasterize_terrain(ctg, 1, tin(), pkg = "terra")
+    plot(dtm)
+
+    opt_output_files(ctg) <- paste0(tempdir(), "/{*}_norm")
+    ctg_norm <- normalize_height(ctg, dtm)
+    plot(ctg_norm)
+
+    opt_output_files(ctg_norm) <- ""
+    ttops <- locate_trees(ctg_norm, lmf(4), uniqueness = "bitmerge")
+    plot(ttops["treeID"], cex = 0.01, pch = 19)
+
+    opt_output_files(ctg_norm) <- paste0(tempdir(), "/chm_terra_{*}")
+    chm <- rasterize_canopy(ctg_norm, 1, p2r(0.15), pkg = "terra")
+    plot(chm, col = height.colors(50))
+
+    expect_error(dalponte2016(chm, ttops)(), "stored on disk")
 
     opt_output_files(ctg_norm) <- paste0(tempdir(), "/{*}_segmented")
     algo <- dalponte2016(chm, ttops)
