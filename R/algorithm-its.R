@@ -88,6 +88,9 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
       return(crown)
     }
 
+    if (raster_is_proxy(chm) & missing(bbox))
+      stop("Cannot segment the trees from a raster stored on disk. Use segment_trees() or load the raster in memory", call. = FALSE)
+
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
     # Otherwise we could get a chm much bigger than the LAS (e.g. LAScatalog processing) and
     # process would never ends
@@ -220,6 +223,9 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
       return(crown)
     }
 
+    if (raster_is_proxy(chm) & missing(bbox))
+      stop("Cannot segment the trees from a raster stored on disk. Use segment_trees() or load the raster in memory", call. = FALSE)
+
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
     # Otherwise we could get a chm much bigger than the LAS (e.g. LAScatalog processing) and
     # process would never ends
@@ -326,6 +332,10 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
   f = function(bbox)
   {
     assert_is_valid_context(LIDRCONTEXTITS, "watershed", null_allowed = TRUE)
+
+    if (raster_is_proxy(chm) & missing(bbox))
+      stop("Cannot segment the trees from a raster stored on disk. Use segment_trees() or load the raster in memory", call. = FALSE)
+
 
     # If a bbox is given we crop the CHM and the seed to this extent to reduce processing time
     # Otherwise we could get a chm much bigger than the LAS (e.g. LAScatalog processing) and
@@ -477,6 +487,8 @@ crop_special_its <- function (treetops, chm, bbox)
   {
     assert_is_all_of(bbox, "bbox")
     chm <- raster_crop(chm, bbox)
+    if (is(chm, "stars_proxy"))
+      chm <- stars::st_as_stars(chm)
     sf::st_agr(treetops) <- "constant"
     treetops <- sf::st_crop(treetops, bbox)
   }
