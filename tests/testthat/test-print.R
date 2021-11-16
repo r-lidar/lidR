@@ -8,6 +8,7 @@ las2     <- readLAS(LASfile)
 las3 <- random_10_points
 las3@data$X <- las3@data$X * 1000
 las3@data$Y <- las3@data$Y * 1000
+las3 = las_update(las3)
 
 folder = system.file("extdata", "", package = "lidR")
 ctg = readLAScatalog(folder)
