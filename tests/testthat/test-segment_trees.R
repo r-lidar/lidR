@@ -244,6 +244,8 @@ test_that("Silva algorithm works standalone and is backward compatible", {
 
 test_that("Watershed algorithm works standalone and is backward compatible", {
 
+  skip_if_not_installed("EBImage")
+
   chm   <- as(chm, "Raster")
   trees <- watershed(chm)()
 
