@@ -46,11 +46,9 @@ NULL
 #' @rdname st_hull
 st_concave_hull <- function(x, concavity = 2, length_threshold = 5) UseMethod("st_concave_hull")
 
-#' @export
-#' @rdname st_hull
-st_convex_hull <- function(x) UseMethod("st_convex_hull")
 
 #' @export
+#' @rdname st_hull
 st_convex_hull.LAS = function(x)
 {
   chull <- convex_hull(x$X, x$Y)

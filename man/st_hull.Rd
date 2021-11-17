@@ -3,13 +3,13 @@
 \name{st_hull}
 \alias{st_hull}
 \alias{st_concave_hull}
-\alias{st_convex_hull}
+\alias{st_convex_hull.LAS}
 \alias{concaveman}
 \title{Concave and convex hulls for LAS objects}
 \usage{
 st_concave_hull(x, concavity = 2, length_threshold = 5)
 
-st_convex_hull(x)
+\method{st_convex_hull}{LAS}(x)
 
 concaveman(x, y = NULL, concavity = 2, length_threshold = 0)
 }
