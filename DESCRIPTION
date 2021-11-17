@@ -25,7 +25,6 @@ Depends:
     methods
 Imports:
     data.table (>= 1.12.0),
-    future,
     glue,
     grDevices,
     lazyeval,
@@ -42,6 +41,7 @@ Imports:
     utils
 Suggests:
     EBImage,
+    future,
     geometry,
     gstat,
     RCSF,

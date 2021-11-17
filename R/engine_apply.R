@@ -42,13 +42,13 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
   # the information is not overwritten by the master worker.
   threads = if (must_disable_openmp()) 1L else if (isFALSE(getOption("lidR.check.nested.parallelism"))) LIDRTHREADS$input else LIDRTHREADS$n
 
-  verbose(glue::glue("Start processing {nclusters} chunks..."))
-  #verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))
-
   # ==== PROCESSING ====
   use_future <- engine_use_future()
-  future <- if (!use_future) function(expr, ...) {eval(expr)} else future::future
-  value  <- if (!use_future) function(x) {x} else function(x) { suppressWarnings(future::value(x)) }
+  if (!use_future) verbose("Future is disabled")
+  verbose(glue::glue("Start processing {nclusters} chunks..."))
+
+  future <- if (!use_future)  no_future else future::future
+  value  <- if (!use_future) function(x) { attr(x, "state") <- NULL ; x } else function(x) { suppressWarnings(future::value(x)) }
 
   for (i in seq_along(.CHUNKS))
   {
@@ -73,7 +73,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
       {
         y <- do.call(.FUN, params)
       }
-      # New option autoread from v3.0.0 (was not a good idea but it exist)
+      # New option autoread from v3.0.0 (was not a good idea but it exists)
       else if (.AUTOREAD == TRUE & .AUTOCROP == FALSE)
       {
         bbox <- st_bbox(chunk)
@@ -206,6 +206,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
       if (states[j] == CHUNK_NULL) next
 
       output[[j]] <- value(futures[[j]])
+      attr(output[[j]], "state") <- NULL ;
     }
 
     Sys.sleep(0.5)
@@ -217,18 +218,19 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
 
 engine_eval_state <- function(future)
 {
+
+  # If future is not a future it means that we are in "no future" mode
+  # The result has already been evaluated and the state is stored in an attribute
+  if (!is(future, "Future")) return(attr(future, "state"))
+
+  # future is a future, we must check if it is resolved. If it is resolved we evaluate
+  # the state of the result
+
   # Fix #414
   sink(paste0(tempdir(), "/dev_null"))
   on.exit(sink(NULL))
 
   cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
-
-  if (is(future, "Future")) return(list(state = CHUNK_OK, msg = ""))
-
-  if (is.null(future))
-  {
-    stop("Unexpected internal error: NULL received instead of a future. Please report this bug.", call. = FALSE)
-  }
 
   if (future::resolved(future))
   {
@@ -356,6 +358,36 @@ engine_use_future <- function()
   if (isTRUE(getOption("lidR.debug")))
     return(FALSE)
 
-  b <- require("future", quietly = TRUE)
+  if (isTRUE(getOption("lidR.no.future")))
+    return(FALSE)
+
+  b <- requireNamespace("future", quietly = TRUE)
   return(b)
+}
+
+no_future <- function(expr, ...)
+{
+  cluster_state <- list(state = CHUNK_OK, msg = "")
+
+  y <- tryCatch(
+  {
+    withCallingHandlers(
+    {
+      y <- eval(expr)
+      if (is.null(y)) cluster_state <- list(state = CHUNK_NULL, msg = "")
+      y
+    },
+    warning = function(w)
+    {
+      cluster_state <<- list(state = CHUNK_WARNING, msg = w["message"])
+    })
+  },
+  error = function(e)
+  {
+    cluster_state <<- list(state = CHUNK_ERROR, msg = e["message"])
+  })
+
+  if (is.null(y)) y <- list(NULL)
+  attr(y, "state") <- cluster_state
+  return(y)
 }
